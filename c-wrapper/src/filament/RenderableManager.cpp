@@ -257,5 +257,27 @@ bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, F
     return cppBuilder->build(*cppEngine, toEntity(entity)) == RenderableBuilder::Result::Success;
 }
 
+void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex,
+        const FilaMaterialInstance* materialInstance) {
+    if (!manager || instance == 0 || !materialInstance) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    cppManager->setMaterialInstanceAt(toInstance(instance), primitiveIndex, cppMaterialInstance);
+}
+
+FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex) {
+    if (!manager || instance == 0) {
+        return nullptr;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return reinterpret_cast<FilaMaterialInstance*>(cppManager->getMaterialInstanceAt(toInstance(instance), primitiveIndex));
+}
+
 } // extern "C"
 

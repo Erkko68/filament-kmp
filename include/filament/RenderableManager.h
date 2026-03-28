@@ -108,6 +108,17 @@ void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder
 // Builds a renderable component into the given entity. Returns true on success.
 bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, FilaEngine* engine, FilaEntity entity);
 
+// Sets the material instance for a primitive at runtime.
+void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex,
+		const FilaMaterialInstance* materialInstance);
+
+// Gets the material instance for a primitive.
+FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex);
+
 #ifdef __cplusplus
 }
 #endif

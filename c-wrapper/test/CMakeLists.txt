@@ -56,6 +56,12 @@ add_library(test_module_indirect_light_compile OBJECT
 add_library(test_module_renderable_manager_compile OBJECT
     module/renderable_manager/renderable_manager_module_compile.c
 )
+add_library(test_module_color_grading_compile OBJECT
+    module/color_grading/color_grading_module_compile.c
+)
+add_library(test_module_render_target_compile OBJECT
+    module/render_target/render_target_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -108,6 +114,12 @@ add_library(test_signature_indirect_light_compile OBJECT
 add_library(test_signature_renderable_manager_compile OBJECT
     signature/renderable_manager/renderable_manager_signature_compile.c
 )
+add_library(test_signature_color_grading_compile OBJECT
+    signature/color_grading/color_grading_signature_compile.c
+)
+add_library(test_signature_render_target_compile OBJECT
+    signature/render_target/render_target_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
@@ -127,6 +139,8 @@ foreach(target_name
     test_module_skybox_compile
     test_module_indirect_light_compile
     test_module_renderable_manager_compile
+    test_module_color_grading_compile
+    test_module_render_target_compile
     test_signature_engine_compile
     test_signature_scene_compile
     test_signature_renderer_compile
@@ -144,6 +158,8 @@ foreach(target_name
     test_signature_skybox_compile
     test_signature_indirect_light_compile
     test_signature_renderable_manager_compile
+    test_signature_color_grading_compile
+    test_signature_render_target_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -167,6 +183,8 @@ add_custom_target(test_compile_modules
         test_module_skybox_compile
         test_module_indirect_light_compile
         test_module_renderable_manager_compile
+        test_module_color_grading_compile
+        test_module_render_target_compile
 )
 
 add_custom_target(test_compile_signatures
@@ -188,6 +206,8 @@ add_custom_target(test_compile_signatures
         test_signature_skybox_compile
         test_signature_indirect_light_compile
         test_signature_renderable_manager_compile
+        test_signature_color_grading_compile
+        test_signature_render_target_compile
 )
 
 add_custom_target(test_compile_all

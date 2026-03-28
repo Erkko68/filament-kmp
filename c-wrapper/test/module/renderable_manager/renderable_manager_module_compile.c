@@ -41,6 +41,8 @@ void fila_renderable_manager_module_compile_only(void) {
     FilaRenderableManagerBuilder_material(builder, 0u, materialInstance);
     (void)FilaRenderableManagerBuilder_build(builder, engine, entity);
     FilaRenderableManagerBuilder_destroy(builder);
+    FilaRenderableManager_setMaterialInstanceAt(manager, instance, 0u, materialInstance);
+    (void)FilaRenderableManager_getMaterialInstanceAt(manager, instance, 0u);
     FilaRenderableManager_destroy(manager, entity);
     FilaEntityManager_destroy(entity);
 }

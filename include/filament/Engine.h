@@ -76,6 +76,12 @@ void FilaEngine_destroySkybox(FilaEngine* engine, FilaSkybox* skybox);
 // Destroys a filament::IndirectLight instance.
 void FilaEngine_destroyIndirectLight(FilaEngine* engine, FilaIndirectLight* indirectLight);
 
+// Destroys a filament::ColorGrading instance.
+void FilaEngine_destroyColorGrading(FilaEngine* engine, FilaColorGrading* colorGrading);
+
+// Destroys a filament::RenderTarget instance.
+void FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* renderTarget);
+
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 

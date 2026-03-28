@@ -29,6 +29,8 @@ static void (*g_renderable_builder_receive_shadows)(FilaRenderableManagerBuilder
 static void (*g_renderable_builder_geometry)(FilaRenderableManagerBuilder*, size_t, FilaRenderablePrimitiveType, FilaVertexBuffer*, FilaIndexBuffer*, size_t, size_t) = FilaRenderableManagerBuilder_geometry;
 static void (*g_renderable_builder_material)(FilaRenderableManagerBuilder*, size_t, const FilaMaterialInstance*) = FilaRenderableManagerBuilder_material;
 static bool (*g_renderable_builder_build)(FilaRenderableManagerBuilder*, FilaEngine*, FilaEntity) = FilaRenderableManagerBuilder_build;
+static void (*g_renderable_set_material_at)(FilaRenderableManager*, FilaRenderableManagerInstance, size_t, const FilaMaterialInstance*) = FilaRenderableManager_setMaterialInstanceAt;
+static FilaMaterialInstance* (*g_renderable_get_material_at)(const FilaRenderableManager*, FilaRenderableManagerInstance, size_t) = FilaRenderableManager_getMaterialInstanceAt;
 
 void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_has_component;
@@ -55,5 +57,7 @@ void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_builder_geometry;
     (void)g_renderable_builder_material;
     (void)g_renderable_builder_build;
+    (void)g_renderable_set_material_at;
+    (void)g_renderable_get_material_at;
 }
 

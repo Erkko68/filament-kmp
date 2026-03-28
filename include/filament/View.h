@@ -39,6 +39,18 @@ bool FilaView_hasCamera(const FilaView* view);
 // Returns the camera attached to this view, or NULL if none is set.
 FilaCamera* FilaView_getCamera(FilaView* view);
 
+// Sets the color grading transform for this view.
+void FilaView_setColorGrading(FilaView* view, FilaColorGrading* colorGrading);
+
+// Returns the color grading transform bound to this view.
+FilaColorGrading* FilaView_getColorGrading(FilaView* view);
+
+// Sets the render target for this view.
+void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget);
+
+// Returns the render target bound to this view.
+FilaRenderTarget* FilaView_getRenderTarget(FilaView* view);
+
 #ifdef __cplusplus
 }
 #endif

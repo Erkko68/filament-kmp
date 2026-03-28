@@ -15,6 +15,7 @@ set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/incl
 # Define the source files for our wrapper
 set(SOURCES
     src/filament/Camera.cpp
+    src/filament/ColorGrading.cpp
     src/filament/Engine.cpp
     src/filament/EntityManager.cpp
     src/filament/Fence.cpp
@@ -22,6 +23,7 @@ set(SOURCES
     src/filament/IndirectLight.cpp
     src/filament/LightManager.cpp
     src/filament/Material.cpp
+    src/filament/RenderTarget.cpp
     src/filament/Renderer.cpp
     src/filament/RenderableManager.cpp
     src/filament/Scene.cpp

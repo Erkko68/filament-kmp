@@ -7,8 +7,13 @@
 
 #include "filament/Camera.h"
 #include "filament/Engine.h"
+#include "filament/IndirectLight.h"
+#include "filament/Material.h"
+#include "filament/MaterialInstance.h"
 #include "filament/Renderer.h"
 #include "filament/Scene.h"
+#include "filament/Skybox.h"
+#include "filament/Texture.h"
 #include "filament/View.h"
 
 static void pumpEvents(void) {
@@ -81,6 +86,9 @@ int main(void) {
         FilaView* view = FilaEngine_createView(engine);
         FilaEntity cameraEntity = 201;
         FilaCamera* camera = FilaEngine_createCamera(engine, cameraEntity);
+        FilaTexture* envTexture = NULL;
+        FilaSkybox* skybox = NULL;
+        FilaIndirectLight* indirectLight = NULL;
 
         if (!scene || !view || !camera) {
             printf("Scene/View/Camera creation failed\n");
@@ -98,6 +106,42 @@ int main(void) {
         FilaView_setCamera(view, camera);
         FilaCamera_setProjectionFov(camera, 45.0, 960.0 / 540.0, 0.1, 1000.0, FILA_CAMERA_FOV_VERTICAL);
         FilaCamera_lookAt(camera, 0.0, 1.5, 4.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+        // Create a simple cubemap texture for environment lighting (4x4x6 minimal cubemap).
+        FilaTextureBuilder* texBuilder = FilaTextureBuilder_create();
+        FilaTextureBuilder_width(texBuilder, 4u);
+        FilaTextureBuilder_height(texBuilder, 4u);
+        FilaTextureBuilder_levels(texBuilder, 1u);
+        FilaTextureBuilder_sampler(texBuilder, FILA_TEXTURE_SAMPLER_CUBEMAP);
+        FilaTextureBuilder_format(texBuilder, FILA_TEXTURE_FORMAT_RGBA8);
+        envTexture = FilaTextureBuilder_build(texBuilder, engine);
+        FilaTextureBuilder_destroy(texBuilder);
+
+        // Attach skybox with the environment texture.
+        if (envTexture) {
+            FilaSkyboxBuilder* skyBuilder = FilaSkyboxBuilder_create();
+            FilaSkyboxBuilder_environment(skyBuilder, envTexture);
+            FilaSkyboxBuilder_intensity(skyBuilder, 25000.0f);
+            skybox = FilaSkyboxBuilder_build(skyBuilder, engine);
+            FilaSkyboxBuilder_destroy(skyBuilder);
+
+            if (skybox) {
+                FilaScene_setSkybox(scene, skybox);
+            }
+        }
+
+        // Create indirect light for environment illumination.
+        FilaIndirectLightBuilder* ilBuilder = FilaIndirectLightBuilder_create();
+        if (envTexture) {
+            FilaIndirectLightBuilder_reflections(ilBuilder, envTexture);
+        }
+        FilaIndirectLightBuilder_intensity(ilBuilder, 20000.0f);
+        indirectLight = FilaIndirectLightBuilder_build(ilBuilder, engine);
+        FilaIndirectLightBuilder_destroy(ilBuilder);
+
+        if (indirectLight) {
+            FilaScene_setIndirectLight(scene, indirectLight);
+        }
 
         bool renderedAtLeastOnce = false;
         for (int frameIndex = 0; frameIndex < 300; ++frameIndex) {
@@ -124,6 +168,18 @@ int main(void) {
         FilaEngine_destroyCameraComponent(engine, cameraEntity);
         FilaEngine_destroyView(engine, view);
         FilaEngine_destroyScene(engine, scene);
+
+        // Clean up environment resources.
+        if (skybox) {
+            FilaEngine_destroySkybox(engine, skybox);
+        }
+        if (indirectLight) {
+            FilaEngine_destroyIndirectLight(engine, indirectLight);
+        }
+        if (envTexture) {
+            FilaEngine_destroyTexture(engine, envTexture);
+        }
+
         FilaEngine_destroySwapChain(engine, swapChain);
         FilaEngine_destroyRenderer(engine, renderer);
         FilaEngine_destroy(&engine);

@@ -220,6 +220,24 @@ void FilaEngine_destroyIndirectLight(FilaEngine* engine, FilaIndirectLight* indi
     cppEngine->destroy(cppIndirectLight);
 }
 
+void FilaEngine_destroyColorGrading(FilaEngine* engine, FilaColorGrading* colorGrading) {
+    if (!engine || !colorGrading) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppColorGrading = reinterpret_cast<filament::ColorGrading*>(colorGrading);
+    cppEngine->destroy(cppColorGrading);
+}
+
+void FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* renderTarget) {
+    if (!engine || !renderTarget) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppRenderTarget = reinterpret_cast<filament::RenderTarget*>(renderTarget);
+    cppEngine->destroy(cppRenderTarget);
+}
+
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
     if (!engine) {
         return nullptr;

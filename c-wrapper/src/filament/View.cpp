@@ -1,4 +1,6 @@
 #include <filament/Camera.h>
+#include <filament/ColorGrading.h>
+#include <filament/RenderTarget.h>
 #include <filament/Scene.h>
 #include <filament/View.h>
 #include <filament/Viewport.h>
@@ -68,10 +70,41 @@ FilaCamera* FilaView_getCamera(FilaView* view) {
         return nullptr;
     }
     auto cppView = reinterpret_cast<filament::View*>(view);
-    if (!cppView->hasCamera()) {
+    return reinterpret_cast<FilaCamera*>(&cppView->getCamera());
+}
+
+void FilaView_setColorGrading(FilaView* view, FilaColorGrading* colorGrading) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    auto cppColorGrading = reinterpret_cast<filament::ColorGrading*>(colorGrading);
+    cppView->setColorGrading(cppColorGrading);
+}
+
+FilaColorGrading* FilaView_getColorGrading(FilaView* view) {
+    if (!view) {
         return nullptr;
     }
-    return reinterpret_cast<FilaCamera*>(&cppView->getCamera());
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    return reinterpret_cast<FilaColorGrading*>(const_cast<filament::ColorGrading*>(cppView->getColorGrading()));
+}
+
+void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    auto cppRenderTarget = reinterpret_cast<filament::RenderTarget*>(renderTarget);
+    cppView->setRenderTarget(cppRenderTarget);
+}
+
+FilaRenderTarget* FilaView_getRenderTarget(FilaView* view) {
+    if (!view) {
+        return nullptr;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    return reinterpret_cast<FilaRenderTarget*>(cppView->getRenderTarget());
 }
 
 } // extern "C"
