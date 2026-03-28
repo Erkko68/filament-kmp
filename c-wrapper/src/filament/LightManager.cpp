@@ -128,6 +128,98 @@ FilaLightType FilaLightManager_getType(const FilaLightManager* manager, FilaLigh
     return fromLightType(cppManager->getType(toInstance(instance)));
 }
 
+void FilaLightManager_setPosition(FilaLightManager* manager, FilaLightManagerInstance instance, float x, float y, float z) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setPosition(toInstance(instance), filament::math::float3{x, y, z});
+}
+
+bool FilaLightManager_getPosition(const FilaLightManager* manager, FilaLightManagerInstance instance, float outPosition[3]) {
+    if (!manager || instance == 0 || !outPosition) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    const auto& p = cppManager->getPosition(toInstance(instance));
+    outPosition[0] = p.x;
+    outPosition[1] = p.y;
+    outPosition[2] = p.z;
+    return true;
+}
+
+void FilaLightManager_setDirection(FilaLightManager* manager, FilaLightManagerInstance instance, float x, float y, float z) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setDirection(toInstance(instance), filament::math::float3{x, y, z});
+}
+
+bool FilaLightManager_getDirection(const FilaLightManager* manager, FilaLightManagerInstance instance, float outDirection[3]) {
+    if (!manager || instance == 0 || !outDirection) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    const auto& d = cppManager->getDirection(toInstance(instance));
+    outDirection[0] = d.x;
+    outDirection[1] = d.y;
+    outDirection[2] = d.z;
+    return true;
+}
+
+void FilaLightManager_setColor(FilaLightManager* manager, FilaLightManagerInstance instance, float r, float g, float b) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setColor(toInstance(instance), filament::LinearColor{r, g, b});
+}
+
+bool FilaLightManager_getColor(const FilaLightManager* manager, FilaLightManagerInstance instance, float outColor[3]) {
+    if (!manager || instance == 0 || !outColor) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    const auto& c = cppManager->getColor(toInstance(instance));
+    outColor[0] = c.x;
+    outColor[1] = c.y;
+    outColor[2] = c.z;
+    return true;
+}
+
+void FilaLightManager_setIntensity(FilaLightManager* manager, FilaLightManagerInstance instance, float intensity) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setIntensity(toInstance(instance), intensity);
+}
+
+float FilaLightManager_getIntensity(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getIntensity(toInstance(instance));
+}
+
+void FilaLightManager_setFalloff(FilaLightManager* manager, FilaLightManagerInstance instance, float radius) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setFalloff(toInstance(instance), radius);
+}
+
+float FilaLightManager_getFalloff(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getFalloff(toInstance(instance));
+}
+
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightType type) {
     auto builder = new LightBuilder(toLightType(type));
     return reinterpret_cast<FilaLightManagerBuilder*>(builder);

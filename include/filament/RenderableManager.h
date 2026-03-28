@@ -64,6 +64,30 @@ void FilaRenderableManager_setCulling(FilaRenderableManager* manager,
 bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance);
 
+// Creates a renderable builder for the specified primitive count.
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t primitiveCount);
+
+// Destroys a renderable builder.
+void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* builder);
+
+// Sets builder layer-mask bits.
+void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint8_t select, uint8_t values);
+
+// Sets builder draw priority.
+void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint8_t priority);
+
+// Enables or disables frustum culling for built renderable.
+void FilaRenderableManagerBuilder_culling(FilaRenderableManagerBuilder* builder, bool enable);
+
+// Enables or disables shadow casting for built renderable.
+void FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* builder, bool enable);
+
+// Enables or disables shadow receiving for built renderable.
+void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* builder, bool enable);
+
+// Builds a renderable component into the given entity. Returns true on success.
+bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, FilaEngine* engine, FilaEntity entity);
+
 #ifdef __cplusplus
 }
 #endif

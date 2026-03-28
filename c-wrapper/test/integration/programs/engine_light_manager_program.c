@@ -104,6 +104,40 @@ int main(void) {
             FilaEngine_destroy(&engine);
             return 1;
         }
+
+        FilaLightManager_setPosition(manager, instance, 0.0f, 2.0f + (float)i, 0.0f);
+        FilaLightManager_setDirection(manager, instance, 0.0f, -1.0f, 0.0f);
+        FilaLightManager_setColor(manager, instance, 1.0f, 0.9f, 0.8f);
+        FilaLightManager_setIntensity(manager, instance, 12345.0f + (float)i);
+        FilaLightManager_setFalloff(manager, instance, 8.0f + (float)i);
+
+        float position[3] = {0};
+        float direction[3] = {0};
+        float color[3] = {0};
+        if (!FilaLightManager_getPosition(manager, instance, position) ||
+                !FilaLightManager_getDirection(manager, instance, direction) ||
+                !FilaLightManager_getColor(manager, instance, color)) {
+            printf("Light getter call failed\n");
+            for (size_t j = 0; j < 3u; ++j) {
+                if (FilaLightManager_hasComponent(manager, entities[j])) {
+                    FilaLightManager_destroy(manager, entities[j]);
+                }
+                FilaEntityManager_destroy(entities[j]);
+            }
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        if (position[1] < 2.0f || direction[1] > -0.5f || color[0] < 0.5f) {
+            printf("Light getter values unexpected\n");
+            for (size_t j = 0; j < 3u; ++j) {
+                if (FilaLightManager_hasComponent(manager, entities[j])) {
+                    FilaLightManager_destroy(manager, entities[j]);
+                }
+                FilaEntityManager_destroy(entities[j]);
+            }
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
     }
 
     FilaEntity listed[8] = {0};

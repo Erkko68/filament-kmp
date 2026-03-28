@@ -42,6 +42,26 @@ void FilaLightManager_destroy(FilaLightManager* manager, FilaEntity entity);
 // Returns the type of a light instance. Defaults to directional for invalid inputs.
 FilaLightType FilaLightManager_getType(const FilaLightManager* manager, FilaLightManagerInstance instance);
 
+// Sets and gets light position.
+void FilaLightManager_setPosition(FilaLightManager* manager, FilaLightManagerInstance instance, float x, float y, float z);
+bool FilaLightManager_getPosition(const FilaLightManager* manager, FilaLightManagerInstance instance, float outPosition[3]);
+
+// Sets and gets light direction.
+void FilaLightManager_setDirection(FilaLightManager* manager, FilaLightManagerInstance instance, float x, float y, float z);
+bool FilaLightManager_getDirection(const FilaLightManager* manager, FilaLightManagerInstance instance, float outDirection[3]);
+
+// Sets and gets light color (linear RGB).
+void FilaLightManager_setColor(FilaLightManager* manager, FilaLightManagerInstance instance, float r, float g, float b);
+bool FilaLightManager_getColor(const FilaLightManager* manager, FilaLightManagerInstance instance, float outColor[3]);
+
+// Sets and gets light intensity.
+void FilaLightManager_setIntensity(FilaLightManager* manager, FilaLightManagerInstance instance, float intensity);
+float FilaLightManager_getIntensity(const FilaLightManager* manager, FilaLightManagerInstance instance);
+
+// Sets and gets falloff radius.
+void FilaLightManager_setFalloff(FilaLightManager* manager, FilaLightManagerInstance instance, float radius);
+float FilaLightManager_getFalloff(const FilaLightManager* manager, FilaLightManagerInstance instance);
+
 // Creates a light builder for the specified light type.
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightType type);
 

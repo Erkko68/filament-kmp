@@ -73,6 +73,21 @@ int main(void) {
         return 1;
     }
 
+    FilaRenderableManagerBuilder* builder = FilaRenderableManagerBuilder_create(0u);
+    if (!builder) {
+        printf("Renderable builder creation failed\n");
+        FilaEntityManager_destroy(entity);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+    FilaRenderableManagerBuilder_layerMask(builder, 0xFFu, 0x03u);
+    FilaRenderableManagerBuilder_priority(builder, 4u);
+    FilaRenderableManagerBuilder_culling(builder, true);
+    FilaRenderableManagerBuilder_castShadows(builder, false);
+    FilaRenderableManagerBuilder_receiveShadows(builder, true);
+    (void)FilaRenderableManagerBuilder_build(builder, engine, entity);
+    FilaRenderableManagerBuilder_destroy(builder);
+
     FilaEntity listed[8] = {0};
     (void)FilaRenderableManager_getEntities(manager, listed, 8u);
     FilaRenderableManager_destroy(manager, entity);

@@ -19,6 +19,14 @@ static void (*g_renderable_set_priority)(FilaRenderableManager*, FilaRenderableM
 static uint8_t (*g_renderable_get_priority)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getPriority;
 static void (*g_renderable_set_culling)(FilaRenderableManager*, FilaRenderableManagerInstance, bool) = FilaRenderableManager_setCulling;
 static bool (*g_renderable_is_culling_enabled)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_isCullingEnabled;
+static FilaRenderableManagerBuilder* (*g_renderable_builder_create)(size_t) = FilaRenderableManagerBuilder_create;
+static void (*g_renderable_builder_destroy)(FilaRenderableManagerBuilder*) = FilaRenderableManagerBuilder_destroy;
+static void (*g_renderable_builder_layer_mask)(FilaRenderableManagerBuilder*, uint8_t, uint8_t) = FilaRenderableManagerBuilder_layerMask;
+static void (*g_renderable_builder_priority)(FilaRenderableManagerBuilder*, uint8_t) = FilaRenderableManagerBuilder_priority;
+static void (*g_renderable_builder_culling)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_culling;
+static void (*g_renderable_builder_cast_shadows)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_castShadows;
+static void (*g_renderable_builder_receive_shadows)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_receiveShadows;
+static bool (*g_renderable_builder_build)(FilaRenderableManagerBuilder*, FilaEngine*, FilaEntity) = FilaRenderableManagerBuilder_build;
 
 void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_has_component;
@@ -35,5 +43,13 @@ void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_get_priority;
     (void)g_renderable_set_culling;
     (void)g_renderable_is_culling_enabled;
+    (void)g_renderable_builder_create;
+    (void)g_renderable_builder_destroy;
+    (void)g_renderable_builder_layer_mask;
+    (void)g_renderable_builder_priority;
+    (void)g_renderable_builder_culling;
+    (void)g_renderable_builder_cast_shadows;
+    (void)g_renderable_builder_receive_shadows;
+    (void)g_renderable_builder_build;
 }
 

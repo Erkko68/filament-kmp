@@ -1,5 +1,7 @@
 #include <filament/RenderableManager.h>
 
+#include <filament/Engine.h>
+
 #include <utils/Entity.h>
 
 #include "../../../include/filament/RenderableManager.h"
@@ -16,6 +18,8 @@ filament::RenderableManager::Instance toInstance(FilaRenderableManagerInstance i
 FilaRenderableManagerInstance fromInstance(filament::RenderableManager::Instance instance) {
     return instance.asValue();
 }
+
+using RenderableBuilder = filament::RenderableManager::Builder;
 } // namespace
 
 extern "C" {
@@ -147,6 +151,68 @@ bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* manager
     }
     auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
     return cppManager->isCullingEnabled(toInstance(instance));
+}
+
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t primitiveCount) {
+    auto builder = new RenderableBuilder(primitiveCount);
+    return reinterpret_cast<FilaRenderableManagerBuilder*>(builder);
+}
+
+void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* builder) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    delete cppBuilder;
+}
+
+void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint8_t select, uint8_t values) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->layerMask(select, values);
+}
+
+void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint8_t priority) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->priority(priority);
+}
+
+void FilaRenderableManagerBuilder_culling(FilaRenderableManagerBuilder* builder, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->culling(enable);
+}
+
+void FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* builder, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->castShadows(enable);
+}
+
+void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* builder, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->receiveShadows(enable);
+}
+
+bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, FilaEngine* engine, FilaEntity entity) {
+    if (!builder || !engine || entity == 0) {
+        return false;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return cppBuilder->build(*cppEngine, toEntity(entity)) == RenderableBuilder::Result::Success;
 }
 
 } // extern "C"
