@@ -9,6 +9,8 @@ static void (*g_scene_remove_entity)(FilaScene*, FilaEntity) = FilaScene_removeE
 static void (*g_scene_remove_all_entities)(FilaScene*) = FilaScene_removeAllEntities;
 static size_t (*g_scene_get_entity_count)(const FilaScene*) = FilaScene_getEntityCount;
 static bool (*g_scene_has_entity)(const FilaScene*, FilaEntity) = FilaScene_hasEntity;
+static void (*g_scene_set_skybox)(FilaScene*, FilaSkybox*) = FilaScene_setSkybox;
+static FilaSkybox* (*g_scene_get_skybox)(FilaScene*) = FilaScene_getSkybox;
 
 void fila_scene_signature_compile_only(void) {
     (void)g_scene_add_entity;
@@ -16,5 +18,7 @@ void fila_scene_signature_compile_only(void) {
     (void)g_scene_remove_all_entities;
     (void)g_scene_get_entity_count;
     (void)g_scene_has_entity;
+    (void)g_scene_set_skybox;
+    (void)g_scene_get_skybox;
 }
 

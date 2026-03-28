@@ -67,6 +67,12 @@ void FilaEngine_destroyMaterial(FilaEngine* engine, FilaMaterial* material);
 // Destroys a filament::MaterialInstance instance.
 void FilaEngine_destroyMaterialInstance(FilaEngine* engine, FilaMaterialInstance* materialInstance);
 
+// Destroys a filament::Texture instance.
+void FilaEngine_destroyTexture(FilaEngine* engine, FilaTexture* texture);
+
+// Destroys a filament::Skybox instance.
+void FilaEngine_destroySkybox(FilaEngine* engine, FilaSkybox* skybox);
+
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 

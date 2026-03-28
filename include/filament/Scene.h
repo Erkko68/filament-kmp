@@ -25,6 +25,12 @@ size_t FilaScene_getEntityCount(const FilaScene* scene);
 // Returns true if the entity exists in the scene.
 bool FilaScene_hasEntity(const FilaScene* scene, FilaEntity entity);
 
+// Sets or unsets the scene skybox.
+void FilaScene_setSkybox(FilaScene* scene, FilaSkybox* skybox);
+
+// Returns the skybox currently associated with the scene.
+FilaSkybox* FilaScene_getSkybox(FilaScene* scene);
+
 #ifdef __cplusplus
 }
 #endif

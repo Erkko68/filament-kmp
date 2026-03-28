@@ -24,6 +24,8 @@ Current modules covered:
 - VertexBuffer
 - IndexBuffer
 - Material
+- Texture
+- Skybox
 
 ## Default workflow (no host Filament libs required)
 
@@ -54,6 +56,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_light_manager`
 - `test_program_engine_renderable_manager`
 - `test_program_engine_resource_builders`
+- `test_program_engine_texture_skybox`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

@@ -1,4 +1,5 @@
 #include <filament/Scene.h>
+#include <filament/Skybox.h>
 
 #include <utils/Entity.h>
 
@@ -51,6 +52,23 @@ bool FilaScene_hasEntity(const FilaScene* scene, FilaEntity entity) {
     }
     auto cppScene = reinterpret_cast<const filament::Scene*>(scene);
     return cppScene->hasEntity(toEntity(entity));
+}
+
+void FilaScene_setSkybox(FilaScene* scene, FilaSkybox* skybox) {
+    if (!scene) {
+        return;
+    }
+    auto cppScene = reinterpret_cast<filament::Scene*>(scene);
+    auto cppSkybox = reinterpret_cast<filament::Skybox*>(skybox);
+    cppScene->setSkybox(cppSkybox);
+}
+
+FilaSkybox* FilaScene_getSkybox(FilaScene* scene) {
+    if (!scene) {
+        return nullptr;
+    }
+    auto cppScene = reinterpret_cast<filament::Scene*>(scene);
+    return reinterpret_cast<FilaSkybox*>(cppScene->getSkybox());
 }
 
 } // extern "C"

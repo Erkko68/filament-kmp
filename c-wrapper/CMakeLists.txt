@@ -24,7 +24,9 @@ set(SOURCES
     src/filament/Renderer.cpp
     src/filament/RenderableManager.cpp
     src/filament/Scene.cpp
+    src/filament/Skybox.cpp
     src/filament/SwapChain.cpp
+    src/filament/Texture.cpp
     src/filament/TransformManager.cpp
     src/filament/VertexBuffer.cpp
     src/filament/View.cpp

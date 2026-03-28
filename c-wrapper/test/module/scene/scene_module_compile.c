@@ -1,5 +1,6 @@
 #include "filament/Engine.h"
 #include "filament/Scene.h"
+#include "filament/Skybox.h"
 
 // Verifies Scene API is consumable and composes with Engine-owned lifecycle.
 void fila_scene_module_compile_only(void) {
@@ -13,6 +14,8 @@ void fila_scene_module_compile_only(void) {
     FilaScene_removeAllEntities(scene);
     (void)FilaScene_getEntityCount(scene);
     (void)FilaScene_hasEntity(scene, entity);
+    FilaScene_setSkybox(scene, (FilaSkybox*)0);
+    (void)FilaScene_getSkybox(scene);
     FilaEngine_destroyScene(engine, scene);
 }
 

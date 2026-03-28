@@ -7,7 +7,9 @@
 #include <filament/Renderer.h>
 #include <filament/RenderableManager.h>
 #include <filament/Scene.h>
+#include <filament/Skybox.h>
 #include <filament/SwapChain.h>
+#include <filament/Texture.h>
 #include <filament/TransformManager.h>
 #include <filament/VertexBuffer.h>
 #include <filament/View.h>
@@ -188,6 +190,24 @@ void FilaEngine_destroyMaterialInstance(FilaEngine* engine, FilaMaterialInstance
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppMaterialInstance = reinterpret_cast<filament::MaterialInstance*>(materialInstance);
     cppEngine->destroy(cppMaterialInstance);
+}
+
+void FilaEngine_destroyTexture(FilaEngine* engine, FilaTexture* texture) {
+    if (!engine || !texture) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
+    cppEngine->destroy(cppTexture);
+}
+
+void FilaEngine_destroySkybox(FilaEngine* engine, FilaSkybox* skybox) {
+    if (!engine || !skybox) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppSkybox = reinterpret_cast<filament::Skybox*>(skybox);
+    cppEngine->destroy(cppSkybox);
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
