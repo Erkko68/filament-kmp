@@ -28,8 +28,10 @@ set(SOURCES
     src/filament/RenderableManager.cpp
     src/filament/Scene.cpp
     src/filament/Skybox.cpp
+    src/filament/Stream.cpp
     src/filament/SwapChain.cpp
     src/filament/Texture.cpp
+    src/filament/TextureSampler.cpp
     src/filament/TransformManager.cpp
     src/filament/VertexBuffer.cpp
     src/filament/View.cpp

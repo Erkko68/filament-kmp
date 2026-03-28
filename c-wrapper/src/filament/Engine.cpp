@@ -9,6 +9,7 @@
 #include <filament/RenderableManager.h>
 #include <filament/Scene.h>
 #include <filament/Skybox.h>
+#include <filament/Stream.h>
 #include <filament/SwapChain.h>
 #include <filament/Texture.h>
 #include <filament/TransformManager.h>
@@ -236,6 +237,15 @@ void FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* render
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppRenderTarget = reinterpret_cast<filament::RenderTarget*>(renderTarget);
     cppEngine->destroy(cppRenderTarget);
+}
+
+void FilaEngine_destroyStream(FilaEngine* engine, FilaStream* stream) {
+    if (!engine || !stream) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppStream = reinterpret_cast<filament::Stream*>(stream);
+    cppEngine->destroy(cppStream);
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {

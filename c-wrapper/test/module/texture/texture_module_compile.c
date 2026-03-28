@@ -10,7 +10,10 @@ void fila_texture_module_compile_only(void) {
     FilaTextureBuilder_width(builder, 16u);
     FilaTextureBuilder_height(builder, 16u);
     FilaTextureBuilder_levels(builder, 1u);
+    FilaTextureBuilder_samples(builder, 1u);
+    FilaTextureBuilder_usage(builder, (uint16_t)(FILA_TEXTURE_USAGE_DEFAULT | FILA_TEXTURE_USAGE_COLOR_ATTACHMENT));
     FilaTextureBuilder_sampler(builder, FILA_TEXTURE_SAMPLER_CUBEMAP);
+    FilaTextureBuilder_sampler(builder, FILA_TEXTURE_SAMPLER_EXTERNAL);
     FilaTextureBuilder_format(builder, FILA_TEXTURE_FORMAT_RGBA8);
 
     FilaTexture* texture = FilaTextureBuilder_build(builder, engine);

@@ -27,6 +27,10 @@ Current modules covered:
 - Texture
 - Skybox
 - IndirectLight
+- ColorGrading
+- RenderTarget
+- Stream
+- TextureParams
 
 ## Default workflow (no host Filament libs required)
 
@@ -60,6 +64,8 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_texture_skybox`
 - `test_program_engine_indirect_light_scene`
 - `test_program_engine_material_instance_parameters`
+- `test_program_engine_view_color_grading_render_target`
+- `test_program_engine_stream_texture_params`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 
@@ -91,6 +97,15 @@ Run it manually:
 
 1. Add `test/module/<api>/<api>_module_compile.c`
 2. Add `test/signature/<api>/<api>_signature_compile.c`
-3. Add targets in `test/CMakeLists.txt`
-4. Optionally add an integration C program in `test/integration/programs/`
+3. Add an integration C smoke program in `test/integration/programs/`
+4. Register all 3 targets in `test/CMakeLists.txt`
+5. Verify both test modes:
+
+```bash
+cd /Users/eric/IdeaProjects/filament-kmp-core/c-wrapper/test
+./build.sh
+
+cd /Users/eric/IdeaProjects/filament-kmp-core/c-wrapper/test
+FILA_ENABLE_LINKED_TESTS=ON ./build.sh
+```
 

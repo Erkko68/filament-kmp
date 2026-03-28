@@ -62,6 +62,12 @@ add_library(test_module_color_grading_compile OBJECT
 add_library(test_module_render_target_compile OBJECT
     module/render_target/render_target_module_compile.c
 )
+add_library(test_module_stream_compile OBJECT
+    module/stream/stream_module_compile.c
+)
+add_library(test_module_texture_sampler_compile OBJECT
+    module/texture_sampler/texture_sampler_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -120,6 +126,12 @@ add_library(test_signature_color_grading_compile OBJECT
 add_library(test_signature_render_target_compile OBJECT
     signature/render_target/render_target_signature_compile.c
 )
+add_library(test_signature_stream_compile OBJECT
+    signature/stream/stream_signature_compile.c
+)
+add_library(test_signature_texture_sampler_compile OBJECT
+    signature/texture_sampler/texture_sampler_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
@@ -141,6 +153,8 @@ foreach(target_name
     test_module_renderable_manager_compile
     test_module_color_grading_compile
     test_module_render_target_compile
+    test_module_stream_compile
+    test_module_texture_sampler_compile
     test_signature_engine_compile
     test_signature_scene_compile
     test_signature_renderer_compile
@@ -160,6 +174,8 @@ foreach(target_name
     test_signature_renderable_manager_compile
     test_signature_color_grading_compile
     test_signature_render_target_compile
+    test_signature_stream_compile
+    test_signature_texture_sampler_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -185,6 +201,8 @@ add_custom_target(test_compile_modules
         test_module_renderable_manager_compile
         test_module_color_grading_compile
         test_module_render_target_compile
+        test_module_stream_compile
+        test_module_texture_sampler_compile
 )
 
 add_custom_target(test_compile_signatures
@@ -208,6 +226,8 @@ add_custom_target(test_compile_signatures
         test_signature_renderable_manager_compile
         test_signature_color_grading_compile
         test_signature_render_target_compile
+        test_signature_stream_compile
+        test_signature_texture_sampler_compile
 )
 
 add_custom_target(test_compile_all
@@ -300,6 +320,18 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_material_instance_parameters PRIVATE filament_c_wrapper)
     add_test(NAME engine_material_instance_parameters_program COMMAND test_program_engine_material_instance_parameters)
+
+    add_executable(test_program_engine_view_color_grading_render_target
+        integration/programs/engine_view_color_grading_render_target_program.c
+    )
+    target_link_libraries(test_program_engine_view_color_grading_render_target PRIVATE filament_c_wrapper)
+    add_test(NAME engine_view_color_grading_render_target_program COMMAND test_program_engine_view_color_grading_render_target)
+
+    add_executable(test_program_engine_stream_texture_params
+        integration/programs/engine_stream_texture_params_program.c
+    )
+    target_link_libraries(test_program_engine_stream_texture_params PRIVATE filament_c_wrapper)
+    add_test(NAME engine_stream_texture_params_program COMMAND test_program_engine_stream_texture_params)
 
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)

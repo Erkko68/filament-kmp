@@ -1,6 +1,6 @@
 # Filament KMP C Wrapper - Batch Summary & Next Steps
 
-**Status:** ✅ **Batches A, B, C, D complete & tested successfully**
+**Status:** ✅ **Batches A, B, C, D, E complete & tested successfully**
 
 ---
 
@@ -72,16 +72,47 @@
 - **Tests:** 
   - Module tests: `color_grading_module_compile.c`, `render_target_module_compile.c`
   - Signature tests: `color_grading_signature_compile.c`, `render_target_signature_compile.c`
+  - Integration test: `engine_view_color_grading_render_target_program.c`
   - All 4 compile-only tests pass without errors
   - Integrated with existing View module test for composition validation
 
-- **Verification:** ✅ Clean compilation (libfilament_c_wrapper.a 146K), all 4 new test objects compiled
+- **Verification:** ✅ Compile-only tests pass and linked integration test passes
+
+### ✅ Batch E: Stream & Texture Advanced
+- **API Surface:**
+  - `FilaStream` & `FilaStreamBuilder` opaque types
+  - `FilaStreamBuilder_*` (create, destroy, width, height)
+  - `FilaStream_*` (getStreamType, setDimensions, getTimestamp)
+  - `FilaStreamBuilder_build` (builder pattern to construct Stream)
+  - `FilaTextureParams` opaque type (TextureSampler wrapper)
+  - `FilaTextureParams_*` (create, destroy, setters/getters for filters, wrap modes, anisotropy)
+  - `FilaTexture_setExternalStream` (bind Stream to Texture for external frame sources)
+  - Enums: `FilaStreamType` (ACQUIRED, NATIVE)
+  - Enums: `FilaSamplerMinFilter` (NEAREST, LINEAR, mipmap variants)
+  - Enums: `FilaSamplerMagFilter` (NEAREST, LINEAR)
+  - Enums: `FilaSamplerWrapMode` (CLAMP_TO_EDGE, REPEAT, MIRRORED_REPEAT)
+  - Enums: `FilaSamplerCompareMode` (NONE, TO_TEXTURE)
+  - Enums: `FilaSamplerCompareFunc` (LE, GE, L, G, E, NE, A, NA)
+
+- **Implementation:**
+  - `c-wrapper/src/filament/Stream.cpp` (59 lines - builder pattern)
+  - `c-wrapper/src/filament/TextureSampler.cpp` (160 lines - sampler parameter wrapper)
+  - `c-wrapper/src/filament/Texture.cpp` (extended with setExternalStream)
+  - `c-wrapper/src/filament/Engine.cpp` (added destroyStream)
+
+- **Tests:**
+  - Module tests: `stream_module_compile.c`, `texture_sampler_module_compile.c`
+  - Signature tests: `stream_signature_compile.c`, `texture_sampler_signature_compile.c`
+  - Integration test: `engine_stream_texture_params_program.c`
+  - All 4 compile-only tests pass without errors
+
+- **Verification:** ✅ Compile-only tests pass and linked integration test passes
 
 ---
 
 ## Current C API Coverage
 
-**Wrapped Modules (18 total):**
+**Wrapped Modules (20 total):**
 - Engine (create, destroy, resource lifecycle)
 - Scene (entity management, skybox, indirect light)
 - Renderer (begin/end frame, render)
@@ -95,33 +126,25 @@
 - IndexBuffer (builder, query)
 - Material (builder, instance creation)
 - MaterialInstance (get parent, set parameters)
-- Texture (builder, dimension queries)
+- Texture (builder, dimension queries, external stream)
 - Skybox (builder, scene binding, getters)
 - IndirectLight (builder, scene binding, getters)
 - ColorGrading (builder, quality/format/exposure/temperature/contrast/vibrance/saturation)
 - RenderTarget (builder, texture attachment, query)
+- Stream (builder, external frame sources)
+- TextureParams (sampler configuration, filter/wrap/anisotropy)
 
 **Test Suite:**
-- 18 module compile tests (header usability)
-- 18 signature tests (ABI lock)
-- 14 linked integration programs
-- **Total compile-only: 36/36 passing** (18 module + 18 signature)
+- 20 module compile tests (header usability)
+- 20 signature tests (ABI lock)
+- 16 linked integration programs
+- **Total compile-only: 40/40 passing** (20 module + 20 signature)
 
 ---
 
 ## Next Batches (Prioritized)
 
-### **Batch E: Stream & Texture Advanced** *(High Priority - Next)*  
-**Why:** Support external frame sources and texture parameters  
-**Scope:**
-- `Stream` builder (external video/camera feeds)
-- `TextureSampler` C wrapper for texture binding control
-- `Texture::setImage` path for dynamic texture updates
-- Extended `MaterialInstance::setParameter` for sampler/texture
-
-**Estimate:** 2 new headers, ~250 lines bridge, 7 new tests
-
-### **Batch F: Geometry Advanced** *(Medium-High Priority)*  
+### **Batch F: Geometry Advanced** *(High Priority - Next)*  
 **Why:** Support skeletal animation, morphing, instancing  
 **Scope:**
 - `SkinningBuffer` (vertex weights, bone indices)
@@ -145,29 +168,34 @@
 
 ## Recommended Action
 
-**Next:** Start **Batch E** for external frame source support
-- Stream/texture parameters unlock video playback, camera feeds, real-time texture updates
-- Foundation for mobile camera integration, streaming media
-- Opens path for video capture, live camera preview
+**Next:** Start **Batch F** for advanced geometry support
+- Skeletal animation, morphing, and instancing unlock advanced character animation and LOD systems
+- Foundation for game engines, CAD/3D modeling tools
+- Opens path for skeletal mesh rendering, shape key animation, GPU instancing performance
 
 ---
 
-## Files Modified/Created (Latest Session - Batch D)
+## Files Modified/Created (Latest Session - Batch E)
 
 ```
-Modified:
-- include/filament/View.cpp (Camera reference→pointer, ColorGrading const cast fixes)
-- include/filament/ColorGrading.h (removed non-existent getter methods)
-- c-wrapper/src/filament/ColorGrading.cpp (removed getter implementations)
-- c-wrapper/src/filament/View.cpp (cast fixes)
-- c-wrapper/test/CMakeLists.txt (added ColorGrading, RenderTarget test targets)
-- c-wrapper/test/module/color_grading/color_grading_module_compile.c (fixed includes)
-- c-wrapper/test/module/render_target/render_target_module_compile.c (fixed includes)
-- c-wrapper/test/signature/color_grading/color_grading_signature_compile.c (fixed includes, bool type)
-- c-wrapper/test/signature/render_target/render_target_signature_compile.c (fixed includes)
-
 Created:
-(All Batch D files already existed, only needed CMake registration + fixes)
+- include/filament/Stream.h (30 lines)
+- include/filament/TextureSampler.h (73 lines)
+- c-wrapper/src/filament/Stream.cpp (59 lines)
+- c-wrapper/src/filament/TextureSampler.cpp (160 lines)
+- c-wrapper/test/module/stream/stream_module_compile.c (18 lines)
+- c-wrapper/test/module/texture_sampler/texture_sampler_module_compile.c (28 lines)
+- c-wrapper/test/signature/stream/stream_signature_compile.c (27 lines)
+- c-wrapper/test/signature/texture_sampler/texture_sampler_signature_compile.c (44 lines)
+
+Modified:
+- include/filament/Types.h (added FilaStream, FilaStreamBuilder, FilaTextureParams)
+- include/filament/Engine.h (added FilaEngine_destroyStream)
+- include/filament/Texture.h (added FilaTexture_setExternalStream)
+- c-wrapper/CMakeLists.txt (added Stream.cpp, TextureSampler.cpp to SOURCES)
+- c-wrapper/src/filament/Engine.cpp (added Stream.h include, destroyStream implementation)
+- c-wrapper/src/filament/Texture.cpp (added Stream.h include, setExternalStream implementation)
+- c-wrapper/test/CMakeLists.txt (added 4 new test targets for Stream & TextureParams)
 ```
 
 ---

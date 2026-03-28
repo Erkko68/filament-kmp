@@ -1,0 +1,30 @@
+#include "filament/TextureSampler.h"
+
+// Verifies TextureSampler C API is consumable from C
+void fila_texture_sampler_module_compile_only(void) {
+    // Test sampler creation
+    FilaTextureParams* sampler = FilaTextureParams_create();
+
+    // Test filter configuration
+    FilaTextureParams_setMinFilter(sampler, FILA_SAMPLER_MIN_LINEAR);
+    FilaTextureParams_setMagFilter(sampler, FILA_SAMPLER_MAG_LINEAR);
+
+    // Test wrap mode configuration
+    FilaTextureParams_setWrapModeS(sampler, FILA_SAMPLER_WRAP_REPEAT);
+    FilaTextureParams_setWrapModeT(sampler, FILA_SAMPLER_WRAP_REPEAT);
+    FilaTextureParams_setWrapModeR(sampler, FILA_SAMPLER_WRAP_CLAMP_TO_EDGE);
+
+    // Test anisotropy
+    FilaTextureParams_setAnisotropy(sampler, 4.0f);
+
+    // Test getters
+    (void)FilaTextureParams_getMinFilter(sampler);
+    (void)FilaTextureParams_getMagFilter(sampler);
+    (void)FilaTextureParams_getWrapModeS(sampler);
+    (void)FilaTextureParams_getWrapModeT(sampler);
+    (void)FilaTextureParams_getWrapModeR(sampler);
+    (void)FilaTextureParams_getAnisotropy(sampler);
+
+    FilaTextureParams_destroy(sampler);
+}
+

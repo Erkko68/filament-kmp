@@ -8,12 +8,15 @@ static void (*g_texture_builder_destroy)(FilaTextureBuilder*) = FilaTextureBuild
 static void (*g_texture_builder_width)(FilaTextureBuilder*, uint32_t) = FilaTextureBuilder_width;
 static void (*g_texture_builder_height)(FilaTextureBuilder*, uint32_t) = FilaTextureBuilder_height;
 static void (*g_texture_builder_levels)(FilaTextureBuilder*, uint8_t) = FilaTextureBuilder_levels;
+static void (*g_texture_builder_samples)(FilaTextureBuilder*, uint8_t) = FilaTextureBuilder_samples;
 static void (*g_texture_builder_sampler)(FilaTextureBuilder*, FilaTextureSampler) = FilaTextureBuilder_sampler;
 static void (*g_texture_builder_format)(FilaTextureBuilder*, FilaTextureFormat) = FilaTextureBuilder_format;
+static void (*g_texture_builder_usage)(FilaTextureBuilder*, uint16_t) = FilaTextureBuilder_usage;
 static FilaTexture* (*g_texture_builder_build)(FilaTextureBuilder*, FilaEngine*) = FilaTextureBuilder_build;
 static size_t (*g_texture_get_width)(const FilaTexture*, size_t) = FilaTexture_getWidth;
 static size_t (*g_texture_get_height)(const FilaTexture*, size_t) = FilaTexture_getHeight;
 static size_t (*g_texture_get_levels)(const FilaTexture*) = FilaTexture_getLevels;
+static void (*g_texture_set_external_stream)(FilaTexture*, FilaEngine*, FilaStream*) = FilaTexture_setExternalStream;
 
 void fila_texture_signature_compile_only(void) {
     (void)g_texture_builder_create;
@@ -21,11 +24,14 @@ void fila_texture_signature_compile_only(void) {
     (void)g_texture_builder_width;
     (void)g_texture_builder_height;
     (void)g_texture_builder_levels;
+    (void)g_texture_builder_samples;
     (void)g_texture_builder_sampler;
     (void)g_texture_builder_format;
+    (void)g_texture_builder_usage;
     (void)g_texture_builder_build;
     (void)g_texture_get_width;
     (void)g_texture_get_height;
     (void)g_texture_get_levels;
+    (void)g_texture_set_external_stream;
 }
 

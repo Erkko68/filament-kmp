@@ -82,6 +82,9 @@ void FilaEngine_destroyColorGrading(FilaEngine* engine, FilaColorGrading* colorG
 // Destroys a filament::RenderTarget instance.
 void FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* renderTarget);
 
+// Destroys a filament::Stream instance.
+void FilaEngine_destroyStream(FilaEngine* engine, FilaStream* stream);
+
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 
