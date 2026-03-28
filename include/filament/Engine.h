@@ -49,6 +49,12 @@ FilaCamera* FilaEngine_getCameraComponent(FilaEngine* engine, FilaEntity entity)
 // Destroys the camera component attached to the given entity.
 void FilaEngine_destroyCameraComponent(FilaEngine* engine, FilaEntity entity);
 
+// Creates a filament::Fence instance.
+FilaFence* FilaEngine_createFence(FilaEngine* engine);
+
+// Destroys a filament::Fence instance.
+void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence);
+
 #ifdef __cplusplus
 }
 #endif

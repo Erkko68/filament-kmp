@@ -8,6 +8,8 @@ static void (*g_engine_destroy_renderer)(FilaEngine*, FilaRenderer*) = FilaEngin
 static FilaSwapChain* (*g_engine_create_swap_chain)(FilaEngine*, void*, uint64_t) = FilaEngine_createSwapChain;
 static FilaSwapChain* (*g_engine_create_swap_chain_headless)(FilaEngine*, uint32_t, uint32_t, uint64_t) = FilaEngine_createSwapChainHeadless;
 static void (*g_engine_destroy_swap_chain)(FilaEngine*, FilaSwapChain*) = FilaEngine_destroySwapChain;
+static FilaFence* (*g_engine_create_fence)(FilaEngine*) = FilaEngine_createFence;
+static void (*g_engine_destroy_fence)(FilaEngine*, FilaFence*) = FilaEngine_destroyFence;
 static FilaScene* (*g_engine_create_scene)(FilaEngine*) = FilaEngine_createScene;
 static void (*g_engine_destroy_scene)(FilaEngine*, FilaScene*) = FilaEngine_destroyScene;
 static FilaView* (*g_engine_create_view)(FilaEngine*) = FilaEngine_createView;
@@ -24,6 +26,8 @@ void fila_engine_signature_compile_only(void) {
     (void)g_engine_create_swap_chain;
     (void)g_engine_create_swap_chain_headless;
     (void)g_engine_destroy_swap_chain;
+    (void)g_engine_create_fence;
+    (void)g_engine_destroy_fence;
     (void)g_engine_create_scene;
     (void)g_engine_destroy_scene;
     (void)g_engine_create_view;

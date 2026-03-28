@@ -14,6 +14,7 @@ typedef struct FilaSwapChain FilaSwapChain;
 typedef struct FilaView FilaView;
 typedef struct FilaScene FilaScene;
 typedef struct FilaCamera FilaCamera;
+typedef struct FilaFence FilaFence;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;

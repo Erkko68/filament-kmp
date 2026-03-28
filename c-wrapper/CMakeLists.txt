@@ -17,6 +17,7 @@ set(SOURCES
     src/filament/Camera.cpp
     src/filament/Engine.cpp
     src/filament/EntityManager.cpp
+    src/filament/Fence.cpp
     src/filament/Renderer.cpp
     src/filament/Scene.cpp
     src/filament/View.cpp
