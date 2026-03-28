@@ -21,6 +21,9 @@ Current modules covered:
 - TransformManager
 - LightManager
 - RenderableManager
+- VertexBuffer
+- IndexBuffer
+- Material
 
 ## Default workflow (no host Filament libs required)
 
@@ -50,6 +53,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_transform_manager`
 - `test_program_engine_light_manager`
 - `test_program_engine_renderable_manager`
+- `test_program_engine_resource_builders`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

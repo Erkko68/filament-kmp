@@ -9,6 +9,9 @@ void fila_renderable_manager_module_compile_only(void) {
     FilaEntity entity = FilaEntityManager_create();
     FilaEntity entities[4] = {0};
     FilaRenderableManagerBuilder* builder = FilaRenderableManagerBuilder_create(0u);
+    FilaVertexBuffer* vertexBuffer = (FilaVertexBuffer*)0;
+    FilaIndexBuffer* indexBuffer = (FilaIndexBuffer*)0;
+    FilaMaterialInstance* materialInstance = (FilaMaterialInstance*)0;
 
     (void)FilaRenderableManager_hasComponent(manager, entity);
     FilaRenderableManagerInstance instance = FilaRenderableManager_getInstance(manager, entity);
@@ -28,6 +31,14 @@ void fila_renderable_manager_module_compile_only(void) {
     FilaRenderableManagerBuilder_culling(builder, true);
     FilaRenderableManagerBuilder_castShadows(builder, false);
     FilaRenderableManagerBuilder_receiveShadows(builder, true);
+    FilaRenderableManagerBuilder_geometry(builder,
+            0u,
+            FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
+            vertexBuffer,
+            indexBuffer,
+            0u,
+            3u);
+    FilaRenderableManagerBuilder_material(builder, 0u, materialInstance);
     (void)FilaRenderableManagerBuilder_build(builder, engine, entity);
     FilaRenderableManagerBuilder_destroy(builder);
     FilaRenderableManager_destroy(manager, entity);

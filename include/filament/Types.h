@@ -20,6 +20,13 @@ typedef struct FilaLightManager FilaLightManager;
 typedef struct FilaRenderableManager FilaRenderableManager;
 typedef struct FilaLightManagerBuilder FilaLightManagerBuilder;
 typedef struct FilaRenderableManagerBuilder FilaRenderableManagerBuilder;
+typedef struct FilaVertexBuffer FilaVertexBuffer;
+typedef struct FilaIndexBuffer FilaIndexBuffer;
+typedef struct FilaMaterial FilaMaterial;
+typedef struct FilaMaterialInstance FilaMaterialInstance;
+typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
+typedef struct FilaIndexBufferBuilder FilaIndexBufferBuilder;
+typedef struct FilaMaterialBuilder FilaMaterialBuilder;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;

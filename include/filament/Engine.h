@@ -55,6 +55,18 @@ FilaFence* FilaEngine_createFence(FilaEngine* engine);
 // Destroys a filament::Fence instance.
 void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence);
 
+// Destroys a filament::VertexBuffer instance.
+void FilaEngine_destroyVertexBuffer(FilaEngine* engine, FilaVertexBuffer* vertexBuffer);
+
+// Destroys a filament::IndexBuffer instance.
+void FilaEngine_destroyIndexBuffer(FilaEngine* engine, FilaIndexBuffer* indexBuffer);
+
+// Destroys a filament::Material instance.
+void FilaEngine_destroyMaterial(FilaEngine* engine, FilaMaterial* material);
+
+// Destroys a filament::MaterialInstance instance.
+void FilaEngine_destroyMaterialInstance(FilaEngine* engine, FilaMaterialInstance* materialInstance);
+
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 

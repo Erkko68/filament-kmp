@@ -1,6 +1,9 @@
 #include <filament/RenderableManager.h>
 
 #include <filament/Engine.h>
+#include <filament/IndexBuffer.h>
+#include <filament/MaterialInstance.h>
+#include <filament/VertexBuffer.h>
 
 #include <utils/Entity.h>
 
@@ -20,6 +23,18 @@ FilaRenderableManagerInstance fromInstance(filament::RenderableManager::Instance
 }
 
 using RenderableBuilder = filament::RenderableManager::Builder;
+
+filament::RenderableManager::PrimitiveType toPrimitiveType(FilaRenderablePrimitiveType type) {
+    switch (type) {
+        case FILA_RENDERABLE_PRIMITIVE_POINTS:
+            return filament::RenderableManager::PrimitiveType::POINTS;
+        case FILA_RENDERABLE_PRIMITIVE_LINES:
+            return filament::RenderableManager::PrimitiveType::LINES;
+        case FILA_RENDERABLE_PRIMITIVE_TRIANGLES:
+        default:
+            return filament::RenderableManager::PrimitiveType::TRIANGLES;
+    }
+}
 } // namespace
 
 extern "C" {
@@ -204,6 +219,33 @@ void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* b
     }
     auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
     cppBuilder->receiveShadows(enable);
+}
+
+void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder,
+        size_t index,
+        FilaRenderablePrimitiveType type,
+        FilaVertexBuffer* vertexBuffer,
+        FilaIndexBuffer* indexBuffer,
+        size_t offset,
+        size_t count) {
+    if (!builder || !vertexBuffer || !indexBuffer) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    auto cppVertexBuffer = reinterpret_cast<filament::VertexBuffer*>(vertexBuffer);
+    auto cppIndexBuffer = reinterpret_cast<filament::IndexBuffer*>(indexBuffer);
+    cppBuilder->geometry(index, toPrimitiveType(type), cppVertexBuffer, cppIndexBuffer, offset, count);
+}
+
+void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder,
+        size_t index,
+        const FilaMaterialInstance* materialInstance) {
+    if (!builder || !materialInstance) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    cppBuilder->material(index, cppMaterialInstance);
 }
 
 bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, FilaEngine* engine, FilaEntity entity) {

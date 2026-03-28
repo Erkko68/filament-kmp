@@ -1,11 +1,15 @@
 #include <filament/Engine.h>
 #include <filament/Fence.h>
+#include <filament/IndexBuffer.h>
 #include <filament/LightManager.h>
+#include <filament/Material.h>
+#include <filament/MaterialInstance.h>
 #include <filament/Renderer.h>
 #include <filament/RenderableManager.h>
 #include <filament/Scene.h>
 #include <filament/SwapChain.h>
 #include <filament/TransformManager.h>
+#include <filament/VertexBuffer.h>
 #include <filament/View.h>
 
 #include <utils/Entity.h>
@@ -148,6 +152,42 @@ void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppFence = reinterpret_cast<filament::Fence*>(fence);
     cppEngine->destroy(cppFence);
+}
+
+void FilaEngine_destroyVertexBuffer(FilaEngine* engine, FilaVertexBuffer* vertexBuffer) {
+    if (!engine || !vertexBuffer) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppVertexBuffer = reinterpret_cast<filament::VertexBuffer*>(vertexBuffer);
+    cppEngine->destroy(cppVertexBuffer);
+}
+
+void FilaEngine_destroyIndexBuffer(FilaEngine* engine, FilaIndexBuffer* indexBuffer) {
+    if (!engine || !indexBuffer) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppIndexBuffer = reinterpret_cast<filament::IndexBuffer*>(indexBuffer);
+    cppEngine->destroy(cppIndexBuffer);
+}
+
+void FilaEngine_destroyMaterial(FilaEngine* engine, FilaMaterial* material) {
+    if (!engine || !material) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppMaterial = reinterpret_cast<filament::Material*>(material);
+    cppEngine->destroy(cppMaterial);
+}
+
+void FilaEngine_destroyMaterialInstance(FilaEngine* engine, FilaMaterialInstance* materialInstance) {
+    if (!engine || !materialInstance) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppMaterialInstance = reinterpret_cast<filament::MaterialInstance*>(materialInstance);
+    cppEngine->destroy(cppMaterialInstance);
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {

@@ -11,6 +11,12 @@
 extern "C" {
 #endif
 
+typedef enum FilaRenderablePrimitiveType {
+	FILA_RENDERABLE_PRIMITIVE_POINTS = 0,
+	FILA_RENDERABLE_PRIMITIVE_LINES = 1,
+	FILA_RENDERABLE_PRIMITIVE_TRIANGLES = 4,
+} FilaRenderablePrimitiveType;
+
 // Returns true if the entity has a renderable component.
 bool FilaRenderableManager_hasComponent(const FilaRenderableManager* manager, FilaEntity entity);
 
@@ -84,6 +90,20 @@ void FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* buil
 
 // Enables or disables shadow receiving for built renderable.
 void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* builder, bool enable);
+
+// Binds geometry for a primitive slot.
+void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder,
+		size_t index,
+		FilaRenderablePrimitiveType type,
+		FilaVertexBuffer* vertexBuffer,
+		FilaIndexBuffer* indexBuffer,
+		size_t offset,
+		size_t count);
+
+// Binds material instance for a primitive slot.
+void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder,
+		size_t index,
+		const FilaMaterialInstance* materialInstance);
 
 // Builds a renderable component into the given entity. Returns true on success.
 bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, FilaEngine* engine, FilaEntity entity);

@@ -35,6 +35,15 @@ add_library(test_module_transform_manager_compile OBJECT
 add_library(test_module_light_manager_compile OBJECT
     module/light_manager/light_manager_module_compile.c
 )
+add_library(test_module_vertex_buffer_compile OBJECT
+    module/vertex_buffer/vertex_buffer_module_compile.c
+)
+add_library(test_module_index_buffer_compile OBJECT
+    module/index_buffer/index_buffer_module_compile.c
+)
+add_library(test_module_material_compile OBJECT
+    module/material/material_module_compile.c
+)
 add_library(test_module_renderable_manager_compile OBJECT
     module/renderable_manager/renderable_manager_module_compile.c
 )
@@ -69,6 +78,15 @@ add_library(test_signature_transform_manager_compile OBJECT
 add_library(test_signature_light_manager_compile OBJECT
     signature/light_manager/light_manager_signature_compile.c
 )
+add_library(test_signature_vertex_buffer_compile OBJECT
+    signature/vertex_buffer/vertex_buffer_signature_compile.c
+)
+add_library(test_signature_index_buffer_compile OBJECT
+    signature/index_buffer/index_buffer_signature_compile.c
+)
+add_library(test_signature_material_compile OBJECT
+    signature/material/material_signature_compile.c
+)
 add_library(test_signature_renderable_manager_compile OBJECT
     signature/renderable_manager/renderable_manager_signature_compile.c
 )
@@ -84,6 +102,9 @@ foreach(target_name
     test_module_swapchain_compile
     test_module_transform_manager_compile
     test_module_light_manager_compile
+    test_module_vertex_buffer_compile
+    test_module_index_buffer_compile
+    test_module_material_compile
     test_module_renderable_manager_compile
     test_signature_engine_compile
     test_signature_scene_compile
@@ -95,6 +116,9 @@ foreach(target_name
     test_signature_swapchain_compile
     test_signature_transform_manager_compile
     test_signature_light_manager_compile
+    test_signature_vertex_buffer_compile
+    test_signature_index_buffer_compile
+    test_signature_material_compile
     test_signature_renderable_manager_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
@@ -112,6 +136,9 @@ add_custom_target(test_compile_modules
         test_module_swapchain_compile
         test_module_transform_manager_compile
         test_module_light_manager_compile
+        test_module_vertex_buffer_compile
+        test_module_index_buffer_compile
+        test_module_material_compile
         test_module_renderable_manager_compile
 )
 
@@ -127,6 +154,9 @@ add_custom_target(test_compile_signatures
         test_signature_swapchain_compile
         test_signature_transform_manager_compile
         test_signature_light_manager_compile
+        test_signature_vertex_buffer_compile
+        test_signature_index_buffer_compile
+        test_signature_material_compile
         test_signature_renderable_manager_compile
 )
 
@@ -196,6 +226,12 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_renderable_manager PRIVATE filament_c_wrapper)
     add_test(NAME engine_renderable_manager_program COMMAND test_program_engine_renderable_manager)
+
+    add_executable(test_program_engine_resource_builders
+        integration/programs/engine_resource_builders_program.c
+    )
+    target_link_libraries(test_program_engine_resource_builders PRIVATE filament_c_wrapper)
+    add_test(NAME engine_resource_builders_program COMMAND test_program_engine_resource_builders)
 
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)
