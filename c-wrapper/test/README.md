@@ -59,6 +59,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_resource_builders`
 - `test_program_engine_texture_skybox`
 - `test_program_engine_indirect_light_scene`
+- `test_program_engine_material_instance_parameters`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

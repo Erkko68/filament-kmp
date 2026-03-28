@@ -275,6 +275,12 @@ if (FILA_ENABLE_LINKED_TESTS)
     target_link_libraries(test_program_engine_indirect_light_scene PRIVATE filament_c_wrapper)
     add_test(NAME engine_indirect_light_scene_program COMMAND test_program_engine_indirect_light_scene)
 
+    add_executable(test_program_engine_material_instance_parameters
+        integration/programs/engine_material_instance_parameters_program.c
+    )
+    target_link_libraries(test_program_engine_material_instance_parameters PRIVATE filament_c_wrapper)
+    add_test(NAME engine_material_instance_parameters_program COMMAND test_program_engine_material_instance_parameters)
+
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)
         add_executable(test_program_engine_scene_view_macos_window
