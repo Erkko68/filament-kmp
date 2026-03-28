@@ -31,6 +31,61 @@ bool FilaTransformManager_empty(const FilaTransformManager* manager);
 // Returns the entity associated with an instance, or 0 for invalid inputs.
 FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* manager, FilaTransformManagerInstance instance);
 
+// Reparents an instance to a new parent instance (0 means no parent).
+void FilaTransformManager_setParent(FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		FilaTransformManagerInstance newParent);
+
+// Returns the parent entity for an instance, or 0 when there is no parent/invalid input.
+FilaEntity FilaTransformManager_getParent(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance);
+
+// Returns the number of children for an instance.
+size_t FilaTransformManager_getChildCount(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance);
+
+// Writes up to maxCount child entities into outChildren and returns number written.
+size_t FilaTransformManager_getChildren(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		FilaEntity* outChildren,
+		size_t maxCount);
+
+// Sets a local transform from a 4x4 column-major float matrix.
+void FilaTransformManager_setTransformMat4f(FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		const float localTransform[16]);
+
+// Gets the local transform as a 4x4 column-major float matrix. Returns false on invalid input.
+bool FilaTransformManager_getTransformMat4f(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		float outLocalTransform[16]);
+
+// Gets the world transform as a 4x4 column-major float matrix. Returns false on invalid input.
+bool FilaTransformManager_getWorldTransformMat4f(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		float outWorldTransform[16]);
+
+// Sets a local transform from a 4x4 column-major double matrix.
+void FilaTransformManager_setTransformMat4(FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		const double localTransform[16]);
+
+// Gets the local transform as a 4x4 column-major double matrix. Returns false on invalid input.
+bool FilaTransformManager_getTransformMat4(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		double outLocalTransform[16]);
+
+// Gets the world transform as a 4x4 column-major double matrix. Returns false on invalid input.
+bool FilaTransformManager_getWorldTransformMat4(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		double outWorldTransform[16]);
+
+// Opens a local transform transaction.
+void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* manager);
+
+// Commits the current local transform transaction.
+void FilaTransformManager_commitLocalTransformTransaction(FilaTransformManager* manager);
+
 #ifdef __cplusplus
 }
 #endif
