@@ -1,0 +1,5 @@
+/c-wrapper/build/
+/.idea/
+/filament-prebuilts/ios/lib/
+/filament-prebuilts/android/lib/
+filament-kmp-core.iml

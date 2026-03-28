@@ -1,0 +1,18 @@
+#include "filament/Engine.h"
+#include "filament/Scene.h"
+
+// Verifies Scene API is consumable and composes with Engine-owned lifecycle.
+void fila_scene_module_compile_only(void) {
+    FilaEngine* engine = (FilaEngine*)0;
+    FilaScene* scene = (FilaScene*)0;
+    FilaEntity entity = 42;
+
+    scene = FilaEngine_createScene(engine);
+    FilaScene_addEntity(scene, entity);
+    FilaScene_removeEntity(scene, entity);
+    FilaScene_removeAllEntities(scene);
+    (void)FilaScene_getEntityCount(scene);
+    (void)FilaScene_hasEntity(scene, entity);
+    FilaEngine_destroyScene(engine, scene);
+}
+
