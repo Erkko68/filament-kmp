@@ -12,6 +12,7 @@ Current modules covered:
 
 - Engine
 - Scene
+- Renderer
 
 ## Default workflow (no host Filament libs required)
 
@@ -28,6 +29,11 @@ This builds:
 - `test_compile_modules`
 - `test_compile_signatures`
 - `test_compile_all`
+
+When linked tests are enabled, integration programs currently include:
+
+- `test_program_engine_scene`
+- `test_program_engine_scene_renderer`
 
 ## Optional linked integration programs
 

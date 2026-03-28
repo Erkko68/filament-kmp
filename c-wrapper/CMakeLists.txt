@@ -15,6 +15,7 @@ set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/incl
 # Define the source files for our wrapper
 set(SOURCES
     src/filament/Engine.cpp
+    src/filament/Renderer.cpp
     src/filament/Scene.cpp
 )
 

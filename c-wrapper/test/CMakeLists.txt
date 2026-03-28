@@ -9,6 +9,9 @@ add_library(test_module_engine_compile OBJECT
 add_library(test_module_scene_compile OBJECT
     module/scene/scene_module_compile.c
 )
+add_library(test_module_renderer_compile OBJECT
+    module/renderer/renderer_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -16,12 +19,17 @@ add_library(test_signature_engine_compile OBJECT
 add_library(test_signature_scene_compile OBJECT
     signature/scene/scene_signature_compile.c
 )
+add_library(test_signature_renderer_compile OBJECT
+    signature/renderer/renderer_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
     test_module_scene_compile
+    test_module_renderer_compile
     test_signature_engine_compile
     test_signature_scene_compile
+    test_signature_renderer_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -30,12 +38,14 @@ add_custom_target(test_compile_modules
     DEPENDS
         test_module_engine_compile
         test_module_scene_compile
+        test_module_renderer_compile
 )
 
 add_custom_target(test_compile_signatures
     DEPENDS
         test_signature_engine_compile
         test_signature_scene_compile
+        test_signature_renderer_compile
 )
 
 add_custom_target(test_compile_all
@@ -50,5 +60,11 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_scene PRIVATE filament_c_wrapper)
     add_test(NAME engine_scene_program COMMAND test_program_engine_scene)
+
+    add_executable(test_program_engine_scene_renderer
+        integration/programs/engine_scene_renderer_program.c
+    )
+    target_link_libraries(test_program_engine_scene_renderer PRIVATE filament_c_wrapper)
+    add_test(NAME engine_scene_renderer_program COMMAND test_program_engine_scene_renderer)
 endif ()
 
