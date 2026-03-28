@@ -57,6 +57,22 @@ int main(void) {
         return 1;
     }
 
+    FilaRenderableManager_setPriority(manager, instance, 7u);
+    if (FilaRenderableManager_getPriority(manager, instance) != 0u) {
+        printf("Renderable priority unexpectedly non-zero\n");
+        FilaEntityManager_destroy(entity);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaRenderableManager_setCulling(manager, instance, false);
+    if (FilaRenderableManager_isCullingEnabled(manager, instance)) {
+        printf("Renderable culling unexpectedly enabled\n");
+        FilaEntityManager_destroy(entity);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
     FilaEntity listed[8] = {0};
     (void)FilaRenderableManager_getEntities(manager, listed, 8u);
     FilaRenderableManager_destroy(manager, entity);

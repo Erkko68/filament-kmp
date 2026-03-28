@@ -62,8 +62,11 @@ int main(void) {
             return 1;
         }
         FilaLightManagerBuilder_direction(builder, 0.0f, -1.0f, 0.0f);
+        FilaLightManagerBuilder_position(builder, 0.0f, 1.0f + (float)i, 0.0f);
         FilaLightManagerBuilder_color(builder, 1.0f, 1.0f, 1.0f);
         FilaLightManagerBuilder_intensity(builder, 100000.0f);
+        FilaLightManagerBuilder_falloff(builder, 10.0f + (float)i);
+        FilaLightManagerBuilder_spotLightCone(builder, 0.3f, 0.8f);
         FilaLightManagerBuilder_castShadows(builder, false);
 
         if (!FilaLightManagerBuilder_build(builder, engine, entities[i])) {

@@ -18,6 +18,10 @@ void fila_renderable_manager_module_compile_only(void) {
     (void)FilaRenderableManager_getPrimitiveCount(manager, instance);
     FilaRenderableManager_setLayerMask(manager, instance, 0xFFu, 0x02u);
     (void)FilaRenderableManager_getLayerMask(manager, instance);
+    FilaRenderableManager_setPriority(manager, instance, 4u);
+    (void)FilaRenderableManager_getPriority(manager, instance);
+    FilaRenderableManager_setCulling(manager, instance, true);
+    (void)FilaRenderableManager_isCullingEnabled(manager, instance);
     FilaRenderableManager_destroy(manager, entity);
     FilaEntityManager_destroy(entity);
 }

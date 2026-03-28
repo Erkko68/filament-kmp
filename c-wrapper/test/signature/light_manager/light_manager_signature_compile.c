@@ -15,8 +15,11 @@ static FilaLightType (*g_light_get_type)(const FilaLightManager*, FilaLightManag
 static FilaLightManagerBuilder* (*g_light_builder_create)(FilaLightType) = FilaLightManagerBuilder_create;
 static void (*g_light_builder_destroy)(FilaLightManagerBuilder*) = FilaLightManagerBuilder_destroy;
 static void (*g_light_builder_direction)(FilaLightManagerBuilder*, float, float, float) = FilaLightManagerBuilder_direction;
+static void (*g_light_builder_position)(FilaLightManagerBuilder*, float, float, float) = FilaLightManagerBuilder_position;
 static void (*g_light_builder_color)(FilaLightManagerBuilder*, float, float, float) = FilaLightManagerBuilder_color;
 static void (*g_light_builder_intensity)(FilaLightManagerBuilder*, float) = FilaLightManagerBuilder_intensity;
+static void (*g_light_builder_falloff)(FilaLightManagerBuilder*, float) = FilaLightManagerBuilder_falloff;
+static void (*g_light_builder_spot_cone)(FilaLightManagerBuilder*, float, float) = FilaLightManagerBuilder_spotLightCone;
 static void (*g_light_builder_cast_shadows)(FilaLightManagerBuilder*, bool) = FilaLightManagerBuilder_castShadows;
 static bool (*g_light_builder_build)(FilaLightManagerBuilder*, FilaEngine*, FilaEntity) = FilaLightManagerBuilder_build;
 
@@ -32,8 +35,11 @@ void fila_light_manager_signature_compile_only(void) {
     (void)g_light_builder_create;
     (void)g_light_builder_destroy;
     (void)g_light_builder_direction;
+    (void)g_light_builder_position;
     (void)g_light_builder_color;
     (void)g_light_builder_intensity;
+    (void)g_light_builder_falloff;
+    (void)g_light_builder_spot_cone;
     (void)g_light_builder_cast_shadows;
     (void)g_light_builder_build;
 }

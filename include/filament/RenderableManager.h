@@ -46,6 +46,24 @@ void FilaRenderableManager_setLayerMask(FilaRenderableManager* manager,
 uint8_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance);
 
+// Sets coarse draw priority for a renderable instance.
+void FilaRenderableManager_setPriority(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		uint8_t priority);
+
+// Gets draw priority for a renderable instance.
+uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
+// Enables or disables frustum culling for a renderable instance.
+void FilaRenderableManager_setCulling(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		bool enable);
+
+// Returns whether frustum culling is enabled for a renderable instance.
+bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
 #ifdef __cplusplus
 }
 #endif

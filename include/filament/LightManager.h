@@ -51,11 +51,20 @@ void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* builder);
 // Sets the light direction for directional and spot lights.
 void FilaLightManagerBuilder_direction(FilaLightManagerBuilder* builder, float x, float y, float z);
 
+// Sets the light position for point and spot lights.
+void FilaLightManagerBuilder_position(FilaLightManagerBuilder* builder, float x, float y, float z);
+
 // Sets light color in linear RGB.
 void FilaLightManagerBuilder_color(FilaLightManagerBuilder* builder, float r, float g, float b);
 
 // Sets light intensity in lux for directional/sun, lumens otherwise.
 void FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* builder, float intensity);
+
+// Sets the influence radius for point and spot lights.
+void FilaLightManagerBuilder_falloff(FilaLightManagerBuilder* builder, float radius);
+
+// Sets inner/outer spot light cone angles in radians.
+void FilaLightManagerBuilder_spotLightCone(FilaLightManagerBuilder* builder, float inner, float outer);
 
 // Enables or disables shadow casting for this light.
 void FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* builder, bool enable);

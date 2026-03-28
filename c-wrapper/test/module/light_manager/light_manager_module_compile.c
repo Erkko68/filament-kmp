@@ -18,8 +18,11 @@ void fila_light_manager_module_compile_only(void) {
     (void)FilaLightManager_getEntities(manager, entities, 4u);
     (void)FilaLightManager_getType(manager, instance);
     FilaLightManagerBuilder_direction(builder, 0.0f, -1.0f, 0.0f);
+    FilaLightManagerBuilder_position(builder, 0.0f, 2.0f, 0.0f);
     FilaLightManagerBuilder_color(builder, 1.0f, 1.0f, 1.0f);
     FilaLightManagerBuilder_intensity(builder, 100000.0f);
+    FilaLightManagerBuilder_falloff(builder, 10.0f);
+    FilaLightManagerBuilder_spotLightCone(builder, 0.3f, 0.8f);
     FilaLightManagerBuilder_castShadows(builder, true);
     (void)FilaLightManagerBuilder_build(builder, engine, entity);
     FilaLightManagerBuilder_destroy(builder);

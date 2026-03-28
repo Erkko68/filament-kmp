@@ -149,6 +149,14 @@ void FilaLightManagerBuilder_direction(FilaLightManagerBuilder* builder, float x
     cppBuilder->direction(filament::math::float3{x, y, z});
 }
 
+void FilaLightManagerBuilder_position(FilaLightManagerBuilder* builder, float x, float y, float z) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->position(filament::math::float3{x, y, z});
+}
+
 void FilaLightManagerBuilder_color(FilaLightManagerBuilder* builder, float r, float g, float b) {
     if (!builder) {
         return;
@@ -163,6 +171,22 @@ void FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* builder, float i
     }
     auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
     cppBuilder->intensity(intensity);
+}
+
+void FilaLightManagerBuilder_falloff(FilaLightManagerBuilder* builder, float radius) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->falloff(radius);
+}
+
+void FilaLightManagerBuilder_spotLightCone(FilaLightManagerBuilder* builder, float inner, float outer) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->spotLightCone(inner, outer);
 }
 
 void FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* builder, bool enable) {

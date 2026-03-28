@@ -111,5 +111,43 @@ uint8_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* manager,
     return cppManager->getLayerMask(toInstance(instance));
 }
 
+void FilaRenderableManager_setPriority(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        uint8_t priority) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setPriority(toInstance(instance), priority);
+}
+
+uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getPriority(toInstance(instance));
+}
+
+void FilaRenderableManager_setCulling(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setCulling(toInstance(instance), enable);
+}
+
+bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->isCullingEnabled(toInstance(instance));
+}
+
 } // extern "C"
 

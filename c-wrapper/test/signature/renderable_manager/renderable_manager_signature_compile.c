@@ -15,6 +15,10 @@ static void (*g_renderable_destroy)(FilaRenderableManager*, FilaEntity) = FilaRe
 static size_t (*g_renderable_get_primitive_count)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getPrimitiveCount;
 static void (*g_renderable_set_layer_mask)(FilaRenderableManager*, FilaRenderableManagerInstance, uint8_t, uint8_t) = FilaRenderableManager_setLayerMask;
 static uint8_t (*g_renderable_get_layer_mask)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getLayerMask;
+static void (*g_renderable_set_priority)(FilaRenderableManager*, FilaRenderableManagerInstance, uint8_t) = FilaRenderableManager_setPriority;
+static uint8_t (*g_renderable_get_priority)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getPriority;
+static void (*g_renderable_set_culling)(FilaRenderableManager*, FilaRenderableManagerInstance, bool) = FilaRenderableManager_setCulling;
+static bool (*g_renderable_is_culling_enabled)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_isCullingEnabled;
 
 void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_has_component;
@@ -27,5 +31,9 @@ void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_get_primitive_count;
     (void)g_renderable_set_layer_mask;
     (void)g_renderable_get_layer_mask;
+    (void)g_renderable_set_priority;
+    (void)g_renderable_get_priority;
+    (void)g_renderable_set_culling;
+    (void)g_renderable_is_culling_enabled;
 }
 
