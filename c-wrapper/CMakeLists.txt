@@ -18,7 +18,9 @@ set(SOURCES
     src/filament/Engine.cpp
     src/filament/EntityManager.cpp
     src/filament/Fence.cpp
+    src/filament/LightManager.cpp
     src/filament/Renderer.cpp
+    src/filament/RenderableManager.cpp
     src/filament/Scene.cpp
     src/filament/SwapChain.cpp
     src/filament/TransformManager.cpp

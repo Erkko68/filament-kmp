@@ -16,12 +16,20 @@ typedef struct FilaScene FilaScene;
 typedef struct FilaCamera FilaCamera;
 typedef struct FilaFence FilaFence;
 typedef struct FilaTransformManager FilaTransformManager;
+typedef struct FilaLightManager FilaLightManager;
+typedef struct FilaRenderableManager FilaRenderableManager;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;
 
 // C representation of filament::TransformManager::Instance.
 typedef uint32_t FilaTransformManagerInstance;
+
+// C representation of filament::LightManager::Instance.
+typedef uint32_t FilaLightManagerInstance;
+
+// C representation of filament::RenderableManager::Instance.
+typedef uint32_t FilaRenderableManagerInstance;
 
 typedef enum FilaCameraFov {
 	FILA_CAMERA_FOV_VERTICAL = 0,

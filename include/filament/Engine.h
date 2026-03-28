@@ -58,6 +58,12 @@ void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence);
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 
+// Returns the engine-owned light manager.
+FilaLightManager* FilaEngine_getLightManager(FilaEngine* engine);
+
+// Returns the engine-owned renderable manager.
+FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* engine);
+
 #ifdef __cplusplus
 }
 #endif

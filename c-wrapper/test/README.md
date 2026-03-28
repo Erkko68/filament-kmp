@@ -19,6 +19,8 @@ Current modules covered:
 - Fence
 - SwapChain
 - TransformManager
+- LightManager
+- RenderableManager
 
 ## Default workflow (no host Filament libs required)
 
@@ -46,6 +48,8 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_fence`
 - `test_program_engine_swapchain`
 - `test_program_engine_transform_manager`
+- `test_program_engine_light_manager`
+- `test_program_engine_renderable_manager`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

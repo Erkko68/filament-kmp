@@ -8,6 +8,8 @@ void fila_engine_module_compile_only(void) {
     FilaScene* scene = (FilaScene*)0;
     FilaView* view = (FilaView*)0;
     FilaTransformManager* transformManager = (FilaTransformManager*)0;
+    FilaLightManager* lightManager = (FilaLightManager*)0;
+    FilaRenderableManager* renderableManager = (FilaRenderableManager*)0;
     FilaEntity entity = 7;
 
     swapChain = FilaEngine_createSwapChain(engine, (void*)0, 0);
@@ -20,6 +22,10 @@ void fila_engine_module_compile_only(void) {
     FilaEngine_destroyView(engine, view);
     FilaEngine_destroyCameraComponent(engine, entity);
     transformManager = FilaEngine_getTransformManager(engine);
+    lightManager = FilaEngine_getLightManager(engine);
+    renderableManager = FilaEngine_getRenderableManager(engine);
     (void)transformManager;
+    (void)lightManager;
+    (void)renderableManager;
 }
 

@@ -1,6 +1,8 @@
 #include <filament/Engine.h>
 #include <filament/Fence.h>
+#include <filament/LightManager.h>
 #include <filament/Renderer.h>
+#include <filament/RenderableManager.h>
 #include <filament/Scene.h>
 #include <filament/SwapChain.h>
 #include <filament/TransformManager.h>
@@ -154,6 +156,22 @@ FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
     }
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     return reinterpret_cast<FilaTransformManager*>(&cppEngine->getTransformManager());
+}
+
+FilaLightManager* FilaEngine_getLightManager(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaLightManager*>(&cppEngine->getLightManager());
+}
+
+FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaRenderableManager*>(&cppEngine->getRenderableManager());
 }
 
 }
