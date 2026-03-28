@@ -2,6 +2,7 @@
 
 #include "filament/Engine.h"
 #include "filament/Material.h"
+#include "filament/MaterialInstance.h"
 
 // Verifies Material builder and instance creation APIs are consumable from C.
 void fila_material_module_compile_only(void) {
@@ -11,6 +12,7 @@ void fila_material_module_compile_only(void) {
     FilaMaterialBuilder_package(builder, fakePackage, sizeof(fakePackage));
     FilaMaterial* material = FilaMaterialBuilder_build(builder, engine);
     FilaMaterialInstance* materialInstance = FilaMaterial_createInstance(material);
+    (void)FilaMaterialInstance_getMaterial(materialInstance);
     FilaMaterialBuilder_destroy(builder);
     FilaEngine_destroyMaterialInstance(engine, materialInstance);
     FilaEngine_destroyMaterial(engine, material);

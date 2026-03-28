@@ -48,5 +48,13 @@ FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* material) 
     return reinterpret_cast<FilaMaterialInstance*>(cppMaterial->createInstance());
 }
 
+const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance* materialInstance) {
+    if (!materialInstance) {
+        return nullptr;
+    }
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    return reinterpret_cast<const FilaMaterial*>(cppMaterialInstance->getMaterial());
+}
+
 } // extern "C"
 

@@ -2,6 +2,8 @@
 
 #include "filament/Engine.h"
 #include "filament/IndexBuffer.h"
+#include "filament/RenderableManager.h"
+#include "filament/EntityManager.h"
 #include "filament/VertexBuffer.h"
 
 int main(void) {
@@ -62,6 +64,59 @@ int main(void) {
         FilaEngine_destroy(&engine);
         return 1;
     }
+
+    FilaEntity renderableEntity = FilaEntityManager_create();
+    if (renderableEntity == 0) {
+        printf("Renderable entity creation failed\n");
+        FilaEngine_destroyIndexBuffer(engine, ib);
+        FilaEngine_destroyVertexBuffer(engine, vb);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaRenderableManagerBuilder* rb = FilaRenderableManagerBuilder_create(1u);
+    if (!rb) {
+        printf("Renderable builder creation failed\n");
+        FilaEntityManager_destroy(renderableEntity);
+        FilaEngine_destroyIndexBuffer(engine, ib);
+        FilaEngine_destroyVertexBuffer(engine, vb);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+    FilaRenderableManagerBuilder_culling(rb, false);
+    FilaRenderableManagerBuilder_castShadows(rb, false);
+    FilaRenderableManagerBuilder_receiveShadows(rb, false);
+    FilaRenderableManagerBuilder_geometry(rb,
+            0u,
+            FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
+            vb,
+            ib,
+            0u,
+            3u);
+    const bool renderableBuilt = FilaRenderableManagerBuilder_build(rb, engine, renderableEntity);
+    FilaRenderableManagerBuilder_destroy(rb);
+
+    if (!renderableBuilt) {
+        printf("Renderable build failed\n");
+        FilaEntityManager_destroy(renderableEntity);
+        FilaEngine_destroyIndexBuffer(engine, ib);
+        FilaEngine_destroyVertexBuffer(engine, vb);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaRenderableManager* rm = FilaEngine_getRenderableManager(engine);
+    if (!rm || !FilaRenderableManager_hasComponent(rm, renderableEntity)) {
+        printf("Renderable component missing after build\n");
+        FilaEntityManager_destroy(renderableEntity);
+        FilaEngine_destroyIndexBuffer(engine, ib);
+        FilaEngine_destroyVertexBuffer(engine, vb);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaRenderableManager_destroy(rm, renderableEntity);
+    FilaEntityManager_destroy(renderableEntity);
 
     FilaEngine_destroyIndexBuffer(engine, ib);
     FilaEngine_destroyVertexBuffer(engine, vb);
