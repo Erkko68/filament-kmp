@@ -20,6 +20,9 @@ add_library(test_module_view_compile OBJECT
 add_library(test_module_camera_compile OBJECT
     module/camera/camera_module_compile.c
 )
+add_library(test_module_entity_manager_compile OBJECT
+    module/entity_manager/entity_manager_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -36,6 +39,9 @@ add_library(test_signature_view_compile OBJECT
 add_library(test_signature_camera_compile OBJECT
     signature/camera/camera_signature_compile.c
 )
+add_library(test_signature_entity_manager_compile OBJECT
+    signature/entity_manager/entity_manager_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
@@ -43,11 +49,13 @@ foreach(target_name
     test_module_renderer_compile
     test_module_view_compile
     test_module_camera_compile
+    test_module_entity_manager_compile
     test_signature_engine_compile
     test_signature_scene_compile
     test_signature_renderer_compile
     test_signature_view_compile
     test_signature_camera_compile
+    test_signature_entity_manager_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -59,6 +67,7 @@ add_custom_target(test_compile_modules
         test_module_renderer_compile
         test_module_view_compile
         test_module_camera_compile
+        test_module_entity_manager_compile
 )
 
 add_custom_target(test_compile_signatures
@@ -68,6 +77,7 @@ add_custom_target(test_compile_signatures
         test_signature_renderer_compile
         test_signature_view_compile
         test_signature_camera_compile
+        test_signature_entity_manager_compile
 )
 
 add_custom_target(test_compile_all
@@ -100,6 +110,12 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_scene_view_first_frame PRIVATE filament_c_wrapper)
     add_test(NAME engine_scene_view_first_frame_program COMMAND test_program_engine_scene_view_first_frame)
+
+    add_executable(test_program_entity_manager
+        integration/programs/entity_manager_program.c
+    )
+    target_link_libraries(test_program_entity_manager PRIVATE filament_c_wrapper)
+    add_test(NAME entity_manager_program COMMAND test_program_entity_manager)
 
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)

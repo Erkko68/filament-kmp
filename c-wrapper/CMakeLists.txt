@@ -16,6 +16,7 @@ set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/incl
 set(SOURCES
     src/filament/Camera.cpp
     src/filament/Engine.cpp
+    src/filament/EntityManager.cpp
     src/filament/Renderer.cpp
     src/filament/Scene.cpp
     src/filament/View.cpp
