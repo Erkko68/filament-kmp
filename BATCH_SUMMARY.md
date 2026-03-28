@@ -1,6 +1,6 @@
 # Filament KMP C Wrapper - Batch Summary & Next Steps
 
-**Status:** ✅ **Batches A, B, C, D, E complete & tested successfully**
+**Status:** ✅ **Batches A, B, C, D, E, F complete & tested successfully**
 
 ---
 
@@ -187,15 +187,19 @@ Created:
 - c-wrapper/test/module/texture_sampler/texture_sampler_module_compile.c (28 lines)
 - c-wrapper/test/signature/stream/stream_signature_compile.c (27 lines)
 - c-wrapper/test/signature/texture_sampler/texture_sampler_signature_compile.c (44 lines)
+- c-wrapper/test/integration/programs/engine_view_color_grading_render_target_program.c
+- c-wrapper/test/integration/programs/engine_stream_texture_params_program.c
 
 Modified:
 - include/filament/Types.h (added FilaStream, FilaStreamBuilder, FilaTextureParams)
 - include/filament/Engine.h (added FilaEngine_destroyStream)
-- include/filament/Texture.h (added FilaTexture_setExternalStream)
+- include/filament/Texture.h (added FilaTexture_setExternalStream, sampler external, texture usage API)
 - c-wrapper/CMakeLists.txt (added Stream.cpp, TextureSampler.cpp to SOURCES)
 - c-wrapper/src/filament/Engine.cpp (added Stream.h include, destroyStream implementation)
-- c-wrapper/src/filament/Texture.cpp (added Stream.h include, setExternalStream implementation)
-- c-wrapper/test/CMakeLists.txt (added 4 new test targets for Stream & TextureParams)
+- c-wrapper/src/filament/Texture.cpp (added Stream.h include, setExternalStream, usage bridge)
+- c-wrapper/test/CMakeLists.txt (added module/signature targets + 2 integration executables)
+- c-wrapper/test/build.sh (runs new integration executables; concise output)
+- c-wrapper/test/README.md (updated module list, integration list, and required test workflow)
 ```
 
 ---

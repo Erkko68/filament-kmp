@@ -15,6 +15,9 @@ static void (*g_engine_destroy_material_instance)(FilaEngine*, FilaMaterialInsta
 static void (*g_engine_destroy_texture)(FilaEngine*, FilaTexture*) = FilaEngine_destroyTexture;
 static void (*g_engine_destroy_skybox)(FilaEngine*, FilaSkybox*) = FilaEngine_destroySkybox;
 static void (*g_engine_destroy_indirect_light)(FilaEngine*, FilaIndirectLight*) = FilaEngine_destroyIndirectLight;
+static void (*g_engine_destroy_skinning_buffer)(FilaEngine*, FilaSkinningBuffer*) = FilaEngine_destroySkinningBuffer;
+static void (*g_engine_destroy_morph_target_buffer)(FilaEngine*, FilaMorphTargetBuffer*) = FilaEngine_destroyMorphTargetBuffer;
+static void (*g_engine_destroy_instance_buffer)(FilaEngine*, FilaInstanceBuffer*) = FilaEngine_destroyInstanceBuffer;
 static FilaFence* (*g_engine_create_fence)(FilaEngine*) = FilaEngine_createFence;
 static void (*g_engine_destroy_fence)(FilaEngine*, FilaFence*) = FilaEngine_destroyFence;
 static FilaScene* (*g_engine_create_scene)(FilaEngine*) = FilaEngine_createScene;
@@ -43,6 +46,9 @@ void fila_engine_signature_compile_only(void) {
     (void)g_engine_destroy_texture;
     (void)g_engine_destroy_skybox;
     (void)g_engine_destroy_indirect_light;
+    (void)g_engine_destroy_skinning_buffer;
+    (void)g_engine_destroy_morph_target_buffer;
+    (void)g_engine_destroy_instance_buffer;
     (void)g_engine_create_fence;
     (void)g_engine_destroy_fence;
     (void)g_engine_create_scene;

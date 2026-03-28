@@ -20,13 +20,16 @@ set(SOURCES
     src/filament/EntityManager.cpp
     src/filament/Fence.cpp
     src/filament/IndexBuffer.cpp
+    src/filament/InstanceBuffer.cpp
     src/filament/IndirectLight.cpp
     src/filament/LightManager.cpp
     src/filament/Material.cpp
+    src/filament/MorphTargetBuffer.cpp
     src/filament/RenderTarget.cpp
     src/filament/Renderer.cpp
     src/filament/RenderableManager.cpp
     src/filament/Scene.cpp
+    src/filament/SkinningBuffer.cpp
     src/filament/Skybox.cpp
     src/filament/Stream.cpp
     src/filament/SwapChain.cpp

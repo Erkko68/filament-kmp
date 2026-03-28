@@ -26,11 +26,21 @@ static void (*g_renderable_builder_priority)(FilaRenderableManagerBuilder*, uint
 static void (*g_renderable_builder_culling)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_culling;
 static void (*g_renderable_builder_cast_shadows)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_castShadows;
 static void (*g_renderable_builder_receive_shadows)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_receiveShadows;
+static void (*g_renderable_builder_enable_skinning_buffers)(FilaRenderableManagerBuilder*, bool) = FilaRenderableManagerBuilder_enableSkinningBuffers;
+static void (*g_renderable_builder_skinning)(FilaRenderableManagerBuilder*, FilaSkinningBuffer*, size_t, size_t) = FilaRenderableManagerBuilder_skinning;
+static void (*g_renderable_builder_morphing)(FilaRenderableManagerBuilder*, FilaMorphTargetBuffer*) = FilaRenderableManagerBuilder_morphing;
+static void (*g_renderable_builder_instances)(FilaRenderableManagerBuilder*, size_t, FilaInstanceBuffer*) = FilaRenderableManagerBuilder_instances;
 static void (*g_renderable_builder_geometry)(FilaRenderableManagerBuilder*, size_t, FilaRenderablePrimitiveType, FilaVertexBuffer*, FilaIndexBuffer*, size_t, size_t) = FilaRenderableManagerBuilder_geometry;
 static void (*g_renderable_builder_material)(FilaRenderableManagerBuilder*, size_t, const FilaMaterialInstance*) = FilaRenderableManagerBuilder_material;
 static bool (*g_renderable_builder_build)(FilaRenderableManagerBuilder*, FilaEngine*, FilaEntity) = FilaRenderableManagerBuilder_build;
 static void (*g_renderable_set_material_at)(FilaRenderableManager*, FilaRenderableManagerInstance, size_t, const FilaMaterialInstance*) = FilaRenderableManager_setMaterialInstanceAt;
 static FilaMaterialInstance* (*g_renderable_get_material_at)(const FilaRenderableManager*, FilaRenderableManagerInstance, size_t) = FilaRenderableManager_getMaterialInstanceAt;
+static void (*g_renderable_set_skinning_buffer)(FilaRenderableManager*, FilaRenderableManagerInstance, FilaSkinningBuffer*, size_t, size_t) = FilaRenderableManager_setSkinningBuffer;
+static void (*g_renderable_set_morph_weights)(FilaRenderableManager*, FilaRenderableManagerInstance, const float*, size_t, size_t) = FilaRenderableManager_setMorphWeights;
+static void (*g_renderable_set_morph_target_buffer_offset_at)(FilaRenderableManager*, FilaRenderableManagerInstance, uint8_t, size_t, size_t) = FilaRenderableManager_setMorphTargetBufferOffsetAt;
+static FilaMorphTargetBuffer* (*g_renderable_get_morph_target_buffer)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getMorphTargetBuffer;
+static size_t (*g_renderable_get_morph_target_count)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getMorphTargetCount;
+static size_t (*g_renderable_get_instance_count)(const FilaRenderableManager*, FilaRenderableManagerInstance) = FilaRenderableManager_getInstanceCount;
 
 void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_has_component;
@@ -54,10 +64,20 @@ void fila_renderable_manager_signature_compile_only(void) {
     (void)g_renderable_builder_culling;
     (void)g_renderable_builder_cast_shadows;
     (void)g_renderable_builder_receive_shadows;
+    (void)g_renderable_builder_enable_skinning_buffers;
+    (void)g_renderable_builder_skinning;
+    (void)g_renderable_builder_morphing;
+    (void)g_renderable_builder_instances;
     (void)g_renderable_builder_geometry;
     (void)g_renderable_builder_material;
     (void)g_renderable_builder_build;
     (void)g_renderable_set_material_at;
     (void)g_renderable_get_material_at;
+    (void)g_renderable_set_skinning_buffer;
+    (void)g_renderable_set_morph_weights;
+    (void)g_renderable_set_morph_target_buffer_offset_at;
+    (void)g_renderable_get_morph_target_buffer;
+    (void)g_renderable_get_morph_target_count;
+    (void)g_renderable_get_instance_count;
 }
 

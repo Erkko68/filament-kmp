@@ -1,6 +1,9 @@
 #include "filament/Engine.h"
 #include "filament/EntityManager.h"
+#include "filament/InstanceBuffer.h"
+#include "filament/MorphTargetBuffer.h"
 #include "filament/RenderableManager.h"
+#include "filament/SkinningBuffer.h"
 
 // Verifies RenderableManager API is consumable from C and composes with Engine + EntityManager.
 void fila_renderable_manager_module_compile_only(void) {
@@ -12,6 +15,9 @@ void fila_renderable_manager_module_compile_only(void) {
     FilaVertexBuffer* vertexBuffer = (FilaVertexBuffer*)0;
     FilaIndexBuffer* indexBuffer = (FilaIndexBuffer*)0;
     FilaMaterialInstance* materialInstance = (FilaMaterialInstance*)0;
+    FilaSkinningBuffer* skinningBuffer = (FilaSkinningBuffer*)0;
+    FilaMorphTargetBuffer* morphTargetBuffer = (FilaMorphTargetBuffer*)0;
+    FilaInstanceBuffer* instanceBuffer = (FilaInstanceBuffer*)0;
 
     (void)FilaRenderableManager_hasComponent(manager, entity);
     FilaRenderableManagerInstance instance = FilaRenderableManager_getInstance(manager, entity);
@@ -31,6 +37,10 @@ void fila_renderable_manager_module_compile_only(void) {
     FilaRenderableManagerBuilder_culling(builder, true);
     FilaRenderableManagerBuilder_castShadows(builder, false);
     FilaRenderableManagerBuilder_receiveShadows(builder, true);
+    FilaRenderableManagerBuilder_enableSkinningBuffers(builder, true);
+    FilaRenderableManagerBuilder_skinning(builder, skinningBuffer, 1u, 0u);
+    FilaRenderableManagerBuilder_morphing(builder, morphTargetBuffer);
+    FilaRenderableManagerBuilder_instances(builder, 1u, instanceBuffer);
     FilaRenderableManagerBuilder_geometry(builder,
             0u,
             FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
@@ -43,6 +53,13 @@ void fila_renderable_manager_module_compile_only(void) {
     FilaRenderableManagerBuilder_destroy(builder);
     FilaRenderableManager_setMaterialInstanceAt(manager, instance, 0u, materialInstance);
     (void)FilaRenderableManager_getMaterialInstanceAt(manager, instance, 0u);
+    FilaRenderableManager_setSkinningBuffer(manager, instance, skinningBuffer, 1u, 0u);
+    float weights[2] = {0.5f, 0.5f};
+    FilaRenderableManager_setMorphWeights(manager, instance, weights, 2u, 0u);
+    FilaRenderableManager_setMorphTargetBufferOffsetAt(manager, instance, 0u, 0u, 0u);
+    (void)FilaRenderableManager_getMorphTargetBuffer(manager, instance);
+    (void)FilaRenderableManager_getMorphTargetCount(manager, instance);
+    (void)FilaRenderableManager_getInstanceCount(manager, instance);
     FilaRenderableManager_destroy(manager, entity);
     FilaEntityManager_destroy(entity);
 }

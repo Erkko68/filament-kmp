@@ -68,6 +68,15 @@ add_library(test_module_stream_compile OBJECT
 add_library(test_module_texture_sampler_compile OBJECT
     module/texture_sampler/texture_sampler_module_compile.c
 )
+add_library(test_module_skinning_buffer_compile OBJECT
+    module/skinning_buffer/skinning_buffer_module_compile.c
+)
+add_library(test_module_morph_target_buffer_compile OBJECT
+    module/morph_target_buffer/morph_target_buffer_module_compile.c
+)
+add_library(test_module_instance_buffer_compile OBJECT
+    module/instance_buffer/instance_buffer_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -132,6 +141,15 @@ add_library(test_signature_stream_compile OBJECT
 add_library(test_signature_texture_sampler_compile OBJECT
     signature/texture_sampler/texture_sampler_signature_compile.c
 )
+add_library(test_signature_skinning_buffer_compile OBJECT
+    signature/skinning_buffer/skinning_buffer_signature_compile.c
+)
+add_library(test_signature_morph_target_buffer_compile OBJECT
+    signature/morph_target_buffer/morph_target_buffer_signature_compile.c
+)
+add_library(test_signature_instance_buffer_compile OBJECT
+    signature/instance_buffer/instance_buffer_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
@@ -155,6 +173,9 @@ foreach(target_name
     test_module_render_target_compile
     test_module_stream_compile
     test_module_texture_sampler_compile
+    test_module_skinning_buffer_compile
+    test_module_morph_target_buffer_compile
+    test_module_instance_buffer_compile
     test_signature_engine_compile
     test_signature_scene_compile
     test_signature_renderer_compile
@@ -176,6 +197,9 @@ foreach(target_name
     test_signature_render_target_compile
     test_signature_stream_compile
     test_signature_texture_sampler_compile
+    test_signature_skinning_buffer_compile
+    test_signature_morph_target_buffer_compile
+    test_signature_instance_buffer_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -203,6 +227,9 @@ add_custom_target(test_compile_modules
         test_module_render_target_compile
         test_module_stream_compile
         test_module_texture_sampler_compile
+        test_module_skinning_buffer_compile
+        test_module_morph_target_buffer_compile
+        test_module_instance_buffer_compile
 )
 
 add_custom_target(test_compile_signatures
@@ -228,6 +255,9 @@ add_custom_target(test_compile_signatures
         test_signature_render_target_compile
         test_signature_stream_compile
         test_signature_texture_sampler_compile
+        test_signature_skinning_buffer_compile
+        test_signature_morph_target_buffer_compile
+        test_signature_instance_buffer_compile
 )
 
 add_custom_target(test_compile_all
@@ -332,6 +362,12 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_stream_texture_params PRIVATE filament_c_wrapper)
     add_test(NAME engine_stream_texture_params_program COMMAND test_program_engine_stream_texture_params)
+
+    add_executable(test_program_engine_geometry_advanced_buffers
+        integration/programs/engine_geometry_advanced_buffers_program.c
+    )
+    target_link_libraries(test_program_engine_geometry_advanced_buffers PRIVATE filament_c_wrapper)
+    add_test(NAME engine_geometry_advanced_buffers_program COMMAND test_program_engine_geometry_advanced_buffers)
 
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)

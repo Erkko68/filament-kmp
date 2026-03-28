@@ -1,13 +1,16 @@
 #include <filament/Engine.h>
 #include <filament/Fence.h>
 #include <filament/IndexBuffer.h>
+#include <filament/InstanceBuffer.h>
 #include <filament/IndirectLight.h>
 #include <filament/LightManager.h>
 #include <filament/Material.h>
 #include <filament/MaterialInstance.h>
+#include <filament/MorphTargetBuffer.h>
 #include <filament/Renderer.h>
 #include <filament/RenderableManager.h>
 #include <filament/Scene.h>
+#include <filament/SkinningBuffer.h>
 #include <filament/Skybox.h>
 #include <filament/Stream.h>
 #include <filament/SwapChain.h>
@@ -246,6 +249,33 @@ void FilaEngine_destroyStream(FilaEngine* engine, FilaStream* stream) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppStream = reinterpret_cast<filament::Stream*>(stream);
     cppEngine->destroy(cppStream);
+}
+
+void FilaEngine_destroySkinningBuffer(FilaEngine* engine, FilaSkinningBuffer* skinningBuffer) {
+    if (!engine || !skinningBuffer) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppSkinningBuffer = reinterpret_cast<filament::SkinningBuffer*>(skinningBuffer);
+    cppEngine->destroy(cppSkinningBuffer);
+}
+
+void FilaEngine_destroyMorphTargetBuffer(FilaEngine* engine, FilaMorphTargetBuffer* morphTargetBuffer) {
+    if (!engine || !morphTargetBuffer) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppMorphTargetBuffer = reinterpret_cast<filament::MorphTargetBuffer*>(morphTargetBuffer);
+    cppEngine->destroy(cppMorphTargetBuffer);
+}
+
+void FilaEngine_destroyInstanceBuffer(FilaEngine* engine, FilaInstanceBuffer* instanceBuffer) {
+    if (!engine || !instanceBuffer) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppInstanceBuffer = reinterpret_cast<filament::InstanceBuffer*>(instanceBuffer);
+    cppEngine->destroy(cppInstanceBuffer);
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {

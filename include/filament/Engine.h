@@ -85,6 +85,15 @@ void FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* render
 // Destroys a filament::Stream instance.
 void FilaEngine_destroyStream(FilaEngine* engine, FilaStream* stream);
 
+// Destroys a filament::SkinningBuffer instance.
+void FilaEngine_destroySkinningBuffer(FilaEngine* engine, FilaSkinningBuffer* skinningBuffer);
+
+// Destroys a filament::MorphTargetBuffer instance.
+void FilaEngine_destroyMorphTargetBuffer(FilaEngine* engine, FilaMorphTargetBuffer* morphTargetBuffer);
+
+// Destroys a filament::InstanceBuffer instance.
+void FilaEngine_destroyInstanceBuffer(FilaEngine* engine, FilaInstanceBuffer* instanceBuffer);
+
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 

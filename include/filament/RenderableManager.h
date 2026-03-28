@@ -91,6 +91,24 @@ void FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* buil
 // Enables or disables shadow receiving for built renderable.
 void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* builder, bool enable);
 
+// Enables skinning buffer mode for built renderable.
+void FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* builder, bool enabled);
+
+// Binds a SkinningBuffer slice for built renderable.
+void FilaRenderableManagerBuilder_skinning(FilaRenderableManagerBuilder* builder,
+		FilaSkinningBuffer* skinningBuffer,
+		size_t count,
+		size_t offset);
+
+// Enables morphing with MorphTargetBuffer for built renderable.
+void FilaRenderableManagerBuilder_morphing(FilaRenderableManagerBuilder* builder,
+		FilaMorphTargetBuffer* morphTargetBuffer);
+
+// Sets renderable draw instance count and optional InstanceBuffer transforms.
+void FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* builder,
+		size_t instanceCount,
+		FilaInstanceBuffer* instanceBuffer);
+
 // Binds geometry for a primitive slot.
 void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder,
 		size_t index,
@@ -118,6 +136,39 @@ void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* manager,
 FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance,
 		size_t primitiveIndex);
+
+// Updates a renderable's skinning buffer association.
+void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		FilaSkinningBuffer* skinningBuffer,
+		size_t count,
+		size_t offset);
+
+// Updates morph target weights for a renderable.
+void FilaRenderableManager_setMorphWeights(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		const float* weights,
+		size_t count,
+		size_t offset);
+
+// Sets morph target buffer offset for a primitive.
+void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		uint8_t level,
+		size_t primitiveIndex,
+		size_t offset);
+
+// Gets the morph target buffer bound to a renderable.
+FilaMorphTargetBuffer* FilaRenderableManager_getMorphTargetBuffer(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
+// Gets morph target count for a renderable.
+size_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
+// Gets draw instance count for a renderable.
+size_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
 
 #ifdef __cplusplus
 }

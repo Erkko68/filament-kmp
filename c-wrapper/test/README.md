@@ -31,6 +31,9 @@ Current modules covered:
 - RenderTarget
 - Stream
 - TextureParams
+- SkinningBuffer
+- MorphTargetBuffer
+- InstanceBuffer
 
 ## Default workflow (no host Filament libs required)
 
@@ -66,6 +69,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_material_instance_parameters`
 - `test_program_engine_view_color_grading_render_target`
 - `test_program_engine_stream_texture_params`
+- `test_program_engine_geometry_advanced_buffers`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

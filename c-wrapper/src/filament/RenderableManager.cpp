@@ -2,7 +2,10 @@
 
 #include <filament/Engine.h>
 #include <filament/IndexBuffer.h>
+#include <filament/InstanceBuffer.h>
 #include <filament/MaterialInstance.h>
+#include <filament/MorphTargetBuffer.h>
+#include <filament/SkinningBuffer.h>
 #include <filament/VertexBuffer.h>
 
 #include <utils/Entity.h>
@@ -221,6 +224,51 @@ void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* b
     cppBuilder->receiveShadows(enable);
 }
 
+void FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* builder, bool enabled) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->enableSkinningBuffers(enabled);
+}
+
+void FilaRenderableManagerBuilder_skinning(FilaRenderableManagerBuilder* builder,
+        FilaSkinningBuffer* skinningBuffer,
+        size_t count,
+        size_t offset) {
+    if (!builder || !skinningBuffer) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    auto cppSkinningBuffer = reinterpret_cast<filament::SkinningBuffer*>(skinningBuffer);
+    cppBuilder->skinning(cppSkinningBuffer, count, offset);
+}
+
+void FilaRenderableManagerBuilder_morphing(FilaRenderableManagerBuilder* builder,
+        FilaMorphTargetBuffer* morphTargetBuffer) {
+    if (!builder || !morphTargetBuffer) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    auto cppMorphTargetBuffer = reinterpret_cast<filament::MorphTargetBuffer*>(morphTargetBuffer);
+    cppBuilder->morphing(cppMorphTargetBuffer);
+}
+
+void FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* builder,
+        size_t instanceCount,
+        FilaInstanceBuffer* instanceBuffer) {
+    if (!builder || instanceCount == 0) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    if (instanceBuffer) {
+        auto cppInstanceBuffer = reinterpret_cast<filament::InstanceBuffer*>(instanceBuffer);
+        cppBuilder->instances(instanceCount, cppInstanceBuffer);
+        return;
+    }
+    cppBuilder->instances(instanceCount);
+}
+
 void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder,
         size_t index,
         FilaRenderablePrimitiveType type,
@@ -277,6 +325,70 @@ FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRend
     }
     auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
     return reinterpret_cast<FilaMaterialInstance*>(cppManager->getMaterialInstanceAt(toInstance(instance), primitiveIndex));
+}
+
+void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        FilaSkinningBuffer* skinningBuffer,
+        size_t count,
+        size_t offset) {
+    if (!manager || instance == 0 || !skinningBuffer) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    auto cppSkinningBuffer = reinterpret_cast<filament::SkinningBuffer*>(skinningBuffer);
+    cppManager->setSkinningBuffer(toInstance(instance), cppSkinningBuffer, count, offset);
+}
+
+void FilaRenderableManager_setMorphWeights(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        const float* weights,
+        size_t count,
+        size_t offset) {
+    if (!manager || instance == 0 || !weights || count == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setMorphWeights(toInstance(instance), weights, count, offset);
+}
+
+void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        uint8_t level,
+        size_t primitiveIndex,
+        size_t offset) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setMorphTargetBufferOffsetAt(toInstance(instance), level, primitiveIndex, offset);
+}
+
+FilaMorphTargetBuffer* FilaRenderableManager_getMorphTargetBuffer(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return nullptr;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return reinterpret_cast<FilaMorphTargetBuffer*>(cppManager->getMorphTargetBuffer(toInstance(instance)));
+}
+
+size_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getMorphTargetCount(toInstance(instance));
+}
+
+size_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getInstanceCount(toInstance(instance));
 }
 
 } // extern "C"
