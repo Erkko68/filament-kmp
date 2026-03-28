@@ -80,6 +80,28 @@ void FilaTransformManager_create(FilaTransformManager* manager, FilaEntity entit
     cppManager->create(toEntity(entity), toInstance(parent));
 }
 
+void FilaTransformManager_createWithTransformMat4f(FilaTransformManager* manager,
+        FilaEntity entity,
+        FilaTransformManagerInstance parent,
+        const float localTransform[16]) {
+    if (!manager || entity == 0 || !localTransform) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::TransformManager*>(manager);
+    cppManager->create(toEntity(entity), toInstance(parent), toMat4f(localTransform));
+}
+
+void FilaTransformManager_createWithTransformMat4(FilaTransformManager* manager,
+        FilaEntity entity,
+        FilaTransformManagerInstance parent,
+        const double localTransform[16]) {
+    if (!manager || entity == 0 || !localTransform) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::TransformManager*>(manager);
+    cppManager->create(toEntity(entity), toInstance(parent), toMat4(localTransform));
+}
+
 void FilaTransformManager_destroy(FilaTransformManager* manager, FilaEntity entity) {
     if (!manager || entity == 0) {
         return;
@@ -102,6 +124,38 @@ bool FilaTransformManager_empty(const FilaTransformManager* manager) {
     }
     auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
     return cppManager->empty();
+}
+
+void FilaTransformManager_setAccurateTranslationsEnabled(FilaTransformManager* manager, bool enable) {
+    if (!manager) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::TransformManager*>(manager);
+    cppManager->setAccurateTranslationsEnabled(enable);
+}
+
+bool FilaTransformManager_isAccurateTranslationsEnabled(const FilaTransformManager* manager) {
+    if (!manager) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
+    return cppManager->isAccurateTranslationsEnabled();
+}
+
+size_t FilaTransformManager_getEntities(const FilaTransformManager* manager,
+        FilaEntity* outEntities,
+        size_t maxCount) {
+    if (!manager || !outEntities || maxCount == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
+    const size_t count = cppManager->getComponentCount();
+    const size_t written = (count < maxCount) ? count : maxCount;
+    const utils::Entity* entities = cppManager->getEntities();
+    for (size_t i = 0; i < written; ++i) {
+        outEntities[i] = utils::Entity::smuggle(entities[i]);
+    }
+    return written;
 }
 
 FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* manager, FilaTransformManagerInstance instance) {

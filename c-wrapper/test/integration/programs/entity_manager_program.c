@@ -31,6 +31,24 @@ int main(void) {
         return 1;
     }
 
+    FilaEntity batch[3] = {0};
+    FilaEntityManager_createMany(3u, batch);
+    for (size_t i = 0; i < 3u; ++i) {
+        if (batch[i] == 0 || !FilaEntityManager_isAlive(batch[i])) {
+            printf("Bulk entity creation failed at index %zu\n", i);
+            FilaEntityManager_destroyMany(3u, batch);
+            return 1;
+        }
+    }
+
+    FilaEntityManager_destroyMany(3u, batch);
+    for (size_t i = 0; i < 3u; ++i) {
+        if (batch[i] != 0) {
+            printf("Bulk entity destroy did not clear slot %zu\n", i);
+            return 1;
+        }
+    }
+
     printf("Entity manager smoke program completed\n");
     return 0;
 }

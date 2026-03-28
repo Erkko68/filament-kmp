@@ -25,13 +25,19 @@ void fila_transform_manager_module_compile_only(void) {
     double outLocal64[16];
     double outWorld64[16];
     FilaEntity children[4];
+    FilaEntity listedEntities[4];
 
-    FilaTransformManager_create(manager, parent, 0u);
-    FilaTransformManager_create(manager, child, FilaTransformManager_getInstance(manager, parent));
+    FilaTransformManager_createWithTransformMat4f(manager, parent, 0u, identity);
+    FilaTransformManager_createWithTransformMat4(manager, child,
+            FilaTransformManager_getInstance(manager, parent),
+            identity64);
     (void)FilaTransformManager_hasComponent(manager, parent);
     FilaTransformManagerInstance parentInstance = FilaTransformManager_getInstance(manager, parent);
     FilaTransformManagerInstance childInstance = FilaTransformManager_getInstance(manager, child);
     (void)FilaTransformManager_getEntity(manager, childInstance);
+    FilaTransformManager_setAccurateTranslationsEnabled(manager, true);
+    (void)FilaTransformManager_isAccurateTranslationsEnabled(manager);
+    (void)FilaTransformManager_getEntities(manager, listedEntities, 4u);
     FilaTransformManager_setParent(manager, childInstance, parentInstance);
     (void)FilaTransformManager_getParent(manager, childInstance);
     (void)FilaTransformManager_getChildCount(manager, parentInstance);

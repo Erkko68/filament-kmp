@@ -13,8 +13,14 @@ extern "C" {
 // Creates a new entity handle. Returns 0 when allocation fails.
 FilaEntity FilaEntityManager_create(void);
 
+// Creates count entities and writes them to outEntities.
+void FilaEntityManager_createMany(size_t count, FilaEntity* outEntities);
+
 // Destroys an entity handle.
 void FilaEntityManager_destroy(FilaEntity entity);
+
+// Destroys count entities provided in entities and zeroes their entries.
+void FilaEntityManager_destroyMany(size_t count, FilaEntity* entities);
 
 // Returns true if the entity is currently alive.
 bool FilaEntityManager_isAlive(FilaEntity entity);

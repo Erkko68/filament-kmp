@@ -45,13 +45,47 @@ int main(void) {
         return 1;
     }
 
-    FilaTransformManager_create(manager, parent, 0u);
+    FilaTransformManager_setAccurateTranslationsEnabled(manager, true);
+    if (!FilaTransformManager_isAccurateTranslationsEnabled(manager)) {
+        printf("Accurate translation mode failed to enable\n");
+        FilaEntityManager_destroy(child);
+        FilaEntityManager_destroy(parent);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    const float parentInit[16] = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f,
+    };
+    FilaTransformManager_createWithTransformMat4f(manager, parent, 0u, parentInit);
     FilaTransformManagerInstance parentInstance = FilaTransformManager_getInstance(manager, parent);
-    FilaTransformManager_create(manager, child, parentInstance);
+
+    const double childInit[16] = {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.5, 0.0, 0.0, 1.0,
+    };
+    FilaTransformManager_createWithTransformMat4(manager, child, parentInstance, childInit);
 
     if (!FilaTransformManager_hasComponent(manager, parent) ||
             !FilaTransformManager_hasComponent(manager, child)) {
         printf("Transform component creation failed\n");
+        FilaTransformManager_destroy(manager, child);
+        FilaTransformManager_destroy(manager, parent);
+        FilaEntityManager_destroy(child);
+        FilaEntityManager_destroy(parent);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaEntity listed[4] = {0};
+    const size_t listedCount = FilaTransformManager_getEntities(manager, listed, 4u);
+    if (listedCount < 2u) {
+        printf("Transform manager entity listing failed\n");
         FilaTransformManager_destroy(manager, child);
         FilaTransformManager_destroy(manager, parent);
         FilaEntityManager_destroy(child);

@@ -19,6 +19,18 @@ FilaTransformManagerInstance FilaTransformManager_getInstance(const FilaTransfor
 // Creates a transform component for the entity.
 void FilaTransformManager_create(FilaTransformManager* manager, FilaEntity entity, FilaTransformManagerInstance parent);
 
+// Creates a transform component initialized with a local 4x4 column-major float matrix.
+void FilaTransformManager_createWithTransformMat4f(FilaTransformManager* manager,
+		FilaEntity entity,
+		FilaTransformManagerInstance parent,
+		const float localTransform[16]);
+
+// Creates a transform component initialized with a local 4x4 column-major double matrix.
+void FilaTransformManager_createWithTransformMat4(FilaTransformManager* manager,
+		FilaEntity entity,
+		FilaTransformManagerInstance parent,
+		const double localTransform[16]);
+
 // Destroys the transform component for the entity.
 void FilaTransformManager_destroy(FilaTransformManager* manager, FilaEntity entity);
 
@@ -27,6 +39,17 @@ size_t FilaTransformManager_getComponentCount(const FilaTransformManager* manage
 
 // Returns whether the manager has no components.
 bool FilaTransformManager_empty(const FilaTransformManager* manager);
+
+// Enables or disables accurate translation mode.
+void FilaTransformManager_setAccurateTranslationsEnabled(FilaTransformManager* manager, bool enable);
+
+// Returns whether accurate translation mode is enabled.
+bool FilaTransformManager_isAccurateTranslationsEnabled(const FilaTransformManager* manager);
+
+// Writes up to maxCount entities managed by this component manager and returns number written.
+size_t FilaTransformManager_getEntities(const FilaTransformManager* manager,
+		FilaEntity* outEntities,
+		size_t maxCount);
 
 // Returns the entity associated with an instance, or 0 for invalid inputs.
 FilaEntity FilaTransformManager_getEntity(const FilaTransformManager* manager, FilaTransformManagerInstance instance);
