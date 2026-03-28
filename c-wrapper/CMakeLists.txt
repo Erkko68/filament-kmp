@@ -17,6 +17,7 @@ set(SOURCES
     src/filament/Engine.cpp
     src/filament/Renderer.cpp
     src/filament/Scene.cpp
+    src/filament/View.cpp
 )
 
 # 1. Create our static library bridge

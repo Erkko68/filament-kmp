@@ -1,6 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/Renderer.h>
 #include <filament/Scene.h>
+#include <filament/View.h>
 
 #include "filament/Engine.h" // Our C Header
 #include "filament/Types.h"  // Our C Types
@@ -51,6 +52,23 @@ void FilaEngine_destroyScene(FilaEngine* engine, FilaScene* scene) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppScene = reinterpret_cast<filament::Scene*>(scene);
     cppEngine->destroy(cppScene);
+}
+
+FilaView* FilaEngine_createView(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaView*>(cppEngine->createView());
+}
+
+void FilaEngine_destroyView(FilaEngine* engine, FilaView* view) {
+    if (!engine || !view) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppEngine->destroy(cppView);
 }
 
 }

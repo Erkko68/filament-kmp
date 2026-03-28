@@ -7,6 +7,8 @@ static FilaRenderer* (*g_engine_create_renderer)(FilaEngine*) = FilaEngine_creat
 static void (*g_engine_destroy_renderer)(FilaEngine*, FilaRenderer*) = FilaEngine_destroyRenderer;
 static FilaScene* (*g_engine_create_scene)(FilaEngine*) = FilaEngine_createScene;
 static void (*g_engine_destroy_scene)(FilaEngine*, FilaScene*) = FilaEngine_destroyScene;
+static FilaView* (*g_engine_create_view)(FilaEngine*) = FilaEngine_createView;
+static void (*g_engine_destroy_view)(FilaEngine*, FilaView*) = FilaEngine_destroyView;
 
 void fila_engine_signature_compile_only(void) {
     (void)g_engine_create;
@@ -15,5 +17,7 @@ void fila_engine_signature_compile_only(void) {
     (void)g_engine_destroy_renderer;
     (void)g_engine_create_scene;
     (void)g_engine_destroy_scene;
+    (void)g_engine_create_view;
+    (void)g_engine_destroy_view;
 }
 

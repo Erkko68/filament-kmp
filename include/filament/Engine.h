@@ -25,6 +25,12 @@ FilaScene* FilaEngine_createScene(FilaEngine* engine);
 // Destroys a filament::Scene instance.
 void FilaEngine_destroyScene(FilaEngine* engine, FilaScene* scene);
 
+// Creates a filament::View instance.
+FilaView* FilaEngine_createView(FilaEngine* engine);
+
+// Destroys a filament::View instance.
+void FilaEngine_destroyView(FilaEngine* engine, FilaView* view);
+
 #ifdef __cplusplus
 }
 #endif

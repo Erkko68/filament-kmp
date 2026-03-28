@@ -13,6 +13,7 @@ Current modules covered:
 - Engine
 - Scene
 - Renderer
+- View
 
 ## Default workflow (no host Filament libs required)
 
@@ -34,6 +35,7 @@ When linked tests are enabled, integration programs currently include:
 
 - `test_program_engine_scene`
 - `test_program_engine_scene_renderer`
+- `test_program_engine_scene_view`
 
 ## Optional linked integration programs
 

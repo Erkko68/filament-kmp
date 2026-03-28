@@ -2,4 +2,5 @@
 /.idea/
 /filament-prebuilts/ios/lib/
 /filament-prebuilts/android/lib/
+/filament-prebuilts/mac/lib/
 filament-kmp-core.iml
