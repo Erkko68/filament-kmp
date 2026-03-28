@@ -26,6 +26,9 @@ static const uint64_t FILA_FENCE_WAIT_FOR_EVER = UINT64_MAX;
 // Waits for the fence to signal.
 FilaFenceStatus FilaFence_wait(FilaFence* fence, FilaFenceMode mode, uint64_t timeoutNs);
 
+// Waits for a fence and destroys it.
+FilaFenceStatus FilaFence_waitAndDestroy(FilaFence* fence, FilaFenceMode mode);
+
 #ifdef __cplusplus
 }
 #endif

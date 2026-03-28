@@ -36,5 +36,13 @@ FilaFenceStatus FilaFence_wait(FilaFence* fence, FilaFenceMode mode, uint64_t ti
     return fromFenceStatus(cppFence->wait(toFenceMode(mode), timeoutNs));
 }
 
+FilaFenceStatus FilaFence_waitAndDestroy(FilaFence* fence, FilaFenceMode mode) {
+    if (!fence) {
+        return FILA_FENCE_STATUS_ERROR;
+    }
+    auto cppFence = reinterpret_cast<filament::Fence*>(fence);
+    return fromFenceStatus(filament::Fence::waitAndDestroy(cppFence, toFenceMode(mode)));
+}
+
 } // extern "C"
 

@@ -20,6 +20,7 @@ set(SOURCES
     src/filament/Fence.cpp
     src/filament/Renderer.cpp
     src/filament/Scene.cpp
+    src/filament/SwapChain.cpp
     src/filament/View.cpp
 )
 

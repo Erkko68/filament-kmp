@@ -17,6 +17,7 @@ Current modules covered:
 - Camera
 - EntityManager
 - Fence
+- SwapChain
 
 ## Default workflow (no host Filament libs required)
 
@@ -42,6 +43,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_scene_view_first_frame` (headless swap-chain frame smoke test)
 - `test_program_entity_manager`
 - `test_program_engine_fence`
+- `test_program_engine_swapchain`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

@@ -29,6 +29,22 @@ int main(void) {
     }
 
     FilaEngine_destroyFence(engine, fence);
+
+    FilaFence* fence2 = FilaEngine_createFence(engine);
+    if (!fence2) {
+        printf("Second fence creation failed\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    const FilaFenceStatus status2 = FilaFence_waitAndDestroy(fence2, FILA_FENCE_MODE_FLUSH);
+    if (status2 != FILA_FENCE_STATUS_CONDITION_SATISFIED &&
+            status2 != FILA_FENCE_STATUS_TIMEOUT_EXPIRED) {
+        printf("Unexpected waitAndDestroy fence status: %d\n", (int)status2);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
     FilaEngine_destroy(&engine);
 
     printf("Engine+fence smoke program completed\n");

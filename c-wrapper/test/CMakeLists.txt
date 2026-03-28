@@ -26,6 +26,9 @@ add_library(test_module_entity_manager_compile OBJECT
 add_library(test_module_fence_compile OBJECT
     module/fence/fence_module_compile.c
 )
+add_library(test_module_swapchain_compile OBJECT
+    module/swapchain/swapchain_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -48,6 +51,9 @@ add_library(test_signature_entity_manager_compile OBJECT
 add_library(test_signature_fence_compile OBJECT
     signature/fence/fence_signature_compile.c
 )
+add_library(test_signature_swapchain_compile OBJECT
+    signature/swapchain/swapchain_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
@@ -57,6 +63,7 @@ foreach(target_name
     test_module_camera_compile
     test_module_entity_manager_compile
     test_module_fence_compile
+    test_module_swapchain_compile
     test_signature_engine_compile
     test_signature_scene_compile
     test_signature_renderer_compile
@@ -64,6 +71,7 @@ foreach(target_name
     test_signature_camera_compile
     test_signature_entity_manager_compile
     test_signature_fence_compile
+    test_signature_swapchain_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -77,6 +85,7 @@ add_custom_target(test_compile_modules
         test_module_camera_compile
         test_module_entity_manager_compile
         test_module_fence_compile
+        test_module_swapchain_compile
 )
 
 add_custom_target(test_compile_signatures
@@ -88,6 +97,7 @@ add_custom_target(test_compile_signatures
         test_signature_camera_compile
         test_signature_entity_manager_compile
         test_signature_fence_compile
+        test_signature_swapchain_compile
 )
 
 add_custom_target(test_compile_all
@@ -132,6 +142,12 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_fence PRIVATE filament_c_wrapper)
     add_test(NAME engine_fence_program COMMAND test_program_engine_fence)
+
+    add_executable(test_program_engine_swapchain
+        integration/programs/engine_swapchain_program.c
+    )
+    target_link_libraries(test_program_engine_swapchain PRIVATE filament_c_wrapper)
+    add_test(NAME engine_swapchain_program COMMAND test_program_engine_swapchain)
 
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)
