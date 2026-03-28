@@ -18,6 +18,7 @@ typedef struct FilaFence FilaFence;
 typedef struct FilaTransformManager FilaTransformManager;
 typedef struct FilaLightManager FilaLightManager;
 typedef struct FilaRenderableManager FilaRenderableManager;
+typedef struct FilaLightManagerBuilder FilaLightManagerBuilder;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;

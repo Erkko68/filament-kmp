@@ -15,6 +15,9 @@ void fila_renderable_manager_module_compile_only(void) {
     (void)FilaRenderableManager_getComponentCount(manager);
     (void)FilaRenderableManager_empty(manager);
     (void)FilaRenderableManager_getEntities(manager, entities, 4u);
+    (void)FilaRenderableManager_getPrimitiveCount(manager, instance);
+    FilaRenderableManager_setLayerMask(manager, instance, 0xFFu, 0x02u);
+    (void)FilaRenderableManager_getLayerMask(manager, instance);
     FilaRenderableManager_destroy(manager, entity);
     FilaEntityManager_destroy(entity);
 }

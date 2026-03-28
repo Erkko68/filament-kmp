@@ -10,6 +10,14 @@
 extern "C" {
 #endif
 
+typedef enum FilaLightType {
+	FILA_LIGHT_TYPE_SUN = 0,
+	FILA_LIGHT_TYPE_DIRECTIONAL = 1,
+	FILA_LIGHT_TYPE_POINT = 2,
+	FILA_LIGHT_TYPE_FOCUSED_SPOT = 3,
+	FILA_LIGHT_TYPE_SPOT = 4,
+} FilaLightType;
+
 // Returns true if the entity has a light component.
 bool FilaLightManager_hasComponent(const FilaLightManager* manager, FilaEntity entity);
 
@@ -30,6 +38,30 @@ size_t FilaLightManager_getEntities(const FilaLightManager* manager, FilaEntity*
 
 // Destroys a light component from an entity.
 void FilaLightManager_destroy(FilaLightManager* manager, FilaEntity entity);
+
+// Returns the type of a light instance. Defaults to directional for invalid inputs.
+FilaLightType FilaLightManager_getType(const FilaLightManager* manager, FilaLightManagerInstance instance);
+
+// Creates a light builder for the specified light type.
+FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightType type);
+
+// Destroys a light builder.
+void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* builder);
+
+// Sets the light direction for directional and spot lights.
+void FilaLightManagerBuilder_direction(FilaLightManagerBuilder* builder, float x, float y, float z);
+
+// Sets light color in linear RGB.
+void FilaLightManagerBuilder_color(FilaLightManagerBuilder* builder, float r, float g, float b);
+
+// Sets light intensity in lux for directional/sun, lumens otherwise.
+void FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* builder, float intensity);
+
+// Enables or disables shadow casting for this light.
+void FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* builder, bool enable);
+
+// Builds the light component into the given entity. Returns true on success.
+bool FilaLightManagerBuilder_build(FilaLightManagerBuilder* builder, FilaEngine* engine, FilaEntity entity);
 
 #ifdef __cplusplus
 }

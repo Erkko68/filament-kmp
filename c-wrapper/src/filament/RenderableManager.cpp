@@ -82,5 +82,34 @@ void FilaRenderableManager_destroy(FilaRenderableManager* manager, FilaEntity en
     cppManager->destroy(toEntity(entity));
 }
 
+size_t FilaRenderableManager_getPrimitiveCount(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getPrimitiveCount(toInstance(instance));
+}
+
+void FilaRenderableManager_setLayerMask(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        uint8_t select,
+        uint8_t values) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setLayerMask(toInstance(instance), select, values);
+}
+
+uint8_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getLayerMask(toInstance(instance));
+}
+
 } // extern "C"
 

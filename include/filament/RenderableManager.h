@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "Types.h"
 
@@ -30,6 +31,20 @@ size_t FilaRenderableManager_getEntities(const FilaRenderableManager* manager, F
 
 // Destroys a renderable component from an entity.
 void FilaRenderableManager_destroy(FilaRenderableManager* manager, FilaEntity entity);
+
+// Returns the primitive count for an instance.
+size_t FilaRenderableManager_getPrimitiveCount(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
+// Sets bits in a renderable instance layer mask.
+void FilaRenderableManager_setLayerMask(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		uint8_t select,
+		uint8_t values);
+
+// Gets layer mask bits for a renderable instance.
+uint8_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
 
 #ifdef __cplusplus
 }
