@@ -31,6 +31,15 @@ FilaView* FilaEngine_createView(FilaEngine* engine);
 // Destroys a filament::View instance.
 void FilaEngine_destroyView(FilaEngine* engine, FilaView* view);
 
+// Creates a camera component for the given entity.
+FilaCamera* FilaEngine_createCamera(FilaEngine* engine, FilaEntity entity);
+
+// Returns the camera component attached to the given entity, if any.
+FilaCamera* FilaEngine_getCameraComponent(FilaEngine* engine, FilaEntity entity);
+
+// Destroys the camera component attached to the given entity.
+void FilaEngine_destroyCameraComponent(FilaEngine* engine, FilaEntity entity);
+
 #ifdef __cplusplus
 }
 #endif

@@ -3,8 +3,16 @@
 #include <filament/Scene.h>
 #include <filament/View.h>
 
+#include <utils/Entity.h>
+
 #include "filament/Engine.h" // Our C Header
 #include "filament/Types.h"  // Our C Types
+
+namespace {
+utils::Entity toEntity(FilaEntity entity) {
+    return utils::Entity::import(entity);
+}
+} // namespace
 
 extern "C" {
 
@@ -69,6 +77,30 @@ void FilaEngine_destroyView(FilaEngine* engine, FilaView* view) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppView = reinterpret_cast<filament::View*>(view);
     cppEngine->destroy(cppView);
+}
+
+FilaCamera* FilaEngine_createCamera(FilaEngine* engine, FilaEntity entity) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaCamera*>(cppEngine->createCamera(toEntity(entity)));
+}
+
+FilaCamera* FilaEngine_getCameraComponent(FilaEngine* engine, FilaEntity entity) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaCamera*>(cppEngine->getCameraComponent(toEntity(entity)));
+}
+
+void FilaEngine_destroyCameraComponent(FilaEngine* engine, FilaEntity entity) {
+    if (!engine) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->destroyCameraComponent(toEntity(entity));
 }
 
 }

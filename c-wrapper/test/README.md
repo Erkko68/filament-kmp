@@ -14,6 +14,7 @@ Current modules covered:
 - Scene
 - Renderer
 - View
+- Camera
 
 ## Default workflow (no host Filament libs required)
 

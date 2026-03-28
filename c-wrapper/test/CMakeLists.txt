@@ -15,6 +15,9 @@ add_library(test_module_renderer_compile OBJECT
 add_library(test_module_view_compile OBJECT
     module/view/view_module_compile.c
 )
+add_library(test_module_camera_compile OBJECT
+    module/camera/camera_module_compile.c
+)
 
 add_library(test_signature_engine_compile OBJECT
     signature/engine/engine_signature_compile.c
@@ -28,16 +31,21 @@ add_library(test_signature_renderer_compile OBJECT
 add_library(test_signature_view_compile OBJECT
     signature/view/view_signature_compile.c
 )
+add_library(test_signature_camera_compile OBJECT
+    signature/camera/camera_signature_compile.c
+)
 
 foreach(target_name
     test_module_engine_compile
     test_module_scene_compile
     test_module_renderer_compile
     test_module_view_compile
+    test_module_camera_compile
     test_signature_engine_compile
     test_signature_scene_compile
     test_signature_renderer_compile
     test_signature_view_compile
+    test_signature_camera_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
 endforeach()
@@ -48,6 +56,7 @@ add_custom_target(test_compile_modules
         test_module_scene_compile
         test_module_renderer_compile
         test_module_view_compile
+        test_module_camera_compile
 )
 
 add_custom_target(test_compile_signatures
@@ -56,6 +65,7 @@ add_custom_target(test_compile_signatures
         test_signature_scene_compile
         test_signature_renderer_compile
         test_signature_view_compile
+        test_signature_camera_compile
 )
 
 add_custom_target(test_compile_all

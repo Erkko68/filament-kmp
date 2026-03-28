@@ -9,6 +9,9 @@ static FilaScene* (*g_engine_create_scene)(FilaEngine*) = FilaEngine_createScene
 static void (*g_engine_destroy_scene)(FilaEngine*, FilaScene*) = FilaEngine_destroyScene;
 static FilaView* (*g_engine_create_view)(FilaEngine*) = FilaEngine_createView;
 static void (*g_engine_destroy_view)(FilaEngine*, FilaView*) = FilaEngine_destroyView;
+static FilaCamera* (*g_engine_create_camera)(FilaEngine*, FilaEntity) = FilaEngine_createCamera;
+static FilaCamera* (*g_engine_get_camera_component)(FilaEngine*, FilaEntity) = FilaEngine_getCameraComponent;
+static void (*g_engine_destroy_camera_component)(FilaEngine*, FilaEntity) = FilaEngine_destroyCameraComponent;
 
 void fila_engine_signature_compile_only(void) {
     (void)g_engine_create;
@@ -19,5 +22,8 @@ void fila_engine_signature_compile_only(void) {
     (void)g_engine_destroy_scene;
     (void)g_engine_create_view;
     (void)g_engine_destroy_view;
+    (void)g_engine_create_camera;
+    (void)g_engine_get_camera_component;
+    (void)g_engine_destroy_camera_component;
 }
 

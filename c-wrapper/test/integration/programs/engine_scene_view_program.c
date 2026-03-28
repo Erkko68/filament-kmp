@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "filament/Camera.h"
 #include "filament/Engine.h"
 #include "filament/Scene.h"
 #include "filament/View.h"
@@ -36,6 +37,46 @@ int main(void) {
         FilaEngine_destroy(&engine);
         return 1;
     }
+
+    FilaEntity cameraEntity = 100;
+    FilaCamera* camera = FilaEngine_createCamera(engine, cameraEntity);
+    if (!camera) {
+        printf("Camera creation failed\n");
+        FilaEngine_destroyView(engine, view);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaView_setCamera(view, camera);
+    if (!FilaView_hasCamera(view)) {
+        printf("View camera expected but missing\n");
+        FilaEngine_destroyCameraComponent(engine, cameraEntity);
+        FilaEngine_destroyView(engine, view);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    if (FilaView_getCamera(view) != camera) {
+        printf("View camera mismatch\n");
+        FilaEngine_destroyCameraComponent(engine, cameraEntity);
+        FilaEngine_destroyView(engine, view);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    if (FilaCamera_getEntity(camera) != cameraEntity) {
+        printf("Camera entity mismatch\n");
+        FilaEngine_destroyCameraComponent(engine, cameraEntity);
+        FilaEngine_destroyView(engine, view);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaEngine_destroyCameraComponent(engine, cameraEntity);
 
     FilaEngine_destroyView(engine, view);
     FilaEngine_destroyScene(engine, scene);

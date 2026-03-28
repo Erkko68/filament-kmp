@@ -11,7 +11,7 @@ cd build
 echo "Configuring CMake..."
 cmake .. -DFILA_ENABLE_LINKED_TESTS=${FILA_ENABLE_LINKED_TESTS:-OFF}
 
-echo "Building wrapper + progressive compile tests (engine + scene + renderer + view)..."
+echo "Building wrapper + progressive compile tests (engine + scene + renderer + view + camera)..."
 # Build only compile-safe targets by default.
 make filament_c_wrapper test_compile_all
 
@@ -22,4 +22,4 @@ if [ "${FILA_ENABLE_LINKED_TESTS:-OFF}" = "ON" ]; then
 fi
 
 echo ""
-echo "✅ Build successful! Progressive tests for Engine, Scene, Renderer, and View are in place."
+echo "✅ Build successful! Progressive tests for Engine, Scene, Renderer, View, and Camera are in place."
