@@ -1,5 +1,6 @@
 #include <filament/Scene.h>
 #include <filament/Skybox.h>
+#include <filament/IndirectLight.h>
 
 #include <utils/Entity.h>
 
@@ -69,6 +70,23 @@ FilaSkybox* FilaScene_getSkybox(FilaScene* scene) {
     }
     auto cppScene = reinterpret_cast<filament::Scene*>(scene);
     return reinterpret_cast<FilaSkybox*>(cppScene->getSkybox());
+}
+
+void FilaScene_setIndirectLight(FilaScene* scene, FilaIndirectLight* indirectLight) {
+    if (!scene) {
+        return;
+    }
+    auto cppScene = reinterpret_cast<filament::Scene*>(scene);
+    auto cppIndirectLight = reinterpret_cast<filament::IndirectLight*>(indirectLight);
+    cppScene->setIndirectLight(cppIndirectLight);
+}
+
+FilaIndirectLight* FilaScene_getIndirectLight(FilaScene* scene) {
+    if (!scene) {
+        return nullptr;
+    }
+    auto cppScene = reinterpret_cast<filament::Scene*>(scene);
+    return reinterpret_cast<FilaIndirectLight*>(cppScene->getIndirectLight());
 }
 
 } // extern "C"

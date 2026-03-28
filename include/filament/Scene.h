@@ -31,6 +31,12 @@ void FilaScene_setSkybox(FilaScene* scene, FilaSkybox* skybox);
 // Returns the skybox currently associated with the scene.
 FilaSkybox* FilaScene_getSkybox(FilaScene* scene);
 
+// Sets or unsets the scene indirect light.
+void FilaScene_setIndirectLight(FilaScene* scene, FilaIndirectLight* indirectLight);
+
+// Returns the indirect light currently associated with the scene.
+FilaIndirectLight* FilaScene_getIndirectLight(FilaScene* scene);
+
 #ifdef __cplusplus
 }
 #endif

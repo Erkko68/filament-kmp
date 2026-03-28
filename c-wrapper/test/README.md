@@ -26,6 +26,7 @@ Current modules covered:
 - Material
 - Texture
 - Skybox
+- IndirectLight
 
 ## Default workflow (no host Filament libs required)
 
@@ -57,6 +58,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_renderable_manager`
 - `test_program_engine_resource_builders`
 - `test_program_engine_texture_skybox`
+- `test_program_engine_indirect_light_scene`
 
 Optional macOS on-screen target (manual run, not part of `ctest`):
 

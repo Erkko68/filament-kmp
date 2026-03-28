@@ -50,6 +50,9 @@ add_library(test_module_texture_compile OBJECT
 add_library(test_module_skybox_compile OBJECT
     module/skybox/skybox_module_compile.c
 )
+add_library(test_module_indirect_light_compile OBJECT
+    module/indirect_light/indirect_light_module_compile.c
+)
 add_library(test_module_renderable_manager_compile OBJECT
     module/renderable_manager/renderable_manager_module_compile.c
 )
@@ -99,6 +102,9 @@ add_library(test_signature_texture_compile OBJECT
 add_library(test_signature_skybox_compile OBJECT
     signature/skybox/skybox_signature_compile.c
 )
+add_library(test_signature_indirect_light_compile OBJECT
+    signature/indirect_light/indirect_light_signature_compile.c
+)
 add_library(test_signature_renderable_manager_compile OBJECT
     signature/renderable_manager/renderable_manager_signature_compile.c
 )
@@ -119,6 +125,7 @@ foreach(target_name
     test_module_material_compile
     test_module_texture_compile
     test_module_skybox_compile
+    test_module_indirect_light_compile
     test_module_renderable_manager_compile
     test_signature_engine_compile
     test_signature_scene_compile
@@ -135,6 +142,7 @@ foreach(target_name
     test_signature_material_compile
     test_signature_texture_compile
     test_signature_skybox_compile
+    test_signature_indirect_light_compile
     test_signature_renderable_manager_compile
 )
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
@@ -157,6 +165,7 @@ add_custom_target(test_compile_modules
         test_module_material_compile
         test_module_texture_compile
         test_module_skybox_compile
+        test_module_indirect_light_compile
         test_module_renderable_manager_compile
 )
 
@@ -177,6 +186,7 @@ add_custom_target(test_compile_signatures
         test_signature_material_compile
         test_signature_texture_compile
         test_signature_skybox_compile
+        test_signature_indirect_light_compile
         test_signature_renderable_manager_compile
 )
 
@@ -258,6 +268,12 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_texture_skybox PRIVATE filament_c_wrapper)
     add_test(NAME engine_texture_skybox_program COMMAND test_program_engine_texture_skybox)
+
+    add_executable(test_program_engine_indirect_light_scene
+        integration/programs/engine_indirect_light_scene_program.c
+    )
+    target_link_libraries(test_program_engine_indirect_light_scene PRIVATE filament_c_wrapper)
+    add_test(NAME engine_indirect_light_scene_program COMMAND test_program_engine_indirect_light_scene)
 
     if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
         enable_language(OBJCXX)

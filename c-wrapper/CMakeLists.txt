@@ -19,6 +19,7 @@ set(SOURCES
     src/filament/EntityManager.cpp
     src/filament/Fence.cpp
     src/filament/IndexBuffer.cpp
+    src/filament/IndirectLight.cpp
     src/filament/LightManager.cpp
     src/filament/Material.cpp
     src/filament/Renderer.cpp

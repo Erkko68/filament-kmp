@@ -1,4 +1,5 @@
 #include "filament/Engine.h"
+#include "filament/IndirectLight.h"
 #include "filament/Scene.h"
 #include "filament/Skybox.h"
 
@@ -16,6 +17,8 @@ void fila_scene_module_compile_only(void) {
     (void)FilaScene_hasEntity(scene, entity);
     FilaScene_setSkybox(scene, (FilaSkybox*)0);
     (void)FilaScene_getSkybox(scene);
+    FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);
+    (void)FilaScene_getIndirectLight(scene);
     FilaEngine_destroyScene(engine, scene);
 }
 

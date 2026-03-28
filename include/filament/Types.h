@@ -28,6 +28,8 @@ typedef struct FilaTexture FilaTexture;
 typedef struct FilaTextureBuilder FilaTextureBuilder;
 typedef struct FilaSkybox FilaSkybox;
 typedef struct FilaSkyboxBuilder FilaSkyboxBuilder;
+typedef struct FilaIndirectLight FilaIndirectLight;
+typedef struct FilaIndirectLightBuilder FilaIndirectLightBuilder;
 typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
 typedef struct FilaIndexBufferBuilder FilaIndexBufferBuilder;
 typedef struct FilaMaterialBuilder FilaMaterialBuilder;

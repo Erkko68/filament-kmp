@@ -1,6 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/Fence.h>
 #include <filament/IndexBuffer.h>
+#include <filament/IndirectLight.h>
 #include <filament/LightManager.h>
 #include <filament/Material.h>
 #include <filament/MaterialInstance.h>
@@ -208,6 +209,15 @@ void FilaEngine_destroySkybox(FilaEngine* engine, FilaSkybox* skybox) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppSkybox = reinterpret_cast<filament::Skybox*>(skybox);
     cppEngine->destroy(cppSkybox);
+}
+
+void FilaEngine_destroyIndirectLight(FilaEngine* engine, FilaIndirectLight* indirectLight) {
+    if (!engine || !indirectLight) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppIndirectLight = reinterpret_cast<filament::IndirectLight*>(indirectLight);
+    cppEngine->destroy(cppIndirectLight);
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
