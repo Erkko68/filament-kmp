@@ -3,6 +3,8 @@
 # - signature/: compile-only checks that lock function signatures
 # - integration/: optional linked programs that use multiple APIs together
 
+option(FILA_ENABLE_MACOS_ONSCREEN_TEST "Build macOS on-screen window smoke program" OFF)
+
 add_library(test_module_engine_compile OBJECT
     module/engine/engine_module_compile.c
 )
@@ -98,5 +100,13 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_scene_view_first_frame PRIVATE filament_c_wrapper)
     add_test(NAME engine_scene_view_first_frame_program COMMAND test_program_engine_scene_view_first_frame)
+
+    if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
+        enable_language(OBJCXX)
+        add_executable(test_program_engine_scene_view_macos_window
+            integration/programs/engine_scene_view_macos_window_program.mm
+        )
+        target_link_libraries(test_program_engine_scene_view_macos_window PRIVATE filament_c_wrapper)
+    endif ()
 endif ()
 

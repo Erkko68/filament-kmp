@@ -39,6 +39,10 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_scene_view`
 - `test_program_engine_scene_view_first_frame` (headless swap-chain frame smoke test)
 
+Optional macOS on-screen target (manual run, not part of `ctest`):
+
+- `test_program_engine_scene_view_macos_window`
+
 ## Optional linked integration programs
 
 Enable only when host Filament libraries are available in your toolchain:
@@ -46,6 +50,19 @@ Enable only when host Filament libraries are available in your toolchain:
 ```bash
 cd /Users/eric/IdeaProjects/filament-kmp-core/c-wrapper/test
 FILA_ENABLE_LINKED_TESTS=ON ./build.sh
+```
+
+Build the optional macOS on-screen smoke program:
+
+```bash
+cd /Users/eric/IdeaProjects/filament-kmp-core/c-wrapper/test
+FILA_ENABLE_LINKED_TESTS=ON FILA_ENABLE_MACOS_ONSCREEN_TEST=ON ./build.sh
+```
+
+Run it manually:
+
+```bash
+/Users/eric/IdeaProjects/filament-kmp-core/c-wrapper/build/test/test_program_engine_scene_view_macos_window
 ```
 
 ## Adding a new API module later
