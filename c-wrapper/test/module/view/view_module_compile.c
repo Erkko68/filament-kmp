@@ -8,9 +8,12 @@ void fila_view_module_compile_only(void) {
     FilaScene* scene = (FilaScene*)0;
     FilaEntity entity = 2;
     FilaCamera* camera = FilaEngine_createCamera(engine, entity);
+    FilaViewport viewport = {0, 0, 640u, 480u};
 
     FilaView_setScene(view, scene);
     (void)FilaView_getScene(view);
+    FilaView_setViewport(view, viewport);
+    (void)FilaView_getViewport(view);
     FilaView_setCamera(view, camera);
     (void)FilaView_hasCamera(view);
     (void)FilaView_getCamera(view);

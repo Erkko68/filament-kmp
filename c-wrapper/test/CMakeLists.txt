@@ -92,5 +92,11 @@ if (FILA_ENABLE_LINKED_TESTS)
     )
     target_link_libraries(test_program_engine_scene_view PRIVATE filament_c_wrapper)
     add_test(NAME engine_scene_view_program COMMAND test_program_engine_scene_view)
+
+    add_executable(test_program_engine_scene_view_first_frame
+        integration/programs/engine_scene_view_first_frame_program.c
+    )
+    target_link_libraries(test_program_engine_scene_view_first_frame PRIVATE filament_c_wrapper)
+    add_test(NAME engine_scene_view_first_frame_program COMMAND test_program_engine_scene_view_first_frame)
 endif ()
 

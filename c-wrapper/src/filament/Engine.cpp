@@ -1,6 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/Renderer.h>
 #include <filament/Scene.h>
+#include <filament/SwapChain.h>
 #include <filament/View.h>
 
 #include <utils/Entity.h>
@@ -43,6 +44,31 @@ void FilaEngine_destroyRenderer(FilaEngine* engine, FilaRenderer* renderer) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppRenderer = reinterpret_cast<filament::Renderer*>(renderer);
     cppEngine->destroy(cppRenderer);
+}
+
+FilaSwapChain* FilaEngine_createSwapChain(FilaEngine* engine, void* nativeWindow, uint64_t flags) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaSwapChain*>(cppEngine->createSwapChain(nativeWindow, flags));
+}
+
+FilaSwapChain* FilaEngine_createSwapChainHeadless(FilaEngine* engine, uint32_t width, uint32_t height, uint64_t flags) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaSwapChain*>(cppEngine->createSwapChain(width, height, flags));
+}
+
+void FilaEngine_destroySwapChain(FilaEngine* engine, FilaSwapChain* swapChain) {
+    if (!engine || !swapChain) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppSwapChain = reinterpret_cast<filament::SwapChain*>(swapChain);
+    cppEngine->destroy(cppSwapChain);
 }
 
 FilaScene* FilaEngine_createScene(FilaEngine* engine) {

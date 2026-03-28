@@ -37,6 +37,7 @@ When linked tests are enabled, integration programs currently include:
 - `test_program_engine_scene`
 - `test_program_engine_scene_renderer`
 - `test_program_engine_scene_view`
+- `test_program_engine_scene_view_first_frame` (headless swap-chain frame smoke test)
 
 ## Optional linked integration programs
 

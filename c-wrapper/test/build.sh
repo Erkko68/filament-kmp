@@ -17,7 +17,7 @@ make filament_c_wrapper test_compile_all
 
 if [ "${FILA_ENABLE_LINKED_TESTS:-OFF}" = "ON" ]; then
   echo "Building and running linked integration tests..."
-  make test_program_engine_scene test_program_engine_scene_renderer test_program_engine_scene_view
+  make test_program_engine_scene test_program_engine_scene_renderer test_program_engine_scene_view test_program_engine_scene_view_first_frame
   ctest --output-on-failure
 fi
 

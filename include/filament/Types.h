@@ -18,6 +18,11 @@ typedef struct FilaCamera FilaCamera;
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;
 
+typedef enum FilaCameraFov {
+	FILA_CAMERA_FOV_VERTICAL = 0,
+	FILA_CAMERA_FOV_HORIZONTAL = 1,
+} FilaCameraFov;
+
 #ifdef __cplusplus
 }
 #endif

@@ -19,6 +19,15 @@ FilaRenderer* FilaEngine_createRenderer(FilaEngine* engine);
 // Destroys a filament::Renderer instance
 void FilaEngine_destroyRenderer(FilaEngine* engine, FilaRenderer* renderer);
 
+// Creates a swap chain from a native window handle.
+FilaSwapChain* FilaEngine_createSwapChain(FilaEngine* engine, void* nativeWindow, uint64_t flags);
+
+// Creates a headless swap chain with the given size.
+FilaSwapChain* FilaEngine_createSwapChainHeadless(FilaEngine* engine, uint32_t width, uint32_t height, uint64_t flags);
+
+// Destroys a filament::SwapChain instance.
+void FilaEngine_destroySwapChain(FilaEngine* engine, FilaSwapChain* swapChain);
+
 // Creates a filament::Scene instance.
 FilaScene* FilaEngine_createScene(FilaEngine* engine);
 
