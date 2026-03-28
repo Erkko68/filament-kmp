@@ -3,6 +3,7 @@
 #include <filament/Renderer.h>
 #include <filament/Scene.h>
 #include <filament/SwapChain.h>
+#include <filament/TransformManager.h>
 #include <filament/View.h>
 
 #include <utils/Entity.h>
@@ -145,6 +146,14 @@ void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppFence = reinterpret_cast<filament::Fence*>(fence);
     cppEngine->destroy(cppFence);
+}
+
+FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaTransformManager*>(&cppEngine->getTransformManager());
 }
 
 }

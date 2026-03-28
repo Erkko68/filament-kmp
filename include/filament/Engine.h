@@ -55,6 +55,9 @@ FilaFence* FilaEngine_createFence(FilaEngine* engine);
 // Destroys a filament::Fence instance.
 void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence);
 
+// Returns the engine-owned transform manager.
+FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
+
 #ifdef __cplusplus
 }
 #endif
