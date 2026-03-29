@@ -13,32 +13,7 @@ set(C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include")
 set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/include")
 
 # Define the source files for our wrapper
-set(SOURCES
-    src/filament/Camera.cpp
-    src/filament/ColorGrading.cpp
-    src/filament/Engine.cpp
-    src/filament/EntityManager.cpp
-    src/filament/Fence.cpp
-    src/filament/IndexBuffer.cpp
-    src/filament/InstanceBuffer.cpp
-    src/filament/IndirectLight.cpp
-    src/filament/LightManager.cpp
-    src/filament/Material.cpp
-    src/filament/MorphTargetBuffer.cpp
-    src/filament/RenderTarget.cpp
-    src/filament/Renderer.cpp
-    src/filament/RenderableManager.cpp
-    src/filament/Scene.cpp
-    src/filament/SkinningBuffer.cpp
-    src/filament/Skybox.cpp
-    src/filament/Stream.cpp
-    src/filament/SwapChain.cpp
-    src/filament/Texture.cpp
-    src/filament/TextureSampler.cpp
-    src/filament/TransformManager.cpp
-    src/filament/VertexBuffer.cpp
-    src/filament/View.cpp
-)
+file(GLOB SOURCES "src/filament/*.cpp")
 
 # 1. Create our static library bridge
 add_library(filament_c_wrapper STATIC ${SOURCES})
@@ -50,34 +25,31 @@ target_include_directories(filament_c_wrapper
     PUBLIC ${C_INCLUDE_DIR}
 )
 
-if (FILA_ENABLE_LINKED_TESTS AND APPLE)
-    set(FILA_MAC_PREBUILT_LIB_DIR
-        "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/mac/lib/arm64"
-        CACHE PATH "Path to macOS arm64 Filament prebuilt static libraries"
-    )
-
-    file(GLOB FILA_MAC_PREBUILT_LIBS "${FILA_MAC_PREBUILT_LIB_DIR}/lib*.a")
-
-    if (NOT FILA_MAC_PREBUILT_LIBS)
-        message(FATAL_ERROR "No prebuilt static libraries found in: ${FILA_MAC_PREBUILT_LIB_DIR}")
-    endif ()
-
-    foreach(prebuilt_lib ${FILA_MAC_PREBUILT_LIBS})
-        if (NOT EXISTS "${prebuilt_lib}")
-            message(FATAL_ERROR "Missing required Filament prebuilt library: ${prebuilt_lib}")
-        endif ()
-    endforeach()
-
-    target_link_libraries(filament_c_wrapper
-        PUBLIC
-            ${FILA_MAC_PREBUILT_LIBS}
-            "-framework Cocoa"
-            "-framework CoreVideo"
-            "-framework IOKit"
-            "-framework Metal"
-            "-framework QuartzCore"
-    )
-endif ()
+if (APPLE)
+    # Try to auto-discover Filament prebuilt static libs for macOS/arm64. If found,
+    # link them into the wrapper so integration tests and executables resolve
+    # filament:: symbols.
+    set(FILA_MAC_PREBUILT_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/mac/lib/arm64")
+    if (EXISTS ${FILA_MAC_PREBUILT_LIB_DIR})
+        file(GLOB FILA_MAC_PREBUILT_LIBS "${FILA_MAC_PREBUILT_LIB_DIR}/lib*.a")
+        if (FILA_MAC_PREBUILT_LIBS)
+            message(STATUS "Linking Filament prebuilt static libs from: ${FILA_MAC_PREBUILT_LIB_DIR}")
+            target_link_libraries(filament_c_wrapper
+                PRIVATE
+                    ${FILA_MAC_PREBUILT_LIBS}
+                    "-framework Cocoa"
+                    "-framework CoreVideo"
+                    "-framework IOKit"
+                    "-framework Metal"
+                    "-framework QuartzCore"
+            )
+        else()
+            message(WARNING "No Filament prebuilt libs found in ${FILA_MAC_PREBUILT_LIB_DIR}; integration executables will fail to link unless FILA_ENABLE_LINKED_TESTS is used and libs provided.")
+        endif()
+    else()
+        message(WARNING "Filament prebuilt lib dir not found: ${FILA_MAC_PREBUILT_LIB_DIR}")
+    endif()
+endif()
 
 # 2. Setup tests
 enable_testing()

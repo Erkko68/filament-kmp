@@ -3,6 +3,7 @@
 #include <filament/Stream.h>
 
 #include "../../../include/filament/Texture.h"
+#include "../../../include/filament/BufferDescriptor.h"
 
 namespace {
 using TextureBuilder = filament::Texture::Builder;
@@ -144,6 +145,35 @@ void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, Fil
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppStream = reinterpret_cast<filament::Stream*>(stream);
     cppTexture->setExternalStream(*cppEngine, cppStream);
+}
+
+void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, FilaPixelBufferDescriptor* buffer) {
+    if (!texture || !engine || !buffer) {
+        return;
+    }
+    auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppBuffer = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(buffer->impl);
+    cppTexture->setImage(*cppEngine, level, xoffset, yoffset, zoffset, width, height, depth, std::move(*cppBuffer));
+}
+
+void FilaTexture_setImage2D(FilaTexture* texture, FilaEngine* engine, size_t level, FilaPixelBufferDescriptor* buffer) {
+    if (!texture || !engine || !buffer) {
+        return;
+    }
+    auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppBuffer = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(buffer->impl);
+    cppTexture->setImage(*cppEngine, level, std::move(*cppBuffer));
+}
+
+void FilaTexture_generateMipmaps(FilaTexture* texture, FilaEngine* engine) {
+    if (!texture || !engine) {
+        return;
+    }
+    auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppTexture->generateMipmaps(*cppEngine);
 }
 
 } // extern "C"

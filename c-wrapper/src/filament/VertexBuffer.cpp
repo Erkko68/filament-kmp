@@ -2,6 +2,7 @@
 #include <filament/MaterialEnums.h>
 #include <filament/VertexBuffer.h>
 
+#include "../../../include/filament/BufferDescriptor.h"
 #include "../../../include/filament/VertexBuffer.h"
 
 namespace {
@@ -83,6 +84,16 @@ size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer) {
     }
     auto cppVertexBuffer = reinterpret_cast<const filament::VertexBuffer*>(vertexBuffer);
     return cppVertexBuffer->getVertexCount();
+}
+
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferDescriptor* buffer, uint32_t byteOffset) {
+    if (!vertexBuffer || !engine || !buffer) {
+        return;
+    }
+    auto cppVertexBuffer = reinterpret_cast<filament::VertexBuffer*>(vertexBuffer);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppBuffer = reinterpret_cast<filament::backend::BufferDescriptor*>(buffer->impl);
+    cppVertexBuffer->setBufferAt(*cppEngine, bufferIndex, std::move(*cppBuffer), byteOffset);
 }
 
 } // extern "C"

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "BufferDescriptor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,6 +31,8 @@ void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder,
         uint8_t byteStride);
 FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder, FilaEngine* engine);
 size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer);
+// Set buffer data for a vertex buffer
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferDescriptor* buffer, uint32_t byteOffset);
 
 #ifdef __cplusplus
 }

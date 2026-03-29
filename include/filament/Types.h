@@ -46,6 +46,10 @@ typedef struct FilaInstanceBufferBuilder FilaInstanceBufferBuilder;
 typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
 typedef struct FilaIndexBufferBuilder FilaIndexBufferBuilder;
 typedef struct FilaMaterialBuilder FilaMaterialBuilder;
+typedef struct FilaBufferObject FilaBufferObject;
+typedef struct FilaBufferObjectBuilder FilaBufferObjectBuilder;
+typedef struct FilaSync FilaSync;
+typedef struct FilaDebugRegistry FilaDebugRegistry;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;

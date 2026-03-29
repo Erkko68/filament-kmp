@@ -94,6 +94,9 @@ void FilaEngine_destroyMorphTargetBuffer(FilaEngine* engine, FilaMorphTargetBuff
 // Destroys a filament::InstanceBuffer instance.
 void FilaEngine_destroyInstanceBuffer(FilaEngine* engine, FilaInstanceBuffer* instanceBuffer);
 
+// Destroys a filament::BufferObject instance.
+void FilaEngine_destroyBufferObject(FilaEngine* engine, FilaBufferObject* bufferObject);
+
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 

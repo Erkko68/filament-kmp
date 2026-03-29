@@ -18,6 +18,7 @@
 #include <filament/TransformManager.h>
 #include <filament/VertexBuffer.h>
 #include <filament/View.h>
+#include <filament/BufferObject.h>
 
 #include <utils/Entity.h>
 
@@ -276,6 +277,15 @@ void FilaEngine_destroyInstanceBuffer(FilaEngine* engine, FilaInstanceBuffer* in
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppInstanceBuffer = reinterpret_cast<filament::InstanceBuffer*>(instanceBuffer);
     cppEngine->destroy(cppInstanceBuffer);
+}
+
+void FilaEngine_destroyBufferObject(FilaEngine* engine, FilaBufferObject* bufferObject) {
+    if (!engine || !bufferObject) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppBufferObject = reinterpret_cast<filament::BufferObject*>(bufferObject);
+    cppEngine->destroy(cppBufferObject);
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {

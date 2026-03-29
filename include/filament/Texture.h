@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "BufferDescriptor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,6 +53,11 @@ size_t FilaTexture_getLevels(const FilaTexture* texture);
 
 // Attach an external stream to this texture
 void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, FilaStream* stream);
+
+// Upload image data to a texture (2D, 3D, or cubemap)
+void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, FilaPixelBufferDescriptor* buffer);
+void FilaTexture_setImage2D(FilaTexture* texture, FilaEngine* engine, size_t level, FilaPixelBufferDescriptor* buffer);
+void FilaTexture_generateMipmaps(FilaTexture* texture, FilaEngine* engine);
 
 #ifdef __cplusplus
 }

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "BufferDescriptor.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +22,9 @@ void FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* builder, uint32_t
 void FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* builder, FilaIndexType indexType);
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* builder, FilaEngine* engine);
 size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer);
+
+// Set buffer data for an index buffer
+void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, FilaBufferDescriptor* buffer, uint32_t byteOffset);
 
 #ifdef __cplusplus
 }

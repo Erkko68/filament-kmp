@@ -1,8 +1,9 @@
-#include <filament/Camera.h>
+#include "../../../filament-prebuilts/include/filament/Camera.h"
 
-#include <math/vec3.h>
-#include <utils/Entity.h>
+#include "../../../filament-prebuilts/include/math/vec3.h"
+#include "../../../filament-prebuilts/include/utils/Entity.h"
 
+// C wrapper headers
 #include "filament/Types.h"
 
 namespace {
