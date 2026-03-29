@@ -75,8 +75,8 @@ For each API batch:
 4. Add/extend module + signature tests.
 5. Add/extend linked smoke test.
 6. Run:
-   - `bash c-wrapper/test/build.sh`
-   - `FILA_ENABLE_LINKED_TESTS=ON bash c-wrapper/test/build.sh`
+   - `bash c-wrapper/test/test_integration.sh`
+   - `bash c-wrapper/test/test_module.sh`
 
 ## Parity Policy
 

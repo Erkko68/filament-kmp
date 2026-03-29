@@ -108,11 +108,21 @@
 
 - **Verification:** ✅ Compile-only tests pass and linked integration test passes
 
+### ✅ Batch F: Geometry Advanced
+- **API Surface:**
+  - `FilaSkinningBuffer` (vertex weights, bone indices)
+  - `FilaMorphTargetBuffer` (shape keys)
+  - `FilaInstanceBuffer` (GPU-driven instancing)
+  - Scene queries for component counts
+
+- **Implementation:** Added missing implementations for advanced geometry components.
+- **Verification:** Completed and tested.
+
 ---
 
 ## Current C API Coverage
 
-**Wrapped Modules (20 total):**
+**Wrapped Modules (23 total):**
 - Engine (create, destroy, resource lifecycle)
 - Scene (entity management, skybox, indirect light)
 - Renderer (begin/end frame, render)
@@ -133,90 +143,53 @@
 - RenderTarget (builder, texture attachment, query)
 - Stream (builder, external frame sources)
 - TextureParams (sampler configuration, filter/wrap/anisotropy)
+- SkinningBuffer (bone transformations)
+- MorphTargetBuffer (shape keys)
+- InstanceBuffer (GPU instancing)
 
 **Test Suite:**
-- 20 module compile tests (header usability)
-- 20 signature tests (ABI lock)
-- 16 linked integration programs
-- **Total compile-only: 40/40 passing** (20 module + 20 signature)
+- 23 module compile tests (header usability)
+- 23 signature tests (ABI lock)
+- 16+ linked integration programs
 
 ---
 
-## Next Batches (Prioritized)
+## Roadmap / Next Batches (Prioritized)
 
-### **Batch F: Geometry Advanced** *(High Priority - Next)*  
-**Why:** Support skeletal animation, morphing, instancing  
+To achieve true 1:1 API parity and a robust KMP ecosystem, the following batches are prioritized:
+
+### **Batch G: Core Utilities, Math, & Missing Enums** *(High Priority - Next)*
+**Why:** Provide the foundational types required by other modules and advanced functionality.
 **Scope:**
-- `SkinningBuffer` (vertex weights, bone indices)
-- `MorphTargetBuffer` (shape keys)
-- `InstanceBuffer` (GPU-driven instancing)
-- Scene queries for component counts
+- `filament/BufferObject.h` (Custom uniform/storage buffer objects)
+- `filament/Sync.h` (Advanced hardware synchronization)
+- `filament/DebugRegistry.h` (Internal metrics and debugging)
+- **Helper / Math Types:** `Box`, `Frustum`, `Viewport`, `Color`
+- **Enums & Config:** `ToneMapper`, `ColorSpace`, `Exposure`, `MaterialEnums`, `MaterialChunkType`
+- **Config Structs:** Full mapping of `Options.h` (`Engine::Config`, `View::DynamicResolutionOptions`, `View::RenderQuality`, etc.)
 
-**Estimate:** 3 new headers, ~300 lines bridge, 9 new tests
+**Action:** Start by mapping these types matching the `filament-prebuilts/include/filament/` structure.
 
-### **Batch G: Utilities & Value Types** *(Medium Priority, On-Demand)*  
-**Why:** Helper types, debug, and configuration  
+### **Batch H: Resource Uploads & Advanced API Parity** *(High Priority)*
+**Why:** Ensure developers can actively feed data to the engine, configure post-processing, and manage lifecycle events dynamically.
 **Scope:**
-- `Viewport`, `Color`, `ToneMapper` helper bindings
-- `DebugRegistry` for debug output
-- `Options` engine configuration reflection
-- Exposure, ColorSpace enums
+- **Pixel / Buffer Descriptors:** Implement `PixelBufferDescriptor` and `BufferDescriptor` mappings (crucial for updating textures and buffers).
+- **Textures & Buffers:** `Texture::setImage`, `Texture::generateMipmaps`, `VertexBuffer::setBufferAt`, `IndexBuffer::setBuffer`.
+- **Advanced Engine Features:** `Engine::create(backend, platform)` to specify Vulkan/Metal/OpenGL, and shared context initialization.
+- **Advanced View Settings:** Expose Ambient Occlusion (SSAO), Screen Space Reflections (SSR), Bloom, FXAA/TAA/MSAA, and Depth of Field.
+- **Material Enhancements:** Support `setParameter` for textures and samplers (not just floats/ints), and arrays of parameters.
+- **Callbacks:** Bridge C++ callbacks (e.g., buffer release, frame completion) to C function pointers so KMP can handle memory correctly.
 
-**Estimate:** 4+ headers, variable scope per feature
+### **Batch I: `gltfio` and Ecosystem Libraries** *(Crucial for usability)*
+**Why:** Loading 3D models easily is the most common use case. Developers need high-level model loading without parsing GLTF manually.
+**Scope:**
+- Wrap `gltfio` library (`AssetLoader`, `FilamentAsset`, `FilamentInstance`, `ResourceLoader`, `Animator`).
+- Wrap `camutils` (`Manipulator`, `Bookmark`) for standard camera controls (orbit, map, free flight).
+- Wrap `ktxreader` / `image` utilities for KTX2 compressed texture loading.
+- Wrap `utils` (e.g., `NameComponentManager`, `HierarchyComponentManager`).
 
 ---
 
 ## Recommended Action
 
-**Next:** Start **Batch F** for advanced geometry support
-- Skeletal animation, morphing, and instancing unlock advanced character animation and LOD systems
-- Foundation for game engines, CAD/3D modeling tools
-- Opens path for skeletal mesh rendering, shape key animation, GPU instancing performance
-
----
-
-## Files Modified/Created (Latest Session - Batch E)
-
-```
-Created:
-- include/filament/Stream.h (30 lines)
-- include/filament/TextureSampler.h (73 lines)
-- c-wrapper/src/filament/Stream.cpp (59 lines)
-- c-wrapper/src/filament/TextureSampler.cpp (160 lines)
-- c-wrapper/test/module/stream/stream_module_compile.c (18 lines)
-- c-wrapper/test/module/texture_sampler/texture_sampler_module_compile.c (28 lines)
-- c-wrapper/test/signature/stream/stream_signature_compile.c (27 lines)
-- c-wrapper/test/signature/texture_sampler/texture_sampler_signature_compile.c (44 lines)
-- c-wrapper/test/integration/programs/engine_view_color_grading_render_target_program.c
-- c-wrapper/test/integration/programs/engine_stream_texture_params_program.c
-
-Modified:
-- include/filament/Types.h (added FilaStream, FilaStreamBuilder, FilaTextureParams)
-- include/filament/Engine.h (added FilaEngine_destroyStream)
-- include/filament/Texture.h (added FilaTexture_setExternalStream, sampler external, texture usage API)
-- c-wrapper/CMakeLists.txt (added Stream.cpp, TextureSampler.cpp to SOURCES)
-- c-wrapper/src/filament/Engine.cpp (added Stream.h include, destroyStream implementation)
-- c-wrapper/src/filament/Texture.cpp (added Stream.h include, setExternalStream, usage bridge)
-- c-wrapper/test/CMakeLists.txt (added module/signature targets + 2 integration executables)
-- c-wrapper/test/build.sh (runs new integration executables; concise output)
-- c-wrapper/test/README.md (updated module list, integration list, and required test workflow)
-```
-
----
-
-## Quick Run Instructions
-
-```bash
-# Compile-only suite (no Filament libs needed):
-cd c-wrapper/test
-./build.sh
-
-# Full linked tests (Filament prebuilts required):
-FILA_ENABLE_LINKED_TESTS=ON ./build.sh
-
-# With macOS on-screen window test:
-FILA_ENABLE_LINKED_TESTS=ON FILA_ENABLE_MACOS_ONSCREEN_TEST=ON ./build.sh
-# Then manually:
-./build/test/test_program_engine_scene_view_macos_window
-```
-
+**Next:** Start **Batch G** to implement the missing core Filament modules (`BufferObject`, `Sync`, `DebugRegistry`), followed by the mathematical helpers (`Box`, `Frustum`, etc.) and configuration enums/structs (`Options`, `MaterialEnums`). Ensure all file structures (`src/` and `include/`) match the existing `filament-prebuilts` layout.

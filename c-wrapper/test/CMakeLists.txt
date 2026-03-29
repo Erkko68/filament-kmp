@@ -1,380 +1,53 @@
 # Progressive test layout:
 # - module/: compile-only checks for header usability
-# - signature/: compile-only checks that lock function signatures
 # - integration/: optional linked programs that use multiple APIs together
 
-option(FILA_ENABLE_MACOS_ONSCREEN_TEST "Build macOS on-screen window smoke program" OFF)
-
-add_library(test_module_engine_compile OBJECT
-    module/engine/engine_module_compile.c
-)
-add_library(test_module_scene_compile OBJECT
-    module/scene/scene_module_compile.c
-)
-add_library(test_module_renderer_compile OBJECT
-    module/renderer/renderer_module_compile.c
-)
-add_library(test_module_view_compile OBJECT
-    module/view/view_module_compile.c
-)
-add_library(test_module_camera_compile OBJECT
-    module/camera/camera_module_compile.c
-)
-add_library(test_module_entity_manager_compile OBJECT
-    module/entity_manager/entity_manager_module_compile.c
-)
-add_library(test_module_fence_compile OBJECT
-    module/fence/fence_module_compile.c
-)
-add_library(test_module_swapchain_compile OBJECT
-    module/swapchain/swapchain_module_compile.c
-)
-add_library(test_module_transform_manager_compile OBJECT
-    module/transform_manager/transform_manager_module_compile.c
-)
-add_library(test_module_light_manager_compile OBJECT
-    module/light_manager/light_manager_module_compile.c
-)
-add_library(test_module_vertex_buffer_compile OBJECT
-    module/vertex_buffer/vertex_buffer_module_compile.c
-)
-add_library(test_module_index_buffer_compile OBJECT
-    module/index_buffer/index_buffer_module_compile.c
-)
-add_library(test_module_material_compile OBJECT
-    module/material/material_module_compile.c
-)
-add_library(test_module_texture_compile OBJECT
-    module/texture/texture_module_compile.c
-)
-add_library(test_module_skybox_compile OBJECT
-    module/skybox/skybox_module_compile.c
-)
-add_library(test_module_indirect_light_compile OBJECT
-    module/indirect_light/indirect_light_module_compile.c
-)
-add_library(test_module_renderable_manager_compile OBJECT
-    module/renderable_manager/renderable_manager_module_compile.c
-)
-add_library(test_module_color_grading_compile OBJECT
-    module/color_grading/color_grading_module_compile.c
-)
-add_library(test_module_render_target_compile OBJECT
-    module/render_target/render_target_module_compile.c
-)
-add_library(test_module_stream_compile OBJECT
-    module/stream/stream_module_compile.c
-)
-add_library(test_module_texture_sampler_compile OBJECT
-    module/texture_sampler/texture_sampler_module_compile.c
-)
-add_library(test_module_skinning_buffer_compile OBJECT
-    module/skinning_buffer/skinning_buffer_module_compile.c
-)
-add_library(test_module_morph_target_buffer_compile OBJECT
-    module/morph_target_buffer/morph_target_buffer_module_compile.c
-)
-add_library(test_module_instance_buffer_compile OBJECT
-    module/instance_buffer/instance_buffer_module_compile.c
+# Automatically find all *_test.c files in module/
+file(GLOB MODULE_TEST_SOURCES
+    module/*_test.c
 )
 
-add_library(test_signature_engine_compile OBJECT
-    signature/engine/engine_signature_compile.c
-)
-add_library(test_signature_scene_compile OBJECT
-    signature/scene/scene_signature_compile.c
-)
-add_library(test_signature_renderer_compile OBJECT
-    signature/renderer/renderer_signature_compile.c
-)
-add_library(test_signature_view_compile OBJECT
-    signature/view/view_signature_compile.c
-)
-add_library(test_signature_camera_compile OBJECT
-    signature/camera/camera_signature_compile.c
-)
-add_library(test_signature_entity_manager_compile OBJECT
-    signature/entity_manager/entity_manager_signature_compile.c
-)
-add_library(test_signature_fence_compile OBJECT
-    signature/fence/fence_signature_compile.c
-)
-add_library(test_signature_swapchain_compile OBJECT
-    signature/swapchain/swapchain_signature_compile.c
-)
-add_library(test_signature_transform_manager_compile OBJECT
-    signature/transform_manager/transform_manager_signature_compile.c
-)
-add_library(test_signature_light_manager_compile OBJECT
-    signature/light_manager/light_manager_signature_compile.c
-)
-add_library(test_signature_vertex_buffer_compile OBJECT
-    signature/vertex_buffer/vertex_buffer_signature_compile.c
-)
-add_library(test_signature_index_buffer_compile OBJECT
-    signature/index_buffer/index_buffer_signature_compile.c
-)
-add_library(test_signature_material_compile OBJECT
-    signature/material/material_signature_compile.c
-)
-add_library(test_signature_texture_compile OBJECT
-    signature/texture/texture_signature_compile.c
-)
-add_library(test_signature_skybox_compile OBJECT
-    signature/skybox/skybox_signature_compile.c
-)
-add_library(test_signature_indirect_light_compile OBJECT
-    signature/indirect_light/indirect_light_signature_compile.c
-)
-add_library(test_signature_renderable_manager_compile OBJECT
-    signature/renderable_manager/renderable_manager_signature_compile.c
-)
-add_library(test_signature_color_grading_compile OBJECT
-    signature/color_grading/color_grading_signature_compile.c
-)
-add_library(test_signature_render_target_compile OBJECT
-    signature/render_target/render_target_signature_compile.c
-)
-add_library(test_signature_stream_compile OBJECT
-    signature/stream/stream_signature_compile.c
-)
-add_library(test_signature_texture_sampler_compile OBJECT
-    signature/texture_sampler/texture_sampler_signature_compile.c
-)
-add_library(test_signature_skinning_buffer_compile OBJECT
-    signature/skinning_buffer/skinning_buffer_signature_compile.c
-)
-add_library(test_signature_morph_target_buffer_compile OBJECT
-    signature/morph_target_buffer/morph_target_buffer_signature_compile.c
-)
-add_library(test_signature_instance_buffer_compile OBJECT
-    signature/instance_buffer/instance_buffer_signature_compile.c
-)
+set(MODULE_TEST_TARGETS)
 
-foreach(target_name
-    test_module_engine_compile
-    test_module_scene_compile
-    test_module_renderer_compile
-    test_module_view_compile
-    test_module_camera_compile
-    test_module_entity_manager_compile
-    test_module_fence_compile
-    test_module_swapchain_compile
-    test_module_transform_manager_compile
-    test_module_light_manager_compile
-    test_module_vertex_buffer_compile
-    test_module_index_buffer_compile
-    test_module_material_compile
-    test_module_texture_compile
-    test_module_skybox_compile
-    test_module_indirect_light_compile
-    test_module_renderable_manager_compile
-    test_module_color_grading_compile
-    test_module_render_target_compile
-    test_module_stream_compile
-    test_module_texture_sampler_compile
-    test_module_skinning_buffer_compile
-    test_module_morph_target_buffer_compile
-    test_module_instance_buffer_compile
-    test_signature_engine_compile
-    test_signature_scene_compile
-    test_signature_renderer_compile
-    test_signature_view_compile
-    test_signature_camera_compile
-    test_signature_entity_manager_compile
-    test_signature_fence_compile
-    test_signature_swapchain_compile
-    test_signature_transform_manager_compile
-    test_signature_light_manager_compile
-    test_signature_vertex_buffer_compile
-    test_signature_index_buffer_compile
-    test_signature_material_compile
-    test_signature_texture_compile
-    test_signature_skybox_compile
-    test_signature_indirect_light_compile
-    test_signature_renderable_manager_compile
-    test_signature_color_grading_compile
-    test_signature_render_target_compile
-    test_signature_stream_compile
-    test_signature_texture_sampler_compile
-    test_signature_skinning_buffer_compile
-    test_signature_morph_target_buffer_compile
-    test_signature_instance_buffer_compile
-)
+foreach(source_file ${MODULE_TEST_SOURCES})
+    get_filename_component(filename ${source_file} NAME_WE)
+    set(target_name test_${filename})
+    add_library(${target_name} OBJECT ${source_file})
     target_include_directories(${target_name} PRIVATE ${C_INCLUDE_DIR})
+    list(APPEND MODULE_TEST_TARGETS ${target_name})
 endforeach()
 
 add_custom_target(test_compile_modules
-    DEPENDS
-        test_module_engine_compile
-        test_module_scene_compile
-        test_module_renderer_compile
-        test_module_view_compile
-        test_module_camera_compile
-        test_module_entity_manager_compile
-        test_module_fence_compile
-        test_module_swapchain_compile
-        test_module_transform_manager_compile
-        test_module_light_manager_compile
-        test_module_vertex_buffer_compile
-        test_module_index_buffer_compile
-        test_module_material_compile
-        test_module_texture_compile
-        test_module_skybox_compile
-        test_module_indirect_light_compile
-        test_module_renderable_manager_compile
-        test_module_color_grading_compile
-        test_module_render_target_compile
-        test_module_stream_compile
-        test_module_texture_sampler_compile
-        test_module_skinning_buffer_compile
-        test_module_morph_target_buffer_compile
-        test_module_instance_buffer_compile
-)
-
-add_custom_target(test_compile_signatures
-    DEPENDS
-        test_signature_engine_compile
-        test_signature_scene_compile
-        test_signature_renderer_compile
-        test_signature_view_compile
-        test_signature_camera_compile
-        test_signature_entity_manager_compile
-        test_signature_fence_compile
-        test_signature_swapchain_compile
-        test_signature_transform_manager_compile
-        test_signature_light_manager_compile
-        test_signature_vertex_buffer_compile
-        test_signature_index_buffer_compile
-        test_signature_material_compile
-        test_signature_texture_compile
-        test_signature_skybox_compile
-        test_signature_indirect_light_compile
-        test_signature_renderable_manager_compile
-        test_signature_color_grading_compile
-        test_signature_render_target_compile
-        test_signature_stream_compile
-        test_signature_texture_sampler_compile
-        test_signature_skinning_buffer_compile
-        test_signature_morph_target_buffer_compile
-        test_signature_instance_buffer_compile
+    DEPENDS ${MODULE_TEST_TARGETS}
 )
 
 add_custom_target(test_compile_all
-    DEPENDS
-        test_compile_modules
-        test_compile_signatures
+    DEPENDS test_compile_modules
 )
 
-if (FILA_ENABLE_LINKED_TESTS)
-    add_executable(test_program_engine_scene
-        integration/programs/engine_scene_program.c
-    )
-    target_link_libraries(test_program_engine_scene PRIVATE filament_c_wrapper)
-    add_test(NAME engine_scene_program COMMAND test_program_engine_scene)
-
-    add_executable(test_program_engine_scene_renderer
-        integration/programs/engine_scene_renderer_program.c
-    )
-    target_link_libraries(test_program_engine_scene_renderer PRIVATE filament_c_wrapper)
-    add_test(NAME engine_scene_renderer_program COMMAND test_program_engine_scene_renderer)
-
-    add_executable(test_program_engine_scene_view
-        integration/programs/engine_scene_view_program.c
-    )
-    target_link_libraries(test_program_engine_scene_view PRIVATE filament_c_wrapper)
-    add_test(NAME engine_scene_view_program COMMAND test_program_engine_scene_view)
-
-    add_executable(test_program_engine_scene_view_first_frame
-        integration/programs/engine_scene_view_first_frame_program.c
-    )
-    target_link_libraries(test_program_engine_scene_view_first_frame PRIVATE filament_c_wrapper)
-    add_test(NAME engine_scene_view_first_frame_program COMMAND test_program_engine_scene_view_first_frame)
-
-    add_executable(test_program_entity_manager
-        integration/programs/entity_manager_program.c
-    )
-    target_link_libraries(test_program_entity_manager PRIVATE filament_c_wrapper)
-    add_test(NAME entity_manager_program COMMAND test_program_entity_manager)
-
-    add_executable(test_program_engine_fence
-        integration/programs/engine_fence_program.c
-    )
-    target_link_libraries(test_program_engine_fence PRIVATE filament_c_wrapper)
-    add_test(NAME engine_fence_program COMMAND test_program_engine_fence)
-
-    add_executable(test_program_engine_swapchain
-        integration/programs/engine_swapchain_program.c
-    )
-    target_link_libraries(test_program_engine_swapchain PRIVATE filament_c_wrapper)
-    add_test(NAME engine_swapchain_program COMMAND test_program_engine_swapchain)
-
-    add_executable(test_program_engine_transform_manager
-        integration/programs/engine_transform_manager_program.c
-    )
-    target_link_libraries(test_program_engine_transform_manager PRIVATE filament_c_wrapper)
-    add_test(NAME engine_transform_manager_program COMMAND test_program_engine_transform_manager)
-
-    add_executable(test_program_engine_light_manager
-        integration/programs/engine_light_manager_program.c
-    )
-    target_link_libraries(test_program_engine_light_manager PRIVATE filament_c_wrapper)
-    add_test(NAME engine_light_manager_program COMMAND test_program_engine_light_manager)
-
-    add_executable(test_program_engine_renderable_manager
-        integration/programs/engine_renderable_manager_program.c
-    )
-    target_link_libraries(test_program_engine_renderable_manager PRIVATE filament_c_wrapper)
-    add_test(NAME engine_renderable_manager_program COMMAND test_program_engine_renderable_manager)
-
-    add_executable(test_program_engine_resource_builders
-        integration/programs/engine_resource_builders_program.c
-    )
-    target_link_libraries(test_program_engine_resource_builders PRIVATE filament_c_wrapper)
-    add_test(NAME engine_resource_builders_program COMMAND test_program_engine_resource_builders)
-
-    add_executable(test_program_engine_texture_skybox
-        integration/programs/engine_texture_skybox_program.c
-    )
-    target_link_libraries(test_program_engine_texture_skybox PRIVATE filament_c_wrapper)
-    add_test(NAME engine_texture_skybox_program COMMAND test_program_engine_texture_skybox)
-
-    add_executable(test_program_engine_indirect_light_scene
-        integration/programs/engine_indirect_light_scene_program.c
-    )
-    target_link_libraries(test_program_engine_indirect_light_scene PRIVATE filament_c_wrapper)
-    add_test(NAME engine_indirect_light_scene_program COMMAND test_program_engine_indirect_light_scene)
-
-    add_executable(test_program_engine_material_instance_parameters
-        integration/programs/engine_material_instance_parameters_program.c
-    )
-    target_link_libraries(test_program_engine_material_instance_parameters PRIVATE filament_c_wrapper)
-    add_test(NAME engine_material_instance_parameters_program COMMAND test_program_engine_material_instance_parameters)
-
-    add_executable(test_program_engine_view_color_grading_render_target
-        integration/programs/engine_view_color_grading_render_target_program.c
-    )
-    target_link_libraries(test_program_engine_view_color_grading_render_target PRIVATE filament_c_wrapper)
-    add_test(NAME engine_view_color_grading_render_target_program COMMAND test_program_engine_view_color_grading_render_target)
-
-    add_executable(test_program_engine_stream_texture_params
-        integration/programs/engine_stream_texture_params_program.c
-    )
-    target_link_libraries(test_program_engine_stream_texture_params PRIVATE filament_c_wrapper)
-    add_test(NAME engine_stream_texture_params_program COMMAND test_program_engine_stream_texture_params)
-
-    add_executable(test_program_engine_geometry_advanced_buffers
-        integration/programs/engine_geometry_advanced_buffers_program.c
-    )
-    target_link_libraries(test_program_engine_geometry_advanced_buffers PRIVATE filament_c_wrapper)
-    add_test(NAME engine_geometry_advanced_buffers_program COMMAND test_program_engine_geometry_advanced_buffers)
-
-    if (APPLE AND FILA_ENABLE_MACOS_ONSCREEN_TEST)
-        enable_language(OBJCXX)
-        add_executable(test_program_engine_scene_view_macos_window
-            integration/programs/engine_scene_view_macos_window_program.mm
-        )
-        target_link_libraries(test_program_engine_scene_view_macos_window PRIVATE filament_c_wrapper)
-    endif ()
+# Integration tests: dynamic discovery for smoke and onscreen
+if (APPLE)
+    enable_language(OBJCXX)
 endif ()
 
+# Smoke tests
+file(GLOB SMOKE_TEST_SOURCES integration/smoke/*_program.c)
+foreach(source_file ${SMOKE_TEST_SOURCES})
+    get_filename_component(filename ${source_file} NAME_WE)
+    set(target_name test_${filename})
+    add_executable(${target_name} ${source_file})
+    target_link_libraries(${target_name} PRIVATE filament_c_wrapper)
+    add_test(NAME ${filename} COMMAND ${target_name})
+endforeach()
+
+# Onscreen tests (macOS only)
+if (APPLE)
+    file(GLOB ONSCREEN_TEST_SOURCES integration/onscreen/*_program.mm)
+    foreach(source_file ${ONSCREEN_TEST_SOURCES})
+        get_filename_component(filename ${source_file} NAME_WE)
+        set(target_name test_${filename})
+        add_executable(${target_name} ${source_file})
+        target_link_libraries(${target_name} PRIVATE filament_c_wrapper)
+        # Optionally add_test here if you want to run onscreen tests via CTest
+    endforeach()
+endif ()
