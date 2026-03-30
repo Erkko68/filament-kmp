@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "../../../include/filament/TransformManager.h"
+#include "filament/TransformManager.h"
 
 namespace {
 utils::Entity toEntity(FilaEntity entity) {

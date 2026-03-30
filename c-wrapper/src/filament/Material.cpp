@@ -6,7 +6,7 @@
 #include <math/vec3.h>
 #include <math/vec4.h>
 
-#include "../../../include/filament/Material.h"
+#include "filament/Material.h"
 
 namespace {
 using MaterialBuilder = filament::Material::Builder;

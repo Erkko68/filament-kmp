@@ -1,6 +1,6 @@
 #include <filament/TextureSampler.h>
 
-#include "../../../include/filament/TextureSampler.h"
+#include "filament/TextureSampler.h"
 
 namespace {
 using TextureSampler = filament::TextureSampler;

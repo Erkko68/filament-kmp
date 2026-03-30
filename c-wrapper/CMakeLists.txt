@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(FILA_ENABLE_LINKED_TESTS "Build linked C test programs (requires host Filament libs)" OFF)
 
 # Define where our C headers are (the ones Kotlin will see)
-set(C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+set(C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Define where the original Filament C++ headers are
 set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/include")

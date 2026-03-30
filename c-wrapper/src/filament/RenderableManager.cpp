@@ -10,7 +10,7 @@
 
 #include <utils/Entity.h>
 
-#include "../../../include/filament/RenderableManager.h"
+#include "filament/RenderableManager.h"
 
 namespace {
 utils::Entity toEntity(FilaEntity entity) {

@@ -2,7 +2,7 @@
 #include <filament/RenderTarget.h>
 #include <filament/Texture.h>
 
-#include "../../../include/filament/RenderTarget.h"
+#include "filament/RenderTarget.h"
 
 namespace {
 using RenderTargetBuilder = filament::RenderTarget::Builder;

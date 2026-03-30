@@ -2,7 +2,7 @@
 #include <filament/IndirectLight.h>
 #include <filament/Texture.h>
 
-#include "../../../include/filament/IndirectLight.h"
+#include "filament/IndirectLight.h"
 
 namespace {
 using IndirectLightBuilder = filament::IndirectLight::Builder;

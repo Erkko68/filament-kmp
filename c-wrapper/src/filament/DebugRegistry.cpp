@@ -1,6 +1,6 @@
 #include <filament/DebugRegistry.h>
 
-#include "../../../include/filament/DebugRegistry.h"
+#include "filament/DebugRegistry.h"
 
 extern "C" {
 

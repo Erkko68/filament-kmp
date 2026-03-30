@@ -5,7 +5,7 @@
 #include <cstring>
 #include <vector>
 
-#include "../../../include/filament/InstanceBuffer.h"
+#include "filament/InstanceBuffer.h"
 
 namespace {
 using InstanceBufferBuilder = filament::InstanceBuffer::Builder;

@@ -2,8 +2,8 @@
 #include <filament/MaterialEnums.h>
 #include <filament/VertexBuffer.h>
 
-#include "../../../include/filament/BufferDescriptor.h"
-#include "../../../include/filament/VertexBuffer.h"
+#include "filament/BufferDescriptor.h"
+#include "filament/VertexBuffer.h"
 
 namespace {
 using VertexBuilder = filament::VertexBuffer::Builder;

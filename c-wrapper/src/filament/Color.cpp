@@ -2,7 +2,7 @@
 #include "../../../filament-prebuilts/include/math/vec3.h"
 
 // C wrapper header
-#include "../../../include/filament/Color.h"
+#include "filament/Color.h"
 
 extern "C" {
 

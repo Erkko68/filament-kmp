@@ -1,4 +1,4 @@
-#include "../../../filament-prebuilts/include/filament/Camera.h"
+#include <filament/Camera.h>
 
 #include "../../../filament-prebuilts/include/math/vec3.h"
 #include "../../../filament-prebuilts/include/utils/Entity.h"
