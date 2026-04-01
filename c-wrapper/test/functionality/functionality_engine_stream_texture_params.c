@@ -5,10 +5,18 @@
 #include "filament/Stream.h"
 #include "filament/Texture.h"
 #include "filament/TextureSampler.h"
+#include "backend/CallbackHandler.h"
 
 static void noop_stream_callback(void* image, void* userData) {
     (void)image;
     (void)userData;
+}
+
+static void noop_handler_dispatch(void* callbackUser, FilaCallbackHandlerCallback callback, void* handlerUser) {
+    (void)handlerUser;
+    if (callback) {
+        callback(callbackUser);
+    }
 }
 
 int main(void) {
@@ -70,6 +78,9 @@ int main(void) {
         return 1;
     }
 
+    FilaStream_setAcquiredImage((FilaStream*)0, (void*)0, noop_stream_callback, (void*)0, (const float*)0);
+    FilaStream_setAcquiredImageWithHandler((FilaStream*)0, (void*)0, (FilaCallbackHandler*)0, noop_stream_callback, (void*)0, (const float*)0);
+
     FilaTextureBuilder* textureBuilder = FilaTextureBuilder_create();
     if (!textureBuilder) {
         printf("Texture builder creation failed\n");
@@ -99,6 +110,7 @@ int main(void) {
 
     FilaTexture_setExternalStream(texture, engine, stream);
     FilaTexture_setExternalImagePlane(texture, engine, (void*)0, 0u);
+    FilaTexture_setImage2DRegion(texture, engine, 0u, 0u, 0u, 1u, 1u, (FilaPixelBufferDescriptor*)0);
     {
         static unsigned char acquiredImageStub = 0u;
         const float identity3x3[9] = {
@@ -107,6 +119,11 @@ int main(void) {
             0.0f, 0.0f, 1.0f,
         };
         FilaStream_setAcquiredImage(stream, &acquiredImageStub, noop_stream_callback, (void*)0, identity3x3);
+        {
+            FilaCallbackHandler* handler = FilaCallbackHandler_create(noop_handler_dispatch, (void*)0);
+            FilaStream_setAcquiredImageWithHandler(stream, &acquiredImageStub, handler, noop_stream_callback, (void*)0, identity3x3);
+            FilaCallbackHandler_destroy(handler);
+        }
     }
     FilaStream_setDimensions(stream, 8u, 8u);
     {

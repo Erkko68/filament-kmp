@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "../backend/CallbackHandler.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +29,13 @@ FilaStreamType FilaStream_getStreamType(const FilaStream* stream);
 void FilaStream_setAcquiredImage(
     FilaStream* stream,
     void* image,
+    FilaStreamCallback callback,
+    void* userData,
+    const float transform[9]);
+void FilaStream_setAcquiredImageWithHandler(
+    FilaStream* stream,
+    void* image,
+    FilaCallbackHandler* handler,
     FilaStreamCallback callback,
     void* userData,
     const float transform[9]);

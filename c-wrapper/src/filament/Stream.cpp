@@ -3,6 +3,7 @@
 
 #include <math/mat3.h>
 
+#include "../../include/filament/BufferDescriptor.h"
 #include "../../include/filament/Stream.h"
 
 namespace {
@@ -83,6 +84,26 @@ void FilaStream_setAcquiredImage(
                 transform[6], transform[7], transform[8]);
     }
     cppStream->setAcquiredImage(image, callback, userData, t);
+}
+
+void FilaStream_setAcquiredImageWithHandler(
+        FilaStream* stream,
+        void* image,
+        FilaCallbackHandler* handler,
+        FilaStreamCallback callback,
+        void* userData,
+        const float transform[9]) {
+    if (!stream || !image || !callback) return;
+    auto cppStream = reinterpret_cast<filament::Stream*>(stream);
+    auto cppHandler = reinterpret_cast<filament::backend::CallbackHandler*>(handler ? handler->impl : nullptr);
+    filament::math::mat3f t;
+    if (transform) {
+        t = filament::math::mat3f(
+                transform[0], transform[1], transform[2],
+                transform[3], transform[4], transform[5],
+                transform[6], transform[7], transform[8]);
+    }
+    cppStream->setAcquiredImage(image, cppHandler, callback, userData, t);
 }
 
 void FilaStream_setDimensions(FilaStream* stream, uint32_t width, uint32_t height) {

@@ -17,6 +17,9 @@ void test_headers_texture_sampler(void) {
     // Test anisotropy
     FilaTextureParams_setAnisotropy(sampler, 4.0f);
 
+    // Test compare mode configuration
+    FilaTextureParams_setCompareMode(sampler, FILA_SAMPLER_COMPARE_TO_TEXTURE, FILA_SAMPLER_COMPARE_LE);
+
     // Test getters
     (void)FilaTextureParams_getMinFilter(sampler);
     (void)FilaTextureParams_getMagFilter(sampler);
@@ -24,6 +27,8 @@ void test_headers_texture_sampler(void) {
     (void)FilaTextureParams_getWrapModeT(sampler);
     (void)FilaTextureParams_getWrapModeR(sampler);
     (void)FilaTextureParams_getAnisotropy(sampler);
+    (void)FilaTextureParams_getCompareMode(sampler);
+    (void)FilaTextureParams_getCompareFunc(sampler);
 
     FilaTextureParams_destroy(sampler);
 }

@@ -49,6 +49,7 @@ void test_headers_texture(void) {
     (void)FilaTexture_getMaxTextureSize(engine, FILA_TEXTURE_SAMPLER_2D);
     (void)FilaTexture_getMaxArrayTextureLayers(engine);
     FilaTexture_setExternalImagePlane(texture, engine, (void*)0, 0u);
+    FilaTexture_setImage2DRegion(texture, engine, 0u, 0u, 0u, 1u, 1u, (FilaPixelBufferDescriptor*)0);
 
     FilaTextureBuilder_destroy(builder);
     FilaEngine_destroyTexture(engine, texture);

@@ -21,6 +21,7 @@ void test_headers_stream(void) {
     // Test getters
     (void)FilaStream_getStreamType(stream);
     FilaStream_setAcquiredImage(stream, (void*)0, noop_stream_callback, (void*)0, (const float*)0);
+    FilaStream_setAcquiredImageWithHandler(stream, (void*)0, (FilaCallbackHandler*)0, noop_stream_callback, (void*)0, (const float*)0);
     FilaStream_setDimensions(stream, 640, 480);
     (void)FilaStream_getTimestamp(stream);
 }
