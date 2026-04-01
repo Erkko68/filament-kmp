@@ -38,6 +38,8 @@ FilaBackendShaderLanguage FilaBackendProgram_getShaderLanguage(const FilaBackend
 
 void FilaBackendProgram_setShader(
     FilaBackendProgram* program, FilaBackendShaderStage shaderStage, const void* data, size_t size);
+void FilaBackendProgram_clearShader(FilaBackendProgram* program, FilaBackendShaderStage shaderStage);
+void FilaBackendProgram_clearAllShaders(FilaBackendProgram* program);
 size_t FilaBackendProgram_getShaderSize(
     const FilaBackendProgram* program, FilaBackendShaderStage shaderStage);
 size_t FilaBackendProgram_copyShader(
@@ -53,6 +55,7 @@ size_t FilaBackendProgram_copyName(
 bool FilaBackendProgram_setDescriptorBindings(
     FilaBackendProgram* program, FilaBackendDescriptorSet set,
     const FilaBackendProgramDescriptorBindingEntry* entries, uint32_t count);
+bool FilaBackendProgram_clearDescriptorBindings(FilaBackendProgram* program, FilaBackendDescriptorSet set);
 
 void FilaBackendProgram_setSingleDescriptorBinding(
     FilaBackendProgram* program, FilaBackendDescriptorSet set, const char* name,
@@ -62,11 +65,18 @@ uint32_t FilaBackendProgram_getDescriptorBindingCount(
 bool FilaBackendProgram_getDescriptorBindingAt(
     const FilaBackendProgram* program, FilaBackendDescriptorSet set, uint32_t index,
     FilaBackendDescriptorType* outType, FilaBackendDescriptorBinding* outBinding);
+size_t FilaBackendProgram_getDescriptorBindingNameSizeAt(
+    const FilaBackendProgram* program, FilaBackendDescriptorSet set, uint32_t index);
+size_t FilaBackendProgram_copyDescriptorBindingNameAt(
+    const FilaBackendProgram* program, FilaBackendDescriptorSet set, uint32_t index,
+    char* outName, size_t outNameSize);
 
 // Replaces push constants for a shader stage with the provided entries.
 bool FilaBackendProgram_setPushConstants(
     FilaBackendProgram* program, FilaBackendShaderStage shaderStage,
     const FilaBackendProgramPushConstantEntry* entries, uint32_t count);
+bool FilaBackendProgram_clearPushConstants(
+    FilaBackendProgram* program, FilaBackendShaderStage shaderStage);
 
 void FilaBackendProgram_setSinglePushConstant(
     FilaBackendProgram* program, FilaBackendShaderStage shaderStage, const char* name,
@@ -76,6 +86,11 @@ uint32_t FilaBackendProgram_getPushConstantCount(
 bool FilaBackendProgram_getPushConstantTypeAt(
     const FilaBackendProgram* program, FilaBackendShaderStage shaderStage, uint32_t index,
     FilaBackendConstantType* outType);
+size_t FilaBackendProgram_getPushConstantNameSizeAt(
+    const FilaBackendProgram* program, FilaBackendShaderStage shaderStage, uint32_t index);
+size_t FilaBackendProgram_copyPushConstantNameAt(
+    const FilaBackendProgram* program, FilaBackendShaderStage shaderStage, uint32_t index,
+    char* outName, size_t outNameSize);
 
 void FilaBackendProgram_setCacheId(FilaBackendProgram* program, uint64_t cacheId);
 uint64_t FilaBackendProgram_getCacheId(const FilaBackendProgram* program);

@@ -11,6 +11,16 @@ struct FilaBackendProgram {
     filament::backend::Program* impl;
 };
 
+namespace {
+bool isValidDescriptorSet(FilaBackendDescriptorSet set) {
+    return set < filament::backend::MAX_DESCRIPTOR_SET_COUNT;
+}
+
+bool isValidShaderStage(FilaBackendShaderStage shaderStage) {
+    return static_cast<size_t>(shaderStage) < filament::backend::Program::SHADER_TYPE_COUNT;
+}
+} // namespace
+
 extern "C" {
 
 FilaBackendProgram* FilaBackendProgram_create(void) {
@@ -61,10 +71,27 @@ FilaBackendShaderLanguage FilaBackendProgram_getShaderLanguage(const FilaBackend
 void FilaBackendProgram_setShader(
         FilaBackendProgram* program, FilaBackendShaderStage shaderStage, const void* data,
         size_t size) {
-    if (!program || !data || size == 0) {
+    if (!program || !data || size == 0 || !isValidShaderStage(shaderStage)) {
         return;
     }
     program->impl->shader(static_cast<filament::backend::ShaderStage>(shaderStage), data, size);
+}
+
+void FilaBackendProgram_clearShader(FilaBackendProgram* program, FilaBackendShaderStage shaderStage) {
+    if (!program || !isValidShaderStage(shaderStage)) {
+        return;
+    }
+    auto stage = static_cast<size_t>(shaderStage);
+    program->impl->getShadersSource()[stage].clear();
+}
+
+void FilaBackendProgram_clearAllShaders(FilaBackendProgram* program) {
+    if (!program) {
+        return;
+    }
+    for (size_t i = 0; i < filament::backend::Program::SHADER_TYPE_COUNT; i++) {
+        program->impl->getShadersSource()[i].clear();
+    }
 }
 
 size_t FilaBackendProgram_getShaderSize(
@@ -131,7 +158,7 @@ size_t FilaBackendProgram_copyName(
 bool FilaBackendProgram_setDescriptorBindings(
         FilaBackendProgram* program, FilaBackendDescriptorSet set,
         const FilaBackendProgramDescriptorBindingEntry* entries, uint32_t count) {
-    if (!program || set >= filament::backend::MAX_DESCRIPTOR_SET_COUNT) {
+    if (!program || !isValidDescriptorSet(set)) {
         return false;
     }
     if (count > filament::backend::MAX_DESCRIPTOR_COUNT) {
@@ -156,6 +183,10 @@ bool FilaBackendProgram_setDescriptorBindings(
     return true;
 }
 
+bool FilaBackendProgram_clearDescriptorBindings(FilaBackendProgram* program, FilaBackendDescriptorSet set) {
+    return FilaBackendProgram_setDescriptorBindings(program, set, nullptr, 0);
+}
+
 void FilaBackendProgram_setSingleDescriptorBinding(
         FilaBackendProgram* program, FilaBackendDescriptorSet set, const char* name,
         FilaBackendDescriptorType type, FilaBackendDescriptorBinding binding) {
@@ -169,7 +200,7 @@ void FilaBackendProgram_setSingleDescriptorBinding(
 
 uint32_t FilaBackendProgram_getDescriptorBindingCount(
         const FilaBackendProgram* program, FilaBackendDescriptorSet set) {
-    if (!program || set >= filament::backend::MAX_DESCRIPTOR_SET_COUNT) {
+    if (!program || !isValidDescriptorSet(set)) {
         return 0;
     }
     return static_cast<uint32_t>(program->impl->getDescriptorBindings()[set].size());
@@ -178,7 +209,7 @@ uint32_t FilaBackendProgram_getDescriptorBindingCount(
 bool FilaBackendProgram_getDescriptorBindingAt(
         const FilaBackendProgram* program, FilaBackendDescriptorSet set, uint32_t index,
         FilaBackendDescriptorType* outType, FilaBackendDescriptorBinding* outBinding) {
-    if (!program || !outType || !outBinding || set >= filament::backend::MAX_DESCRIPTOR_SET_COUNT) {
+    if (!program || !outType || !outBinding || !isValidDescriptorSet(set)) {
         return false;
     }
     const auto& bindings = program->impl->getDescriptorBindings()[set];
@@ -191,10 +222,42 @@ bool FilaBackendProgram_getDescriptorBindingAt(
     return true;
 }
 
+size_t FilaBackendProgram_getDescriptorBindingNameSizeAt(
+        const FilaBackendProgram* program, FilaBackendDescriptorSet set, uint32_t index) {
+    if (!program || !isValidDescriptorSet(set)) {
+        return 0;
+    }
+    const auto& bindings = program->impl->getDescriptorBindings()[set];
+    if (index >= bindings.size()) {
+        return 0;
+    }
+    return static_cast<size_t>(bindings[index].name.size());
+}
+
+size_t FilaBackendProgram_copyDescriptorBindingNameAt(
+        const FilaBackendProgram* program, FilaBackendDescriptorSet set, uint32_t index,
+        char* outName, size_t outNameSize) {
+    if (!program || !outName || outNameSize == 0 || !isValidDescriptorSet(set)) {
+        return 0;
+    }
+    const auto& bindings = program->impl->getDescriptorBindings()[set];
+    if (index >= bindings.size()) {
+        return 0;
+    }
+    const auto& name = bindings[index].name;
+    const size_t nameSize = static_cast<size_t>(name.size());
+    const size_t copySize = std::min(nameSize, outNameSize - 1);
+    if (copySize > 0) {
+        std::memcpy(outName, name.c_str(), copySize);
+    }
+    outName[copySize] = '\0';
+    return copySize;
+}
+
 bool FilaBackendProgram_setPushConstants(
         FilaBackendProgram* program, FilaBackendShaderStage shaderStage,
         const FilaBackendProgramPushConstantEntry* entries, uint32_t count) {
-    if (!program) {
+    if (!program || !isValidShaderStage(shaderStage)) {
         return false;
     }
     if (count > filament::backend::MAX_PUSH_CONSTANT_COUNT) {
@@ -222,6 +285,11 @@ bool FilaBackendProgram_setPushConstants(
     return true;
 }
 
+bool FilaBackendProgram_clearPushConstants(
+        FilaBackendProgram* program, FilaBackendShaderStage shaderStage) {
+    return FilaBackendProgram_setPushConstants(program, shaderStage, nullptr, 0);
+}
+
 void FilaBackendProgram_setSinglePushConstant(
         FilaBackendProgram* program, FilaBackendShaderStage shaderStage, const char* name,
         FilaBackendConstantType type) {
@@ -234,7 +302,7 @@ void FilaBackendProgram_setSinglePushConstant(
 
 uint32_t FilaBackendProgram_getPushConstantCount(
         const FilaBackendProgram* program, FilaBackendShaderStage shaderStage) {
-    if (!program) {
+    if (!program || !isValidShaderStage(shaderStage)) {
         return 0;
     }
     auto stage = static_cast<filament::backend::ShaderStage>(shaderStage);
@@ -244,7 +312,7 @@ uint32_t FilaBackendProgram_getPushConstantCount(
 bool FilaBackendProgram_getPushConstantTypeAt(
         const FilaBackendProgram* program, FilaBackendShaderStage shaderStage, uint32_t index,
         FilaBackendConstantType* outType) {
-    if (!program || !outType) {
+    if (!program || !outType || !isValidShaderStage(shaderStage)) {
         return false;
     }
     auto stage = static_cast<filament::backend::ShaderStage>(shaderStage);
@@ -254,6 +322,40 @@ bool FilaBackendProgram_getPushConstantTypeAt(
     }
     *outType = static_cast<FilaBackendConstantType>(constants[index].type);
     return true;
+}
+
+size_t FilaBackendProgram_getPushConstantNameSizeAt(
+        const FilaBackendProgram* program, FilaBackendShaderStage shaderStage, uint32_t index) {
+    if (!program || !isValidShaderStage(shaderStage)) {
+        return 0;
+    }
+    auto stage = static_cast<filament::backend::ShaderStage>(shaderStage);
+    const auto& constants = program->impl->getPushConstants(stage);
+    if (index >= constants.size()) {
+        return 0;
+    }
+    return static_cast<size_t>(constants[index].name.size());
+}
+
+size_t FilaBackendProgram_copyPushConstantNameAt(
+        const FilaBackendProgram* program, FilaBackendShaderStage shaderStage, uint32_t index,
+        char* outName, size_t outNameSize) {
+    if (!program || !outName || outNameSize == 0 || !isValidShaderStage(shaderStage)) {
+        return 0;
+    }
+    auto stage = static_cast<filament::backend::ShaderStage>(shaderStage);
+    const auto& constants = program->impl->getPushConstants(stage);
+    if (index >= constants.size()) {
+        return 0;
+    }
+    const auto& name = constants[index].name;
+    const size_t nameSize = static_cast<size_t>(name.size());
+    const size_t copySize = std::min(nameSize, outNameSize - 1);
+    if (copySize > 0) {
+        std::memcpy(outName, name.c_str(), copySize);
+    }
+    outName[copySize] = '\0';
+    return copySize;
 }
 
 void FilaBackendProgram_setCacheId(FilaBackendProgram* program, uint64_t cacheId) {

@@ -12,6 +12,8 @@ void backend_program_test(void) {
     {
         const char shaderBytes[4] = { 't', 'e', 's', 't' };
         FilaBackendProgram_setShader(program, FILA_BACKEND_SHADER_STAGE_VERTEX, shaderBytes, 4);
+        FilaBackendProgram_clearShader(program, FILA_BACKEND_SHADER_STAGE_FRAGMENT);
+        FilaBackendProgram_clearAllShaders(program);
         {
             char outShader[8];
             FilaBackendProgram_getShaderSize(program, FILA_BACKEND_SHADER_STAGE_VERTEX);
@@ -33,11 +35,28 @@ void backend_program_test(void) {
         "uTexture",
         FILA_BACKEND_DESCRIPTOR_TYPE_SAMPLER_2D_FLOAT,
         1);
+
+    {
+        FilaBackendProgramDescriptorBindingEntry entries[2] = {
+            { "uTex0", FILA_BACKEND_DESCRIPTOR_TYPE_SAMPLER_2D_FLOAT, 0 },
+            { "uTex1", FILA_BACKEND_DESCRIPTOR_TYPE_SAMPLER_2D_FLOAT, 1 },
+        };
+        FilaBackendProgram_setDescriptorBindings(program, 0, entries, 2);
+        FilaBackendProgram_setDescriptorBindings(program, 0, NULL, 0);
+        FilaBackendProgram_clearDescriptorBindings(program, 0);
+    }
+
     FilaBackendProgram_getDescriptorBindingCount(program, 0);
     {
         FilaBackendDescriptorType outType = FILA_BACKEND_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         FilaBackendDescriptorBinding outBinding = 0;
         FilaBackendProgram_getDescriptorBindingAt(program, 0, 0, &outType, &outBinding);
+        {
+            char outName[64];
+            FilaBackendProgram_getDescriptorBindingNameSizeAt(program, 0, 0);
+            FilaBackendProgram_copyDescriptorBindingNameAt(program, 0, 0, outName, sizeof(outName));
+            FilaBackendProgram_copyDescriptorBindingNameAt(program, 0, 99, outName, sizeof(outName));
+        }
     }
 
     FilaBackendProgram_setSinglePushConstant(
@@ -45,6 +64,17 @@ void backend_program_test(void) {
         FILA_BACKEND_SHADER_STAGE_VERTEX,
         "pc0",
         FILA_BACKEND_CONSTANT_TYPE_INT);
+
+    {
+        FilaBackendProgramPushConstantEntry constants[2] = {
+            { "pc0", FILA_BACKEND_CONSTANT_TYPE_INT },
+            { "pc1", FILA_BACKEND_CONSTANT_TYPE_FLOAT },
+        };
+        FilaBackendProgram_setPushConstants(program, FILA_BACKEND_SHADER_STAGE_VERTEX, constants, 2);
+        FilaBackendProgram_setPushConstants(program, FILA_BACKEND_SHADER_STAGE_VERTEX, NULL, 0);
+        FilaBackendProgram_clearPushConstants(program, FILA_BACKEND_SHADER_STAGE_VERTEX);
+    }
+
     FilaBackendProgram_getPushConstantCount(program, FILA_BACKEND_SHADER_STAGE_VERTEX);
     {
         FilaBackendConstantType outType = FILA_BACKEND_CONSTANT_TYPE_BOOL;
@@ -53,6 +83,22 @@ void backend_program_test(void) {
             FILA_BACKEND_SHADER_STAGE_VERTEX,
             0,
             &outType);
+        {
+            char outName[64];
+            FilaBackendProgram_getPushConstantNameSizeAt(program, FILA_BACKEND_SHADER_STAGE_VERTEX, 0);
+            FilaBackendProgram_copyPushConstantNameAt(
+                program,
+                FILA_BACKEND_SHADER_STAGE_VERTEX,
+                0,
+                outName,
+                sizeof(outName));
+            FilaBackendProgram_copyPushConstantNameAt(
+                program,
+                (FilaBackendShaderStage)255,
+                0,
+                outName,
+                sizeof(outName));
+        }
     }
 
     FilaBackendProgram_setCacheId(program, 123u);
