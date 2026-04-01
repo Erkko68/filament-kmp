@@ -5,6 +5,8 @@
 #include <filament/View.h>
 #include <filament/Viewport.h>
 
+#include <algorithm>
+
 #include "../../include/filament/Renderer.h"
 
 namespace {
@@ -58,6 +60,26 @@ void fromClearOptions(const filament::Renderer::ClearOptions& in, FilaRendererCl
     out->clearStencil = in.clearStencil;
     out->clear = in.clear;
     out->discard = in.discard;
+}
+
+void fromFrameInfo(const filament::Renderer::FrameInfo& in, FilaRendererFrameInfo* out) {
+    if (!out) {
+        return;
+    }
+    out->frameId = in.frameId;
+    out->gpuFrameDuration = in.gpuFrameDuration;
+    out->denoisedGpuFrameDuration = in.denoisedGpuFrameDuration;
+    out->beginFrame = in.beginFrame;
+    out->endFrame = in.endFrame;
+    out->backendBeginFrame = in.backendBeginFrame;
+    out->backendEndFrame = in.backendEndFrame;
+    out->gpuFrameComplete = in.gpuFrameComplete;
+    out->vsync = in.vsync;
+    out->displayPresent = in.displayPresent;
+    out->presentDeadline = in.presentDeadline;
+    out->displayPresentInterval = in.displayPresentInterval;
+    out->compositionToPresentLatency = in.compositionToPresentLatency;
+    out->expectedPresentLatency = in.expectedPresentLatency;
 }
 }
 
@@ -137,6 +159,22 @@ void FilaRenderer_renderStandaloneView(FilaRenderer* renderer, const FilaView* v
     cppRenderer->renderStandaloneView(cppView);
 }
 
+FilaEngine* FilaRenderer_getEngine(FilaRenderer* renderer) {
+    if (!renderer) {
+        return nullptr;
+    }
+    auto cppRenderer = reinterpret_cast<filament::Renderer*>(renderer);
+    return reinterpret_cast<FilaEngine*>(cppRenderer->getEngine());
+}
+
+const FilaEngine* FilaRenderer_getEngineConst(const FilaRenderer* renderer) {
+    if (!renderer) {
+        return nullptr;
+    }
+    auto cppRenderer = reinterpret_cast<const filament::Renderer*>(renderer);
+    return reinterpret_cast<const FilaEngine*>(cppRenderer->getEngine());
+}
+
 void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info) {
     if (!renderer) {
         return;
@@ -196,6 +234,30 @@ bool FilaRenderer_shouldRenderFrame(const FilaRenderer* renderer) {
     return cppRenderer->shouldRenderFrame();
 }
 
+void FilaRenderer_setPresentationTime(FilaRenderer* renderer, int64_t monotonicClockNanos) {
+    if (!renderer) {
+        return;
+    }
+    auto cppRenderer = reinterpret_cast<filament::Renderer*>(renderer);
+    cppRenderer->setPresentationTime(monotonicClockNanos);
+}
+
+void FilaRenderer_skipNextFrames(FilaRenderer* renderer, size_t frameCount) {
+    if (!renderer) {
+        return;
+    }
+    auto cppRenderer = reinterpret_cast<filament::Renderer*>(renderer);
+    cppRenderer->skipNextFrames(frameCount);
+}
+
+size_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* renderer) {
+    if (!renderer) {
+        return 0u;
+    }
+    auto cppRenderer = reinterpret_cast<const filament::Renderer*>(renderer);
+    return cppRenderer->getFrameToSkipCount();
+}
+
 double FilaRenderer_getUserTime(const FilaRenderer* renderer) {
     if (!renderer) {
         return 0.0;
@@ -210,6 +272,31 @@ void FilaRenderer_resetUserTime(FilaRenderer* renderer) {
     }
     auto cppRenderer = reinterpret_cast<filament::Renderer*>(renderer);
     cppRenderer->resetUserTime();
+}
+
+size_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* renderer) {
+    if (!renderer) {
+        return 0u;
+    }
+    auto cppRenderer = reinterpret_cast<const filament::Renderer*>(renderer);
+    return cppRenderer->getMaxFrameHistorySize();
+}
+
+size_t FilaRenderer_getFrameInfoHistory(
+        const FilaRenderer* renderer,
+        size_t historySize,
+        FilaRendererFrameInfo* outFrameInfos,
+        size_t outFrameInfosCount) {
+    if (!renderer || historySize == 0u || !outFrameInfos || outFrameInfosCount == 0u) {
+        return 0u;
+    }
+    auto cppRenderer = reinterpret_cast<const filament::Renderer*>(renderer);
+    const auto history = cppRenderer->getFrameInfoHistory(historySize);
+    const size_t copied = std::min<size_t>(history.size(), outFrameInfosCount);
+    for (size_t i = 0; i < copied; ++i) {
+        fromFrameInfo(history[i], &outFrameInfos[i]);
+    }
+    return copied;
 }
 
 } // extern "C"

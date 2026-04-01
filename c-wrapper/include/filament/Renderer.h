@@ -2,6 +2,7 @@
 #define FILAMENT_C_RENDERER_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "Types.h"
@@ -16,6 +17,26 @@ extern "C" {
 #define FILA_RENDERER_COPY_FRAME_COMMIT 0x1u
 #define FILA_RENDERER_COPY_FRAME_SET_PRESENTATION_TIME 0x2u
 #define FILA_RENDERER_COPY_FRAME_CLEAR 0x4u
+
+#define FILA_RENDERER_FRAME_INFO_INVALID ((int64_t)-1)
+#define FILA_RENDERER_FRAME_INFO_PENDING ((int64_t)-2)
+
+typedef struct FilaRendererFrameInfo {
+    uint32_t frameId;
+    int64_t gpuFrameDuration;
+    int64_t denoisedGpuFrameDuration;
+    int64_t beginFrame;
+    int64_t endFrame;
+    int64_t backendBeginFrame;
+    int64_t backendEndFrame;
+    int64_t gpuFrameComplete;
+    int64_t vsync;
+    int64_t displayPresent;
+    int64_t presentDeadline;
+    int64_t displayPresentInterval;
+    int64_t compositionToPresentLatency;
+    int64_t expectedPresentLatency;
+} FilaRendererFrameInfo;
 
 // Begins a frame on the given swap chain.
 // Returns true when rendering should proceed, false when the frame should be skipped.
@@ -57,6 +78,10 @@ void FilaRenderer_readPixelsRenderTarget(
 // Renders a standalone view outside begin/end frame.
 void FilaRenderer_renderStandaloneView(FilaRenderer* renderer, const FilaView* view);
 
+// Returns the engine associated with this renderer.
+FilaEngine* FilaRenderer_getEngine(FilaRenderer* renderer);
+const FilaEngine* FilaRenderer_getEngineConst(const FilaRenderer* renderer);
+
 // Configures renderer/display/frame pacing options.
 void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info);
 void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options);
@@ -67,10 +92,21 @@ bool FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClea
 void FilaRenderer_setVsyncTime(FilaRenderer* renderer, uint64_t steadyClockTimeNano);
 void FilaRenderer_skipFrame(FilaRenderer* renderer, uint64_t vsyncSteadyClockTimeNano);
 bool FilaRenderer_shouldRenderFrame(const FilaRenderer* renderer);
+void FilaRenderer_setPresentationTime(FilaRenderer* renderer, int64_t monotonicClockNanos);
+void FilaRenderer_skipNextFrames(FilaRenderer* renderer, size_t frameCount);
+size_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* renderer);
 
 // Renderer user-time helpers.
 double FilaRenderer_getUserTime(const FilaRenderer* renderer);
 void FilaRenderer_resetUserTime(FilaRenderer* renderer);
+
+// Frame-history timing introspection.
+size_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* renderer);
+size_t FilaRenderer_getFrameInfoHistory(
+        const FilaRenderer* renderer,
+        size_t historySize,
+        FilaRendererFrameInfo* outFrameInfos,
+        size_t outFrameInfosCount);
 
 #ifdef __cplusplus
 }

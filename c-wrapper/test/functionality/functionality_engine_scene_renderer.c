@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include <string.h>
+
 #include "filament/Engine.h"
 #include "filament/Renderer.h"
 #include "filament/Scene.h"
@@ -16,6 +18,14 @@ int main(void) {
     FilaRenderer* renderer = FilaEngine_createRenderer(engine);
     if (!renderer) {
         printf("Renderer creation failed\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    if (FilaRenderer_getEngine(renderer) != engine ||
+            FilaRenderer_getEngineConst((const FilaRenderer*)renderer) != (const FilaEngine*)engine) {
+        printf("Renderer engine getter mismatch\n");
+        FilaEngine_destroyRenderer(engine, renderer);
         FilaEngine_destroy(&engine);
         return 1;
     }
@@ -61,13 +71,55 @@ int main(void) {
 
         FilaRenderer_setVsyncTime(renderer, FilaEngine_getSteadyClockTimeNano());
         FilaRenderer_skipFrame(renderer, 0u);
+        FilaRenderer_setPresentationTime((FilaRenderer*)0, 0);
         (void)FilaRenderer_shouldRenderFrame(renderer);
+
+        FilaRenderer_skipNextFrames(renderer, 2u);
+        if (FilaRenderer_getFrameToSkipCount(renderer) > 2u) {
+            printf("Renderer frame-to-skip count mismatch\n");
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroyRenderer(engine, renderer);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
 
         const double userTimeBefore = FilaRenderer_getUserTime(renderer);
         FilaRenderer_resetUserTime(renderer);
         const double userTimeAfterReset = FilaRenderer_getUserTime(renderer);
         if (userTimeAfterReset > userTimeBefore + 1.0) {
             printf("Renderer user time reset appears inconsistent\n");
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroyRenderer(engine, renderer);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        if (FilaRenderer_getMaxFrameHistorySize((const FilaRenderer*)0) != 0u) {
+            printf("Renderer max frame history should be zero for null renderer\n");
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroyRenderer(engine, renderer);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        FilaRendererFrameInfo history[4];
+        memset(history, 0xAB, sizeof(history));
+        if (FilaRenderer_getFrameInfoHistory((const FilaRenderer*)0, 1u, history, 4u) != 0u ||
+                FilaRenderer_getFrameInfoHistory(renderer, 0u, history, 4u) != 0u ||
+                FilaRenderer_getFrameInfoHistory(renderer, 1u, (FilaRendererFrameInfo*)0, 4u) != 0u ||
+                FilaRenderer_getFrameInfoHistory(renderer, 1u, history, 0u) != 0u) {
+            printf("Renderer frame history null-safety contract mismatch\n");
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroyRenderer(engine, renderer);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        const size_t maxHistory = FilaRenderer_getMaxFrameHistorySize(renderer);
+        const size_t requested = maxHistory > 0u ? (maxHistory < 2u ? maxHistory : 2u) : 1u;
+        const size_t written = FilaRenderer_getFrameInfoHistory(renderer, requested, history, 4u);
+        if (written > requested || written > 4u || written > maxHistory) {
+            printf("Renderer frame history size contract mismatch\n");
             FilaEngine_destroyScene(engine, scene);
             FilaEngine_destroyRenderer(engine, renderer);
             FilaEngine_destroy(&engine);

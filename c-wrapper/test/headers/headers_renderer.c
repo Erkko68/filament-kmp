@@ -16,6 +16,7 @@ void test_headers_renderer(void) {
     FilaRendererDisplayInfo displayInfo;
     FilaRendererFrameRateOptions frameRate;
     FilaRendererClearOptions clearOptions;
+    FilaRendererFrameInfo frameInfos[2];
 
     FilaRendererDisplayInfo_setDefaults(&displayInfo);
     FilaRendererFrameRateOptions_setDefaults(&frameRate);
@@ -35,14 +36,21 @@ void test_headers_renderer(void) {
     FilaRenderer_renderStandaloneView(renderer, view);
 
     FilaRenderer_setDisplayInfo(renderer, &displayInfo);
+    (void)FilaRenderer_getEngine(renderer);
+    (void)FilaRenderer_getEngineConst(renderer);
     FilaRenderer_setFrameRateOptions(renderer, &frameRate);
     FilaRenderer_setClearOptions(renderer, &clearOptions);
     (void)FilaRenderer_getClearOptions(renderer, &clearOptions);
     FilaRenderer_setVsyncTime(renderer, 0u);
     FilaRenderer_skipFrame(renderer, 0u);
     (void)FilaRenderer_shouldRenderFrame(renderer);
+    FilaRenderer_setPresentationTime(renderer, 0);
+    FilaRenderer_skipNextFrames(renderer, 2u);
+    (void)FilaRenderer_getFrameToSkipCount(renderer);
     (void)FilaRenderer_getUserTime(renderer);
     FilaRenderer_resetUserTime(renderer);
+    (void)FilaRenderer_getMaxFrameHistorySize(renderer);
+    (void)FilaRenderer_getFrameInfoHistory(renderer, 2u, frameInfos, 2u);
 
     FilaEngine_destroyRenderer(engine, renderer);
 }
