@@ -1,195 +1,262 @@
-# Filament KMP C Wrapper - Batch Summary & Next Steps
+# Filament KMP C Wrapper - Batch Operating Guide
 
-**Status:** ✅ **Batches A, B, C, D, E, F complete & tested successfully**
+This document is the forward-looking execution standard for every API batch in this repository.
+Use it as the source of truth for scope control, implementation order, quality gates, and handoff.
 
----
-
-## Completed Work
-
-### ✅ Batch A: IndirectLight + Scene Binding
-- **API Surface:**
-  - `FilaIndirectLight` & `FilaIndirectLightBuilder` opaque types
-  - `FilaIndirectLightBuilder_*` (create, destroy, reflections, intensity, build)
-  - `FilaIndirectLight_*` (setIntensity, getIntensity, getReflectionsTexture, getIrradianceTexture)
-  - `FilaScene_setIndirectLight` / `FilaScene_getIndirectLight`
-  - `FilaEngine_destroyIndirectLight`
-  
-- **Implementation:** `c-wrapper/src/filament/IndirectLight.cpp` (85 lines)
-- **Tests:** Module, linked smoke program
-- **Verification:** 13/13 ctest passed (including IndirectLight scene binding runtime)
-
-### ✅ Batch B: MaterialInstance Parameter Setters
-- **API Surface:**
-  - `FilaMaterialInstance_setParameterFloat`
-  - `FilaMaterialInstance_setParameterFloat2`
-  - `FilaMaterialInstance_setParameterFloat3`
-  - `FilaMaterialInstance_setParameterFloat4`
-  - `FilaMaterialInstance_setParameterInt`
-  - `FilaMaterialInstance_setParameterUint`
-
-- **Implementation:** Extended `c-wrapper/src/filament/Material.cpp` with guarded setters via `Material::hasParameter()` precheck
-- **Tests:** Module, linked parameter smoke program
-- **Verification:** 14/14 ctest passed (including MaterialInstance parameter setting runtime)
-
-### ✅ Batch C: RenderableManager Material Instance Runtime Binding
-- **API Surface:**
-  - `FilaRenderableManager_setMaterialInstanceAt` (set material for primitive at runtime)
-  - `FilaRenderableManager_getMaterialInstanceAt` (query bound material instance)
-
-- **Implementation:** Extended `c-wrapper/src/filament/RenderableManager.cpp` with runtime material instance get/set
-- **Tests:** Extended module + signature compile-only tests to cover new APIs
-- **Verification:** 14/14 ctest passed (all linked smoke programs still pass)
-
-### ✅ Enhanced macOS Window Test
-- **New Features:**
-  - Cubemap texture creation (`FilaTextureBuilder` → 4×4 RGBA8)
-  - Skybox attachment with environment texture
-  - IndirectLight creation with reflections
-  - Full scene IBL lighting pipeline
-  - Proper resource cleanup order (skybox → indirectLight → texture → scene)
-
-- **Result:** ✅ Builds successfully, integrates seamlessly with existing render loop
-- **Verification:** 14/14 ctest passed (all linked smoke programs still pass)
-
-### ✅ Batch D: View Color Grading & Render Target
-- **API Surface:**
-  - `FilaColorGrading` & `FilaColorGradingBuilder` opaque types
-  - `FilaColorGradingBuilder_*` (create, destroy, quality, format, dimensions, exposure, temperature/tint, contrast, vibrance, saturation, etc.)
-  - `FilaColorGradingBuilder_build` (builder pattern to construct ColorGrading)
-  - `FilaRenderTarget` & `FilaRenderTargetBuilder` opaque types
-  - `FilaRenderTargetBuilder_*` (create, destroy, texture, mipLevel, face, layer, samples)
-  - `FilaRenderTarget_*` (getters for texture, mipLevel, face, layer)
-  - `FilaView_setColorGrading` / `FilaView_getColorGrading`
-  - `FilaView_setRenderTarget` / `FilaView_getRenderTarget`
-  - Enums: `FilaColorGradingQuality` (LOW, MEDIUM, HIGH, ULTRA), `FilaColorGradingLutFormat` (INTEGER, FLOAT)
-  - Enums: `FilaRenderTargetAttachmentPoint` (COLOR0-7, DEPTH), `FilaCubemapFace` (6 faces)
-
-- **Implementation:** 
-  - `c-wrapper/src/filament/ColorGrading.cpp` (~113 lines - builder pattern)
-  - `c-wrapper/src/filament/RenderTarget.cpp` (already existed, verified working)
-  - `c-wrapper/src/filament/View.cpp` (fixed Camera reference-to-pointer, ColorGrading const qualifier handling)
-
-- **Tests:** 
-  - Module tests: `color_grading_module_compile.c`, `render_target_module_compile.c`
-  - Signature tests: `color_grading_signature_compile.c`, `render_target_signature_compile.c`
-  - Integration test: `engine_view_color_grading_render_target_program.c`
-  - All 4 compile-only tests pass without errors
-  - Integrated with existing View module test for composition validation
-
-- **Verification:** ✅ Compile-only tests pass and linked integration test passes
-
-### ✅ Batch E: Stream & Texture Advanced
-- **API Surface:**
-  - `FilaStream` & `FilaStreamBuilder` opaque types
-  - `FilaStreamBuilder_*` (create, destroy, width, height)
-  - `FilaStream_*` (getStreamType, setDimensions, getTimestamp)
-  - `FilaStreamBuilder_build` (builder pattern to construct Stream)
-  - `FilaTextureParams` opaque type (TextureSampler wrapper)
-  - `FilaTextureParams_*` (create, destroy, setters/getters for filters, wrap modes, anisotropy)
-  - `FilaTexture_setExternalStream` (bind Stream to Texture for external frame sources)
-  - Enums: `FilaStreamType` (ACQUIRED, NATIVE)
-  - Enums: `FilaSamplerMinFilter` (NEAREST, LINEAR, mipmap variants)
-  - Enums: `FilaSamplerMagFilter` (NEAREST, LINEAR)
-  - Enums: `FilaSamplerWrapMode` (CLAMP_TO_EDGE, REPEAT, MIRRORED_REPEAT)
-  - Enums: `FilaSamplerCompareMode` (NONE, TO_TEXTURE)
-  - Enums: `FilaSamplerCompareFunc` (LE, GE, L, G, E, NE, A, NA)
-
-- **Implementation:**
-  - `c-wrapper/src/filament/Stream.cpp` (59 lines - builder pattern)
-  - `c-wrapper/src/filament/TextureSampler.cpp` (160 lines - sampler parameter wrapper)
-  - `c-wrapper/src/filament/Texture.cpp` (extended with setExternalStream)
-  - `c-wrapper/src/filament/Engine.cpp` (added destroyStream)
-
-- **Tests:**
-  - Module tests: `stream_module_compile.c`, `texture_sampler_module_compile.c`
-  - Signature tests: `stream_signature_compile.c`, `texture_sampler_signature_compile.c`
-  - Integration test: `engine_stream_texture_params_program.c`
-  - All 4 compile-only tests pass without errors
-
-- **Verification:** ✅ Compile-only tests pass and linked integration test passes
-
-### ✅ Batch F: Geometry Advanced
-- **API Surface:**
-  - `FilaSkinningBuffer` (vertex weights, bone indices)
-  - `FilaMorphTargetBuffer` (shape keys)
-  - `FilaInstanceBuffer` (GPU-driven instancing)
-  - Scene queries for component counts
-
-- **Implementation:** Added missing implementations for advanced geometry components.
-- **Verification:** Completed and tested.
+Related reference: `AGENT_FILAMENT_API_METHODOLOGY.md`.
 
 ---
 
-## Current C API Coverage
+## 1) Batch Mission
 
-**Wrapped Modules (23 total):**
-- Engine (create, destroy, resource lifecycle)
-- Scene (entity management, skybox, indirect light)
-- Renderer (begin/end frame, render)
-- View (scene/camera binding, viewport, color grading, render target)
-- Camera (projection, look-at)
-- TransformManager (get/set transforms, hierarchy)
-- LightManager (add lights, sun direction)
-- RenderableManager (geometry, materials, visibility)
-- EntityManager (create/destroy entities)
-- VertexBuffer (builder, query)
-- IndexBuffer (builder, query)
-- Material (builder, instance creation)
-- MaterialInstance (get parent, set parameters)
-- Texture (builder, dimension queries, external stream)
-- Skybox (builder, scene binding, getters)
-- IndirectLight (builder, scene binding, getters)
-- ColorGrading (builder, quality/format/exposure/temperature/contrast/vibrance/saturation)
-- RenderTarget (builder, texture attachment, query)
-- Stream (builder, external frame sources)
-- TextureParams (sampler configuration, filter/wrap/anisotropy)
-- SkinningBuffer (bone transformations)
-- MorphTargetBuffer (shape keys)
-- InstanceBuffer (GPU instancing)
+Each batch delivers a coherent, low-risk slice of Filament C++ API parity into the C ABI.
 
-**Test Suite:**
-- 23 module compile tests (header usability)
-- 23 signature tests (ABI lock)
-- 16+ linked integration programs
+Every batch must:
+- Preserve ABI predictability (`Fila*` naming and stable signatures).
+- Follow ownership semantics used by Filament (especially `Engine`-owned objects).
+- Include compile-only coverage and linked runtime validation.
+- Leave evidence (tests, logs, and decisions) for future maintainers.
 
 ---
 
-## Roadmap / Next Batches (Prioritized)
+## 2) Definition of a Batch
 
-To achieve true 1:1 API parity and a robust KMP ecosystem, the following batches are prioritized:
+A batch is a bounded unit of work that can be reviewed and shipped independently.
 
-### **Batch G: Core Utilities, Math, & Missing Enums** *(High Priority - Next)*
-**Why:** Provide the foundational types required by other modules and advanced functionality.
-**Scope:**
-- `filament/BufferObject.h` (Custom uniform/storage buffer objects)
-- `filament/Sync.h` (Advanced hardware synchronization)
-- `filament/DebugRegistry.h` (Internal metrics and debugging)
-- **Helper / Math Types:** `Box`, `Frustum`, `Viewport`, `Color`
-- **Enums & Config:** `ToneMapper`, `ColorSpace`, `Exposure`, `MaterialEnums`, `MaterialChunkType`
-- **Config Structs:** Full mapping of `Options.h` (`Engine::Config`, `View::DynamicResolutionOptions`, `View::RenderQuality`, etc.)
+Required traits:
+- Single theme (for example: one subsystem, one family of builders, or one feature path).
+- Clear entry/exit criteria.
+- Explicit risk list.
+- Complete implementation-to-validation path in one pass.
 
-**Action:** Start by mapping these types matching the `filament-prebuilts/include/filament/` structure.
-
-### **Batch H: Resource Uploads & Advanced API Parity** *(High Priority)*
-**Why:** Ensure developers can actively feed data to the engine, configure post-processing, and manage lifecycle events dynamically.
-**Scope:**
-- **Pixel / Buffer Descriptors:** Implement `PixelBufferDescriptor` and `BufferDescriptor` mappings (crucial for updating textures and buffers).
-- **Textures & Buffers:** `Texture::setImage`, `Texture::generateMipmaps`, `VertexBuffer::setBufferAt`, `IndexBuffer::setBuffer`.
-- **Advanced Engine Features:** `Engine::create(backend, platform)` to specify Vulkan/Metal/OpenGL, and shared context initialization.
-- **Advanced View Settings:** Expose Ambient Occlusion (SSAO), Screen Space Reflections (SSR), Bloom, FXAA/TAA/MSAA, and Depth of Field.
-- **Material Enhancements:** Support `setParameter` for textures and samplers (not just floats/ints), and arrays of parameters.
-- **Callbacks:** Bridge C++ callbacks (e.g., buffer release, frame completion) to C function pointers so KMP can handle memory correctly.
-
-### **Batch I: `gltfio` and Ecosystem Libraries** *(Crucial for usability)*
-**Why:** Loading 3D models easily is the most common use case. Developers need high-level model loading without parsing GLTF manually.
-**Scope:**
-- Wrap `gltfio` library (`AssetLoader`, `FilamentAsset`, `FilamentInstance`, `ResourceLoader`, `Animator`).
-- Wrap `camutils` (`Manipulator`, `Bookmark`) for standard camera controls (orbit, map, free flight).
-- Wrap `ktxreader` / `image` utilities for KTX2 compressed texture loading.
-- Wrap `utils` (e.g., `NameComponentManager`, `HierarchyComponentManager`).
+Avoid mixing unrelated features in one batch.
 
 ---
 
-## Recommended Action
+## 3) Standard Procedure (End-to-End)
 
-**Next:** Start **Batch G** to implement the missing core Filament modules (`BufferObject`, `Sync`, `DebugRegistry`), followed by the mathematical helpers (`Box`, `Frustum`, etc.) and configuration enums/structs (`Options`, `MaterialEnums`). Ensure all file structures (`src/` and `include/`) match the existing `filament-prebuilts` layout.
+### Phase 0 - Intake and Scope Lock
+
+1. Identify exact upstream targets in `filament-prebuilts/include/filament/`.
+2. List symbols to add/extend (types, enums, functions).
+3. Mark non-goals for this batch.
+4. Record dependency constraints (if any) on earlier batches.
+
+Exit criteria:
+- Scope list exists and is frozen for this iteration.
+- Risks and assumptions are written.
+
+### Phase 1 - API Design for C ABI
+
+1. Define `Fila*` symbol names and overload suffix strategy.
+2. Confirm ownership and lifetime behavior.
+3. Define null/invalid input behavior and return defaults.
+4. Validate enum and struct mappings for ABI safety.
+
+Exit criteria:
+- Public API shape is final before implementation starts.
+
+### Phase 2 - Header Work
+
+1. Add or update public headers under `c-wrapper/include/filament/`.
+2. Keep opaque handles in `Types.h` where needed.
+3. Ensure declarations are minimal, consistent, and C-safe.
+
+Exit criteria:
+- Header compiles cleanly in isolation via module compile tests.
+
+### Phase 3 - Bridge Implementation
+
+1. Implement adapters in `c-wrapper/src/filament/`.
+2. Add conversion logic (entity, instance, matrix) per methodology.
+3. Add defensive guards in every exported function.
+4. Avoid C++ exceptions crossing C ABI boundaries.
+
+Exit criteria:
+- New symbols resolve and behavior is guarded.
+
+### Phase 4 - Build Integration
+
+1. Register new sources in `c-wrapper/CMakeLists.txt`.
+2. Register tests in the test CMake files.
+3. Confirm no accidental platform-specific breakage.
+
+Exit criteria:
+- Build graph includes all new files and test targets.
+
+### Phase 5 - Test Coverage
+
+1. Module compile tests: header usability and includes.
+2. Signature compile tests: lock function pointer ABI.
+3. Linked integration smoke: runtime behavior and cleanup order.
+
+Exit criteria:
+- All three test layers exist for the new API surface.
+
+### Phase 6 - Validation Run
+
+Run the standard scripts:
+
+```bash
+bash c-wrapper/test/test_module.sh
+bash c-wrapper/test/test_integration.sh
+```
+
+If linked tests are unavailable locally, note it explicitly and record what was run.
+
+Exit criteria:
+- Validation results are captured with pass/fail and any skipped conditions.
+
+### Phase 7 - Review and Merge Readiness
+
+1. Verify naming, ownership, guards, and test completeness.
+2. Confirm no unintended ABI drift.
+3. Confirm docs and artifacts are updated.
+
+Exit criteria:
+- Batch is releasable without follow-up fixes for core behavior.
+
+### Phase 8 - Handoff
+
+1. Publish batch record (scope, files, tests, risks, decisions).
+2. Add next-batch seeds (what is now unblocked and recommended).
+3. Track deferred work separately from completed scope.
+
+Exit criteria:
+- Another engineer can continue from artifacts only.
+
+---
+
+## 4) Quality Gates (Must Pass)
+
+Gate 1: Scope Gate
+- Exact symbols, ownership model, and non-goals documented.
+
+Gate 2: ABI Gate
+- Naming, signatures, and type mappings stable and test-locked.
+
+Gate 3: Safety Gate
+- Null/invalid guards present; default-safe return behavior defined.
+
+Gate 4: Build Gate
+- CMake wiring complete for sources and tests.
+
+Gate 5: Runtime Gate
+- Linked smoke path validates functionality and cleanup order.
+
+Gate 6: Evidence Gate
+- Batch evidence pack is complete and attached.
+
+---
+
+## 5) Required Artifacts Per Batch
+
+Minimum artifact set:
+- Updated headers in `c-wrapper/include/filament/`.
+- Updated bridges in `c-wrapper/src/filament/`.
+- CMake registration changes.
+- Module compile tests.
+- Signature compile tests.
+- Linked integration test(s) or explicit rationale if deferred.
+- Batch decision record (scope decisions and tradeoffs).
+- Validation evidence (what command ran, what passed, what was skipped).
+
+---
+
+## 6) Risk Management Rules
+
+- Keep each batch small enough to bisect quickly.
+- Prefer low-risk parity slices before advanced callback or descriptor surfaces.
+- Do not mix behavior changes with broad refactors in the same batch.
+- If a risk cannot be tested in linked mode, mark as open risk and document mitigation.
+
+---
+
+## 7) Forward Execution Cadence
+
+For all upcoming batches, follow this cadence:
+
+1. Plan and scope lock.
+2. Implement headers and bridges.
+3. Wire build and tests.
+4. Run validation scripts.
+5. Publish evidence and next-batch recommendations.
+
+This cadence is mandatory unless explicitly overridden in the batch decision record.
+
+---
+
+## 8) Batch Template (Copy for New Batch)
+
+Use this template for every new batch:
+
+```markdown
+# Batch <ID>: <Title>
+
+## Goal
+- <one-paragraph mission>
+
+## Scope
+- In scope:
+  - <symbol/module>
+- Out of scope:
+  - <deferred item>
+
+## Upstream Mapping
+- Source headers:
+  - <filament-prebuilts/include/...>
+
+## API Decisions
+- Naming:
+  - <Fila symbol rules>
+- Ownership:
+  - <engine-owned vs caller-owned>
+- Safety defaults:
+  - <null/invalid behavior>
+
+## File Changes
+- Headers:
+  - <path>
+- Sources:
+  - <path>
+- Build files:
+  - <path>
+
+## Tests
+- Module compile:
+  - <path>
+- Signature compile:
+  - <path>
+- Linked integration:
+  - <path>
+
+## Validation Evidence
+- Commands run:
+  - `bash c-wrapper/test/test_module.sh`
+  - `bash c-wrapper/test/test_integration.sh`
+- Results:
+  - <pass/fail/skip with reason>
+
+## Risks and Mitigations
+- Risk:
+  - <description>
+- Mitigation:
+  - <action>
+
+## Exit Criteria Checklist
+- [ ] Scope gate passed
+- [ ] ABI gate passed
+- [ ] Safety gate passed
+- [ ] Build gate passed
+- [ ] Runtime gate passed
+- [ ] Evidence gate passed
+
+## Next Batch Seeds
+- <what is now unblocked>
+```
+
+---
+
+## 9) Working Rule
+
+If there is a conflict between convenience and ABI safety, choose ABI safety.

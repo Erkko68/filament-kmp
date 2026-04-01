@@ -503,6 +503,8 @@ typedef enum FilaBackendStreamType {
     FILA_BACKEND_STREAM_TYPE_ACQUIRED = 1,
 } FilaBackendStreamType;
 
+typedef void (*FilaBackendStreamCallback)(void* image, void* userData);
+
 FilaBackendTargetBufferFlags FilaBackendTargetBufferFlags_at(size_t index);
 FilaBackendRenderTargetAttachmentPoint FilaBackendRenderTargetAttachmentPoint_at(size_t index);
 bool FilaBackendPrimitiveType_isStrip(FilaBackendPrimitiveType type);
