@@ -22,8 +22,10 @@ void test_headers_scene(void) {
     (void)FilaScene_hasEntity(scene, entity);
     FilaScene_setSkybox(scene, (FilaSkybox*)0);
     (void)FilaScene_getSkybox(scene);
+    (void)FilaScene_getSkyboxConst(scene);
     FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);
     (void)FilaScene_getIndirectLight(scene);
+    (void)FilaScene_getIndirectLightConst(scene);
     FilaEntity entities[2] = { 43, 44 };
     FilaScene_addEntities(scene, entities, 2u);
     FilaScene_removeEntities(scene, entities, 2u);

@@ -210,6 +210,38 @@ size_t FilaTransformManager_getChildren(const FilaTransformManager* manager,
     return written;
 }
 
+size_t FilaTransformManager_getChildInstances(const FilaTransformManager* manager,
+        FilaTransformManagerInstance instance,
+        FilaTransformManagerInstance* outChildren,
+        size_t maxCount) {
+    if (!manager || instance == 0 || !outChildren || maxCount == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
+    const auto begin = cppManager->getChildrenBegin(toInstance(instance));
+    const auto end = cppManager->getChildrenEnd(toInstance(instance));
+    size_t written = 0;
+    for (auto it = begin; it != end && written < maxCount; ++it) {
+        outChildren[written++] = fromInstance(*it);
+    }
+    return written;
+}
+
+void FilaTransformManager_forEachChildInstance(const FilaTransformManager* manager,
+        FilaTransformManagerInstance instance,
+        FilaTransformManagerInstanceCallback callback,
+        void* userData) {
+    if (!manager || instance == 0 || !callback) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
+    const auto begin = cppManager->getChildrenBegin(toInstance(instance));
+    const auto end = cppManager->getChildrenEnd(toInstance(instance));
+    for (auto it = begin; it != end; ++it) {
+        callback(fromInstance(*it), userData);
+    }
+}
+
 void FilaTransformManager_setTransformMat4f(FilaTransformManager* manager,
         FilaTransformManagerInstance instance,
         const float localTransform[16]) {

@@ -2,6 +2,11 @@
 #include "utils/EntityManager.h"
 #include "filament/TransformManager.h"
 
+static void transform_instance_callback(FilaTransformManagerInstance instance, void* userData) {
+    (void)instance;
+    (void)userData;
+}
+
 // Verifies TransformManager API is consumable from C and composes with Engine + EntityManager.
 void test_headers_transform_manager(void) {
     FilaEngine* engine = (FilaEngine*)0;
@@ -25,6 +30,7 @@ void test_headers_transform_manager(void) {
     double outLocal64[16];
     double outWorld64[16];
     FilaEntity children[4];
+    FilaTransformManagerInstance childInstances[4];
     FilaEntity listedEntities[4];
 
     FilaTransformManager_createWithTransformMat4f(manager, parent, 0u, identity);
@@ -42,6 +48,8 @@ void test_headers_transform_manager(void) {
     (void)FilaTransformManager_getParent(manager, childInstance);
     (void)FilaTransformManager_getChildCount(manager, parentInstance);
     (void)FilaTransformManager_getChildren(manager, parentInstance, children, 4u);
+    (void)FilaTransformManager_getChildInstances(manager, parentInstance, childInstances, 4u);
+    FilaTransformManager_forEachChildInstance(manager, parentInstance, transform_instance_callback, (void*)0);
     FilaTransformManager_openLocalTransformTransaction(manager);
     FilaTransformManager_setTransformMat4f(manager, childInstance, identity);
     FilaTransformManager_setTransformMat4(manager, childInstance, identity64);

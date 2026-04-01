@@ -61,6 +61,13 @@ void FilaRenderableManager_setPriority(FilaRenderableManager* manager,
 uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance);
 
+// Sets and gets renderable channel.
+void FilaRenderableManager_setChannel(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		uint8_t channel);
+uint8_t FilaRenderableManager_getChannel(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
 // Enables or disables frustum culling for a renderable instance.
 void FilaRenderableManager_setCulling(FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance,
@@ -68,6 +75,35 @@ void FilaRenderableManager_setCulling(FilaRenderableManager* manager,
 
 // Returns whether frustum culling is enabled for a renderable instance.
 bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+
+// Runtime toggles and query helpers.
+void FilaRenderableManager_setFogEnabled(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		bool enable);
+bool FilaRenderableManager_getFogEnabled(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+void FilaRenderableManager_setLightChannel(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		unsigned int channel,
+		bool enable);
+bool FilaRenderableManager_getLightChannel(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		unsigned int channel);
+void FilaRenderableManager_setCastShadows(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		bool enable);
+void FilaRenderableManager_setReceiveShadows(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		bool enable);
+void FilaRenderableManager_setScreenSpaceContactShadows(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		bool enable);
+bool FilaRenderableManager_isShadowCaster(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+bool FilaRenderableManager_isShadowReceiver(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance);
+bool FilaRenderableManager_isScreenSpaceContactShadowsEnabled(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance);
 
 // Creates a renderable builder for the specified primitive count.
@@ -90,6 +126,14 @@ void FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* buil
 
 // Enables or disables shadow receiving for built renderable.
 void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* builder, bool enable);
+
+// Builder advanced flags.
+void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint8_t channel);
+void FilaRenderableManagerBuilder_lightChannel(FilaRenderableManagerBuilder* builder, unsigned int channel, bool enable);
+void FilaRenderableManagerBuilder_fog(FilaRenderableManagerBuilder* builder, bool enabled);
+void FilaRenderableManagerBuilder_screenSpaceContactShadows(FilaRenderableManagerBuilder* builder, bool enable);
+void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, size_t primitiveIndex, uint16_t order);
+void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, size_t primitiveIndex, bool enabled);
 
 // Enables skinning buffer mode for built renderable.
 void FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* builder, bool enabled);
@@ -134,6 +178,23 @@ void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* manager,
 
 // Gets the material instance for a primitive.
 FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex);
+void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex);
+void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex,
+		uint16_t order);
+uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex);
+void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* manager,
+		FilaRenderableManagerInstance instance,
+		size_t primitiveIndex,
+		bool enabled);
+bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance,
 		size_t primitiveIndex);
 

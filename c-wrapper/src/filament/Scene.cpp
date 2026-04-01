@@ -74,6 +74,14 @@ FilaSkybox* FilaScene_getSkybox(FilaScene* scene) {
     return reinterpret_cast<FilaSkybox*>(cppScene->getSkybox());
 }
 
+const FilaSkybox* FilaScene_getSkyboxConst(const FilaScene* scene) {
+    if (!scene) {
+        return nullptr;
+    }
+    auto cppScene = reinterpret_cast<const filament::Scene*>(scene);
+    return reinterpret_cast<const FilaSkybox*>(cppScene->getSkybox());
+}
+
 void FilaScene_setIndirectLight(FilaScene* scene, FilaIndirectLight* indirectLight) {
     if (!scene) {
         return;
@@ -89,6 +97,14 @@ FilaIndirectLight* FilaScene_getIndirectLight(FilaScene* scene) {
     }
     auto cppScene = reinterpret_cast<filament::Scene*>(scene);
     return reinterpret_cast<FilaIndirectLight*>(cppScene->getIndirectLight());
+}
+
+const FilaIndirectLight* FilaScene_getIndirectLightConst(const FilaScene* scene) {
+    if (!scene) {
+        return nullptr;
+    }
+    auto cppScene = reinterpret_cast<const filament::Scene*>(scene);
+    return reinterpret_cast<const FilaIndirectLight*>(cppScene->getIndirectLight());
 }
 
 void FilaScene_addEntities(FilaScene* scene, const FilaEntity* entities, size_t count) {

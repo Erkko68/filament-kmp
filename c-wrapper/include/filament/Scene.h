@@ -31,11 +31,17 @@ void FilaScene_setSkybox(FilaScene* scene, FilaSkybox* skybox);
 // Returns the skybox currently associated with the scene.
 FilaSkybox* FilaScene_getSkybox(FilaScene* scene);
 
+// Returns the skybox currently associated with the scene through a const scene handle.
+const FilaSkybox* FilaScene_getSkyboxConst(const FilaScene* scene);
+
 // Sets or unsets the scene indirect light.
 void FilaScene_setIndirectLight(FilaScene* scene, FilaIndirectLight* indirectLight);
 
 // Returns the indirect light currently associated with the scene.
 FilaIndirectLight* FilaScene_getIndirectLight(FilaScene* scene);
+
+// Returns the indirect light currently associated with the scene through a const scene handle.
+const FilaIndirectLight* FilaScene_getIndirectLightConst(const FilaScene* scene);
 
 // Adds a list of entities to the scene.
 void FilaScene_addEntities(FilaScene* scene, const FilaEntity* entities, size_t count);

@@ -65,9 +65,15 @@ int main(void) {
         FilaLightManagerBuilder_position(builder, 0.0f, 1.0f + (float)i, 0.0f);
         FilaLightManagerBuilder_color(builder, 1.0f, 1.0f, 1.0f);
         FilaLightManagerBuilder_intensity(builder, 100000.0f);
+        FilaLightManagerBuilder_intensityCandela(builder, 500.0f);
+        FilaLightManagerBuilder_lightChannel(builder, 1u, true);
         FilaLightManagerBuilder_falloff(builder, 10.0f + (float)i);
         FilaLightManagerBuilder_spotLightCone(builder, 0.3f, 0.8f);
         FilaLightManagerBuilder_castShadows(builder, false);
+        FilaLightManagerBuilder_castLight(builder, true);
+        FilaLightManagerBuilder_sunAngularRadius(builder, 0.545f);
+        FilaLightManagerBuilder_sunHaloSize(builder, 10.0f);
+        FilaLightManagerBuilder_sunHaloFalloff(builder, 80.0f);
 
         if (!FilaLightManagerBuilder_build(builder, engine, entities[i])) {
             printf("Light build failed\n");
@@ -109,7 +115,21 @@ int main(void) {
         FilaLightManager_setDirection(manager, instance, 0.0f, -1.0f, 0.0f);
         FilaLightManager_setColor(manager, instance, 1.0f, 0.9f, 0.8f);
         FilaLightManager_setIntensity(manager, instance, 12345.0f + (float)i);
+        FilaLightManager_setIntensityCandela(manager, instance, 321.0f + (float)i);
+        FilaLightManager_setLightChannel(manager, instance, 1u, true);
+        (void)FilaLightManager_getLightChannel(manager, instance, 1u);
         FilaLightManager_setFalloff(manager, instance, 8.0f + (float)i);
+        FilaLightManager_setSpotLightCone(manager, instance, 0.2f, 0.7f);
+        (void)FilaLightManager_getSpotLightOuterCone(manager, instance);
+        (void)FilaLightManager_getSpotLightInnerCone(manager, instance);
+        FilaLightManager_setSunAngularRadius(manager, instance, 0.545f);
+        (void)FilaLightManager_getSunAngularRadius(manager, instance);
+        FilaLightManager_setSunHaloSize(manager, instance, 10.0f);
+        (void)FilaLightManager_getSunHaloSize(manager, instance);
+        FilaLightManager_setSunHaloFalloff(manager, instance, 80.0f);
+        (void)FilaLightManager_getSunHaloFalloff(manager, instance);
+        FilaLightManager_setShadowCaster(manager, instance, (types[i] != FILA_LIGHT_TYPE_POINT));
+        (void)FilaLightManager_isShadowCaster(manager, instance);
 
         float position[3] = {0};
         float direction[3] = {0};

@@ -6,6 +6,23 @@
 #include "utils/EntityManager.h"
 #include "filament/TransformManager.h"
 
+typedef struct {
+    FilaTransformManagerInstance expected;
+    size_t count;
+    bool foundExpected;
+} ChildInstanceVisitorContext;
+
+static void count_child_instance(FilaTransformManagerInstance instance, void* userData) {
+    ChildInstanceVisitorContext* context = (ChildInstanceVisitorContext*)userData;
+    if (!context) {
+        return;
+    }
+    context->count += 1u;
+    if (instance == context->expected) {
+        context->foundExpected = true;
+    }
+}
+
 int main(void) {
     printf("Running engine+transform_manager functionality program...\n");
 
@@ -129,6 +146,38 @@ int main(void) {
     const size_t childCount = FilaTransformManager_getChildren(manager, parentInstance, children, 8u);
     if (childCount == 0u) {
         printf("Transform child listing failed\n");
+        FilaTransformManager_destroy(manager, child);
+        FilaTransformManager_destroy(manager, parent);
+        FilaEntityManager_destroy(child);
+        FilaEntityManager_destroy(parent);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    FilaTransformManagerInstance childInstances[8] = {0u};
+    const size_t childInstanceCount =
+            FilaTransformManager_getChildInstances(manager, parentInstance, childInstances, 8u);
+    bool foundChildInstance = false;
+    for (size_t i = 0; i < childInstanceCount; ++i) {
+        if (childInstances[i] == childInstance) {
+            foundChildInstance = true;
+            break;
+        }
+    }
+    if (childInstanceCount == 0u || !foundChildInstance) {
+        printf("Transform child-instance listing failed\n");
+        FilaTransformManager_destroy(manager, child);
+        FilaTransformManager_destroy(manager, parent);
+        FilaEntityManager_destroy(child);
+        FilaEntityManager_destroy(parent);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    ChildInstanceVisitorContext visitorContext = { childInstance, 0u, false };
+    FilaTransformManager_forEachChildInstance(manager, parentInstance, count_child_instance, &visitorContext);
+    if (visitorContext.count == 0u || !visitorContext.foundExpected) {
+        printf("Transform child-instance iteration failed\n");
         FilaTransformManager_destroy(manager, child);
         FilaTransformManager_destroy(manager, parent);
         FilaEntityManager_destroy(child);

@@ -152,6 +152,25 @@ uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* manager,
     return cppManager->getPriority(toInstance(instance));
 }
 
+void FilaRenderableManager_setChannel(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        uint8_t channel) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setChannel(toInstance(instance), channel);
+}
+
+uint8_t FilaRenderableManager_getChannel(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getChannel(toInstance(instance));
+}
+
 void FilaRenderableManager_setCulling(FilaRenderableManager* manager,
         FilaRenderableManagerInstance instance,
         bool enable) {
@@ -169,6 +188,103 @@ bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* manager
     }
     auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
     return cppManager->isCullingEnabled(toInstance(instance));
+}
+
+void FilaRenderableManager_setFogEnabled(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setFogEnabled(toInstance(instance), enable);
+}
+
+bool FilaRenderableManager_getFogEnabled(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getFogEnabled(toInstance(instance));
+}
+
+void FilaRenderableManager_setLightChannel(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        unsigned int channel,
+        bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setLightChannel(toInstance(instance), channel, enable);
+}
+
+bool FilaRenderableManager_getLightChannel(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        unsigned int channel) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getLightChannel(toInstance(instance), channel);
+}
+
+void FilaRenderableManager_setCastShadows(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setCastShadows(toInstance(instance), enable);
+}
+
+void FilaRenderableManager_setReceiveShadows(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setReceiveShadows(toInstance(instance), enable);
+}
+
+void FilaRenderableManager_setScreenSpaceContactShadows(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setScreenSpaceContactShadows(toInstance(instance), enable);
+}
+
+bool FilaRenderableManager_isShadowCaster(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->isShadowCaster(toInstance(instance));
+}
+
+bool FilaRenderableManager_isShadowReceiver(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->isShadowReceiver(toInstance(instance));
+}
+
+bool FilaRenderableManager_isScreenSpaceContactShadowsEnabled(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->isScreenSpaceContactShadowsEnabled(toInstance(instance));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t primitiveCount) {
@@ -222,6 +338,54 @@ void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* b
     }
     auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
     cppBuilder->receiveShadows(enable);
+}
+
+void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint8_t channel) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->channel(channel);
+}
+
+void FilaRenderableManagerBuilder_lightChannel(FilaRenderableManagerBuilder* builder, unsigned int channel, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->lightChannel(channel, enable);
+}
+
+void FilaRenderableManagerBuilder_fog(FilaRenderableManagerBuilder* builder, bool enabled) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->fog(enabled);
+}
+
+void FilaRenderableManagerBuilder_screenSpaceContactShadows(FilaRenderableManagerBuilder* builder, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->screenSpaceContactShadows(enable);
+}
+
+void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, size_t primitiveIndex, uint16_t order) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->blendOrder(primitiveIndex, order);
+}
+
+void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, size_t primitiveIndex, bool enabled) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<RenderableBuilder*>(builder);
+    cppBuilder->globalBlendOrderEnabled(primitiveIndex, enabled);
 }
 
 void FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* builder, bool enabled) {
@@ -325,6 +489,58 @@ FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRend
     }
     auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
     return reinterpret_cast<FilaMaterialInstance*>(cppManager->getMaterialInstanceAt(toInstance(instance), primitiveIndex));
+}
+
+void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->clearMaterialInstanceAt(toInstance(instance), primitiveIndex);
+}
+
+void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex,
+        uint16_t order) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setBlendOrderAt(toInstance(instance), primitiveIndex, order);
+}
+
+uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex) {
+    if (!manager || instance == 0) {
+        return 0u;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->getBlendOrderAt(toInstance(instance), primitiveIndex);
+}
+
+void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex,
+        bool enabled) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::RenderableManager*>(manager);
+    cppManager->setGlobalBlendOrderEnabledAt(toInstance(instance), primitiveIndex, enabled);
+}
+
+bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* manager,
+        FilaRenderableManagerInstance instance,
+        size_t primitiveIndex) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::RenderableManager*>(manager);
+    return cppManager->isGlobalBlendOrderEnabledAt(toInstance(instance), primitiveIndex);
 }
 
 void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* manager,

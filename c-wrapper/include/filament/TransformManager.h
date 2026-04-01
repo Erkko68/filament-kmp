@@ -73,6 +73,20 @@ size_t FilaTransformManager_getChildren(const FilaTransformManager* manager,
 		FilaEntity* outChildren,
 		size_t maxCount);
 
+// Writes up to maxCount child transform instances into outChildren and returns number written.
+size_t FilaTransformManager_getChildInstances(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		FilaTransformManagerInstance* outChildren,
+		size_t maxCount);
+
+typedef void (*FilaTransformManagerInstanceCallback)(FilaTransformManagerInstance instance, void* userData);
+
+// Invokes callback for each child transform instance of the given parent instance.
+void FilaTransformManager_forEachChildInstance(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		FilaTransformManagerInstanceCallback callback,
+		void* userData);
+
 // Sets a local transform from a 4x4 column-major float matrix.
 void FilaTransformManager_setTransformMat4f(FilaTransformManager* manager,
 		FilaTransformManagerInstance instance,

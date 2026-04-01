@@ -204,6 +204,30 @@ float FilaLightManager_getIntensity(const FilaLightManager* manager, FilaLightMa
     return cppManager->getIntensity(toInstance(instance));
 }
 
+void FilaLightManager_setIntensityCandela(FilaLightManager* manager, FilaLightManagerInstance instance, float intensity) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setIntensityCandela(toInstance(instance), intensity);
+}
+
+void FilaLightManager_setLightChannel(FilaLightManager* manager, FilaLightManagerInstance instance, unsigned int channel, bool enable) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setLightChannel(toInstance(instance), channel, enable);
+}
+
+bool FilaLightManager_getLightChannel(const FilaLightManager* manager, FilaLightManagerInstance instance, unsigned int channel) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getLightChannel(toInstance(instance), channel);
+}
+
 void FilaLightManager_setFalloff(FilaLightManager* manager, FilaLightManagerInstance instance, float radius) {
     if (!manager || instance == 0) {
         return;
@@ -218,6 +242,94 @@ float FilaLightManager_getFalloff(const FilaLightManager* manager, FilaLightMana
     }
     auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
     return cppManager->getFalloff(toInstance(instance));
+}
+
+void FilaLightManager_setSpotLightCone(FilaLightManager* manager, FilaLightManagerInstance instance, float inner, float outer) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setSpotLightCone(toInstance(instance), inner, outer);
+}
+
+float FilaLightManager_getSpotLightOuterCone(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getSpotLightOuterCone(toInstance(instance));
+}
+
+float FilaLightManager_getSpotLightInnerCone(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getSpotLightInnerCone(toInstance(instance));
+}
+
+void FilaLightManager_setSunAngularRadius(FilaLightManager* manager, FilaLightManagerInstance instance, float angularRadius) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setSunAngularRadius(toInstance(instance), angularRadius);
+}
+
+float FilaLightManager_getSunAngularRadius(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getSunAngularRadius(toInstance(instance));
+}
+
+void FilaLightManager_setSunHaloSize(FilaLightManager* manager, FilaLightManagerInstance instance, float haloSize) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setSunHaloSize(toInstance(instance), haloSize);
+}
+
+float FilaLightManager_getSunHaloSize(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getSunHaloSize(toInstance(instance));
+}
+
+void FilaLightManager_setSunHaloFalloff(FilaLightManager* manager, FilaLightManagerInstance instance, float haloFalloff) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setSunHaloFalloff(toInstance(instance), haloFalloff);
+}
+
+float FilaLightManager_getSunHaloFalloff(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return 0.0f;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->getSunHaloFalloff(toInstance(instance));
+}
+
+void FilaLightManager_setShadowCaster(FilaLightManager* manager, FilaLightManagerInstance instance, bool shadowCaster) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setShadowCaster(toInstance(instance), shadowCaster);
+}
+
+bool FilaLightManager_isShadowCaster(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->isShadowCaster(toInstance(instance));
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightType type) {
@@ -287,6 +399,54 @@ void FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* builder, bool 
     }
     auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
     cppBuilder->castShadows(enable);
+}
+
+void FilaLightManagerBuilder_castLight(FilaLightManagerBuilder* builder, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->castLight(enable);
+}
+
+void FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* builder, unsigned int channel, bool enable) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->lightChannel(channel, enable);
+}
+
+void FilaLightManagerBuilder_intensityCandela(FilaLightManagerBuilder* builder, float intensity) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->intensityCandela(intensity);
+}
+
+void FilaLightManagerBuilder_sunAngularRadius(FilaLightManagerBuilder* builder, float angularRadius) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->sunAngularRadius(angularRadius);
+}
+
+void FilaLightManagerBuilder_sunHaloSize(FilaLightManagerBuilder* builder, float haloSize) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->sunHaloSize(haloSize);
+}
+
+void FilaLightManagerBuilder_sunHaloFalloff(FilaLightManagerBuilder* builder, float haloFalloff) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->sunHaloFalloff(haloFalloff);
 }
 
 bool FilaLightManagerBuilder_build(FilaLightManagerBuilder* builder, FilaEngine* engine, FilaEntity entity) {
