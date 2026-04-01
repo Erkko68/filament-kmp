@@ -1,7 +1,7 @@
 #include <filament/ColorGrading.h>
 #include <filament/Engine.h>
 
-#include "filament/ColorGrading.h"
+#include "../../include/filament/ColorGrading.h"
 
 namespace {
 using ColorGradingBuilder = filament::ColorGrading::Builder;

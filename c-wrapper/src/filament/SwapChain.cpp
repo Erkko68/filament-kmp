@@ -1,7 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/SwapChain.h>
 
-#include "filament/SwapChain.h"
+#include "../../include/filament/SwapChain.h"
 
 extern "C" {
 

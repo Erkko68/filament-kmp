@@ -4,7 +4,7 @@
 
 #include <math/vec4.h>
 
-#include "filament/Skybox.h"
+#include "../../include/filament/Skybox.h"
 
 namespace {
 using SkyboxBuilder = filament::Skybox::Builder;

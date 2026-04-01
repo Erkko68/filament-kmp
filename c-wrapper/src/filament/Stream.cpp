@@ -1,7 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/Stream.h>
 
-#include "filament/Stream.h"
+#include "../../include/filament/Stream.h"
 
 namespace {
 using StreamBuilder = filament::Stream::Builder;

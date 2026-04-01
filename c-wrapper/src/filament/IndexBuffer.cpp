@@ -1,8 +1,8 @@
 #include <filament/Engine.h>
 #include <filament/IndexBuffer.h>
 
-#include "filament/BufferDescriptor.h"
-#include "filament/IndexBuffer.h"
+#include "../../include/filament/BufferDescriptor.h"
+#include "../../include/filament/IndexBuffer.h"
 
 namespace {
 using IndexBuilder = filament::IndexBuffer::Builder;

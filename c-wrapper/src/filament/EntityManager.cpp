@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "filament/Types.h"
+#include "../../include/filament/Types.h"
 
 extern "C" {
 

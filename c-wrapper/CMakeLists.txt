@@ -13,7 +13,9 @@ set(C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-prebuilts/include")
 
 # Define the source files for our wrapper
-file(GLOB SOURCES "src/filament/*.cpp")
+file(GLOB FILAMENT_SOURCES "src/filament/*.cpp")
+file(GLOB BACKEND_SOURCES "src/backend/*.cpp")
+set(SOURCES ${FILAMENT_SOURCES} ${BACKEND_SOURCES})
 
 # 1. Create our static library bridge
 add_library(filament_c_wrapper STATIC ${SOURCES})

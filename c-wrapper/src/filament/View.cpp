@@ -5,7 +5,7 @@
 #include <filament/View.h>
 #include <filament/Viewport.h>
 
-#include "filament/View.h"
+#include "../../include/filament/View.h"
 
 extern "C" {
 

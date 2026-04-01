@@ -4,8 +4,8 @@
 
 #include <utils/Entity.h>
 
-#include "filament/Scene.h"
-#include "filament/Types.h"
+#include "../../include/filament/Scene.h"
+#include "../../include/filament/Types.h"
 
 namespace {
 utils::Entity toEntity(FilaEntity entity) {

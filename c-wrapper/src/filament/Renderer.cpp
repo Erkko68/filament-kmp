@@ -2,7 +2,7 @@
 #include <filament/SwapChain.h>
 #include <filament/View.h>
 
-#include "filament/Types.h"
+#include "../../include/filament/Types.h"
 
 extern "C" {
 

@@ -6,7 +6,7 @@
 
 #include <utils/Entity.h>
 
-#include "filament/LightManager.h"
+#include "../../include/filament/LightManager.h"
 
 namespace {
 utils::Entity toEntity(FilaEntity entity) {

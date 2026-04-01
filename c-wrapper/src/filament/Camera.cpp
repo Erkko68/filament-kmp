@@ -4,7 +4,7 @@
 #include "../../../filament-prebuilts/include/utils/Entity.h"
 
 // C wrapper headers
-#include "filament/Types.h"
+#include "../../include/filament/Types.h"
 
 namespace {
 filament::Camera::Fov toFov(FilaCameraFov fov) {

@@ -1,6 +1,6 @@
 #include <filament/Fence.h>
 
-#include "filament/Fence.h"
+#include "../../include/filament/Fence.h"
 
 namespace {
 filament::Fence::Mode toFenceMode(FilaFenceMode mode) {

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "filament/SkinningBuffer.h"
+#include "../../include/filament/SkinningBuffer.h"
 
 namespace {
 using SkinningBufferBuilder = filament::SkinningBuffer::Builder;

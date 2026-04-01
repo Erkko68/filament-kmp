@@ -1,6 +1,6 @@
 #include <filament/ToneMapper.h>
 
-#include "filament/ToneMapper.h"
+#include "../../include/filament/ToneMapper.h"
 
 extern "C" {
 

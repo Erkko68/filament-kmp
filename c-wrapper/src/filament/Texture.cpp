@@ -2,8 +2,8 @@
 #include <filament/Texture.h>
 #include <filament/Stream.h>
 
-#include "filament/Texture.h"
-#include "filament/BufferDescriptor.h"
+#include "../../include/filament/Texture.h"
+#include "../../include/filament/BufferDescriptor.h"
 
 namespace {
 using TextureBuilder = filament::Texture::Builder;

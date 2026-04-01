@@ -22,8 +22,8 @@
 
 #include <utils/Entity.h>
 
-#include "filament/Engine.h" // Our C Header
-#include "filament/Types.h"  // Our C Types
+#include "../../include/filament/Engine.h" // Our C Header
+#include "../../include/filament/Types.h"  // Our C Types
 
 namespace {
 utils::Entity toEntity(FilaEntity entity) {

@@ -1,7 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/MorphTargetBuffer.h>
 
-#include "filament/MorphTargetBuffer.h"
+#include "../../include/filament/MorphTargetBuffer.h"
 
 namespace {
 using MorphTargetBufferBuilder = filament::MorphTargetBuffer::Builder;

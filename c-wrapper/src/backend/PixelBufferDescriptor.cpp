@@ -1,9 +1,6 @@
-#include "backend/PixelBufferDescriptor.h"
-#include <filament/backend/PixelBufferDescriptor.h>
+#include "filament/BufferDescriptor.h"
+#include <backend/PixelBufferDescriptor.h>
 
-struct FilaPixelBufferDescriptor {
-    void* impl;
-};
 
 extern "C" {
 

@@ -1,9 +1,6 @@
-#include "backend/BufferDescriptor.h"
-#include <filament/backend/BufferDescriptor.h>
+#include "filament/BufferDescriptor.h"
+#include <backend/BufferDescriptor.h>
 
-struct FilaBufferDescriptor {
-    void* impl;
-};
 
 extern "C" {
 
