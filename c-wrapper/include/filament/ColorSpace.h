@@ -31,6 +31,16 @@ typedef struct FilaColorSpace {
     FilaColorSpaceWhitePoint whitePoint;
 } FilaColorSpace;
 
+void FilaColorSpacePrimaries_set(FilaColorSpacePrimaries* outPrimaries,
+        float rx, float ry,
+        float gx, float gy,
+        float bx, float by);
+void FilaColorSpaceWhitePoint_set(FilaColorSpaceWhitePoint* outWhitePoint, float x, float y);
+void FilaColorSpaceTransferFunction_set(FilaColorSpaceTransferFunction* outTf,
+        double a, double b, double c, double d, double e, double f, double g);
+void FilaColorSpaceTransferFunction_setType3(FilaColorSpaceTransferFunction* outTf,
+        double a, double b, double c, double d, double g);
+
 void FilaColorSpace_setRec709Primaries(FilaColorSpacePrimaries* outPrimaries);
 void FilaColorSpace_setD65WhitePoint(FilaColorSpaceWhitePoint* outWhitePoint);
 void FilaColorSpace_setLinearTransferFunction(FilaColorSpaceTransferFunction* outTf);

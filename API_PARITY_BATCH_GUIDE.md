@@ -1,207 +1,173 @@
-# API Parity Batch Guide (Filament + Backend)
+# API Parity Roadmap (Demo-Driven)
 
-This guide captures the current parity gaps and proposes the next implementation batches.
+This document defines the next implementation plan to reach a clear product goal:
 
-## Audit Snapshot (2026-04-01)
+> Build and run a C-header Filament program that renders visible geometry with lighting and shadows,
+> and keep extending parity from that baseline.
 
-### 1) File-Level Gaps
+Updated: 2026-04-01
 
-#### `filament` headers missing in C wrapper
+---
+
+## North-Star Outcome
+
+### Target Demo
+
+Create and maintain a runnable sample under `c-wrapper/test/functionality/` that proves:
+
+1. Engine + renderer + view + scene are configured from C.
+2. Geometry is visible (triangle/mesh path).
+3. At least one light affects the scene.
+4. Shadow casting/receiving behavior is enabled and exercised.
+5. Program runs cleanly in CI-style test invocation.
+
+### Demo Acceptance Criteria
+
+- Demo builds with `./test_functionality.sh`.
+- Demo exits with code `0`.
+- No deprecated API dependencies required.
+- No `backend/platforms/*` exposure required.
+
+---
+
+## Current Direction
+
+- `Batch F` manager parity work is treated as functionally complete for current goals.
+- `Batch G` utility/query work is substantially complete for backend-agnostic C usage.
+- `backend/platforms/*` remains explicitly deferred unless a concrete platform adapter requirement appears.
+
+---
+
+## Batch A (Now): Missing Filament Header Surface
+
+### Goal
+
+Unblock higher-level API parity by adding missing low-risk filament header surfaces.
+
+### Scope
+
+Add C headers and bridges for:
+
 - `filament/ColorSpace.h`
 - `filament/Exposure.h`
-- `filament/FilamentAPI.h`
-- `filament/MaterialChunkType.h`
 - `filament/MaterialEnums.h`
+- `filament/MaterialChunkType.h`
 - `filament/Options.h`
+- `filament/FilamentAPI.h` (C compatibility/stub only)
 
-#### `backend` headers missing in C wrapper
-- `backend/platforms/` (entire folder not surfaced in C)
-- `backend/README.md` (documentation only)
+### Implementation Rules
 
-### 2) Major Partial-Parity Zones
+- C-safe only; no C++-macro mirroring in public C headers.
+- Non-deprecated surfaces first.
+- Null/invalid guards on every exported function.
 
-These headers exist in C, but are still significantly narrower than upstream API surface:
-- `c-wrapper/include/filament/Engine.h`
-- `c-wrapper/include/filament/View.h`
-- `c-wrapper/include/filament/Renderer.h`
-- `c-wrapper/include/filament/Material.h`
-- `c-wrapper/include/filament/MaterialInstance.h`
-- `c-wrapper/include/filament/Texture.h`
-- `c-wrapper/include/backend/Platform.h`
-- `c-wrapper/include/backend/DriverEnums.h`
+### Tests
 
-### 3) Notes
-- `backend/platforms/*` is high-risk and platform-coupled; keep it as a late batch unless explicitly needed.
-- `FilamentAPI.h` in C should likely be a compatibility/stub surface (not a direct C++ macro mirror).
-- Continue excluding deprecated APIs unless needed for compatibility.
+- Add/extend compile coverage in `c-wrapper/test/headers/`.
+- Add runtime checks only for deterministic helpers in `c-wrapper/test/functionality/`.
+
+### Exit Criteria
+
+- All missing Batch A headers exist in `c-wrapper/include/filament/`.
+- Header tests compile cleanly.
+- Any runtime-safe helpers added have functionality checks.
 
 ---
 
-## Proposed Batch Roadmap
+## Batch B (Next): Engine Parity Expansion
 
-## Batch A: Missing Filament Header Surface (Low Risk, High Unlock)
+### Goal
 
-**Goal**: Eliminate missing file-level gaps in `filament/` headers.
+Expand `Engine` read/query/control surface needed to support the demo and future View/Renderer work.
 
-**Scope**
-- Add C headers and bridge implementations for:
-  - `ColorSpace`
-  - `Exposure`
-  - `MaterialEnums`
-  - `MaterialChunkType`
-  - `Options`
-  - `FilamentAPI` (C-safe compatibility surface)
+### Scope (non-deprecated)
 
-**Dependencies**
-- None beyond existing type system.
+Prioritize:
 
-**Tests**
-- New module compile tests per new header.
-- Extend smoke tests where static helpers are runtime-safe.
+- Capability and feature-level readbacks.
+- Additional deterministic config getters.
+- Max-count / limit query helpers that are practical in C.
 
----
+Defer:
 
-## Batch B: Engine Parity Expansion (Core Queries + Runtime Controls)
+- Async command/callback APIs until callback model is standardized.
 
-**Goal**: Expand `Engine` parity after stereo/config additions.
+### Tests
 
-**Scope (non-deprecated only)**
-- Add missing read-only query helpers and safe toggles first:
-  - backend/support/feature-level getters
-  - additional config readbacks
-  - max-instance/count style queries as C helpers where practical
-- Defer async command APIs until callback model is standardized.
+- Extend `c-wrapper/test/headers/headers_engine.c`.
+- Extend existing engine functionality programs under `c-wrapper/test/functionality/`.
 
-**Dependencies**
-- `backend/DriverEnums` and `backend/Platform` enums must remain aligned.
+### Exit Criteria
 
-**Tests**
-- Extend `c-wrapper/test/module/engine_test.c`.
-- Extend `engine_scene_*` smoke programs with new engine queries.
+- Engine query parity required by demo setup is available in C.
+- Header and functionality suites remain green.
 
 ---
 
-## Batch C: View + Renderer Option Parity
+## Demo Track (Runs in Parallel)
 
-**Goal**: Fill large parity gaps in rendering controls.
+### D0: Baseline Scene Program
 
-**Scope**
-- `View`: stereoscopic options, post-process controls, quality knobs, dynamic resolution, render quality buckets.
-- `Renderer`: frame pacing/query APIs that are deterministic in smoke mode.
+Create/extend a dedicated functionality program to render a minimal lit/shadowed scene from C APIs.
 
-**Dependencies**
-- Batch B (engine capability/config readback) recommended first.
-- `Options.h` from Batch A should be in place.
+Suggested path:
 
-**Tests**
-- Extend `view_test.c` and `renderer_test.c`.
-- Add/expand integration smoke with readback assertions.
+- `c-wrapper/test/functionality/functionality_engine_scene_lighting_shadows.c`
 
----
+### D1: Stabilize Inputs
 
-## Batch D: Material + MaterialInstance Full Parameter Surface
+- Use already wrapped manager surfaces (`Scene`, `LightManager`, `RenderableManager`, `TransformManager`).
+- Keep assets/procedural geometry deterministic.
+- Keep startup and teardown explicit in one file.
 
-**Goal**: Bring parameter setting/getting APIs closer to parity.
+### D2: Add Assertions
 
-**Scope**
-- Add missing parameter overload families (scalar/vector/matrix/texture variants).
-- Add enum-backed material property queries and blending/shading model exposure.
-- Keep callback/async compile hooks for later unless required.
+- Assert non-null manager retrieval.
+- Assert entity/component creation success.
+- Assert key runtime state queries (instance validity, component presence, light/shadow toggles).
 
-**Dependencies**
-- Batch A (`MaterialEnums`, `MaterialChunkType`).
+### D3: Keep It CI-Friendly
 
-**Tests**
-- Expand `material_test.c`.
-- Expand material parameter smoke programs.
+- No interactive dependency.
+- Fail fast with clear messages.
+- Exit `0` on success.
 
 ---
 
-## Batch E: Texture + Sampler + Stream Advanced Paths
+## Explicit Deferrals
 
-**Goal**: Complete practical texture upload/sampler/stream parity.
+### Deferred by Default
 
-**Scope**
-- Add missing `Texture`/`TextureSampler` controls and utility queries.
-- Add stream/acquired image dependent paths that are deterministic.
+- `backend/platforms/*` (platform-coupled adapters).
+- Platform instance/lifecycle virtual API exposure.
+- Deprecated upstream API parity.
 
-**Dependencies**
-- Backend descriptor and pixel descriptor parity should be stable first.
+### When to Reopen
 
-**Tests**
-- Extend `texture_test.c`, `texture_sampler_test.c`, `stream_test.c`.
-- Integration coverage in existing texture/stream smoke programs.
+Only reopen if we have a concrete product requirement that cannot be met through backend-agnostic C APIs.
 
 ---
 
-## Batch F: Scene/Light/Renderable Advanced Managers
+## Execution Cadence
 
-**Goal**: Complete higher-level scene graph manager parity.
+For each slice:
 
-**Scope**
-- Fill advanced builder/query/update gaps in:
-  - `LightManager`
-  - `RenderableManager`
-  - `Scene`
-  - `TransformManager` edge utilities
+1. Add/adjust C header declarations.
+2. Implement bridge with guards.
+3. Add header compile coverage.
+4. Add deterministic functionality checks (if runtime-safe).
+5. Run full suites and keep green.
 
-**Dependencies**
-- Batch C/D for enum/options consistency.
+Primary validation commands:
 
-**Tests**
-- Expand module tests for each manager.
-- Extend engine scene smoke suites.
+- `cd c-wrapper/test && ./test_headers.sh`
+- `cd c-wrapper/test && ./test_functionality.sh`
 
 ---
 
-## Batch G: Backend Platform + DriverEnums Completion
+## Immediate Next Steps
 
-**Goal**: Close remaining backend gaps that impact engine/runtime behavior.
-
-**Scope**
-- Complete utility/query coverage in:
-  - `backend/Platform.h`
-  - `backend/DriverEnums.h`
-- Keep APIs C-safe and backend-agnostic.
-
-**Dependencies**
-- Batches B/C should be mostly complete.
-
-**Tests**
-- Extend existing backend module tests.
-- Add deterministic smoke checks where runtime backend supports readback.
-
----
-
-## Batch H: Backend `platforms/*` (Optional / Late)
-
-**Goal**: Decide whether platform-specific backend adapters should be exposed in C.
-
-**Scope options**
-1. **Defer indefinitely** (recommended default).
-2. Expose a minimal subset for specific host platforms.
-3. Full platform API parity (highest maintenance cost).
-
-**Dependencies**
-- Clear product requirement for platform-level customization.
-
-**Tests**
-- Platform-specific integration harnesses.
-
----
-
-## Execution Rules for Every Batch
-
-- Keep strict non-deprecated parity targets.
-- Keep null/invalid guards in every C export.
-- Prefer extending existing module/smoke tests before adding new binaries.
-- Run and record:
-  - `bash c-wrapper/test/test_module.sh`
-  - `bash c-wrapper/test/test_integration.sh`
-
----
-
-## Immediate Next Recommendation
-
-Start with **Batch A** (missing headers) and then **Batch B** (Engine expansion). This gives the best unblock ratio for later View/Renderer/Material parity work.
+1. Execute Batch A header additions in the exact order above.
+2. Add/expand the demo functionality program for geometry + lighting + shadows.
+3. Begin Batch B engine query expansion only as needed to remove demo blockers.
 

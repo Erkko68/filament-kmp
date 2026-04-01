@@ -70,3 +70,4 @@ export FILA_TEST_MATERIAL_PACKAGE="/absolute/path/to/sample.filamat"
 ./test/test_functionality.sh
 ```
 
+

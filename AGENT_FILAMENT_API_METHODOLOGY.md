@@ -62,8 +62,6 @@ For each new Filament module `X`:
 - Default mode builds wrapper + compile-only checks.
 - Linked integration tests require host prebuilts:
   - `FILA_ENABLE_LINKED_TESTS=ON`
-- Optional macOS GUI smoke target is built manually:
-  - `FILA_ENABLE_MACOS_ONSCREEN_TEST=ON`
 
 ## Incremental Workflow
 
