@@ -1,6 +1,10 @@
 #include "backend/DescriptorSetOffsetArray.h"
 
 void backend_descriptor_set_offset_array_test(void) {
+    FilaBackendDriverApi* driverApi = (FilaBackendDriverApi*)0;
+    FilaBackendCommandStream* commandStream = FilaBackendDriverApi_asCommandStream(driverApi);
+    (void)commandStream;
+
     FilaBackendDescriptorSetOffsetArray* array = FilaBackendDescriptorSetOffsetArray_create();
     FilaBackendDescriptorSetOffsetArray_empty(array);
     FilaBackendDescriptorSetOffsetArray_size(array);
