@@ -16,6 +16,12 @@ void FilaMaterialBuilder_package(FilaMaterialBuilder* builder, const void* paylo
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* builder, FilaEngine* engine);
 
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* material);
+FilaMaterialInstance* FilaMaterial_createInstanceNamed(const FilaMaterial* material, const char* name);
+
+const char* FilaMaterial_getName(const FilaMaterial* material);
+bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name);
+bool FilaMaterial_isSampler(const FilaMaterial* material, const char* name);
+size_t FilaMaterial_getParameterCount(const FilaMaterial* material);
 
 #ifdef __cplusplus
 }

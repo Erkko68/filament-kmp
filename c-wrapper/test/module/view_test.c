@@ -31,6 +31,31 @@ void fila_view_module_compile_only(void) {
     FilaView_setRenderTarget(view, renderTarget);
     (void)FilaView_getRenderTarget(view);
 
+    FilaView_setName(view, "main-view");
+    (void)FilaView_getName(view);
+    FilaView_setVisibleLayers(view, 0xFFu, 0x03u);
+    (void)FilaView_getVisibleLayers(view);
+    FilaView_setBlendMode(view, FILA_VIEW_BLEND_MODE_TRANSLUCENT);
+    (void)FilaView_getBlendMode(view);
+    FilaView_setAntiAliasing(view, FILA_VIEW_ANTI_ALIASING_FXAA);
+    (void)FilaView_getAntiAliasing(view);
+    FilaView_setDithering(view, FILA_VIEW_DITHERING_TEMPORAL);
+    (void)FilaView_getDithering(view);
+    FilaView_setShadowType(view, FILA_VIEW_SHADOW_TYPE_VSM);
+    (void)FilaView_getShadowType(view);
+    FilaView_setShadowingEnabled(view, true);
+    (void)FilaView_isShadowingEnabled(view);
+    FilaView_setScreenSpaceRefractionEnabled(view, false);
+    (void)FilaView_isScreenSpaceRefractionEnabled(view);
+    FilaView_setPostProcessingEnabled(view, true);
+    (void)FilaView_isPostProcessingEnabled(view);
+    FilaView_setFrontFaceWindingInverted(view, false);
+    (void)FilaView_isFrontFaceWindingInverted(view);
+    FilaView_setTransparentPickingEnabled(view, false);
+    (void)FilaView_isTransparentPickingEnabled(view);
+    FilaView_setStencilBufferEnabled(view, false);
+    (void)FilaView_isStencilBufferEnabled(view);
+
     FilaEngine_destroyCameraComponent(engine, entity);
     FilaEngine_destroyView(engine, view);
 }

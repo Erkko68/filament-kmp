@@ -72,6 +72,15 @@ int main(void) {
         return 1;
     }
 
+    if (FilaRenderTarget_getSupportedColorAttachmentsCount(renderTarget) == 0u) {
+        printf("RenderTarget supported attachment count invalid\n");
+        FilaEngine_destroyRenderTarget(engine, renderTarget);
+        FilaEngine_destroyTexture(engine, texture);
+        FilaEngine_destroyView(engine, view);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
     FilaColorGradingBuilder* cgBuilder = FilaColorGradingBuilder_create();
     if (!cgBuilder) {
         printf("ColorGrading builder creation failed\n");
@@ -138,4 +147,3 @@ int main(void) {
     printf("Engine+view+color_grading+render_target smoke program completed\n");
     return 0;
 }
-

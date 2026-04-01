@@ -72,6 +72,15 @@ void FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* builder, uint8_t s
     cppBuilder->samples(samples);
 }
 
+void FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* builder,
+        FilaRenderTargetAttachmentPoint attachment,
+        uint8_t layerCount,
+        uint8_t baseLayer) {
+    if (!builder) return;
+    auto cppBuilder = reinterpret_cast<RenderTargetBuilder*>(builder);
+    cppBuilder->multiview(toAttachmentPoint(attachment), layerCount, baseLayer);
+}
+
 FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* builder, FilaEngine* engine) {
     if (!builder || !engine) return nullptr;
     auto cppBuilder = reinterpret_cast<RenderTargetBuilder*>(builder);
@@ -105,6 +114,12 @@ uint32_t FilaRenderTarget_getLayer(const FilaRenderTarget* renderTarget,
     if (!renderTarget) return 0;
     auto cppRenderTarget = reinterpret_cast<const filament::RenderTarget*>(renderTarget);
     return cppRenderTarget->getLayer(toAttachmentPoint(attachment));
+}
+
+uint8_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* renderTarget) {
+    if (!renderTarget) return filament::RenderTarget::MIN_SUPPORTED_COLOR_ATTACHMENTS_COUNT;
+    auto cppRenderTarget = reinterpret_cast<const filament::RenderTarget*>(renderTarget);
+    return cppRenderTarget->getSupportedColorAttachmentsCount();
 }
 
 } // extern "C"

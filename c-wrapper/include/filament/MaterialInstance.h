@@ -30,6 +30,13 @@ void FilaMaterialInstance_setParameterInt(FilaMaterialInstance* materialInstance
 // Sets an unsigned int uniform parameter by name.
 void FilaMaterialInstance_setParameterUint(FilaMaterialInstance* materialInstance, const char* name, uint32_t x);
 
+// Sets a texture+sampler parameter by name.
+void FilaMaterialInstance_setParameterTexture(
+    FilaMaterialInstance* materialInstance,
+    const char* name,
+    const FilaTexture* texture,
+    const FilaTextureParams* sampler);
+
 #ifdef __cplusplus
 }
 #endif

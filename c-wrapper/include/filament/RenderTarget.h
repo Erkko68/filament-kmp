@@ -46,6 +46,10 @@ void FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* builder,
         FilaRenderTargetAttachmentPoint attachment,
         uint32_t layer);
 void FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* builder, uint8_t samples);
+void FilaRenderTargetBuilder_multiview(FilaRenderTargetBuilder* builder,
+        FilaRenderTargetAttachmentPoint attachment,
+        uint8_t layerCount,
+        uint8_t baseLayer);
 FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* builder, FilaEngine* engine);
 
 FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* renderTarget,
@@ -56,6 +60,7 @@ FilaCubemapFace FilaRenderTarget_getFace(const FilaRenderTarget* renderTarget,
         FilaRenderTargetAttachmentPoint attachment);
 uint32_t FilaRenderTarget_getLayer(const FilaRenderTarget* renderTarget,
         FilaRenderTargetAttachmentPoint attachment);
+uint8_t FilaRenderTarget_getSupportedColorAttachmentsCount(const FilaRenderTarget* renderTarget);
 
 #ifdef __cplusplus
 }

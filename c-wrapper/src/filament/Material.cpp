@@ -1,6 +1,8 @@
 #include <filament/Engine.h>
 #include <filament/Material.h>
 #include <filament/MaterialInstance.h>
+#include <filament/Texture.h>
+#include <filament/TextureSampler.h>
 
 #include <math/vec2.h>
 #include <math/vec3.h>
@@ -60,12 +62,52 @@ FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* material) 
     return reinterpret_cast<FilaMaterialInstance*>(cppMaterial->createInstance());
 }
 
+FilaMaterialInstance* FilaMaterial_createInstanceNamed(const FilaMaterial* material, const char* name) {
+    if (!material) {
+        return nullptr;
+    }
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    return reinterpret_cast<FilaMaterialInstance*>(cppMaterial->createInstance(name));
+}
+
 const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance* materialInstance) {
     if (!materialInstance) {
         return nullptr;
     }
     auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
     return reinterpret_cast<const FilaMaterial*>(cppMaterialInstance->getMaterial());
+}
+
+const char* FilaMaterial_getName(const FilaMaterial* material) {
+    if (!material) {
+        return nullptr;
+    }
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    return cppMaterial->getName();
+}
+
+bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name) {
+    if (!material || !name || name[0] == '\0') {
+        return false;
+    }
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    return cppMaterial->hasParameter(name);
+}
+
+bool FilaMaterial_isSampler(const FilaMaterial* material, const char* name) {
+    if (!material || !name || name[0] == '\0') {
+        return false;
+    }
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    return cppMaterial->isSampler(name);
+}
+
+size_t FilaMaterial_getParameterCount(const FilaMaterial* material) {
+    if (!material) {
+        return 0;
+    }
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    return cppMaterial->getParameterCount();
 }
 
 void FilaMaterialInstance_setParameterFloat(FilaMaterialInstance* materialInstance, const char* name, float x) {
@@ -114,6 +156,18 @@ void FilaMaterialInstance_setParameterUint(FilaMaterialInstance* materialInstanc
         return;
     }
     cppMaterialInstance->setParameter(name, x);
+}
+
+void FilaMaterialInstance_setParameterTexture(
+        FilaMaterialInstance* materialInstance, const char* name, const FilaTexture* texture,
+        const FilaTextureParams* sampler) {
+    auto cppMaterialInstance = reinterpret_cast<filament::MaterialInstance*>(materialInstance);
+    if (!canSetParameter(cppMaterialInstance, name) || !sampler) {
+        return;
+    }
+    auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
+    auto cppSampler = reinterpret_cast<const filament::TextureSampler*>(sampler);
+    cppMaterialInstance->setParameter(name, cppTexture, *cppSampler);
 }
 
 } // extern "C"
