@@ -70,10 +70,19 @@ void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine,
     if (!indexBuffer || !engine || !buffer) {
         return;
     }
+    if (!buffer->impl) {
+        return;
+    }
     auto cppIndexBuffer = reinterpret_cast<filament::IndexBuffer*>(indexBuffer);
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppBuffer = reinterpret_cast<filament::backend::BufferDescriptor*>(buffer->impl);
     cppIndexBuffer->setBuffer(*cppEngine, std::move(*cppBuffer), byteOffset);
+    delete cppBuffer;
+    buffer->impl = nullptr;
+    buffer->callback = nullptr;
+    buffer->user = nullptr;
+    buffer->handler = nullptr;
+    buffer->consumed = true;
 }
 
 } // extern "C"

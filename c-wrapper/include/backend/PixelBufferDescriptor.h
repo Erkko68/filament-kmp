@@ -102,6 +102,8 @@ typedef enum FilaCompressedPixelDataType {
 
 /**
  * Creates a FilaPixelBufferDescriptor referencing an image in main memory.
+ * After a successful texture upload call consumes this descriptor, it becomes non-owning and
+ * callback/query APIs return empty values.
  *
  * @param buffer    Virtual address of the buffer containing the image.
  * @param size      Size in bytes of the buffer containing the image.
@@ -154,7 +156,7 @@ FilaCallbackHandler* FilaPixelBufferDescriptor_getHandler(const FilaPixelBufferD
 
 /**
  * Destroys a FilaPixelBufferDescriptor.
- * This will trigger the release callback if one was set.
+ * This triggers the release callback only if this descriptor still owns the image buffer.
  *
  * @param desc A pointer to the FilaPixelBufferDescriptor to destroy.
  */

@@ -90,10 +90,19 @@ void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* en
     if (!vertexBuffer || !engine || !buffer) {
         return;
     }
+    if (!buffer->impl) {
+        return;
+    }
     auto cppVertexBuffer = reinterpret_cast<filament::VertexBuffer*>(vertexBuffer);
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppBuffer = reinterpret_cast<filament::backend::BufferDescriptor*>(buffer->impl);
     cppVertexBuffer->setBufferAt(*cppEngine, bufferIndex, std::move(*cppBuffer), byteOffset);
+    delete cppBuffer;
+    buffer->impl = nullptr;
+    buffer->callback = nullptr;
+    buffer->user = nullptr;
+    buffer->handler = nullptr;
+    buffer->consumed = true;
 }
 
 } // extern "C"

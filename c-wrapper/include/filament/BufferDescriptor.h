@@ -11,6 +11,7 @@ struct FilaBufferDescriptor {
     FilaBufferReleaseCallback callback;
     void* user;
     FilaCallbackHandler* handler;
+    bool consumed;
 };
 
 struct FilaPixelBufferDescriptor {
@@ -18,6 +19,7 @@ struct FilaPixelBufferDescriptor {
     FilaBufferReleaseCallback callback;
     void* user;
     FilaCallbackHandler* handler;
+    bool consumed;
 };
 
 struct FilaCallbackHandler {

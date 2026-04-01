@@ -44,6 +44,7 @@ FilaBufferDescriptor* FilaBufferDescriptor_create(const void* buffer, size_t siz
     desc->callback = callback;
     desc->user = user;
     desc->handler = nullptr;
+    desc->consumed = false;
     return desc;
 }
 
@@ -58,11 +59,12 @@ FilaBufferDescriptor* FilaBufferDescriptor_createWithHandler(
     desc->callback = callback;
     desc->user = user;
     desc->handler = handler;
+    desc->consumed = false;
     return desc;
 }
 
 void FilaBufferDescriptor_setCallback(FilaBufferDescriptor* desc, FilaBufferReleaseCallback callback, void* user) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return;
     }
     auto impl = reinterpret_cast<filament::backend::BufferDescriptor*>(desc->impl);
@@ -80,7 +82,7 @@ void FilaBufferDescriptor_setCallback(FilaBufferDescriptor* desc, FilaBufferRele
 void FilaBufferDescriptor_setCallbackWithHandler(
         FilaBufferDescriptor* desc, FilaCallbackHandler* handler,
         FilaBufferReleaseCallback callback, void* user) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return;
     }
     auto impl = reinterpret_cast<filament::backend::BufferDescriptor*>(desc->impl);
@@ -97,7 +99,7 @@ void FilaBufferDescriptor_setCallbackWithHandler(
 }
 
 bool FilaBufferDescriptor_hasCallback(const FilaBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return false;
     }
     auto impl = reinterpret_cast<const filament::backend::BufferDescriptor*>(desc->impl);
@@ -105,21 +107,21 @@ bool FilaBufferDescriptor_hasCallback(const FilaBufferDescriptor* desc) {
 }
 
 FilaBufferReleaseCallback FilaBufferDescriptor_getCallback(const FilaBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return nullptr;
     }
     return desc->callback;
 }
 
 void* FilaBufferDescriptor_getUser(const FilaBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return nullptr;
     }
     return desc->user;
 }
 
 FilaCallbackHandler* FilaBufferDescriptor_getHandler(const FilaBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return nullptr;
     }
     return desc->handler;
@@ -127,20 +129,22 @@ FilaCallbackHandler* FilaBufferDescriptor_getHandler(const FilaBufferDescriptor*
 
 void FilaBufferDescriptor_destroy(FilaBufferDescriptor* desc) {
     if (desc) {
-        auto impl = reinterpret_cast<filament::backend::BufferDescriptor*>(desc->impl);
-        delete impl;
+        if (desc->impl) {
+            auto impl = reinterpret_cast<filament::backend::BufferDescriptor*>(desc->impl);
+            delete impl;
+        }
         delete desc;
     }
 }
 
 const void* FilaBufferDescriptor_getBuffer(const FilaBufferDescriptor* desc) {
-    if (!desc) return nullptr;
+    if (!desc || !desc->impl) return nullptr;
     auto impl = reinterpret_cast<const filament::backend::BufferDescriptor*>(desc->impl);
     return impl->buffer;
 }
 
 size_t FilaBufferDescriptor_getSize(const FilaBufferDescriptor* desc) {
-    if (!desc) return 0;
+    if (!desc || !desc->impl) return 0;
     auto impl = reinterpret_cast<const filament::backend::BufferDescriptor*>(desc->impl);
     return impl->size;
 }

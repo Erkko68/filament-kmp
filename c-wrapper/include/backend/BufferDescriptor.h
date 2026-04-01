@@ -20,6 +20,8 @@ typedef void (*FilaBufferReleaseCallback)(void* buffer, size_t size, void* user)
 /**
  * Creates a FilaBufferDescriptor.
  * The created descriptor takes ownership of the buffer.
+ * After a successful buffer upload call consumes this descriptor, it becomes non-owning and
+ * callback/query APIs return empty values.
  *
  * @param buffer    Memory address of the CPU buffer to reference.
  * @param size      Size of the CPU buffer in bytes.
@@ -56,7 +58,7 @@ FilaCallbackHandler* FilaBufferDescriptor_getHandler(const FilaBufferDescriptor*
 
 /**
  * Destroys a FilaBufferDescriptor.
- * This will trigger the release callback if one was set.
+ * This triggers the release callback only if this descriptor still owns the buffer.
  *
  * @param desc A pointer to the FilaBufferDescriptor to destroy.
  */

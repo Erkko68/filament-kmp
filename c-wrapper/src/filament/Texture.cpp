@@ -151,20 +151,38 @@ void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level
     if (!texture || !engine || !buffer) {
         return;
     }
+    if (!buffer->impl) {
+        return;
+    }
     auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppBuffer = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(buffer->impl);
     cppTexture->setImage(*cppEngine, level, xoffset, yoffset, zoffset, width, height, depth, std::move(*cppBuffer));
+    delete cppBuffer;
+    buffer->impl = nullptr;
+    buffer->callback = nullptr;
+    buffer->user = nullptr;
+    buffer->handler = nullptr;
+    buffer->consumed = true;
 }
 
 void FilaTexture_setImage2D(FilaTexture* texture, FilaEngine* engine, size_t level, FilaPixelBufferDescriptor* buffer) {
     if (!texture || !engine || !buffer) {
         return;
     }
+    if (!buffer->impl) {
+        return;
+    }
     auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppBuffer = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(buffer->impl);
     cppTexture->setImage(*cppEngine, level, std::move(*cppBuffer));
+    delete cppBuffer;
+    buffer->impl = nullptr;
+    buffer->callback = nullptr;
+    buffer->user = nullptr;
+    buffer->handler = nullptr;
+    buffer->consumed = true;
 }
 
 void FilaTexture_generateMipmaps(FilaTexture* texture, FilaEngine* engine) {

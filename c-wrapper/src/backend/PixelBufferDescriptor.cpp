@@ -85,6 +85,7 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutAndHandler(
     desc->callback = callback;
     desc->user = user;
     desc->handler = handler;
+    desc->consumed = false;
     return desc;
 }
 
@@ -110,12 +111,13 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithHandler
     desc->callback = callback;
     desc->user = user;
     desc->handler = handler;
+    desc->consumed = false;
     return desc;
 }
 
 void FilaPixelBufferDescriptor_setCallback(FilaPixelBufferDescriptor* desc,
         FilaBufferReleaseCallback callback, void* user) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return;
     }
     auto impl = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(desc->impl);
@@ -133,7 +135,7 @@ void FilaPixelBufferDescriptor_setCallback(FilaPixelBufferDescriptor* desc,
 void FilaPixelBufferDescriptor_setCallbackWithHandler(
         FilaPixelBufferDescriptor* desc, FilaCallbackHandler* handler,
         FilaBufferReleaseCallback callback, void* user) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return;
     }
     auto impl = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(desc->impl);
@@ -150,7 +152,7 @@ void FilaPixelBufferDescriptor_setCallbackWithHandler(
 }
 
 bool FilaPixelBufferDescriptor_hasCallback(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return false;
     }
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
@@ -158,21 +160,21 @@ bool FilaPixelBufferDescriptor_hasCallback(const FilaPixelBufferDescriptor* desc
 }
 
 FilaBufferReleaseCallback FilaPixelBufferDescriptor_getCallback(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return nullptr;
     }
     return desc->callback;
 }
 
 void* FilaPixelBufferDescriptor_getUser(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return nullptr;
     }
     return desc->user;
 }
 
 FilaCallbackHandler* FilaPixelBufferDescriptor_getHandler(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) {
+    if (!desc || !desc->impl) {
         return nullptr;
     }
     return desc->handler;
@@ -180,69 +182,71 @@ FilaCallbackHandler* FilaPixelBufferDescriptor_getHandler(const FilaPixelBufferD
 
 void FilaPixelBufferDescriptor_destroy(FilaPixelBufferDescriptor* desc) {
     if (desc) {
-        auto impl = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(desc->impl);
-        delete impl;
+        if (desc->impl) {
+            auto impl = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(desc->impl);
+            delete impl;
+        }
         delete desc;
     }
 }
 
 const void* FilaPixelBufferDescriptor_getBuffer(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return nullptr;
+    if (!desc || !desc->impl) return nullptr;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->buffer;
 }
 
 size_t FilaPixelBufferDescriptor_getSize(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return 0;
+    if (!desc || !desc->impl) return 0;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->size;
 }
 
 FilaPixelDataFormat FilaPixelBufferDescriptor_getFormat(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return FILA_PIXEL_DATA_FORMAT_R;
+    if (!desc || !desc->impl) return FILA_PIXEL_DATA_FORMAT_R;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return static_cast<FilaPixelDataFormat>(impl->format);
 }
 
 FilaPixelDataType FilaPixelBufferDescriptor_getType(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return FILA_PIXEL_DATA_TYPE_UBYTE;
+    if (!desc || !desc->impl) return FILA_PIXEL_DATA_TYPE_UBYTE;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return static_cast<FilaPixelDataType>(impl->type);
 }
 
 uint8_t FilaPixelBufferDescriptor_getAlignment(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return 1;
+    if (!desc || !desc->impl) return 1;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->alignment;
 }
 
 uint32_t FilaPixelBufferDescriptor_getLeft(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return 0;
+    if (!desc || !desc->impl) return 0;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->left;
 }
 
 uint32_t FilaPixelBufferDescriptor_getTop(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return 0;
+    if (!desc || !desc->impl) return 0;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->top;
 }
 
 uint32_t FilaPixelBufferDescriptor_getStride(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return 0;
+    if (!desc || !desc->impl) return 0;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->stride;
 }
 
 uint32_t FilaPixelBufferDescriptor_getImageSize(const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return 0;
+    if (!desc || !desc->impl) return 0;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return impl->imageSize;
 }
 
 FilaCompressedPixelDataType FilaPixelBufferDescriptor_getCompressedFormat(
         const FilaPixelBufferDescriptor* desc) {
-    if (!desc) return FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_R11;
+    if (!desc || !desc->impl) return FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_R11;
     auto impl = reinterpret_cast<const filament::backend::PixelBufferDescriptor*>(desc->impl);
     return static_cast<FilaCompressedPixelDataType>(impl->compressedFormat);
 }
