@@ -3,6 +3,7 @@
 #include "filament/Engine.h"
 #include "utils/EntityManager.h"
 #include "filament/RenderableManager.h"
+#include "filament/Box.h"
 
 int main(void) {
     printf("Running engine+renderable_manager functionality program...\n");
@@ -109,6 +110,48 @@ int main(void) {
         return 1;
     }
 
+    FilaBox box = {
+            {0.0f, 0.0f, 0.0f},
+            {1.0f, 1.0f, 1.0f},
+    };
+    FilaBox outBox = {
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+    };
+    const float identity4x4[16] = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f,
+    };
+    const FilaRenderableBone identityBone = {
+            {1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            0.0f,
+    };
+    const FilaRenderableBoneIndexAndWeight indicesAndWeights[2] = {
+            {0.0f, 0.75f},
+            {1.0f, 0.25f},
+    };
+    size_t pairsPerVertex[2] = {1u, 1u};
+    FilaRenderableManager_setAxisAlignedBoundingBox(manager, instance, &box);
+    if (FilaRenderableManager_getAxisAlignedBoundingBox(manager, instance, &outBox)) {
+        printf("Renderable bounding-box query unexpectedly succeeded\n");
+        FilaEntityManager_destroy(entity);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+    FilaRenderableManager_setBones(manager, instance, &identityBone, 1u, 0u);
+    FilaRenderableManager_setBonesMat4f(manager, instance, identity4x4, 1u, 0u);
+    FilaRenderableManager_setGeometryAt(manager,
+            instance,
+            0u,
+            FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
+            (FilaVertexBuffer*)0,
+            (FilaIndexBuffer*)0,
+            0u,
+            3u);
+
     FilaRenderableManagerBuilder* builder = FilaRenderableManagerBuilder_create(0u);
     if (!builder) {
         printf("Renderable builder creation failed\n");
@@ -127,6 +170,34 @@ int main(void) {
     FilaRenderableManagerBuilder_receiveShadows(builder, true);
     FilaRenderableManagerBuilder_blendOrder(builder, 0u, 1u);
     FilaRenderableManagerBuilder_globalBlendOrderEnabled(builder, 0u, true);
+    FilaRenderableManagerBuilder_geometryType(builder, FILA_RENDERABLE_GEOMETRY_TYPE_DYNAMIC);
+    FilaRenderableManagerBuilder_morphingLegacy(builder, 2u);
+    FilaRenderableManagerBuilder_morphingOffset(builder, 0u, 0u, 0u);
+    FilaRenderableManagerBuilder_boundingBox(builder, &box);
+    FilaRenderableManagerBuilder_skinningBoneCount(builder, 1u);
+    FilaRenderableManagerBuilder_skinningMat4f(builder, 1u, identity4x4);
+    FilaRenderableManagerBuilder_skinningBones(builder, 1u, &identityBone);
+    FilaRenderableManagerBuilder_boneIndicesAndWeightsVector(builder,
+            0u,
+            (const FilaRenderableBoneIndexAndWeight*)0,
+            2u,
+            pairsPerVertex,
+            2u);
+    FilaRenderableManagerBuilder_boneIndicesAndWeightsVector(builder,
+            0u,
+            indicesAndWeights,
+            2u,
+            pairsPerVertex,
+            0u);
+    FilaRenderableManagerBuilder_geometryIndexedRange(builder,
+            0u,
+            FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
+            (FilaVertexBuffer*)0,
+            (FilaIndexBuffer*)0,
+            0u,
+            0u,
+            2u,
+            3u);
     (void)FilaRenderableManagerBuilder_build(builder, engine, entity);
     FilaRenderableManagerBuilder_destroy(builder);
 
@@ -141,6 +212,12 @@ int main(void) {
     FilaRenderableManager_setGlobalBlendOrderEnabledAt(manager, instance, 0u, true);
     if (FilaRenderableManager_isGlobalBlendOrderEnabledAt(manager, instance, 0u)) {
         printf("Renderable global blend order unexpectedly enabled\n");
+        FilaEntityManager_destroy(entity);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+    if (FilaRenderableManager_getEnabledAttributesAt(manager, instance, 0u) != 0u) {
+        printf("Renderable enabled-attributes mask unexpectedly non-zero\n");
         FilaEntityManager_destroy(entity);
         FilaEngine_destroy(&engine);
         return 1;

@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "Box.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,6 +17,23 @@ typedef enum FilaRenderablePrimitiveType {
 	FILA_RENDERABLE_PRIMITIVE_LINES = 1,
 	FILA_RENDERABLE_PRIMITIVE_TRIANGLES = 4,
 } FilaRenderablePrimitiveType;
+
+typedef enum FilaRenderableGeometryType {
+	FILA_RENDERABLE_GEOMETRY_TYPE_DYNAMIC = 0,
+	FILA_RENDERABLE_GEOMETRY_TYPE_STATIC_BOUNDS = 1,
+	FILA_RENDERABLE_GEOMETRY_TYPE_STATIC = 2,
+} FilaRenderableGeometryType;
+
+typedef struct FilaRenderableBone {
+	float unitQuaternion[4]; // quaternion in w,x,y,z order
+	float translation[3];
+	float reserved;
+} FilaRenderableBone;
+
+typedef struct FilaRenderableBoneIndexAndWeight {
+	float boneIndex;
+	float weight;
+} FilaRenderableBoneIndexAndWeight;
 
 // Returns true if the entity has a renderable component.
 bool FilaRenderableManager_hasComponent(const FilaRenderableManager* manager, FilaEntity entity);
@@ -135,6 +153,10 @@ void FilaRenderableManagerBuilder_screenSpaceContactShadows(FilaRenderableManage
 void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, size_t primitiveIndex, uint16_t order);
 void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, size_t primitiveIndex, bool enabled);
 
+// Sets geometry mutability constraints for the built renderable.
+void FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* builder,
+		FilaRenderableGeometryType geometryType);
+
 // Enables skinning buffer mode for built renderable.
 void FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* builder, bool enabled);
 
@@ -144,9 +166,49 @@ void FilaRenderableManagerBuilder_skinning(FilaRenderableManagerBuilder* builder
 		size_t count,
 		size_t offset);
 
+// Enables classic skinning with an explicit bone count and identity/default transforms.
+void FilaRenderableManagerBuilder_skinningBoneCount(FilaRenderableManagerBuilder* builder,
+		size_t boneCount);
+
+// Enables classic skinning with initial column-major 4x4 float bone transforms.
+void FilaRenderableManagerBuilder_skinningMat4f(FilaRenderableManagerBuilder* builder,
+		size_t boneCount,
+		const float* transforms4x4);
+
+// Enables classic skinning with initial quaternion+translation bones.
+void FilaRenderableManagerBuilder_skinningBones(FilaRenderableManagerBuilder* builder,
+		size_t boneCount,
+		const FilaRenderableBone* bones);
+
+// Defines advanced skinning index/weight pairs for a primitive.
+void FilaRenderableManagerBuilder_boneIndicesAndWeights(FilaRenderableManagerBuilder* builder,
+		size_t primitiveIndex,
+		const FilaRenderableBoneIndexAndWeight* indicesAndWeights,
+		size_t count,
+		size_t bonesPerVertex);
+
+// Defines variable-length advanced skinning index/weight pairs per vertex for a primitive.
+// The sum of all entries in pairsPerVertex must equal pairCount.
+void FilaRenderableManagerBuilder_boneIndicesAndWeightsVector(FilaRenderableManagerBuilder* builder,
+		size_t primitiveIndex,
+		const FilaRenderableBoneIndexAndWeight* indicesAndWeights,
+		size_t pairCount,
+		const size_t* pairsPerVertex,
+		size_t vertexCount);
+
 // Enables morphing with MorphTargetBuffer for built renderable.
 void FilaRenderableManagerBuilder_morphing(FilaRenderableManagerBuilder* builder,
 		FilaMorphTargetBuffer* morphTargetBuffer);
+
+// Enables legacy morphing with the requested morph target count.
+void FilaRenderableManagerBuilder_morphingLegacy(FilaRenderableManagerBuilder* builder,
+		size_t targetCount);
+
+// Sets morph target buffer offset range for a primitive.
+void FilaRenderableManagerBuilder_morphingOffset(FilaRenderableManagerBuilder* builder,
+		uint8_t level,
+		size_t primitiveIndex,
+		size_t offset);
 
 // Sets renderable draw instance count and optional InstanceBuffer transforms.
 void FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* builder,
@@ -154,82 +216,136 @@ void FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* builde
 		FilaInstanceBuffer* instanceBuffer);
 
 // Binds geometry for a primitive slot.
-void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder,
-		size_t index,
-		FilaRenderablePrimitiveType type,
-		FilaVertexBuffer* vertexBuffer,
-		FilaIndexBuffer* indexBuffer,
-		size_t offset,
-		size_t count);
+ void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder,
+	 size_t index,
+	 FilaRenderablePrimitiveType type,
+	 FilaVertexBuffer* vertexBuffer,
+	 FilaIndexBuffer* indexBuffer,
+	 size_t offset,
+	 size_t count);
+
+// Binds geometry for a primitive slot with explicit min/max index range.
+void FilaRenderableManagerBuilder_geometryIndexedRange(FilaRenderableManagerBuilder* builder,
+	 size_t index,
+	 FilaRenderablePrimitiveType type,
+	 FilaVertexBuffer* vertexBuffer,
+	 FilaIndexBuffer* indexBuffer,
+	 size_t offset,
+	 size_t minIndex,
+	 size_t maxIndex,
+	 size_t count);
 
 // Binds material instance for a primitive slot.
 void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder,
-		size_t index,
-		const FilaMaterialInstance* materialInstance);
+	 size_t index,
+	 const FilaMaterialInstance* materialInstance);
+
+// Sets object-space axis-aligned bounding box for the built renderable.
+void FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* builder,
+	 const FilaBox* boundingBox);
 
 // Builds a renderable component into the given entity. Returns true on success.
 bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, FilaEngine* engine, FilaEntity entity);
 
+// Sets object-space axis-aligned bounding box for a renderable instance.
+void FilaRenderableManager_setAxisAlignedBoundingBox(FilaRenderableManager* manager,
+	 FilaRenderableManagerInstance instance,
+	 const FilaBox* boundingBox);
+
+// Gets object-space axis-aligned bounding box for a renderable instance. Returns false on invalid input.
+bool FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager* manager,
+	 FilaRenderableManagerInstance instance,
+	 FilaBox* outBoundingBox);
+
+// Rebinds geometry for a primitive at runtime.
+void FilaRenderableManager_setGeometryAt(FilaRenderableManager* manager,
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex,
+	 FilaRenderablePrimitiveType type,
+	 FilaVertexBuffer* vertexBuffer,
+	 FilaIndexBuffer* indexBuffer,
+	 size_t offset,
+	 size_t count);
+
 // Sets the material instance for a primitive at runtime.
 void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		size_t primitiveIndex,
-		const FilaMaterialInstance* materialInstance);
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex,
+	 const FilaMaterialInstance* materialInstance);
 
 // Gets the material instance for a primitive.
 FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		size_t primitiveIndex);
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex);
 void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		size_t primitiveIndex);
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex);
 void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		size_t primitiveIndex,
-		uint16_t order);
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex,
+	 uint16_t order);
 uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		size_t primitiveIndex);
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex);
 void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		size_t primitiveIndex,
-		bool enabled);
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex,
+	 bool enabled);
 bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* manager,
+	 FilaRenderableManagerInstance instance,
+	 size_t primitiveIndex);
+
+// Returns enabled vertex attribute slots as a bitmask for a primitive.
+uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* manager,
 		FilaRenderableManagerInstance instance,
 		size_t primitiveIndex);
 
 // Updates a renderable's skinning buffer association.
 void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		FilaSkinningBuffer* skinningBuffer,
-		size_t count,
-		size_t offset);
+	 FilaRenderableManagerInstance instance,
+	 FilaSkinningBuffer* skinningBuffer,
+	 size_t count,
+	 size_t offset);
+
+// Updates classic skinning bone transforms from column-major 4x4 float matrices.
+void FilaRenderableManager_setBonesMat4f(FilaRenderableManager* manager,
+	 FilaRenderableManagerInstance instance,
+	 const float* transforms4x4,
+	 size_t count,
+	 size_t offset);
+
+// Updates classic skinning bone transforms from quaternion+translation pairs.
+void FilaRenderableManager_setBones(FilaRenderableManager* manager,
+	 FilaRenderableManagerInstance instance,
+	 const FilaRenderableBone* bones,
+	 size_t count,
+	 size_t offset);
 
 // Updates morph target weights for a renderable.
 void FilaRenderableManager_setMorphWeights(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		const float* weights,
-		size_t count,
-		size_t offset);
+	 FilaRenderableManagerInstance instance,
+	 const float* weights,
+	 size_t count,
+	 size_t offset);
 
 // Sets morph target buffer offset for a primitive.
 void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance,
-		uint8_t level,
-		size_t primitiveIndex,
-		size_t offset);
+	 FilaRenderableManagerInstance instance,
+	 uint8_t level,
+	 size_t primitiveIndex,
+	 size_t offset);
 
 // Gets the morph target buffer bound to a renderable.
 FilaMorphTargetBuffer* FilaRenderableManager_getMorphTargetBuffer(const FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance);
+	 FilaRenderableManagerInstance instance);
 
 // Gets morph target count for a renderable.
 size_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance);
+	 FilaRenderableManagerInstance instance);
 
 // Gets draw instance count for a renderable.
 size_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* manager,
-		FilaRenderableManagerInstance instance);
+	 FilaRenderableManagerInstance instance);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,7 @@
 #ifndef FILAMENT_C_VERTEX_BUFFER_H
 #define FILAMENT_C_VERTEX_BUFFER_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -29,6 +30,7 @@ void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder,
         FilaVertexAttributeType attributeType,
         uint32_t byteOffset,
         uint8_t byteStride);
+void FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* builder, bool enabled);
 FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder, FilaEngine* engine);
 size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer);
 // Set buffer data for a vertex buffer

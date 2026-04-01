@@ -13,6 +13,7 @@ void test_headers_vertex_buffer(void) {
             FILA_VERTEX_ATTRIBUTE_TYPE_FLOAT3,
             0u,
             0u);
+    FilaVertexBufferBuilder_advancedSkinning(builder, true);
     FilaVertexBuffer* vb = FilaVertexBufferBuilder_build(builder, engine);
     (void)FilaVertexBuffer_getVertexCount(vb);
     FilaVertexBufferBuilder_destroy(builder);

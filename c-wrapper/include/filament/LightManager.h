@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "Types.h"
 
@@ -17,6 +18,48 @@ typedef enum FilaLightType {
 	FILA_LIGHT_TYPE_FOCUSED_SPOT = 3,
 	FILA_LIGHT_TYPE_SPOT = 4,
 } FilaLightType;
+
+typedef struct FilaLightManagerShadowOptionsVsm {
+	bool elvsm;
+	float blurWidth;
+} FilaLightManagerShadowOptionsVsm;
+
+typedef struct FilaLightManagerShadowOptions {
+	uint32_t mapSize;
+	uint8_t shadowCascades;
+	float cascadeSplitPositions[3];
+	float constantBias;
+	float normalBias;
+	float shadowFar;
+	float shadowNearHint;
+	float shadowFarHint;
+	bool stable;
+	bool lispsm;
+	float polygonOffsetConstant;
+	float polygonOffsetSlope;
+	bool screenSpaceContactShadows;
+	uint8_t stepCount;
+	float maxShadowDistance;
+	FilaLightManagerShadowOptionsVsm vsm;
+	float shadowBulbRadius;
+	float transform[4]; // quaternion in w,x,y,z order
+} FilaLightManagerShadowOptions;
+
+// Computes uniform shadow cascade split positions for a given cascade count.
+void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint8_t cascades);
+
+// Computes logarithmic shadow cascade split positions for a given cascade count and depth range.
+void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions,
+		uint8_t cascades,
+		float near,
+		float far);
+
+// Computes practical shadow cascade split positions for a given cascade count and depth range.
+void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions,
+		uint8_t cascades,
+		float near,
+		float far,
+		float lambda);
 
 // Returns true if the entity has a light component.
 bool FilaLightManager_hasComponent(const FilaLightManager* manager, FilaEntity entity);
@@ -41,6 +84,9 @@ void FilaLightManager_destroy(FilaLightManager* manager, FilaEntity entity);
 
 // Returns the type of a light instance. Defaults to directional for invalid inputs.
 FilaLightType FilaLightManager_getType(const FilaLightManager* manager, FilaLightManagerInstance instance);
+bool FilaLightManager_isDirectional(const FilaLightManager* manager, FilaLightManagerInstance instance);
+bool FilaLightManager_isPointLight(const FilaLightManager* manager, FilaLightManagerInstance instance);
+bool FilaLightManager_isSpotLight(const FilaLightManager* manager, FilaLightManagerInstance instance);
 
 // Sets and gets light position.
 void FilaLightManager_setPosition(FilaLightManager* manager, FilaLightManagerInstance instance, float x, float y, float z);
@@ -60,6 +106,10 @@ float FilaLightManager_getIntensity(const FilaLightManager* manager, FilaLightMa
 
 // Sets light intensity in candela and light channel controls.
 void FilaLightManager_setIntensityCandela(FilaLightManager* manager, FilaLightManagerInstance instance, float intensity);
+void FilaLightManager_setIntensityWattsEfficiency(FilaLightManager* manager,
+		FilaLightManagerInstance instance,
+		float watts,
+		float efficiency);
 void FilaLightManager_setLightChannel(FilaLightManager* manager, FilaLightManagerInstance instance, unsigned int channel, bool enable);
 bool FilaLightManager_getLightChannel(const FilaLightManager* manager, FilaLightManagerInstance instance, unsigned int channel);
 
@@ -79,6 +129,12 @@ void FilaLightManager_setSunHaloFalloff(FilaLightManager* manager, FilaLightMana
 float FilaLightManager_getSunHaloFalloff(const FilaLightManager* manager, FilaLightManagerInstance instance);
 void FilaLightManager_setShadowCaster(FilaLightManager* manager, FilaLightManagerInstance instance, bool shadowCaster);
 bool FilaLightManager_isShadowCaster(const FilaLightManager* manager, FilaLightManagerInstance instance);
+void FilaLightManager_setShadowOptions(FilaLightManager* manager,
+		FilaLightManagerInstance instance,
+		const FilaLightManagerShadowOptions* options);
+bool FilaLightManager_getShadowOptions(const FilaLightManager* manager,
+		FilaLightManagerInstance instance,
+		FilaLightManagerShadowOptions* outOptions);
 
 // Creates a light builder for the specified light type.
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightType type);
@@ -97,6 +153,9 @@ void FilaLightManagerBuilder_color(FilaLightManagerBuilder* builder, float r, fl
 
 // Sets light intensity in lux for directional/sun, lumens otherwise.
 void FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* builder, float intensity);
+void FilaLightManagerBuilder_intensityWattsEfficiency(FilaLightManagerBuilder* builder,
+		float watts,
+		float efficiency);
 
 // Sets the influence radius for point and spot lights.
 void FilaLightManagerBuilder_falloff(FilaLightManagerBuilder* builder, float radius);
@@ -112,6 +171,8 @@ void FilaLightManagerBuilder_intensityCandela(FilaLightManagerBuilder* builder, 
 void FilaLightManagerBuilder_sunAngularRadius(FilaLightManagerBuilder* builder, float angularRadius);
 void FilaLightManagerBuilder_sunHaloSize(FilaLightManagerBuilder* builder, float haloSize);
 void FilaLightManagerBuilder_sunHaloFalloff(FilaLightManagerBuilder* builder, float haloFalloff);
+void FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* builder,
+		const FilaLightManagerShadowOptions* options);
 
 // Builds the light component into the given entity. Returns true on success.
 bool FilaLightManagerBuilder_build(FilaLightManagerBuilder* builder, FilaEngine* engine, FilaEntity entity);

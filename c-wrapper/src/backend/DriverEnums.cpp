@@ -2,6 +2,8 @@
 
 #include <backend/DriverEnums.h>
 
+#include <limits>
+
 namespace {
 static_assert((uint32_t)filament::backend::TargetBufferFlags::COLOR0 == FILA_BACKEND_TARGET_BUFFER_COLOR0,
     "FilaBackendTargetBufferFlags must stay aligned with filament::backend::TargetBufferFlags");
@@ -92,6 +94,15 @@ static_assert((int)filament::backend::StencilFace::FRONT_AND_BACK == FILA_BACKEN
     "FilaBackendStencilFace must stay aligned with filament::backend::StencilFace");
 static_assert((int)filament::backend::StreamType::ACQUIRED == FILA_BACKEND_STREAM_TYPE_ACQUIRED,
     "FilaBackendStreamType must stay aligned with filament::backend::StreamType");
+static_assert((int)filament::backend::Workaround::EMULATE_SRGB_SWAPCHAIN ==
+        FILA_BACKEND_WORKAROUND_EMULATE_SRGB_SWAPCHAIN,
+    "FilaBackendWorkaround must stay aligned with filament::backend::Workaround");
+static_assert(filament::backend::Attribute::FLAG_NORMALIZED == FILA_BACKEND_ATTRIBUTE_FLAG_NORMALIZED,
+    "FilaBackendAttributeFlags normalized bit must stay aligned with filament::backend::Attribute");
+static_assert(filament::backend::Attribute::FLAG_INTEGER_TARGET == FILA_BACKEND_ATTRIBUTE_FLAG_INTEGER_TARGET,
+    "FilaBackendAttributeFlags integer-target bit must stay aligned with filament::backend::Attribute");
+static_assert(filament::backend::Attribute::BUFFER_UNUSED == FILA_BACKEND_ATTRIBUTE_BUFFER_UNUSED,
+    "FilaBackendAttributeFlags buffer-unused value must stay aligned with filament::backend::Attribute");
 } // namespace
 
 extern "C" {
@@ -125,6 +136,61 @@ const char* FilaBackendTextureType_toString(FilaBackendTextureType type) {
         case FILA_BACKEND_TEXTURE_TYPE_DEPTH: return "DEPTH";
         case FILA_BACKEND_TEXTURE_TYPE_STENCIL: return "STENCIL";
         case FILA_BACKEND_TEXTURE_TYPE_DEPTH_STENCIL: return "DEPTH_STENCIL";
+    }
+    return "UNKNOWN";
+}
+
+const char* FilaBackendBackend_toString(FilaBackendBackend backend) {
+    switch (backend) {
+        case FILA_BACKEND_NOOP: return "Noop";
+        case FILA_BACKEND_OPENGL: return "OpenGL";
+        case FILA_BACKEND_VULKAN: return "Vulkan";
+        case FILA_BACKEND_METAL: return "Metal";
+        case FILA_BACKEND_WEBGPU: return "WebGPU";
+        case FILA_BACKEND_DEFAULT: return "Default";
+    }
+    return "UNKNOWN";
+}
+
+const char* FilaBackendShaderLanguage_toString(FilaBackendShaderLanguage shaderLanguage) {
+    switch (shaderLanguage) {
+        case FILA_BACKEND_SHADER_LANGUAGE_ESSL1: return "ESSL 1.0";
+        case FILA_BACKEND_SHADER_LANGUAGE_ESSL3: return "ESSL 3.0";
+        case FILA_BACKEND_SHADER_LANGUAGE_SPIRV: return "SPIR-V";
+        case FILA_BACKEND_SHADER_LANGUAGE_MSL: return "MSL";
+        case FILA_BACKEND_SHADER_LANGUAGE_METAL_LIBRARY: return "Metal precompiled library";
+        case FILA_BACKEND_SHADER_LANGUAGE_WGSL: return "WGSL";
+        case FILA_BACKEND_SHADER_LANGUAGE_UNSPECIFIED: return "Unspecified";
+    }
+    return "UNKNOWN";
+}
+
+const char* FilaBackendShaderModel_toString(FilaBackendShaderModel shaderModel) {
+    switch (shaderModel) {
+        case FILA_BACKEND_SHADER_MODEL_MOBILE: return "mobile";
+        case FILA_BACKEND_SHADER_MODEL_DESKTOP: return "desktop";
+    }
+    return "UNKNOWN";
+}
+
+const char* FilaBackendSamplerType_toString(FilaBackendSamplerType samplerType) {
+    switch (samplerType) {
+        case FILA_BACKEND_SAMPLER_TYPE_2D: return "SAMPLER_2D";
+        case FILA_BACKEND_SAMPLER_TYPE_2D_ARRAY: return "SAMPLER_2D_ARRAY";
+        case FILA_BACKEND_SAMPLER_TYPE_CUBEMAP: return "SAMPLER_CUBEMAP";
+        case FILA_BACKEND_SAMPLER_TYPE_EXTERNAL: return "SAMPLER_EXTERNAL";
+        case FILA_BACKEND_SAMPLER_TYPE_3D: return "SAMPLER_3D";
+        case FILA_BACKEND_SAMPLER_TYPE_CUBEMAP_ARRAY: return "SAMPLER_CUBEMAP_ARRAY";
+    }
+    return "UNKNOWN";
+}
+
+const char* FilaBackendSamplerFormat_toString(FilaBackendSamplerFormat samplerFormat) {
+    switch (samplerFormat) {
+        case FILA_BACKEND_SAMPLER_FORMAT_INT: return "INT";
+        case FILA_BACKEND_SAMPLER_FORMAT_UINT: return "UINT";
+        case FILA_BACKEND_SAMPLER_FORMAT_FLOAT: return "FLOAT";
+        case FILA_BACKEND_SAMPLER_FORMAT_SHADOW: return "SHADOW";
     }
     return "UNKNOWN";
 }
@@ -286,6 +352,146 @@ bool FilaBackendDescriptorSetLayoutDescriptor_isBufferType(FilaBackendDescriptor
 
 bool FilaBackendDescriptorFlags_has(FilaBackendDescriptorFlags flags, FilaBackendDescriptorFlags bit) {
     return ((uint8_t)flags & (uint8_t)bit) != 0;
+}
+
+uint64_t FilaBackendSwapChainConfig_transparent(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_TRANSPARENT;
+}
+
+uint64_t FilaBackendSwapChainConfig_readable(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_READABLE;
+}
+
+uint64_t FilaBackendSwapChainConfig_enableXcb(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_ENABLE_XCB;
+}
+
+uint64_t FilaBackendSwapChainConfig_appleCvPixelBuffer(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_APPLE_CVPIXELBUFFER;
+}
+
+uint64_t FilaBackendSwapChainConfig_srgbColorSpace(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_SRGB_COLORSPACE;
+}
+
+uint64_t FilaBackendSwapChainConfig_hasStencilBuffer(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_HAS_STENCIL_BUFFER;
+}
+
+uint64_t FilaBackendSwapChainHasStencilBufferAlias(void) {
+    return filament::backend::SWAP_CHAIN_HAS_STENCIL_BUFFER;
+}
+
+uint64_t FilaBackendSwapChainConfig_protectedContent(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_PROTECTED_CONTENT;
+}
+
+uint64_t FilaBackendSwapChainConfig_msaa4Samples(void) {
+    return filament::backend::SWAP_CHAIN_CONFIG_MSAA_4_SAMPLES;
+}
+
+size_t FilaBackendLimits_getMaxVertexAttributeCount(void) {
+    return filament::backend::MAX_VERTEX_ATTRIBUTE_COUNT;
+}
+
+size_t FilaBackendLimits_getMaxSamplerCount(void) {
+    return filament::backend::MAX_SAMPLER_COUNT;
+}
+
+size_t FilaBackendLimits_getMaxVertexBufferCount(void) {
+    return filament::backend::MAX_VERTEX_BUFFER_COUNT;
+}
+
+size_t FilaBackendLimits_getMaxSsboCount(void) {
+    return filament::backend::MAX_SSBO_COUNT;
+}
+
+size_t FilaBackendLimits_getMaxDescriptorSetCount(void) {
+    return filament::backend::MAX_DESCRIPTOR_SET_COUNT;
+}
+
+size_t FilaBackendLimits_getMaxDescriptorCount(void) {
+    return filament::backend::MAX_DESCRIPTOR_COUNT;
+}
+
+size_t FilaBackendLimits_getMaxPushConstantCount(void) {
+    return filament::backend::MAX_PUSH_CONSTANT_COUNT;
+}
+
+size_t FilaBackendLimits_getConfigUniformBindingCount(void) {
+    return filament::backend::CONFIG_UNIFORM_BINDING_COUNT;
+}
+
+size_t FilaBackendLimits_getConfigSamplerBindingCount(void) {
+    return filament::backend::CONFIG_SAMPLER_BINDING_COUNT;
+}
+
+uint8_t FilaBackendLimits_getExternalSamplerDataIndexUnused(void) {
+    return filament::backend::EXTERNAL_SAMPLER_DATA_INDEX_UNUSED;
+}
+
+bool FilaBackendFeatureLevel_getCaps(FilaBackendFeatureLevel level,
+        size_t* outMaxVertexSamplerCount,
+        size_t* outMaxFragmentSamplerCount) {
+    if (!outMaxVertexSamplerCount || !outMaxFragmentSamplerCount) {
+        return false;
+    }
+    const size_t index = static_cast<size_t>(level);
+    if (index >= 4u) {
+        return false;
+    }
+    *outMaxVertexSamplerCount = filament::backend::FEATURE_LEVEL_CAPS[index].MAX_VERTEX_SAMPLER_COUNT;
+    *outMaxFragmentSamplerCount = filament::backend::FEATURE_LEVEL_CAPS[index].MAX_FRAGMENT_SAMPLER_COUNT;
+    return true;
+}
+
+uint64_t FilaBackendFence_getWaitForEverTimeout(void) {
+    return filament::backend::FENCE_WAIT_FOR_EVER;
+}
+
+bool FilaBackendTargetBufferFlags_has(FilaBackendTargetBufferFlags flags,
+        FilaBackendTargetBufferFlags bit) {
+    return (static_cast<uint32_t>(flags) & static_cast<uint32_t>(bit)) != 0u;
+}
+
+bool FilaBackendTextureUsage_has(FilaBackendTextureUsage usage, FilaBackendTextureUsage bit) {
+    return (static_cast<uint16_t>(usage) & static_cast<uint16_t>(bit)) != 0u;
+}
+
+bool FilaBackendStencilFace_has(FilaBackendStencilFace faces, FilaBackendStencilFace bit) {
+    return (static_cast<uint8_t>(faces) & static_cast<uint8_t>(bit)) != 0u;
+}
+
+bool FilaBackendBufferUsage_has(FilaBackendBufferUsage usage, FilaBackendBufferUsage bit) {
+    return (static_cast<uint8_t>(usage) & static_cast<uint8_t>(bit)) != 0u;
+}
+
+bool FilaBackendMapBufferAccessFlags_has(FilaBackendMapBufferAccessFlags flags,
+        FilaBackendMapBufferAccessFlags bit) {
+    return (static_cast<uint8_t>(flags) & static_cast<uint8_t>(bit)) != 0u;
+}
+
+FilaBackendAsyncCallId FilaBackendAsyncCallId_getInvalid(void) {
+    return static_cast<FilaBackendAsyncCallId>(filament::backend::InvalidAsyncCallId);
+}
+
+void FilaBackendAttribute_setDefaults(FilaBackendAttributeData* outData) {
+    if (!outData) {
+        return;
+    }
+    outData->offset = 0u;
+    outData->stride = 0u;
+    outData->buffer = FILA_BACKEND_ATTRIBUTE_BUFFER_UNUSED;
+    outData->type = FILA_BACKEND_ELEMENT_TYPE_BYTE;
+    outData->flags = 0u;
+}
+
+bool FilaBackendAttribute_hasFlag(const FilaBackendAttributeData* attribute,
+        FilaBackendAttributeFlags bit) {
+    if (!attribute || bit == FILA_BACKEND_ATTRIBUTE_BUFFER_UNUSED) {
+        return false;
+    }
+    return (attribute->flags & static_cast<uint8_t>(bit)) != 0u;
 }
 
 }

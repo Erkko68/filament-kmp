@@ -91,6 +91,19 @@ int64_t FilaBackendPlatformCompositorTiming_getInvalidTimePointNs(void);
 int64_t FilaBackendPlatformFrameTimestamps_getInvalidTimePointNs(void);
 int64_t FilaBackendPlatformFrameTimestamps_getPendingTimePointNs(void);
 
+const char* FilaBackendPlatformStereoscopicType_toString(
+        FilaBackendPlatformStereoscopicType type);
+const char* FilaBackendPlatformDeviceInfoType_toString(
+        FilaBackendPlatformDeviceInfoType type);
+const char* FilaBackendPlatformGpuContextPriority_toString(
+        FilaBackendPlatformGpuContextPriority priority);
+const char* FilaBackendPlatformAsynchronousMode_toString(
+        FilaBackendPlatformAsynchronousMode mode);
+
+bool FilaBackendPlatformCompositorTiming_isInvalidTimePointNs(int64_t value);
+bool FilaBackendPlatformFrameTimestamps_isInvalidTimePointNs(int64_t value);
+bool FilaBackendPlatformFrameTimestamps_isPendingTimePointNs(int64_t value);
+
 #ifdef __cplusplus
 }
 #endif

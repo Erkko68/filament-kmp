@@ -507,6 +507,33 @@ typedef enum FilaBackendStreamType {
     FILA_BACKEND_STREAM_TYPE_ACQUIRED = 1,
 } FilaBackendStreamType;
 
+typedef enum FilaBackendWorkaround {
+    FILA_BACKEND_WORKAROUND_SPLIT_EASU = 0,
+    FILA_BACKEND_WORKAROUND_ALLOW_READ_ONLY_ANCILLARY_FEEDBACK_LOOP = 1,
+    FILA_BACKEND_WORKAROUND_ADRENO_UNIFORM_ARRAY_CRASH = 2,
+    FILA_BACKEND_WORKAROUND_METAL_STATIC_TEXTURE_TARGET_ERROR = 3,
+    FILA_BACKEND_WORKAROUND_DISABLE_BLIT_INTO_TEXTURE_ARRAY = 4,
+    FILA_BACKEND_WORKAROUND_POWER_VR_SHADER_WORKAROUNDS = 5,
+    FILA_BACKEND_WORKAROUND_DISABLE_DEPTH_PRECACHE_FOR_DEFAULT_MATERIAL = 6,
+    FILA_BACKEND_WORKAROUND_EMULATE_SRGB_SWAPCHAIN = 7,
+} FilaBackendWorkaround;
+
+typedef uint32_t FilaBackendAsyncCallId;
+
+typedef struct FilaBackendAttributeData {
+    uint32_t offset;
+    uint8_t stride;
+    uint8_t buffer;
+    FilaBackendElementType type;
+    uint8_t flags;
+} FilaBackendAttributeData;
+
+typedef enum FilaBackendAttributeFlags {
+    FILA_BACKEND_ATTRIBUTE_FLAG_NORMALIZED = 0x1,
+    FILA_BACKEND_ATTRIBUTE_FLAG_INTEGER_TARGET = 0x2,
+    FILA_BACKEND_ATTRIBUTE_BUFFER_UNUSED = 0xFF,
+} FilaBackendAttributeFlags;
+
 typedef void (*FilaBackendStreamCallback)(void* image, void* userData);
 
 FilaBackendTargetBufferFlags FilaBackendTargetBufferFlags_at(size_t index);
@@ -514,6 +541,11 @@ FilaBackendRenderTargetAttachmentPoint FilaBackendRenderTargetAttachmentPoint_at
 bool FilaBackendPrimitiveType_isStrip(FilaBackendPrimitiveType type);
 bool FilaBackendShaderStageFlags_hasStage(FilaBackendShaderStageFlags flags, FilaBackendShaderStage stage);
 const char* FilaBackendTextureType_toString(FilaBackendTextureType type);
+const char* FilaBackendBackend_toString(FilaBackendBackend backend);
+const char* FilaBackendShaderLanguage_toString(FilaBackendShaderLanguage shaderLanguage);
+const char* FilaBackendShaderModel_toString(FilaBackendShaderModel shaderModel);
+const char* FilaBackendSamplerType_toString(FilaBackendSamplerType samplerType);
+const char* FilaBackendSamplerFormat_toString(FilaBackendSamplerFormat samplerFormat);
 const char* FilaBackendBufferObjectBinding_toString(FilaBackendBufferObjectBinding binding);
 
 FilaBackendTextureType FilaBackendTextureFormat_getTextureType(FilaBackendTextureFormat format);
@@ -548,6 +580,46 @@ const char* FilaBackendDescriptorType_toString(FilaBackendDescriptorType type);
 bool FilaBackendDescriptorSetLayoutDescriptor_isSamplerType(FilaBackendDescriptorType type);
 bool FilaBackendDescriptorSetLayoutDescriptor_isBufferType(FilaBackendDescriptorType type);
 bool FilaBackendDescriptorFlags_has(FilaBackendDescriptorFlags flags, FilaBackendDescriptorFlags bit);
+
+uint64_t FilaBackendSwapChainConfig_transparent(void);
+uint64_t FilaBackendSwapChainConfig_readable(void);
+uint64_t FilaBackendSwapChainConfig_enableXcb(void);
+uint64_t FilaBackendSwapChainConfig_appleCvPixelBuffer(void);
+uint64_t FilaBackendSwapChainConfig_srgbColorSpace(void);
+uint64_t FilaBackendSwapChainConfig_hasStencilBuffer(void);
+uint64_t FilaBackendSwapChainHasStencilBufferAlias(void);
+uint64_t FilaBackendSwapChainConfig_protectedContent(void);
+uint64_t FilaBackendSwapChainConfig_msaa4Samples(void);
+
+size_t FilaBackendLimits_getMaxVertexAttributeCount(void);
+size_t FilaBackendLimits_getMaxSamplerCount(void);
+size_t FilaBackendLimits_getMaxVertexBufferCount(void);
+size_t FilaBackendLimits_getMaxSsboCount(void);
+size_t FilaBackendLimits_getMaxDescriptorSetCount(void);
+size_t FilaBackendLimits_getMaxDescriptorCount(void);
+size_t FilaBackendLimits_getMaxPushConstantCount(void);
+size_t FilaBackendLimits_getConfigUniformBindingCount(void);
+size_t FilaBackendLimits_getConfigSamplerBindingCount(void);
+uint8_t FilaBackendLimits_getExternalSamplerDataIndexUnused(void);
+
+bool FilaBackendFeatureLevel_getCaps(FilaBackendFeatureLevel level,
+        size_t* outMaxVertexSamplerCount,
+        size_t* outMaxFragmentSamplerCount);
+
+uint64_t FilaBackendFence_getWaitForEverTimeout(void);
+
+bool FilaBackendTargetBufferFlags_has(FilaBackendTargetBufferFlags flags,
+        FilaBackendTargetBufferFlags bit);
+bool FilaBackendTextureUsage_has(FilaBackendTextureUsage usage, FilaBackendTextureUsage bit);
+bool FilaBackendStencilFace_has(FilaBackendStencilFace faces, FilaBackendStencilFace bit);
+bool FilaBackendBufferUsage_has(FilaBackendBufferUsage usage, FilaBackendBufferUsage bit);
+bool FilaBackendMapBufferAccessFlags_has(FilaBackendMapBufferAccessFlags flags,
+        FilaBackendMapBufferAccessFlags bit);
+
+FilaBackendAsyncCallId FilaBackendAsyncCallId_getInvalid(void);
+void FilaBackendAttribute_setDefaults(FilaBackendAttributeData* outData);
+bool FilaBackendAttribute_hasFlag(const FilaBackendAttributeData* attribute,
+        FilaBackendAttributeFlags bit);
 
 #ifdef __cplusplus
 }

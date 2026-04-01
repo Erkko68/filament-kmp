@@ -78,6 +78,16 @@ int main(void) {
         return 1;
     }
 
+    const FilaScene* constScene = scene;
+    if (FilaScene_getIndirectLightConst(constScene) != indirectLight) {
+        printf("Scene const indirect-light binding mismatch\n");
+        FilaEngine_destroyIndirectLight(engine, indirectLight);
+        FilaEngine_destroyTexture(engine, reflections);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
     if (FilaIndirectLight_getReflectionsTexture(indirectLight) != reflections) {
         printf("IndirectLight reflections texture mismatch\n");
         FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);
@@ -102,6 +112,14 @@ int main(void) {
     FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);
     if (FilaScene_getIndirectLight(scene) != (FilaIndirectLight*)0) {
         printf("Scene indirect-light clear failed\n");
+        FilaEngine_destroyIndirectLight(engine, indirectLight);
+        FilaEngine_destroyTexture(engine, reflections);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+    if (FilaScene_getIndirectLightConst(constScene) != (const FilaIndirectLight*)0) {
+        printf("Scene const indirect-light clear failed\n");
         FilaEngine_destroyIndirectLight(engine, indirectLight);
         FilaEngine_destroyTexture(engine, reflections);
         FilaEngine_destroyScene(engine, scene);

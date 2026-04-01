@@ -16,6 +16,10 @@ void test_headers_backend_driver_enums(void) {
     FilaBackendShaderStageFlags_hasStage(stageFlags, stage);
 
     FilaBackendTextureType textureType = FILA_BACKEND_TEXTURE_TYPE_DEPTH_STENCIL;
+    FilaBackendBackend_toString(backend);
+    FilaBackendBackend_toString((FilaBackendBackend)255);
+    FilaBackendShaderLanguage_toString(shaderLanguage);
+    FilaBackendShaderLanguage_toString((FilaBackendShaderLanguage)255);
     FilaBackendTextureType_toString(textureType);
     FilaBackendTextureType_toString((FilaBackendTextureType)255);
 
@@ -61,6 +65,8 @@ void test_headers_backend_driver_enums(void) {
     FilaBackendMapBufferAccessFlags mapAccess = FILA_BACKEND_MAP_BUFFER_ACCESS_INVALIDATE_RANGE_BIT;
     FilaBackendFenceStatus fenceStatus = FILA_BACKEND_FENCE_STATUS_TIMEOUT_EXPIRED;
     FilaBackendShaderModel shaderModel = FILA_BACKEND_SHADER_MODEL_DESKTOP;
+    FilaBackendShaderModel_toString(shaderModel);
+    FilaBackendShaderModel_toString((FilaBackendShaderModel)255);
     (void)bufferUsage;
     (void)mapAccess;
     (void)fenceStatus;
@@ -97,8 +103,18 @@ void test_headers_backend_driver_enums(void) {
     FilaBackendStencilOperation stencilOp = FILA_BACKEND_STENCIL_OPERATION_INVERT;
     FilaBackendStencilFace stencilFace = FILA_BACKEND_STENCIL_FACE_FRONT_AND_BACK;
     FilaBackendStreamType streamType = FILA_BACKEND_STREAM_TYPE_ACQUIRED;
+    FilaBackendWorkaround workaround = FILA_BACKEND_WORKAROUND_EMULATE_SRGB_SWAPCHAIN;
+    FilaBackendAsyncCallId asyncCallId = FilaBackendAsyncCallId_getInvalid();
+    FilaBackendAttributeData attributeData;
+    FilaBackendAttribute_setDefaults(&attributeData);
+    (void)FilaBackendAttribute_hasFlag(&attributeData, FILA_BACKEND_ATTRIBUTE_FLAG_NORMALIZED);
+    (void)FilaBackendAttribute_hasFlag((const FilaBackendAttributeData*)0, FILA_BACKEND_ATTRIBUTE_FLAG_NORMALIZED);
     FilaBackendBufferObjectBinding_toString(bufferObjectBinding);
     FilaBackendBufferObjectBinding_toString((FilaBackendBufferObjectBinding)255);
+    FilaBackendSamplerType_toString(samplerType);
+    FilaBackendSamplerType_toString((FilaBackendSamplerType)255);
+    FilaBackendSamplerFormat_toString(samplerFormat);
+    FilaBackendSamplerFormat_toString((FilaBackendSamplerFormat)255);
     (void)samplerType;
     (void)bufferObjectBinding;
     (void)samplerFormat;
@@ -115,6 +131,8 @@ void test_headers_backend_driver_enums(void) {
     (void)stencilOp;
     (void)stencilFace;
     (void)streamType;
+    (void)workaround;
+    (void)asyncCallId;
 
     FilaBackendDescriptorType descriptorType = FILA_BACKEND_DESCRIPTOR_TYPE_SAMPLER_CUBE_DEPTH;
     FilaBackendDescriptorFlags descriptorFlags =
@@ -147,5 +165,41 @@ void test_headers_backend_driver_enums(void) {
     FilaBackendDescriptorSetLayoutDescriptor_isSamplerType(FILA_BACKEND_DESCRIPTOR_TYPE_SAMPLER_EXTERNAL);
     FilaBackendDescriptorSetLayoutDescriptor_isBufferType(FILA_BACKEND_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
     FilaBackendDescriptorFlags_has(descriptorFlags, FILA_BACKEND_DESCRIPTOR_FLAGS_UNFILTERABLE);
+
+    (void)FilaBackendSwapChainConfig_transparent();
+    (void)FilaBackendSwapChainConfig_readable();
+    (void)FilaBackendSwapChainConfig_enableXcb();
+    (void)FilaBackendSwapChainConfig_appleCvPixelBuffer();
+    (void)FilaBackendSwapChainConfig_srgbColorSpace();
+    (void)FilaBackendSwapChainConfig_hasStencilBuffer();
+    (void)FilaBackendSwapChainHasStencilBufferAlias();
+    (void)FilaBackendSwapChainConfig_protectedContent();
+    (void)FilaBackendSwapChainConfig_msaa4Samples();
+
+    (void)FilaBackendLimits_getMaxVertexAttributeCount();
+    (void)FilaBackendLimits_getMaxSamplerCount();
+    (void)FilaBackendLimits_getMaxVertexBufferCount();
+    (void)FilaBackendLimits_getMaxSsboCount();
+    (void)FilaBackendLimits_getMaxDescriptorSetCount();
+    (void)FilaBackendLimits_getMaxDescriptorCount();
+    (void)FilaBackendLimits_getMaxPushConstantCount();
+    (void)FilaBackendLimits_getConfigUniformBindingCount();
+    (void)FilaBackendLimits_getConfigSamplerBindingCount();
+    (void)FilaBackendLimits_getExternalSamplerDataIndexUnused();
+
+    size_t maxVertexSamplers = 0;
+    size_t maxFragmentSamplers = 0;
+    (void)FilaBackendFeatureLevel_getCaps(FILA_BACKEND_FEATURE_LEVEL_1,
+            &maxVertexSamplers,
+            &maxFragmentSamplers);
+    (void)FilaBackendFence_getWaitForEverTimeout();
+
+    (void)FilaBackendTargetBufferFlags_has(FILA_BACKEND_TARGET_BUFFER_ALL, FILA_BACKEND_TARGET_BUFFER_DEPTH);
+    (void)FilaBackendTextureUsage_has(FILA_BACKEND_TEXTURE_USAGE_DEFAULT, FILA_BACKEND_TEXTURE_USAGE_SAMPLEABLE);
+    (void)FilaBackendStencilFace_has(FILA_BACKEND_STENCIL_FACE_FRONT_AND_BACK, FILA_BACKEND_STENCIL_FACE_FRONT);
+    (void)FilaBackendBufferUsage_has(FILA_BACKEND_BUFFER_USAGE_SHARED_WRITE_BIT, FILA_BACKEND_BUFFER_USAGE_DYNAMIC_BIT);
+    (void)FilaBackendMapBufferAccessFlags_has(
+            FILA_BACKEND_MAP_BUFFER_ACCESS_WRITE_BIT | FILA_BACKEND_MAP_BUFFER_ACCESS_INVALIDATE_RANGE_BIT,
+            FILA_BACKEND_MAP_BUFFER_ACCESS_INVALIDATE_RANGE_BIT);
 }
 

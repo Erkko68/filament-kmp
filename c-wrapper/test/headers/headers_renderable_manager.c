@@ -1,4 +1,5 @@
 #include "filament/Engine.h"
+#include "filament/Box.h"
 #include "utils/EntityManager.h"
 #include "filament/InstanceBuffer.h"
 #include "filament/MorphTargetBuffer.h"
@@ -18,6 +19,30 @@ void test_headers_renderable_manager(void) {
     FilaSkinningBuffer* skinningBuffer = (FilaSkinningBuffer*)0;
     FilaMorphTargetBuffer* morphTargetBuffer = (FilaMorphTargetBuffer*)0;
     FilaInstanceBuffer* instanceBuffer = (FilaInstanceBuffer*)0;
+    FilaBox box = {
+            {0.0f, 0.0f, 0.0f},
+            {1.0f, 1.0f, 1.0f},
+    };
+    FilaBox outBox = {
+            {0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+    };
+    float identity4x4[16] = {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f,
+    };
+    FilaRenderableBone identityBone = {
+            {1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            0.0f,
+    };
+    FilaRenderableBoneIndexAndWeight indicesAndWeights[2] = {
+            {0.0f, 0.75f},
+            {1.0f, 0.25f},
+    };
+    size_t pairsPerVertex[2] = {1u, 1u};
 
     (void)FilaRenderableManager_hasComponent(manager, entity);
     FilaRenderableManagerInstance instance = FilaRenderableManager_getInstance(manager, entity);
@@ -55,9 +80,22 @@ void test_headers_renderable_manager(void) {
     FilaRenderableManagerBuilder_receiveShadows(builder, true);
     FilaRenderableManagerBuilder_blendOrder(builder, 0u, 1u);
     FilaRenderableManagerBuilder_globalBlendOrderEnabled(builder, 0u, true);
+    FilaRenderableManagerBuilder_geometryType(builder, FILA_RENDERABLE_GEOMETRY_TYPE_DYNAMIC);
     FilaRenderableManagerBuilder_enableSkinningBuffers(builder, true);
     FilaRenderableManagerBuilder_skinning(builder, skinningBuffer, 1u, 0u);
+    FilaRenderableManagerBuilder_skinningBoneCount(builder, 1u);
+    FilaRenderableManagerBuilder_skinningMat4f(builder, 1u, identity4x4);
+    FilaRenderableManagerBuilder_skinningBones(builder, 1u, &identityBone);
+    FilaRenderableManagerBuilder_boneIndicesAndWeights(builder, 0u, indicesAndWeights, 2u, 2u);
+    FilaRenderableManagerBuilder_boneIndicesAndWeightsVector(builder,
+            0u,
+            indicesAndWeights,
+            2u,
+            pairsPerVertex,
+            2u);
+    FilaRenderableManagerBuilder_morphingLegacy(builder, 2u);
     FilaRenderableManagerBuilder_morphing(builder, morphTargetBuffer);
+    FilaRenderableManagerBuilder_morphingOffset(builder, 0u, 0u, 0u);
     FilaRenderableManagerBuilder_instances(builder, 1u, instanceBuffer);
     FilaRenderableManagerBuilder_geometry(builder,
             0u,
@@ -66,9 +104,29 @@ void test_headers_renderable_manager(void) {
             indexBuffer,
             0u,
             3u);
+    FilaRenderableManagerBuilder_geometryIndexedRange(builder,
+            0u,
+            FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
+            vertexBuffer,
+            indexBuffer,
+            0u,
+            0u,
+            2u,
+            3u);
     FilaRenderableManagerBuilder_material(builder, 0u, materialInstance);
+    FilaRenderableManagerBuilder_boundingBox(builder, &box);
     (void)FilaRenderableManagerBuilder_build(builder, engine, entity);
     FilaRenderableManagerBuilder_destroy(builder);
+    FilaRenderableManager_setAxisAlignedBoundingBox(manager, instance, &box);
+    (void)FilaRenderableManager_getAxisAlignedBoundingBox(manager, instance, &outBox);
+    FilaRenderableManager_setGeometryAt(manager,
+            instance,
+            0u,
+            FILA_RENDERABLE_PRIMITIVE_TRIANGLES,
+            vertexBuffer,
+            indexBuffer,
+            0u,
+            3u);
     FilaRenderableManager_setMaterialInstanceAt(manager, instance, 0u, materialInstance);
     (void)FilaRenderableManager_getMaterialInstanceAt(manager, instance, 0u);
     FilaRenderableManager_clearMaterialInstanceAt(manager, instance, 0u);
@@ -76,7 +134,10 @@ void test_headers_renderable_manager(void) {
     (void)FilaRenderableManager_getBlendOrderAt(manager, instance, 0u);
     FilaRenderableManager_setGlobalBlendOrderEnabledAt(manager, instance, 0u, true);
     (void)FilaRenderableManager_isGlobalBlendOrderEnabledAt(manager, instance, 0u);
+    (void)FilaRenderableManager_getEnabledAttributesAt(manager, instance, 0u);
     FilaRenderableManager_setSkinningBuffer(manager, instance, skinningBuffer, 1u, 0u);
+    FilaRenderableManager_setBones(manager, instance, &identityBone, 1u, 0u);
+    FilaRenderableManager_setBonesMat4f(manager, instance, identity4x4, 1u, 0u);
     float weights[2] = {0.5f, 0.5f};
     FilaRenderableManager_setMorphWeights(manager, instance, weights, 2u, 0u);
     FilaRenderableManager_setMorphTargetBufferOffsetAt(manager, instance, 0u, 0u, 0u);

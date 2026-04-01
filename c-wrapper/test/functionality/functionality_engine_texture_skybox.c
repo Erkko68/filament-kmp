@@ -118,6 +118,16 @@ int main(void) {
         return 1;
     }
 
+    const FilaScene* constScene = scene;
+    if (FilaScene_getSkyboxConst(constScene) != skybox) {
+        printf("Scene const skybox binding mismatch\n");
+        FilaEngine_destroySkybox(engine, skybox);
+        FilaEngine_destroyTexture(engine, texture);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
     if (FilaSkybox_getTexture(skybox) != texture) {
         printf("Skybox texture query mismatch\n");
         FilaScene_setSkybox(scene, (FilaSkybox*)0);
@@ -131,6 +141,14 @@ int main(void) {
     FilaScene_setSkybox(scene, (FilaSkybox*)0);
     if (FilaScene_getSkybox(scene) != (FilaSkybox*)0) {
         printf("Scene skybox clear failed\n");
+        FilaEngine_destroySkybox(engine, skybox);
+        FilaEngine_destroyTexture(engine, texture);
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+    if (FilaScene_getSkyboxConst(constScene) != (const FilaSkybox*)0) {
+        printf("Scene const skybox clear failed\n");
         FilaEngine_destroySkybox(engine, skybox);
         FilaEngine_destroyTexture(engine, texture);
         FilaEngine_destroyScene(engine, scene);

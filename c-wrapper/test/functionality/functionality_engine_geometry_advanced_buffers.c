@@ -73,6 +73,7 @@ int main(void) {
             FILA_VERTEX_ATTRIBUTE_TYPE_FLOAT3,
             0u,
             0u);
+    FilaVertexBufferBuilder_advancedSkinning(vbBuilder, true);
     FilaVertexBuffer* vb = FilaVertexBufferBuilder_build(vbBuilder, engine);
     FilaVertexBufferBuilder_destroy(vbBuilder);
 
@@ -95,12 +96,38 @@ int main(void) {
 
     FilaEntity entity = FilaEntityManager_create();
     FilaRenderableManagerBuilder* rb = FilaRenderableManagerBuilder_create(1u);
+    FilaRenderableBone bindPoseBone = {
+            {1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f},
+            0.0f,
+    };
+    FilaRenderableBoneIndexAndWeight advancedPairsRect[3] = {
+            {0.0f, 1.0f},
+            {0.0f, 1.0f},
+            {0.0f, 1.0f},
+    };
+    FilaRenderableBoneIndexAndWeight advancedPairsVector[4] = {
+            {0.0f, 1.0f},
+            {0.0f, 0.6f},
+            {0.0f, 0.4f},
+            {0.0f, 1.0f},
+    };
+    size_t pairsPerVertex[3] = {1u, 2u, 1u};
     FilaRenderableManagerBuilder_culling(rb, false);
     FilaRenderableManagerBuilder_castShadows(rb, false);
     FilaRenderableManagerBuilder_receiveShadows(rb, false);
     FilaRenderableManagerBuilder_geometry(rb, 0u, FILA_RENDERABLE_PRIMITIVE_TRIANGLES, vb, ib, 0u, 3u);
     FilaRenderableManagerBuilder_enableSkinningBuffers(rb, true);
     FilaRenderableManagerBuilder_skinning(rb, skinningBuffer, 256u, 0u);
+    FilaRenderableManagerBuilder_skinningBoneCount(rb, 2u);
+    FilaRenderableManagerBuilder_skinningBones(rb, 1u, &bindPoseBone);
+    FilaRenderableManagerBuilder_boneIndicesAndWeights(rb, 0u, advancedPairsRect, 3u, 1u);
+    FilaRenderableManagerBuilder_boneIndicesAndWeightsVector(rb,
+            0u,
+            advancedPairsVector,
+            4u,
+            pairsPerVertex,
+            3u);
     FilaRenderableManagerBuilder_morphing(rb, morphTargetBuffer);
     FilaRenderableManagerBuilder_instances(rb, 1u, instanceBuffer);
     const bool built = FilaRenderableManagerBuilder_build(rb, engine, entity);

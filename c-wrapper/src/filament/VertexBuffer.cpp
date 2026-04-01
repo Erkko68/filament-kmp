@@ -69,6 +69,14 @@ void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder,
     cppBuilder->attribute(toVertexAttribute(attribute), bufferIndex, toAttributeType(attributeType), byteOffset, byteStride);
 }
 
+void FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* builder, bool enabled) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<VertexBuilder*>(builder);
+    cppBuilder->advancedSkinning(enabled);
+}
+
 FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder, FilaEngine* engine) {
     if (!builder || !engine) {
         return nullptr;

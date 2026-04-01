@@ -54,9 +54,98 @@ FilaLightType fromLightType(filament::LightManager::Type type) {
 }
 
 using LightBuilder = filament::LightManager::Builder;
+
+filament::LightManager::ShadowOptions toShadowOptions(const FilaLightManagerShadowOptions& options) {
+    filament::LightManager::ShadowOptions converted;
+    converted.mapSize = options.mapSize;
+    converted.shadowCascades = options.shadowCascades;
+    converted.cascadeSplitPositions[0] = options.cascadeSplitPositions[0];
+    converted.cascadeSplitPositions[1] = options.cascadeSplitPositions[1];
+    converted.cascadeSplitPositions[2] = options.cascadeSplitPositions[2];
+    converted.constantBias = options.constantBias;
+    converted.normalBias = options.normalBias;
+    converted.shadowFar = options.shadowFar;
+    converted.shadowNearHint = options.shadowNearHint;
+    converted.shadowFarHint = options.shadowFarHint;
+    converted.stable = options.stable;
+    converted.lispsm = options.lispsm;
+    converted.polygonOffsetConstant = options.polygonOffsetConstant;
+    converted.polygonOffsetSlope = options.polygonOffsetSlope;
+    converted.screenSpaceContactShadows = options.screenSpaceContactShadows;
+    converted.stepCount = options.stepCount;
+    converted.maxShadowDistance = options.maxShadowDistance;
+    converted.vsm.elvsm = options.vsm.elvsm;
+    converted.vsm.blurWidth = options.vsm.blurWidth;
+    converted.shadowBulbRadius = options.shadowBulbRadius;
+    converted.transform = filament::math::quatf{
+            options.transform[0],
+            options.transform[1],
+            options.transform[2],
+            options.transform[3]};
+    return converted;
+}
+
+void fromShadowOptions(const filament::LightManager::ShadowOptions& options,
+        FilaLightManagerShadowOptions* outOptions) {
+    if (!outOptions) {
+        return;
+    }
+    outOptions->mapSize = options.mapSize;
+    outOptions->shadowCascades = options.shadowCascades;
+    outOptions->cascadeSplitPositions[0] = options.cascadeSplitPositions[0];
+    outOptions->cascadeSplitPositions[1] = options.cascadeSplitPositions[1];
+    outOptions->cascadeSplitPositions[2] = options.cascadeSplitPositions[2];
+    outOptions->constantBias = options.constantBias;
+    outOptions->normalBias = options.normalBias;
+    outOptions->shadowFar = options.shadowFar;
+    outOptions->shadowNearHint = options.shadowNearHint;
+    outOptions->shadowFarHint = options.shadowFarHint;
+    outOptions->stable = options.stable;
+    outOptions->lispsm = options.lispsm;
+    outOptions->polygonOffsetConstant = options.polygonOffsetConstant;
+    outOptions->polygonOffsetSlope = options.polygonOffsetSlope;
+    outOptions->screenSpaceContactShadows = options.screenSpaceContactShadows;
+    outOptions->stepCount = options.stepCount;
+    outOptions->maxShadowDistance = options.maxShadowDistance;
+    outOptions->vsm.elvsm = options.vsm.elvsm;
+    outOptions->vsm.blurWidth = options.vsm.blurWidth;
+    outOptions->shadowBulbRadius = options.shadowBulbRadius;
+    outOptions->transform[0] = options.transform.w;
+    outOptions->transform[1] = options.transform.x;
+    outOptions->transform[2] = options.transform.y;
+    outOptions->transform[3] = options.transform.z;
+}
 } // namespace
 
 extern "C" {
+
+void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint8_t cascades) {
+    if (!splitPositions || cascades < 1u || cascades > 4u) {
+        return;
+    }
+    filament::LightManager::ShadowCascades::computeUniformSplits(splitPositions, cascades);
+}
+
+void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions,
+        uint8_t cascades,
+        float near,
+        float far) {
+    if (!splitPositions || cascades < 1u || cascades > 4u) {
+        return;
+    }
+    filament::LightManager::ShadowCascades::computeLogSplits(splitPositions, cascades, near, far);
+}
+
+void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions,
+        uint8_t cascades,
+        float near,
+        float far,
+        float lambda) {
+    if (!splitPositions || cascades < 1u || cascades > 4u) {
+        return;
+    }
+    filament::LightManager::ShadowCascades::computePracticalSplits(splitPositions, cascades, near, far, lambda);
+}
 
 bool FilaLightManager_hasComponent(const FilaLightManager* manager, FilaEntity entity) {
     if (!manager || entity == 0) {
@@ -126,6 +215,30 @@ FilaLightType FilaLightManager_getType(const FilaLightManager* manager, FilaLigh
     }
     auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
     return fromLightType(cppManager->getType(toInstance(instance)));
+}
+
+bool FilaLightManager_isDirectional(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->isDirectional(toInstance(instance));
+}
+
+bool FilaLightManager_isPointLight(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->isPointLight(toInstance(instance));
+}
+
+bool FilaLightManager_isSpotLight(const FilaLightManager* manager, FilaLightManagerInstance instance) {
+    if (!manager || instance == 0) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    return cppManager->isSpotLight(toInstance(instance));
 }
 
 void FilaLightManager_setPosition(FilaLightManager* manager, FilaLightManagerInstance instance, float x, float y, float z) {
@@ -210,6 +323,17 @@ void FilaLightManager_setIntensityCandela(FilaLightManager* manager, FilaLightMa
     }
     auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
     cppManager->setIntensityCandela(toInstance(instance), intensity);
+}
+
+void FilaLightManager_setIntensityWattsEfficiency(FilaLightManager* manager,
+        FilaLightManagerInstance instance,
+        float watts,
+        float efficiency) {
+    if (!manager || instance == 0) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setIntensity(toInstance(instance), watts, efficiency);
 }
 
 void FilaLightManager_setLightChannel(FilaLightManager* manager, FilaLightManagerInstance instance, unsigned int channel, bool enable) {
@@ -332,6 +456,27 @@ bool FilaLightManager_isShadowCaster(const FilaLightManager* manager, FilaLightM
     return cppManager->isShadowCaster(toInstance(instance));
 }
 
+void FilaLightManager_setShadowOptions(FilaLightManager* manager,
+        FilaLightManagerInstance instance,
+        const FilaLightManagerShadowOptions* options) {
+    if (!manager || instance == 0 || !options) {
+        return;
+    }
+    auto cppManager = reinterpret_cast<filament::LightManager*>(manager);
+    cppManager->setShadowOptions(toInstance(instance), toShadowOptions(*options));
+}
+
+bool FilaLightManager_getShadowOptions(const FilaLightManager* manager,
+        FilaLightManagerInstance instance,
+        FilaLightManagerShadowOptions* outOptions) {
+    if (!manager || instance == 0 || !outOptions) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::LightManager*>(manager);
+    fromShadowOptions(cppManager->getShadowOptions(toInstance(instance)), outOptions);
+    return true;
+}
+
 FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightType type) {
     auto builder = new LightBuilder(toLightType(type));
     return reinterpret_cast<FilaLightManagerBuilder*>(builder);
@@ -375,6 +520,16 @@ void FilaLightManagerBuilder_intensity(FilaLightManagerBuilder* builder, float i
     }
     auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
     cppBuilder->intensity(intensity);
+}
+
+void FilaLightManagerBuilder_intensityWattsEfficiency(FilaLightManagerBuilder* builder,
+        float watts,
+        float efficiency) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->intensity(watts, efficiency);
 }
 
 void FilaLightManagerBuilder_falloff(FilaLightManagerBuilder* builder, float radius) {
@@ -447,6 +602,15 @@ void FilaLightManagerBuilder_sunHaloFalloff(FilaLightManagerBuilder* builder, fl
     }
     auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
     cppBuilder->sunHaloFalloff(haloFalloff);
+}
+
+void FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* builder,
+        const FilaLightManagerShadowOptions* options) {
+    if (!builder || !options) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<LightBuilder*>(builder);
+    cppBuilder->shadowOptions(toShadowOptions(*options));
 }
 
 bool FilaLightManagerBuilder_build(FilaLightManagerBuilder* builder, FilaEngine* engine, FilaEntity entity) {
