@@ -29,12 +29,98 @@ namespace {
 utils::Entity toEntity(FilaEntity entity) {
     return utils::Entity::import(entity);
 }
+
+filament::Engine::StereoscopicType toStereoscopicType(FilaEngineStereoscopicType type) {
+    switch (type) {
+        case FILA_ENGINE_STEREOSCOPIC_TYPE_INSTANCED:
+            return filament::Engine::StereoscopicType::INSTANCED;
+        case FILA_ENGINE_STEREOSCOPIC_TYPE_MULTIVIEW:
+            return filament::Engine::StereoscopicType::MULTIVIEW;
+        case FILA_ENGINE_STEREOSCOPIC_TYPE_NONE:
+        default:
+            return filament::Engine::StereoscopicType::NONE;
+    }
+}
+
+FilaEngineStereoscopicType fromStereoscopicType(filament::Engine::StereoscopicType type) {
+    switch (type) {
+        case filament::Engine::StereoscopicType::INSTANCED:
+            return FILA_ENGINE_STEREOSCOPIC_TYPE_INSTANCED;
+        case filament::Engine::StereoscopicType::MULTIVIEW:
+            return FILA_ENGINE_STEREOSCOPIC_TYPE_MULTIVIEW;
+        case filament::Engine::StereoscopicType::NONE:
+        default:
+            return FILA_ENGINE_STEREOSCOPIC_TYPE_NONE;
+    }
+}
+
+void applyConfig(const FilaEngineConfig* config, filament::Engine::Config* outConfig) {
+    if (!outConfig) {
+        return;
+    }
+    if (!config) {
+        *outConfig = filament::Engine::Config{};
+        return;
+    }
+    outConfig->stereoscopicType = toStereoscopicType(config->stereoscopicType);
+    outConfig->stereoscopicEyeCount = config->stereoscopicEyeCount == 0 ? 1 : config->stereoscopicEyeCount;
+}
 } // namespace
 
 extern "C" {
 
+void FilaEngineConfig_setDefaults(FilaEngineConfig* outConfig) {
+    if (!outConfig) {
+        return;
+    }
+    const filament::Engine::Config defaults;
+    outConfig->stereoscopicType = static_cast<FilaEngineStereoscopicType>(defaults.stereoscopicType);
+    outConfig->stereoscopicEyeCount = defaults.stereoscopicEyeCount;
+}
+
 FilaEngine* FilaEngine_create() {
     return reinterpret_cast<FilaEngine*>(filament::Engine::create());
+}
+
+FilaEngine* FilaEngine_createWithConfig(const FilaEngineConfig* config) {
+    filament::Engine::Config cppConfig;
+    applyConfig(config, &cppConfig);
+    return reinterpret_cast<FilaEngine*>(filament::Engine::create(
+            filament::Engine::Backend::DEFAULT,
+            nullptr,
+            nullptr,
+            &cppConfig));
+}
+
+size_t FilaEngine_getMaxStereoscopicEyes(void) {
+    return filament::Engine::getMaxStereoscopicEyes();
+}
+
+uint8_t FilaEngine_getStereoscopicEyeCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->getConfig().stereoscopicEyeCount;
+}
+
+bool FilaEngine_isStereoSupported(const FilaEngine* engine, FilaEngineStereoscopicType type) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->isStereoSupported(toStereoscopicType(type));
+}
+
+bool FilaEngine_getConfig(const FilaEngine* engine, FilaEngineConfig* outConfig) {
+    if (!engine || !outConfig) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    const auto& config = cppEngine->getConfig();
+    outConfig->stereoscopicType = fromStereoscopicType(config.stereoscopicType);
+    outConfig->stereoscopicEyeCount = config.stereoscopicEyeCount;
+    return true;
 }
 
 void FilaEngine_destroy(FilaEngine** engine) {

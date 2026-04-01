@@ -15,6 +15,17 @@ void fila_engine_module_compile_only(void) {
     FilaLightManager* lightManager = (FilaLightManager*)0;
     FilaRenderableManager* renderableManager = (FilaRenderableManager*)0;
     FilaEntity entity = 7;
+    FilaEngineConfig config;
+    FilaEngineConfig readback;
+
+    FilaEngineConfig_setDefaults(&config);
+    config.stereoscopicEyeCount = 2u;
+    config.stereoscopicType = FILA_ENGINE_STEREOSCOPIC_TYPE_NONE;
+    engine = FilaEngine_createWithConfig(&config);
+    (void)FilaEngine_getMaxStereoscopicEyes();
+    (void)FilaEngine_getStereoscopicEyeCount(engine);
+    (void)FilaEngine_isStereoSupported(engine, FILA_ENGINE_STEREOSCOPIC_TYPE_NONE);
+    (void)FilaEngine_getConfig(engine, &readback);
 
     swapChain = FilaEngine_createSwapChain(engine, (void*)0, 0);
     swapChain = FilaEngine_createSwapChainHeadless(engine, 640u, 480u, 0);

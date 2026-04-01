@@ -1,5 +1,5 @@
-#include "../../../filament-prebuilts/include/filament/Color.h"
-#include "../../../filament-prebuilts/include/math/vec3.h"
+#include <filament/Color.h>
+#include <math/vec3.h>
 
 // C wrapper header
 #include "../../include/filament/Color.h"

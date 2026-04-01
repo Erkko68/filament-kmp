@@ -2,15 +2,27 @@
 
 #include "filament/Camera.h"
 #include "filament/Engine.h"
+#include "filament/Frustum.h"
 #include "filament/Scene.h"
 #include "filament/View.h"
 
 int main(void) {
     printf("Running engine+scene+view smoke program...\n");
 
-    FilaEngine* engine = FilaEngine_create();
+    FilaEngineConfig config;
+    FilaEngineConfig_setDefaults(&config);
+    config.stereoscopicType = FILA_ENGINE_STEREOSCOPIC_TYPE_NONE;
+    config.stereoscopicEyeCount = 2u;
+
+    FilaEngine* engine = FilaEngine_createWithConfig(&config);
     if (!engine) {
         printf("Engine creation failed\n");
+        return 1;
+    }
+
+    if (FilaEngine_getStereoscopicEyeCount(engine) < 2u) {
+        printf("Engine eye count mismatch\n");
+        FilaEngine_destroy(&engine);
         return 1;
     }
 
@@ -141,8 +153,22 @@ int main(void) {
             0.0, 0.0, 0.0, 1.0,
         };
         double outM[16];
+        double eyeMatrices[32] = {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        };
         double pos[3];
+        double shift[2];
+        double scaling[4];
         float axis[3];
+        FilaFrustum frustum;
 
         FilaCamera_setProjection(
             camera,
@@ -156,17 +182,26 @@ int main(void) {
         FilaCamera_setLensProjection(camera, 35.0, 16.0 / 9.0, 0.1, 1000.0);
         FilaCamera_setCustomProjection(camera, identity, 0.1, 1000.0);
         FilaCamera_setCustomProjectionWithCulling(camera, identity, identity, 0.1, 1000.0);
+        FilaCamera_setCustomEyeProjection(camera, eyeMatrices, 2u, identity, 0.1, 1000.0);
         FilaCamera_setModelMatrix(camera, identity);
+        FilaCamera_setEyeModelMatrix(camera, 0u, identity);
+        FilaCamera_setScaling(camera, 1.0, 1.0);
+        FilaCamera_setShift(camera, 0.0, 0.0);
         FilaCamera_setFocusDistance(camera, 4.0f);
+        FilaCamera_setExposureValue(camera, 1.0f);
 
         if (!FilaCamera_getProjectionMatrix(camera, 0u, outM) ||
+                !FilaCamera_getProjectionMatrix(camera, 1u, outM) ||
                 !FilaCamera_getCullingProjectionMatrix(camera, outM) ||
                 !FilaCamera_getModelMatrix(camera, outM) ||
                 !FilaCamera_getViewMatrix(camera, outM) ||
+                !FilaCamera_getScaling(camera, scaling) ||
+                !FilaCamera_getShift(camera, shift) ||
                 !FilaCamera_getPosition(camera, pos) ||
                 !FilaCamera_getLeftVector(camera, axis) ||
                 !FilaCamera_getUpVector(camera, axis) ||
-                !FilaCamera_getForwardVector(camera, axis)) {
+                !FilaCamera_getForwardVector(camera, axis) ||
+                !FilaCamera_getFrustum(camera, &frustum)) {
             printf("Camera matrix/vector query failed\n");
             FilaEngine_destroyCameraComponent(engine, cameraEntity);
             FilaEngine_destroyView(engine, view);
@@ -183,6 +218,11 @@ int main(void) {
         (void)FilaCamera_getSensitivity(camera);
         (void)FilaCamera_getFocalLength(camera);
         (void)FilaCamera_getFocusDistance(camera);
+        (void)FilaCamera_projectionFov(45.0, 16.0 / 9.0, 0.1, 1000.0, FILA_CAMERA_FOV_VERTICAL, outM);
+        (void)FilaCamera_projectionLens(35.0, 16.0 / 9.0, 0.1, 1000.0, outM);
+        (void)FilaCamera_inverseProjection(outM, outM);
+        (void)FilaCamera_computeEffectiveFocalLength(35.0, 4.0);
+        (void)FilaCamera_computeEffectiveFov(45.0, 4.0);
     }
 
     FilaEngine_destroyCameraComponent(engine, cameraEntity);
@@ -194,4 +234,3 @@ int main(void) {
     printf("Engine+scene+view smoke program completed\n");
     return 0;
 }
-

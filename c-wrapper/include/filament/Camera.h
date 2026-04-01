@@ -2,8 +2,10 @@
 #define FILAMENT_C_CAMERA_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
+#include "Frustum.h"
 #include "Types.h"
 
 #ifdef __cplusplus
@@ -20,6 +22,9 @@ FilaEntity FilaCamera_getEntity(const FilaCamera* camera);
 
 // Sets physically-based exposure values.
 void FilaCamera_setExposure(FilaCamera* camera, float aperture, float shutterSpeed, float sensitivity);
+
+// Sets exposure directly (maps to Camera::setExposure(float exposure)).
+void FilaCamera_setExposureValue(FilaCamera* camera, float exposure);
 
 
 // Sets perspective projection using field-of-view parameters.
@@ -51,6 +56,23 @@ void FilaCamera_setLensProjection(
     double nearPlane,
     double farPlane);
 
+// Returns projection matrix from field-of-view parameters.
+bool FilaCamera_projectionFov(
+    double fovInDegrees,
+    double aspect,
+    double nearPlane,
+    double farPlane,
+    FilaCameraFov direction,
+    double outProjection[16]);
+
+// Returns projection matrix from focal length.
+bool FilaCamera_projectionLens(
+    double focalLengthInMillimeters,
+    double aspect,
+    double nearPlane,
+    double farPlane,
+    double outProjection[16]);
+
 // Sets custom projection matrix for both render and culling.
 void FilaCamera_setCustomProjection(FilaCamera* camera, const double projection[16], double nearPlane, double farPlane);
 
@@ -62,8 +84,24 @@ void FilaCamera_setCustomProjectionWithCulling(
     double nearPlane,
     double farPlane);
 
+// Sets custom projection matrices for each eye.
+void FilaCamera_setCustomEyeProjection(
+    FilaCamera* camera,
+    const double* projectionMatrices,
+    size_t count,
+    const double projectionForCulling[16],
+    double nearPlane,
+    double farPlane);
+
 // Sets camera model matrix.
 void FilaCamera_setModelMatrix(FilaCamera* camera, const double modelMatrix[16]);
+
+// Sets model matrix for a specific eye (relative to camera head space).
+void FilaCamera_setEyeModelMatrix(FilaCamera* camera, uint8_t eyeId, const double modelMatrix[16]);
+
+// Adds post-projection scaling and translation.
+void FilaCamera_setScaling(FilaCamera* camera, double x, double y);
+void FilaCamera_setShift(FilaCamera* camera, double x, double y);
 
 // Returns projection matrix for the requested eye.
 bool FilaCamera_getProjectionMatrix(
@@ -80,6 +118,10 @@ bool FilaCamera_getModelMatrix(const FilaCamera* camera, double outModelMatrix[1
 // Returns camera view matrix.
 bool FilaCamera_getViewMatrix(const FilaCamera* camera, double outViewMatrix[16]);
 
+// Returns post-projection scaling and translation.
+bool FilaCamera_getScaling(const FilaCamera* camera, double outScaling4[4]);
+bool FilaCamera_getShift(const FilaCamera* camera, double outShift2[2]);
+
 // Returns near/far clipping values.
 double FilaCamera_getNear(const FilaCamera* camera);
 double FilaCamera_getCullingFar(const FilaCamera* camera);
@@ -93,6 +135,9 @@ bool FilaCamera_getForwardVector(const FilaCamera* camera, float outForward3[3])
 // Returns effective field of view in degrees.
 float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* camera, FilaCameraFov direction);
 
+// Returns camera culling frustum planes in world space.
+bool FilaCamera_getFrustum(const FilaCamera* camera, FilaFrustum* outFrustum);
+
 // Returns physically-based camera exposure values.
 float FilaCamera_getAperture(const FilaCamera* camera);
 float FilaCamera_getShutterSpeed(const FilaCamera* camera);
@@ -102,6 +147,11 @@ double FilaCamera_getFocalLength(const FilaCamera* camera);
 // Sets and gets focus distance.
 void FilaCamera_setFocusDistance(FilaCamera* camera, float distance);
 float FilaCamera_getFocusDistance(const FilaCamera* camera);
+
+// Utility helpers for projection math.
+bool FilaCamera_inverseProjection(const double projection[16], double outInverseProjection[16]);
+double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance);
+double FilaCamera_computeEffectiveFov(double fovInDegrees, double focusDistance);
 
 #ifdef __cplusplus
 }

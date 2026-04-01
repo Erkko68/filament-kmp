@@ -1,14 +1,47 @@
 #ifndef FILAMENT_C_ENGINE_H
 #define FILAMENT_C_ENGINE_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
 #include "Types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef enum FilaEngineStereoscopicType {
+	FILA_ENGINE_STEREOSCOPIC_TYPE_NONE = 0,
+	FILA_ENGINE_STEREOSCOPIC_TYPE_INSTANCED = 1,
+	FILA_ENGINE_STEREOSCOPIC_TYPE_MULTIVIEW = 2,
+} FilaEngineStereoscopicType;
+
+typedef struct FilaEngineConfig {
+	FilaEngineStereoscopicType stereoscopicType;
+	uint8_t stereoscopicEyeCount;
+} FilaEngineConfig;
+
+// Populates config with Filament default values for exposed fields.
+void FilaEngineConfig_setDefaults(FilaEngineConfig* outConfig);
+
 // Creates a filament::Engine instance
 FilaEngine* FilaEngine_create();
+
+// Creates a filament::Engine instance with selected config fields.
+FilaEngine* FilaEngine_createWithConfig(const FilaEngineConfig* config);
+
+// Returns max stereoscopic eyes supported by Filament.
+size_t FilaEngine_getMaxStereoscopicEyes(void);
+
+// Returns this engine's configured stereoscopic eye count.
+uint8_t FilaEngine_getStereoscopicEyeCount(const FilaEngine* engine);
+
+// Returns true if this engine/backend supports the requested stereoscopic technique.
+bool FilaEngine_isStereoSupported(const FilaEngine* engine, FilaEngineStereoscopicType type);
+
+// Copies this engine's exposed config fields.
+bool FilaEngine_getConfig(const FilaEngine* engine, FilaEngineConfig* outConfig);
 
 // Destroys a filament::Engine instance
 void FilaEngine_destroy(FilaEngine** engine);

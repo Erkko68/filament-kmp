@@ -1,9 +1,14 @@
 #include <filament/Camera.h>
+#include <filament/Frustum.h>
 
 #include <math/mat4.h>
+#include <math/vec2.h>
+#include <math/vec3.h>
+#include <math/vec4.h>
 
-#include "../../../filament-prebuilts/include/math/vec3.h"
-#include "../../../filament-prebuilts/include/utils/Entity.h"
+#include <vector>
+
+#include <utils/Entity.h>
 
 // C wrapper headers
 #include "../../include/filament/Camera.h"
@@ -64,6 +69,14 @@ void FilaCamera_setExposure(FilaCamera* camera, float aperture, float shutterSpe
     cppCamera->setExposure(aperture, shutterSpeed, sensitivity);
 }
 
+void FilaCamera_setExposureValue(FilaCamera* camera, float exposure) {
+    if (!camera) {
+        return;
+    }
+    auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
+    cppCamera->setExposure(exposure);
+}
+
 void FilaCamera_setProjectionFov(FilaCamera* camera, double fovInDegrees, double aspect,
         double nearPlane, double farPlane, FilaCameraFov direction) {
     if (!camera) {
@@ -108,6 +121,32 @@ void FilaCamera_setLensProjection(
     cppCamera->setLensProjection(focalLengthInMillimeters, aspect, nearPlane, farPlane);
 }
 
+bool FilaCamera_projectionFov(
+        double fovInDegrees, double aspect, double nearPlane, double farPlane,
+        FilaCameraFov direction, double outProjection[16]) {
+    if (!outProjection) {
+        return false;
+    }
+    fromMat4(
+            filament::Camera::projection(
+                    toFov(direction), fovInDegrees, aspect, nearPlane, farPlane),
+            outProjection);
+    return true;
+}
+
+bool FilaCamera_projectionLens(
+        double focalLengthInMillimeters, double aspect, double nearPlane, double farPlane,
+        double outProjection[16]) {
+    if (!outProjection) {
+        return false;
+    }
+    fromMat4(
+            filament::Camera::projection(
+                    focalLengthInMillimeters, aspect, nearPlane, farPlane),
+            outProjection);
+    return true;
+}
+
 void FilaCamera_setCustomProjection(
         FilaCamera* camera, const double projection[16], double nearPlane, double farPlane) {
     if (!camera || !projection) {
@@ -128,12 +167,51 @@ void FilaCamera_setCustomProjectionWithCulling(
             toMat4(projection), toMat4(projectionForCulling), nearPlane, farPlane);
 }
 
+void FilaCamera_setCustomEyeProjection(
+        FilaCamera* camera, const double* projectionMatrices, size_t count,
+        const double projectionForCulling[16], double nearPlane, double farPlane) {
+    if (!camera || !projectionMatrices || !projectionForCulling || count == 0) {
+        return;
+    }
+    auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
+    std::vector<filament::math::mat4> eyeProjections(count);
+    for (size_t i = 0; i < count; ++i) {
+        eyeProjections[i] = toMat4(projectionMatrices + (i * 16));
+    }
+    cppCamera->setCustomEyeProjection(
+            eyeProjections.data(), count, toMat4(projectionForCulling), nearPlane, farPlane);
+}
+
 void FilaCamera_setModelMatrix(FilaCamera* camera, const double modelMatrix[16]) {
     if (!camera || !modelMatrix) {
         return;
     }
     auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
     cppCamera->setModelMatrix(toMat4(modelMatrix));
+}
+
+void FilaCamera_setEyeModelMatrix(FilaCamera* camera, uint8_t eyeId, const double modelMatrix[16]) {
+    if (!camera || !modelMatrix) {
+        return;
+    }
+    auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
+    cppCamera->setEyeModelMatrix(eyeId, toMat4(modelMatrix));
+}
+
+void FilaCamera_setScaling(FilaCamera* camera, double x, double y) {
+    if (!camera) {
+        return;
+    }
+    auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
+    cppCamera->setScaling(filament::math::double2{x, y});
+}
+
+void FilaCamera_setShift(FilaCamera* camera, double x, double y) {
+    if (!camera) {
+        return;
+    }
+    auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
+    cppCamera->setShift(filament::math::double2{x, y});
 }
 
 bool FilaCamera_getProjectionMatrix(
@@ -170,6 +248,30 @@ bool FilaCamera_getViewMatrix(const FilaCamera* camera, double outViewMatrix[16]
     }
     auto cppCamera = reinterpret_cast<const filament::Camera*>(camera);
     fromMat4(cppCamera->getViewMatrix(), outViewMatrix);
+    return true;
+}
+
+bool FilaCamera_getScaling(const FilaCamera* camera, double outScaling4[4]) {
+    if (!camera || !outScaling4) {
+        return false;
+    }
+    auto cppCamera = reinterpret_cast<const filament::Camera*>(camera);
+    const auto v = cppCamera->getScaling();
+    outScaling4[0] = v.x;
+    outScaling4[1] = v.y;
+    outScaling4[2] = v.z;
+    outScaling4[3] = v.w;
+    return true;
+}
+
+bool FilaCamera_getShift(const FilaCamera* camera, double outShift2[2]) {
+    if (!camera || !outShift2) {
+        return false;
+    }
+    auto cppCamera = reinterpret_cast<const filament::Camera*>(camera);
+    const auto v = cppCamera->getShift();
+    outShift2[0] = v.x;
+    outShift2[1] = v.y;
     return true;
 }
 
@@ -245,6 +347,23 @@ float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* camera, FilaCameraFov
     return cppCamera->getFieldOfViewInDegrees(toFov(direction));
 }
 
+bool FilaCamera_getFrustum(const FilaCamera* camera, FilaFrustum* outFrustum) {
+    if (!camera || !outFrustum) {
+        return false;
+    }
+    auto cppCamera = reinterpret_cast<const filament::Camera*>(camera);
+    const auto frustum = cppCamera->getFrustum();
+    filament::math::float4 planes[6];
+    frustum.getNormalizedPlanes(planes);
+    for (size_t i = 0; i < 6; ++i) {
+        outFrustum->planes[i][0] = planes[i].x;
+        outFrustum->planes[i][1] = planes[i].y;
+        outFrustum->planes[i][2] = planes[i].z;
+        outFrustum->planes[i][3] = planes[i].w;
+    }
+    return true;
+}
+
 float FilaCamera_getAperture(const FilaCamera* camera) {
     if (!camera) {
         return 0.0f;
@@ -291,6 +410,24 @@ float FilaCamera_getFocusDistance(const FilaCamera* camera) {
     }
     auto cppCamera = reinterpret_cast<const filament::Camera*>(camera);
     return cppCamera->getFocusDistance();
+}
+
+bool FilaCamera_inverseProjection(const double projection[16], double outInverseProjection[16]) {
+    if (!projection || !outInverseProjection) {
+        return false;
+    }
+    fromMat4(
+            filament::Camera::inverseProjection(toMat4(projection)),
+            outInverseProjection);
+    return true;
+}
+
+double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance) {
+    return filament::Camera::computeEffectiveFocalLength(focalLength, focusDistance);
+}
+
+double FilaCamera_computeEffectiveFov(double fovInDegrees, double focusDistance) {
+    return filament::Camera::computeEffectiveFov(fovInDegrees, focusDistance);
 }
 
 } // extern "C"
