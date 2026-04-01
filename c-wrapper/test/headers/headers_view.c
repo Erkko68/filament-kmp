@@ -110,6 +110,18 @@ void test_headers_view(void) {
     (void)FilaView_getStereoscopicOptions(view, &stereo);
     FilaView_clearFrameHistory(view, engine);
 
+    FilaView_setDebugCamera(view, camera);
+    (void)FilaView_getDirectionalShadowCameraCount(view);
+    {
+        const FilaCamera* shadowCameras[2] = {(const FilaCamera*)0, (const FilaCamera*)0};
+        (void)FilaView_getDirectionalShadowCameras(view, shadowCameras, 2u);
+    }
+    FilaView_setFroxelVizEnabled(view, false);
+    {
+        FilaViewFroxelConfigurationInfoWithAge froxelInfo;
+        (void)FilaView_getFroxelConfigurationInfo(view, &froxelInfo);
+    }
+
     FilaEngine_destroyCameraComponent(engine, entity);
     FilaEngine_destroyView(engine, view);
 }

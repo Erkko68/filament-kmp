@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <filament/Camera.h>
 #include <filament/ColorGrading.h>
 #include <filament/RenderTarget.h>
@@ -439,6 +441,14 @@ void fromVignetteOptions(filament::VignetteOptions const& in, FilaVignetteOption
     out->color[2] = in.color.b;
     out->color[3] = in.color.a;
     out->enabled = in.enabled;
+}
+
+void fromMat4f(const filament::math::mat4f& in, float out[16]) {
+    for (size_t c = 0; c < 4; ++c) {
+        for (size_t r = 0; r < 4; ++r) {
+            out[c * 4 + r] = in[c][r];
+        }
+    }
 }
 } // namespace
 
@@ -1004,6 +1014,76 @@ FilaEntity FilaView_getFogEntity(const FilaView* view) {
     }
     auto cppView = reinterpret_cast<const filament::View*>(view);
     return utils::Entity::smuggle(cppView->getFogEntity());
+}
+
+
+void FilaView_setDebugCamera(FilaView* view, FilaCamera* camera) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    auto cppCamera = reinterpret_cast<filament::Camera*>(camera);
+    cppView->setDebugCamera(cppCamera);
+}
+
+size_t FilaView_getDirectionalShadowCameraCount(const FilaView* view) {
+    if (!view) {
+        return 0u;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    return cppView->getDirectionalShadowCameras().size();
+}
+
+size_t FilaView_getDirectionalShadowCameras(
+        const FilaView* view,
+        const FilaCamera** outCameras,
+        size_t outCameraCount) {
+    if (!view || !outCameras || outCameraCount == 0u) {
+        return 0u;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    const auto cameras = cppView->getDirectionalShadowCameras();
+    const size_t copied = std::min<size_t>(cameras.size(), outCameraCount);
+    for (size_t i = 0; i < copied; ++i) {
+        outCameras[i] = reinterpret_cast<const FilaCamera*>(cameras[i]);
+    }
+    return copied;
+}
+
+void FilaView_setFroxelVizEnabled(FilaView* view, bool enabled) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setFroxelVizEnabled(enabled);
+}
+
+bool FilaView_getFroxelConfigurationInfo(
+        const FilaView* view,
+        FilaViewFroxelConfigurationInfoWithAge* outInfo) {
+    if (!view || !outInfo) {
+        return false;
+    }
+
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    const auto infoWithAge = cppView->getFroxelConfigurationInfo();
+
+    outInfo->info.width = infoWithAge.info.width;
+    outInfo->info.height = infoWithAge.info.height;
+    outInfo->info.depth = infoWithAge.info.depth;
+    outInfo->info.viewportWidth = infoWithAge.info.viewportWidth;
+    outInfo->info.viewportHeight = infoWithAge.info.viewportHeight;
+    outInfo->info.froxelDimension[0] = infoWithAge.info.froxelDimension.x;
+    outInfo->info.froxelDimension[1] = infoWithAge.info.froxelDimension.y;
+    outInfo->info.zLightFar = infoWithAge.info.zLightFar;
+    outInfo->info.linearizer = infoWithAge.info.linearizer;
+    fromMat4f(infoWithAge.info.p, outInfo->info.projection);
+    outInfo->info.clipTransform[0] = infoWithAge.info.clipTransform.x;
+    outInfo->info.clipTransform[1] = infoWithAge.info.clipTransform.y;
+    outInfo->info.clipTransform[2] = infoWithAge.info.clipTransform.z;
+    outInfo->info.clipTransform[3] = infoWithAge.info.clipTransform.w;
+    outInfo->age = infoWithAge.age;
+    return true;
 }
 
 } // extern "C"

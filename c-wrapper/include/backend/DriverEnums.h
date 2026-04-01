@@ -365,6 +365,10 @@ typedef enum FilaBackendSamplerType {
     FILA_BACKEND_SAMPLER_TYPE_CUBEMAP_ARRAY = 5,
 } FilaBackendSamplerType;
 
+typedef enum FilaBackendSubpassType {
+    FILA_BACKEND_SUBPASS_TYPE_SUBPASS_INPUT = 0,
+} FilaBackendSubpassType;
+
 typedef enum FilaBackendBufferObjectBinding {
     FILA_BACKEND_BUFFER_OBJECT_BINDING_VERTEX = 0,
     FILA_BACKEND_BUFFER_OBJECT_BINDING_UNIFORM = 1,

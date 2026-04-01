@@ -26,6 +26,9 @@
 #include "../../include/filament/Engine.h" // Our C Header
 #include "../../include/filament/Types.h"  // Our C Types
 
+void FilaMaterialInstance_clearCachedBoolParameters(const filament::MaterialInstance* materialInstance);
+void FilaMaterialInstance_clearAllCachedBoolParameters(void);
+
 namespace {
 utils::Entity toEntity(FilaEntity entity) {
     return utils::Entity::import(entity);
@@ -738,6 +741,7 @@ bool FilaEngine_execute(FilaEngine* engine) {
 
 void FilaEngine_destroy(FilaEngine** engine) {
     if (engine && *engine) {
+        FilaMaterialInstance_clearAllCachedBoolParameters();
         auto cppEngine = reinterpret_cast<filament::Engine*>(*engine);
         filament::Engine::destroy(&cppEngine);
         *engine = nullptr;
@@ -911,6 +915,7 @@ void FilaEngine_destroyMaterialInstance(FilaEngine* engine, FilaMaterialInstance
     }
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppMaterialInstance = reinterpret_cast<filament::MaterialInstance*>(materialInstance);
+    FilaMaterialInstance_clearCachedBoolParameters(cppMaterialInstance);
     cppEngine->destroy(cppMaterialInstance);
 }
 

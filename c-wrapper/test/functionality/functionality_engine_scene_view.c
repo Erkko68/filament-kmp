@@ -251,6 +251,57 @@ int main(void) {
     }
 
     {
+        const size_t shadowCameraCount = FilaView_getDirectionalShadowCameraCount(view);
+        const FilaCamera* shadowCameras[2] = {(const FilaCamera*)0, (const FilaCamera*)0};
+        const size_t copiedShadowCameras = FilaView_getDirectionalShadowCameras(view, shadowCameras, 2u);
+        if (copiedShadowCameras > 2u || copiedShadowCameras > shadowCameraCount) {
+            printf("Directional shadow camera contract mismatch\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        FilaView_setDebugCamera(view, camera);
+        FilaView_setFroxelVizEnabled(view, false);
+
+        if (FilaView_getDirectionalShadowCameraCount((const FilaView*)0) != 0u ||
+                FilaView_getDirectionalShadowCameras((const FilaView*)0, shadowCameras, 2u) != 0u ||
+                FilaView_getDirectionalShadowCameras(view, (const FilaCamera**)0, 2u) != 0u ||
+                FilaView_getDirectionalShadowCameras(view, shadowCameras, 0u) != 0u) {
+            printf("Directional shadow camera null-safety mismatch\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        {
+            FilaViewFroxelConfigurationInfoWithAge froxelInfo;
+            if (!FilaView_getFroxelConfigurationInfo(view, &froxelInfo)) {
+                printf("Froxel configuration readback failed\n");
+                FilaEngine_destroyCameraComponent(engine, cameraEntity);
+                FilaEngine_destroyView(engine, view);
+                FilaEngine_destroyScene(engine, scene);
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
+        }
+
+        if (FilaView_getFroxelConfigurationInfo((const FilaView*)0, (FilaViewFroxelConfigurationInfoWithAge*)0) ||
+                FilaView_getFroxelConfigurationInfo(view, (FilaViewFroxelConfigurationInfoWithAge*)0)) {
+            printf("Froxel configuration null-safety mismatch\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+    }
+
+    {
         double identity[16] = {
             1.0, 0.0, 0.0, 0.0,
             0.0, 1.0, 0.0, 0.0,

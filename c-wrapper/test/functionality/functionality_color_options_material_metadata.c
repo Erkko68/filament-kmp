@@ -28,6 +28,25 @@ int main(void) {
         return 1;
     }
 
+    {
+        FilaMaterialParameterInfo parameterInfos[2];
+        if (FilaMaterial_getParameters((const FilaMaterial*)0, parameterInfos, 2u) != 0u ||
+                FilaMaterial_getParameters((const FilaMaterial*)0, (FilaMaterialParameterInfo*)0, 0u) != 0u) {
+            printf("Unexpected parameter metadata readback on null material\n");
+            return 1;
+        }
+    }
+
+    if (FilaMaterial_getRequiredAttributes((const FilaMaterial*)0) != 0u) {
+        printf("Unexpected required attributes on null material\n");
+        return 1;
+    }
+
+    if (FilaMaterial_getDefaultInstance((FilaMaterial*)0) != (FilaMaterialInstance*)0) {
+        printf("Unexpected default instance on null material\n");
+        return 1;
+    }
+
     printf("functionality_color_options_material_metadata completed\n");
     return 0;
 }

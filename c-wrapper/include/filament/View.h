@@ -2,6 +2,7 @@
 #define FILAMENT_C_VIEW_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "Types.h"
@@ -155,6 +156,39 @@ bool FilaView_isFrustumCullingEnabled(const FilaView* view);
 
 // Returns the fog entity associated with this view.
 FilaEntity FilaView_getFogEntity(const FilaView* view);
+
+// Debug camera and directional-shadow camera inspection helpers.
+void FilaView_setDebugCamera(FilaView* view, FilaCamera* camera);
+size_t FilaView_getDirectionalShadowCameraCount(const FilaView* view);
+size_t FilaView_getDirectionalShadowCameras(
+    const FilaView* view,
+    const FilaCamera** outCameras,
+    size_t outCameraCount);
+
+// Debug froxel visualizer controls.
+void FilaView_setFroxelVizEnabled(FilaView* view, bool enabled);
+
+typedef struct FilaViewFroxelConfigurationInfo {
+    uint16_t width;
+    uint16_t height;
+    uint16_t depth;
+    uint32_t viewportWidth;
+    uint32_t viewportHeight;
+    uint32_t froxelDimension[2];
+    float zLightFar;
+    float linearizer;
+    float projection[16];
+    float clipTransform[4];
+} FilaViewFroxelConfigurationInfo;
+
+typedef struct FilaViewFroxelConfigurationInfoWithAge {
+    FilaViewFroxelConfigurationInfo info;
+    uint32_t age;
+} FilaViewFroxelConfigurationInfoWithAge;
+
+bool FilaView_getFroxelConfigurationInfo(
+    const FilaView* view,
+    FilaViewFroxelConfigurationInfoWithAge* outInfo);
 
 #ifdef __cplusplus
 }
