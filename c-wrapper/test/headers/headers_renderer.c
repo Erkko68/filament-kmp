@@ -13,6 +13,14 @@ void test_headers_renderer(void) {
     FilaPixelBufferDescriptor* pixelBuffer = (FilaPixelBufferDescriptor*)0;
     FilaViewport viewport = {0, 0, 1u, 1u};
 
+    FilaRendererDisplayInfo displayInfo;
+    FilaRendererFrameRateOptions frameRate;
+    FilaRendererClearOptions clearOptions;
+
+    FilaRendererDisplayInfo_setDefaults(&displayInfo);
+    FilaRendererFrameRateOptions_setDefaults(&frameRate);
+    FilaRendererClearOptions_setDefaults(&clearOptions);
+
     (void)FilaRenderer_beginFrame(renderer, swapChain, (uint64_t)0);
     FilaRenderer_render(renderer, view);
     FilaRenderer_endFrame(renderer);
@@ -25,5 +33,16 @@ void test_headers_renderer(void) {
     FilaRenderer_readPixels(renderer, 0u, 0u, 1u, 1u, pixelBuffer);
     FilaRenderer_readPixelsRenderTarget(renderer, renderTarget, 0u, 0u, 1u, 1u, pixelBuffer);
     FilaRenderer_renderStandaloneView(renderer, view);
+
+    FilaRenderer_setDisplayInfo(renderer, &displayInfo);
+    FilaRenderer_setFrameRateOptions(renderer, &frameRate);
+    FilaRenderer_setClearOptions(renderer, &clearOptions);
+    (void)FilaRenderer_getClearOptions(renderer, &clearOptions);
+    FilaRenderer_setVsyncTime(renderer, 0u);
+    FilaRenderer_skipFrame(renderer, 0u);
+    (void)FilaRenderer_shouldRenderFrame(renderer);
+    (void)FilaRenderer_getUserTime(renderer);
+    FilaRenderer_resetUserTime(renderer);
+
     FilaEngine_destroyRenderer(engine, renderer);
 }

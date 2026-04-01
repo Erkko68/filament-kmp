@@ -14,6 +14,7 @@
 #include <filament/Skybox.h>
 #include <filament/Stream.h>
 #include <filament/SwapChain.h>
+#include <filament/Sync.h>
 #include <filament/Texture.h>
 #include <filament/TransformManager.h>
 #include <filament/VertexBuffer.h>
@@ -54,6 +55,20 @@ FilaEngineStereoscopicType fromStereoscopicType(filament::Engine::StereoscopicTy
     }
 }
 
+filament::Engine::FeatureLevel toFeatureLevel(FilaBackendFeatureLevel level) {
+    switch (level) {
+        case FILA_BACKEND_FEATURE_LEVEL_3:
+            return filament::Engine::FeatureLevel::FEATURE_LEVEL_3;
+        case FILA_BACKEND_FEATURE_LEVEL_2:
+            return filament::Engine::FeatureLevel::FEATURE_LEVEL_2;
+        case FILA_BACKEND_FEATURE_LEVEL_1:
+            return filament::Engine::FeatureLevel::FEATURE_LEVEL_1;
+        case FILA_BACKEND_FEATURE_LEVEL_0:
+        default:
+            return filament::Engine::FeatureLevel::FEATURE_LEVEL_0;
+    }
+}
+
 void applyConfig(const FilaEngineConfig* config, filament::Engine::Config* outConfig) {
     if (!outConfig) {
         return;
@@ -64,6 +79,39 @@ void applyConfig(const FilaEngineConfig* config, filament::Engine::Config* outCo
     }
     outConfig->stereoscopicType = toStereoscopicType(config->stereoscopicType);
     outConfig->stereoscopicEyeCount = config->stereoscopicEyeCount == 0 ? 1 : config->stereoscopicEyeCount;
+}
+
+
+FilaBackendFeatureLevel fromFeatureLevel(filament::Engine::FeatureLevel level) {
+    switch (level) {
+        case filament::Engine::FeatureLevel::FEATURE_LEVEL_3:
+            return FILA_BACKEND_FEATURE_LEVEL_3;
+        case filament::Engine::FeatureLevel::FEATURE_LEVEL_2:
+            return FILA_BACKEND_FEATURE_LEVEL_2;
+        case filament::Engine::FeatureLevel::FEATURE_LEVEL_1:
+            return FILA_BACKEND_FEATURE_LEVEL_1;
+        case filament::Engine::FeatureLevel::FEATURE_LEVEL_0:
+        default:
+            return FILA_BACKEND_FEATURE_LEVEL_0;
+    }
+}
+
+FilaBackendBackend fromBackend(filament::Engine::Backend backend) {
+    switch (backend) {
+        case filament::Engine::Backend::OPENGL:
+            return FILA_BACKEND_OPENGL;
+        case filament::Engine::Backend::VULKAN:
+            return FILA_BACKEND_VULKAN;
+        case filament::Engine::Backend::METAL:
+            return FILA_BACKEND_METAL;
+        case filament::Engine::Backend::WEBGPU:
+            return FILA_BACKEND_WEBGPU;
+        case filament::Engine::Backend::NOOP:
+            return FILA_BACKEND_NOOP;
+        case filament::Engine::Backend::DEFAULT:
+        default:
+            return FILA_BACKEND_DEFAULT;
+    }
 }
 } // namespace
 
@@ -121,6 +169,571 @@ bool FilaEngine_getConfig(const FilaEngine* engine, FilaEngineConfig* outConfig)
     outConfig->stereoscopicType = fromStereoscopicType(config.stereoscopicType);
     outConfig->stereoscopicEyeCount = config.stereoscopicEyeCount;
     return true;
+}
+
+FilaBackendFeatureLevel FilaEngine_getSupportedFeatureLevel(const FilaEngine* engine) {
+    if (!engine) {
+        return FILA_BACKEND_FEATURE_LEVEL_0;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return fromFeatureLevel(cppEngine->getSupportedFeatureLevel());
+}
+
+FilaBackendFeatureLevel FilaEngine_getActiveFeatureLevel(const FilaEngine* engine) {
+    if (!engine) {
+        return FILA_BACKEND_FEATURE_LEVEL_0;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return fromFeatureLevel(cppEngine->getActiveFeatureLevel());
+}
+
+bool FilaEngine_setActiveFeatureLevel(
+        FilaEngine* engine,
+        FilaBackendFeatureLevel featureLevel,
+        FilaBackendFeatureLevel* outActiveFeatureLevel) {
+    if (!engine || !outActiveFeatureLevel) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    try {
+        const auto active = cppEngine->setActiveFeatureLevel(toFeatureLevel(featureLevel));
+        *outActiveFeatureLevel = fromFeatureLevel(active);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+size_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->getMaxAutomaticInstances();
+}
+
+void FilaEngine_setAutomaticInstancingEnabled(FilaEngine* engine, bool enabled) {
+    if (!engine) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->setAutomaticInstancingEnabled(enabled);
+}
+
+bool FilaEngine_isAutomaticInstancingEnabled(const FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->isAutomaticInstancingEnabled();
+}
+
+bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->isAsynchronousModeEnabled();
+}
+
+FilaBackendBackend FilaEngine_getBackend(const FilaEngine* engine) {
+    if (!engine) {
+        return FILA_BACKEND_DEFAULT;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return fromBackend(cppEngine->getBackend());
+}
+
+size_t FilaEngine_getBufferObjectCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getBufferObjectCount();
+}
+
+size_t FilaEngine_getViewCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getViewCount();
+}
+
+size_t FilaEngine_getSceneCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getSceneCount();
+}
+
+size_t FilaEngine_getSwapChainCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getSwapChainCount();
+}
+
+size_t FilaEngine_getStreamCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getStreamCount();
+}
+
+size_t FilaEngine_getIndexBufferCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getIndexBufferCount();
+}
+
+size_t FilaEngine_getSkinningBufferCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getSkinningBufferCount();
+}
+
+size_t FilaEngine_getMorphTargetBufferCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getMorphTargetBufferCount();
+}
+
+size_t FilaEngine_getInstanceBufferCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getInstanceBufferCount();
+}
+
+size_t FilaEngine_getVertexBufferCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getVertexBufferCount();
+}
+
+size_t FilaEngine_getIndirectLightCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getIndirectLightCount();
+}
+
+size_t FilaEngine_getMaterialCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getMaterialCount();
+}
+
+size_t FilaEngine_getTextureCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getTextureCount();
+}
+
+size_t FilaEngine_getSkyboxCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getSkyboxeCount();
+}
+
+size_t FilaEngine_getColorGradingCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getColorGradingCount();
+}
+
+size_t FilaEngine_getRenderTargetCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    return reinterpret_cast<const filament::Engine*>(engine)->getRenderTargetCount();
+}
+
+uint64_t FilaEngine_getSteadyClockTimeNano(void) {
+    return filament::Engine::getSteadyClockTimeNano();
+}
+
+bool FilaEngine_flush(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    try {
+        cppEngine->flush();
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+bool FilaEngine_flushAndWait(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    try {
+        cppEngine->flushAndWait();
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+bool FilaEngine_flushAndWaitWithTimeout(FilaEngine* engine, uint64_t timeoutNs, bool* outCompleted) {
+    if (!engine || !outCompleted) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    try {
+        *outCompleted = cppEngine->flushAndWait(timeoutNs);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+bool FilaEngine_isValidBufferObject(const FilaEngine* engine, const FilaBufferObject* bufferObject) {
+    if (!engine || !bufferObject) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppBufferObject = reinterpret_cast<const filament::BufferObject*>(bufferObject);
+    return cppEngine->isValid(cppBufferObject);
+}
+
+bool FilaEngine_isValidVertexBuffer(const FilaEngine* engine, const FilaVertexBuffer* vertexBuffer) {
+    if (!engine || !vertexBuffer) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppVertexBuffer = reinterpret_cast<const filament::VertexBuffer*>(vertexBuffer);
+    return cppEngine->isValid(cppVertexBuffer);
+}
+
+bool FilaEngine_isValidFence(const FilaEngine* engine, const FilaFence* fence) {
+    if (!engine || !fence) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppFence = reinterpret_cast<const filament::Fence*>(fence);
+    return cppEngine->isValid(cppFence);
+}
+
+bool FilaEngine_isValidSync(const FilaEngine* engine, const FilaSync* sync) {
+    if (!engine || !sync) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppSync = reinterpret_cast<const filament::Sync*>(sync);
+    return cppEngine->isValid(cppSync);
+}
+
+bool FilaEngine_isValidIndexBuffer(const FilaEngine* engine, const FilaIndexBuffer* indexBuffer) {
+    if (!engine || !indexBuffer) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppIndexBuffer = reinterpret_cast<const filament::IndexBuffer*>(indexBuffer);
+    return cppEngine->isValid(cppIndexBuffer);
+}
+
+bool FilaEngine_isValidSkinningBuffer(const FilaEngine* engine, const FilaSkinningBuffer* skinningBuffer) {
+    if (!engine || !skinningBuffer) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppSkinningBuffer = reinterpret_cast<const filament::SkinningBuffer*>(skinningBuffer);
+    return cppEngine->isValid(cppSkinningBuffer);
+}
+
+bool FilaEngine_isValidMorphTargetBuffer(const FilaEngine* engine, const FilaMorphTargetBuffer* morphTargetBuffer) {
+    if (!engine || !morphTargetBuffer) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppMorphTargetBuffer = reinterpret_cast<const filament::MorphTargetBuffer*>(morphTargetBuffer);
+    return cppEngine->isValid(cppMorphTargetBuffer);
+}
+
+bool FilaEngine_isValidIndirectLight(const FilaEngine* engine, const FilaIndirectLight* indirectLight) {
+    if (!engine || !indirectLight) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppIndirectLight = reinterpret_cast<const filament::IndirectLight*>(indirectLight);
+    return cppEngine->isValid(cppIndirectLight);
+}
+
+bool FilaEngine_isValidMaterial(const FilaEngine* engine, const FilaMaterial* material) {
+    if (!engine || !material) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    return cppEngine->isValid(cppMaterial);
+}
+
+bool FilaEngine_isValidMaterialInstanceWithMaterial(
+        const FilaEngine* engine,
+        const FilaMaterial* material,
+        const FilaMaterialInstance* materialInstance) {
+    if (!engine || !material || !materialInstance) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    return cppEngine->isValid(cppMaterial, cppMaterialInstance);
+}
+
+bool FilaEngine_isValidMaterialInstanceExpensive(
+        const FilaEngine* engine,
+        const FilaMaterialInstance* materialInstance) {
+    if (!engine || !materialInstance) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    return cppEngine->isValidExpensive(cppMaterialInstance);
+}
+
+bool FilaEngine_isValidRenderer(const FilaEngine* engine, const FilaRenderer* renderer) {
+    if (!engine || !renderer) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppRenderer = reinterpret_cast<const filament::Renderer*>(renderer);
+    return cppEngine->isValid(cppRenderer);
+}
+
+bool FilaEngine_isValidScene(const FilaEngine* engine, const FilaScene* scene) {
+    if (!engine || !scene) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppScene = reinterpret_cast<const filament::Scene*>(scene);
+    return cppEngine->isValid(cppScene);
+}
+
+bool FilaEngine_isValidSkybox(const FilaEngine* engine, const FilaSkybox* skybox) {
+    if (!engine || !skybox) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppSkybox = reinterpret_cast<const filament::Skybox*>(skybox);
+    return cppEngine->isValid(cppSkybox);
+}
+
+bool FilaEngine_isValidColorGrading(const FilaEngine* engine, const FilaColorGrading* colorGrading) {
+    if (!engine || !colorGrading) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppColorGrading = reinterpret_cast<const filament::ColorGrading*>(colorGrading);
+    return cppEngine->isValid(cppColorGrading);
+}
+
+bool FilaEngine_isValidSwapChain(const FilaEngine* engine, const FilaSwapChain* swapChain) {
+    if (!engine || !swapChain) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppSwapChain = reinterpret_cast<const filament::SwapChain*>(swapChain);
+    return cppEngine->isValid(cppSwapChain);
+}
+
+bool FilaEngine_isValidStream(const FilaEngine* engine, const FilaStream* stream) {
+    if (!engine || !stream) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppStream = reinterpret_cast<const filament::Stream*>(stream);
+    return cppEngine->isValid(cppStream);
+}
+
+bool FilaEngine_isValidTexture(const FilaEngine* engine, const FilaTexture* texture) {
+    if (!engine || !texture) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
+    return cppEngine->isValid(cppTexture);
+}
+
+bool FilaEngine_isValidRenderTarget(const FilaEngine* engine, const FilaRenderTarget* renderTarget) {
+    if (!engine || !renderTarget) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppRenderTarget = reinterpret_cast<const filament::RenderTarget*>(renderTarget);
+    return cppEngine->isValid(cppRenderTarget);
+}
+
+bool FilaEngine_isValidView(const FilaEngine* engine, const FilaView* view) {
+    if (!engine || !view) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    return cppEngine->isValid(cppView);
+}
+
+bool FilaEngine_isValidInstanceBuffer(const FilaEngine* engine, const FilaInstanceBuffer* instanceBuffer) {
+    if (!engine || !instanceBuffer) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    auto cppInstanceBuffer = reinterpret_cast<const filament::InstanceBuffer*>(instanceBuffer);
+    return cppEngine->isValid(cppInstanceBuffer);
+}
+
+void FilaEngine_destroyEntityComponents(FilaEngine* engine, FilaEntity entity) {
+    if (!engine) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->destroy(toEntity(entity));
+}
+
+bool FilaEngine_isPaused(const FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->isPaused();
+}
+
+bool FilaEngine_setPaused(FilaEngine* engine, bool paused) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->setPaused(paused);
+    return true;
+}
+
+bool FilaEngine_pumpMessageQueues(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->pumpMessageQueues();
+    return true;
+}
+
+bool FilaEngine_unprotected(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->unprotected();
+    return true;
+}
+
+bool FilaEngine_enableAccurateTranslations(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->enableAccurateTranslations();
+    return true;
+}
+
+const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return reinterpret_cast<const FilaMaterial*>(cppEngine->getDefaultMaterial());
+}
+
+bool FilaEngine_hasFeatureFlag(const FilaEngine* engine, const char* name) {
+    if (!engine || !name) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(const_cast<FilaEngine*>(engine));
+    return cppEngine->hasFeatureFlag(name);
+}
+
+bool FilaEngine_getFeatureFlag(const FilaEngine* engine, const char* name, bool* outValue) {
+    if (!engine || !name || !outValue) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    const auto value = cppEngine->getFeatureFlag(name);
+    if (!value.has_value()) {
+        return false;
+    }
+    *outValue = value.value();
+    return true;
+}
+
+bool FilaEngine_setFeatureFlag(FilaEngine* engine, const char* name, bool value) {
+    if (!engine || !name) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return cppEngine->setFeatureFlag(name, value);
+}
+
+size_t FilaEngine_getFeatureFlagCount(const FilaEngine* engine) {
+    if (!engine) {
+        return 0u;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->getFeatureFlags().size();
+}
+
+bool FilaEngine_getFeatureFlagInfo(
+        const FilaEngine* engine,
+        size_t index,
+        const char** outName,
+        const char** outDescription,
+        bool* outValue,
+        bool* outConstant) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    const auto flags = cppEngine->getFeatureFlags();
+    if (index >= flags.size()) {
+        return false;
+    }
+
+    const auto& flag = flags[index];
+    if (outName) {
+        *outName = flag.name;
+    }
+    if (outDescription) {
+        *outDescription = flag.description;
+    }
+    if (outValue) {
+        *outValue = *flag.value;
+    }
+    if (outConstant) {
+        *outConstant = flag.constant;
+    }
+    return true;
+}
+
+bool FilaEngine_execute(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    try {
+        cppEngine->execute();
+        return true;
+    } catch (...) {
+        return false;
+    }
 }
 
 void FilaEngine_destroy(FilaEngine** engine) {
@@ -239,6 +852,14 @@ FilaFence* FilaEngine_createFence(FilaEngine* engine) {
     return reinterpret_cast<FilaFence*>(cppEngine->createFence());
 }
 
+FilaSync* FilaEngine_createSync(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaSync*>(cppEngine->createSync());
+}
+
 void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence) {
     if (!engine || !fence) {
         return;
@@ -246,6 +867,15 @@ void FilaEngine_destroyFence(FilaEngine* engine, FilaFence* fence) {
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppFence = reinterpret_cast<filament::Fence*>(fence);
     cppEngine->destroy(cppFence);
+}
+
+void FilaEngine_destroySync(FilaEngine* engine, FilaSync* sync) {
+    if (!engine || !sync) {
+        return;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppSync = reinterpret_cast<filament::Sync*>(sync);
+    cppEngine->destroy(cppSync);
 }
 
 void FilaEngine_destroyVertexBuffer(FilaEngine* engine, FilaVertexBuffer* vertexBuffer) {

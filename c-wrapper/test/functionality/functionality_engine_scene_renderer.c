@@ -33,6 +33,48 @@ int main(void) {
     printf("Scene entity count: %zu\n", FilaScene_getEntityCount(scene));
     FilaScene_removeAllEntities(scene);
 
+    {
+        FilaRendererDisplayInfo displayInfo;
+        FilaRendererFrameRateOptions frameRate;
+        FilaRendererClearOptions clearOptions;
+
+        FilaRendererDisplayInfo_setDefaults(&displayInfo);
+        FilaRendererFrameRateOptions_setDefaults(&frameRate);
+        FilaRendererClearOptions_setDefaults(&clearOptions);
+
+        displayInfo.refreshRate = 60.0f;
+        frameRate.interval = 1u;
+        clearOptions.clear = true;
+        clearOptions.discard = true;
+
+        FilaRenderer_setDisplayInfo(renderer, &displayInfo);
+        FilaRenderer_setFrameRateOptions(renderer, &frameRate);
+        FilaRenderer_setClearOptions(renderer, &clearOptions);
+
+        if (!FilaRenderer_getClearOptions(renderer, &clearOptions)) {
+            printf("Renderer clear options readback failed\n");
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroyRenderer(engine, renderer);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        FilaRenderer_setVsyncTime(renderer, FilaEngine_getSteadyClockTimeNano());
+        FilaRenderer_skipFrame(renderer, 0u);
+        (void)FilaRenderer_shouldRenderFrame(renderer);
+
+        const double userTimeBefore = FilaRenderer_getUserTime(renderer);
+        FilaRenderer_resetUserTime(renderer);
+        const double userTimeAfterReset = FilaRenderer_getUserTime(renderer);
+        if (userTimeAfterReset > userTimeBefore + 1.0) {
+            printf("Renderer user time reset appears inconsistent\n");
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroyRenderer(engine, renderer);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+    }
+
     FilaViewport viewport = {0, 0, 16u, 16u};
     FilaRenderer_copyFrame(
         renderer,

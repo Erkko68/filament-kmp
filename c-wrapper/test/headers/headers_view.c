@@ -56,6 +56,60 @@ void test_headers_view(void) {
     FilaView_setStencilBufferEnabled(view, false);
     (void)FilaView_isStencilBufferEnabled(view);
 
+    FilaDynamicResolutionOptions dynamicResolution;
+    FilaRenderQuality renderQuality;
+    FilaMultiSampleAntiAliasingOptions msaa;
+    FilaTemporalAntiAliasingOptions taa;
+    FilaScreenSpaceReflectionsOptions ssr;
+    FilaAmbientOcclusionOptions ao;
+    FilaBloomOptions bloom;
+    FilaFogOptions fog;
+    FilaDepthOfFieldOptions dof;
+    FilaVignetteOptions vignette;
+    FilaGuardBandOptions guardBand;
+    FilaStereoscopicOptions stereo;
+    float lastScale[2] = {0.0f, 0.0f};
+
+    FilaDynamicResolutionOptions_setDefaults(&dynamicResolution);
+    FilaRenderQuality_setDefaults(&renderQuality);
+    FilaMultiSampleAntiAliasingOptions_setDefaults(&msaa);
+    FilaTemporalAntiAliasingOptions_setDefaults(&taa);
+    FilaScreenSpaceReflectionsOptions_setDefaults(&ssr);
+    FilaAmbientOcclusionOptions_setDefaults(&ao);
+    FilaBloomOptions_setDefaults(&bloom);
+    FilaFogOptions_setDefaults(&fog);
+    FilaDepthOfFieldOptions_setDefaults(&dof);
+    FilaVignetteOptions_setDefaults(&vignette);
+    FilaGuardBandOptions_setDefaults(&guardBand);
+    FilaStereoscopicOptions_setDefaults(&stereo);
+
+    FilaView_setDynamicResolutionOptions(view, &dynamicResolution);
+    (void)FilaView_getDynamicResolutionOptions(view, &dynamicResolution);
+    (void)FilaView_getLastDynamicResolutionScale(view, lastScale);
+    FilaView_setRenderQuality(view, &renderQuality);
+    (void)FilaView_getRenderQuality(view, &renderQuality);
+    FilaView_setMultiSampleAntiAliasingOptions(view, &msaa);
+    (void)FilaView_getMultiSampleAntiAliasingOptions(view, &msaa);
+    FilaView_setTemporalAntiAliasingOptions(view, &taa);
+    (void)FilaView_getTemporalAntiAliasingOptions(view, &taa);
+    FilaView_setScreenSpaceReflectionsOptions(view, &ssr);
+    (void)FilaView_getScreenSpaceReflectionsOptions(view, &ssr);
+    FilaView_setAmbientOcclusionOptions(view, &ao);
+    (void)FilaView_getAmbientOcclusionOptions(view, &ao);
+    FilaView_setBloomOptions(view, &bloom);
+    (void)FilaView_getBloomOptions(view, &bloom);
+    FilaView_setFogOptions(view, &fog);
+    (void)FilaView_getFogOptions(view, &fog);
+    FilaView_setDepthOfFieldOptions(view, &dof);
+    (void)FilaView_getDepthOfFieldOptions(view, &dof);
+    FilaView_setVignetteOptions(view, &vignette);
+    (void)FilaView_getVignetteOptions(view, &vignette);
+    FilaView_setGuardBandOptions(view, &guardBand);
+    (void)FilaView_getGuardBandOptions(view, &guardBand);
+    FilaView_setStereoscopicOptions(view, &stereo);
+    (void)FilaView_getStereoscopicOptions(view, &stereo);
+    FilaView_clearFrameHistory(view, engine);
+
     FilaEngine_destroyCameraComponent(engine, entity);
     FilaEngine_destroyView(engine, view);
 }

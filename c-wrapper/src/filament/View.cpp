@@ -40,6 +40,406 @@ filament::ShadowType toShadowType(FilaViewShadowType shadowType) {
 FilaViewShadowType fromShadowType(filament::ShadowType shadowType) {
     return static_cast<FilaViewShadowType>(shadowType);
 }
+
+filament::RenderQuality toRenderQuality(const FilaRenderQuality* quality) {
+    filament::RenderQuality out;
+    if (!quality) {
+        return out;
+    }
+    out.hdrColorBuffer = static_cast<filament::QualityLevel>(quality->hdrColorBuffer);
+    return out;
+}
+
+void fromRenderQuality(filament::RenderQuality const& in, FilaRenderQuality* out) {
+    if (!out) {
+        return;
+    }
+    out->hdrColorBuffer = static_cast<FilaQualityLevel>(in.hdrColorBuffer);
+}
+
+filament::DynamicResolutionOptions toDynamicResolutionOptions(const FilaDynamicResolutionOptions* options) {
+    filament::DynamicResolutionOptions out;
+    if (!options) {
+        return out;
+    }
+    out.minScale = { options->minScaleX, options->minScaleY };
+    out.maxScale = { options->maxScaleX, options->maxScaleY };
+    out.sharpness = options->sharpness;
+    out.enabled = options->enabled;
+    out.homogeneousScaling = options->homogeneousScaling;
+    out.quality = static_cast<filament::QualityLevel>(options->quality);
+    return out;
+}
+
+void fromDynamicResolutionOptions(filament::DynamicResolutionOptions const& in, FilaDynamicResolutionOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->minScaleX = in.minScale.x;
+    out->minScaleY = in.minScale.y;
+    out->maxScaleX = in.maxScale.x;
+    out->maxScaleY = in.maxScale.y;
+    out->sharpness = in.sharpness;
+    out->enabled = in.enabled;
+    out->homogeneousScaling = in.homogeneousScaling;
+    out->quality = static_cast<FilaQualityLevel>(in.quality);
+}
+
+filament::MultiSampleAntiAliasingOptions toMsaaOptions(const FilaMultiSampleAntiAliasingOptions* options) {
+    filament::MultiSampleAntiAliasingOptions out;
+    if (!options) {
+        return out;
+    }
+    out.enabled = options->enabled;
+    out.sampleCount = options->sampleCount;
+    out.customResolve = options->customResolve;
+    return out;
+}
+
+void fromMsaaOptions(filament::MultiSampleAntiAliasingOptions const& in, FilaMultiSampleAntiAliasingOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->enabled = in.enabled;
+    out->sampleCount = in.sampleCount;
+    out->customResolve = in.customResolve;
+}
+
+filament::TemporalAntiAliasingOptions toTaaOptions(const FilaTemporalAntiAliasingOptions* options) {
+    filament::TemporalAntiAliasingOptions out;
+    if (!options) {
+        return out;
+    }
+    out.filterWidth = options->filterWidth;
+    out.feedback = options->feedback;
+    out.lodBias = options->lodBias;
+    out.sharpness = options->sharpness;
+    out.enabled = options->enabled;
+    out.upscaling = options->upscaling;
+    out.filterHistory = options->filterHistory;
+    out.filterInput = options->filterInput;
+    out.useYCoCg = options->useYCoCg;
+    out.hdr = options->hdr;
+    out.boxType = static_cast<filament::TemporalAntiAliasingOptions::BoxType>(options->boxType);
+    out.boxClipping = static_cast<filament::TemporalAntiAliasingOptions::BoxClipping>(options->boxClipping);
+    out.jitterPattern = static_cast<filament::TemporalAntiAliasingOptions::JitterPattern>(options->jitterPattern);
+    out.varianceGamma = options->varianceGamma;
+    out.preventFlickering = options->preventFlickering;
+    out.historyReprojection = options->historyReprojection;
+    return out;
+}
+
+void fromTaaOptions(filament::TemporalAntiAliasingOptions const& in, FilaTemporalAntiAliasingOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->filterWidth = in.filterWidth;
+    out->feedback = in.feedback;
+    out->lodBias = in.lodBias;
+    out->sharpness = in.sharpness;
+    out->enabled = in.enabled;
+    out->upscaling = in.upscaling;
+    out->filterHistory = in.filterHistory;
+    out->filterInput = in.filterInput;
+    out->useYCoCg = in.useYCoCg;
+    out->hdr = in.hdr;
+    out->boxType = static_cast<FilaTemporalAntiAliasingBoxType>(in.boxType);
+    out->boxClipping = static_cast<FilaTemporalAntiAliasingBoxClipping>(in.boxClipping);
+    out->jitterPattern = static_cast<FilaTemporalAntiAliasingJitterPattern>(in.jitterPattern);
+    out->varianceGamma = in.varianceGamma;
+    out->preventFlickering = in.preventFlickering;
+    out->historyReprojection = in.historyReprojection;
+}
+
+filament::ScreenSpaceReflectionsOptions toSsrOptions(const FilaScreenSpaceReflectionsOptions* options) {
+    filament::ScreenSpaceReflectionsOptions out;
+    if (!options) {
+        return out;
+    }
+    out.thickness = options->thickness;
+    out.bias = options->bias;
+    out.maxDistance = options->maxDistance;
+    out.stride = options->stride;
+    out.enabled = options->enabled;
+    return out;
+}
+
+void fromSsrOptions(filament::ScreenSpaceReflectionsOptions const& in, FilaScreenSpaceReflectionsOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->thickness = in.thickness;
+    out->bias = in.bias;
+    out->maxDistance = in.maxDistance;
+    out->stride = in.stride;
+    out->enabled = in.enabled;
+}
+
+filament::GuardBandOptions toGuardBandOptions(const FilaGuardBandOptions* options) {
+    filament::GuardBandOptions out;
+    if (!options) {
+        return out;
+    }
+    out.enabled = options->enabled;
+    return out;
+}
+
+void fromGuardBandOptions(filament::GuardBandOptions const& in, FilaGuardBandOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->enabled = in.enabled;
+}
+
+filament::StereoscopicOptions toStereoscopicOptions(const FilaStereoscopicOptions* options) {
+    filament::StereoscopicOptions out;
+    if (!options) {
+        return out;
+    }
+    out.enabled = options->enabled;
+    return out;
+}
+
+void fromStereoscopicOptions(filament::StereoscopicOptions const& in, FilaStereoscopicOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->enabled = in.enabled;
+}
+
+filament::AmbientOcclusionOptions toAmbientOcclusionOptions(const FilaAmbientOcclusionOptions* options) {
+    filament::AmbientOcclusionOptions out;
+    if (!options) {
+        return out;
+    }
+    out.aoType = static_cast<filament::AmbientOcclusionOptions::AmbientOcclusionType>(options->aoType);
+    out.radius = options->radius;
+    out.power = options->power;
+    out.bias = options->bias;
+    out.resolution = options->resolution;
+    out.intensity = options->intensity;
+    out.bilateralThreshold = options->bilateralThreshold;
+    out.quality = static_cast<filament::QualityLevel>(options->quality);
+    out.lowPassFilter = static_cast<filament::QualityLevel>(options->lowPassFilter);
+    out.upsampling = static_cast<filament::QualityLevel>(options->upsampling);
+    out.enabled = options->enabled;
+    out.bentNormals = options->bentNormals;
+    out.minHorizonAngleRad = options->minHorizonAngleRad;
+
+    out.ssct.lightConeRad = options->ssct.lightConeRad;
+    out.ssct.shadowDistance = options->ssct.shadowDistance;
+    out.ssct.contactDistanceMax = options->ssct.contactDistanceMax;
+    out.ssct.intensity = options->ssct.intensity;
+    out.ssct.lightDirection = {
+        options->ssct.lightDirection[0], options->ssct.lightDirection[1], options->ssct.lightDirection[2]};
+    out.ssct.depthBias = options->ssct.depthBias;
+    out.ssct.depthSlopeBias = options->ssct.depthSlopeBias;
+    out.ssct.sampleCount = options->ssct.sampleCount;
+    out.ssct.rayCount = options->ssct.rayCount;
+    out.ssct.enabled = options->ssct.enabled;
+
+    out.gtao.sampleSliceCount = options->gtao.sampleSliceCount;
+    out.gtao.sampleStepsPerSlice = options->gtao.sampleStepsPerSlice;
+    out.gtao.thicknessHeuristic = options->gtao.thicknessHeuristic;
+    out.gtao.useVisibilityBitmasks = options->gtao.useVisibilityBitmasks;
+    out.gtao.constThickness = options->gtao.constThickness;
+    out.gtao.linearThickness = options->gtao.linearThickness;
+    return out;
+}
+
+void fromAmbientOcclusionOptions(filament::AmbientOcclusionOptions const& in, FilaAmbientOcclusionOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->aoType = static_cast<FilaAmbientOcclusionType>(in.aoType);
+    out->radius = in.radius;
+    out->power = in.power;
+    out->bias = in.bias;
+    out->resolution = in.resolution;
+    out->intensity = in.intensity;
+    out->bilateralThreshold = in.bilateralThreshold;
+    out->quality = static_cast<FilaQualityLevel>(in.quality);
+    out->lowPassFilter = static_cast<FilaQualityLevel>(in.lowPassFilter);
+    out->upsampling = static_cast<FilaQualityLevel>(in.upsampling);
+    out->enabled = in.enabled;
+    out->bentNormals = in.bentNormals;
+    out->minHorizonAngleRad = in.minHorizonAngleRad;
+
+    out->ssct.lightConeRad = in.ssct.lightConeRad;
+    out->ssct.shadowDistance = in.ssct.shadowDistance;
+    out->ssct.contactDistanceMax = in.ssct.contactDistanceMax;
+    out->ssct.intensity = in.ssct.intensity;
+    out->ssct.lightDirection[0] = in.ssct.lightDirection.x;
+    out->ssct.lightDirection[1] = in.ssct.lightDirection.y;
+    out->ssct.lightDirection[2] = in.ssct.lightDirection.z;
+    out->ssct.depthBias = in.ssct.depthBias;
+    out->ssct.depthSlopeBias = in.ssct.depthSlopeBias;
+    out->ssct.sampleCount = in.ssct.sampleCount;
+    out->ssct.rayCount = in.ssct.rayCount;
+    out->ssct.enabled = in.ssct.enabled;
+
+    out->gtao.sampleSliceCount = in.gtao.sampleSliceCount;
+    out->gtao.sampleStepsPerSlice = in.gtao.sampleStepsPerSlice;
+    out->gtao.thicknessHeuristic = in.gtao.thicknessHeuristic;
+    out->gtao.useVisibilityBitmasks = in.gtao.useVisibilityBitmasks;
+    out->gtao.constThickness = in.gtao.constThickness;
+    out->gtao.linearThickness = in.gtao.linearThickness;
+}
+
+filament::BloomOptions toBloomOptions(const FilaBloomOptions* options) {
+    filament::BloomOptions out;
+    if (!options) {
+        return out;
+    }
+    out.dirt = reinterpret_cast<filament::Texture*>(options->dirt);
+    out.dirtStrength = options->dirtStrength;
+    out.strength = options->strength;
+    out.resolution = options->resolution;
+    out.levels = options->levels;
+    out.blendMode = static_cast<filament::BloomOptions::BlendMode>(options->blendMode);
+    out.threshold = options->threshold;
+    out.enabled = options->enabled;
+    out.highlight = options->highlight;
+    out.quality = static_cast<filament::QualityLevel>(options->quality);
+    out.lensFlare = options->lensFlare;
+    out.starburst = options->starburst;
+    out.chromaticAberration = options->chromaticAberration;
+    out.ghostCount = options->ghostCount;
+    out.ghostSpacing = options->ghostSpacing;
+    out.ghostThreshold = options->ghostThreshold;
+    out.haloThickness = options->haloThickness;
+    out.haloRadius = options->haloRadius;
+    out.haloThreshold = options->haloThreshold;
+    return out;
+}
+
+void fromBloomOptions(filament::BloomOptions const& in, FilaBloomOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->dirt = reinterpret_cast<FilaTexture*>(in.dirt);
+    out->dirtStrength = in.dirtStrength;
+    out->strength = in.strength;
+    out->resolution = in.resolution;
+    out->levels = in.levels;
+    out->blendMode = static_cast<FilaBloomBlendMode>(in.blendMode);
+    out->threshold = in.threshold;
+    out->enabled = in.enabled;
+    out->highlight = in.highlight;
+    out->quality = static_cast<FilaQualityLevel>(in.quality);
+    out->lensFlare = in.lensFlare;
+    out->starburst = in.starburst;
+    out->chromaticAberration = in.chromaticAberration;
+    out->ghostCount = in.ghostCount;
+    out->ghostSpacing = in.ghostSpacing;
+    out->ghostThreshold = in.ghostThreshold;
+    out->haloThickness = in.haloThickness;
+    out->haloRadius = in.haloRadius;
+    out->haloThreshold = in.haloThreshold;
+}
+
+filament::FogOptions toFogOptions(const FilaFogOptions* options) {
+    filament::FogOptions out;
+    if (!options) {
+        return out;
+    }
+    out.distance = options->distance;
+    out.cutOffDistance = options->cutOffDistance;
+    out.maximumOpacity = options->maximumOpacity;
+    out.height = options->height;
+    out.heightFalloff = options->heightFalloff;
+    out.color = { options->color[0], options->color[1], options->color[2] };
+    out.density = options->density;
+    out.inScatteringStart = options->inScatteringStart;
+    out.inScatteringSize = options->inScatteringSize;
+    out.fogColorFromIbl = options->fogColorFromIbl;
+    out.skyColor = reinterpret_cast<filament::Texture*>(options->skyColor);
+    out.enabled = options->enabled;
+    return out;
+}
+
+void fromFogOptions(filament::FogOptions const& in, FilaFogOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->distance = in.distance;
+    out->cutOffDistance = in.cutOffDistance;
+    out->maximumOpacity = in.maximumOpacity;
+    out->height = in.height;
+    out->heightFalloff = in.heightFalloff;
+    out->color[0] = in.color.r;
+    out->color[1] = in.color.g;
+    out->color[2] = in.color.b;
+    out->density = in.density;
+    out->inScatteringStart = in.inScatteringStart;
+    out->inScatteringSize = in.inScatteringSize;
+    out->fogColorFromIbl = in.fogColorFromIbl;
+    out->skyColor = reinterpret_cast<FilaTexture*>(in.skyColor);
+    out->enabled = in.enabled;
+}
+
+filament::DepthOfFieldOptions toDepthOfFieldOptions(const FilaDepthOfFieldOptions* options) {
+    filament::DepthOfFieldOptions out;
+    if (!options) {
+        return out;
+    }
+    out.cocScale = options->cocScale;
+    out.cocAspectRatio = options->cocAspectRatio;
+    out.maxApertureDiameter = options->maxApertureDiameter;
+    out.enabled = options->enabled;
+    out.filter = static_cast<filament::DepthOfFieldOptions::Filter>(options->filter);
+    out.nativeResolution = options->nativeResolution;
+    out.foregroundRingCount = options->foregroundRingCount;
+    out.backgroundRingCount = options->backgroundRingCount;
+    out.fastGatherRingCount = options->fastGatherRingCount;
+    out.maxForegroundCOC = options->maxForegroundCOC;
+    out.maxBackgroundCOC = options->maxBackgroundCOC;
+    return out;
+}
+
+void fromDepthOfFieldOptions(filament::DepthOfFieldOptions const& in, FilaDepthOfFieldOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->cocScale = in.cocScale;
+    out->cocAspectRatio = in.cocAspectRatio;
+    out->maxApertureDiameter = in.maxApertureDiameter;
+    out->enabled = in.enabled;
+    out->filter = static_cast<FilaDepthOfFieldFilter>(in.filter);
+    out->nativeResolution = in.nativeResolution;
+    out->foregroundRingCount = in.foregroundRingCount;
+    out->backgroundRingCount = in.backgroundRingCount;
+    out->fastGatherRingCount = in.fastGatherRingCount;
+    out->maxForegroundCOC = in.maxForegroundCOC;
+    out->maxBackgroundCOC = in.maxBackgroundCOC;
+}
+
+filament::VignetteOptions toVignetteOptions(const FilaVignetteOptions* options) {
+    filament::VignetteOptions out;
+    if (!options) {
+        return out;
+    }
+    out.midPoint = options->midPoint;
+    out.roundness = options->roundness;
+    out.feather = options->feather;
+    out.color = { options->color[0], options->color[1], options->color[2], options->color[3] };
+    out.enabled = options->enabled;
+    return out;
+}
+
+void fromVignetteOptions(filament::VignetteOptions const& in, FilaVignetteOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->midPoint = in.midPoint;
+    out->roundness = in.roundness;
+    out->feather = in.feather;
+    out->color[0] = in.color.r;
+    out->color[1] = in.color.g;
+    out->color[2] = in.color.b;
+    out->color[3] = in.color.a;
+    out->enabled = in.enabled;
+}
 } // namespace
 
 extern "C" {
@@ -356,6 +756,230 @@ void FilaView_setDynamicLightingOptions(FilaView* view, float zLightNear, float 
     }
     auto cppView = reinterpret_cast<filament::View*>(view);
     cppView->setDynamicLightingOptions(zLightNear, zLightFar);
+}
+
+void FilaView_setDynamicResolutionOptions(FilaView* view, const FilaDynamicResolutionOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setDynamicResolutionOptions(toDynamicResolutionOptions(options));
+}
+
+bool FilaView_getDynamicResolutionOptions(const FilaView* view, FilaDynamicResolutionOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromDynamicResolutionOptions(cppView->getDynamicResolutionOptions(), outOptions);
+    return true;
+}
+
+bool FilaView_getLastDynamicResolutionScale(const FilaView* view, float outScale2[2]) {
+    if (!view || !outScale2) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    const auto scale = cppView->getLastDynamicResolutionScale();
+    outScale2[0] = scale.x;
+    outScale2[1] = scale.y;
+    return true;
+}
+
+void FilaView_setRenderQuality(FilaView* view, const FilaRenderQuality* quality) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setRenderQuality(toRenderQuality(quality));
+}
+
+bool FilaView_getRenderQuality(const FilaView* view, FilaRenderQuality* outQuality) {
+    if (!view || !outQuality) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromRenderQuality(cppView->getRenderQuality(), outQuality);
+    return true;
+}
+
+void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaMultiSampleAntiAliasingOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setMultiSampleAntiAliasingOptions(toMsaaOptions(options));
+}
+
+bool FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, FilaMultiSampleAntiAliasingOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromMsaaOptions(cppView->getMultiSampleAntiAliasingOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setTemporalAntiAliasingOptions(FilaView* view, const FilaTemporalAntiAliasingOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setTemporalAntiAliasingOptions(toTaaOptions(options));
+}
+
+bool FilaView_getTemporalAntiAliasingOptions(const FilaView* view, FilaTemporalAntiAliasingOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromTaaOptions(cppView->getTemporalAntiAliasingOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaScreenSpaceReflectionsOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setScreenSpaceReflectionsOptions(toSsrOptions(options));
+}
+
+bool FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaScreenSpaceReflectionsOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromSsrOptions(cppView->getScreenSpaceReflectionsOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaAmbientOcclusionOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setAmbientOcclusionOptions(toAmbientOcclusionOptions(options));
+}
+
+bool FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaAmbientOcclusionOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromAmbientOcclusionOptions(cppView->getAmbientOcclusionOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setBloomOptions(FilaView* view, const FilaBloomOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setBloomOptions(toBloomOptions(options));
+}
+
+bool FilaView_getBloomOptions(const FilaView* view, FilaBloomOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromBloomOptions(cppView->getBloomOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setFogOptions(FilaView* view, const FilaFogOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setFogOptions(toFogOptions(options));
+}
+
+bool FilaView_getFogOptions(const FilaView* view, FilaFogOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromFogOptions(cppView->getFogOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaDepthOfFieldOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setDepthOfFieldOptions(toDepthOfFieldOptions(options));
+}
+
+bool FilaView_getDepthOfFieldOptions(const FilaView* view, FilaDepthOfFieldOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromDepthOfFieldOptions(cppView->getDepthOfFieldOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setVignetteOptions(FilaView* view, const FilaVignetteOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setVignetteOptions(toVignetteOptions(options));
+}
+
+bool FilaView_getVignetteOptions(const FilaView* view, FilaVignetteOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromVignetteOptions(cppView->getVignetteOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setGuardBandOptions(FilaView* view, const FilaGuardBandOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setGuardBandOptions(toGuardBandOptions(options));
+}
+
+bool FilaView_getGuardBandOptions(const FilaView* view, FilaGuardBandOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromGuardBandOptions(cppView->getGuardBandOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setStereoscopicOptions(FilaView* view, const FilaStereoscopicOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setStereoscopicOptions(toStereoscopicOptions(options));
+}
+
+bool FilaView_getStereoscopicOptions(const FilaView* view, FilaStereoscopicOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromStereoscopicOptions(cppView->getStereoscopicOptions(), outOptions);
+    return true;
+}
+
+void FilaView_clearFrameHistory(FilaView* view, FilaEngine* engine) {
+    if (!view || !engine) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppView->clearFrameHistory(*cppEngine);
 }
 
 void FilaView_setFrustumCullingEnabled(FilaView* view, bool cullingEnabled) {

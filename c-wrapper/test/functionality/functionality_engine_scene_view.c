@@ -156,6 +156,101 @@ int main(void) {
     }
 
     {
+        FilaDynamicResolutionOptions dynamicResolution;
+        FilaRenderQuality renderQuality;
+        FilaMultiSampleAntiAliasingOptions msaa;
+        FilaTemporalAntiAliasingOptions taa;
+        FilaScreenSpaceReflectionsOptions ssr;
+        FilaAmbientOcclusionOptions ao;
+        FilaBloomOptions bloom;
+        FilaFogOptions fog;
+        FilaDepthOfFieldOptions dof;
+        FilaVignetteOptions vignette;
+        FilaGuardBandOptions guardBand;
+        FilaStereoscopicOptions stereo;
+        float lastScale[2] = {0.0f, 0.0f};
+
+        FilaDynamicResolutionOptions_setDefaults(&dynamicResolution);
+        FilaRenderQuality_setDefaults(&renderQuality);
+        FilaMultiSampleAntiAliasingOptions_setDefaults(&msaa);
+        FilaTemporalAntiAliasingOptions_setDefaults(&taa);
+        FilaScreenSpaceReflectionsOptions_setDefaults(&ssr);
+        FilaAmbientOcclusionOptions_setDefaults(&ao);
+        FilaBloomOptions_setDefaults(&bloom);
+        FilaFogOptions_setDefaults(&fog);
+        FilaDepthOfFieldOptions_setDefaults(&dof);
+        FilaVignetteOptions_setDefaults(&vignette);
+        FilaGuardBandOptions_setDefaults(&guardBand);
+        FilaStereoscopicOptions_setDefaults(&stereo);
+
+        dynamicResolution.enabled = true;
+        dynamicResolution.quality = FILA_QUALITY_LEVEL_MEDIUM;
+        renderQuality.hdrColorBuffer = FILA_QUALITY_LEVEL_HIGH;
+        msaa.enabled = true;
+        msaa.sampleCount = 4u;
+        taa.enabled = true;
+        taa.feedback = 0.15f;
+        ssr.enabled = true;
+        ssr.maxDistance = 2.0f;
+        ao.enabled = true;
+        ao.aoType = FILA_AMBIENT_OCCLUSION_TYPE_GTAO;
+        bloom.enabled = true;
+        bloom.strength = 0.2f;
+        fog.enabled = true;
+        fog.density = 0.15f;
+        dof.enabled = true;
+        dof.filter = FILA_DEPTH_OF_FIELD_FILTER_MEDIAN;
+        vignette.enabled = true;
+        vignette.roundness = 0.6f;
+        guardBand.enabled = true;
+        stereo.enabled = true;
+
+        FilaView_setDynamicResolutionOptions(view, &dynamicResolution);
+        FilaView_setRenderQuality(view, &renderQuality);
+        FilaView_setMultiSampleAntiAliasingOptions(view, &msaa);
+        FilaView_setTemporalAntiAliasingOptions(view, &taa);
+        FilaView_setScreenSpaceReflectionsOptions(view, &ssr);
+        FilaView_setAmbientOcclusionOptions(view, &ao);
+        FilaView_setBloomOptions(view, &bloom);
+        FilaView_setFogOptions(view, &fog);
+        FilaView_setDepthOfFieldOptions(view, &dof);
+        FilaView_setVignetteOptions(view, &vignette);
+        FilaView_setGuardBandOptions(view, &guardBand);
+        FilaView_setStereoscopicOptions(view, &stereo);
+
+        if (!FilaView_getDynamicResolutionOptions(view, &dynamicResolution) ||
+                !FilaView_getRenderQuality(view, &renderQuality) ||
+                !FilaView_getMultiSampleAntiAliasingOptions(view, &msaa) ||
+                !FilaView_getTemporalAntiAliasingOptions(view, &taa) ||
+                !FilaView_getScreenSpaceReflectionsOptions(view, &ssr) ||
+                !FilaView_getAmbientOcclusionOptions(view, &ao) ||
+                !FilaView_getBloomOptions(view, &bloom) ||
+                !FilaView_getFogOptions(view, &fog) ||
+                !FilaView_getDepthOfFieldOptions(view, &dof) ||
+                !FilaView_getVignetteOptions(view, &vignette) ||
+                !FilaView_getGuardBandOptions(view, &guardBand) ||
+                !FilaView_getStereoscopicOptions(view, &stereo)) {
+            printf("View options readback failed\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        if (!FilaView_getLastDynamicResolutionScale(view, lastScale)) {
+            printf("Dynamic resolution scale readback failed\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        FilaView_clearFrameHistory(view, engine);
+    }
+
+    {
         double identity[16] = {
             1.0, 0.0, 0.0, 0.0,
             0.0, 1.0, 0.0, 0.0,

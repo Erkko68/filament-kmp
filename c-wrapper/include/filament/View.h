@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "Options.h"
 #include "Viewport.h"
 
 #ifdef __cplusplus
@@ -109,6 +110,44 @@ bool FilaView_isChannelDepthClearEnabled(const FilaView* view, uint8_t channel);
 
 // Configures light clustering depth range heuristics.
 void FilaView_setDynamicLightingOptions(FilaView* view, float zLightNear, float zLightFar);
+
+// Configures dynamic resolution for this view.
+void FilaView_setDynamicResolutionOptions(FilaView* view, const FilaDynamicResolutionOptions* options);
+bool FilaView_getDynamicResolutionOptions(const FilaView* view, FilaDynamicResolutionOptions* outOptions);
+bool FilaView_getLastDynamicResolutionScale(const FilaView* view, float outScale2[2]);
+
+// Configures render-quality controls.
+void FilaView_setRenderQuality(FilaView* view, const FilaRenderQuality* quality);
+bool FilaView_getRenderQuality(const FilaView* view, FilaRenderQuality* outQuality);
+
+// Configures MSAA/TAA/SSR options.
+void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaMultiSampleAntiAliasingOptions* options);
+bool FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, FilaMultiSampleAntiAliasingOptions* outOptions);
+void FilaView_setTemporalAntiAliasingOptions(FilaView* view, const FilaTemporalAntiAliasingOptions* options);
+bool FilaView_getTemporalAntiAliasingOptions(const FilaView* view, FilaTemporalAntiAliasingOptions* outOptions);
+void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaScreenSpaceReflectionsOptions* options);
+bool FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaScreenSpaceReflectionsOptions* outOptions);
+
+// Configures advanced post-process options.
+void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaAmbientOcclusionOptions* options);
+bool FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaAmbientOcclusionOptions* outOptions);
+void FilaView_setBloomOptions(FilaView* view, const FilaBloomOptions* options);
+bool FilaView_getBloomOptions(const FilaView* view, FilaBloomOptions* outOptions);
+void FilaView_setFogOptions(FilaView* view, const FilaFogOptions* options);
+bool FilaView_getFogOptions(const FilaView* view, FilaFogOptions* outOptions);
+void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaDepthOfFieldOptions* options);
+bool FilaView_getDepthOfFieldOptions(const FilaView* view, FilaDepthOfFieldOptions* outOptions);
+void FilaView_setVignetteOptions(FilaView* view, const FilaVignetteOptions* options);
+bool FilaView_getVignetteOptions(const FilaView* view, FilaVignetteOptions* outOptions);
+
+// Configures guard band and stereoscopic options.
+void FilaView_setGuardBandOptions(FilaView* view, const FilaGuardBandOptions* options);
+bool FilaView_getGuardBandOptions(const FilaView* view, FilaGuardBandOptions* outOptions);
+void FilaView_setStereoscopicOptions(FilaView* view, const FilaStereoscopicOptions* options);
+bool FilaView_getStereoscopicOptions(const FilaView* view, FilaStereoscopicOptions* outOptions);
+
+// Clears temporal history used by this view.
+void FilaView_clearFrameHistory(FilaView* view, FilaEngine* engine);
 
 // Debug/runtime culling toggle.
 void FilaView_setFrustumCullingEnabled(FilaView* view, bool cullingEnabled);

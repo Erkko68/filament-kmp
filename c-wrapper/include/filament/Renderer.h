@@ -7,6 +7,7 @@
 #include "Types.h"
 #include "Viewport.h"
 #include "BufferDescriptor.h"
+#include "Options.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,6 +56,21 @@ void FilaRenderer_readPixelsRenderTarget(
 
 // Renders a standalone view outside begin/end frame.
 void FilaRenderer_renderStandaloneView(FilaRenderer* renderer, const FilaView* view);
+
+// Configures renderer/display/frame pacing options.
+void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info);
+void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options);
+void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClearOptions* options);
+bool FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClearOptions* outOptions);
+
+// Frame pacing and timing controls.
+void FilaRenderer_setVsyncTime(FilaRenderer* renderer, uint64_t steadyClockTimeNano);
+void FilaRenderer_skipFrame(FilaRenderer* renderer, uint64_t vsyncSteadyClockTimeNano);
+bool FilaRenderer_shouldRenderFrame(const FilaRenderer* renderer);
+
+// Renderer user-time helpers.
+double FilaRenderer_getUserTime(const FilaRenderer* renderer);
+void FilaRenderer_resetUserTime(FilaRenderer* renderer);
 
 #ifdef __cplusplus
 }
