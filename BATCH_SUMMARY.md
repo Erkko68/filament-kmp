@@ -15,7 +15,7 @@
   - `FilaEngine_destroyIndirectLight`
   
 - **Implementation:** `c-wrapper/src/filament/IndirectLight.cpp` (85 lines)
-- **Tests:** Module + Signature compile-only tests, linked smoke program
+- **Tests:** Module, linked smoke program
 - **Verification:** 13/13 ctest passed (including IndirectLight scene binding runtime)
 
 ### ✅ Batch B: MaterialInstance Parameter Setters
@@ -28,7 +28,7 @@
   - `FilaMaterialInstance_setParameterUint`
 
 - **Implementation:** Extended `c-wrapper/src/filament/Material.cpp` with guarded setters via `Material::hasParameter()` precheck
-- **Tests:** Module + Signature compile-only tests, linked parameter smoke program
+- **Tests:** Module, linked parameter smoke program
 - **Verification:** 14/14 ctest passed (including MaterialInstance parameter setting runtime)
 
 ### ✅ Batch C: RenderableManager Material Instance Runtime Binding

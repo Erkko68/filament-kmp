@@ -8,9 +8,19 @@
 // Internal bridge payload for C++ translation units.
 struct FilaBufferDescriptor {
     void* impl;
+    FilaBufferReleaseCallback callback;
+    void* user;
+    FilaCallbackHandler* handler;
 };
 
 struct FilaPixelBufferDescriptor {
+    void* impl;
+    FilaBufferReleaseCallback callback;
+    void* user;
+    FilaCallbackHandler* handler;
+};
+
+struct FilaCallbackHandler {
     void* impl;
 };
 #endif

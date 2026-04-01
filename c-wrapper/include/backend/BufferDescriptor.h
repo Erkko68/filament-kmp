@@ -2,7 +2,10 @@
 #define FILAMENT_C_BACKEND_BUFFERDESCRIPTOR_H
 
 #include <stddef.h>
+#include <stdbool.h>
 #include <stdint.h>
+
+#include "CallbackHandler.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,6 +29,30 @@ typedef void (*FilaBufferReleaseCallback)(void* buffer, size_t size, void* user)
  */
 FilaBufferDescriptor* FilaBufferDescriptor_create(
     const void* buffer, size_t size, FilaBufferReleaseCallback callback, void* user);
+
+FilaBufferDescriptor* FilaBufferDescriptor_createWithHandler(
+    const void* buffer, size_t size, FilaCallbackHandler* handler,
+    FilaBufferReleaseCallback callback, void* user);
+
+// Replaces the release callback and associated user pointer.
+void FilaBufferDescriptor_setCallback(
+    FilaBufferDescriptor* desc, FilaBufferReleaseCallback callback, void* user);
+
+void FilaBufferDescriptor_setCallbackWithHandler(
+    FilaBufferDescriptor* desc, FilaCallbackHandler* handler,
+    FilaBufferReleaseCallback callback, void* user);
+
+// Returns true if a release callback is currently set.
+bool FilaBufferDescriptor_hasCallback(const FilaBufferDescriptor* desc);
+
+// Returns the currently configured release callback.
+FilaBufferReleaseCallback FilaBufferDescriptor_getCallback(const FilaBufferDescriptor* desc);
+
+// Returns the currently configured user pointer.
+void* FilaBufferDescriptor_getUser(const FilaBufferDescriptor* desc);
+
+// Returns the callback handler associated with this descriptor, or NULL.
+FilaCallbackHandler* FilaBufferDescriptor_getHandler(const FilaBufferDescriptor* desc);
 
 /**
  * Destroys a FilaBufferDescriptor.
