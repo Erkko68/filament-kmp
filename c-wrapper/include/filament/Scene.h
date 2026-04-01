@@ -37,6 +37,26 @@ void FilaScene_setIndirectLight(FilaScene* scene, FilaIndirectLight* indirectLig
 // Returns the indirect light currently associated with the scene.
 FilaIndirectLight* FilaScene_getIndirectLight(FilaScene* scene);
 
+// Adds a list of entities to the scene.
+void FilaScene_addEntities(FilaScene* scene, const FilaEntity* entities, size_t count);
+
+// Removes a list of entities from the scene.
+void FilaScene_removeEntities(FilaScene* scene, const FilaEntity* entities, size_t count);
+
+// Returns the number of active renderables currently in the scene.
+size_t FilaScene_getRenderableCount(const FilaScene* scene);
+
+// Returns the number of active lights currently in the scene.
+size_t FilaScene_getLightCount(const FilaScene* scene);
+
+typedef void (*FilaSceneEntityCallback)(FilaEntity entity, void* userData);
+
+// Invokes callback for each entity currently present in the scene.
+void FilaScene_forEach(
+    const FilaScene* scene,
+    FilaSceneEntityCallback callback,
+    void* userData);
+
 #ifdef __cplusplus
 }
 #endif

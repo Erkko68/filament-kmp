@@ -10,6 +10,12 @@ using TextureBuilder = filament::Texture::Builder;
 
 filament::Texture::Sampler toSampler(FilaTextureSampler sampler) {
     switch (sampler) {
+        case FILA_TEXTURE_SAMPLER_CUBEMAP_ARRAY:
+            return filament::Texture::Sampler::SAMPLER_CUBEMAP_ARRAY;
+        case FILA_TEXTURE_SAMPLER_3D:
+            return filament::Texture::Sampler::SAMPLER_3D;
+        case FILA_TEXTURE_SAMPLER_2D_ARRAY:
+            return filament::Texture::Sampler::SAMPLER_2D_ARRAY;
         case FILA_TEXTURE_SAMPLER_EXTERNAL:
             return filament::Texture::Sampler::SAMPLER_EXTERNAL;
         case FILA_TEXTURE_SAMPLER_CUBEMAP:
@@ -20,16 +26,24 @@ filament::Texture::Sampler toSampler(FilaTextureSampler sampler) {
     }
 }
 
+FilaTextureSampler toTextureSampler(filament::Texture::Sampler sampler) {
+    return static_cast<FilaTextureSampler>(sampler);
+}
+
 filament::Texture::InternalFormat toInternalFormat(FilaTextureFormat format) {
-    switch (format) {
-        case FILA_TEXTURE_FORMAT_RGBA8:
-        default:
-            return filament::Texture::InternalFormat::RGBA8;
-    }
+    return static_cast<filament::Texture::InternalFormat>(format);
+}
+
+FilaTextureFormat toTextureFormat(filament::Texture::InternalFormat format) {
+    return static_cast<FilaTextureFormat>(format);
 }
 
 filament::Texture::Usage toUsage(uint16_t usage) {
     return static_cast<filament::Texture::Usage>(usage);
+}
+
+filament::Texture::Swizzle toSwizzle(FilaTextureSwizzle swizzle) {
+    return static_cast<filament::Texture::Swizzle>(swizzle);
 }
 } // namespace
 
@@ -62,6 +76,14 @@ void FilaTextureBuilder_height(FilaTextureBuilder* builder, uint32_t height) {
     }
     auto cppBuilder = reinterpret_cast<TextureBuilder*>(builder);
     cppBuilder->height(height);
+}
+
+void FilaTextureBuilder_depth(FilaTextureBuilder* builder, uint32_t depth) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<TextureBuilder*>(builder);
+    cppBuilder->depth(depth);
 }
 
 void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint8_t levels) {
@@ -104,6 +126,24 @@ void FilaTextureBuilder_usage(FilaTextureBuilder* builder, uint16_t usage) {
     cppBuilder->usage(toUsage(usage));
 }
 
+void FilaTextureBuilder_swizzle(
+        FilaTextureBuilder* builder, FilaTextureSwizzle r, FilaTextureSwizzle g,
+        FilaTextureSwizzle b, FilaTextureSwizzle a) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<TextureBuilder*>(builder);
+    cppBuilder->swizzle(toSwizzle(r), toSwizzle(g), toSwizzle(b), toSwizzle(a));
+}
+
+void FilaTextureBuilder_external(FilaTextureBuilder* builder) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<TextureBuilder*>(builder);
+    cppBuilder->external();
+}
+
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* builder, FilaEngine* engine) {
     if (!builder || !engine) {
         return nullptr;
@@ -127,6 +167,14 @@ size_t FilaTexture_getHeight(const FilaTexture* texture, size_t level) {
     }
     auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
     return cppTexture->getHeight(level);
+}
+
+size_t FilaTexture_getDepth(const FilaTexture* texture, size_t level) {
+    if (!texture) {
+        return 0;
+    }
+    auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
+    return cppTexture->getDepth(level);
 }
 
 size_t FilaTexture_getLevels(const FilaTexture* texture) {
@@ -192,6 +240,100 @@ void FilaTexture_generateMipmaps(FilaTexture* texture, FilaEngine* engine) {
     auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     cppTexture->generateMipmaps(*cppEngine);
+}
+
+FilaTextureSampler FilaTexture_getTarget(const FilaTexture* texture) {
+    if (!texture) {
+        return FILA_TEXTURE_SAMPLER_2D;
+    }
+    auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
+    return toTextureSampler(cppTexture->getTarget());
+}
+
+FilaTextureFormat FilaTexture_getFormat(const FilaTexture* texture) {
+    if (!texture) {
+        return FILA_TEXTURE_FORMAT_RGBA8;
+    }
+    auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
+    return toTextureFormat(cppTexture->getFormat());
+}
+
+bool FilaTexture_isCreationComplete(const FilaTexture* texture) {
+    if (!texture) {
+        return false;
+    }
+    auto cppTexture = reinterpret_cast<const filament::Texture*>(texture);
+    return cppTexture->isCreationComplete();
+}
+
+bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureFormat format) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return filament::Texture::isTextureFormatSupported(*cppEngine, toInternalFormat(format));
+}
+
+bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureFormat format) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return filament::Texture::isTextureFormatMipmappable(*cppEngine, toInternalFormat(format));
+}
+
+bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format) {
+    return filament::Texture::isTextureFormatCompressed(toInternalFormat(format));
+}
+
+bool FilaTexture_isProtectedTexturesSupported(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return filament::Texture::isProtectedTexturesSupported(*cppEngine);
+}
+
+bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return filament::Texture::isTextureSwizzleSupported(*cppEngine);
+}
+
+size_t FilaTexture_computeTextureDataSize(
+        FilaTexturePixelDataFormat format, FilaTexturePixelDataType type, size_t stride,
+        size_t height, size_t alignment) {
+    return filament::Texture::computeTextureDataSize(
+            static_cast<filament::Texture::Format>(format),
+            static_cast<filament::Texture::Type>(type),
+            stride, height, alignment);
+}
+
+bool FilaTexture_validatePixelFormatAndType(
+        FilaTextureFormat internalFormat, FilaTexturePixelDataFormat format,
+        FilaTexturePixelDataType type) {
+    return filament::Texture::validatePixelFormatAndType(
+            toInternalFormat(internalFormat),
+            static_cast<filament::Texture::Format>(format),
+            static_cast<filament::Texture::Type>(type));
+}
+
+size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSampler sampler) {
+    if (!engine) {
+        return 0;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return filament::Texture::getMaxTextureSize(*cppEngine, toSampler(sampler));
+}
+
+size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
+    if (!engine) {
+        return 0;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return filament::Texture::getMaxArrayTextureLayers(*cppEngine);
 }
 
 } // extern "C"

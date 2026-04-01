@@ -47,13 +47,41 @@ int main(void) {
 
     if (FilaTexture_getWidth(texture, 0u) != 4u ||
             FilaTexture_getHeight(texture, 0u) != 4u ||
-            FilaTexture_getLevels(texture) != 1u) {
+            FilaTexture_getDepth(texture, 0u) != 1u ||
+            FilaTexture_getLevels(texture) != 1u ||
+            FilaTexture_getTarget(texture) != FILA_TEXTURE_SAMPLER_CUBEMAP ||
+            FilaTexture_getFormat(texture) != FILA_TEXTURE_FORMAT_RGBA8 ||
+            !FilaTexture_isCreationComplete(texture)) {
         printf("Texture dimension query mismatch\n");
         FilaEngine_destroyTexture(engine, texture);
         FilaEngine_destroyScene(engine, scene);
         FilaEngine_destroy(&engine);
         return 1;
     }
+
+    if (!FilaTexture_isTextureFormatSupported(engine, FILA_TEXTURE_FORMAT_RGBA8)) {
+        printf("RGBA8 format should be supported on this backend\n");
+        FilaEngine_destroyScene(engine, scene);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    (void)FilaTexture_isTextureFormatMipmappable(engine, FILA_TEXTURE_FORMAT_RGBA8);
+    (void)FilaTexture_isTextureFormatCompressed(FILA_TEXTURE_FORMAT_RGBA8);
+    (void)FilaTexture_isProtectedTexturesSupported(engine);
+    (void)FilaTexture_isTextureSwizzleSupported(engine);
+    (void)FilaTexture_computeTextureDataSize(
+        FILA_PIXEL_DATA_FORMAT_RGBA,
+        FILA_PIXEL_DATA_TYPE_UBYTE,
+        4u,
+        4u,
+        1u);
+    (void)FilaTexture_validatePixelFormatAndType(
+        FILA_TEXTURE_FORMAT_RGBA8,
+        FILA_PIXEL_DATA_FORMAT_RGBA,
+        FILA_PIXEL_DATA_TYPE_UBYTE);
+    (void)FilaTexture_getMaxTextureSize(engine, FILA_TEXTURE_SAMPLER_2D);
+    (void)FilaTexture_getMaxArrayTextureLayers(engine);
 
     FilaSkyboxBuilder* skyboxBuilder = FilaSkyboxBuilder_create();
     if (!skyboxBuilder) {
@@ -118,4 +146,3 @@ int main(void) {
     printf("Engine+texture+skybox smoke program completed\n");
     return 0;
 }
-

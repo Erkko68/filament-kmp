@@ -3,6 +3,11 @@
 #include "filament/Scene.h"
 #include "filament/Skybox.h"
 
+static void scene_entity_callback(FilaEntity entity, void* userData) {
+    (void)entity;
+    (void)userData;
+}
+
 // Verifies Scene API is consumable and composes with Engine-owned lifecycle.
 void fila_scene_module_compile_only(void) {
     FilaEngine* engine = (FilaEngine*)0;
@@ -19,6 +24,11 @@ void fila_scene_module_compile_only(void) {
     (void)FilaScene_getSkybox(scene);
     FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);
     (void)FilaScene_getIndirectLight(scene);
+    FilaEntity entities[2] = { 43, 44 };
+    FilaScene_addEntities(scene, entities, 2u);
+    FilaScene_removeEntities(scene, entities, 2u);
+    (void)FilaScene_getRenderableCount(scene);
+    (void)FilaScene_getLightCount(scene);
+    FilaScene_forEach(scene, scene_entity_callback, (void*)0);
     FilaEngine_destroyScene(engine, scene);
 }
-

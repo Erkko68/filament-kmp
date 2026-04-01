@@ -12,16 +12,42 @@ void fila_texture_module_compile_only(void) {
     FilaTextureBuilder_levels(builder, 1u);
     FilaTextureBuilder_samples(builder, 1u);
     FilaTextureBuilder_usage(builder, (uint16_t)(FILA_TEXTURE_USAGE_DEFAULT | FILA_TEXTURE_USAGE_COLOR_ATTACHMENT));
-    FilaTextureBuilder_sampler(builder, FILA_TEXTURE_SAMPLER_CUBEMAP);
-    FilaTextureBuilder_sampler(builder, FILA_TEXTURE_SAMPLER_EXTERNAL);
-    FilaTextureBuilder_format(builder, FILA_TEXTURE_FORMAT_RGBA8);
+    FilaTextureBuilder_sampler(builder, FILA_TEXTURE_SAMPLER_CUBEMAP_ARRAY);
+    FilaTextureBuilder_swizzle(
+        builder,
+        FILA_TEXTURE_SWIZZLE_CHANNEL_0,
+        FILA_TEXTURE_SWIZZLE_CHANNEL_1,
+        FILA_TEXTURE_SWIZZLE_CHANNEL_2,
+        FILA_TEXTURE_SWIZZLE_CHANNEL_3);
+    FilaTextureBuilder_external(builder);
 
     FilaTexture* texture = FilaTextureBuilder_build(builder, engine);
     (void)FilaTexture_getWidth(texture, 0u);
     (void)FilaTexture_getHeight(texture, 0u);
     (void)FilaTexture_getLevels(texture);
+    (void)FilaTexture_getDepth(texture, 0u);
+    (void)FilaTexture_getTarget(texture);
+    (void)FilaTexture_getFormat(texture);
+    (void)FilaTexture_isCreationComplete(texture);
+
+    (void)FilaTexture_isTextureFormatSupported(engine, FILA_TEXTURE_FORMAT_RGBA8);
+    (void)FilaTexture_isTextureFormatMipmappable(engine, FILA_TEXTURE_FORMAT_RGBA8);
+    (void)FilaTexture_isTextureFormatCompressed(FILA_TEXTURE_FORMAT_RGBA8);
+    (void)FilaTexture_isProtectedTexturesSupported(engine);
+    (void)FilaTexture_isTextureSwizzleSupported(engine);
+    (void)FilaTexture_computeTextureDataSize(
+        FILA_PIXEL_DATA_FORMAT_RGBA,
+        FILA_PIXEL_DATA_TYPE_UBYTE,
+        4u,
+        4u,
+        1u);
+    (void)FilaTexture_validatePixelFormatAndType(
+        FILA_TEXTURE_FORMAT_RGBA8,
+        FILA_PIXEL_DATA_FORMAT_RGBA,
+        FILA_PIXEL_DATA_TYPE_UBYTE);
+    (void)FilaTexture_getMaxTextureSize(engine, FILA_TEXTURE_SAMPLER_2D);
+    (void)FilaTexture_getMaxArrayTextureLayers(engine);
 
     FilaTextureBuilder_destroy(builder);
     FilaEngine_destroyTexture(engine, texture);
 }
-
