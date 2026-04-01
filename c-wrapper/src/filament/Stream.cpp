@@ -1,17 +1,31 @@
 #include <filament/Engine.h>
 #include <filament/Stream.h>
 
+#include <math/mat3.h>
+
 #include "../../include/filament/Stream.h"
 
 namespace {
 using StreamBuilder = filament::Stream::Builder;
 
 filament::backend::StreamType toStreamType(FilaStreamType type) {
-    return static_cast<filament::backend::StreamType>(type);
+    switch (type) {
+        case FILA_STREAM_ACQUIRED:
+            return filament::backend::StreamType::ACQUIRED;
+        case FILA_STREAM_NATIVE:
+        default:
+            return filament::backend::StreamType::NATIVE;
+    }
 }
 
 FilaStreamType fromStreamType(filament::backend::StreamType type) {
-    return static_cast<FilaStreamType>(type);
+    switch (type) {
+        case filament::backend::StreamType::ACQUIRED:
+            return FILA_STREAM_ACQUIRED;
+        case filament::backend::StreamType::NATIVE:
+        default:
+            return FILA_STREAM_NATIVE;
+    }
 }
 } // namespace
 
@@ -51,6 +65,24 @@ FilaStreamType FilaStream_getStreamType(const FilaStream* stream) {
     if (!stream) return FILA_STREAM_ACQUIRED;
     auto cppStream = reinterpret_cast<const filament::Stream*>(stream);
     return fromStreamType(cppStream->getStreamType());
+}
+
+void FilaStream_setAcquiredImage(
+        FilaStream* stream,
+        void* image,
+        FilaStreamCallback callback,
+        void* userData,
+        const float transform[9]) {
+    if (!stream || !image || !callback) return;
+    auto cppStream = reinterpret_cast<filament::Stream*>(stream);
+    filament::math::mat3f t;
+    if (transform) {
+        t = filament::math::mat3f(
+                transform[0], transform[1], transform[2],
+                transform[3], transform[4], transform[5],
+                transform[6], transform[7], transform[8]);
+    }
+    cppStream->setAcquiredImage(image, callback, userData, t);
 }
 
 void FilaStream_setDimensions(FilaStream* stream, uint32_t width, uint32_t height) {

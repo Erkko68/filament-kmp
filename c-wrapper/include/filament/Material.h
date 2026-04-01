@@ -16,6 +16,26 @@ extern "C" {
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* builder);
 void FilaMaterialBuilder_package(FilaMaterialBuilder* builder, const void* payload, size_t size);
+
+typedef enum FilaMaterialBuilderShadowSamplingQuality {
+	FILA_MATERIAL_BUILDER_SHADOW_SAMPLING_QUALITY_HARD = 0,
+	FILA_MATERIAL_BUILDER_SHADOW_SAMPLING_QUALITY_LOW = 1,
+} FilaMaterialBuilderShadowSamplingQuality;
+
+typedef enum FilaMaterialUboBatchingMode {
+	FILA_MATERIAL_UBO_BATCHING_MODE_DEFAULT = 0,
+	FILA_MATERIAL_UBO_BATCHING_MODE_DISABLED = 1,
+} FilaMaterialUboBatchingMode;
+
+void FilaMaterialBuilder_constantInt(FilaMaterialBuilder* builder, const char* name, int32_t value);
+void FilaMaterialBuilder_constantFloat(FilaMaterialBuilder* builder, const char* name, float value);
+void FilaMaterialBuilder_constantBool(FilaMaterialBuilder* builder, const char* name, bool value);
+void FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* builder, size_t shBandCount);
+void FilaMaterialBuilder_shadowSamplingQuality(
+	FilaMaterialBuilder* builder,
+	FilaMaterialBuilderShadowSamplingQuality quality);
+void FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* builder, FilaMaterialUboBatchingMode mode);
+
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* builder, FilaEngine* engine);
 
 typedef struct FilaMaterialParameterInfo {

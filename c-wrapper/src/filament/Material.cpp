@@ -139,6 +139,65 @@ void FilaMaterialBuilder_package(FilaMaterialBuilder* builder, const void* paylo
     cppBuilder->package(payload, size);
 }
 
+void FilaMaterialBuilder_constantInt(FilaMaterialBuilder* builder, const char* name, int32_t value) {
+    if (!builder || !name || name[0] == '\0') {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<MaterialBuilder*>(builder);
+    try {
+        cppBuilder->constant(name, value);
+    } catch (...) {
+    }
+}
+
+void FilaMaterialBuilder_constantFloat(FilaMaterialBuilder* builder, const char* name, float value) {
+    if (!builder || !name || name[0] == '\0') {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<MaterialBuilder*>(builder);
+    try {
+        cppBuilder->constant(name, value);
+    } catch (...) {
+    }
+}
+
+void FilaMaterialBuilder_constantBool(FilaMaterialBuilder* builder, const char* name, bool value) {
+    if (!builder || !name || name[0] == '\0') {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<MaterialBuilder*>(builder);
+    try {
+        cppBuilder->constant(name, value);
+    } catch (...) {
+    }
+}
+
+void FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* builder, size_t shBandCount) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<MaterialBuilder*>(builder);
+    cppBuilder->sphericalHarmonicsBandCount(shBandCount);
+}
+
+void FilaMaterialBuilder_shadowSamplingQuality(
+        FilaMaterialBuilder* builder,
+        FilaMaterialBuilderShadowSamplingQuality quality) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<MaterialBuilder*>(builder);
+    cppBuilder->shadowSamplingQuality(static_cast<MaterialBuilder::ShadowSamplingQuality>(quality));
+}
+
+void FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* builder, FilaMaterialUboBatchingMode mode) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<MaterialBuilder*>(builder);
+    cppBuilder->uboBatching(static_cast<filament::Material::UboBatchingMode>(mode));
+}
+
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* builder, FilaEngine* engine) {
     if (!builder || !engine) {
         return nullptr;
@@ -170,6 +229,23 @@ const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance*
     }
     auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
     return reinterpret_cast<const FilaMaterial*>(cppMaterialInstance->getMaterial());
+}
+
+const char* FilaMaterialInstance_getName(const FilaMaterialInstance* materialInstance) {
+    if (!materialInstance) {
+        return nullptr;
+    }
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    return cppMaterialInstance->getName();
+}
+
+FilaMaterialInstance* FilaMaterialInstance_duplicate(const FilaMaterialInstance* materialInstance, const char* name) {
+    if (!materialInstance) {
+        return nullptr;
+    }
+    auto cppMaterialInstance = reinterpret_cast<const filament::MaterialInstance*>(materialInstance);
+    auto duplicated = filament::MaterialInstance::duplicate(cppMaterialInstance, name);
+    return reinterpret_cast<FilaMaterialInstance*>(duplicated);
 }
 
 const char* FilaMaterial_getName(const FilaMaterial* material) {

@@ -2,6 +2,11 @@
 #include "filament/Stream.h"
 #include "filament/Types.h"
 
+static void noop_stream_callback(void* image, void* userData) {
+    (void)image;
+    (void)userData;
+}
+
 // Verifies Stream C API is consumable from C
 void test_headers_stream(void) {
     FilaEngine* engine = (FilaEngine*)0;
@@ -15,6 +20,7 @@ void test_headers_stream(void) {
 
     // Test getters
     (void)FilaStream_getStreamType(stream);
+    FilaStream_setAcquiredImage(stream, (void*)0, noop_stream_callback, (void*)0, (const float*)0);
     FilaStream_setDimensions(stream, 640, 480);
     (void)FilaStream_getTimestamp(stream);
 }

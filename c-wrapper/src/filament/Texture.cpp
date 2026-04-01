@@ -144,6 +144,14 @@ void FilaTextureBuilder_external(FilaTextureBuilder* builder) {
     cppBuilder->external();
 }
 
+void FilaTextureBuilder_import(FilaTextureBuilder* builder, intptr_t id) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<TextureBuilder*>(builder);
+    cppBuilder->import(id);
+}
+
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* builder, FilaEngine* engine) {
     if (!builder || !engine) {
         return nullptr;
@@ -193,6 +201,16 @@ void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, Fil
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     auto cppStream = reinterpret_cast<filament::Stream*>(stream);
     cppTexture->setExternalStream(*cppEngine, cppStream);
+}
+
+
+void FilaTexture_setExternalImagePlane(FilaTexture* texture, FilaEngine* engine, void* externalImage, size_t plane) {
+    if (!texture || !engine || !externalImage) {
+        return;
+    }
+    auto cppTexture = reinterpret_cast<filament::Texture*>(texture);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppTexture->setExternalImage(*cppEngine, externalImage, plane);
 }
 
 void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, FilaPixelBufferDescriptor* buffer) {

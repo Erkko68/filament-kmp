@@ -1,6 +1,7 @@
 #ifndef FILAMENT_C_STREAM_H
 #define FILAMENT_C_STREAM_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "Types.h"
@@ -10,8 +11,8 @@ extern "C" {
 #endif
 
 typedef enum FilaStreamType {
-    FILA_STREAM_ACQUIRED = 0,
-    FILA_STREAM_NATIVE = 1,
+    FILA_STREAM_NATIVE = 0,
+    FILA_STREAM_ACQUIRED = 1,
 } FilaStreamType;
 
 // Stream builder API
@@ -20,8 +21,16 @@ void FilaStreamBuilder_destroy(FilaStreamBuilder* builder);
 void FilaStreamBuilder_width(FilaStreamBuilder* builder, uint32_t width);
 void FilaStreamBuilder_height(FilaStreamBuilder* builder, uint32_t height);
 
+typedef void (*FilaStreamCallback)(void* image, void* userData);
+
 // Stream methods
 FilaStreamType FilaStream_getStreamType(const FilaStream* stream);
+void FilaStream_setAcquiredImage(
+    FilaStream* stream,
+    void* image,
+    FilaStreamCallback callback,
+    void* userData,
+    const float transform[9]);
 void FilaStream_setDimensions(FilaStream* stream, uint32_t width, uint32_t height);
 int64_t FilaStream_getTimestamp(const FilaStream* stream);
 

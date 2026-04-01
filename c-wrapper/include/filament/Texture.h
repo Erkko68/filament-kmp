@@ -68,6 +68,7 @@ void FilaTextureBuilder_swizzle(
     FilaTextureSwizzle b,
     FilaTextureSwizzle a);
 void FilaTextureBuilder_external(FilaTextureBuilder* builder);
+void FilaTextureBuilder_import(FilaTextureBuilder* builder, intptr_t id);
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* builder, FilaEngine* engine);
 
 size_t FilaTexture_getWidth(const FilaTexture* texture, size_t level);
@@ -97,6 +98,7 @@ size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSampler samp
 size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine);
 
 // Attach an external stream to this texture
+void FilaTexture_setExternalImagePlane(FilaTexture* texture, FilaEngine* engine, void* externalImage, size_t plane);
 void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, FilaStream* stream);
 
 // Upload image data to a texture (2D, 3D, or cubemap)

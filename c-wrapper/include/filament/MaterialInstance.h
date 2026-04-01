@@ -15,6 +15,8 @@ extern "C" {
 
 // Returns the parent material for this instance.
 const FilaMaterial* FilaMaterialInstance_getMaterial(const FilaMaterialInstance* materialInstance);
+const char* FilaMaterialInstance_getName(const FilaMaterialInstance* materialInstance);
+FilaMaterialInstance* FilaMaterialInstance_duplicate(const FilaMaterialInstance* materialInstance, const char* name);
 
 // Sets a float uniform parameter by name.
 void FilaMaterialInstance_setParameterFloat(FilaMaterialInstance* materialInstance, const char* name, float x);

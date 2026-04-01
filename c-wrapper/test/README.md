@@ -50,3 +50,23 @@ cmake -S . -B build -DFILA_ENABLE_LINKED_TESTS=ON
 cmake --build build --target test_functionality
 ctest --test-dir build --output-on-failure -L functionality
 ```
+
+## Optional Material Fixture Checks (Batch D)
+
+`functionality_color_options_material_metadata` supports an optional real material package path via:
+
+- `FILA_TEST_MATERIAL_PACKAGE`
+
+When set, the test loads the binary package, builds a material, and runs stricter metadata checks.
+
+With the sample `test/materials/mat.mat` present, `test/test_functionality.sh` auto-compiles it to
+`test/materials/mat.filamat` when `matc` is available and exports `FILA_TEST_MATERIAL_PACKAGE`
+for the test run.
+
+You can also provide a precompiled package explicitly:
+
+```bash
+export FILA_TEST_MATERIAL_PACKAGE="/absolute/path/to/sample.filamat"
+./test/test_functionality.sh
+```
+

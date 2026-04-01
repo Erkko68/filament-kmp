@@ -20,6 +20,7 @@ void test_headers_texture(void) {
         FILA_TEXTURE_SWIZZLE_CHANNEL_2,
         FILA_TEXTURE_SWIZZLE_CHANNEL_3);
     FilaTextureBuilder_external(builder);
+    FilaTextureBuilder_import(builder, (intptr_t)0);
 
     FilaTexture* texture = FilaTextureBuilder_build(builder, engine);
     (void)FilaTexture_getWidth(texture, 0u);
@@ -47,6 +48,7 @@ void test_headers_texture(void) {
         FILA_PIXEL_DATA_TYPE_UBYTE);
     (void)FilaTexture_getMaxTextureSize(engine, FILA_TEXTURE_SAMPLER_2D);
     (void)FilaTexture_getMaxArrayTextureLayers(engine);
+    FilaTexture_setExternalImagePlane(texture, engine, (void*)0, 0u);
 
     FilaTextureBuilder_destroy(builder);
     FilaEngine_destroyTexture(engine, texture);

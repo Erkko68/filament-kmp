@@ -15,6 +15,24 @@ int main(void) {
         return 1;
     }
 
+    {
+        FilaMaterialBuilder* builder = FilaMaterialBuilder_create();
+        FilaMaterialBuilder_constantInt(builder, "kInt", 1);
+        FilaMaterialBuilder_constantFloat(builder, "kFloat", 1.0f);
+        FilaMaterialBuilder_constantBool(builder, "kBool", true);
+        FilaMaterialBuilder_sphericalHarmonicsBandCount(builder, 3u);
+        FilaMaterialBuilder_shadowSamplingQuality(builder, FILA_MATERIAL_BUILDER_SHADOW_SAMPLING_QUALITY_LOW);
+        FilaMaterialBuilder_uboBatching(builder, FILA_MATERIAL_UBO_BATCHING_MODE_DISABLED);
+        FilaMaterialBuilder_destroy(builder);
+
+        FilaMaterialBuilder_constantInt((FilaMaterialBuilder*)0, "kInt", 1);
+        FilaMaterialBuilder_constantFloat((FilaMaterialBuilder*)0, "kFloat", 1.0f);
+        FilaMaterialBuilder_constantBool((FilaMaterialBuilder*)0, "kBool", true);
+        FilaMaterialBuilder_sphericalHarmonicsBandCount((FilaMaterialBuilder*)0, 3u);
+        FilaMaterialBuilder_shadowSamplingQuality((FilaMaterialBuilder*)0, FILA_MATERIAL_BUILDER_SHADOW_SAMPLING_QUALITY_HARD);
+        FilaMaterialBuilder_uboBatching((FilaMaterialBuilder*)0, FILA_MATERIAL_UBO_BATCHING_MODE_DEFAULT);
+    }
+
     // Exercise null guards for parameter setters; this is a safe runtime path even
     // without an embedded valid material package.
     FilaMaterialInstance_setParameterFloat((FilaMaterialInstance*)0, "uFloat", 1.0f);
@@ -92,6 +110,8 @@ int main(void) {
     }
 
     (void)FilaMaterial_createInstanceNamed((const FilaMaterial*)0, "named");
+    (void)FilaMaterialInstance_duplicate((const FilaMaterialInstance*)0, "dup");
+    (void)FilaMaterialInstance_getName((const FilaMaterialInstance*)0);
     (void)FilaMaterial_getName((const FilaMaterial*)0);
     (void)FilaMaterial_hasParameter((const FilaMaterial*)0, "uSampler");
     (void)FilaMaterial_isSampler((const FilaMaterial*)0, "uSampler");
@@ -171,6 +191,49 @@ int main(void) {
         printf("MaterialInstance null material query mismatch\n");
         FilaEngine_destroy(&engine);
         return 1;
+    }
+
+    {
+        const FilaMaterial* defaultMaterial = FilaEngine_getDefaultMaterial(engine);
+        if (!defaultMaterial) {
+            printf("Default material query failed\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        FilaMaterialInstance* defaultInstance = FilaMaterial_getDefaultInstance((FilaMaterial*)defaultMaterial);
+        if (!defaultInstance) {
+            printf("Default material instance query failed\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        if (FilaMaterialInstance_getMaterial(defaultInstance) != defaultMaterial) {
+            printf("Default instance parent material mismatch\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        if (FilaMaterialInstance_getName(defaultInstance) == (const char*)0) {
+            printf("Default instance name query failed\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        {
+            FilaMaterialInstance* duplicated = FilaMaterialInstance_duplicate(defaultInstance, "default-dup");
+            if (!duplicated) {
+                printf("Default instance duplication failed\n");
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
+            if (FilaMaterialInstance_getMaterial(duplicated) != defaultMaterial) {
+                printf("Duplicated instance parent material mismatch\n");
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
+            FilaEngine_destroyMaterialInstance(engine, duplicated);
+        }
     }
 
     FilaEngine_destroy(&engine);

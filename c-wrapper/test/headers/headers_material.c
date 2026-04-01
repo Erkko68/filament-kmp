@@ -11,10 +11,18 @@ void test_headers_material(void) {
     FilaEngine* engine = (FilaEngine*)0;
     FilaMaterialBuilder* builder = FilaMaterialBuilder_create();
     const unsigned char fakePackage[4] = {0, 0, 0, 0};
+    FilaMaterialBuilder_constantInt(builder, "kInt", 1);
+    FilaMaterialBuilder_constantFloat(builder, "kFloat", 1.0f);
+    FilaMaterialBuilder_constantBool(builder, "kBool", true);
+    FilaMaterialBuilder_sphericalHarmonicsBandCount(builder, 3u);
+    FilaMaterialBuilder_shadowSamplingQuality(builder, FILA_MATERIAL_BUILDER_SHADOW_SAMPLING_QUALITY_HARD);
+    FilaMaterialBuilder_uboBatching(builder, FILA_MATERIAL_UBO_BATCHING_MODE_DEFAULT);
     FilaMaterialBuilder_package(builder, fakePackage, sizeof(fakePackage));
     FilaMaterial* material = FilaMaterialBuilder_build(builder, engine);
     FilaMaterialInstance* materialInstance = FilaMaterial_createInstance(material);
     FilaMaterialInstance* namedInstance = FilaMaterial_createInstanceNamed(material, "instance-0");
+    (void)FilaMaterialInstance_getName(materialInstance);
+    (void)FilaMaterialInstance_duplicate(materialInstance, "dup-0");
     (void)FilaMaterial_getName(material);
     (void)FilaMaterial_hasParameter(material, "uFloat");
     (void)FilaMaterial_isSampler(material, "uAlbedo");
