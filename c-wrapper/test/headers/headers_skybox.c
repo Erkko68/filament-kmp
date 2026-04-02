@@ -16,6 +16,7 @@ void test_headers_skybox(void) {
 
     FilaSkybox* skybox = FilaSkyboxBuilder_build(builder, engine);
     FilaSkybox_setLayerMask(skybox, 0xFFu, 0x01u);
+    FilaSkybox_setColor(skybox, 0.2f, 0.3f, 0.4f, 1.0f);
     (void)FilaSkybox_getLayerMask(skybox);
     (void)FilaSkybox_getIntensity(skybox);
     (void)FilaSkybox_getTexture(skybox);

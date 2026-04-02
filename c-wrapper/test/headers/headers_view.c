@@ -61,6 +61,8 @@ void test_headers_view(void) {
     FilaMultiSampleAntiAliasingOptions msaa;
     FilaTemporalAntiAliasingOptions taa;
     FilaScreenSpaceReflectionsOptions ssr;
+    FilaVsmShadowOptions vsmShadow;
+    FilaSoftShadowOptions softShadow;
     FilaAmbientOcclusionOptions ao;
     FilaBloomOptions bloom;
     FilaFogOptions fog;
@@ -75,6 +77,8 @@ void test_headers_view(void) {
     FilaMultiSampleAntiAliasingOptions_setDefaults(&msaa);
     FilaTemporalAntiAliasingOptions_setDefaults(&taa);
     FilaScreenSpaceReflectionsOptions_setDefaults(&ssr);
+    FilaVsmShadowOptions_setDefaults(&vsmShadow);
+    FilaSoftShadowOptions_setDefaults(&softShadow);
     FilaAmbientOcclusionOptions_setDefaults(&ao);
     FilaBloomOptions_setDefaults(&bloom);
     FilaFogOptions_setDefaults(&fog);
@@ -94,6 +98,10 @@ void test_headers_view(void) {
     (void)FilaView_getTemporalAntiAliasingOptions(view, &taa);
     FilaView_setScreenSpaceReflectionsOptions(view, &ssr);
     (void)FilaView_getScreenSpaceReflectionsOptions(view, &ssr);
+    FilaView_setVsmShadowOptions(view, &vsmShadow);
+    (void)FilaView_getVsmShadowOptions(view, &vsmShadow);
+    FilaView_setSoftShadowOptions(view, &softShadow);
+    (void)FilaView_getSoftShadowOptions(view, &softShadow);
     FilaView_setAmbientOcclusionOptions(view, &ao);
     (void)FilaView_getAmbientOcclusionOptions(view, &ao);
     FilaView_setBloomOptions(view, &bloom);
@@ -120,6 +128,11 @@ void test_headers_view(void) {
     {
         FilaViewFroxelConfigurationInfoWithAge froxelInfo;
         (void)FilaView_getFroxelConfigurationInfo(view, &froxelInfo);
+    }
+    {
+        float materialGlobal[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+        FilaView_setMaterialGlobal(view, 0u, materialGlobal);
+        (void)FilaView_getMaterialGlobal(view, 0u, materialGlobal);
     }
 
     FilaEngine_destroyCameraComponent(engine, entity);

@@ -136,6 +136,13 @@ bool FilaEngine_isValidSync(const FilaEngine* engine, const FilaSync* sync);
 bool FilaEngine_hasFeatureFlag(const FilaEngine* engine, const char* name);
 bool FilaEngine_getFeatureFlag(const FilaEngine* engine, const char* name, bool* outValue);
 bool FilaEngine_setFeatureFlag(FilaEngine* engine, const char* name, bool value);
+bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* engine, const char* name);
+
+// Cancels a pending asynchronous operation by id.
+bool FilaEngine_cancelAsyncCall(FilaEngine* engine, FilaBackendAsyncCallId id);
+
+// WebGL-only backend-state reset helper. Returns false when unsupported.
+bool FilaEngine_resetBackendState(FilaEngine* engine);
 
 // Feature-flag introspection helpers.
 size_t FilaEngine_getFeatureFlagCount(const FilaEngine* engine);
@@ -239,6 +246,9 @@ void FilaEngine_destroyBufferObject(FilaEngine* engine, FilaBufferObject* buffer
 
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
+
+// Returns the engine-owned debug registry.
+FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* engine);
 
 // Returns the engine-owned light manager.
 FilaLightManager* FilaEngine_getLightManager(FilaEngine* engine);

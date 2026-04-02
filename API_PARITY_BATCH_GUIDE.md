@@ -5,7 +5,7 @@ This document defines the next implementation plan to reach a clear product goal
 > Build and run a C-header Filament program that renders visible geometry with lighting and shadows,
 > and keep extending parity from that baseline.
 
-Updated: 2026-04-01
+Updated: 2026-04-02
 
 ---
 
@@ -35,6 +35,120 @@ Create and maintain a runnable sample under `c-wrapper/test/functionality/` that
 - `Batch F` manager parity work is treated as functionally complete for current goals.
 - `Batch G` utility/query work is substantially complete for backend-agnostic C usage.
 - `backend/platforms/*` remains explicitly deferred unless a concrete platform adapter requirement appears.
+- A recursive parity audit now exists in `c-wrapper/tools/filament_parity_report.md` and is the source of truth for new batch intake.
+
+---
+
+## Report-Driven Intake Rules (Effective Now)
+
+- Ignore all `backend/*` additions for this phase, including `backend/platforms/*`.
+- Prioritize modules that unlock reusable app/sample plumbing first (`utils/*`), then scene-quality runtime APIs.
+- Treat callback-heavy APIs as deferred unless we explicitly standardize callback ABI patterns in C first.
+- Prefer small vertical slices: header + bridge + header tests + deterministic functionality coverage.
+
+---
+
+## Batch H (Now): Utils Foundation (Easy / High Reuse)
+
+### Goal
+
+Add low-risk utility modules that improve internal bridge ergonomics and future sample scaffolding.
+
+### Scope
+
+- `utils/Entity.h`
+- `utils/EntityInstance.h`
+- `utils/Status.h`
+
+### Exit Criteria
+
+- New wrappers compile and expose stable C ABI names.
+- Header compile tests added under `c-wrapper/test/headers/`.
+- Existing functionality suite remains green.
+
+---
+
+## Batch I: Utils Hardening (Selective)
+
+### Goal
+
+Close practical utility gaps without entering callback/listener complexity.
+
+### Scope
+
+- Complete safe pull-style gaps in `utils/EntityManager.h`.
+- Defer listener registration surfaces for now:
+  - `registerListener`
+  - `unregisterListener`
+  - `onEntitiesDestroyed`
+
+### Exit Criteria
+
+- Deterministic entity-manager queries usable from C.
+- No callback ABI introduced in this batch.
+
+---
+
+## Batch J: Scene Quality Runtime Gaps (Filament Core)
+
+### Goal
+
+Improve visual-scene controllability for sample parity (lighting/shadow quality controls).
+
+### Scope
+
+- `filament/View.h` high-impact non-callback gaps:
+  - `setSoftShadowOptions` / `getSoftShadowOptions`
+  - `setVsmShadowOptions` / `getVsmShadowOptions`
+  - `setMaterialGlobal` / `getMaterialGlobal` (if low-risk to bridge)
+- `filament/Skybox.h`:
+  - `setColor`
+
+### Exit Criteria
+
+- Demo-track programs can control key shadow and AA knobs through C.
+- Added coverage in `headers_view.c`, `headers_skybox.c`, and targeted functionality checks.
+
+---
+
+## Batch K: Geometry/Bounds Runtime Completeness
+
+### Goal
+
+Close geometry utility gaps that affect robust renderable handling and diagnostics.
+
+### Scope
+
+- `filament/RenderableManager.h`:
+  - `computeAABB`-related parity where practical.
+- `filament/Box.h`:
+  - expose useful box helpers needed by runtime scene logic.
+
+### Exit Criteria
+
+- Bounding-volume related flows are available from C without custom C++ side helpers.
+
+---
+
+## Batch L: Async-Adjacent Readiness (Non-callback first)
+
+### Goal
+
+Add readiness/query APIs that are useful before full callback standardization.
+
+### Scope
+
+- `filament/IndexBuffer.h`: `isCreationComplete`-style readiness helpers.
+- `filament/VertexBuffer.h`: buffer-object/readiness helpers where callback-free.
+- `filament/Texture.h`: readiness/query helpers that do not force callback ABI.
+
+### Deferred inside batch
+
+- Async callback entrypoints (`setBufferAtAsync`-style) until callback ABI policy is locked.
+
+### Exit Criteria
+
+- C callers can gate usage on resource readiness with deterministic polling/query APIs.
 
 ---
 
@@ -141,6 +255,7 @@ Suggested path:
 - `backend/platforms/*` (platform-coupled adapters).
 - Platform instance/lifecycle virtual API exposure.
 - Deprecated upstream API parity.
+- Cross-thread callback-heavy APIs until a shared C callback ABI pattern is finalized.
 
 ### When to Reopen
 
@@ -167,7 +282,7 @@ Primary validation commands:
 
 ## Immediate Next Steps
 
-1. Execute Batch A header additions in the exact order above.
-2. Add/expand the demo functionality program for geometry + lighting + shadows.
-3. Begin Batch B engine query expansion only as needed to remove demo blockers.
+1. Execute `Batch H` (`utils/Entity.h`, `utils/EntityInstance.h`, `utils/Status.h`).
+2. Execute `Batch I` selective `utils/EntityManager.h` completion (no listeners/callbacks).
+3. Move to `Batch J` view/shadow runtime controls and update demo-track assertions.
 

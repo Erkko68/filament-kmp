@@ -20,6 +20,7 @@ void FilaSkyboxBuilder_priority(FilaSkyboxBuilder* builder, uint8_t priority);
 FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* builder, FilaEngine* engine);
 
 void FilaSkybox_setLayerMask(FilaSkybox* skybox, uint8_t select, uint8_t values);
+void FilaSkybox_setColor(FilaSkybox* skybox, float r, float g, float b, float a);
 uint8_t FilaSkybox_getLayerMask(const FilaSkybox* skybox);
 float FilaSkybox_getIntensity(const FilaSkybox* skybox);
 const FilaTexture* FilaSkybox_getTexture(const FilaSkybox* skybox);

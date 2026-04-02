@@ -89,6 +89,28 @@ void FilaScreenSpaceReflectionsOptions_setDefaults(FilaScreenSpaceReflectionsOpt
     outOptions->enabled = defaults.enabled;
 }
 
+void FilaVsmShadowOptions_setDefaults(FilaVsmShadowOptions* outOptions) {
+    if (!outOptions) {
+        return;
+    }
+    filament::VsmShadowOptions defaults;
+    outOptions->anisotropy = defaults.anisotropy;
+    outOptions->mipmapping = defaults.mipmapping;
+    outOptions->msaaSamples = defaults.msaaSamples;
+    outOptions->highPrecision = defaults.highPrecision;
+    outOptions->minVarianceScale = defaults.minVarianceScale;
+    outOptions->lightBleedReduction = defaults.lightBleedReduction;
+}
+
+void FilaSoftShadowOptions_setDefaults(FilaSoftShadowOptions* outOptions) {
+    if (!outOptions) {
+        return;
+    }
+    filament::SoftShadowOptions defaults;
+    outOptions->penumbraScale = defaults.penumbraScale;
+    outOptions->penumbraRatioScale = defaults.penumbraRatioScale;
+}
+
 void FilaRendererDisplayInfo_setDefaults(FilaRendererDisplayInfo* outInfo) {
     if (!outInfo) {
         return;

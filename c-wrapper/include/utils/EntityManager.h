@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "filament/Types.h"
 
@@ -30,6 +31,16 @@ size_t FilaEntityManager_getEntityCount(void);
 
 // Returns the maximum number of simultaneous entities.
 size_t FilaEntityManager_getMaxEntityCount(void);
+
+// Returns generation value for an entity index, or 0 for invalid index.
+uint8_t FilaEntityManager_getGenerationForIndex(size_t index);
+
+// Returns whether this build tracks active entities for debug snapshots.
+bool FilaEntityManager_isTrackingEnabled(void);
+
+// Writes up to maxCount active entities into outEntities when tracking is enabled.
+// Returns number of entities written. Returns 0 when tracking is disabled.
+size_t FilaEntityManager_getActiveEntities(FilaEntity* outEntities, size_t maxCount);
 
 #ifdef __cplusplus
 }

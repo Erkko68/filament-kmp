@@ -30,11 +30,15 @@ void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder,
         FilaVertexAttributeType attributeType,
         uint32_t byteOffset,
         uint8_t byteStride);
+void FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* builder, bool enabled);
+void FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, bool normalized);
 void FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* builder, bool enabled);
 FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder, FilaEngine* engine);
 size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer);
+bool FilaVertexBuffer_isCreationComplete(const FilaVertexBuffer* vertexBuffer);
 // Set buffer data for a vertex buffer
 void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferDescriptor* buffer, uint32_t byteOffset);
+void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, const FilaBufferObject* bufferObject);
 
 #ifdef __cplusplus
 }

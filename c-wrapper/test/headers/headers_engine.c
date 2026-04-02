@@ -1,4 +1,5 @@
 #include "filament/Engine.h"
+#include "filament/DebugRegistry.h"
 
 // Verifies Engine header can be consumed from plain C.
 void test_headers_engine(void) {
@@ -26,6 +27,7 @@ void test_headers_engine(void) {
     FilaTransformManager* transformManager = (FilaTransformManager*)0;
     FilaLightManager* lightManager = (FilaLightManager*)0;
     FilaRenderableManager* renderableManager = (FilaRenderableManager*)0;
+    FilaDebugRegistry* debugRegistry = (FilaDebugRegistry*)0;
     FilaEntity entity = 7;
     FilaEngineConfig config;
     FilaEngineConfig readback;
@@ -150,9 +152,11 @@ void test_headers_engine(void) {
     FilaEngine_destroyCameraComponent(engine, entity);
 
     transformManager = FilaEngine_getTransformManager(engine);
+    debugRegistry = FilaEngine_getDebugRegistry(engine);
     lightManager = FilaEngine_getLightManager(engine);
     renderableManager = FilaEngine_getRenderableManager(engine);
     (void)transformManager;
+    (void)debugRegistry;
     (void)lightManager;
     (void)renderableManager;
 }

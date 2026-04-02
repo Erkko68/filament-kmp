@@ -9,6 +9,9 @@ void test_headers_entity_manager(void) {
     (void)FilaEntityManager_isAlive(entity);
     (void)FilaEntityManager_getEntityCount();
     (void)FilaEntityManager_getMaxEntityCount();
+    (void)FilaEntityManager_getGenerationForIndex(0u);
+    (void)FilaEntityManager_isTrackingEnabled();
+    (void)FilaEntityManager_getActiveEntities(entities, 4u);
     FilaEntityManager_destroyMany(4u, entities);
     FilaEntityManager_destroy(entity);
 }

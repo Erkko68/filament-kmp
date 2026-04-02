@@ -177,6 +177,50 @@ void fromSsrOptions(filament::ScreenSpaceReflectionsOptions const& in, FilaScree
     out->enabled = in.enabled;
 }
 
+filament::VsmShadowOptions toVsmShadowOptions(const FilaVsmShadowOptions* options) {
+    filament::VsmShadowOptions out;
+    if (!options) {
+        return out;
+    }
+    out.anisotropy = options->anisotropy;
+    out.mipmapping = options->mipmapping;
+    out.msaaSamples = options->msaaSamples;
+    out.highPrecision = options->highPrecision;
+    out.minVarianceScale = options->minVarianceScale;
+    out.lightBleedReduction = options->lightBleedReduction;
+    return out;
+}
+
+void fromVsmShadowOptions(filament::VsmShadowOptions const& in, FilaVsmShadowOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->anisotropy = in.anisotropy;
+    out->mipmapping = in.mipmapping;
+    out->msaaSamples = in.msaaSamples;
+    out->highPrecision = in.highPrecision;
+    out->minVarianceScale = in.minVarianceScale;
+    out->lightBleedReduction = in.lightBleedReduction;
+}
+
+filament::SoftShadowOptions toSoftShadowOptions(const FilaSoftShadowOptions* options) {
+    filament::SoftShadowOptions out;
+    if (!options) {
+        return out;
+    }
+    out.penumbraScale = options->penumbraScale;
+    out.penumbraRatioScale = options->penumbraRatioScale;
+    return out;
+}
+
+void fromSoftShadowOptions(filament::SoftShadowOptions const& in, FilaSoftShadowOptions* out) {
+    if (!out) {
+        return;
+    }
+    out->penumbraScale = in.penumbraScale;
+    out->penumbraRatioScale = in.penumbraRatioScale;
+}
+
 filament::GuardBandOptions toGuardBandOptions(const FilaGuardBandOptions* options) {
     filament::GuardBandOptions out;
     if (!options) {
@@ -648,6 +692,41 @@ FilaViewShadowType FilaView_getShadowType(const FilaView* view) {
     return fromShadowType(cppView->getShadowType());
 }
 
+
+void FilaView_setVsmShadowOptions(FilaView* view, const FilaVsmShadowOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setVsmShadowOptions(toVsmShadowOptions(options));
+}
+
+bool FilaView_getVsmShadowOptions(const FilaView* view, FilaVsmShadowOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromVsmShadowOptions(cppView->getVsmShadowOptions(), outOptions);
+    return true;
+}
+
+void FilaView_setSoftShadowOptions(FilaView* view, const FilaSoftShadowOptions* options) {
+    if (!view) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setSoftShadowOptions(toSoftShadowOptions(options));
+}
+
+bool FilaView_getSoftShadowOptions(const FilaView* view, FilaSoftShadowOptions* outOptions) {
+    if (!view || !outOptions) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    fromSoftShadowOptions(cppView->getSoftShadowOptions(), outOptions);
+    return true;
+}
+
 void FilaView_setShadowingEnabled(FilaView* view, bool enabled) {
     if (!view) {
         return;
@@ -1083,6 +1162,28 @@ bool FilaView_getFroxelConfigurationInfo(
     outInfo->info.clipTransform[2] = infoWithAge.info.clipTransform.z;
     outInfo->info.clipTransform[3] = infoWithAge.info.clipTransform.w;
     outInfo->age = infoWithAge.age;
+    return true;
+}
+
+void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, const float value4[4]) {
+    if (!view || !value4) {
+        return;
+    }
+    auto cppView = reinterpret_cast<filament::View*>(view);
+    cppView->setMaterialGlobal(index,
+            filament::math::float4(value4[0], value4[1], value4[2], value4[3]));
+}
+
+bool FilaView_getMaterialGlobal(const FilaView* view, uint32_t index, float outValue4[4]) {
+    if (!view || !outValue4) {
+        return false;
+    }
+    auto cppView = reinterpret_cast<const filament::View*>(view);
+    const auto value = cppView->getMaterialGlobal(index);
+    outValue4[0] = value.x;
+    outValue4[1] = value.y;
+    outValue4[2] = value.z;
+    outValue4[3] = value.w;
     return true;
 }
 

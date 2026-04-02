@@ -66,6 +66,14 @@ size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer) {
     return cppIndexBuffer->getIndexCount();
 }
 
+bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* indexBuffer) {
+    if (!indexBuffer) {
+        return false;
+    }
+    auto cppIndexBuffer = reinterpret_cast<const filament::IndexBuffer*>(indexBuffer);
+    return cppIndexBuffer->isCreationComplete();
+}
+
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, FilaBufferDescriptor* buffer, uint32_t byteOffset) {
     if (!indexBuffer || !engine || !buffer) {
         return;

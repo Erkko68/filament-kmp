@@ -61,5 +61,36 @@ size_t FilaEntityManager_getMaxEntityCount(void) {
     return utils::EntityManager::getMaxEntityCount();
 }
 
+uint8_t FilaEntityManager_getGenerationForIndex(size_t index) {
+    if (index > utils::EntityManager::getMaxEntityCount()) {
+        return 0u;
+    }
+    return utils::EntityManager::get().getGenerationForIndex(index);
+}
+
+bool FilaEntityManager_isTrackingEnabled(void) {
+#if FILAMENT_UTILS_TRACK_ENTITIES
+    return true;
+#else
+    return false;
+#endif
+}
+
+size_t FilaEntityManager_getActiveEntities(FilaEntity* outEntities, size_t maxCount) {
+    if (!outEntities || maxCount == 0u) {
+        return 0u;
+    }
+#if FILAMENT_UTILS_TRACK_ENTITIES
+    const auto active = utils::EntityManager::get().getActiveEntities();
+    const size_t count = active.size() < maxCount ? active.size() : maxCount;
+    for (size_t i = 0u; i < count; ++i) {
+        outEntities[i] = utils::Entity::smuggle(active[i]);
+    }
+    return count;
+#else
+    return 0u;
+#endif
+}
+
 } // extern "C"
 

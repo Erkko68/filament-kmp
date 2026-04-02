@@ -138,6 +138,8 @@ int main(void) {
         return 1;
     }
 
+    FilaSkybox_setColor(skybox, 0.15f, 0.2f, 0.25f, 1.0f);
+
     FilaScene_setSkybox(scene, (FilaSkybox*)0);
     if (FilaScene_getSkybox(scene) != (FilaSkybox*)0) {
         printf("Scene skybox clear failed\n");

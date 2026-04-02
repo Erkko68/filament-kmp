@@ -56,6 +56,18 @@ int main(void) {
 
     FilaIndirectLightBuilder_reflections(ilBuilder, reflections);
     FilaIndirectLightBuilder_intensity(ilBuilder, 25000.0f);
+    {
+        const float sh[3] = {0.0f, 0.0f, 0.0f};
+        FilaIndirectLightBuilder_radiance(ilBuilder, 1u, sh);
+    }
+    {
+        const float identity3x3[9] = {
+                1.0f, 0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 1.0f,
+        };
+        FilaIndirectLightBuilder_rotationMat3f(ilBuilder, identity3x3);
+    }
 
     FilaIndirectLight* indirectLight = FilaIndirectLightBuilder_build(ilBuilder, engine);
     FilaIndirectLightBuilder_destroy(ilBuilder);
@@ -107,6 +119,30 @@ int main(void) {
         FilaEngine_destroyScene(engine, scene);
         FilaEngine_destroy(&engine);
         return 1;
+    }
+
+    {
+        const float rotation3x3[9] = {
+                1.0f, 0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 1.0f,
+        };
+        float outRotation3x3[9];
+        float direction[3];
+        float color[4];
+
+        FilaIndirectLight_setRotationMat3f(indirectLight, rotation3x3);
+        if (!FilaIndirectLight_getRotationMat3f(indirectLight, outRotation3x3) ||
+                !FilaIndirectLight_getDirectionEstimate(indirectLight, direction) ||
+                !FilaIndirectLight_getColorEstimate(indirectLight, direction, color)) {
+            printf("IndirectLight rotation/estimate query failed\n");
+            FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);
+            FilaEngine_destroyIndirectLight(engine, indirectLight);
+            FilaEngine_destroyTexture(engine, reflections);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
     }
 
     FilaScene_setIndirectLight(scene, (FilaIndirectLight*)0);

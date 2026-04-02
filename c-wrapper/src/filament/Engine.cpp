@@ -1,4 +1,5 @@
 #include <filament/Engine.h>
+#include <filament/DebugRegistry.h>
 #include <filament/Fence.h>
 #include <filament/IndexBuffer.h>
 #include <filament/InstanceBuffer.h>
@@ -686,6 +687,35 @@ bool FilaEngine_setFeatureFlag(FilaEngine* engine, const char* name, bool value)
     return cppEngine->setFeatureFlag(name, value);
 }
 
+bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* engine, const char* name) {
+    if (!engine || !name) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<const filament::Engine*>(engine);
+    return cppEngine->getFeatureFlagPtr(name);
+}
+
+bool FilaEngine_cancelAsyncCall(FilaEngine* engine, FilaBackendAsyncCallId id) {
+    if (!engine) {
+        return false;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return cppEngine->cancelAsyncCall(static_cast<filament::Engine::AsyncCallId>(id));
+}
+
+bool FilaEngine_resetBackendState(FilaEngine* engine) {
+    if (!engine) {
+        return false;
+    }
+#if defined(__EMSCRIPTEN__)
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppEngine->resetBackendState();
+    return true;
+#else
+    return false;
+#endif
+}
+
 size_t FilaEngine_getFeatureFlagCount(const FilaEngine* engine) {
     if (!engine) {
         return 0u;
@@ -1015,6 +1045,14 @@ FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
     }
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     return reinterpret_cast<FilaTransformManager*>(&cppEngine->getTransformManager());
+}
+
+FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaDebugRegistry*>(&cppEngine->getDebugRegistry());
 }
 
 FilaLightManager* FilaEngine_getLightManager(FilaEngine* engine) {

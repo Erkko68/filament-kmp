@@ -8,6 +8,8 @@ void test_headers_options(void) {
     FilaMultiSampleAntiAliasingOptions msaa;
     FilaTemporalAntiAliasingOptions taa;
     FilaScreenSpaceReflectionsOptions ssr;
+    FilaVsmShadowOptions vsmShadow;
+    FilaSoftShadowOptions softShadow;
     FilaRendererDisplayInfo displayInfo;
     FilaRendererFrameRateOptions frameRate;
     FilaRendererClearOptions clearOptions;
@@ -24,6 +26,8 @@ void test_headers_options(void) {
     FilaMultiSampleAntiAliasingOptions_setDefaults(&msaa);
     FilaTemporalAntiAliasingOptions_setDefaults(&taa);
     FilaScreenSpaceReflectionsOptions_setDefaults(&ssr);
+    FilaVsmShadowOptions_setDefaults(&vsmShadow);
+    FilaSoftShadowOptions_setDefaults(&softShadow);
     FilaRendererDisplayInfo_setDefaults(&displayInfo);
     FilaRendererFrameRateOptions_setDefaults(&frameRate);
     FilaRendererClearOptions_setDefaults(&clearOptions);

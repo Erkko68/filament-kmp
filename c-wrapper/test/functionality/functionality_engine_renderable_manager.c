@@ -133,7 +133,40 @@ int main(void) {
             {0.0f, 0.75f},
             {1.0f, 0.25f},
     };
+    const float positions3[9] = {
+            -1.0f, -1.0f, 0.0f,
+             1.0f, -1.0f, 0.0f,
+             0.0f,  1.0f, 0.0f,
+    };
+    const float positions4[12] = {
+            -1.0f, -1.0f, 0.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f,
+             0.0f,  1.0f, 0.0f, 1.0f,
+    };
+    const uint16_t idx16[3] = {0u, 1u, 2u};
+    const uint32_t idx32[3] = {0u, 1u, 2u};
     size_t pairsPerVertex[2] = {1u, 1u};
+
+    {
+        FilaBox computed = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
+        if (!FilaRenderableManager_computeAabbFloat3U16(positions3, idx16, 3u, 0u, &computed) ||
+                !FilaRenderableManager_computeAabbFloat3U32(positions3, idx32, 3u, 0u, &computed) ||
+                !FilaRenderableManager_computeAabbFloat4U16(positions4, idx16, 3u, 0u, &computed) ||
+                !FilaRenderableManager_computeAabbFloat4U32(positions4, idx32, 3u, 0u, &computed)) {
+            printf("Renderable computeAABB helper failed\n");
+            FilaEntityManager_destroy(entity);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        if (computed.center[0] != 0.0f || computed.center[1] != 0.0f ||
+                computed.halfExtent[0] != 1.0f || computed.halfExtent[1] != 1.0f) {
+            printf("Renderable computeAABB result mismatch\n");
+            FilaEntityManager_destroy(entity);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+    }
     FilaRenderableManager_setAxisAlignedBoundingBox(manager, instance, &box);
     if (FilaRenderableManager_getAxisAlignedBoundingBox(manager, instance, &outBox)) {
         printf("Renderable bounding-box query unexpectedly succeeded\n");

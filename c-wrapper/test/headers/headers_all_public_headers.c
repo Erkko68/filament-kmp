@@ -55,6 +55,9 @@
 #include "filament/Viewport.h"
 
 #include "utils/EntityManager.h"
+#include "utils/Entity.h"
+#include "utils/EntityInstance.h"
+#include "utils/Status.h"
 
 void test_headers_all_public_headers(void) {}
 

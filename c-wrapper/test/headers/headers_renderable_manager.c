@@ -42,6 +42,18 @@ void test_headers_renderable_manager(void) {
             {0.0f, 0.75f},
             {1.0f, 0.25f},
     };
+    float positions3[9] = {
+            -1.0f, -1.0f, 0.0f,
+             1.0f, -1.0f, 0.0f,
+             0.0f,  1.0f, 0.0f,
+    };
+    float positions4[12] = {
+            -1.0f, -1.0f, 0.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f,
+             0.0f,  1.0f, 0.0f, 1.0f,
+    };
+    uint16_t idx16[3] = {0u, 1u, 2u};
+    uint32_t idx32[3] = {0u, 1u, 2u};
     size_t pairsPerVertex[2] = {1u, 1u};
 
     (void)FilaRenderableManager_hasComponent(manager, entity);
@@ -144,6 +156,10 @@ void test_headers_renderable_manager(void) {
     (void)FilaRenderableManager_getMorphTargetBuffer(manager, instance);
     (void)FilaRenderableManager_getMorphTargetCount(manager, instance);
     (void)FilaRenderableManager_getInstanceCount(manager, instance);
+    (void)FilaRenderableManager_computeAabbFloat3U16(positions3, idx16, 3u, 0u, &outBox);
+    (void)FilaRenderableManager_computeAabbFloat3U32(positions3, idx32, 3u, 0u, &outBox);
+    (void)FilaRenderableManager_computeAabbFloat4U16(positions4, idx16, 3u, 0u, &outBox);
+    (void)FilaRenderableManager_computeAabbFloat4U32(positions4, idx32, 3u, 0u, &outBox);
     FilaRenderableManager_destroy(manager, entity);
     FilaEntityManager_destroy(entity);
 }

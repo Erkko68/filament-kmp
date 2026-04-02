@@ -2,6 +2,7 @@
 #define FILAMENT_C_MORPH_TARGET_BUFFER_H
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stddef.h>
 
 #include "Types.h"
@@ -24,6 +25,20 @@ size_t FilaMorphTargetBuffer_getCount(const FilaMorphTargetBuffer* morphTargetBu
 bool FilaMorphTargetBuffer_hasPositions(const FilaMorphTargetBuffer* morphTargetBuffer);
 bool FilaMorphTargetBuffer_hasTangents(const FilaMorphTargetBuffer* morphTargetBuffer);
 bool FilaMorphTargetBuffer_isCustomMorphingEnabled(const FilaMorphTargetBuffer* morphTargetBuffer);
+void FilaMorphTargetBuffer_setPositionsAtFloat3(
+		FilaMorphTargetBuffer* morphTargetBuffer,
+		FilaEngine* engine,
+		size_t targetIndex,
+		const float* positions3,
+		size_t count,
+		size_t offset);
+void FilaMorphTargetBuffer_setTangentsAt(
+		FilaMorphTargetBuffer* morphTargetBuffer,
+		FilaEngine* engine,
+		size_t targetIndex,
+		const int16_t* tangents4,
+		size_t count,
+		size_t offset);
 
 #ifdef __cplusplus
 }

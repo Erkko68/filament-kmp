@@ -115,6 +115,20 @@ typedef struct FilaScreenSpaceReflectionsOptions {
     bool enabled;
 } FilaScreenSpaceReflectionsOptions;
 
+typedef struct FilaVsmShadowOptions {
+    uint8_t anisotropy;
+    bool mipmapping;
+    uint8_t msaaSamples;
+    bool highPrecision;
+    float minVarianceScale;
+    float lightBleedReduction;
+} FilaVsmShadowOptions;
+
+typedef struct FilaSoftShadowOptions {
+    float penumbraScale;
+    float penumbraRatioScale;
+} FilaSoftShadowOptions;
+
 typedef enum FilaAmbientOcclusionType {
     FILA_AMBIENT_OCCLUSION_TYPE_SAO = 0,
     FILA_AMBIENT_OCCLUSION_TYPE_GTAO = 1,
@@ -255,6 +269,8 @@ void FilaDynamicResolutionOptions_setDefaults(FilaDynamicResolutionOptions* outO
 void FilaMultiSampleAntiAliasingOptions_setDefaults(FilaMultiSampleAntiAliasingOptions* outOptions);
 void FilaTemporalAntiAliasingOptions_setDefaults(FilaTemporalAntiAliasingOptions* outOptions);
 void FilaScreenSpaceReflectionsOptions_setDefaults(FilaScreenSpaceReflectionsOptions* outOptions);
+void FilaVsmShadowOptions_setDefaults(FilaVsmShadowOptions* outOptions);
+void FilaSoftShadowOptions_setDefaults(FilaSoftShadowOptions* outOptions);
 void FilaRendererDisplayInfo_setDefaults(FilaRendererDisplayInfo* outInfo);
 void FilaRendererFrameRateOptions_setDefaults(FilaRendererFrameRateOptions* outOptions);
 void FilaRendererClearOptions_setDefaults(FilaRendererClearOptions* outOptions);

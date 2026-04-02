@@ -83,6 +83,14 @@ void FilaSkybox_setLayerMask(FilaSkybox* skybox, uint8_t select, uint8_t values)
     cppSkybox->setLayerMask(select, values);
 }
 
+void FilaSkybox_setColor(FilaSkybox* skybox, float r, float g, float b, float a) {
+    if (!skybox) {
+        return;
+    }
+    auto cppSkybox = reinterpret_cast<filament::Skybox*>(skybox);
+    cppSkybox->setColor(filament::math::float4(r, g, b, a));
+}
+
 uint8_t FilaSkybox_getLayerMask(const FilaSkybox* skybox) {
     if (!skybox) {
         return 0;

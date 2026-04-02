@@ -111,5 +111,43 @@ bool FilaMorphTargetBuffer_isCustomMorphingEnabled(const FilaMorphTargetBuffer* 
     return cppMorphTargetBuffer->isCustomMorphingEnabled();
 }
 
+void FilaMorphTargetBuffer_setPositionsAtFloat3(
+        FilaMorphTargetBuffer* morphTargetBuffer,
+        FilaEngine* engine,
+        size_t targetIndex,
+        const float* positions3,
+        size_t count,
+        size_t offset) {
+    if (!morphTargetBuffer || !engine || !positions3 || count == 0u) {
+        return;
+    }
+    auto cppMorphTargetBuffer = reinterpret_cast<filament::MorphTargetBuffer*>(morphTargetBuffer);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppMorphTargetBuffer->setPositionsAt(*cppEngine,
+            targetIndex,
+            reinterpret_cast<const filament::math::float3*>(positions3),
+            count,
+            offset);
+}
+
+void FilaMorphTargetBuffer_setTangentsAt(
+        FilaMorphTargetBuffer* morphTargetBuffer,
+        FilaEngine* engine,
+        size_t targetIndex,
+        const int16_t* tangents4,
+        size_t count,
+        size_t offset) {
+    if (!morphTargetBuffer || !engine || !tangents4 || count == 0u) {
+        return;
+    }
+    auto cppMorphTargetBuffer = reinterpret_cast<filament::MorphTargetBuffer*>(morphTargetBuffer);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    cppMorphTargetBuffer->setTangentsAt(*cppEngine,
+            targetIndex,
+            reinterpret_cast<const filament::math::short4*>(tangents4),
+            count,
+            offset);
+}
+
 } // extern "C"
 

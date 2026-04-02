@@ -161,6 +161,8 @@ int main(void) {
         FilaMultiSampleAntiAliasingOptions msaa;
         FilaTemporalAntiAliasingOptions taa;
         FilaScreenSpaceReflectionsOptions ssr;
+        FilaVsmShadowOptions vsmShadow;
+        FilaSoftShadowOptions softShadow;
         FilaAmbientOcclusionOptions ao;
         FilaBloomOptions bloom;
         FilaFogOptions fog;
@@ -175,6 +177,8 @@ int main(void) {
         FilaMultiSampleAntiAliasingOptions_setDefaults(&msaa);
         FilaTemporalAntiAliasingOptions_setDefaults(&taa);
         FilaScreenSpaceReflectionsOptions_setDefaults(&ssr);
+        FilaVsmShadowOptions_setDefaults(&vsmShadow);
+        FilaSoftShadowOptions_setDefaults(&softShadow);
         FilaAmbientOcclusionOptions_setDefaults(&ao);
         FilaBloomOptions_setDefaults(&bloom);
         FilaFogOptions_setDefaults(&fog);
@@ -192,6 +196,10 @@ int main(void) {
         taa.feedback = 0.15f;
         ssr.enabled = true;
         ssr.maxDistance = 2.0f;
+        vsmShadow.anisotropy = 1u;
+        vsmShadow.msaaSamples = 2u;
+        softShadow.penumbraScale = 1.15f;
+        softShadow.penumbraRatioScale = 1.25f;
         ao.enabled = true;
         ao.aoType = FILA_AMBIENT_OCCLUSION_TYPE_GTAO;
         bloom.enabled = true;
@@ -210,6 +218,8 @@ int main(void) {
         FilaView_setMultiSampleAntiAliasingOptions(view, &msaa);
         FilaView_setTemporalAntiAliasingOptions(view, &taa);
         FilaView_setScreenSpaceReflectionsOptions(view, &ssr);
+        FilaView_setVsmShadowOptions(view, &vsmShadow);
+        FilaView_setSoftShadowOptions(view, &softShadow);
         FilaView_setAmbientOcclusionOptions(view, &ao);
         FilaView_setBloomOptions(view, &bloom);
         FilaView_setFogOptions(view, &fog);
@@ -223,6 +233,8 @@ int main(void) {
                 !FilaView_getMultiSampleAntiAliasingOptions(view, &msaa) ||
                 !FilaView_getTemporalAntiAliasingOptions(view, &taa) ||
                 !FilaView_getScreenSpaceReflectionsOptions(view, &ssr) ||
+                !FilaView_getVsmShadowOptions(view, &vsmShadow) ||
+                !FilaView_getSoftShadowOptions(view, &softShadow) ||
                 !FilaView_getAmbientOcclusionOptions(view, &ao) ||
                 !FilaView_getBloomOptions(view, &bloom) ||
                 !FilaView_getFogOptions(view, &fog) ||
@@ -238,8 +250,38 @@ int main(void) {
             return 1;
         }
 
+        {
+            float materialGlobal[4] = {0.25f, 0.50f, 0.75f, 1.0f};
+            if (!FilaView_getMaterialGlobal(view, 0u, materialGlobal)) {
+                printf("Material global readback failed\n");
+                FilaEngine_destroyCameraComponent(engine, cameraEntity);
+                FilaEngine_destroyView(engine, view);
+                FilaEngine_destroyScene(engine, scene);
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
+            FilaView_setMaterialGlobal(view, 0u, materialGlobal);
+            if (!FilaView_getMaterialGlobal(view, 0u, materialGlobal)) {
+                printf("Material global readback after write failed\n");
+                FilaEngine_destroyCameraComponent(engine, cameraEntity);
+                FilaEngine_destroyView(engine, view);
+                FilaEngine_destroyScene(engine, scene);
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
+        }
+
         if (!FilaView_getLastDynamicResolutionScale(view, lastScale)) {
             printf("Dynamic resolution scale readback failed\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
+        if (vsmShadow.anisotropy != 1u || softShadow.penumbraScale <= 1.0f) {
+            printf("View shadow option readback mismatch\n");
             FilaEngine_destroyCameraComponent(engine, cameraEntity);
             FilaEngine_destroyView(engine, view);
             FilaEngine_destroyScene(engine, scene);

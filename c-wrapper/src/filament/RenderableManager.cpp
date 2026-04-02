@@ -896,5 +896,81 @@ size_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* manag
     return cppManager->getInstanceCount(toInstance(instance));
 }
 
+bool FilaRenderableManager_computeAabbFloat3U16(
+        const float* vertices,
+        const uint16_t* indices,
+        size_t indexCount,
+        size_t vertexStrideBytes,
+        FilaBox* outBox) {
+    if (!vertices || !indices || !outBox || indexCount == 0u) {
+        return false;
+    }
+    const size_t stride = vertexStrideBytes == 0u ? sizeof(filament::math::float3) : vertexStrideBytes;
+    const auto aabb = filament::RenderableManager::computeAABB(
+            reinterpret_cast<const filament::math::float3*>(vertices),
+            indices,
+            indexCount,
+            stride);
+    fromBox(aabb, outBox);
+    return true;
+}
+
+bool FilaRenderableManager_computeAabbFloat3U32(
+        const float* vertices,
+        const uint32_t* indices,
+        size_t indexCount,
+        size_t vertexStrideBytes,
+        FilaBox* outBox) {
+    if (!vertices || !indices || !outBox || indexCount == 0u) {
+        return false;
+    }
+    const size_t stride = vertexStrideBytes == 0u ? sizeof(filament::math::float3) : vertexStrideBytes;
+    const auto aabb = filament::RenderableManager::computeAABB(
+            reinterpret_cast<const filament::math::float3*>(vertices),
+            indices,
+            indexCount,
+            stride);
+    fromBox(aabb, outBox);
+    return true;
+}
+
+bool FilaRenderableManager_computeAabbFloat4U16(
+        const float* vertices,
+        const uint16_t* indices,
+        size_t indexCount,
+        size_t vertexStrideBytes,
+        FilaBox* outBox) {
+    if (!vertices || !indices || !outBox || indexCount == 0u) {
+        return false;
+    }
+    const size_t stride = vertexStrideBytes == 0u ? sizeof(filament::math::float4) : vertexStrideBytes;
+    const auto aabb = filament::RenderableManager::computeAABB(
+            reinterpret_cast<const filament::math::float4*>(vertices),
+            indices,
+            indexCount,
+            stride);
+    fromBox(aabb, outBox);
+    return true;
+}
+
+bool FilaRenderableManager_computeAabbFloat4U32(
+        const float* vertices,
+        const uint32_t* indices,
+        size_t indexCount,
+        size_t vertexStrideBytes,
+        FilaBox* outBox) {
+    if (!vertices || !indices || !outBox || indexCount == 0u) {
+        return false;
+    }
+    const size_t stride = vertexStrideBytes == 0u ? sizeof(filament::math::float4) : vertexStrideBytes;
+    const auto aabb = filament::RenderableManager::computeAABB(
+            reinterpret_cast<const filament::math::float4*>(vertices),
+            indices,
+            indexCount,
+            stride);
+    fromBox(aabb, outBox);
+    return true;
+}
+
 } // extern "C"
 

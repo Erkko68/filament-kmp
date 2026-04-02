@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "filament/Engine.h"
+#include "filament/DebugRegistry.h"
 #include "filament/TransformManager.h"
 #include "utils/EntityManager.h"
 
@@ -233,6 +234,61 @@ int main(void) {
         printf("enableAccurateTranslations failed\n");
         FilaEngine_destroy(&engine);
         return 1;
+    }
+
+    {
+        FilaDebugRegistry* debugRegistry = FilaEngine_getDebugRegistry(engine);
+        if (!debugRegistry) {
+            printf("DebugRegistry unavailable\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        const char* missingProperty = "fila.nonexistent.debug.property";
+        bool b = false;
+        int i = 0;
+        float f = 0.0f;
+        float f2[2] = {0.0f, 0.0f};
+        float f3[3] = {0.0f, 0.0f, 0.0f};
+        float f4[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        const void* data = NULL;
+        size_t count = 0u;
+
+        if (FilaDebugRegistry_hasProperty(debugRegistry, missingProperty)) {
+            printf("Unexpected debug property presence\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        if (FilaDebugRegistry_getPropertyAddress(debugRegistry, missingProperty) != NULL ||
+                FilaDebugRegistry_getPropertyAddressConst(debugRegistry, missingProperty) != NULL) {
+            printf("Unexpected debug property address\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        if (FilaDebugRegistry_setPropertyBool(debugRegistry, missingProperty, true) ||
+                FilaDebugRegistry_setPropertyInt(debugRegistry, missingProperty, 1) ||
+                FilaDebugRegistry_setPropertyFloat(debugRegistry, missingProperty, 1.0f) ||
+                FilaDebugRegistry_setPropertyFloat2(debugRegistry, missingProperty, f2) ||
+                FilaDebugRegistry_setPropertyFloat3(debugRegistry, missingProperty, f3) ||
+                FilaDebugRegistry_setPropertyFloat4(debugRegistry, missingProperty, f4)) {
+            printf("Unexpected ability to set missing debug property\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        if (FilaDebugRegistry_getPropertyBool(debugRegistry, missingProperty, &b) ||
+                FilaDebugRegistry_getPropertyInt(debugRegistry, missingProperty, &i) ||
+                FilaDebugRegistry_getPropertyFloat(debugRegistry, missingProperty, &f) ||
+                FilaDebugRegistry_getPropertyFloat2(debugRegistry, missingProperty, f2) ||
+                FilaDebugRegistry_getPropertyFloat3(debugRegistry, missingProperty, f3) ||
+                FilaDebugRegistry_getPropertyFloat4(debugRegistry, missingProperty, f4)) {
+            printf("Unexpected value retrieval for missing debug property\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        if (FilaDebugRegistry_getDataSource(debugRegistry, missingProperty, &data, &count)) {
+            printf("Unexpected data source for missing debug property\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
     }
 
     const FilaMaterial* defaultMaterial = FilaEngine_getDefaultMaterial(engine);

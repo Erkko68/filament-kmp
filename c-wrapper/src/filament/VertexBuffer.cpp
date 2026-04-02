@@ -2,6 +2,8 @@
 #include <filament/MaterialEnums.h>
 #include <filament/VertexBuffer.h>
 
+#include <filament/BufferObject.h>
+
 #include "../../include/filament/BufferDescriptor.h"
 #include "../../include/filament/VertexBuffer.h"
 
@@ -69,6 +71,22 @@ void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder,
     cppBuilder->attribute(toVertexAttribute(attribute), bufferIndex, toAttributeType(attributeType), byteOffset, byteStride);
 }
 
+void FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* builder, bool enabled) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<VertexBuilder*>(builder);
+    cppBuilder->enableBufferObjects(enabled);
+}
+
+void FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, bool normalized) {
+    if (!builder) {
+        return;
+    }
+    auto cppBuilder = reinterpret_cast<VertexBuilder*>(builder);
+    cppBuilder->normalized(toVertexAttribute(attribute), normalized);
+}
+
 void FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* builder, bool enabled) {
     if (!builder) {
         return;
@@ -94,6 +112,14 @@ size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer) {
     return cppVertexBuffer->getVertexCount();
 }
 
+bool FilaVertexBuffer_isCreationComplete(const FilaVertexBuffer* vertexBuffer) {
+    if (!vertexBuffer) {
+        return false;
+    }
+    auto cppVertexBuffer = reinterpret_cast<const filament::VertexBuffer*>(vertexBuffer);
+    return cppVertexBuffer->isCreationComplete();
+}
+
 void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferDescriptor* buffer, uint32_t byteOffset) {
     if (!vertexBuffer || !engine || !buffer) {
         return;
@@ -111,6 +137,20 @@ void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* en
     buffer->user = nullptr;
     buffer->handler = nullptr;
     buffer->consumed = true;
+}
+
+void FilaVertexBuffer_setBufferObjectAt(
+        FilaVertexBuffer* vertexBuffer,
+        FilaEngine* engine,
+        uint8_t bufferIndex,
+        const FilaBufferObject* bufferObject) {
+    if (!vertexBuffer || !engine || !bufferObject) {
+        return;
+    }
+    auto cppVertexBuffer = reinterpret_cast<filament::VertexBuffer*>(vertexBuffer);
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    auto cppBufferObject = reinterpret_cast<const filament::BufferObject*>(bufferObject);
+    cppVertexBuffer->setBufferObjectAt(*cppEngine, bufferIndex, cppBufferObject);
 }
 
 } // extern "C"

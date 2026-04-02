@@ -347,6 +347,32 @@ size_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* ma
 size_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* manager,
 	 FilaRenderableManagerInstance instance);
 
+// Computes object-space AABB from indexed float3/float4 vertex buffers.
+bool FilaRenderableManager_computeAabbFloat3U16(
+		const float* vertices,
+		const uint16_t* indices,
+		size_t indexCount,
+		size_t vertexStrideBytes,
+		FilaBox* outBox);
+bool FilaRenderableManager_computeAabbFloat3U32(
+		const float* vertices,
+		const uint32_t* indices,
+		size_t indexCount,
+		size_t vertexStrideBytes,
+		FilaBox* outBox);
+bool FilaRenderableManager_computeAabbFloat4U16(
+		const float* vertices,
+		const uint16_t* indices,
+		size_t indexCount,
+		size_t vertexStrideBytes,
+		FilaBox* outBox);
+bool FilaRenderableManager_computeAabbFloat4U32(
+		const float* vertices,
+		const uint32_t* indices,
+		size_t indexCount,
+		size_t vertexStrideBytes,
+		FilaBox* outBox);
+
 #ifdef __cplusplus
 }
 #endif

@@ -90,6 +90,10 @@ FilaViewDithering FilaView_getDithering(const FilaView* view);
 // Configures shadowing strategy.
 void FilaView_setShadowType(FilaView* view, FilaViewShadowType shadowType);
 FilaViewShadowType FilaView_getShadowType(const FilaView* view);
+void FilaView_setVsmShadowOptions(FilaView* view, const FilaVsmShadowOptions* options);
+bool FilaView_getVsmShadowOptions(const FilaView* view, FilaVsmShadowOptions* outOptions);
+void FilaView_setSoftShadowOptions(FilaView* view, const FilaSoftShadowOptions* options);
+bool FilaView_getSoftShadowOptions(const FilaView* view, FilaSoftShadowOptions* outOptions);
 
 // Toggles key render pipeline options.
 void FilaView_setShadowingEnabled(FilaView* view, bool enabled);
@@ -189,6 +193,10 @@ typedef struct FilaViewFroxelConfigurationInfoWithAge {
 bool FilaView_getFroxelConfigurationInfo(
     const FilaView* view,
     FilaViewFroxelConfigurationInfoWithAge* outInfo);
+
+// Material global variables for user materials (index range: 0..3).
+void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, const float value4[4]);
+bool FilaView_getMaterialGlobal(const FilaView* view, uint32_t index, float outValue4[4]);
 
 #ifdef __cplusplus
 }

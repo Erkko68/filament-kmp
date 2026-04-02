@@ -1,6 +1,7 @@
 #ifndef FILAMENT_C_INDEX_BUFFER_H
 #define FILAMENT_C_INDEX_BUFFER_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -22,6 +23,7 @@ void FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* builder, uint32_t
 void FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* builder, FilaIndexType indexType);
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* builder, FilaEngine* engine);
 size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer);
+bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* indexBuffer);
 
 // Set buffer data for an index buffer
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, FilaBufferDescriptor* buffer, uint32_t byteOffset);

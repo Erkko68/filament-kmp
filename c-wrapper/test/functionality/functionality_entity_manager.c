@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "utils/EntityManager.h"
 
@@ -31,6 +32,15 @@ int main(void) {
         return 1;
     }
 
+    {
+        const size_t maxCount = FilaEntityManager_getMaxEntityCount();
+        if (FilaEntityManager_getGenerationForIndex(maxCount + 1u) != 0u) {
+            printf("Generation lookup should return 0 for out-of-range index\n");
+            return 1;
+        }
+        (void)FilaEntityManager_getGenerationForIndex(0u);
+    }
+
     FilaEntity batch[3] = {0};
     FilaEntityManager_createMany(3u, batch);
     for (size_t i = 0; i < 3u; ++i) {
@@ -45,6 +55,16 @@ int main(void) {
     for (size_t i = 0; i < 3u; ++i) {
         if (batch[i] != 0) {
             printf("Bulk entity destroy did not clear slot %zu\n", i);
+            return 1;
+        }
+    }
+
+    {
+        FilaEntity active[8] = {0};
+        const bool tracking = FilaEntityManager_isTrackingEnabled();
+        const size_t written = FilaEntityManager_getActiveEntities(active, 8u);
+        if (!tracking && written != 0u) {
+            printf("Active entities should be unavailable when tracking is disabled\n");
             return 1;
         }
     }
