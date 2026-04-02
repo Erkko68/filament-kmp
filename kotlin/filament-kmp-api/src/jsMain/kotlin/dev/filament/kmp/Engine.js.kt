@@ -25,6 +25,46 @@ actual class Engine {
     actual fun destroyView(view: View) {
     }
 
+    actual fun createSwapChain(surface: Any, flags: Long): SwapChain {
+        TODO("Not yet implemented")
+    }
+
+    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain {
+        TODO("Not yet implemented")
+    }
+
+    actual fun destroySwapChain(swapChain: SwapChain) {
+    }
+
+    actual fun destroyRenderTarget(target: RenderTarget) {
+    }
+
+    actual fun destroyTexture(texture: Texture) {
+    }
+
+    actual fun destroyBufferObject(bufferObject: BufferObject) {
+    }
+
+    actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
+    }
+
+    actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
+    }
+
+    actual fun destroyMaterial(material: Material) {
+    }
+
+    actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
+    }
+
+    actual fun getRenderableManager(): RenderableManager {
+        TODO("Not yet implemented")
+    }
+
+    actual fun getTransformManager(): TransformManager {
+        TODO("Not yet implemented")
+    }
+
     actual fun close() {
     }
 

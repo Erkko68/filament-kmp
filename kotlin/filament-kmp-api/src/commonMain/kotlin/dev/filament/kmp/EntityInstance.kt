@@ -8,5 +8,3 @@ package dev.filament.kmp
 )
 annotation class EntityInstance
 
-const val ENTITY_INSTANCE_NULL: Int = 0
-

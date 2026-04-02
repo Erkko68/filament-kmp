@@ -10,15 +10,17 @@ This document tracks the proceeding for the 1:1 migration from
 - Keep Android comments/Javadocs when converting.
 - Keep `jsMain` and `nativeMain` as TODO actuals when implementation is not ready.
 - `Entity` / `EntityInstance` are now shared common annotations (not expect/actual) to keep usage stable across all targets.
+- `Engine` and `View` are currently sample-partial wrappers and will be expanded to full parity.
+- New expect APIs preserve/adapt Android Java method comments.
 
 ## Step 1 - Baseline (already implemented)
 
 Implemented classes:
 - `Box`
-- `Engine`
+- `Engine` (sample-partial)
 - `Renderer`
 - `Scene`
-- `View`
+- `View` (sample-partial)
 
 Missing classes:
 - `BufferObject`
@@ -155,6 +157,16 @@ Implemented classes:
 
 Missing classes:
 - `BufferObject`
+
+## Step 6 - Surface and target batch (auto-continued)
+
+Implemented classes:
+- `SwapChain`
+- `RenderTarget`
+- `Texture`
+
+Missing classes:
+- `BufferObject`
 - `Camera`
 - `ColorGrading`
 - `IndexBuffer`
@@ -163,23 +175,63 @@ Missing classes:
 - `Material`
 - `MaterialInstance`
 - `MorphTargetBuffer`
-- `RenderTarget`
 - `RenderableManager`
 - `SkinningBuffer`
 - `Skybox`
 - `Stream`
 - `SurfaceOrientation`
-- `SwapChain`
-- `Texture`
 - `ToneMapper`
 - `TransformManager`
 - `VertexBuffer`
 
+## Step 7 - Geometry buffer batch (auto-continued)
+
+Implemented classes:
+- `BufferObject`
+- `IndexBuffer`
+- `VertexBuffer`
+
+Missing classes:
+- `Camera`
+- `ColorGrading`
+- `IndirectLight`
+- `LightManager`
+- `Material`
+- `MaterialInstance`
+- `MorphTargetBuffer`
+- `RenderableManager`
+- `SkinningBuffer`
+- `Skybox`
+- `Stream`
+- `SurfaceOrientation`
+- `ToneMapper`
+- `TransformManager`
+
+## Step 8 - Material and transform-manager batch (auto-continued)
+
+Implemented classes:
+- `Material`
+- `MaterialInstance`
+- `RenderableManager`
+- `TransformManager`
+
+Missing classes:
+- `Camera`
+- `ColorGrading`
+- `IndirectLight`
+- `LightManager`
+- `MorphTargetBuffer`
+- `SkinningBuffer`
+- `Skybox`
+- `Stream`
+- `SurfaceOrientation`
+- `ToneMapper`
+
 ## Next batch (auto-continue)
 
 Planned next classes:
-- `SwapChain`
-- `RenderTarget`
-- `Texture`
-- `BufferObject`
+- `Camera`
+- `LightManager`
+- `IndirectLight`
+- `Skybox`
 

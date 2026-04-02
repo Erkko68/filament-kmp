@@ -3,7 +3,7 @@ package dev.filament.kmp
 import com.google.android.filament.Engine as AndroidFilamentEngine
 
 actual class Engine private constructor(
-    private var androidEngine: AndroidFilamentEngine?,
+    internal var androidEngine: AndroidFilamentEngine?,
 ) {
     actual val isValid: Boolean
         get() = androidEngine != null
@@ -42,6 +42,82 @@ actual class Engine private constructor(
         val handle = view.androidView ?: return
         engine.destroyView(handle)
         view.invalidate()
+    }
+
+    actual fun createSwapChain(surface: Any, flags: Long): SwapChain {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        return SwapChain(engine.createSwapChain(surface, flags))
+    }
+
+    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        return SwapChain(engine.createSwapChain(width, height, flags))
+    }
+
+    actual fun destroySwapChain(swapChain: SwapChain) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = swapChain.androidSwapChain ?: return
+        engine.destroySwapChain(handle)
+        swapChain.invalidate()
+    }
+
+    actual fun destroyRenderTarget(target: RenderTarget) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = target.androidRenderTarget ?: return
+        engine.destroyRenderTarget(handle)
+        target.invalidate()
+    }
+
+    actual fun destroyTexture(texture: Texture) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = texture.androidTexture ?: return
+        engine.destroyTexture(handle)
+        texture.invalidate()
+    }
+
+    actual fun destroyBufferObject(bufferObject: BufferObject) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = bufferObject.androidBufferObject ?: return
+        engine.destroyBufferObject(handle)
+        bufferObject.invalidate()
+    }
+
+    actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = indexBuffer.androidIndexBuffer ?: return
+        engine.destroyIndexBuffer(handle)
+        indexBuffer.invalidate()
+    }
+
+    actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = vertexBuffer.androidVertexBuffer ?: return
+        engine.destroyVertexBuffer(handle)
+        vertexBuffer.invalidate()
+    }
+
+    actual fun destroyMaterial(material: Material) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = material.androidMaterial ?: return
+        engine.destroyMaterial(handle)
+        material.invalidate()
+    }
+
+    actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = materialInstance.androidMaterialInstance ?: return
+        engine.destroyMaterialInstance(handle)
+        materialInstance.invalidate()
+    }
+
+    actual fun getRenderableManager(): RenderableManager {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        return RenderableManager(engine.renderableManager)
+    }
+
+    actual fun getTransformManager(): TransformManager {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        return TransformManager(engine.transformManager)
     }
 
     actual fun close() {
