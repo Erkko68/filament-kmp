@@ -1,3 +1,2 @@
-headers = filament/Engine.h
+headers = filament/Types.h filament/Box.h filament/BufferDescriptor.h filament/BufferObject.h filament/Camera.h filament/Color.h filament/ColorGrading.h filament/ColorSpace.h filament/DebugRegistry.h filament/Engine.h filament/Exposure.h filament/Fence.h filament/FilamentAPI.h filament/Frustum.h filament/IndexBuffer.h filament/IndirectLight.h filament/InstanceBuffer.h filament/LightManager.h filament/Material.h filament/MaterialChunkType.h filament/MaterialEnums.h filament/MaterialInstance.h filament/MorphTargetBuffer.h filament/Options.h filament/RenderTarget.h filament/RenderableManager.h filament/Renderer.h filament/Scene.h filament/SkinningBuffer.h filament/Skybox.h filament/Stream.h filament/SwapChain.h filament/Sync.h filament/Texture.h filament/TextureSampler.h filament/ToneMapper.h filament/TransformManager.h filament/VertexBuffer.h filament/View.h filament/Viewport.h
 package = dev.filament.kmp.cinterop
-

@@ -6,11 +6,11 @@ Kotlin Multiplatform API layer for Filament C wrapper.
 
 - Provides `expect/actual` platform split for all requested targets.
 - Seeds cinterop with `filament/Engine.h`.
-- Keeps APIs intentionally small until the first Engine/Scene wrappers are added.
+- Adds a first OO `Engine` wrapper (`Engine.create`, `Engine.close`) with native backing on Apple/Linux/Windows native targets.
+- Android and Web currently expose explicit `TODO` runtime errors for `Engine.create` until their bridge layers are added.
 
 ## Next
 
-1. Expand cinterop header surface (core + gltfio wrappers).
-2. Add first native handle wrappers (`Engine`, `Scene`, `View`).
-3. Add platform-specific linker options per target.
-
+1. Wire Android bridge (JNI/NDK) for `Engine`.
+2. Add Web backend strategy (WASM bridge or JS-hosted backend).
+3. Expand wrappers (`Scene`, `View`, `Renderer`) and ownership-safe relationships.

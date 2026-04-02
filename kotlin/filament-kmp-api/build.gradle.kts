@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
     kotlin("multiplatform")
@@ -18,121 +19,84 @@ kotlin {
 
     linuxX64()
     linuxArm64()
+
     mingwX64()
 
     js(IR) {
         browser()
-        nodejs()
         binaries.library()
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
-        val commonMain by getting
+        commonMain.dependencies {}
+
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
 
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
-        val nativeTest by creating {
-            dependsOn(commonTest)
+        nativeMain.dependencies {}
+
+        androidMain.dependencies {
+            implementation("com.google.android.filament:filament-android:1.70.1")
         }
 
-        val iosMain by creating {
-            dependsOn(nativeMain)
-        }
-        val iosTest by creating {
-            dependsOn(nativeTest)
-        }
+        jsMain.dependencies {
 
-        val macosMain by creating {
-            dependsOn(nativeMain)
-        }
-        val macosTest by creating {
-            dependsOn(nativeTest)
-        }
-
-        val linuxMain by creating {
-            dependsOn(nativeMain)
-        }
-        val linuxTest by creating {
-            dependsOn(nativeTest)
-        }
-
-        val windowsMain by creating {
-            dependsOn(nativeMain)
-        }
-        val windowsTest by creating {
-            dependsOn(nativeTest)
-        }
-
-        val webMain by creating {
-            dependsOn(commonMain)
-        }
-        val webTest by creating {
-            dependsOn(commonTest)
-        }
-
-        val androidMain by getting
-        val androidUnitTest by getting
-
-        val jsMain by getting {
-            dependsOn(webMain)
-        }
-        val jsTest by getting {
-            dependsOn(webTest)
-        }
-
-        val iosArm64Main by getting {
-            dependsOn(iosMain)
-        }
-        val iosSimulatorArm64Main by getting {
-            dependsOn(iosMain)
-        }
-        val macosArm64Main by getting {
-            dependsOn(macosMain)
-        }
-        val linuxX64Main by getting {
-            dependsOn(linuxMain)
-        }
-        val linuxArm64Main by getting {
-            dependsOn(linuxMain)
-        }
-        val mingwX64Main by getting {
-            dependsOn(windowsMain)
-        }
-
-        val iosArm64Test by getting {
-            dependsOn(iosTest)
-        }
-        val iosSimulatorArm64Test by getting {
-            dependsOn(iosTest)
-        }
-        val macosArm64Test by getting {
-            dependsOn(macosTest)
-        }
-        val linuxX64Test by getting {
-            dependsOn(linuxTest)
-        }
-        val linuxArm64Test by getting {
-            dependsOn(linuxTest)
-        }
-        val mingwX64Test by getting {
-            dependsOn(windowsTest)
         }
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
+
         compilations.getByName("main").cinterops {
             create("filament") {
                 defFile(project.file("src/nativeInterop/cinterop/filament.def"))
+
                 includeDirs(
                     project.file("../../c-wrapper/include"),
                     project.file("../../filament-prebuilts/include")
                 )
+            }
+        }
+
+        binaries.all {
+            val platform = target.konanTarget.family
+
+            val libDir = when (platform) {
+                Family.IOS -> "ios"
+                Family.OSX -> "macos"
+                Family.LINUX -> "linux"
+                Family.MINGW -> "windows"
+                else -> error("Unsupported platform: $platform")
+            }
+
+            linkerOpts(
+                "-L${projectDir}/../../filament-prebuilts/lib/$libDir",
+                "-lfilament"
+            )
+
+            when (platform) {
+                Family.IOS -> {
+                    linkerOpts(
+                        "-framework", "Metal",
+                        "-framework", "UIKit",
+                        "-framework", "CoreVideo",
+                        "-framework", "QuartzCore"
+                    )
+                }
+
+                Family.OSX -> {
+                    linkerOpts(
+                        "-framework", "Metal",
+                        "-framework", "Cocoa",
+                        "-framework", "QuartzCore"
+                    )
+                }
+
+                else -> Unit
             }
         }
     }
@@ -140,10 +104,9 @@ kotlin {
 
 android {
     namespace = "dev.filament.kmp"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
     }
 }
-
