@@ -4,6 +4,27 @@ actual class Engine {
     actual val isValid: Boolean
         get() = TODO("Not yet implemented")
 
+    actual fun createRenderer(): Renderer {
+        TODO("Not yet implemented")
+    }
+
+    actual fun destroyRenderer(renderer: Renderer) {
+    }
+
+    actual fun createScene(): Scene {
+        TODO("Not yet implemented")
+    }
+
+    actual fun destroyScene(scene: Scene) {
+    }
+
+    actual fun createView(): View {
+        TODO("Not yet implemented")
+    }
+
+    actual fun destroyView(view: View) {
+    }
+
     actual fun close() {
     }
 

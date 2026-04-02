@@ -6,6 +6,18 @@ package dev.filament.kmp
 expect class Engine {
     val isValid: Boolean
 
+    fun createRenderer(): Renderer
+
+    fun destroyRenderer(renderer: Renderer)
+
+    fun createScene(): Scene
+
+    fun destroyScene(scene: Scene)
+
+    fun createView(): View
+
+    fun destroyView(view: View)
+
     fun close()
 
     companion object {

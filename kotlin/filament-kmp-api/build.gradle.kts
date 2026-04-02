@@ -9,6 +9,8 @@ plugins {
 group = "dev.filament.kmp"
 version = "0.1.0-SNAPSHOT"
 
+val filamentAndroidVersion = "1.70.1"
+
 kotlin {
     androidTarget()
 
@@ -30,7 +32,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        commonMain.dependencies {}
+        val commonMain by getting
 
         val commonTest by getting {
             dependencies {
@@ -38,15 +40,15 @@ kotlin {
             }
         }
 
-        nativeMain.dependencies {}
+        val nativeMain by getting
 
-        androidMain.dependencies {
-            implementation("com.google.android.filament:filament-android:1.70.1")
+        val androidMain by getting {
+            dependencies {
+                implementation("com.google.android.filament:filament-android:$filamentAndroidVersion")
+            }
         }
 
-        jsMain.dependencies {
-
-        }
+        val jsMain by getting
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {

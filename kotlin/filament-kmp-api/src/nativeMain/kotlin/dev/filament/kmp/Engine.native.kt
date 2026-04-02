@@ -23,6 +23,30 @@ actual class Engine private constructor(
     actual val isValid: Boolean
         get() = nativeHandle != null
 
+    actual fun createRenderer(): Renderer {
+        error("Native Renderer wiring is not implemented yet.")
+    }
+
+    actual fun destroyRenderer(renderer: Renderer) {
+        renderer.invalidate()
+    }
+
+    actual fun createScene(): Scene {
+        error("Native Scene wiring is not implemented yet.")
+    }
+
+    actual fun destroyScene(scene: Scene) {
+        scene.invalidate()
+    }
+
+    actual fun createView(): View {
+        error("Native View wiring is not implemented yet.")
+    }
+
+    actual fun destroyView(view: View) {
+        view.invalidate()
+    }
+
     actual fun close() {
         val handle = nativeHandle ?: return
         memScoped {

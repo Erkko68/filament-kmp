@@ -12,10 +12,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-
-        flatDir {
-            dirs(file("filament-prebuilts/android/lib"))
-        }
     }
 }
 
