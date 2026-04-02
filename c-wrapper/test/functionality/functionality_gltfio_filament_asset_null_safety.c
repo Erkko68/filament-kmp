@@ -48,6 +48,8 @@ int main(void) {
             text[0] != '\0' ||
             FilaGltfioFilamentAsset_getMorphTargetCountAt((const FilaGltfioFilamentAsset*)0, 0) != 0u ||
             FilaGltfioFilamentAsset_getWireframe((FilaGltfioFilamentAsset*)0) != 0 ||
+            FilaGltfioFilamentAsset_getEngine((const FilaGltfioFilamentAsset*)0) != (FilaEngine*)0 ||
+            FilaGltfioFilamentAsset_areFilamentComponentsDetached((const FilaGltfioFilamentAsset*)0) ||
             FilaGltfioFilamentAsset_getSourceAsset((FilaGltfioFilamentAsset*)0) != (const void*)0 ||
             FilaGltfioFilamentAsset_getSceneCount((const FilaGltfioFilamentAsset*)0) != 0u ||
             FilaGltfioFilamentAsset_getSceneName((const FilaGltfioFilamentAsset*)0, 0u) != (const char*)0 ||
@@ -58,6 +60,7 @@ int main(void) {
         return 1;
     }
 
+    FilaGltfioFilamentAsset_detachFilamentComponents((FilaGltfioFilamentAsset*)0);
     FilaGltfioFilamentAsset_releaseSourceData((FilaGltfioFilamentAsset*)0);
 
     printf("functionality_gltfio_filament_asset_null_safety completed\n");

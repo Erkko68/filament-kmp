@@ -2,6 +2,7 @@
 
 #include <new>
 #include <string>
+#include <vector>
 
 #include "../../include/utils/Path.h"
 
@@ -91,6 +92,16 @@ size_t FilaUtilsPath_copyPath(const FilaUtilsPath* path, char* outPath, size_t o
     return copyText(path->value.getPath(), outPath, outPathSize);
 }
 
+size_t FilaUtilsPath_copyCanonicalPath(const char* pathname, char* outPath, size_t outPathSize) {
+    if (!pathname) {
+        if (outPath && outPathSize > 0u) {
+            outPath[0] = '\0';
+        }
+        return 0u;
+    }
+    return copyText(utils::Path::getCanonicalPath(pathname), outPath, outPathSize);
+}
+
 size_t FilaUtilsPath_copyName(const FilaUtilsPath* path, char* outName, size_t outNameSize) {
     if (!path) {
         if (outName && outNameSize > 0u) {
@@ -158,6 +169,48 @@ bool FilaUtilsPath_equals(const FilaUtilsPath* lhs, const FilaUtilsPath* rhs) {
     return lhs->value == rhs->value;
 }
 
+size_t FilaUtilsPath_getSegmentCount(const FilaUtilsPath* path) {
+    if (!path) {
+        return 0u;
+    }
+    return path->value.split().size();
+}
+
+size_t FilaUtilsPath_copySegmentAt(const FilaUtilsPath* path, size_t segmentIndex, char* outSegment, size_t outSegmentSize) {
+    if (!path) {
+        if (outSegment && outSegmentSize > 0u) {
+            outSegment[0] = '\0';
+        }
+        return 0u;
+    }
+    const std::vector<std::string> segments = path->value.split();
+    if (segmentIndex >= segments.size()) {
+        if (outSegment && outSegmentSize > 0u) {
+            outSegment[0] = '\0';
+        }
+        return 0u;
+    }
+    return copyText(segments[segmentIndex], outSegment, outSegmentSize);
+}
+
+size_t FilaUtilsPath_getListContentsCount(const FilaUtilsPath* path) {
+    if (!path) {
+        return 0u;
+    }
+    return path->value.listContents().size();
+}
+
+FilaUtilsPath* FilaUtilsPath_getListContentAt(const FilaUtilsPath* path, size_t entryIndex) {
+    if (!path) {
+        return nullptr;
+    }
+    const std::vector<utils::Path> entries = path->value.listContents();
+    if (entryIndex >= entries.size()) {
+        return nullptr;
+    }
+    return createFromPath(entries[entryIndex]);
+}
+
 FilaUtilsPath* FilaUtilsPath_getCurrentDirectory(void) {
     return createFromPath(utils::Path::getCurrentDirectory());
 }
@@ -187,4 +240,5 @@ bool FilaUtilsPath_unlinkFile(FilaUtilsPath* path) {
 }
 
 } // extern "C"
+
 

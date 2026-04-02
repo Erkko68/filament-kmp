@@ -37,5 +37,13 @@ void* FilaSwapChain_getNativeWindow(const FilaSwapChain* swapChain) {
     return cppSwapChain->getNativeWindow();
 }
 
+bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* swapChain) {
+    if (!swapChain) {
+        return false;
+    }
+    auto cppSwapChain = reinterpret_cast<const filament::SwapChain*>(swapChain);
+    return cppSwapChain->isFrameScheduledCallbackSet();
+}
+
 } // extern "C"
 

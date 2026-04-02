@@ -81,6 +81,10 @@ size_t FilaGltfioFilamentAsset_copyMorphTargetNameAt(const FilaGltfioFilamentAss
 size_t FilaGltfioFilamentAsset_getMorphTargetCountAt(const FilaGltfioFilamentAsset* asset, FilaEntity entity);
 FilaEntity FilaGltfioFilamentAsset_getWireframe(FilaGltfioFilamentAsset* asset);
 
+FilaEngine* FilaGltfioFilamentAsset_getEngine(const FilaGltfioFilamentAsset* asset);
+void FilaGltfioFilamentAsset_detachFilamentComponents(FilaGltfioFilamentAsset* asset);
+bool FilaGltfioFilamentAsset_areFilamentComponentsDetached(const FilaGltfioFilamentAsset* asset);
+
 void FilaGltfioFilamentAsset_releaseSourceData(FilaGltfioFilamentAsset* asset);
 const void* FilaGltfioFilamentAsset_getSourceAsset(FilaGltfioFilamentAsset* asset);
 

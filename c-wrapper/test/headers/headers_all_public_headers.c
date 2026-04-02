@@ -63,12 +63,18 @@
 #include "gltfio/TextureProvider.h"
 
 #include "geometry/Transcoder.h"
+#include "geometry/SurfaceOrientation.h"
+#include "geometry/TangentSpaceMesh.h"
 
 #include "utils/EntityManager.h"
+#include "utils/NameComponentManager.h"
 #include "utils/Entity.h"
 #include "utils/EntityInstance.h"
 #include "utils/Status.h"
 #include "utils/Debug.h"
+#include "utils/Log.h"
+#include "utils/Panic.h"
+#include "utils/CallStack.h"
 #include "utils/Path.h"
 
 void test_headers_all_public_headers(void) {}

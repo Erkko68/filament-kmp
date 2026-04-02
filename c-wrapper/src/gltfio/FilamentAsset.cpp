@@ -326,6 +326,30 @@ FilaEntity FilaGltfioFilamentAsset_getWireframe(FilaGltfioFilamentAsset* asset) 
     return fromEntity(cppAsset->getWireframe());
 }
 
+FilaEngine* FilaGltfioFilamentAsset_getEngine(const FilaGltfioFilamentAsset* asset) {
+    if (!asset) {
+        return nullptr;
+    }
+    auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
+    return reinterpret_cast<FilaEngine*>(cppAsset->getEngine());
+}
+
+void FilaGltfioFilamentAsset_detachFilamentComponents(FilaGltfioFilamentAsset* asset) {
+    if (!asset) {
+        return;
+    }
+    auto* cppAsset = reinterpret_cast<filament::gltfio::FilamentAsset*>(asset);
+    cppAsset->detachFilamentComponents();
+}
+
+bool FilaGltfioFilamentAsset_areFilamentComponentsDetached(const FilaGltfioFilamentAsset* asset) {
+    if (!asset) {
+        return false;
+    }
+    auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
+    return cppAsset->areFilamentComponentsDetached();
+}
+
 void FilaGltfioFilamentAsset_releaseSourceData(FilaGltfioFilamentAsset* asset) {
     if (!asset) {
         return;

@@ -31,6 +31,9 @@ void test_headers_gltfio_filament_asset(void) {
     (void)FilaGltfioFilamentAsset_copyMorphTargetNameAt((const FilaGltfioFilamentAsset*)0, 0, 0u, text, sizeof(text));
     (void)FilaGltfioFilamentAsset_getMorphTargetCountAt((const FilaGltfioFilamentAsset*)0, 0);
     (void)FilaGltfioFilamentAsset_getWireframe((FilaGltfioFilamentAsset*)0);
+    (void)FilaGltfioFilamentAsset_getEngine((const FilaGltfioFilamentAsset*)0);
+    FilaGltfioFilamentAsset_detachFilamentComponents((FilaGltfioFilamentAsset*)0);
+    (void)FilaGltfioFilamentAsset_areFilamentComponentsDetached((const FilaGltfioFilamentAsset*)0);
     FilaGltfioFilamentAsset_releaseSourceData((FilaGltfioFilamentAsset*)0);
     (void)FilaGltfioFilamentAsset_getSourceAsset((FilaGltfioFilamentAsset*)0);
     (void)FilaGltfioFilamentAsset_getSceneCount((const FilaGltfioFilamentAsset*)0);

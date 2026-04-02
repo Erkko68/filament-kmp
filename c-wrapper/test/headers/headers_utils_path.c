@@ -15,11 +15,16 @@ void test_headers_utils_path(void) {
     (void)FilaUtilsPath_isEmpty(joined);
     (void)FilaUtilsPath_isAbsolute(joined);
     (void)FilaUtilsPath_copyPath(joined, text, sizeof(text));
+    (void)FilaUtilsPath_copyCanonicalPath("/tmp/../tmp", text, sizeof(text));
     (void)FilaUtilsPath_copyName(joined, text, sizeof(text));
     (void)FilaUtilsPath_copyNameWithoutExtension(joined, text, sizeof(text));
     (void)FilaUtilsPath_copyExtension(joined, text, sizeof(text));
     (void)FilaUtilsPath_concatToSelf(root, leaf);
     (void)FilaUtilsPath_equals(root, joined);
+    (void)FilaUtilsPath_getSegmentCount(joined);
+    (void)FilaUtilsPath_copySegmentAt(joined, 0u, text, sizeof(text));
+    (void)FilaUtilsPath_getListContentsCount(root);
+    (void)FilaUtilsPath_getListContentAt(root, 0u);
     (void)FilaUtilsPath_getCurrentDirectory();
     (void)FilaUtilsPath_getCurrentExecutable();
     (void)FilaUtilsPath_getTemporaryDirectory();

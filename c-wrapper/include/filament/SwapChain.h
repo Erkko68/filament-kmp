@@ -32,6 +32,9 @@ bool FilaSwapChain_isMSAASwapChainSupported(FilaEngine* engine, uint32_t samples
 // Returns the native window handle used by this swap chain.
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* swapChain);
 
+// Returns true if this swap chain currently has a frame-scheduled callback set.
+bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* swapChain);
+
 #ifdef __cplusplus
 }
 #endif

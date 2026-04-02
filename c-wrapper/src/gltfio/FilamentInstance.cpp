@@ -1,6 +1,8 @@
 #include <gltfio/Animator.h>
 #include <gltfio/FilamentInstance.h>
 
+#include <math/mat4.h>
+
 #include <cstring>
 
 #include <utils/Entity.h>
@@ -30,6 +32,14 @@ size_t copyCString(const char* text, char* outText, size_t outTextSize) {
 
 FilaEntity fromEntity(utils::Entity entity) {
     return utils::Entity::smuggle(entity);
+}
+
+void fromMat4f(const filament::math::mat4f& mat, float out16[16]) {
+    for (size_t c = 0u; c < 4u; ++c) {
+        for (size_t r = 0u; r < 4u; ++r) {
+            out16[c * 4u + r] = mat[c][r];
+        }
+    }
 }
 
 void fromAabb(const filament::Aabb& aabb, FilaAabb* outAabb) {
@@ -120,6 +130,14 @@ FilaGltfioAnimator* FilaGltfioFilamentInstance_getAnimator(FilaGltfioFilamentIns
     return reinterpret_cast<FilaGltfioAnimator*>(cppInstance->getAnimator());
 }
 
+const FilaGltfioFilamentAsset* FilaGltfioFilamentInstance_getAsset(const FilaGltfioFilamentInstance* instance) {
+    if (!instance) {
+        return nullptr;
+    }
+    auto* cppInstance = reinterpret_cast<const filament::gltfio::FilamentInstance*>(instance);
+    return reinterpret_cast<const FilaGltfioFilamentAsset*>(cppInstance->getAsset());
+}
+
 size_t FilaGltfioFilamentInstance_getSkinCount(const FilaGltfioFilamentInstance* instance) {
     if (!instance) {
         return 0u;
@@ -172,6 +190,49 @@ size_t FilaGltfioFilamentInstance_getJointsAt(const FilaGltfioFilamentInstance* 
     return written;
 }
 
+void FilaGltfioFilamentInstance_attachSkin(
+        FilaGltfioFilamentInstance* instance,
+        size_t skinIndex,
+        FilaEntity target) {
+    if (!instance || target == 0) {
+        return;
+    }
+    auto* cppInstance = reinterpret_cast<filament::gltfio::FilamentInstance*>(instance);
+    cppInstance->attachSkin(skinIndex, utils::Entity::import(target));
+}
+
+void FilaGltfioFilamentInstance_detachSkin(
+        FilaGltfioFilamentInstance* instance,
+        size_t skinIndex,
+        FilaEntity target) {
+    if (!instance || target == 0) {
+        return;
+    }
+    auto* cppInstance = reinterpret_cast<filament::gltfio::FilamentInstance*>(instance);
+    cppInstance->detachSkin(skinIndex, utils::Entity::import(target));
+}
+
+size_t FilaGltfioFilamentInstance_getInverseBindMatricesAt(
+        const FilaGltfioFilamentInstance* instance,
+        size_t skinIndex,
+        float* outMatrices4x4,
+        size_t maxMatrices) {
+    if (!instance || !outMatrices4x4 || maxMatrices == 0u) {
+        return 0u;
+    }
+    auto* cppInstance = reinterpret_cast<const filament::gltfio::FilamentInstance*>(instance);
+    const size_t count = cppInstance->getJointCountAt(skinIndex);
+    const size_t written = (count < maxMatrices) ? count : maxMatrices;
+    const filament::math::mat4f* matrices = cppInstance->getInverseBindMatricesAt(skinIndex);
+    if (!matrices) {
+        return 0u;
+    }
+    for (size_t i = 0u; i < written; ++i) {
+        fromMat4f(matrices[i], outMatrices4x4 + i * 16u);
+    }
+    return written;
+}
+
 size_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* instance) {
     if (!instance) {
         return 0u;
@@ -197,6 +258,14 @@ size_t FilaGltfioFilamentInstance_getMaterialInstances(const FilaGltfioFilamentI
         outMaterialInstances[i] = reinterpret_cast<FilaMaterialInstance*>(const_cast<filament::MaterialInstance*>(mats[i]));
     }
     return written;
+}
+
+void FilaGltfioFilamentInstance_detachMaterialInstances(FilaGltfioFilamentInstance* instance) {
+    if (!instance) {
+        return;
+    }
+    auto* cppInstance = reinterpret_cast<filament::gltfio::FilamentInstance*>(instance);
+    cppInstance->detachMaterialInstances();
 }
 
 void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstance* instance) {

@@ -10,6 +10,7 @@ void test_headers_swapchain(void) {
     (void)FilaSwapChain_isSRGBSwapChainSupported(engine);
     (void)FilaSwapChain_isMSAASwapChainSupported(engine, 4u);
     (void)FilaSwapChain_getNativeWindow(swapChain);
+    (void)FilaSwapChain_isFrameScheduledCallbackSet(swapChain);
     FilaEngine_destroySwapChain(engine, swapChain);
 }
 

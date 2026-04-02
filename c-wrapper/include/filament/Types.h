@@ -51,6 +51,9 @@ typedef struct FilaBufferObjectBuilder FilaBufferObjectBuilder;
 typedef struct FilaSync FilaSync;
 typedef struct FilaDebugRegistry FilaDebugRegistry;
 typedef struct FilaEntityManager FilaEntityManager;
+typedef struct FilaNameComponentManager FilaNameComponentManager;
+typedef struct FilaUtilsCallStack FilaUtilsCallStack;
+typedef struct FilaUtilsPanic FilaUtilsPanic;
 typedef struct FilaGltfioAnimator FilaGltfioAnimator;
 typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;
 typedef struct FilaGltfioFilamentAsset FilaGltfioFilamentAsset;
@@ -59,6 +62,10 @@ typedef struct FilaGltfioResourceLoader FilaGltfioResourceLoader;
 typedef struct FilaGltfioMaterialProvider FilaGltfioMaterialProvider;
 typedef struct FilaGltfioTextureProvider FilaGltfioTextureProvider;
 typedef struct FilaGeometryTranscoder FilaGeometryTranscoder;
+typedef struct FilaGeometrySurfaceOrientation FilaGeometrySurfaceOrientation;
+typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientationBuilder;
+typedef struct FilaGeometryTangentSpaceMesh FilaGeometryTangentSpaceMesh;
+typedef struct FilaGeometryTangentSpaceMeshBuilder FilaGeometryTangentSpaceMeshBuilder;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;

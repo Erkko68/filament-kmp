@@ -10,12 +10,19 @@ int main(void) {
             (FilaGltfioMaterialProvider*)0,
             (FilaEntityManager*)0,
             (const char*)0);
+    const FilaMaterial* materials[2] = {(const FilaMaterial*)1, (const FilaMaterial*)1};
 
     if (loader != (FilaGltfioAssetLoader*)0 ||
+            FilaGltfioAssetLoader_createWithNames((FilaEngine*)0,
+                    (FilaGltfioMaterialProvider*)0,
+                    (FilaEntityManager*)0,
+                    (FilaNameComponentManager*)0,
+                    (const char*)0) != (FilaGltfioAssetLoader*)0 ||
             FilaGltfioAssetLoader_createAsset((FilaGltfioAssetLoader*)0, (const uint8_t*)0, 0u) != (FilaGltfioFilamentAsset*)0 ||
             FilaGltfioAssetLoader_createInstancedAsset((FilaGltfioAssetLoader*)0, (const uint8_t*)0, 0u, (FilaGltfioFilamentInstance**)0, 0u) != (FilaGltfioFilamentAsset*)0 ||
             FilaGltfioAssetLoader_createInstance((FilaGltfioAssetLoader*)0, (FilaGltfioFilamentAsset*)0) != (FilaGltfioFilamentInstance*)0 ||
-            FilaGltfioAssetLoader_getMaterialsCount((const FilaGltfioAssetLoader*)0) != 0u) {
+            FilaGltfioAssetLoader_getMaterialsCount((const FilaGltfioAssetLoader*)0) != 0u ||
+            FilaGltfioAssetLoader_getMaterials((const FilaGltfioAssetLoader*)0, materials, 2u) != 0u) {
         printf("AssetLoader null defaults mismatch\n");
         return 1;
     }

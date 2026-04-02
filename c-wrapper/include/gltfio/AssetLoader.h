@@ -18,6 +18,14 @@ FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(
         FilaEntityManager* entities,
         const char* defaultNodeName);
 
+// Creates an asset loader with an optional NameComponentManager.
+FilaGltfioAssetLoader* FilaGltfioAssetLoader_createWithNames(
+        FilaEngine* engine,
+        FilaGltfioMaterialProvider* materials,
+        FilaEntityManager* entities,
+        FilaNameComponentManager* names,
+        const char* defaultNodeName);
+
 // Destroys the asset loader and sets the caller handle to NULL.
 void FilaGltfioAssetLoader_destroy(FilaGltfioAssetLoader** inOutLoader);
 
@@ -50,6 +58,12 @@ void FilaGltfioAssetLoader_enableDiagnostics(FilaGltfioAssetLoader* loader, bool
 
 // Returns the count of cached glTF materials.
 size_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* loader);
+
+// Writes up to maxCount cached material handles.
+size_t FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* loader,
+        const FilaMaterial** outMaterials,
+        size_t maxCount);
+
 
 #ifdef __cplusplus
 }

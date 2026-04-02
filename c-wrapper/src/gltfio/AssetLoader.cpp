@@ -14,6 +14,15 @@ FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(
         FilaGltfioMaterialProvider* materials,
         FilaEntityManager* entities,
         const char* defaultNodeName) {
+    return FilaGltfioAssetLoader_createWithNames(engine, materials, entities, (FilaNameComponentManager*)0, defaultNodeName);
+}
+
+FilaGltfioAssetLoader* FilaGltfioAssetLoader_createWithNames(
+        FilaEngine* engine,
+        FilaGltfioMaterialProvider* materials,
+        FilaEntityManager* entities,
+        FilaNameComponentManager* names,
+        const char* defaultNodeName) {
     if (!engine || !materials) {
         return nullptr;
     }
@@ -22,8 +31,8 @@ FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(
     config.engine = reinterpret_cast<filament::Engine*>(engine);
     config.materials = reinterpret_cast<filament::gltfio::MaterialProvider*>(materials);
     config.entities = reinterpret_cast<utils::EntityManager*>(entities);
+    config.names = reinterpret_cast<utils::NameComponentManager*>(names);
     config.defaultNodeName = const_cast<char*>(defaultNodeName);
-    config.names = nullptr;
     config.ext = nullptr;
 
     return reinterpret_cast<FilaGltfioAssetLoader*>(filament::gltfio::AssetLoader::create(config));
@@ -116,6 +125,26 @@ size_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* load
     auto* cppLoader = reinterpret_cast<const filament::gltfio::AssetLoader*>(loader);
     return cppLoader->getMaterialsCount();
 }
+
+size_t FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* loader,
+        const FilaMaterial** outMaterials,
+        size_t maxCount) {
+    if (!loader || !outMaterials || maxCount == 0u) {
+        return 0u;
+    }
+    auto* cppLoader = reinterpret_cast<const filament::gltfio::AssetLoader*>(loader);
+    const size_t count = cppLoader->getMaterialsCount();
+    const size_t written = (count < maxCount) ? count : maxCount;
+    const filament::Material* const* materials = cppLoader->getMaterials();
+    if (!materials) {
+        return 0u;
+    }
+    for (size_t i = 0u; i < written; ++i) {
+        outMaterials[i] = reinterpret_cast<const FilaMaterial*>(materials[i]);
+    }
+    return written;
+}
+
 
 } // extern "C"
 

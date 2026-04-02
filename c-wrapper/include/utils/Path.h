@@ -24,6 +24,7 @@ void FilaUtilsPath_setPath(FilaUtilsPath* path, const char* pathname);
 
 // Returns required bytes excluding null terminator.
 size_t FilaUtilsPath_copyPath(const FilaUtilsPath* path, char* outPath, size_t outPathSize);
+size_t FilaUtilsPath_copyCanonicalPath(const char* pathname, char* outPath, size_t outPathSize);
 size_t FilaUtilsPath_copyName(const FilaUtilsPath* path, char* outName, size_t outNameSize);
 size_t FilaUtilsPath_copyNameWithoutExtension(
         const FilaUtilsPath* path,
@@ -37,6 +38,12 @@ FilaUtilsPath* FilaUtilsPath_getAbsolutePath(const FilaUtilsPath* path);
 FilaUtilsPath* FilaUtilsPath_concat(const FilaUtilsPath* root, const FilaUtilsPath* leaf);
 bool FilaUtilsPath_concatToSelf(FilaUtilsPath* root, const FilaUtilsPath* leaf);
 bool FilaUtilsPath_equals(const FilaUtilsPath* lhs, const FilaUtilsPath* rhs);
+
+size_t FilaUtilsPath_getSegmentCount(const FilaUtilsPath* path);
+size_t FilaUtilsPath_copySegmentAt(const FilaUtilsPath* path, size_t segmentIndex, char* outSegment, size_t outSegmentSize);
+
+size_t FilaUtilsPath_getListContentsCount(const FilaUtilsPath* path);
+FilaUtilsPath* FilaUtilsPath_getListContentAt(const FilaUtilsPath* path, size_t entryIndex);
 
 FilaUtilsPath* FilaUtilsPath_getCurrentDirectory(void);
 FilaUtilsPath* FilaUtilsPath_getCurrentExecutable(void);

@@ -40,6 +40,9 @@ size_t FilaGltfioFilamentInstance_copyMaterialVariantName(const FilaGltfioFilame
 // Returns the animator associated with this instance.
 FilaGltfioAnimator* FilaGltfioFilamentInstance_getAnimator(FilaGltfioFilamentInstance* instance);
 
+// Returns the asset that owns this instance.
+const FilaGltfioFilamentAsset* FilaGltfioFilamentInstance_getAsset(const FilaGltfioFilamentInstance* instance);
+
 // Returns the number of skins on this instance.
 size_t FilaGltfioFilamentInstance_getSkinCount(const FilaGltfioFilamentInstance* instance);
 
@@ -61,6 +64,25 @@ size_t FilaGltfioFilamentInstance_getJointsAt(const FilaGltfioFilamentInstance* 
         FilaEntity* outJoints,
         size_t maxCount);
 
+// Attaches the given skin to a target entity.
+void FilaGltfioFilamentInstance_attachSkin(
+        FilaGltfioFilamentInstance* instance,
+        size_t skinIndex,
+        FilaEntity target);
+
+// Detaches the given skin from a target entity.
+void FilaGltfioFilamentInstance_detachSkin(
+        FilaGltfioFilamentInstance* instance,
+        size_t skinIndex,
+        FilaEntity target);
+
+// Copies inverse bind matrices as column-major float4x4 blocks.
+size_t FilaGltfioFilamentInstance_getInverseBindMatricesAt(
+        const FilaGltfioFilamentInstance* instance,
+        size_t skinIndex,
+        float* outMatrices4x4,
+        size_t maxMatrices);
+
 // Returns number of material instances bound to this instance.
 size_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* instance);
 
@@ -68,6 +90,9 @@ size_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilam
 size_t FilaGltfioFilamentInstance_getMaterialInstances(const FilaGltfioFilamentInstance* instance,
         FilaMaterialInstance** outMaterialInstances,
         size_t maxCount);
+
+// Releases ownership of material instances to caller code.
+void FilaGltfioFilamentInstance_detachMaterialInstances(FilaGltfioFilamentInstance* instance);
 
 // Recomputes renderable bounding boxes for malformed assets.
 void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstance* instance);
