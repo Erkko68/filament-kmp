@@ -16,6 +16,7 @@ typedef struct FilaBufferDescriptor FilaBufferDescriptor;
 
 // Callback for buffer release
 typedef void (*FilaBufferReleaseCallback)(void* buffer, size_t size, void* user);
+typedef void (*FilaBufferReleaseTokenCallback)(void* buffer, size_t size, uintptr_t userToken);
 
 /**
  * Creates a FilaBufferDescriptor.
@@ -32,17 +33,31 @@ typedef void (*FilaBufferReleaseCallback)(void* buffer, size_t size, void* user)
 FilaBufferDescriptor* FilaBufferDescriptor_create(
     const void* buffer, size_t size, FilaBufferReleaseCallback callback, void* user);
 
+FilaBufferDescriptor* FilaBufferDescriptor_createWithToken(
+    const void* buffer, size_t size, FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 FilaBufferDescriptor* FilaBufferDescriptor_createWithHandler(
     const void* buffer, size_t size, FilaCallbackHandler* handler,
     FilaBufferReleaseCallback callback, void* user);
+
+FilaBufferDescriptor* FilaBufferDescriptor_createWithHandlerAndToken(
+    const void* buffer, size_t size, FilaCallbackHandler* handler,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
 
 // Replaces the release callback and associated user pointer.
 void FilaBufferDescriptor_setCallback(
     FilaBufferDescriptor* desc, FilaBufferReleaseCallback callback, void* user);
 
+void FilaBufferDescriptor_setCallbackWithToken(
+    FilaBufferDescriptor* desc, FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 void FilaBufferDescriptor_setCallbackWithHandler(
     FilaBufferDescriptor* desc, FilaCallbackHandler* handler,
     FilaBufferReleaseCallback callback, void* user);
+
+void FilaBufferDescriptor_setCallbackWithHandlerAndToken(
+    FilaBufferDescriptor* desc, FilaCallbackHandler* handler,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
 
 // Returns true if a release callback is currently set.
 bool FilaBufferDescriptor_hasCallback(const FilaBufferDescriptor* desc);
@@ -52,6 +67,9 @@ FilaBufferReleaseCallback FilaBufferDescriptor_getCallback(const FilaBufferDescr
 
 // Returns the currently configured user pointer.
 void* FilaBufferDescriptor_getUser(const FilaBufferDescriptor* desc);
+
+// Returns the currently configured user token.
+uintptr_t FilaBufferDescriptor_getUserToken(const FilaBufferDescriptor* desc);
 
 // Returns the callback handler associated with this descriptor, or NULL.
 FilaCallbackHandler* FilaBufferDescriptor_getHandler(const FilaBufferDescriptor* desc);

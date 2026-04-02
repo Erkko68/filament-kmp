@@ -2,6 +2,7 @@
 
 void test_headers_gltfio_filament_asset(void) {
     FilaEntity entities[4];
+    FilaGltfioFilamentInstance* instances[2];
     FilaAabb aabb;
     char text[32];
 
@@ -14,6 +15,19 @@ void test_headers_gltfio_filament_asset(void) {
     (void)FilaGltfioFilamentAsset_getCameraEntities((const FilaGltfioFilamentAsset*)0, entities, 4u);
     (void)FilaGltfioFilamentAsset_getCameraEntityCount((const FilaGltfioFilamentAsset*)0);
     (void)FilaGltfioFilamentAsset_getRoot((const FilaGltfioFilamentAsset*)0);
+    FilaGltfioFilamentAsset_addEntitiesToScene(
+            (const FilaGltfioFilamentAsset*)0,
+            (FilaScene*)0,
+            entities,
+            4u,
+            (FilaGltfioSceneMask)0u);
+    FilaGltfioFilamentAsset_addAllEntitiesToScene(
+            (const FilaGltfioFilamentAsset*)0,
+            (FilaScene*)0,
+            (FilaGltfioSceneMask)0u);
+    FilaGltfioFilamentAsset_removeEntitiesFromScene(
+            (const FilaGltfioFilamentAsset*)0,
+            (FilaScene*)0);
     (void)FilaGltfioFilamentAsset_popRenderable((FilaGltfioFilamentAsset*)0);
     (void)FilaGltfioFilamentAsset_popRenderables((FilaGltfioFilamentAsset*)0, entities, 4u);
     (void)FilaGltfioFilamentAsset_getResourceUriCount((const FilaGltfioFilamentAsset*)0);
@@ -40,5 +54,7 @@ void test_headers_gltfio_filament_asset(void) {
     (void)FilaGltfioFilamentAsset_getSceneName((const FilaGltfioFilamentAsset*)0, 0u);
     (void)FilaGltfioFilamentAsset_copySceneName((const FilaGltfioFilamentAsset*)0, 0u, text, sizeof(text));
     (void)FilaGltfioFilamentAsset_getInstance((FilaGltfioFilamentAsset*)0);
+    (void)FilaGltfioFilamentAsset_getAssetInstanceCount((const FilaGltfioFilamentAsset*)0);
+    (void)FilaGltfioFilamentAsset_getAssetInstances((FilaGltfioFilamentAsset*)0, instances, 2u);
 }
 

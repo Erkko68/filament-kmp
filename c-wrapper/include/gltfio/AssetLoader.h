@@ -64,6 +64,12 @@ size_t FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* loader,
         const FilaMaterial** outMaterials,
         size_t maxCount);
 
+// Returns the NameComponentManager associated with this loader, or NULL.
+FilaNameComponentManager* FilaGltfioAssetLoader_getNames(const FilaGltfioAssetLoader* loader);
+
+// Returns the MaterialProvider associated with this loader.
+FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* loader);
+
 
 #ifdef __cplusplus
 }

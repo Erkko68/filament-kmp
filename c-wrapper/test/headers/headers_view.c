@@ -4,6 +4,16 @@
 #include "filament/RenderTarget.h"
 #include "filament/Texture.h"
 
+static void pick_cb(const FilaViewPickingQueryResult* result, void* userData) {
+    (void)result;
+    (void)userData;
+}
+
+static void pick_token_cb(const FilaViewPickingQueryResult* result, uintptr_t userToken) {
+    (void)result;
+    (void)userToken;
+}
+
 // Verifies View API is consumable from C and composes with Engine + Scene handles.
 void test_headers_view(void) {
     FilaEngine* engine = (FilaEngine*)0;
@@ -129,6 +139,11 @@ void test_headers_view(void) {
         FilaViewFroxelConfigurationInfoWithAge froxelInfo;
         (void)FilaView_getFroxelConfigurationInfo(view, &froxelInfo);
     }
+    (void)FilaView_pick(view, 10u, 20u, pick_cb, (void*)0x1);
+    (void)FilaView_pickWithHandler(view, 10u, 20u, (FilaCallbackHandler*)0, pick_cb, (void*)0x2);
+    (void)FilaView_pickWithToken(view, 10u, 20u, pick_token_cb, (uintptr_t)3u);
+    (void)FilaView_pickWithHandlerAndToken(
+        view, 10u, 20u, (FilaCallbackHandler*)0, pick_token_cb, (uintptr_t)4u);
     {
         float materialGlobal[4] = {0.0f, 0.0f, 0.0f, 1.0f};
         FilaView_setMaterialGlobal(view, 0u, materialGlobal);

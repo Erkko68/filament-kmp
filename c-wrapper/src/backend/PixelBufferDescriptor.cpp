@@ -5,7 +5,9 @@
 namespace {
 struct CallbackPayload {
     FilaBufferReleaseCallback callback;
+    FilaBufferReleaseTokenCallback tokenCallback;
     void* user;
+    uintptr_t userToken;
 };
 
 void releasePayload(CallbackPayload* payload) {
@@ -20,16 +22,25 @@ void buffer_release_trampoline(void* buffer, size_t size, void* user) {
     if (payload->callback) {
         payload->callback(buffer, size, payload->user);
     }
+    if (payload->tokenCallback) {
+        payload->tokenCallback(buffer, size, payload->userToken);
+    }
     releasePayload(payload);
 }
 
-CallbackPayload* makePayload(FilaBufferReleaseCallback callback, void* user) {
-    if (!callback) {
+CallbackPayload* makePayload(
+        FilaBufferReleaseCallback callback,
+        void* user,
+        FilaBufferReleaseTokenCallback tokenCallback,
+        uintptr_t userToken) {
+    if (!callback && !tokenCallback) {
         return nullptr;
     }
     auto payload = new CallbackPayload;
     payload->callback = callback;
+    payload->tokenCallback = tokenCallback;
     payload->user = user;
+    payload->userToken = userToken;
     return payload;
 }
 
@@ -52,12 +63,27 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_create(const void* buffer, 
         buffer, size, format, type, alignment, 0, 0, 0, nullptr, callback, user);
 }
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithToken(const void* buffer, size_t size,
+        FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment,
+        FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    return FilaPixelBufferDescriptor_createWithLayoutHandlerAndToken(
+        buffer, size, format, type, alignment, 0, 0, 0, nullptr, callback, userToken);
+}
+
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayout(const void* buffer, size_t size,
         FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment,
         uint32_t left, uint32_t top, uint32_t stride,
         FilaBufferReleaseCallback callback, void* user) {
     return FilaPixelBufferDescriptor_createWithLayoutAndHandler(
         buffer, size, format, type, alignment, left, top, stride, nullptr, callback, user);
+}
+
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutAndToken(const void* buffer, size_t size,
+        FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment,
+        uint32_t left, uint32_t top, uint32_t stride,
+        FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    return FilaPixelBufferDescriptor_createWithLayoutHandlerAndToken(
+        buffer, size, format, type, alignment, left, top, stride, nullptr, callback, userToken);
 }
 
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithHandler(const void* buffer, size_t size,
@@ -67,11 +93,18 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithHandler(const voi
         buffer, size, format, type, alignment, 0, 0, 0, handler, callback, user);
 }
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithHandlerAndToken(const void* buffer, size_t size,
+        FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment,
+        FilaCallbackHandler* handler, FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    return FilaPixelBufferDescriptor_createWithLayoutHandlerAndToken(
+        buffer, size, format, type, alignment, 0, 0, 0, handler, callback, userToken);
+}
+
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutAndHandler(
         const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
         uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferReleaseCallback callback, void* user) {
-    auto payload = makePayload(callback, user);
+    auto payload = makePayload(callback, user, nullptr, 0u);
     auto cppHandler = handler ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl) : nullptr;
     auto desc = new FilaPixelBufferDescriptor;
     desc->impl = new filament::backend::PixelBufferDescriptor(
@@ -83,7 +116,33 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutAndHandler(
         callback ? buffer_release_trampoline : nullptr,
         payload);
     desc->callback = callback;
+    desc->tokenCallback = nullptr;
     desc->user = user;
+    desc->userToken = 0u;
+    desc->handler = handler;
+    desc->consumed = false;
+    return desc;
+}
+
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutHandlerAndToken(
+        const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
+        uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+        FilaCallbackHandler* handler, FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    auto payload = makePayload(nullptr, nullptr, callback, userToken);
+    auto cppHandler = handler ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl) : nullptr;
+    auto desc = new FilaPixelBufferDescriptor;
+    desc->impl = new filament::backend::PixelBufferDescriptor(
+        buffer, size,
+        static_cast<filament::backend::PixelDataFormat>(format),
+        static_cast<filament::backend::PixelDataType>(type),
+        alignment, left, top, stride,
+        cppHandler,
+        callback ? buffer_release_trampoline : nullptr,
+        payload);
+    desc->callback = nullptr;
+    desc->tokenCallback = callback;
+    desc->user = nullptr;
+    desc->userToken = userToken;
     desc->handler = handler;
     desc->consumed = false;
     return desc;
@@ -96,10 +155,17 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressed(const void
         buffer, size, format, imageSize, nullptr, callback, user);
 }
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithToken(const void* buffer, size_t size,
+        FilaCompressedPixelDataType format, uint32_t imageSize,
+        FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    return FilaPixelBufferDescriptor_createCompressedWithHandlerAndToken(
+        buffer, size, format, imageSize, nullptr, callback, userToken);
+}
+
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithHandler(
         const void* buffer, size_t size, FilaCompressedPixelDataType format, uint32_t imageSize,
         FilaCallbackHandler* handler, FilaBufferReleaseCallback callback, void* user) {
-    auto payload = makePayload(callback, user);
+    auto payload = makePayload(callback, user, nullptr, 0u);
     auto cppHandler = handler ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl) : nullptr;
     auto desc = new FilaPixelBufferDescriptor;
     desc->impl = new filament::backend::PixelBufferDescriptor(
@@ -109,7 +175,30 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithHandler
         callback ? buffer_release_trampoline : nullptr,
         payload);
     desc->callback = callback;
+    desc->tokenCallback = nullptr;
     desc->user = user;
+    desc->userToken = 0u;
+    desc->handler = handler;
+    desc->consumed = false;
+    return desc;
+}
+
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithHandlerAndToken(
+        const void* buffer, size_t size, FilaCompressedPixelDataType format, uint32_t imageSize,
+        FilaCallbackHandler* handler, FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    auto payload = makePayload(nullptr, nullptr, callback, userToken);
+    auto cppHandler = handler ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl) : nullptr;
+    auto desc = new FilaPixelBufferDescriptor;
+    desc->impl = new filament::backend::PixelBufferDescriptor(
+        buffer, size,
+        static_cast<filament::backend::CompressedPixelDataType>(format), imageSize,
+        cppHandler,
+        callback ? buffer_release_trampoline : nullptr,
+        payload);
+    desc->callback = nullptr;
+    desc->tokenCallback = callback;
+    desc->user = nullptr;
+    desc->userToken = userToken;
     desc->handler = handler;
     desc->consumed = false;
     return desc;
@@ -125,10 +214,31 @@ void FilaPixelBufferDescriptor_setCallback(FilaPixelBufferDescriptor* desc,
         auto oldPayload = static_cast<CallbackPayload*>(impl->getUser());
         releasePayload(oldPayload);
     }
-    auto payload = makePayload(callback, user);
+    auto payload = makePayload(callback, user, nullptr, 0u);
     impl->setCallback(callback ? buffer_release_trampoline : nullptr, payload);
     desc->callback = callback;
+    desc->tokenCallback = nullptr;
     desc->user = user;
+    desc->userToken = 0u;
+    desc->handler = nullptr;
+}
+
+void FilaPixelBufferDescriptor_setCallbackWithToken(FilaPixelBufferDescriptor* desc,
+        FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    if (!desc || !desc->impl) {
+        return;
+    }
+    auto impl = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(desc->impl);
+    if (impl->hasCallback()) {
+        auto oldPayload = static_cast<CallbackPayload*>(impl->getUser());
+        releasePayload(oldPayload);
+    }
+    auto payload = makePayload(nullptr, nullptr, callback, userToken);
+    impl->setCallback(callback ? buffer_release_trampoline : nullptr, payload);
+    desc->callback = nullptr;
+    desc->tokenCallback = callback;
+    desc->user = nullptr;
+    desc->userToken = userToken;
     desc->handler = nullptr;
 }
 
@@ -143,11 +253,34 @@ void FilaPixelBufferDescriptor_setCallbackWithHandler(
         auto oldPayload = static_cast<CallbackPayload*>(impl->getUser());
         releasePayload(oldPayload);
     }
-    auto payload = makePayload(callback, user);
+    auto payload = makePayload(callback, user, nullptr, 0u);
     auto cppHandler = handler ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl) : nullptr;
     impl->setCallback(cppHandler, callback ? buffer_release_trampoline : nullptr, payload);
     desc->callback = callback;
+    desc->tokenCallback = nullptr;
     desc->user = user;
+    desc->userToken = 0u;
+    desc->handler = handler;
+}
+
+void FilaPixelBufferDescriptor_setCallbackWithHandlerAndToken(
+        FilaPixelBufferDescriptor* desc, FilaCallbackHandler* handler,
+        FilaBufferReleaseTokenCallback callback, uintptr_t userToken) {
+    if (!desc || !desc->impl) {
+        return;
+    }
+    auto impl = reinterpret_cast<filament::backend::PixelBufferDescriptor*>(desc->impl);
+    if (impl->hasCallback()) {
+        auto oldPayload = static_cast<CallbackPayload*>(impl->getUser());
+        releasePayload(oldPayload);
+    }
+    auto payload = makePayload(nullptr, nullptr, callback, userToken);
+    auto cppHandler = handler ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl) : nullptr;
+    impl->setCallback(cppHandler, callback ? buffer_release_trampoline : nullptr, payload);
+    desc->callback = nullptr;
+    desc->tokenCallback = callback;
+    desc->user = nullptr;
+    desc->userToken = userToken;
     desc->handler = handler;
 }
 
@@ -171,6 +304,13 @@ void* FilaPixelBufferDescriptor_getUser(const FilaPixelBufferDescriptor* desc) {
         return nullptr;
     }
     return desc->user;
+}
+
+uintptr_t FilaPixelBufferDescriptor_getUserToken(const FilaPixelBufferDescriptor* desc) {
+    if (!desc || !desc->impl) {
+        return 0u;
+    }
+    return desc->userToken;
 }
 
 FilaCallbackHandler* FilaPixelBufferDescriptor_getHandler(const FilaPixelBufferDescriptor* desc) {

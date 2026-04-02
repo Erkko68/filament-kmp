@@ -145,6 +145,22 @@ size_t FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* loader,
     return written;
 }
 
+FilaNameComponentManager* FilaGltfioAssetLoader_getNames(const FilaGltfioAssetLoader* loader) {
+    if (!loader) {
+        return nullptr;
+    }
+    auto* cppLoader = reinterpret_cast<const filament::gltfio::AssetLoader*>(loader);
+    return reinterpret_cast<FilaNameComponentManager*>(cppLoader->getNames());
+}
+
+FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* loader) {
+    if (!loader) {
+        return nullptr;
+    }
+    auto* cppLoader = reinterpret_cast<filament::gltfio::AssetLoader*>(loader);
+    return reinterpret_cast<FilaGltfioMaterialProvider*>(&cppLoader->getMaterialProvider());
+}
+
 
 } // extern "C"
 

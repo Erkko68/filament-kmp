@@ -6,6 +6,7 @@ int main(void) {
     printf("Running functionality_gltfio_filament_asset_null_safety...\n");
 
     FilaEntity entities[2] = {1, 1};
+    FilaGltfioFilamentInstance* instances[2] = {(FilaGltfioFilamentInstance*)1, (FilaGltfioFilamentInstance*)1};
     FilaAabb aabb;
     char text[8] = {'x', 0};
 
@@ -19,10 +20,27 @@ int main(void) {
             FilaGltfioFilamentAsset_getCameraEntityCount((const FilaGltfioFilamentAsset*)0) != 0u ||
             FilaGltfioFilamentAsset_getRoot((const FilaGltfioFilamentAsset*)0) != 0 ||
             FilaGltfioFilamentAsset_popRenderable((FilaGltfioFilamentAsset*)0) != 0 ||
-            FilaGltfioFilamentAsset_popRenderables((FilaGltfioFilamentAsset*)0, entities, 2u) != 0u) {
+            FilaGltfioFilamentAsset_popRenderables((FilaGltfioFilamentAsset*)0, entities, 2u) != 0u ||
+            FilaGltfioFilamentAsset_getAssetInstanceCount((const FilaGltfioFilamentAsset*)0) != 0u ||
+            FilaGltfioFilamentAsset_getAssetInstances((FilaGltfioFilamentAsset*)0, instances, 2u) != 0u) {
         printf("FilamentAsset null entity/query mismatch\n");
         return 1;
     }
+
+    FilaGltfioFilamentAsset_addAllEntitiesToScene(
+            (const FilaGltfioFilamentAsset*)0,
+            (FilaScene*)0,
+            (FilaGltfioSceneMask)0u);
+    FilaGltfioFilamentAsset_removeEntitiesFromScene(
+            (const FilaGltfioFilamentAsset*)0,
+            (FilaScene*)0);
+
+    FilaGltfioFilamentAsset_addEntitiesToScene(
+            (const FilaGltfioFilamentAsset*)0,
+            (FilaScene*)0,
+            entities,
+            2u,
+            (FilaGltfioSceneMask)0u);
 
     if (FilaGltfioFilamentAsset_getResourceUriCount((const FilaGltfioFilamentAsset*)0) != 0u ||
             FilaGltfioFilamentAsset_getResourceUriAt((const FilaGltfioFilamentAsset*)0, 0u) != (const char*)0 ||

@@ -9,7 +9,9 @@
 struct FilaBufferDescriptor {
     void* impl;
     FilaBufferReleaseCallback callback;
+    FilaBufferReleaseTokenCallback tokenCallback;
     void* user;
+    uintptr_t userToken;
     FilaCallbackHandler* handler;
     bool consumed;
 };
@@ -17,7 +19,9 @@ struct FilaBufferDescriptor {
 struct FilaPixelBufferDescriptor {
     void* impl;
     FilaBufferReleaseCallback callback;
+    FilaBufferReleaseTokenCallback tokenCallback;
     void* user;
+    uintptr_t userToken;
     FilaCallbackHandler* handler;
     bool consumed;
 };

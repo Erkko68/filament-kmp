@@ -59,8 +59,10 @@
 #include "gltfio/FilamentAsset.h"
 #include "gltfio/FilamentInstance.h"
 #include "gltfio/MaterialProvider.h"
+#include "gltfio/NodeManager.h"
 #include "gltfio/ResourceLoader.h"
 #include "gltfio/TextureProvider.h"
+#include "gltfio/TrsTransformManager.h"
 
 #include "geometry/Transcoder.h"
 #include "geometry/SurfaceOrientation.h"

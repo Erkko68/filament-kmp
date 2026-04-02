@@ -70,4 +70,12 @@ export FILA_TEST_MATERIAL_PACKAGE="/absolute/path/to/sample.filamat"
 ./test/test_functionality.sh
 ```
 
+## Optional glTF Load/Unload Smoke Fixture
+
+`functionality_gltfio_load_unload_smoke` runs a deterministic lifecycle path when:
+
+- `FILA_TEST_GLTF_GLB`
+
+is set to an absolute `.glb` fixture path. If unset, the test prints a skip message and exits `0`.
+
 

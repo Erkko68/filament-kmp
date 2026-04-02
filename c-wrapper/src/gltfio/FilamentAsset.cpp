@@ -3,6 +3,7 @@
 #include <cstring>
 #include <vector>
 
+#include <filament/Scene.h>
 #include <utils/Entity.h>
 
 #include "../../include/gltfio/FilamentAsset.h"
@@ -137,6 +138,62 @@ FilaEntity FilaGltfioFilamentAsset_getRoot(const FilaGltfioFilamentAsset* asset)
     }
     auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
     return fromEntity(cppAsset->getRoot());
+}
+
+void FilaGltfioFilamentAsset_addEntitiesToScene(
+        const FilaGltfioFilamentAsset* asset,
+        FilaScene* scene,
+        const FilaEntity* entities,
+        size_t entityCount,
+        FilaGltfioSceneMask sceneFilter) {
+    if (!asset || !scene || !entities || entityCount == 0u) {
+        return;
+    }
+
+    std::vector<utils::Entity> cppEntities(entityCount);
+    for (size_t i = 0u; i < entityCount; ++i) {
+        cppEntities[i] = utils::Entity::import(entities[i]);
+    }
+
+    auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
+    auto* cppScene = reinterpret_cast<filament::Scene*>(scene);
+    cppAsset->addEntitiesToScene(
+            *cppScene,
+            cppEntities.data(),
+            entityCount,
+            filament::gltfio::FilamentAsset::SceneMask(sceneFilter));
+}
+
+void FilaGltfioFilamentAsset_addAllEntitiesToScene(
+        const FilaGltfioFilamentAsset* asset,
+        FilaScene* scene,
+        FilaGltfioSceneMask sceneFilter) {
+    if (!asset || !scene) {
+        return;
+    }
+    auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
+    auto* cppScene = reinterpret_cast<filament::Scene*>(scene);
+    cppAsset->addEntitiesToScene(
+            *cppScene,
+            cppAsset->getEntities(),
+            cppAsset->getEntityCount(),
+            filament::gltfio::FilamentAsset::SceneMask(sceneFilter));
+}
+
+void FilaGltfioFilamentAsset_removeEntitiesFromScene(
+        const FilaGltfioFilamentAsset* asset,
+        FilaScene* scene) {
+    if (!asset || !scene) {
+        return;
+    }
+    auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
+    auto* cppScene = reinterpret_cast<filament::Scene*>(scene);
+    const auto* entities = cppAsset->getEntities();
+    const auto count = cppAsset->getEntityCount();
+    if (!entities || count == 0u) {
+        return;
+    }
+    cppScene->removeEntities(entities, count);
 }
 
 FilaEntity FilaGltfioFilamentAsset_popRenderable(FilaGltfioFilamentAsset* asset) {
@@ -395,6 +452,38 @@ FilaGltfioFilamentInstance* FilaGltfioFilamentAsset_getInstance(FilaGltfioFilame
     }
     auto* cppAsset = reinterpret_cast<filament::gltfio::FilamentAsset*>(asset);
     return reinterpret_cast<FilaGltfioFilamentInstance*>(cppAsset->getInstance());
+}
+
+size_t FilaGltfioFilamentAsset_getAssetInstanceCount(const FilaGltfioFilamentAsset* asset) {
+    if (!asset) {
+        return 0u;
+    }
+    auto* cppAsset = reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset);
+    return cppAsset->getAssetInstanceCount();
+}
+
+size_t FilaGltfioFilamentAsset_getAssetInstances(
+        FilaGltfioFilamentAsset* asset,
+        FilaGltfioFilamentInstance** outInstances,
+        size_t maxCount) {
+    if (!asset) {
+        return 0u;
+    }
+    auto* cppAsset = reinterpret_cast<filament::gltfio::FilamentAsset*>(asset);
+    const size_t count = cppAsset->getAssetInstanceCount();
+    if (!outInstances || maxCount == 0u) {
+        return count;
+    }
+
+    filament::gltfio::FilamentInstance** instances = cppAsset->getAssetInstances();
+    if (!instances) {
+        return 0u;
+    }
+    const size_t written = (count < maxCount) ? count : maxCount;
+    for (size_t i = 0u; i < written; ++i) {
+        outInstances[i] = reinterpret_cast<FilaGltfioFilamentInstance*>(instances[i]);
+    }
+    return written;
 }
 
 } // extern "C"

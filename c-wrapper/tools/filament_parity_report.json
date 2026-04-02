@@ -1,107 +1,24 @@
 {
   "prebuilt_header_count": 183,
-  "wrapper_header_count": 62,
+  "wrapper_header_count": 74,
   "missing_headers": [
-    "backend/platforms/AndroidNdk.h",
-    "backend/platforms/OpenGLPlatform.h",
-    "backend/platforms/PlatformCocoaGL.h",
-    "backend/platforms/PlatformCocoaTouchGL.h",
-    "backend/platforms/PlatformEGL.h",
-    "backend/platforms/PlatformEGLAndroid.h",
-    "backend/platforms/PlatformEGLHeadless.h",
-    "backend/platforms/PlatformGLX.h",
-    "backend/platforms/PlatformMetal-ObjC.h",
-    "backend/platforms/PlatformMetal.h",
-    "backend/platforms/PlatformOSMesa.h",
-    "backend/platforms/PlatformWGL.h",
-    "backend/platforms/PlatformWebGL.h",
-    "backend/platforms/VulkanPlatform.h",
-    "backend/platforms/VulkanPlatformAndroid.h",
-    "backend/platforms/VulkanPlatformApple.h",
-    "backend/platforms/VulkanPlatformLinux.h",
-    "backend/platforms/VulkanPlatformWindows.h",
-    "backend/platforms/WebGPUPlatform.h",
-    "backend/platforms/WebGPUPlatformAndroid.h",
-    "backend/platforms/WebGPUPlatformApple.h",
-    "backend/platforms/WebGPUPlatformLinux.h",
-    "backend/platforms/WebGPUPlatformWindows.h",
-    "camutils/Bookmark.h",
-    "camutils/Manipulator.h",
-    "camutils/compiler.h",
-    "filamat/Enums.h",
-    "filamat/MaterialBuilder.h",
-    "filamat/Package.h",
-    "filament-generatePrefilterMipmap/generatePrefilterMipmap.h",
-    "filament-iblprefilter/IBLPrefilterContext.h",
     "filameshio/MeshReader.h",
-    "geometry/SurfaceOrientation.h",
-    "geometry/TangentSpaceMesh.h",
-    "geometry/Transcoder.h",
-    "gltfio/Animator.h",
-    "gltfio/AssetLoader.h",
-    "gltfio/FilamentAsset.h",
-    "gltfio/FilamentInstance.h",
-    "gltfio/MaterialProvider.h",
     "gltfio/NodeManager.h",
-    "gltfio/ResourceLoader.h",
-    "gltfio/TextureProvider.h",
     "gltfio/TrsTransformManager.h",
     "gltfio/materials/uberarchive.h",
     "gltfio/math.h",
-    "ibl/Cubemap.h",
-    "ibl/CubemapIBL.h",
-    "ibl/CubemapSH.h",
-    "ibl/CubemapUtils.h",
-    "ibl/Image.h",
-    "ibl/utilities.h",
-    "image/ColorTransform.h",
-    "image/ImageOps.h",
-    "image/ImageSampler.h",
-    "image/Ktx1Bundle.h",
-    "image/LinearImage.h",
-    "imageio-lite/ImageDecoder.h",
-    "imageio-lite/ImageEncoder.h",
-    "ktxreader/Ktx1Reader.h",
-    "ktxreader/Ktx2Reader.h",
-    "math/TMatHelpers.h",
-    "math/TQuatHelpers.h",
-    "math/TVecHelpers.h",
-    "math/compiler.h",
-    "math/fast.h",
-    "math/half.h",
-    "math/mat2.h",
-    "math/mat3.h",
-    "math/mat4.h",
-    "math/mathfwd.h",
-    "math/norm.h",
-    "math/quat.h",
-    "math/scalar.h",
-    "math/vec2.h",
-    "math/vec3.h",
-    "math/vec4.h",
-    "mathio/ostream.h",
-    "mikktspace/mikktspace.h",
-    "tsl/robin_growth_policy.h",
-    "tsl/robin_hash.h",
-    "tsl/robin_map.h",
-    "tsl/robin_set.h",
-    "uberz/ArchiveEnums.h",
-    "uberz/ReadableArchive.h",
-    "uberz/WritableArchive.h",
     "utils/Allocator.h",
     "utils/BitmaskEnum.h",
-    "utils/CallStack.h",
+    "utils/CString.h",
     "utils/FixedCapacityVector.h",
     "utils/Hash.h",
+    "utils/ImmutableCString.h",
     "utils/InternPool.h",
     "utils/Invocable.h",
-    "utils/Log.h",
     "utils/Logger.h",
     "utils/LruCache.h",
     "utils/MonotonicRingMap.h",
     "utils/Mutex.h",
-    "utils/NameComponentManager.h",
-    "utils/Panic.h",
     "utils/PrivateImplementation-impl.h",
     "utils/PrivateImplementation.h",
     "utils/RefCountedMap.h",
@@ -120,12 +37,7 @@
     "utils/memalign.h",
     "utils/ostream.h",
     "utils/sstream.h",
-    "utils/unwindows.h",
-    "viewer/AutomationEngine.h",
-    "viewer/AutomationSpec.h",
-    "viewer/RemoteServer.h",
-    "viewer/Settings.h",
-    "viewer/ViewerGui.h"
+    "utils/unwindows.h"
   ],
   "shared_headers": [
     {
@@ -138,7 +50,7 @@
     {
       "header": "backend/BufferDescriptor.h",
       "prebuilt_method_count": 3,
-      "wrapper_function_count": 11,
+      "wrapper_function_count": 16,
       "covered_method_count": 2,
       "missing_methods": [
         "mCallback"
@@ -147,7 +59,7 @@
     {
       "header": "backend/CallbackHandler.h",
       "prebuilt_method_count": 2,
-      "wrapper_function_count": 2,
+      "wrapper_function_count": 3,
       "covered_method_count": 1,
       "missing_methods": [
         "post"
@@ -205,7 +117,7 @@
     {
       "header": "backend/PixelBufferDescriptor.h",
       "prebuilt_method_count": 3,
-      "wrapper_function_count": 25,
+      "wrapper_function_count": 34,
       "covered_method_count": 2,
       "missing_methods": [
         "assert_invariant"
@@ -288,9 +200,9 @@
     },
     {
       "header": "filament/BufferObject.h",
-      "prebuilt_method_count": 7,
+      "prebuilt_method_count": 5,
       "wrapper_function_count": 7,
-      "covered_method_count": 7,
+      "covered_method_count": 5,
       "missing_methods": []
     },
     {
@@ -313,12 +225,10 @@
     },
     {
       "header": "filament/ColorGrading.h",
-      "prebuilt_method_count": 20,
+      "prebuilt_method_count": 17,
       "wrapper_function_count": 20,
-      "covered_method_count": 19,
-      "missing_methods": [
-        "toneMapping"
-      ]
+      "covered_method_count": 17,
+      "missing_methods": []
     },
     {
       "header": "filament/ColorSpace.h",
@@ -338,16 +248,13 @@
       "header": "filament/Engine.h",
       "prebuilt_method_count": 76,
       "wrapper_function_count": 108,
-      "covered_method_count": 68,
+      "covered_method_count": 71,
       "missing_methods": [
         "getDriver",
         "getEngine",
         "getFeatureFlags",
         "getJobSystem",
-        "getPlatform",
-        "getSkyboxeCount",
-        "has_value",
-        "sharedContext"
+        "getPlatform"
       ]
     },
     {
@@ -384,11 +291,10 @@
     },
     {
       "header": "filament/IndexBuffer.h",
-      "prebuilt_method_count": 10,
+      "prebuilt_method_count": 8,
       "wrapper_function_count": 8,
-      "covered_method_count": 8,
+      "covered_method_count": 7,
       "missing_methods": [
-        "async",
         "setBufferAsync"
       ]
     },
@@ -401,9 +307,9 @@
     },
     {
       "header": "filament/InstanceBuffer.h",
-      "prebuilt_method_count": 7,
+      "prebuilt_method_count": 5,
       "wrapper_function_count": 6,
-      "covered_method_count": 7,
+      "covered_method_count": 5,
       "missing_methods": []
     },
     {
@@ -417,12 +323,11 @@
       "header": "filament/Material.h",
       "prebuilt_method_count": 43,
       "wrapper_function_count": 43,
-      "covered_method_count": 39,
+      "covered_method_count": 40,
       "missing_methods": [
         "UserVariantFilterMask",
         "compile",
-        "setParameter",
-        "strlen"
+        "setParameter"
       ]
     },
     {
@@ -443,16 +348,14 @@
       "header": "filament/MaterialInstance.h",
       "prebuilt_method_count": 41,
       "wrapper_function_count": 77,
-      "covered_method_count": 40,
-      "missing_methods": [
-        "strlen"
-      ]
+      "covered_method_count": 41,
+      "missing_methods": []
     },
     {
       "header": "filament/MorphTargetBuffer.h",
-      "prebuilt_method_count": 15,
+      "prebuilt_method_count": 13,
       "wrapper_function_count": 15,
-      "covered_method_count": 15,
+      "covered_method_count": 13,
       "missing_methods": []
     },
     {
@@ -473,13 +376,8 @@
       "header": "filament/RenderableManager.h",
       "prebuilt_method_count": 72,
       "wrapper_function_count": 79,
-      "covered_method_count": 68,
-      "missing_methods": [
-        "bmax",
-        "bmin",
-        "max",
-        "min"
-      ]
+      "covered_method_count": 72,
+      "missing_methods": []
     },
     {
       "header": "filament/Renderer.h",
@@ -497,9 +395,9 @@
     },
     {
       "header": "filament/SkinningBuffer.h",
-      "prebuilt_method_count": 7,
+      "prebuilt_method_count": 5,
       "wrapper_function_count": 7,
-      "covered_method_count": 7,
+      "covered_method_count": 5,
       "missing_methods": []
     },
     {
@@ -511,35 +409,32 @@
     },
     {
       "header": "filament/Stream.h",
-      "prebuilt_method_count": 10,
+      "prebuilt_method_count": 5,
       "wrapper_function_count": 10,
-      "covered_method_count": 10,
+      "covered_method_count": 5,
       "missing_methods": []
     },
     {
       "header": "filament/SwapChain.h",
       "prebuilt_method_count": 6,
-      "wrapper_function_count": 4,
-      "covered_method_count": 5,
-      "missing_methods": [
-        "isFrameScheduledCallbackSet"
-      ]
+      "wrapper_function_count": 5,
+      "covered_method_count": 6,
+      "missing_methods": []
     },
     {
       "header": "filament/Sync.h",
       "prebuilt_method_count": 2,
-      "wrapper_function_count": 1,
+      "wrapper_function_count": 2,
       "covered_method_count": 2,
       "missing_methods": []
     },
     {
       "header": "filament/Texture.h",
-      "prebuilt_method_count": 37,
+      "prebuilt_method_count": 35,
       "wrapper_function_count": 36,
-      "covered_method_count": 34,
+      "covered_method_count": 33,
       "missing_methods": [
         "async",
-        "move",
         "setImageAsync"
       ]
     },
@@ -573,26 +468,20 @@
     },
     {
       "header": "filament/VertexBuffer.h",
-      "prebuilt_method_count": 16,
+      "prebuilt_method_count": 14,
       "wrapper_function_count": 13,
-      "covered_method_count": 13,
+      "covered_method_count": 12,
       "missing_methods": [
-        "async",
         "setBufferAtAsync",
         "setBufferObjectAtAsync"
       ]
     },
     {
       "header": "filament/View.h",
-      "prebuilt_method_count": 85,
-      "wrapper_function_count": 78,
-      "covered_method_count": 81,
-      "missing_methods": [
-        "getSampleCount",
-        "move",
-        "pick",
-        "setSampleCount"
-      ]
+      "prebuilt_method_count": 77,
+      "wrapper_function_count": 84,
+      "covered_method_count": 77,
+      "missing_methods": []
     },
     {
       "header": "filament/Viewport.h",
@@ -602,29 +491,117 @@
       "missing_methods": []
     },
     {
-      "header": "utils/CString.h",
-      "prebuilt_method_count": 22,
-      "wrapper_function_count": 11,
+      "header": "geometry/SurfaceOrientation.h",
+      "prebuilt_method_count": 11,
+      "wrapper_function_count": 14,
+      "covered_method_count": 11,
+      "missing_methods": []
+    },
+    {
+      "header": "geometry/TangentSpaceMesh.h",
+      "prebuilt_method_count": 19,
+      "wrapper_function_count": 21,
+      "covered_method_count": 17,
+      "missing_methods": [
+        "aux",
+        "getAux"
+      ]
+    },
+    {
+      "header": "geometry/Transcoder.h",
+      "prebuilt_method_count": 0,
+      "wrapper_function_count": 3,
+      "covered_method_count": 0,
+      "missing_methods": []
+    },
+    {
+      "header": "gltfio/Animator.h",
+      "prebuilt_method_count": 9,
+      "wrapper_function_count": 8,
+      "covered_method_count": 8,
+      "missing_methods": [
+        "addInstance"
+      ]
+    },
+    {
+      "header": "gltfio/AssetLoader.h",
+      "prebuilt_method_count": 14,
+      "wrapper_function_count": 10,
+      "covered_method_count": 10,
+      "missing_methods": [
+        "getMaterialProvider",
+        "getNames",
+        "getNodeManager",
+        "isSupported"
+      ]
+    },
+    {
+      "header": "gltfio/FilamentAsset.h",
+      "prebuilt_method_count": 32,
+      "wrapper_function_count": 35,
+      "covered_method_count": 28,
+      "missing_methods": [
+        "addEntitiesToScene",
+        "getAssetInstanceCount",
+        "getAssetInstances",
+        "getResourceUris"
+      ]
+    },
+    {
+      "header": "gltfio/FilamentInstance.h",
+      "prebuilt_method_count": 20,
+      "wrapper_function_count": 22,
+      "covered_method_count": 20,
+      "missing_methods": []
+    },
+    {
+      "header": "gltfio/MaterialProvider.h",
+      "prebuilt_method_count": 8,
+      "wrapper_function_count": 4,
       "covered_method_count": 4,
       "missing_methods": [
-        "FixedSizeString",
-        "assert",
-        "begin",
-        "c_str",
-        "compare",
-        "do_tracking",
-        "end",
-        "insert",
-        "length",
-        "move",
-        "replace",
-        "size_t",
-        "string_view",
-        "strlen",
-        "strncpy",
-        "swap",
-        "to_string",
-        "track"
+        "constrainMaterial",
+        "createMaterialInstance",
+        "needsDummyData",
+        "processShaderString"
+      ]
+    },
+    {
+      "header": "gltfio/ResourceLoader.h",
+      "prebuilt_method_count": 11,
+      "wrapper_function_count": 12,
+      "covered_method_count": 11,
+      "missing_methods": []
+    },
+    {
+      "header": "gltfio/TextureProvider.h",
+      "prebuilt_method_count": 15,
+      "wrapper_function_count": 5,
+      "covered_method_count": 2,
+      "missing_methods": [
+        "cancelDecoding",
+        "createKtx2Provider",
+        "createStbProvider",
+        "createWebpProvider",
+        "getDecodedCount",
+        "getPopMessage",
+        "getPoppedCount",
+        "getPushMessage",
+        "getPushedCount",
+        "popTexture",
+        "pushTexture",
+        "updateQueue",
+        "waitForCompletion"
+      ]
+    },
+    {
+      "header": "utils/CallStack.h",
+      "prebuilt_method_count": 8,
+      "wrapper_function_count": 7,
+      "covered_method_count": 6,
+      "missing_methods": [
+        "CString",
+        "update_gcc"
       ]
     },
     {
@@ -649,35 +626,45 @@
       "missing_methods": []
     },
     {
-      "header": "utils/ImmutableCString.h",
-      "prebuilt_method_count": 10,
-      "wrapper_function_count": 9,
+      "header": "utils/Log.h",
+      "prebuilt_method_count": 0,
+      "wrapper_function_count": 1,
       "covered_method_count": 0,
+      "missing_methods": []
+    },
+    {
+      "header": "utils/NameComponentManager.h",
+      "prebuilt_method_count": 5,
+      "wrapper_function_count": 10,
+      "covered_method_count": 5,
+      "missing_methods": []
+    },
+    {
+      "header": "utils/Panic.h",
+      "prebuilt_method_count": 16,
+      "wrapper_function_count": 8,
+      "covered_method_count": 9,
       "missing_methods": [
-        "assert",
-        "begin",
-        "compare",
-        "do_tracking",
-        "end",
-        "free",
-        "initializeFrom",
-        "strlen",
-        "swap",
-        "track"
+        "PanicStream",
+        "c_str",
+        "log",
+        "logWarning",
+        "panicLog",
+        "setPanicHandler",
+        "what"
       ]
     },
     {
       "header": "utils/Path.h",
       "prebuilt_method_count": 25,
-      "wrapper_function_count": 26,
-      "covered_method_count": 18,
+      "wrapper_function_count": 31,
+      "covered_method_count": 19,
       "missing_methods": [
         "c_str",
         "getCanonicalPath",
         "getExtension",
         "getName",
         "getNameWithoutExtension",
-        "listContents",
         "split"
       ]
     },

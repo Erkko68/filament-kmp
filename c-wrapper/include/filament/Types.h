@@ -61,6 +61,8 @@ typedef struct FilaGltfioAssetLoader FilaGltfioAssetLoader;
 typedef struct FilaGltfioResourceLoader FilaGltfioResourceLoader;
 typedef struct FilaGltfioMaterialProvider FilaGltfioMaterialProvider;
 typedef struct FilaGltfioTextureProvider FilaGltfioTextureProvider;
+typedef struct FilaGltfioNodeManager FilaGltfioNodeManager;
+typedef struct FilaGltfioTrsTransformManager FilaGltfioTrsTransformManager;
 typedef struct FilaGeometryTranscoder FilaGeometryTranscoder;
 typedef struct FilaGeometrySurfaceOrientation FilaGeometrySurfaceOrientation;
 typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientationBuilder;
@@ -78,6 +80,12 @@ typedef uint32_t FilaLightManagerInstance;
 
 // C representation of filament::RenderableManager::Instance.
 typedef uint32_t FilaRenderableManagerInstance;
+
+// C representation of filament::gltfio::NodeManager::Instance.
+typedef uint32_t FilaGltfioNodeManagerInstance;
+
+// C representation of filament::gltfio::TrsTransformManager::Instance.
+typedef uint32_t FilaGltfioTrsTransformManagerInstance;
 
 typedef enum FilaCameraFov {
 	FILA_CAMERA_FOV_VERTICAL = 0,

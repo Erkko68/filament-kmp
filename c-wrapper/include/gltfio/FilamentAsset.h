@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "../filament/Box.h"
 #include "filament/Types.h"
@@ -32,6 +33,28 @@ size_t FilaGltfioFilamentAsset_getCameraEntities(const FilaGltfioFilamentAsset* 
 size_t FilaGltfioFilamentAsset_getCameraEntityCount(const FilaGltfioFilamentAsset* asset);
 
 FilaEntity FilaGltfioFilamentAsset_getRoot(const FilaGltfioFilamentAsset* asset);
+
+typedef uint32_t FilaGltfioSceneMask;
+
+// Adds the selected entities to the given scene using glTF scene membership filtering.
+void FilaGltfioFilamentAsset_addEntitiesToScene(
+        const FilaGltfioFilamentAsset* asset,
+        FilaScene* scene,
+        const FilaEntity* entities,
+        size_t entityCount,
+        FilaGltfioSceneMask sceneFilter);
+
+// Convenience helper that adds every asset entity to the given scene.
+void FilaGltfioFilamentAsset_addAllEntitiesToScene(
+        const FilaGltfioFilamentAsset* asset,
+        FilaScene* scene,
+        FilaGltfioSceneMask sceneFilter);
+
+// Removes every asset entity from the given scene.
+void FilaGltfioFilamentAsset_removeEntitiesFromScene(
+        const FilaGltfioFilamentAsset* asset,
+        FilaScene* scene);
+
 FilaEntity FilaGltfioFilamentAsset_popRenderable(FilaGltfioFilamentAsset* asset);
 size_t FilaGltfioFilamentAsset_popRenderables(
         FilaGltfioFilamentAsset* asset,
@@ -96,6 +119,11 @@ size_t FilaGltfioFilamentAsset_copySceneName(const FilaGltfioFilamentAsset* asse
         size_t outSceneNameSize);
 
 FilaGltfioFilamentInstance* FilaGltfioFilamentAsset_getInstance(FilaGltfioFilamentAsset* asset);
+size_t FilaGltfioFilamentAsset_getAssetInstanceCount(const FilaGltfioFilamentAsset* asset);
+size_t FilaGltfioFilamentAsset_getAssetInstances(
+        FilaGltfioFilamentAsset* asset,
+        FilaGltfioFilamentInstance** outInstances,
+        size_t maxCount);
 
 #ifdef __cplusplus
 }

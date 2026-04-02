@@ -6,6 +6,16 @@
 #include "filament/Scene.h"
 #include "filament/View.h"
 
+static void pick_cb(const FilaViewPickingQueryResult* result, void* userData) {
+    (void)result;
+    (void)userData;
+}
+
+static void pick_token_cb(const FilaViewPickingQueryResult* result, uintptr_t userToken) {
+    (void)result;
+    (void)userToken;
+}
+
 int main(void) {
     printf("Running engine+scene+view functionality program...\n");
 
@@ -293,6 +303,19 @@ int main(void) {
     }
 
     {
+        if (FilaView_pick(view, 1u, 1u, (FilaViewPickCallback)0, (void*)0) ||
+                FilaView_pick((FilaView*)0, 1u, 1u, pick_cb, (void*)0) ||
+                FilaView_pickWithToken(view, 1u, 1u, (FilaViewPickTokenCallback)0, (uintptr_t)0) ||
+                FilaView_pickWithHandlerAndToken((FilaView*)0, 1u, 1u,
+                        (FilaCallbackHandler*)0, pick_token_cb, (uintptr_t)1)) {
+            printf("View pick null-safety mismatch\n");
+            FilaEngine_destroyCameraComponent(engine, cameraEntity);
+            FilaEngine_destroyView(engine, view);
+            FilaEngine_destroyScene(engine, scene);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+
         const size_t shadowCameraCount = FilaView_getDirectionalShadowCameraCount(view);
         const FilaCamera* shadowCameras[2] = {(const FilaCamera*)0, (const FilaCamera*)0};
         const size_t copiedShadowCameras = FilaView_getDirectionalShadowCameras(view, shadowCameras, 2u);

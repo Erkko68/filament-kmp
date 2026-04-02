@@ -75,6 +75,35 @@ LOW_SIGNAL_NAMES = {
     "name",
 }
 
+# Header families intentionally out-of-scope for this wrapper phase.
+IGNORED_MISSING_HEADER_PREFIXES = (
+    "backend/platforms/",
+    "camutils/",
+    "filamat/",
+    "filament-generatePrefilterMipmap/",
+    "filament-iblprefilter/",
+    "ibl/",
+    "image/",
+    "imageio-lite/",
+    "ktxreader/",
+    "math/",
+    "mathio/",
+    "mikktspace/",
+    "tsl/",
+    "uberz/",
+    "viewer/",
+)
+
+# Known heuristic false positives that should not count as missing methods.
+IGNORED_METHODS_BY_HEADER = {
+    "filament/Engine.h": {"getSkyboxeCount", "has_value", "sharedContext"},
+    "filament/Material.h": {"strlen"},
+    "filament/MaterialInstance.h": {"strlen"},
+    "filament/RenderableManager.h": {"bmax", "bmin", "min", "max"},
+    "filament/Texture.h": {"move"},
+    "filament/View.h": {"move"},
+}
+
 
 def strip_comments(text: str) -> str:
     text = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
@@ -114,6 +143,9 @@ def parse_cpp_methods(header_path: Path) -> List[str]:
     methods = []
     for match in DECL_RE.finditer(text):
         name = match.group(1)
+        prefix = text[max(0, match.start() - 192):match.start()]
+        if "UTILS_DEPRECATED" in prefix or "@deprecated" in prefix.lower():
+            continue
         if name in SKIP_WORDS:
             continue
         if name in class_names:
@@ -184,7 +216,14 @@ def build_report(prebuilt_dir: Path, wrapper_dir: Path) -> AuditReport:
     prebuilt_headers = collect_headers(prebuilt_dir)
     wrapper_headers = collect_headers(wrapper_dir)
 
-    missing_headers = sorted([h for h in prebuilt_headers if h not in wrapper_headers])
+    missing_headers = sorted(
+        [
+            h
+            for h in prebuilt_headers
+            if h not in wrapper_headers
+            and not any(h.startswith(prefix) for prefix in IGNORED_MISSING_HEADER_PREFIXES)
+        ]
+    )
     shared = sorted(set(prebuilt_headers.keys()) & set(wrapper_headers.keys()))
 
     shared_reports: List[SharedHeaderReport] = []
@@ -195,6 +234,9 @@ def build_report(prebuilt_dir: Path, wrapper_dir: Path) -> AuditReport:
         missing_methods = [
             m for m in prebuilt_methods if not likely_method_covered(m, wrapper_funcs)
         ]
+        ignored_methods = IGNORED_METHODS_BY_HEADER.get(header, set())
+        if ignored_methods:
+            missing_methods = [m for m in missing_methods if m not in ignored_methods]
         covered = len(prebuilt_methods) - len(missing_methods)
 
         shared_reports.append(

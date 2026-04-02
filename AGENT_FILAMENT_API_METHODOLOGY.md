@@ -7,6 +7,17 @@ This note documents how to adapt Filament C++ API surface into this project's C 
 - Keep a predictable C ABI (`Fila*` types/functions) for Kotlin/Native and C consumers.
 - Mirror Filament API names and ownership semantics as closely as practical.
 - Add APIs incrementally with compile and runtime test coverage.
+- Keep Kotlin/Native interop predictable by preferring tokenized callback userdata when possible.
+
+## Scope Guidance (Current)
+
+- In scope now:
+  - Filament core rendering/runtime APIs needed for scene creation and graphics workflows.
+  - glTF loading surfaces (`gltfio/*`) needed for model loading pipelines.
+  - Practical utility APIs used directly by app/runtime flows.
+- Deferred for now:
+  - `backend/platforms/*` wrappers and platform adapter internals.
+  - Low-level utilities that are better handled directly in Kotlin unless they unblock a concrete feature.
 
 ## Naming and API Shape
 
@@ -18,6 +29,7 @@ This note documents how to adapt Filament C++ API surface into this project's C 
 - For overloaded C++ APIs, use explicit suffixes in C:
   - Example: `setTransformMat4f`, `setTransformMat4`.
 - For getters that can fail on invalid input, prefer `bool` + out-parameter.
+- For callback userdata, provide a token variant (`uintptr_t`) in addition to pointer-based APIs.
 
 ## Header and Source Layout
 
@@ -49,6 +61,9 @@ For each new Filament module `X`:
   - numeric/count -> `0`
   - enum status -> error value
 - Do not throw exceptions from C ABI paths.
+- For callback-heavy APIs, keep both forms:
+  - pointer userdata form for C compatibility.
+  - token userdata form for Kotlin/Native friendliness.
 
 ## Testing Strategy
 
@@ -56,6 +71,7 @@ For each new Filament module `X`:
 - Signature tests lock function pointer types to prevent ABI drift.
 - Linked runtime smoke tests validate behavior and cleanup order.
 - Keep integration tests bounded in time and deterministic.
+- For every callback-capable API addition, add compile coverage for both pointer and token callback variants.
 
 ## Runtime and Build Modes
 
@@ -73,8 +89,15 @@ For each API batch:
 4. Add/extend module + signature tests.
 5. Add/extend linked smoke test.
 6. Run:
-   - `bash c-wrapper/test/test_integration.sh`
-   - `bash c-wrapper/test/test_module.sh`
+   - `bash c-wrapper/test/test_headers.sh`
+   - `bash c-wrapper/test/test_functionality.sh`
+
+## Parity Audit Policy
+
+- Treat parity report output as a triage tool, not an ABI proof.
+- Ignore upstream deprecated methods when computing actionable parity gaps.
+- Maintain a small curated false-positive ignore map for noisy method tokens.
+- Keep deferred header families (for example `backend/platforms/*`) out of actionable parity totals.
 
 ## Parity Policy
 

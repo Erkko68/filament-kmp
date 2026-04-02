@@ -21,4 +21,7 @@ python3 /Users/eric/IdeaProjects/filament-kmp-core/c-wrapper/tools/filament_pari
 - Method matching is heuristic: C++ method names are matched against `Fila*` function names by token sequence.
 - This report is a triage aid, not a strict ABI proof.
 - For exact parity planning, use this report plus manual review of high-value headers first (for example `filament/Engine.h`, `filament/View.h`, `filament/Renderer.h`, `filament/Scene.h`, `filament/Material.h`).
+- The script intentionally excludes deferred header families (for example `backend/platforms/*` and tooling-only upstream modules) from the "missing headers" count.
+- Methods marked upstream as deprecated (via `UTILS_DEPRECATED` or `@deprecated`) are ignored in gap calculations.
+- A small per-header false-positive ignore list is applied for known heuristic noise tokens.
 

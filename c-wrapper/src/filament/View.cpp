@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <new>
 
 #include <filament/Camera.h>
 #include <filament/ColorGrading.h>
@@ -6,11 +7,78 @@
 #include <filament/Scene.h>
 #include <filament/View.h>
 #include <filament/Viewport.h>
+#include <backend/CallbackHandler.h>
 #include <utils/Entity.h>
 
 #include "../../include/filament/View.h"
+#include "../../include/filament/BufferDescriptor.h"
 
 namespace {
+struct PickCallbackPayload {
+    FilaViewPickCallback callback = nullptr;
+    FilaViewPickTokenCallback tokenCallback = nullptr;
+    void* userData = nullptr;
+    uintptr_t userToken = 0;
+};
+
+void toPickingQueryResult(
+        const filament::View::PickingQueryResult& in,
+        FilaViewPickingQueryResult* out) {
+    if (!out) {
+        return;
+    }
+    out->renderable = utils::Entity::smuggle(in.renderable);
+    out->depth = in.depth;
+    out->reserved1 = in.reserved1;
+    out->reserved2 = in.reserved2;
+    out->fragCoordsX = in.fragCoords.x;
+    out->fragCoordsY = in.fragCoords.y;
+    out->fragCoordsZ = in.fragCoords.z;
+}
+
+void onPickingResult(
+        const filament::View::PickingQueryResult& result,
+        filament::View::PickingQuery* query) {
+    if (!query) {
+        return;
+    }
+    auto* payload = static_cast<PickCallbackPayload*>(query->storage[0]);
+    query->storage[0] = nullptr;
+    if (!payload) {
+        return;
+    }
+    FilaViewPickingQueryResult outResult{};
+    toPickingQueryResult(result, &outResult);
+    if (payload->callback) {
+        payload->callback(&outResult, payload->userData);
+    }
+    if (payload->tokenCallback) {
+        payload->tokenCallback(&outResult, payload->userToken);
+    }
+    delete payload;
+}
+
+bool schedulePick(
+        FilaView* view,
+        uint32_t x,
+        uint32_t y,
+        FilaCallbackHandler* handler,
+        PickCallbackPayload* payload) {
+    if (!view || !payload) {
+        delete payload;
+        return false;
+    }
+
+    auto* cppView = reinterpret_cast<filament::View*>(view);
+    auto* cppHandler = handler
+            ? reinterpret_cast<filament::backend::CallbackHandler*>(handler->impl)
+            : nullptr;
+
+    auto& query = cppView->pick(x, y, cppHandler, onPickingResult);
+    query.storage[0] = payload;
+    return true;
+}
+
 filament::BlendMode toBlendMode(FilaViewBlendMode blendMode) {
     return static_cast<filament::BlendMode>(blendMode);
 }
@@ -652,6 +720,7 @@ void FilaView_setAntiAliasing(FilaView* view, FilaViewAntiAliasing antiAliasing)
     cppView->setAntiAliasing(toAntiAliasing(antiAliasing));
 }
 
+
 FilaViewAntiAliasing FilaView_getAntiAliasing(const FilaView* view) {
     if (!view) {
         return FILA_VIEW_ANTI_ALIASING_NONE;
@@ -1163,6 +1232,80 @@ bool FilaView_getFroxelConfigurationInfo(
     outInfo->info.clipTransform[3] = infoWithAge.info.clipTransform.w;
     outInfo->age = infoWithAge.age;
     return true;
+}
+
+bool FilaView_pick(
+        FilaView* view,
+        uint32_t x,
+        uint32_t y,
+        FilaViewPickCallback callback,
+        void* userData) {
+    if (!callback) {
+        return false;
+    }
+    auto* payload = new (std::nothrow) PickCallbackPayload;
+    if (!payload) {
+        return false;
+    }
+    payload->callback = callback;
+    payload->userData = userData;
+    return schedulePick(view, x, y, nullptr, payload);
+}
+
+bool FilaView_pickWithHandler(
+        FilaView* view,
+        uint32_t x,
+        uint32_t y,
+        FilaCallbackHandler* handler,
+        FilaViewPickCallback callback,
+        void* userData) {
+    if (!callback) {
+        return false;
+    }
+    auto* payload = new (std::nothrow) PickCallbackPayload;
+    if (!payload) {
+        return false;
+    }
+    payload->callback = callback;
+    payload->userData = userData;
+    return schedulePick(view, x, y, handler, payload);
+}
+
+bool FilaView_pickWithToken(
+        FilaView* view,
+        uint32_t x,
+        uint32_t y,
+        FilaViewPickTokenCallback callback,
+        uintptr_t userToken) {
+    if (!callback) {
+        return false;
+    }
+    auto* payload = new (std::nothrow) PickCallbackPayload;
+    if (!payload) {
+        return false;
+    }
+    payload->tokenCallback = callback;
+    payload->userToken = userToken;
+    return schedulePick(view, x, y, nullptr, payload);
+}
+
+bool FilaView_pickWithHandlerAndToken(
+        FilaView* view,
+        uint32_t x,
+        uint32_t y,
+        FilaCallbackHandler* handler,
+        FilaViewPickTokenCallback callback,
+        uintptr_t userToken) {
+    if (!callback) {
+        return false;
+    }
+    auto* payload = new (std::nothrow) PickCallbackPayload;
+    if (!payload) {
+        return false;
+    }
+    payload->tokenCallback = callback;
+    payload->userToken = userToken;
+    return schedulePick(view, x, y, handler, payload);
 }
 
 void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, const float value4[4]) {

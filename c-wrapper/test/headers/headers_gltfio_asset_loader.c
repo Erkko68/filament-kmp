@@ -26,6 +26,8 @@ void test_headers_gltfio_asset_loader(void) {
     FilaGltfioAssetLoader_enableDiagnostics(loader, true);
     (void)FilaGltfioAssetLoader_getMaterialsCount((const FilaGltfioAssetLoader*)0);
     (void)FilaGltfioAssetLoader_getMaterials((const FilaGltfioAssetLoader*)0, materials, 4u);
+    (void)FilaGltfioAssetLoader_getNames((const FilaGltfioAssetLoader*)0);
+    (void)FilaGltfioAssetLoader_getMaterialProvider((FilaGltfioAssetLoader*)0);
     FilaGltfioAssetLoader_destroy(&loader);
 }
 

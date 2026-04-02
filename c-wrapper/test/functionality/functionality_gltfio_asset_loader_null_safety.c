@@ -22,7 +22,9 @@ int main(void) {
             FilaGltfioAssetLoader_createInstancedAsset((FilaGltfioAssetLoader*)0, (const uint8_t*)0, 0u, (FilaGltfioFilamentInstance**)0, 0u) != (FilaGltfioFilamentAsset*)0 ||
             FilaGltfioAssetLoader_createInstance((FilaGltfioAssetLoader*)0, (FilaGltfioFilamentAsset*)0) != (FilaGltfioFilamentInstance*)0 ||
             FilaGltfioAssetLoader_getMaterialsCount((const FilaGltfioAssetLoader*)0) != 0u ||
-            FilaGltfioAssetLoader_getMaterials((const FilaGltfioAssetLoader*)0, materials, 2u) != 0u) {
+            FilaGltfioAssetLoader_getMaterials((const FilaGltfioAssetLoader*)0, materials, 2u) != 0u ||
+            FilaGltfioAssetLoader_getNames((const FilaGltfioAssetLoader*)0) != (FilaNameComponentManager*)0 ||
+            FilaGltfioAssetLoader_getMaterialProvider((FilaGltfioAssetLoader*)0) != (FilaGltfioMaterialProvider*)0) {
         printf("AssetLoader null defaults mismatch\n");
         return 1;
     }

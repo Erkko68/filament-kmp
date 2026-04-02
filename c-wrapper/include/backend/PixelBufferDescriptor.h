@@ -119,39 +119,75 @@ FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_create(
     uint8_t alignment,
     FilaBufferReleaseCallback callback, void* user);
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithToken(
+    const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
+    uint8_t alignment,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayout(
     const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
     uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
     FilaBufferReleaseCallback callback, void* user);
+
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutAndToken(
+    const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
+    uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
 
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithHandler(
     const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
     uint8_t alignment, FilaCallbackHandler* handler,
     FilaBufferReleaseCallback callback, void* user);
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithHandlerAndToken(
+    const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
+    uint8_t alignment, FilaCallbackHandler* handler,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutAndHandler(
     const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
     uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
     FilaCallbackHandler* handler, FilaBufferReleaseCallback callback, void* user);
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createWithLayoutHandlerAndToken(
+    const void* buffer, size_t size, FilaPixelDataFormat format, FilaPixelDataType type,
+    uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+    FilaCallbackHandler* handler, FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressed(
     const void* buffer, size_t size, FilaCompressedPixelDataType format, uint32_t imageSize,
     FilaBufferReleaseCallback callback, void* user);
+
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithToken(
+    const void* buffer, size_t size, FilaCompressedPixelDataType format, uint32_t imageSize,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
 
 FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithHandler(
     const void* buffer, size_t size, FilaCompressedPixelDataType format, uint32_t imageSize,
     FilaCallbackHandler* handler, FilaBufferReleaseCallback callback, void* user);
 
+FilaPixelBufferDescriptor* FilaPixelBufferDescriptor_createCompressedWithHandlerAndToken(
+    const void* buffer, size_t size, FilaCompressedPixelDataType format, uint32_t imageSize,
+    FilaCallbackHandler* handler, FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 void FilaPixelBufferDescriptor_setCallback(
     FilaPixelBufferDescriptor* desc, FilaBufferReleaseCallback callback, void* user);
+
+void FilaPixelBufferDescriptor_setCallbackWithToken(
+    FilaPixelBufferDescriptor* desc, FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
 
 void FilaPixelBufferDescriptor_setCallbackWithHandler(
     FilaPixelBufferDescriptor* desc, FilaCallbackHandler* handler,
     FilaBufferReleaseCallback callback, void* user);
 
+void FilaPixelBufferDescriptor_setCallbackWithHandlerAndToken(
+    FilaPixelBufferDescriptor* desc, FilaCallbackHandler* handler,
+    FilaBufferReleaseTokenCallback callback, uintptr_t userToken);
+
 bool FilaPixelBufferDescriptor_hasCallback(const FilaPixelBufferDescriptor* desc);
 FilaBufferReleaseCallback FilaPixelBufferDescriptor_getCallback(const FilaPixelBufferDescriptor* desc);
 void* FilaPixelBufferDescriptor_getUser(const FilaPixelBufferDescriptor* desc);
+uintptr_t FilaPixelBufferDescriptor_getUserToken(const FilaPixelBufferDescriptor* desc);
 FilaCallbackHandler* FilaPixelBufferDescriptor_getHandler(const FilaPixelBufferDescriptor* desc);
 
 /**

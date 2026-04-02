@@ -8,6 +8,7 @@
 #include "Types.h"
 #include "Options.h"
 #include "Viewport.h"
+#include "../backend/CallbackHandler.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,6 +81,8 @@ uint8_t FilaView_getVisibleLayers(const FilaView* view);
 // Configures blend mode for rendering into swap chain.
 void FilaView_setBlendMode(FilaView* view, FilaViewBlendMode blendMode);
 FilaViewBlendMode FilaView_getBlendMode(const FilaView* view);
+
+// Configures post-process anti-aliasing and dithering.
 
 // Configures post-process anti-aliasing and dithering.
 void FilaView_setAntiAliasing(FilaView* view, FilaViewAntiAliasing antiAliasing);
@@ -193,6 +196,54 @@ typedef struct FilaViewFroxelConfigurationInfoWithAge {
 bool FilaView_getFroxelConfigurationInfo(
     const FilaView* view,
     FilaViewFroxelConfigurationInfoWithAge* outInfo);
+
+typedef struct FilaViewPickingQueryResult {
+    FilaEntity renderable;
+    float depth;
+    uint32_t reserved1;
+    uint32_t reserved2;
+    float fragCoordsX;
+    float fragCoordsY;
+    float fragCoordsZ;
+} FilaViewPickingQueryResult;
+
+typedef void (*FilaViewPickCallback)(
+    const FilaViewPickingQueryResult* result,
+    void* userData);
+typedef void (*FilaViewPickTokenCallback)(
+    const FilaViewPickingQueryResult* result,
+    uintptr_t userToken);
+
+// Schedules an asynchronous picking query for this view.
+bool FilaView_pick(
+    FilaView* view,
+    uint32_t x,
+    uint32_t y,
+    FilaViewPickCallback callback,
+    void* userData);
+
+bool FilaView_pickWithHandler(
+    FilaView* view,
+    uint32_t x,
+    uint32_t y,
+    FilaCallbackHandler* handler,
+    FilaViewPickCallback callback,
+    void* userData);
+
+bool FilaView_pickWithToken(
+    FilaView* view,
+    uint32_t x,
+    uint32_t y,
+    FilaViewPickTokenCallback callback,
+    uintptr_t userToken);
+
+bool FilaView_pickWithHandlerAndToken(
+    FilaView* view,
+    uint32_t x,
+    uint32_t y,
+    FilaCallbackHandler* handler,
+    FilaViewPickTokenCallback callback,
+    uintptr_t userToken);
 
 // Material global variables for user materials (index range: 0..3).
 void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, const float value4[4]);
