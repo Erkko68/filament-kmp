@@ -7,6 +7,12 @@
 
 #include "filament/Types.h"
 
+typedef struct FilaEntityManagerListener FilaEntityManagerListener;
+typedef void (*FilaEntityManagerEntitiesDestroyedCallback)(
+		size_t count,
+		const FilaEntity* entities,
+		void* userData);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,6 +47,24 @@ bool FilaEntityManager_isTrackingEnabled(void);
 // Writes up to maxCount active entities into outEntities when tracking is enabled.
 // Returns number of entities written. Returns 0 when tracking is disabled.
 size_t FilaEntityManager_getActiveEntities(FilaEntity* outEntities, size_t maxCount);
+
+// Dumps active entities into text form when tracking is enabled.
+// Returns total text bytes available (excluding null terminator).
+size_t FilaEntityManager_dumpActiveEntities(char* outText, size_t outTextSize);
+
+// Listener lifecycle helpers for destruction callbacks.
+FilaEntityManagerListener* FilaEntityManagerListener_create(
+		FilaEntityManagerEntitiesDestroyedCallback callback,
+		void* userData);
+void FilaEntityManagerListener_destroy(FilaEntityManagerListener* listener);
+bool FilaEntityManager_registerListener(FilaEntityManagerListener* listener);
+bool FilaEntityManager_unregisterListener(FilaEntityManagerListener* listener);
+
+// Manual callback forwarder that mirrors Listener::onEntitiesDestroyed semantics.
+bool FilaEntityManagerListener_onEntitiesDestroyed(
+		FilaEntityManagerListener* listener,
+		size_t count,
+		const FilaEntity* entities);
 
 #ifdef __cplusplus
 }

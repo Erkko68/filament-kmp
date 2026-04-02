@@ -3,8 +3,17 @@
 
 #include "filament/Engine.h"
 #include "filament/DebugRegistry.h"
+#include "filament/Sync.h"
 #include "filament/TransformManager.h"
 #include "utils/EntityManager.h"
+
+static void on_sync_external_handle(FilaSync* sync, void* userData) {
+    if (!userData) {
+        return;
+    }
+    bool* called = (bool*)userData;
+    *called = (sync != (FilaSync*)0);
+}
 
 int main(void) {
     printf("Running functionality_engine_runtime_queries...\n");
@@ -49,6 +58,10 @@ int main(void) {
         printf("setPaused should fail on null engine\n");
         return 1;
     }
+    if (FilaEngine_getEntityManager((FilaEngine*)0) != (FilaEntityManager*)0) {
+        printf("getEntityManager should return null for null engine\n");
+        return 1;
+    }
     if (FilaEngine_getDefaultMaterial((const FilaEngine*)0) != (const FilaMaterial*)0) {
         printf("Default material should be null for null engine\n");
         return 1;
@@ -66,6 +79,18 @@ int main(void) {
         printf("setFeatureFlag should fail on null engine\n");
         return 1;
     }
+    if (FilaEngine_getFeatureFlagPtr((const FilaEngine*)0, "x") != NULL) {
+        printf("getFeatureFlagPtr should fail on null engine\n");
+        return 1;
+    }
+    if (FilaEngine_cancelAsyncCall((FilaEngine*)0, FilaBackendAsyncCallId_getInvalid())) {
+        printf("cancelAsyncCall should fail on null engine\n");
+        return 1;
+    }
+    if (FilaEngine_resetBackendState((FilaEngine*)0)) {
+        printf("resetBackendState should fail on null engine\n");
+        return 1;
+    }
     if (FilaEngine_getFeatureFlagCount((const FilaEngine*)0) != 0u) {
         printf("Feature flag count should be zero for null engine\n");
         return 1;
@@ -76,6 +101,10 @@ int main(void) {
     }
     if (FilaEngine_execute((FilaEngine*)0)) {
         printf("execute should fail on null engine\n");
+        return 1;
+    }
+    if (FilaSync_getExternalHandle((FilaSync*)0, on_sync_external_handle, (void*)0)) {
+        printf("Sync getExternalHandle should fail on null sync\n");
         return 1;
     }
 
@@ -115,6 +144,12 @@ int main(void) {
     FilaEngine_setAutomaticInstancingEnabled(engine, false);
     if (FilaEngine_isAutomaticInstancingEnabled(engine)) {
         printf("Automatic instancing should be disabled\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    if (!FilaEngine_getEntityManager(engine)) {
+        printf("EntityManager should be available\n");
         FilaEngine_destroy(&engine);
         return 1;
     }
@@ -305,6 +340,22 @@ int main(void) {
         FilaEngine_destroy(&engine);
         return 1;
     }
+    {
+        bool externalHandleCallbackCalled = false;
+        if (!FilaSync_getExternalHandle(sync, on_sync_external_handle, &externalHandleCallbackCalled)) {
+            printf("Sync getExternalHandle call failed\n");
+            FilaEngine_destroySync(engine, sync);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        if (!FilaEngine_pumpMessageQueues(engine)) {
+            printf("Failed to pump message queue after Sync callback request\n");
+            FilaEngine_destroySync(engine, sync);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+        (void)externalHandleCallbackCalled;
+    }
     FilaEngine_destroySync(engine, sync);
     if (FilaEngine_isValidSync(engine, sync)) {
         printf("Sync should be invalid after destroy\n");
@@ -328,6 +379,67 @@ int main(void) {
         FilaEngine_destroy(&engine);
         return 1;
     }
+    if (FilaEngine_getFeatureFlagPtr(engine, missingFlag) != NULL) {
+        printf("Unexpected missing feature flag pointer\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    if (FilaEngine_cancelAsyncCall(engine, FilaBackendAsyncCallId_getInvalid())) {
+        printf("Unexpected cancellation success for invalid async id\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    {
+        bool foundMutableFlag = false;
+        const size_t count = FilaEngine_getFeatureFlagCount(engine);
+        for (size_t i = 0u; i < count; ++i) {
+            const char* name = NULL;
+            bool constant = true;
+            if (!FilaEngine_getFeatureFlagInfo(engine, i, &name, NULL, NULL, &constant)) {
+                printf("Failed to enumerate feature flags\n");
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
+            if (!constant && name) {
+                bool* ptr = FilaEngine_getFeatureFlagPtr(engine, name);
+                if (!ptr) {
+                    printf("Mutable feature flag should expose pointer\n");
+                    FilaEngine_destroy(&engine);
+                    return 1;
+                }
+                bool value = false;
+                if (!FilaEngine_getFeatureFlag(engine, name, &value)) {
+                    printf("Failed to read mutable feature flag value\n");
+                    FilaEngine_destroy(&engine);
+                    return 1;
+                }
+                if (*ptr != value) {
+                    printf("Feature flag pointer value mismatch\n");
+                    FilaEngine_destroy(&engine);
+                    return 1;
+                }
+                foundMutableFlag = true;
+                break;
+            }
+        }
+        (void)foundMutableFlag;
+    }
+
+#if defined(__EMSCRIPTEN__)
+    if (!FilaEngine_resetBackendState(engine)) {
+        printf("resetBackendState should succeed on Emscripten\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+#else
+    if (FilaEngine_resetBackendState(engine)) {
+        printf("resetBackendState should be unsupported on this platform\n");
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+#endif
 
     const size_t featureFlagCount = FilaEngine_getFeatureFlagCount(engine);
     if (featureFlagCount > 0u) {

@@ -113,6 +113,14 @@ int main(void) {
     (void)FilaMaterialInstance_duplicate((const FilaMaterialInstance*)0, "dup");
     (void)FilaMaterialInstance_getName((const FilaMaterialInstance*)0);
     (void)FilaMaterial_getName((const FilaMaterial*)0);
+    {
+        size_t sourceLength = 17u;
+        if (FilaMaterial_getSource((const FilaMaterial*)0, &sourceLength) != (const char*)0 || sourceLength != 0u) {
+            printf("Material source null-safety mismatch\n");
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
+    }
     (void)FilaMaterial_hasParameter((const FilaMaterial*)0, "uSampler");
     (void)FilaMaterial_isSampler((const FilaMaterial*)0, "uSampler");
     (void)FilaMaterial_getParameterCount((const FilaMaterial*)0);
@@ -199,6 +207,16 @@ int main(void) {
             printf("Default material query failed\n");
             FilaEngine_destroy(&engine);
             return 1;
+        }
+
+        {
+            size_t sourceLength = 0u;
+            const char* source = FilaMaterial_getSource(defaultMaterial, &sourceLength);
+            if (!source && sourceLength != 0u) {
+                printf("Default material source metadata mismatch\n");
+                FilaEngine_destroy(&engine);
+                return 1;
+            }
         }
 
         FilaMaterialInstance* defaultInstance = FilaMaterial_getDefaultInstance((FilaMaterial*)defaultMaterial);

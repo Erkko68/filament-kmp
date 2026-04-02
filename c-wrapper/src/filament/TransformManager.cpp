@@ -227,6 +227,30 @@ size_t FilaTransformManager_getChildInstances(const FilaTransformManager* manage
     return written;
 }
 
+bool FilaTransformManager_getChildrenBegin(const FilaTransformManager* manager,
+        FilaTransformManagerInstance instance,
+        FilaTransformManagerInstance* outBegin) {
+    if (!manager || instance == 0 || !outBegin) {
+        return false;
+    }
+    auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
+    const auto begin = cppManager->getChildrenBegin(toInstance(instance));
+    const auto end = cppManager->getChildrenEnd(toInstance(instance));
+    *outBegin = (begin == end) ? 0u : fromInstance(*begin);
+    return true;
+}
+
+bool FilaTransformManager_getChildrenEnd(const FilaTransformManager* manager,
+        FilaTransformManagerInstance instance,
+        FilaTransformManagerInstance* outEnd) {
+    if (!manager || instance == 0 || !outEnd) {
+        return false;
+    }
+    // C API uses 0 as the end sentinel for child-iterator parity helpers.
+    *outEnd = 0u;
+    return true;
+}
+
 void FilaTransformManager_forEachChildInstance(const FilaTransformManager* manager,
         FilaTransformManagerInstance instance,
         FilaTransformManagerInstanceCallback callback,
@@ -295,6 +319,12 @@ bool FilaTransformManager_getTransformMat4(const FilaTransformManager* manager,
     return true;
 }
 
+bool FilaTransformManager_getTransformAccurate(const FilaTransformManager* manager,
+        FilaTransformManagerInstance instance,
+        double outLocalTransform[16]) {
+    return FilaTransformManager_getTransformMat4(manager, instance, outLocalTransform);
+}
+
 bool FilaTransformManager_getWorldTransformMat4(const FilaTransformManager* manager,
         FilaTransformManagerInstance instance,
         double outWorldTransform[16]) {
@@ -304,6 +334,12 @@ bool FilaTransformManager_getWorldTransformMat4(const FilaTransformManager* mana
     auto cppManager = reinterpret_cast<const filament::TransformManager*>(manager);
     fromMat4(cppManager->getWorldTransformAccurate(toInstance(instance)), outWorldTransform);
     return true;
+}
+
+bool FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* manager,
+        FilaTransformManagerInstance instance,
+        double outWorldTransform[16]) {
+    return FilaTransformManager_getWorldTransformMat4(manager, instance, outWorldTransform);
 }
 
 void FilaTransformManager_openLocalTransformTransaction(FilaTransformManager* manager) {

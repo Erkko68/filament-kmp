@@ -263,6 +263,35 @@ Only reopen if we have a concrete product requirement that cannot be met through
 
 ---
 
+## Quick Triage Reference (2026-04-02)
+
+This section captures manual review outcomes for high-noise heuristic gaps so they are not repeatedly re-triaged.
+
+- `filament/Engine.h`
+  - Covered-equivalent: `getSkyboxeCount` via `FilaEngine_getSkyboxCount`, `getFeatureFlags` via count+info helpers.
+  - Heuristic noise: `has_value`.
+  - Not instance API: `sharedContext` (builder-time).
+  - Deferred (platform/internal): `getDriver`, `getPlatform`, `getJobSystem`.
+  - Deferred (callback/token flow): `getEngine`.
+  - Deferred (redundant surface): `getEntityManager` (dedicated `utils/EntityManager` wrappers already available).
+- `filament/FilamentAPI.h`
+  - Template/base infrastructure (`FilamentAPI`, `builderMakeName`, mixin `getName`) is intentionally not mirrored as runtime C APIs.
+- `filament/IndexBuffer.h`
+  - `async` / `setBufferAsync` deferred pending callback ABI standardization.
+- `filament/Material.h`
+  - Heuristic noise: `strlen`.
+  - Parameter setting parity is provided on `MaterialInstance`, not `Material`.
+  - `compile` / `UserVariantFilterMask` deferred pending callback ABI standardization.
+  - `getSource` remains a valid non-callback gap candidate.
+- `filament/Sync.h`
+  - Heuristic noise: `Sync` (class token).
+  - `getExternalHandle` deferred (callback + platform handle ABI).
+- `filament/Texture.h`
+  - `async` / `setImageAsync` deferred pending callback ABI standardization.
+  - Heuristic noise: `move`.
+
+---
+
 ## Execution Cadence
 
 For each slice:

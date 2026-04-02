@@ -256,6 +256,21 @@ const char* FilaMaterial_getName(const FilaMaterial* material) {
     return cppMaterial->getName();
 }
 
+const char* FilaMaterial_getSource(const FilaMaterial* material, size_t* outLength) {
+    if (outLength) {
+        *outLength = 0u;
+    }
+    if (!material) {
+        return nullptr;
+    }
+    auto cppMaterial = reinterpret_cast<const filament::Material*>(material);
+    const auto source = cppMaterial->getSource();
+    if (outLength) {
+        *outLength = source.size();
+    }
+    return source.data();
+}
+
 bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name) {
     if (!material || !name || name[0] == '\0') {
         return false;

@@ -1,9 +1,46 @@
 #include <utils/Entity.h>
 #include <utils/EntityManager.h>
+#include <utils/sstream.h>
 
+#include <cstring>
 #include <vector>
 
 #include "../../include/filament/Types.h"
+#include "../../include/utils/EntityManager.h"
+
+namespace {
+
+class BridgeEntityManagerListener final : public utils::EntityManager::Listener {
+public:
+    BridgeEntityManagerListener(FilaEntityManagerEntitiesDestroyedCallback callback, void* userData)
+            : mCallback(callback), mUserData(userData) {}
+
+    void onEntitiesDestroyed(size_t n, utils::Entity const* entities) noexcept override {
+        if (!mCallback) {
+            return;
+        }
+        std::vector<FilaEntity> converted(n);
+        for (size_t i = 0; i < n; ++i) {
+            converted[i] = utils::Entity::smuggle(entities[i]);
+        }
+        mCallback(n, converted.data(), mUserData);
+    }
+
+private:
+    FilaEntityManagerEntitiesDestroyedCallback mCallback = nullptr;
+    void* mUserData = nullptr;
+};
+
+} // namespace
+
+struct FilaEntityManagerListener {
+    BridgeEntityManagerListener bridge;
+    bool registered = false;
+
+    FilaEntityManagerListener(FilaEntityManagerEntitiesDestroyedCallback callback, void* userData)
+            : bridge(callback, userData) {}
+};
+
 
 extern "C" {
 
@@ -90,6 +127,82 @@ size_t FilaEntityManager_getActiveEntities(FilaEntity* outEntities, size_t maxCo
 #else
     return 0u;
 #endif
+}
+
+size_t FilaEntityManager_dumpActiveEntities(char* outText, size_t outTextSize) {
+#if FILAMENT_UTILS_TRACK_ENTITIES
+    utils::io::sstream out;
+    utils::EntityManager::get().dumpActiveEntities(out);
+    const char* text = out.c_str();
+    const size_t len = out.length();
+    if (!outText || outTextSize == 0u) {
+        return len;
+    }
+    const size_t copyLen = len < (outTextSize - 1u) ? len : (outTextSize - 1u);
+    if (copyLen > 0u) {
+        std::memcpy(outText, text, copyLen);
+    }
+    outText[copyLen] = '\0';
+    return len;
+#else
+    if (outText && outTextSize > 0u) {
+        outText[0] = '\0';
+    }
+    return 0u;
+#endif
+}
+
+FilaEntityManagerListener* FilaEntityManagerListener_create(
+        FilaEntityManagerEntitiesDestroyedCallback callback,
+        void* userData) {
+    if (!callback) {
+        return nullptr;
+    }
+    return new FilaEntityManagerListener(callback, userData);
+}
+
+void FilaEntityManagerListener_destroy(FilaEntityManagerListener* listener) {
+    if (!listener) {
+        return;
+    }
+    if (listener->registered) {
+        utils::EntityManager::get().unregisterListener(&listener->bridge);
+        listener->registered = false;
+    }
+    delete listener;
+}
+
+bool FilaEntityManager_registerListener(FilaEntityManagerListener* listener) {
+    if (!listener) {
+        return false;
+    }
+    utils::EntityManager::get().registerListener(&listener->bridge);
+    listener->registered = true;
+    return true;
+}
+
+bool FilaEntityManager_unregisterListener(FilaEntityManagerListener* listener) {
+    if (!listener) {
+        return false;
+    }
+    utils::EntityManager::get().unregisterListener(&listener->bridge);
+    listener->registered = false;
+    return true;
+}
+
+bool FilaEntityManagerListener_onEntitiesDestroyed(
+        FilaEntityManagerListener* listener,
+        size_t count,
+        const FilaEntity* entities) {
+    if (!listener || (count > 0u && !entities)) {
+        return false;
+    }
+    std::vector<utils::Entity> converted(count);
+    for (size_t i = 0u; i < count; ++i) {
+        converted[i] = utils::Entity::import(entities[i]);
+    }
+    listener->bridge.onEntitiesDestroyed(count, converted.data());
+    return true;
 }
 
 } // extern "C"

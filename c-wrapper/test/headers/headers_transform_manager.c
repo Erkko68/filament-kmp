@@ -31,6 +31,8 @@ void test_headers_transform_manager(void) {
     double outWorld64[16];
     FilaEntity children[4];
     FilaTransformManagerInstance childInstances[4];
+    FilaTransformManagerInstance childBegin = 0u;
+    FilaTransformManagerInstance childEnd = 0u;
     FilaEntity listedEntities[4];
 
     FilaTransformManager_createWithTransformMat4f(manager, parent, 0u, identity);
@@ -49,6 +51,8 @@ void test_headers_transform_manager(void) {
     (void)FilaTransformManager_getChildCount(manager, parentInstance);
     (void)FilaTransformManager_getChildren(manager, parentInstance, children, 4u);
     (void)FilaTransformManager_getChildInstances(manager, parentInstance, childInstances, 4u);
+    (void)FilaTransformManager_getChildrenBegin(manager, parentInstance, &childBegin);
+    (void)FilaTransformManager_getChildrenEnd(manager, parentInstance, &childEnd);
     FilaTransformManager_forEachChildInstance(manager, parentInstance, transform_instance_callback, (void*)0);
     FilaTransformManager_openLocalTransformTransaction(manager);
     FilaTransformManager_setTransformMat4f(manager, childInstance, identity);
@@ -57,7 +61,9 @@ void test_headers_transform_manager(void) {
     (void)FilaTransformManager_getTransformMat4f(manager, childInstance, outLocal);
     (void)FilaTransformManager_getWorldTransformMat4f(manager, childInstance, outWorld);
     (void)FilaTransformManager_getTransformMat4(manager, childInstance, outLocal64);
+    (void)FilaTransformManager_getTransformAccurate(manager, childInstance, outLocal64);
     (void)FilaTransformManager_getWorldTransformMat4(manager, childInstance, outWorld64);
+    (void)FilaTransformManager_getWorldTransformAccurate(manager, childInstance, outWorld64);
     (void)FilaTransformManager_getComponentCount(manager);
     (void)FilaTransformManager_empty(manager);
     FilaTransformManager_destroy(manager, child);

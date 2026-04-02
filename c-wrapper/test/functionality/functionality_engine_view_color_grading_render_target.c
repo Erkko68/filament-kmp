@@ -1,9 +1,11 @@
 #include <stdio.h>
 
 #include "filament/ColorGrading.h"
+#include "filament/ColorSpace.h"
 #include "filament/Engine.h"
 #include "filament/RenderTarget.h"
 #include "filament/Texture.h"
+#include "filament/ToneMapper.h"
 #include "filament/View.h"
 
 int main(void) {
@@ -94,10 +96,48 @@ int main(void) {
     FilaColorGradingBuilder_quality(cgBuilder, FILA_COLOR_GRADING_QUALITY_MEDIUM);
     FilaColorGradingBuilder_format(cgBuilder, FILA_COLOR_GRADING_LUT_FORMAT_INTEGER);
     FilaColorGradingBuilder_dimensions(cgBuilder, 16u);
+    FilaColorGradingBuilder_exposure(cgBuilder, 0.25f);
+    FilaColorGradingBuilder_whiteBalance(cgBuilder, 0.1f, -0.1f);
+    FilaColorGradingBuilder_channelMixer(
+            cgBuilder,
+            (const float[3]){1.0f, 0.0f, 0.0f},
+            (const float[3]){0.0f, 1.0f, 0.0f},
+            (const float[3]){0.0f, 0.0f, 1.0f});
+    FilaColorGradingBuilder_shadowsMidtonesHighlights(
+            cgBuilder,
+            (const float[4]){1.0f, 1.0f, 1.0f, 0.0f},
+            (const float[4]){1.0f, 1.0f, 1.0f, 0.0f},
+            (const float[4]){1.0f, 1.0f, 1.0f, 0.0f},
+            (const float[4]){0.0f, 0.333f, 0.55f, 1.0f});
+    FilaColorGradingBuilder_slopeOffsetPower(
+            cgBuilder,
+            (const float[3]){1.0f, 1.0f, 1.0f},
+            (const float[3]){0.0f, 0.0f, 0.0f},
+            (const float[3]){1.0f, 1.0f, 1.0f});
     FilaColorGradingBuilder_contrast(cgBuilder, 1.05f);
+    FilaColorGradingBuilder_curves(
+            cgBuilder,
+            (const float[3]){1.0f, 1.0f, 1.0f},
+            (const float[3]){1.0f, 1.0f, 1.0f},
+            (const float[3]){1.0f, 1.0f, 1.0f});
+
+    FilaLinearToneMapper* linearToneMapper = FilaLinearToneMapper_create();
+    FilaToneMapper* toneMapper = FilaLinearToneMapper_asToneMapper(linearToneMapper);
+    FilaColorGradingBuilder_toneMapper(cgBuilder, toneMapper);
+
+    FilaColorSpacePrimaries primaries;
+    FilaColorSpaceTransferFunction transferFunction;
+    FilaColorSpaceWhitePoint whitePoint;
+    FilaColorSpace colorSpace;
+    FilaColorSpace_setRec709Primaries(&primaries);
+    FilaColorSpace_setSrgbTransferFunction(&transferFunction);
+    FilaColorSpace_setD65WhitePoint(&whitePoint);
+    FilaColorSpace_set(&colorSpace, &primaries, &transferFunction, &whitePoint);
+    FilaColorGradingBuilder_outputColorSpace(cgBuilder, &colorSpace);
 
     FilaColorGrading* colorGrading = FilaColorGradingBuilder_build(cgBuilder, engine);
     FilaColorGradingBuilder_destroy(cgBuilder);
+    FilaToneMapper_destroy(toneMapper);
 
     if (!colorGrading) {
         printf("ColorGrading build failed\n");

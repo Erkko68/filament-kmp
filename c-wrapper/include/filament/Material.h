@@ -53,6 +53,7 @@ FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* material);
 FilaMaterialInstance* FilaMaterial_createInstanceNamed(const FilaMaterial* material, const char* name);
 
 const char* FilaMaterial_getName(const FilaMaterial* material);
+const char* FilaMaterial_getSource(const FilaMaterial* material, size_t* outLength);
 bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name);
 bool FilaMaterial_isSampler(const FilaMaterial* material, const char* name);
 size_t FilaMaterial_getParameterCount(const FilaMaterial* material);

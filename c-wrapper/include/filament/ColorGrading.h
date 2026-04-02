@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 #include "Types.h"
+#include "ToneMapper.h"
+#include "ColorSpace.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,9 +34,32 @@ void FilaColorGradingBuilder_gamutMapping(FilaColorGradingBuilder* builder, bool
 void FilaColorGradingBuilder_exposure(FilaColorGradingBuilder* builder, float exposure);
 void FilaColorGradingBuilder_nightAdaptation(FilaColorGradingBuilder* builder, float adaptation);
 void FilaColorGradingBuilder_whiteBalance(FilaColorGradingBuilder* builder, float temperature, float tint);
+void FilaColorGradingBuilder_channelMixer(
+        FilaColorGradingBuilder* builder,
+        const float outRed3[3],
+        const float outGreen3[3],
+        const float outBlue3[3]);
+void FilaColorGradingBuilder_shadowsMidtonesHighlights(
+        FilaColorGradingBuilder* builder,
+        const float shadows4[4],
+        const float midtones4[4],
+        const float highlights4[4],
+        const float ranges4[4]);
+void FilaColorGradingBuilder_slopeOffsetPower(
+        FilaColorGradingBuilder* builder,
+        const float slope3[3],
+        const float offset3[3],
+        const float power3[3]);
 void FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* builder, float contrast);
 void FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* builder, float vibrance);
 void FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* builder, float saturation);
+void FilaColorGradingBuilder_curves(
+        FilaColorGradingBuilder* builder,
+        const float shadowGamma3[3],
+        const float midPoint3[3],
+        const float highlightScale3[3]);
+void FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* builder, const FilaToneMapper* toneMapper);
+void FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* builder, const FilaColorSpace* colorSpace);
 FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* builder, FilaEngine* engine);
 
 

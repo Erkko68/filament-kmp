@@ -157,6 +157,8 @@ int main(void) {
     FilaTransformManagerInstance childInstances[8] = {0u};
     const size_t childInstanceCount =
             FilaTransformManager_getChildInstances(manager, parentInstance, childInstances, 8u);
+    FilaTransformManagerInstance childBegin = 0u;
+    FilaTransformManagerInstance childEnd = 0u;
     bool foundChildInstance = false;
     for (size_t i = 0; i < childInstanceCount; ++i) {
         if (childInstances[i] == childInstance) {
@@ -166,6 +168,18 @@ int main(void) {
     }
     if (childInstanceCount == 0u || !foundChildInstance) {
         printf("Transform child-instance listing failed\n");
+        FilaTransformManager_destroy(manager, child);
+        FilaTransformManager_destroy(manager, parent);
+        FilaEntityManager_destroy(child);
+        FilaEntityManager_destroy(parent);
+        FilaEngine_destroy(&engine);
+        return 1;
+    }
+
+    if (!FilaTransformManager_getChildrenBegin(manager, parentInstance, &childBegin) ||
+            !FilaTransformManager_getChildrenEnd(manager, parentInstance, &childEnd) ||
+            childBegin == 0u || childEnd != 0u) {
+        printf("Transform child iterator boundary query failed\n");
         FilaTransformManager_destroy(manager, child);
         FilaTransformManager_destroy(manager, parent);
         FilaEntityManager_destroy(child);
@@ -254,6 +268,23 @@ int main(void) {
         FilaEntityManager_destroy(parent);
         FilaEngine_destroy(&engine);
         return 1;
+    }
+
+    {
+        double localAlias[16] = {0};
+        double worldAlias[16] = {0};
+        if (!FilaTransformManager_getTransformAccurate(manager, childInstance, localAlias) ||
+                !FilaTransformManager_getWorldTransformAccurate(manager, childInstance, worldAlias) ||
+                fabs(localAlias[12] - 2.0) > 1e-8 ||
+                fabs(worldAlias[12] - 2.0) > 1e-8) {
+            printf("Transform accurate alias getters failed\n");
+            FilaTransformManager_destroy(manager, child);
+            FilaTransformManager_destroy(manager, parent);
+            FilaEntityManager_destroy(child);
+            FilaEntityManager_destroy(parent);
+            FilaEngine_destroy(&engine);
+            return 1;
+        }
     }
 
     FilaTransformManager_destroy(manager, child);

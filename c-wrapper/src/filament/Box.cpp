@@ -1,5 +1,7 @@
 #include <filament/Box.h>
 
+#include <math/mat3.h>
+
 #include "../../include/filament/Box.h"
 
 namespace {
@@ -34,6 +36,31 @@ filament::Aabb toAabb(const FilaAabb* aabb) {
     out.min = {aabb->min[0], aabb->min[1], aabb->min[2]};
     out.max = {aabb->max[0], aabb->max[1], aabb->max[2]};
     return out;
+}
+
+void fromAabb(const filament::Aabb& aabb, FilaAabb* outAabb) {
+    if (!outAabb) {
+        return;
+    }
+    outAabb->min[0] = aabb.min.x;
+    outAabb->min[1] = aabb.min.y;
+    outAabb->min[2] = aabb.min.z;
+    outAabb->max[0] = aabb.max.x;
+    outAabb->max[1] = aabb.max.y;
+    outAabb->max[2] = aabb.max.z;
+}
+
+filament::math::mat3f toMat3f(const float m3x3[9]) {
+    filament::math::mat3f m;
+    if (!m3x3) {
+        return m;
+    }
+    for (size_t col = 0u; col < 3u; ++col) {
+        for (size_t row = 0u; row < 3u; ++row) {
+            m[col][row] = m3x3[col * 3u + row];
+        }
+    }
+    return m;
 }
 
 } // namespace
@@ -79,6 +106,16 @@ bool FilaBox_getMax(const FilaBox* box, float outMax3[3]) {
     return true;
 }
 
+bool FilaBox_union(const FilaBox* lhs, const FilaBox* rhs, FilaBox* outBox) {
+    if (!lhs || !rhs || !outBox) {
+        return false;
+    }
+    filament::Box combined = toBox(lhs);
+    combined.unionSelf(toBox(rhs));
+    fromBox(combined, outBox);
+    return true;
+}
+
 bool FilaBox_translateTo(const FilaBox* box, const float center3[3], FilaBox* outBox) {
     if (!box || !center3 || !outBox) {
         return false;
@@ -97,6 +134,18 @@ bool FilaBox_getBoundingSphere(const FilaBox* box, float outCenterRadius4[4]) {
     outCenterRadius4[1] = sphere.y;
     outCenterRadius4[2] = sphere.z;
     outCenterRadius4[3] = sphere.w;
+    return true;
+}
+
+bool FilaBox_transformAffine(const float m3x3[9], const float translation3[3], const FilaBox* box, FilaBox* outBox) {
+    if (!m3x3 || !translation3 || !box || !outBox) {
+        return false;
+    }
+    const filament::Box transformed = filament::Box::transform(
+            toMat3f(m3x3),
+            filament::math::float3{translation3[0], translation3[1], translation3[2]},
+            toBox(box));
+    fromBox(transformed, outBox);
     return true;
 }
 
@@ -134,6 +183,31 @@ float FilaAabb_contains(const FilaAabb* aabb, const float point3[3]) {
         return 0.0f;
     }
     return toAabb(aabb).contains({point3[0], point3[1], point3[2]});
+}
+
+bool FilaAabb_getCorners(const FilaAabb* aabb, float outCorners8x3[24]) {
+    if (!aabb || !outCorners8x3) {
+        return false;
+    }
+    const auto corners = toAabb(aabb).getCorners();
+    for (size_t i = 0u; i < 8u; ++i) {
+        outCorners8x3[i * 3u + 0u] = corners[i].x;
+        outCorners8x3[i * 3u + 1u] = corners[i].y;
+        outCorners8x3[i * 3u + 2u] = corners[i].z;
+    }
+    return true;
+}
+
+bool FilaAabb_transformAffine(const float m3x3[9], const float translation3[3], const FilaAabb* aabb, FilaAabb* outAabb) {
+    if (!m3x3 || !translation3 || !aabb || !outAabb) {
+        return false;
+    }
+    const filament::Aabb transformed = filament::Aabb::transform(
+            toMat3f(m3x3),
+            filament::math::float3{translation3[0], translation3[1], translation3[2]},
+            toAabb(aabb));
+    fromAabb(transformed, outAabb);
+    return true;
 }
 
 } // extern "C"

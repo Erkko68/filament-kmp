@@ -23,6 +23,7 @@
 #include <filament/BufferObject.h>
 
 #include <utils/Entity.h>
+#include <utils/EntityManager.h>
 
 #include "../../include/filament/Engine.h" // Our C Header
 #include "../../include/filament/Types.h"  // Our C Types
@@ -1045,6 +1046,14 @@ FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine) {
     }
     auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
     return reinterpret_cast<FilaTransformManager*>(&cppEngine->getTransformManager());
+}
+
+FilaEntityManager* FilaEngine_getEntityManager(FilaEngine* engine) {
+    if (!engine) {
+        return nullptr;
+    }
+    auto cppEngine = reinterpret_cast<filament::Engine*>(engine);
+    return reinterpret_cast<FilaEntityManager*>(&cppEngine->getEntityManager());
 }
 
 FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* engine) {

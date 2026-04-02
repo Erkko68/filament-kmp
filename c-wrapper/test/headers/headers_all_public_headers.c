@@ -58,6 +58,8 @@
 #include "utils/Entity.h"
 #include "utils/EntityInstance.h"
 #include "utils/Status.h"
+#include "utils/Debug.h"
+#include "utils/Path.h"
 
 void test_headers_all_public_headers(void) {}
 

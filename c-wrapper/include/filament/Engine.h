@@ -247,6 +247,9 @@ void FilaEngine_destroyBufferObject(FilaEngine* engine, FilaBufferObject* buffer
 // Returns the engine-owned transform manager.
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* engine);
 
+// Returns the engine-owned entity manager.
+FilaEntityManager* FilaEngine_getEntityManager(FilaEngine* engine);
+
 // Returns the engine-owned debug registry.
 FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* engine);
 

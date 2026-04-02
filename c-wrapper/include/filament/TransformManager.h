@@ -79,6 +79,14 @@ size_t FilaTransformManager_getChildInstances(const FilaTransformManager* manage
 		FilaTransformManagerInstance* outChildren,
 		size_t maxCount);
 
+// Returns iterator begin/end equivalent child instances for the given parent instance.
+bool FilaTransformManager_getChildrenBegin(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		FilaTransformManagerInstance* outBegin);
+bool FilaTransformManager_getChildrenEnd(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		FilaTransformManagerInstance* outEnd);
+
 typedef void (*FilaTransformManagerInstanceCallback)(FilaTransformManagerInstance instance, void* userData);
 
 // Invokes callback for each child transform instance of the given parent instance.
@@ -112,8 +120,18 @@ bool FilaTransformManager_getTransformMat4(const FilaTransformManager* manager,
 		FilaTransformManagerInstance instance,
 		double outLocalTransform[16]);
 
+// Alias of getTransformMat4 for API parity naming.
+bool FilaTransformManager_getTransformAccurate(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		double outLocalTransform[16]);
+
 // Gets the world transform as a 4x4 column-major double matrix. Returns false on invalid input.
 bool FilaTransformManager_getWorldTransformMat4(const FilaTransformManager* manager,
+		FilaTransformManagerInstance instance,
+		double outWorldTransform[16]);
+
+// Alias of getWorldTransformMat4 for API parity naming.
+bool FilaTransformManager_getWorldTransformAccurate(const FilaTransformManager* manager,
 		FilaTransformManagerInstance instance,
 		double outWorldTransform[16]);
 

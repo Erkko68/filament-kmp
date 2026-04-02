@@ -3,6 +3,21 @@
 
 #include "utils/EntityManager.h"
 
+typedef struct ListenerState {
+    size_t callCount;
+    size_t totalDestroyed;
+} ListenerState;
+
+static void on_entities_destroyed(size_t count, const FilaEntity* entities, void* userData) {
+    ListenerState* state = (ListenerState*)userData;
+    if (!state) {
+        return;
+    }
+    state->callCount += 1u;
+    state->totalDestroyed += count;
+    (void)entities;
+}
+
 int main(void) {
     printf("Running entity manager functionality program...\n");
 
@@ -67,6 +82,74 @@ int main(void) {
             printf("Active entities should be unavailable when tracking is disabled\n");
             return 1;
         }
+
+        char dumpText[256] = {0};
+        const size_t dumpLen = FilaEntityManager_dumpActiveEntities(dumpText, sizeof(dumpText));
+        const size_t probeLen = FilaEntityManager_dumpActiveEntities((char*)0, 0u);
+        if (dumpLen != probeLen) {
+            printf("Active entities dump length mismatch\n");
+            return 1;
+        }
+        if (!tracking && dumpLen != 0u) {
+            printf("Active entities dump should be unavailable when tracking is disabled\n");
+            return 1;
+        }
+    }
+
+    {
+        ListenerState state = {0u, 0u};
+        FilaEntityManagerListener* listener = FilaEntityManagerListener_create(on_entities_destroyed, &state);
+        if (!listener) {
+            printf("EntityManager listener creation failed\n");
+            return 1;
+        }
+        if (!FilaEntityManager_registerListener(listener)) {
+            printf("EntityManager registerListener failed\n");
+            FilaEntityManagerListener_destroy(listener);
+            return 1;
+        }
+
+        FilaEntity entities[2] = {0};
+        FilaEntityManager_createMany(2u, entities);
+        FilaEntityManager_destroyMany(2u, entities);
+        if (state.callCount == 0u || state.totalDestroyed < 2u) {
+            printf("EntityManager listener did not observe destruction\n");
+            FilaEntityManager_unregisterListener(listener);
+            FilaEntityManagerListener_destroy(listener);
+            return 1;
+        }
+
+        const size_t callCountBeforeUnregister = state.callCount;
+        if (!FilaEntityManager_unregisterListener(listener)) {
+            printf("EntityManager unregisterListener failed\n");
+            FilaEntityManagerListener_destroy(listener);
+            return 1;
+        }
+
+        FilaEntity postEntities[1] = {0};
+        FilaEntityManager_createMany(1u, postEntities);
+        FilaEntityManager_destroyMany(1u, postEntities);
+        if (state.callCount != callCountBeforeUnregister) {
+            printf("EntityManager listener should not be called after unregister\n");
+            FilaEntityManagerListener_destroy(listener);
+            return 1;
+        }
+
+        if (!FilaEntityManagerListener_onEntitiesDestroyed(listener, 0u, (const FilaEntity*)0)) {
+            printf("EntityManager listener manual callback bridge failed\n");
+            FilaEntityManagerListener_destroy(listener);
+            return 1;
+        }
+
+        FilaEntityManagerListener_destroy(listener);
+    }
+
+    if (FilaEntityManager_registerListener((FilaEntityManagerListener*)0) ||
+            FilaEntityManager_unregisterListener((FilaEntityManagerListener*)0) ||
+            FilaEntityManagerListener_onEntitiesDestroyed((FilaEntityManagerListener*)0, 0u, (const FilaEntity*)0) ||
+            FilaEntityManagerListener_create((FilaEntityManagerEntitiesDestroyedCallback)0, (void*)0) != (FilaEntityManagerListener*)0) {
+        printf("EntityManager listener null-safety mismatch\n");
+        return 1;
     }
 
     printf("Entity manager functionality program completed\n");

@@ -28,6 +28,7 @@ void test_headers_engine(void) {
     FilaLightManager* lightManager = (FilaLightManager*)0;
     FilaRenderableManager* renderableManager = (FilaRenderableManager*)0;
     FilaDebugRegistry* debugRegistry = (FilaDebugRegistry*)0;
+    FilaEntityManager* entityManager = (FilaEntityManager*)0;
     FilaEntity entity = 7;
     FilaEngineConfig config;
     FilaEngineConfig readback;
@@ -38,6 +39,7 @@ void test_headers_engine(void) {
     bool flagValue = false;
     bool flagConstant = false;
     bool completed = false;
+    bool* flagPtr = (bool*)0;
 
     FilaEngineConfig_setDefaults(&config);
     config.stereoscopicEyeCount = 2u;
@@ -112,6 +114,10 @@ void test_headers_engine(void) {
     (void)FilaEngine_hasFeatureFlag(engine, "backend.disable_parallel_shader_compile");
     (void)FilaEngine_getFeatureFlag(engine, "backend.disable_parallel_shader_compile", &flagValue);
     (void)FilaEngine_setFeatureFlag(engine, "backend.disable_parallel_shader_compile", false);
+    flagPtr = FilaEngine_getFeatureFlagPtr(engine, "backend.disable_parallel_shader_compile");
+    (void)flagPtr;
+    (void)FilaEngine_cancelAsyncCall(engine, FilaBackendAsyncCallId_getInvalid());
+    (void)FilaEngine_resetBackendState(engine);
     (void)FilaEngine_getFeatureFlagCount(engine);
     (void)FilaEngine_getFeatureFlagInfo(
             engine,
@@ -152,10 +158,12 @@ void test_headers_engine(void) {
     FilaEngine_destroyCameraComponent(engine, entity);
 
     transformManager = FilaEngine_getTransformManager(engine);
+    entityManager = FilaEngine_getEntityManager(engine);
     debugRegistry = FilaEngine_getDebugRegistry(engine);
     lightManager = FilaEngine_getLightManager(engine);
     renderableManager = FilaEngine_getRenderableManager(engine);
     (void)transformManager;
+    (void)entityManager;
     (void)debugRegistry;
     (void)lightManager;
     (void)renderableManager;

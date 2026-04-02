@@ -24,6 +24,10 @@ void test_headers_material(void) {
     (void)FilaMaterialInstance_getName(materialInstance);
     (void)FilaMaterialInstance_duplicate(materialInstance, "dup-0");
     (void)FilaMaterial_getName(material);
+    {
+        size_t sourceLength = 0u;
+        (void)FilaMaterial_getSource(material, &sourceLength);
+    }
     (void)FilaMaterial_hasParameter(material, "uFloat");
     (void)FilaMaterial_isSampler(material, "uAlbedo");
     (void)FilaMaterial_getParameterCount(material);

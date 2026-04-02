@@ -50,6 +50,7 @@ typedef struct FilaBufferObject FilaBufferObject;
 typedef struct FilaBufferObjectBuilder FilaBufferObjectBuilder;
 typedef struct FilaSync FilaSync;
 typedef struct FilaDebugRegistry FilaDebugRegistry;
+typedef struct FilaEntityManager FilaEntityManager;
 
 // C representation of utils::Entity identity.
 typedef int32_t FilaEntity;
