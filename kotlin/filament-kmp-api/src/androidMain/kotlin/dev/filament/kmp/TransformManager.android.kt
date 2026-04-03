@@ -5,40 +5,76 @@ import com.google.android.filament.TransformManager as AndroidTransformManager
 actual class TransformManager internal constructor(
     internal val androidTransformManager: AndroidTransformManager,
 ) {
-    actual fun hasComponent(entity: Int): Boolean = androidTransformManager.hasComponent(entity)
+    actual fun hasComponent(@Entity entity: Int): Boolean = androidTransformManager.hasComponent(entity)
 
-    actual fun getInstance(entity: Int): Int = androidTransformManager.getInstance(entity)
+    @EntityInstance
+    actual fun getInstance(@Entity entity: Int): Int = androidTransformManager.getInstance(entity)
 
-    actual fun create(entity: Int): Int = androidTransformManager.create(entity)
+    actual fun setAccurateTranslationsEnabled(enable: Boolean) {
+        androidTransformManager.setAccurateTranslationsEnabled(enable)
+    }
 
-    actual fun create(entity: Int, parent: Int, localTransform: FloatArray?): Int {
+    actual fun isAccurateTranslationsEnabled(): Boolean = androidTransformManager.isAccurateTranslationsEnabled
+
+    @EntityInstance
+    actual fun create(@Entity entity: Int): Int = androidTransformManager.create(entity)
+
+    @EntityInstance
+    actual fun create(@Entity entity: Int, @EntityInstance parent: Int, localTransform: FloatArray?): Int {
         return androidTransformManager.create(entity, parent, localTransform)
     }
 
-    actual fun destroy(entity: Int) {
+    @EntityInstance
+    actual fun create(@Entity entity: Int, @EntityInstance parent: Int, localTransform: DoubleArray?): Int {
+        return androidTransformManager.create(entity, parent, localTransform)
+    }
+
+    actual fun destroy(@Entity entity: Int) {
         androidTransformManager.destroy(entity)
     }
 
-    actual fun setParent(i: Int, newParent: Int) {
+    actual fun setParent(@EntityInstance i: Int, @EntityInstance newParent: Int) {
         androidTransformManager.setParent(i, newParent)
     }
 
-    actual fun getParent(i: Int): Int = androidTransformManager.getParent(i)
+    @Entity
+    actual fun getParent(@EntityInstance i: Int): Int = androidTransformManager.getParent(i)
 
-    actual fun getChildCount(i: Int): Int = androidTransformManager.getChildCount(i)
+    actual fun getChildCount(@EntityInstance i: Int): Int = androidTransformManager.getChildCount(i)
 
-    actual fun getChildren(i: Int, outEntities: IntArray?): IntArray = androidTransformManager.getChildren(i, outEntities)
+    @Entity
+    actual fun getChildren(@EntityInstance i: Int, outEntities: IntArray?): IntArray = androidTransformManager.getChildren(i, outEntities)
 
-    actual fun setTransform(i: Int, localTransform: FloatArray) {
+    actual fun setTransform(@EntityInstance i: Int, localTransform: FloatArray) {
         androidTransformManager.setTransform(i, localTransform)
     }
 
-    actual fun getTransform(i: Int, outLocalTransform: FloatArray?): FloatArray {
+    actual fun setTransform(@EntityInstance i: Int, localTransform: DoubleArray) {
+        androidTransformManager.setTransform(i, localTransform)
+    }
+
+    actual fun getTransform(@EntityInstance i: Int, outLocalTransform: FloatArray?): FloatArray {
         return androidTransformManager.getTransform(i, outLocalTransform)
     }
 
-    actual fun getWorldTransform(i: Int, outWorldTransform: FloatArray?): FloatArray {
+    actual fun getTransform(@EntityInstance i: Int, outLocalTransform: DoubleArray?): DoubleArray {
+        return androidTransformManager.getTransform(i, outLocalTransform)
+    }
+
+    actual fun getWorldTransform(@EntityInstance i: Int, outWorldTransform: FloatArray?): FloatArray {
         return androidTransformManager.getWorldTransform(i, outWorldTransform)
+    }
+
+    actual fun getWorldTransform(@EntityInstance i: Int, outWorldTransform: DoubleArray?): DoubleArray {
+        return androidTransformManager.getWorldTransform(i, outWorldTransform)
+    }
+
+    actual fun openLocalTransformTransaction() {
+        androidTransformManager.openLocalTransformTransaction()
+    }
+
+    actual fun commitLocalTransformTransaction() {
+        androidTransformManager.commitLocalTransformTransaction()
     }
 
     actual fun getNativeObject(): Long = androidTransformManager.nativeObject

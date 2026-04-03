@@ -274,3 +274,29 @@ Implemented classes:
 Missing classes:
 - None
 
+## Parity audit backlog (from java->expect script)
+
+Source report:
+- `kotlin/filament-kmp-api/tools/filament_java_expect_parity_report.md`
+
+Priority classes with notable missing API surface:
+- `Engine`
+- `View`
+- `Renderer`
+- `Scene`
+- `RenderableManager`
+- `Material`
+- `MaterialInstance`
+- `Texture`
+- `TransformManager`
+
+Note:
+- Internal helper APIs such as `invalidate()` are tracked as KMP lifecycle helpers and may appear as "only in expect" in parity reports.
+
+## Step 12 - Scene and transform parity expansion (in progress)
+
+Planned fixes:
+- Expand `Scene` expect/actual to include Android public APIs from `Scene.java`.
+- Expand `TransformManager` expect/actual to include accurate-translation, FP64 overloads, and local-transform transaction APIs.
+- Keep strict Android Javadocs/KDocs parity for all updated expect declarations.
+

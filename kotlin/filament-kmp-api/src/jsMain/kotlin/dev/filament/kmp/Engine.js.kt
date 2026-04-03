@@ -25,15 +25,15 @@ actual class Engine {
     actual fun destroyView(view: View) {
     }
 
-    actual fun createCamera(entity: Int): Camera {
+    actual fun createCamera(@Entity entity: Int): Camera {
         TODO("Not yet implemented")
     }
 
-    actual fun getCameraComponent(entity: Int): Camera? {
+    actual fun getCameraComponent(@Entity entity: Int): Camera? {
         TODO("Not yet implemented")
     }
 
-    actual fun destroyCameraComponent(entity: Int) {
+    actual fun destroyCameraComponent(@Entity entity: Int) {
     }
 
     actual fun createSwapChain(surface: Any, flags: Long): SwapChain {

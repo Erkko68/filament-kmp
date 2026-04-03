@@ -1,34 +1,35 @@
 package dev.filament.kmp
 
 actual class RenderableManager {
-    actual fun hasComponent(entity: Int): Boolean = TODO("Not yet implemented")
+    actual fun hasComponent(@Entity entity: Int): Boolean = TODO("Not yet implemented")
 
-    actual fun getInstance(entity: Int): Int = TODO("Not yet implemented")
+    @EntityInstance
+    actual fun getInstance(@Entity entity: Int): Int = TODO("Not yet implemented")
 
-    actual fun destroy(entity: Int) {
+    actual fun destroy(@Entity entity: Int) {
         TODO("Not yet implemented")
     }
 
-    actual fun setAxisAlignedBoundingBox(i: Int, aabb: Box) {
+    actual fun setAxisAlignedBoundingBox(@EntityInstance i: Int, aabb: Box) {
         TODO("Not yet implemented")
     }
 
-    actual fun setLayerMask(i: Int, select: Int, value: Int) {
+    actual fun setLayerMask(@EntityInstance i: Int, select: Int, value: Int) {
         TODO("Not yet implemented")
     }
 
-    actual fun setPriority(i: Int, priority: Int) {
+    actual fun setPriority(@EntityInstance i: Int, priority: Int) {
         TODO("Not yet implemented")
     }
 
-    actual fun setMaterialInstanceAt(i: Int, primitiveIndex: Int, materialInstance: MaterialInstance) {
+    actual fun setMaterialInstanceAt(@EntityInstance i: Int, primitiveIndex: Int, materialInstance: MaterialInstance) {
         TODO("Not yet implemented")
     }
 
-    actual fun getMaterialInstanceAt(i: Int, primitiveIndex: Int): MaterialInstance = TODO("Not yet implemented")
+    actual fun getMaterialInstanceAt(@EntityInstance i: Int, primitiveIndex: Int): MaterialInstance = TODO("Not yet implemented")
 
     actual fun setGeometryAt(
-        i: Int,
+        @EntityInstance i: Int,
         primitiveIndex: Int,
         type: PrimitiveType,
         vertices: VertexBuffer,
@@ -46,7 +47,7 @@ actual class RenderableManager {
 
         actual fun boundingBox(aabb: Box): Builder = TODO("Not yet implemented")
 
-        actual fun build(engine: Engine, entity: Int) {
+        actual fun build(engine: Engine, @Entity entity: Int) {
             TODO("Not yet implemented")
         }
     }

@@ -12,6 +12,10 @@ version = "0.1.0-SNAPSHOT"
 val filamentAndroidVersion = "1.70.1"
 
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     androidTarget()
 
     iosArm64()

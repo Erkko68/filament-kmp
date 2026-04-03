@@ -3,77 +3,78 @@ package dev.filament.kmp
 actual class LightManager {
     actual fun getComponentCount(): Int = TODO("Not yet implemented")
 
-    actual fun hasComponent(entity: Int): Boolean = TODO("Not yet implemented")
+    actual fun hasComponent(@Entity entity: Int): Boolean = TODO("Not yet implemented")
 
-    actual fun getInstance(entity: Int): Int = TODO("Not yet implemented")
+    @EntityInstance
+    actual fun getInstance(@Entity entity: Int): Int = TODO("Not yet implemented")
 
-    actual fun destroy(entity: Int) {
+    actual fun destroy(@Entity entity: Int) {
     }
 
-    actual fun getType(i: Int): Type = TODO("Not yet implemented")
+    actual fun getType(@EntityInstance i: Int): Type = TODO("Not yet implemented")
 
-    actual fun setLightChannel(i: Int, channel: Int, enable: Boolean) {
+    actual fun setLightChannel(@EntityInstance i: Int, channel: Int, enable: Boolean) {
     }
 
-    actual fun getLightChannel(i: Int, channel: Int): Boolean = TODO("Not yet implemented")
+    actual fun getLightChannel(@EntityInstance i: Int, channel: Int): Boolean = TODO("Not yet implemented")
 
-    actual fun setPosition(i: Int, x: Float, y: Float, z: Float) {
+    actual fun setPosition(@EntityInstance i: Int, x: Float, y: Float, z: Float) {
     }
 
-    actual fun getPosition(i: Int, out: FloatArray?): FloatArray = TODO("Not yet implemented")
+    actual fun getPosition(@EntityInstance i: Int, out: FloatArray?): FloatArray = TODO("Not yet implemented")
 
-    actual fun setDirection(i: Int, x: Float, y: Float, z: Float) {
+    actual fun setDirection(@EntityInstance i: Int, x: Float, y: Float, z: Float) {
     }
 
-    actual fun getDirection(i: Int, out: FloatArray?): FloatArray = TODO("Not yet implemented")
+    actual fun getDirection(@EntityInstance i: Int, out: FloatArray?): FloatArray = TODO("Not yet implemented")
 
-    actual fun setColor(i: Int, linearR: Float, linearG: Float, linearB: Float) {
+    actual fun setColor(@EntityInstance i: Int, linearR: Float, linearG: Float, linearB: Float) {
     }
 
-    actual fun getColor(i: Int, out: FloatArray?): FloatArray = TODO("Not yet implemented")
+    actual fun getColor(@EntityInstance i: Int, out: FloatArray?): FloatArray = TODO("Not yet implemented")
 
-    actual fun setIntensity(i: Int, intensity: Float) {
+    actual fun setIntensity(@EntityInstance i: Int, intensity: Float) {
     }
 
-    actual fun setIntensityCandela(i: Int, intensity: Float) {
+    actual fun setIntensityCandela(@EntityInstance i: Int, intensity: Float) {
     }
 
-    actual fun setIntensity(i: Int, watts: Float, efficiency: Float) {
+    actual fun setIntensity(@EntityInstance i: Int, watts: Float, efficiency: Float) {
     }
 
-    actual fun getIntensity(i: Int): Float = TODO("Not yet implemented")
+    actual fun getIntensity(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
-    actual fun setFalloff(i: Int, falloff: Float) {
+    actual fun setFalloff(@EntityInstance i: Int, falloff: Float) {
     }
 
-    actual fun getFalloff(i: Int): Float = TODO("Not yet implemented")
+    actual fun getFalloff(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
-    actual fun setSpotLightCone(i: Int, inner: Float, outer: Float) {
+    actual fun setSpotLightCone(@EntityInstance i: Int, inner: Float, outer: Float) {
     }
 
-    actual fun setSunAngularRadius(i: Int, angularRadius: Float) {
+    actual fun setSunAngularRadius(@EntityInstance i: Int, angularRadius: Float) {
     }
 
-    actual fun getSunAngularRadius(i: Int): Float = TODO("Not yet implemented")
+    actual fun getSunAngularRadius(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
-    actual fun setSunHaloSize(i: Int, haloSize: Float) {
+    actual fun setSunHaloSize(@EntityInstance i: Int, haloSize: Float) {
     }
 
-    actual fun getSunHaloSize(i: Int): Float = TODO("Not yet implemented")
+    actual fun getSunHaloSize(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
-    actual fun setSunHaloFalloff(i: Int, haloFalloff: Float) {
+    actual fun setSunHaloFalloff(@EntityInstance i: Int, haloFalloff: Float) {
     }
 
-    actual fun getSunHaloFalloff(i: Int): Float = TODO("Not yet implemented")
+    actual fun getSunHaloFalloff(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
-    actual fun setShadowCaster(i: Int, shadowCaster: Boolean) {
+    actual fun setShadowCaster(@EntityInstance i: Int, shadowCaster: Boolean) {
     }
 
-    actual fun isShadowCaster(i: Int): Boolean = TODO("Not yet implemented")
+    actual fun isShadowCaster(@EntityInstance i: Int): Boolean = TODO("Not yet implemented")
 
-    actual fun getOuterConeAngle(i: Int): Float = TODO("Not yet implemented")
+    actual fun getOuterConeAngle(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
-    actual fun getInnerConeAngle(i: Int): Float = TODO("Not yet implemented")
+    actual fun getInnerConeAngle(@EntityInstance i: Int): Float = TODO("Not yet implemented")
 
     actual fun getNativeObject(): Long = TODO("Not yet implemented")
 
@@ -108,7 +109,7 @@ actual class LightManager {
 
         actual fun sunHaloFalloff(haloFalloff: Float): Builder = TODO("Not yet implemented")
 
-        actual fun build(engine: Engine, entity: Int) {
+        actual fun build(engine: Engine, @Entity entity: Int) {
         }
     }
 
