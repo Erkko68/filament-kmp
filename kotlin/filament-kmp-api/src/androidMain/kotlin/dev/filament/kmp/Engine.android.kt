@@ -10,7 +10,7 @@ actual class Engine private constructor(
 
     actual fun createRenderer(): Renderer {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
-        return Renderer(engine.createRenderer())
+        return Renderer(engine.createRenderer(), this)
     }
 
     actual fun destroyRenderer(renderer: Renderer) {
