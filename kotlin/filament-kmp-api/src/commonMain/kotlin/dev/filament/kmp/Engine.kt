@@ -46,6 +46,21 @@ expect class Engine {
     fun destroyView(view: View)
 
     /**
+     * Creates a Camera component and associates it with the given entity.
+     */
+    fun createCamera(@Entity entity: Int): Camera
+
+    /**
+     * Returns the Camera component associated with the given entity, or null.
+     */
+    fun getCameraComponent(@Entity entity: Int): Camera?
+
+    /**
+     * Destroys the Camera component associated with the given entity.
+     */
+    fun destroyCameraComponent(@Entity entity: Int)
+
+    /**
      * Creates a {@link SwapChain} from the given OS native window handle.
      *
      * @param surface on Android, <b>must be</b> an instance of {@link android.view.Surface}
@@ -100,10 +115,19 @@ expect class Engine {
     fun destroyTexture(texture: Texture)
 
     /**
-     * Destroys a {@link BufferObject} and frees all its associated resources.
-     * @param bufferObject the {@link BufferObject} to destroy
+     * Destroys a Skybox and frees all its associated resources.
      */
-    fun destroyBufferObject(bufferObject: BufferObject)
+    fun destroySkybox(skybox: Skybox)
+
+    /**
+     * Destroys an IndirectLight and frees all its associated resources.
+     */
+    fun destroyIndirectLight(indirectLight: IndirectLight)
+
+    /**
+     * Destroys a ColorGrading and frees all its associated resources.
+     */
+    fun destroyColorGrading(colorGrading: ColorGrading)
 
     /**
      * Destroys a {@link IndexBuffer} and frees all its associated resources.
@@ -133,6 +157,11 @@ expect class Engine {
     fun getRenderableManager(): RenderableManager
 
     /**
+     * @return the LightManager used by this Engine
+     */
+    fun getLightManager(): LightManager
+
+    /**
      * @return the {@link TransformManager} used by this {@link Engine}
      */
     fun getTransformManager(): TransformManager
@@ -154,4 +183,3 @@ data class EngineConfig(
     val stereoscopicType: EngineStereoscopicType = EngineStereoscopicType.NONE,
     val stereoscopicEyeCount: UByte = 1u,
 )
-

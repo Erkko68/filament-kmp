@@ -44,6 +44,22 @@ actual class Engine private constructor(
         view.invalidate()
     }
 
+    actual fun createCamera(@Entity entity: Int): Camera {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        return Camera(engine.createCamera(entity))
+    }
+
+    actual fun getCameraComponent(@Entity entity: Int): Camera? {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val camera = engine.getCameraComponent(entity) ?: return null
+        return Camera(camera)
+    }
+
+    actual fun destroyCameraComponent(@Entity entity: Int) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        engine.destroyCameraComponent(entity)
+    }
+
     actual fun createSwapChain(surface: Any, flags: Long): SwapChain {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
         return SwapChain(engine.createSwapChain(surface, flags))
@@ -75,12 +91,27 @@ actual class Engine private constructor(
         texture.invalidate()
     }
 
-    actual fun destroyBufferObject(bufferObject: BufferObject) {
+    actual fun destroySkybox(skybox: Skybox) {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
-        val handle = bufferObject.androidBufferObject ?: return
-        engine.destroyBufferObject(handle)
-        bufferObject.invalidate()
+        val handle = skybox.androidSkybox ?: return
+        engine.destroySkybox(handle)
+        skybox.invalidate()
     }
+
+    actual fun destroyIndirectLight(indirectLight: IndirectLight) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = indirectLight.androidIndirectLight ?: return
+        engine.destroyIndirectLight(handle)
+        indirectLight.invalidate()
+    }
+
+    actual fun destroyColorGrading(colorGrading: ColorGrading) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = colorGrading.androidColorGrading ?: return
+        engine.destroyColorGrading(handle)
+        colorGrading.invalidate()
+    }
+
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
@@ -113,6 +144,11 @@ actual class Engine private constructor(
     actual fun getRenderableManager(): RenderableManager {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
         return RenderableManager(engine.renderableManager)
+    }
+
+    actual fun getLightManager(): LightManager {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        return LightManager(engine.lightManager)
     }
 
     actual fun getTransformManager(): TransformManager {

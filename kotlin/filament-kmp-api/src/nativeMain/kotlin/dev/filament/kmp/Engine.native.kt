@@ -47,6 +47,17 @@ actual class Engine private constructor(
         view.invalidate()
     }
 
+    actual fun createCamera(@Entity entity: Int): Camera {
+        error("Native Camera wiring is not implemented yet.")
+    }
+
+    actual fun getCameraComponent(@Entity entity: Int): Camera? {
+        error("Native Camera component wiring is not implemented yet.")
+    }
+
+    actual fun destroyCameraComponent(@Entity entity: Int) {
+    }
+
     actual fun createSwapChain(surface: Any, flags: Long): SwapChain {
         error("Native SwapChain wiring is not implemented yet.")
     }
@@ -67,8 +78,16 @@ actual class Engine private constructor(
         texture.invalidate()
     }
 
-    actual fun destroyBufferObject(bufferObject: BufferObject) {
-        bufferObject.invalidate()
+    actual fun destroySkybox(skybox: Skybox) {
+        skybox.invalidate()
+    }
+
+    actual fun destroyIndirectLight(indirectLight: IndirectLight) {
+        indirectLight.invalidate()
+    }
+
+    actual fun destroyColorGrading(colorGrading: ColorGrading) {
+        colorGrading.invalidate()
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
@@ -89,6 +108,10 @@ actual class Engine private constructor(
 
     actual fun getRenderableManager(): RenderableManager {
         error("Native RenderableManager wiring is not implemented yet.")
+    }
+
+    actual fun getLightManager(): LightManager {
+        error("Native LightManager wiring is not implemented yet.")
     }
 
     actual fun getTransformManager(): TransformManager {

@@ -227,11 +227,39 @@ Missing classes:
 - `SurfaceOrientation`
 - `ToneMapper`
 
-## Next batch (auto-continue)
+## Step 9 - Camera and environment lighting batch (auto-continued)
 
-Planned next classes:
+Implemented classes:
 - `Camera`
 - `LightManager`
 - `IndirectLight`
 - `Skybox`
+
+Missing classes:
+- `ColorGrading`
+- `MorphTargetBuffer`
+- `SkinningBuffer`
+- `Stream`
+- `SurfaceOrientation`
+- `ToneMapper`
+
+## Next batch (auto-continue)
+
+Planned next classes:
+- `MorphTargetBuffer`
+- `SkinningBuffer`
+- `Stream`
+- `SurfaceOrientation`
+
+## Step 10 - Color pipeline batch (auto-continued)
+
+Implemented classes:
+- `ColorGrading`
+- `ToneMapper`
+
+Missing classes:
+- `MorphTargetBuffer`
+- `SkinningBuffer`
+- `Stream`
+- `SurfaceOrientation`
 

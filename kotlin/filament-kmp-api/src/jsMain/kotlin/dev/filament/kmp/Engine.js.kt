@@ -25,6 +25,17 @@ actual class Engine {
     actual fun destroyView(view: View) {
     }
 
+    actual fun createCamera(entity: Int): Camera {
+        TODO("Not yet implemented")
+    }
+
+    actual fun getCameraComponent(entity: Int): Camera? {
+        TODO("Not yet implemented")
+    }
+
+    actual fun destroyCameraComponent(entity: Int) {
+    }
+
     actual fun createSwapChain(surface: Any, flags: Long): SwapChain {
         TODO("Not yet implemented")
     }
@@ -42,8 +53,15 @@ actual class Engine {
     actual fun destroyTexture(texture: Texture) {
     }
 
-    actual fun destroyBufferObject(bufferObject: BufferObject) {
+    actual fun destroySkybox(skybox: Skybox) {
     }
+
+    actual fun destroyIndirectLight(indirectLight: IndirectLight) {
+    }
+
+    actual fun destroyColorGrading(colorGrading: ColorGrading) {
+    }
+
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
     }
@@ -62,6 +80,10 @@ actual class Engine {
     }
 
     actual fun getTransformManager(): TransformManager {
+        TODO("Not yet implemented")
+    }
+
+    actual fun getLightManager(): LightManager {
         TODO("Not yet implemented")
     }
 
