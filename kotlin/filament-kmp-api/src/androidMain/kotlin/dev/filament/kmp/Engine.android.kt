@@ -1,12 +1,210 @@
 package dev.filament.kmp
 
+import com.google.android.filament.Material as AndroidMaterial
 import com.google.android.filament.Engine as AndroidFilamentEngine
+import com.google.android.filament.SwapChain as AndroidSwapChain
 
 actual class Engine private constructor(
     internal var androidEngine: AndroidFilamentEngine?,
 ) {
-    actual val isValid: Boolean
-        get() = androidEngine != null
+    private fun engine(): AndroidFilamentEngine = requireNotNull(androidEngine) { "Engine is closed." }
+
+    actual fun isValid(): Boolean = androidEngine != null
+
+    actual fun createFence(): Fence = Fence(engine().createFence())
+
+    actual fun createSwapChain(surface: Any): SwapChain = createSwapChain(surface, SwapChainFlags.CONFIG_DEFAULT)
+
+    actual fun createSwapChainFromNativeSurface(nativeSurface: Long, flags: Long): SwapChain {
+        val eng = engine()
+        val nativeSurfaceClass = Class.forName("com.google.android.filament.NativeSurface")
+        val ctor = nativeSurfaceClass.getDeclaredConstructor(Long::class.javaPrimitiveType)
+        val nativeSurfaceObj = ctor.newInstance(nativeSurface)
+        val method = eng.javaClass.methods.firstOrNull {
+            it.name == "createSwapChainFromNativeSurface" && it.parameterTypes.size == 2
+        } ?: throw IllegalStateException("createSwapChainFromNativeSurface is unavailable in this Filament Android runtime.")
+        val swapChain = method.invoke(eng, nativeSurfaceObj, flags) as AndroidSwapChain
+        return SwapChain(swapChain)
+    }
+
+    actual fun destroy() {
+        engine().destroy()
+        androidEngine = null
+    }
+
+    actual fun destroyEntity(@Entity entity: Int) {
+        engine().destroyEntity(entity)
+    }
+
+    actual fun destroyFence(fence: Fence) {
+        val handle = fence.androidFence ?: return
+        engine().destroyFence(handle)
+        fence.clearNativeObject()
+    }
+
+    actual fun enableAccurateTranslations() {
+        engine().enableAccurateTranslations()
+    }
+
+    actual fun flush() {
+        engine().flush()
+    }
+
+    actual fun flushAndWait() {
+        engine().flushAndWait()
+    }
+
+    actual fun flushAndWait(timeout: Long) {
+        engine().flushAndWait(timeout)
+    }
+
+    actual fun getActiveFeatureLevel(): Int = engine().activeFeatureLevel.ordinal
+
+    actual fun getBackend(): Int = engine().backend.ordinal
+
+    actual fun getConfig(): EngineConfig {
+        val config = engine().config
+        val stereoscopicType = when (config.stereoscopicType.name) {
+            "NONE" -> EngineStereoscopicType.NONE
+            "INSTANCED" -> EngineStereoscopicType.INSTANCED
+            "MULTIVIEW" -> EngineStereoscopicType.MULTIVIEW
+            else -> EngineStereoscopicType.NONE
+        }
+        return EngineConfig(stereoscopicType, config.stereoscopicEyeCount.toUByte())
+    }
+
+    actual fun getEntityManager(): EntityManager = EntityManager(engine().entityManager)
+
+    actual fun getFeatureFlag(flag: Int): Boolean = engine().getFeatureFlag(flag.toString())
+
+    actual fun getMaxStereoscopicEyes(): Int = engine().maxStereoscopicEyes.toInt()
+
+    actual fun getNativeJobSystem(): Long = engine().nativeJobSystem
+
+    actual fun getNativeObject(): Long = engine().nativeObject
+
+    actual fun getSteadyClockTimeNano(): Long = AndroidFilamentEngine.getSteadyClockTimeNano()
+
+    actual fun getSupportedFeatureLevel(): Int = engine().supportedFeatureLevel.ordinal
+
+    actual fun hasFeatureFlag(flag: Int): Boolean = engine().hasFeatureFlag(flag.toString())
+
+    actual fun isAutomaticInstancingEnabled(): Boolean = engine().isAutomaticInstancingEnabled
+
+    actual fun isPaused(): Boolean = engine().isPaused
+
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean {
+        val handle = colorGrading.androidColorGrading ?: return false
+        return engine().isValidColorGrading(handle)
+    }
+
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean {
+        val handle = materialInstance.androidMaterialInstance ?: return false
+        return engine().isValidExpensiveMaterialInstance(handle)
+    }
+
+    actual fun isValidFence(fence: Fence): Boolean {
+        val handle = fence.androidFence ?: return false
+        return engine().isValidFence(handle)
+    }
+
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean {
+        val handle = indexBuffer.androidIndexBuffer ?: return false
+        return engine().isValidIndexBuffer(handle)
+    }
+
+    actual fun isValidIndirectLight(indirectLight: IndirectLight): Boolean {
+        val handle = indirectLight.androidIndirectLight ?: return false
+        return engine().isValidIndirectLight(handle)
+    }
+
+    actual fun isValidMaterial(material: Material): Boolean {
+        val handle = material.androidMaterial ?: return false
+        return engine().isValidMaterial(handle)
+    }
+
+    actual fun isValidMaterialInstance(materialInstance: MaterialInstance, includingDefaultInstance: Boolean): Boolean {
+        val handle = materialInstance.androidMaterialInstance ?: return false
+        val material: AndroidMaterial = handle.material
+        return engine().isValidMaterialInstance(material, handle)
+    }
+
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean {
+        val handle = morphTargetBuffer.androidMorphTargetBuffer ?: return false
+        return engine().isValidMorphTargetBuffer(handle)
+    }
+
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean {
+        val handle = renderTarget.androidRenderTarget ?: return false
+        return engine().isValidRenderTarget(handle)
+    }
+
+    actual fun isValidRenderer(renderer: Renderer): Boolean {
+        val handle = renderer.androidRenderer ?: return false
+        return engine().isValidRenderer(handle)
+    }
+
+    actual fun isValidScene(scene: Scene): Boolean {
+        val handle = scene.androidScene ?: return false
+        return engine().isValidScene(handle)
+    }
+
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean {
+        val handle = skinningBuffer.androidSkinningBuffer ?: return false
+        return engine().isValidSkinningBuffer(handle)
+    }
+
+    actual fun isValidSkybox(skybox: Skybox): Boolean {
+        val handle = skybox.androidSkybox ?: return false
+        return engine().isValidSkybox(handle)
+    }
+
+    actual fun isValidStream(stream: Stream): Boolean {
+        val handle = stream.androidStream ?: return false
+        return engine().isValidStream(handle)
+    }
+
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean {
+        val handle = swapChain.androidSwapChain ?: return false
+        return engine().isValidSwapChain(handle)
+    }
+
+    actual fun isValidTexture(texture: Texture): Boolean {
+        val handle = texture.androidTexture ?: return false
+        return engine().isValidTexture(handle)
+    }
+
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean {
+        val handle = vertexBuffer.androidVertexBuffer ?: return false
+        return engine().isValidVertexBuffer(handle)
+    }
+
+    actual fun isValidView(view: View): Boolean {
+        val handle = view.androidView ?: return false
+        return engine().isValidView(handle)
+    }
+
+    actual fun setActiveFeatureLevel(featureLevel: Int) {
+        val values = AndroidFilamentEngine.FeatureLevel.values()
+        val clamped = featureLevel.coerceIn(0, values.lastIndex)
+        engine().setActiveFeatureLevel(values[clamped])
+    }
+
+    actual fun setAutomaticInstancingEnabled(enabled: Boolean) {
+        engine().setAutomaticInstancingEnabled(enabled)
+    }
+
+    actual fun setFeatureFlag(flag: Int, enabled: Boolean) {
+        engine().setFeatureFlag(flag.toString(), enabled)
+    }
+
+    actual fun setPaused(paused: Boolean) {
+        engine().setPaused(paused)
+    }
+
+    actual fun unprotected() {
+        engine().unprotected()
+    }
 
     actual fun createRenderer(): Renderer {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
@@ -178,11 +376,13 @@ actual class Engine private constructor(
     }
 
     actual fun close() {
-        androidEngine?.destroy()
+        engine().destroy()
         androidEngine = null
     }
 
     actual companion object {
+        actual fun create(): Engine = Engine(AndroidFilamentEngine.create())
+
         actual fun create(config: EngineConfig): Engine {
             require(config == EngineConfig()) {
                 "Android Engine.create currently supports default EngineConfig only."

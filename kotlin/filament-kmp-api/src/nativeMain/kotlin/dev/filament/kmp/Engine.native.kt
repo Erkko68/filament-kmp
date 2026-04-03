@@ -20,11 +20,131 @@ import kotlinx.cinterop.value
 actual class Engine private constructor(
     private var nativeHandle: CPointer<FilaEngine>?,
 ) {
-    actual val isValid: Boolean
-        get() = nativeHandle != null
+    actual fun isValid(): Boolean = nativeHandle != null
+
+    actual fun createFence(): Fence {
+        TODO("Not yet implemented")
+    }
+
+    actual fun createSwapChain(surface: Any): SwapChain {
+        TODO("Not yet implemented")
+    }
+
+    actual fun createSwapChainFromNativeSurface(nativeSurface: Long, flags: Long): SwapChain {
+        TODO("Not yet implemented")
+    }
+
+    actual fun destroy() {
+        close()
+    }
+
+    actual fun destroyEntity(@Entity entity: Int) {
+    }
+
+    actual fun destroyFence(fence: Fence) {
+    }
+
+    actual fun enableAccurateTranslations() {
+        TODO("Not yet implemented")
+    }
+
+    actual fun flush() {
+        TODO("Not yet implemented")
+    }
+
+    actual fun flushAndWait() {
+        TODO("Not yet implemented")
+    }
+
+    actual fun flushAndWait(timeout: Long) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun getActiveFeatureLevel(): Int = TODO("Not yet implemented")
+
+    actual fun getBackend(): Int = TODO("Not yet implemented")
+
+    actual fun getConfig(): EngineConfig = EngineConfig()
+
+    actual fun getEntityManager(): EntityManager = EntityManager.get()
+
+    actual fun getFeatureFlag(flag: Int): Boolean = TODO("Not yet implemented")
+
+    actual fun getMaxStereoscopicEyes(): Int = TODO("Not yet implemented")
+
+    actual fun getNativeJobSystem(): Long = TODO("Not yet implemented")
+
+    actual fun getNativeObject(): Long = nativeHandle?.rawValue?.toLong() ?: 0L
+
+    actual fun getSteadyClockTimeNano(): Long = TODO("Not yet implemented")
+
+    actual fun getSupportedFeatureLevel(): Int = TODO("Not yet implemented")
+
+    actual fun hasFeatureFlag(flag: Int): Boolean = TODO("Not yet implemented")
+
+    actual fun isAutomaticInstancingEnabled(): Boolean =
+        TODO("Not yet implemented")
+
+    actual fun isPaused(): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = true
+
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = true
+
+    actual fun isValidFence(fence: Fence): Boolean = true
+
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = true
+
+    actual fun isValidIndirectLight(indirectLight: IndirectLight): Boolean = true
+
+    actual fun isValidMaterial(material: Material): Boolean = true
+
+    actual fun isValidMaterialInstance(materialInstance: MaterialInstance, includingDefaultInstance: Boolean): Boolean = true
+
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true
+
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = true
+
+    actual fun isValidRenderer(renderer: Renderer): Boolean = true
+
+    actual fun isValidScene(scene: Scene): Boolean = true
+
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true
+
+    actual fun isValidSkybox(skybox: Skybox): Boolean = true
+
+    actual fun isValidStream(stream: Stream): Boolean = true
+
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = true
+
+    actual fun isValidTexture(texture: Texture): Boolean = true
+
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = true
+
+    actual fun isValidView(view: View): Boolean = true
+
+    actual fun setActiveFeatureLevel(featureLevel: Int) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setAutomaticInstancingEnabled(enabled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setFeatureFlag(flag: Int, enabled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setPaused(paused: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun unprotected() {
+        TODO("Not yet implemented")
+    }
 
     actual fun createRenderer(): Renderer {
-        error("Native Renderer wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun destroyRenderer(renderer: Renderer) {
@@ -32,7 +152,7 @@ actual class Engine private constructor(
     }
 
     actual fun createScene(): Scene {
-        error("Native Scene wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun destroyScene(scene: Scene) {
@@ -40,7 +160,7 @@ actual class Engine private constructor(
     }
 
     actual fun createView(): View {
-        error("Native View wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun destroyView(view: View) {
@@ -48,22 +168,22 @@ actual class Engine private constructor(
     }
 
     actual fun createCamera(@Entity entity: Int): Camera {
-        error("Native Camera wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun getCameraComponent(@Entity entity: Int): Camera? {
-        error("Native Camera component wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun destroyCameraComponent(@Entity entity: Int) {
     }
 
     actual fun createSwapChain(surface: Any, flags: Long): SwapChain {
-        error("Native SwapChain wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain {
-        error("Native headless SwapChain wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun destroySwapChain(swapChain: SwapChain) {
@@ -119,15 +239,15 @@ actual class Engine private constructor(
     }
 
     actual fun getRenderableManager(): RenderableManager {
-        error("Native RenderableManager wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun getLightManager(): LightManager {
-        error("Native LightManager wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun getTransformManager(): TransformManager {
-        error("Native TransformManager wiring is not implemented yet.")
+        TODO("Not yet implemented")
     }
 
     actual fun close() {
@@ -141,6 +261,8 @@ actual class Engine private constructor(
     }
 
     actual companion object {
+        actual fun create(): Engine = create(EngineConfig())
+
         actual fun create(config: EngineConfig): Engine {
             val handle = memScoped {
                 val nativeConfig = alloc<FilaEngineConfig>()

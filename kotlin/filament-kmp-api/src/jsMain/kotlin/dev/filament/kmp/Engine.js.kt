@@ -1,8 +1,121 @@
 package dev.filament.kmp
 
 actual class Engine {
-    actual val isValid: Boolean
-        get() = TODO("Not yet implemented")
+    actual fun isValid(): Boolean = TODO("Not yet implemented")
+
+    actual fun createFence(): Fence = TODO("Not yet implemented")
+
+    actual fun createSwapChain(surface: Any): SwapChain = TODO("Not yet implemented")
+
+    actual fun createSwapChainFromNativeSurface(nativeSurface: Long, flags: Long): SwapChain = TODO("Not yet implemented")
+
+    actual fun destroy() {
+    }
+
+    actual fun destroyEntity(@Entity entity: Int) {
+    }
+
+    actual fun destroyFence(fence: Fence) {
+    }
+
+    actual fun enableAccurateTranslations() {
+        TODO("Not yet implemented")
+    }
+
+    actual fun flush() {
+        TODO("Not yet implemented")
+    }
+
+    actual fun flushAndWait() {
+        TODO("Not yet implemented")
+    }
+
+    actual fun flushAndWait(timeout: Long) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun getActiveFeatureLevel(): Int = TODO("Not yet implemented")
+
+    actual fun getBackend(): Int = TODO("Not yet implemented")
+
+    actual fun getConfig(): EngineConfig = TODO("Not yet implemented")
+
+    actual fun getEntityManager(): EntityManager = TODO("Not yet implemented")
+
+    actual fun getFeatureFlag(flag: Int): Boolean = TODO("Not yet implemented")
+
+    actual fun getMaxStereoscopicEyes(): Int = TODO("Not yet implemented")
+
+    actual fun getNativeJobSystem(): Long = TODO("Not yet implemented")
+
+    actual fun getNativeObject(): Long = TODO("Not yet implemented")
+
+    actual fun getSteadyClockTimeNano(): Long = TODO("Not yet implemented")
+
+    actual fun getSupportedFeatureLevel(): Int = TODO("Not yet implemented")
+
+    actual fun hasFeatureFlag(flag: Int): Boolean = TODO("Not yet implemented")
+
+    actual fun isAutomaticInstancingEnabled(): Boolean = TODO("Not yet implemented")
+
+    actual fun isPaused(): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidFence(fence: Fence): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidIndirectLight(indirectLight: IndirectLight): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidMaterial(material: Material): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidMaterialInstance(materialInstance: MaterialInstance, includingDefaultInstance: Boolean): Boolean =
+        TODO("Not yet implemented")
+
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidRenderer(renderer: Renderer): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidScene(scene: Scene): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidSkybox(skybox: Skybox): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidStream(stream: Stream): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidTexture(texture: Texture): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = TODO("Not yet implemented")
+
+    actual fun isValidView(view: View): Boolean = TODO("Not yet implemented")
+
+    actual fun setActiveFeatureLevel(featureLevel: Int) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setAutomaticInstancingEnabled(enabled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setFeatureFlag(flag: Int, enabled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setPaused(paused: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun unprotected() {
+        TODO("Not yet implemented")
+    }
 
     actual fun createRenderer(): Renderer {
         TODO("Not yet implemented")
@@ -100,6 +213,10 @@ actual class Engine {
     }
 
     actual companion object {
+        actual fun create(): Engine {
+            TODO("Not yet implemented")
+        }
+
         actual fun create(config: EngineConfig): Engine {
             TODO("Not yet implemented")
         }

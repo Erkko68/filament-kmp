@@ -4,7 +4,99 @@ package dev.filament.kmp
  * Kotlin-style wrapper over Filament's Engine lifecycle.
  */
 expect class Engine {
-    val isValid: Boolean
+    fun isValid(): Boolean
+
+    fun createFence(): Fence
+
+    fun createSwapChain(surface: Any): SwapChain
+
+    fun createSwapChainFromNativeSurface(nativeSurface: Long, flags: Long): SwapChain
+
+    fun destroy()
+
+    fun destroyEntity(@Entity entity: Int)
+
+    fun destroyFence(fence: Fence)
+
+    fun enableAccurateTranslations()
+
+    fun flush()
+
+    fun flushAndWait()
+
+    fun flushAndWait(timeout: Long)
+
+    fun getActiveFeatureLevel(): Int
+
+    fun getBackend(): Int
+
+    fun getConfig(): EngineConfig
+
+    fun getEntityManager(): EntityManager
+
+    fun getFeatureFlag(flag: Int): Boolean
+
+    fun getMaxStereoscopicEyes(): Int
+
+    fun getNativeJobSystem(): Long
+
+    fun getNativeObject(): Long
+
+    fun getSteadyClockTimeNano(): Long
+
+    fun getSupportedFeatureLevel(): Int
+
+    fun hasFeatureFlag(flag: Int): Boolean
+
+    fun isAutomaticInstancingEnabled(): Boolean
+
+    fun isPaused(): Boolean
+
+    fun isValidColorGrading(colorGrading: ColorGrading): Boolean
+
+    fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean
+
+    fun isValidFence(fence: Fence): Boolean
+
+    fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
+
+    fun isValidIndirectLight(indirectLight: IndirectLight): Boolean
+
+    fun isValidMaterial(material: Material): Boolean
+
+    fun isValidMaterialInstance(materialInstance: MaterialInstance, includingDefaultInstance: Boolean): Boolean
+
+    fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
+
+    fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
+
+    fun isValidRenderer(renderer: Renderer): Boolean
+
+    fun isValidScene(scene: Scene): Boolean
+
+    fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
+
+    fun isValidSkybox(skybox: Skybox): Boolean
+
+    fun isValidStream(stream: Stream): Boolean
+
+    fun isValidSwapChain(swapChain: SwapChain): Boolean
+
+    fun isValidTexture(texture: Texture): Boolean
+
+    fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
+
+    fun isValidView(view: View): Boolean
+
+    fun setActiveFeatureLevel(featureLevel: Int)
+
+    fun setAutomaticInstancingEnabled(enabled: Boolean)
+
+    fun setFeatureFlag(flag: Int, enabled: Boolean)
+
+    fun setPaused(paused: Boolean)
+
+    fun unprotected()
 
     /**
      * Creates a {@link Renderer}.
@@ -187,6 +279,8 @@ expect class Engine {
     fun close()
 
     companion object {
+        fun create(): Engine
+
         fun create(config: EngineConfig = EngineConfig()): Engine
     }
 }
