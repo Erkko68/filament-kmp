@@ -1,6 +1,23 @@
 package dev.filament.kmp
 
 expect class MaterialInstance {
+    enum class StencilOperation {
+        KEEP,
+        ZERO,
+        REPLACE,
+        INCR_CLAMP,
+        INCR_WRAP,
+        DECR_CLAMP,
+        DECR_WRAP,
+        INVERT,
+    }
+
+    enum class StencilFace {
+        FRONT,
+        BACK,
+        FRONT_AND_BACK,
+    }
+
     /**
      * Creates a new {@link #MaterialInstance} using another {@link #MaterialInstance} as a template for initialization.
      * The new {@link #MaterialInstance} is an instance of the same {@link Material} of the template instance and
@@ -97,6 +114,18 @@ expect class MaterialInstance {
     fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int)
 
     /**
+     * Sets the value of a color parameter.
+     *
+     * @param name the name of the material parameter
+     * @param type the type of the color parameter
+     * @param r    the value of the red component
+     * @param g    the value of the green component
+     * @param b    the value of the blue component
+     * @param a    the value of the alpha component
+     */
+    fun setParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float)
+
+    /**
      * Sets a texture and sampler parameter on this material's default instance.
      * <p>
      * Note: Depth textures can't be sampled with a linear filter unless the comparison mode is set
@@ -190,10 +219,21 @@ expect class MaterialInstance {
     fun setDoubleSided(doubleSided: Boolean)
 
     /**
+     * Returns true if double-sided lighting is enabled.
+     */
+    fun isDoubleSided(): Boolean
+
+    /**
      * Sets the transparency mode for this material instance.
      * @see Material.TransparencyMode
      */
     fun setTransparencyMode(mode: Material.TransparencyMode)
+
+    /**
+     * Returns the transparency mode for this material instance.
+     * @see Material.TransparencyMode
+     */
+    fun getTransparencyMode(): Material.TransparencyMode
 
     /**
      * Overrides the default triangle culling state that was set on the material.
@@ -203,6 +243,187 @@ expect class MaterialInstance {
      * Rasterization: culling</a>
      */
     fun setCullingMode(mode: Material.CullingMode)
+
+    fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode)
+
+    /**
+     * Returns the triangle culling state for this material instance.
+     *
+     * @see Material.CullingMode
+     */
+    fun getCullingMode(): Material.CullingMode
+
+    /**
+     * Returns the shadow triangle culling state for this material instance.
+     *
+     * @see Material.CullingMode
+     */
+    fun getShadowCullingMode(): Material.CullingMode
+
+    /**
+     * Enables or disables color writing.
+     *
+     * @param enable true to enable color writing, false to disable
+     */
+    fun setColorWrite(enable: Boolean)
+
+    /**
+     * Returns true if color writing is enabled.
+     */
+    fun isColorWriteEnabled(): Boolean
+
+    /**
+     * Enables or disables depth writing.
+     *
+     * @param enable true to enable depth writing, false to disable
+     */
+    fun setDepthWrite(enable: Boolean)
+
+    /**
+     * Returns true if depth writing is enabled.
+     */
+    fun isDepthWriteEnabled(): Boolean
+
+    /**
+     * Enables or disables stencil writing.
+     *
+     * @param enable true to enable stencil writing, false to disable
+     */
+    fun setStencilWrite(enable: Boolean)
+
+    /**
+     * Returns true if stencil writing is enabled.
+     */
+    fun isStencilWriteEnabled(): Boolean
+
+    /**
+     * Enables or disables depth culling.
+     *
+     * @param enable true to enable depth culling, false to disable
+     */
+    fun setDepthCulling(enable: Boolean)
+
+    /**
+     * Returns true if depth culling is enabled.
+     */
+    fun isDepthCullingEnabled(): Boolean
+
+    /**
+     * Sets the depth comparison function.
+     *
+     * @param func the depth comparison function
+     */
+    fun setDepthFunc(func: TextureSampler.CompareFunction)
+
+    /**
+     * Returns the depth comparison function.
+     */
+    fun getDepthFunc(): TextureSampler.CompareFunction
+
+    /**
+     * Sets the stencil comparison function for a specific face.
+     *
+     * @param func the stencil comparison function
+     * @param face the stencil face
+     */
+    fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace)
+
+    /**
+     * Sets the stencil comparison function for both faces.
+     *
+     * @param func the stencil comparison function
+     */
+    fun setStencilCompareFunction(func: TextureSampler.CompareFunction)
+
+    /**
+     * Sets the stencil operation for stencil fail cases.
+     *
+     * @param op the stencil operation
+     * @param face the stencil face
+     */
+    fun setStencilOpStencilFail(op: StencilOperation, face: StencilFace)
+
+    /**
+     * Sets the stencil operation for stencil fail cases for both faces.
+     *
+     * @param op the stencil operation
+     */
+    fun setStencilOpStencilFail(op: StencilOperation)
+
+    /**
+     * Sets the stencil operation for depth fail cases.
+     *
+     * @param op the stencil operation
+     * @param face the stencil face
+     */
+    fun setStencilOpDepthFail(op: StencilOperation, face: StencilFace)
+
+    /**
+     * Sets the stencil operation for depth fail cases for both faces.
+     *
+     * @param op the stencil operation
+     */
+    fun setStencilOpDepthFail(op: StencilOperation)
+
+    /**
+     * Sets the stencil operation for depth and stencil pass cases.
+     *
+     * @param op the stencil operation
+     * @param face the stencil face
+     */
+    fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace)
+
+    /**
+     * Sets the stencil operation for depth and stencil pass cases for both faces.
+     *
+     * @param op the stencil operation
+     */
+    fun setStencilOpDepthStencilPass(op: StencilOperation)
+
+    /**
+     * Sets the stencil reference value for a specific face.
+     *
+     * @param value the stencil reference value
+     * @param face the stencil face
+     */
+    fun setStencilReferenceValue(value: Int, face: StencilFace)
+
+    /**
+     * Sets the stencil reference value for both faces.
+     *
+     * @param value the stencil reference value
+     */
+    fun setStencilReferenceValue(value: Int)
+
+    /**
+     * Sets the stencil read mask for a specific face.
+     *
+     * @param readMask the stencil read mask
+     * @param face the stencil face
+     */
+    fun setStencilReadMask(readMask: Int, face: StencilFace)
+
+    /**
+     * Sets the stencil read mask for both faces.
+     *
+     * @param readMask the stencil read mask
+     */
+    fun setStencilReadMask(readMask: Int)
+
+    /**
+     * Sets the stencil write mask for a specific face.
+     *
+     * @param writeMask the stencil write mask
+     * @param face the stencil face
+     */
+    fun setStencilWriteMask(writeMask: Int, face: StencilFace)
+
+    /**
+     * Sets the stencil write mask for both faces.
+     *
+     * @param writeMask the stencil write mask
+     */
+    fun setStencilWriteMask(writeMask: Int)
 
     fun getNativeObject(): Long
 
