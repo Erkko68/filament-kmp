@@ -102,6 +102,7 @@ actual class Camera {
 
     actual fun getSensitivity(): Float = TODO("Not yet implemented")
 
+    @Entity
     actual fun getEntity(): Int = TODO("Not yet implemented")
 
     actual fun setEyeModelMatrix(eyeId: Int, model: DoubleArray) {
