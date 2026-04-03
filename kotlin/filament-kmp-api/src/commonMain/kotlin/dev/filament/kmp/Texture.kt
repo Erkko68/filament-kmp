@@ -27,6 +27,50 @@ expect class Texture {
         NEGATIVE_Z,
     }
 
+    enum class Format {
+        R,
+        R_INTEGER,
+        RG,
+        RG_INTEGER,
+        RGB,
+        RGB_INTEGER,
+        RGBA,
+        RGBA_INTEGER,
+        UNUSED,
+        DEPTH_COMPONENT,
+        DEPTH_STENCIL,
+        STENCIL_INDEX,
+        ALPHA,
+    }
+
+    enum class Type {
+        UBYTE,
+        BYTE,
+        USHORT,
+        SHORT,
+        UINT,
+        INT,
+        HALF,
+        FLOAT,
+        COMPRESSED,
+        UINT_10F_11F_11F_REV,
+        USHORT_565,
+    }
+
+    enum class Swizzle {
+        SUBSTITUTE_ZERO,
+        SUBSTITUTE_ONE,
+        CHANNEL_0,
+        CHANNEL_1,
+        CHANNEL_2,
+        CHANNEL_3,
+    }
+
+    class PrefilterOptions {
+        var sampleCount: Int
+        var mirror: Boolean
+    }
+
     object Usage {
         val COLOR_ATTACHMENT: Int
         val DEPTH_ATTACHMENT: Int
@@ -58,6 +102,12 @@ expect class Texture {
 
         fun usage(flags: Int): Builder
 
+        fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder
+
+        fun importTexture(id: Long): Builder
+
+        fun external(): Builder
+
         fun build(engine: Engine): Texture
     }
 
@@ -73,6 +123,34 @@ expect class Texture {
 
     fun getFormat(): InternalFormat
 
+    fun setImage(engine: Engine, level: Int, buffer: Any)
+
+    fun setImage(engine: Engine, level: Int, buffer: Any, faceOffsetsInBytes: IntArray)
+
+    fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Any)
+
+    fun setImage(
+        engine: Engine,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        zoffset: Int,
+        width: Int,
+        height: Int,
+        depth: Int,
+        buffer: Any,
+    )
+
+    fun setExternalImage(engine: Engine, eglImage: Long)
+
+    fun setExternalImage(engine: Engine, externalImageRef: Any)
+
+    fun setExternalStream(engine: Engine, stream: Stream)
+
+    fun generateMipmaps(engine: Engine)
+
+    fun generatePrefilterMipmap(engine: Engine, buffer: Any, faceOffsetsInBytes: IntArray, options: PrefilterOptions?)
+
     fun getNativeObject(): Long
 
     internal fun invalidate()
@@ -86,9 +164,10 @@ expect class Texture {
 
         fun isTextureSwizzleSupported(engine: Engine): Boolean
 
+        fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean
+
         fun getMaxTextureSize(engine: Engine, type: Sampler): Int
 
         fun getMaxArrayTextureLayers(engine: Engine): Int
     }
 }
-

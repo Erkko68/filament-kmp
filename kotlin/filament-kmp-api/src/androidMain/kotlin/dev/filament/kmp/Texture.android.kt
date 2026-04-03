@@ -35,6 +35,94 @@ actual class Texture internal constructor(
         return texture.format.toKmp()
     }
 
+    actual fun setImage(engine: Engine, level: Int, buffer: Any) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.setImage(androidEngine, level, buffer as AndroidTexture.PixelBufferDescriptor)
+    }
+
+    actual fun setImage(engine: Engine, level: Int, buffer: Any, faceOffsetsInBytes: IntArray) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.setImage(androidEngine, level, buffer as AndroidTexture.PixelBufferDescriptor, faceOffsetsInBytes)
+    }
+
+    actual fun setImage(
+        engine: Engine,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        buffer: Any,
+    ) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.setImage(androidEngine, level, xoffset, yoffset, width, height, buffer as AndroidTexture.PixelBufferDescriptor)
+    }
+
+    actual fun setImage(
+        engine: Engine,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        zoffset: Int,
+        width: Int,
+        height: Int,
+        depth: Int,
+        buffer: Any,
+    ) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.setImage(
+            androidEngine,
+            level,
+            xoffset,
+            yoffset,
+            zoffset,
+            width,
+            height,
+            depth,
+            buffer as AndroidTexture.PixelBufferDescriptor,
+        )
+    }
+
+    actual fun setExternalImage(engine: Engine, eglImage: Long) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.setExternalImage(androidEngine, eglImage)
+    }
+
+    actual fun setExternalImage(engine: Engine, externalImageRef: Any) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.setExternalImage(androidEngine, externalImageRef)
+    }
+
+    actual fun setExternalStream(engine: Engine, stream: Stream) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        val androidStream = requireNotNull(stream.androidStream) { "Calling method on destroyed Stream" }
+        texture.setExternalStream(androidEngine, androidStream)
+    }
+
+    actual fun generateMipmaps(engine: Engine) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.generateMipmaps(androidEngine)
+    }
+
+    actual fun generatePrefilterMipmap(engine: Engine, buffer: Any, faceOffsetsInBytes: IntArray, options: PrefilterOptions?) {
+        val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
+        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
+        texture.generatePrefilterMipmap(
+            androidEngine,
+            buffer as AndroidTexture.PixelBufferDescriptor,
+            faceOffsetsInBytes,
+            options?.toAndroid(),
+        )
+    }
+
     actual fun getNativeObject(): Long {
         val texture = requireNotNull(androidTexture) { "Calling method on destroyed Texture" }
         return texture.nativeObject
@@ -87,6 +175,21 @@ actual class Texture internal constructor(
             return this
         }
 
+        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder {
+            androidBuilder.swizzle(r.toAndroid(), g.toAndroid(), b.toAndroid(), a.toAndroid())
+            return this
+        }
+
+        actual fun importTexture(id: Long): Builder {
+            androidBuilder.importTexture(id)
+            return this
+        }
+
+        actual fun external(): Builder {
+            androidBuilder.external()
+            return this
+        }
+
         actual fun build(engine: Engine): Texture {
             val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
             return Texture(androidBuilder.build(androidEngine))
@@ -117,6 +220,50 @@ actual class Texture internal constructor(
         NEGATIVE_Y,
         POSITIVE_Z,
         NEGATIVE_Z,
+    }
+
+    actual enum class Format {
+        R,
+        R_INTEGER,
+        RG,
+        RG_INTEGER,
+        RGB,
+        RGB_INTEGER,
+        RGBA,
+        RGBA_INTEGER,
+        UNUSED,
+        DEPTH_COMPONENT,
+        DEPTH_STENCIL,
+        STENCIL_INDEX,
+        ALPHA,
+    }
+
+    actual enum class Type {
+        UBYTE,
+        BYTE,
+        USHORT,
+        SHORT,
+        UINT,
+        INT,
+        HALF,
+        FLOAT,
+        COMPRESSED,
+        UINT_10F_11F_11F_REV,
+        USHORT_565,
+    }
+
+    actual enum class Swizzle {
+        SUBSTITUTE_ZERO,
+        SUBSTITUTE_ONE,
+        CHANNEL_0,
+        CHANNEL_1,
+        CHANNEL_2,
+        CHANNEL_3,
+    }
+
+    actual class PrefilterOptions {
+        actual var sampleCount: Int = 8
+        actual var mirror: Boolean = true
     }
 
     actual object Usage {
@@ -151,6 +298,18 @@ actual class Texture internal constructor(
             return AndroidTexture.isTextureSwizzleSupported(androidEngine)
         }
 
+        actual fun validatePixelFormatAndType(
+            internalFormat: InternalFormat,
+            pixelDataFormat: Format,
+            pixelDataType: Type,
+        ): Boolean {
+            return AndroidTexture.validatePixelFormatAndType(
+                internalFormat.toAndroid(),
+                pixelDataFormat.toAndroid(),
+                pixelDataType.toAndroid(),
+            )
+        }
+
         actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int {
             val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
             return AndroidTexture.getMaxTextureSize(androidEngine, type.toAndroid())
@@ -163,30 +322,11 @@ actual class Texture internal constructor(
     }
 }
 
-private fun Texture.Sampler.toAndroid(): AndroidTexture.Sampler = when (this) {
-    Texture.Sampler.SAMPLER_2D -> AndroidTexture.Sampler.SAMPLER_2D
-    Texture.Sampler.SAMPLER_2D_ARRAY -> AndroidTexture.Sampler.SAMPLER_2D_ARRAY
-    Texture.Sampler.SAMPLER_CUBEMAP -> AndroidTexture.Sampler.SAMPLER_CUBEMAP
-    Texture.Sampler.SAMPLER_EXTERNAL -> AndroidTexture.Sampler.SAMPLER_EXTERNAL
-    Texture.Sampler.SAMPLER_3D -> AndroidTexture.Sampler.SAMPLER_3D
-}
+private fun Texture.Sampler.toAndroid(): AndroidTexture.Sampler = AndroidTexture.Sampler.valueOf(name)
 
-private fun AndroidTexture.Sampler.toKmp(): Texture.Sampler = when (this) {
-    AndroidTexture.Sampler.SAMPLER_2D -> Texture.Sampler.SAMPLER_2D
-    AndroidTexture.Sampler.SAMPLER_2D_ARRAY -> Texture.Sampler.SAMPLER_2D_ARRAY
-    AndroidTexture.Sampler.SAMPLER_CUBEMAP -> Texture.Sampler.SAMPLER_CUBEMAP
-    AndroidTexture.Sampler.SAMPLER_EXTERNAL -> Texture.Sampler.SAMPLER_EXTERNAL
-    AndroidTexture.Sampler.SAMPLER_3D -> Texture.Sampler.SAMPLER_3D
-}
+private fun AndroidTexture.Sampler.toKmp(): Texture.Sampler = Texture.Sampler.valueOf(name)
 
-private fun Texture.InternalFormat.toAndroid(): AndroidTexture.InternalFormat = when (this) {
-    Texture.InternalFormat.RGBA8 -> AndroidTexture.InternalFormat.RGBA8
-    Texture.InternalFormat.SRGB8_A8 -> AndroidTexture.InternalFormat.SRGB8_A8
-    Texture.InternalFormat.DEPTH24 -> AndroidTexture.InternalFormat.DEPTH24
-    Texture.InternalFormat.DEPTH24_STENCIL8 -> AndroidTexture.InternalFormat.DEPTH24_STENCIL8
-    Texture.InternalFormat.DEPTH32F -> AndroidTexture.InternalFormat.DEPTH32F
-    Texture.InternalFormat.DEPTH32F_STENCIL8 -> AndroidTexture.InternalFormat.DEPTH32F_STENCIL8
-}
+private fun Texture.InternalFormat.toAndroid(): AndroidTexture.InternalFormat = AndroidTexture.InternalFormat.valueOf(name)
 
 private fun AndroidTexture.InternalFormat.toKmp(): Texture.InternalFormat = when (this) {
     AndroidTexture.InternalFormat.RGBA8 -> Texture.InternalFormat.RGBA8
@@ -198,21 +338,18 @@ private fun AndroidTexture.InternalFormat.toKmp(): Texture.InternalFormat = when
     else -> Texture.InternalFormat.RGBA8
 }
 
-internal fun Texture.CubemapFace.toAndroid(): AndroidTexture.CubemapFace = when (this) {
-    Texture.CubemapFace.POSITIVE_X -> AndroidTexture.CubemapFace.POSITIVE_X
-    Texture.CubemapFace.NEGATIVE_X -> AndroidTexture.CubemapFace.NEGATIVE_X
-    Texture.CubemapFace.POSITIVE_Y -> AndroidTexture.CubemapFace.POSITIVE_Y
-    Texture.CubemapFace.NEGATIVE_Y -> AndroidTexture.CubemapFace.NEGATIVE_Y
-    Texture.CubemapFace.POSITIVE_Z -> AndroidTexture.CubemapFace.POSITIVE_Z
-    Texture.CubemapFace.NEGATIVE_Z -> AndroidTexture.CubemapFace.NEGATIVE_Z
-}
+private fun Texture.Format.toAndroid(): AndroidTexture.Format = AndroidTexture.Format.valueOf(name)
 
-internal fun AndroidTexture.CubemapFace.toKmp(): Texture.CubemapFace = when (this) {
-    AndroidTexture.CubemapFace.POSITIVE_X -> Texture.CubemapFace.POSITIVE_X
-    AndroidTexture.CubemapFace.NEGATIVE_X -> Texture.CubemapFace.NEGATIVE_X
-    AndroidTexture.CubemapFace.POSITIVE_Y -> Texture.CubemapFace.POSITIVE_Y
-    AndroidTexture.CubemapFace.NEGATIVE_Y -> Texture.CubemapFace.NEGATIVE_Y
-    AndroidTexture.CubemapFace.POSITIVE_Z -> Texture.CubemapFace.POSITIVE_Z
-    AndroidTexture.CubemapFace.NEGATIVE_Z -> Texture.CubemapFace.NEGATIVE_Z
-}
+private fun Texture.Type.toAndroid(): AndroidTexture.Type = AndroidTexture.Type.valueOf(name)
 
+private fun Texture.Swizzle.toAndroid(): AndroidTexture.Swizzle = AndroidTexture.Swizzle.valueOf(name)
+
+private fun Texture.PrefilterOptions.toAndroid(): AndroidTexture.PrefilterOptions =
+    AndroidTexture.PrefilterOptions().also {
+        it.sampleCount = sampleCount
+        it.mirror = mirror
+    }
+
+internal fun Texture.CubemapFace.toAndroid(): AndroidTexture.CubemapFace = AndroidTexture.CubemapFace.valueOf(name)
+
+internal fun AndroidTexture.CubemapFace.toKmp(): Texture.CubemapFace = Texture.CubemapFace.valueOf(name)

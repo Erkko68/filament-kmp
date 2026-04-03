@@ -13,6 +13,52 @@ actual class Texture {
 
     actual fun getFormat(): InternalFormat = TODO("Not yet implemented")
 
+    actual fun setImage(engine: Engine, level: Int, buffer: Any) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setImage(engine: Engine, level: Int, buffer: Any, faceOffsetsInBytes: IntArray) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Any) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setImage(
+        engine: Engine,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        zoffset: Int,
+        width: Int,
+        height: Int,
+        depth: Int,
+        buffer: Any,
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setExternalImage(engine: Engine, eglImage: Long) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setExternalImage(engine: Engine, externalImageRef: Any) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun setExternalStream(engine: Engine, stream: Stream) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun generateMipmaps(engine: Engine) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun generatePrefilterMipmap(engine: Engine, buffer: Any, faceOffsetsInBytes: IntArray, options: PrefilterOptions?) {
+        TODO("Not yet implemented")
+    }
+
     actual fun getNativeObject(): Long = TODO("Not yet implemented")
 
     actual internal fun invalidate() {
@@ -34,6 +80,12 @@ actual class Texture {
         actual fun format(format: InternalFormat): Builder = TODO("Not yet implemented")
 
         actual fun usage(flags: Int): Builder = TODO("Not yet implemented")
+
+        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder = TODO("Not yet implemented")
+
+        actual fun importTexture(id: Long): Builder = TODO("Not yet implemented")
+
+        actual fun external(): Builder = TODO("Not yet implemented")
 
         actual fun build(engine: Engine): Texture = TODO("Not yet implemented")
     }
@@ -62,6 +114,50 @@ actual class Texture {
         NEGATIVE_Y,
         POSITIVE_Z,
         NEGATIVE_Z,
+    }
+
+    actual enum class Format {
+        R,
+        R_INTEGER,
+        RG,
+        RG_INTEGER,
+        RGB,
+        RGB_INTEGER,
+        RGBA,
+        RGBA_INTEGER,
+        UNUSED,
+        DEPTH_COMPONENT,
+        DEPTH_STENCIL,
+        STENCIL_INDEX,
+        ALPHA,
+    }
+
+    actual enum class Type {
+        UBYTE,
+        BYTE,
+        USHORT,
+        SHORT,
+        UINT,
+        INT,
+        HALF,
+        FLOAT,
+        COMPRESSED,
+        UINT_10F_11F_11F_REV,
+        USHORT_565,
+    }
+
+    actual enum class Swizzle {
+        SUBSTITUTE_ZERO,
+        SUBSTITUTE_ONE,
+        CHANNEL_0,
+        CHANNEL_1,
+        CHANNEL_2,
+        CHANNEL_3,
+    }
+
+    actual class PrefilterOptions {
+        actual var sampleCount: Int = 8
+        actual var mirror: Boolean = true
     }
 
     actual object Usage {
@@ -93,6 +189,14 @@ actual class Texture {
             TODO("Not yet implemented")
         }
 
+        actual fun validatePixelFormatAndType(
+            internalFormat: InternalFormat,
+            pixelDataFormat: Format,
+            pixelDataType: Type,
+        ): Boolean {
+            TODO("Not yet implemented")
+        }
+
         actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int {
             TODO("Not yet implemented")
         }
@@ -102,4 +206,3 @@ actual class Texture {
         }
     }
 }
-
