@@ -82,6 +82,18 @@ actual class Engine private constructor(
         skybox.invalidate()
     }
 
+    actual fun destroyStream(stream: Stream) {
+        stream.invalidate()
+    }
+
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        skinningBuffer.invalidate()
+    }
+
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        morphTargetBuffer.invalidate()
+    }
+
     actual fun destroyIndirectLight(indirectLight: IndirectLight) {
         indirectLight.invalidate()
     }

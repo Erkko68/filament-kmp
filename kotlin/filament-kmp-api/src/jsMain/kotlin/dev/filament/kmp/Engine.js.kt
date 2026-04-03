@@ -56,6 +56,15 @@ actual class Engine {
     actual fun destroySkybox(skybox: Skybox) {
     }
 
+    actual fun destroyStream(stream: Stream) {
+    }
+
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+    }
+
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+    }
+
     actual fun destroyIndirectLight(indirectLight: IndirectLight) {
     }
 

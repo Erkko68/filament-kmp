@@ -98,6 +98,27 @@ actual class Engine private constructor(
         skybox.invalidate()
     }
 
+    actual fun destroyStream(stream: Stream) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = stream.androidStream ?: return
+        engine.destroyStream(handle)
+        stream.invalidate()
+    }
+
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = skinningBuffer.androidSkinningBuffer ?: return
+        engine.destroySkinningBuffer(handle)
+        skinningBuffer.invalidate()
+    }
+
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        val engine = requireNotNull(androidEngine) { "Engine is closed." }
+        val handle = morphTargetBuffer.androidMorphTargetBuffer ?: return
+        engine.destroyMorphTargetBuffer(handle)
+        morphTargetBuffer.invalidate()
+    }
+
     actual fun destroyIndirectLight(indirectLight: IndirectLight) {
         val engine = requireNotNull(androidEngine) { "Engine is closed." }
         val handle = indirectLight.androidIndirectLight ?: return

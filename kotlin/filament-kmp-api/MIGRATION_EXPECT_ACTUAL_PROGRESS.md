@@ -263,3 +263,14 @@ Missing classes:
 - `Stream`
 - `SurfaceOrientation`
 
+## Step 11 - Buffer/stream/surface batch (auto-continued)
+
+Implemented classes:
+- `MorphTargetBuffer`
+- `SkinningBuffer`
+- `Stream`
+- `SurfaceOrientation`
+
+Missing classes:
+- None
+

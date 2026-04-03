@@ -120,6 +120,24 @@ expect class Engine {
     fun destroySkybox(skybox: Skybox)
 
     /**
+     * Destroys a {@link Stream} and frees all its associated resources.
+     * @param stream the {@link Stream} to destroy
+     */
+    fun destroyStream(stream: Stream)
+
+    /**
+     * Destroys a {@link SkinningBuffer} and frees all its associated resources.
+     * @param skinningBuffer the {@link SkinningBuffer} to destroy
+     */
+    fun destroySkinningBuffer(skinningBuffer: SkinningBuffer)
+
+    /**
+     * Destroys a {@link MorphTargetBuffer} and frees all its associated resources.
+     * @param morphTargetBuffer the {@link MorphTargetBuffer} to destroy
+     */
+    fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer)
+
+    /**
      * Destroys an IndirectLight and frees all its associated resources.
      */
     fun destroyIndirectLight(indirectLight: IndirectLight)
