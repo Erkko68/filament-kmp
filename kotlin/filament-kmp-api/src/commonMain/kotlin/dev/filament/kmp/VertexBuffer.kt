@@ -4,6 +4,7 @@ expect class VertexBuffer {
     class Builder() {
         fun vertexCount(vertexCount: Int): Builder
         fun bufferCount(bufferCount: Int): Builder
+        fun enableBufferObjects(enabled: Boolean): Builder
         fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int = 0, byteStride: Int = 0): Builder
         fun normalized(attribute: VertexAttribute, enabled: Boolean = true): Builder
         fun build(engine: Engine): VertexBuffer
@@ -25,6 +26,7 @@ expect class VertexBuffer {
     }
 
     fun getVertexCount(): Int
-    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any)
-    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, sizeInBytes: Int)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int)
+    fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject)
 }

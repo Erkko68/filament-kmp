@@ -17,6 +17,10 @@ actual class VertexBuffer internal constructor(internal var nativeHandle: CPoint
             FilaVertexBufferBuilder_bufferCount(nativeBuilder, bufferCount.toUByte())
             return this
         }
+        actual fun enableBufferObjects(enabled: Boolean): Builder {
+            FilaVertexBufferBuilder_enableBufferObjects(nativeBuilder, enabled)
+            return this
+        }
         actual fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int, byteStride: Int): Builder {
             FilaVertexBufferBuilder_attribute(
                 nativeBuilder,
@@ -56,12 +60,17 @@ actual class VertexBuffer internal constructor(internal var nativeHandle: CPoint
 
     actual fun getVertexCount(): Int = FilaVertexBuffer_getVertexCount(nativeHandle).toInt()
     
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any) {
-        // FIXME: sizeInBytes should be passed or calculated
-        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), buffer as? CPointer<*>, 0u.toULong(), 0u, null, null, null)
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, sizeInBytes: Int) {
+        val ptr = buffer as? CPointer<*>
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes.toULong(), 0u, null, null, null)
     }
 
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), buffer as? CPointer<*>, 0u.toULong(), destOffsetInBytes.toUInt(), null, null, null)
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int) {
+        val ptr = buffer as? CPointer<*>
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes.toULong(), destOffsetInBytes.toUInt(), null, null, null)
+    }
+
+    actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
+        FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), bufferObject.nativeHandle)
     }
 }

@@ -15,6 +15,10 @@ actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVe
             nativeBuilder.bufferCount(bufferCount)
             return this
         }
+        actual fun enableBufferObjects(enabled: Boolean): Builder {
+            nativeBuilder.enableBufferObjects(enabled)
+            return this
+        }
         actual fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int, byteStride: Int): Builder {
             nativeBuilder.attribute(
                 AndroidVertexBuffer.VertexAttribute.values()[attribute.ordinal],
@@ -47,10 +51,13 @@ actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVe
     }
 
     actual fun getVertexCount(): Int = nativeVertexBuffer.vertexCount
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any) {
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer)
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, sizeInBytes: Int) {
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, 0, sizeInBytes)
     }
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, destOffsetInBytes, count)
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int) {
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, destOffsetInBytes, sizeInBytes)
+    }
+    actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
+        nativeVertexBuffer.setBufferObjectAt(engine.nativeEngine, bufferIndex, bufferObject.nativeBufferObject)
     }
 }

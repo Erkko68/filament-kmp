@@ -21,10 +21,10 @@ actual class IndexBuffer internal constructor(val nativeIndexBuffer: AndroidInde
     }
 
     actual fun getIndexCount(): Int = nativeIndexBuffer.indexCount
-    actual fun setBuffer(engine: Engine, buffer: Any) {
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer as Buffer)
+    actual fun setBuffer(engine: Engine, buffer: Any, sizeInBytes: Int) {
+        nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer as Buffer, 0, sizeInBytes)
     }
-    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer as Buffer, destOffsetInBytes, count)
+    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int) {
+        nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer as Buffer, destOffsetInBytes, sizeInBytes)
     }
 }

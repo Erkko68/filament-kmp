@@ -21,10 +21,10 @@ actual class BufferObject internal constructor(val nativeBufferObject: AndroidBu
     }
 
     actual fun getByteCount(): Int = nativeBufferObject.byteCount
-    actual fun setBuffer(engine: Engine, buffer: Any) {
-        nativeBufferObject.setBuffer(engine.nativeEngine, buffer as Buffer)
+    actual fun setBuffer(engine: Engine, buffer: Any, sizeInBytes: Int) {
+        nativeBufferObject.setBuffer(engine.nativeEngine, buffer as Buffer, 0, sizeInBytes)
     }
-    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        nativeBufferObject.setBuffer(engine.nativeEngine, buffer as Buffer, destOffsetInBytes, count)
+    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int) {
+        nativeBufferObject.setBuffer(engine.nativeEngine, buffer as Buffer, destOffsetInBytes, sizeInBytes)
     }
 }

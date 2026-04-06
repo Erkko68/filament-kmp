@@ -26,23 +26,40 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
     actual enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
+    actual enum class TransparencyMode { DEFAULT, TWO_PASSES_ONE_SIDE, TWO_PASSES_TWO_SIDES }
 
     actual fun getName(): String = FilaMaterial_getName(nativeHandle)?.toKString() ?: ""
     
     actual fun getShading(): Shading {
-        val shading = FilaMaterial_getShading(nativeHandle).toInt()
-        return when (shading) {
-            0 -> Shading.UNLIT
-            1 -> Shading.LIT
-            2 -> Shading.CLOTH // Swapped in C API
-            3 -> Shading.SUBSURFACE
-            4 -> Shading.SPECULAR_GLOSSINESS
-            else -> Shading.LIT
-        }
+        val s = FilaMaterial_getShading(nativeHandle).toInt()
+        return Shading.values().getOrElse(s) { Shading.LIT }
     }
 
-    actual fun getBlendingMode(): BlendingMode = BlendingMode.values()[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
-    
+    actual fun getBlendingMode(): BlendingMode {
+        val b = FilaMaterial_getBlendingMode(nativeHandle).toInt()
+        return BlendingMode.values().getOrElse(b) { BlendingMode.OPAQUE }
+    }
+
+    actual fun getTransparencyMode(): TransparencyMode {
+        val t = FilaMaterial_getTransparencyMode(nativeHandle).toInt()
+        return TransparencyMode.values().getOrElse(t) { TransparencyMode.DEFAULT }
+    }
+
+    actual fun getCullingMode(): CullingMode {
+        val c = FilaMaterial_getCullingMode(nativeHandle).toInt()
+        return CullingMode.values().getOrElse(c) { CullingMode.NONE }
+    }
+
+    actual fun isColorWriteEnabled(): Boolean = FilaMaterial_isColorWriteEnabled(nativeHandle)
+    actual fun isDepthWriteEnabled(): Boolean = FilaMaterial_isDepthWriteEnabled(nativeHandle)
+    actual fun isDepthCullingEnabled(): Boolean = FilaMaterial_isDepthCullingEnabled(nativeHandle)
+    actual fun isDoubleSided(): Boolean = FilaMaterial_isDoubleSided(nativeHandle)
+    actual fun isAlphaToCoverageEnabled(): Boolean = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
+
+    actual fun getMaskThreshold(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
+    actual fun getSpecularAntiAliasingVariance(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
+    actual fun getSpecularAntiAliasingThreshold(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
+
     actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
     actual fun createInstance(name: String): MaterialInstance = MaterialInstance(FilaMaterial_createInstanceWithName(nativeHandle, name))
     actual fun getDefaultInstance(): MaterialInstance = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))

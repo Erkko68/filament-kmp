@@ -25,6 +25,10 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
             FilaTextureBuilder_levels(nativeBuilder, levels.toUByte())
             return this
         }
+        actual fun samples(samples: Int): Builder {
+            FilaTextureBuilder_samples(nativeBuilder, samples.toUByte())
+            return this
+        }
         actual fun sampler(target: Sampler): Builder {
             FilaTextureBuilder_sampler(nativeBuilder, target.ordinal.toUInt())
             return this
@@ -37,6 +41,10 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
             FilaTextureBuilder_usage(nativeBuilder, usage.toUInt())
             return this
         }
+        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder {
+            FilaTextureBuilder_swizzle(nativeBuilder, r.ordinal.toUInt(), g.ordinal.toUInt(), b.ordinal.toUInt(), a.ordinal.toUInt())
+            return this
+        }
         actual fun build(engine: Engine): Texture {
             val handle = FilaTextureBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaTextureBuilder_destroy(nativeBuilder)
@@ -44,7 +52,7 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
         }
     }
 
-    actual enum class Sampler { SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D }
+    actual enum class Sampler { SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY }
 
     actual enum class InternalFormat {
         R8, R8_SNORM, R8UI, R8I, STENCIL8,
@@ -86,6 +94,14 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
         RGB_BPTC_SIGNED_FLOAT, RGB_BPTC_UNSIGNED_FLOAT, RGBA_BPTC_UNORM, SRGB_ALPHA_BPTC_UNORM
     }
 
+    actual enum class CubemapFace { POSITIVE_X, NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z }
+
+    actual enum class Format { R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, STENCIL_INDEX, ALPHA }
+
+    actual enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565 }
+
+    actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
+
     actual class Usage {
         actual companion object {
             actual val COLOR_ATTACHMENT = 0x1
@@ -98,10 +114,50 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
         }
     }
 
+    actual class PixelBufferDescriptor actual constructor(
+        actual val storage: Any,
+        actual val sizeInBytes: Int,
+        actual val format: Format,
+        actual val type: Type,
+        actual val alignment: Int,
+        actual val left: Int,
+        actual val top: Int,
+        actual val stride: Int
+    )
+
     actual fun getWidth(level: Int): Int = FilaTexture_getWidth(nativeHandle, level.toULong()).toInt()
     actual fun getHeight(level: Int): Int = FilaTexture_getHeight(nativeHandle, level.toULong()).toInt()
     actual fun getDepth(level: Int): Int = FilaTexture_getDepth(nativeHandle, level.toULong()).toInt()
     actual fun getLevels(): Int = FilaTexture_getLevels(nativeHandle).toInt()
     actual fun getTarget(): Sampler = Sampler.values()[FilaTexture_getTarget(nativeHandle).toInt()]
     actual fun getFormat(): InternalFormat = InternalFormat.values()[FilaTexture_getFormat(nativeHandle).toInt()]
+
+    actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
+        val width = getWidth(level)
+        val height = getHeight(level)
+        val depth = getDepth(level)
+        setImage(engine, level, 0, 0, 0, width, height, depth, descriptor)
+    }
+
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor) {
+        setImage(engine, level, xoffset, yoffset, 0, width, height, 1, descriptor)
+    }
+
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
+        val ptr = descriptor.storage as? CPointer<*>
+        FilaTexture_setImage(
+            nativeHandle, engine.nativeHandle, level.toULong(),
+            xoffset.toUInt(), yoffset.toUInt(), zoffset.toUInt(),
+            width.toUInt(), height.toUInt(), depth.toUInt(),
+            ptr, descriptor.sizeInBytes.toULong(),
+            descriptor.format.ordinal.toUInt(), descriptor.type.ordinal.toUInt(),
+            descriptor.alignment.toUByte(),
+            descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
+            null, null, null
+        )
+    }
+
+    actual fun generateMipmaps(engine: Engine) {
+        FilaTexture_generateMipmaps(nativeHandle, engine.nativeHandle)
+    }
 }

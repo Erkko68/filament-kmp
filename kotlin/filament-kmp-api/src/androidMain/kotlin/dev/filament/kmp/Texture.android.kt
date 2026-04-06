@@ -1,6 +1,7 @@
 package dev.filament.kmp
 
 import com.google.android.filament.Texture as AndroidTexture
+import java.nio.Buffer
 
 actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
     actual class Builder actual constructor() {
@@ -22,6 +23,10 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
             nativeBuilder.levels(levels)
             return this
         }
+        actual fun samples(samples: Int): Builder {
+            nativeBuilder.samples(samples)
+            return this
+        }
         actual fun sampler(target: Sampler): Builder {
             nativeBuilder.sampler(AndroidTexture.Sampler.values()[target.ordinal])
             return this
@@ -34,10 +39,19 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
             nativeBuilder.usage(usage)
             return this
         }
+        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder {
+            nativeBuilder.swizzle(
+                AndroidTexture.Swizzle.values()[r.ordinal],
+                AndroidTexture.Swizzle.values()[g.ordinal],
+                AndroidTexture.Swizzle.values()[b.ordinal],
+                AndroidTexture.Swizzle.values()[a.ordinal]
+            )
+            return this
+        }
         actual fun build(engine: Engine): Texture = Texture(nativeBuilder.build(engine.nativeEngine))
     }
 
-    actual enum class Sampler { SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D }
+    actual enum class Sampler { SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY }
 
     actual enum class InternalFormat {
         R8, R8_SNORM, R8UI, R8I, STENCIL8,
@@ -79,15 +93,44 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
         RGB_BPTC_SIGNED_FLOAT, RGB_BPTC_UNSIGNED_FLOAT, RGBA_BPTC_UNORM, SRGB_ALPHA_BPTC_UNORM
     }
 
+    actual enum class CubemapFace { POSITIVE_X, NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z }
+
+    actual enum class Format { R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, STENCIL_INDEX, ALPHA }
+
+    actual enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565 }
+
+    actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
+
     actual class Usage {
         actual companion object {
             actual val COLOR_ATTACHMENT = 0x1
-            actual val SAMPLEABLE = 0x2
-            actual val DEPTH_ATTACHMENT = 0x4
-            actual val STENCIL_ATTACHMENT = 0x8
-            actual val UPLOADABLE = 0x10
-            actual val BLIT_SRC = 0x20
-            actual val BLIT_DST = 0x40
+            actual val SAMPLEABLE = 0x10   // MATCHING ANDROID: 0x10 is sampleable
+            actual val DEPTH_ATTACHMENT = 0x2
+            actual val STENCIL_ATTACHMENT = 0x4
+            actual val UPLOADABLE = 0x8
+            actual val BLIT_SRC = 0x40
+            actual val BLIT_DST = 0x80
+        }
+    }
+
+    actual class PixelBufferDescriptor actual constructor(
+        actual val storage: Any,
+        actual val sizeInBytes: Int,
+        actual val format: Format,
+        actual val type: Type,
+        actual val alignment: Int,
+        actual val left: Int,
+        actual val top: Int,
+        actual val stride: Int
+    ) {
+        internal fun toNative(): AndroidTexture.PixelBufferDescriptor {
+            val descriptor = AndroidTexture.PixelBufferDescriptor(
+                storage as Buffer,
+                AndroidTexture.Format.values()[format.ordinal],
+                AndroidTexture.Type.values()[type.ordinal],
+                alignment, left, top, stride, null, null
+            )
+            return descriptor
         }
     }
 
@@ -97,4 +140,20 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
     actual fun getLevels(): Int = nativeTexture.levels
     actual fun getTarget(): Sampler = Sampler.values()[nativeTexture.target.ordinal]
     actual fun getFormat(): InternalFormat = InternalFormat.values()[nativeTexture.format.ordinal]
+
+    actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
+        nativeTexture.setImage(engine.nativeEngine, level, descriptor.toNative())
+    }
+
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor) {
+        nativeTexture.setImage(engine.nativeEngine, level, xoffset, yoffset, width, height, descriptor.toNative())
+    }
+
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
+        nativeTexture.setImage(engine.nativeEngine, level, xoffset, yoffset, zoffset, width, height, depth, descriptor.toNative())
+    }
+
+    actual fun generateMipmaps(engine: Engine) {
+        nativeTexture.generateMipmaps(engine.nativeEngine)
+    }
 }

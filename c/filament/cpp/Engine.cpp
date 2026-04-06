@@ -8,6 +8,7 @@
 #include <filament/Stream.h>
 #include <filament/IndexBuffer.h>
 #include <filament/VertexBuffer.h>
+#include <filament/BufferObject.h>
 #include <filament/SkinningBuffer.h>
 #include <filament/MorphTargetBuffer.h>
 #include <filament/IndirectLight.h>
@@ -163,6 +164,10 @@ bool FilaEngine_destroyVertexBuffer(FilaEngine* engine, FilaVertexBuffer* vertex
     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(VertexBuffer, vertexBuffer));
 }
 
+bool FilaEngine_destroyBufferObject(FilaEngine* engine, FilaBufferObject* bufferObject) {
+    return FILA_CAST(Engine, engine)->destroy(FILA_CAST(BufferObject, bufferObject));
+}
+
 bool FilaEngine_destroySkinningBuffer(FilaEngine* engine, FilaSkinningBuffer* skinningBuffer) {
     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(SkinningBuffer, skinningBuffer));
 }
@@ -229,6 +234,10 @@ bool FilaEngine_isValidIndexBuffer(FilaEngine* engine, FilaIndexBuffer* indexBuf
 
 bool FilaEngine_isValidVertexBuffer(FilaEngine* engine, FilaVertexBuffer* vertexBuffer) {
     return FILA_CAST(Engine, engine)->isValid(FILA_CAST(VertexBuffer, vertexBuffer));
+}
+
+bool FilaEngine_isValidBufferObject(FilaEngine* engine, FilaBufferObject* bufferObject) {
+    return FILA_CAST(Engine, engine)->isValid(FILA_CAST(BufferObject, bufferObject));
 }
 
 bool FilaEngine_isValidSkinningBuffer(FilaEngine* engine, FilaSkinningBuffer* skinningBuffer) {

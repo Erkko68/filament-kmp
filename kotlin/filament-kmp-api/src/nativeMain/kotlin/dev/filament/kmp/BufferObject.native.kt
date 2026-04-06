@@ -28,12 +28,13 @@ actual class BufferObject internal constructor(internal var nativeHandle: CPoint
 
     actual fun getByteCount(): Int = FilaBufferObject_getByteCount(nativeHandle).toInt()
     
-    actual fun setBuffer(engine: Engine, buffer: Any) {
-        // FIXME: sizeInBytes should be passed or calculated
-        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, buffer as? CPointer<*>, 0u.toULong(), 0u, null, null, null)
+    actual fun setBuffer(engine: Engine, buffer: Any, sizeInBytes: Int) {
+        val ptr = buffer as? CPointer<*>
+        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes.toULong(), 0u, null, null, null)
     }
 
-    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, buffer as? CPointer<*>, 0u.toULong(), destOffsetInBytes.toUInt(), null, null, null)
+    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int) {
+        val ptr = buffer as? CPointer<*>
+        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes.toULong(), destOffsetInBytes.toUInt(), null, null, null)
     }
 }
