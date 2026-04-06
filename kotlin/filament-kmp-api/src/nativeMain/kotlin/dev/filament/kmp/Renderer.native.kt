@@ -1,20 +1,20 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package dev.filament.kmp
 
 import kotlinx.cinterop.*
-import filament.*
+import dev.filament.kmp.cinterop.*
+import cnames.structs.FilaRenderer
 
-actual class Renderer internal constructor(
-    internal val nativeObject: CPointer<FilaRenderer>
-) {
+actual class Renderer internal constructor(internal var nativeHandle: CPointer<FilaRenderer>?) {
     actual class DisplayInfo actual constructor() {
         actual var refreshRate: Float = 60.0f
     }
 
     actual class FrameRateOptions actual constructor() {
+        actual var interval: Float = 1.0f
         actual var headRoomRatio: Float = 0.0f
-        actual var scaleRate: Float = 0.125f
+        actual var scaleRate: Float = 1.0f / 15.0f
         actual var history: Int = 15
-        actual var interval: Int = 1
     }
 
     actual class ClearOptions actual constructor() {
@@ -23,89 +23,70 @@ actual class Renderer internal constructor(
         actual var discard: Boolean = true
     }
 
-    actual fun beginFrame(swapChain: SwapChain): Boolean = FilaRenderer_beginFrame(nativeObject, swapChain.nativeObject, 0u)
-    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilaRenderer_beginFrame(nativeObject, swapChain.nativeObject, frameTimeNanos.toULong())
-    
-    actual fun endFrame() {
-        FilaRenderer_endFrame(nativeObject)
+    actual companion object {
+        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 0x1
+        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 0x2
+        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 0x4
     }
 
-    actual fun render(view: View) {
-        FilaRenderer_render(nativeObject, view.nativeObject)
+    private lateinit var engine: Engine
+    internal fun setEngine(engine: Engine): Renderer {
+        this.engine = engine
+        return this
+    }
+    actual fun getEngine(): Engine = engine
+
+    actual fun setDisplayInfo(info: DisplayInfo) {
+        memScoped {
+            val cInfo = alloc<FilaRendererDisplayInfo>()
+            cInfo.refreshRate = info.refreshRate
+            FilaRenderer_setDisplayInfo(nativeHandle, cInfo.ptr)
+        }
     }
 
-    actual fun renderStandaloneView(view: View) {
-        FilaRenderer_renderStandaloneView(nativeObject, view.nativeObject)
+    actual fun getDisplayInfo(): DisplayInfo = DisplayInfo() // Cache not implemented
+
+    actual fun setFrameRateOptions(options: FrameRateOptions) {
+        memScoped {
+            val cOptions = alloc<FilaRendererFrameRateOptions>()
+            cOptions.interval = options.interval.toUInt().toUByte()
+            cOptions.headRoomRatio = options.headRoomRatio
+            cOptions.scaleRate = options.scaleRate
+            cOptions.history = options.history.toUByte()
+            FilaRenderer_setFrameRateOptions(nativeHandle, cOptions.ptr)
+        }
     }
 
+    actual fun getFrameRateOptions(): FrameRateOptions = FrameRateOptions()
+
+    actual fun setClearOptions(options: ClearOptions) {
+        memScoped {
+            val cOptions = alloc<FilaRendererClearOptions>()
+            options.clearColor.forEachIndexed { i, v -> cOptions.clearColor[i] = v }
+            cOptions.clear = options.clear
+            cOptions.discard = options.discard
+            FilaRenderer_setClearOptions(nativeHandle, cOptions.ptr)
+        }
+    }
+
+    actual fun getClearOptions(): ClearOptions = ClearOptions()
+
+    actual fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos.toULong())
+    actual fun setVsyncTime(steadyClockTimeNano: Long) = FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano.toULong())
+    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano.toULong())
+    actual fun shouldRenderFrame(): Boolean = FilaRenderer_shouldRenderFrame(nativeHandle)
+    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos.toULong())
+    actual fun endFrame() = FilaRenderer_endFrame(nativeHandle)
+    actual fun render(view: View) = FilaRenderer_render(nativeHandle, view.nativeHandle)
+    actual fun renderStandaloneView(view: View) = FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
-        FilaRenderer_copyFrame(nativeObject, dstSwapChain.nativeObject,
+        FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle, 
             dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
             srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
             flags.toUInt())
     }
-
-    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
-        val storagePtr = buffer.storage.nativePointer() ?: return
-        val sizeInBytes = (buffer.storage.limit() * buffer.storage.elementSize()).toULong()
-        FilaRenderer_readPixels(nativeObject, xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
-            storagePtr, sizeInBytes, buffer.format.toNative(), buffer.type.toNative(),
-            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
-            null, null, null)
-    }
-
-    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
-        val storagePtr = buffer.storage.nativePointer() ?: return
-        val sizeInBytes = (buffer.storage.limit() * buffer.storage.elementSize()).toULong()
-        FilaRenderer_readPixelsRenderTarget(nativeObject, renderTarget.nativeObject,
-            xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
-            storagePtr, sizeInBytes, buffer.format.toNative(), buffer.type.toNative(),
-            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
-            null, null, null)
-    }
-
-    actual fun getUserTime(): Double = FilaRenderer_getUserTime(nativeObject)
-    actual fun resetUserTime() { FilaRenderer_resetUserTime(nativeObject) }
-
-    actual fun setDisplayInfo(info: DisplayInfo) {
-        memScoped {
-            val nativeInfo = alloc<FilaRendererDisplayInfo>()
-            nativeInfo.refreshRate = info.refreshRate
-            FilaRenderer_setDisplayInfo(nativeObject, nativeInfo.ptr)
-        }
-    }
-
-    actual fun setFrameRateOptions(options: FrameRateOptions) {
-        memScoped {
-            val nativeOptions = alloc<FilaRendererFrameRateOptions>()
-            nativeOptions.headRoomRatio = options.headRoomRatio
-            nativeOptions.scaleRate = options.scaleRate
-            nativeOptions.history = options.history.toUByte()
-            nativeOptions.interval = options.interval.toUByte()
-            FilaRenderer_setFrameRateOptions(nativeObject, nativeOptions.ptr)
-        }
-    }
-
-    actual fun setClearOptions(options: ClearOptions) {
-        memScoped {
-            val nativeOptions = alloc<FilaRendererClearOptions>()
-            nativeOptions.clearColor[0] = options.clearColor[0]
-            nativeOptions.clearColor[1] = options.clearColor[1]
-            nativeOptions.clearColor[2] = options.clearColor[2]
-            nativeOptions.clearColor[3] = options.clearColor[3]
-            nativeOptions.clear = options.clear
-            nativeOptions.discard = options.discard
-            FilaRenderer_setClearOptions(nativeObject, nativeOptions.ptr)
-        }
-    }
-
-    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
-        FilaRenderer_skipFrame(nativeObject, vsyncSteadyClockTimeNano.toULong())
-    }
-
-    actual fun setVsyncTime(steadyClockTimeNano: Long) {
-        FilaRenderer_setVsyncTime(nativeObject, steadyClockTimeNano.toULong())
-    }
-
-    actual val nativeObject: Long get() = nativeObject.toLong()
+    actual fun getUserTime(): Double = FilaRenderer_getUserTime(nativeHandle)
+    actual fun resetUserTime() = FilaRenderer_resetUserTime(nativeHandle)
+    actual fun skipNextFrames(frameCount: Int) = FilaRenderer_skipNextFrames(nativeHandle, frameCount.toUInt())
+    actual fun getFrameToSkipCount(): Int = FilaRenderer_getFrameToSkipCount(nativeHandle).toInt()
 }

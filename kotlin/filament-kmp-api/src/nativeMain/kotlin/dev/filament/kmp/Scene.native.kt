@@ -1,63 +1,30 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package dev.filament.kmp
 
 import kotlinx.cinterop.*
-import filament.*
+import dev.filament.kmp.cinterop.*
+import cnames.structs.FilaScene
 
-actual class Scene internal constructor(
-    internal val nativeObject: CPointer<FilaScene>
-) {
+actual class Scene internal constructor(internal var nativeHandle: CPointer<FilaScene>?) {
+    private var skybox: Skybox? = null
+    private var indirectLight: IndirectLight? = null
+
     actual fun setSkybox(skybox: Skybox?) {
-        FilaScene_setSkybox(nativeObject, skybox?.nativeObject)
+        this.skybox = skybox
+        FilaScene_setSkybox(nativeHandle, skybox?.nativeHandle)
     }
+    actual fun getSkybox(): Skybox? = skybox
 
-    actual fun setIndirectLight(indirectLight: IndirectLight?) {
-        FilaScene_setIndirectLight(nativeObject, indirectLight?.nativeObject)
+    actual fun setIndirectLight(ibl: IndirectLight?) {
+        this.indirectLight = ibl
+        FilaScene_setIndirectLight(nativeHandle, ibl?.nativeHandle)
     }
+    actual fun getIndirectLight(): IndirectLight? = indirectLight
 
-    actual fun addEntity(@Entity entity: Int) {
-        FilaScene_addEntity(nativeObject, entity.toUInt())
-    }
-
-    actual fun addEntities(entities: IntArray) {
-        memScoped {
-            val nativeEntities = allocArray<FilaEntityVar>(entities.size)
-            for (i in entities.indices) {
-                nativeEntities[i] = entities[i].toUInt()
-            }
-            FilaScene_addEntities(nativeObject, nativeEntities, entities.size.toULong())
-        }
-    }
-
-    actual fun remove(@Entity entity: Int) {
-        FilaScene_remove(nativeObject, entity.toUInt())
-    }
-
-    actual fun removeEntities(entities: IntArray) {
-        memScoped {
-            val nativeEntities = allocArray<FilaEntityVar>(entities.size)
-            for (i in entities.indices) {
-                nativeEntities[i] = entities[i].toUInt()
-            }
-            FilaScene_removeEntities(nativeObject, nativeEntities, entities.size.toULong())
-        }
-    }
-
-    actual fun getEntityCount(): Int = FilaScene_getEntityCount(nativeObject).toInt()
-    actual fun getRenderableCount(): Int = FilaScene_getRenderableCount(nativeObject).toInt()
-    actual fun getLightCount(): Int = FilaScene_getLightCount(nativeObject).toInt()
-
-    actual fun hasEntity(@Entity entity: Int): Boolean = FilaScene_hasEntity(nativeObject, entity.toUInt())
-
-    actual fun getEntities(out: IntArray?): IntArray {
-        val count = getEntityCount()
-        val result = if (out != null && out.size >= count) out else IntArray(count)
-        memScoped {
-            val nativeEntities = allocArray<FilaEntityVar>(count)
-            FilaScene_getEntities(nativeObject, nativeEntities, count.toULong())
-            for (i in 0 until count) {
-                result[i] = nativeEntities[i].toInt()
-            }
-        }
-        return result
-    }
+    actual fun addEntity(entity: Int) = FilaScene_addEntity(nativeHandle, entity.toUInt())
+    actual fun removeEntity(entity: Int) = FilaScene_remove(nativeHandle, entity.toUInt())
+    actual fun getEntityCount(): Int = FilaScene_getEntityCount(nativeHandle).toInt()
+    actual fun getRenderableCount(): Int = FilaScene_getRenderableCount(nativeHandle).toInt()
+    actual fun getLightCount(): Int = FilaScene_getLightCount(nativeHandle).toInt()
+    actual fun hasEntity(entity: Int): Boolean = FilaScene_hasEntity(nativeHandle, entity.toUInt())
 }

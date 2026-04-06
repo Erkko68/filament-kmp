@@ -44,7 +44,7 @@ void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint8_t samples) {
     FILA_CAST(Texture::Builder, builder)->samples(samples);
 }
 
-void FilaTextureBuilder_sampler(FilaTextureBuilder* builder, FilaTextureSampler sampler) {
+void FilaTextureBuilder_sampler(FilaTextureBuilder* builder, FilaTextureSamplerType sampler) {
     FILA_CAST(Texture::Builder, builder)->sampler(static_cast<Texture::Sampler>(sampler));
 }
 
@@ -86,7 +86,7 @@ bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine) {
     return Texture::isTextureSwizzleSupported(*FILA_CAST(Engine, engine));
 }
 
-size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSampler sampler) {
+size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSamplerType sampler) {
     return Texture::getMaxTextureSize(*FILA_CAST(Engine, engine), static_cast<Texture::Sampler>(sampler));
 }
 
@@ -119,8 +119,8 @@ size_t FilaTexture_getLevels(const FilaTexture* texture) {
     return FILA_CONST_CAST(Texture, texture)->getLevels();
 }
 
-FilaTextureSampler FilaTexture_getTarget(const FilaTexture* texture) {
-    return static_cast<FilaTextureSampler>(FILA_CONST_CAST(Texture, texture)->getTarget());
+FilaTextureSamplerType FilaTexture_getTarget(const FilaTexture* texture) {
+    return static_cast<FilaTextureSamplerType>(FILA_CONST_CAST(Texture, texture)->getTarget());
 }
 
 FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture) {

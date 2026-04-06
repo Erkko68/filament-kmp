@@ -1,12 +1,16 @@
 package dev.filament.kmp
 
-@Target(
-    AnnotationTarget.VALUE_PARAMETER,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.LOCAL_VARIABLE,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.PROPERTY_GETTER
-)
-annotation class Entity
+/**
+ * An Entity is an opaque 32-bits ID.
+ */
+typealias Entity = Int
 
+/**
+ * An EntityInstance is an opaque 32-bits ID representing a component instance.
+ */
+typealias EntityInstance = Int
+
+/**
+ * Represents a null entity.
+ */
+const val NULL_ENTITY: Entity = 0

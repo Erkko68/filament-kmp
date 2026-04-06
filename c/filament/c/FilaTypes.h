@@ -82,6 +82,52 @@ typedef enum FilaVertexAttribute {
     FILA_VERTEX_ATTRIBUTE_CUSTOM7 = 14,
 } FilaVertexAttribute;
 
+// Matches filament::backend::PixelDataFormat
+typedef enum FilaPixelDataFormat {
+    FILA_PIXEL_DATA_FORMAT_R = 0,
+    FILA_PIXEL_DATA_FORMAT_R_INTEGER = 1,
+    FILA_PIXEL_DATA_FORMAT_RG = 2,
+    FILA_PIXEL_DATA_FORMAT_RG_INTEGER = 3,
+    FILA_PIXEL_DATA_FORMAT_RGB = 4,
+    FILA_PIXEL_DATA_FORMAT_RGB_INTEGER = 5,
+    FILA_PIXEL_DATA_FORMAT_RGBA = 6,
+    FILA_PIXEL_DATA_FORMAT_RGBA_INTEGER = 7,
+    FILA_PIXEL_DATA_FORMAT_UNUSED = 8,
+    FILA_PIXEL_DATA_FORMAT_DEPTH_COMPONENT = 9,
+    FILA_PIXEL_DATA_FORMAT_DEPTH_STENCIL = 10,
+    FILA_PIXEL_DATA_FORMAT_ALPHA = 11,
+} FilaPixelDataFormat;
+
+// Matches filament::backend::PixelDataType
+typedef enum FilaPixelDataType {
+    FILA_PIXEL_DATA_TYPE_UBYTE = 0,
+    FILA_PIXEL_DATA_TYPE_BYTE = 1,
+    FILA_PIXEL_DATA_TYPE_USHORT = 2,
+    FILA_PIXEL_DATA_TYPE_SHORT = 3,
+    FILA_PIXEL_DATA_TYPE_UINT = 4,
+    FILA_PIXEL_DATA_TYPE_INT = 5,
+    FILA_PIXEL_DATA_TYPE_HALF = 6,
+    FILA_PIXEL_DATA_TYPE_FLOAT = 7,
+    FILA_PIXEL_DATA_TYPE_COMPRESSED = 8,
+    FILA_PIXEL_DATA_TYPE_UINT_10F_11F_11F_REV = 9,
+    FILA_PIXEL_DATA_TYPE_USHORT_565 = 10,
+    FILA_PIXEL_DATA_TYPE_UINT_2_10_10_10_REV = 11,
+} FilaPixelDataType;
+
+typedef struct FilaQuat {
+    float x, y, z, w;
+} FilaQuat;
+
+typedef struct FilaFloat3 {
+    float x, y, z;
+} FilaFloat3;
+
+typedef struct FilaBone {
+    FilaQuat unitQuaternion;
+    FilaFloat3 translation;
+    float reserved;
+} FilaBone;
+
 // Entity type (matches utils::Entity::Type)
 typedef uint32_t FilaEntity;
 

@@ -8,14 +8,14 @@ extern "C" {
 #endif
 
 // Matches filament::backend::SamplerType
-typedef enum FilaTextureSampler {
+typedef enum FilaTextureSamplerType {
     FILA_TEXTURE_SAMPLER_2D = 0,
     FILA_TEXTURE_SAMPLER_2D_ARRAY = 1,
     FILA_TEXTURE_SAMPLER_CUBEMAP = 2,
     FILA_TEXTURE_SAMPLER_EXTERNAL = 3,
     FILA_TEXTURE_SAMPLER_3D = 4,
     FILA_TEXTURE_SAMPLER_CUBEMAP_ARRAY = 5,
-} FilaTextureSampler;
+} FilaTextureSamplerType;
 
 // Matches filament::backend::TextureFormat
 typedef enum FilaTextureInternalFormat {
@@ -75,37 +75,6 @@ typedef enum FilaTextureInternalFormat {
     FILA_TEXTURE_INTERNAL_FORMAT_RGBA32I = 54,
 } FilaTextureInternalFormat;
 
-// Matches filament::backend::PixelDataFormat
-typedef enum FilaPixelDataFormat {
-    FILA_PIXEL_DATA_FORMAT_R = 0,
-    FILA_PIXEL_DATA_FORMAT_R_INTEGER = 1,
-    FILA_PIXEL_DATA_FORMAT_RG = 2,
-    FILA_PIXEL_DATA_FORMAT_RG_INTEGER = 3,
-    FILA_PIXEL_DATA_FORMAT_RGB = 4,
-    FILA_PIXEL_DATA_FORMAT_RGB_INTEGER = 5,
-    FILA_PIXEL_DATA_FORMAT_RGBA = 6,
-    FILA_PIXEL_DATA_FORMAT_RGBA_INTEGER = 7,
-    FILA_PIXEL_DATA_FORMAT_DEPTH_COMPONENT = 9,
-    FILA_PIXEL_DATA_FORMAT_DEPTH_STENCIL = 10,
-    FILA_PIXEL_DATA_FORMAT_ALPHA = 11,
-} FilaPixelDataFormat;
-
-// Matches filament::backend::PixelDataType
-typedef enum FilaPixelDataType {
-    FILA_PIXEL_DATA_TYPE_UBYTE = 0,
-    FILA_PIXEL_DATA_TYPE_BYTE = 1,
-    FILA_PIXEL_DATA_TYPE_USHORT = 2,
-    FILA_PIXEL_DATA_TYPE_SHORT = 3,
-    FILA_PIXEL_DATA_TYPE_UINT = 4,
-    FILA_PIXEL_DATA_TYPE_INT = 5,
-    FILA_PIXEL_DATA_TYPE_HALF = 6,
-    FILA_PIXEL_DATA_TYPE_FLOAT = 7,
-    FILA_PIXEL_DATA_TYPE_COMPRESSED = 8,
-    FILA_PIXEL_DATA_TYPE_UINT_10F_11F_11F_REV = 9,
-    FILA_PIXEL_DATA_TYPE_USHORT_565 = 10,
-    FILA_PIXEL_DATA_TYPE_UINT_2_10_10_10_REV = 11,
-} FilaPixelDataType;
-
 // Matches filament::backend::TextureUsage
 typedef enum FilaTextureUsage {
     FILA_TEXTURE_USAGE_NONE = 0x0000,
@@ -153,7 +122,7 @@ void FilaTextureBuilder_height(FilaTextureBuilder* builder, uint32_t height);
 void FilaTextureBuilder_depth(FilaTextureBuilder* builder, uint32_t depth);
 void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint8_t levels);
 void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint8_t samples);
-void FilaTextureBuilder_sampler(FilaTextureBuilder* builder, FilaTextureSampler sampler);
+void FilaTextureBuilder_sampler(FilaTextureBuilder* builder, FilaTextureSamplerType target);
 void FilaTextureBuilder_format(FilaTextureBuilder* builder, FilaTextureInternalFormat format);
 void FilaTextureBuilder_usage(FilaTextureBuilder* builder, FilaTextureUsage usage);
 void FilaTextureBuilder_swizzle(FilaTextureBuilder* builder, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a);
@@ -164,7 +133,7 @@ void FilaTextureBuilder_external(FilaTextureBuilder* builder);
 bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureInternalFormat format);
 bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureInternalFormat format);
 bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine);
-size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSampler sampler);
+size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSamplerType target);
 size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine);
 bool FilaTexture_validatePixelFormatAndType(FilaTextureInternalFormat internalFormat, FilaPixelDataFormat format, FilaPixelDataType type);
 
@@ -172,7 +141,7 @@ size_t FilaTexture_getWidth(const FilaTexture* texture, size_t level);
 size_t FilaTexture_getHeight(const FilaTexture* texture, size_t level);
 size_t FilaTexture_getDepth(const FilaTexture* texture, size_t level);
 size_t FilaTexture_getLevels(const FilaTexture* texture);
-FilaTextureSampler FilaTexture_getTarget(const FilaTexture* texture);
+FilaTextureSamplerType FilaTexture_getTarget(const FilaTexture* texture);
 FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture);
 
 void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);

@@ -1,49 +1,8 @@
 package dev.filament.kmp
 
-/**
- * LightManager allows you to create a light source in the scene, such as a sun or street lights.
- * <p>
- * At least one light must be added to a scene in order to see anything
- * (unless the [Material.Shading.UNLIT] is used).
- * </p>
- *
- * <h1>Creation and destruction</h1>
- * <p>
- * A Light component is created using the [LightManager.Builder] and destroyed by calling
- * [LightManager.destroy].
- * </p>
- * <pre>
- *  val engine = Engine.create()
- *  val sun = EntityManager.get().create()
- *
- *  LightManager.Builder(Type.SUN)
- *              .castShadows(true)
- *              .build(engine, sun)
- *
- *  engine.getLightManager().destroy(sun)
- * </pre>
- */
 expect class LightManager {
+    enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
 
-    /**
-     * Denotes the type of the light being created.
-     */
-    enum class Type {
-        /** Directional light that also draws a sun's disk in the sky. */
-        SUN,
-        /** Directional light, emits light in a given direction. */
-        DIRECTIONAL,
-        /** Point light, emits light from a position, in all directions. */
-        POINT,
-        /** Physically correct spot light. */
-        FOCUSED_SPOT,
-        /** Spot light with coupling of outer cone and illumination disabled. */
-        SPOT
-    }
-
-    /**
-     * Control the quality / performance of the shadow map associated to this light
-     */
     class ShadowOptions() {
         var mapSize: Int
         var shadowCascades: Int
@@ -55,8 +14,6 @@ expect class LightManager {
         var shadowFarHint: Float
         var stable: Boolean
         var lispsm: Boolean
-        var polygonOffsetConstant: Float
-        var polygonOffsetSlope: Float
         var screenSpaceContactShadows: Boolean
         var stepCount: Int
         var maxShadowDistance: Float
@@ -66,25 +23,10 @@ expect class LightManager {
         var transform: FloatArray
     }
 
-    /**
-     * Utilities for shadow cascades
-     */
-    class ShadowCascades {
-        companion object {
-            fun computeUniformSplits(splitPositions: FloatArray, cascades: Int)
-            fun computeLogSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float)
-            fun computePracticalSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float, lambda: Float)
-        }
-    }
-
-    /**
-     * Use Builder to construct a Light object instance
-     */
     class Builder(type: Type) {
-        fun lightChannel(channel: Int, enable: Boolean): Builder
         fun castShadows(enable: Boolean): Builder
         fun shadowOptions(options: ShadowOptions): Builder
-        fun castLight(enabled: Boolean): Builder
+        fun castLight(enable: Boolean): Builder
         fun position(x: Float, y: Float, z: Float): Builder
         fun direction(x: Float, y: Float, z: Float): Builder
         fun color(linearR: Float, linearG: Float, linearB: Float): Builder
@@ -96,45 +38,43 @@ expect class LightManager {
         fun sunAngularRadius(angularRadius: Float): Builder
         fun sunHaloSize(haloSize: Float): Builder
         fun sunHaloFalloff(haloFalloff: Float): Builder
-        fun build(engine: Engine, entity: Int)
+        fun lightChannel(channel: Int, enable: Boolean): Builder
+        fun build(engine: Engine, entity: Entity)
     }
 
-    companion object {
-        const val EFFICIENCY_INCANDESCENT: Float
-        const val EFFICIENCY_HALOGEN: Float
-        const val EFFICIENCY_FLUORESCENT: Float
-        const val EFFICIENCY_LED: Float
-    }
-
-    fun getComponentCount(): Int
-    fun hasComponent(entity: Int): Boolean
-    fun getInstance(entity: Int): Int
-    fun destroy(entity: Int)
-
-    fun getType(instance: Int): Type
-    fun setLightChannel(instance: Int, channel: Int, enable: Boolean)
-    fun getLightChannel(instance: Int, channel: Int): Boolean
-    fun setPosition(instance: Int, x: Float, y: Float, z: Float)
-    fun getPosition(instance: Int, out: FloatArray?): FloatArray
-    fun setDirection(instance: Int, x: Float, y: Float, z: Float)
-    fun getDirection(instance: Int, out: FloatArray?): FloatArray
-    fun setColor(instance: Int, linearR: Float, linearG: Float, linearB: Float)
-    fun getColor(instance: Int, out: FloatArray?): FloatArray
-    fun setIntensity(instance: Int, intensity: Float)
-    fun setIntensityCandela(instance: Int, intensity: Float)
-    fun setIntensity(instance: Int, watts: Float, efficiency: Float)
-    fun getIntensity(instance: Int): Float
-    fun setFalloff(instance: Int, falloff: Float)
-    fun getFalloff(instance: Int): Float
-    fun setSpotLightCone(instance: Int, inner: Float, outer: Float)
-    fun setSunAngularRadius(instance: Int, angularRadius: Float)
-    fun getSunAngularRadius(instance: Int): Float
-    fun setSunHaloSize(instance: Int, haloSize: Float)
-    fun getSunHaloSize(instance: Int): Float
-    fun setSunHaloFalloff(instance: Int, haloFalloff: Float)
-    fun getSunHaloFalloff(instance: Int): Float
-    fun setShadowCaster(instance: Int, shadowCaster: Boolean)
-    fun isShadowCaster(instance: Int): Boolean
-    fun getOuterConeAngle(instance: Int): Float
-    fun getInnerConeAngle(instance: Int): Float
+    fun hasComponent(entity: Entity): Boolean
+    fun getInstance(entity: Entity): EntityInstance
+    fun destroy(entity: Entity)
+    
+    fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float)
+    fun getPosition(instance: EntityInstance, outPosition: FloatArray?): FloatArray
+    fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float)
+    fun getDirection(instance: EntityInstance, outDirection: FloatArray?): FloatArray
+    fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float)
+    fun getColor(instance: EntityInstance, outColor: FloatArray?): FloatArray
+    
+    fun setIntensity(instance: EntityInstance, intensity: Float)
+    fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float)
+    fun setIntensityCandela(instance: EntityInstance, intensity: Float)
+    fun getIntensity(instance: EntityInstance): Float
+    
+    fun setFalloff(instance: EntityInstance, radius: Float)
+    fun getFalloff(instance: EntityInstance): Float
+    
+    fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float)
+    fun getSpotLightInnerCone(instance: EntityInstance): Float
+    fun getSpotLightOuterCone(instance: EntityInstance): Float
+    
+    fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float)
+    fun getSunAngularRadius(instance: EntityInstance): Float
+    fun setSunHaloSize(instance: EntityInstance, haloSize: Float)
+    fun getSunHaloSize(instance: EntityInstance): Float
+    fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float)
+    fun getSunHaloFalloff(instance: EntityInstance): Float
+    
+    fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean)
+    fun isShadowCaster(instance: EntityInstance): Boolean
+    
+    fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean)
+    fun getLightChannel(instance: EntityInstance, channel: Int): Boolean
 }

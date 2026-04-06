@@ -1,55 +1,39 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package dev.filament.kmp
 
 import kotlinx.cinterop.*
-import filament.*
+import dev.filament.kmp.cinterop.*
+import cnames.structs.FilaIndexBuffer
 
-actual class IndexBuffer internal constructor(
-    internal val nativeObject: CPointer<FilaIndexBuffer>
-) {
-    actual enum class IndexType {
-        USHORT, UINT;
-
-        internal fun toNative(): FilaIndexBufferType = when (this) {
-            USHORT -> FILA_INDEX_BUFFER_TYPE_USHORT
-            UINT -> FILA_INDEX_BUFFER_TYPE_UINT
-        }
-    }
-
+actual class IndexBuffer internal constructor(internal var nativeHandle: CPointer<FilaIndexBuffer>?) {
     actual class Builder actual constructor() {
-        private val nativeBuilder = FilaIndexBufferBuilder_create()!!
+        private val nativeBuilder = FilaIndexBufferBuilder_create()
+
+        actual enum class IndexType { USHORT, UINT }
 
         actual fun indexCount(indexCount: Int): Builder {
             FilaIndexBufferBuilder_indexCount(nativeBuilder, indexCount.toUInt())
             return this
         }
-
         actual fun bufferType(indexType: IndexType): Builder {
-            FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.toNative())
+            FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.ordinal.toUInt())
             return this
         }
-
         actual fun build(engine: Engine): IndexBuffer {
-            val nativeIndexBuffer = FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeObject)
-                ?: throw IllegalStateException("Couldn't create IndexBuffer")
+            val handle = FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaIndexBufferBuilder_destroy(nativeBuilder)
-            return IndexBuffer(nativeIndexBuffer)
+            return IndexBuffer(handle)
         }
     }
 
-    actual fun getIndexCount(): Int = FilaIndexBuffer_getIndexCount(nativeObject).toInt()
-
-    actual fun setBuffer(engine: Engine, buffer: Buffer) {
-        setBuffer(engine, buffer, 0, 0, null, null)
+    actual fun getIndexCount(): Int = FilaIndexBuffer_getIndexCount(nativeHandle).toInt()
+    
+    actual fun setBuffer(engine: Engine, buffer: Any) {
+        // FIXME: sizeInBytes should be passed or calculated
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, buffer as? CPointer<*>, 0u.toULong(), 0u, null, null, null)
     }
 
-    actual fun setBuffer(engine: Engine, buffer: Buffer, destOffsetInBytes: Int, count: Int) {
-        setBuffer(engine, buffer, destOffsetInBytes, count, null, null)
-    }
-
-    actual fun setBuffer(engine: Engine, buffer: Buffer, destOffsetInBytes: Int, count: Int, handler: Any?, callback: Runnable?) {
-        val bufferPtr = buffer.nativePointer() ?: return
-        val sizeInBytes = if (count > 0) count * buffer.elementSize() else (buffer.limit() - buffer.position()) * buffer.elementSize()
-
-        FilaIndexBuffer_setBuffer(nativeObject, engine.nativeObject, bufferPtr, sizeInBytes.toULong(), destOffsetInBytes.toUInt(), null, null, null)
+    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, buffer as? CPointer<*>, 0u.toULong(), destOffsetInBytes.toUInt(), null, null, null)
     }
 }

@@ -1,3 +1,25 @@
 package dev.filament.kmp
 
-actual typealias Scene = com.google.android.filament.Scene
+actual class Scene internal constructor(val nativeScene: com.google.android.filament.Scene) {
+    private var skybox: Skybox? = null
+    private var indirectLight: IndirectLight? = null
+
+    actual fun setSkybox(skybox: Skybox?) {
+        this.skybox = skybox
+        nativeScene.skybox = skybox?.nativeSkybox
+    }
+    actual fun getSkybox(): Skybox? = skybox
+
+    actual fun setIndirectLight(ibl: IndirectLight?) {
+        this.indirectLight = ibl
+        nativeScene.indirectLight = ibl?.nativeIndirectLight
+    }
+    actual fun getIndirectLight(): IndirectLight? = indirectLight
+
+    actual fun addEntity(entity: Int) = nativeScene.addEntity(entity)
+    actual fun removeEntity(entity: Int) = nativeScene.removeEntity(entity)
+    actual fun getEntityCount(): Int = nativeScene.entityCount
+    actual fun getRenderableCount(): Int = nativeScene.renderableCount
+    actual fun getLightCount(): Int = nativeScene.lightCount
+    actual fun hasEntity(entity: Int): Boolean = nativeScene.hasEntity(entity)
+}

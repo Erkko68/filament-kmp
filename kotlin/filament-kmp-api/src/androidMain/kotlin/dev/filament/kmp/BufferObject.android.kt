@@ -3,70 +3,28 @@ package dev.filament.kmp
 import com.google.android.filament.BufferObject as AndroidBufferObject
 import java.nio.Buffer
 
-actual class BufferObject internal constructor(
-    internal var androidBufferObject: AndroidBufferObject?,
-) {
-    actual fun getByteCount(): Int {
-        val bufferObject = requireNotNull(androidBufferObject) { "Calling method on destroyed BufferObject" }
-        return bufferObject.byteCount
-    }
+actual class BufferObject internal constructor(val nativeBufferObject: AndroidBufferObject) {
+    actual class Builder actual constructor() {
+        private val nativeBuilder = AndroidBufferObject.Builder()
 
-    actual fun setBuffer(engine: Engine, buffer: Any) {
-        setBuffer(engine, buffer, 0, 0, null, null)
-    }
-
-    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        setBuffer(engine, buffer, destOffsetInBytes, count, null, null)
-    }
-
-    actual fun setBuffer(
-        engine: Engine,
-        buffer: Any,
-        destOffsetInBytes: Int,
-        count: Int,
-        handler: Any?,
-        callback: (() -> Unit)?,
-    ) {
-        val bufferObject = requireNotNull(androidBufferObject) { "Calling method on destroyed BufferObject" }
-        val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
-        bufferObject.setBuffer(androidEngine, buffer as Buffer, destOffsetInBytes, count, handler, callback?.let { Runnable { it() } })
-    }
-
-    actual val nativeObject: Long
-        get() {
-        val bufferObject = requireNotNull(androidBufferObject) { "Calling method on destroyed BufferObject" }
-        return bufferObject.nativeObject
-    }
-
-    actual internal fun invalidate() {
-        androidBufferObject = null
-    }
-
-    actual class Builder {
-        private val androidBuilder = AndroidBufferObject.Builder()
+        actual enum class BindingType { VERTEX }
 
         actual fun size(byteCount: Int): Builder {
-            androidBuilder.size(byteCount)
+            nativeBuilder.size(byteCount)
             return this
         }
-
         actual fun bindingType(bindingType: BindingType): Builder {
-            androidBuilder.bindingType(bindingType.toAndroid())
+            nativeBuilder.bindingType(AndroidBufferObject.Builder.BindingType.values()[bindingType.ordinal])
             return this
         }
+        actual fun build(engine: Engine): BufferObject = BufferObject(nativeBuilder.build(engine.nativeEngine))
+    }
 
-        actual fun build(engine: Engine): BufferObject {
-            val androidEngine = requireNotNull(engine.androidEngine) { "Engine is closed." }
-            return BufferObject(androidBuilder.build(androidEngine))
-        }
-
-        actual enum class BindingType {
-            VERTEX,
-        }
+    actual fun getByteCount(): Int = nativeBufferObject.byteCount
+    actual fun setBuffer(engine: Engine, buffer: Any) {
+        nativeBufferObject.setBuffer(engine.nativeEngine, buffer as Buffer)
+    }
+    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
+        nativeBufferObject.setBuffer(engine.nativeEngine, buffer as Buffer, destOffsetInBytes, count)
     }
 }
-
-private fun BufferObject.Builder.BindingType.toAndroid(): AndroidBufferObject.Builder.BindingType = when (this) {
-    BufferObject.Builder.BindingType.VERTEX -> AndroidBufferObject.Builder.BindingType.VERTEX
-}
-

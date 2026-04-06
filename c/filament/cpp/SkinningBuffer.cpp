@@ -34,12 +34,12 @@ size_t FilaSkinningBuffer_getBoneCount(const FilaSkinningBuffer* buffer) {
     return FILA_CONST_CAST(SkinningBuffer, buffer)->getBoneCount();
 }
 
-void FilaSkinningBuffer_setBonesAsMatrices(FilaSkinningBuffer* buffer, FilaEngine* engine, const float* matrices, size_t boneCount, size_t offset) {
+void FilaSkinningBuffer_setBonesMat4f(FilaSkinningBuffer* buffer, FilaEngine* engine, const float* matrices, size_t boneCount, size_t offset) {
     FILA_CAST(SkinningBuffer, buffer)->setBones(*FILA_CAST(Engine, engine), 
         reinterpret_cast<const math::mat4f*>(matrices), boneCount, offset);
 }
 
-void FilaSkinningBuffer_setBonesAsQuaternions(FilaSkinningBuffer* buffer, FilaEngine* engine, const FilaBone* bones, size_t boneCount, size_t offset) {
+void FilaSkinningBuffer_setBonesQuaternions(FilaSkinningBuffer* buffer, FilaEngine* engine, const FilaBone* bones, size_t boneCount, size_t offset) {
     FILA_CAST(SkinningBuffer, buffer)->setBones(*FILA_CAST(Engine, engine), 
         reinterpret_cast<const RenderableManager::Bone*>(bones), boneCount, offset);
 }

@@ -28,10 +28,10 @@ kotlin {
 
     mingwX64()
 
-    js(IR) {
-        browser()
-        binaries.library()
-    }
+//    js(IR) {
+//        browser()
+//        binaries.library()
+//    }
 
     applyDefaultHierarchyTemplate()
 
@@ -52,7 +52,7 @@ kotlin {
             }
         }
 
-        val jsMain by getting
+        //val jsMain by getting
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {

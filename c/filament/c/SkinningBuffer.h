@@ -19,8 +19,8 @@ void FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* builder, bo
 
 // SkinningBuffer
 size_t FilaSkinningBuffer_getBoneCount(const FilaSkinningBuffer* buffer);
-void FilaSkinningBuffer_setBonesAsMatrices(FilaSkinningBuffer* buffer, FilaEngine* engine, const float* matrices, size_t boneCount, size_t offset);
-void FilaSkinningBuffer_setBonesAsQuaternions(FilaSkinningBuffer* buffer, FilaEngine* engine, const FilaBone* bones, size_t boneCount, size_t offset);
+void FilaSkinningBuffer_setBonesMat4f(FilaSkinningBuffer* buffer, FilaEngine* engine, const float* matrices, size_t boneCount, size_t offset);
+void FilaSkinningBuffer_setBonesQuaternions(FilaSkinningBuffer* buffer, FilaEngine* engine, const FilaBone* bones, size_t boneCount, size_t offset);
 
 #ifdef __cplusplus
 }
