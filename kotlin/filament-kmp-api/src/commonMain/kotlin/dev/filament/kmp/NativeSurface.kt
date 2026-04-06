@@ -8,11 +8,11 @@ expect class NativeSurface {
 
     fun dispose()
 
-    fun getWidth(): Int
+    val width: Int
 
-    fun getHeight(): Int
+    val height: Int
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
     internal fun invalidate()
 }

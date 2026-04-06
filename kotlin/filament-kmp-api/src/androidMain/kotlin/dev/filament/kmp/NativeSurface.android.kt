@@ -13,13 +13,16 @@ actual class NativeSurface internal constructor(
         androidNativeSurface = null
     }
 
-    actual fun getWidth(): Int =
+    actual val width: Int
+        get() =
         requireNotNull(androidNativeSurface) { "Calling method on destroyed NativeSurface" }.width
 
-    actual fun getHeight(): Int =
+    actual val height: Int
+        get() =
         requireNotNull(androidNativeSurface) { "Calling method on destroyed NativeSurface" }.height
 
-    actual fun getNativeObject(): Long =
+    actual val nativeObject: Long
+        get() =
         requireNotNull(androidNativeSurface) { "Calling method on destroyed NativeSurface" }.nativeObject
 
     actual internal fun invalidate() {

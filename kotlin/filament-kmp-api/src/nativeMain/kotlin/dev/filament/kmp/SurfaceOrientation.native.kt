@@ -1,9 +1,11 @@
 package dev.filament.kmp
 
 actual class SurfaceOrientation {
-    actual fun getNativeObject(): Long = TODO("Not yet implemented")
+    actual val nativeObject: Long
+        get() = TODO("Not yet implemented")
 
-    actual fun getVertexCount(): Int = TODO("Not yet implemented")
+    actual val vertexCount: Int
+        get() = TODO("Not yet implemented")
 
     actual fun getQuatsAsFloat(buffer: Any) {
         TODO("Not yet implemented")

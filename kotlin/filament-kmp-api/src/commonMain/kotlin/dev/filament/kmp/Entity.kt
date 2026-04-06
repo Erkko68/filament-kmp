@@ -5,6 +5,8 @@ package dev.filament.kmp
     AnnotationTarget.FUNCTION,
     AnnotationTarget.LOCAL_VARIABLE,
     AnnotationTarget.FIELD,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.PROPERTY_GETTER
 )
 annotation class Entity
 

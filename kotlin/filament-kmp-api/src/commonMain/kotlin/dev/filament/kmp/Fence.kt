@@ -17,7 +17,7 @@ expect class Fence {
      */
     fun wait(mode: Mode, timeoutNanoSeconds: Long): FenceStatus
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
     companion object {
         val WAIT_FOR_EVER: Long

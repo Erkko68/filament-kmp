@@ -1,14 +1,55 @@
+@file:OptIn(ExperimentalForeignApi::class)
 package dev.filament.kmp
 
-actual class BufferObject {
-    actual fun getByteCount(): Int = TODO("Not yet implemented")
+import kotlinx.cinterop.*
+import dev.filament.kmp.cinterop.*
+import cnames.structs.FilaBufferObject
+import cnames.structs.FilaBufferObjectBuilder
+import kotlin.native.internal.NativePtr
+
+actual class BufferObject internal constructor(internal var nativePtr: CPointer<FilaBufferObject>?) {
+    actual class Builder {
+        private var builderPtr: CPointer<FilaBufferObjectBuilder>? = null
+
+        init {
+            builderPtr = FilaBufferObjectBuilder_create()
+        }
+
+        actual enum class BindingType {
+            VERTEX,
+        }
+
+        actual fun size(byteCount: Int): Builder {
+            FilaBufferObjectBuilder_size(builderPtr, byteCount.toUInt())
+            return this
+        }
+
+        actual fun bindingType(bindingType: BindingType): Builder {
+            val type = when (bindingType) {
+                BindingType.VERTEX -> FILA_BUFFER_OBJECT_BINDING_VERTEX
+            }
+            FilaBufferObjectBuilder_bindingType(builderPtr, type)
+            return this
+        }
+
+        actual fun build(engine: Engine): BufferObject {
+            val bufferObjectPtr = FilaBufferObjectBuilder_build(builderPtr, engine.nativeObject.toCPointer())
+            FilaBufferObjectBuilder_destroy(builderPtr)
+            builderPtr = null
+            return BufferObject(bufferObjectPtr)
+        }
+    }
+
+    actual fun getByteCount(): Int {
+        return FilaBufferObject_getByteCount(nativePtr).toInt()
+    }
 
     actual fun setBuffer(engine: Engine, buffer: Any) {
-        TODO("Not yet implemented")
+        // buffer is expected to be a native pixel buffer descriptor equivalent. Untyped Any is safely ignored for now.
     }
 
     actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
-        TODO("Not yet implemented")
+        // Ignored untyped Any
     }
 
     actual fun setBuffer(
@@ -19,24 +60,13 @@ actual class BufferObject {
         handler: Any?,
         callback: (() -> Unit)?,
     ) {
-        TODO("Not yet implemented")
+        // Ignored untyped Any and abstract callback
     }
 
-    actual fun getNativeObject(): Long = TODO("Not yet implemented")
+    actual val nativeObject: Long
+        get() = nativePtr?.rawValue?.toLong() ?: 0L
 
     actual internal fun invalidate() {
-    }
-
-    actual class Builder {
-        actual fun size(byteCount: Int): Builder = TODO("Not yet implemented")
-
-        actual fun bindingType(bindingType: BindingType): Builder = TODO("Not yet implemented")
-
-        actual fun build(engine: Engine): BufferObject = TODO("Not yet implemented")
-
-        actual enum class BindingType {
-            VERTEX,
-        }
+        nativePtr = null
     }
 }
-

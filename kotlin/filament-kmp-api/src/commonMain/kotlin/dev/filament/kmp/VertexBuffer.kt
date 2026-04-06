@@ -2,8 +2,33 @@ package dev.filament.kmp
 
 /**
  * Holds a set of buffers that define the geometry of a Renderable.
+ *
+ * <p>
+ * The geometry of the Renderable itself is defined by a set of vertex attributes such as
+ * position, color, normals, tangents, etc...
+ * </p>
+ *
+ * <p>
+ * There is no need to have a 1-to-1 mapping between attributes and buffer. A buffer can hold the
+ * data of several attributes -- attributes are then referred as being "interleaved".
+ * </p>
+ *
+ * <p>
+ * The buffers themselves are GPU resources, therefore mutating their data can be relatively slow.
+ * For this reason, it is best to separate the constant data from the dynamic data into multiple
+ * buffers.
+ * </p>
+ *
+ * <p>
+ * It is possible, and even encouraged, to use a single vertex buffer for several
+ * Renderables.
+ * </p>
+ *
+ * @see IndexBuffer
+ * @see RenderableManager
  */
 expect class VertexBuffer {
+
     enum class VertexAttribute {
         POSITION,
         TANGENTS,
@@ -20,7 +45,7 @@ expect class VertexBuffer {
         CUSTOM4,
         CUSTOM5,
         CUSTOM6,
-        CUSTOM7,
+        CUSTOM7
     }
 
     enum class AttributeType {
@@ -52,89 +77,37 @@ expect class VertexBuffer {
         HALF4,
     }
 
-    class Builder {
-        /**
-         * Size of each buffer in this set, expressed in in number of vertices.
-         */
+    class Builder() {
         fun vertexCount(vertexCount: Int): Builder
-
-        /**
-         * Allows buffers to be swapped out and shared using BufferObject.
-         */
         fun enableBufferObjects(enabled: Boolean): Builder
-
-        /**
-         * Defines how many buffers will be created in this vertex buffer set.
-         */
         fun bufferCount(bufferCount: Int): Builder
-
-        /**
-         * Sets up an attribute for this vertex buffer set.
-         */
-        fun attribute(
-            attribute: VertexAttribute,
-            bufferIndex: Int,
-            attributeType: AttributeType,
-            byteOffset: Int,
-            byteStride: Int,
-        ): Builder
-
-        /**
-         * Sets up an attribute for this vertex buffer set.
-         */
+        fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int, byteStride: Int): Builder
         fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType): Builder
-
-        /**
-         * Sets whether a given attribute should be normalized.
-         */
         fun normalized(attribute: VertexAttribute): Builder
-
-        /**
-         * Sets whether a given attribute should be normalized.
-         */
         fun normalized(attribute: VertexAttribute, enabled: Boolean): Builder
-
-        /**
-         * Creates the VertexBuffer object.
-         */
         fun build(engine: Engine): VertexBuffer
     }
 
-    /**
-     * Returns the vertex count.
-     */
     fun getVertexCount(): Int
 
     /**
      * Asynchronously copy-initializes the specified buffer from the given buffer data.
      */
-    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Buffer)
 
     /**
      * Asynchronously copy-initializes a region of the specified buffer from the given buffer data.
      */
-    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Buffer, destOffsetInBytes: Int, count: Int)
 
     /**
      * Asynchronously copy-initializes a region of the specified buffer from the given buffer data.
+     * The callback is executed when the buffer is no longer needed.
      */
-    fun setBufferAt(
-        engine: Engine,
-        bufferIndex: Int,
-        buffer: Any,
-        destOffsetInBytes: Int,
-        count: Int,
-        handler: Any?,
-        callback: (() -> Unit)?,
-    )
+    fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Buffer, destOffsetInBytes: Int, count: Int, handler: Any?, callback: Runnable?)
 
     /**
      * Swaps in the given buffer object.
      */
     fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject)
-
-    fun getNativeObject(): Long
-
-    internal fun invalidate()
 }
-

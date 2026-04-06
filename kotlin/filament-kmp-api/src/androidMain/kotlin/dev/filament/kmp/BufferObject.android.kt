@@ -32,7 +32,8 @@ actual class BufferObject internal constructor(
         bufferObject.setBuffer(androidEngine, buffer as Buffer, destOffsetInBytes, count, handler, callback?.let { Runnable { it() } })
     }
 
-    actual fun getNativeObject(): Long {
+    actual val nativeObject: Long
+        get() {
         val bufferObject = requireNotNull(androidBufferObject) { "Calling method on destroyed BufferObject" }
         return bufferObject.nativeObject
     }

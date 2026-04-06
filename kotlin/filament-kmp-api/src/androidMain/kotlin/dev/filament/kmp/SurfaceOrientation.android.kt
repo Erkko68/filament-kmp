@@ -6,12 +6,14 @@ import java.nio.Buffer
 actual class SurfaceOrientation internal constructor(
     internal var androidSurfaceOrientation: AndroidSurfaceOrientation?,
 ) {
-    actual fun getNativeObject(): Long {
+    actual val nativeObject: Long
+        get() {
         val surfaceOrientation = requireNotNull(androidSurfaceOrientation) { "Calling method on destroyed SurfaceOrientation" }
         return surfaceOrientation.nativeObject
     }
 
-    actual fun getVertexCount(): Int {
+    actual val vertexCount: Int
+        get() {
         val surfaceOrientation = requireNotNull(androidSurfaceOrientation) { "Calling method on destroyed SurfaceOrientation" }
         return surfaceOrientation.vertexCount
     }

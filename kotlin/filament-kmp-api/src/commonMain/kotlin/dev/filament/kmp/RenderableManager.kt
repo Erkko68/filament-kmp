@@ -1,34 +1,40 @@
 package dev.filament.kmp
 
 /**
- * Factory and manager for <em>renderables</em>, which are entities that can be drawn.
+ * Factory and manager for renderables, which are entities that can be drawn.
+ *
+ * <p>Renderables are bundles of primitives, each of which has its own geometry and material. All
+ * primitives in a particular renderable share a set of rendering attributes, such as whether they
+ * cast shadows or use vertex skinning.</p>
+ *
+ * <pre>
+ * val entity = EntityManager.get().create()
+ *
+ * RenderableManager.Builder(1)
+ *         .boundingBox(Box(0.0f, 0.0f, 0.0f, 9000.0f, 9000.0f, 9000.0f))
+ *         .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
+ *         .material(0, material)
+ *         .build(engine, entity)
+ *
+ * scene.addEntity(entity)
+ * </pre>
+ *
+ * <p>To modify the state of an existing renderable, clients should first use RenderableManager
+ * to get a temporary handle called an instance. The instance can then be used to get or set
+ * the renderable's state. Please note that instances are ephemeral; clients should store entities,
+ * not instances.</p>
  */
 expect class RenderableManager {
-    /**
-     * Checks if the given entity already has a renderable component.
-     */
-    fun hasComponent(@Entity entity: Int): Boolean
 
     /**
-     * Gets a temporary handle that can be used to access the renderable state.
-     */
-    @EntityInstance
-    fun getInstance(@Entity entity: Int): Int
-
-    /**
-     * Destroys the renderable component in the given entity.
-     */
-    fun destroy(@Entity entity: Int)
-
-    /**
-     * Primitive types used in {@link RenderableManager.Builder#geometry}.
+     * Primitive types used in [RenderableManager.Builder.geometry].
      */
     enum class PrimitiveType {
         POINTS,
         LINES,
         LINE_STRIP,
         TRIANGLES,
-        TRIANGLE_STRIP,
+        TRIANGLE_STRIP
     }
 
     /**
@@ -36,209 +42,87 @@ expect class RenderableManager {
      */
     class Builder(count: Int) {
         /**
-         * Specifies the geometry data for a primitive.
+         * Type of geometry for a Renderable
          */
-        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer): Builder
-
-        /**
-         * Specifies geometry with explicit index offset and count.
-         */
-        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int): Builder
-
-        /**
-         * Specifies geometry with explicit index range and count.
-         */
-        fun geometry(
-            index: Int,
-            type: PrimitiveType,
-            vertices: VertexBuffer,
-            indices: IndexBuffer,
-            offset: Int,
-            minIndex: Int,
-            maxIndex: Int,
-            count: Int,
-        ): Builder
-
         enum class GeometryType {
             DYNAMIC,
             STATIC_BOUNDS,
-            STATIC,
+            STATIC
         }
 
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer): Builder
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int): Builder
+        fun geometry(index: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder
         fun geometryType(type: GeometryType): Builder
-
-        /**
-         * Binds a material instance to the specified primitive.
-         */
         fun material(index: Int, material: MaterialInstance): Builder
-
-        fun blendOrder(index: Int, blendOrder: Int): Builder
-
-        fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder
-
-        /**
-         * The axis-aligned bounding box of the renderable.
-         */
         fun boundingBox(aabb: Box): Builder
-
         fun layerMask(select: Int, value: Int): Builder
-
         fun priority(priority: Int): Builder
-
         fun channel(channel: Int): Builder
-
         fun culling(enabled: Boolean): Builder
-
-        fun lightChannel(channel: Int, enable: Boolean): Builder
-
-        fun instances(instanceCount: Int): Builder
-
         fun castShadows(enabled: Boolean): Builder
-
         fun receiveShadows(enabled: Boolean): Builder
-
         fun screenSpaceContactShadows(enabled: Boolean): Builder
-
-        fun enableSkinningBuffers(enabled: Boolean): Builder
-
-        fun fog(enabled: Boolean): Builder
-
-        fun skinning(skinningBuffer: SkinningBuffer?, boneCount: Int, offset: Int): Builder
-
-        fun skinning(boneCount: Int): Builder
-
-        fun skinning(boneCount: Int, bones: Any): Builder
-
+        fun lightChannel(channel: Int, enable: Boolean): Builder
+        fun instances(instanceCount: Int): Builder
         fun morphing(targetCount: Int): Builder
-
         fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder
-
         fun morphing(level: Int, primitiveIndex: Int, offset: Int): Builder
-
-        /**
-         * Creates entities with renderable components.
-         */
-        fun build(engine: Engine, @Entity entity: Int)
+        fun skinning(boneCount: Int): Builder
+        fun skinning(boneCount: Int, bones: Buffer): Builder
+        fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder
+        fun enableSkinningBuffers(enabled: Boolean): Builder
+        fun fog(enabled: Boolean): Builder
+        fun blendOrder(index: Int, blendOrder: Int): Builder
+        fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder
+        fun build(engine: Engine, entity: Int)
     }
 
-    /**
-     * Changes the bounding box used for frustum culling.
-     *
-     * @see Builder#boundingBox
-     * @see RenderableManager#getAxisAlignedBoundingBox
-     */
-    fun setAxisAlignedBoundingBox(@EntityInstance i: Int, aabb: Box)
+    fun hasComponent(entity: Int): Boolean
+    fun getInstance(entity: Int): Int
+    fun destroy(entity: Int)
 
-    fun getAxisAlignedBoundingBox(@EntityInstance i: Int, out: Box? = null): Box
+    fun setAxisAlignedBoundingBox(instance: Int, aabb: Box)
+    fun getAxisAlignedBoundingBox(instance: Int, out: Box?): Box
+    fun setLayerMask(instance: Int, select: Int, value: Int)
+    fun setPriority(instance: Int, priority: Int)
+    fun getPriority(instance: Int): Int
+    fun setChannel(instance: Int, channel: Int)
+    fun getChannel(instance: Int): Int
+    fun setCulling(instance: Int, enabled: Boolean)
+    fun isCullingEnabled(instance: Int): Boolean
+    fun setCastShadows(instance: Int, enabled: Boolean)
+    fun isShadowCaster(instance: Int): Boolean
+    fun setReceiveShadows(instance: Int, enabled: Boolean)
+    fun isShadowReceiver(instance: Int): Boolean
+    fun setScreenSpaceContactShadows(instance: Int, enabled: Boolean)
+    fun isScreenSpaceContactShadowsEnabled(instance: Int): Boolean
+    fun setFogEnabled(instance: Int, enabled: Boolean)
+    fun getFogEnabled(instance: Int): Boolean
+    fun setLightChannel(instance: Int, channel: Int, enable: Boolean)
+    fun getLightChannel(instance: Int, channel: Int): Boolean
 
-    /**
-     * Changes the visibility bits.
-     *
-     * @see Builder#layerMask
-     * @see View#setVisibleLayers
-     */
-    fun setLayerMask(@EntityInstance i: Int, select: Int, value: Int)
+    fun setMaterialInstanceAt(instance: Int, primitiveIndex: Int, materialInstance: MaterialInstance)
+    fun getMaterialInstanceAt(instance: Int, primitiveIndex: Int): MaterialInstance
+    fun clearMaterialInstanceAt(instance: Int, primitiveIndex: Int)
+    fun setGeometryAt(instance: Int, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer)
+    fun setGeometryAt(instance: Int, primitiveIndex: Int, type: PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Int, count: Int)
 
-    /**
-     * Changes the coarse-level draw ordering.
-     *
-     * @see Builder#priority
-     */
-    fun setPriority(@EntityInstance i: Int, priority: Int)
+    fun getPrimitiveCount(instance: Int): Int
+    fun getInstanceCount(instance: Int): Int
 
-    fun getPriority(@EntityInstance i: Int): Int
+    fun setBonesAsMatrices(instance: Int, matrices: Buffer, boneCount: Int, offset: Int)
+    fun setBonesAsQuaternions(instance: Int, quaternions: Buffer, boneCount: Int, offset: Int)
+    fun setSkinningBuffer(instance: Int, skinningBuffer: SkinningBuffer, count: Int, offset: Int)
 
-    fun setChannel(@EntityInstance i: Int, channel: Int)
+    fun setMorphWeights(instance: Int, weights: FloatArray, offset: Int)
+    fun setMorphTargetBufferOffsetAt(instance: Int, level: Int, primitiveIndex: Int, offset: Int)
+    fun getMorphTargetCount(instance: Int): Int
 
-    fun getChannel(@EntityInstance i: Int): Int
+    fun setBlendOrderAt(instance: Int, primitiveIndex: Int, blendOrder: Int)
+    fun getBlendOrderAt(instance: Int, primitiveIndex: Int): Int
+    fun setGlobalBlendOrderEnabledAt(instance: Int, primitiveIndex: Int, enabled: Boolean)
+    fun isGlobalBlendOrderEnabledAt(instance: Int, primitiveIndex: Int): Boolean
 
-    fun setCulling(@EntityInstance i: Int, enabled: Boolean)
-
-    fun isCullingEnabled(@EntityInstance i: Int): Boolean
-
-    fun setFogEnabled(@EntityInstance i: Int, enabled: Boolean)
-
-    fun getFogEnabled(@EntityInstance i: Int): Boolean
-
-    fun setLightChannel(@EntityInstance i: Int, channel: Int, enable: Boolean)
-
-    fun getLightChannel(@EntityInstance i: Int, channel: Int): Boolean
-
-    fun setCastShadows(@EntityInstance i: Int, enabled: Boolean)
-
-    fun setReceiveShadows(@EntityInstance i: Int, enabled: Boolean)
-
-    fun setScreenSpaceContactShadows(@EntityInstance i: Int, enabled: Boolean)
-
-    fun isScreenSpaceContactShadowsEnabled(@EntityInstance i: Int): Boolean
-
-    fun isShadowCaster(@EntityInstance i: Int): Boolean
-
-    fun isShadowReceiver(@EntityInstance i: Int): Boolean
-
-    fun setSkinningBuffer(@EntityInstance i: Int, skinningBuffer: SkinningBuffer, count: Int, offset: Int)
-
-    fun setBonesAsMatrices(@EntityInstance i: Int, matrices: Any, boneCount: Int, offset: Int)
-
-    fun setBonesAsQuaternions(@EntityInstance i: Int, quaternions: Any, boneCount: Int, offset: Int)
-
-    fun setMorphWeights(@EntityInstance i: Int, weights: FloatArray, offset: Int)
-
-    fun setMorphTargetBufferOffsetAt(@EntityInstance i: Int, level: Int, primitiveIndex: Int, offset: Int)
-
-    fun getMorphTargetCount(@EntityInstance i: Int): Int
-
-    fun getPrimitiveCount(@EntityInstance i: Int): Int
-
-    fun getInstanceCount(@EntityInstance i: Int): Int
-
-    /**
-     * Changes the material instance binding for the given primitive.
-     *
-     * @see Builder#material
-     */
-    fun setMaterialInstanceAt(@EntityInstance i: Int, primitiveIndex: Int, materialInstance: MaterialInstance)
-
-    fun clearMaterialInstanceAt(@EntityInstance i: Int, primitiveIndex: Int)
-
-    /**
-     * Creates a MaterialInstance Java wrapper object for a particular material instance.
-     */
-    fun getMaterialInstanceAt(@EntityInstance i: Int, primitiveIndex: Int): MaterialInstance
-
-    /**
-     * Changes the geometry for the given primitive.
-     *
-     * @see Builder#geometry Builder.geometry
-     */
-    fun setGeometryAt(
-        @EntityInstance i: Int,
-        primitiveIndex: Int,
-        type: PrimitiveType,
-        vertices: VertexBuffer,
-        indices: IndexBuffer,
-    )
-
-    fun setGeometryAt(
-        @EntityInstance i: Int,
-        primitiveIndex: Int,
-        type: PrimitiveType,
-        vertices: VertexBuffer,
-        indices: IndexBuffer,
-        offset: Int,
-        count: Int,
-    )
-
-    fun setBlendOrderAt(@EntityInstance instance: Int, primitiveIndex: Int, blendOrder: Int)
-
-    fun getBlendOrderAt(@EntityInstance instance: Int, primitiveIndex: Int): Int
-
-    fun setGlobalBlendOrderEnabledAt(@EntityInstance instance: Int, primitiveIndex: Int, enabled: Boolean)
-
-    fun isGlobalBlendOrderEnabledAt(@EntityInstance instance: Int, primitiveIndex: Int): Boolean
-
-    fun getEnabledAttributesAt(@EntityInstance i: Int, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute>
-
-    fun getNativeObject(): Long
+    fun getEnabledAttributesAt(instance: Int, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute>
 }
-

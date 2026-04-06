@@ -1,57 +1,34 @@
 package dev.filament.kmp
 
-actual open class ToneMapper {
-    actual fun getNativeObject(): Long = TODO("Not yet implemented")
+import kotlinx.cinterop.*
+import filament.*
 
-    actual class Linear actual constructor() : ToneMapper()
-
-    actual class ACES actual constructor() : ToneMapper()
-
-    actual class ACESLegacy actual constructor() : ToneMapper()
-
-    actual class Filmic actual constructor() : ToneMapper()
-
-    actual class PBRNeutralToneMapper actual constructor() : ToneMapper()
-
-    actual class GT7ToneMapper actual constructor() : ToneMapper()
-
-    actual class Agx actual constructor(look: AgxLook) : ToneMapper() {
-        actual enum class AgxLook {
-            NONE,
-            PUNCHY,
-            GOLDEN,
+actual class ToneMapper internal constructor(
+    internal val nativeObject: CPointer<FilaToneMapper>
+) {
+    actual enum class AgxLook {
+        NONE, PUNCHY, GOLDEN;
+        internal fun toNative(): FilaAgxLook = when (this) {
+            NONE -> FILA_AGX_LOOK_NONE
+            PUNCHY -> FILA_AGX_LOOK_PUNCHY
+            GOLDEN -> FILA_AGX_LOOK_GOLDEN
         }
     }
 
-    actual class Generic actual constructor(
-        contrast: Float,
-        midGrayIn: Float,
-        midGrayOut: Float,
-        hdrMax: Float,
-    ) : ToneMapper() {
-        actual fun getContrast(): Float = TODO("Not yet implemented")
+    actual companion object {
+        actual fun Linear(): ToneMapper = ToneMapper(FilaToneMapper_Linear()!!)
+        actual fun ACES(): ToneMapper = ToneMapper(FilaToneMapper_ACES()!!)
+        actual fun ACESLegacy(): ToneMapper = ToneMapper(FilaToneMapper_ACESLegacy()!!)
+        actual fun Filmic(): ToneMapper = ToneMapper(FilaToneMapper_Filmic()!!)
+        actual fun PBRNeutral(): ToneMapper = ToneMapper(FilaToneMapper_PBRNeutral()!!)
+        actual fun GT7(): ToneMapper = ToneMapper(FilaToneMapper_GT7()!!)
+        actual fun Agx(look: AgxLook): ToneMapper = ToneMapper(FilaToneMapper_Agx(look.toNative())!!)
+        actual fun Generic(contrast: Float, midGrayIn: Float, midGrayOut: Float, hdrMax: Float): ToneMapper = 
+            ToneMapper(FilaToneMapper_Generic(contrast, midGrayIn, midGrayOut, hdrMax)!!)
+        actual fun DisplayRange(): ToneMapper = ToneMapper(FilaToneMapper_DisplayRange()!!)
+    }
 
-        actual fun setContrast(contrast: Float) {
-            TODO("Not yet implemented")
-        }
-
-        actual fun getMidGrayIn(): Float = TODO("Not yet implemented")
-
-        actual fun setMidGrayIn(midGrayIn: Float) {
-            TODO("Not yet implemented")
-        }
-
-        actual fun getMidGrayOut(): Float = TODO("Not yet implemented")
-
-        actual fun setMidGrayOut(midGrayOut: Float) {
-            TODO("Not yet implemented")
-        }
-
-        actual fun getHdrMax(): Float = TODO("Not yet implemented")
-
-        actual fun setHdrMax(hdrMax: Float) {
-            TODO("Not yet implemented")
-        }
+    internal fun destroy() {
+        FilaToneMapper_destroy(nativeObject)
     }
 }
-

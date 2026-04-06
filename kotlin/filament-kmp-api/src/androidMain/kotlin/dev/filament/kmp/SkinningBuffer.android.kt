@@ -23,7 +23,8 @@ actual class SkinningBuffer internal constructor(
         return skinningBuffer.boneCount
     }
 
-    actual fun getNativeObject(): Long {
+    actual val nativeObject: Long
+        get() {
         val skinningBuffer = requireNotNull(androidSkinningBuffer) { "Calling method on destroyed SkinningBuffer" }
         return skinningBuffer.nativeObject
     }

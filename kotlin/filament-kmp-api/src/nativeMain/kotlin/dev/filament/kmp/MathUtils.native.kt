@@ -1,5 +1,8 @@
 package dev.filament.kmp
 
+import kotlinx.cinterop.*
+import filament.*
+
 actual object MathUtils {
     actual fun packTangentFrame(
         tangentX: Float,
@@ -13,7 +16,12 @@ actual object MathUtils {
         normalZ: Float,
         quaternion: FloatArray,
     ) {
-        TODO("Not yet implemented")
+        packTangentFrame(
+            tangentX, tangentY, tangentZ,
+            bitangentX, bitangentY, bitangentZ,
+            normalX, normalY, normalZ,
+            quaternion, 0
+        )
     }
 
     actual fun packTangentFrame(
@@ -29,7 +37,18 @@ actual object MathUtils {
         quaternion: FloatArray,
         offset: Int,
     ) {
-        TODO("Not yet implemented")
+        val q = FloatArray(4)
+        memScoped {
+            val nativeQ = allocArray<FloatVar>(4)
+            FilaMathUtils_packTangentFrame(
+                tangentX, tangentY, tangentZ,
+                bitangentX, bitangentY, bitangentZ,
+                normalX, normalY, normalZ,
+                nativeQ
+            )
+            for (i in 0 until 4) {
+                quaternion[offset + i] = nativeQ[i]
+            }
+        }
     }
 }
-

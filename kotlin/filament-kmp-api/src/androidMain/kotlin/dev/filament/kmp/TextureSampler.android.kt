@@ -39,49 +39,57 @@ actual class TextureSampler {
         androidSampler = AndroidTextureSampler(mode.toAndroid(), function.toAndroid())
     }
 
-    actual fun getMinFilter(): MinFilter = androidSampler.minFilter.toKmp()
+    actual val minFilter: MinFilter
+        get() = androidSampler.minFilter.toKmp()
 
     actual fun setMinFilter(filter: MinFilter) {
         androidSampler.setMinFilter(filter.toAndroid())
     }
 
-    actual fun getMagFilter(): MagFilter = androidSampler.magFilter.toKmp()
+    actual val magFilter: MagFilter
+        get() = androidSampler.magFilter.toKmp()
 
     actual fun setMagFilter(filter: MagFilter) {
         androidSampler.setMagFilter(filter.toAndroid())
     }
 
-    actual fun getWrapModeS(): WrapMode = androidSampler.wrapModeS.toKmp()
+    actual val wrapModeS: WrapMode
+        get() = androidSampler.wrapModeS.toKmp()
 
     actual fun setWrapModeS(mode: WrapMode) {
         androidSampler.setWrapModeS(mode.toAndroid())
     }
 
-    actual fun getWrapModeT(): WrapMode = androidSampler.wrapModeT.toKmp()
+    actual val wrapModeT: WrapMode
+        get() = androidSampler.wrapModeT.toKmp()
 
     actual fun setWrapModeT(mode: WrapMode) {
         androidSampler.setWrapModeT(mode.toAndroid())
     }
 
-    actual fun getWrapModeR(): WrapMode = androidSampler.wrapModeR.toKmp()
+    actual val wrapModeR: WrapMode
+        get() = androidSampler.wrapModeR.toKmp()
 
     actual fun setWrapModeR(mode: WrapMode) {
         androidSampler.setWrapModeR(mode.toAndroid())
     }
 
-    actual fun getAnisotropy(): Float = androidSampler.anisotropy
+    actual val anisotropy: Float
+        get() = androidSampler.anisotropy
 
     actual fun setAnisotropy(anisotropy: Float) {
         androidSampler.setAnisotropy(anisotropy)
     }
 
-    actual fun getCompareMode(): CompareMode = androidSampler.compareMode.toKmp()
+    actual val compareMode: CompareMode
+        get() = androidSampler.compareMode.toKmp()
 
     actual fun setCompareMode(mode: CompareMode) {
         androidSampler.setCompareMode(mode.toAndroid())
     }
 
-    actual fun getCompareFunction(): CompareFunction = androidSampler.compareFunction.toKmp()
+    actual val compareFunction: CompareFunction
+        get() = androidSampler.compareFunction.toKmp()
 
     actual fun setCompareFunction(function: CompareFunction) {
         androidSampler.setCompareFunction(function.toAndroid())

@@ -55,12 +55,12 @@ expect class MorphTargetBuffer {
     /**
      * @return number of vertices in this {@link MorphTargetBuffer}
      */
-    fun getVertexCount(): Int
+    val vertexCount: Int
 
     /**
      * @return number of morph targets in this {@link MorphTargetBuffer}
      */
-    fun getCount(): Int
+    val count: Int
 
     /**
      * @return true if this MorphTargetBuffer has a position buffer.
@@ -77,7 +77,7 @@ expect class MorphTargetBuffer {
      */
     fun isCustomMorphingEnabled(): Boolean
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
     internal fun invalidate()
 }

@@ -36,7 +36,7 @@ expect class SkinningBuffer {
      */
     fun getBoneCount(): Int
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
     internal fun invalidate()
 }

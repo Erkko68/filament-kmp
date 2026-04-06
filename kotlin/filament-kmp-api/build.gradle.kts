@@ -62,8 +62,11 @@ kotlin {
                 defFile(project.file("src/nativeInterop/cinterop/filament.def"))
 
                 includeDirs(
-                    project.file("../../c-wrapper/include"),
-                    project.file("../../filament-prebuilts/include")
+                    project.file("../../c/filament/c"),
+                    project.file("../../c/filamat/c"),
+                    project.file("../../c/filament-utils/c"),
+                    project.file("../../filament-main/filament/include"),
+                    project.file("../../filament-main/libs/utils/include")
                 )
             }
         }

@@ -49,13 +49,13 @@ expect class Box {
      *
      * @return an XYZ float array of size 3
      */
-    fun getCenter(): FloatArray
+    val center: FloatArray
 
     /**
      * Returns the half-extent from the center of the 3D box.
      *
      * @return an XYZ float array of size 3
      */
-    fun getHalfExtent(): FloatArray
+    val halfExtent: FloatArray
 }
 

@@ -2,23 +2,29 @@ package dev.filament.kmp
 
 /**
  * A Filament Material defines the visual appearance of an object. Materials function as a
- * templates from which {@link MaterialInstance}s can be spawned. Use {@link Builder} to construct
+ * templates from which [MaterialInstance]s can be spawned. Use [Builder] to construct
  * a Material object.
+ *
+ * @see <a href="https://google.github.io/filament/Materials.html">Filament Materials Guide</a>
  */
 expect class Material {
+
+    /** Supported shading models */
     enum class Shading {
         UNLIT,
         LIT,
         SUBSURFACE,
         CLOTH,
-        SPECULAR_GLOSSINESS,
+        SPECULAR_GLOSSINESS
     }
 
+    /** Attribute interpolation types in the fragment shader */
     enum class Interpolation {
         SMOOTH,
-        FLAT,
+        FLAT
     }
 
+    /** Supported blending modes */
     enum class BlendingMode {
         OPAQUE,
         TRANSPARENT,
@@ -29,59 +35,76 @@ expect class Material {
         SCREEN,
     }
 
+    /** How transparent objects are handled */
     enum class TransparencyMode {
         DEFAULT,
         TWO_PASSES_ONE_SIDE,
-        TWO_PASSES_TWO_SIDES,
+        TWO_PASSES_TWO_SIDES
     }
 
+    /** Supported refraction modes */
     enum class RefractionMode {
         NONE,
         CUBEMAP,
-        SCREEN_SPACE,
+        SCREEN_SPACE
     }
 
+    /** Supported refraction types */
     enum class RefractionType {
         SOLID,
-        THIN,
+        THIN
     }
 
+    /** Supported reflection modes */
     enum class ReflectionMode {
         DEFAULT,
-        SCREEN_SPACE,
+        SCREEN_SPACE
     }
 
+    /** Supported types of vertex domains */
     enum class VertexDomain {
         OBJECT,
         WORLD,
         VIEW,
-        DEVICE,
+        DEVICE
     }
 
+    /** Face culling Mode */
     enum class CullingMode {
         NONE,
         FRONT,
         BACK,
-        FRONT_AND_BACK,
+        FRONT_AND_BACK
     }
 
+    /** Shader compiler priority queue */
     enum class CompilerPriorityQueue {
         CRITICAL,
         HIGH,
-        LOW,
+        LOW
     }
 
+    /** Defines whether a material instance should use UBO batching or not. */
     enum class UboBatchingMode {
         DEFAULT,
-        DISABLED,
+        DISABLED
     }
 
-    class Parameter(
-        name: String,
-        type: Type,
-        precision: Precision,
-        count: Int,
-    ) {
+    class UserVariantFilterBit {
+        companion object {
+            const val DIRECTIONAL_LIGHTING: Int
+            const val DYNAMIC_LIGHTING: Int
+            const val SHADOW_RECEIVER: Int
+            const val SKINNING: Int
+            const val FOG: Int
+            const val VSM: Int
+            const val SSR: Int
+            const val STE: Int
+            const val ALL: Int
+        }
+    }
+
+    class Parameter {
         enum class Type {
             BOOL,
             BOOL2,
@@ -106,14 +129,14 @@ expect class Material {
             SAMPLER_CUBEMAP,
             SAMPLER_EXTERNAL,
             SAMPLER_3D,
-            SUBPASS_INPUT,
+            SUBPASS_INPUT
         }
 
         enum class Precision {
             LOW,
             MEDIUM,
             HIGH,
-            DEFAULT,
+            DEFAULT
         }
 
         val name: String
@@ -122,129 +145,64 @@ expect class Material {
         val count: Int
     }
 
-    class Builder {
+    class Builder() {
         enum class ShadowSamplingQuality {
             HARD,
             LOW,
         }
 
-        /**
-         * Specifies the material data. The material data is a binary blob produced by
-         * libfilamat or by matc.
-         *
-         * @param buffer  buffer containing material data
-         * @param size    size of the material data in bytes
-         */
-        fun payload(buffer: Any, size: Int): Builder
-
+        fun payload(buffer: Buffer, size: Int): Builder
         fun sphericalHarmonicsBandCount(shBandCount: Int): Builder
-
         fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder
-
         fun uboBatching(mode: UboBatchingMode): Builder
-
-        /**
-         * Creates and returns the Material object.
-         *
-         * @param engine reference to the Engine instance to associate this Material with
-         *
-         * @return the newly created object
-         *
-         * @exception IllegalStateException if the material could not be created
-         */
         fun build(engine: Engine): Material
     }
 
-    fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: (() -> Unit)?)
-
-    /**
-     * Creates a new instance of this material. Material instances should be freed using
-     * {@link Engine#destroyMaterialInstance(MaterialInstance)}.
-     *
-     * @return the new instance
-     */
+    fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: Runnable?)
     fun createInstance(): MaterialInstance
-
-    /**
-     * Creates a new instance of this material with a specified name. Material instances should be
-     * freed using {@link Engine#destroyMaterialInstance(MaterialInstance)}.
-     *
-     * @param name arbitrary label to associate with the given material instance
-     *
-     * @return the new instance
-     */
     fun createInstance(name: String): MaterialInstance
-
-    /** Returns the material's default instance. */
     fun getDefaultInstance(): MaterialInstance
-
-    /**
-     * Returns the name of this material. The material name is used for debugging purposes.
-     */
     fun getName(): String
-
     fun getShading(): Shading
-
     fun getInterpolation(): Interpolation
-
     fun getBlendingMode(): BlendingMode
-
     fun getTransparencyMode(): TransparencyMode
-
     fun getRefractionMode(): RefractionMode
-
     fun getRefractionType(): RefractionType
-
     fun getReflectionMode(): ReflectionMode
-
-    fun getFeatureLevel(): Int
-
+    fun getFeatureLevel(): Engine.FeatureLevel
     fun getVertexDomain(): VertexDomain
-
     fun getCullingMode(): CullingMode
-
     fun isColorWriteEnabled(): Boolean
-
     fun isDepthWriteEnabled(): Boolean
-
     fun isDepthCullingEnabled(): Boolean
-
     fun isDoubleSided(): Boolean
-
     fun isAlphaToCoverageEnabled(): Boolean
-
     fun getMaskThreshold(): Float
-
     fun getSpecularAntiAliasingVariance(): Float
-
     fun getSpecularAntiAliasingThreshold(): Float
-
     fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute>
-
     fun getParameterCount(): Int
-
     fun getParameters(): List<Parameter>
-
     fun hasParameter(name: String): Boolean
-
     fun getParameterTransformName(samplerName: String): String
 
     fun setDefaultParameter(name: String, x: Boolean)
-
     fun setDefaultParameter(name: String, x: Float)
-
     fun setDefaultParameter(name: String, x: Int)
-
+    fun setDefaultParameter(name: String, x: Boolean, y: Boolean)
     fun setDefaultParameter(name: String, x: Float, y: Float)
-
+    fun setDefaultParameter(name: String, x: Int, y: Int)
+    fun setDefaultParameter(name: String, x: Boolean, y: Boolean, z: Boolean)
     fun setDefaultParameter(name: String, x: Float, y: Float, z: Float)
-
+    fun setDefaultParameter(name: String, x: Int, y: Int, z: Int)
+    fun setDefaultParameter(name: String, x: Boolean, y: Boolean, z: Boolean, w: Boolean)
     fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float)
-
-    fun setDefaultParameter(name: String, type: Any, x: Float, y: Float, z: Float, w: Float)
-
-    fun getNativeObject(): Long
-
-    internal fun invalidate()
+    fun setDefaultParameter(name: String, x: Int, y: Int, z: Int, w: Int)
+    fun setDefaultParameter(name: String, type: MaterialInstance.BooleanElement, v: BooleanArray, offset: Int, count: Int)
+    fun setDefaultParameter(name: String, type: MaterialInstance.IntElement, v: IntArray, offset: Int, count: Int)
+    fun setDefaultParameter(name: String, type: MaterialInstance.FloatElement, v: FloatArray, offset: Int, count: Int)
+    fun setDefaultParameter(name: String, type: Colors.RgbType, r: Float, g: Float, b: Float)
+    fun setDefaultParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float)
+    fun setDefaultParameter(name: String, texture: Texture, sampler: TextureSampler)
 }
-

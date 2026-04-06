@@ -1,74 +1,74 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package dev.filament.kmp
 
+import dev.filament.kmp.cinterop.*
+import kotlinx.cinterop.*
+
 actual class TextureSampler {
+    internal var nativeObject: Long = 0L
+
     actual constructor() {
+        nativeObject = FilaTextureSampler_create(
+            FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST,
+            FILA_TEXTURE_SAMPLER_MAG_FILTER_NEAREST,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE
+        ).toLong()
     }
 
-    actual constructor(minMag: MagFilter) {
-    }
+    actual constructor(minMag: MagFilter) : this(MinFilter.entries[minMag.ordinal], minMag, WrapMode.CLAMP_TO_EDGE)
 
-    actual constructor(minMag: MagFilter, wrap: WrapMode) {
-    }
+    actual constructor(minMag: MagFilter, wrap: WrapMode) : this(MinFilter.entries[minMag.ordinal], minMag, wrap)
 
-    actual constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) {
-    }
+    actual constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) : this(min, mag, wrap, wrap, wrap)
 
     actual constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) {
+        nativeObject = FilaTextureSampler_create(
+            min.toFila(),
+            mag.toFila(),
+            s.toFila(),
+            t.toFila(),
+            r.toFila()
+        ).toLong()
     }
 
-    actual constructor(mode: CompareMode) {
-    }
+    actual constructor(mode: CompareMode) : this(mode, CompareFunction.LESS_EQUAL)
 
     actual constructor(mode: CompareMode, function: CompareFunction) {
+        nativeObject = FilaTextureSampler_createCompare(
+            mode.toFila(),
+            function.toFila()
+        ).toLong()
     }
 
-    actual fun getMinFilter(): MinFilter = TODO("Not yet implemented")
-
-    actual fun setMinFilter(filter: MinFilter) {
-        TODO("Not yet implemented")
+    internal constructor(native: Long) {
+        this.nativeObject = native
     }
 
-    actual fun getMagFilter(): MagFilter = TODO("Not yet implemented")
+    actual val minFilter: MinFilter
+        get() = MinFilter.entries[FilaTextureSampler_getMinFilter(nativeObject.toULong()).toInt()]
 
-    actual fun setMagFilter(filter: MagFilter) {
-        TODO("Not yet implemented")
-    }
+    actual val magFilter: MagFilter
+        get() = MagFilter.entries[FilaTextureSampler_getMagFilter(nativeObject.toULong()).toInt()]
 
-    actual fun getWrapModeS(): WrapMode = TODO("Not yet implemented")
+    actual val wrapModeS: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeS(nativeObject.toULong()).toInt()]
 
-    actual fun setWrapModeS(mode: WrapMode) {
-        TODO("Not yet implemented")
-    }
+    actual val wrapModeT: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeT(nativeObject.toULong()).toInt()]
 
-    actual fun getWrapModeT(): WrapMode = TODO("Not yet implemented")
+    actual val wrapModeR: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeR(nativeObject.toULong()).toInt()]
 
-    actual fun setWrapModeT(mode: WrapMode) {
-        TODO("Not yet implemented")
-    }
+    actual val anisotropy: Float
+        get() = FilaTextureSampler_getAnisotropy(nativeObject.toULong())
 
-    actual fun getWrapModeR(): WrapMode = TODO("Not yet implemented")
+    actual val compareMode: CompareMode
+        get() = CompareMode.entries[FilaTextureSampler_getCompareMode(nativeObject.toULong()).toInt()]
 
-    actual fun setWrapModeR(mode: WrapMode) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getAnisotropy(): Float = TODO("Not yet implemented")
-
-    actual fun setAnisotropy(anisotropy: Float) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getCompareMode(): CompareMode = TODO("Not yet implemented")
-
-    actual fun setCompareMode(mode: CompareMode) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getCompareFunction(): CompareFunction = TODO("Not yet implemented")
-
-    actual fun setCompareFunction(function: CompareFunction) {
-        TODO("Not yet implemented")
-    }
+    actual val compareFunction: CompareFunction
+        get() = CompareFunction.entries[FilaTextureSampler_getCompareFunction(nativeObject.toULong()).toInt()]
 
     actual enum class WrapMode {
         CLAMP_TO_EDGE,
@@ -96,14 +96,49 @@ actual class TextureSampler {
     }
 
     actual enum class CompareFunction {
-        LESS_EQUAL,
-        GREATER_EQUAL,
-        LESS,
-        GREATER,
-        EQUAL,
-        NOT_EQUAL,
-        ALWAYS,
-        NEVER,
+        LESS_EQUAL, // C: LE
+        GREATER_EQUAL, // C: GE
+        LESS, // C: L
+        GREATER, // C: G
+        EQUAL, // C: E
+        NOT_EQUAL, // C: NE
+        ALWAYS, // C: A
+        NEVER, // C: N
+    }
+
+    private fun WrapMode.toFila() = when (this) {
+        WrapMode.CLAMP_TO_EDGE -> FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE
+        WrapMode.REPEAT -> FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT
+        WrapMode.MIRRORED_REPEAT -> FILA_TEXTURE_SAMPLER_WRAP_MODE_MIRRORED_REPEAT
+    }
+
+    private fun MinFilter.toFila() = when (this) {
+        MinFilter.NEAREST -> FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST
+        MinFilter.LINEAR -> FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR
+        MinFilter.NEAREST_MIPMAP_NEAREST -> FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_NEAREST
+        MinFilter.LINEAR_MIPMAP_NEAREST -> FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_NEAREST
+        MinFilter.NEAREST_MIPMAP_LINEAR -> FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_LINEAR
+        MinFilter.LINEAR_MIPMAP_LINEAR -> FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR
+    }
+
+    private fun MagFilter.toFila() = when (this) {
+        MagFilter.NEAREST -> FILA_TEXTURE_SAMPLER_MAG_FILTER_NEAREST
+        MagFilter.LINEAR -> FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR
+    }
+
+    private fun CompareMode.toFila() = when (this) {
+        CompareMode.NONE -> FILA_TEXTURE_SAMPLER_COMPARE_MODE_NONE
+        CompareMode.COMPARE_TO_TEXTURE -> FILA_TEXTURE_SAMPLER_COMPARE_MODE_COMPARE_TO_TEXTURE
+    }
+
+    private fun CompareFunction.toFila() = when (this) {
+        CompareFunction.LESS_EQUAL -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE
+        CompareFunction.GREATER_EQUAL -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_GE
+        CompareFunction.LESS -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_L
+        CompareFunction.GREATER -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_G
+        CompareFunction.EQUAL -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_E
+        CompareFunction.NOT_EQUAL -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_NE
+        CompareFunction.ALWAYS -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_A
+        CompareFunction.NEVER -> FILA_TEXTURE_SAMPLER_COMPARE_FUNC_N
     }
 }
-

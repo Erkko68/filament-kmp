@@ -17,12 +17,14 @@ actual class MorphTargetBuffer internal constructor(
         morphTargetBuffer.setTangentsAt(androidEngine, targetIndex, tangents, count)
     }
 
-    actual fun getVertexCount(): Int {
+    actual val vertexCount: Int
+        get() {
         val morphTargetBuffer = requireNotNull(androidMorphTargetBuffer) { "Calling method on destroyed MorphTargetBuffer" }
         return morphTargetBuffer.vertexCount
     }
 
-    actual fun getCount(): Int {
+    actual val count: Int
+        get() {
         val morphTargetBuffer = requireNotNull(androidMorphTargetBuffer) { "Calling method on destroyed MorphTargetBuffer" }
         return morphTargetBuffer.count
     }
@@ -42,7 +44,8 @@ actual class MorphTargetBuffer internal constructor(
         return morphTargetBuffer.isCustomMorphingEnabled()
     }
 
-    actual fun getNativeObject(): Long {
+    actual val nativeObject: Long
+        get() {
         val morphTargetBuffer = requireNotNull(androidMorphTargetBuffer) { "Calling method on destroyed MorphTargetBuffer" }
         return morphTargetBuffer.nativeObject
     }

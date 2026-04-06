@@ -59,7 +59,7 @@ expect class BufferObject {
         callback: (() -> Unit)?,
     )
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
     internal fun invalidate()
 }

@@ -30,9 +30,9 @@ expect class SurfaceOrientation {
         fun build(): SurfaceOrientation
     }
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
-    fun getVertexCount(): Int
+    val vertexCount: Int
 
     fun getQuatsAsFloat(buffer: Any)
 

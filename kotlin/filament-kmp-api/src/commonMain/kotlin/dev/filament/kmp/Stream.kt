@@ -58,7 +58,7 @@ expect class Stream {
     /**
      * Indicates whether this <code>Stream</code> is NATIVE or ACQUIRED.
      */
-    fun getStreamType(): StreamType
+    val streamType: StreamType
 
     /**
      * Updates an <pre>ACQUIRED</pre> stream with an image that is guaranteed to be used in the next frame.
@@ -73,9 +73,9 @@ expect class Stream {
     /**
      * Returns the presentation time of the currently displayed frame in nanosecond.
      */
-    fun getTimestamp(): Long
+    val timestamp: Long
 
-    fun getNativeObject(): Long
+    val nativeObject: Long
 
     internal fun invalidate()
 }

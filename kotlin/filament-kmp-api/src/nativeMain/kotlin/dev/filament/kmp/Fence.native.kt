@@ -5,9 +5,8 @@ actual class Fence internal constructor() {
         TODO("Not yet implemented")
     }
 
-    actual fun getNativeObject(): Long {
-        TODO("Not yet implemented")
-    }
+    actual val nativeObject: Long
+        get() = TODO("Not yet implemented")
 
     actual companion object {
         actual val WAIT_FOR_EVER: Long = -1L

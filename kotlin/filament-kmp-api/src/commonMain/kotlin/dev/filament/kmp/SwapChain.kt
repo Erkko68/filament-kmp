@@ -1,29 +1,46 @@
 package dev.filament.kmp
 
 /**
- * A <code>SwapChain</code> represents an Operating System's native renderable surface.
+ * A SwapChain represents an Operating System's native renderable surface.
  */
 expect class SwapChain {
-    val isValid: Boolean
 
+    /**
+     * @return the native Object this SwapChain was created from or null for a headless SwapChain.
+     */
     fun getNativeWindow(): Any?
 
-    fun setFrameCompletedCallback(handler: Any, callback: () -> Unit)
+    /**
+     * FrameCompletedCallback is a callback function that notifies an application when a frame's
+     * contents have completed rendering on the GPU.
+     */
+    fun setFrameCompletedCallback(handler: Any, callback: Runnable)
 
-    fun setFrameScheduledCallback(handler: Any, callback: () -> Unit)
+    /**
+     * FrameScheduledCallback is a callback function that notifies an application about the status
+     * of a frame after Filament has finished its processing.
+     */
+    fun setFrameScheduledCallback(handler: Any, callback: Runnable)
 
+    /**
+     * Returns whether this SwapChain currently has a FrameScheduledCallback set.
+     */
     fun isFrameScheduledCallbackSet(): Boolean
 
-    fun getNativeObject(): Long
-
-    internal fun invalidate()
-
     companion object {
+        /**
+         * Return whether createSwapChain supports the CONFIG_PROTECTED_CONTENT flag.
+         */
         fun isProtectedContentSupported(engine: Engine): Boolean
 
+        /**
+         * Return whether createSwapChain supports the CONFIG_SRGB_COLORSPACE flag.
+         */
         fun isSRGBSwapChainSupported(engine: Engine): Boolean
 
+        /**
+         * Return whether createSwapChain supports the CONFIG_MSAA_*_SAMPLES flag.
+         */
         fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean
     }
 }
-

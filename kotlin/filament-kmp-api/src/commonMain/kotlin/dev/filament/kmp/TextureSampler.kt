@@ -155,35 +155,35 @@ expect class TextureSampler {
      */
     constructor(mode: CompareMode, function: CompareFunction)
 
-    fun getMinFilter(): MinFilter
+    val minFilter: MinFilter
 
     fun setMinFilter(filter: MinFilter)
 
-    fun getMagFilter(): MagFilter
+    val magFilter: MagFilter
 
     fun setMagFilter(filter: MagFilter)
 
-    fun getWrapModeS(): WrapMode
+    val wrapModeS: WrapMode
 
     fun setWrapModeS(mode: WrapMode)
 
-    fun getWrapModeT(): WrapMode
+    val wrapModeT: WrapMode
 
     fun setWrapModeT(mode: WrapMode)
 
-    fun getWrapModeR(): WrapMode
+    val wrapModeR: WrapMode
 
     fun setWrapModeR(mode: WrapMode)
 
-    fun getAnisotropy(): Float
+    val anisotropy: Float
 
     fun setAnisotropy(anisotropy: Float)
 
-    fun getCompareMode(): CompareMode
+    val compareMode: CompareMode
 
     fun setCompareMode(mode: CompareMode)
 
-    fun getCompareFunction(): CompareFunction
+    val compareFunction: CompareFunction
 
     fun setCompareFunction(function: CompareFunction)
 }

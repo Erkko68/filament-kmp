@@ -5,7 +5,8 @@ import com.google.android.filament.Stream as AndroidStream
 actual class Stream internal constructor(
     internal var androidStream: AndroidStream?,
 ) {
-    actual fun getStreamType(): StreamType {
+    actual val streamType: StreamType
+        get() {
         val stream = requireNotNull(androidStream) { "Calling method on destroyed Stream" }
         return stream.streamType.toKmp()
     }
@@ -20,12 +21,14 @@ actual class Stream internal constructor(
         stream.setDimensions(width, height)
     }
 
-    actual fun getTimestamp(): Long {
+    actual val timestamp: Long
+        get() {
         val stream = requireNotNull(androidStream) { "Calling method on destroyed Stream" }
         return stream.timestamp
     }
 
-    actual fun getNativeObject(): Long {
+    actual val nativeObject: Long
+        get() {
         val stream = requireNotNull(androidStream) { "Calling method on destroyed Stream" }
         return stream.nativeObject
     }

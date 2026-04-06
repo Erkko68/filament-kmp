@@ -1,40 +1,53 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package dev.filament.kmp
 
-actual class EntityManager {
+import kotlinx.cinterop.*
+import dev.filament.kmp.cinterop.*
+import cnames.structs.FilaEntityManager
+
+actual class EntityManager internal constructor(internal var nativePtr: CPointer<FilaEntityManager>?) {
     @Entity
     actual fun create(): Int {
-        TODO("Not yet implemented")
+        return FilaEntityManager_create(nativePtr).toInt()
     }
 
     actual fun destroy(@Entity entity: Int) {
-        TODO("Not yet implemented")
+        FilaEntityManager_destroy(nativePtr, entity.toUInt())
     }
 
     @Entity
     actual fun create(n: Int): IntArray {
-        TODO("Not yet implemented")
+        val entities = IntArray(n)
+        entities.usePinned { pinned ->
+            FilaEntityManager_createArray(nativePtr, n.toULong(), pinned.addressOf(0).reinterpret())
+        }
+        return entities
     }
 
     actual fun create(@Entity entities: IntArray): IntArray {
-        TODO("Not yet implemented")
+        entities.usePinned { pinned ->
+            FilaEntityManager_createArray(nativePtr, entities.size.toULong(), pinned.addressOf(0).reinterpret())
+        }
+        return entities
     }
 
     actual fun destroy(@Entity entities: IntArray) {
-        TODO("Not yet implemented")
+        entities.usePinned { pinned ->
+            FilaEntityManager_destroyArray(nativePtr, entities.size.toULong(), pinned.addressOf(0).reinterpret())
+        }
     }
 
     actual fun isAlive(@Entity entity: Int): Boolean {
-        TODO("Not yet implemented")
+        return FilaEntityManager_isAlive(nativePtr, entity.toUInt())
     }
 
-    actual fun getNativeObject(): Long {
-        TODO("Not yet implemented")
-    }
+    actual val nativeObject: Long
+        get() = nativePtr?.rawValue?.toLong() ?: 0L
 
     actual companion object {
+        private val instance by lazy { EntityManager(FilaEntityManager_get()) }
         actual fun get(): EntityManager {
-            TODO("Not yet implemented")
+            return instance
         }
     }
 }
-

@@ -1,114 +1,111 @@
 package dev.filament.kmp
 
-actual class Renderer internal constructor() {
-    actual class DisplayInfo {
+import kotlinx.cinterop.*
+import filament.*
+
+actual class Renderer internal constructor(
+    internal val nativeObject: CPointer<FilaRenderer>
+) {
+    actual class DisplayInfo actual constructor() {
         actual var refreshRate: Float = 60.0f
-        @Deprecated("Ignored by Filament")
-        actual var presentationDeadlineNanos: Long = 0L
-        @Deprecated("Ignored by Filament")
-        actual var vsyncOffsetNanos: Long = 0L
     }
 
-    actual class FrameRateOptions {
-        actual var interval: Float = 1.0f
+    actual class FrameRateOptions actual constructor() {
         actual var headRoomRatio: Float = 0.0f
-        actual var scaleRate: Float = 1.0f / 15.0f
+        actual var scaleRate: Float = 0.125f
         actual var history: Int = 15
+        actual var interval: Int = 1
     }
 
-    actual class ClearOptions {
+    actual class ClearOptions actual constructor() {
         actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
         actual var clear: Boolean = false
         actual var discard: Boolean = true
     }
 
-    actual val isValid: Boolean
-        get() = false
-
-    actual fun setDisplayInfo(info: DisplayInfo) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getDisplayInfo(): DisplayInfo = TODO("Not yet implemented")
-
-    actual fun setFrameRateOptions(options: FrameRateOptions) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getFrameRateOptions(): FrameRateOptions = TODO("Not yet implemented")
-
-    actual fun setClearOptions(options: ClearOptions) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getClearOptions(): ClearOptions = TODO("Not yet implemented")
-
-    actual fun getEngine(): Engine = TODO("Not yet implemented")
-
-    actual fun setPresentationTime(monotonicClockNanos: Long) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun setVsyncTime(steadyClockTimeNano: Long) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun shouldRenderFrame(): Boolean = TODO("Not yet implemented")
-
-    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = TODO("Not yet implemented")
-
+    actual fun beginFrame(swapChain: SwapChain): Boolean = FilaRenderer_beginFrame(nativeObject, swapChain.nativeObject, 0u)
+    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilaRenderer_beginFrame(nativeObject, swapChain.nativeObject, frameTimeNanos.toULong())
+    
     actual fun endFrame() {
-        TODO("Not yet implemented")
+        FilaRenderer_endFrame(nativeObject)
     }
 
     actual fun render(view: View) {
-        TODO("Not yet implemented")
+        FilaRenderer_render(nativeObject, view.nativeObject)
     }
 
     actual fun renderStandaloneView(view: View) {
-        TODO("Not yet implemented")
+        FilaRenderer_renderStandaloneView(nativeObject, view.nativeObject)
     }
 
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
-        TODO("Not yet implemented")
+        FilaRenderer_copyFrame(nativeObject, dstSwapChain.nativeObject,
+            dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
+            srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
+            flags.toUInt())
     }
 
-    @Deprecated("Use copyFrame")
-    actual fun mirrorFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
-        TODO("Not yet implemented")
+    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        val storagePtr = buffer.storage.nativePointer() ?: return
+        val sizeInBytes = (buffer.storage.limit() * buffer.storage.elementSize()).toULong()
+        FilaRenderer_readPixels(nativeObject, xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
+            storagePtr, sizeInBytes, buffer.format.toNative(), buffer.type.toNative(),
+            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
+            null, null, null)
     }
 
-    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Any) {
-        TODO("Not yet implemented")
+    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        val storagePtr = buffer.storage.nativePointer() ?: return
+        val sizeInBytes = (buffer.storage.limit() * buffer.storage.elementSize()).toULong()
+        FilaRenderer_readPixelsRenderTarget(nativeObject, renderTarget.nativeObject,
+            xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
+            storagePtr, sizeInBytes, buffer.format.toNative(), buffer.type.toNative(),
+            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
+            null, null, null)
     }
 
-    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Any) {
-        TODO("Not yet implemented")
+    actual fun getUserTime(): Double = FilaRenderer_getUserTime(nativeObject)
+    actual fun resetUserTime() { FilaRenderer_resetUserTime(nativeObject) }
+
+    actual fun setDisplayInfo(info: DisplayInfo) {
+        memScoped {
+            val nativeInfo = alloc<FilaRendererDisplayInfo>()
+            nativeInfo.refreshRate = info.refreshRate
+            FilaRenderer_setDisplayInfo(nativeObject, nativeInfo.ptr)
+        }
     }
 
-    actual fun getUserTime(): Double = TODO("Not yet implemented")
-
-    actual fun resetUserTime() {
-        TODO("Not yet implemented")
+    actual fun setFrameRateOptions(options: FrameRateOptions) {
+        memScoped {
+            val nativeOptions = alloc<FilaRendererFrameRateOptions>()
+            nativeOptions.headRoomRatio = options.headRoomRatio
+            nativeOptions.scaleRate = options.scaleRate
+            nativeOptions.history = options.history.toUByte()
+            nativeOptions.interval = options.interval.toUByte()
+            FilaRenderer_setFrameRateOptions(nativeObject, nativeOptions.ptr)
+        }
     }
 
-    actual fun skipNextFrames(frameCount: Int) {
-        TODO("Not yet implemented")
+    actual fun setClearOptions(options: ClearOptions) {
+        memScoped {
+            val nativeOptions = alloc<FilaRendererClearOptions>()
+            nativeOptions.clearColor[0] = options.clearColor[0]
+            nativeOptions.clearColor[1] = options.clearColor[1]
+            nativeOptions.clearColor[2] = options.clearColor[2]
+            nativeOptions.clearColor[3] = options.clearColor[3]
+            nativeOptions.clear = options.clear
+            nativeOptions.discard = options.discard
+            FilaRenderer_setClearOptions(nativeObject, nativeOptions.ptr)
+        }
     }
 
-    actual fun getFrameToSkipCount(): Int = TODO("Not yet implemented")
-
-    actual fun getNativeObject(): Long = TODO("Not yet implemented")
-
-    actual internal fun invalidate() = Unit
-
-    actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 0x1
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 0x2
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 0x4
+    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
+        FilaRenderer_skipFrame(nativeObject, vsyncSteadyClockTimeNano.toULong())
     }
+
+    actual fun setVsyncTime(steadyClockTimeNano: Long) {
+        FilaRenderer_setVsyncTime(nativeObject, steadyClockTimeNano.toULong())
+    }
+
+    actual val nativeObject: Long get() = nativeObject.toLong()
 }

@@ -13,7 +13,8 @@ actual class Fence internal constructor(
         return fence.wait(mode.toAndroid(), timeoutNanoSeconds).toKmp()
     }
 
-    actual fun getNativeObject(): Long {
+    actual val nativeObject: Long
+        get() {
         val fence = requireNotNull(androidFence) { "Calling method on destroyed Fence" }
         return fence.nativeObject
     }
