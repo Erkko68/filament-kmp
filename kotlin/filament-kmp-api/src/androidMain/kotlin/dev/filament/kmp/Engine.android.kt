@@ -3,6 +3,11 @@ package dev.filament.kmp
 import com.google.android.filament.Engine as AndroidEngine
 
 actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
+    private val mTransformManager by lazy { TransformManager(nativeEngine.transformManager) }
+    private val mLightManager by lazy { LightManager(nativeEngine.lightManager) }
+    private val mRenderableManager by lazy { RenderableManager(nativeEngine.renderableManager) }
+    private val mEntityManager by lazy { EntityManager(nativeEngine.entityManager) }
+
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
         internal fun toAndroid() = AndroidEngine.Backend.values()[ordinal]
@@ -233,10 +238,10 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun destroyRenderTarget(target: RenderTarget) { nativeEngine.destroyRenderTarget(target.nativeRenderTarget) }
     actual fun destroyEntity(entity: Int) { nativeEngine.destroyEntity(entity) }
 
-    actual fun getTransformManager(): TransformManager = TransformManager(nativeEngine.transformManager)
-    actual fun getLightManager(): LightManager = LightManager(nativeEngine.lightManager)
-    actual fun getRenderableManager(): RenderableManager = RenderableManager(nativeEngine.renderableManager)
-    actual fun getEntityManager(): EntityManager = EntityManager(nativeEngine.entityManager)
+    actual fun getTransformManager(): TransformManager = mTransformManager
+    actual fun getLightManager(): LightManager = mLightManager
+    actual fun getRenderableManager(): RenderableManager = mRenderableManager
+    actual fun getEntityManager(): EntityManager = mEntityManager
 
     actual fun flushAndWait() = nativeEngine.flushAndWait()
     actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)

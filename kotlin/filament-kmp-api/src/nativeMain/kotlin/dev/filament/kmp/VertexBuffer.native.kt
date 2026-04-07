@@ -68,10 +68,54 @@ actual class VertexBuffer internal constructor(internal var nativeHandle: CPoint
         setBufferAt(engine, bufferIndex, buffer, destOffsetInBytes, count, null, null)
     }
 
+    private class BufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
+
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
-        val ptr = buffer as? CPointer<*>
-        // Callback bridging not yet implemented for Native
-        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, 0.toULong(), destOffsetInBytes.toUInt(), null, null, null)
+        var ptr: CPointer<out CPointed>? = null
+        var sizeInBytes: ULong = 0.toULong()
+        var pinned: Pinned<*>? = null
+
+        when (buffer) {
+            is FloatArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = (buffer.size * 4).toULong()
+            }
+            is ByteArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = buffer.size.toULong()
+            }
+            is ShortArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = (buffer.size * 2).toULong()
+            }
+            is IntArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = (buffer.size * 4).toULong()
+            }
+            is CPointer<*> -> {
+                ptr = buffer
+                sizeInBytes = 0.toULong() // User responsible for size or handled by Filament if 0
+            }
+        }
+
+        if (pinned == null && callback == null) {
+            FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
+        } else {
+            val wrapper = BufferPinWrapper(pinned ?: ByteArray(0).pin(), callback) // Empty pin if none
+            val stableRef = StableRef.create(wrapper)
+            val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
+                val ref = user!!.asStableRef<BufferPinWrapper>()
+                val wrap = ref.get()
+                wrap.callback?.invoke()
+                wrap.pinned.unpin()
+                ref.dispose()
+            }
+            FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, callbackWrapper, stableRef.asCPointer())
+        }
     }
 
     actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {

@@ -7,6 +7,11 @@ import cnames.structs.FilaEngine
 import cnames.structs.FilaEngineBuilder
 
 actual class Engine internal constructor(internal var nativeHandle: CPointer<FilaEngine>?) {
+    private val mTransformManager by lazy { TransformManager(FilaEngine_getTransformManager(nativeHandle)!!) }
+    private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)!!) }
+    private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!) }
+    private val mEntityManager by lazy { EntityManager(FilaEngine_getEntityManager(nativeHandle)!!) }
+
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
         internal fun toNative(): UInt = ordinal.toUInt()
@@ -254,10 +259,10 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     }
     actual fun destroyEntity(entity: Int) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
 
-    actual fun getTransformManager(): TransformManager = TransformManager(FilaEngine_getTransformManager(nativeHandle)!!)
-    actual fun getLightManager(): LightManager = LightManager(FilaEngine_getLightManager(nativeHandle)!!)
-    actual fun getRenderableManager(): RenderableManager = RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!)
-    actual fun getEntityManager(): EntityManager = EntityManager(FilaEngine_getEntityManager(nativeHandle)!!)
+    actual fun getTransformManager(): TransformManager = mTransformManager
+    actual fun getLightManager(): LightManager = mLightManager
+    actual fun getRenderableManager(): RenderableManager = mRenderableManager
+    actual fun getEntityManager(): EntityManager = mEntityManager
 
     actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000u) }
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())

@@ -114,6 +114,8 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
         }
     }
 
+    private class TexturePinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
+
     actual class PixelBufferDescriptor actual constructor(
         actual val storage: Any,
         actual val sizeInBytes: Int,
@@ -146,17 +148,59 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
     }
 
     actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
-        val ptr = descriptor.storage as? CPointer<*>
-        FilaTexture_setImage(
-            nativeHandle, engine.nativeHandle, level.toULong(),
-            xoffset.toUInt(), yoffset.toUInt(), zoffset.toUInt(),
-            width.toUInt(), height.toUInt(), depth.toUInt(),
-            ptr, descriptor.sizeInBytes.toULong(),
-            descriptor.format.ordinal.toUInt(), descriptor.type.ordinal.toUInt(),
-            descriptor.alignment.toUByte(),
-            descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
-            null, null, null
-        )
+        var ptr: CPointer<out CPointed>? = null
+        var pinned: Pinned<*>? = null
+
+        when (val storage = descriptor.storage) {
+            is ByteArray -> {
+                pinned = storage.pin()
+                ptr = pinned.addressOf(0)
+            }
+            is FloatArray -> {
+                pinned = storage.pin()
+                ptr = pinned.addressOf(0)
+            }
+            is IntArray -> {
+                pinned = storage.pin()
+                ptr = pinned.addressOf(0)
+            }
+            is CPointer<*> -> {
+                ptr = storage
+            }
+        }
+
+        if (pinned == null && descriptor.callback == null) {
+            FilaTexture_setImage(
+                nativeHandle, engine.nativeHandle, level.toULong(),
+                xoffset.toUInt(), yoffset.toUInt(), zoffset.toUInt(),
+                width.toUInt(), height.toUInt(), depth.toUInt(),
+                ptr, descriptor.sizeInBytes.toULong(),
+                descriptor.format.ordinal.toUInt(), descriptor.type.ordinal.toUInt(),
+                descriptor.alignment.toUByte(),
+                descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
+                null, null, null
+            )
+        } else {
+            val wrapper = TexturePinWrapper(pinned ?: ByteArray(0).pin(), descriptor.callback)
+            val stableRef = StableRef.create(wrapper)
+            val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
+                val ref = user!!.asStableRef<TexturePinWrapper>()
+                val wrap = ref.get()
+                wrap.callback?.invoke()
+                wrap.pinned.unpin()
+                ref.dispose()
+            }
+            FilaTexture_setImage(
+                nativeHandle, engine.nativeHandle, level.toULong(),
+                xoffset.toUInt(), yoffset.toUInt(), zoffset.toUInt(),
+                width.toUInt(), height.toUInt(), depth.toUInt(),
+                ptr, descriptor.sizeInBytes.toULong(),
+                descriptor.format.ordinal.toUInt(), descriptor.type.ordinal.toUInt(),
+                descriptor.alignment.toUByte(),
+                descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
+                null, callbackWrapper, stableRef.asCPointer()
+            )
+        }
     }
 
     actual fun generateMipmaps(engine: Engine) {

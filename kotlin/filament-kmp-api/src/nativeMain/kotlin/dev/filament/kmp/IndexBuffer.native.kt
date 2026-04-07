@@ -26,9 +26,53 @@ actual class IndexBuffer internal constructor(internal var nativeHandle: CPointe
         setBuffer(engine, buffer, destOffsetInBytes, count, null, null)
     }
 
+    private class BufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
+
     actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
-        val ptr = buffer as? CPointer<*>
-        // Callback bridging not yet implemented for Native
-        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, ptr, 0.toULong(), destOffsetInBytes.toUInt(), null, null, null)
+        var ptr: CPointer<out CPointed>? = null
+        var sizeInBytes: ULong = 0.toULong()
+        var pinned: Pinned<*>? = null
+
+        when (buffer) {
+            is FloatArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = (buffer.size * 4).toULong()
+            }
+            is ByteArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = buffer.size.toULong()
+            }
+            is ShortArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = (buffer.size * 2).toULong()
+            }
+            is IntArray -> {
+                pinned = buffer.pin()
+                ptr = pinned.addressOf(0)
+                sizeInBytes = (buffer.size * 4).toULong()
+            }
+            is CPointer<*> -> {
+                ptr = buffer
+                sizeInBytes = 0.toULong()
+            }
+        }
+
+        if (pinned == null && callback == null) {
+            FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
+        } else {
+            val wrapper = BufferPinWrapper(pinned ?: ByteArray(0).pin(), callback)
+            val stableRef = StableRef.create(wrapper)
+            val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
+                val ref = user!!.asStableRef<BufferPinWrapper>()
+                val wrap = ref.get()
+                wrap.callback?.invoke()
+                wrap.pinned.unpin()
+                ref.dispose()
+            }
+            FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, callbackWrapper, stableRef.asCPointer())
+        }
     }
 }
