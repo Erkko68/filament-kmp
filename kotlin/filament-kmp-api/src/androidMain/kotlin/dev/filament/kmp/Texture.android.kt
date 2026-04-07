@@ -48,6 +48,14 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
             )
             return this
         }
+        actual fun importTexture(id: Long): Builder {
+            nativeBuilder.importTexture(id)
+            return this
+        }
+        actual fun external(): Builder {
+            nativeBuilder.external()
+            return this
+        }
         actual fun build(engine: Engine): Texture = Texture(nativeBuilder.build(engine.nativeEngine))
     }
 
@@ -103,13 +111,17 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
 
     actual class Usage {
         actual companion object {
-            actual val COLOR_ATTACHMENT = 0x1
-            actual val SAMPLEABLE = 0x10
-            actual val DEPTH_ATTACHMENT = 0x2
-            actual val STENCIL_ATTACHMENT = 0x4
-            actual val UPLOADABLE = 0x8
-            actual val BLIT_SRC = 0x40
-            actual val BLIT_DST = 0x80
+            actual val COLOR_ATTACHMENT = AndroidTexture.Usage.COLOR_ATTACHMENT
+            actual val DEPTH_ATTACHMENT = AndroidTexture.Usage.DEPTH_ATTACHMENT
+            actual val STENCIL_ATTACHMENT = AndroidTexture.Usage.STENCIL_ATTACHMENT
+            actual val UPLOADABLE = AndroidTexture.Usage.UPLOADABLE
+            actual val SAMPLEABLE = AndroidTexture.Usage.SAMPLEABLE
+            actual val SUBPASS_INPUT = AndroidTexture.Usage.SUBPASS_INPUT
+            actual val BLIT_SRC = AndroidTexture.Usage.BLIT_SRC
+            actual val BLIT_DST = AndroidTexture.Usage.BLIT_DST
+            actual val PROTECTED = AndroidTexture.Usage.PROTECTED
+            actual val GEN_MIPMAPPABLE = AndroidTexture.Usage.GEN_MIPMAPPABLE
+            actual val DEFAULT = AndroidTexture.Usage.DEFAULT
         }
     }
 
@@ -157,5 +169,32 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
 
     actual fun generateMipmaps(engine: Engine) {
         nativeTexture.generateMipmaps(engine.nativeEngine)
+    }
+
+    actual fun setExternalImage(engine: Engine, eglImage: Long) {
+        nativeTexture.setExternalImage(engine.nativeEngine, eglImage)
+    }
+
+    actual fun setExternalStream(engine: Engine, stream: Stream) {
+        nativeTexture.setExternalStream(engine.nativeEngine, stream.nativeStream)
+    }
+
+    actual companion object {
+        actual fun isTextureFormatSupported(engine: Engine, format: InternalFormat): Boolean =
+            AndroidTexture.isTextureFormatSupported(engine.nativeEngine, AndroidTexture.InternalFormat.values()[format.ordinal])
+        actual fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
+            AndroidTexture.isTextureFormatMipmappable(engine.nativeEngine, AndroidTexture.InternalFormat.values()[format.ordinal])
+        actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
+            AndroidTexture.isTextureSwizzleSupported(engine.nativeEngine)
+        actual fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean =
+            AndroidTexture.validatePixelFormatAndType(
+                AndroidTexture.InternalFormat.values()[internalFormat.ordinal],
+                AndroidTexture.Format.values()[pixelDataFormat.ordinal],
+                AndroidTexture.Type.values()[pixelDataType.ordinal]
+            )
+        actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int =
+            AndroidTexture.getMaxTextureSize(engine.nativeEngine, AndroidTexture.Sampler.values()[type.ordinal])
+        actual fun getMaxArrayTextureLayers(engine: Engine): Int =
+            AndroidTexture.getMaxArrayTextureLayers(engine.nativeEngine)
     }
 }

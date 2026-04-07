@@ -167,6 +167,7 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    actual fun isValidBufferObject(bufferObject: BufferObject): Boolean = FilaEngine_isValidBufferObject(nativeHandle, bufferObject.nativeHandle)
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
@@ -235,6 +236,10 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
         FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
         vertexBuffer.nativeHandle = null
+    }
+    actual fun destroyBufferObject(bufferObject: BufferObject) {
+        FilaEngine_destroyBufferObject(nativeHandle, bufferObject.nativeHandle)
+        bufferObject.nativeHandle = null
     }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
         FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)

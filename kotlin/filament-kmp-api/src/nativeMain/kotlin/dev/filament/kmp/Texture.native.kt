@@ -9,42 +9,27 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaTextureBuilder_create()
 
-        actual fun width(width: Int): Builder {
-            FilaTextureBuilder_width(nativeBuilder, width.toUInt())
-            return this
-        }
-        actual fun height(height: Int): Builder {
-            FilaTextureBuilder_height(nativeBuilder, height.toUInt())
-            return this
-        }
-        actual fun depth(depth: Int): Builder {
-            FilaTextureBuilder_depth(nativeBuilder, depth.toUInt())
-            return this
-        }
-        actual fun levels(levels: Int): Builder {
-            FilaTextureBuilder_levels(nativeBuilder, levels.toUByte())
-            return this
-        }
-        actual fun samples(samples: Int): Builder {
-            FilaTextureBuilder_samples(nativeBuilder, samples.toUByte())
-            return this
-        }
-        actual fun sampler(target: Sampler): Builder {
-            FilaTextureBuilder_sampler(nativeBuilder, target.ordinal.toUInt())
-            return this
-        }
-        actual fun format(format: InternalFormat): Builder {
-            FilaTextureBuilder_format(nativeBuilder, format.ordinal.toUInt())
-            return this
-        }
-        actual fun usage(usage: Int): Builder {
-            FilaTextureBuilder_usage(nativeBuilder, usage.toUInt())
-            return this
-        }
-        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder {
+        actual fun width(width: Int): Builder = apply { FilaTextureBuilder_width(nativeBuilder, width.toUInt()) }
+        actual fun height(height: Int): Builder = apply { FilaTextureBuilder_height(nativeBuilder, height.toUInt()) }
+        actual fun depth(depth: Int): Builder = apply { FilaTextureBuilder_depth(nativeBuilder, depth.toUInt()) }
+        actual fun levels(levels: Int): Builder = apply { FilaTextureBuilder_levels(nativeBuilder, levels.toUByte()) }
+        actual fun samples(samples: Int): Builder = apply { FilaTextureBuilder_samples(nativeBuilder, samples.toUByte()) }
+        actual fun sampler(target: Sampler): Builder = apply { FilaTextureBuilder_sampler(nativeBuilder, target.ordinal.toUInt()) }
+        actual fun format(format: InternalFormat): Builder = apply { FilaTextureBuilder_format(nativeBuilder, format.ordinal.toUInt()) }
+        actual fun usage(usage: Int): Builder = apply { FilaTextureBuilder_usage(nativeBuilder, usage.toUInt()) }
+        
+        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder = apply {
             FilaTextureBuilder_swizzle(nativeBuilder, r.ordinal.toUInt(), g.ordinal.toUInt(), b.ordinal.toUInt(), a.ordinal.toUInt())
-            return this
         }
+
+        actual fun importTexture(id: Long): Builder = apply {
+            FilaTextureBuilder_importTexture(nativeBuilder, id.toLong())
+        }
+
+        actual fun external(): Builder = apply {
+            FilaTextureBuilder_external(nativeBuilder)
+        }
+
         actual fun build(engine: Engine): Texture {
             val handle = FilaTextureBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaTextureBuilder_destroy(nativeBuilder)
@@ -95,26 +80,25 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
     }
 
     actual enum class CubemapFace { POSITIVE_X, NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z }
-
     actual enum class Format { R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, STENCIL_INDEX, ALPHA }
-
     actual enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565 }
-
     actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
 
     actual class Usage {
         actual companion object {
-            actual val COLOR_ATTACHMENT = 0x1
-            actual val SAMPLEABLE = 0x10
-            actual val DEPTH_ATTACHMENT = 0x2
-            actual val STENCIL_ATTACHMENT = 0x4
-            actual val UPLOADABLE = 0x8
-            actual val BLIT_SRC = 0x40
-            actual val BLIT_DST = 0x80
+            actual val COLOR_ATTACHMENT = 0x0001
+            actual val DEPTH_ATTACHMENT = 0x0002
+            actual val STENCIL_ATTACHMENT = 0x0004
+            actual val UPLOADABLE = 0x0008
+            actual val SAMPLEABLE = 0x0010
+            actual val SUBPASS_INPUT = 0x0020
+            actual val BLIT_SRC = 0x0040
+            actual val BLIT_DST = 0x0080
+            actual val PROTECTED = 0x0100
+            actual val GEN_MIPMAPPABLE = 0x0200
+            actual val DEFAULT = 0x0008 or 0x0010
         }
     }
-
-    private class TexturePinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 
     actual class PixelBufferDescriptor actual constructor(
         actual val storage: Any,
@@ -137,10 +121,7 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
     actual fun getFormat(): InternalFormat = InternalFormat.values()[FilaTexture_getFormat(nativeHandle).toInt()]
 
     actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
-        val width = getWidth(level)
-        val height = getHeight(level)
-        val depth = getDepth(level)
-        setImage(engine, level, 0, 0, 0, width, height, depth, descriptor)
+        setImage(engine, level, 0, 0, 0, getWidth(level), getHeight(level), 1, descriptor)
     }
 
     actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor) {
@@ -148,62 +129,53 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
     }
 
     actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
-        var ptr: CPointer<out CPointed>? = null
-        var pinned: Pinned<*>? = null
-
-        when (val storage = descriptor.storage) {
-            is ByteArray -> {
-                pinned = storage.pin()
-                ptr = pinned.addressOf(0)
-            }
-            is FloatArray -> {
-                pinned = storage.pin()
-                ptr = pinned.addressOf(0)
-            }
-            is IntArray -> {
-                pinned = storage.pin()
-                ptr = pinned.addressOf(0)
-            }
-            is CPointer<*> -> {
-                ptr = storage
-            }
-        }
-
-        if (pinned == null && descriptor.callback == null) {
+        descriptor.storage.usePinned { pinned ->
             FilaTexture_setImage(
                 nativeHandle, engine.nativeHandle, level.toULong(),
                 xoffset.toUInt(), yoffset.toUInt(), zoffset.toUInt(),
                 width.toUInt(), height.toUInt(), depth.toUInt(),
-                ptr, descriptor.sizeInBytes.toULong(),
+                pinned.addressOf(0), descriptor.sizeInBytes.toULong(),
                 descriptor.format.ordinal.toUInt(), descriptor.type.ordinal.toUInt(),
-                descriptor.alignment.toUByte(),
-                descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
-                null, null, null
-            )
-        } else {
-            val wrapper = TexturePinWrapper(pinned ?: ByteArray(0).pin(), descriptor.callback)
-            val stableRef = StableRef.create(wrapper)
-            val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
-                val ref = user!!.asStableRef<TexturePinWrapper>()
-                val wrap = ref.get()
-                wrap.callback?.invoke()
-                wrap.pinned.unpin()
-                ref.dispose()
-            }
-            FilaTexture_setImage(
-                nativeHandle, engine.nativeHandle, level.toULong(),
-                xoffset.toUInt(), yoffset.toUInt(), zoffset.toUInt(),
-                width.toUInt(), height.toUInt(), depth.toUInt(),
-                ptr, descriptor.sizeInBytes.toULong(),
-                descriptor.format.ordinal.toUInt(), descriptor.type.ordinal.toUInt(),
-                descriptor.alignment.toUByte(),
-                descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
-                null, callbackWrapper, stableRef.asCPointer()
+                descriptor.alignment.toUByte(), descriptor.left.toUInt(), descriptor.top.toUInt(), descriptor.stride.toUInt(),
+                null, null, null // TODO: handle callback
             )
         }
     }
 
     actual fun generateMipmaps(engine: Engine) {
         FilaTexture_generateMipmaps(nativeHandle, engine.nativeHandle)
+    }
+
+    actual fun setExternalImage(engine: Engine, eglImage: Long) {
+        FilaTexture_setExternalImage(nativeHandle, engine.nativeHandle, eglImage.toCPointer())
+    }
+
+    actual fun setExternalStream(engine: Engine, stream: Stream) {
+        FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, stream.nativeHandle)
+    }
+
+    actual companion object {
+        actual fun isTextureFormatSupported(engine: Engine, format: InternalFormat): Boolean =
+            FilaTexture_isTextureFormatSupported(engine.nativeHandle, format.ordinal.toUInt())
+        actual fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
+            FilaTexture_isTextureFormatMipmappable(engine.nativeHandle, format.ordinal.toUInt())
+        actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
+            FilaTexture_isTextureSwizzleSupported(engine.nativeHandle)
+        actual fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean =
+            FilaTexture_validatePixelFormatAndType(internalFormat.ordinal.toUInt(), pixelDataFormat.ordinal.toUInt(), pixelDataType.ordinal.toUInt())
+        actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int =
+            FilaTexture_getMaxTextureSize(engine.nativeHandle, type.ordinal.toUInt()).toInt()
+        actual fun getMaxArrayTextureLayers(engine: Engine): Int =
+            FilaTexture_getMaxArrayTextureLayers(engine.nativeHandle).toInt()
+    }
+}
+
+private fun Any.usePinned(block: (Pinned<*>) -> Unit) {
+    when (this) {
+        is ByteArray -> this.pin().use { block(it) }
+        is FloatArray -> this.pin().use { block(it) }
+        is ShortArray -> this.pin().use { block(it) }
+        is IntArray -> this.pin().use { block(it) }
+        else -> throw IllegalArgumentException("Unsupported storage type for pinning")
     }
 }

@@ -17,6 +17,39 @@ actual class Material internal constructor(internal val nativeMaterial: AndroidM
     actual enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
+    
+    actual class UserVariantFilterBit {
+        actual companion object {
+            actual val DIRECTIONAL_LIGHTING = AndroidMaterial.UserVariantFilterBit.DIRECTIONAL_LIGHTING
+            actual val DYNAMIC_LIGHTING = AndroidMaterial.UserVariantFilterBit.DYNAMIC_LIGHTING
+            actual val SHADOW_RECEIVER = AndroidMaterial.UserVariantFilterBit.SHADOW_RECEIVER
+            actual val SKINNING = AndroidMaterial.UserVariantFilterBit.SKINNING
+            actual val FOG = AndroidMaterial.UserVariantFilterBit.FOG
+            actual val VSM = AndroidMaterial.UserVariantFilterBit.VSM
+            actual val SSR = AndroidMaterial.UserVariantFilterBit.SSR
+            actual val STE = AndroidMaterial.UserVariantFilterBit.STE
+            actual val ALL = AndroidMaterial.UserVariantFilterBit.ALL
+        }
+    }
+
+    actual class Parameter actual constructor(
+        actual val name: String,
+        actual val type: Type,
+        actual val precision: Precision,
+        actual val count: Int
+    ) {
+        actual enum class Type {
+            BOOL, BOOL2, BOOL3, BOOL4,
+            FLOAT, FLOAT2, FLOAT3, FLOAT4,
+            INT, INT2, INT3, INT4,
+            UINT, UINT2, UINT3, UINT4,
+            MAT3, MAT4,
+            SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D,
+            SUBPASS_INPUT
+        }
+
+        actual enum class Precision { LOW, MEDIUM, HIGH, DEFAULT }
+    }
 
     actual class Builder actual constructor() {
         private val androidBuilder = AndroidMaterial.Builder()
@@ -86,6 +119,14 @@ actual class Material internal constructor(internal val nativeMaterial: AndroidM
     actual fun getSpecularAntiAliasingThreshold(): Float = nativeMaterial.specularAntiAliasingThreshold
     actual fun getFeatureLevel(): Engine.FeatureLevel = Engine.FeatureLevel.entries[nativeMaterial.featureLevel.ordinal]
     actual fun getParameterCount(): Int = nativeMaterial.parameterCount
+    actual fun getParameters(): List<Parameter> = nativeMaterial.parameters.map { p ->
+        Parameter(
+            p.name,
+            Parameter.Type.values()[p.type.ordinal],
+            Parameter.Precision.values()[p.precision.ordinal],
+            p.count
+        )
+    }
 
     actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
         val attrSet = nativeMaterial.requiredAttributes

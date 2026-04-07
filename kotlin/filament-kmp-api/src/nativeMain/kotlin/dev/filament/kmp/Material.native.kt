@@ -4,10 +4,8 @@ package dev.filament.kmp
 import kotlinx.cinterop.*
 import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaMaterial
-import cnames.structs.FilaMaterial_Builder
 
-actual class Material internal constructor(internal val nativeHandle: CPointer<FilaMaterial>) {
-    private val mDefaultInstance: MaterialInstance by lazy { MaterialInstance(this, FilaMaterial_getDefaultInstance(nativeHandle)!!) }
+actual class Material internal constructor(internal var nativeHandle: CPointer<FilaMaterial>?) {
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
@@ -20,92 +18,130 @@ actual class Material internal constructor(internal val nativeHandle: CPointer<F
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
 
-    actual class Builder actual constructor() {
-        private val nativeBuilder = FilaMaterial_Builder_create()!!
+    actual class UserVariantFilterBit {
+        actual companion object {
+            actual val DIRECTIONAL_LIGHTING = 0x01
+            actual val DYNAMIC_LIGHTING = 0x02
+            actual val SHADOW_RECEIVER = 0x04
+            actual val SKINNING = 0x08
+            actual val FOG = 0x10
+            actual val VSM = 0x20
+            actual val SSR = 0x40
+            actual val STE = 0x80
+            actual val ALL = 0xFF
+        }
+    }
 
+    actual class Parameter actual constructor(
+        actual val name: String,
+        actual val type: Type,
+        actual val precision: Precision,
+        actual val count: Int
+    ) {
+        actual enum class Type {
+            BOOL, BOOL2, BOOL3, BOOL4,
+            FLOAT, FLOAT2, FLOAT3, FLOAT4,
+            INT, INT2, INT3, INT4,
+            UINT, UINT2, UINT3, UINT4,
+            MAT3, MAT4,
+            SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D,
+            SUBPASS_INPUT
+        }
+        actual enum class Precision { LOW, MEDIUM, HIGH, DEFAULT }
+    }
+
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaMaterial_Builder_create()
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(buffer: Any, size: Int): Builder = apply {
-            FilaMaterial_Builder_package(nativeBuilder, buffer.interpretAsCPointer(), size.toULong())
+            buffer.usePinned { pinned ->
+                FilaMaterial_Builder_package(nativeBuilder, pinned.addressOf(0), size.toULong())
+            }
         }
-
         actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
             FilaMaterial_Builder_sphericalHarmonicsBandCount(nativeBuilder, shBandCount)
         }
-
         actual fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder = apply {
             FilaMaterial_Builder_shadowSamplingQuality(nativeBuilder, quality.ordinal.toUInt())
         }
-
         actual fun uboBatching(mode: UboBatchingMode): Builder = apply {
             FilaMaterial_Builder_uboBatching(nativeBuilder, mode.ordinal.toUInt())
         }
-
         actual fun build(engine: Engine): Material {
-            val material = FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
+            val handle = FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
             FilaMaterial_Builder_destroy(nativeBuilder)
-            return Material(material!!)
+            return Material(handle)
         }
     }
 
-    actual fun compile(
-        priority: CompilerPriorityQueue,
-        variants: Int,
-        handler: Any?,
-        callback: (() -> Unit)?
-    ) {
-        val stableRef = if (callback != null) StableRef.create(callback) else null
-        FilaMaterial_compile(
-            nativeHandle,
-            priority.ordinal.toUInt(),
-            variants.toUInt(),
-            handler.interpretAsCPointer(),
-            staticCFunction { m, data ->
-                val cb = data?.asStableRef<() -> Unit>()?.get()
-                cb?.invoke()
-                data?.asStableRef<() -> Unit>()?.dispose()
-            },
-            stableRef?.asCPointer()
-        )
+    actual fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: (() -> Unit)?) {
+        // TODO: handle callback and handler
+        FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, null, null)
     }
 
-    actual fun createInstance(): MaterialInstance = MaterialInstance(this, FilaMaterial_createInstance(nativeHandle)!!)
-    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(this, FilaMaterial_createInstanceWithName(nativeHandle, name)!!)
-    actual fun getDefaultInstance(): MaterialInstance = mDefaultInstance
+    actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
+    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(FilaMaterial_createInstanceWithName(nativeHandle, name))
+    actual fun getDefaultInstance(): MaterialInstance = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))
 
     actual fun getName(): String = FilaMaterial_getName(nativeHandle)?.toKString() ?: ""
-    actual fun getShading(): Shading = Shading.entries[FilaMaterial_getShading(nativeHandle).toInt()]
-    actual fun getInterpolation(): Interpolation = Interpolation.entries[FilaMaterial_getInterpolation(nativeHandle).toInt()]
-    actual fun getBlendingMode(): BlendingMode = BlendingMode.entries[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
-    actual fun getTransparencyMode(): TransparencyMode = TransparencyMode.entries[FilaMaterial_getTransparencyMode(nativeHandle).toInt()]
-    actual fun getRefractionMode(): RefractionMode = RefractionMode.entries[FilaMaterial_getRefractionMode(nativeHandle).toInt()]
-    actual fun getRefractionType(): RefractionType = RefractionType.entries[FilaMaterial_getRefractionType(nativeHandle).toInt()]
-    actual fun getReflectionMode(): ReflectionMode = ReflectionMode.entries[FilaMaterial_getReflectionMode(nativeHandle).toInt()]
-    actual fun getVertexDomain(): VertexDomain = VertexDomain.entries[FilaMaterial_getVertexDomain(nativeHandle).toInt()]
-    actual fun getCullingMode(): CullingMode = CullingMode.entries[FilaMaterial_getCullingMode(nativeHandle).toInt()]
+    actual fun getShading(): Shading = Shading.values()[FilaMaterial_getShading(nativeHandle).toInt()]
+    actual fun getInterpolation(): Interpolation = Interpolation.values()[FilaMaterial_getInterpolation(nativeHandle).toInt()]
+    actual fun getBlendingMode(): BlendingMode = BlendingMode.values()[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
+    actual fun getTransparencyMode(): TransparencyMode = TransparencyMode.values()[FilaMaterial_getTransparencyMode(nativeHandle).toInt()]
+    actual fun getRefractionMode(): RefractionMode = RefractionMode.values()[FilaMaterial_getRefractionMode(nativeHandle)]
+    actual fun getRefractionType(): RefractionType = RefractionType.values()[FilaMaterial_getRefractionType(nativeHandle)]
+    actual fun getReflectionMode(): ReflectionMode = ReflectionMode.values()[FilaMaterial_getReflectionMode(nativeHandle)]
+    actual fun getVertexDomain(): VertexDomain = VertexDomain.values()[FilaMaterial_getVertexDomain(nativeHandle).toInt()]
+    actual fun getCullingMode(): CullingMode = CullingMode.values()[FilaMaterial_getCullingMode(nativeHandle).toInt()]
+    
     actual fun isColorWriteEnabled(): Boolean = FilaMaterial_isColorWriteEnabled(nativeHandle)
     actual fun isDepthWriteEnabled(): Boolean = FilaMaterial_isDepthWriteEnabled(nativeHandle)
     actual fun isDepthCullingEnabled(): Boolean = FilaMaterial_isDepthCullingEnabled(nativeHandle)
     actual fun isDoubleSided(): Boolean = FilaMaterial_isDoubleSided(nativeHandle)
     actual fun isAlphaToCoverageEnabled(): Boolean = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
+    
     actual fun getMaskThreshold(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
     actual fun getSpecularAntiAliasingVariance(): Float = FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
     actual fun getSpecularAntiAliasingThreshold(): Float = FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
     actual fun getFeatureLevel(): Engine.FeatureLevel = Engine.FeatureLevel.entries[FilaMaterial_getFeatureLevel(nativeHandle).toInt()]
+    
     actual fun getParameterCount(): Int = FilaMaterial_getParameterCount(nativeHandle).toInt()
 
+    actual fun getParameters(): List<Parameter> = memScoped {
+        val count = getParameterCount()
+        if (count == 0) return emptyList()
+        val infoArray = allocArray<FilaMaterialParameterInfo>(count)
+        val actualCount = FilaMaterial_getParameters(nativeHandle, infoArray, count.toUInt())
+        (0 until actualCount.toInt()).map { i ->
+            val info = infoArray[i]
+            Parameter(
+                info.name?.toKString() ?: "",
+                Parameter.Type.values()[info.type],
+                Parameter.Precision.values()[info.precision.toInt()],
+                info.count.toInt()
+            )
+        }
+    }
+
     actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
-        val bitmask = FilaMaterial_getRequiredAttributes(nativeHandle)
-        val attributes = mutableSetOf<VertexBuffer.VertexAttribute>()
+        val bitset = FilaMaterial_getRequiredAttributes(nativeHandle)
+        val result = mutableSetOf<VertexBuffer.VertexAttribute>()
         VertexBuffer.VertexAttribute.entries.forEach { attr ->
-            if ((bitmask and (1u shl attr.ordinal)) != 0u) {
-                attributes.add(attr)
+            if ((bitset and (1u shl attr.ordinal)) != 0u) {
+                result.add(attr)
             }
         }
-        return attributes
+        return result
     }
 }
 
-private fun Any?.interpretAsCPointer(): CPointer<out CPointed>? {
-    return if (this is CPointer<*>) this.reinterpret() else null
+private fun Any.usePinned(block: (Pinned<*>) -> Unit) {
+    when (this) {
+        is ByteArray -> this.pin().use { block(it) }
+        is FloatArray -> this.pin().use { block(it) }
+        is ShortArray -> this.pin().use { block(it) }
+        is IntArray -> this.pin().use { block(it) }
+        else -> throw IllegalArgumentException("Unsupported storage type for pinning")
+    }
 }

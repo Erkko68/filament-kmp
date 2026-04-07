@@ -114,8 +114,10 @@ expect class Engine {
     fun isValidView(view: View): Boolean
     fun isValidScene(scene: Scene): Boolean
     fun isValidFence(fence: Fence): Boolean
+    fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
     fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
     fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
+    fun isValidBufferObject(bufferObject: BufferObject): Boolean
     fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
     fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
     fun isValidIndirectLight(ibl: IndirectLight): Boolean
@@ -125,7 +127,6 @@ expect class Engine {
     fun isValidSkybox(skybox: Skybox): Boolean
     fun isValidColorGrading(colorGrading: ColorGrading): Boolean
     fun isValidTexture(texture: Texture): Boolean
-    fun isValidRenderTarget(target: RenderTarget): Boolean
     fun isValidStream(stream: Stream): Boolean
     fun isValidSwapChain(swapChain: SwapChain): Boolean
 
@@ -161,6 +162,7 @@ expect class Engine {
     // Buffers and Managers
     fun destroyIndexBuffer(indexBuffer: IndexBuffer)
     fun destroyVertexBuffer(vertexBuffer: VertexBuffer)
+    fun destroyBufferObject(bufferObject: BufferObject)
     fun destroySkinningBuffer(skinningBuffer: SkinningBuffer)
     fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer)
     fun destroyIndirectLight(ibl: IndirectLight)

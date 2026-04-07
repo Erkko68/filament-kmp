@@ -191,6 +191,7 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
+    actual fun isValidBufferObject(bufferObject: BufferObject): Boolean = nativeEngine.isValidBufferObject(bufferObject.nativeBufferObject)
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = nativeEngine.isValidSkinningBuffer(skinningBuffer.nativeSkinningBuffer)
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = nativeEngine.isValidMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
@@ -232,6 +233,7 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) { nativeEngine.destroyIndexBuffer(indexBuffer.nativeIndexBuffer) }
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) { nativeEngine.destroyVertexBuffer(vertexBuffer.nativeVertexBuffer) }
+    actual fun destroyBufferObject(bufferObject: BufferObject) { nativeEngine.destroyBufferObject(bufferObject.nativeBufferObject) }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) { nativeEngine.destroySkinningBuffer(skinningBuffer.nativeSkinningBuffer) }
     actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) { nativeEngine.destroyMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer) }
     actual fun destroyIndirectLight(ibl: IndirectLight) { nativeEngine.destroyIndirectLight(ibl.nativeIndirectLight) }

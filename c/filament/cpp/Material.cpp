@@ -140,6 +140,12 @@ uint32_t FilaMaterial_getParameterCount(const FilaMaterial* material) {
     return static_cast<uint32_t>(FILA_CONST_CAST(Material, material)->getParameterCount());
 }
 
+uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* parameters, uint32_t count) {
+    auto m = FILA_CONST_CAST(Material, material);
+    auto p = reinterpret_cast<Material::ParameterInfo*>(parameters);
+    return static_cast<uint32_t>(m->getParameters(p, count));
+}
+
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material) {
     return FILA_CONST_CAST(Material, material)->getRequiredAttributes().getValue();
 }

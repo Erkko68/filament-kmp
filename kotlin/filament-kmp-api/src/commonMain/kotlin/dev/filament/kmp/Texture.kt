@@ -11,6 +11,8 @@ expect class Texture {
         fun format(format: InternalFormat): Builder
         fun usage(usage: Int): Builder
         fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder
+        fun importTexture(id: Long): Builder
+        fun external(): Builder
         fun build(engine: Engine): Texture
     }
 
@@ -67,12 +69,16 @@ expect class Texture {
     class Usage {
         companion object {
             val COLOR_ATTACHMENT: Int
-            val SAMPLEABLE: Int
             val DEPTH_ATTACHMENT: Int
             val STENCIL_ATTACHMENT: Int
             val UPLOADABLE: Int
+            val SAMPLEABLE: Int
+            val SUBPASS_INPUT: Int
             val BLIT_SRC: Int
             val BLIT_DST: Int
+            val PROTECTED: Int
+            val GEN_MIPMAPPABLE: Int
+            val DEFAULT: Int
         }
     }
 
@@ -110,6 +116,16 @@ expect class Texture {
     fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor)
     fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor)
     fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor)
+    fun setExternalImage(engine: Engine, eglImage: Long)
+    fun setExternalStream(engine: Engine, stream: Stream)
     fun generateMipmaps(engine: Engine)
-}
 
+    companion object {
+        fun isTextureFormatSupported(engine: Engine, format: InternalFormat): Boolean
+        fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean
+        fun isTextureSwizzleSupported(engine: Engine): Boolean
+        fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean
+        fun getMaxTextureSize(engine: Engine, type: Sampler): Int
+        fun getMaxArrayTextureLayers(engine: Engine): Int
+    }
+}

@@ -16,6 +16,44 @@ expect class Material {
     enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
     enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     enum class UboBatchingMode { DEFAULT, DISABLED }
+    
+    class UserVariantFilterBit {
+        companion object {
+            val DIRECTIONAL_LIGHTING: Int
+            val DYNAMIC_LIGHTING: Int
+            val SHADOW_RECEIVER: Int
+            val SKINNING: Int
+            val FOG: Int
+            val VSM: Int
+            val SSR: Int
+            val STE: Int
+            val ALL: Int
+        }
+    }
+
+    class Parameter(
+        name: String,
+        type: Type,
+        precision: Precision,
+        count: Int
+    ) {
+        val name: String
+        val type: Type
+        val precision: Precision
+        val count: Int
+
+        enum class Type {
+            BOOL, BOOL2, BOOL3, BOOL4,
+            FLOAT, FLOAT2, FLOAT3, FLOAT4,
+            INT, INT2, INT3, INT4,
+            UINT, UINT2, UINT3, UINT4,
+            MAT3, MAT4,
+            SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D,
+            SUBPASS_INPUT
+        }
+
+        enum class Precision { LOW, MEDIUM, HIGH, DEFAULT }
+    }
 
     class Builder() {
         enum class ShadowSamplingQuality { HARD, LOW }
@@ -52,7 +90,7 @@ expect class Material {
     fun getFeatureLevel(): Engine.FeatureLevel
     
     fun getParameterCount(): Int
-    // fun getParameters(out: Array<Parameter>? = null): Array<Parameter> // This might be complex due to KMP Array differences
+    fun getParameters(): List<Parameter>
     
     fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute>
 }

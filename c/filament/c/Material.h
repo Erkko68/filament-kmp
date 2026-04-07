@@ -119,6 +119,7 @@ float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* material
 FilaEngineFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* material);
 
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* material);
+uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* parameters, uint32_t count);
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material);
 
 void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQueue priority, uint32_t variants, void* handler, FilaMaterialCompileCallback callback, void* userData);
