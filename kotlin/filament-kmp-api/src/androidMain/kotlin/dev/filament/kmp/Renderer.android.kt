@@ -7,6 +7,9 @@ actual class Renderer internal constructor(
     private val engine: Engine,
     val nativeRenderer: AndroidRenderer
 ) {
+    private var mDisplayInfo: DisplayInfo? = null
+    private var mFrameRateOptions: FrameRateOptions? = null
+    private var mClearOptions: ClearOptions? = null
     actual class DisplayInfo actual constructor() {
         val nativeInfo = AndroidRenderer.DisplayInfo()
         actual var refreshRate: Float
@@ -51,27 +54,31 @@ actual class Renderer internal constructor(
 
     actual fun getEngine(): Engine = engine
 
-    actual fun setDisplayInfo(info: DisplayInfo) = nativeRenderer.setDisplayInfo(info.nativeInfo)
-    actual fun getDisplayInfo(): DisplayInfo = DisplayInfo().apply {
-        val info = nativeRenderer.displayInfo
-        refreshRate = info.refreshRate
+    actual fun setDisplayInfo(info: DisplayInfo) {
+        mDisplayInfo = info
+        nativeRenderer.setDisplayInfo(info.nativeInfo)
+    }
+    actual fun getDisplayInfo(): DisplayInfo {
+        if (mDisplayInfo == null) mDisplayInfo = DisplayInfo()
+        return mDisplayInfo!!
     }
 
-    actual fun setFrameRateOptions(options: FrameRateOptions) = nativeRenderer.setFrameRateOptions(options.nativeOptions)
-    actual fun getFrameRateOptions(): FrameRateOptions = FrameRateOptions().apply {
-        val options = nativeRenderer.frameRateOptions
-        interval = options.interval
-        headRoomRatio = options.headRoomRatio
-        scaleRate = options.scaleRate
-        history = options.history
+    actual fun setFrameRateOptions(options: FrameRateOptions) {
+        mFrameRateOptions = options
+        nativeRenderer.setFrameRateOptions(options.nativeOptions)
+    }
+    actual fun getFrameRateOptions(): FrameRateOptions {
+        if (mFrameRateOptions == null) mFrameRateOptions = FrameRateOptions()
+        return mFrameRateOptions!!
     }
 
-    actual fun setClearOptions(options: ClearOptions) = nativeRenderer.setClearOptions(options.nativeOptions)
-    actual fun getClearOptions(): ClearOptions = ClearOptions().apply {
-        val options = nativeRenderer.clearOptions
-        clearColor = options.clearColor
-        clear = options.clear
-        discard = options.discard
+    actual fun setClearOptions(options: ClearOptions) {
+        mClearOptions = options
+        nativeRenderer.setClearOptions(options.nativeOptions)
+    }
+    actual fun getClearOptions(): ClearOptions {
+        if (mClearOptions == null) mClearOptions = ClearOptions()
+        return mClearOptions!!
     }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = nativeRenderer.setPresentationTime(monotonicClockNanos)

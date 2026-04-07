@@ -6,6 +6,10 @@ import com.google.android.filament.Viewport as FilamentViewport
 
 actual class View internal constructor(internal val nativeView: FilamentView) {
     internal val getNativeObject: Long get() = nativeView.nativeObject
+    
+    private var mScene: Scene? = null
+    private var mCamera: Camera? = null
+    private var mRenderTarget: RenderTarget? = null
 
     actual enum class AntiAliasing { NONE, FXAA }
     actual enum class Dithering { NONE, TEMPORAL }
@@ -208,11 +212,17 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     actual fun setName(name: String) { this@View.nativeView.setName(name) }
     actual fun getName(): String? = this@View.nativeView.name
 
-    actual fun setScene(scene: Scene?) { this@View.nativeView.scene = scene?.nativeScene }
-    actual fun getScene(): Scene? = null // TODO bridge backward
+    actual fun setScene(scene: Scene?) { 
+        this@View.mScene = scene
+        this@View.nativeView.scene = scene?.nativeScene 
+    }
+    actual fun getScene(): Scene? = mScene
 
-    actual fun setCamera(camera: Camera?) { this@View.nativeView.camera = camera?.nativeCamera }
-    actual fun getCamera(): Camera? = null // TODO bridge backward
+    actual fun setCamera(camera: Camera?) { 
+        this@View.mCamera = camera
+        this@View.nativeView.camera = camera?.nativeCamera 
+    }
+    actual fun getCamera(): Camera? = mCamera
 
     actual fun setViewport(viewport: Viewport) {
         val nativeVp = FilamentViewport(viewport.left, viewport.bottom, viewport.width, viewport.height)
@@ -455,9 +465,10 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     }
 
     actual fun setRenderTarget(target: RenderTarget?) {
+        this@View.mRenderTarget = target
         this@View.nativeView.setRenderTarget(target?.nativeRenderTarget)
     }
-    actual fun getRenderTarget(): RenderTarget? = null
+    actual fun getRenderTarget(): RenderTarget? = mRenderTarget
 
     actual fun setShadowType(type: ShadowType) {
         this@View.mShadowType = type

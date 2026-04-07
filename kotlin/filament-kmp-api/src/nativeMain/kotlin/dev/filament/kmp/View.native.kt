@@ -13,6 +13,10 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
+    
+    private var mScene: Scene? = null
+    private var mCamera: Camera? = null
+    private var mRenderTarget: RenderTarget? = null
 
     private var mShadowType: ShadowType = ShadowType.PCF
 
@@ -177,11 +181,17 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual fun setName(name: String) { FilaView_setName(nativeHandle, name) }
     actual fun getName(): String? = null
 
-    actual fun setScene(scene: Scene?) { FilaView_setScene(nativeHandle, scene?.nativeHandle) }
-    actual fun getScene(): Scene? = null
-
-    actual fun setCamera(camera: Camera?) { FilaView_setCamera(nativeHandle, camera?.nativeHandle) }
-    actual fun getCamera(): Camera? = null
+    actual fun setScene(scene: Scene?) { 
+        mScene = scene
+        FilaView_setScene(nativeHandle, scene?.nativeHandle) 
+    }
+    actual fun getScene(): Scene? = mScene
+    
+    actual fun setCamera(camera: Camera?) { 
+        mCamera = camera
+        FilaView_setCamera(nativeHandle, camera?.nativeHandle) 
+    }
+    actual fun getCamera(): Camera? = mCamera
 
     actual fun setViewport(viewport: Viewport) {
         FilaView_setViewport(nativeHandle, viewport.left, viewport.bottom, viewport.width.toUInt(), viewport.height.toUInt())
@@ -381,9 +391,10 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual fun getScreenSpaceReflectionsOptions(): ScreenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions()
 
     actual fun setRenderTarget(target: RenderTarget?) {
+        mRenderTarget = target
         FilaView_setRenderTarget(nativeHandle, target?.nativeHandle)
     }
-    actual fun getRenderTarget(): RenderTarget? = null
+    actual fun getRenderTarget(): RenderTarget? = mRenderTarget
 
     actual fun setShadowType(type: ShadowType) {
         mShadowType = type
