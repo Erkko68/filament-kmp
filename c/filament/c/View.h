@@ -213,14 +213,23 @@ void FilaView_setTransparentPickingEnabled(FilaView* view, bool enabled);
 bool FilaView_isTransparentPickingEnabled(const FilaView* view);
 
 void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaViewAmbientOcclusionOptions* options);
+void FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaViewAmbientOcclusionOptions* out);
 void FilaView_setBloomOptions(FilaView* view, const FilaViewBloomOptions* options);
+void FilaView_getBloomOptions(const FilaView* view, FilaViewBloomOptions* out);
 void FilaView_setFogOptions(FilaView* view, const FilaViewFogOptions* options);
+void FilaView_getFogOptions(const FilaView* view, FilaViewFogOptions* out);
 void FilaView_setBlendMode(FilaView* view, FilaViewBlendMode blendMode);
+FilaViewBlendMode FilaView_getBlendMode(const FilaView* view);
 void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaViewDepthOfFieldOptions* options);
+void FilaView_getDepthOfFieldOptions(const FilaView* view, FilaViewDepthOfFieldOptions* out);
 void FilaView_setVignetteOptions(FilaView* view, const FilaViewVignetteOptions* options);
+void FilaView_getVignetteOptions(const FilaView* view, FilaViewVignetteOptions* out);
 void FilaView_setTemporalAntiAliasingOptions(FilaView* view, const FilaViewTemporalAntiAliasingOptions* options);
+void FilaView_getTemporalAntiAliasingOptions(const FilaView* view, FilaViewTemporalAntiAliasingOptions* out);
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaViewMultiSampleAntiAliasingOptions* options);
+void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, FilaViewMultiSampleAntiAliasingOptions* out);
 void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaViewScreenSpaceReflectionsOptions* options);
+void FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaViewScreenSpaceReflectionsOptions* out);
 
 void FilaView_setFrustumCullingEnabled(FilaView* view, bool enabled);
 bool FilaView_isFrustumCullingEnabled(const FilaView* view);

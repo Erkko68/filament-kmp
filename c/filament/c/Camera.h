@@ -76,6 +76,8 @@ double FilaCamera_getFocalLength(const FilaCamera* camera);
 double FilaCamera_computeEffectiveFocalLength(double focalLength, double focusDistance);
 double FilaCamera_computeEffectiveFov(double fovInDegrees, double focusDistance);
 
+FilaEntity FilaCamera_getEntity(const FilaCamera* camera);
+
 #ifdef __cplusplus
 }
 #endif

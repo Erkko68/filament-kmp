@@ -6,7 +6,7 @@ import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaRenderableManager
 import cnames.structs.FilaRenderableManagerBuilder
 
-actual class RenderableManager internal constructor(internal val nativeHandle: CPointer<FilaRenderableManager>?) {
+actual class RenderableManager internal constructor(internal var nativeHandle: CPointer<FilaRenderableManager>?) {
     actual enum class PrimitiveType(val value: Int) {
         POINTS(0), LINES(1), TRIANGLES(4), NONE(0xFF);
         internal fun toNative(): FilaRenderableManagerPrimitiveType = when (this) {

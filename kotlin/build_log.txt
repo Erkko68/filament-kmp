@@ -1,0 +1,32 @@
+> Task :filament-kmp-api:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :filament-kmp-api:preBuild UP-TO-DATE
+> Task :filament-kmp-api:preDebugBuild UP-TO-DATE
+> Task :filament-kmp-api:generateDebugResValues UP-TO-DATE
+> Task :filament-kmp-api:generateDebugResources UP-TO-DATE
+> Task :filament-kmp-api:packageDebugResources UP-TO-DATE
+> Task :filament-kmp-api:processDebugNavigationResources UP-TO-DATE
+> Task :filament-kmp-api:parseDebugLocalResources UP-TO-DATE
+> Task :filament-kmp-api:generateDebugRFile UP-TO-DATE
+> Task :filament-kmp-api:cinteropFilamentMacosArm64 UP-TO-DATE
+
+> Task :filament-kmp-api:compileDebugKotlinAndroid
+w: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/androidMain/kotlin/dev/filament/kmp/ColorGrading.android.kt:14:27 'fun toneMapping(p0: ColorGrading.ToneMapping!): ColorGrading.Builder!' is deprecated. Deprecated in Java.
+w: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/androidMain/kotlin/dev/filament/kmp/ColorGrading.android.kt:14:59 'enum class ToneMapping : Enum<ColorGrading.ToneMapping!>' is deprecated. Deprecated in Java.
+w: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/androidMain/kotlin/dev/filament/kmp/RenderableManager.android.kt:192:20 Condition is always 'true'.
+w: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/androidMain/kotlin/dev/filament/kmp/View.android.kt:114:54 'field filterWidth: Float' is deprecated. Deprecated in Java.
+w: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/androidMain/kotlin/dev/filament/kmp/View.android.kt:114:83 'field filterWidth: Float' is deprecated. Deprecated in Java.
+w: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/androidMain/kotlin/dev/filament/kmp/View.android.kt:227:25 'field filterWidth: Float' is deprecated. Deprecated in Java.
+
+> Task :filament-kmp-api:compileKotlinMacosArm64
+
+[Incubating] Problems report is available at: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 2s
+9 actionable tasks: 2 executed, 7 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.3.0/userguide/configuration_cache_enabling.html

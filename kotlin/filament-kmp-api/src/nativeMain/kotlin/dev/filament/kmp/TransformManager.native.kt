@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaTransformManager
 
-actual class TransformManager internal constructor(internal val nativeHandle: CPointer<FilaTransformManager>?) {
+actual class TransformManager internal constructor(internal var nativeHandle: CPointer<FilaTransformManager>?) {
     actual fun hasComponent(entity: Entity): Boolean = FilaTransformManager_hasComponent(nativeHandle, entity.toUInt())
     actual fun getInstance(entity: Entity): EntityInstance = FilaTransformManager_getInstance(nativeHandle, entity.toUInt()).toInt()
     

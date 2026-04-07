@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaEntityManager
 
-actual class EntityManager internal constructor(internal val nativeHandle: CPointer<FilaEntityManager>?) {
+actual class EntityManager internal constructor(internal var nativeHandle: CPointer<FilaEntityManager>?) {
     actual companion object {
         private val instance = EntityManager(FilaEntityManager_get())
         actual fun get(): EntityManager = instance

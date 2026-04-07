@@ -15,7 +15,7 @@ typedef struct FilaRendererFrameRateOptions {
     float headRoomRatio;
     float scaleRate;
     uint8_t history;
-    uint8_t interval;
+    float interval;
 } FilaRendererFrameRateOptions;
 
 typedef struct FilaRendererClearOptions {

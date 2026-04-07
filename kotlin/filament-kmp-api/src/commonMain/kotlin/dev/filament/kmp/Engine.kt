@@ -125,8 +125,10 @@ expect class Engine {
     fun destroyRenderer(renderer: Renderer)
 
     // Camera
+    fun createCamera(): Camera
     fun createCamera(entity: Int): Camera
     fun getCameraComponent(entity: Int): Camera?
+    fun destroyCamera(camera: Camera)
     fun destroyCameraComponent(entity: Int)
 
     // Scene
@@ -137,8 +139,7 @@ expect class Engine {
     fun createFence(): Fence
     fun destroyFence(fence: Fence)
 
-    // Buffers and Managers (will be added as we implement them)
-    // For now, let's include the common ones from Engine.java
+    // Buffers and Managers
     fun destroyIndexBuffer(indexBuffer: IndexBuffer)
     fun destroyVertexBuffer(vertexBuffer: VertexBuffer)
     fun destroyIndirectLight(ibl: IndirectLight)

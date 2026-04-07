@@ -75,7 +75,9 @@ FilaRenderer* FilaEngine_createRenderer(FilaEngine* engine);
 bool FilaEngine_destroyRenderer(FilaEngine* engine, FilaRenderer* renderer);
 
 FilaCamera* FilaEngine_createCamera(FilaEngine* engine, FilaEntity entity);
+FilaCamera* FilaEngine_createCameraAuto(FilaEngine* engine);
 FilaCamera* FilaEngine_getCameraComponent(FilaEngine* engine, FilaEntity entity);
+bool FilaEngine_destroyCamera(FilaEngine* engine, FilaCamera* camera);
 void FilaEngine_destroyCameraComponent(FilaEngine* engine, FilaEntity entity);
 
 FilaScene* FilaEngine_createScene(FilaEngine* engine);
@@ -96,6 +98,7 @@ bool FilaEngine_destroyMaterialInstance(FilaEngine* engine, FilaMaterialInstance
 bool FilaEngine_destroySkybox(FilaEngine* engine, FilaSkybox* skybox);
 bool FilaEngine_destroyColorGrading(FilaEngine* engine, FilaColorGrading* colorGrading);
 bool FilaEngine_destroyTexture(FilaEngine* engine, FilaTexture* texture);
+bool FilaEngine_destroyTextureSampler(FilaEngine* engine, FilaTextureSampler* sampler);
 bool FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* target);
 
 void FilaEngine_destroyEntity(FilaEngine* engine, FilaEntity entity);

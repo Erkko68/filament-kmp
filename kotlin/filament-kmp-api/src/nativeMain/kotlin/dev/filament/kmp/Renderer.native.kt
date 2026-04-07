@@ -49,7 +49,7 @@ actual class Renderer internal constructor(internal var nativeHandle: CPointer<F
     actual fun setFrameRateOptions(options: FrameRateOptions) {
         memScoped {
             val cOptions = alloc<FilaRendererFrameRateOptions>()
-            cOptions.interval = options.interval.toUInt().toUByte()
+            cOptions.interval = options.interval
             cOptions.headRoomRatio = options.headRoomRatio
             cOptions.scaleRate = options.scaleRate
             cOptions.history = options.history.toUByte()

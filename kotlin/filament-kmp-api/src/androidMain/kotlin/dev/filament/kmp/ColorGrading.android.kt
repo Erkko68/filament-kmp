@@ -48,7 +48,7 @@ actual class ColorGrading internal constructor(val nativeColorGrading: AndroidCo
         }
         actual fun build(engine: Engine): ColorGrading = ColorGrading(nativeBuilder.build(engine.nativeEngine))
     }
-
+    
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ToneMapping { LINEAR, ACES_LEGACY, ACES, FILMIC, DISPLAY_RANGE }
 }

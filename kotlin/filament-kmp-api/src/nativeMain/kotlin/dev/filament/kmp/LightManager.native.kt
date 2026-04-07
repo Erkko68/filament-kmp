@@ -6,7 +6,7 @@ import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaLightManager
 import cnames.structs.FilaLightManagerBuilder
 
-actual class LightManager internal constructor(internal val nativeHandle: CPointer<FilaLightManager>?) {
+actual class LightManager internal constructor(internal var nativeHandle: CPointer<FilaLightManager>?) {
     actual enum class Type { 
         SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT;
         internal fun toNative(): FilaLightManagerType = ordinal.toUInt()

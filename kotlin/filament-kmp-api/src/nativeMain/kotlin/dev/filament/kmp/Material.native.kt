@@ -57,8 +57,8 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
     actual fun isAlphaToCoverageEnabled(): Boolean = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
 
     actual fun getMaskThreshold(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
-    actual fun getSpecularAntiAliasingVariance(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
-    actual fun getSpecularAntiAliasingThreshold(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
+    actual fun getSpecularAntiAliasingVariance(): Float = FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
+    actual fun getSpecularAntiAliasingThreshold(): Float = FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
     actual fun createInstance(name: String): MaterialInstance = MaterialInstance(FilaMaterial_createInstanceWithName(nativeHandle, name))

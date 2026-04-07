@@ -1,8 +1,8 @@
 package dev.filament.kmp
 
-expect class Viewport(left: Int, bottom: Int, width: Int, height: Int) {
-    var left: Int
-    var bottom: Int
-    var width: Int
-    var height: Int
-}
+class Viewport(
+    var left: Int = 0,
+    var bottom: Int = 0,
+    var width: Int = 0,
+    var height: Int = 0
+)

@@ -128,8 +128,16 @@ FilaCamera* FilaEngine_createCamera(FilaEngine* engine, FilaEntity entity) {
     return reinterpret_cast<FilaCamera*>(FILA_CAST(Engine, engine)->createCamera(Entity::import(entity)));
 }
 
+FilaCamera* FilaEngine_createCameraAuto(FilaEngine* engine) {
+    return reinterpret_cast<FilaCamera*>(FILA_CAST(Engine, engine)->createCamera(EntityManager::get().create()));
+}
+
 FilaCamera* FilaEngine_getCameraComponent(FilaEngine* engine, FilaEntity entity) {
     return reinterpret_cast<FilaCamera*>(FILA_CAST(Engine, engine)->getCameraComponent(Entity::import(entity)));
+}
+
+bool FilaEngine_destroyCamera(FilaEngine* engine, FilaCamera* camera) {
+    return FILA_CAST(Engine, engine)->destroy(FILA_CAST(Camera, camera));
 }
 
 void FilaEngine_destroyCameraComponent(FilaEngine* engine, FilaEntity entity) {
@@ -198,6 +206,10 @@ bool FilaEngine_destroyColorGrading(FilaEngine* engine, FilaColorGrading* colorG
 
 bool FilaEngine_destroyTexture(FilaEngine* engine, FilaTexture* texture) {
     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(Texture, texture));
+}
+
+bool FilaEngine_destroyTextureSampler(FilaEngine* engine, FilaTextureSampler* sampler) {
+    return FILA_CAST(Engine, engine)->destroy(FILA_CAST(TextureSampler, sampler));
 }
 
 bool FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* target) {

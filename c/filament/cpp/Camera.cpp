@@ -178,4 +178,8 @@ double FilaCamera_computeEffectiveFov(double fovInDegrees, double focusDistance)
     return Camera::computeEffectiveFov(fovInDegrees, focusDistance);
 }
 
+FilaEntity FilaCamera_getEntity(const FilaCamera* camera) {
+    return FILA_CONST_CAST(Camera, camera)->getEntity().getId();
+}
+
 } // extern "C"

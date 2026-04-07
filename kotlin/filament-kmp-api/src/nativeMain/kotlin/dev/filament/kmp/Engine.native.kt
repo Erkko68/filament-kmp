@@ -176,10 +176,19 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
         renderer.nativeHandle = null
     }
 
+    actual fun createCamera(): Camera {
+        val handle = FilaEngine_createCameraAuto(nativeHandle)
+        val entity = FilaCamera_getEntity(handle).toInt()
+        return Camera(handle, entity)
+    }
     actual fun createCamera(entity: Int): Camera = Camera(FilaEngine_createCamera(nativeHandle, entity.toUInt()), entity)
     actual fun getCameraComponent(entity: Int): Camera? {
         val handle = FilaEngine_getCameraComponent(nativeHandle, entity.toUInt())
         return if (handle != null) Camera(handle, entity) else null
+    }
+    actual fun destroyCamera(camera: Camera) {
+        FilaEngine_destroyCamera(nativeHandle, camera.nativeHandle)
+        camera.nativeHandle = null
     }
     actual fun destroyCameraComponent(entity: Int) = FilaEngine_destroyCameraComponent(nativeHandle, entity.toUInt())
 

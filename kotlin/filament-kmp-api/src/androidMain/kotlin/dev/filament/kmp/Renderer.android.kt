@@ -10,7 +10,7 @@ actual class Renderer internal constructor(
             get() = nativeInfo.refreshRate
             set(value) { nativeInfo.refreshRate = value }
     }
-
+ 
     actual class FrameRateOptions actual constructor() {
         val nativeOptions = com.google.android.filament.Renderer.FrameRateOptions()
         actual var interval: Float
@@ -26,7 +26,7 @@ actual class Renderer internal constructor(
             get() = nativeOptions.history
             set(value) { nativeOptions.history = value }
     }
-
+ 
     actual class ClearOptions actual constructor() {
         val nativeOptions = com.google.android.filament.Renderer.ClearOptions()
         actual var clearColor: FloatArray
@@ -39,7 +39,7 @@ actual class Renderer internal constructor(
             get() = nativeOptions.discard
             set(value) { nativeOptions.discard = value }
     }
-
+ 
     actual companion object {
         actual val MIRROR_FRAME_FLAG_COMMIT: Int = com.google.android.filament.Renderer.MIRROR_FRAME_FLAG_COMMIT
         actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = com.google.android.filament.Renderer.MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME
@@ -80,7 +80,10 @@ actual class Renderer internal constructor(
     actual fun render(view: View) = nativeRenderer.render(view.nativeView)
     actual fun renderStandaloneView(view: View) = nativeRenderer.renderStandaloneView(view.nativeView)
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) =
-        nativeRenderer.copyFrame(dstSwapChain.nativeSwapChain, dstViewport.nativeViewport, srcViewport.nativeViewport, flags)
+        nativeRenderer.copyFrame(dstSwapChain.nativeSwapChain, 
+            com.google.android.filament.Viewport(dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height),
+            com.google.android.filament.Viewport(srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height), 
+            flags)
 
     actual fun getUserTime(): Double = nativeRenderer.userTime
     actual fun resetUserTime() = nativeRenderer.resetUserTime()

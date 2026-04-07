@@ -192,6 +192,34 @@ void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaViewAmbientOc
     FILA_CAST(View, view)->setAmbientOcclusionOptions(cppOptions);
 }
 
+void FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaViewAmbientOcclusionOptions* out) {
+    const View::AmbientOcclusionOptions& cppOptions = FILA_CONST_CAST(View, view)->getAmbientOcclusionOptions();
+    out->radius = cppOptions.radius;
+    out->bias = cppOptions.bias;
+    out->power = cppOptions.power;
+    out->resolution = cppOptions.resolution;
+    out->intensity = cppOptions.intensity;
+    out->bilateralThreshold = cppOptions.bilateralThreshold;
+    out->quality = static_cast<FilaViewQualityLevel>(cppOptions.quality);
+    out->lowPassFilter = static_cast<FilaViewQualityLevel>(cppOptions.lowPassFilter);
+    out->upsampling = static_cast<FilaViewQualityLevel>(cppOptions.upsampling);
+    out->enabled = cppOptions.enabled;
+    out->bentNormals = cppOptions.bentNormals;
+    out->minHorizonAngleRad = cppOptions.minHorizonAngleRad;
+    out->ssct.lightConeRad = cppOptions.ssct.lightConeRad;
+    out->ssct.shadowDistance = cppOptions.ssct.shadowDistance;
+    out->ssct.contactDistanceMax = cppOptions.ssct.contactDistanceMax;
+    out->ssct.intensity = cppOptions.ssct.intensity;
+    out->ssct.lightDirection[0] = cppOptions.ssct.lightDirection.x;
+    out->ssct.lightDirection[1] = cppOptions.ssct.lightDirection.y;
+    out->ssct.lightDirection[2] = cppOptions.ssct.lightDirection.z;
+    out->ssct.depthBias = cppOptions.ssct.depthBias;
+    out->ssct.depthSlopeBias = cppOptions.ssct.depthSlopeBias;
+    out->ssct.sampleCount = cppOptions.ssct.sampleCount;
+    out->ssct.rayCount = cppOptions.ssct.rayCount;
+    out->ssct.enabled = cppOptions.ssct.enabled;
+}
+
 void FilaView_setBloomOptions(FilaView* view, const FilaViewBloomOptions* options) {
     View::BloomOptions cppOptions;
     cppOptions.dirt = FILA_CAST(Texture, options->dirt);
@@ -215,6 +243,28 @@ void FilaView_setBloomOptions(FilaView* view, const FilaViewBloomOptions* option
     FILA_CAST(View, view)->setBloomOptions(cppOptions);
 }
 
+void FilaView_getBloomOptions(const FilaView* view, FilaViewBloomOptions* out) {
+    const View::BloomOptions& cppOptions = FILA_CONST_CAST(View, view)->getBloomOptions();
+    out->dirt = reinterpret_cast<FilaTexture*>(const_cast<Texture*>(cppOptions.dirt));
+    out->dirtStrength = cppOptions.dirtStrength;
+    out->strength = cppOptions.strength;
+    out->resolution = cppOptions.resolution;
+    out->levels = cppOptions.levels;
+    out->blendMode = static_cast<int>(cppOptions.blendMode);
+    out->threshold = cppOptions.threshold;
+    out->enabled = cppOptions.enabled;
+    out->highlight = cppOptions.highlight;
+    out->lensFlare = cppOptions.lensFlare;
+    out->starburst = cppOptions.starburst;
+    out->chromaticAberration = cppOptions.chromaticAberration;
+    out->ghostCount = cppOptions.ghostCount;
+    out->ghostSpacing = cppOptions.ghostSpacing;
+    out->ghostThreshold = cppOptions.ghostThreshold;
+    out->haloThickness = cppOptions.haloThickness;
+    out->haloRadius = cppOptions.haloRadius;
+    out->haloThreshold = cppOptions.haloThreshold;
+}
+
 void FilaView_setFogOptions(FilaView* view, const FilaViewFogOptions* options) {
     View::FogOptions cppOptions;
     cppOptions.distance = options->distance;
@@ -232,8 +282,28 @@ void FilaView_setFogOptions(FilaView* view, const FilaViewFogOptions* options) {
     FILA_CAST(View, view)->setFogOptions(cppOptions);
 }
 
+void FilaView_getFogOptions(const FilaView* view, FilaViewFogOptions* out) {
+    const View::FogOptions& cppOptions = FILA_CONST_CAST(View, view)->getFogOptions();
+    out->distance = cppOptions.distance;
+    out->cutOffDistance = cppOptions.cutOffDistance;
+    out->maximumOpacity = cppOptions.maximumOpacity;
+    out->height = cppOptions.height;
+    out->heightFalloff = cppOptions.heightFalloff;
+    out->color[0] = cppOptions.color.r; out->color[1] = cppOptions.color.g; out->color[2] = cppOptions.color.b;
+    out->density = cppOptions.density;
+    out->inScatteringStart = cppOptions.inScatteringStart;
+    out->inScatteringSize = cppOptions.inScatteringSize;
+    out->fogColorFromIbl = cppOptions.fogColorFromIbl;
+    out->skyColor = reinterpret_cast<FilaTexture*>(const_cast<Texture*>(cppOptions.skyColor));
+    out->enabled = cppOptions.enabled;
+}
+
 void FilaView_setBlendMode(FilaView* view, FilaViewBlendMode blendMode) {
     FILA_CAST(View, view)->setBlendMode(static_cast<View::BlendMode>(blendMode));
+}
+
+FilaViewBlendMode FilaView_getBlendMode(const FilaView* view) {
+    return static_cast<FilaViewBlendMode>(FILA_CONST_CAST(View, view)->getBlendMode());
 }
 
 void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaViewDepthOfFieldOptions* options) {
@@ -251,6 +321,20 @@ void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaViewDepthOfFieldO
     FILA_CAST(View, view)->setDepthOfFieldOptions(cppOptions);
 }
 
+void FilaView_getDepthOfFieldOptions(const FilaView* view, FilaViewDepthOfFieldOptions* out) {
+    const View::DepthOfFieldOptions& cppOptions = FILA_CONST_CAST(View, view)->getDepthOfFieldOptions();
+    out->cocScale = cppOptions.cocScale;
+    out->maxApertureDiameter = cppOptions.maxApertureDiameter;
+    out->enabled = cppOptions.enabled;
+    out->filter = static_cast<int>(cppOptions.filter);
+    out->nativeResolution = cppOptions.nativeResolution;
+    out->foregroundRingCount = cppOptions.foregroundRingCount;
+    out->backgroundRingCount = cppOptions.backgroundRingCount;
+    out->fastGatherRingCount = cppOptions.fastGatherRingCount;
+    out->maxForegroundCOC = cppOptions.maxForegroundCOC;
+    out->maxBackgroundCOC = cppOptions.maxBackgroundCOC;
+}
+
 void FilaView_setVignetteOptions(FilaView* view, const FilaViewVignetteOptions* options) {
     View::VignetteOptions cppOptions;
     cppOptions.midPoint = options->midPoint;
@@ -261,12 +345,28 @@ void FilaView_setVignetteOptions(FilaView* view, const FilaViewVignetteOptions* 
     FILA_CAST(View, view)->setVignetteOptions(cppOptions);
 }
 
+void FilaView_getVignetteOptions(const FilaView* view, FilaViewVignetteOptions* out) {
+    const View::VignetteOptions& cppOptions = FILA_CONST_CAST(View, view)->getVignetteOptions();
+    out->midPoint = cppOptions.midPoint;
+    out->roundness = cppOptions.roundness;
+    out->feather = cppOptions.feather;
+    out->color[0] = cppOptions.color.r; out->color[1] = cppOptions.color.g; out->color[2] = cppOptions.color.b; out->color[3] = cppOptions.color.a;
+    out->enabled = cppOptions.enabled;
+}
+
 void FilaView_setTemporalAntiAliasingOptions(FilaView* view, const FilaViewTemporalAntiAliasingOptions* options) {
     View::TemporalAntiAliasingOptions cppOptions;
     cppOptions.filterWidth = options->filterWidth;
     cppOptions.feedback = options->feedback;
     cppOptions.enabled = options->enabled;
     FILA_CAST(View, view)->setTemporalAntiAliasingOptions(cppOptions);
+}
+
+void FilaView_getTemporalAntiAliasingOptions(const FilaView* view, FilaViewTemporalAntiAliasingOptions* out) {
+    const View::TemporalAntiAliasingOptions& cppOptions = FILA_CONST_CAST(View, view)->getTemporalAntiAliasingOptions();
+    out->filterWidth = cppOptions.filterWidth;
+    out->feedback = cppOptions.feedback;
+    out->enabled = cppOptions.enabled;
 }
 
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaViewMultiSampleAntiAliasingOptions* options) {
@@ -277,6 +377,13 @@ void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaViewMu
     FILA_CAST(View, view)->setMultiSampleAntiAliasingOptions(cppOptions);
 }
 
+void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, FilaViewMultiSampleAntiAliasingOptions* out) {
+    const View::MultiSampleAntiAliasingOptions& cppOptions = FILA_CONST_CAST(View, view)->getMultiSampleAntiAliasingOptions();
+    out->enabled = cppOptions.enabled;
+    out->sampleCount = cppOptions.sampleCount;
+    out->customResolve = cppOptions.customResolve;
+}
+
 void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaViewScreenSpaceReflectionsOptions* options) {
     View::ScreenSpaceReflectionsOptions cppOptions;
     cppOptions.thickness = options->thickness;
@@ -285,6 +392,15 @@ void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaViewScr
     cppOptions.stride = options->stride;
     cppOptions.enabled = options->enabled;
     FILA_CAST(View, view)->setScreenSpaceReflectionsOptions(cppOptions);
+}
+
+void FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaViewScreenSpaceReflectionsOptions* out) {
+    const View::ScreenSpaceReflectionsOptions& cppOptions = FILA_CONST_CAST(View, view)->getScreenSpaceReflectionsOptions();
+    out->thickness = cppOptions.thickness;
+    out->bias = cppOptions.bias;
+    out->maxDistance = cppOptions.maxDistance;
+    out->stride = cppOptions.stride;
+    out->enabled = cppOptions.enabled;
 }
 
 void FilaView_setFrustumCullingEnabled(FilaView* view, bool enabled) {
