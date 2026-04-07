@@ -84,7 +84,9 @@ expect class Texture {
         alignment: Int = 1,
         left: Int = 0,
         top: Int = 0,
-        stride: Int = 0
+        stride: Int = 0,
+        handler: Any? = null,
+        callback: (() -> Unit)? = null
     ) {
         val storage: Any
         val sizeInBytes: Int
@@ -94,6 +96,8 @@ expect class Texture {
         val left: Int
         val top: Int
         val stride: Int
+        val handler: Any?
+        val callback: (() -> Unit)?
     }
 
     fun getWidth(level: Int = 0): Int

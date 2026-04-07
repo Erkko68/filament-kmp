@@ -20,12 +20,6 @@ typedef enum FilaEngineStereoscopicType {
     FILA_ENGINE_STEREOSCOPIC_TYPE_MULTIVIEW = 1,
 } FilaEngineStereoscopicType;
 
-typedef enum FilaEngineFeatureLevel {
-    FILA_ENGINE_FEATURE_LEVEL_0 = 0,
-    FILA_ENGINE_FEATURE_LEVEL_1 = 1,
-    FILA_ENGINE_FEATURE_LEVEL_2 = 2,
-    FILA_ENGINE_FEATURE_LEVEL_3 = 3,
-} FilaEngineFeatureLevel;
 
 typedef struct FilaEngineConfig {
     uint32_t commandBufferSizeMB;

@@ -1,8 +1,8 @@
 package dev.filament.kmp
 
 expect class RenderableManager {
-    enum class PrimitiveType { POINTS, LINES, TRIANGLES, NONE }
-    enum class GeometryType { STATIC, DYNAMIC }
+    enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
+    enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 
     class Builder(count: Int) {
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder
@@ -68,4 +68,8 @@ expect class RenderableManager {
     
     fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean)
     fun getLightChannel(instance: EntityInstance, channel: Int): Boolean
+ 
+    fun getMorphTargetCount(instance: EntityInstance): Int
+    fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int = 0)
+    fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int)
 }

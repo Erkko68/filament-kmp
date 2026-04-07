@@ -1,18 +1,21 @@
 package dev.filament.kmp
 
+import com.google.android.filament.Renderer as AndroidRenderer
+import com.google.android.filament.Viewport as AndroidViewport
+
 actual class Renderer internal constructor(
     private val engine: Engine,
-    val nativeRenderer: com.google.android.filament.Renderer
+    val nativeRenderer: AndroidRenderer
 ) {
     actual class DisplayInfo actual constructor() {
-        val nativeInfo = com.google.android.filament.Renderer.DisplayInfo()
+        val nativeInfo = AndroidRenderer.DisplayInfo()
         actual var refreshRate: Float
             get() = nativeInfo.refreshRate
             set(value) { nativeInfo.refreshRate = value }
     }
  
     actual class FrameRateOptions actual constructor() {
-        val nativeOptions = com.google.android.filament.Renderer.FrameRateOptions()
+        val nativeOptions = AndroidRenderer.FrameRateOptions()
         actual var interval: Float
             get() = nativeOptions.interval
             set(value) { nativeOptions.interval = value }
@@ -28,7 +31,7 @@ actual class Renderer internal constructor(
     }
  
     actual class ClearOptions actual constructor() {
-        val nativeOptions = com.google.android.filament.Renderer.ClearOptions()
+        val nativeOptions = AndroidRenderer.ClearOptions()
         actual var clearColor: FloatArray
             get() = nativeOptions.clearColor
             set(value) { nativeOptions.clearColor = value }
@@ -41,9 +44,9 @@ actual class Renderer internal constructor(
     }
  
     actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = com.google.android.filament.Renderer.MIRROR_FRAME_FLAG_COMMIT
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = com.google.android.filament.Renderer.MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = com.google.android.filament.Renderer.MIRROR_FRAME_FLAG_CLEAR
+        actual val MIRROR_FRAME_FLAG_COMMIT: Int = AndroidRenderer.MIRROR_FRAME_FLAG_COMMIT
+        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = AndroidRenderer.MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME
+        actual val MIRROR_FRAME_FLAG_CLEAR: Int = AndroidRenderer.MIRROR_FRAME_FLAG_CLEAR
     }
 
     actual fun getEngine(): Engine = engine
@@ -81,9 +84,17 @@ actual class Renderer internal constructor(
     actual fun renderStandaloneView(view: View) = nativeRenderer.renderStandaloneView(view.nativeView)
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) =
         nativeRenderer.copyFrame(dstSwapChain.nativeSwapChain, 
-            com.google.android.filament.Viewport(dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height),
-            com.google.android.filament.Viewport(srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height), 
+            AndroidViewport(dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height),
+            AndroidViewport(srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height), 
             flags)
+
+    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        nativeRenderer.readPixels(xoffset, yoffset, width, height, buffer.toNative())
+    }
+
+    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        nativeRenderer.readPixels(renderTarget.nativeRenderTarget, xoffset, yoffset, width, height, buffer.toNative())
+    }
 
     actual fun getUserTime(): Double = nativeRenderer.userTime
     actual fun resetUserTime() = nativeRenderer.resetUserTime()

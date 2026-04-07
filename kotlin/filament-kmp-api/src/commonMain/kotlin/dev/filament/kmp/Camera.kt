@@ -10,6 +10,9 @@ expect class Camera {
     fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double)
     fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double)
     
+    fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double)
+    fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray)
+
     fun setScaling(x: Double, y: Double)
     fun getScaling(out: DoubleArray? = null): DoubleArray
     fun setShift(x: Double, y: Double)
@@ -39,12 +42,16 @@ expect class Camera {
     fun getCullingFar(): Float
     
     fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float)
+    fun setExposure(exposure: Float)
     fun getAperture(): Float
     fun getShutterSpeed(): Float
     fun getSensitivity(): Float
+    fun getFocalLength(): Double
     
     fun setFocusDistance(distance: Float)
     fun getFocusDistance(): Float
     
+    fun getFieldOfViewInDegrees(direction: Fov): Double
+
     fun getEntity(): Int
 }

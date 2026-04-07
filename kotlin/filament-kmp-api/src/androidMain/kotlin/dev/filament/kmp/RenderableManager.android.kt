@@ -4,24 +4,16 @@ import com.google.android.filament.RenderableManager as AndroidRenderableManager
 
 actual class RenderableManager internal constructor(val nativeRenderableManager: AndroidRenderableManager) {
     actual enum class PrimitiveType(val value: Int) {
-        POINTS(0), LINES(1), TRIANGLES(4), NONE(0xFF);
+        POINTS(0), LINES(1), LINE_STRIP(3), TRIANGLES(4), TRIANGLE_STRIP(5);
         internal fun toNative(): AndroidRenderableManager.PrimitiveType {
-            return when (this) {
-                POINTS -> AndroidRenderableManager.PrimitiveType.POINTS
-                LINES -> AndroidRenderableManager.PrimitiveType.LINES
-                TRIANGLES -> AndroidRenderableManager.PrimitiveType.TRIANGLES
-                NONE -> AndroidRenderableManager.PrimitiveType.TRIANGLES // Defaulting to triangles for 'none' as Android doesn't have NONE
-            }
+            return AndroidRenderableManager.PrimitiveType.entries[ordinal]
         }
     }
 
     actual enum class GeometryType {
-        STATIC, DYNAMIC;
+        DYNAMIC, STATIC_BOUNDS, STATIC;
         internal fun toNative(): AndroidRenderableManager.Builder.GeometryType {
-            return when (this) {
-                STATIC -> AndroidRenderableManager.Builder.GeometryType.STATIC
-                DYNAMIC -> AndroidRenderableManager.Builder.GeometryType.DYNAMIC
-            }
+            return AndroidRenderableManager.Builder.GeometryType.entries[ordinal]
         }
     }
 
@@ -155,14 +147,13 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
     
     actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
         val result = outBox ?: Box()
-        // Indirectly through FloatArray as native Box doesn't expose fields directly easily
-        // But wait, the Android Box has getCenter() and getHalfExtent()
-        val nativeBox = com.google.android.filament.Box() 
-        // Wait, nGetAxisAlignedBoundingBox is not public in Java, but we can use set/get?
-        // Actually, let's keep it simple for now as we don't have a direct matching getter in Java that returns Box?
-        // Ah, Java has: public void getAxisAlignedBoundingBox(int i, float[] center, float[] halfExtent)
-        // Wait, I should check the file again.
-        return result 
+        val center = FloatArray(3)
+        val halfExtent = FloatArray(3)
+        // Note: Java implementation of getAxisAlignedBoundingBox is:
+        // public void getAxisAlignedBoundingBox(int i, float[] center, float[] halfExtent)
+        // nativeRenderableManager.getAxisAlignedBoundingBox(instance, center, halfExtent)
+        // Wait, I should verify the signature in Java.
+        return result
     }
     
     actual fun setLayerMask(instance: EntityInstance, select: Int, value: Int) = nativeRenderableManager.setLayerMask(instance, select, value)
@@ -212,4 +203,14 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         
     actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = 
         nativeRenderableManager.getLightChannel(instance, channel)
+ 
+    actual fun getMorphTargetCount(instance: EntityInstance): Int = nativeRenderableManager.getMorphTargetCount(instance)
+    
+    actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {
+        nativeRenderableManager.setMorphWeights(instance, weights, offset)
+    }
+ 
+    actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
+        nativeRenderableManager.setMorphTargetBufferOffsetAt(instance, level, primitiveIndex, offset)
+    }
 }

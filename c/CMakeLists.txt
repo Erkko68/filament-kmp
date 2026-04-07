@@ -8,46 +8,47 @@ set(CMAKE_C_STANDARD 11)
 option(FILAMENT_SUPPORTS_VULKAN "Enables Vulkan" OFF)
 
 # Filament directory setup
-# Expecting FILAMENT_DIST_DIR to point to the compiled filament distribution
 if (NOT FILAMENT_DIST_DIR)
-    # Fallback to a relative path if not provided
-    set(FILAMENT_DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-main/out/release/filament")
+    set(FILAMENT_DIST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../filament-main")
 endif()
 
-message(STATUS "Using Filament distribution at: ${FILAMENT_DIST_DIR}")
+set(FILAMENT_BUILD_DIR "${FILAMENT_DIST_DIR}/out/cmake-make-release")
 
-# Imported libraries (matching filament-android configuration)
+message(STATUS "Using Filament distribution at: ${FILAMENT_DIST_DIR}")
+message(STATUS "Using Filament build at: ${FILAMENT_BUILD_DIR}")
+
+# Imported libraries
 add_library(filament STATIC IMPORTED)
 set_target_properties(filament PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libfilament.a) # Defaulting to x86_64 for desktop verification
+        ${FILAMENT_BUILD_DIR}/filament/libfilament.a)
 
 add_library(backend STATIC IMPORTED)
 set_target_properties(backend PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libbackend.a)
+        ${FILAMENT_BUILD_DIR}/filament/backend/libbackend.a)
 
 add_library(utils STATIC IMPORTED)
 set_target_properties(utils PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libutils.a)
+        ${FILAMENT_BUILD_DIR}/libs/utils/libutils.a)
 
 add_library(geometry STATIC IMPORTED)
 set_target_properties(geometry PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libgeometry.a)
+        ${FILAMENT_BUILD_DIR}/libs/geometry/libgeometry_combined.a)
 
 add_library(ibl-lite STATIC IMPORTED)
 set_target_properties(ibl-lite PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libibl-lite.a)
+        ${FILAMENT_BUILD_DIR}/libs/ibl-lite/libibl-lite.a)
 
 add_library(filaflat STATIC IMPORTED)
 set_target_properties(filaflat PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libfilaflat.a)
+        ${FILAMENT_BUILD_DIR}/libs/filaflat/libfilaflat.a)
 
 add_library(filabridge STATIC IMPORTED)
 set_target_properties(filabridge PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libfilabridge.a)
+        ${FILAMENT_BUILD_DIR}/libs/filabridge/libfilabridge.a)
 
 add_library(zstd STATIC IMPORTED)
 set_target_properties(zstd PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_DIST_DIR}/lib/x86_64/libzstd.a)
+        ${FILAMENT_BUILD_DIR}/third_party/zstd/libzstd.a)
 
 # The C-wrapper library
 add_library(filament-c SHARED
@@ -114,7 +115,11 @@ target_include_directories(filament-c PUBLIC
 
 target_include_directories(filament-c PRIVATE
     filament/cpp
-    ${FILAMENT_DIST_DIR}/include
+    ${FILAMENT_DIST_DIR}/filament/include
+    ${FILAMENT_DIST_DIR}/libs/utils/include
+    ${FILAMENT_DIST_DIR}/libs/math/include
+    ${FILAMENT_DIST_DIR}/libs/geometry/include
+    ${FILAMENT_BUILD_DIR}/generated/include
 )
 
 target_link_libraries(filament-c

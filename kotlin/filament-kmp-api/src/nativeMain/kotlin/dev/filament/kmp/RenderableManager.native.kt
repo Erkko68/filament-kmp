@@ -6,142 +6,64 @@ import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaRenderableManager
 import cnames.structs.FilaRenderableManagerBuilder
 
-actual class RenderableManager internal constructor(internal var nativeHandle: CPointer<FilaRenderableManager>?) {
-    actual enum class PrimitiveType(val value: Int) {
-        POINTS(0), LINES(1), TRIANGLES(4), NONE(0xFF);
-        internal fun toNative(): FilaRenderableManagerPrimitiveType = when (this) {
-            POINTS -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_POINTS
-            LINES -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_LINES
-            TRIANGLES -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_TRIANGLES
-            NONE -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_NONE
-        }
-    }
-
-    actual enum class GeometryType {
-        STATIC, DYNAMIC;
-        internal fun toNative(): FilaRenderableManagerGeometryType = when (this) {
-            STATIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC
-            DYNAMIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_DYNAMIC
-        }
-    }
+actual class RenderableManager internal constructor(internal val nativeHandle: CPointer<FilaRenderableManager>) {
+    actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
+    actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 
     actual class Builder actual constructor(count: Int) {
         private val nativeBuilder = FilaRenderableManagerBuilder_create(count.toULong())!!
 
-        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder {
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
             FilaRenderableManagerBuilder_geometry(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle)
-            return this
         }
-
-        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder {
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder = apply {
             FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toULong(), count.toULong())
-            return this
         }
-
-        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder {
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
             FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toULong(), minIndex.toULong(), maxIndex.toULong(), count.toULong())
-            return this
         }
-
-        actual fun geometryType(type: GeometryType): Builder {
+        
+        actual fun geometryType(type: GeometryType): Builder = apply {
             FilaRenderableManagerBuilder_geometryType(nativeBuilder, type.toNative())
-            return this
         }
-
-        actual fun material(index: Int, materialInstance: MaterialInstance): Builder {
+        actual fun material(index: Int, materialInstance: MaterialInstance): Builder = apply {
             FilaRenderableManagerBuilder_material(nativeBuilder, index.toULong(), materialInstance.nativeHandle)
-            return this
         }
-
-        actual fun blendOrder(index: Int, blendOrder: Int): Builder {
+        actual fun blendOrder(index: Int, blendOrder: Int): Builder = apply {
             FilaRenderableManagerBuilder_blendOrder(nativeBuilder, index.toULong(), blendOrder.toUShort())
-            return this
         }
-
-        actual fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder {
+        actual fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder = apply {
             FilaRenderableManagerBuilder_globalBlendOrderEnabled(nativeBuilder, index.toULong(), enabled)
-            return this
         }
-
-        actual fun boundingBox(box: Box): Builder {
-            FilaRenderableManagerBuilder_boundingBox(nativeBuilder,
+        actual fun boundingBox(box: Box): Builder = apply {
+            FilaRenderableManagerBuilder_boundingBox(nativeBuilder, 
                 box.center[0], box.center[1], box.center[2],
-                box.halfExtent[0], box.halfExtent[1], box.halfExtent[2]
-            )
-            return this
+                box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
         }
-
-        actual fun layerMask(select: Int, value: Int): Builder {
-            FilaRenderableManagerBuilder_layerMask(nativeBuilder, select.toUByte(), value.toUByte())
-            return this
-        }
-
-        actual fun priority(priority: Int): Builder {
-            FilaRenderableManagerBuilder_priority(nativeBuilder, priority.toUByte())
-            return this
-        }
-
-        actual fun channel(channel: Int): Builder {
-            FilaRenderableManagerBuilder_channel(nativeBuilder, channel.toUByte())
-            return this
-        }
-
-        actual fun culling(enabled: Boolean): Builder {
-            FilaRenderableManagerBuilder_culling(nativeBuilder, enabled)
-            return this
-        }
-
-        actual fun castShadows(enabled: Boolean): Builder {
-            FilaRenderableManagerBuilder_castShadows(nativeBuilder, enabled)
-            return this
-        }
-
-        actual fun receiveShadows(enabled: Boolean): Builder {
-            FilaRenderableManagerBuilder_receiveShadows(nativeBuilder, enabled)
-            return this
-        }
-
-        actual fun screenSpaceContactShadows(enabled: Boolean): Builder {
-            FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enabled)
-            return this
-        }
-
-        actual fun skinning(boneCount: Int): Builder {
-            FilaRenderableManagerBuilder_skinning(nativeBuilder, boneCount.toUInt())
-            return this
-        }
-
-        actual fun skinning(boneCount: Int, bones: FloatArray): Builder {
-            bones.usePinned { 
-                FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount.toUInt(), it.addressOf(0))
+        actual fun layerMask(select: Int, value: Int): Builder = apply { FilaRenderableManagerBuilder_layerMask(nativeBuilder, select.toUByte(), value.toUByte()) }
+        actual fun priority(priority: Int): Builder = apply { FilaRenderableManagerBuilder_priority(nativeBuilder, priority.toUByte()) }
+        actual fun channel(channel: Int): Builder = apply { FilaRenderableManagerBuilder_channel(nativeBuilder, channel.toUByte()) }
+        actual fun culling(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_culling(nativeBuilder, enabled) }
+        actual fun castShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_castShadows(nativeBuilder, enabled) }
+        actual fun receiveShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_receiveShadows(nativeBuilder, enabled) }
+        actual fun screenSpaceContactShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enabled) }
+        actual fun skinning(boneCount: Int): Builder = apply { FilaRenderableManagerBuilder_skinning(nativeBuilder, boneCount.toUInt()) }
+        actual fun skinning(boneCount: Int, bones: FloatArray): Builder = apply {
+            bones.usePinned { pinned ->
+                FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount.toUInt(), pinned.addressOf(0))
             }
-            return this
         }
-
-        actual fun morphing(targetCount: Int): Builder {
-            FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount.toUInt())
-            return this
-        }
-
-        actual fun fog(enabled: Boolean): Builder {
-            FilaRenderableManagerBuilder_fog(nativeBuilder, enabled)
-            return this
-        }
-
-        actual fun lightChannel(channel: Int, enable: Boolean): Builder {
-            FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel.toUInt(), enable)
-            return this
-        }
-
-        actual fun instances(instanceCount: Int): Builder {
-            FilaRenderableManagerBuilder_instances(nativeBuilder, instanceCount.toULong())
-            return this
-        }
-
+        actual fun morphing(targetCount: Int): Builder = apply { FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount.toUInt()) }
+        actual fun fog(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
+        actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel.toUInt(), enable) }
+        actual fun instances(instanceCount: Int): Builder = apply { FilaRenderableManagerBuilder_instances(nativeBuilder, instanceCount.toULong()) }
         actual fun build(engine: Engine, entity: Entity) {
             FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity.toUInt())
             FilaRenderableManagerBuilder_destroy(nativeBuilder)
         }
+
+        private fun PrimitiveType.toNative(): UInt = ordinal.toUInt()
+        private fun GeometryType.toNative(): UInt = ordinal.toUInt()
     }
 
     actual fun hasComponent(entity: Entity): Boolean = FilaRenderableManager_hasComponent(nativeHandle, entity.toUInt())
@@ -149,20 +71,24 @@ actual class RenderableManager internal constructor(internal var nativeHandle: C
     actual fun destroy(entity: Entity) = FilaRenderableManager_destroy(nativeHandle, entity.toUInt())
     
     actual fun setAxisAlignedBoundingBox(instance: EntityInstance, box: Box) {
-        FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance.toUInt(),
+        FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance.toUInt(), 
             box.center[0], box.center[1], box.center[2],
-            box.halfExtent[0], box.halfExtent[1], box.halfExtent[2]
-        )
+            box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
     }
-    
     actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
-        val result = outBox ?: Box()
-        result.center.usePinned { centerPtr ->
-            result.halfExtent.usePinned { halfPtr ->
-                FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance.toUInt(), centerPtr.addressOf(0), halfPtr.addressOf(0))
-            }
+        memScoped {
+            val center = allocArray<FloatVar>(3)
+            val halfExtent = allocArray<FloatVar>(3)
+            FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance.toUInt(), center, halfExtent)
+            val result = outBox ?: Box()
+            result.center[0] = center[0]
+            result.center[1] = center[1]
+            result.center[2] = center[2]
+            result.halfExtent[0] = halfExtent[0]
+            result.halfExtent[1] = halfExtent[1]
+            result.halfExtent[2] = halfExtent[2]
+            return result
         }
-        return result
     }
     
     actual fun setLayerMask(instance: EntityInstance, select: Int, value: Int) = FilaRenderableManager_setLayerMask(nativeHandle, instance.toUInt(), select.toUByte(), value.toUByte())
@@ -184,8 +110,9 @@ actual class RenderableManager internal constructor(internal var nativeHandle: C
     actual fun getPrimitiveCount(instance: EntityInstance): Int = FilaRenderableManager_getPrimitiveCount(nativeHandle, instance.toUInt()).toInt()
     actual fun getInstanceCount(instance: EntityInstance): Int = FilaRenderableManager_getInstanceCount(nativeHandle, instance.toUInt()).toInt()
     
-    actual fun setMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int, materialInstance: MaterialInstance) = 
+    actual fun setMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int, materialInstance: MaterialInstance) {
         FilaRenderableManager_setMaterialInstanceAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), materialInstance.nativeHandle)
+    }
         
     actual fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance? {
         val handle = FilaRenderableManager_getMaterialInstanceAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong())
@@ -197,19 +124,38 @@ actual class RenderableManager internal constructor(internal var nativeHandle: C
     
     actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) = 
         FilaRenderableManager_setBlendOrderAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), blendOrder.toUShort())
-        
-    actual fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int = 
-        FilaRenderableManager_getBlendOrderAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong()).toInt()
-        
+    actual fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int = FilaRenderableManager_getBlendOrderAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong()).toInt()
     actual fun setGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int, enabled: Boolean) = 
         FilaRenderableManager_setGlobalBlendOrderEnabledAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), enabled)
-        
     actual fun isGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int): Boolean = 
         FilaRenderableManager_isGlobalBlendOrderEnabledAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong())
     
-    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = 
-        FilaRenderableManager_setLightChannel(nativeHandle, instance.toUInt(), channel.toUInt(), enable)
-        
-    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = 
-        FilaRenderableManager_getLightChannel(nativeHandle, instance.toUInt(), channel.toUInt())
+    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = FilaRenderableManager_setLightChannel(nativeHandle, instance.toUInt(), channel.toUInt(), enable)
+    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = FilaRenderableManager_getLightChannel(nativeHandle, instance.toUInt(), channel.toUInt())
+ 
+    actual fun getMorphTargetCount(instance: EntityInstance): Int = FilaRenderableManager_getMorphTargetCount(nativeHandle, instance.toUInt()).toInt()
+    
+    actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {
+        weights.usePinned { pinned ->
+            FilaRenderableManager_setMorphWeights(nativeHandle, instance.toUInt(), pinned.addressOf(offset), (weights.size - offset).toUInt(), offset.toUInt())
+        }
+    }
+ 
+    actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
+        FilaRenderableManager_setMorphTargetBufferOffsetAt(nativeHandle, instance.toUInt(), level.toUByte(), primitiveIndex.toULong(), offset.toULong())
+    }
+ 
+    private fun PrimitiveType.toNative(): UInt = when (this) {
+        PrimitiveType.POINTS -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_POINTS
+        PrimitiveType.LINES -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_LINES
+        PrimitiveType.LINE_STRIP -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_LINE_STRIP
+        PrimitiveType.TRIANGLES -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_TRIANGLES
+        PrimitiveType.TRIANGLE_STRIP -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_TRIANGLE_STRIP
+    }
+ 
+    private fun GeometryType.toNative(): UInt = when (this) {
+        GeometryType.DYNAMIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_DYNAMIC
+        GeometryType.STATIC_BOUNDS -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC_BOUNDS
+        GeometryType.STATIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC
+    }
 }

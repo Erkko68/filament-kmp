@@ -10,10 +10,20 @@ extern "C" {
 typedef enum FilaMaterialShading {
     FILA_MATERIAL_SHADING_UNLIT = 0,
     FILA_MATERIAL_SHADING_LIT = 1,
-    FILA_MATERIAL_SHADING_CLOTH = 2,
-    FILA_MATERIAL_SHADING_SUBSURFACE = 3,
+    FILA_MATERIAL_SHADING_SUBSURFACE = 2,
+    FILA_MATERIAL_SHADING_CLOTH = 3,
     FILA_MATERIAL_SHADING_SPECULAR_GLOSSINESS = 4,
 } FilaMaterialShading;
+
+typedef enum FilaMaterialShadowSamplingQuality {
+    FILA_MATERIAL_SHADOW_SAMPLING_QUALITY_HARD = 0,
+    FILA_MATERIAL_SHADOW_SAMPLING_QUALITY_LOW = 1,
+} FilaMaterialShadowSamplingQuality;
+
+typedef enum FilaMaterialUboBatchingMode {
+    FILA_MATERIAL_UBO_BATCHING_MODE_DEFAULT = 0,
+    FILA_MATERIAL_UBO_BATCHING_MODE_DISABLED = 1,
+} FilaMaterialUboBatchingMode;
 
 typedef enum FilaMaterialInterpolation {
     FILA_MATERIAL_INTERPOLATION_SMOOTH = 0,
@@ -50,61 +60,6 @@ typedef enum FilaMaterialVertexDomain {
     FILA_MATERIAL_VERTEX_DOMAIN_DEVICE = 3,
 } FilaMaterialVertexDomain;
 
-typedef enum FilaMaterialProperty {
-    FILA_MATERIAL_PROPERTY_BASE_COLOR = 0,
-    FILA_MATERIAL_PROPERTY_ROUGHNESS = 1,
-    FILA_MATERIAL_PROPERTY_METALLIC = 2,
-    FILA_MATERIAL_PROPERTY_REFLECTANCE = 3,
-    FILA_MATERIAL_PROPERTY_AMBIENT_OCCLUSION = 4,
-    FILA_MATERIAL_PROPERTY_EMISSIVE = 5,
-    FILA_MATERIAL_PROPERTY_CLEAR_COAT = 6,
-    FILA_MATERIAL_PROPERTY_CLEAR_COAT_ROUGHNESS = 7,
-    FILA_MATERIAL_PROPERTY_CLEAR_COAT_NORMAL = 8,
-    FILA_MATERIAL_PROPERTY_ANISOTROPY = 9,
-    FILA_MATERIAL_PROPERTY_ANISOTROPY_DIRECTION = 10,
-    FILA_MATERIAL_PROPERTY_THICKNESS = 11,
-    FILA_MATERIAL_PROPERTY_SUBSURFACE_POWER = 12,
-    FILA_MATERIAL_PROPERTY_SUBSURFACE_COLOR = 13,
-    FILA_MATERIAL_PROPERTY_SHEEN_COLOR = 14,
-    FILA_MATERIAL_PROPERTY_SHEEN_ROUGHNESS = 15,
-    FILA_MATERIAL_PROPERTY_GLOSSINESS = 16,
-    FILA_MATERIAL_PROPERTY_SPECULAR_COLOR = 17,
-    FILA_MATERIAL_PROPERTY_NORMAL = 18,
-    FILA_MATERIAL_PROPERTY_BENT_NORMAL = 19,
-    FILA_MATERIAL_PROPERTY_CLEAR_COAT_BENT_NORMAL = 20,
-    FILA_MATERIAL_PROPERTY_IOR = 21,
-    FILA_MATERIAL_PROPERTY_TRANSMISSION = 22,
-    FILA_MATERIAL_PROPERTY_ABSORPTION = 23,
-    FILA_MATERIAL_PROPERTY_MICRO_THICKNESS = 24,
-} FilaMaterialProperty;
-
-typedef enum FilaMaterialParameterType {
-    FILA_MATERIAL_PARAMETER_TYPE_BOOL = 0,
-    FILA_MATERIAL_PARAMETER_TYPE_BOOL2 = 1,
-    FILA_MATERIAL_PARAMETER_TYPE_BOOL3 = 2,
-    FILA_MATERIAL_PARAMETER_TYPE_BOOL4 = 3,
-    FILA_MATERIAL_PARAMETER_TYPE_FLOAT = 4,
-    FILA_MATERIAL_PARAMETER_TYPE_FLOAT2 = 5,
-    FILA_MATERIAL_PARAMETER_TYPE_FLOAT3 = 6,
-    FILA_MATERIAL_PARAMETER_TYPE_FLOAT4 = 7,
-    FILA_MATERIAL_PARAMETER_TYPE_INT = 8,
-    FILA_MATERIAL_PARAMETER_TYPE_INT2 = 9,
-    FILA_MATERIAL_PARAMETER_TYPE_INT3 = 10,
-    FILA_MATERIAL_PARAMETER_TYPE_INT4 = 11,
-    FILA_MATERIAL_PARAMETER_TYPE_UINT = 12,
-    FILA_MATERIAL_PARAMETER_TYPE_UINT2 = 13,
-    FILA_MATERIAL_PARAMETER_TYPE_UINT3 = 14,
-    FILA_MATERIAL_PARAMETER_TYPE_UINT4 = 15,
-    FILA_MATERIAL_PARAMETER_TYPE_MAT3 = 16,
-    FILA_MATERIAL_PARAMETER_TYPE_MAT4 = 17,
-    FILA_MATERIAL_PARAMETER_TYPE_SAMPLER_2D = 100,
-    FILA_MATERIAL_PARAMETER_TYPE_SAMPLER_2D_ARRAY = 101,
-    FILA_MATERIAL_PARAMETER_TYPE_SAMPLER_CUBEMAP = 102,
-    FILA_MATERIAL_PARAMETER_TYPE_SAMPLER_EXTERNAL = 103,
-    FILA_MATERIAL_PARAMETER_TYPE_SAMPLER_3D = 104,
-    FILA_MATERIAL_PARAMETER_TYPE_SUBPASS_INPUT = 200,
-} FilaMaterialParameterType;
-
 typedef enum FilaMaterialPrecision {
     FILA_MATERIAL_PRECISION_LOW = 0,
     FILA_MATERIAL_PRECISION_MEDIUM = 1,
@@ -112,19 +67,31 @@ typedef enum FilaMaterialPrecision {
     FILA_MATERIAL_PRECISION_DEFAULT = 3,
 } FilaMaterialPrecision;
 
+typedef enum FilaMaterialCompilerPriorityQueue {
+    FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_CRITICAL = 0,
+    FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_HIGH = 1,
+    FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_LOW = 2,
+} FilaMaterialCompilerPriorityQueue;
+
 typedef struct FilaMaterialParameterInfo {
     const char* name;
-    FilaMaterialParameterType type;
+    int type; // Use int for simplicity if enum FilaMaterialParameterType is not included
     FilaMaterialPrecision precision;
     uint32_t count;
 } FilaMaterialParameterInfo;
 
 typedef void (*FilaMaterialCompileCallback)(FilaMaterial* material, void* userData);
 
-// Builder
-FilaMaterial* FilaMaterial_Builder_build(FilaEngine* engine, const void* payload, size_t size);
+// Persistent Builder
+FilaMaterial_Builder* FilaMaterial_Builder_create();
+void FilaMaterial_Builder_destroy(FilaMaterial_Builder* builder);
+void FilaMaterial_Builder_package(FilaMaterial_Builder* builder, const void* payload, size_t size);
+void FilaMaterial_Builder_sphericalHarmonicsBandCount(FilaMaterial_Builder* builder, int count);
+void FilaMaterial_Builder_shadowSamplingQuality(FilaMaterial_Builder* builder, FilaMaterialShadowSamplingQuality quality);
+void FilaMaterial_Builder_uboBatching(FilaMaterial_Builder* builder, FilaMaterialUboBatchingMode mode);
+FilaMaterial* FilaMaterial_Builder_build(FilaMaterial_Builder* builder, FilaEngine* engine);
 
-// Material
+// Material methods
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(const FilaMaterial* material);
 FilaMaterialInstance* FilaMaterial_createInstance(FilaMaterial* material);
 FilaMaterialInstance* FilaMaterial_createInstanceWithName(FilaMaterial* material, const char* name);
@@ -137,7 +104,6 @@ FilaMaterialTransparencyMode FilaMaterial_getTransparencyMode(const FilaMaterial
 int FilaMaterial_getRefractionMode(const FilaMaterial* material);
 int FilaMaterial_getRefractionType(const FilaMaterial* material);
 int FilaMaterial_getReflectionMode(const FilaMaterial* material);
-int FilaMaterial_getFeatureLevel(const FilaMaterial* material);
 FilaMaterialVertexDomain FilaMaterial_getVertexDomain(const FilaMaterial* material);
 FilaMaterialCullingMode FilaMaterial_getCullingMode(const FilaMaterial* material);
 
@@ -150,15 +116,12 @@ bool FilaMaterial_isAlphaToCoverageEnabled(const FilaMaterial* material);
 float FilaMaterial_getMaskThreshold(const FilaMaterial* material);
 float FilaMaterial_getSpecularAntiAliasingVariance(const FilaMaterial* material);
 float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* material);
+FilaEngineFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* material);
 
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* material);
-void FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* out, uint32_t count);
-
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material);
-bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name);
-const char* FilaMaterial_getParameterTransformName(const FilaMaterial* material, const char* samplerName);
 
-void FilaMaterial_compile(FilaMaterial* material, int priority, int variants, void* handler, FilaMaterialCompileCallback callback, void* userData);
+void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQueue priority, uint32_t variants, void* handler, FilaMaterialCompileCallback callback, void* userData);
 
 #ifdef __cplusplus
 }

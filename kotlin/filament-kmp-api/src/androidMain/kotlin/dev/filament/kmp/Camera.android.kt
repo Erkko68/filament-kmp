@@ -1,13 +1,15 @@
 package dev.filament.kmp
 
-actual class Camera internal constructor(val nativeCamera: com.google.android.filament.Camera) {
+import com.google.android.filament.Camera as AndroidCamera
+
+actual class Camera internal constructor(val nativeCamera: AndroidCamera) {
     actual enum class Projection {
         PERSPECTIVE, ORTHO;
-        internal fun toAndroid() = com.google.android.filament.Camera.Projection.values()[ordinal]
+        internal fun toAndroid() = AndroidCamera.Projection.values()[ordinal]
     }
     actual enum class Fov {
         VERTICAL, HORIZONTAL;
-        internal fun toAndroid() = com.google.android.filament.Camera.Fov.values()[ordinal]
+        internal fun toAndroid() = AndroidCamera.Fov.values()[ordinal]
     }
  
     actual fun setProjection(projection: Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double) {
@@ -24,6 +26,13 @@ actual class Camera internal constructor(val nativeCamera: com.google.android.fi
     }
     actual fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double) {
         nativeCamera.setCustomProjection(matrix, matrixForCulling, near, far)
+    }
+
+    actual fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double) {
+        nativeCamera.setCustomEyeProjection(projection, count, projectionForCulling, near, far)
+    }
+    actual fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray) {
+        nativeCamera.setEyeModelMatrix(eyeId, modelMatrix)
     }
     
     actual fun setScaling(x: Double, y: Double) {
@@ -67,14 +76,20 @@ actual class Camera internal constructor(val nativeCamera: com.google.android.fi
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
         nativeCamera.setExposure(aperture, shutterSpeed, sensitivity)
     }
+    actual fun setExposure(exposure: Float) {
+        nativeCamera.setExposure(exposure)
+    }
     actual fun getAperture(): Float = nativeCamera.aperture
     actual fun getShutterSpeed(): Float = nativeCamera.shutterSpeed
     actual fun getSensitivity(): Float = nativeCamera.sensitivity
+    actual fun getFocalLength(): Double = nativeCamera.focalLength
     
     actual fun setFocusDistance(distance: Float) {
         nativeCamera.focusDistance = distance
     }
     actual fun getFocusDistance(): Float = nativeCamera.focusDistance
     
+    actual fun getFieldOfViewInDegrees(direction: Fov): Double = nativeCamera.getFieldOfViewInDegrees(direction.toAndroid())
+
     actual fun getEntity(): Int = nativeCamera.entity
 }

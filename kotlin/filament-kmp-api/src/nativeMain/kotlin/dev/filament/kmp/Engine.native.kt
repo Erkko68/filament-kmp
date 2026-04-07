@@ -218,11 +218,9 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     }
     actual fun destroyMaterial(material: Material) {
         FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
-        material.nativeHandle = null
     }
     actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
         FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
-        materialInstance.nativeHandle = null
     }
     actual fun destroySkybox(skybox: Skybox) {
         FilaEngine_destroySkybox(nativeHandle, skybox.nativeHandle)
@@ -234,18 +232,16 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     }
     actual fun destroyTexture(texture: Texture) {
         FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
-        texture.nativeHandle = null
     }
     actual fun destroyRenderTarget(target: RenderTarget) {
         FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle)
-        target.nativeHandle = null
     }
     actual fun destroyEntity(entity: Int) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
 
-    actual fun getTransformManager(): TransformManager = TransformManager(FilaEngine_getTransformManager(nativeHandle))
-    actual fun getLightManager(): LightManager = LightManager(FilaEngine_getLightManager(nativeHandle))
-    actual fun getRenderableManager(): RenderableManager = RenderableManager(FilaEngine_getRenderableManager(nativeHandle))
-    actual fun getEntityManager(): EntityManager = EntityManager(FilaEngine_getEntityManager(nativeHandle))
+    actual fun getTransformManager(): TransformManager = TransformManager(FilaEngine_getTransformManager(nativeHandle)!!)
+    actual fun getLightManager(): LightManager = LightManager(FilaEngine_getLightManager(nativeHandle)!!)
+    actual fun getRenderableManager(): RenderableManager = RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!)
+    actual fun getEntityManager(): EntityManager = EntityManager(FilaEngine_getEntityManager(nativeHandle)!!)
 
     actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000u) }
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())

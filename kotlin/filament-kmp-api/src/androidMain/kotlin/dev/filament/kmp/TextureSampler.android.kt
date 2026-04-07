@@ -3,7 +3,7 @@ package dev.filament.kmp
 import com.google.android.filament.TextureSampler as FilaTextureSampler
 
 actual class TextureSampler {
-    internal val mSampler: FilaTextureSampler
+    internal val nativeSampler: FilaTextureSampler
 
     actual enum class WrapMode {
         CLAMP_TO_EDGE,
@@ -42,60 +42,60 @@ actual class TextureSampler {
     }
 
     actual constructor() {
-        mSampler = FilaTextureSampler()
+        nativeSampler = FilaTextureSampler()
     }
 
     actual constructor(minMag: MagFilter) {
-        mSampler = FilaTextureSampler(minMag.toFila())
+        nativeSampler = FilaTextureSampler(minMag.toFila())
     }
 
     actual constructor(minMag: MagFilter, wrap: WrapMode) {
-        mSampler = FilaTextureSampler(minMag.toFila(), wrap.toFila())
+        nativeSampler = FilaTextureSampler(minMag.toFila(), wrap.toFila())
     }
 
     actual constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) {
-        mSampler = FilaTextureSampler(min.toFila(), mag.toFila(), wrap.toFila())
+        nativeSampler = FilaTextureSampler(min.toFila(), mag.toFila(), wrap.toFila())
     }
 
     actual constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) {
-        mSampler = FilaTextureSampler(min.toFila(), mag.toFila(), s.toFila(), t.toFila(), r.toFila())
+        nativeSampler = FilaTextureSampler(min.toFila(), mag.toFila(), s.toFila(), t.toFila(), r.toFila())
     }
 
     actual constructor(mode: CompareMode) {
-        mSampler = FilaTextureSampler(mode.toFila())
+        nativeSampler = FilaTextureSampler(mode.toFila())
     }
 
     actual constructor(mode: CompareMode, function: CompareFunction) {
-        mSampler = FilaTextureSampler(mode.toFila(), function.toFila())
+        nativeSampler = FilaTextureSampler(mode.toFila(), function.toFila())
     }
 
     internal constructor(sampler: FilaTextureSampler) {
-        mSampler = sampler
+        nativeSampler = sampler
     }
 
-    actual fun getMinFilter(): MinFilter = MinFilter.values()[mSampler.minFilter.ordinal]
-    actual fun setMinFilter(filter: MinFilter) { mSampler.minFilter = filter.toFila() }
+    actual fun getMinFilter(): MinFilter = MinFilter.values()[nativeSampler.minFilter.ordinal]
+    actual fun setMinFilter(filter: MinFilter) { nativeSampler.minFilter = filter.toFila() }
 
-    actual fun getMagFilter(): MagFilter = MagFilter.values()[mSampler.magFilter.ordinal]
-    actual fun setMagFilter(filter: MagFilter) { mSampler.magFilter = filter.toFila() }
+    actual fun getMagFilter(): MagFilter = MagFilter.values()[nativeSampler.magFilter.ordinal]
+    actual fun setMagFilter(filter: MagFilter) { nativeSampler.magFilter = filter.toFila() }
 
-    actual fun getWrapModeS(): WrapMode = WrapMode.values()[mSampler.wrapModeS.ordinal]
-    actual fun setWrapModeS(mode: WrapMode) { mSampler.wrapModeS = mode.toFila() }
+    actual fun getWrapModeS(): WrapMode = WrapMode.values()[nativeSampler.wrapModeS.ordinal]
+    actual fun setWrapModeS(mode: WrapMode) { nativeSampler.wrapModeS = mode.toFila() }
 
-    actual fun getWrapModeT(): WrapMode = WrapMode.values()[mSampler.wrapModeT.ordinal]
-    actual fun setWrapModeT(mode: WrapMode) { mSampler.wrapModeT = mode.toFila() }
+    actual fun getWrapModeT(): WrapMode = WrapMode.values()[nativeSampler.wrapModeT.ordinal]
+    actual fun setWrapModeT(mode: WrapMode) { nativeSampler.wrapModeT = mode.toFila() }
 
-    actual fun getWrapModeR(): WrapMode = WrapMode.values()[mSampler.wrapModeR.ordinal]
-    actual fun setWrapModeR(mode: WrapMode) { mSampler.wrapModeR = mode.toFila() }
+    actual fun getWrapModeR(): WrapMode = WrapMode.values()[nativeSampler.wrapModeR.ordinal]
+    actual fun setWrapModeR(mode: WrapMode) { nativeSampler.wrapModeR = mode.toFila() }
 
-    actual fun getAnisotropy(): Float = mSampler.anisotropy
-    actual fun setAnisotropy(anisotropy: Float) { mSampler.anisotropy = anisotropy }
+    actual fun getAnisotropy(): Float = nativeSampler.anisotropy
+    actual fun setAnisotropy(anisotropy: Float) { nativeSampler.anisotropy = anisotropy }
 
-    actual fun getCompareMode(): CompareMode = CompareMode.values()[mSampler.compareMode.ordinal]
-    actual fun setCompareMode(mode: CompareMode) { mSampler.compareMode = mode.toFila() }
+    actual fun getCompareMode(): CompareMode = CompareMode.values()[nativeSampler.compareMode.ordinal]
+    actual fun setCompareMode(mode: CompareMode) { nativeSampler.compareMode = mode.toFila() }
 
-    actual fun getCompareFunction(): CompareFunction = CompareFunction.values()[mSampler.compareFunction.ordinal]
-    actual fun setCompareFunction(function: CompareFunction) { mSampler.compareFunction = function.toFila() }
+    actual fun getCompareFunction(): CompareFunction = CompareFunction.values()[nativeSampler.compareFunction.ordinal]
+    actual fun setCompareFunction(function: CompareFunction) { nativeSampler.compareFunction = function.toFila() }
 
     private fun WrapMode.toFila() = FilaTextureSampler.WrapMode.values()[this.ordinal]
     private fun MinFilter.toFila() = FilaTextureSampler.MinFilter.values()[this.ordinal]

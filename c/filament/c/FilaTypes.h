@@ -28,6 +28,7 @@ typedef struct FilaBufferObject FilaBufferObject;
 typedef struct FilaTexture FilaTexture;
 typedef struct FilaStream FilaStream;
 typedef struct FilaMaterial FilaMaterial;
+typedef struct FilaMaterial_Builder FilaMaterial_Builder;
 typedef struct FilaMaterialInstance FilaMaterialInstance;
 
 typedef struct FilaRenderableManager FilaRenderableManager;
@@ -36,11 +37,6 @@ typedef struct FilaLightManager FilaLightManager;
 typedef struct FilaEntityManager FilaEntityManager;
 
 typedef struct FilaFence FilaFence;
-typedef struct FilaSwapChain FilaSwapChain;
-typedef struct FilaStream FilaStream;
-typedef struct FilaIndexBuffer FilaIndexBuffer;
-typedef struct FilaVertexBuffer FilaVertexBuffer;
-typedef struct FilaBufferObject FilaBufferObject;
 typedef struct FilaSkinningBuffer FilaSkinningBuffer;
 typedef struct FilaMorphTargetBuffer FilaMorphTargetBuffer;
 typedef struct FilaToneMapper FilaToneMapper;
@@ -113,6 +109,13 @@ typedef enum FilaPixelDataType {
     FILA_PIXEL_DATA_TYPE_USHORT_565 = 10,
     FILA_PIXEL_DATA_TYPE_UINT_2_10_10_10_REV = 11,
 } FilaPixelDataType;
+ 
+typedef enum FilaEngineFeatureLevel {
+    FILA_ENGINE_FEATURE_LEVEL_0 = 0,
+    FILA_ENGINE_FEATURE_LEVEL_1 = 1,
+    FILA_ENGINE_FEATURE_LEVEL_2 = 2,
+    FILA_ENGINE_FEATURE_LEVEL_3 = 3,
+} FilaEngineFeatureLevel;
 
 typedef struct FilaQuat {
     float x, y, z, w;
@@ -121,6 +124,11 @@ typedef struct FilaQuat {
 typedef struct FilaFloat3 {
     float x, y, z;
 } FilaFloat3;
+
+typedef struct FilaBox {
+    float center[3];
+    float halfExtent[3];
+} FilaBox;
 
 typedef struct FilaBone {
     FilaQuat unitQuaternion;

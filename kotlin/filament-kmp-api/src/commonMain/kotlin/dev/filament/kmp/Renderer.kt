@@ -40,6 +40,10 @@ expect class Renderer {
     fun render(view: View)
     fun renderStandaloneView(view: View)
     fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int)
+    
+    fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
+    fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
+
     fun getUserTime(): Double
     fun resetUserTime()
     fun skipNextFrames(frameCount: Int)

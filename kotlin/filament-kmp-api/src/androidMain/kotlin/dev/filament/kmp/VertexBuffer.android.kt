@@ -4,6 +4,21 @@ import com.google.android.filament.VertexBuffer as AndroidVertexBuffer
 import java.nio.Buffer
 
 actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVertexBuffer) {
+    actual enum class VertexAttribute {
+        POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
+        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7
+    }
+
+    actual enum class AttributeType {
+        BYTE, BYTE2, BYTE3, BYTE4,
+        UBYTE, UBYTE2, UBYTE3, UBYTE4,
+        SHORT, SHORT2, SHORT3, SHORT4,
+        USHORT, USHORT2, USHORT3, USHORT4,
+        INT, UINT,
+        FLOAT, FLOAT2, FLOAT3, FLOAT4,
+        HALF, HALF2, HALF3, HALF4
+    }
+
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidVertexBuffer.Builder()
 
@@ -35,28 +50,22 @@ actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVe
         actual fun build(engine: Engine): VertexBuffer = VertexBuffer(nativeBuilder.build(engine.nativeEngine))
     }
 
-    actual enum class VertexAttribute {
-        POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
-        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7
-    }
-
-    actual enum class AttributeType {
-        BYTE, BYTE2, BYTE3, BYTE4,
-        UBYTE, UBYTE2, UBYTE3, UBYTE4,
-        SHORT, SHORT2, SHORT3, SHORT4,
-        USHORT, USHORT2, USHORT3, USHORT4,
-        INT, UINT,
-        FLOAT, FLOAT2, FLOAT3, FLOAT4,
-        HALF, HALF2, HALF3, HALF4
-    }
-
     actual fun getVertexCount(): Int = nativeVertexBuffer.vertexCount
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, sizeInBytes: Int) {
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, 0, sizeInBytes)
+
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any) {
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer)
     }
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int) {
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, destOffsetInBytes, sizeInBytes)
+
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int) {
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, destOffsetInBytes, count)
     }
+
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, buffer: Any, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
+        val executor = handler as? java.util.concurrent.Executor ?: Runnable::run
+        val runnable = if (callback != null) Runnable { callback() } else null
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, buffer as Buffer, destOffsetInBytes, count, executor, runnable)
+    }
+
     actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
         nativeVertexBuffer.setBufferObjectAt(engine.nativeEngine, bufferIndex, bufferObject.nativeBufferObject)
     }

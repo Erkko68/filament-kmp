@@ -122,7 +122,9 @@ actual class Texture internal constructor(internal var nativeHandle: CPointer<Fi
         actual val alignment: Int,
         actual val left: Int,
         actual val top: Int,
-        actual val stride: Int
+        actual val stride: Int,
+        actual val handler: Any?,
+        actual val callback: (() -> Unit)?
     )
 
     actual fun getWidth(level: Int): Int = FilaTexture_getWidth(nativeHandle, level.toULong()).toInt()

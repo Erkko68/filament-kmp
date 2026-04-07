@@ -15,6 +15,11 @@ typedef enum FilaLightManagerType {
     FILA_LIGHT_MANAGER_TYPE_SPOT = 4,
 } FilaLightManagerType;
 
+typedef struct FilaLightManagerVsmShadowOptions {
+    bool elvsm;
+    float blurWidth;
+} FilaLightManagerVsmShadowOptions;
+
 typedef struct FilaLightManagerShadowOptions {
     uint32_t mapSize;
     uint32_t shadowCascades;
@@ -31,10 +36,7 @@ typedef struct FilaLightManagerShadowOptions {
     bool screenSpaceContactShadows;
     uint8_t stepCount;
     float maxShadowDistance;
-    struct {
-        bool elvsm;
-        float blurWidth;
-    } vsm;
+    FilaLightManagerVsmShadowOptions vsm;
     float shadowBulbRadius;
     float transform[4];
 } FilaLightManagerShadowOptions;

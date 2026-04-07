@@ -15,6 +15,7 @@ expect class IndexBuffer {
     }
 
     fun getIndexCount(): Int
-    fun setBuffer(engine: Engine, buffer: Any, sizeInBytes: Int)
-    fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, sizeInBytes: Int)
+    fun setBuffer(engine: Engine, buffer: Any)
+    fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int)
+    fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?)
 }

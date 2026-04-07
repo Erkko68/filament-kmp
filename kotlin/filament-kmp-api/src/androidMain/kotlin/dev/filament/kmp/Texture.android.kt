@@ -104,7 +104,7 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
     actual class Usage {
         actual companion object {
             actual val COLOR_ATTACHMENT = 0x1
-            actual val SAMPLEABLE = 0x10   // MATCHING ANDROID: 0x10 is sampleable
+            actual val SAMPLEABLE = 0x10
             actual val DEPTH_ATTACHMENT = 0x2
             actual val STENCIL_ATTACHMENT = 0x4
             actual val UPLOADABLE = 0x8
@@ -121,16 +121,18 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
         actual val alignment: Int,
         actual val left: Int,
         actual val top: Int,
-        actual val stride: Int
+        actual val stride: Int,
+        actual val handler: Any?,
+        actual val callback: (() -> Unit)?
     ) {
         internal fun toNative(): AndroidTexture.PixelBufferDescriptor {
-            val descriptor = AndroidTexture.PixelBufferDescriptor(
+            val runnable = if (callback != null) Runnable { callback.invoke() } else null
+            return AndroidTexture.PixelBufferDescriptor(
                 storage as Buffer,
                 AndroidTexture.Format.values()[format.ordinal],
                 AndroidTexture.Type.values()[type.ordinal],
-                alignment, left, top, stride, null, null
+                alignment, left, top, stride, handler, runnable
             )
-            return descriptor
         }
     }
 

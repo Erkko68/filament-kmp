@@ -85,6 +85,31 @@ actual class Renderer internal constructor(internal var nativeHandle: CPointer<F
             srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
             flags.toUInt())
     }
+
+    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        val ptr = buffer.storage as? CPointer<*>
+        FilaRenderer_readPixels(
+            nativeHandle, 
+            xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
+            ptr, buffer.sizeInBytes.toULong(),
+            buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
+            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
+            null, null, null // Handler and callback not yet bridged for Native
+        )
+    }
+
+    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        val ptr = buffer.storage as? CPointer<*>
+        FilaRenderer_readPixelsRenderTarget(
+            nativeHandle, renderTarget.nativeHandle,
+            xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
+            ptr, buffer.sizeInBytes.toULong(),
+            buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
+            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
+            null, null, null // Handler and callback not yet bridged for Native
+        )
+    }
+
     actual fun getUserTime(): Double = FilaRenderer_getUserTime(nativeHandle)
     actual fun resetUserTime() = FilaRenderer_resetUserTime(nativeHandle)
     actual fun skipNextFrames(frameCount: Int) = FilaRenderer_skipNextFrames(nativeHandle, frameCount.toUInt())
