@@ -17,8 +17,6 @@ expect class LightManager {
         var shadowFarHint: Float
         var stable: Boolean
         var lispsm: Boolean
-        var polygonOffsetConstant: Float
-        var polygonOffsetSlope: Float
         var screenSpaceContactShadows: Boolean
         var stepCount: Int
         var maxShadowDistance: Float

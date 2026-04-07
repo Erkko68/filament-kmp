@@ -231,5 +231,7 @@ expect class View {
     fun getMaterialGlobal(index: Int): FloatArray
     fun getFogEntity(): Int
     fun clearFrameHistory(engine: Engine)
+    
+    fun setDynamicLightingOptions(zNear: Float, zFar: Float)
 }
 

@@ -537,4 +537,8 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     actual fun getMaterialGlobal(index: Int): FloatArray = this@View.nativeView.getMaterialGlobal(index, null)
     actual fun getFogEntity(): Int = this@View.nativeView.fogEntity
     actual fun clearFrameHistory(engine: Engine) { this@View.nativeView.clearFrameHistory(engine.nativeEngine) }
+
+    actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
+        nativeView.setDynamicLightingOptions(zNear, zFar)
+    }
 }

@@ -28,6 +28,7 @@ typedef struct FilaEngineConfig {
     uint32_t minCommandBufferSizeMB;
     uint32_t perFrameCommandsSizeMB;
     uint32_t jobSystemThreadCount;
+    uint32_t textureUseAfterFreePoolSize;
     FilaEngineStereoscopicType stereoscopicType;
     uint8_t stereoscopicEyeCount;
     uint32_t resourceAllocatorCacheSizeMB;

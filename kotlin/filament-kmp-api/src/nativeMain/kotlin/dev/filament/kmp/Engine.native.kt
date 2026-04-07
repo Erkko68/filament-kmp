@@ -72,7 +72,7 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
             native.minCommandBufferSizeMB = minCommandBufferSizeMB.toUInt()
             native.perFrameCommandsSizeMB = perFrameCommandsSizeMB.toUInt()
             native.jobSystemThreadCount = jobSystemThreadCount.toUInt()
-            // native.textureUseAfterFreePoolSize is not present in FilaEngineConfig
+            native.textureUseAfterFreePoolSize = textureUseAfterFreePoolSize.toUInt()
             native.stereoscopicType = stereoscopicType.toNative()
             native.stereoscopicEyeCount = stereoscopicEyeCount.toUByte()
             native.resourceAllocatorCacheSizeMB = resourceAllocatorCacheSizeMB.toUInt()

@@ -22,8 +22,6 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
             nativeOptions.shadowFarHint = 100.0f
             nativeOptions.stable = false
             nativeOptions.lispsm = true
-            nativeOptions.polygonOffsetConstant = 0.5f
-            nativeOptions.polygonOffsetSlope = 2.0f
             nativeOptions.screenSpaceContactShadows = false
             nativeOptions.stepCount = 8u.toUByte()
             nativeOptions.maxShadowDistance = 0.0f
@@ -71,14 +69,6 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
         actual var lispsm: Boolean
             get() = nativeOptions.lispsm
             set(value) { nativeOptions.lispsm = value }
-            
-        actual var polygonOffsetConstant: Float
-            get() = nativeOptions.polygonOffsetConstant
-            set(value) { nativeOptions.polygonOffsetConstant = value }
-            
-        actual var polygonOffsetSlope: Float
-            get() = nativeOptions.polygonOffsetSlope
-            set(value) { nativeOptions.polygonOffsetSlope = value }
             
         actual var screenSpaceContactShadows: Boolean
             get() = nativeOptions.screenSpaceContactShadows

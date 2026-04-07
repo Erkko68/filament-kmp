@@ -51,6 +51,7 @@ void FilaEngineBuilder_config(FilaEngineBuilder* builder, const FilaEngineConfig
     cppConfig.minCommandBufferSizeMB = config->minCommandBufferSizeMB;
     cppConfig.perFrameCommandsSizeMB = config->perFrameCommandsSizeMB;
     cppConfig.jobSystemThreadCount = config->jobSystemThreadCount;
+    cppConfig.textureUseAfterFreePoolSize = config->textureUseAfterFreePoolSize;
     cppConfig.stereoscopicType = static_cast<Engine::StereoscopicType>(config->stereoscopicType);
     cppConfig.stereoscopicEyeCount = config->stereoscopicEyeCount;
     cppConfig.resourceAllocatorCacheSizeMB = config->resourceAllocatorCacheSizeMB;

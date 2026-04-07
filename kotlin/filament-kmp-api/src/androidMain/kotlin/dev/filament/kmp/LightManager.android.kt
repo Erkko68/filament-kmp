@@ -49,14 +49,6 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
             get() = nativeOptions.lispsm
             set(value) { nativeOptions.lispsm = value }
             
-        actual var polygonOffsetConstant: Float
-            get() = 0.5f // Default or from native if available, Android ShadowOptions usually has these
-            set(value) { /* nativeOptions.polygonOffsetConstant = value */ }
-            
-        actual var polygonOffsetSlope: Float
-            get() = 2.0f
-            set(value) { /* nativeOptions.polygonOffsetSlope = value */ }
-            
         actual var screenSpaceContactShadows: Boolean
             get() = nativeOptions.screenSpaceContactShadows
             set(value) { nativeOptions.screenSpaceContactShadows = value }

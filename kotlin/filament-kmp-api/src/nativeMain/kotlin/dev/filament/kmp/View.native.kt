@@ -472,4 +472,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
     actual fun getFogEntity(): Int = FilaView_getFogEntity(nativeHandle).toInt()
     actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
+
+    actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
+        FilaView_setDynamicLightingOptions(nativeHandle, zNear, zFar)
+    }
 }
