@@ -53,6 +53,7 @@ typedef struct FilaViewBloomOptions {
     bool threshold;
     bool enabled;
     float highlight;
+    FilaViewQualityLevel quality;
     bool lensFlare;
     bool starburst;
     float chromaticAberration;
@@ -88,8 +89,8 @@ typedef struct FilaViewDepthOfFieldOptions {
     uint8_t foregroundRingCount;
     uint8_t backgroundRingCount;
     uint8_t fastGatherRingCount;
-    uint8_t maxForegroundCOC;
-    uint8_t maxBackgroundCOC;
+    uint16_t maxForegroundCOC;
+    uint16_t maxBackgroundCOC;
 } FilaViewDepthOfFieldOptions;
 
 typedef struct FilaViewVignetteOptions {
@@ -130,7 +131,20 @@ typedef struct FilaViewAmbientOcclusionOptions {
 typedef struct FilaViewTemporalAntiAliasingOptions {
     float filterWidth;
     float feedback;
+    float lodBias;
+    float sharpness;
     bool enabled;
+    float upscaling;
+    bool filterHistory;
+    bool filterInput;
+    bool useYCoCg;
+    bool hdr;
+    int boxType;
+    int boxClipping;
+    int jitterPattern;
+    float varianceGamma;
+    bool preventFlickering;
+    bool historyReprojection;
 } FilaViewTemporalAntiAliasingOptions;
 
 typedef struct FilaViewMultiSampleAntiAliasingOptions {
@@ -150,6 +164,7 @@ typedef struct FilaViewScreenSpaceReflectionsOptions {
 typedef struct FilaViewVsmShadowOptions {
     uint8_t anisotropy;
     bool mipmapping;
+    uint8_t msaaSamples;
     bool highPrecision;
     float minVarianceScale;
     float lightBleedReduction;
@@ -159,6 +174,14 @@ typedef struct FilaViewSoftShadowOptions {
     float penumbraScale;
     float penumbraRatioScale;
 } FilaViewSoftShadowOptions;
+
+typedef struct FilaViewGuardBandOptions {
+    bool enabled;
+} FilaViewGuardBandOptions;
+
+typedef struct FilaViewStereoscopicOptions {
+    bool enabled;
+} FilaViewStereoscopicOptions;
 
 typedef struct FilaViewPickingQueryResult {
     FilaEntity renderable;
@@ -230,6 +253,12 @@ void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaViewMu
 void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, FilaViewMultiSampleAntiAliasingOptions* out);
 void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaViewScreenSpaceReflectionsOptions* options);
 void FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaViewScreenSpaceReflectionsOptions* out);
+
+void FilaView_setStereoscopicOptions(FilaView* view, const FilaViewStereoscopicOptions* options);
+void FilaView_getStereoscopicOptions(const FilaView* view, FilaViewStereoscopicOptions* out);
+
+void FilaView_setGuardBandOptions(FilaView* view, const FilaViewGuardBandOptions* options);
+void FilaView_getGuardBandOptions(const FilaView* view, FilaViewGuardBandOptions* out);
 
 void FilaView_setFrustumCullingEnabled(FilaView* view, bool enabled);
 bool FilaView_isFrustumCullingEnabled(const FilaView* view);

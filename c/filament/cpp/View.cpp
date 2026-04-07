@@ -118,6 +118,7 @@ void FilaView_setVsmShadowOptions(FilaView* view, const FilaViewVsmShadowOptions
     View::VsmShadowOptions cppOptions;
     cppOptions.anisotropy = options->anisotropy;
     cppOptions.mipmapping = options->mipmapping;
+    cppOptions.msaaSamples = options->msaaSamples;
     cppOptions.highPrecision = options->highPrecision;
     cppOptions.minVarianceScale = options->minVarianceScale;
     cppOptions.lightBleedReduction = options->lightBleedReduction;
@@ -231,6 +232,7 @@ void FilaView_setBloomOptions(FilaView* view, const FilaViewBloomOptions* option
     cppOptions.threshold = options->threshold;
     cppOptions.enabled = options->enabled;
     cppOptions.highlight = options->highlight;
+    cppOptions.quality = static_cast<View::QualityLevel>(options->quality);
     cppOptions.lensFlare = options->lensFlare;
     cppOptions.starburst = options->starburst;
     cppOptions.chromaticAberration = options->chromaticAberration;
@@ -254,6 +256,7 @@ void FilaView_getBloomOptions(const FilaView* view, FilaViewBloomOptions* out) {
     out->threshold = cppOptions.threshold;
     out->enabled = cppOptions.enabled;
     out->highlight = cppOptions.highlight;
+    out->quality = static_cast<FilaViewQualityLevel>(cppOptions.quality);
     out->lensFlare = cppOptions.lensFlare;
     out->starburst = cppOptions.starburst;
     out->chromaticAberration = cppOptions.chromaticAberration;
@@ -358,7 +361,20 @@ void FilaView_setTemporalAntiAliasingOptions(FilaView* view, const FilaViewTempo
     View::TemporalAntiAliasingOptions cppOptions;
     cppOptions.filterWidth = options->filterWidth;
     cppOptions.feedback = options->feedback;
+    cppOptions.lodBias = options->lodBias;
+    cppOptions.sharpness = options->sharpness;
     cppOptions.enabled = options->enabled;
+    cppOptions.upscaling = options->upscaling;
+    cppOptions.filterHistory = options->filterHistory;
+    cppOptions.filterInput = options->filterInput;
+    cppOptions.useYCoCg = options->useYCoCg;
+    cppOptions.hdr = options->hdr;
+    cppOptions.boxType = static_cast<View::TemporalAntiAliasingOptions::BoxType>(options->boxType);
+    cppOptions.boxClipping = static_cast<View::TemporalAntiAliasingOptions::BoxClipping>(options->boxClipping);
+    cppOptions.jitterPattern = static_cast<View::TemporalAntiAliasingOptions::JitterPattern>(options->jitterPattern);
+    cppOptions.varianceGamma = options->varianceGamma;
+    cppOptions.preventFlickering = options->preventFlickering;
+    cppOptions.historyReprojection = options->historyReprojection;
     FILA_CAST(View, view)->setTemporalAntiAliasingOptions(cppOptions);
 }
 
@@ -366,7 +382,20 @@ void FilaView_getTemporalAntiAliasingOptions(const FilaView* view, FilaViewTempo
     const View::TemporalAntiAliasingOptions& cppOptions = FILA_CONST_CAST(View, view)->getTemporalAntiAliasingOptions();
     out->filterWidth = cppOptions.filterWidth;
     out->feedback = cppOptions.feedback;
+    out->lodBias = cppOptions.lodBias;
+    out->sharpness = cppOptions.sharpness;
     out->enabled = cppOptions.enabled;
+    out->upscaling = cppOptions.upscaling;
+    out->filterHistory = cppOptions.filterHistory;
+    out->filterInput = cppOptions.filterInput;
+    out->useYCoCg = cppOptions.useYCoCg;
+    out->hdr = cppOptions.hdr;
+    out->boxType = static_cast<int>(cppOptions.boxType);
+    out->boxClipping = static_cast<int>(cppOptions.boxClipping);
+    out->jitterPattern = static_cast<int>(cppOptions.jitterPattern);
+    out->varianceGamma = cppOptions.varianceGamma;
+    out->preventFlickering = cppOptions.preventFlickering;
+    out->historyReprojection = cppOptions.historyReprojection;
 }
 
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaViewMultiSampleAntiAliasingOptions* options) {
@@ -400,6 +429,28 @@ void FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaViewScr
     out->bias = cppOptions.bias;
     out->maxDistance = cppOptions.maxDistance;
     out->stride = cppOptions.stride;
+    out->enabled = cppOptions.enabled;
+}
+
+void FilaView_setStereoscopicOptions(FilaView* view, const FilaViewStereoscopicOptions* options) {
+    View::StereoscopicOptions cppOptions;
+    cppOptions.enabled = options->enabled;
+    FILA_CAST(View, view)->setStereoscopicOptions(cppOptions);
+}
+
+void FilaView_getStereoscopicOptions(const FilaView* view, FilaViewStereoscopicOptions* out) {
+    const View::StereoscopicOptions& cppOptions = FILA_CONST_CAST(View, view)->getStereoscopicOptions();
+    out->enabled = cppOptions.enabled;
+}
+
+void FilaView_setGuardBandOptions(FilaView* view, const FilaViewGuardBandOptions* options) {
+    View::GuardBandOptions cppOptions;
+    cppOptions.enabled = options->enabled;
+    FILA_CAST(View, view)->setGuardBandOptions(cppOptions);
+}
+
+void FilaView_getGuardBandOptions(const FilaView* view, FilaViewGuardBandOptions* out) {
+    const View::GuardBandOptions& cppOptions = FILA_CONST_CAST(View, view)->getGuardBandOptions();
     out->enabled = cppOptions.enabled;
 }
 

@@ -7,6 +7,7 @@ expect class View {
     enum class ToneMapping { LINEAR, ACES }
     enum class BlendMode { OPAQUE, TRANSLUCENT }
     enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
+    enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
 
     class DynamicResolutionOptions() {
         var enabled: Boolean
@@ -39,6 +40,9 @@ expect class View {
         var haloRadius: Float
         var haloThickness: Float
         var haloThreshold: Float
+        var highlight: Float
+        var blendMode: BlendMode
+        enum class BlendMode { ADD, INTERPOLATE }
     }
 
     class FogOptions() {
@@ -49,6 +53,12 @@ expect class View {
         var heightFalloff: Float
         var color: FloatArray
         var densityMap: Texture?
+        var cutOffDistance: Float
+        var maximumOpacity: Float
+        var inScatteringStart: Float
+        var inScatteringSize: Float
+        var fogColorFromIbl: Boolean
+        var skyColor: Texture?
     }
 
     class DepthOfFieldOptions() {
@@ -60,6 +70,8 @@ expect class View {
         var foregroundRingCount: Int
         var backgroundRingCount: Int
         var fastGatherRingCount: Int
+        var maxForegroundCOC: Int
+        var maxBackgroundCOC: Int
         enum class Filter { NONE, MEDIAN, GAUSSIAN }
     }
 
@@ -83,12 +95,40 @@ expect class View {
         var upsampling: Quality
         var enabled: Boolean
         var bentNormals: Boolean
+        var bilateralThreshold: Float
+        var resolution: Float
+        var ssct: Ssct
+        class Ssct() {
+            var enabled: Boolean
+            var lightConeRad: Float
+            var shadowDistance: Float
+            var contactDistanceMax: Float
+            var intensity: Float
+            var lightDirection: FloatArray
+            var depthBias: Float
+            var depthSlopeBias: Float
+            var sampleCount: Int
+            var rayCount: Int
+        }
     }
 
     class TemporalAntiAliasingOptions() {
         var filterWidth: Float
         var feedback: Float
+        var lodBias: Float
+        var sharpness: Float
         var enabled: Boolean
+        var upscaling: Float
+        var filterHistory: Boolean
+        var filterInput: Boolean
+        var useYCoCg: Boolean
+        var hdr: Boolean
+        var boxType: Int
+        var boxClipping: Int
+        var jitterPattern: Int
+        var varianceGamma: Float
+        var preventFlickering: Boolean
+        var historyReprojection: Boolean
     }
 
     class ScreenSpaceReflectionsOptions() {
@@ -97,6 +137,34 @@ expect class View {
         var bias: Float
         var maxDistance: Float
         var stride: Float
+    }
+
+    class VsmShadowOptions() {
+        var anisotropy: Int
+        var mipmapping: Boolean
+        var msaaSamples: Int
+        var highPrecision: Boolean
+        var minVarianceScale: Float
+        var lightBleedReduction: Float
+    }
+
+    class SoftShadowOptions() {
+        var penumbraScale: Float
+        var penumbraRatioScale: Float
+    }
+
+    class GuardBandOptions() {
+        var enabled: Boolean
+    }
+
+    class StereoscopicOptions() {
+        var enabled: Boolean
+    }
+
+    class MultiSampleAntiAliasingOptions() {
+        var enabled: Boolean
+        var sampleCount: Int
+        var customResolve: Boolean
     }
 
     fun setName(name: String)
@@ -140,4 +208,33 @@ expect class View {
 
     fun setRenderTarget(target: RenderTarget?)
     fun getRenderTarget(): RenderTarget?
+
+    fun setShadowType(type: ShadowType)
+    fun getShadowType(): ShadowType
+    fun setVsmShadowOptions(options: VsmShadowOptions)
+    fun getVsmShadowOptions(): VsmShadowOptions
+    fun setSoftShadowOptions(options: SoftShadowOptions)
+    fun getSoftShadowOptions(): SoftShadowOptions
+    fun setGuardBandOptions(options: GuardBandOptions)
+    fun getGuardBandOptions(): GuardBandOptions
+    fun setStereoscopicOptions(options: StereoscopicOptions)
+    fun getStereoscopicOptions(): StereoscopicOptions
+    fun setMultiSampleAntiAliasingOptions(options: MultiSampleAntiAliasingOptions)
+    fun getMultiSampleAntiAliasingOptions(): MultiSampleAntiAliasingOptions
+
+    fun setFrustumCullingEnabled(enabled: Boolean)
+    fun isFrustumCullingEnabled(): Boolean
+    fun setScreenSpaceRefractionEnabled(enabled: Boolean)
+    fun setStencilBufferEnabled(enabled: Boolean)
+    fun isStencilBufferEnabled(): Boolean
+    fun setFrontFaceWindingInverted(inverted: Boolean)
+    fun isFrontFaceWindingInverted(): Boolean
+    fun setTransparentPickingEnabled(enabled: Boolean)
+    fun isTransparentPickingEnabled(): Boolean
+
+    fun setMaterialGlobal(index: Int, value: FloatArray)
+    fun getMaterialGlobal(index: Int): FloatArray
+    fun getFogEntity(): Int
+    fun clearFrameHistory(engine: Engine)
 }
+
