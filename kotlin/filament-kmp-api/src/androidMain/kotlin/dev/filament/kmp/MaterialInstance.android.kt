@@ -2,21 +2,30 @@ package dev.filament.kmp
 
 import com.google.android.filament.MaterialInstance as AndroidMaterialInstance
 
-actual class MaterialInstance internal constructor(internal val nativeMaterialInstance: AndroidMaterialInstance) {
+actual class MaterialInstance internal constructor(
+    private var mMaterial: Material?, 
+    internal val nativeMaterialInstance: AndroidMaterialInstance
+) {
+    internal constructor(nativeMaterialInstance: AndroidMaterialInstance) : this(null, nativeMaterialInstance)
     actual enum class BooleanElement { BOOL, BOOL2, BOOL3, BOOL4 }
     actual enum class IntElement { INT, INT2, INT3, INT4 }
     actual enum class FloatElement { FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4 }
     
     actual companion object {
         actual fun duplicate(other: MaterialInstance, name: String?): MaterialInstance {
-            return MaterialInstance(AndroidMaterialInstance.duplicate(other.nativeMaterialInstance, name))
+            return MaterialInstance(other.getMaterial(), AndroidMaterialInstance.duplicate(other.nativeMaterialInstance, name))
         }
     }
     
     actual enum class StencilOperation { KEEP, ZERO, REPLACE, INCR_CLAMP, INCR_WRAP, DECR_CLAMP, DECR_WRAP, INVERT }
     actual enum class StencilFace { FRONT, BACK, FRONT_AND_BACK }
 
-    actual fun getMaterial(): Material = Material(nativeMaterialInstance.material)
+    actual fun getMaterial(): Material {
+        if (mMaterial == null) {
+            mMaterial = Material(nativeMaterialInstance.material)
+        }
+        return mMaterial!!
+    }
     actual fun getName(): String = nativeMaterialInstance.name
 
     actual fun setParameter(name: String, x: Boolean) { nativeMaterialInstance.setParameter(name, x) }

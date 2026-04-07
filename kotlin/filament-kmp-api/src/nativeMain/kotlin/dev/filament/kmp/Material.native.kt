@@ -7,6 +7,7 @@ import cnames.structs.FilaMaterial
 import cnames.structs.FilaMaterial_Builder
 
 actual class Material internal constructor(internal val nativeHandle: CPointer<FilaMaterial>) {
+    private val mDefaultInstance: MaterialInstance by lazy { MaterialInstance(this, FilaMaterial_getDefaultInstance(nativeHandle)!!) }
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
@@ -68,9 +69,9 @@ actual class Material internal constructor(internal val nativeHandle: CPointer<F
         )
     }
 
-    actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle)!!)
-    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(FilaMaterial_createInstanceWithName(nativeHandle, name)!!)
-    actual fun getDefaultInstance(): MaterialInstance = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle)!!)
+    actual fun createInstance(): MaterialInstance = MaterialInstance(this, FilaMaterial_createInstance(nativeHandle)!!)
+    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(this, FilaMaterial_createInstanceWithName(nativeHandle, name)!!)
+    actual fun getDefaultInstance(): MaterialInstance = mDefaultInstance
 
     actual fun getName(): String = FilaMaterial_getName(nativeHandle)?.toKString() ?: ""
     actual fun getShading(): Shading = Shading.entries[FilaMaterial_getShading(nativeHandle).toInt()]

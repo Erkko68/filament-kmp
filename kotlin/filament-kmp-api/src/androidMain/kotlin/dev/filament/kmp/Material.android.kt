@@ -5,6 +5,7 @@ import java.nio.Buffer
 import java.util.BitSet
 
 actual class Material internal constructor(internal val nativeMaterial: AndroidMaterial) {
+    private val mDefaultInstance: MaterialInstance by lazy { MaterialInstance(this, nativeMaterial.defaultInstance) }
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
@@ -38,7 +39,7 @@ actual class Material internal constructor(internal val nativeMaterial: AndroidM
         }
 
         actual fun uboBatching(mode: UboBatchingMode): Builder {
-            // Android SDK might not expose this yet in the same way, or it's a newer feature
+            androidBuilder.uboBatching(AndroidMaterial.UboBatchingMode.entries[mode.ordinal])
             return this
         }
 
@@ -61,9 +62,9 @@ actual class Material internal constructor(internal val nativeMaterial: AndroidM
         )
     }
 
-    actual fun createInstance(): MaterialInstance = MaterialInstance(nativeMaterial.createInstance())
-    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(nativeMaterial.createInstance(name))
-    actual fun getDefaultInstance(): MaterialInstance = MaterialInstance(nativeMaterial.getDefaultInstance())
+    actual fun createInstance(): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance())
+    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance(name))
+    actual fun getDefaultInstance(): MaterialInstance = mDefaultInstance
 
     actual fun getName(): String = nativeMaterial.name
     actual fun getShading(): Shading = Shading.values()[nativeMaterial.shading.ordinal]
@@ -87,10 +88,11 @@ actual class Material internal constructor(internal val nativeMaterial: AndroidM
     actual fun getParameterCount(): Int = nativeMaterial.parameterCount
 
     actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
-        val bitset = nativeMaterial.requiredAttributes as java.util.BitSet
+        val attrSet = nativeMaterial.requiredAttributes
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
+        // We iterate over our KMP enum entries and check if they exist in the Java set
         VertexBuffer.VertexAttribute.entries.forEach { attr ->
-            if (bitset.get(attr.ordinal)) {
+            if (attrSet.any { it.name == attr.name }) {
                 result.add(attr)
             }
         }

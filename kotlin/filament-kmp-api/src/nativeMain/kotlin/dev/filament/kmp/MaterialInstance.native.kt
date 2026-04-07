@@ -5,7 +5,11 @@ import kotlinx.cinterop.*
 import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaMaterialInstance
 
-actual class MaterialInstance internal constructor(internal val nativeHandle: CPointer<FilaMaterialInstance>) {
+actual class MaterialInstance internal constructor(
+    private var mMaterial: Material?, 
+    internal val nativeHandle: CPointer<FilaMaterialInstance>
+) {
+    internal constructor(nativeHandle: CPointer<FilaMaterialInstance>) : this(null, nativeHandle)
     actual enum class BooleanElement { BOOL, BOOL2, BOOL3, BOOL4 }
     actual enum class IntElement { INT, INT2, INT3, INT4 }
     actual enum class FloatElement { FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4 }
@@ -15,11 +19,16 @@ actual class MaterialInstance internal constructor(internal val nativeHandle: CP
  
     actual companion object {
         actual fun duplicate(other: MaterialInstance, name: String?): MaterialInstance {
-            return MaterialInstance(FilaMaterialInstance_duplicate(other.nativeHandle, name)!!)
+            return MaterialInstance(other.getMaterial(), FilaMaterialInstance_duplicate(other.nativeHandle, name)!!)
         }
     }
 
-    actual fun getMaterial(): Material = Material(FilaMaterialInstance_getMaterial(nativeHandle)!!)
+    actual fun getMaterial(): Material {
+        if (mMaterial == null) {
+            mMaterial = Material(FilaMaterialInstance_getMaterial(nativeHandle)!!)
+        }
+        return mMaterial!!
+    }
     actual fun getName(): String = FilaMaterialInstance_getName(nativeHandle)?.toKString() ?: ""
 
     actual fun setParameter(name: String, x: Boolean) { FilaMaterialInstance_setParameterBool(nativeHandle, name, x) }
