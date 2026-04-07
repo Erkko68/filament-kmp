@@ -11,6 +11,7 @@
 
 using namespace filament;
 using namespace backend;
+using namespace filament_c;
 
 extern "C" {
 
@@ -42,8 +43,8 @@ void FilaRenderer_copyFrame(FilaRenderer* renderer, FilaSwapChain* dstSwapChain,
         int dstLeft, int dstBottom, int dstWidth, int dstHeight,
         int srcLeft, int srcBottom, int srcWidth, int srcHeight,
         uint32_t flags) {
-    const Viewport dstViewport{dstLeft, dstBottom, (uint32_t)dstWidth, (uint32_t)dstHeight};
-    const Viewport srcViewport{srcLeft, srcBottom, (uint32_t)srcWidth, (uint32_t)srcHeight};
+    const filament::Viewport dstViewport{dstLeft, dstBottom, (uint32_t)dstWidth, (uint32_t)dstHeight};
+    const filament::Viewport srcViewport{srcLeft, srcBottom, (uint32_t)srcWidth, (uint32_t)srcHeight};
     FILA_CAST(Renderer, renderer)->copyFrame(FILA_CAST(SwapChain, dstSwapChain), dstViewport, srcViewport, flags);
 }
 
@@ -54,13 +55,10 @@ void FilaRenderer_readPixels(FilaRenderer* renderer,
         uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     
+    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, (PixelDataFormat)format, (PixelDataType)type, alignment, left, top, stride,
             reinterpret_cast<CallbackHandler*>(handler),
-            [callback, userData](void* buf, size_t size, void*) {
-                if (callback) {
-                    callback(buf, size, userData);
-                }
-            });
+            pixelBufferCallback, wrapper);
     FILA_CAST(Renderer, renderer)->readPixels(xoffset, yoffset, width, height, std::move(desc));
 }
 
@@ -71,13 +69,10 @@ void FilaRenderer_readPixelsRenderTarget(FilaRenderer* renderer, FilaRenderTarge
         uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     
+    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, (PixelDataFormat)format, (PixelDataType)type, alignment, left, top, stride,
             reinterpret_cast<CallbackHandler*>(handler),
-            [callback, userData](void* buf, size_t size, void*) {
-                if (callback) {
-                    callback(buf, size, userData);
-                }
-            });
+            pixelBufferCallback, wrapper);
     FILA_CAST(Renderer, renderer)->readPixels(FILA_CAST(RenderTarget, renderTarget), xoffset, yoffset, width, height, std::move(desc));
 }
 
@@ -98,7 +93,7 @@ void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRenderer
         .headRoomRatio = options->headRoomRatio,
         .scaleRate = options->scaleRate,
         .history = options->history,
-        .interval = options->interval
+        .interval = (uint8_t)options->interval
     });
 }
 

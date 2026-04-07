@@ -32,7 +32,7 @@ void FilaMaterial_Builder_sphericalHarmonicsBandCount(FilaMaterial_Builder* buil
 
 void FilaMaterial_Builder_shadowSamplingQuality(FilaMaterial_Builder* builder, FilaMaterialShadowSamplingQuality quality) {
     reinterpret_cast<Material::Builder*>(builder)->shadowSamplingQuality(
-        static_cast<Material::ShadowSamplingQuality>(quality));
+        static_cast<Material::Builder::ShadowSamplingQuality>(quality));
 }
 
 void FilaMaterial_Builder_uboBatching(FilaMaterial_Builder* builder, FilaMaterialUboBatchingMode mode) {

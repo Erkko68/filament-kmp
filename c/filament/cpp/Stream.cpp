@@ -6,6 +6,7 @@
 #include "../c/Stream.h"
 
 using namespace filament;
+using namespace filament_c;
 
 extern "C" {
 
@@ -43,13 +44,10 @@ FilaStreamType FilaStream_getStreamType(const FilaStream* stream) {
 
 void FilaStream_setAcquiredImage(FilaStream* stream, FilaEngine* engine, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const float* transform) {
     math::mat3f t = transform ? *reinterpret_cast<const math::mat3f*>(transform) : math::mat3f();
+    auto wrapper = new StreamCallbackWrapper{callback, userdata};
     FILA_CAST(Stream, stream)->setAcquiredImage(image, 
         reinterpret_cast<backend::CallbackHandler*>(handler),
-        [callback, userdata](void* img, void*) {
-            if (callback) {
-                callback(img, userdata);
-            }
-        }, userdata, t);
+        streamCallback, wrapper, t);
 }
 
 void FilaStream_setDimensions(FilaStream* stream, uint32_t width, uint32_t height) {

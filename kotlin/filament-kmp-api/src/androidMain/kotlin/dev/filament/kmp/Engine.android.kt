@@ -179,6 +179,22 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         return config
     }
     actual fun getMaxStereoscopicEyes(): Long = nativeEngine.maxStereoscopicEyes
+    
+    actual fun isValidRenderer(renderer: Renderer): Boolean = nativeEngine.isValidRenderer(renderer.nativeRenderer)
+    actual fun isValidView(view: View): Boolean = nativeEngine.isValidView(view.nativeView)
+    actual fun isValidScene(scene: Scene): Boolean = nativeEngine.isValidScene(scene.nativeScene)
+    actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
+    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
+    actual fun isValidMaterial(material: Material): Boolean = nativeEngine.isValidMaterial(material.nativeMaterial)
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = nativeEngine.isValidMaterialInstance(material.nativeMaterial, materialInstance.nativeMaterialInstance)
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = nativeEngine.isValidExpensiveMaterialInstance(materialInstance.nativeMaterialInstance)
+    actual fun isValidSkybox(skybox: Skybox): Boolean = nativeEngine.isValidSkybox(skybox.nativeSkybox)
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = nativeEngine.isValidColorGrading(colorGrading.nativeColorGrading)
+    actual fun isValidTexture(texture: Texture): Boolean = nativeEngine.isValidTexture(texture.nativeTexture)
+    actual fun isValidRenderTarget(target: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(target.nativeRenderTarget)
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
 
     actual fun createSwapChain(surface: Any): SwapChain = SwapChain(nativeEngine.createSwapChain(surface))
     actual fun createSwapChain(surface: Any, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(surface, flags))

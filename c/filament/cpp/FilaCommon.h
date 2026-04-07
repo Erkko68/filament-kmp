@@ -38,4 +38,45 @@
 #define UTILS_CAST(type, ptr) reinterpret_cast<utils::type*>(ptr)
 #define UTILS_CONST_CAST(type, ptr) reinterpret_cast<const utils::type*>(ptr)
 
+namespace filament_c {
+    struct BufferCallbackWrapper {
+        FilaBufferCallback callback;
+        void* userData;
+    };
+
+    inline void bufferCallback(void* buffer, size_t size, void* user) {
+        auto wrapper = reinterpret_cast<BufferCallbackWrapper*>(user);
+        if (wrapper->callback) {
+            wrapper->callback(buffer, size, wrapper->userData);
+        }
+        delete wrapper;
+    }
+
+    struct PixelBufferCallbackWrapper {
+        FilaBufferCallback callback;
+        void* userData;
+    };
+
+    inline void pixelBufferCallback(void* buffer, size_t size, void* user) {
+        auto wrapper = reinterpret_cast<PixelBufferCallbackWrapper*>(user);
+        if (wrapper->callback) {
+            wrapper->callback(buffer, size, wrapper->userData);
+        }
+        delete wrapper;
+    }
+
+    struct StreamCallbackWrapper {
+        FilaStreamCallback callback;
+        void* userData;
+    };
+
+    inline void streamCallback(void* image, void* user) {
+        auto wrapper = reinterpret_cast<StreamCallbackWrapper*>(user);
+        if (wrapper->callback) {
+            wrapper->callback(image, wrapper->userData);
+        }
+        delete wrapper;
+    }
+}
+
 #endif // FILAMENT_CPP_COMMON_H

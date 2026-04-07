@@ -137,7 +137,9 @@ FilaCamera* FilaEngine_getCameraComponent(FilaEngine* engine, FilaEntity entity)
 }
 
 bool FilaEngine_destroyCamera(FilaEngine* engine, FilaCamera* camera) {
-    return FILA_CAST(Engine, engine)->destroy(FILA_CAST(Camera, camera));
+    Camera* cppCamera = FILA_CAST(Camera, camera);
+    FILA_CAST(Engine, engine)->destroyCameraComponent(cppCamera->getEntity());
+    return true;
 }
 
 void FilaEngine_destroyCameraComponent(FilaEngine* engine, FilaEntity entity) {
@@ -208,9 +210,7 @@ bool FilaEngine_destroyTexture(FilaEngine* engine, FilaTexture* texture) {
     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(Texture, texture));
 }
 
-bool FilaEngine_destroyTextureSampler(FilaEngine* engine, FilaTextureSampler* sampler) {
-    return FILA_CAST(Engine, engine)->destroy(FILA_CAST(TextureSampler, sampler));
-}
+
 
 bool FilaEngine_destroyRenderTarget(FilaEngine* engine, FilaRenderTarget* target) {
     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(RenderTarget, target));

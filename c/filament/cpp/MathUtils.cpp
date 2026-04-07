@@ -1,4 +1,4 @@
-#include "c/MathUtils.h"
+#include "../c/MathUtils.h"
 #include <math/mat3.h>
 #include <math/quat.h>
 

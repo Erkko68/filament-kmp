@@ -7,6 +7,7 @@
 
 using namespace filament;
 using namespace backend;
+using namespace filament_c;
 
 extern "C" {
 
@@ -38,13 +39,10 @@ size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer) {
 }
 
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+    auto wrapper = new BufferCallbackWrapper{callback, userData};
     BufferDescriptor desc(buffer, sizeInBytes, 
         reinterpret_cast<backend::CallbackHandler*>(handler),
-        [callback, userData](void* buf, size_t size, void*) {
-            if (callback) {
-                callback(buf, size, userData);
-            }
-        });
+        bufferCallback, wrapper);
     FILA_CAST(IndexBuffer, indexBuffer)->setBuffer(*FILA_CAST(Engine, engine), std::move(desc), destOffsetInBytes);
 }
 

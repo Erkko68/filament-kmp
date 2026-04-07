@@ -109,6 +109,22 @@ expect class Engine {
     fun isAutomaticInstancingEnabled(): Boolean
     fun getConfig(): Config
     fun getMaxStereoscopicEyes(): Long
+    
+    fun isValidRenderer(renderer: Renderer): Boolean
+    fun isValidView(view: View): Boolean
+    fun isValidScene(scene: Scene): Boolean
+    fun isValidFence(fence: Fence): Boolean
+    fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
+    fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
+    fun isValidIndirectLight(ibl: IndirectLight): Boolean
+    fun isValidMaterial(material: Material): Boolean
+    fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean
+    fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean
+    fun isValidSkybox(skybox: Skybox): Boolean
+    fun isValidColorGrading(colorGrading: ColorGrading): Boolean
+    fun isValidTexture(texture: Texture): Boolean
+    fun isValidRenderTarget(target: RenderTarget): Boolean
+    fun isValidSwapChain(swapChain: SwapChain): Boolean
 
     // SwapChain
     fun createSwapChain(surface: Any): SwapChain

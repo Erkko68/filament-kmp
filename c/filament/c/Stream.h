@@ -12,9 +12,6 @@ typedef enum FilaStreamType {
     FILA_STREAM_TYPE_ACQUIRED = 1,
 } FilaStreamType;
 
-// Matches filament::backend::StreamCallback
-typedef void (*FilaStreamCallback)(void* image, void* userdata);
-
 // Builder
 typedef struct FilaStreamBuilder FilaStreamBuilder;
 

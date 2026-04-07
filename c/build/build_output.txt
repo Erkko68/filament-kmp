@@ -1,0 +1,149 @@
+[  2%] Building CXX object CMakeFiles/filament-c.dir/filament/cpp/Engine.cpp.o
+/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/Engine.cpp:140:39: error: no matching member function for call to 'destroy'
+  140 |     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(Camera, camera));
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:664:17: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'Engine * _Nullable * _Nullable' for 1st argument
+  664 |     static void destroy(Engine* UTILS_NULLABLE* UTILS_NULLABLE engine);
+      |                 ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:691:17: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'Engine * _Nullable' for 1st argument
+  691 |     static void destroy(Engine* UTILS_NULLABLE engine);
+      |                 ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:931:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const BufferObject * _Nullable' for 1st argument
+  931 |     bool destroy(const BufferObject* UTILS_NULLABLE p);         //!< Destroys a BufferObject object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:932:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const VertexBuffer * _Nullable' for 1st argument
+  932 |     bool destroy(const VertexBuffer* UTILS_NULLABLE p);         //!< Destroys an VertexBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:933:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Fence * _Nullable' for 1st argument
+  933 |     bool destroy(const Fence* UTILS_NULLABLE p);                //!< Destroys a Fence object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:934:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Sync * _Nullable' for 1st argument
+  934 |     bool destroy(const Sync* UTILS_NULLABLE p);                 //!< Destroys a Sync object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:935:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const IndexBuffer * _Nullable' for 1st argument
+  935 |     bool destroy(const IndexBuffer* UTILS_NULLABLE p);          //!< Destroys an IndexBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:936:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const SkinningBuffer * _Nullable' for 1st argument
+  936 |     bool destroy(const SkinningBuffer* UTILS_NULLABLE p);       //!< Destroys a SkinningBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:937:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const MorphTargetBuffer * _Nullable' for 1st argument
+  937 |     bool destroy(const MorphTargetBuffer* UTILS_NULLABLE p);    //!< Destroys a MorphTargetBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:938:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const IndirectLight * _Nullable' for 1st argument
+  938 |     bool destroy(const IndirectLight* UTILS_NULLABLE p);        //!< Destroys an IndirectLight object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:948:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Material * _Nullable' for 1st argument
+  948 |     bool destroy(const Material* UTILS_NULLABLE p);
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:949:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const MaterialInstance * _Nullable' for 1st argument
+  949 |     bool destroy(const MaterialInstance* UTILS_NULLABLE p); //!< Destroys a MaterialInstance object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:950:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Renderer * _Nullable' for 1st argument
+  950 |     bool destroy(const Renderer* UTILS_NULLABLE p);         //!< Destroys a Renderer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:951:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Scene * _Nullable' for 1st argument
+  951 |     bool destroy(const Scene* UTILS_NULLABLE p);            //!< Destroys a Scene object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:952:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Skybox * _Nullable' for 1st argument
+  952 |     bool destroy(const Skybox* UTILS_NULLABLE p);           //!< Destroys a SkyBox object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:953:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const ColorGrading * _Nullable' for 1st argument
+  953 |     bool destroy(const ColorGrading* UTILS_NULLABLE p);     //!< Destroys a ColorGrading object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:954:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const SwapChain * _Nullable' for 1st argument
+  954 |     bool destroy(const SwapChain* UTILS_NULLABLE p);        //!< Destroys a SwapChain object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:955:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Stream * _Nullable' for 1st argument
+  955 |     bool destroy(const Stream* UTILS_NULLABLE p);           //!< Destroys a Stream object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:956:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const Texture * _Nullable' for 1st argument
+  956 |     bool destroy(const Texture* UTILS_NULLABLE p);          //!< Destroys a Texture object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:957:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const RenderTarget * _Nullable' for 1st argument
+  957 |     bool destroy(const RenderTarget* UTILS_NULLABLE p);     //!< Destroys a RenderTarget object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:958:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const View * _Nullable' for 1st argument
+  958 |     bool destroy(const View* UTILS_NULLABLE p);             //!< Destroys a View object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:959:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'const InstanceBuffer * _Nullable' for 1st argument
+  959 |     bool destroy(const InstanceBuffer* UTILS_NULLABLE p);   //!< Destroys an InstanceBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:960:10: note: candidate function not viable: no known conversion from 'filament::Camera *' to 'utils::Entity' for 1st argument
+  960 |     void destroy(utils::Entity e);    //!< Destroys all filament-known components from this entity
+      |          ^       ~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/Engine.cpp:212:39: error: no matching member function for call to 'destroy'
+  212 |     return FILA_CAST(Engine, engine)->destroy(FILA_CAST(TextureSampler, sampler));
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:664:17: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'Engine * _Nullable * _Nullable' for 1st argument
+  664 |     static void destroy(Engine* UTILS_NULLABLE* UTILS_NULLABLE engine);
+      |                 ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:691:17: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'Engine * _Nullable' for 1st argument
+  691 |     static void destroy(Engine* UTILS_NULLABLE engine);
+      |                 ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:931:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const BufferObject * _Nullable' for 1st argument
+  931 |     bool destroy(const BufferObject* UTILS_NULLABLE p);         //!< Destroys a BufferObject object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:932:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const VertexBuffer * _Nullable' for 1st argument
+  932 |     bool destroy(const VertexBuffer* UTILS_NULLABLE p);         //!< Destroys an VertexBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:933:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Fence * _Nullable' for 1st argument
+  933 |     bool destroy(const Fence* UTILS_NULLABLE p);                //!< Destroys a Fence object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:934:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Sync * _Nullable' for 1st argument
+  934 |     bool destroy(const Sync* UTILS_NULLABLE p);                 //!< Destroys a Sync object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:935:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const IndexBuffer * _Nullable' for 1st argument
+  935 |     bool destroy(const IndexBuffer* UTILS_NULLABLE p);          //!< Destroys an IndexBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:936:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const SkinningBuffer * _Nullable' for 1st argument
+  936 |     bool destroy(const SkinningBuffer* UTILS_NULLABLE p);       //!< Destroys a SkinningBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:937:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const MorphTargetBuffer * _Nullable' for 1st argument
+  937 |     bool destroy(const MorphTargetBuffer* UTILS_NULLABLE p);    //!< Destroys a MorphTargetBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:938:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const IndirectLight * _Nullable' for 1st argument
+  938 |     bool destroy(const IndirectLight* UTILS_NULLABLE p);        //!< Destroys an IndirectLight object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:948:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Material * _Nullable' for 1st argument
+  948 |     bool destroy(const Material* UTILS_NULLABLE p);
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:949:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const MaterialInstance * _Nullable' for 1st argument
+  949 |     bool destroy(const MaterialInstance* UTILS_NULLABLE p); //!< Destroys a MaterialInstance object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:950:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Renderer * _Nullable' for 1st argument
+  950 |     bool destroy(const Renderer* UTILS_NULLABLE p);         //!< Destroys a Renderer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:951:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Scene * _Nullable' for 1st argument
+  951 |     bool destroy(const Scene* UTILS_NULLABLE p);            //!< Destroys a Scene object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:952:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Skybox * _Nullable' for 1st argument
+  952 |     bool destroy(const Skybox* UTILS_NULLABLE p);           //!< Destroys a SkyBox object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:953:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const ColorGrading * _Nullable' for 1st argument
+  953 |     bool destroy(const ColorGrading* UTILS_NULLABLE p);     //!< Destroys a ColorGrading object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:954:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const SwapChain * _Nullable' for 1st argument
+  954 |     bool destroy(const SwapChain* UTILS_NULLABLE p);        //!< Destroys a SwapChain object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:955:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Stream * _Nullable' for 1st argument
+  955 |     bool destroy(const Stream* UTILS_NULLABLE p);           //!< Destroys a Stream object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:956:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const Texture * _Nullable' for 1st argument
+  956 |     bool destroy(const Texture* UTILS_NULLABLE p);          //!< Destroys a Texture object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:957:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const RenderTarget * _Nullable' for 1st argument
+  957 |     bool destroy(const RenderTarget* UTILS_NULLABLE p);     //!< Destroys a RenderTarget object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:958:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const View * _Nullable' for 1st argument
+  958 |     bool destroy(const View* UTILS_NULLABLE p);             //!< Destroys a View object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:959:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'const InstanceBuffer * _Nullable' for 1st argument
+  959 |     bool destroy(const InstanceBuffer* UTILS_NULLABLE p);   //!< Destroys an InstanceBuffer object.
+      |          ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h:960:10: note: candidate function not viable: cannot convert argument of incomplete type 'filament::TextureSampler *' to 'utils::Entity' for 1st argument
+  960 |     void destroy(utils::Entity e);    //!< Destroys all filament-known components from this entity
+      |          ^       ~~~~~~~~~~~~~~~
+2 errors generated.
+make[2]: *** [CMakeFiles/filament-c.dir/filament/cpp/Engine.cpp.o] Error 1
+make[1]: *** [CMakeFiles/filament-c.dir/all] Error 2
+make: *** [all] Error 2

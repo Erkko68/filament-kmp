@@ -9,6 +9,7 @@
 
 using namespace filament;
 using namespace backend;
+using namespace filament_c;
 
 extern "C" {
 
@@ -128,30 +129,24 @@ FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture) {
 }
 
 void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, 
         static_cast<backend::PixelDataFormat>(format),
         static_cast<backend::PixelDataType>(type),
         alignment, left, top, stride,
         reinterpret_cast<backend::CallbackHandler*>(handler),
-        [callback, userData](void* buf, size_t size, void*) {
-            if (callback) {
-                callback(buf, size, userData);
-            }
-        });
+        pixelBufferCallback, wrapper);
     FILA_CAST(Texture, texture)->setImage(*FILA_CAST(Engine, engine), level, xoffset, yoffset, zoffset, width, height, depth, std::move(desc));
 }
 
 void FilaTexture_setImageCubemap(FilaTexture* texture, FilaEngine* engine, size_t level, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, const FilaTextureFaceOffsets* faceOffsets, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, 
         static_cast<backend::PixelDataFormat>(format),
         static_cast<backend::PixelDataType>(type),
         alignment, left, top, stride,
         reinterpret_cast<backend::CallbackHandler*>(handler),
-        [callback, userData](void* buf, size_t size, void*) {
-            if (callback) {
-                callback(buf, size, userData);
-            }
-        });
+        pixelBufferCallback, wrapper);
     
     Texture::FaceOffsets offsets;
     offsets.px = faceOffsets->px;

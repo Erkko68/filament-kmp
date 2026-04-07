@@ -23,7 +23,7 @@ FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* builder, FilaEngine* engi
 }
 
 void FilaSkyboxBuilder_environment(FilaSkyboxBuilder* builder, const FilaTexture* texture) {
-    FILA_CAST(Skybox::Builder, builder)->environment(reinterpret_cast<const Texture*>(texture));
+    FILA_CAST(Skybox::Builder, builder)->environment(const_cast<Texture*>(FILA_CONST_CAST(Texture, texture)));
 }
 
 void FilaSkyboxBuilder_showSun(FilaSkyboxBuilder* builder, bool show) {
