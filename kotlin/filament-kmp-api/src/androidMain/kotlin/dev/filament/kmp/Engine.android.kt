@@ -61,9 +61,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         actual var jobSystemThreadCount: Long
             get() = android.jobSystemThreadCount
             set(value) { android.jobSystemThreadCount = value }
-        actual var textureUseAfterFreePoolSize: Long
-            get() = android.textureUseAfterFreePoolSize
-            set(value) { android.textureUseAfterFreePoolSize = value }
         actual var stereoscopicType: StereoscopicType
             get() = StereoscopicType.fromAndroid(android.stereoscopicType)
             set(value) { android.stereoscopicType = value.toAndroid() }
@@ -160,7 +157,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         config.minCommandBufferSizeMB = androidConfig.minCommandBufferSizeMB
         config.perFrameCommandsSizeMB = androidConfig.perFrameCommandsSizeMB
         config.jobSystemThreadCount = androidConfig.jobSystemThreadCount
-        config.textureUseAfterFreePoolSize = androidConfig.textureUseAfterFreePoolSize
         config.stereoscopicType = StereoscopicType.fromAndroid(androidConfig.stereoscopicType)
         config.stereoscopicEyeCount = androidConfig.stereoscopicEyeCount
         config.resourceAllocatorCacheSizeMB = androidConfig.resourceAllocatorCacheSizeMB

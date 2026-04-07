@@ -87,27 +87,51 @@ actual class Renderer internal constructor(internal var nativeHandle: CPointer<F
     }
 
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
-        val ptr = buffer.storage as? CPointer<*>
-        FilaRenderer_readPixels(
-            nativeHandle, 
-            xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
-            ptr, buffer.sizeInBytes.toULong(),
-            buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
-            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
-            null, null, null // Handler and callback not yet bridged for Native
-        )
+        val storage = buffer.storage ?: return
+        val size = buffer.sizeInBytes.toULong()
+        
+        fun doRead(ptr: CPointer<out CPointed>?) {
+            FilaRenderer_readPixels(
+                nativeHandle, 
+                xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
+                ptr, size,
+                buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
+                buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
+                null, null, null
+            )
+        }
+
+        when (storage) {
+            is CPointer<*> -> doRead(storage.reinterpret())
+            is ByteArray -> storage.usePinned { pinned -> doRead(pinned.addressOf(0)) }
+            is FloatArray -> storage.usePinned { pinned -> doRead(pinned.addressOf(0)) }
+            is IntArray -> storage.usePinned { pinned -> doRead(pinned.addressOf(0)) }
+            else -> throw IllegalArgumentException("Unsupported storage type for readPixels: ${storage::class}")
+        }
     }
 
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
-        val ptr = buffer.storage as? CPointer<*>
-        FilaRenderer_readPixelsRenderTarget(
-            nativeHandle, renderTarget.nativeHandle,
-            xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
-            ptr, buffer.sizeInBytes.toULong(),
-            buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
-            buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
-            null, null, null // Handler and callback not yet bridged for Native
-        )
+        val storage = buffer.storage ?: return
+        val size = buffer.sizeInBytes.toULong()
+
+        fun doRead(ptr: CPointer<out CPointed>?) {
+            FilaRenderer_readPixelsRenderTarget(
+                nativeHandle, renderTarget.nativeHandle,
+                xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
+                ptr, size,
+                buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
+                buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
+                null, null, null
+            )
+        }
+
+        when (storage) {
+            is CPointer<*> -> doRead(storage.reinterpret())
+            is ByteArray -> storage.usePinned { pinned -> doRead(pinned.addressOf(0)) }
+            is FloatArray -> storage.usePinned { pinned -> doRead(pinned.addressOf(0)) }
+            is IntArray -> storage.usePinned { pinned -> doRead(pinned.addressOf(0)) }
+            else -> throw IllegalArgumentException("Unsupported storage type for readPixels: ${storage::class}")
+        }
     }
 
     actual fun getUserTime(): Double = FilaRenderer_getUserTime(nativeHandle)

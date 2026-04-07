@@ -54,4 +54,8 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
         }
         return result
     }
+
+    actual fun forEach(block: (Int) -> Unit) {
+        getEntities().forEach(block)
+    }
 }

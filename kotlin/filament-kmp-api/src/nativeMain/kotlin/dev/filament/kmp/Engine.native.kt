@@ -51,7 +51,6 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
         actual var minCommandBufferSizeMB: Long = 1
         actual var perFrameCommandsSizeMB: Long = 2
         actual var jobSystemThreadCount: Long = 0
-        actual var textureUseAfterFreePoolSize: Long = 0
         actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
         actual var stereoscopicEyeCount: Long = 2
         actual var resourceAllocatorCacheSizeMB: Long = 64
@@ -72,7 +71,6 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
             native.minCommandBufferSizeMB = minCommandBufferSizeMB.toUInt()
             native.perFrameCommandsSizeMB = perFrameCommandsSizeMB.toUInt()
             native.jobSystemThreadCount = jobSystemThreadCount.toUInt()
-            native.textureUseAfterFreePoolSize = textureUseAfterFreePoolSize.toUInt()
             native.stereoscopicType = stereoscopicType.toNative()
             native.stereoscopicEyeCount = stereoscopicEyeCount.toUByte()
             native.resourceAllocatorCacheSizeMB = resourceAllocatorCacheSizeMB.toUInt()

@@ -59,7 +59,6 @@ expect class Engine {
         var minCommandBufferSizeMB: Long
         var perFrameCommandsSizeMB: Long
         var jobSystemThreadCount: Long
-        var textureUseAfterFreePoolSize: Long
         var stereoscopicType: StereoscopicType
         var stereoscopicEyeCount: Long
         var resourceAllocatorCacheSizeMB: Long

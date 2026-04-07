@@ -27,6 +27,10 @@ actual class Scene internal constructor(val nativeScene: com.google.android.fila
     actual fun getLightCount(): Int = nativeScene.lightCount
     actual fun hasEntity(entity: Int): Boolean = nativeScene.hasEntity(entity)
 
-    actual fun getEntities(): IntArray = nativeScene.entities
+    actual fun getEntities(): IntArray = nativeScene.getEntities()
     actual fun getEntities(outArray: IntArray?): IntArray = nativeScene.getEntities(outArray)
+
+    actual fun forEach(block: (Int) -> Unit) {
+        nativeScene.getEntities(null).forEach(block)
+    }
 }

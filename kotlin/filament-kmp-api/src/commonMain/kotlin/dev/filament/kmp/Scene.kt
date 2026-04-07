@@ -19,4 +19,6 @@ expect class Scene {
     
     fun getEntities(): IntArray
     fun getEntities(outArray: IntArray?): IntArray
+    
+    fun forEach(block: (Int) -> Unit)
 }

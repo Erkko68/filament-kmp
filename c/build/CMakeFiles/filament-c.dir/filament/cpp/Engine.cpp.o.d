@@ -1,6 +1,6 @@
 CMakeFiles/filament-c.dir/filament/cpp/Engine.cpp.o: \
   /Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/Engine.cpp \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/BufferObject.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/FilamentAPI.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/utils/include/utils/compiler.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/arm_acle.h \
@@ -996,12 +996,8 @@ CMakeFiles/filament-c.dir/filament/cpp/Engine.cpp.o: \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/vec3.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/vec2.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/TVecHelpers.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/SwapChain.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/CallbackHandler.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/View.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Options.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Color.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/utils/include/utils/Entity.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/BufferDescriptor.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Camera.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/mathfwd.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/mat4.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/TMatHelpers.h \
@@ -1009,41 +1005,45 @@ CMakeFiles/filament-c.dir/filament/cpp/Engine.cpp.o: \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/TQuatHelpers.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/scalar.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/math/include/math/mat3.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Renderer.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Camera.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Scene.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/ColorGrading.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/ToneMapper.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Engine.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Fence.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Stream.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/IndexBuffer.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/BufferDescriptor.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/VertexBuffer.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/IndirectLight.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Material.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Color.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/filabridge/include/filament/MaterialEnums.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/BufferObject.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/MaterialInstance.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/CallbackHandler.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/MorphTargetBuffer.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/RenderTarget.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/TargetBufferInfo.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/Handle.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Renderer.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Scene.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/SkinningBuffer.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/RenderableManager.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Box.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/float.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/float.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/float.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/MorphTargetBuffer.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/utils/include/utils/EntityInstance.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/IndirectLight.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Material.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/MaterialInstance.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Skybox.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/ColorGrading.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/ToneMapper.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Stream.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/SwapChain.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Texture.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/PixelBufferDescriptor.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/RenderTarget.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/TargetBufferInfo.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/backend/include/backend/Handle.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/VertexBuffer.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/View.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Options.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/utils/include/utils/Entity.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/libs/utils/include/utils/EntityManager.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/FilaCommon.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Viewport.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/TransformManager.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/LightManager.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/../c/Engine.h \
   /Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/../c/FilaTypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/stdbool.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/stdbool.h \
-  /Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/../c/Engine.h
+  /Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/FilaCommon.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/Viewport.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/TransformManager.h \
+  /Users/eric/IdeaProjects/filament-kmp-core/c/../filament-main/filament/include/filament/LightManager.h
