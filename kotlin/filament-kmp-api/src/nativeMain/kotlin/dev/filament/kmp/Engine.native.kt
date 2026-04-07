@@ -167,6 +167,8 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
     actual fun isValidMaterial(material: Material): Boolean = FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
@@ -175,6 +177,7 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
     actual fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
     actual fun isValidRenderTarget(target: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, target.nativeHandle)
+    actual fun isValidStream(stream: Stream): Boolean = FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
 
     actual fun createSwapChain(surface: Any): SwapChain = SwapChain(FilaEngine_createSwapChain(nativeHandle, null /* TODO */, 0UL))
@@ -233,6 +236,14 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
         FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
         vertexBuffer.nativeHandle = null
     }
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+        skinningBuffer.nativeHandle = null
+    }
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        FilaEngine_destroyMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
+        morphTargetBuffer.nativeHandle = null
+    }
     actual fun destroyIndirectLight(ibl: IndirectLight) {
         FilaEngine_destroyIndirectLight(nativeHandle, ibl.nativeHandle)
         ibl.nativeHandle = null
@@ -256,6 +267,10 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     }
     actual fun destroyRenderTarget(target: RenderTarget) {
         FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle)
+    }
+    actual fun destroyStream(stream: Stream) {
+        FilaEngine_destroyStream(nativeHandle, stream.nativeHandle)
+        stream.nativeHandle = null
     }
     actual fun destroyEntity(entity: Int) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
 

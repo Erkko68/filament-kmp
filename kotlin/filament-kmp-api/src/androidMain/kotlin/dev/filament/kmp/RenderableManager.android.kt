@@ -109,8 +109,18 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
             return this
         }
 
+        actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder {
+            nativeBuilder.skinning(skinningBuffer.nativeSkinningBuffer, boneCount, offset)
+            return this
+        }
+
         actual fun morphing(targetCount: Int): Builder {
             nativeBuilder.morphing(targetCount)
+            return this
+        }
+
+        actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder {
+            nativeBuilder.morphing(morphTargetBuffer.nativeMorphTargetBuffer)
             return this
         }
 
@@ -147,12 +157,14 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
     
     actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
         val result = outBox ?: Box()
-        val center = FloatArray(3)
-        val halfExtent = FloatArray(3)
-        // Note: Java implementation of getAxisAlignedBoundingBox is:
-        // public void getAxisAlignedBoundingBox(int i, float[] center, float[] halfExtent)
-        // nativeRenderableManager.getAxisAlignedBoundingBox(instance, center, halfExtent)
-        // Wait, I should verify the signature in Java.
+        val androidBox = com.google.android.filament.Box()
+        nativeRenderableManager.getAxisAlignedBoundingBox(instance, androidBox)
+        result.center[0] = androidBox.center[0]
+        result.center[1] = androidBox.center[1]
+        result.center[2] = androidBox.center[2]
+        result.halfExtent[0] = androidBox.halfExtent[0]
+        result.halfExtent[1] = androidBox.halfExtent[1]
+        result.halfExtent[2] = androidBox.halfExtent[2]
         return result
     }
     
@@ -205,6 +217,10 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         nativeRenderableManager.getLightChannel(instance, channel)
  
     actual fun getMorphTargetCount(instance: EntityInstance): Int = nativeRenderableManager.getMorphTargetCount(instance)
+    
+    actual fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
+        nativeRenderableManager.setSkinningBuffer(instance, skinningBuffer.nativeSkinningBuffer, count, offset)
+    }
     
     actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {
         nativeRenderableManager.setMorphWeights(instance, weights, offset)

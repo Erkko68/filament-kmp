@@ -23,7 +23,9 @@ expect class RenderableManager {
         fun screenSpaceContactShadows(enabled: Boolean): Builder
         fun skinning(boneCount: Int): Builder
         fun skinning(boneCount: Int, bones: FloatArray): Builder
+        fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder
         fun morphing(targetCount: Int): Builder
+        fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder
         fun fog(enabled: Boolean): Builder
         fun lightChannel(channel: Int, enable: Boolean): Builder
         fun instances(instanceCount: Int): Builder
@@ -70,6 +72,7 @@ expect class RenderableManager {
     fun getLightChannel(instance: EntityInstance, channel: Int): Boolean
  
     fun getMorphTargetCount(instance: EntityInstance): Int
+    fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int)
     fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int = 0)
     fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int)
 }

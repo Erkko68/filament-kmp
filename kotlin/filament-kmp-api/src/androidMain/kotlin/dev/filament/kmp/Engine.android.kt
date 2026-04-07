@@ -191,6 +191,8 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = nativeEngine.isValidSkinningBuffer(skinningBuffer.nativeSkinningBuffer)
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = nativeEngine.isValidMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = nativeEngine.isValidMaterial(material.nativeMaterial)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = nativeEngine.isValidMaterialInstance(material.nativeMaterial, materialInstance.nativeMaterialInstance)
@@ -199,6 +201,7 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = nativeEngine.isValidColorGrading(colorGrading.nativeColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = nativeEngine.isValidTexture(texture.nativeTexture)
     actual fun isValidRenderTarget(target: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(target.nativeRenderTarget)
+    actual fun isValidStream(stream: Stream): Boolean = nativeEngine.isValidStream(stream.nativeStream)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
 
     actual fun createSwapChain(surface: Any): SwapChain = SwapChain(nativeEngine.createSwapChain(surface))
@@ -229,6 +232,8 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) { nativeEngine.destroyIndexBuffer(indexBuffer.nativeIndexBuffer) }
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) { nativeEngine.destroyVertexBuffer(vertexBuffer.nativeVertexBuffer) }
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) { nativeEngine.destroySkinningBuffer(skinningBuffer.nativeSkinningBuffer) }
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) { nativeEngine.destroyMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer) }
     actual fun destroyIndirectLight(ibl: IndirectLight) { nativeEngine.destroyIndirectLight(ibl.nativeIndirectLight) }
     actual fun destroyMaterial(material: Material) { nativeEngine.destroyMaterial(material.nativeMaterial) }
     actual fun destroyMaterialInstance(materialInstance: MaterialInstance) { nativeEngine.destroyMaterialInstance(materialInstance.nativeMaterialInstance) }
@@ -236,6 +241,7 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun destroyColorGrading(colorGrading: ColorGrading) { nativeEngine.destroyColorGrading(colorGrading.nativeColorGrading) }
     actual fun destroyTexture(texture: Texture) { nativeEngine.destroyTexture(texture.nativeTexture) }
     actual fun destroyRenderTarget(target: RenderTarget) { nativeEngine.destroyRenderTarget(target.nativeRenderTarget) }
+    actual fun destroyStream(stream: Stream) { nativeEngine.destroyStream(stream.nativeStream) }
     actual fun destroyEntity(entity: Int) { nativeEngine.destroyEntity(entity) }
 
     actual fun getTransformManager(): TransformManager = mTransformManager

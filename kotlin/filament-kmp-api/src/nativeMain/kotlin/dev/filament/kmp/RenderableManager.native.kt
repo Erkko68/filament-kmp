@@ -53,7 +53,13 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
                 FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount.toUInt(), pinned.addressOf(0))
             }
         }
+        actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
+            FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount.toUInt(), offset.toUInt())
+        }
         actual fun morphing(targetCount: Int): Builder = apply { FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount.toUInt()) }
+        actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
+            FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
+        }
         actual fun fog(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel.toUInt(), enable) }
         actual fun instances(instanceCount: Int): Builder = apply { FilaRenderableManagerBuilder_instances(nativeBuilder, instanceCount.toULong()) }
@@ -135,6 +141,10 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
  
     actual fun getMorphTargetCount(instance: EntityInstance): Int = FilaRenderableManager_getMorphTargetCount(nativeHandle, instance.toUInt()).toInt()
     
+    actual fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
+        FilaRenderableManager_setSkinningBuffer(nativeHandle, instance.toUInt(), skinningBuffer.nativeHandle, count.toUInt(), offset.toUInt())
+    }
+
     actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {
         weights.usePinned { pinned ->
             FilaRenderableManager_setMorphWeights(nativeHandle, instance.toUInt(), pinned.addressOf(offset), (weights.size - offset).toUInt(), offset.toUInt())

@@ -116,6 +116,8 @@ expect class Engine {
     fun isValidFence(fence: Fence): Boolean
     fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
     fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
+    fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
+    fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
     fun isValidIndirectLight(ibl: IndirectLight): Boolean
     fun isValidMaterial(material: Material): Boolean
     fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean
@@ -124,6 +126,7 @@ expect class Engine {
     fun isValidColorGrading(colorGrading: ColorGrading): Boolean
     fun isValidTexture(texture: Texture): Boolean
     fun isValidRenderTarget(target: RenderTarget): Boolean
+    fun isValidStream(stream: Stream): Boolean
     fun isValidSwapChain(swapChain: SwapChain): Boolean
 
     // SwapChain
@@ -158,6 +161,8 @@ expect class Engine {
     // Buffers and Managers
     fun destroyIndexBuffer(indexBuffer: IndexBuffer)
     fun destroyVertexBuffer(vertexBuffer: VertexBuffer)
+    fun destroySkinningBuffer(skinningBuffer: SkinningBuffer)
+    fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer)
     fun destroyIndirectLight(ibl: IndirectLight)
     fun destroyMaterial(material: Material)
     fun destroyMaterialInstance(materialInstance: MaterialInstance)
@@ -165,6 +170,7 @@ expect class Engine {
     fun destroyColorGrading(colorGrading: ColorGrading)
     fun destroyTexture(texture: Texture)
     fun destroyRenderTarget(target: RenderTarget)
+    fun destroyStream(stream: Stream)
     fun destroyEntity(entity: Int)
 
     // Managers
