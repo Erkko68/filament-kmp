@@ -116,7 +116,6 @@ expect class Texture {
     fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor)
     fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor)
     fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor)
-    fun setExternalImage(engine: Engine, eglImage: Long)
     fun setExternalStream(engine: Engine, stream: Stream)
     fun generateMipmaps(engine: Engine)
 

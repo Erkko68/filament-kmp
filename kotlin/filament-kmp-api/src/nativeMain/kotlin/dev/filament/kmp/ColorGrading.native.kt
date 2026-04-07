@@ -14,10 +14,6 @@ actual class ColorGrading internal constructor(internal var nativeHandle: CPoint
             return this
         }
         
-        actual fun toneMapping(toneMapping: ToneMapping): Builder {
-            FilaColorGradingBuilder_toneMapping(nativeBuilder, toneMapping.ordinal.toUInt())
-            return this
-        }
         
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
             FilaColorGradingBuilder_luminanceScaling(nativeBuilder, luminanceScaling)
@@ -67,5 +63,4 @@ actual class ColorGrading internal constructor(internal var nativeHandle: CPoint
     }
 
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
-    actual enum class ToneMapping { LINEAR, ACES_LEGACY, ACES, FILMIC, DISPLAY_RANGE }
 }

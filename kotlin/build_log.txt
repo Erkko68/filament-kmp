@@ -1,1 +1,315 @@
-zsh: no such file or directory: clear./gradlew
+Initialized native services in: /Users/eric/.gradle/native
+Initialized jansi services in: /Users/eric/.gradle/native
+Found daemon DaemonInfo{pid=90771, address=[2b66a25b-a644-4e9e-80c8-d9b2bc9f3d3f port:53694, addresses:[/127.0.0.1]], state=Idle, lastBusy=1775579432323, context=DefaultDaemonContext[uid=4fa33529-4a5f-4eb9-8c98-1f5a72dbaf51,javaHome=/Users/eric/.antigravity/extensions/redhat.java-1.53.0-darwin-arm64/jre/21.0.10-macosx-aarch64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=/Users/eric/.gradle/daemon,pid=90771,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2g,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=/Users/eric/Library/Java/JavaVirtualMachines/ms-21.0.10/Contents/Home (no Daemon JVM specified, using current Java home), daemonOpts=[-Xmx2g, -Dfile.encoding=UTF-8, -Duser.country=US, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=4fa33529-4a5f-4eb9-8c98-1f5a72dbaf51,javaHome=/Users/eric/.antigravity/extensions/redhat.java-1.53.0-darwin-arm64/jre/21.0.10-macosx-aarch64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=/Users/eric/.gradle/daemon,pid=90771,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx2g,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 71606). The daemon log file: /Users/eric/.gradle/daemon/9.3.0/daemon-71606.out.log
+Starting 80th build in daemon [uptime: 1 hrs 49 mins 57.597 secs, performance: 97%, GC rate: 0.00/s, heap usage: 1% of 2 GiB]
+Using 10 worker leases.
+Operational build model parameters: {requiresToolingModels=false, parallelProjectExecution=false, configureOnDemand=false, configurationCache=false, configurationCacheParallelStore=false, configurationCacheParallelLoad=true, isolatedProjects=false, parallelProjectConfiguration=false, intermediateModelCache=false, parallelToolingApiActions=false, invalidateCoupledProjects=false, modelAsProjectDependency=false, resilientModelBuilding=false}
+Now considering [/Users/eric/IdeaProjects/filament-kmp-core/kotlin] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/Users/eric/IdeaProjects/filament-kmp-core/kotlin/settings.gradle.kts'.
+Projects loaded. Root project using build file '/Users/eric/IdeaProjects/filament-kmp-core/kotlin/build.gradle.kts'.
+Included projects: [root project 'filament-kmp', project ':filament-kmp-api']
+
+> Configure project :
+Evaluating root project 'filament-kmp' using build file '/Users/eric/IdeaProjects/filament-kmp-core/kotlin/build.gradle.kts'.
+Resolved plugin [id: 'org.jetbrains.kotlin.multiplatform', version: '2.1.20', apply: false]
+Resolved plugin [id: 'com.android.library', version: '8.13.2', apply: false]
+
+> Configure project :filament-kmp-api
+Evaluating project ':filament-kmp-api' using build file '/Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/build.gradle.kts'.
+Resolved plugin [id: 'org.jetbrains.kotlin.multiplatform']
+Resolved plugin [id: 'com.android.library']
+Build 9f294fe0-cf9e-4801-8b0e-8410ced7125f is started
+Using Kotlin Gradle Plugin gradle85 variant
+Using default execution profile
+All projects evaluated.
+Task path ':filament-kmp-api:compileNativeMainKotlinMetadata' matched project ':filament-kmp-api'
+Task name matched 'compileNativeMainKotlinMetadata'
+Selected primary task 'compileNativeMainKotlinMetadata' from project :filament-kmp-api
+Tasks to be executed: [task ':filament-kmp-api:checkKotlinGradlePluginConfigurationErrors', task ':filament-kmp-api:cinteropFilamentIosArm64', task ':filament-kmp-api:cinteropFilamentIosSimulatorArm64', task ':filament-kmp-api:cinteropFilamentLinuxArm64', task ':filament-kmp-api:cinteropFilamentLinuxX64', task ':filament-kmp-api:cinteropFilamentMacosArm64', task ':filament-kmp-api:cinteropFilamentMingwX64', task ':filament-kmp-api:commonizeNativeDistribution', task ':filament-kmp-api:commonizeCInterop', task ':filament-kmp-api:transformCommonMainDependenciesMetadata', task ':filament-kmp-api:compileCommonMainKotlinMetadata', task ':filament-kmp-api:metadataCommonMainProcessResources', task ':filament-kmp-api:metadataCommonMainClasses', task ':filament-kmp-api:transformNativeMainCInteropDependenciesMetadata', task ':filament-kmp-api:transformNativeMainDependenciesMetadata', task ':filament-kmp-api:compileNativeMainKotlinMetadata']
+Tasks that were excluded: []
+Resolve mutations for :filament-kmp-api:checkKotlinGradlePluginConfigurationErrors (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:checkKotlinGradlePluginConfigurationErrors (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:checkKotlinGradlePluginConfigurationErrors SKIPPED
+Skipping task ':filament-kmp-api:checkKotlinGradlePluginConfigurationErrors' as task onlyIf 'errorDiagnostics are present' is false.
+Resolve mutations for :filament-kmp-api:cinteropFilamentIosArm64 (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:cinteropFilamentIosArm64 (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:cinteropFilamentIosArm64 UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:cinteropFilamentIosArm64' because:
+  Build cache is disabled
+  CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.
+Skipping task ':filament-kmp-api:cinteropFilamentIosArm64' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:cinteropFilamentIosSimulatorArm64 (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:cinteropFilamentIosSimulatorArm64 (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:cinteropFilamentIosSimulatorArm64 UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:cinteropFilamentIosSimulatorArm64' because:
+  Build cache is disabled
+  CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.
+Skipping task ':filament-kmp-api:cinteropFilamentIosSimulatorArm64' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:cinteropFilamentLinuxArm64 (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:cinteropFilamentLinuxArm64 (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:cinteropFilamentLinuxArm64 UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:cinteropFilamentLinuxArm64' because:
+  Build cache is disabled
+  CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.
+Skipping task ':filament-kmp-api:cinteropFilamentLinuxArm64' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:cinteropFilamentLinuxX64 (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:cinteropFilamentLinuxX64 (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:cinteropFilamentLinuxX64 UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:cinteropFilamentLinuxX64' because:
+  Build cache is disabled
+  CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.
+Skipping task ':filament-kmp-api:cinteropFilamentLinuxX64' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:cinteropFilamentMacosArm64 (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:cinteropFilamentMacosArm64 (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:cinteropFilamentMacosArm64 UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:cinteropFilamentMacosArm64' because:
+  Build cache is disabled
+  CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.
+Skipping task ':filament-kmp-api:cinteropFilamentMacosArm64' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:cinteropFilamentMingwX64 (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:cinteropFilamentMingwX64 (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:cinteropFilamentMingwX64 UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:cinteropFilamentMingwX64' because:
+  Build cache is disabled
+  CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.
+Skipping task ':filament-kmp-api:cinteropFilamentMingwX64' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:commonizeNativeDistribution (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:commonizeNativeDistribution (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:commonizeNativeDistribution UP-TO-DATE
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Native Distribution Commonization: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/klib/commonized/2.1.20/.lock ...
+Native Distribution Commonization: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/klib/commonized/2.1.20/.lock
+Native Distribution Commonization: Calculating cache state for [(ios_arm64, ios_simulator_arm64, macos_arm64), (ios_arm64, ios_simulator_arm64), (linux_arm64, linux_x64), (ios_arm64, ios_simulator_arm64, linux_arm64, linux_x64, macos_arm64, mingw_x64)]
+Native Distribution Commonization: Cache hit: (ios_arm64, ios_simulator_arm64, macos_arm64) already commonized
+Native Distribution Commonization: Cache hit: (ios_arm64, ios_simulator_arm64) already commonized
+Native Distribution Commonization: Cache hit: (linux_arm64, linux_x64) already commonized
+Native Distribution Commonization: Cache hit: (ios_arm64, ios_simulator_arm64, linux_arm64, linux_x64, macos_arm64, mingw_x64) already commonized
+Native Distribution Commonization: All available targets are commonized already - Nothing to do
+Native Distribution Commonization: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/klib/commonized/2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:commonizeNativeDistribution' because:
+  Build cache is disabled
+  Native Distribution Commonizer Task uses internal caching mechanism with fine grained cache control
+Skipping task ':filament-kmp-api:commonizeNativeDistribution' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:commonizeCInterop (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:commonizeCInterop (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:commonizeCInterop UP-TO-DATE
+Caching disabled for task ':filament-kmp-api:commonizeCInterop' because:
+  Build cache is disabled
+Skipping task ':filament-kmp-api:commonizeCInterop' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:transformCommonMainDependenciesMetadata (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:transformCommonMainDependenciesMetadata (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:transformCommonMainDependenciesMetadata UP-TO-DATE
+Caching disabled for task ':filament-kmp-api:transformCommonMainDependenciesMetadata' because:
+  Build cache is disabled
+  Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load
+Skipping task ':filament-kmp-api:transformCommonMainDependenciesMetadata' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:compileCommonMainKotlinMetadata (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:compileCommonMainKotlinMetadata (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:compileCommonMainKotlinMetadata UP-TO-DATE
+Caching disabled for task ':filament-kmp-api:compileCommonMainKotlinMetadata' because:
+  Build cache is disabled
+Skipping task ':filament-kmp-api:compileCommonMainKotlinMetadata' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:metadataCommonMainProcessResources (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:metadataCommonMainProcessResources (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:metadataCommonMainProcessResources NO-SOURCE
+Skipping task ':filament-kmp-api:metadataCommonMainProcessResources' as it has no source files and no previous output files.
+Resolve mutations for :filament-kmp-api:metadataCommonMainClasses (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:metadataCommonMainClasses (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:metadataCommonMainClasses UP-TO-DATE
+Skipping task ':filament-kmp-api:metadataCommonMainClasses' as it has no actions.
+Resolve mutations for :filament-kmp-api:transformNativeMainCInteropDependenciesMetadata (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:transformNativeMainCInteropDependenciesMetadata (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:transformNativeMainCInteropDependenciesMetadata UP-TO-DATE
+Caching disabled for task ':filament-kmp-api:transformNativeMainCInteropDependenciesMetadata' because:
+  Build cache is disabled
+  Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load
+Skipping task ':filament-kmp-api:transformNativeMainCInteropDependenciesMetadata' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:transformNativeMainDependenciesMetadata (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:transformNativeMainDependenciesMetadata (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:transformNativeMainDependenciesMetadata UP-TO-DATE
+Caching disabled for task ':filament-kmp-api:transformNativeMainDependenciesMetadata' because:
+  Build cache is disabled
+  Metadata Dependency Transformation Task doesn't benefit from caching as it doesn't have heavy load
+Skipping task ':filament-kmp-api:transformNativeMainDependenciesMetadata' as it is up-to-date.
+Resolve mutations for :filament-kmp-api:compileNativeMainKotlinMetadata (Thread[#4992,Execution worker,5,main]) started.
+:filament-kmp-api:compileNativeMainKotlinMetadata (Thread[#4992,Execution worker,5,main]) started.
+
+> Task :filament-kmp-api:compileNativeMainKotlinMetadata FAILED
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Acquire lock: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock ...
+Kotlin Native Bundle: Lock acquired: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Kotlin Native Bundle: Lock released: /Users/eric/.konan/kotlin-native-prebuilt-macos-aarch64-2.1.20/.lock
+Caching disabled for task ':filament-kmp-api:compileNativeMainKotlinMetadata' because:
+  Build cache is disabled
+Task ':filament-kmp-api:compileNativeMainKotlinMetadata' is not up-to-date because:
+  Task has failed previously.
+e: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/nativeMain/kotlin/dev/filament/kmp/Texture.native.kt:1:61 Annotation argument must be a compile-time constant.
+e: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/nativeMain/kotlin/dev/filament/kmp/Texture.native.kt:1:78 Unresolved reference 'InternalInteropApi'.
+e: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/filament-kmp-api/src/nativeMain/kotlin/dev/filament/kmp/Texture.native.kt:315:110 Unresolved reference 'toNativePtr'.
+Build 9f294fe0-cf9e-4801-8b0e-8410ced7125f is closed
+
+[Incubating] Problems report is available at: file:///Users/eric/IdeaProjects/filament-kmp-core/kotlin/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':filament-kmp-api:compileNativeMainKotlinMetadata'.
+> Compilation finished with errors
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 865ms
+13 actionable tasks: 1 executed, 12 up-to-date
+Watched directory hierarchies: [/Users/eric/IdeaProjects/filament-kmp-core/kotlin]

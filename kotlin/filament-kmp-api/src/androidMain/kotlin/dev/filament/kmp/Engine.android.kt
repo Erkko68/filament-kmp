@@ -64,9 +64,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         actual var textureUseAfterFreePoolSize: Long
             get() = android.textureUseAfterFreePoolSize
             set(value) { android.textureUseAfterFreePoolSize = value }
-        actual var disableParallelShaderCompile: Boolean
-            get() = android.disableParallelShaderCompile
-            set(value) { android.disableParallelShaderCompile = value }
         actual var stereoscopicType: StereoscopicType
             get() = StereoscopicType.fromAndroid(android.stereoscopicType)
             set(value) { android.stereoscopicType = value.toAndroid() }
@@ -79,9 +76,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         actual var resourceAllocatorCacheMaxAge: Long
             get() = android.resourceAllocatorCacheMaxAge
             set(value) { android.resourceAllocatorCacheMaxAge = value }
-        actual var disableHandleUseAfterFreeCheck: Boolean
-            get() = android.disableHandleUseAfterFreeCheck
-            set(value) { android.disableHandleUseAfterFreeCheck = value }
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
@@ -96,9 +90,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         actual var forceGLES2Context: Boolean
             get() = android.forceGLES2Context
             set(value) { android.forceGLES2Context = value }
-        actual var assertNativeWindowIsValid: Boolean
-            get() = android.assertNativeWindowIsValid
-            set(value) { android.assertNativeWindowIsValid = value }
         actual var gpuContextPriority: GpuContextPriority
             get() = GpuContextPriority.fromAndroid(android.gpuContextPriority)
             set(value) { android.gpuContextPriority = value.toAndroid() }
@@ -170,15 +161,12 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
         config.perFrameCommandsSizeMB = androidConfig.perFrameCommandsSizeMB
         config.jobSystemThreadCount = androidConfig.jobSystemThreadCount
         config.textureUseAfterFreePoolSize = androidConfig.textureUseAfterFreePoolSize
-        config.disableParallelShaderCompile = androidConfig.disableParallelShaderCompile
         config.stereoscopicType = StereoscopicType.fromAndroid(androidConfig.stereoscopicType)
         config.stereoscopicEyeCount = androidConfig.stereoscopicEyeCount
         config.resourceAllocatorCacheSizeMB = androidConfig.resourceAllocatorCacheSizeMB
         config.resourceAllocatorCacheMaxAge = androidConfig.resourceAllocatorCacheMaxAge
-        config.disableHandleUseAfterFreeCheck = androidConfig.disableHandleUseAfterFreeCheck
         config.preferredShaderLanguage = Config.ShaderLanguage.fromAndroid(androidConfig.preferredShaderLanguage)
         config.forceGLES2Context = androidConfig.forceGLES2Context
-        config.assertNativeWindowIsValid = androidConfig.assertNativeWindowIsValid
         config.gpuContextPriority = GpuContextPriority.fromAndroid(androidConfig.gpuContextPriority)
         config.sharedUboInitialSizeInBytes = androidConfig.sharedUboInitialSizeInBytes
         return config
@@ -191,7 +179,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
-    actual fun isValidBufferObject(bufferObject: BufferObject): Boolean = nativeEngine.isValidBufferObject(bufferObject.nativeBufferObject)
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = nativeEngine.isValidSkinningBuffer(skinningBuffer.nativeSkinningBuffer)
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = nativeEngine.isValidMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
@@ -201,7 +188,7 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidSkybox(skybox: Skybox): Boolean = nativeEngine.isValidSkybox(skybox.nativeSkybox)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = nativeEngine.isValidColorGrading(colorGrading.nativeColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = nativeEngine.isValidTexture(texture.nativeTexture)
-    actual fun isValidRenderTarget(target: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(target.nativeRenderTarget)
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(renderTarget.nativeRenderTarget)
     actual fun isValidStream(stream: Stream): Boolean = nativeEngine.isValidStream(stream.nativeStream)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
 
@@ -233,7 +220,6 @@ actual class Engine internal constructor(val nativeEngine: AndroidEngine) {
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) { nativeEngine.destroyIndexBuffer(indexBuffer.nativeIndexBuffer) }
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) { nativeEngine.destroyVertexBuffer(vertexBuffer.nativeVertexBuffer) }
-    actual fun destroyBufferObject(bufferObject: BufferObject) { nativeEngine.destroyBufferObject(bufferObject.nativeBufferObject) }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) { nativeEngine.destroySkinningBuffer(skinningBuffer.nativeSkinningBuffer) }
     actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) { nativeEngine.destroyMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer) }
     actual fun destroyIndirectLight(ibl: IndirectLight) { nativeEngine.destroyIndirectLight(ibl.nativeIndirectLight) }

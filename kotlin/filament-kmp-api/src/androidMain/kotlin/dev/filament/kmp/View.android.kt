@@ -11,10 +11,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     private var mCamera: Camera? = null
     private var mRenderTarget: RenderTarget? = null
 
-    actual enum class AntiAliasing { NONE, FXAA }
     actual enum class Dithering { NONE, TEMPORAL }
-    actual enum class AmbientOcclusion { NONE, SSAO }
-    actual enum class ToneMapping { LINEAR, ACES }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
@@ -149,7 +146,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
 
     actual class TemporalAntiAliasingOptions actual constructor() {
         val native = FilamentView.TemporalAntiAliasingOptions()
-        actual var filterWidth: Float get() = native.filterWidth; set(v) { native.filterWidth = v }
         actual var feedback: Float get() = native.feedback; set(v) { native.feedback = v }
         actual var lodBias: Float get() = native.lodBias; set(v) { native.lodBias = v }
         actual var sharpness: Float get() = native.sharpness; set(v) { native.sharpness = v }
@@ -182,7 +178,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var mipmapping: Boolean get() = native.mipmapping; set(v) { native.mipmapping = v }
         actual var msaaSamples: Int get() = native.msaaSamples; set(v) { native.msaaSamples = v }
         actual var highPrecision: Boolean get() = native.highPrecision; set(v) { native.highPrecision = v }
-        actual var minVarianceScale: Float get() = native.minVarianceScale; set(v) { native.minVarianceScale = v }
         actual var lightBleedReduction: Float get() = native.lightBleedReduction; set(v) { native.lightBleedReduction = v }
     }
 
@@ -245,16 +240,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     }
     actual fun getVisibleLayers(): Int = this@View.nativeView.visibleLayers
 
-    actual fun setShadowingEnabled(enabled: Boolean) { this@View.nativeView.setShadowingEnabled(enabled) }
     actual fun setPostProcessingEnabled(enabled: Boolean) { this@View.nativeView.setPostProcessingEnabled(enabled) }
     actual fun isPostProcessingEnabled(): Boolean = this@View.nativeView.isPostProcessingEnabled
 
-    actual fun setAntiAliasing(type: AntiAliasing) {
-        this@View.nativeView.antiAliasing = FilamentView.AntiAliasing.values()[type.ordinal]
-    }
-    actual fun getAntiAliasing(): AntiAliasing {
-        return dev.filament.kmp.View.AntiAliasing.values()[this@View.nativeView.antiAliasing.ordinal]
-    }
 
     actual fun setDithering(dithering: Dithering) {
         this@View.nativeView.dithering = FilamentView.Dithering.values()[dithering.ordinal]
@@ -433,7 +421,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         val kmp = TemporalAntiAliasingOptions()
         kmp.enabled = o.enabled
         kmp.feedback = o.feedback
-        kmp.filterWidth = o.filterWidth
         kmp.lodBias = o.lodBias
         kmp.sharpness = o.sharpness
         kmp.upscaling = o.upscaling
@@ -486,7 +473,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         kmp.mipmapping = o.mipmapping
         kmp.msaaSamples = o.msaaSamples
         kmp.highPrecision = o.highPrecision
-        kmp.minVarianceScale = o.minVarianceScale
         kmp.lightBleedReduction = o.lightBleedReduction
         return kmp
     }

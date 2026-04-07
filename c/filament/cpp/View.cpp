@@ -52,38 +52,8 @@ uint8_t FilaView_getVisibleLayers(const FilaView* view) {
     return FILA_CONST_CAST(View, view)->getVisibleLayers();
 }
 
-void FilaView_setShadowingEnabled(FilaView* view, bool enabled) {
-    FILA_CAST(View, view)->setShadowingEnabled(enabled);
-}
-
-bool FilaView_isShadowingEnabled(const FilaView* view) {
-    return FILA_CONST_CAST(View, view)->isShadowingEnabled();
-}
-
 void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget) {
     FILA_CAST(View, view)->setRenderTarget(FILA_CAST(RenderTarget, renderTarget));
-}
-
-void FilaView_setSampleCount(FilaView* view, uint8_t count) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    FILA_CAST(View, view)->setSampleCount(count);
-#pragma clang diagnostic pop
-}
-
-uint8_t FilaView_getSampleCount(const FilaView* view) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return FILA_CONST_CAST(View, view)->getSampleCount();
-#pragma clang diagnostic pop
-}
-
-void FilaView_setAntiAliasing(FilaView* view, FilaViewAntiAliasing type) {
-    FILA_CAST(View, view)->setAntiAliasing(static_cast<View::AntiAliasing>(type));
-}
-
-FilaViewAntiAliasing FilaView_getAntiAliasing(const FilaView* view) {
-    return static_cast<FilaViewAntiAliasing>(FILA_CONST_CAST(View, view)->getAntiAliasing());
 }
 
 void FilaView_setDithering(FilaView* view, FilaViewDithering dithering) {

@@ -171,10 +171,6 @@ actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
         nativeTexture.generateMipmaps(engine.nativeEngine)
     }
 
-    actual fun setExternalImage(engine: Engine, eglImage: Long) {
-        nativeTexture.setExternalImage(engine.nativeEngine, eglImage)
-    }
-
     actual fun setExternalStream(engine: Engine, stream: Stream) {
         nativeTexture.setExternalStream(engine.nativeEngine, stream.nativeStream)
     }

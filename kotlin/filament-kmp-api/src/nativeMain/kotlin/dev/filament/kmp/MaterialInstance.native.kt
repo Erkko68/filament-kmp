@@ -41,14 +41,19 @@ actual class MaterialInstance internal constructor(
         FilaMaterialInstance_setParameterTexture(nativeHandle, name, texture.nativeHandle, sampler.nativeHandle)
     }
     
-    actual fun setParameter(name: String, type: BooleanElement, v: BooleanArray, offset: Int, count: Int) {
-        v.usePinned { pinned ->
-            FilaMaterialInstance_setBooleanParameterArray(nativeHandle, name, (type.ordinal + 1).toUInt(), pinned.addressOf(offset).reinterpret(), count.toULong())
+    actual fun setParameter(name: String, type: BooleanElement, v: BooleanArray, offset: Int, count: Int) = memScoped {
+        val nativeArray = allocArray<BooleanVar>(count)
+        for (i in 0 until count) {
+            nativeArray[i].value = v[offset + i]
         }
+        FilaMaterialInstance_setBooleanParameterArray(nativeHandle, name, (type.ordinal + 1).toUInt(), nativeArray, count.toULong())
     }
     actual fun setParameter(name: String, type: IntElement, v: IntArray, offset: Int, count: Int) {
-        v.usePinned { pinned ->
-            FilaMaterialInstance_setIntParameterArray(nativeHandle, name, (type.ordinal + 1).toUInt(), pinned.addressOf(offset).reinterpret(), count.toULong())
+        val pinned = v.pin()
+        try {
+            FilaMaterialInstance_setIntParameterArray(nativeHandle, name, (type.ordinal + 1).toUInt(), pinned.addressOf(offset), count.toULong())
+        } finally {
+            pinned.unpin()
         }
     }
     actual fun setParameter(name: String, type: FloatElement, v: FloatArray, offset: Int, count: Int) {
@@ -60,8 +65,11 @@ actual class MaterialInstance internal constructor(
             FloatElement.MAT3 -> 9
             FloatElement.MAT4 -> 16
         }
-        v.usePinned { pinned ->
-            FilaMaterialInstance_setFloatParameterArray(nativeHandle, name, elementSize.toUInt(), pinned.addressOf(offset).reinterpret(), count.toULong())
+        val pinned = v.pin()
+        try {
+            FilaMaterialInstance_setFloatParameterArray(nativeHandle, name, elementSize.toUInt(), pinned.addressOf(offset), count.toULong())
+        } finally {
+            pinned.unpin()
         }
     }
     
@@ -118,38 +126,63 @@ actual class MaterialInstance internal constructor(
     actual fun getDepthFunc(): TextureSampler.CompareFunction = TextureSampler.CompareFunction.values()[FilaMaterialInstance_getDepthFunc(nativeHandle).toInt()]
     
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace) {
-        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal.toUInt(), face.ordinal.toUInt())
+        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal.toUInt(), face.native)
     }
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction) {
-        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.ordinal.toUInt())
+        FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.native)
     }
     actual fun setStencilOpStencilFail(op: StencilOperation, face: StencilFace) {
-        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal.toUInt(), face.ordinal.toUInt())
+        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal.toUInt(), face.native)
     }
     actual fun setStencilOpStencilFail(op: StencilOperation) {
-        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.ordinal.toUInt())
+        FilaMaterialInstance_setStencilOpStencilFail(nativeHandle, op.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.native)
     }
     actual fun setStencilOpDepthFail(op: StencilOperation, face: StencilFace) {
-        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal.toUInt(), face.ordinal.toUInt())
+        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal.toUInt(), face.native)
     }
     actual fun setStencilOpDepthFail(op: StencilOperation) {
-        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.ordinal.toUInt())
+        FilaMaterialInstance_setStencilOpDepthFail(nativeHandle, op.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.native)
     }
     actual fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace) {
-        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal.toUInt(), face.ordinal.toUInt())
+        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal.toUInt(), face.native)
     }
     actual fun setStencilOpDepthStencilPass(op: StencilOperation) {
-        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.ordinal.toUInt())
+        FilaMaterialInstance_setStencilOpDepthStencilPass(nativeHandle, op.ordinal.toUInt(), StencilFace.FRONT_AND_BACK.native)
+    }
+    
+    actual fun setStencilReferenceValue(value: Int, face: StencilFace) {
+        FilaMaterialInstance_setStencilReferenceValue(nativeHandle, value.toUInt(), face.native)
+    }
+    actual fun setStencilReferenceValue(value: Int) {
+        FilaMaterialInstance_setStencilReferenceValue(nativeHandle, value.toUInt(), StencilFace.FRONT_AND_BACK.native)
+    }
+    actual fun setStencilReadMask(readMask: Int, face: StencilFace) {
+        FilaMaterialInstance_setStencilReadMask(nativeHandle, readMask.toUInt(), face.native)
+    }
+    actual fun setStencilReadMask(readMask: Int) {
+        FilaMaterialInstance_setStencilReadMask(nativeHandle, readMask.toUInt(), StencilFace.FRONT_AND_BACK.native)
+    }
+    actual fun setStencilWriteMask(writeMask: Int, face: StencilFace) {
+        FilaMaterialInstance_setStencilWriteMask(nativeHandle, writeMask.toUInt(), face.native)
+    }
+    actual fun setStencilWriteMask(writeMask: Int) {
+        FilaMaterialInstance_setStencilWriteMask(nativeHandle, writeMask.toUInt(), StencilFace.FRONT_AND_BACK.native)
     }
 }
 
+private val MaterialInstance.StencilFace.native: UInt
+    get() = when (this) {
+        MaterialInstance.StencilFace.FRONT -> 1u
+        MaterialInstance.StencilFace.BACK -> 2u
+        MaterialInstance.StencilFace.FRONT_AND_BACK -> 3u
+    }
+
 private fun Any.usePinned(block: (Pinned<*>) -> Unit) {
     when (this) {
-        is ByteArray -> this.pin().use { block(it) }
-        is FloatArray -> this.pin().use { block(it) }
-        is ShortArray -> this.pin().use { block(it) }
-        is IntArray -> this.pin().use { block(it) }
-        is BooleanArray -> this.pin().use { block(it) }
+        is ByteArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
+        is FloatArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
+        is ShortArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
+        is IntArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
         else -> throw IllegalArgumentException("Unsupported storage type for pinning")
     }
 }

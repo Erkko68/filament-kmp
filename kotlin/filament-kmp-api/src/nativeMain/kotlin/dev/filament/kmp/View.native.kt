@@ -6,10 +6,7 @@ import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaView
 
 actual class View internal constructor(internal var nativeHandle: CPointer<FilaView>?) {
-    actual enum class AntiAliasing { NONE, FXAA }
     actual enum class Dithering { NONE, TEMPORAL }
-    actual enum class AmbientOcclusion { NONE, SSAO }
-    actual enum class ToneMapping { LINEAR, ACES }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
@@ -124,7 +121,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
 
     actual class TemporalAntiAliasingOptions actual constructor() {
-        actual var filterWidth: Float = 1.0f
         actual var feedback: Float = 0.12f
         actual var enabled: Boolean = false
         actual var lodBias: Float = -1.0f
@@ -155,7 +151,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var mipmapping: Boolean = false
         actual var msaaSamples: Int = 1
         actual var highPrecision: Boolean = false
-        actual var minVarianceScale: Float = 0.5f
         actual var lightBleedReduction: Float = 0.15f
     }
 
@@ -208,14 +203,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
     actual fun getVisibleLayers(): Int = FilaView_getVisibleLayers(nativeHandle).toInt()
 
-    actual fun setShadowingEnabled(enabled: Boolean) { FilaView_setShadowingEnabled(nativeHandle, enabled) }
     actual fun setPostProcessingEnabled(enabled: Boolean) { FilaView_setPostProcessingEnabled(nativeHandle, enabled) }
     actual fun isPostProcessingEnabled(): Boolean = FilaView_isPostProcessingEnabled(nativeHandle)
-
-    actual fun setAntiAliasing(type: AntiAliasing) {
-        FilaView_setAntiAliasing(nativeHandle, type.ordinal.toUInt())
-    }
-    actual fun getAntiAliasing(): AntiAliasing = AntiAliasing.values()[FilaView_getAntiAliasing(nativeHandle).toInt()]
 
     actual fun setDithering(dithering: Dithering) {
         FilaView_setDithering(nativeHandle, dithering.ordinal.toUInt())
@@ -357,7 +346,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         memScoped {
             val cOptions = alloc<FilaViewTemporalAntiAliasingOptions>()
             cOptions.enabled = options.enabled
-            cOptions.filterWidth = options.filterWidth
             cOptions.feedback = options.feedback
             cOptions.lodBias = options.lodBias
             cOptions.sharpness = options.sharpness
@@ -409,7 +397,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             cOptions.mipmapping = options.mipmapping
             cOptions.msaaSamples = options.msaaSamples.toUByte()
             cOptions.highPrecision = options.highPrecision
-            cOptions.minVarianceScale = options.minVarianceScale
             cOptions.lightBleedReduction = options.lightBleedReduction
             FilaView_setVsmShadowOptions(nativeHandle, cOptions.ptr)
         }

@@ -52,19 +52,16 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
         actual var perFrameCommandsSizeMB: Long = 2
         actual var jobSystemThreadCount: Long = 0
         actual var textureUseAfterFreePoolSize: Long = 0
-        actual var disableParallelShaderCompile: Boolean = false
         actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
         actual var stereoscopicEyeCount: Long = 2
         actual var resourceAllocatorCacheSizeMB: Long = 64
         actual var resourceAllocatorCacheMaxAge: Long = 1
-        actual var disableHandleUseAfterFreeCheck: Boolean = false
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
         }
         actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
         actual var forceGLES2Context: Boolean = false
-        actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         actual var sharedUboInitialSizeInBytes: Long = 256 * 64
 
@@ -76,15 +73,12 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
             native.perFrameCommandsSizeMB = perFrameCommandsSizeMB.toUInt()
             native.jobSystemThreadCount = jobSystemThreadCount.toUInt()
             // native.textureUseAfterFreePoolSize is not present in FilaEngineConfig
-            native.disableParallelShaderCompile = disableParallelShaderCompile
             native.stereoscopicType = stereoscopicType.toNative()
             native.stereoscopicEyeCount = stereoscopicEyeCount.toUByte()
             native.resourceAllocatorCacheSizeMB = resourceAllocatorCacheSizeMB.toUInt()
             native.resourceAllocatorCacheMaxAge = resourceAllocatorCacheMaxAge.toUByte()
-            native.disableHandleUseAfterFreeCheck = disableHandleUseAfterFreeCheck
             native.preferredShaderLanguage = preferredShaderLanguage.ordinal
             native.forceGLES2Context = forceGLES2Context
-            native.assertNativeWindowIsValid = assertNativeWindowIsValid
             native.gpuContextPriority = gpuContextPriority.toNative()
             native.sharedUboInitialSizeInBytes = sharedUboInitialSizeInBytes.toUInt()
         }
@@ -167,7 +161,6 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
-    actual fun isValidBufferObject(bufferObject: BufferObject): Boolean = FilaEngine_isValidBufferObject(nativeHandle, bufferObject.nativeHandle)
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
@@ -177,7 +170,7 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun isValidSkybox(skybox: Skybox): Boolean = FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
     actual fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
-    actual fun isValidRenderTarget(target: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, target.nativeHandle)
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle)
     actual fun isValidStream(stream: Stream): Boolean = FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
 
@@ -236,10 +229,6 @@ actual class Engine internal constructor(internal var nativeHandle: CPointer<Fil
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
         FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
         vertexBuffer.nativeHandle = null
-    }
-    actual fun destroyBufferObject(bufferObject: BufferObject) {
-        FilaEngine_destroyBufferObject(nativeHandle, bufferObject.nativeHandle)
-        bufferObject.nativeHandle = null
     }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
         FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)

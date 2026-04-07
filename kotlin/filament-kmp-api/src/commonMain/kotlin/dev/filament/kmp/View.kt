@@ -1,10 +1,7 @@
 package dev.filament.kmp
 
 expect class View {
-    enum class AntiAliasing { NONE, FXAA }
     enum class Dithering { NONE, TEMPORAL }
-    enum class AmbientOcclusion { NONE, SSAO }
-    enum class ToneMapping { LINEAR, ACES }
     enum class BlendMode { OPAQUE, TRANSLUCENT }
     enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
@@ -113,7 +110,6 @@ expect class View {
     }
 
     class TemporalAntiAliasingOptions() {
-        var filterWidth: Float
         var feedback: Float
         var lodBias: Float
         var sharpness: Float
@@ -144,7 +140,6 @@ expect class View {
         var mipmapping: Boolean
         var msaaSamples: Int
         var highPrecision: Boolean
-        var minVarianceScale: Float
         var lightBleedReduction: Float
     }
 
@@ -179,11 +174,8 @@ expect class View {
     fun getBlendMode(): BlendMode
     fun setVisibleLayers(select: Int, values: Int)
     fun getVisibleLayers(): Int
-    fun setShadowingEnabled(enabled: Boolean)
     fun setPostProcessingEnabled(enabled: Boolean)
     fun isPostProcessingEnabled(): Boolean
-    fun setAntiAliasing(type: AntiAliasing)
-    fun getAntiAliasing(): AntiAliasing
     fun setDithering(dithering: Dithering)
     fun getDithering(): Dithering
     fun setDynamicResolutionOptions(options: DynamicResolutionOptions)

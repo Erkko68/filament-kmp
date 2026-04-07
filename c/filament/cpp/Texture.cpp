@@ -139,36 +139,6 @@ void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level
     FILA_CAST(Texture, texture)->setImage(*FILA_CAST(Engine, engine), level, xoffset, yoffset, zoffset, width, height, depth, std::move(desc));
 }
 
-void FilaTexture_setImageCubemap(FilaTexture* texture, FilaEngine* engine, size_t level, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, const FilaTextureFaceOffsets* faceOffsets, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
-    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
-    PixelBufferDescriptor desc(buffer, sizeInBytes, 
-        static_cast<backend::PixelDataFormat>(format),
-        static_cast<backend::PixelDataType>(type),
-        alignment, left, top, stride,
-        reinterpret_cast<backend::CallbackHandler*>(handler),
-        pixelBufferCallback, wrapper);
-    
-    Texture::FaceOffsets offsets;
-    offsets.px = faceOffsets->px;
-    offsets.nx = faceOffsets->nx;
-    offsets.py = faceOffsets->py;
-    offsets.ny = faceOffsets->ny;
-    offsets.pz = faceOffsets->pz;
-    offsets.nz = faceOffsets->nz;
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    FILA_CAST(Texture, texture)->setImage(*FILA_CAST(Engine, engine), level, std::move(desc), offsets);
-#pragma clang diagnostic pop
-}
-
-void FilaTexture_setExternalImage(FilaTexture* texture, FilaEngine* engine, void* image) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    FILA_CAST(Texture, texture)->setExternalImage(*FILA_CAST(Engine, engine), image);
-#pragma clang diagnostic pop
-}
-
 void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, FilaStream* stream) {
     FILA_CAST(Texture, texture)->setExternalStream(*FILA_CAST(Engine, engine), reinterpret_cast<Stream*>(stream));
 }

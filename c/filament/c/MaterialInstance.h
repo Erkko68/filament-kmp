@@ -41,9 +41,9 @@ typedef enum FilaMaterialInstanceStencilCompareFunc {
 
 // Matches filament::MaterialInstance::StencilFace
 typedef enum FilaMaterialInstanceStencilFace {
-    FILA_MATERIAL_INSTANCE_STENCIL_FACE_FRONT = 0,
-    FILA_MATERIAL_INSTANCE_STENCIL_FACE_BACK = 1,
-    FILA_MATERIAL_INSTANCE_STENCIL_FACE_FRONT_AND_BACK = 2
+    FILA_MATERIAL_INSTANCE_STENCIL_FACE_FRONT = 1,
+    FILA_MATERIAL_INSTANCE_STENCIL_FACE_BACK = 2,
+    FILA_MATERIAL_INSTANCE_STENCIL_FACE_FRONT_AND_BACK = 3
 } FilaMaterialInstanceStencilFace;
 
 // Matches filament::MaterialInstance::StencilOperation

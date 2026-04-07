@@ -47,4 +47,24 @@ actual class BufferObject internal constructor(val nativeBufferObject: AndroidBu
             nativeBufferObject.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count)
         }
     }
+
+    actual fun setBuffer(
+        engine: Engine,
+        buffer: Any,
+        destOffsetInBytes: Int,
+        count: Int,
+        handler: Any?,
+        callback: (() -> Unit)?
+    ) {
+        if (buffer is Buffer) {
+            nativeBufferObject.setBuffer(
+                engine.nativeEngine,
+                buffer,
+                destOffsetInBytes,
+                count,
+                handler,
+                if (callback != null) Runnable { callback() } else null
+            )
+        }
+    }
 }

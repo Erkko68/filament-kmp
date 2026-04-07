@@ -3,7 +3,6 @@ package dev.filament.kmp
 expect class ColorGrading {
     class Builder() {
         fun quality(qualityLevel: QualityLevel): Builder
-        fun toneMapping(toneMapping: ToneMapping): Builder
         fun luminanceScaling(luminanceScaling: Boolean): Builder
         fun gamutMapping(gamutMapping: Boolean): Builder
         fun exposure(exposure: Float): Builder
@@ -16,5 +15,4 @@ expect class ColorGrading {
     }
 
     enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
-    enum class ToneMapping { LINEAR, ACES_LEGACY, ACES, FILMIC, DISPLAY_RANGE }
 }

@@ -28,15 +28,12 @@ typedef struct FilaEngineConfig {
     uint32_t minCommandBufferSizeMB;
     uint32_t perFrameCommandsSizeMB;
     uint32_t jobSystemThreadCount;
-    bool disableParallelShaderCompile;
     FilaEngineStereoscopicType stereoscopicType;
     uint8_t stereoscopicEyeCount;
     uint32_t resourceAllocatorCacheSizeMB;
     uint8_t resourceAllocatorCacheMaxAge;
-    bool disableHandleUseAfterFreeCheck;
     int32_t preferredShaderLanguage;
     bool forceGLES2Context;
-    bool assertNativeWindowIsValid;
     int32_t gpuContextPriority;
     uint32_t sharedUboInitialSizeInBytes;
 } FilaEngineConfig;

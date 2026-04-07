@@ -38,6 +38,7 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
         actual val precision: Precision,
         actual val count: Int
     ) {
+
         actual enum class Type {
             BOOL, BOOL2, BOOL3, BOOL4,
             FLOAT, FLOAT2, FLOAT3, FLOAT4,
@@ -55,8 +56,12 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(buffer: Any, size: Int): Builder = apply {
-            buffer.usePinned { pinned ->
-                FilaMaterial_Builder_package(nativeBuilder, pinned.addressOf(0), size.toULong())
+            (buffer as? ByteArray)?.pin()?.let { pinned ->
+                try {
+                    FilaMaterial_Builder_package(nativeBuilder, pinned.addressOf(0), size.toULong())
+                } finally {
+                    pinned.unpin()
+                }
             }
         }
         actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
@@ -76,8 +81,18 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
     }
 
     actual fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: (() -> Unit)?) {
-        // TODO: handle callback and handler
-        FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, null, null)
+        if (callback == null) {
+            FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, null, null)
+        } else {
+            val stableRef = StableRef.create(callback)
+            val callbackWrapper = staticCFunction { _: CPointer<FilaMaterial>?, user: COpaquePointer? ->
+                val ref = user!!.asStableRef<(() -> Unit)>()
+                val cb = ref.get()
+                cb.invoke()
+                ref.dispose()
+            }
+            FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, callbackWrapper, stableRef.asCPointer())
+        }
     }
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
@@ -138,10 +153,10 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
 
 private fun Any.usePinned(block: (Pinned<*>) -> Unit) {
     when (this) {
-        is ByteArray -> this.pin().use { block(it) }
-        is FloatArray -> this.pin().use { block(it) }
-        is ShortArray -> this.pin().use { block(it) }
-        is IntArray -> this.pin().use { block(it) }
+        is ByteArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
+        is FloatArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
+        is ShortArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
+        is IntArray -> this.pin().let { try { block(it) } finally { it.unpin() } }
         else -> throw IllegalArgumentException("Unsupported storage type for pinning")
     }
 }

@@ -10,10 +10,6 @@ actual class ColorGrading internal constructor(val nativeColorGrading: AndroidCo
             nativeBuilder.quality(AndroidColorGrading.QualityLevel.values()[qualityLevel.ordinal])
             return this
         }
-        actual fun toneMapping(toneMapping: ToneMapping): Builder {
-            nativeBuilder.toneMapping(AndroidColorGrading.ToneMapping.values()[toneMapping.ordinal])
-            return this
-        }
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
             nativeBuilder.luminanceScaling(luminanceScaling)
             return this
@@ -50,5 +46,4 @@ actual class ColorGrading internal constructor(val nativeColorGrading: AndroidCo
     }
     
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
-    actual enum class ToneMapping { LINEAR, ACES_LEGACY, ACES, FILMIC, DISPLAY_RANGE }
 }

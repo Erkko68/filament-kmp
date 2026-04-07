@@ -51,15 +51,12 @@ void FilaEngineBuilder_config(FilaEngineBuilder* builder, const FilaEngineConfig
     cppConfig.minCommandBufferSizeMB = config->minCommandBufferSizeMB;
     cppConfig.perFrameCommandsSizeMB = config->perFrameCommandsSizeMB;
     cppConfig.jobSystemThreadCount = config->jobSystemThreadCount;
-    cppConfig.disableParallelShaderCompile = config->disableParallelShaderCompile;
     cppConfig.stereoscopicType = static_cast<Engine::StereoscopicType>(config->stereoscopicType);
     cppConfig.stereoscopicEyeCount = config->stereoscopicEyeCount;
     cppConfig.resourceAllocatorCacheSizeMB = config->resourceAllocatorCacheSizeMB;
     cppConfig.resourceAllocatorCacheMaxAge = config->resourceAllocatorCacheMaxAge;
-    cppConfig.disableHandleUseAfterFreeCheck = config->disableHandleUseAfterFreeCheck;
     cppConfig.preferredShaderLanguage = static_cast<Engine::Config::ShaderLanguage>(config->preferredShaderLanguage);
     cppConfig.forceGLES2Context = config->forceGLES2Context;
-    cppConfig.assertNativeWindowIsValid = config->assertNativeWindowIsValid;
     cppConfig.gpuContextPriority = static_cast<Engine::GpuContextPriority>(config->gpuContextPriority);
     cppConfig.sharedUboInitialSizeInBytes = config->sharedUboInitialSizeInBytes;
 

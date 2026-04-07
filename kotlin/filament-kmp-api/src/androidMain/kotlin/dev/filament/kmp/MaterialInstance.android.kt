@@ -145,4 +145,23 @@ actual class MaterialInstance internal constructor(
     actual fun setStencilOpDepthStencilPass(op: StencilOperation) {
         nativeMaterialInstance.setStencilOpDepthStencilPass(com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal])
     }
+
+    actual fun setStencilReferenceValue(value: Int, face: StencilFace) {
+        nativeMaterialInstance.setStencilReferenceValue(value, com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal])
+    }
+    actual fun setStencilReferenceValue(value: Int) {
+        nativeMaterialInstance.setStencilReferenceValue(value)
+    }
+    actual fun setStencilReadMask(readMask: Int, face: StencilFace) {
+        nativeMaterialInstance.setStencilReadMask(readMask, com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal])
+    }
+    actual fun setStencilReadMask(readMask: Int) {
+        nativeMaterialInstance.setStencilReadMask(readMask)
+    }
+    actual fun setStencilWriteMask(writeMask: Int, face: StencilFace) {
+        nativeMaterialInstance.setStencilWriteMask(writeMask, com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal])
+    }
+    actual fun setStencilWriteMask(writeMask: Int) {
+        nativeMaterialInstance.setStencilWriteMask(writeMask)
+    }
 }

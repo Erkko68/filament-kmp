@@ -82,4 +82,11 @@ expect class MaterialInstance {
     fun setStencilOpDepthFail(op: StencilOperation)
     fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace)
     fun setStencilOpDepthStencilPass(op: StencilOperation)
+    
+    fun setStencilReferenceValue(value: Int, face: StencilFace)
+    fun setStencilReferenceValue(value: Int)
+    fun setStencilReadMask(readMask: Int, face: StencilFace)
+    fun setStencilReadMask(readMask: Int)
+    fun setStencilWriteMask(writeMask: Int, face: StencilFace)
+    fun setStencilWriteMask(writeMask: Int)
 }

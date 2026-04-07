@@ -60,12 +60,10 @@ expect class Engine {
         var perFrameCommandsSizeMB: Long
         var jobSystemThreadCount: Long
         var textureUseAfterFreePoolSize: Long
-        var disableParallelShaderCompile: Boolean
         var stereoscopicType: StereoscopicType
         var stereoscopicEyeCount: Long
         var resourceAllocatorCacheSizeMB: Long
         var resourceAllocatorCacheMaxAge: Long
-        var disableHandleUseAfterFreeCheck: Boolean
 
         enum class ShaderLanguage {
             DEFAULT,
@@ -74,7 +72,6 @@ expect class Engine {
         }
         var preferredShaderLanguage: ShaderLanguage
         var forceGLES2Context: Boolean
-        var assertNativeWindowIsValid: Boolean
         var gpuContextPriority: GpuContextPriority
         var sharedUboInitialSizeInBytes: Long
     }
@@ -117,7 +114,6 @@ expect class Engine {
     fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
     fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
     fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
-    fun isValidBufferObject(bufferObject: BufferObject): Boolean
     fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
     fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
     fun isValidIndirectLight(ibl: IndirectLight): Boolean
@@ -162,7 +158,6 @@ expect class Engine {
     // Buffers and Managers
     fun destroyIndexBuffer(indexBuffer: IndexBuffer)
     fun destroyVertexBuffer(vertexBuffer: VertexBuffer)
-    fun destroyBufferObject(bufferObject: BufferObject)
     fun destroySkinningBuffer(skinningBuffer: SkinningBuffer)
     fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer)
     fun destroyIndirectLight(ibl: IndirectLight)

@@ -41,30 +41,64 @@ actual class BufferObject internal constructor(internal var nativeHandle: CPoint
 
     actual fun getByteCount(): Int = FilaBufferObject_getByteCount(nativeHandle).toInt()
 
+    private class BufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
+
     actual fun setBuffer(engine: Engine, buffer: Any) {
-        setBuffer(engine, buffer, 0, 0)
+        setBuffer(engine, buffer, 0, 0, null, null)
     }
 
     actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int) {
+        setBuffer(engine, buffer, destOffsetInBytes, count, null, null)
+    }
+
+    actual fun setBuffer(engine: Engine, buffer: Any, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
         var ptr: CPointer<out CPointed>? = null
         var sizeInBytes: ULong = 0.toULong()
+        var pinned: Pinned<*>? = null
 
-        (buffer as? FloatArray)?.usePinned { pinned ->
-            ptr = pinned.addressOf(0)
-            sizeInBytes = (buffer.size * 4).toULong()
+        when (buffer) {
+            is FloatArray -> {
+                val p = buffer.pin()
+                pinned = p
+                ptr = p.addressOf(0)
+                sizeInBytes = (buffer.size * 4).toULong()
+            }
+            is ByteArray -> {
+                val p = buffer.pin()
+                pinned = p
+                ptr = p.addressOf(0)
+                sizeInBytes = buffer.size.toULong()
+            }
+            is ShortArray -> {
+                val p = buffer.pin()
+                pinned = p
+                ptr = p.addressOf(0)
+                sizeInBytes = (buffer.size * 2).toULong()
+            }
+            is IntArray -> {
+                val p = buffer.pin()
+                pinned = p
+                ptr = p.addressOf(0)
+                sizeInBytes = (buffer.size * 4).toULong()
+            }
+        }
+
+        val finalCount = if (count <= 0) sizeInBytes.toUInt() else count.toUInt()
+
+        if (pinned == null && callback == null) {
             FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
-        } ?: (buffer as? ByteArray)?.usePinned { pinned ->
-            ptr = pinned.addressOf(0)
-            sizeInBytes = buffer.size.toULong()
-            FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
-        } ?: (buffer as? ShortArray)?.usePinned { pinned ->
-            ptr = pinned.addressOf(0)
-            sizeInBytes = (buffer.size * 2).toULong()
-            FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
-        } ?: (buffer as? IntArray)?.usePinned { pinned ->
-            ptr = pinned.addressOf(0)
-            sizeInBytes = (buffer.size * 4).toULong()
-            FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
+        } else {
+            // Even if pin failed (e.g. unsupported type), we still want to handle the callback if it exists
+            val wrapper = BufferPinWrapper(pinned ?: ByteArray(0).pin(), callback)
+            val stableRef = StableRef.create(wrapper)
+            val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
+                val ref = user!!.asStableRef<BufferPinWrapper>()
+                val wrap = ref.get()
+                wrap.callback?.invoke()
+                wrap.pinned.unpin()
+                ref.dispose()
+            }
+            FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, callbackWrapper, stableRef.asCPointer())
         }
     }
 }

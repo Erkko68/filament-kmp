@@ -145,8 +145,6 @@ FilaTextureSamplerType FilaTexture_getTarget(const FilaTexture* texture);
 FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture);
 
 void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
-void FilaTexture_setImageCubemap(FilaTexture* texture, FilaEngine* engine, size_t level, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, const FilaTextureFaceOffsets* faceOffsets, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
-void FilaTexture_setExternalImage(FilaTexture* texture, FilaEngine* engine, void* image);
 void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, FilaStream* stream);
 void FilaTexture_generateMipmaps(const FilaTexture* texture, FilaEngine* engine);
 

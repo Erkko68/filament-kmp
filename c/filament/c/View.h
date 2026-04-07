@@ -7,10 +7,7 @@
 extern "C" {
 #endif
 
-typedef enum FilaViewAntiAliasing {
-    FILA_VIEW_ANTI_ALIASING_NONE = 0,
-    FILA_VIEW_ANTI_ALIASING_FXAA = 1,
-} FilaViewAntiAliasing;
+
 
 typedef enum FilaViewDithering {
     FILA_VIEW_DITHERING_NONE = 0,
@@ -202,16 +199,7 @@ void FilaView_setViewport(FilaView* view, int left, int bottom, uint32_t width, 
 void FilaView_setVisibleLayers(FilaView* view, uint8_t select, uint8_t value);
 uint8_t FilaView_getVisibleLayers(const FilaView* view);
 
-void FilaView_setShadowingEnabled(FilaView* view, bool enabled);
-bool FilaView_isShadowingEnabled(const FilaView* view);
-
 void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget);
-
-void FilaView_setSampleCount(FilaView* view, uint8_t count);
-uint8_t FilaView_getSampleCount(const FilaView* view);
-
-void FilaView_setAntiAliasing(FilaView* view, FilaViewAntiAliasing type);
-FilaViewAntiAliasing FilaView_getAntiAliasing(const FilaView* view);
 
 void FilaView_setDithering(FilaView* view, FilaViewDithering dithering);
 FilaViewDithering FilaView_getDithering(const FilaView* view);
