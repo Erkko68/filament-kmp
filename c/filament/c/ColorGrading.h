@@ -20,13 +20,6 @@ typedef enum FilaColorGradingLutFormat {
     FILA_COLOR_GRADING_LUT_FORMAT_FLOAT = 1,
 } FilaColorGradingLutFormat;
 
-typedef enum FilaColorGradingToneMapping {
-    FILA_COLOR_GRADING_TONE_MAPPING_LINEAR = 0,
-    FILA_COLOR_GRADING_TONE_MAPPING_ACES_LEGACY = 1,
-    FILA_COLOR_GRADING_TONE_MAPPING_ACES = 2,
-    FILA_COLOR_GRADING_TONE_MAPPING_FILMIC = 3,
-    FILA_COLOR_GRADING_TONE_MAPPING_DISPLAY_RANGE = 4,
-} FilaColorGradingToneMapping;
 
 // Builder
 typedef struct FilaColorGradingBuilder FilaColorGradingBuilder;
@@ -39,7 +32,6 @@ void FilaColorGradingBuilder_quality(FilaColorGradingBuilder* builder, FilaColor
 void FilaColorGradingBuilder_format(FilaColorGradingBuilder* builder, FilaColorGradingLutFormat format);
 void FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* builder, uint8_t dim);
 void FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* builder, const FilaToneMapper* toneMapper);
-void FilaColorGradingBuilder_toneMapping(FilaColorGradingBuilder* builder, FilaColorGradingToneMapping toneMapping);
 void FilaColorGradingBuilder_luminanceScaling(FilaColorGradingBuilder* builder, bool luminanceScaling);
 void FilaColorGradingBuilder_gamutMapping(FilaColorGradingBuilder* builder, bool gamutMapping);
 void FilaColorGradingBuilder_exposure(FilaColorGradingBuilder* builder, float exposure);

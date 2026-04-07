@@ -187,6 +187,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         FilaView_setCamera(nativeHandle, camera?.nativeHandle) 
     }
     actual fun getCamera(): Camera? = mCamera
+    actual fun hasCamera(): Boolean = FilaView_hasCamera(nativeHandle)
 
     actual fun setViewport(viewport: Viewport) {
         FilaView_setViewport(nativeHandle, viewport.left, viewport.bottom, viewport.width.toUInt(), viewport.height.toUInt())
@@ -200,6 +201,10 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
 
     actual fun setVisibleLayers(select: Int, values: Int) {
         FilaView_setVisibleLayers(nativeHandle, select.toUByte(), values.toUByte())
+    }
+    actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
+        val mask = (1 shl layer).toUByte()
+        FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0.toUByte())
     }
     actual fun getVisibleLayers(): Int = FilaView_getVisibleLayers(nativeHandle).toInt()
 
@@ -444,6 +449,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
 
     actual fun setFrustumCullingEnabled(enabled: Boolean) { FilaView_setFrustumCullingEnabled(nativeHandle, enabled) }
     actual fun isFrustumCullingEnabled(): Boolean = FilaView_isFrustumCullingEnabled(nativeHandle)
+    actual fun setShadowingEnabled(enabled: Boolean) { FilaView_setShadowingEnabled(nativeHandle, enabled) }
     actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) { FilaView_setScreenSpaceRefractionEnabled(nativeHandle, enabled) }
     actual fun setStencilBufferEnabled(enabled: Boolean) { FilaView_setStencilBufferEnabled(nativeHandle, enabled) }
     actual fun isStencilBufferEnabled(): Boolean = FilaView_isStencilBufferEnabled(nativeHandle)

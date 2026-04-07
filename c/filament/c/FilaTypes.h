@@ -140,6 +140,23 @@ typedef struct FilaBone {
 // Entity type (matches utils::Entity::Type)
 typedef uint32_t FilaEntity;
 
+typedef enum FilaRgbType {
+    FILA_RGB_TYPE_SRGB = 0,
+    FILA_RGB_TYPE_LINEAR = 1,
+} FilaRgbType;
+
+typedef enum FilaRgbaType {
+    FILA_RGBA_TYPE_SRGB = 0,
+    FILA_RGBA_TYPE_LINEAR = 1,
+    FILA_RGBA_TYPE_PREMULTIPLIED_SRGB = 2,
+    FILA_RGBA_TYPE_PREMULTIPLIED_LINEAR = 3,
+} FilaRgbaType;
+
+typedef enum FilaColorConversion {
+    FILA_COLOR_CONVERSION_ACCURATE = 0,
+    FILA_COLOR_CONVERSION_FAST = 1,
+} FilaColorConversion;
+
 // Callback types
 typedef void (*FilaBufferCallback)(void* buffer, size_t size, void* userData);
 typedef void (*FilaStreamCallback)(void* image, void* userData);

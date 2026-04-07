@@ -168,11 +168,13 @@ expect class View {
     fun getScene(): Scene?
     fun setCamera(camera: Camera?)
     fun getCamera(): Camera?
+    fun hasCamera(): Boolean
     fun setViewport(viewport: Viewport)
     fun getViewport(): Viewport
     fun setBlendMode(blendMode: BlendMode)
     fun getBlendMode(): BlendMode
     fun setVisibleLayers(select: Int, values: Int)
+    fun setLayerEnabled(layer: Int, enabled: Boolean)
     fun getVisibleLayers(): Int
     fun setPostProcessingEnabled(enabled: Boolean)
     fun isPostProcessingEnabled(): Boolean
@@ -216,6 +218,7 @@ expect class View {
 
     fun setFrustumCullingEnabled(enabled: Boolean)
     fun isFrustumCullingEnabled(): Boolean
+    fun setShadowingEnabled(enabled: Boolean)
     fun setScreenSpaceRefractionEnabled(enabled: Boolean)
     fun setStencilBufferEnabled(enabled: Boolean)
     fun isStencilBufferEnabled(): Boolean

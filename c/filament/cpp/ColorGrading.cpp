@@ -39,12 +39,6 @@ void FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* builder, const 
     FILA_CAST(ColorGrading::Builder, builder)->toneMapper(reinterpret_cast<const ToneMapper*>(toneMapper));
 }
 
-void FilaColorGradingBuilder_toneMapping(FilaColorGradingBuilder* builder, FilaColorGradingToneMapping toneMapping) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    FILA_CAST(ColorGrading::Builder, builder)->toneMapping(static_cast<ColorGrading::ToneMapping>(toneMapping));
-#pragma clang diagnostic pop
-}
 
 void FilaColorGradingBuilder_luminanceScaling(FilaColorGradingBuilder* builder, bool luminanceScaling) {
     FILA_CAST(ColorGrading::Builder, builder)->luminanceScaling(luminanceScaling);

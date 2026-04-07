@@ -214,6 +214,9 @@ void FilaView_setSoftShadowOptions(FilaView* view, const FilaViewSoftShadowOptio
 void FilaView_setRenderQuality(FilaView* view, FilaViewQualityLevel hdrColorBufferQuality);
 void FilaView_setDynamicLightingOptions(FilaView* view, float zLightNear, float zLightFar);
 
+void FilaView_setShadowingEnabled(FilaView* view, bool enabled);
+bool FilaView_isShadowingEnabled(const FilaView* view);
+
 void FilaView_setPostProcessingEnabled(FilaView* view, bool enabled);
 bool FilaView_isPostProcessingEnabled(const FilaView* view);
 

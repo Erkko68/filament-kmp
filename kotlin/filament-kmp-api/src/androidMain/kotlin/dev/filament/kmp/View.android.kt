@@ -218,6 +218,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         this@View.nativeView.camera = camera?.nativeCamera 
     }
     actual fun getCamera(): Camera? = mCamera
+    actual fun hasCamera(): Boolean = this@View.nativeView.hasCamera()
 
     actual fun setViewport(viewport: Viewport) {
         val nativeVp = FilamentViewport(viewport.left, viewport.bottom, viewport.width, viewport.height)
@@ -237,6 +238,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
 
     actual fun setVisibleLayers(select: Int, values: Int) {
         this@View.nativeView.setVisibleLayers(select, values)
+    }
+    actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
+        this@View.nativeView.setLayerEnabled(layer, enabled)
     }
     actual fun getVisibleLayers(): Int = this@View.nativeView.visibleLayers
 
@@ -518,6 +522,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
 
     actual fun setFrustumCullingEnabled(enabled: Boolean) { this@View.nativeView.setFrustumCullingEnabled(enabled) }
     actual fun isFrustumCullingEnabled(): Boolean = this@View.nativeView.isFrustumCullingEnabled
+    actual fun setShadowingEnabled(enabled: Boolean) { this@View.nativeView.setShadowingEnabled(enabled) }
     actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) { this@View.nativeView.setScreenSpaceRefractionEnabled(enabled) }
     actual fun setStencilBufferEnabled(enabled: Boolean) { this@View.nativeView.setStencilBufferEnabled(enabled) }
     actual fun isStencilBufferEnabled(): Boolean = this@View.nativeView.isStencilBufferEnabled

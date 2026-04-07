@@ -12,6 +12,10 @@ extern "C" {
 void FilaColors_cct(float temperature, float* outColor);
 void FilaColors_illuminantD(float temperature, float* outColor);
 
+void FilaColors_toLinearRgb(FilaRgbType type, const float* inRgb, float* outRgb);
+void FilaColors_toLinearRgba(FilaRgbaType type, const float* inRgba, float* outRgba);
+void FilaColors_toLinearConvert(FilaColorConversion conversion, const float* inRgb, float* outRgb);
+
 #ifdef __cplusplus
 }
 #endif

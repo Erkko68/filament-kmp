@@ -112,6 +112,14 @@ void FilaView_setDynamicLightingOptions(FilaView* view, float zLightNear, float 
     FILA_CAST(View, view)->setDynamicLightingOptions(zLightNear, zLightFar);
 }
 
+void FilaView_setShadowingEnabled(FilaView* view, bool enabled) {
+    FILA_CAST(View, view)->setShadowingEnabled(enabled);
+}
+
+bool FilaView_isShadowingEnabled(const FilaView* view) {
+    return FILA_CONST_CAST(View, view)->isShadowingEnabled();
+}
+
 void FilaView_setPostProcessingEnabled(FilaView* view, bool enabled) {
     FILA_CAST(View, view)->setPostProcessingEnabled(enabled);
 }

@@ -4,61 +4,92 @@ package dev.filament.kmp
 import kotlinx.cinterop.*
 import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaColorGrading
+import cnames.structs.FilaColorGradingBuilder
 
 actual class ColorGrading internal constructor(internal var nativeHandle: CPointer<FilaColorGrading>?) {
     actual class Builder actual constructor() {
-        private val nativeBuilder = FilaColorGradingBuilder_create()
+        private val nativeHandle: CPointer<FilaColorGradingBuilder>? = FilaColorGradingBuilder_create()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
-            FilaColorGradingBuilder_quality(nativeBuilder, qualityLevel.ordinal.toUInt())
+            FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal.toUInt())
             return this
         }
-        
-        
+
+        actual fun toneMapper(toneMapper: ToneMapper): Builder {
+            FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
+            return this
+        }
+
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
-            FilaColorGradingBuilder_luminanceScaling(nativeBuilder, luminanceScaling)
+            FilaColorGradingBuilder_luminanceScaling(nativeHandle, luminanceScaling)
             return this
         }
-        
+
         actual fun gamutMapping(gamutMapping: Boolean): Builder {
-            FilaColorGradingBuilder_gamutMapping(nativeBuilder, gamutMapping)
+            FilaColorGradingBuilder_gamutMapping(nativeHandle, gamutMapping)
             return this
         }
-        
+
         actual fun exposure(exposure: Float): Builder {
-            FilaColorGradingBuilder_exposure(nativeBuilder, exposure)
+            FilaColorGradingBuilder_exposure(nativeHandle, exposure)
             return this
         }
-        
+
         actual fun nightAdaptation(adaptation: Float): Builder {
-            FilaColorGradingBuilder_nightAdaptation(nativeBuilder, adaptation)
+            FilaColorGradingBuilder_nightAdaptation(nativeHandle, adaptation)
             return this
         }
-        
+
         actual fun whiteBalance(temperature: Float, tint: Float): Builder {
-            FilaColorGradingBuilder_whiteBalance(nativeBuilder, temperature, tint)
+            FilaColorGradingBuilder_whiteBalance(nativeHandle, temperature, tint)
             return this
         }
-        
+
+        actual fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder {
+            memScoped {
+                FilaColorGradingBuilder_channelMixer(nativeHandle, outRed.toCValues().ptr, outGreen.toCValues().ptr, outBlue.toCValues().ptr)
+            }
+            return this
+        }
+
+        actual fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder {
+            memScoped {
+                FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, shadows.toCValues().ptr, midtones.toCValues().ptr, highlights.toCValues().ptr, ranges.toCValues().ptr)
+            }
+            return this
+        }
+
+        actual fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder {
+            memScoped {
+                FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, slope.toCValues().ptr, offset.toCValues().ptr, power.toCValues().ptr)
+            }
+            return this
+        }
+
         actual fun contrast(contrast: Float): Builder {
-            FilaColorGradingBuilder_contrast(nativeBuilder, contrast)
+            FilaColorGradingBuilder_contrast(nativeHandle, contrast)
             return this
         }
-        
+
         actual fun vibrance(vibrance: Float): Builder {
-            FilaColorGradingBuilder_vibrance(nativeBuilder, vibrance)
+            FilaColorGradingBuilder_vibrance(nativeHandle, vibrance)
             return this
         }
-        
+
         actual fun saturation(saturation: Float): Builder {
-            FilaColorGradingBuilder_saturation(nativeBuilder, saturation)
+            FilaColorGradingBuilder_saturation(nativeHandle, saturation)
             return this
         }
-        
+
+        actual fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
+            memScoped {
+                FilaColorGradingBuilder_curves(nativeHandle, shadowGamma.toCValues().ptr, midPoint.toCValues().ptr, highlightScale.toCValues().ptr)
+            }
+            return this
+        }
+
         actual fun build(engine: Engine): ColorGrading {
-            val handle = FilaColorGradingBuilder_build(nativeBuilder, engine.nativeHandle)
-            FilaColorGradingBuilder_destroy(nativeBuilder)
-            return ColorGrading(handle)
+            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
         }
     }
 

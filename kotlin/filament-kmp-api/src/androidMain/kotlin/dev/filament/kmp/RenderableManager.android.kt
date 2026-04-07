@@ -192,7 +192,7 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         
     actual fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance? {
         val nativeInstance = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex)
-        return if (nativeInstance != null) MaterialInstance(nativeInstance) else null
+        return MaterialInstance(nativeInstance)
     }
     
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) = 
