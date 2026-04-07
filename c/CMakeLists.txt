@@ -128,6 +128,8 @@ add_library(filament-c SHARED
     filament/cpp/TextureSampler.cpp
     # Colors
     filament/cpp/Colors.cpp
+    # SurfaceOrientation
+    filament/cpp/SurfaceOrientation.cpp
 )
 
 target_include_directories(filament-c PUBLIC

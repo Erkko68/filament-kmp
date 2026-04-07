@@ -1,8 +1,10 @@
-#include "SurfaceOrientation.h"
-#include <filament/SurfaceOrientation.h>
+#include <stdint.h>
 #include <stddef.h>
+#include <geometry/SurfaceOrientation.h>
+#include "../c/SurfaceOrientation.h"
 
 using namespace filament;
+using namespace filament::geometry;
 
 struct FilaSurfaceOrientationBuilder {
     SurfaceOrientation::Builder builder;
@@ -27,19 +29,19 @@ void FilaSurfaceOrientationBuilder_vertexCount(FilaSurfaceOrientationBuilder* bu
 }
 
 void FilaSurfaceOrientationBuilder_normals(FilaSurfaceOrientationBuilder* builder, const float* buffer, uint32_t stride) {
-    builder->builder.normals(buffer, stride);
+    builder->builder.normals(reinterpret_cast<const math::float3*>(buffer), stride);
 }
 
 void FilaSurfaceOrientationBuilder_tangents(FilaSurfaceOrientationBuilder* builder, const float* buffer, uint32_t stride) {
-    builder->builder.tangents(buffer, stride);
+    builder->builder.tangents(reinterpret_cast<const math::float4*>(buffer), stride);
 }
 
 void FilaSurfaceOrientationBuilder_uvs(FilaSurfaceOrientationBuilder* builder, const float* buffer, uint32_t stride) {
-    builder->builder.uvs(buffer, stride);
+    builder->builder.uvs(reinterpret_cast<const math::float2*>(buffer), stride);
 }
 
 void FilaSurfaceOrientationBuilder_positions(FilaSurfaceOrientationBuilder* builder, const float* buffer, uint32_t stride) {
-    builder->builder.positions(buffer, stride);
+    builder->builder.positions(reinterpret_cast<const math::float3*>(buffer), stride);
 }
 
 void FilaSurfaceOrientationBuilder_triangleCount(FilaSurfaceOrientationBuilder* builder, uint32_t triangleCount) {
@@ -47,17 +49,17 @@ void FilaSurfaceOrientationBuilder_triangleCount(FilaSurfaceOrientationBuilder* 
 }
 
 void FilaSurfaceOrientationBuilder_triangles16(FilaSurfaceOrientationBuilder* builder, const uint16_t* buffer) {
-    builder->builder.triangles(buffer);
+    builder->builder.triangles(reinterpret_cast<const math::ushort3*>(buffer));
 }
 
 void FilaSurfaceOrientationBuilder_triangles32(FilaSurfaceOrientationBuilder* builder, const uint32_t* buffer) {
-    builder->builder.triangles(buffer);
+    builder->builder.triangles(reinterpret_cast<const math::uint3*>(buffer));
 }
 
 FilaSurfaceOrientation* FilaSurfaceOrientationBuilder_build(FilaSurfaceOrientationBuilder* builder) {
     SurfaceOrientation* orientation = builder->builder.build();
     if (orientation == nullptr) return nullptr;
-    return new FilaSurfaceOrientation{orientation} ;
+    return new FilaSurfaceOrientation{orientation};
 }
 
 void FilaSurfaceOrientation_destroy(FilaSurfaceOrientation* orientation) {
@@ -70,15 +72,15 @@ uint32_t FilaSurfaceOrientation_getVertexCount(const FilaSurfaceOrientation* ori
 }
 
 void FilaSurfaceOrientation_getQuatsAsFloat(const FilaSurfaceOrientation* orientation, float* buffer, uint32_t count) {
-    orientation->orientation->getQuats(buffer, count);
+    orientation->orientation->getQuats(reinterpret_cast<math::quatf*>(buffer), count);
 }
 
 void FilaSurfaceOrientation_getQuatsAsHalf(const FilaSurfaceOrientation* orientation, uint16_t* buffer, uint32_t count) {
-    orientation->orientation->getQuats((math::half4*)buffer, count);
+    orientation->orientation->getQuats(reinterpret_cast<math::quath*>(buffer), count);
 }
 
 void FilaSurfaceOrientation_getQuatsAsShort(const FilaSurfaceOrientation* orientation, int16_t* buffer, uint32_t count) {
-    orientation->orientation->getQuats((math::short4*)buffer, count);
+    orientation->orientation->getQuats(reinterpret_cast<math::short4*>(buffer), count);
 }
 
 }

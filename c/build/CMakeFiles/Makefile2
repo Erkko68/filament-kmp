@@ -91,12 +91,12 @@ clean: CMakeFiles/filament-utils-c.dir/clean
 CMakeFiles/filament-c.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 "Built target filament-c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32 "Built target filament-c"
 .PHONY : CMakeFiles/filament-c.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/filament-c.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles 29
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles 30
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/filament-c.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles 0
 .PHONY : CMakeFiles/filament-c.dir/rule
@@ -108,7 +108,7 @@ filament-c: CMakeFiles/filament-c.dir/rule
 # codegen rule for target.
 CMakeFiles/filament-c.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 "Finished codegen for target filament-c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32 "Finished codegen for target filament-c"
 .PHONY : CMakeFiles/filament-c.dir/codegen
 
 # clean rule for target.
@@ -155,12 +155,12 @@ CMakeFiles/filamat-c.dir/clean:
 CMakeFiles/filament-utils-c.dir/all: CMakeFiles/filament-c.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-utils-c.dir/build.make CMakeFiles/filament-utils-c.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-utils-c.dir/build.make CMakeFiles/filament-utils-c.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=32,33,34,35 "Built target filament-utils-c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=33,34,35,36 "Built target filament-utils-c"
 .PHONY : CMakeFiles/filament-utils-c.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/filament-utils-c.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles 33
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles 34
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/filament-utils-c.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles 0
 .PHONY : CMakeFiles/filament-utils-c.dir/rule
@@ -172,7 +172,7 @@ filament-utils-c: CMakeFiles/filament-utils-c.dir/rule
 # codegen rule for target.
 CMakeFiles/filament-utils-c.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-utils-c.dir/build.make CMakeFiles/filament-utils-c.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=32,33,34,35 "Finished codegen for target filament-utils-c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles --progress-num=33,34,35,36 "Finished codegen for target filament-utils-c"
 .PHONY : CMakeFiles/filament-utils-c.dir/codegen
 
 # clean rule for target.

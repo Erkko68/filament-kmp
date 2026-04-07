@@ -29,6 +29,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/SkinningBuffer.cpp" "CMakeFiles/filament-c.dir/filament/cpp/SkinningBuffer.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/SkinningBuffer.cpp.o.d"
   "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/Skybox.cpp" "CMakeFiles/filament-c.dir/filament/cpp/Skybox.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/Skybox.cpp.o.d"
   "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/Stream.cpp" "CMakeFiles/filament-c.dir/filament/cpp/Stream.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/Stream.cpp.o.d"
+  "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/SurfaceOrientation.cpp" "CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.o.d"
   "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/SwapChain.cpp" "CMakeFiles/filament-c.dir/filament/cpp/SwapChain.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/SwapChain.cpp.o.d"
   "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/Texture.cpp" "CMakeFiles/filament-c.dir/filament/cpp/Texture.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/Texture.cpp.o.d"
   "/Users/eric/IdeaProjects/filament-kmp-core/c/filament/cpp/TextureSampler.cpp" "CMakeFiles/filament-c.dir/filament/cpp/TextureSampler.cpp.o" "gcc" "CMakeFiles/filament-c.dir/filament/cpp/TextureSampler.cpp.o.d"

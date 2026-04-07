@@ -41,6 +41,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/filament-c.dir/filament/cpp/Skybox.cpp.o.d"
   "CMakeFiles/filament-c.dir/filament/cpp/Stream.cpp.o"
   "CMakeFiles/filament-c.dir/filament/cpp/Stream.cpp.o.d"
+  "CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.o"
+  "CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.o.d"
   "CMakeFiles/filament-c.dir/filament/cpp/SwapChain.cpp.o"
   "CMakeFiles/filament-c.dir/filament/cpp/SwapChain.cpp.o.d"
   "CMakeFiles/filament-c.dir/filament/cpp/Texture.cpp.o"

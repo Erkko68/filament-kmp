@@ -755,6 +755,30 @@ filament/cpp/Stream.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/filament/cpp/Stream.cpp.s
 .PHONY : filament/cpp/Stream.cpp.s
 
+filament/cpp/SurfaceOrientation.o: filament/cpp/SurfaceOrientation.cpp.o
+.PHONY : filament/cpp/SurfaceOrientation.o
+
+# target to build an object file
+filament/cpp/SurfaceOrientation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.o
+.PHONY : filament/cpp/SurfaceOrientation.cpp.o
+
+filament/cpp/SurfaceOrientation.i: filament/cpp/SurfaceOrientation.cpp.i
+.PHONY : filament/cpp/SurfaceOrientation.i
+
+# target to preprocess a source file
+filament/cpp/SurfaceOrientation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.i
+.PHONY : filament/cpp/SurfaceOrientation.cpp.i
+
+filament/cpp/SurfaceOrientation.s: filament/cpp/SurfaceOrientation.cpp.s
+.PHONY : filament/cpp/SurfaceOrientation.s
+
+# target to generate assembly for a file
+filament/cpp/SurfaceOrientation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/filament-c.dir/build.make CMakeFiles/filament-c.dir/filament/cpp/SurfaceOrientation.cpp.s
+.PHONY : filament/cpp/SurfaceOrientation.cpp.s
+
 filament/cpp/SwapChain.o: filament/cpp/SwapChain.cpp.o
 .PHONY : filament/cpp/SwapChain.o
 
@@ -1009,6 +1033,9 @@ help:
 	@echo "... filament/cpp/Stream.o"
 	@echo "... filament/cpp/Stream.i"
 	@echo "... filament/cpp/Stream.s"
+	@echo "... filament/cpp/SurfaceOrientation.o"
+	@echo "... filament/cpp/SurfaceOrientation.i"
+	@echo "... filament/cpp/SurfaceOrientation.s"
 	@echo "... filament/cpp/SwapChain.o"
 	@echo "... filament/cpp/SwapChain.i"
 	@echo "... filament/cpp/SwapChain.s"
