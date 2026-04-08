@@ -6,7 +6,7 @@ import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaEngine
 import cnames.structs.FilaEngineBuilder
 
-actual class Engine internal constructor(internal var nativeHandle: CPointer<FilaEngine>?) {
+actual class Engine public constructor(public var nativeHandle: CPointer<FilaEngine>?) {
     private val mTransformManager by lazy { TransformManager(FilaEngine_getTransformManager(nativeHandle)!!) }
     private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)!!) }
     private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!) }

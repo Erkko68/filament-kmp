@@ -3,7 +3,7 @@ package dev.filament.kmp
 import com.google.android.filament.Texture as AndroidTexture
 import java.nio.Buffer
 
-actual class Texture internal constructor(val nativeTexture: AndroidTexture) {
+actual class Texture public constructor(val nativeTexture: AndroidTexture) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidTexture.Builder()
 

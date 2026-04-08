@@ -5,26 +5,19 @@
 
 # Gradle
 .gradle/
+**/build/
 build/
-*/build/
 local.properties
-
-# Kotlin
 .kotlin/
-kotlin/.gradle/
-kotlin/build/
-kotlin/*/build/
-kotlin/local.properties
 
 # Native / Filament
 /filament-main/
 /filament-prebuilts/
-/C/build/
-/c/build/
+c/build/
+C/build/
 
 # Temp / OS
 *.hprof
 *.log
-
-# C
-c/build/
+.DS_Store
+**/ .DS_Store

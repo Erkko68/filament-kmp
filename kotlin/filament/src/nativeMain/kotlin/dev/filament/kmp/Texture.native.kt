@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import dev.filament.kmp.cinterop.*
 import cnames.structs.FilaTexture
 
-actual class Texture internal constructor(internal var nativeHandle: CPointer<FilaTexture>?) {
+actual class Texture public constructor(public var nativeHandle: CPointer<FilaTexture>?) {
 
     actual enum class Sampler {
         SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY;
