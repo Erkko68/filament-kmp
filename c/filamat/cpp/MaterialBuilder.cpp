@@ -22,7 +22,9 @@ FilaMaterialBuilder* FilaMaterialBuilder_create() {
 }
 
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* builder) {
-    delete reinterpret_cast<MaterialBuilder*>(builder);
+    if (builder) {
+        delete reinterpret_cast<MaterialBuilder*>(builder);
+    }
 }
 
 FilaPackage* FilaMaterialBuilder_build(FilaMaterialBuilder* builder) {
@@ -59,7 +61,7 @@ void FilaMaterialBuilder_uniformParameterArray(FilaMaterialBuilder* builder, Fil
 }
 
 void FilaMaterialBuilder_samplerParameter(FilaMaterialBuilder* builder, FilaMaterialBuilderSamplerType type, FilaMaterialBuilderSamplerFormat format, FilaMaterialBuilderParameterPrecision precision, const char* name) {
-    reinterpret_cast<MaterialBuilder*>(builder)->parameter(name, static_cast<MaterialBuilder::SamplerType>(type), static_cast<MaterialBuilder::SamplerFormat>(format), static_cast<MaterialBuilder::ParameterPrecision>(precision));
+    reinterpret_cast<MaterialBuilder*>(builder)->parameter(name, static_cast<backend::SamplerType>(type), static_cast<backend::SamplerFormat>(format), static_cast<backend::Precision>(precision));
 }
 
 void FilaMaterialBuilder_variable(FilaMaterialBuilder* builder, FilaMaterialBuilderVariable variable, const char* name) {
@@ -154,23 +156,23 @@ void FilaMaterialBuilder_multiBounceAmbientOcclusion(FilaMaterialBuilder* builde
     reinterpret_cast<MaterialBuilder*>(builder)->multiBounceAmbientOcclusion(enable);
 }
 
-void FilaMaterialBuilder_specularAmbientOcclusion(FilaMaterialBuilder* builder, int32_t mode) {
+void FilaMaterialBuilder_specularAmbientOcclusion(FilaMaterialBuilder* builder, FilaMaterialBuilderSpecularAmbientOcclusion mode) {
     reinterpret_cast<MaterialBuilder*>(builder)->specularAmbientOcclusion(static_cast<MaterialBuilder::SpecularAmbientOcclusion>(mode));
 }
 
-void FilaMaterialBuilder_refractionMode(FilaMaterialBuilder* builder, int32_t mode) {
+void FilaMaterialBuilder_refractionMode(FilaMaterialBuilder* builder, FilaMaterialBuilderRefractionMode mode) {
     reinterpret_cast<MaterialBuilder*>(builder)->refractionMode(static_cast<MaterialBuilder::RefractionMode>(mode));
 }
 
-void FilaMaterialBuilder_reflectionMode(FilaMaterialBuilder* builder, int32_t mode) {
+void FilaMaterialBuilder_reflectionMode(FilaMaterialBuilder* builder, FilaMaterialBuilderReflectionMode mode) {
     reinterpret_cast<MaterialBuilder*>(builder)->reflectionMode(static_cast<MaterialBuilder::ReflectionMode>(mode));
 }
 
-void FilaMaterialBuilder_refractionType(FilaMaterialBuilder* builder, int32_t type) {
+void FilaMaterialBuilder_refractionType(FilaMaterialBuilder* builder, FilaMaterialBuilderRefractionType type) {
     reinterpret_cast<MaterialBuilder*>(builder)->refractionType(static_cast<MaterialBuilder::RefractionType>(type));
 }
 
-void FilaMaterialBuilder_transparencyMode(FilaMaterialBuilder* builder, int32_t mode) {
+void FilaMaterialBuilder_transparencyMode(FilaMaterialBuilder* builder, FilaMaterialBuilderTransparencyMode mode) {
     reinterpret_cast<MaterialBuilder*>(builder)->transparencyMode(static_cast<MaterialBuilder::TransparencyMode>(mode));
 }
 
@@ -186,7 +188,7 @@ void FilaMaterialBuilder_optimization(FilaMaterialBuilder* builder, FilaMaterial
     reinterpret_cast<MaterialBuilder*>(builder)->optimization(static_cast<MaterialBuilder::Optimization>(optimization));
 }
 
-void FilaMaterialBuilder_variantFilter(FilaMaterialBuilder* builder, uint8_t variantFilter) {
+void FilaMaterialBuilder_variantFilter(FilaMaterialBuilder* builder, uint32_t variantFilter) {
     reinterpret_cast<MaterialBuilder*>(builder)->variantFilter(variantFilter);
 }
 
@@ -194,9 +196,39 @@ void FilaMaterialBuilder_useLegacyMorphing(FilaMaterialBuilder* builder) {
     reinterpret_cast<MaterialBuilder*>(builder)->useLegacyMorphing();
 }
 
+void FilaMaterialBuilder_shaderDefine(FilaMaterialBuilder* builder, const char* name, const char* value) {
+    reinterpret_cast<MaterialBuilder*>(builder)->shaderDefine(name, value);
+}
+
+void FilaMaterialBuilder_quality(FilaMaterialBuilder* builder, FilaMaterialBuilderShaderQuality quality) {
+    reinterpret_cast<MaterialBuilder*>(builder)->quality(static_cast<MaterialBuilder::ShaderQuality>(quality));
+}
+
+void FilaMaterialBuilder_featureLevel(FilaMaterialBuilder* builder, uint8_t featureLevel) {
+    reinterpret_cast<MaterialBuilder*>(builder)->featureLevel(static_cast<backend::FeatureLevel>(featureLevel));
+}
+
+void FilaMaterialBuilder_instanced(FilaMaterialBuilder* builder, bool enable) {
+    reinterpret_cast<MaterialBuilder*>(builder)->instanced(enable);
+}
+
+void FilaMaterialBuilder_linearFog(FilaMaterialBuilder* builder, bool enable) {
+    reinterpret_cast<MaterialBuilder*>(builder)->linearFog(enable);
+}
+
+void FilaMaterialBuilder_shadowFarAttenuation(FilaMaterialBuilder* builder, bool enable) {
+    reinterpret_cast<MaterialBuilder*>(builder)->shadowFarAttenuation(enable);
+}
+
+void FilaMaterialBuilder_useDefaultDepthVariant(FilaMaterialBuilder* builder) {
+    reinterpret_cast<MaterialBuilder*>(builder)->useDefaultDepthVariant();
+}
+
 // Package
 void FilaPackage_destroy(FilaPackage* package) {
-    delete reinterpret_cast<Package*>(package);
+    if (package) {
+        delete reinterpret_cast<Package*>(package);
+    }
 }
 
 bool FilaPackage_isValid(const FilaPackage* package) {
