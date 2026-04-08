@@ -25,3 +25,6 @@ kotlin/local.properties
 # Temp / OS
 *.hprof
 *.log
+
+# C
+c/build/
