@@ -85,7 +85,7 @@ kotlin {
             }
 
             linkerOpts(
-                "-L${projectDir}/../../filament-prebuilts/lib/$libDir",
+                "-L${projectDir}/../../prebuilts/lib/$libDir",
                 "-lfilament"
             )
 
