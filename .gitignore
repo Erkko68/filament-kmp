@@ -12,7 +12,7 @@ local.properties
 
 # Native / Filament
 /filament-main/
-/filament-prebuilts/
+/prebuilts/
 c/build/
 C/build/
 
