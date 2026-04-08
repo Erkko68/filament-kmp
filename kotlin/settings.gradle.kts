@@ -1,3 +1,9 @@
+rootProject.name = "filament-kmp-core"
+
+include(":filament")
+include(":filamat")
+include(":filament-utils")
+
 pluginManagement {
     repositories {
         google()
@@ -7,16 +13,8 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
     repositories {
         google()
         mavenCentral()
     }
 }
-
-rootProject.name = "filament-kmp"
-
-include(":filament-kmp-api")
-
-project(":filament-kmp-api").projectDir = file("filament-kmp-api")

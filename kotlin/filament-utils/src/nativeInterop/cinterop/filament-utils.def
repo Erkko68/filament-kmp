@@ -1,0 +1,3 @@
+package = dev.filament.kmp.utils
+headers = HDRLoader.h IBLPrefilter.h Manipulator.h
+headerFilter = HDRLoader.h IBLPrefilter.h Manipulator.h

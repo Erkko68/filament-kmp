@@ -1,0 +1,3 @@
+package = dev.filament.kmp.filamat
+headers = MaterialBuilder.h
+headerFilter = MaterialBuilder.h

@@ -1,7 +1,27 @@
-/c-wrapper/build/
-/.idea/
-/filament-prebuilts/ios/lib/
-/filament-prebuilts/android/lib/
-/filament-prebuilts/mac/lib/
-filament-kmp-core.iml
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Gradle
+.gradle/
+build/
+*/build/
+local.properties
+
+# Kotlin
+.kotlin/
+kotlin/.gradle/
+kotlin/build/
+kotlin/*/build/
+kotlin/local.properties
+
+# Native / Filament
 /filament-main/
+/filament-prebuilts/
+/C/build/
+/c/build/
+
+# Temp / OS
+*.hprof
+*.log
