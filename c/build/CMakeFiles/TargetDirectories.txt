@@ -1,5 +1,0 @@
-/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles/filament-c.dir
-/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles/filamat-c.dir
-/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles/filament-utils-c.dir
-/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles/edit_cache.dir
-/Users/eric/IdeaProjects/filament-kmp-core/c/build/CMakeFiles/rebuild_cache.dir
