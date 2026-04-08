@@ -23,7 +23,7 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual enum class SamplerType {
-        SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D
+        SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY
     }
 
     actual enum class SamplerFormat {
@@ -35,11 +35,11 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual enum class Variable {
-        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3
+        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4
     }
 
     actual enum class BlendingMode {
-        OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN
+        OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN, CUSTOM
     }
 
     actual enum class VertexDomain {
@@ -88,6 +88,14 @@ actual class MaterialBuilder actual constructor() {
 
     actual enum class Optimization {
         NONE, PREPROCESSOR, SIZE, PERFORMANCE
+    }
+
+    actual enum class ShaderQuality {
+        DEFAULT, LOW, NORMAL, HIGH
+    }
+
+    actual enum class FeatureLevel {
+        LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3
     }
 
     actual companion object {
@@ -343,6 +351,41 @@ actual class MaterialBuilder actual constructor() {
 
     actual fun useLegacyMorphing(): MaterialBuilder {
         FilaMaterialBuilder_useLegacyMorphing(nativeHandle)
+        return this
+    }
+
+    actual fun shaderDefine(name: String, value: String): MaterialBuilder {
+        FilaMaterialBuilder_shaderDefine(nativeHandle, name, value)
+        return this
+    }
+
+    actual fun quality(quality: ShaderQuality): MaterialBuilder {
+        FilaMaterialBuilder_quality(nativeHandle, quality.ordinal.toInt())
+        return this
+    }
+
+    actual fun featureLevel(level: FeatureLevel): MaterialBuilder {
+        FilaMaterialBuilder_featureLevel(nativeHandle, level.ordinal.toUByte())
+        return this
+    }
+
+    actual fun instanced(enabled: Boolean): MaterialBuilder {
+        FilaMaterialBuilder_instanced(nativeHandle, enabled)
+        return this
+    }
+
+    actual fun linearFog(enabled: Boolean): MaterialBuilder {
+        FilaMaterialBuilder_linearFog(nativeHandle, enabled)
+        return this
+    }
+
+    actual fun shadowFarAttenuation(enabled: Boolean): MaterialBuilder {
+        FilaMaterialBuilder_shadowFarAttenuation(nativeHandle, enabled)
+        return this
+    }
+
+    actual fun useDefaultDepthVariant(): MaterialBuilder {
+        FilaMaterialBuilder_useDefaultDepthVariant(nativeHandle)
         return this
     }
 

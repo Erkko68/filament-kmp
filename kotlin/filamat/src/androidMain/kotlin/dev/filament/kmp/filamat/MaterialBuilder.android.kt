@@ -20,7 +20,7 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual enum class SamplerType {
-        SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D
+        SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY
     }
 
     actual enum class SamplerFormat {
@@ -32,11 +32,11 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual enum class Variable {
-        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3
+        CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4
     }
 
     actual enum class BlendingMode {
-        OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN
+        OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN, CUSTOM
     }
 
     actual enum class VertexDomain {
@@ -85,6 +85,14 @@ actual class MaterialBuilder actual constructor() {
 
     actual enum class Optimization {
         NONE, PREPROCESSOR, SIZE, PERFORMANCE
+    }
+
+    actual enum class ShaderQuality {
+        DEFAULT, LOW, NORMAL, HIGH
+    }
+
+    actual enum class FeatureLevel {
+        LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3
     }
 
     actual companion object {
@@ -309,6 +317,42 @@ actual class MaterialBuilder actual constructor() {
 
     actual fun useLegacyMorphing(): MaterialBuilder {
         builder.useLegacyMorphing()
+        return this
+    }
+
+    actual fun shaderDefine(name: String, value: String): MaterialBuilder {
+        builder.shaderDefine(name, value)
+        return this
+    }
+
+    actual fun quality(quality: ShaderQuality): MaterialBuilder {
+        builder.quality(AndroidMaterialBuilder.ShaderQuality.values()[quality.ordinal])
+        return this
+    }
+
+    actual fun featureLevel(level: FeatureLevel): MaterialBuilder {
+        // Map LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3 to Android's FeatureLevel
+        builder.featureLevel(com.google.android.filament.backend.FeatureLevel.values()[level.ordinal])
+        return this
+    }
+
+    actual fun instanced(enabled: Boolean): MaterialBuilder {
+        builder.instanced(enabled)
+        return this
+    }
+
+    actual fun linearFog(enabled: Boolean): MaterialBuilder {
+        builder.linearFog(enabled)
+        return this
+    }
+
+    actual fun shadowFarAttenuation(enabled: Boolean): MaterialBuilder {
+        builder.shadowFarAttenuation(enabled)
+        return this
+    }
+
+    actual fun useDefaultDepthVariant(): MaterialBuilder {
+        builder.useDefaultDepthVariant()
         return this
     }
 }

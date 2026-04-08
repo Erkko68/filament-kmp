@@ -42,7 +42,8 @@ expect class MaterialBuilder() {
         SAMPLER_2D_ARRAY,
         SAMPLER_CUBEMAP,
         SAMPLER_EXTERNAL,
-        SAMPLER_3D
+        SAMPLER_3D,
+        SAMPLER_CUBEMAP_ARRAY
     }
 
     enum class SamplerFormat {
@@ -63,7 +64,8 @@ expect class MaterialBuilder() {
         CUSTOM0,
         CUSTOM1,
         CUSTOM2,
-        CUSTOM3
+        CUSTOM3,
+        CUSTOM4
     }
 
     enum class BlendingMode {
@@ -73,7 +75,8 @@ expect class MaterialBuilder() {
         MASKED,
         FADE,
         MULTIPLY,
-        SCREEN
+        SCREEN,
+        CUSTOM
     }
 
     enum class VertexDomain {
@@ -144,6 +147,20 @@ expect class MaterialBuilder() {
         PERFORMANCE
     }
 
+    enum class ShaderQuality {
+        DEFAULT,
+        LOW,
+        NORMAL,
+        HIGH
+    }
+
+    enum class FeatureLevel {
+        LEVEL_0,
+        LEVEL_1,
+        LEVEL_2,
+        LEVEL_3
+    }
+
     companion object {
         fun init()
         fun shutdown()
@@ -192,4 +209,11 @@ expect class MaterialBuilder() {
     fun optimization(optimization: Optimization): MaterialBuilder
     fun variantFilter(variantFilter: Int): MaterialBuilder
     fun useLegacyMorphing(): MaterialBuilder
+    fun shaderDefine(name: String, value: String): MaterialBuilder
+    fun quality(quality: ShaderQuality): MaterialBuilder
+    fun featureLevel(level: FeatureLevel): MaterialBuilder
+    fun instanced(enabled: Boolean): MaterialBuilder
+    fun linearFog(enabled: Boolean): MaterialBuilder
+    fun shadowFarAttenuation(enabled: Boolean): MaterialBuilder
+    fun useDefaultDepthVariant(): MaterialBuilder
 }
