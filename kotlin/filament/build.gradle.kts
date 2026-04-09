@@ -71,98 +71,95 @@ kotlin {
         }
     }
 
-    targets.withType<KotlinNativeTarget>().configureEach {
-        binaries.all {
-            val platform = target.konanTarget.family
-
-            // Path to prebuilt Filament libraries
-            val filamentPrebuiltDir = when (platform) {
-                Family.IOS -> "${projectDir}/../../prebuilts/ios/lib/universal"
-                Family.OSX -> "${projectDir}/../../prebuilts/mac/lib/arm64"
-                else -> ""
-            }
-
-            if (filamentPrebuiltDir.isNotEmpty()) {
-                linkerOpts("-L$filamentPrebuiltDir")
-
-                // Link all required Filament static libraries
-                // Note: The order of linking can be important for static libraries
-                linkerOpts(
-                    "-lfilament", "-lbackend", "-lutils", "-lmath",
-                    "-lgeometry_combined", "-libl-lite", "-libl",
-                    "-lfilamat_combined", "-lshaders", "-lfilament-iblprefilter",
-                    "-lcamutils", "-limage", "-limageio-lite", "-lfilabridge",
-                    "-lfilaflat", "-lzstd", "-lsmol-v", "-lktxreader",
-                    "-lpng", "-ltinyexr", "-lz", "-labseil", "-lperfetto"
-                )
-
-                // Link the C-wrapper (built from /c folder)
-                // We use target-specific build directories
-                linkerOpts("-L${projectDir}/../../c/build/${target.name}", "-lfilament-c")
-            }
-
-            when (platform) {
-                Family.IOS -> {
-                    linkerOpts(
-                        "-framework", "Metal",
-                        "-framework", "UIKit",
-                        "-framework", "CoreVideo",
-                        "-framework", "QuartzCore",
-                        "-framework", "CoreGraphics",
-                        "-framework", "Foundation"
-                    )
-                }
-
-                Family.OSX -> {
-                    linkerOpts(
-                        "-framework", "Metal",
-                        "-framework", "Cocoa",
-                        "-framework", "QuartzCore",
-                        "-framework", "CoreVideo",
-                        "-framework", "AppKit",
-                        "-framework", "CoreGraphics",
-                        "-framework", "Foundation"
-                    )
-                }
-
-                else -> Unit
-            }
-        }
-    }
-
-    // --- Automated Native Build Configuration ---
+    // --- Automated Native Build & C-Interop Embedding Configuration ---
     targets.withType<KotlinNativeTarget>().configureEach {
         val targetName = name
         val konanTarget = konanTarget
 
-        // Map KonanTarget to simplified Filament platform flag
-        val filaPlatform = when (konanTarget) {
-            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios"
-            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64 -> "ios-simulator"
-            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64 -> "macos"
-            else -> ""
+        if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
+            binaries.all {
+                freeCompilerArgs += listOf("-Xoverride-konan-properties=apple.sdk.min.version=15.0")
+            }
         }
 
+        // 1. Setup paths
+        val (filaPlatform, filaArch) = when (konanTarget) {
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64 -> "ios-simulator" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-simulator" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64 -> "macos" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64 -> "macos" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64 -> "linux" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_ARM64 -> "linux" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MINGW_X64 -> "windows" to "x64"
+            else -> "" to ""
+        }
+        val (libPrefix, libSuffix) = when (konanTarget.family) {
+            org.jetbrains.kotlin.konan.target.Family.MINGW -> "" to ".lib"
+            else -> "lib" to ".a"
+        }
+        val buildDir = project.file("../../c/build/$targetName")
+        val filamentPrebuiltDir = "${projectDir}/../../prebuilts/$targetName/lib"
+
+
+        // 2. Automate the C Wrapper compilation
         if (filaPlatform.isNotEmpty()) {
             val cmakeTaskName = "buildFilamentC_$targetName"
-            val buildDir = project.file("../../c/build/$targetName")
-
             val buildFilamentC = tasks.register<Exec>(cmakeTaskName) {
                 buildDir.mkdirs()
                 workingDir(buildDir)
-
                 val cmakePath = "/opt/homebrew/bin/cmake"
-                commandLine("sh", "-c", "$cmakePath ../../ -DFILAMENT_PLATFORM=$filaPlatform -DCMAKE_BUILD_TYPE=Release && $cmakePath --build . --target filament-c")
-
-                // Log what we are doing
-                doFirst {
-                    println("Building Filament C Wrapper for $targetName ($filaPlatform) in $buildDir")
-                }
+                commandLine("sh", "-c", "$cmakePath ../../ -DFILAMENT_PLATFORM=$filaPlatform -DFILAMENT_ARCH=$filaArch -DCMAKE_BUILD_TYPE=Release && $cmakePath --build . --target filament-c")
+                doFirst { println("Building Filament C Wrapper for $targetName ($filaPlatform/$filaArch) in $buildDir") }
             }
 
-            // Ensure the native build runs before compilation
+            // Ensure Kotlin Compilation waits for C build
             compilations.getByName("main").compileKotlinTaskProvider.configure {
                 dependsOn(buildFilamentC)
+            }
+
+            // CRITICAL: Ensure cinterop waits for the C build, because it needs to pack libfilament-c.a!
+            project.tasks.matching { it.name == "cinteropFilament${targetName.replaceFirstChar { c -> c.uppercase() }}" }.configureEach {
+                dependsOn(buildFilamentC)
+            }
+        }
+
+        // 3. Configure cinterop to PACK the static libraries into the .klib
+        compilations.getByName("main").cinterops {
+            // Update the existing filament cinterop (assumes you ran create("filament") earlier)
+            getByName("filament") {
+                if (filamentPrebuiltDir.isNotEmpty()) {
+                    // Tell cinterop where to find the static libraries
+                    extraOpts("-libraryPath", filamentPrebuiltDir)
+                    extraOpts("-libraryPath", buildDir.absolutePath)
+
+                    // Find all static libraries in the prebuilts folder
+                    val prebuiltLibs = if (file(filamentPrebuiltDir).exists()) {
+                        fileTree(filamentPrebuiltDir) {
+                            include("*.a", "*.lib")
+                        }.map { it.name }
+                    } else {
+                        emptyList<String>()
+                    }
+                    
+                    if (prebuiltLibs.isEmpty() && filaPlatform.isNotEmpty()) {
+                        val errorMsg = """
+                            |
+                            |  MISSING DEPENDENCIES for $targetName:
+                            |  Filament prebuilt libraries were not found in: $filamentPrebuiltDir
+                            |  Please build Filament for $filaPlatform ($filaArch) and copy the $libSuffix files to that directory.
+                            |
+                        """.trimMargin()
+                        logger.error(errorMsg)
+                    }
+                    
+                    val staticLibs = prebuiltLibs + "${libPrefix}filament-c${libSuffix}"
+
+                    // Instruct cinterop to physically embed each library
+                    staticLibs.forEach { lib ->
+                        extraOpts("-staticLibrary", lib)
+                    }
+                }
             }
         }
     }

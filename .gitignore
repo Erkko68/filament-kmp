@@ -1,23 +1,20 @@
-# IDE
-.idea/
-*.iml
-.DS_Store
-
-# Gradle
-.gradle/
+# Temp / Build Artifacts
+temp_filament_build/
 **/build/
 build/
-local.properties
-.kotlin/
-
-# Native / Filament
 /filament-main/
 /prebuilts/
 c/build/
-C/build/
 
-# Temp / OS
+# Gradle
+.gradle/
+local.properties
+.kotlin/
+
+# IDE / OS
+.idea/
+*.iml
+.DS_Store
 *.hprof
 *.log
-.DS_Store
 **/ .DS_Store

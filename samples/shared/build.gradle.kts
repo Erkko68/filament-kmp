@@ -21,34 +21,6 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "shared"
             isStatic = true
-
-            val targetName = iosTarget.name
-            val filamentPrebuiltDir = "${projectDir}/../../prebuilts/ios/lib/universal"
-
-            linkerOpts("-L$filamentPrebuiltDir")
-
-            // Link all required Filament static libraries
-            linkerOpts(
-                "-lfilament", "-lbackend", "-lutils", "-lmath",
-                "-lgeometry_combined", "-libl-lite", "-libl",
-                "-lfilamat_combined", "-lshaders", "-lfilament-iblprefilter",
-                "-lcamutils", "-limage", "-limageio-lite", "-lfilabridge",
-                "-lfilaflat", "-lzstd", "-lsmol-v", "-lktxreader",
-                "-lpng", "-ltinyexr", "-lz", "-labseil", "-lperfetto"
-            )
-
-            // Link the C-wrapper built by the filament-kmp library
-            linkerOpts("-L${projectDir}/../../c/build/$targetName", "-lfilament-c")
-
-            // Essential frameworks for Filament on iOS
-            linkerOpts(
-                "-framework", "Metal",
-                "-framework", "UIKit",
-                "-framework", "CoreVideo",
-                "-framework", "QuartzCore",
-                "-framework", "CoreGraphics",
-                "-framework", "Foundation"
-            )
         }
     }
     
