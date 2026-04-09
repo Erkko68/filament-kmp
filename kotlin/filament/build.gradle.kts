@@ -62,11 +62,10 @@ kotlin {
                 defFile(project.file("src/nativeInterop/cinterop/filament.def"))
 
                 includeDirs(
-                    project.file("../../C/filament/c"),
-                    project.file("../../C/filamat/c"),
-                    project.file("../../C/filament-utils/c"),
-                    project.file("../../filament-main/filament/include"),
-                    project.file("../../filament-main/libs/utils/include")
+                    project.file("../../c/filament/c"),
+                    project.file("../../c/filamat/c"),
+                    project.file("../../c/filament-utils/c"),
+                    project.file("../../prebuilts/include")
                 )
             }
         }
@@ -76,18 +75,31 @@ kotlin {
         binaries.all {
             val platform = target.konanTarget.family
 
-            val libDir = when (platform) {
-                Family.IOS -> "ios"
-                Family.OSX -> "macos"
-                Family.LINUX -> "linux"
-                Family.MINGW -> "windows"
-                else -> error("Unsupported platform: $platform")
+            // Path to prebuilt Filament libraries
+            val filamentPrebuiltDir = when (platform) {
+                Family.IOS -> "${projectDir}/../../prebuilts/ios/lib/universal"
+                Family.OSX -> "${projectDir}/../../prebuilts/mac/lib/arm64"
+                else -> ""
             }
 
-            linkerOpts(
-                "-L${projectDir}/../../prebuilts/lib/$libDir",
-                "-lfilament"
-            )
+            if (filamentPrebuiltDir.isNotEmpty()) {
+                linkerOpts("-L$filamentPrebuiltDir")
+
+                // Link all required Filament static libraries
+                // Note: The order of linking can be important for static libraries
+                linkerOpts(
+                    "-lfilament", "-lbackend", "-lutils", "-lmath",
+                    "-lgeometry_combined", "-libl-lite", "-libl",
+                    "-lfilamat_combined", "-lshaders", "-lfilament-iblprefilter",
+                    "-lcamutils", "-limage", "-limageio-lite", "-lfilabridge",
+                    "-lfilaflat", "-lzstd", "-lsmol-v", "-lktxreader",
+                    "-lpng", "-ltinyexr", "-lz", "-labseil", "-lperfetto"
+                )
+
+                // Link the C-wrapper (built from /c folder)
+                // We use target-specific build directories
+                linkerOpts("-L${projectDir}/../../c/build/${target.name}", "-lfilament-c")
+            }
 
             when (platform) {
                 Family.IOS -> {
@@ -95,7 +107,9 @@ kotlin {
                         "-framework", "Metal",
                         "-framework", "UIKit",
                         "-framework", "CoreVideo",
-                        "-framework", "QuartzCore"
+                        "-framework", "QuartzCore",
+                        "-framework", "CoreGraphics",
+                        "-framework", "Foundation"
                     )
                 }
 
@@ -103,11 +117,52 @@ kotlin {
                     linkerOpts(
                         "-framework", "Metal",
                         "-framework", "Cocoa",
-                        "-framework", "QuartzCore"
+                        "-framework", "QuartzCore",
+                        "-framework", "CoreVideo",
+                        "-framework", "AppKit",
+                        "-framework", "CoreGraphics",
+                        "-framework", "Foundation"
                     )
                 }
 
                 else -> Unit
+            }
+        }
+    }
+
+    // --- Automated Native Build Configuration ---
+    targets.withType<KotlinNativeTarget>().configureEach {
+        val targetName = name
+        val konanTarget = konanTarget
+
+        // Map KonanTarget to simplified Filament platform flag
+        val filaPlatform = when (konanTarget) {
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios"
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64 -> "ios-simulator"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64 -> "macos"
+            else -> ""
+        }
+
+        if (filaPlatform.isNotEmpty()) {
+            val cmakeTaskName = "buildFilamentC_$targetName"
+            val buildDir = project.file("../../c/build/$targetName")
+
+            val buildFilamentC = tasks.register<Exec>(cmakeTaskName) {
+                buildDir.mkdirs()
+                workingDir(buildDir)
+
+                val cmakePath = "/opt/homebrew/bin/cmake"
+                commandLine("sh", "-c", "$cmakePath ../../ -DFILAMENT_PLATFORM=$filaPlatform -DCMAKE_BUILD_TYPE=Release && $cmakePath --build . --target filament-c")
+
+                // Log what we are doing
+                doFirst {
+                    println("Building Filament C Wrapper for $targetName ($filaPlatform) in $buildDir")
+                }
+            }
+
+            // Ensure the native build runs before compilation
+            compilations.getByName("main").compileKotlinTaskProvider.configure {
+                dependsOn(buildFilamentC)
             }
         }
     }
