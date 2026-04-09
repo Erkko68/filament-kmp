@@ -1,5 +1,6 @@
 # Temp / Build Artifacts
-temp_filament_build/
+filament-source/
+
 **/build/
 build/
 /filament-main/
@@ -12,6 +13,7 @@ local.properties
 .kotlin/
 
 # IDE / OS
+.vscode/
 .idea/
 *.iml
 .DS_Store
