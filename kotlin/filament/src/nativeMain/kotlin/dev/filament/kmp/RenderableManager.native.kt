@@ -68,8 +68,8 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
             FilaRenderableManagerBuilder_destroy(nativeBuilder)
         }
 
-        private fun PrimitiveType.toNative(): UInt = ordinal.toUInt()
-        private fun GeometryType.toNative(): UInt = ordinal.toUInt()
+        private fun PrimitiveType.toNative(): UInt = dev.filament.kmp.toNative(this)
+        private fun GeometryType.toNative(): UInt = dev.filament.kmp.toNative(this)
     }
 
     actual fun hasComponent(entity: Entity): Boolean = FilaRenderableManager_hasComponent(nativeHandle, entity.toUInt())
@@ -155,17 +155,21 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
         FilaRenderableManager_setMorphTargetBufferOffsetAt(nativeHandle, instance.toUInt(), level.toUByte(), primitiveIndex.toULong(), offset.toULong())
     }
  
-    private fun PrimitiveType.toNative(): UInt = when (this) {
-        PrimitiveType.POINTS -> 0u
-        PrimitiveType.LINES -> 1u
-        PrimitiveType.LINE_STRIP -> 3u
-        PrimitiveType.TRIANGLES -> 4u
-        PrimitiveType.TRIANGLE_STRIP -> 5u
-    }
- 
-    private fun GeometryType.toNative(): UInt = when (this) {
-        GeometryType.DYNAMIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_DYNAMIC
-        GeometryType.STATIC_BOUNDS -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC_BOUNDS
-        GeometryType.STATIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC
-    }
 }
+
+private fun toNative(type: RenderableManager.PrimitiveType): UInt = when (type) {
+    RenderableManager.PrimitiveType.POINTS -> 0u
+    RenderableManager.PrimitiveType.LINES -> 1u
+    RenderableManager.PrimitiveType.LINE_STRIP -> 3u
+    RenderableManager.PrimitiveType.TRIANGLES -> 4u
+    RenderableManager.PrimitiveType.TRIANGLE_STRIP -> 5u
+}
+
+private fun toNative(type: RenderableManager.GeometryType): UInt = when (type) {
+    RenderableManager.GeometryType.DYNAMIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_DYNAMIC
+    RenderableManager.GeometryType.STATIC_BOUNDS -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC_BOUNDS
+    RenderableManager.GeometryType.STATIC -> FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC
+}
+
+private fun RenderableManager.PrimitiveType.toNative(): UInt = toNative(this)
+private fun RenderableManager.GeometryType.toNative(): UInt = toNative(this)
