@@ -2,7 +2,7 @@ package eric.bitria.samples
 
 import dev.filament.kmp.*
 
-class FilamentRenderer {
+class FilamentRenderer : FilamentViewRenderer {
     var engine: Engine? = null
         private set
     var renderer: Renderer? = null
@@ -28,9 +28,9 @@ class FilamentRenderer {
         view!!.setScene(scene)
         view!!.setCamera(camera)
 
-        // Simple gray skybox
+        // Simple red skybox for visual testing
         skybox = Skybox.Builder()
-            .color(0.2f, 0.2f, 0.2f, 1.0f)
+            .color(1.0f, 0.0f, 0.0f, 1.0f)
             .build(engine!!)
         scene!!.setSkybox(skybox)
         
@@ -39,7 +39,7 @@ class FilamentRenderer {
         camera!!.lookAt(0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
     }
 
-    fun onSurfaceAvailable(surface: NativeSurface, width: Int, height: Int) {
+    override fun onSurfaceAvailable(surface: NativeSurface, width: Int, height: Int) {
         engine?.let {
             if (swapChain != null) {
                 it.destroySwapChain(swapChain!!)
@@ -49,13 +49,24 @@ class FilamentRenderer {
         }
     }
 
-    fun onSurfaceResized(width: Int, height: Int) {
+    override fun onSurfaceResized(width: Int, height: Int) {
+        if (width <= 0 || height <= 0) return
+
         view?.setViewport(Viewport(0, 0, width, height))
         val aspect = width.toDouble() / height.toDouble()
         camera?.setProjection(45.0, aspect, 0.1, 100.0, Camera.Fov.VERTICAL)
     }
 
-    fun render(frameTimeNanos: Long) {
+    override fun onSurfaceDetached() {
+        engine?.let {
+            if (swapChain != null) {
+                it.destroySwapChain(swapChain!!)
+                swapChain = null
+            }
+        }
+    }
+
+    override fun render(frameTimeNanos: Long) {
         val renderer = renderer ?: return
         val swapChain = swapChain ?: return
         val view = view ?: return

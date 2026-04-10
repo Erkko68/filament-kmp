@@ -32,7 +32,7 @@ fun App() {
             Text(
                 "Filament KMP Scene",
                 modifier = Modifier.align(Alignment.TopCenter).padding(top = 48.dp),
-                color = Color.White
+                color = Color.Black
             )
         }
     }

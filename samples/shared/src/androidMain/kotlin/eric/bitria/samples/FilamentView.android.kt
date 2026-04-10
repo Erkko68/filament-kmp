@@ -6,12 +6,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import dev.filament.kmp.NativeSurface
-import kotlinx.coroutines.isActive
 
 @Composable
 actual fun FilamentView(
     modifier: Modifier,
-    renderer: FilamentRenderer
+    renderer: FilamentViewRenderer
 ) {
     AndroidView(
         modifier = modifier,
@@ -39,11 +38,5 @@ actual fun FilamentView(
         update = {}
     )
 
-    LaunchedEffect(renderer) {
-        while (isActive) {
-            withFrameNanos { frameTimeNanos ->
-                renderer.render(frameTimeNanos)
-            }
-        }
-    }
+    FilamentRenderLoop(renderer)
 }
