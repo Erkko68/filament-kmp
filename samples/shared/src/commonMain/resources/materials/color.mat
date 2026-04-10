@@ -1,0 +1,12 @@
+material {
+    name : color,
+    shadingModel : unlit,
+    requires : [ color ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = shader_color;
+    }
+}

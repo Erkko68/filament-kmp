@@ -93,6 +93,7 @@ if [ "$DO_IOS_SIM" = true ]; then
         -DCMAKE_INSTALL_PREFIX="../ios-release/filament" \
         -DCMAKE_TOOLCHAIN_FILE="../../third_party/clang/iOS.cmake" \
         -DIOS_ARCH="$HOST_ARCH" \
+        -DIOS=1 \
         -DPLATFORM_NAME="iphonesimulator" \
         -DCMAKE_OSX_SYSROOT="iphonesimulator" \
         -DCMAKE_OSX_DEPLOYMENT_TARGET="14.0" \
