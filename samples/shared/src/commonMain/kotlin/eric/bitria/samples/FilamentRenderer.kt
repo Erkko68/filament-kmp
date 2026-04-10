@@ -1,6 +1,7 @@
 package eric.bitria.samples
 
 import dev.filament.kmp.*
+import dev.filament.kmp.filamat.*
 
 class FilamentRenderer : FilamentViewRenderer {
     var engine: Engine? = null
@@ -28,8 +29,9 @@ class FilamentRenderer : FilamentViewRenderer {
     private var pendingWidth: Int = 0
     private var pendingHeight: Int = 0
 
-    fun initialize(materialData: ByteArray) {
-        println("FilamentRenderer: Initializing engine...")
+    fun initialize() {
+        println("FilamentRenderer: Initializing engine and MaterialBuilder...")
+        MaterialBuilder.init()
         engine = Engine.create()
         renderer = engine!!.createRenderer()
         scene = engine!!.createScene()
@@ -49,7 +51,7 @@ class FilamentRenderer : FilamentViewRenderer {
         camera!!.setProjection(45.0, 1.0, 0.1, 100.0, Camera.Fov.VERTICAL)
         camera!!.lookAt(0.0, 0.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
 
-        setupCube(materialData)
+        setupCube()
         println("FilamentRenderer: Cube setup complete.")
 
         // Handle surface if it became available before engine was ready
@@ -60,9 +62,27 @@ class FilamentRenderer : FilamentViewRenderer {
         }
     }
 
-    private fun setupCube(materialData: ByteArray) {
+    private fun setupCube() {
         val engine = engine!!
-        material = Material.Builder().payload(materialData).build(engine)
+        
+        println("FilamentRenderer: Compiling material at runtime...")
+        val materialPackage = MaterialBuilder()
+            .name("BakedColor")
+            .platform(MaterialBuilder.Platform.ALL)
+            .targetApi(MaterialBuilder.TargetApi.ALL)
+            .shading(MaterialBuilder.Shading.UNLIT)
+            .require(VertexBuffer.VertexAttribute.COLOR)
+            .material("void material(inout MaterialInputs material) { prepareMaterial(material); material.baseColor = getColor(); }")
+            .build()
+        
+        if (!materialPackage.isValid()) {
+            println("FilamentRenderer: FAILED to compile material at runtime!")
+        }
+
+        material = Material.Builder()
+            .payload(materialPackage.getBuffer())
+            .build(engine)
+        
         materialInstance = material!!.createInstance()
 
         val side = 1.0f

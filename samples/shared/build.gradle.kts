@@ -35,6 +35,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation("dev.filament.kmp:filament")
+            implementation("dev.filament.kmp:filamat")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

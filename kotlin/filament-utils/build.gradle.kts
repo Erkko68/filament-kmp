@@ -49,27 +49,86 @@ kotlin {
             create("filament_utils") {
                 defFile(project.file("src/nativeInterop/cinterop/filament-utils.def"))
                 includeDirs(
-                    project.file("../../C/filament-utils/c"),
-                    project.file("../../filament-main/filament/include"),
-                    project.file("../../filament-main/libs/utils/include")
+                    project.file("../../c/filament-utils/c"),
+                    project.file("../../c/filament/c"),
+                    project.file("../../prebuilts/include")
                 )
             }
         }
+    }
 
-        binaries.all {
-            val platform = target.konanTarget.family
-            val libDir = when (platform) {
-                Family.IOS -> "ios"
-                Family.OSX -> "macos"
-                Family.LINUX -> "linux"
-                Family.MINGW -> "windows"
-                else -> error("Unsupported platform: $platform")
+    // --- Automated Native Build & C-Interop Embedding Configuration ---
+    targets.withType<KotlinNativeTarget>().configureEach {
+        val targetName = name
+        val konanTarget = konanTarget
+
+        if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
+            binaries.all {
+                freeCompilerArgs += listOf("-Xoverride-konan-properties=apple.sdk.min.version=15.0")
+            }
+        }
+
+        // 1. Setup paths
+        val (filaPlatform, filaArch) = when (konanTarget) {
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64 -> "ios-simulator" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-simulator" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64 -> "macos" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64 -> "macos" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64 -> "linux" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_ARM64 -> "linux" to "arm64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MINGW_X64 -> "windows" to "x64"
+            else -> "" to ""
+        }
+        val (libPrefix, libSuffix) = when (konanTarget.family) {
+            org.jetbrains.kotlin.konan.target.Family.MINGW -> "" to ".lib"
+            else -> "lib" to ".a"
+        }
+        val buildDir = project.file("../../c/build/$targetName")
+        val filamentPrebuiltDir = "${projectDir}/../../prebuilts/$targetName/lib"
+
+        // 2. Automate the C Wrapper compilation
+        if (filaPlatform.isNotEmpty()) {
+            val cmakeTaskName = "buildFilamentUtilsC_$targetName"
+            val buildFilamentUtilsC = tasks.register<Exec>(cmakeTaskName) {
+                buildDir.mkdirs()
+                workingDir(buildDir)
+                val cmakePath = "/opt/homebrew/bin/cmake"
+                commandLine("sh", "-c", "$cmakePath ../../ -DFILAMENT_PLATFORM=$filaPlatform -DFILAMENT_ARCH=$filaArch -DCMAKE_BUILD_TYPE=Release && $cmakePath --build . --target filament-utils-c")
+                doFirst { println("Building Filament Utils C Wrapper for $targetName ($filaPlatform/$filaArch) in $buildDir") }
             }
 
-            linkerOpts(
-                "-L${projectDir}/../../prebuilts/lib/$libDir",
-                "-lfilament-utils"
-            )
+            compilations.getByName("main").compileKotlinTaskProvider.configure {
+                dependsOn(buildFilamentUtilsC)
+            }
+
+            project.tasks.matching { it.name == "cinteropFilament_utils${targetName.replaceFirstChar { c -> c.uppercase() }}" }.configureEach {
+                dependsOn(buildFilamentUtilsC)
+            }
+        }
+
+        // 3. Configure cinterop to PACK the static libraries into the .klib
+        compilations.getByName("main").cinterops {
+            getByName("filament_utils") {
+                if (filamentPrebuiltDir.isNotEmpty()) {
+                    extraOpts("-libraryPath", filamentPrebuiltDir)
+                    extraOpts("-libraryPath", buildDir.absolutePath)
+
+                    val prebuiltLibs = if (file(filamentPrebuiltDir).exists()) {
+                        fileTree(filamentPrebuiltDir) {
+                            include("*.a", "*.lib")
+                        }.map { it.name }
+                    } else {
+                        emptyList<String>()
+                    }
+
+                    val staticLibs = prebuiltLibs + "${libPrefix}filament-utils-c${libSuffix}"
+
+                    staticLibs.forEach { lib ->
+                        extraOpts("-staticLibrary", lib)
+                    }
+                }
+            }
         }
     }
 }

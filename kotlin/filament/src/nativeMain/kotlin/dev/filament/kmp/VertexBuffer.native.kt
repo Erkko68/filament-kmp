@@ -73,23 +73,18 @@ actual class VertexBuffer internal constructor(internal var nativeHandle: CPoint
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
         val pinned = data.pin()
         val ptr = pinned.addressOf(0).reinterpret<ByteVar>()
-        val sizeInBytes = data.size.toULong()
+        val sizeInBytes = if (count > 0) count.toULong() else data.size.toULong()
 
-        if (callback == null) {
-            FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, null, null)
-            pinned.unpin()
-        } else {
-            val wrapper = BufferPinWrapper(pinned, callback)
-            val stableRef = StableRef.create(wrapper)
-            val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
-                val ref = user!!.asStableRef<BufferPinWrapper>()
-                val wrap = ref.get()
-                wrap.callback?.invoke()
-                wrap.pinned.unpin()
-                ref.dispose()
-            }
-            FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, callbackWrapper, stableRef.asCPointer())
+        val wrapper = BufferPinWrapper(pinned, callback)
+        val stableRef = StableRef.create(wrapper)
+        val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
+            val ref = user!!.asStableRef<BufferPinWrapper>()
+            val wrap = ref.get()
+            wrap.callback?.invoke()
+            wrap.pinned.unpin()
+            ref.dispose()
         }
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex.toUByte(), ptr, sizeInBytes, destOffsetInBytes.toUInt(), null, callbackWrapper, stableRef.asCPointer())
     }
 
     actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {

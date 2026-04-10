@@ -11,20 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-import eric.bitria.samples.shared.resources.Res
-
 @Composable
 fun App() {
     val renderer = remember { FilamentRenderer() }
     
-    LaunchedEffect(Unit) {
-        println("App: Loading material resource...")
-        val materialData = Res.readBytes("files/materials/baked_color.filamat")
-        println("App: Material resource loaded (${materialData.size} bytes). Initializing renderer...")
-        renderer.initialize(materialData)
-    }
-    
     DisposableEffect(Unit) {
+        renderer.initialize()
         onDispose {
             renderer.destroy()
         }
