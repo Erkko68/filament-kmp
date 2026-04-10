@@ -1,7 +1,7 @@
 #include <filament/Engine.h>
 #include <filament/Texture.h>
 #include <image/LinearImage.h>
-#include <imageio/ImageDecoder.h>
+#include <imageio-lite/ImageDecoder.h>
 #include <utils/Log.h>
 
 #include <sstream>
@@ -12,6 +12,7 @@
 
 using namespace filament;
 using namespace image;
+using namespace imageio_lite;
 using namespace utils;
 
 extern "C" {

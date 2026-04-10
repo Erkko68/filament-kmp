@@ -70,6 +70,8 @@ class FilamentRenderer : FilamentViewRenderer {
             .platform(MaterialBuilder.Platform.MOBILE)
             .targetApi(MaterialBuilder.TargetApi.ALL)
             .shading(MaterialBuilder.Shading.UNLIT)
+            .doubleSided(true)
+            .culling(MaterialBuilder.CullingMode.NONE)
             .require(VertexBuffer.VertexAttribute.COLOR)
             .material("void material(inout MaterialInputs material) { prepareMaterial(material); material.baseColor = getColor(); }")
             .build()

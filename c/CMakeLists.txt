@@ -94,7 +94,7 @@ set_target_properties(iblprefilter PROPERTIES IMPORTED_LOCATION
 
 add_filament_library(camutils)
 add_filament_library(image)
-add_filament_library(imageio)
+add_filament_library(imageio-lite)
 add_filament_library(filaflat)
 add_filament_library(filabridge)
 add_filament_library(zstd)
@@ -254,10 +254,7 @@ target_link_libraries(filament-utils-c
     PRIVATE iblprefilter
     PRIVATE camutils
     PRIVATE image
-    PRIVATE imageio
-    PRIVATE png
-    PRIVATE tinyexr
-    PRIVATE z
+    PRIVATE imageio-lite
     PRIVATE zstd
     PRIVATE utils
     PRIVATE math

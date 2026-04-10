@@ -156,11 +156,11 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
     }
  
     private fun PrimitiveType.toNative(): UInt = when (this) {
-        PrimitiveType.POINTS -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_POINTS
-        PrimitiveType.LINES -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_LINES
-        PrimitiveType.LINE_STRIP -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_LINE_STRIP
-        PrimitiveType.TRIANGLES -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_TRIANGLES
-        PrimitiveType.TRIANGLE_STRIP -> FILA_RENDERABLE_MANAGER_PRIMITIVE_TYPE_TRIANGLE_STRIP
+        PrimitiveType.POINTS -> 0u
+        PrimitiveType.LINES -> 1u
+        PrimitiveType.LINE_STRIP -> 3u
+        PrimitiveType.TRIANGLES -> 4u
+        PrimitiveType.TRIANGLE_STRIP -> 5u
     }
  
     private fun GeometryType.toNative(): UInt = when (this) {
