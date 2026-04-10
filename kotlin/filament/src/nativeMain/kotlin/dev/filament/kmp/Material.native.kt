@@ -56,8 +56,10 @@ actual class Material internal constructor(internal var nativeHandle: CPointer<F
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(data: ByteArray): Builder = apply {
-            data.usePinned { pinned ->
-                FilaMaterial_Builder_package(nativeBuilder, pinned.addressOf(0).reinterpret<ByteVar>(), data.size.toULong())
+            if (data.isNotEmpty()) {
+                data.usePinned { pinned ->
+                    FilaMaterial_Builder_package(nativeBuilder, pinned.addressOf(0).reinterpret<ByteVar>(), data.size.toULong())
+                }
             }
         }
         actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {

@@ -325,7 +325,7 @@ actual class MaterialBuilder actual constructor() {
             TargetApi.VULKAN -> 0x02u
             TargetApi.METAL -> 0x04u
             TargetApi.WEBGPU -> 0x08u
-            TargetApi.ALL -> 0x0Fu
+            TargetApi.ALL -> 0x07u // OpenGL | Vulkan | Metal
         }
         FilaMaterialBuilder_targetApi(nativeHandle, apiNative)
         return this

@@ -2,15 +2,15 @@ package dev.filament.kmp
 
 expect class VertexBuffer {
     enum class VertexAttribute {
-        POSITION,
-        TANGENTS,
-        COLOR,
-        UV0,
-        UV1,
-        BONE_INDICES,
-        BONE_WEIGHTS,
-        UNUSED,
-        CUSTOM0,
+        POSITION, // 0
+        TANGENTS, // 1
+        COLOR,    // 2
+        UV0,      // 3
+        UV1,      // 4
+        BONE_INDICES, // 5
+        BONE_WEIGHTS, // 6
+        UNUSED,       // 7
+        CUSTOM0,      // 8
         CUSTOM1,
         CUSTOM2,
         CUSTOM3,

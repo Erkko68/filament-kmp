@@ -65,10 +65,9 @@ class FilamentRenderer : FilamentViewRenderer {
     private fun setupCube() {
         val engine = engine!!
         
-        println("FilamentRenderer: Compiling material at runtime...")
         val materialPackage = MaterialBuilder()
             .name("BakedColor")
-            .platform(MaterialBuilder.Platform.ALL)
+            .platform(MaterialBuilder.Platform.MOBILE)
             .targetApi(MaterialBuilder.TargetApi.ALL)
             .shading(MaterialBuilder.Shading.UNLIT)
             .require(VertexBuffer.VertexAttribute.COLOR)
@@ -77,6 +76,7 @@ class FilamentRenderer : FilamentViewRenderer {
         
         if (!materialPackage.isValid()) {
             println("FilamentRenderer: FAILED to compile material at runtime!")
+            return
         }
 
         material = Material.Builder()
