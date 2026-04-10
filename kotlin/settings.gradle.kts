@@ -1,4 +1,4 @@
-rootProject.name = "filament-kmp-core"
+rootProject.name = "filament-kmp"
 
 include(":filament")
 include(":filamat")
