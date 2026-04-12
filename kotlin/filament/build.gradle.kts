@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.Family
 
 plugins {
     kotlin("multiplatform")
@@ -20,13 +19,7 @@ kotlin {
 
     iosArm64()
     iosSimulatorArm64()
-
-    macosArm64()
-
-    linuxX64()
-    linuxArm64()
-
-    mingwX64()
+    iosX64()
 
 //    js(IR) {
 //        browser()
@@ -51,8 +44,6 @@ kotlin {
                 implementation("com.google.android.filament:filament-android:$filamentAndroidVersion")
             }
         }
-
-        //val jsMain by getting
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
@@ -87,17 +78,10 @@ kotlin {
             org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios" to "arm64"
             org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64 -> "ios-simulator" to "arm64"
             org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-simulator" to "x64"
-            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64 -> "macos" to "arm64"
-            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64 -> "macos" to "x64"
-            org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64 -> "linux" to "x64"
-            org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_ARM64 -> "linux" to "arm64"
-            org.jetbrains.kotlin.konan.target.KonanTarget.MINGW_X64 -> "windows" to "x64"
             else -> "" to ""
         }
-        val (libPrefix, libSuffix) = when (konanTarget.family) {
-            org.jetbrains.kotlin.konan.target.Family.MINGW -> "" to ".lib"
-            else -> "lib" to ".a"
-        }
+        val libPrefix = "lib"
+        val libSuffix = ".a"
         val buildDir = project.file("../../c/build/$targetName")
         val filamentPrebuiltDir = "${projectDir}/../../prebuilts/$targetName/lib"
 
@@ -114,7 +98,7 @@ kotlin {
             }
 
             // Ensure Kotlin Compilation waits for C build
-            compilations.getByName("main").compileKotlinTaskProvider.configure {
+            compilations.getByName("main").compileTaskProvider.configure {
                 dependsOn(buildFilamentC)
             }
 

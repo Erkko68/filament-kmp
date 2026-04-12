@@ -1,0 +1,1282 @@
+Initialized native services in: /Users/eric/.gradle/native
+Initialized jansi services in: /Users/eric/.gradle/native
+Found daemon DaemonInfo{pid=8419, address=[4529769f-7620-480c-ab3b-02495b76653a port:50526, addresses:[/127.0.0.1]], state=Idle, lastBusy=1775994934233, context=DefaultDaemonContext[uid=739c9e44-b348-4a47-8fcc-9dc5410c3f64,javaHome=/Users/eric/.antigravity/extensions/redhat.java-1.53.0-darwin-arm64/jre/21.0.10-macosx-aarch64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=/Users/eric/.gradle/daemon,pid=8419,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx4096m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+JVM is incompatible.
+Wanted: DaemonRequestContext{jvmCriteria=/Users/eric/Library/Java/JavaVirtualMachines/jbr-21.0.10/Contents/Home (no Daemon JVM specified, using current Java home), daemonOpts=[-Xmx4096m, -Dfile.encoding=UTF-8, -Duser.country=US, -Duser.language=en, -Duser.variant], applyInstrumentationAgent=true, nativeServicesMode=ENABLED, priority=NORMAL}
+Actual: DefaultDaemonContext[uid=739c9e44-b348-4a47-8fcc-9dc5410c3f64,javaHome=/Users/eric/.antigravity/extensions/redhat.java-1.53.0-darwin-arm64/jre/21.0.10-macosx-aarch64,javaVersion=21,javaVendor=Eclipse Adoptium,daemonRegistryDir=/Users/eric/.gradle/daemon,pid=8419,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-Xmx4096m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 8344). The daemon log file: /Users/eric/.gradle/daemon/9.4.0/daemon-8344.out.log
+Starting 6th build in daemon [uptime: 5 mins 31.031 secs, performance: 99%, GC rate: 0.00/s, heap usage: 0% of 4 GiB]
+Using 10 worker leases.
+Operational build model parameters: {cachingModelBuilding=false, configurationCache=true, configurationCacheDisabledReason=null, configurationCacheParallelLoad=true, configurationCacheParallelStore=false, configureOnDemand=false, invalidateCoupledProjects=false, isolatedProjects=false, modelAsProjectDependency=false, modelBuilding=false, parallelModelBuilding=false, parallelProjectConfiguration=false, parallelProjectExecution=true, resilientModelBuilding=false}
+Encryption key source: default Gradle keystore (pkcs12)
+Now considering [/Users/eric/IdeaProjects/filament-kmp/kotlin] as hierarchies to watch
+Calculating task graph as configuration cache cannot be reused because file 'filamat/build.gradle.kts' has changed.
+Now considering [/Users/eric/IdeaProjects/filament-kmp/kotlin] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/Users/eric/IdeaProjects/filament-kmp/kotlin/settings.gradle.kts'.
+Using local directory build cache for the root build (location = /Users/eric/.gradle/caches/build-cache-1, remove unused entries = after 7 days).
+Projects loaded. Root project using build file '/Users/eric/IdeaProjects/filament-kmp/kotlin/build.gradle.kts'.
+Included projects: [root project 'filament-kmp', project ':filamat', project ':filament', project ':filament-utils']
+
+> Configure project :
+Evaluating root project 'filament-kmp' using build file '/Users/eric/IdeaProjects/filament-kmp/kotlin/build.gradle.kts'.
+Resolved plugin [id: 'org.jetbrains.kotlin.multiplatform', version: '2.1.20', apply: false]
+Resolved plugin [id: 'com.android.library', version: '8.13.2', apply: false]
+
+> Configure project :filamat
+Evaluating project ':filamat' using build file '/Users/eric/IdeaProjects/filament-kmp/kotlin/filamat/build.gradle.kts'.
+Resolved plugin [id: 'org.jetbrains.kotlin.multiplatform']
+Resolved plugin [id: 'com.android.library']
+Build a576720a-28d9-4b04-b97e-60995643035b is started
+Using Kotlin Gradle Plugin gradle85 variant
+Using default execution profile
+[KOTLIN] Storing cached files in /Users/eric/.gradle
+[KOTLIN] Storing cached files in /Users/eric/.gradle
+[KOTLIN] Storing cached files in /Users/eric/.gradle
+
+> Configure project :filament
+Evaluating project ':filament' using build file '/Users/eric/IdeaProjects/filament-kmp/kotlin/filament/build.gradle.kts'.
+Resolved plugin [id: 'org.jetbrains.kotlin.multiplatform']
+Resolved plugin [id: 'com.android.library']
+Using Kotlin Gradle Plugin gradle85 variant
+Using default execution profile
+
+  MISSING DEPENDENCIES for iosArm64:
+  Filament prebuilt libraries were not found in: /Users/eric/IdeaProjects/filament-kmp/kotlin/filament/../../prebuilts/iosArm64/lib
+  Please build Filament for ios (arm64) and copy the .a files to that directory.
+
+
+  MISSING DEPENDENCIES for iosX64:
+  Filament prebuilt libraries were not found in: /Users/eric/IdeaProjects/filament-kmp/kotlin/filament/../../prebuilts/iosX64/lib
+  Please build Filament for ios-simulator (x64) and copy the .a files to that directory.
+
+
+> Configure project :filament-utils
+Evaluating project ':filament-utils' using build file '/Users/eric/IdeaProjects/filament-kmp/kotlin/filament-utils/build.gradle.kts'.
+Resolved plugin [id: 'org.jetbrains.kotlin.multiplatform']
+Resolved plugin [id: 'com.android.library']
+Using Kotlin Gradle Plugin gradle85 variant
+Using default execution profile
+All projects evaluated.
+Task path ':filament:compileKotlinJs' matched project ':filament'
+Task name matched 'compileKotlinJs'
+Selected primary task 'compileKotlinJs' from project :filament
+Tasks to be executed: [task ':filament:checkKotlinGradlePluginConfigurationErrors', task ':filament:compileKotlinJs']
+Tasks that were excluded: []
+Build a576720a-28d9-4b04-b97e-60995643035b is closed
+Using local directory build cache for the root build (location = /Users/eric/.gradle/caches/build-cache-1, remove unused entries = after 7 days).
+Ignoring listeners of task graph ready event, as this build (:) has already executed work.
+Resolve mutations for :filament:checkKotlinGradlePluginConfigurationErrors (Thread[#317,Execution worker,5,main]) started.
+:filament:checkKotlinGradlePluginConfigurationErrors (Thread[#323,Execution worker Thread 7,5,main]) started.
+
+> Task :filament:checkKotlinGradlePluginConfigurationErrors SKIPPED
+Skipping task ':filament:checkKotlinGradlePluginConfigurationErrors' as task onlyIf 'errorDiagnostics are present' is false.
+Resolve mutations for :filament:compileKotlinJs (Thread[#323,Execution worker Thread 7,5,main]) started.
+:filament:compileKotlinJs (Thread[#323,Execution worker Thread 7,5,main]) started.
+
+> Task :filament:compileKotlinJs FAILED
+Build cache key for task ':filament:compileKotlinJs' is 99485a0868d2b0c51b0787845dc0b3e6
+Task ':filament:compileKotlinJs' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':filament:compileKotlinJs'.
+Using Kotlin/JS incremental compilation
+Options for KOTLIN DAEMON: IncrementalCompilationOptions(super=CompilationOptions(compilerMode=INCREMENTAL_COMPILER, targetPlatform=JS, reportCategories=[0, 3], reportSeverity=2, requestedCompilationResults=[0], kotlinScriptExtensions=[]), sourceChanges=org.jetbrains.kotlin.buildtools.api.SourcesChanges$Unknown@1a84476b, classpathChanges=NotAvailableForJSCompiler, workingDir=/Users/eric/IdeaProjects/filament-kmp/kotlin/filament/build/kotlin/compileKotlinJs/cacheable, multiModuleICSettings=MultiModuleICSettings(buildHistoryFile=/Users/eric/IdeaProjects/filament-kmp/kotlin/filament/build/kotlin/compileKotlinJs/local-state/build-history.bin, useModuleDetection=false), usePreciseJavaTracking=false, icFeatures=IncrementalCompilationFeatures(withAbiSnapshot=false, preciseCompilationResultsBackup=true, keepIncrementalCompilationCachesInMemory=true, enableUnsafeIncrementalCompilationForMultiplatform=false, enableMonotonousIncrementalCompileSetExpansion=true), outputFiles=[/Users/eric/IdeaProjects/filament-kmp/kotlin/filament/build/classes/kotlin/js/main, /Users/eric/IdeaProjects/filament-kmp/kotlin/filament/build/kotlin/compileKotlinJs/cacheable, /Users/eric/IdeaProjects/filament-kmp/kotlin/filament/build/kotlin/compileKotlinJs/local-state])
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:117:14 'actual class Camera : Any' has no corresponding members for expected class members:
+
+    expect fun setProjection(projection: Camera.Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double): Unit
+
+    expect fun setProjection(fovInDegrees: Double, aspect: Double, near: Double, far: Double, direction: Camera.Fov): Unit
+
+    expect fun setLensProjection(focalLength: Double, aspect: Double, near: Double, far: Double): Unit
+
+    expect fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double): Unit
+
+    expect fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double): Unit
+
+    expect fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double): Unit
+
+    expect fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray): Unit
+
+    expect fun setScaling(x: Double, y: Double): Unit
+
+    expect fun getScaling(out: DoubleArray? = ...): DoubleArray
+
+    expect fun setShift(x: Double, y: Double): Unit
+
+    expect fun getShift(out: DoubleArray? = ...): DoubleArray
+
+    expect fun lookAt(eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double, upY: Double, upZ: Double): Unit
+
+    expect fun setModelMatrix(modelMatrix: FloatArray): Unit
+
+    expect fun setModelMatrix(modelMatrix: DoubleArray): Unit
+
+    expect fun getProjectionMatrix(out: DoubleArray? = ...): DoubleArray
+
+    expect fun getCullingProjectionMatrix(out: DoubleArray? = ...): DoubleArray
+
+    expect fun getModelMatrix(out: FloatArray? = ...): FloatArray
+
+    expect fun getModelMatrix(out: DoubleArray? = ...): DoubleArray
+
+    expect fun getViewMatrix(out: FloatArray? = ...): FloatArray
+
+    expect fun getViewMatrix(out: DoubleArray? = ...): DoubleArray
+
+    expect fun getPosition(out: FloatArray? = ...): FloatArray
+
+    expect fun getLeftVector(out: FloatArray? = ...): FloatArray
+
+    expect fun getUpVector(out: FloatArray? = ...): FloatArray
+
+    expect fun getForwardVector(out: FloatArray? = ...): FloatArray
+
+    expect fun getNear(): Float
+
+    expect fun getCullingFar(): Float
+
+    expect fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float): Unit
+
+    expect fun setExposure(exposure: Float): Unit
+
+    expect fun getAperture(): Float
+
+    expect fun getShutterSpeed(): Float
+
+    expect fun getSensitivity(): Float
+
+    expect fun getFocalLength(): Double
+
+    expect fun setFocusDistance(distance: Float): Unit
+
+    expect fun getFocusDistance(): Float
+
+    expect fun getFieldOfViewInDegrees(direction: Camera.Fov): Double
+
+    expect fun getEntity(): Int
+
+    expect enum class Projection : Enum<Camera.Projection>
+
+    expect enum class Fov : Enum<Camera.Fov>
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:118:14 'actual class View : Any' has no corresponding members for expected class members:
+
+    expect fun setName(name: String): Unit
+
+    expect fun getName(): String?
+
+    expect fun setScene(scene: Scene?): Unit
+
+    expect fun getScene(): Scene?
+
+    expect fun setCamera(camera: Camera?): Unit
+
+    expect fun getCamera(): Camera?
+
+    expect fun hasCamera(): Boolean
+
+    expect fun setViewport(viewport: Viewport): Unit
+
+    expect fun getViewport(): Viewport
+
+    expect fun setBlendMode(blendMode: View.BlendMode): Unit
+
+    expect fun getBlendMode(): View.BlendMode
+
+    expect fun setVisibleLayers(select: Int, values: Int): Unit
+
+    expect fun setLayerEnabled(layer: Int, enabled: Boolean): Unit
+
+    expect fun getVisibleLayers(): Int
+
+    expect fun setPostProcessingEnabled(enabled: Boolean): Unit
+
+    expect fun isPostProcessingEnabled(): Boolean
+
+    expect fun setDithering(dithering: View.Dithering): Unit
+
+    expect fun getDithering(): View.Dithering
+
+    expect fun setDynamicResolutionOptions(options: View.DynamicResolutionOptions): Unit
+
+    expect fun getDynamicResolutionOptions(): View.DynamicResolutionOptions
+
+    expect fun setRenderQuality(renderQuality: View.RenderQuality): Unit
+
+    expect fun getRenderQuality(): View.RenderQuality
+
+    expect fun setBloomOptions(options: View.BloomOptions): Unit
+
+    expect fun getBloomOptions(): View.BloomOptions
+
+    expect fun setFogOptions(options: View.FogOptions): Unit
+
+    expect fun getFogOptions(): View.FogOptions
+
+    expect fun setDepthOfFieldOptions(options: View.DepthOfFieldOptions): Unit
+
+    expect fun getDepthOfFieldOptions(): View.DepthOfFieldOptions
+
+    expect fun setVignetteOptions(options: View.VignetteOptions): Unit
+
+    expect fun getVignetteOptions(): View.VignetteOptions
+
+    expect fun setAmbientOcclusionOptions(options: View.AmbientOcclusionOptions): Unit
+
+    expect fun getAmbientOcclusionOptions(): View.AmbientOcclusionOptions
+
+    expect fun setTemporalAntiAliasingOptions(options: View.TemporalAntiAliasingOptions): Unit
+
+    expect fun getTemporalAntiAliasingOptions(): View.TemporalAntiAliasingOptions
+
+    expect fun setScreenSpaceReflectionsOptions(options: View.ScreenSpaceReflectionsOptions): Unit
+
+    expect fun getScreenSpaceReflectionsOptions(): View.ScreenSpaceReflectionsOptions
+
+    expect fun setRenderTarget(target: RenderTarget?): Unit
+
+    expect fun getRenderTarget(): RenderTarget?
+
+    expect fun setShadowType(type: View.ShadowType): Unit
+
+    expect fun getShadowType(): View.ShadowType
+
+    expect fun setVsmShadowOptions(options: View.VsmShadowOptions): Unit
+
+    expect fun getVsmShadowOptions(): View.VsmShadowOptions
+
+    expect fun setSoftShadowOptions(options: View.SoftShadowOptions): Unit
+
+    expect fun getSoftShadowOptions(): View.SoftShadowOptions
+
+    expect fun setGuardBandOptions(options: View.GuardBandOptions): Unit
+
+    expect fun getGuardBandOptions(): View.GuardBandOptions
+
+    expect fun setStereoscopicOptions(options: View.StereoscopicOptions): Unit
+
+    expect fun getStereoscopicOptions(): View.StereoscopicOptions
+
+    expect fun setMultiSampleAntiAliasingOptions(options: View.MultiSampleAntiAliasingOptions): Unit
+
+    expect fun getMultiSampleAntiAliasingOptions(): View.MultiSampleAntiAliasingOptions
+
+    expect fun setFrustumCullingEnabled(enabled: Boolean): Unit
+
+    expect fun isFrustumCullingEnabled(): Boolean
+
+    expect fun setShadowingEnabled(enabled: Boolean): Unit
+
+    expect fun setScreenSpaceRefractionEnabled(enabled: Boolean): Unit
+
+    expect fun setStencilBufferEnabled(enabled: Boolean): Unit
+
+    expect fun isStencilBufferEnabled(): Boolean
+
+    expect fun setFrontFaceWindingInverted(inverted: Boolean): Unit
+
+    expect fun isFrontFaceWindingInverted(): Boolean
+
+    expect fun setTransparentPickingEnabled(enabled: Boolean): Unit
+
+    expect fun isTransparentPickingEnabled(): Boolean
+
+    expect fun setMaterialGlobal(index: Int, value: FloatArray): Unit
+
+    expect fun getMaterialGlobal(index: Int): FloatArray
+
+    expect fun getFogEntity(): Int
+
+    expect fun clearFrameHistory(engine: Engine): Unit
+
+    expect fun setDynamicLightingOptions(zNear: Float, zFar: Float): Unit
+
+    expect enum class Dithering : Enum<View.Dithering>
+
+    expect enum class BlendMode : Enum<View.BlendMode>
+
+    expect enum class Quality : Enum<View.Quality>
+
+    expect enum class ShadowType : Enum<View.ShadowType>
+
+    expect class DynamicResolutionOptions : Any
+
+    expect class RenderQuality : Any
+
+    expect class BloomOptions : Any
+
+    expect class FogOptions : Any
+
+    expect class DepthOfFieldOptions : Any
+
+    expect class VignetteOptions : Any
+
+    expect class AmbientOcclusionOptions : Any
+
+    expect class TemporalAntiAliasingOptions : Any
+
+    expect class ScreenSpaceReflectionsOptions : Any
+
+    expect class VsmShadowOptions : Any
+
+    expect class SoftShadowOptions : Any
+
+    expect class GuardBandOptions : Any
+
+    expect class StereoscopicOptions : Any
+
+    expect class MultiSampleAntiAliasingOptions : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:119:14 'actual class Scene : Any' has no corresponding members for expected class members:
+
+    expect fun setSkybox(skybox: Skybox?): Unit
+
+    expect fun getSkybox(): Skybox?
+
+    expect fun setIndirectLight(ibl: IndirectLight?): Unit
+
+    expect fun getIndirectLight(): IndirectLight?
+
+    expect fun addEntity(entity: Int): Unit
+
+    expect fun addEntities(entities: IntArray): Unit
+
+    expect fun removeEntity(entity: Int): Unit
+
+    expect fun removeEntities(entities: IntArray): Unit
+
+    expect fun getEntityCount(): Int
+
+    expect fun getRenderableCount(): Int
+
+    expect fun getLightCount(): Int
+
+    expect fun hasEntity(entity: Int): Boolean
+
+    expect fun getEntities(): IntArray
+
+    expect fun getEntities(outArray: IntArray?): IntArray
+
+    expect fun forEach(block: (Int) -> Unit): Unit
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:120:14 'actual class Renderer : Any' has no corresponding members for expected class members:
+
+    expect fun getEngine(): Engine
+
+    expect fun setDisplayInfo(info: Renderer.DisplayInfo): Unit
+
+    expect fun getDisplayInfo(): Renderer.DisplayInfo
+
+    expect fun setFrameRateOptions(options: Renderer.FrameRateOptions): Unit
+
+    expect fun getFrameRateOptions(): Renderer.FrameRateOptions
+
+    expect fun setClearOptions(options: Renderer.ClearOptions): Unit
+
+    expect fun getClearOptions(): Renderer.ClearOptions
+
+    expect fun setPresentationTime(monotonicClockNanos: Long): Unit
+
+    expect fun setVsyncTime(steadyClockTimeNano: Long): Unit
+
+    expect fun skipFrame(vsyncSteadyClockTimeNano: Long): Unit
+
+    expect fun shouldRenderFrame(): Boolean
+
+    expect fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean
+
+    expect fun endFrame(): Unit
+
+    expect fun render(view: View): Unit
+
+    expect fun renderStandaloneView(view: View): Unit
+
+    expect fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int): Unit
+
+    expect fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor): Unit
+
+    expect fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor): Unit
+
+    expect fun getUserTime(): Double
+
+    expect fun resetUserTime(): Unit
+
+    expect fun skipNextFrames(frameCount: Int): Unit
+
+    expect fun getFrameToSkipCount(): Int
+
+    expect class DisplayInfo : Any
+
+    expect class FrameRateOptions : Any
+
+    expect class ClearOptions : Any
+
+    expect companion object Companion : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:121:14 'actual class SwapChain : Any' has no corresponding members for expected class members:
+
+    expect fun getNativeWindow(): Any?
+
+    expect fun setFrameCompletedCallback(handler: Any?, callback: () -> Unit): Unit
+
+    expect fun setFrameScheduledCallback(handler: Any?, callback: () -> Unit): Unit
+
+    expect fun isFrameScheduledCallbackSet(): Boolean
+
+    expect fun getNativeObject(): Long
+
+    expect companion object Companion : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:123:14 'actual class VertexBuffer : Any' has no corresponding members for expected class members:
+
+    expect fun getVertexCount(): Int
+
+    expect fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray): Unit
+
+    expect fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int): Unit
+
+    expect fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any? = ..., callback: (() -> Unit)? = ...): Unit
+
+    expect fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject): Unit
+
+    expect enum class VertexAttribute : Enum<VertexBuffer.VertexAttribute>
+
+    expect enum class AttributeType : Enum<VertexBuffer.AttributeType>
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:124:14 'actual class IndexBuffer : Any' has no corresponding members for expected class members:
+
+    expect fun getIndexCount(): Int
+
+    expect fun setBuffer(engine: Engine, data: ByteArray): Unit
+
+    expect fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int): Unit
+
+    expect fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any? = ..., callback: (() -> Unit)? = ...): Unit
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:125:14 'actual class Material : Any' has no corresponding members for expected class members:
+
+    expect fun compile(priority: Material.CompilerPriorityQueue, variants: Int, handler: Any? = ..., callback: (() -> Unit)? = ...): Unit
+
+    expect fun createInstance(): MaterialInstance
+
+    expect fun createInstance(name: String): MaterialInstance
+
+    expect fun getDefaultInstance(): MaterialInstance
+
+    expect fun getName(): String
+
+    expect fun getShading(): Material.Shading
+
+    expect fun getInterpolation(): Material.Interpolation
+
+    expect fun getBlendingMode(): Material.BlendingMode
+
+    expect fun getTransparencyMode(): Material.TransparencyMode
+
+    expect fun getRefractionMode(): Material.RefractionMode
+
+    expect fun getRefractionType(): Material.RefractionType
+
+    expect fun getReflectionMode(): Material.ReflectionMode
+
+    expect fun getVertexDomain(): Material.VertexDomain
+
+    expect fun getCullingMode(): Material.CullingMode
+
+    expect fun isColorWriteEnabled(): Boolean
+
+    expect fun isDepthWriteEnabled(): Boolean
+
+    expect fun isDepthCullingEnabled(): Boolean
+
+    expect fun isDoubleSided(): Boolean
+
+    expect fun isAlphaToCoverageEnabled(): Boolean
+
+    expect fun getMaskThreshold(): Float
+
+    expect fun getSpecularAntiAliasingVariance(): Float
+
+    expect fun getSpecularAntiAliasingThreshold(): Float
+
+    expect fun getFeatureLevel(): Engine.FeatureLevel
+
+    expect fun getParameterCount(): Int
+
+    expect fun getParameters(): List<Material.Parameter>
+
+    expect fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute>
+
+    expect enum class Shading : Enum<Material.Shading>
+
+    expect enum class Interpolation : Enum<Material.Interpolation>
+
+    expect enum class BlendingMode : Enum<Material.BlendingMode>
+
+    expect enum class TransparencyMode : Enum<Material.TransparencyMode>
+
+    expect enum class RefractionMode : Enum<Material.RefractionMode>
+
+    expect enum class RefractionType : Enum<Material.RefractionType>
+
+    expect enum class ReflectionMode : Enum<Material.ReflectionMode>
+
+    expect enum class VertexDomain : Enum<Material.VertexDomain>
+
+    expect enum class CullingMode : Enum<Material.CullingMode>
+
+    expect enum class CompilerPriorityQueue : Enum<Material.CompilerPriorityQueue>
+
+    expect enum class UboBatchingMode : Enum<Material.UboBatchingMode>
+
+    expect class UserVariantFilterBit : Any
+
+    expect class Parameter : Any
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:126:14 'actual class MaterialInstance : Any' has no corresponding members for expected class members:
+
+    expect fun getMaterial(): Material
+
+    expect fun getName(): String
+
+    expect fun setParameter(name: String, x: Boolean): Unit
+
+    expect fun setParameter(name: String, x: Float): Unit
+
+    expect fun setParameter(name: String, x: Int): Unit
+
+    expect fun setParameter(name: String, x: Boolean, y: Boolean): Unit
+
+    expect fun setParameter(name: String, x: Float, y: Float): Unit
+
+    expect fun setParameter(name: String, x: Int, y: Int): Unit
+
+    expect fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean): Unit
+
+    expect fun setParameter(name: String, x: Float, y: Float, z: Float): Unit
+
+    expect fun setParameter(name: String, x: Int, y: Int, z: Int): Unit
+
+    expect fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean, w: Boolean): Unit
+
+    expect fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float): Unit
+
+    expect fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int): Unit
+
+    expect fun setParameter(name: String, texture: Texture, sampler: TextureSampler): Unit
+
+    expect fun setParameter(name: String, type: MaterialInstance.BooleanElement, v: BooleanArray, offset: Int, count: Int): Unit
+
+    expect fun setParameter(name: String, type: MaterialInstance.IntElement, v: IntArray, offset: Int, count: Int): Unit
+
+    expect fun setParameter(name: String, type: MaterialInstance.FloatElement, v: FloatArray, offset: Int, count: Int): Unit
+
+    expect fun setParameter(name: String, type: Colors.RgbType, r: Float, g: Float, b: Float): Unit
+
+    expect fun setParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float): Unit
+
+    expect fun setScissor(left: Int, bottom: Int, width: Int, height: Int): Unit
+
+    expect fun unsetScissor(): Unit
+
+    expect fun setPolygonOffset(scale: Float, constant: Float): Unit
+
+    expect fun setMaskThreshold(threshold: Float): Unit
+
+    expect fun getMaskThreshold(): Float
+
+    expect fun setSpecularAntiAliasingVariance(variance: Float): Unit
+
+    expect fun getSpecularAntiAliasingVariance(): Float
+
+    expect fun setSpecularAntiAliasingThreshold(threshold: Float): Unit
+
+    expect fun getSpecularAntiAliasingThreshold(): Float
+
+    expect fun setDoubleSided(doubleSided: Boolean): Unit
+
+    expect fun isDoubleSided(): Boolean
+
+    expect fun setTransparencyMode(mode: Material.TransparencyMode): Unit
+
+    expect fun getTransparencyMode(): Material.TransparencyMode
+
+    expect fun setCullingMode(mode: Material.CullingMode): Unit
+
+    expect fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode): Unit
+
+    expect fun getCullingMode(): Material.CullingMode
+
+    expect fun getShadowCullingMode(): Material.CullingMode
+
+    expect fun setColorWrite(enable: Boolean): Unit
+
+    expect fun isColorWriteEnabled(): Boolean
+
+    expect fun setDepthWrite(enable: Boolean): Unit
+
+    expect fun isDepthWriteEnabled(): Boolean
+
+    expect fun setStencilWrite(enable: Boolean): Unit
+
+    expect fun isStencilWriteEnabled(): Boolean
+
+    expect fun setDepthCulling(enable: Boolean): Unit
+
+    expect fun setDepthFunc(func: TextureSampler.CompareFunction): Unit
+
+    expect fun isDepthCullingEnabled(): Boolean
+
+    expect fun getDepthFunc(): TextureSampler.CompareFunction
+
+    expect fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilCompareFunction(func: TextureSampler.CompareFunction): Unit
+
+    expect fun setStencilOpStencilFail(op: MaterialInstance.StencilOperation, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilOpStencilFail(op: MaterialInstance.StencilOperation): Unit
+
+    expect fun setStencilOpDepthFail(op: MaterialInstance.StencilOperation, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilOpDepthFail(op: MaterialInstance.StencilOperation): Unit
+
+    expect fun setStencilOpDepthStencilPass(op: MaterialInstance.StencilOperation, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilOpDepthStencilPass(op: MaterialInstance.StencilOperation): Unit
+
+    expect fun setStencilReferenceValue(value: Int, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilReferenceValue(value: Int): Unit
+
+    expect fun setStencilReadMask(readMask: Int, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilReadMask(readMask: Int): Unit
+
+    expect fun setStencilWriteMask(writeMask: Int, face: MaterialInstance.StencilFace): Unit
+
+    expect fun setStencilWriteMask(writeMask: Int): Unit
+
+    expect enum class BooleanElement : Enum<MaterialInstance.BooleanElement>
+
+    expect enum class IntElement : Enum<MaterialInstance.IntElement>
+
+    expect enum class FloatElement : Enum<MaterialInstance.FloatElement>
+
+    expect enum class StencilOperation : Enum<MaterialInstance.StencilOperation>
+
+    expect enum class StencilFace : Enum<MaterialInstance.StencilFace>
+
+    expect companion object Companion : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:127:14 'actual class Texture : Any' has no corresponding members for expected class members:
+
+    expect fun getWidth(level: Int = ...): Int
+
+    expect fun getHeight(level: Int = ...): Int
+
+    expect fun getDepth(level: Int = ...): Int
+
+    expect fun getLevels(): Int
+
+    expect fun getTarget(): Texture.Sampler
+
+    expect fun getFormat(): Texture.InternalFormat
+
+    expect fun setImage(engine: Engine, level: Int, descriptor: Texture.PixelBufferDescriptor): Unit
+
+    expect fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: Texture.PixelBufferDescriptor): Unit
+
+    expect fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: Texture.PixelBufferDescriptor): Unit
+
+    expect fun setExternalStream(engine: Engine, stream: Stream): Unit
+
+    expect fun generateMipmaps(engine: Engine): Unit
+
+    expect class Builder : Any
+
+    expect enum class Sampler : Enum<Texture.Sampler>
+
+    expect enum class InternalFormat : Enum<Texture.InternalFormat>
+
+    expect enum class CubemapFace : Enum<Texture.CubemapFace>
+
+    expect enum class Format : Enum<Texture.Format>
+
+    expect enum class Type : Enum<Texture.Type>
+
+    expect enum class Swizzle : Enum<Texture.Swizzle>
+
+    expect class Usage : Any
+
+    expect class PixelBufferDescriptor : Any
+
+    expect companion object Companion : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:128:14 'actual class IndirectLight : Any' has no corresponding members for expected class members:
+
+    expect fun setIntensity(intensity: Float): Unit
+
+    expect fun getIntensity(): Float
+
+    expect fun setRotation(rotation: FloatArray): Unit
+
+    expect fun getRotation(out: FloatArray? = ...): FloatArray
+
+    expect fun getReflectionsTexture(): Texture?
+
+    expect fun getIrradianceTexture(): Texture?
+
+    expect class Builder : Any
+
+    expect companion object Companion : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:129:14 'actual class Skybox : Any' has no corresponding members for expected class members:
+
+    expect fun setColor(r: Float, g: Float, b: Float, a: Float): Unit
+
+    expect fun getIntensity(): Float
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:130:14 'actual class RenderTarget : Any' has no corresponding members for expected class members:
+
+    expect fun getTexture(attachment: RenderTarget.AttachmentPoint): Texture?
+
+    expect fun getMipLevel(attachment: RenderTarget.AttachmentPoint): Int
+
+    expect fun getFace(attachment: RenderTarget.AttachmentPoint): Texture.CubemapFace
+
+    expect fun getLayer(attachment: RenderTarget.AttachmentPoint): Int
+
+    expect enum class AttachmentPoint : Enum<RenderTarget.AttachmentPoint>
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:131:14 'actual class Stream : Any' has no corresponding members for expected class members:
+
+    expect fun getStreamType(): Stream.StreamType
+
+    expect fun setDimensions(width: Int, height: Int): Unit
+
+    expect fun getTimestamp(): Long
+
+    expect enum class StreamType : Enum<Stream.StreamType>
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:132:14 'actual class Fence : Any' has no corresponding members for expected class members:
+
+    expect fun wait(mode: Fence.Mode, timeout: Long): Fence.FenceStatus
+
+    expect fun getNativeObject(): Long
+
+    expect enum class Mode : Enum<Fence.Mode>
+
+    expect enum class FenceStatus : Enum<Fence.FenceStatus>
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:133:14 'actual class ColorGrading : Any' has no corresponding members for expected class members:
+
+    expect class Builder : Any
+
+    expect enum class QualityLevel : Enum<ColorGrading.QualityLevel>
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:134:19 'actual class ToneMapper : Any' has no corresponding members for expected class members:
+
+    expect class Linear : ToneMapper
+
+    expect class ACES : ToneMapper
+
+    expect class ACESLegacy : ToneMapper
+
+    expect class Filmic : ToneMapper
+
+    expect class PBRNeutralToneMapper : ToneMapper
+
+    expect class GT7ToneMapper : ToneMapper
+
+    expect class Agx : ToneMapper
+
+    expect class Generic : ToneMapper
+
+    expect class DisplayRange : ToneMapper
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:135:14 'actual class TextureSampler : Any' has no corresponding members for expected class members:
+
+    expect constructor(minMag: TextureSampler.MagFilter): TextureSampler
+
+    The following declaration is incompatible because parameter names are different:
+        constructor(native: dynamic): TextureSampler
+
+    expect constructor(mode: TextureSampler.CompareMode): TextureSampler
+
+    The following declaration is incompatible because parameter names are different:
+        constructor(native: dynamic): TextureSampler
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:135:14 'actual class TextureSampler : Any' has no corresponding members for expected class members:
+
+    expect fun getMinFilter(): TextureSampler.MinFilter
+
+    expect fun setMinFilter(filter: TextureSampler.MinFilter): Unit
+
+    expect fun getMagFilter(): TextureSampler.MagFilter
+
+    expect fun setMagFilter(filter: TextureSampler.MagFilter): Unit
+
+    expect fun getWrapModeS(): TextureSampler.WrapMode
+
+    expect fun setWrapModeS(mode: TextureSampler.WrapMode): Unit
+
+    expect fun getWrapModeT(): TextureSampler.WrapMode
+
+    expect fun setWrapModeT(mode: TextureSampler.WrapMode): Unit
+
+    expect fun getWrapModeR(): TextureSampler.WrapMode
+
+    expect fun setWrapModeR(mode: TextureSampler.WrapMode): Unit
+
+    expect fun getAnisotropy(): Float
+
+    expect fun setAnisotropy(anisotropy: Float): Unit
+
+    expect fun getCompareMode(): TextureSampler.CompareMode
+
+    expect fun setCompareMode(mode: TextureSampler.CompareMode): Unit
+
+    expect fun getCompareFunction(): TextureSampler.CompareFunction
+
+    expect fun setCompareFunction(function: TextureSampler.CompareFunction): Unit
+
+    expect enum class WrapMode : Enum<TextureSampler.WrapMode>
+
+    expect enum class MinFilter : Enum<TextureSampler.MinFilter>
+
+    expect enum class MagFilter : Enum<TextureSampler.MagFilter>
+
+    expect enum class CompareMode : Enum<TextureSampler.CompareMode>
+
+    expect enum class CompareFunction : Enum<TextureSampler.CompareFunction>
+
+    expect constructor(): TextureSampler
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): TextureSampler
+
+    expect constructor(minMag: TextureSampler.MagFilter, wrap: TextureSampler.WrapMode): TextureSampler
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): TextureSampler
+
+    expect constructor(min: TextureSampler.MinFilter, mag: TextureSampler.MagFilter, wrap: TextureSampler.WrapMode): TextureSampler
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): TextureSampler
+
+    expect constructor(min: TextureSampler.MinFilter, mag: TextureSampler.MagFilter, s: TextureSampler.WrapMode, t: TextureSampler.WrapMode, r: TextureSampler.WrapMode): TextureSampler
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): TextureSampler
+
+    expect constructor(mode: TextureSampler.CompareMode, function: TextureSampler.CompareFunction): TextureSampler
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): TextureSampler
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:135:28 'constructor(native: dynamic): TextureSampler' has several compatible expect declarations in modules [module <dev.filament.kmp:filament>, module <dev.filament.kmp:filament>].
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:136:14 'actual class EntityManager : Any' has no corresponding members for expected class members:
+
+    expect fun create(): Int
+
+    expect fun create(n: Int): IntArray
+
+    expect fun create(entities: IntArray): IntArray
+
+    expect fun destroy(entity: Int): Unit
+
+    expect fun destroy(entities: IntArray): Unit
+
+    expect fun isAlive(entity: Int): Boolean
+
+    expect companion object Companion : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:137:14 'actual class TransformManager : Any' has no corresponding members for expected class members:
+
+    expect fun hasComponent(entity: Int): Boolean
+
+    expect fun getInstance(entity: Int): Int
+
+    expect fun create(entity: Int): Int
+
+    expect fun create(entity: Int, parent: Int, localTransform: FloatArray?): Int
+
+    expect fun create(entity: Int, parent: Int, localTransform: DoubleArray?): Int
+
+    expect fun destroy(entity: Int): Unit
+
+    expect fun setParent(instance: Int, newParent: Int): Unit
+
+    expect fun getParent(instance: Int): Int
+
+    expect fun getChildCount(instance: Int): Int
+
+    expect fun getChildren(instance: Int, outEntities: IntArray?): IntArray
+
+    expect fun setTransform(instance: Int, localTransform: FloatArray): Unit
+
+    expect fun setTransform(instance: Int, localTransform: DoubleArray): Unit
+
+    expect fun getTransform(instance: Int, outLocalTransform: FloatArray?): FloatArray
+
+    expect fun getTransform(instance: Int, outLocalTransform: DoubleArray?): DoubleArray
+
+    expect fun getWorldTransform(instance: Int, outWorldTransform: FloatArray?): FloatArray
+
+    expect fun getWorldTransform(instance: Int, outWorldTransform: DoubleArray?): DoubleArray
+
+    expect fun openLocalTransformTransaction(): Unit
+
+    expect fun commitLocalTransformTransaction(): Unit
+
+    expect fun setAccurateTranslationsEnabled(enable: Boolean): Unit
+
+    expect fun isAccurateTranslationsEnabled(): Boolean
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:138:14 'actual class LightManager : Any' has no corresponding members for expected class members:
+
+    expect fun getComponentCount(): Int
+
+    expect fun hasComponent(entity: Int): Boolean
+
+    expect fun getInstance(entity: Int): Int
+
+    expect fun destroy(entity: Int): Unit
+
+    expect fun getType(instance: Int): LightManager.Type
+
+    expect fun setDirection(instance: Int, x: Float, y: Float, z: Float): Unit
+
+    expect fun getDirection(instance: Int, out: FloatArray): FloatArray
+
+    expect fun setPosition(instance: Int, x: Float, y: Float, z: Float): Unit
+
+    expect fun getPosition(instance: Int, out: FloatArray): FloatArray
+
+    expect fun setColor(instance: Int, r: Float, g: Float, b: Float): Unit
+
+    expect fun getColor(instance: Int, out: FloatArray): FloatArray
+
+    expect fun setIntensity(instance: Int, intensity: Float): Unit
+
+    expect fun setIntensity(instance: Int, watts: Float, efficiency: Float): Unit
+
+    expect fun setIntensityCandela(instance: Int, intensity: Float): Unit
+
+    expect fun getIntensity(instance: Int): Float
+
+    expect fun setFalloff(instance: Int, radius: Float): Unit
+
+    expect fun getFalloff(instance: Int): Float
+
+    expect fun setSpotLightCone(instance: Int, inner: Float, outer: Float): Unit
+
+    expect fun getInnerConeAngle(instance: Int): Float
+
+    expect fun getOuterConeAngle(instance: Int): Float
+
+    expect fun setSunAngularRadius(instance: Int, angularRadius: Float): Unit
+
+    expect fun getSunAngularRadius(instance: Int): Float
+
+    expect fun setSunHaloSize(instance: Int, haloSize: Float): Unit
+
+    expect fun getSunHaloSize(instance: Int): Float
+
+    expect fun setSunHaloFalloff(instance: Int, haloFalloff: Float): Unit
+
+    expect fun getSunHaloFalloff(instance: Int): Float
+
+    expect fun setShadowCaster(instance: Int, shadowCaster: Boolean): Unit
+
+    expect fun isShadowCaster(instance: Int): Boolean
+
+    expect fun setLightChannel(instance: Int, channel: Int, enable: Boolean): Unit
+
+    expect fun getLightChannel(instance: Int, channel: Int): Boolean
+
+    expect enum class Type : Enum<LightManager.Type>
+
+    expect class ShadowOptions : Any
+
+    expect object ShadowCascades : Any
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:139:14 'actual class RenderableManager : Any' has no corresponding members for expected class members:
+
+    expect fun hasComponent(entity: Int): Boolean
+
+    expect fun getInstance(entity: Int): Int
+
+    expect fun destroy(entity: Int): Unit
+
+    expect fun setAxisAlignedBoundingBox(instance: Int, box: Box): Unit
+
+    expect fun getAxisAlignedBoundingBox(instance: Int, outBox: Box?): Box
+
+    expect fun setLayerMask(instance: Int, select: Int, value: Int): Unit
+
+    expect fun setPriority(instance: Int, priority: Int): Unit
+
+    expect fun getPriority(instance: Int): Int
+
+    expect fun setChannel(instance: Int, channel: Int): Unit
+
+    expect fun getChannel(instance: Int): Int
+
+    expect fun setCulling(instance: Int, enabled: Boolean): Unit
+
+    expect fun isCullingEnabled(instance: Int): Boolean
+
+    expect fun setFogEnabled(instance: Int, enabled: Boolean): Unit
+
+    expect fun getFogEnabled(instance: Int): Boolean
+
+    expect fun setCastShadows(instance: Int, enabled: Boolean): Unit
+
+    expect fun setReceiveShadows(instance: Int, enabled: Boolean): Unit
+
+    expect fun setScreenSpaceContactShadows(instance: Int, enabled: Boolean): Unit
+
+    expect fun isShadowCaster(instance: Int): Boolean
+
+    expect fun isShadowReceiver(instance: Int): Boolean
+
+    expect fun isScreenSpaceContactShadowsEnabled(instance: Int): Boolean
+
+    expect fun getPrimitiveCount(instance: Int): Int
+
+    expect fun getInstanceCount(instance: Int): Int
+
+    expect fun setMaterialInstanceAt(instance: Int, primitiveIndex: Int, materialInstance: MaterialInstance): Unit
+
+    expect fun getMaterialInstanceAt(instance: Int, primitiveIndex: Int): MaterialInstance?
+
+    expect fun setGeometryAt(instance: Int, primitiveIndex: Int, type: RenderableManager.PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Unit
+
+    expect fun setBlendOrderAt(instance: Int, primitiveIndex: Int, blendOrder: Int): Unit
+
+    expect fun getBlendOrderAt(instance: Int, primitiveIndex: Int): Int
+
+    expect fun setGlobalBlendOrderEnabledAt(instance: Int, primitiveIndex: Int, enabled: Boolean): Unit
+
+    expect fun isGlobalBlendOrderEnabledAt(instance: Int, primitiveIndex: Int): Boolean
+
+    expect fun setLightChannel(instance: Int, channel: Int, enable: Boolean): Unit
+
+    expect fun getLightChannel(instance: Int, channel: Int): Boolean
+
+    expect fun getMorphTargetCount(instance: Int): Int
+
+    expect fun setSkinningBuffer(instance: Int, skinningBuffer: SkinningBuffer, count: Int, offset: Int): Unit
+
+    expect fun setMorphWeights(instance: Int, weights: FloatArray, offset: Int = ...): Unit
+
+    expect fun setMorphTargetBufferOffsetAt(instance: Int, level: Int, primitiveIndex: Int, offset: Int): Unit
+
+    expect enum class PrimitiveType : Enum<RenderableManager.PrimitiveType>
+
+    expect enum class GeometryType : Enum<RenderableManager.GeometryType>
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:140:14 'actual class BufferObject : Any' has no corresponding members for expected class members:
+
+    expect fun getByteCount(): Int
+
+    expect fun setBuffer(engine: Engine, data: ByteArray): Unit
+
+    expect fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int): Unit
+
+    expect fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any? = ..., callback: (() -> Unit)? = ...): Unit
+
+    expect enum class BindingType : Enum<BufferObject.BindingType>
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:141:14 'actual class SkinningBuffer : Any' has no corresponding members for expected class members:
+
+    expect fun getBoneCount(): Int
+
+    expect fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int): Unit
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:142:14 'actual class MorphTargetBuffer : Any' has no corresponding members for expected class members:
+
+    expect fun getVertexCount(): Int
+
+    expect fun getCount(): Int
+
+    expect fun hasPositions(): Boolean
+
+    expect fun hasTangents(): Boolean
+
+    expect fun isCustomMorphingEnabled(): Boolean
+
+    expect fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int): Unit
+
+    expect fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int): Unit
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:143:14 'actual class SurfaceOrientation : Any' has no corresponding members for expected class members:
+
+    expect fun getVertexCount(): Int
+
+    expect fun getQuatsAsFloat(buffer: Any, count: Int): Unit
+
+    expect fun getQuatsAsHalf(buffer: Any, count: Int): Unit
+
+    expect fun getQuatsAsShort(buffer: Any, count: Int): Unit
+
+    expect fun destroy(): Unit
+
+    expect class Builder : Any
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:144:14 'actual class Box : Any' has no corresponding members for expected class members:
+
+    expect val center: FloatArray
+
+    expect val halfExtent: FloatArray
+
+    expect fun setCenter(x: Float, y: Float, z: Float): Unit
+
+    expect fun setHalfExtent(x: Float, y: Float, z: Float): Unit
+
+    expect fun getMin(): FloatArray
+
+    expect fun getMax(): FloatArray
+
+    expect constructor(): Box
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): Box
+
+    expect constructor(centerX: Float, centerY: Float, centerZ: Float, halfExtentX: Float, halfExtentY: Float, halfExtentZ: Float): Box
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): Box
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:145:14 'actual class Aabb : Any' has no corresponding members for expected class members:
+
+    expect val min: FloatArray
+
+    expect val max: FloatArray
+
+    expect fun setMin(x: Float, y: Float, z: Float): Unit
+
+    expect fun setMax(x: Float, y: Float, z: Float): Unit
+
+    expect fun center(): FloatArray
+
+    expect fun halfExtent(): FloatArray
+
+    expect constructor(): Aabb
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): Aabb
+
+    expect constructor(minX: Float, minY: Float, minZ: Float, maxX: Float, maxY: Float, maxZ: Float): Aabb
+
+    The following declaration is incompatible because number of value parameters is different:
+        constructor(native: dynamic): Aabb
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:147:15 'actual object Colors : Any' has no corresponding members for expected class members:
+
+    expect fun toLinear(type: Colors.RgbType, r: Float, g: Float, b: Float): FloatArray
+
+    The following declarations are incompatible because number of value parameters is different:
+        actual fun toLinear(type: Colors.RgbType, color: FloatArray): FloatArray
+        actual fun toLinear(type: Colors.RgbaType, color: FloatArray): FloatArray
+
+    expect fun toLinear(type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float): FloatArray
+
+    The following declarations are incompatible because number of value parameters is different:
+        actual fun toLinear(type: Colors.RgbType, color: FloatArray): FloatArray
+        actual fun toLinear(type: Colors.RgbaType, color: FloatArray): FloatArray
+
+    expect fun toLinear(conversion: Colors.Conversion, rgb: FloatArray): FloatArray
+
+    The following declarations are incompatible because parameter types are different:
+        actual fun toLinear(type: Colors.RgbType, color: FloatArray): FloatArray
+        actual fun toLinear(type: Colors.RgbaType, color: FloatArray): FloatArray
+
+    expect fun illuminantD(temperature: Float): FloatArray
+
+    The following declaration is incompatible because parameter types are different:
+        actual fun illuminantD(uv: FloatArray): FloatArray
+
+    expect enum class Conversion : Enum<Colors.Conversion>
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:148:23 'actual enum class RgbType : Enum<Colors.RgbType>' has no corresponding expected declaration
+The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
+    expect enum class RgbType : Enum<Colors.RgbType>
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:149:23 'actual enum class RgbaType : Enum<Colors.RgbaType>' has no corresponding expected declaration
+The following declaration is incompatible because some entries from expected enum are missing in the actual enum:
+    expect enum class RgbaType : Enum<Colors.RgbaType>
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:150:16 'actual fun toLinear(type: Colors.RgbType, color: FloatArray): FloatArray' has no corresponding expected declaration
+The following declaration is incompatible because parameter names are different:
+    expect fun toLinear(type: Colors.RgbType, rgb: FloatArray): FloatArray
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:151:16 'actual fun toLinear(type: Colors.RgbaType, color: FloatArray): FloatArray' has no corresponding expected declaration
+The following declaration is incompatible because parameter names are different:
+    expect fun toLinear(type: Colors.RgbaType, rgba: FloatArray): FloatArray
+
+e: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/filament/src/jsMain/kotlin/dev/filament/kmp/FilamentJs.kt:153:16 'actual fun illuminantD(uv: FloatArray): FloatArray' has no corresponding expected declaration
+The following declaration is incompatible because parameter types are different:
+    expect fun illuminantD(temperature: Float): FloatArray
+
+Finished executing kotlin compiler using DAEMON strategy
+Build 602c97ea-99e3-4eb0-bb33-68fcab8e3471 is started
+Build 602c97ea-99e3-4eb0-bb33-68fcab8e3471 is closed
+
+See the complete report at file:///Users/eric/IdeaProjects/filament-kmp/kotlin/build/reports/configuration-cache/77d9bqdd8n3ub8dwm2akxq7oi/3hgkbbqx0263j5q7tbfliv9td/configuration-cache-report.html
+
+[Incubating] Problems report is available at: file:///Users/eric/IdeaProjects/filament-kmp/kotlin/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':filament:compileKotlinJs'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.4.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 720ms
+1 actionable task: 1 executed
+Watched directory hierarchies: [/Users/eric/IdeaProjects/filament-kmp/kotlin]
+Configuration cache entry stored.
+Configuration Cache (/Users/eric/IdeaProjects/filament-kmp/kotlin/.gradle/configuration-cache) [subdir: /Users/eric/IdeaProjects/filament-kmp/kotlin/.gradle/configuration-cache/be26b1b5-dd2d-4e60-bad9-2110da87bb93] cleanup deleted 8 files/directories.

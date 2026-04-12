@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 
 # --- Platform specific setup ---
-set(FILAMENT_PLATFORM "macos" CACHE STRING "Target platform (ios, ios-simulator, macos, linux, windows)")
+set(FILAMENT_PLATFORM "ios-simulator" CACHE STRING "Target platform (ios, ios-simulator)")
 set(FILAMENT_ARCH "arm64" CACHE STRING "Target architecture (arm64, x64)")
 
 # --- Platform specific setup ---
@@ -17,16 +17,6 @@ elseif (FILAMENT_PLATFORM STREQUAL "ios-simulator")
     set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
     set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0")
     set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosSimulatorArm64/lib")
-elseif (FILAMENT_PLATFORM STREQUAL "macos")
-    set(CMAKE_SYSTEM_NAME Darwin)
-    set(CMAKE_OSX_ARCHITECTURES ${FILAMENT_ARCH})
-    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/macosArm64/lib")
-elseif (FILAMENT_PLATFORM STREQUAL "linux")
-    set(CMAKE_SYSTEM_NAME Linux)
-    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/linuxX64/lib")
-elseif (FILAMENT_PLATFORM STREQUAL "windows")
-    set(CMAKE_SYSTEM_NAME Windows)
-    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/mingwX64/lib")
 endif()
 
 project(filament-c)
@@ -198,21 +188,6 @@ if (APPLE)
         "-framework CoreVideo"
         "-framework OpenGL"
     )
-elseif (WIN32)
-    target_link_libraries(filament-c PRIVATE
-        opengl32.lib
-        user32.lib
-        gdi32.lib
-        shlwapi.lib
-    )
-else() # Linux
-    target_link_libraries(filament-c PRIVATE
-        pthread
-        dl
-        GL
-        X11
-    )
-    set_target_properties(filament-c PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 # filamat-c library
