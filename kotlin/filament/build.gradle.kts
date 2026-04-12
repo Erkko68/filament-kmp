@@ -1,25 +1,64 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("maven-publish")
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
-group = "dev.filament.kmp"
-version = "0.1.0-SNAPSHOT"
+val filaVersion: String by project
+val libVersion: String by project
+val projectGroup: String by project
 
-val filamentAndroidVersion = "1.70.1"
+group = projectGroup
+version = "${filaVersion}-${libVersion}"
+
+val filamentAndroidVersion = filaVersion
 
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
-    androidTarget()
+    androidTarget() {
+        publishLibraryVariants("release", "debug")
+    }
 
-    iosArm64()
-    iosSimulatorArm64()
-    iosX64()
+    val xcf = XCFramework("Filament")
+    iosArm64 {
+        binaries.framework {
+            baseName = "Filament"
+            isStatic = true
+            xcf.add(this)
+        }
+    }
+    iosSimulatorArm64 {
+        binaries.framework {
+            baseName = "Filament"
+            isStatic = true
+            xcf.add(this)
+        }
+    }
+    iosX64 {
+        binaries.framework {
+            baseName = "Filament"
+            isStatic = true
+            xcf.add(this)
+        }
+    }
+
+    cocoapods {
+        summary = "Filament Kotlin Multiplatform Wrapper"
+        homepage = "https://github.com/Erkko68/filament-kmp"
+        ios.deploymentTarget = "15.0"
+        framework {
+            baseName = "Filament"
+            isStatic = true
+        }
+        name = "Filament"
+    }
 
 //    js(IR) {
 //        browser()
@@ -155,5 +194,25 @@ android {
 
     defaultConfig {
         minSdk = 24
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "Remote"
+            url = uri("https://your-maven-repo.com/repository/maven-releases/")
+            credentials {
+                username = project.findProperty("maven.user")?.toString()
+                password = project.findProperty("maven.key")?.toString()
+            }
+        }
+        maven {
+            name = "Local"
+            url = uri(layout.buildDirectory.dir("repo"))
+        }
+    }
+    publications.withType<MavenPublication> {
+        artifactId = "filament"
     }
 }

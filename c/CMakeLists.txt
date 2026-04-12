@@ -180,14 +180,25 @@ target_link_libraries(filament-c
 )
 
 if (APPLE)
-    target_link_libraries(filament-c PRIVATE
-        "-framework Metal"
-        "-framework Foundation"
-        "-framework AppKit"
-        "-framework QuartzCore"
-        "-framework CoreVideo"
-        "-framework OpenGL"
-    )
+    if (FILAMENT_PLATFORM STREQUAL "ios" OR FILAMENT_PLATFORM STREQUAL "ios-simulator")
+        target_link_libraries(filament-c PRIVATE
+            "-framework Metal"
+            "-framework Foundation"
+            "-framework UIKit"
+            "-framework QuartzCore"
+            "-framework CoreVideo"
+            "-framework OpenGLES"
+        )
+    else()
+        target_link_libraries(filament-c PRIVATE
+            "-framework Metal"
+            "-framework Foundation"
+            "-framework AppKit"
+            "-framework QuartzCore"
+            "-framework CoreVideo"
+            "-framework OpenGL"
+        )
+    endif()
 endif()
 
 # filamat-c library
