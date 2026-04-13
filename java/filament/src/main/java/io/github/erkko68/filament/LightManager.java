@@ -18,6 +18,40 @@ public class LightManager {
         SPOT
     }
 
+    public static class ShadowOptions {
+        public int mapSize = 1024;
+        public int shadowCascades = 1;
+        public float[] cascadeSplitPositions = { 0.125f, 0.25f, 0.50f };
+        public float constantBias = 0.001f;
+        public float normalBias = 1.0f;
+        public float shadowFar = 0.0f;
+        public float shadowNearHint = 1.0f;
+        public float shadowFarHint = 100.0f;
+        public boolean stable = false;
+        public boolean lispsm = true;
+        public float polygonOffsetConstant = 0.5f;
+        public float polygonOffsetSlope = 2.0f;
+        public boolean screenSpaceContactShadows = false;
+        public int stepCount = 8;
+        public float maxShadowDistance = 0.3f;
+        public boolean elvsm = false;
+        public float blurWidth = 0.0f;
+        public float shadowBulbRadius = 0.02f;
+        public float[] transform = { 0.0f, 0.0f, 0.0f, 1.0f };
+    }
+
+    public static class ShadowCascades {
+        public static void computeUniformSplits(float[] splitPositions, int cascades) {
+            nComputeUniformSplits(splitPositions, cascades);
+        }
+        public static void computeLogSplits(float[] splitPositions, int cascades, float near, float far) {
+            nComputeLogSplits(splitPositions, cascades, near, far);
+        }
+        public static void computePracticalSplits(float[] splitPositions, int cascades, float near, float far, float lambda) {
+            nComputePracticalSplits(splitPositions, cascades, near, far, lambda);
+        }
+    }
+
     public static class Builder {
         private final long mNativeBuilder;
         private final Cleaner.Cleanable mCleanable;
@@ -29,6 +63,18 @@ public class LightManager {
 
         public Builder castShadows(boolean enabled) {
             nBuilderCastShadows(mNativeBuilder, enabled);
+            return this;
+        }
+
+        public Builder shadowOptions(ShadowOptions options) {
+            nBuilderShadowOptions(mNativeBuilder,
+                options.mapSize, options.shadowCascades, options.cascadeSplitPositions,
+                options.constantBias, options.normalBias, options.shadowFar, options.shadowNearHint,
+                options.shadowFarHint, options.stable, options.lispsm,
+                options.polygonOffsetConstant, options.polygonOffsetSlope,
+                options.screenSpaceContactShadows,
+                options.stepCount, options.maxShadowDistance,
+                options.elvsm, options.blurWidth, options.shadowBulbRadius, options.transform);
             return this;
         }
 
@@ -44,6 +90,36 @@ public class LightManager {
 
         public Builder direction(float x, float y, float z) {
             nBuilderDirection(mNativeBuilder, x, y, z);
+            return this;
+        }
+
+        public Builder position(float x, float y, float z) {
+            nBuilderPosition(mNativeBuilder, x, y, z);
+            return this;
+        }
+
+        public Builder falloff(float radius) {
+            nBuilderFalloff(mNativeBuilder, radius);
+            return this;
+        }
+
+        public Builder spotLightCone(float inner, float outer) {
+            nBuilderSpotLightCone(mNativeBuilder, inner, outer);
+            return this;
+        }
+
+        public Builder sunAngularRadius(float radius) {
+            nBuilderSunAngularRadius(mNativeBuilder, radius);
+            return this;
+        }
+
+        public Builder sunHaloSize(float size) {
+            nBuilderSunHaloSize(mNativeBuilder, size);
+            return this;
+        }
+
+        public Builder sunHaloFalloff(float falloff) {
+            nBuilderSunHaloFalloff(mNativeBuilder, falloff);
             return this;
         }
 
@@ -119,8 +195,26 @@ public class LightManager {
     private static native long nCreateBuilder(int type);
     private static native void nDestroyBuilder(long nativeBuilder);
     private static native void nBuilderCastShadows(long nativeBuilder, boolean enabled);
+    private static native void nBuilderShadowOptions(long nativeBuilder,
+        int mapSize, int shadowCascades, float[] cascadeSplitPositions,
+        float constantBias, float normalBias, float shadowFar, float shadowNearHint,
+        float shadowFarHint, boolean stable, boolean lispsm,
+        float polygonOffsetConstant, float polygonOffsetSlope,
+        boolean screenSpaceContactShadows,
+        int stepCount, float maxShadowDistance,
+        boolean elvsm, float blurWidth, float shadowBulbRadius, float[] transform);
     private static native void nBuilderColor(long nativeBuilder, float r, float g, float b);
     private static native void nBuilderIntensity(long nativeBuilder, float intensity);
     private static native void nBuilderDirection(long nativeBuilder, float x, float y, float z);
+    private static native void nBuilderPosition(long nativeBuilder, float x, float y, float z);
+    private static native void nBuilderFalloff(long nativeBuilder, float radius);
+    private static native void nBuilderSpotLightCone(long nativeBuilder, float inner, float outer);
+    private static native void nBuilderSunAngularRadius(long nativeBuilder, float radius);
+    private static native void nBuilderSunHaloSize(long nativeBuilder, float size);
+    private static native void nBuilderSunHaloFalloff(long nativeBuilder, float falloff);
     private static native void nBuilderBuild(long nativeBuilder, long nativeEngine, int entity);
+
+    private static native void nComputeUniformSplits(float[] splitPositions, int cascades);
+    private static native void nComputeLogSplits(float[] splitPositions, int cascades, float near, float far);
+    private static native void nComputePracticalSplits(float[] splitPositions, int cascades, float near, float far, float lambda);
 }

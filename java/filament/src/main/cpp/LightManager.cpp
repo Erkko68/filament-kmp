@@ -70,6 +70,49 @@ Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderCastShadows(JN
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderShadowOptions(JNIEnv* env, jclass, jlong nativeBuilder,
+    jint mapSize, jint shadowCascades, jfloatArray cascadeSplitPositions,
+    jfloat constantBias, jfloat normalBias, jfloat shadowFar, jfloat shadowNearHint,
+    jfloat shadowFarHint, jboolean stable, jboolean lispsm,
+    jfloat polygonOffsetConstant, jfloat polygonOffsetSlope,
+    jboolean screenSpaceContactShadows,
+    jint stepCount, jfloat maxShadowDistance,
+    jboolean elvsm, jfloat blurWidth, jfloat shadowBulbRadius, jfloatArray transform) {
+
+    LightManager::ShadowOptions options;
+    options.mapSize = (uint32_t) mapSize;
+    options.shadowCascades = (uint8_t) shadowCascades;
+
+    jfloat* splits = env->GetFloatArrayElements(cascadeSplitPositions, nullptr);
+    options.cascadeSplitPositions[0] = splits[0];
+    options.cascadeSplitPositions[1] = splits[1];
+    options.cascadeSplitPositions[2] = splits[2];
+    env->ReleaseFloatArrayElements(cascadeSplitPositions, splits, JNI_ABORT);
+
+    options.constantBias = constantBias;
+    options.normalBias = normalBias;
+    options.shadowFar = shadowFar;
+    options.shadowNearHint = shadowNearHint;
+    options.shadowFarHint = shadowFarHint;
+    options.stable = (bool) stable;
+    options.lispsm = (bool) lispsm;
+    options.polygonOffsetConstant = polygonOffsetConstant;
+    options.polygonOffsetSlope = polygonOffsetSlope;
+    options.screenSpaceContactShadows = (bool) screenSpaceContactShadows;
+    options.stepCount = (uint8_t) stepCount;
+    options.maxShadowDistance = maxShadowDistance;
+    options.vsm.elvsm = (bool) elvsm;
+    options.vsm.blurWidth = blurWidth;
+    options.shadowBulbRadius = shadowBulbRadius;
+
+    jfloat* quat = env->GetFloatArrayElements(transform, nullptr);
+    options.transform = { quat[3], { quat[0], quat[1], quat[2] } }; // math::quatf{w, {x, y, z}}
+    env->ReleaseFloatArrayElements(transform, quat, JNI_ABORT);
+
+    ((LightManager::Builder*) nativeBuilder)->shadowOptions(options);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderColor(JNIEnv* env, jclass, jlong nativeBuilder, jfloat r, jfloat g, jfloat b) {
     ((LightManager::Builder*) nativeBuilder)->color({r, g, b});
 }
@@ -85,6 +128,57 @@ Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderDirection(JNIE
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderPosition(JNIEnv* env, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
+    ((LightManager::Builder*) nativeBuilder)->position({x, y, z});
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderFalloff(JNIEnv* env, jclass, jlong nativeBuilder, jfloat radius) {
+    ((LightManager::Builder*) nativeBuilder)->falloff(radius);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderSpotLightCone(JNIEnv* env, jclass, jlong nativeBuilder, jfloat inner, jfloat outer) {
+    ((LightManager::Builder*) nativeBuilder)->spotLightCone(inner, outer);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderSunAngularRadius(JNIEnv* env, jclass, jlong nativeBuilder, jfloat radius) {
+    ((LightManager::Builder*) nativeBuilder)->sunAngularRadius(radius);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderSunHaloSize(JNIEnv* env, jclass, jlong nativeBuilder, jfloat size) {
+    ((LightManager::Builder*) nativeBuilder)->sunHaloSize(size);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderSunHaloFalloff(JNIEnv* env, jclass, jlong nativeBuilder, jfloat falloff) {
+    ((LightManager::Builder*) nativeBuilder)->sunHaloFalloff(falloff);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_LightManager_00024Builder_nBuilderBuild(JNIEnv* env, jclass, jlong nativeBuilder, jlong nativeEngine, jint entity) {
     ((LightManager::Builder*) nativeBuilder)->build(*(Engine*) nativeEngine, (utils::Entity&) entity);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_nComputeUniformSplits(JNIEnv* env, jclass, jfloatArray splitPositions, jint cascades) {
+    jfloat* splits = env->GetFloatArrayElements(splitPositions, nullptr);
+    LightManager::ShadowCascades::computeUniformSplits(splits, (uint8_t) cascades);
+    env->ReleaseFloatArrayElements(splitPositions, splits, 0);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_nComputeLogSplits(JNIEnv* env, jclass, jfloatArray splitPositions, jint cascades, jfloat near, jfloat far) {
+    jfloat* splits = env->GetFloatArrayElements(splitPositions, nullptr);
+    LightManager::ShadowCascades::computeLogSplits(splits, (uint8_t) cascades, near, far);
+    env->ReleaseFloatArrayElements(splitPositions, splits, 0);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_LightManager_nComputePracticalSplits(JNIEnv* env, jclass, jfloatArray splitPositions, jint cascades, jfloat near, jfloat far, jfloat lambda) {
+    jfloat* splits = env->GetFloatArrayElements(splitPositions, nullptr);
+    LightManager::ShadowCascades::computePracticalSplits(splits, (uint8_t) cascades, near, far, lambda);
+    env->ReleaseFloatArrayElements(splitPositions, splits, 0);
 }

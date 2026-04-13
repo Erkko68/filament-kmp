@@ -30,14 +30,27 @@ Java_io_github_erkko68_filament_filamat_MaterialBuilder_nDestroyMaterialBuilder(
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_filamat_MaterialBuilder_nBuilderBuild(JNIEnv* env, jclass, jlong nativeBuilder, jlong nativeEngine) {
     MaterialBuilder* builder = (MaterialBuilder*) nativeBuilder;
+    utils::JobSystem* jobSystem = nullptr;
     if (nativeEngine != 0) {
         Engine* engine = (Engine*) nativeEngine;
-        Package* pkg = new Package(builder->build(engine->getJobSystem()));
-        return (jlong) pkg;
-    } else {
-        Package* pkg = new Package(builder->build());
-        return (jlong) pkg;
+        jobSystem = &engine->getJobSystem();
     }
+
+    bool ownJobSystem = false;
+    if (jobSystem == nullptr) {
+        jobSystem = new utils::JobSystem;
+        jobSystem->adopt();
+        ownJobSystem = true;
+    }
+
+    Package* pkg = new Package(builder->build(*jobSystem));
+
+    if (ownJobSystem) {
+        jobSystem->emancipate();
+        delete jobSystem;
+    }
+
+    return (jlong) pkg;
 }
 
 extern "C" JNIEXPORT jbyteArray JNICALL

@@ -26,8 +26,7 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_Engine_nCreateEngine(JNIEnv* env, jclass, jlong nativeBackend, jlong nativeSharedContext) {
-    // For now we use default backend. In production we might want to specify it.
-    Engine* engine = Engine::create();
+    Engine* engine = Engine::create((Engine::Backend) nativeBackend);
     return (jlong) engine;
 }
 
@@ -171,4 +170,9 @@ Java_io_github_erkko68_filament_Engine_nGetLightManager(JNIEnv* env, jclass, jlo
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_Engine_nGetTransformManager(JNIEnv* env, jclass, jlong nativeEngine) {
     return (jlong) &((Engine*) nativeEngine)->getTransformManager();
+}
+
+extern "C" JNIEXPORT jlong JNICALL
+Java_io_github_erkko68_filament_Engine_nGetJobSystem(JNIEnv* env, jclass, jlong nativeEngine) {
+    return (jlong) &((Engine*) nativeEngine)->getJobSystem();
 }

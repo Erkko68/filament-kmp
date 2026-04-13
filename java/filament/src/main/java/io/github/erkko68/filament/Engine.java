@@ -7,13 +7,25 @@ public class Engine {
     private long mNativeObject;
     private final Cleaner.Cleanable mCleanable;
 
+    public enum Backend {
+        DEFAULT,
+        OPENGL,
+        VULKAN,
+        METAL,
+        NOOP
+    }
+
     private Engine(long nativeEngine) {
         mNativeObject = nativeEngine;
         mCleanable = NativeRegistry.registerForCleanup(this, new EngineCleanup(mNativeObject));
     }
 
     public static Engine create() {
-        long nativeEngine = nCreateEngine(0, 0);
+        return create(Backend.DEFAULT);
+    }
+
+    public static Engine create(Backend backend) {
+        long nativeEngine = nCreateEngine(backend.ordinal(), 0);
         if (nativeEngine == 0) throw new IllegalStateException("Couldn't create Engine");
         return new Engine(nativeEngine);
     }
@@ -144,6 +156,10 @@ public class Engine {
         return new TransformManager(nGetTransformManager(getNativeObject()));
     }
 
+    public long getJobSystem() {
+        return nGetJobSystem(getNativeObject());
+    }
+
     public long getNativeObject() {
         if (mNativeObject == 0) {
             throw new IllegalStateException("Calling method on destroyed Engine");
@@ -186,4 +202,5 @@ public class Engine {
     private static native long nGetRenderableManager(long nativeEngine);
     private static native long nGetLightManager(long nativeEngine);
     private static native long nGetTransformManager(long nativeEngine);
+    private static native long nGetJobSystem(long nativeEngine);
 }
