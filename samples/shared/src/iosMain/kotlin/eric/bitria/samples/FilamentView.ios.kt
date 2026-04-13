@@ -4,7 +4,7 @@ package eric.bitria.samples
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
-import dev.filament.kmp.NativeSurface
+import io.github.erkko68.NativeSurface
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.objcPtr

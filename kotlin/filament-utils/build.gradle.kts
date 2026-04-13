@@ -2,11 +2,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.konan.target.Family
 
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("maven-publish")
-    id("org.jetbrains.kotlin.native.cocoapods")
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 val filaVersion: String by project
@@ -17,6 +18,10 @@ group = projectGroup
 version = "${filaVersion}-${libVersion}"
 
 val filamentAndroidVersion = filaVersion
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
 
 kotlin {
     compilerOptions {
@@ -50,16 +55,7 @@ kotlin {
         }
     }
 
-    cocoapods {
-        summary = "Filament Utils Kotlin Multiplatform Wrapper"
-        homepage = "https://github.com/Erkko68/filament-kmp"
-        ios.deploymentTarget = "15.0"
-        framework {
-            baseName = "FilamentUtils"
-            isStatic = true
-        }
-        name = "FilamentUtils"
-    }
+
 
 //    js(IR) {
 //        browser()
@@ -165,29 +161,40 @@ kotlin {
 }
 
 android {
-    namespace = "dev.filament.kmp"
+    namespace = "io.github.erkko68.filamentutils"
     compileSdk = 36
     defaultConfig {
         minSdk = 24
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "Remote"
-            url = uri("https://your-maven-repo.com/repository/maven-releases/")
-            credentials {
-                username = project.findProperty("maven.user")?.toString()
-                password = project.findProperty("maven.key")?.toString()
+mavenPublishing {
+    coordinates(projectGroup, "filament-utils", "${filaVersion}-${libVersion}")
+
+    pom {
+        name.set(project.property("maven.name").toString())
+        description.set(project.property("maven.description").toString())
+        url.set(project.property("maven.url").toString())
+        licenses {
+            license {
+                name.set(project.property("maven.license.name").toString())
+                url.set(project.property("maven.license.url").toString())
             }
         }
-        maven {
-            name = "Local"
-            url = uri(layout.buildDirectory.dir("repo"))
+        developers {
+            developer {
+                id.set(project.property("maven.developer.id").toString())
+                name.set(project.property("maven.developer.name").toString())
+                email.set(project.property("maven.developer.email").toString())
+            }
+        }
+        scm {
+            connection.set(project.property("maven.scm").toString())
+            developerConnection.set(project.property("maven.scm").toString())
+            url.set(project.property("maven.url").toString())
         }
     }
-    publications.withType<MavenPublication> {
-        artifactId = "filament-utils"
-    }
+
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 }

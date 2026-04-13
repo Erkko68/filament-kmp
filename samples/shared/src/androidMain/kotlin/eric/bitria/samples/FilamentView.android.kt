@@ -5,7 +5,7 @@ import android.view.SurfaceView
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import dev.filament.kmp.NativeSurface
+import io.github.erkko68.NativeSurface
 
 @Composable
 actual fun FilamentView(
