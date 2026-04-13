@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 public class VertexBuffer {
     private long mNativeObject;
 
-    private VertexBuffer(long nativeVertexBuffer) {
+    public VertexBuffer(long nativeVertexBuffer) {
         mNativeObject = nativeVertexBuffer;
     }
 

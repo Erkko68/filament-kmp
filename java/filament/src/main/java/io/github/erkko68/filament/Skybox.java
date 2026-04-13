@@ -6,7 +6,7 @@ import java.lang.ref.Cleaner;
 public class Skybox {
     private long mNativeObject;
 
-    private Skybox(long nativeSkybox) {
+    public Skybox(long nativeSkybox) {
         mNativeObject = nativeSkybox;
     }
 

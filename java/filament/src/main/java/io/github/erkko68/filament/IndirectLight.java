@@ -6,7 +6,7 @@ import java.lang.ref.Cleaner;
 public class IndirectLight {
     private long mNativeObject;
 
-    private IndirectLight(long nativeIndirectLight) {
+    public IndirectLight(long nativeIndirectLight) {
         mNativeObject = nativeIndirectLight;
     }
 

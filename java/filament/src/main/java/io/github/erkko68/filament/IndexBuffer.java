@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 public class IndexBuffer {
     private long mNativeObject;
 
-    private IndexBuffer(long nativeIndexBuffer) {
+    public IndexBuffer(long nativeIndexBuffer) {
         mNativeObject = nativeIndexBuffer;
     }
 

@@ -34,6 +34,17 @@ add_filament_library(math)
 add_filament_library(image)
 add_filament_library(camutils)
 add_filament_library(zstd)
+add_filament_library(filameshio)
+add_filament_library(ktxreader)
+add_filament_library(basis_transcoder)
+add_filament_library(imageio-lite)
+add_filament_library(meshoptimizer)
+add_filament_library(filabridge)
+add_filament_library(filaflat)
+add_filament_library(smol-v)
+add_filament_library(bluegl)
+add_filament_library(bluevk)
+add_filament_library(filament-iblprefilter)
 
 # The JNI shared library
 add_library(filament-utils-jni SHARED
@@ -41,6 +52,8 @@ add_library(filament-utils-jni SHARED
     src/main/cpp/IBLPrefilterContext.cpp
     src/main/cpp/Manipulator.cpp
     src/main/cpp/Bookmark.cpp
+    src/main/cpp/KtxLoader.cpp
+    src/main/cpp/MeshReader.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
     src/main/cpp/common/VirtualMachineEnv.cpp
@@ -55,12 +68,6 @@ target_include_directories(filament-utils-jni PRIVATE
 # Link common JNI sources from the filament module's directory to avoid duplication
 # if CMake supports it, or we point to the files in filament module.
 # For now, I'll assume they will be copied or symlinked, or I'll just use the full path.
-set_source_files_properties(
-    src/main/cpp/common/NioUtils.cpp
-    src/main/cpp/common/CallbackUtils.cpp
-    src/main/cpp/common/VirtualMachineEnv.cpp
-    PROPERTIES EXTERNAL_OBJECT true
-)
 
 target_link_libraries(filament-utils-jni
     PRIVATE filament
@@ -69,16 +76,37 @@ target_link_libraries(filament-utils-jni
     PRIVATE image
     PRIVATE camutils
     PRIVATE zstd
+    PRIVATE filameshio
+    PRIVATE ktxreader
+    PRIVATE basis_transcoder
+    PRIVATE imageio-lite
+    PRIVATE meshoptimizer
+    PRIVATE filabridge
+    PRIVATE filaflat
+    PRIVATE smol-v
+    PRIVATE bluegl
+    PRIVATE bluevk
+    PRIVATE filament-iblprefilter
     ${JNI_LIBRARIES}
 )
 
 if (APPLE)
-    target_link_libraries(filament-utils-jni PRIVATE
-        "-framework Metal"
-        "-framework Foundation"
-        "-framework AppKit"
-        "-framework QuartzCore"
-        "-framework CoreVideo"
-        "-framework OpenGL"
-    )
+    if (FILAMENT_PLATFORM STREQUAL "macos")
+        target_link_libraries(filament-utils-jni PRIVATE
+            "-framework Metal"
+            "-framework Foundation"
+            "-framework AppKit"
+            "-framework QuartzCore"
+            "-framework CoreVideo"
+            "-framework OpenGL"
+        )
+    else()
+        target_link_libraries(filament-utils-jni PRIVATE
+            "-framework Metal"
+            "-framework Foundation"
+            "-framework UIKit"
+            "-framework QuartzCore"
+            "-framework CoreVideo"
+        )
+    endif()
 endif()

@@ -33,14 +33,28 @@ tasks.register<Exec>("cmakeConfig") {
         "macos" -> "macos"
         else -> p
     }
+    
     val arch = when(a) {
         "arm64" -> "Arm64"
         "x64" -> "X64"
         else -> a.replaceFirstChar { it.uppercase() }
     }
+
+    val cmakeArgs = mutableListOf("-DFILAMENT_PLATFORM=$platform", "-DFILAMENT_ARCH=$arch")
     
+    if (p == "ios-simulator") {
+        cmakeArgs.add("-DCMAKE_OSX_SYSROOT=iphonesimulator")
+        cmakeArgs.add("-DCMAKE_OSX_ARCHITECTURES=arm64")
+    } else if (p == "ios") {
+        cmakeArgs.add("-DCMAKE_OSX_SYSROOT=iphoneos")
+        cmakeArgs.add("-DCMAKE_OSX_ARCHITECTURES=arm64")
+    } else if (p == "macos") {
+        cmakeArgs.add("-DCMAKE_OSX_SYSROOT=macosx")
+        cmakeArgs.add("-DCMAKE_OSX_ARCHITECTURES=arm64")
+    }
+
     val cmakePath = if (File("/opt/homebrew/bin/cmake").exists()) "/opt/homebrew/bin/cmake" else "cmake"
-    commandLine(cmakePath, "../../", "-DFILAMENT_PLATFORM=$platform", "-DFILAMENT_ARCH=$arch")
+    commandLine(cmakePath, "../../", *cmakeArgs.toTypedArray())
 }
 
 tasks.register<Exec>("cmakeBuild") {
