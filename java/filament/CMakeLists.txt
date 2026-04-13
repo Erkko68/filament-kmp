@@ -46,6 +46,13 @@ add_library(filament-jni SHARED
     src/main/cpp/Scene.cpp
     src/main/cpp/Camera.cpp
     src/main/cpp/EntityManager.cpp
+    src/main/cpp/VertexBuffer.cpp
+    src/main/cpp/IndexBuffer.cpp
+    src/main/cpp/Texture.cpp
+    src/main/cpp/Material.cpp
+    src/main/cpp/RenderableManager.cpp
+    src/main/cpp/LightManager.cpp
+    src/main/cpp/TransformManager.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
 )

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament;
 
+import io.github.erkko68.filament.internal.NativeRegistry;
+import java.lang.ref.Cleaner;
 import java.nio.Buffer;
 
 public class Material {

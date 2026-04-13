@@ -7,8 +7,8 @@ public class Renderer {
         mNativeObject = nativeRenderer;
     }
 
-    public boolean beginFrame(SwapChain swapChain) {
-        return nBeginFrame(getNativeObject(), swapChain.getNativeObject());
+    public boolean beginFrame(SwapChain swapChain, long frameTimeNanos) {
+        return nBeginFrame(getNativeObject(), swapChain.getNativeObject(), frameTimeNanos);
     }
 
     public void render(View view) {
@@ -20,7 +20,9 @@ public class Renderer {
     }
 
     public long getNativeObject() {
-        if (mNativeObject == 0) throw new IllegalStateException("Renderer already destroyed");
+        if (mNativeObject == 0) {
+            throw new IllegalStateException("Calling method on destroyed Renderer");
+        }
         return mNativeObject;
     }
 
@@ -28,7 +30,7 @@ public class Renderer {
         mNativeObject = 0;
     }
 
-    private static native boolean nBeginFrame(long nativeRenderer, long nativeSwapChain);
+    private static native boolean nBeginFrame(long nativeRenderer, long nativeSwapChain, long frameTimeNanos);
     private static native void nRender(long nativeRenderer, long nativeView);
     private static native void nEndFrame(long nativeRenderer);
 }

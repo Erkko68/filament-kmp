@@ -1,7 +1,7 @@
 package io.github.erkko68.filament;
 
 public class EntityManager {
-    private static final EntityManager sInstance = new EntityManager();
+    private static final EntityManager INSTANCE = new EntityManager();
     private long mNativeObject;
 
     private EntityManager() {
@@ -9,18 +9,30 @@ public class EntityManager {
     }
 
     public static EntityManager get() {
-        return sInstance;
+        return INSTANCE;
     }
 
     public int create() {
-        return nCreate(mNativeObject);
+        return nCreate(getNativeObject());
     }
 
     public void destroy(int entity) {
-        nDestroy(mNativeObject, entity);
+        nDestroy(getNativeObject(), entity);
+    }
+
+    public boolean isAlive(int entity) {
+        return nIsAlive(getNativeObject(), entity);
+    }
+
+    public long getNativeObject() {
+        if (mNativeObject == 0) {
+            throw new IllegalStateException("Calling method on destroyed EntityManager");
+        }
+        return mNativeObject;
     }
 
     private static native long nGetEntityManager();
     private static native int nCreate(long nativeEntityManager);
     private static native void nDestroy(long nativeEntityManager, int entity);
+    private static native boolean nIsAlive(long nativeEntityManager, int entity);
 }

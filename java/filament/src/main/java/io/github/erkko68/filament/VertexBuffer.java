@@ -1,7 +1,7 @@
 package io.github.erkko68.filament;
 
-import io.github.erkko68.filament.internal.NioUtils;
-
+import io.github.erkko68.filament.internal.NativeRegistry;
+import java.lang.ref.Cleaner;
 import java.nio.Buffer;
 import java.nio.BufferOverflowException;
 import java.util.concurrent.Executor;
@@ -44,9 +44,11 @@ public class VertexBuffer {
 
     public static class Builder {
         private final long mNativeBuilder;
+        private final Cleaner.Cleanable mCleanable;
 
         public Builder() {
             mNativeBuilder = nCreateBuilder();
+            mCleanable = NativeRegistry.registerForCleanup(this, new BuilderCleanup(mNativeBuilder));
         }
 
         public Builder vertexCount(int vertexCount) {
@@ -84,7 +86,11 @@ public class VertexBuffer {
             return new VertexBuffer(nativeVertexBuffer);
         }
 
-        // Note: In a production app, use a Cleaner or Finalizer to nDestroyBuilder
+        private static class BuilderCleanup implements Runnable {
+            private final long mNativeObject;
+            BuilderCleanup(long nativeObject) { mNativeObject = nativeObject; }
+            @Override public void run() { nDestroyBuilder(mNativeObject); }
+        }
     }
 
     public int getVertexCount() {

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament;
 
+import io.github.erkko68.filament.internal.NativeRegistry;
+import java.lang.ref.Cleaner;
 import java.nio.Buffer;
 import java.nio.BufferOverflowException;
 import java.util.concurrent.Executor;
@@ -78,9 +80,11 @@ public class Texture {
 
     public static class Builder {
         private final long mNativeBuilder;
+        private final Cleaner.Cleanable mCleanable;
 
         public Builder() {
             mNativeBuilder = nCreateBuilder();
+            mCleanable = NativeRegistry.registerForCleanup(this, new BuilderCleanup(mNativeBuilder));
         }
 
         public Builder width(int width) {
@@ -122,6 +126,12 @@ public class Texture {
             long nativeTexture = nBuilderBuild(mNativeBuilder, engine.getNativeObject());
             if (nativeTexture == 0) throw new IllegalStateException("Couldn't create Texture");
             return new Texture(nativeTexture);
+        }
+
+        private static class BuilderCleanup implements Runnable {
+            private final long mNativeObject;
+            BuilderCleanup(long nativeObject) { mNativeObject = nativeObject; }
+            @Override public void run() { nDestroyBuilder(mNativeObject); }
         }
     }
 

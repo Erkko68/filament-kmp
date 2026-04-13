@@ -1,247 +1,141 @@
 package io.github.erkko68.filament;
 
-import java.util.concurrent.Executor;
+import io.github.erkko68.filament.internal.NativeRegistry;
+import java.lang.ref.Cleaner;
 
-/**
- * Engine is filament's main entry-point.
- */
 public class Engine {
     private long mNativeObject;
-    private Config mConfig;
+    private final Cleaner.Cleanable mCleanable;
 
-    public enum Backend {
-        DEFAULT,
-        VULKAN,
-        OPENGL,
-        METAL,
-        NOOP,
-    }
-
-    public enum FeatureLevel {
-        FEATURE_LEVEL_0,
-        FEATURE_LEVEL_1,
-        FEATURE_LEVEL_2,
-        FEATURE_LEVEL_3,
-    }
-
-    public enum StereoscopicType {
-        NONE,
-        INSTANCED,
-        MULTIVIEW,
-    }
-
-    public enum GpuContextPriority {
-        DEFAULT,
-        LOW,
-        MEDIUM,
-        HIGH,
-        REALTIME,
-    }
-
-    public enum FeatureState {
-        FALSE,
-        TRUE,
-        INDETERMINATE
-    }
-
-    public static class Config {
-        public long commandBufferSizeMB = 3 * 1;
-        public long perRenderPassArenaSizeMB = 3;
-        public long driverHandleArenaSizeMB = 0;
-        public long minCommandBufferSizeMB = 1;
-        public long perFrameCommandsSizeMB = 2;
-        public long jobSystemThreadCount = 0;
-        public boolean disableParallelShaderCompile = false;
-        public StereoscopicType stereoscopicType = StereoscopicType.NONE;
-        public long stereoscopicEyeCount = 2;
-        public long resourceAllocatorCacheSizeMB = 64;
-        public long resourceAllocatorCacheMaxAge = 1;
-        public boolean disableHandleUseAfterFreeCheck = false;
-        public enum ShaderLanguage { DEFAULT, MSL, METAL_LIBRARY }
-        public ShaderLanguage preferredShaderLanguage = ShaderLanguage.DEFAULT;
-        public boolean forceGLES2Context = false;
-        public boolean assertNativeWindowIsValid = false;
-        public GpuContextPriority gpuContextPriority = GpuContextPriority.DEFAULT;
-        public long sharedUboInitialSizeInBytes = 256 * 64;
-    }
-
-    public static class Builder {
-        private final long mNativeBuilder;
-        private Config mConfig;
-
-        public Builder() {
-            mNativeBuilder = nCreateBuilder();
-        }
-
-        public Builder backend(Backend backend) {
-            nSetBuilderBackend(mNativeBuilder, (long) backend.ordinal());
-            return this;
-        }
-
-        public Builder sharedContext(long sharedContext) {
-            nSetBuilderSharedContext(mNativeBuilder, sharedContext);
-            return this;
-        }
-
-        public Builder config(Config config) {
-            mConfig = config;
-            nSetBuilderConfig(mNativeBuilder, config.commandBufferSizeMB,
-                    config.perRenderPassArenaSizeMB, config.driverHandleArenaSizeMB,
-                    config.minCommandBufferSizeMB, config.perFrameCommandsSizeMB,
-                    config.jobSystemThreadCount, config.disableParallelShaderCompile,
-                    config.stereoscopicType.ordinal(), config.stereoscopicEyeCount,
-                    config.resourceAllocatorCacheSizeMB, config.resourceAllocatorCacheMaxAge,
-                    config.disableHandleUseAfterFreeCheck,
-                    config.preferredShaderLanguage.ordinal(),
-                    config.forceGLES2Context, config.assertNativeWindowIsValid,
-                    config.gpuContextPriority.ordinal(),
-                    config.sharedUboInitialSizeInBytes);
-            return this;
-        }
-
-        public Builder featureLevel(FeatureLevel featureLevel) {
-            nSetBuilderFeatureLevel(mNativeBuilder, featureLevel.ordinal());
-            return this;
-        }
-
-        public Builder paused(boolean paused) {
-            nSetBuilderPaused(mNativeBuilder, paused);
-            return this;
-        }
-
-        public Builder feature(String name, boolean value) {
-            nSetBuilderFeature(mNativeBuilder, name, value);
-            return this;
-        }
-
-        public Engine build() {
-            long nativeEngine = nBuilderBuild(mNativeBuilder);
-            if (nativeEngine == 0) throw new IllegalStateException("Couldn't create Engine");
-            return new Engine(nativeEngine, mConfig);
-        }
-
-        @Override
-        protected void finalize() throws Throwable {
-            try {
-                nDestroyBuilder(mNativeBuilder);
-            } finally {
-                super.finalize();
-            }
-        }
-    }
-
-    private Engine(long nativeEngine, Config config) {
+    private Engine(long nativeEngine) {
         mNativeObject = nativeEngine;
-        mConfig = config;
+        mCleanable = NativeRegistry.registerForCleanup(this, new EngineCleanup(mNativeObject));
     }
 
     public static Engine create() {
-        return new Builder().build();
-    }
-
-    public static Engine create(Backend backend) {
-        return new Builder().backend(backend).build();
-    }
-
-    public boolean isValid() {
-        return mNativeObject != 0;
+        long nativeEngine = nCreateEngine(0, 0);
+        if (nativeEngine == 0) throw new IllegalStateException("Couldn't create Engine");
+        return new Engine(nativeEngine);
     }
 
     public void destroy() {
-        nDestroyEngine(getNativeObject());
+        mCleanable.clean();
         mNativeObject = 0;
     }
 
-    public long getNativeObject() {
-        if (mNativeObject == 0) throw new IllegalStateException("Engine already destroyed");
-        return mNativeObject;
-    }
-
-    public Backend getBackend() {
-        return Backend.values()[(int) nGetBackend(getNativeObject())];
-    }
-
-    public void flush() {
-        nFlush(getNativeObject());
-    }
-
-    public boolean flushAndWait(long timeout) {
-        return nFlushAndWait(getNativeObject(), timeout);
-    }
-
-    // SwpChain management
-    public SwapChain createSwapChain(long nativeWindow) {
-        return createSwapChain(nativeWindow, 0);
-    }
-
-    public SwapChain createSwapChain(long nativeWindow, long flags) {
-        long nativeSwapChain = nCreateSwapChain(getNativeObject(), nativeWindow, flags);
-        if (nativeSwapChain == 0) return null;
-        return new SwapChain(nativeSwapChain);
-    }
-
-    public void destroySwapChain(SwapChain swapChain) {
-        if (nDestroySwapChain(getNativeObject(), swapChain.getNativeObject())) {
-            swapChain.clearNativeObject();
-        }
-    }
-
-    // View management
-    public View createView() {
-        long nativeView = nCreateView(getNativeObject());
-        if (nativeView == 0) return null;
-        return new View(nativeView);
-    }
-
-    public void destroyView(View view) {
-        if (nDestroyView(getNativeObject(), view.getNativeObject())) {
-            view.clearNativeObject();
-        }
-    }
-
-    // Renderer management
     public Renderer createRenderer() {
-        long nativeRenderer = nCreateRenderer(getNativeObject());
-        if (nativeRenderer == 0) return null;
-        return new Renderer(nativeRenderer);
+        return new Renderer(nCreateRenderer(getNativeObject()));
     }
 
     public void destroyRenderer(Renderer renderer) {
-        if (nDestroyRenderer(getNativeObject(), renderer.getNativeObject())) {
-            renderer.clearNativeObject();
+        nDestroyRenderer(getNativeObject(), renderer.getNativeObject());
+        renderer.clearNativeObject();
+    }
+
+    public SwapChain createSwapChain(int width, int height, long flags) {
+        return new SwapChain(nCreateSwapChain(getNativeObject(), width, height, flags));
+    }
+
+    public void destroySwapChain(SwapChain swapChain) {
+        nDestroySwapChain(getNativeObject(), swapChain.getNativeObject());
+        swapChain.clearNativeObject();
+    }
+
+    public View createView() {
+        return new View(nCreateView(getNativeObject()));
+    }
+
+    public void destroyView(View view) {
+        nDestroyView(getNativeObject(), view.getNativeObject());
+        view.clearNativeObject();
+    }
+
+    public Scene createScene() {
+        return new Scene(nCreateScene(getNativeObject()));
+    }
+
+    public void destroyScene(Scene scene) {
+        nDestroyScene(getNativeObject(), scene.getNativeObject());
+        scene.clearNativeObject();
+    }
+
+    public Camera createCamera() {
+        return new Camera(nCreateCamera(getNativeObject()));
+    }
+
+    public void destroyCamera(Camera camera) {
+        nDestroyCamera(getNativeObject(), camera.getNativeObject());
+        camera.clearNativeObject();
+    }
+
+    public void destroyVertexBuffer(VertexBuffer vb) {
+        nDestroyVertexBuffer(getNativeObject(), vb.getNativeObject());
+        vb.clearNativeObject();
+    }
+
+    public void destroyIndexBuffer(IndexBuffer ib) {
+        nDestroyIndexBuffer(getNativeObject(), ib.getNativeObject());
+        ib.clearNativeObject();
+    }
+
+    public void destroyMaterial(Material material) {
+        nDestroyMaterial(getNativeObject(), material.getNativeObject());
+        material.clearNativeObject();
+    }
+
+    public void destroyTexture(Texture texture) {
+        nDestroyTexture(getNativeObject(), texture.getNativeObject());
+        texture.clearNativeObject();
+    }
+
+    public void destroyEntity(int entity) {
+        nDestroyEntity(getNativeObject(), entity);
+    }
+
+    public RenderableManager getRenderableManager() {
+        return new RenderableManager(nGetRenderableManager(getNativeObject()));
+    }
+
+    public LightManager getLightManager() {
+        return new LightManager(nGetLightManager(getNativeObject()));
+    }
+
+    public TransformManager getTransformManager() {
+        return new TransformManager(nGetTransformManager(getNativeObject()));
+    }
+
+    public long getNativeObject() {
+        if (mNativeObject == 0) {
+            throw new IllegalStateException("Calling method on destroyed Engine");
         }
+        return mNativeObject;
     }
 
-    // Native methods
-    private static native long nCreateBuilder();
-    private static native void nDestroyBuilder(long nativeBuilder);
-    private static native void nSetBuilderBackend(long nativeBuilder, long backend);
-    private static native void nSetBuilderSharedContext(long nativeBuilder, long sharedContext);
-    private static native void nSetBuilderConfig(long nativeBuilder, long commandBufferSizeMB,
-            long perRenderPassArenaSizeMB, long driverHandleArenaSizeMB, long minCommandBufferSizeMB,
-            long perFrameCommandsSizeMB, long jobSystemThreadCount, boolean disableParallelShaderCompile,
-            int stereoscopicType, long stereoscopicEyeCount, long resourceAllocatorCacheSizeMB,
-            long resourceAllocatorCacheMaxAge, boolean disableHandleUseAfterFreeCheck,
-            int preferredShaderLanguage, boolean forceGLES2Context, boolean assertNativeWindowIsValid,
-            int gpuContextPriority, long sharedUboInitialSizeInBytes);
-    private static native void nSetBuilderFeatureLevel(long nativeBuilder, int featureLevel);
-    private static native void nSetBuilderPaused(long nativeBuilder, boolean paused);
-    private static native void nSetBuilderFeature(long nativeBuilder, String name, boolean value);
-    private static native long nBuilderBuild(long nativeBuilder);
+    private static class EngineCleanup implements Runnable {
+        private final long mNativeObject;
+        EngineCleanup(long nativeObject) { mNativeObject = nativeObject; }
+        @Override public void run() { nDestroyEngine(mNativeObject); }
+    }
 
+    private static native long nCreateEngine(long nativeBackend, long nativeSharedContext);
     private static native void nDestroyEngine(long nativeEngine);
-    private static native long nGetBackend(long nativeEngine);
-    private static native void nFlush(long nativeEngine);
-    private static native boolean nFlushAndWait(long nativeEngine, long timeout);
-
-    private static native long nCreateSwapChain(long nativeEngine, long nativeWindow, long flags);
-    private static native boolean nDestroySwapChain(long nativeEngine, long nativeSwapChain);
-    private static native long nCreateView(long nativeEngine);
-    private static native boolean nDestroyView(long nativeEngine, long nativeView);
     private static native long nCreateRenderer(long nativeEngine);
-    private static native boolean nDestroyRenderer(long nativeEngine, long nativeRenderer);
+    private static native void nDestroyRenderer(long nativeEngine, long nativeRenderer);
+    private static native long nCreateSwapChain(long nativeEngine, int width, int height, long flags);
+    private static native void nDestroySwapChain(long nativeEngine, long nativeSwapChain);
+    private static native long nCreateView(long nativeEngine);
+    private static native void nDestroyView(long nativeEngine, long nativeView);
+    private static native long nCreateScene(long nativeEngine);
+    private static native void nDestroyScene(long nativeEngine, long nativeScene);
+    private static native long nCreateCamera(long nativeEngine);
+    private static native void nDestroyCamera(long nativeEngine, long nativeCamera);
+    private static native void nDestroyVertexBuffer(long nativeEngine, long nativeVertexBuffer);
+    private static native void nDestroyIndexBuffer(long nativeEngine, long nativeIndexBuffer);
+    private static native void nDestroyMaterial(long nativeEngine, long nativeMaterial);
+    private static native void nDestroyTexture(long nativeEngine, long nativeTexture);
+    private static native void nDestroyEntity(long nativeEngine, int entity);
 
-    static {
-        System.loadLibrary("filament-jni");
-    }
+    private static native long nGetRenderableManager(long nativeEngine);
+    private static native long nGetLightManager(long nativeEngine);
+    private static native long nGetTransformManager(long nativeEngine);
 }

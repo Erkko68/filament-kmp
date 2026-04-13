@@ -12,9 +12,9 @@ import java.nio.ShortBuffer;
 /**
  * Helper class for Nio Buffer operations in JNI.
  */
-final class NioUtils {
+public final class NioUtils {
 
-    enum BufferType {
+    public enum BufferType {
         BYTE,
         CHAR,
         SHORT,

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament;
 
+import io.github.erkko68.filament.internal.NativeRegistry;
+import java.lang.ref.Cleaner;
 import java.nio.Buffer;
 import java.nio.BufferOverflowException;
 import java.util.concurrent.Executor;
@@ -13,6 +15,7 @@ public class IndexBuffer {
 
     public static class Builder {
         private final long mNativeBuilder;
+        private final Cleaner.Cleanable mCleanable;
 
         public enum IndexType {
             USHORT,
@@ -21,6 +24,7 @@ public class IndexBuffer {
 
         public Builder() {
             mNativeBuilder = nCreateBuilder();
+            mCleanable = NativeRegistry.registerForCleanup(this, new BuilderCleanup(mNativeBuilder));
         }
 
         public Builder indexCount(int indexCount) {
@@ -37,6 +41,12 @@ public class IndexBuffer {
             long nativeIndexBuffer = nBuilderBuild(mNativeBuilder, engine.getNativeObject());
             if (nativeIndexBuffer == 0) throw new IllegalStateException("Couldn't create IndexBuffer");
             return new IndexBuffer(nativeIndexBuffer);
+        }
+
+        private static class BuilderCleanup implements Runnable {
+            private final long mNativeObject;
+            BuilderCleanup(long nativeObject) { mNativeObject = nativeObject; }
+            @Override public void run() { nDestroyBuilder(mNativeObject); }
         }
     }
 

@@ -8,19 +8,25 @@ public class View {
     }
 
     public void setScene(Scene scene) {
-        nSetScene(getNativeObject(), scene.getNativeObject());
+        nSetScene(getNativeObject(), scene != null ? scene.getNativeObject() : 0);
     }
 
     public void setCamera(Camera camera) {
-        nSetCamera(getNativeObject(), camera.getNativeObject());
+        nSetCamera(getNativeObject(), camera != null ? camera.getNativeObject() : 0);
     }
 
-    public void setViewport(int left, int bottom, int width, int height) {
-        nSetViewport(getNativeObject(), left, bottom, width, height);
+    public void setViewport(Viewport viewport) {
+        nSetViewport(getNativeObject(), viewport.left, viewport.bottom, viewport.width, viewport.height);
+    }
+
+    public void setClearColor(float r, float g, float b, float a) {
+        nSetClearColor(getNativeObject(), r, g, b, a);
     }
 
     public long getNativeObject() {
-        if (mNativeObject == 0) throw new IllegalStateException("View already destroyed");
+        if (mNativeObject == 0) {
+            throw new IllegalStateException("Calling method on destroyed View");
+        }
         return mNativeObject;
     }
 
@@ -31,4 +37,5 @@ public class View {
     private static native void nSetScene(long nativeView, long nativeScene);
     private static native void nSetCamera(long nativeView, long nativeCamera);
     private static native void nSetViewport(long nativeView, int left, int bottom, int width, int height);
+    private static native void nSetClearColor(long nativeView, float r, float g, float b, float a);
 }

@@ -16,7 +16,9 @@ public class Scene {
     }
 
     public long getNativeObject() {
-        if (mNativeObject == 0) throw new IllegalStateException("Scene already destroyed");
+        if (mNativeObject == 0) {
+            throw new IllegalStateException("Calling method on destroyed Scene");
+        }
         return mNativeObject;
     }
 
