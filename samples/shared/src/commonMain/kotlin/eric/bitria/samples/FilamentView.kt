@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import io.github.erkko68.NativeSurface
+import io.github.erkko68.filament.NativeSurface
 import kotlinx.coroutines.isActive
 
 interface FilamentViewRenderer {

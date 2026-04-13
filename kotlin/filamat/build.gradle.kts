@@ -161,7 +161,7 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.erkko68.filamat"
+    namespace = "io.github.erkko68.filament.filament.filamat"
     compileSdk = 36
     defaultConfig {
         minSdk = 24

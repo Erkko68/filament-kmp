@@ -1,7 +1,7 @@
 package eric.bitria.samples
 
-import io.github.erkko68.*
-import io.github.erkko68.filamat.*
+import io.github.erkko68.filament.*
+import io.github.erkko68.filament.filamat.*
 
 class FilamentRenderer : FilamentViewRenderer {
     var engine: Engine? = null
