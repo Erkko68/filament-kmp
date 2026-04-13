@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 public class Texture {
     private long mNativeObject;
 
-    private Texture(long nativeTexture) {
+    public Texture(long nativeTexture) {
         mNativeObject = nativeTexture;
     }
 

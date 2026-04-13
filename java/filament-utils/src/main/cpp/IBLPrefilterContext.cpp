@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <filament/Engine.h>
 #include <filament/Texture.h>
-#include <filament/IBLPrefilterContext.h>
+#include <filament-iblprefilter/IBLPrefilterContext.h>
 
 using namespace filament;
 

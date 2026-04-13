@@ -1,7 +1,10 @@
 #include <jni.h>
-#include <camutils/CameraManipulator.h>
+#include <camutils/Manipulator.h>
+#include <camutils/Bookmark.h>
 
 using namespace filament::camutils;
+
+using CameraManipulator = Manipulator<float>;
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_utils_Manipulator_00024Builder_nCreateBuilder(JNIEnv* env, jclass) {
@@ -130,27 +133,30 @@ Java_io_github_erkko68_filament_utils_Manipulator_nSetViewport(JNIEnv* env, jcla
 
 extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_utils_Manipulator_nGetLookAtFloat(JNIEnv* env, jclass, jlong nativeManip, jfloatArray eyePosition, jfloatArray targetPosition, jfloatArray upward) {
-    float eye[3], target[3], up[3];
-    ((CameraManipulator*) nativeManip)->getLookAt(eye, target, up);
-    env->SetFloatArrayRegion(eyePosition, 0, 3, eye);
-    env->SetFloatArrayRegion(targetPosition, 0, 3, target);
-    env->SetFloatArrayRegion(upward, 0, 3, up);
+    filament::math::vec3<float> eye, target, up;
+    ((CameraManipulator*) nativeManip)->getLookAt(&eye, &target, &up);
+    env->SetFloatArrayRegion(eyePosition, 0, 3, &eye.x);
+    env->SetFloatArrayRegion(targetPosition, 0, 3, &target.x);
+    env->SetFloatArrayRegion(upward, 0, 3, &up.x);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_utils_Manipulator_nGetLookAtDouble(JNIEnv* env, jclass, jlong nativeManip, jdoubleArray eyePosition, jdoubleArray targetPosition, jdoubleArray upward) {
-    double eye[3], target[3], up[3];
-    ((CameraManipulator*) nativeManip)->getLookAt(eye, target, up);
-    env->SetDoubleArrayRegion(eyePosition, 0, 3, eye);
-    env->SetDoubleArrayRegion(targetPosition, 0, 3, target);
-    env->SetDoubleArrayRegion(upward, 0, 3, up);
+    filament::math::vec3<float> eye, target, up;
+    ((CameraManipulator*) nativeManip)->getLookAt(&eye, &target, &up);
+    double deye[3] = {eye.x, eye.y, eye.z};
+    double dtarget[3] = {target.x, target.y, target.z};
+    double dup[3] = {up.x, up.y, up.z};
+    env->SetDoubleArrayRegion(eyePosition, 0, 3, deye);
+    env->SetDoubleArrayRegion(targetPosition, 0, 3, dtarget);
+    env->SetDoubleArrayRegion(upward, 0, 3, dup);
 }
 
 extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_utils_Manipulator_nRaycast(JNIEnv* env, jclass, jlong nativeManip, jint x, jint y, jfloatArray result) {
-    float res[3];
-    ((CameraManipulator*) nativeManip)->raycast(x, y, res);
-    env->SetFloatArrayRegion(result, 0, 3, res);
+    filament::math::vec3<float> res;
+    ((CameraManipulator*) nativeManip)->raycast(x, y, &res);
+    env->SetFloatArrayRegion(result, 0, 3, &res.x);
 }
 
 extern "C" JNIEXPORT void JNICALL
@@ -190,7 +196,6 @@ Java_io_github_erkko68_filament_utils_Manipulator_nUpdate(JNIEnv* env, jclass, j
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_utils_Manipulator_nGetCurrentBookmark(JNIEnv* env, jclass, jlong nativeManip) {
-    // In camutils, getCurrentBookmark returns a struct, usually JNI implementation allocates it on heap
     auto bookmark = ((CameraManipulator*) nativeManip)->getCurrentBookmark();
     return (jlong) new CameraManipulator::Bookmark(bookmark);
 }
