@@ -84,7 +84,34 @@ Java_io_github_erkko68_filament_MaterialInstance_nSetParameterInt(JNIEnv* env, j
 extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_MaterialInstance_nSetParameterTexture(JNIEnv* env, jclass, jlong nativeMaterialInstance, jstring name, jlong nativeTexture, jint sampler) {
     const char* nativeName = env->GetStringUTFChars(name, nullptr);
-    TextureSampler s((TextureSampler::MinFilter)sampler, (TextureSampler::MagFilter)sampler); // Simple mapping for now
+    TextureSampler s(static_cast<uint32_t>(sampler));
     ((MaterialInstance*) nativeMaterialInstance)->setParameter(nativeName, (Texture*) nativeTexture, s);
+    env->ReleaseStringUTFChars(name, nativeName);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_MaterialInstance_nSetParameterFloatArray(JNIEnv* env, jclass, jlong nativeMaterialInstance, jstring name, jfloatArray value, jint offset, jint count) {
+    const char* nativeName = env->GetStringUTFChars(name, nullptr);
+    jfloat* data = env->GetFloatArrayElements(value, nullptr);
+    ((MaterialInstance*) nativeMaterialInstance)->setParameter(nativeName, (float const*) (data + offset), (size_t) count);
+    env->ReleaseFloatArrayElements(value, data, JNI_ABORT);
+    env->ReleaseStringUTFChars(name, nativeName);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_MaterialInstance_nSetParameterIntArray(JNIEnv* env, jclass, jlong nativeMaterialInstance, jstring name, jintArray value, jint offset, jint count) {
+    const char* nativeName = env->GetStringUTFChars(name, nullptr);
+    jint* data = env->GetIntArrayElements(value, nullptr);
+    ((MaterialInstance*) nativeMaterialInstance)->setParameter(nativeName, (int32_t const*) (data + offset), (size_t) count);
+    env->ReleaseIntArrayElements(value, data, JNI_ABORT);
+    env->ReleaseStringUTFChars(name, nativeName);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_MaterialInstance_nSetParameterMat4f(JNIEnv* env, jclass, jlong nativeMaterialInstance, jstring name, jfloatArray matrix) {
+    const char* nativeName = env->GetStringUTFChars(name, nullptr);
+    jfloat* m = env->GetFloatArrayElements(matrix, nullptr);
+    ((MaterialInstance*) nativeMaterialInstance)->setParameter(nativeName, *reinterpret_cast<const math::mat4f*>(m));
+    env->ReleaseFloatArrayElements(matrix, m, JNI_ABORT);
     env->ReleaseStringUTFChars(name, nativeName);
 }

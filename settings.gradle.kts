@@ -8,6 +8,7 @@ include(":kotlin:filament-utils")
 // Java modules
 include(":java:filament")
 include(":java:filamat")
+include(":java:gltfio")
 include(":java:filament-utils")
 
 pluginManagement {

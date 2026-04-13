@@ -58,12 +58,63 @@ public class LightManager {
         }
     }
 
+    public int getInstance(int entity) {
+        return nGetInstance(mNativeObject, entity);
+    }
+
+    public void setIntensity(int instance, float intensity) {
+        nSetIntensity(mNativeObject, instance, intensity);
+    }
+
+    public void setColor(int instance, float r, float g, float b) {
+        nSetColor(mNativeObject, instance, r, g, b);
+    }
+
+    public void setDirection(int instance, float x, float y, float z) {
+        nSetDirection(mNativeObject, instance, x, y, z);
+    }
+
+    public void setPosition(int instance, float x, float y, float z) {
+        nSetPosition(mNativeObject, instance, x, y, z);
+    }
+
+    public void setFalloff(int instance, float falloff) {
+        nSetFalloff(mNativeObject, instance, falloff);
+    }
+
+    public void setSunAngularRadius(int instance, float radius) {
+        nSetSunAngularRadius(mNativeObject, instance, radius);
+    }
+
+    public void setSunHaloSize(int instance, float size) {
+        nSetSunHaloSize(mNativeObject, instance, size);
+    }
+
+    public void setSunHaloFalloff(int instance, float falloff) {
+        nSetSunHaloFalloff(mNativeObject, instance, falloff);
+    }
+
+    public void destroy(int entity) {
+        nDestroy(mNativeObject, entity);
+    }
+
     public long getNativeObject() {
         if (mNativeObject == 0) {
             throw new IllegalStateException("Calling method on destroyed LightManager");
         }
         return mNativeObject;
     }
+
+    private static native int nGetInstance(long nativeLightManager, int entity);
+    private static native void nSetIntensity(long nativeLightManager, int instance, float intensity);
+    private static native void nSetColor(long nativeLightManager, int instance, float r, float g, float b);
+    private static native void nSetDirection(long nativeLightManager, int instance, float x, float y, float z);
+    private static native void nSetPosition(long nativeLightManager, int instance, float x, float y, float z);
+    private static native void nSetFalloff(long nativeLightManager, int instance, float falloff);
+    private static native void nSetSunAngularRadius(long nativeLightManager, int instance, float radius);
+    private static native void nSetSunHaloSize(long nativeLightManager, int instance, float size);
+    private static native void nSetSunHaloFalloff(long nativeLightManager, int instance, float falloff);
+    private static native void nDestroy(long nativeLightManager, int entity);
 
     private static native long nCreateBuilder(int type);
     private static native void nDestroyBuilder(long nativeBuilder);

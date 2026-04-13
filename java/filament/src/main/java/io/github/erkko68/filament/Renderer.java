@@ -75,7 +75,7 @@ public class Renderer {
                 buffer.storage, buffer.storage.remaining(),
                 buffer.left, buffer.top, buffer.type.ordinal(), buffer.alignment,
                 buffer.stride, buffer.format.ordinal(),
-                buffer.handler, buffer.callback);
+                buffer.executor, buffer.callback);
         if (result < 0) throw new java.nio.BufferOverflowException();
     }
 

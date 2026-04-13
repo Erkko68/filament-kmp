@@ -29,6 +29,25 @@ public class Camera {
         nSetModelMatrix(getNativeObject(), matrix);
     }
 
+    public void setExposure(float aperture, float shutterSpeed, float sensitivity) {
+        nSetExposure(getNativeObject(), aperture, shutterSpeed, sensitivity);
+    }
+
+    public void setExposure(float exposure) {
+        setExposure(1.0f, 1.2f, 100.0f * (1.0f / exposure));
+    }
+
+    public void setFocusDistance(float distance) {
+        nSetFocusDistance(getNativeObject(), distance);
+    }
+
+    public float getNear() { return nGetNear(getNativeObject()); }
+    public float getCullingFar() { return nGetCullingFar(getNativeObject()); }
+    public float getAperture() { return nGetAperture(getNativeObject()); }
+    public float getShutterSpeed() { return nGetShutterSpeed(getNativeObject()); }
+    public float getSensitivity() { return nGetSensitivity(getNativeObject()); }
+    public float getFocusDistance() { return nGetFocusDistance(getNativeObject()); }
+
     public enum Fov {
         VERTICAL,
         HORIZONTAL
@@ -49,4 +68,12 @@ public class Camera {
     private static native void nSetProjectionFov(long nativeCamera, double fovInDegrees, double aspect, double near, double far, int direction);
     private static native void nLookAt(long nativeCamera, double eyeX, double eyeY, double eyeZ, double centerX, double centerY, double centerZ, double upX, double upY, double upZ);
     private static native void nSetModelMatrix(long nativeCamera, float[] matrix);
+    private static native void nSetExposure(long nativeCamera, float aperture, float shutterSpeed, float sensitivity);
+    private static native void nSetFocusDistance(long nativeCamera, float distance);
+    private static native float nGetNear(long nativeCamera);
+    private static native float nGetCullingFar(long nativeCamera);
+    private static native float nGetAperture(long nativeCamera);
+    private static native float nGetShutterSpeed(long nativeCamera);
+    private static native float nGetSensitivity(long nativeCamera);
+    private static native float nGetFocusDistance(long nativeCamera);
 }

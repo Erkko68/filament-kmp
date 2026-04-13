@@ -66,6 +66,7 @@ add_library(filament-jni SHARED
     src/main/cpp/SkinningBuffer.cpp
     src/main/cpp/Colors.cpp
     src/main/cpp/MathUtils.cpp
+    src/main/cpp/ToneMapper.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
     src/main/cpp/common/VirtualMachineEnv.cpp
