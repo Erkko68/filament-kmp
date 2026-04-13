@@ -56,6 +56,14 @@ public class RenderableManager {
         return nHasComponent(getNativeObject(), entity);
     }
 
+    public void setMorphTargetBuffer(int instance, MorphTargetBuffer buffer) {
+        nSetMorphTargetBuffer(getNativeObject(), instance, buffer.getNativeObject());
+    }
+
+    public void setSkinningBuffer(int instance, SkinningBuffer buffer, int count, int offset) {
+        nSetSkinningBuffer(getNativeObject(), instance, buffer.getNativeObject(), count, offset);
+    }
+
     public void destroy(int entity) {
         nDestroy(getNativeObject(), entity);
     }
@@ -75,5 +83,8 @@ public class RenderableManager {
     private static native void nBuilderBuild(long nativeBuilder, long nativeEngine, int entity);
 
     private static native boolean nHasComponent(long nativeRenderableManager, int entity);
+    private static native void nSetLayerMask(long nativeManager, int instance, int select, int values);
+    private static native void nSetMorphTargetBuffer(long nativeManager, int instance, long nativeBuffer);
+    private static native void nSetSkinningBuffer(long nativeManager, int instance, long nativeBuffer, int count, int offset);
     private static native void nDestroy(long nativeRenderableManager, int entity);
 }

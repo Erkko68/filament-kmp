@@ -12,8 +12,17 @@
 #include <filament/RenderableManager.h>
 #include <filament/LightManager.h>
 #include <filament/TransformManager.h>
+#include <utils/EntityManager.h>
+#include <utils/Entity.h>
+
+#include "common/VirtualMachineEnv.h"
 
 using namespace filament;
+
+extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+    VirtualMachineEnv::get().setJvm(vm);
+    return JNI_VERSION_1_6;
+}
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_Engine_nCreateEngine(JNIEnv* env, jclass, jlong nativeBackend, jlong nativeSharedContext) {

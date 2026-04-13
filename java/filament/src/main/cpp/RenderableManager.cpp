@@ -5,6 +5,9 @@
 #include <filament/IndexBuffer.h>
 #include <filament/MaterialInstance.h>
 #include <filament/Box.h>
+#include <filament/MorphTargetBuffer.h>
+#include <filament/SkinningBuffer.h>
+#include <utils/Entity.h>
 
 using namespace filament;
 
@@ -40,7 +43,22 @@ Java_io_github_erkko68_filament_RenderableManager_00024Builder_nBuilderBuild(JNI
 
 extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_erkko68_filament_RenderableManager_nHasComponent(JNIEnv* env, jclass, jlong nativeRenderableManager, jint entity) {
-    return (jboolean) ((RenderableManager*) nativeRenderableManager)->hasComponent((utils::Entity&) entity);
+    return (jboolean) ((RenderableManager*) nativeRenderableManager)->hasComponent(utils::Entity::import(entity));
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_RenderableManager_nSetLayerMask(JNIEnv* env, jclass, jlong nativeManager, jint instance, jint select, jint values) {
+    ((RenderableManager*) nativeManager)->setLayerMask((RenderableManager::Instance) instance, (uint8_t) select, (uint8_t) values);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_RenderableManager_nSetMorphTargetBuffer(JNIEnv* env, jclass, jlong nativeManager, jint instance, jlong nativeBuffer) {
+    ((RenderableManager*) nativeManager)->setMorphTargetBuffer((RenderableManager::Instance) instance, (MorphTargetBuffer*) nativeBuffer);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_RenderableManager_nSetSkinningBuffer(JNIEnv* env, jclass, jlong nativeManager, jint instance, jlong nativeBuffer, jint count, jint offset) {
+    ((RenderableManager*) nativeManager)->setSkinningBuffer((RenderableManager::Instance) instance, (SkinningBuffer*) nativeBuffer, (size_t) count, (size_t) offset);
 }
 
 extern "C" JNIEXPORT void JNICALL

@@ -24,7 +24,7 @@ public class Engine {
     }
 
     public Renderer createRenderer() {
-        return new Renderer(nCreateRenderer(getNativeObject()));
+        return new Renderer(this, nCreateRenderer(getNativeObject()));
     }
 
     public void destroyRenderer(Renderer renderer) {
