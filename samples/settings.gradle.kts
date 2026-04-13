@@ -1,5 +1,10 @@
 rootProject.name = "Samples"
-includeBuild("../kotlin")
+includeBuild("../") {
+    dependencySubstitution {
+        substitute(module("io.github.erkko68.filament:filament")).using(project(":kotlin:filament"))
+        substitute(module("io.github.erkko68.filament:filamat")).using(project(":kotlin:filamat"))
+    }
+}
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 

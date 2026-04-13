@@ -115,3 +115,8 @@ Java_io_github_erkko68_filament_MaterialInstance_nSetParameterMat4f(JNIEnv* env,
     env->ReleaseFloatArrayElements(matrix, m, JNI_ABORT);
     env->ReleaseStringUTFChars(name, nativeName);
 }
+
+extern "C" JNIEXPORT jlong JNICALL
+Java_io_github_erkko68_filament_MaterialInstance_nGetMaterial(JNIEnv* env, jclass, jlong nativeMaterialInstance) {
+    return (jlong) ((MaterialInstance*) nativeMaterialInstance)->getMaterial();
+}

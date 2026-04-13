@@ -4,9 +4,14 @@ public class MaterialInstance {
     private final Material mMaterial;
     private long mNativeObject;
 
-    MaterialInstance(Material material, long nativeMaterialInstance) {
+    public MaterialInstance(Material material, long nativeMaterialInstance) {
         mMaterial = material;
         mNativeObject = nativeMaterialInstance;
+    }
+
+    public MaterialInstance(long nativeMaterialInstance) {
+        mNativeObject = nativeMaterialInstance;
+        mMaterial = new Material(nGetMaterial(nativeMaterialInstance));
     }
 
     public Material getMaterial() {
@@ -74,4 +79,5 @@ public class MaterialInstance {
     private static native void nSetParameterFloatArray(long nativeMaterialInstance, String name, float[] value, int offset, int count);
     private static native void nSetParameterIntArray(long nativeMaterialInstance, String name, int[] value, int offset, int count);
     private static native void nSetParameterMat4f(long nativeMaterialInstance, String name, float[] matrix);
+    private static native long nGetMaterial(long nativeMaterialInstance);
 }

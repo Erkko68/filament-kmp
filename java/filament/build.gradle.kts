@@ -12,16 +12,30 @@ tasks.register<Exec>("cmakeConfig") {
     buildDir.mkdirs()
     workingDir(buildDir)
     
-    val platform = project.findProperty("filament.platform") as String? ?: "macos"
-    val arch = project.findProperty("filament.arch") as String? ?: "arm64"
+    val p = project.findProperty("filament.platform") as String? ?: "macos"
+    val a = project.findProperty("filament.arch") as String? ?: "arm64"
     
-    commandLine("cmake", "../../", "-DFILAMENT_PLATFORM=$platform", "-DFILAMENT_ARCH=$arch")
+    val platform = when(p) {
+        "ios-simulator" -> "iosSimulator"
+        "ios" -> "ios"
+        "macos" -> "macos"
+        else -> p
+    }
+    val arch = when(a) {
+        "arm64" -> "Arm64"
+        "x64" -> "X64"
+        else -> a.replaceFirstChar { it.uppercase() }
+    }
+    
+    val cmakePath = if (File("/opt/homebrew/bin/cmake").exists()) "/opt/homebrew/bin/cmake" else "cmake"
+    commandLine(cmakePath, "../../", "-DFILAMENT_PLATFORM=$platform", "-DFILAMENT_ARCH=$arch")
 }
 
 tasks.register<Exec>("cmakeBuild") {
     dependsOn("cmakeConfig")
     workingDir(layout.buildDirectory.dir("cmake").get().asFile)
-    commandLine("cmake", "--build", ".")
+    val cmakePath = if (File("/opt/homebrew/bin/cmake").exists()) "/opt/homebrew/bin/cmake" else "cmake"
+    commandLine(cmakePath, "--build", ".")
 }
 
 // Ensure java compile doesn't strictly depend on native build but we might want it for tests

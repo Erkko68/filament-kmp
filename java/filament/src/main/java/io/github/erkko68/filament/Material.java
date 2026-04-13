@@ -7,7 +7,7 @@ import java.nio.Buffer;
 public class Material {
     private long mNativeObject;
 
-    private Material(long nativeMaterial) {
+    public Material(long nativeMaterial) {
         mNativeObject = nativeMaterial;
     }
 
