@@ -67,7 +67,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":filament"))
+                implementation(project(":kotlin:filament"))
             }
         }
         val nativeMain by getting
@@ -85,7 +85,7 @@ kotlin {
                 includeDirs(
                     project.file("../../c/filament-utils/c"),
                     project.file("../../c/filament/c"),
-                    project.file("../../prebuilts/include")
+                    project.file("../../include")
                 )
             }
         }

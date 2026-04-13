@@ -35,7 +35,7 @@ class RotatingCubeTest {
             -x, -y, -z,  x, -y, -z,  x, -y,  z, -x, -y,  z  // Bottom
         )
 
-        val normals = floatArrayOf(
+        val colors = floatArrayOf(
             0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f,
             0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f, -1f,
             -1f, 0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f, -1f, 0f, 0f,
@@ -57,11 +57,11 @@ class RotatingCubeTest {
             .vertexCount(24)
             .bufferCount(2)
             .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.AttributeType.FLOAT3, 0, 12)
-            .attribute(VertexBuffer.VertexAttribute.NORMAL, 1, VertexBuffer.AttributeType.FLOAT3, 0, 12)
+            .attribute(VertexBuffer.VertexAttribute.COLOR, 1, VertexBuffer.AttributeType.FLOAT3, 0, 12)
             .build(engine)
 
         vb.setBufferAt(engine, 0, positions.toBytes())
-        vb.setBufferAt(engine, 1, normals.toBytes())
+        vb.setBufferAt(engine, 1, colors.toBytes())
 
         val ib = IndexBuffer.Builder()
             .indexCount(36)

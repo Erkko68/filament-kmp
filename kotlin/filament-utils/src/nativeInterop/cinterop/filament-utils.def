@@ -1,3 +1,3 @@
-package = dev.filament.kmp.utils.cinterop
+package = io.github.erkko68.filament.utils.cinterop
 headers = HDRLoader.h IBLPrefilter.h Manipulator.h
 headerFilter = HDRLoader.h IBLPrefilter.h Manipulator.h

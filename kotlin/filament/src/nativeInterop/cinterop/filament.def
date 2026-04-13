@@ -1,5 +1,5 @@
 headers = FilaTypes.h Engine.h Camera.h Material.h RenderableManager.h TransformManager.h LightManager.h Renderer.h View.h Scene.h SwapChain.h VertexBuffer.h IndexBuffer.h BufferObject.h Texture.h RenderTarget.h MorphTargetBuffer.h SkinningBuffer.h IndirectLight.h Skybox.h Stream.h Fence.h ToneMapper.h ColorGrading.h MaterialInstance.h EntityManager.h TextureSampler.h Colors.h MathUtils.h SurfaceOrientation.h
-package = dev.filament.kmp.cinterop
+package = io.github.erkko68.filament.cinterop
 headerFilter = *.h
 
 # iOS Consumer Linking

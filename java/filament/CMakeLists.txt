@@ -1,0 +1,82 @@
+cmake_minimum_required(VERSION 3.19)
+project(filament-jni)
+
+set(CMAKE_CXX_STANDARD 20)
+
+# --- Platform specific setup (Similar to c/CMakeLists.txt) ---
+set(FILAMENT_PLATFORM "macos" CACHE STRING "Target platform (ios, ios-simulator, macos, linux, windows)")
+set(FILAMENT_ARCH "arm64" CACHE STRING "Target architecture (arm64, x64)")
+
+# Paths
+set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")
+set(FILAMENT_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prebuilts/${FILAMENT_PLATFORM}${FILAMENT_ARCH}/lib")
+
+# JNI setup
+find_package(JNI REQUIRED)
+
+message(STATUS "Using Filament headers at: ${FILAMENT_INCLUDE_DIR}")
+message(STATUS "Using Filament libraries at: ${FILAMENT_LIB_DIR}")
+
+# Imported libraries Helper (Simplified from c/CMakeLists.txt)
+macro(add_filament_library NAME)
+    add_library(${NAME} STATIC IMPORTED)
+    if (WIN32)
+        set_target_properties(${NAME} PROPERTIES IMPORTED_LOCATION ${FILAMENT_LIB_DIR}/${NAME}.lib)
+    else()
+        set_target_properties(${NAME} PROPERTIES IMPORTED_LOCATION ${FILAMENT_LIB_DIR}/lib${NAME}.a)
+    endif()
+endmacro()
+
+add_filament_library(filament)
+add_filament_library(backend)
+add_filament_library(utils)
+add_filament_library(math)
+add_filament_library(filaflat)
+add_filament_library(filabridge)
+add_filament_library(zstd)
+add_filament_library(smol-v)
+add_filament_library(bluegl)
+add_filament_library(bluevk)
+
+# The JNI shared library
+add_library(filament-jni SHARED
+    src/main/cpp/Engine.cpp
+    src/main/cpp/Renderer.cpp
+    src/main/cpp/View.cpp
+    src/main/cpp/Scene.cpp
+    src/main/cpp/Camera.cpp
+    src/main/cpp/EntityManager.cpp
+    src/main/cpp/common/NioUtils.cpp
+    src/main/cpp/common/CallbackUtils.cpp
+)
+
+target_include_directories(filament-jni PRIVATE
+    src/main/cpp
+    ${JNI_INCLUDE_DIRS}
+    ${FILAMENT_INCLUDE_DIR}
+)
+
+target_link_libraries(filament-jni
+    PRIVATE filament
+    PRIVATE backend
+    PRIVATE utils
+    # PRIVATE math
+    PRIVATE filaflat
+    PRIVATE filabridge
+    PRIVATE zstd
+    PRIVATE smol-v
+    PRIVATE bluegl
+    PRIVATE bluevk
+    ${JNI_LIBRARIES}
+)
+
+if (APPLE)
+    target_link_libraries(filament-jni PRIVATE
+        "-framework Metal"
+        "-framework Foundation"
+        "-framework AppKit"
+        "-framework QuartzCore"
+        "-framework CoreVideo"
+        "-framework OpenGL"
+    )
+endif()

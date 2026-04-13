@@ -91,7 +91,7 @@ kotlin {
                     project.file("../../c/filament/c"),
                     project.file("../../c/filamat/c"),
                     project.file("../../c/filament-utils/c"),
-                    project.file("../../prebuilts/include")
+                    project.file("../../include")
                 )
             }
         }

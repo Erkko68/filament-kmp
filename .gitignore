@@ -1,22 +1,20 @@
-# Temp / Build Artifacts
-filament-source/
-
+# Build Artifacts
 **/build/
-build/
+.cxx/
+filament-source/
 /filament-main/
 /prebuilts/
-c/build/
 
 # Gradle
 .gradle/
-local.properties
+**/local.properties
 .kotlin/
 
 # IDE / OS
 .vscode/
 .idea/
 *.iml
-.DS_Store
 *.hprof
 *.log
+.DS_Store
 **/.DS_Store
