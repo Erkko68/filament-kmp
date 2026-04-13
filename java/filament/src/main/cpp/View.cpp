@@ -3,6 +3,7 @@
 #include <filament/Scene.h>
 #include <filament/Camera.h>
 #include <filament/Viewport.h>
+#include <filament/ColorGrading.h>
 
 using namespace filament;
 

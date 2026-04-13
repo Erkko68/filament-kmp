@@ -53,6 +53,17 @@ add_library(filament-jni SHARED
     src/main/cpp/RenderableManager.cpp
     src/main/cpp/LightManager.cpp
     src/main/cpp/TransformManager.cpp
+    src/main/cpp/IndirectLight.cpp
+    src/main/cpp/Skybox.cpp
+    src/main/cpp/ColorGrading.cpp
+    src/main/cpp/ToneMapper.cpp
+    src/main/cpp/TextureSampler.cpp
+    src/main/cpp/Fence.cpp
+    src/main/cpp/BufferObject.cpp
+    src/main/cpp/RenderTarget.cpp
+    src/main/cpp/Stream.cpp
+    src/main/cpp/MorphTargetBuffer.cpp
+    src/main/cpp/SkinningBuffer.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
 )

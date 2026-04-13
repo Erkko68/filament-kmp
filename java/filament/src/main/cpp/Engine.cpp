@@ -105,6 +105,46 @@ Java_io_github_erkko68_filament_Engine_nDestroyTexture(JNIEnv* env, jclass, jlon
 }
 
 extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroyIndirectLight(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeIndirectLight) {
+    ((Engine*) nativeEngine)->destroy((IndirectLight*) nativeIndirectLight);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroySkybox(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeSkybox) {
+    ((Engine*) nativeEngine)->destroy((Skybox*) nativeSkybox);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroyColorGrading(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeColorGrading) {
+    ((Engine*) nativeEngine)->destroy((ColorGrading*) nativeColorGrading);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroyBufferObject(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeBufferObject) {
+    ((Engine*) nativeEngine)->destroy((BufferObject*) nativeBufferObject);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroyRenderTarget(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeRenderTarget) {
+    ((Engine*) nativeEngine)->destroy((RenderTarget*) nativeRenderTarget);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroyStream(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeStream) {
+    ((Engine*) nativeEngine)->destroy((Stream*) nativeStream);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroyMorphTargetBuffer(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeBuffer) {
+    ((Engine*) nativeEngine)->destroy((MorphTargetBuffer*) nativeBuffer);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_Engine_nDestroySkinningBuffer(JNIEnv* env, jclass, jlong nativeEngine, jlong nativeBuffer) {
+    ((Engine*) nativeEngine)->destroy((SkinningBuffer*) nativeBuffer);
+}
+
+extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_Engine_nDestroyEntity(JNIEnv* env, jclass, jlong nativeEngine, jint entity) {
     ((Engine*) nativeEngine)->destroy((utils::Entity&) entity);
 }

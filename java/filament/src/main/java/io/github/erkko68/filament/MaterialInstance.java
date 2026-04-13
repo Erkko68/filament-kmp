@@ -33,8 +33,8 @@ public class MaterialInstance {
         nSetParameterInt(getNativeObject(), name, value);
     }
 
-    public void setParameter(String name, Texture texture, Texture.Sampler sampler) {
-        nSetParameterTexture(getNativeObject(), name, texture.getNativeObject(), sampler.ordinal());
+    public void setParameter(String name, Texture texture, TextureSampler sampler) {
+        nSetParameterTexture(getNativeObject(), name, texture.getNativeObject(), sampler.getSampler());
     }
 
     public long getNativeObject() {

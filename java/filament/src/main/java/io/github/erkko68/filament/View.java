@@ -23,6 +23,10 @@ public class View {
         nSetClearColor(getNativeObject(), r, g, b, a);
     }
 
+    public void setColorGrading(ColorGrading colorGrading) {
+        nSetColorGrading(getNativeObject(), colorGrading != null ? colorGrading.getNativeObject() : 0);
+    }
+
     public long getNativeObject() {
         if (mNativeObject == 0) {
             throw new IllegalStateException("Calling method on destroyed View");
@@ -38,4 +42,5 @@ public class View {
     private static native void nSetCamera(long nativeView, long nativeCamera);
     private static native void nSetViewport(long nativeView, int left, int bottom, int width, int height);
     private static native void nSetClearColor(long nativeView, float r, float g, float b, float a);
+    private static native void nSetColorGrading(long nativeView, long nativeColorGrading);
 }

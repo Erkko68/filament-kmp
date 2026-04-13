@@ -88,6 +88,46 @@ public class Engine {
         texture.clearNativeObject();
     }
 
+    public void destroyIndirectLight(IndirectLight indirectLight) {
+        nDestroyIndirectLight(getNativeObject(), indirectLight.getNativeObject());
+        indirectLight.clearNativeObject();
+    }
+
+    public void destroySkybox(Skybox skybox) {
+        nDestroySkybox(getNativeObject(), skybox.getNativeObject());
+        skybox.clearNativeObject();
+    }
+
+    public void destroyColorGrading(ColorGrading colorGrading) {
+        nDestroyColorGrading(getNativeObject(), colorGrading.getNativeObject());
+        colorGrading.clearNativeObject();
+    }
+
+    public void destroyBufferObject(BufferObject bufferObject) {
+        nDestroyBufferObject(getNativeObject(), bufferObject.getNativeObject());
+        bufferObject.clearNativeObject();
+    }
+
+    public void destroyRenderTarget(RenderTarget renderTarget) {
+        nDestroyRenderTarget(getNativeObject(), renderTarget.getNativeObject());
+        renderTarget.clearNativeObject();
+    }
+
+    public void destroyStream(Stream stream) {
+        nDestroyStream(getNativeObject(), stream.getNativeObject());
+        stream.clearNativeObject();
+    }
+
+    public void destroyMorphTargetBuffer(MorphTargetBuffer buffer) {
+        nDestroyMorphTargetBuffer(getNativeObject(), buffer.getNativeObject());
+        buffer.clearNativeObject();
+    }
+
+    public void destroySkinningBuffer(SkinningBuffer buffer) {
+        nDestroySkinningBuffer(getNativeObject(), buffer.getNativeObject());
+        buffer.clearNativeObject();
+    }
+
     public void destroyEntity(int entity) {
         nDestroyEntity(getNativeObject(), entity);
     }
@@ -133,6 +173,14 @@ public class Engine {
     private static native void nDestroyIndexBuffer(long nativeEngine, long nativeIndexBuffer);
     private static native void nDestroyMaterial(long nativeEngine, long nativeMaterial);
     private static native void nDestroyTexture(long nativeEngine, long nativeTexture);
+    private static native void nDestroyIndirectLight(long nativeEngine, long nativeIndirectLight);
+    private static native void nDestroySkybox(long nativeEngine, long nativeSkybox);
+    private static native void nDestroyColorGrading(long nativeEngine, long nativeColorGrading);
+    private static native void nDestroyBufferObject(long nativeEngine, long nativeBufferObject);
+    private static native void nDestroyRenderTarget(long nativeEngine, long nativeRenderTarget);
+    private static native void nDestroyStream(long nativeEngine, long nativeStream);
+    private static native void nDestroyMorphTargetBuffer(long nativeEngine, long nativeBuffer);
+    private static native void nDestroySkinningBuffer(long nativeEngine, long nativeBuffer);
     private static native void nDestroyEntity(long nativeEngine, int entity);
 
     private static native long nGetRenderableManager(long nativeEngine);
