@@ -3,6 +3,9 @@ package io.github.erkko68.filament.utils;
 import org.jetbrains.annotations.NotNull;
 
 public class Manipulator {
+    static {
+        Utils.init();
+    }
     private static final Mode[] sModeValues = Mode.values();
     private long mNativeObject;
 

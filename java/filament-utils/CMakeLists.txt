@@ -43,15 +43,16 @@ add_filament_library(filaflat)
 add_filament_library(smol-v)
     add_filament_library(bluegl)
     add_filament_library(bluevk)
+add_filament_library(filament-iblprefilter)
 
 # The JNI shared library
 add_library(filament-utils-jni SHARED
     src/main/cpp/Bookmark.cpp
     src/main/cpp/HDRLoader.cpp
+    src/main/cpp/IBLPrefilterContext.cpp
     src/main/cpp/Manipulator.cpp
     src/main/cpp/KTX1Loader.cpp
     src/main/cpp/TextureLoader.cpp
-    src/main/cpp/Utils.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
     src/main/cpp/common/VirtualMachineEnv.cpp
@@ -83,6 +84,7 @@ target_link_libraries(filament-utils-jni
     PRIVATE smol-v
     PRIVATE bluegl
     PRIVATE bluevk
+    PRIVATE filament-iblprefilter
     ${JNI_LIBRARIES}
 )
 

@@ -18,6 +18,6 @@ actual object HDRLoader {
     }
 
     init {
-        Utils.init()
+        com.google.android.filament.utils.Utils.init()
     }
 }

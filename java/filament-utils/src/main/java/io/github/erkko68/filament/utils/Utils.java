@@ -19,12 +19,15 @@ package io.github.erkko68.filament.utils;
 import io.github.erkko68.filament.Filament;
 
 public class Utils {
-    /**
-     * Initializes the utils JNI layer. Must be called before using any utils functionality.
-     */
-    public static void init() {
-        // Load Filament first to ensure that the NioUtils Java class is available in the JNIEnv.
+    static {
         Filament.init();
         System.loadLibrary("filament-utils-jni");
+    }
+
+    /**
+     * Initializes the utils JNI layer. Internal use only.
+     */
+    static void init() {
+        // The static block handles initialization.
     }
 }

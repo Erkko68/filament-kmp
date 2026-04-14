@@ -179,7 +179,7 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
 
     companion object {
         init {
-            Utils.init()
+            com.google.android.filament.utils.Utils.init()
         }
     }
 }
