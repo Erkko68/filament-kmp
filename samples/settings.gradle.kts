@@ -3,6 +3,7 @@ includeBuild("../") {
     dependencySubstitution {
         substitute(module("io.github.erkko68.filament:filament")).using(project(":kotlin:filament"))
         substitute(module("io.github.erkko68.filament:filamat")).using(project(":kotlin:filamat"))
+        substitute(module("io.github.erkko68.filament:gltfio")).using(project(":kotlin:gltfio"))
     }
 }
 

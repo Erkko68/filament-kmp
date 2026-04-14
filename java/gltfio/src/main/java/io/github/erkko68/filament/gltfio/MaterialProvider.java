@@ -45,9 +45,6 @@ public interface MaterialProvider {
 
 
         public MaterialKey() {}
-        static {
-            Gltfio.init();
-        }
 
         public void constrainMaterial(@NotNull int[] uvmap) {
             nConstrainMaterial(this, uvmap);

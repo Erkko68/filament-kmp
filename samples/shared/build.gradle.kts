@@ -36,6 +36,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation("io.github.erkko68.filament:filament")
             implementation("io.github.erkko68.filament:filamat")
+            implementation("io.github.erkko68.filament:gltfio")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

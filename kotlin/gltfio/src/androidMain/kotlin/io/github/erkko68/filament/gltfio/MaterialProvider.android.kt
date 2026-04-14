@@ -43,31 +43,3 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
 
     override fun getNativeProvider(): com.google.android.filament.gltfio.MaterialProvider = nativeObject
 }
-
-actual class JitShaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    private val delegate = UbershaderProvider(engine)
-
-    actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? {
-        return delegate.createMaterialInstance(config, uvmap, label, extras)
-    }
-
-    actual override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material? {
-        return delegate.getMaterial(config, uvmap, label)
-    }
-
-    actual override fun getMaterials(): Array<io.github.erkko68.filament.Material> {
-        return delegate.getMaterials()
-    }
-
-    actual override fun needsDummyData(attrib: Int): Boolean = delegate.needsDummyData(attrib)
-
-    actual override fun destroyMaterials() {
-        delegate.destroyMaterials()
-    }
-
-    actual override fun destroy() {
-        delegate.destroy()
-    }
-
-    override fun getNativeProvider(): com.google.android.filament.gltfio.MaterialProvider = delegate.getNativeProvider()
-}

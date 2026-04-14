@@ -21,14 +21,3 @@ expect class UbershaderProvider : MaterialProvider {
     override fun destroyMaterials()
     override fun destroy()
 }
-
-expect class JitShaderProvider : MaterialProvider {
-    constructor(engine: Engine)
-
-    override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
-    override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
-    override fun getMaterials(): Array<io.github.erkko68.filament.Material>
-    override fun needsDummyData(attrib: Int): Boolean
-    override fun destroyMaterials()
-    override fun destroy()
-}

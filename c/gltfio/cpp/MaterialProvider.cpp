@@ -14,9 +14,6 @@ FilaMaterialProvider* FilaMaterialProvider_createUbershaderProvider(FilaEngine* 
     return (FilaMaterialProvider*) createUbershaderProvider((Engine*) engine, archive, archiveByteCount);
 }
 
-FilaMaterialProvider* FilaMaterialProvider_createJitShaderProvider(FilaEngine* engine) {
-    return (FilaMaterialProvider*) createJitShaderProvider((Engine*) engine);
-}
 
 void FilaMaterialProvider_destroyMaterials(FilaMaterialProvider* provider) {
     ((MaterialProvider*) provider)->destroyMaterials();
