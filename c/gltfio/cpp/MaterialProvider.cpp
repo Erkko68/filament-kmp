@@ -1,4 +1,5 @@
 #include <gltfio/MaterialProvider.h>
+#include <gltfio/materials/uberarchive.h>
 #include "../c/MaterialProvider.h"
 
 using namespace filament;
@@ -11,6 +12,10 @@ void FilaMaterialProvider_destroy(FilaMaterialProvider* provider) {
 }
 
 FilaMaterialProvider* FilaMaterialProvider_createUbershaderProvider(FilaEngine* engine, const void* archive, size_t archiveByteCount) {
+    if (archive == nullptr) {
+        archive = UBERARCHIVE_DEFAULT_DATA;
+        archiveByteCount = UBERARCHIVE_DEFAULT_SIZE;
+    }
     return (FilaMaterialProvider*) createUbershaderProvider((Engine*) engine, archive, archiveByteCount);
 }
 

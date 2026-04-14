@@ -19,6 +19,7 @@ class FilamentRenderer : FilamentViewRenderer {
         private set
     var skybox: Skybox? = null
         private set
+    private var sunLightEntity: Entity? = null
 
     // Object 1: Runtime compiled material
     private var runtimeCubeEntity: Entity? = null
@@ -39,10 +40,13 @@ class FilamentRenderer : FilamentViewRenderer {
     private var gltfResourceLoader: ResourceLoader? = null
     private var gltfAsset: FilamentAsset? = null
     private var gltfMaterialProvider: MaterialProvider? = null
+    private var gltfBaseTransform: DoubleArray? = null
 
     private var pendingSurface: NativeSurface? = null
     private var pendingWidth: Int = 0
     private var pendingHeight: Int = 0
+    private var pendingFilamatData: ByteArray? = null
+    private var pendingGlbData: ByteArray? = null
 
     fun initialize() {
         println("FilamentRenderer: Initializing engine and MaterialBuilder...")
@@ -62,7 +66,16 @@ class FilamentRenderer : FilamentViewRenderer {
             .color(0.1f, 0.12f, 0.15f, 1.0f) // Darker blueish background
             .build(engine!!)
         scene!!.setSkybox(skybox)
-        
+
+        // glTF PBR materials need some light; a simple directional light is enough for samples.
+        sunLightEntity = engine!!.getEntityManager().create()
+        LightManager.Builder(LightManager.Type.DIRECTIONAL)
+            .color(1.0f, 1.0f, 1.0f)
+            .intensity(100_000.0f)
+            .direction(0.3f, -1.0f, -0.5f)
+            .build(engine!!, sunLightEntity!!)
+        scene!!.addEntity(sunLightEntity!!)
+
         // Setup initial camera
         camera!!.setProjection(45.0, 1.0, 0.1, 100.0, Camera.Fov.VERTICAL)
         camera!!.lookAt(0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
@@ -79,6 +92,18 @@ class FilamentRenderer : FilamentViewRenderer {
             println("FilamentRenderer: Applying pending surface...")
             onSurfaceAvailable(it, pendingWidth, pendingHeight)
             pendingSurface = null
+        }
+
+        pendingFilamatData?.let {
+            println("FilamentRenderer: Applying pending filamat...")
+            setupResourceMaterialCube(it)
+            pendingFilamatData = null
+        }
+
+        pendingGlbData?.let {
+            println("FilamentRenderer: Applying pending glb...")
+            setupGltfModel(it)
+            pendingGlbData = null
         }
     }
 
@@ -148,8 +173,13 @@ class FilamentRenderer : FilamentViewRenderer {
     }
 
     fun setupResourceMaterialCube(filamatData: ByteArray) {
-        val engine = engine ?: return
-        
+        val engine = engine
+        if (engine == null) {
+            pendingFilamatData = filamatData
+            println("FilamentRenderer: Engine not ready, queued filamat setup")
+            return
+        }
+
         println("FilamentRenderer: Setting up Resource Material Object...")
         resourceMaterial = Material.Builder()
             .payload(filamatData)
@@ -173,18 +203,49 @@ class FilamentRenderer : FilamentViewRenderer {
     }
 
     fun setupGltfModel(glbData: ByteArray) {
-        val engine = engine ?: return
-        val loader = gltfLoader ?: return
-        
+        val engine = engine
+        val loader = gltfLoader
+        if (engine == null || loader == null) {
+            pendingGlbData = glbData
+            println("FilamentRenderer: GLTF loader not ready, queued glb setup")
+            return
+        }
+
+        gltfAsset?.let { existing ->
+            scene?.removeEntities(existing.getEntities())
+            gltfLoader?.destroyAsset(existing)
+            gltfAsset = null
+        }
+
         println("FilamentRenderer: Setting up GLTF Model Object...")
         gltfAsset = loader.createAsset(glbData)
         if (gltfAsset != null) {
-            gltfResourceLoader?.loadResources(gltfAsset!!)
-            scene!!.addEntity(gltfAsset!!.getRoot())
+            val asset = gltfAsset!!
+            val loaded = gltfResourceLoader?.loadResources(asset) ?: false
+            scene!!.addEntities(asset.getEntities())
+            println(
+                "FilamentRenderer: GLTF loaded=$loaded entities=${asset.getEntityCount()} renderables=${asset.getRenderableEntities().size}"
+            )
+
+            // Calculate auto-scale and centering
+            val box = asset.getBoundingBox()
+            val center = box.center
+            val halfExtent = box.halfExtent
+            val maxDim = maxOf(halfExtent[0], maxOf(halfExtent[1], halfExtent[2]))
+            val scale = if (maxDim > 0) 3.5 / (maxDim * 2.0) else 1.0
             
-            // Position it on the right
+            val transform = identity()
+            // Transform = Scale(s) * Translation(-center)
+            multiplyMatrices(transform, scaling(scale), transform)
+            multiplyMatrices(transform, translation(-center[0].toDouble(), -center[1].toDouble(), -center[2].toDouble()), transform)
+            gltfBaseTransform = transform
+
+            // Initial position on the right
             val tm = engine.getTransformManager()
-            tm.setTransform(tm.getInstance(gltfAsset!!.getRoot()), translation(2.5, 0.0, 0.0))
+            val initialTransform = translation(2.5, 0.0, 0.0)
+            multiplyMatrices(initialTransform, gltfBaseTransform!!, initialTransform)
+            tm.setTransform(tm.getInstance(asset.getRoot()), initialTransform)
+            asset.releaseSourceData()
         } else {
             println("FilamentRenderer: FAILED to load GLB asset!")
         }
@@ -260,10 +321,13 @@ class FilamentRenderer : FilamentViewRenderer {
         }
 
         // Rotate gltf model root
-        gltfAsset?.let {
-            val transform = translation(2.5, 0.0, 0.0)
-            multiplyMatrices(transform, rotationY(angle * 0.8), transform)
-            tm.setTransform(tm.getInstance(it.getRoot()), transform)
+        gltfAsset?.let { asset ->
+            gltfBaseTransform?.let { base ->
+                val transform = translation(2.5, 0.0, 0.0)
+                multiplyMatrices(transform, rotationY(angle * 0.8), transform)
+                multiplyMatrices(transform, base, transform)
+                tm.setTransform(tm.getInstance(asset.getRoot()), transform)
+            }
         }
     }
 
@@ -273,6 +337,24 @@ class FilamentRenderer : FilamentViewRenderer {
             0.0, 1.0, 0.0, 0.0,
             0.0, 0.0, 1.0, 0.0,
               x,   y,   z, 1.0
+        )
+    }
+
+    private fun scaling(s: Double): DoubleArray {
+        return doubleArrayOf(
+              s, 0.0, 0.0, 0.0,
+            0.0,   s, 0.0, 0.0,
+            0.0, 0.0,   s, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )
+    }
+
+    private fun identity(): DoubleArray {
+        return doubleArrayOf(
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
         )
     }
 
@@ -304,7 +386,8 @@ class FilamentRenderer : FilamentViewRenderer {
         engine?.let {
             runtimeCubeEntity?.let { e -> it.getEntityManager().destroy(e) }
             resourceCubeEntity?.let { e -> it.getEntityManager().destroy(e) }
-            
+            sunLightEntity?.let { e -> it.destroyEntity(e) }
+
             gltfAsset?.let { a -> gltfLoader?.destroyAsset(a) }
             gltfLoader?.let { l -> AssetLoader.destroy(l) }
             gltfResourceLoader?.destroy()
@@ -333,6 +416,7 @@ class FilamentRenderer : FilamentViewRenderer {
         camera = null
         swapChain = null
         skybox = null
+        sunLightEntity = null
         runtimeCubeEntity = null
         resourceCubeEntity = null
         gltfAsset = null
