@@ -4,6 +4,7 @@ rootProject.name = "filament-umbrella"
 include(":kotlin:filament")
 include(":kotlin:filamat")
 include(":kotlin:filament-utils")
+include(":kotlin:gltfio")
 
 // Java modules
 include(":java:filament")

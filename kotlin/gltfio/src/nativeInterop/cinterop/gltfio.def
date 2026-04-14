@@ -1,0 +1,10 @@
+headers = AssetLoader.h FilamentAsset.h FilamentInstance.h Animator.h MaterialProvider.h ResourceLoader.h
+package = io.github.erkko68.filament.gltfio.cinterop
+headerFilter = *.h
+
+# iOS Consumer Linking
+linkerOpts.ios_arm64 = -lc++ -lz -framework Metal -framework UIKit -framework CoreVideo -framework QuartzCore -framework CoreGraphics -framework Foundation -framework OpenGLES -weak_framework UIUtilities
+linkerOpts.ios_simulator_arm64 = -lc++ -lz -framework Metal -framework UIKit -framework CoreVideo -framework QuartzCore -framework CoreGraphics -framework Foundation -framework OpenGLES -weak_framework UIUtilities
+
+# macOS Consumer Linking
+linkerOpts.macos_arm64 = -lc++ -lz -framework Metal -framework Cocoa -framework QuartzCore -framework CoreVideo -framework AppKit -framework CoreGraphics -framework Foundation

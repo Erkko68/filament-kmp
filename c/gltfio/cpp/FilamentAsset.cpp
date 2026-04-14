@@ -76,12 +76,12 @@ FilaBox FilaFilamentAsset_getBoundingBox(FilaFilamentAsset* asset) {
     FilaBox box;
     auto center = aabb.center();
     auto extent = aabb.extent();
-    box.center[0] = center.x;
-    box.center[1] = center.y;
-    box.center[2] = center.z;
-    box.halfExtent[0] = extent.x;
-    box.halfExtent[1] = extent.y;
-    box.halfExtent[2] = extent.z;
+    box.centerX = center.x;
+    box.centerY = center.y;
+    box.centerZ = center.z;
+    box.halfExtentX = extent.x;
+    box.halfExtentY = extent.y;
+    box.halfExtentZ = extent.z;
     return box;
 }
 
@@ -125,8 +125,16 @@ void FilaFilamentAsset_getResourceUris(FilaFilamentAsset* asset, const char** ur
     }
 }
 
-FilaFilamentInstance* FilaFilamentAsset_getInstance(FilaFilamentAsset* asset) {
-    return (FilaFilamentInstance*) ((FilamentAsset*) asset)->getInstance();
+size_t FilaFilamentAsset_getAssetInstanceCount(FilaFilamentAsset* asset) {
+    return ((FilamentAsset*) asset)->getAssetInstanceCount();
+}
+
+void FilaFilamentAsset_getAssetInstances(FilaFilamentAsset* asset, FilaFilamentInstance** instances) {
+    FilamentInstance** src = ((FilamentAsset*) asset)->getAssetInstances();
+    size_t count = ((FilamentAsset*) asset)->getAssetInstanceCount();
+    for (size_t i = 0; i < count; ++i) {
+        instances[i] = (FilaFilamentInstance*) src[i];
+    }
 }
 
 void FilaFilamentAsset_releaseSourceData(FilaFilamentAsset* asset) {

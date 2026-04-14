@@ -13,7 +13,7 @@ size_t FilaAnimator_getAnimationCount(FilaAnimator* animator);
 float FilaAnimator_getAnimationDuration(FilaAnimator* animator, size_t animationIndex);
 const char* FilaAnimator_getAnimationName(FilaAnimator* animator, size_t animationIndex);
 
-void FilaAnimator_applyCrossFade(FilaAnimator* animator, size_t previousAnimationIndex, size_t nextAnimationIndex, float alpha);
+void FilaAnimator_applyCrossFade(FilaAnimator* animator, size_t previousAnimationIndex, float previousAnimationTime, float alpha);
 void FilaAnimator_resetBoneMatrices(FilaAnimator* animator);
 
 #ifdef __cplusplus

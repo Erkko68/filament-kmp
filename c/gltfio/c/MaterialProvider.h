@@ -14,6 +14,17 @@ FilaMaterialProvider* FilaMaterialProvider_createJitShaderProvider(FilaEngine* e
 
 void FilaMaterialProvider_destroyMaterials(FilaMaterialProvider* provider);
 size_t FilaMaterialProvider_getMaterialsCount(FilaMaterialProvider* provider);
+void FilaMaterialProvider_getMaterials(FilaMaterialProvider* provider, FilaMaterial** materials);
+
+bool FilaMaterialProvider_needsDummyData(FilaMaterialProvider* provider, int attrib);
+
+FilaMaterialInstance* FilaMaterialProvider_createMaterialInstance(FilaMaterialProvider* provider, 
+    const FilaMaterialKey* key, const uint8_t* uvmap, const char* label, const char* extras);
+
+FilaMaterial* FilaMaterialProvider_getMaterial(FilaMaterialProvider* provider, 
+    const FilaMaterialKey* key, const uint8_t* uvmap, const char* label);
+
+void FilaMaterialKey_constrainMaterial(FilaMaterialKey* key, uint8_t* uvmap);
 
 #ifdef __cplusplus
 }

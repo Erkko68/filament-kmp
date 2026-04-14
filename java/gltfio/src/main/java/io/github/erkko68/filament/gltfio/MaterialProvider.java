@@ -42,13 +42,6 @@ public interface MaterialProvider {
         public int volumeThicknessUV;
         public boolean hasSheen;
         public boolean hasIOR;
-        public boolean hasVolume;
-        public boolean hasDispersion;
-        public boolean hasSpecular;
-        public boolean hasSpecularTexture;
-        public boolean hasSpecularColorTexture;
-        public int specularTextureUV;
-        public int specularColorTextureUV;
 
 
         public MaterialKey() {}

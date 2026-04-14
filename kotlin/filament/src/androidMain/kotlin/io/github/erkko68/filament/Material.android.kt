@@ -4,7 +4,7 @@ import com.google.android.filament.Material as AndroidMaterial
 import java.nio.Buffer
 import java.util.BitSet
 
-actual class Material internal constructor(internal val nativeMaterial: AndroidMaterial) {
+actual class Material constructor(internal val nativeMaterial: AndroidMaterial) {
     private val mDefaultInstance: MaterialInstance by lazy { MaterialInstance(this, nativeMaterial.defaultInstance) }
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }

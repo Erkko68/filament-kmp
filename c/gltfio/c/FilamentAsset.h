@@ -38,7 +38,8 @@ const char* FilaFilamentAsset_getMorphTargetNameAt(FilaFilamentAsset* asset, Fil
 size_t FilaFilamentAsset_getResourceUriCount(FilaFilamentAsset* asset);
 void FilaFilamentAsset_getResourceUris(FilaFilamentAsset* asset, const char** uris);
 
-FilaFilamentInstance* FilaFilamentAsset_getInstance(FilaFilamentAsset* asset);
+size_t FilaFilamentAsset_getAssetInstanceCount(FilaFilamentAsset* asset);
+void FilaFilamentAsset_getAssetInstances(FilaFilamentAsset* asset, FilaFilamentInstance** instances);
 
 void FilaFilamentAsset_releaseSourceData(FilaFilamentAsset* asset);
 

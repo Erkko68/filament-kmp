@@ -32,6 +32,14 @@ FilaFilamentAsset* FilaAssetLoader_createInstancedAsset(FilaAssetLoader* loader,
     return (FilaFilamentAsset*) ((AssetLoader*) loader)->createInstancedAsset((const uint8_t*) buffer, (uint32_t) bufferByteCount, (FilamentInstance**) instances, instanceCount);
 }
 
+FilaFilamentInstance* FilaAssetLoader_createInstance(FilaAssetLoader* loader, FilaFilamentAsset* asset) {
+    return (FilaFilamentInstance*) ((AssetLoader*) loader)->createInstance((FilamentAsset*) asset);
+}
+
+void FilaAssetLoader_enableDiagnostics(FilaAssetLoader* loader, bool enable) {
+    ((AssetLoader*) loader)->enableDiagnostics(enable);
+}
+
 void FilaAssetLoader_destroyAsset(FilaAssetLoader* loader, FilaFilamentAsset* asset) {
     ((AssetLoader*) loader)->destroyAsset((FilamentAsset*) asset);
 }

@@ -26,8 +26,8 @@ const char* FilaAnimator_getAnimationName(FilaAnimator* animator, size_t animati
     return ((Animator*) animator)->getAnimationName(animationIndex);
 }
 
-void FilaAnimator_applyCrossFade(FilaAnimator* animator, size_t previousAnimationIndex, size_t nextAnimationIndex, float alpha) {
-    ((Animator*) animator)->applyCrossFade(previousAnimationIndex, nextAnimationIndex, alpha);
+void FilaAnimator_applyCrossFade(FilaAnimator* animator, size_t previousAnimationIndex, float previousAnimationTime, float alpha) {
+    ((Animator*) animator)->applyCrossFade(previousAnimationIndex, previousAnimationTime, alpha);
 }
 
 void FilaAnimator_resetBoneMatrices(FilaAnimator* animator) {

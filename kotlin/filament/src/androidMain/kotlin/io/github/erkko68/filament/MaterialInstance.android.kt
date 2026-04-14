@@ -2,11 +2,11 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.MaterialInstance as AndroidMaterialInstance
 
-actual class MaterialInstance internal constructor(
+actual class MaterialInstance constructor(
     private var mMaterial: Material?, 
     internal val nativeMaterialInstance: AndroidMaterialInstance
 ) {
-    internal constructor(nativeMaterialInstance: AndroidMaterialInstance) : this(null, nativeMaterialInstance)
+    constructor(nativeMaterialInstance: AndroidMaterialInstance) : this(null, nativeMaterialInstance)
     actual enum class BooleanElement { BOOL, BOOL2, BOOL3, BOOL4 }
     actual enum class IntElement { INT, INT2, INT3, INT4 }
     actual enum class FloatElement { FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4 }

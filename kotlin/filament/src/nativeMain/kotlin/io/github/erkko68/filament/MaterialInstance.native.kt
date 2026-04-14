@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaMaterialInstance
 
-actual class MaterialInstance internal constructor(
+actual class MaterialInstance constructor(
     internal val nativeHandle: CPointer<FilaMaterialInstance>?
 ) {
     actual enum class BooleanElement { BOOL, BOOL2, BOOL3, BOOL4 }
