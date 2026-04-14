@@ -11,13 +11,19 @@ using namespace filament;
 using namespace image;
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_HDRLoader_nCreateHDRTexture(JNIEnv* env, jclass, jlong nativeEngine, jobject buffer, jint remaining, jint format) {
+Java_io_github_erkko68_filament_utils_HDRLoader_nCreateHDRTexture(JNIEnv* env, jclass, jlong nativeEngine, jbyteArray buffer, jint format) {
     Engine* engine = (Engine*) nativeEngine;
-    void* data = env->GetDirectBufferAddress(buffer);
-    std::string ins((char const*) data, (size_t) remaining);
+    
+    jsize length = env->GetArrayLength(buffer);
+    jbyte* data = env->GetByteArrayElements(buffer, nullptr);
+    
+    std::string ins((char const*) data, (size_t) length);
     std::istringstream in(ins);
 
     LinearImage image = imageio_lite::ImageDecoder::decode(in, "memory.hdr");
+    
+    env->ReleaseByteArrayElements(buffer, data, JNI_ABORT);
+    
     if (!image.isValid()) return 0;
 
     uint32_t width = image.getWidth();

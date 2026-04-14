@@ -16,4 +16,8 @@ actual object HDRLoader {
         val androidTexture = AndroidHDRLoader.createTexture(engine.nativeEngine, byteBuffer)
         return androidTexture?.let { Texture(it) }
     }
+
+    init {
+        Utils.init()
+    }
 }

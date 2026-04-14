@@ -29,6 +29,7 @@ public class MaterialBuilder {
     public enum RefractionType { SOLID, THIN }
     public enum Platform { DESKTOP, MOBILE, ALL }
     public enum Optimization { NONE, PREPROCESSOR, SIZE, PERFORMANCE }
+    public enum ShaderQuality { DEFAULT, LOW, NORMAL, HIGH }
 
     public enum UniformType {
         BOOL, BOOL2, BOOL3, BOOL4,
@@ -142,6 +143,21 @@ public class MaterialBuilder {
         return this;
     }
 
+    public MaterialBuilder quality(@NotNull ShaderQuality quality) {
+        nMaterialBuilderQuality(mNativeBuilder, quality.ordinal() - 1);
+        return this;
+    }
+
+    public MaterialBuilder instanced(boolean enable) {
+        nMaterialBuilderInstanced(mNativeBuilder, enable);
+        return this;
+    }
+
+    public MaterialBuilder shaderDefine(@NotNull String name, @NotNull String value) {
+        nMaterialBuilderShaderDefine(mNativeBuilder, name, value);
+        return this;
+    }
+
     public MaterialPackage build() {
         return build(null);
     }
@@ -222,4 +238,7 @@ public class MaterialBuilder {
     private static native void nMaterialBuilderSpecularAmbientOcclusion(long nativeBuilder, int sao);
     private static native void nMaterialBuilderVariantFilter(long nativeBuilder, int variantFilter);
     private static native void nMaterialBuilderUseLegacyMorphing(long nativeBuilder);
+    private static native void nMaterialBuilderQuality(long nativeBuilder, int quality);
+    private static native void nMaterialBuilderInstanced(long nativeBuilder, boolean enable);
+    private static native void nMaterialBuilderShaderDefine(long nativeBuilder, String name, String value);
 }

@@ -8,6 +8,11 @@ public class EntityManager {
         mNativeObject = nGetEntityManager();
     }
 
+    /** Package-private: used by Engine to wrap the engine-owned EntityManager. */
+    EntityManager(long nativeEntityManager) {
+        mNativeObject = nativeEntityManager;
+    }
+
     public static EntityManager get() {
         return INSTANCE;
     }

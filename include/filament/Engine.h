@@ -26,6 +26,7 @@
 #include <utils/compiler.h>
 #include <utils/Invocable.h>
 #include <utils/Slice.h>
+#include <utils/tribool.h>
 
 #include <functional>
 #include <initializer_list>
@@ -1070,6 +1071,13 @@ public:
      * been canceled.
      */
     bool cancelAsyncCall(AsyncCallId id);
+
+    void compile(backend::CompilerPriorityQueue priority,
+            const Material* UTILS_NONNULL material, const View* UTILS_NONNULL view,
+            utils::tribool shadowReceiver,
+            utils::tribool skinning,
+            backend::CallbackHandler* UTILS_NULLABLE handler = nullptr,
+            utils::Invocable<void(Material* UTILS_NONNULL)>&& callback = {}) noexcept;
 
     /**
      * Kicks the hardware thread (e.g. the OpenGL, Vulkan or Metal thread) and blocks until

@@ -43,8 +43,16 @@ public class SkinningBuffer {
         }
     }
 
-    public void setBones(Engine engine, Buffer transforms, int count, int offset) {
-        nSetBones(getNativeObject(), engine.getNativeObject(), transforms, transforms.remaining(), count, offset);
+    public void setBonesAsMatrices(Engine engine, Buffer matrices, int boneCount, int offset) {
+        int result = nSetBonesAsMatrices(getNativeObject(), engine.getNativeObject(),
+                matrices, matrices.remaining(), boneCount, offset);
+        if (result < 0) throw new java.nio.BufferOverflowException();
+    }
+
+    public void setBonesAsQuaternions(Engine engine, Buffer quaternions, int boneCount, int offset) {
+        int result = nSetBonesAsQuaternions(getNativeObject(), engine.getNativeObject(),
+                quaternions, quaternions.remaining(), boneCount, offset);
+        if (result < 0) throw new java.nio.BufferOverflowException();
     }
 
     public int getBoneCount() {
@@ -68,6 +76,7 @@ public class SkinningBuffer {
     private static native void nBuilderInitialize(long nativeBuilder, boolean initialize);
     private static native long nBuilderBuild(long nativeBuilder, long nativeEngine);
 
-    private static native void nSetBones(long nativeBuffer, long nativeEngine, Buffer transforms, int remaining, int count, int offset);
+    private static native int nSetBonesAsMatrices(long nativeBuffer, long nativeEngine, Buffer matrices, int remaining, int boneCount, int offset);
+    private static native int nSetBonesAsQuaternions(long nativeBuffer, long nativeEngine, Buffer quaternions, int remaining, int boneCount, int offset);
     private static native int nGetBoneCount(long nativeBuffer);
 }

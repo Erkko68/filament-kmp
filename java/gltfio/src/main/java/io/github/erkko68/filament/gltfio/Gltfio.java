@@ -9,7 +9,11 @@ public class Gltfio {
         if (!sInitialized) {
             Filament.init();
             System.loadLibrary("gltfio-jni");
+            nInit();
             sInitialized = true;
         }
     }
+
+    private static native void nInit();
 }
+

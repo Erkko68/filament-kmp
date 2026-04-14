@@ -37,6 +37,13 @@ add_filament_library(zstd)
 add_filament_library(smol-v)
 add_filament_library(bluegl)
 add_filament_library(bluevk)
+add_filament_library(ibl)
+add_filament_library(image)
+add_filament_library(geometry)
+add_filament_library(meshoptimizer)
+add_filament_library(camutils)
+add_filament_library(ktxreader)
+add_filament_library(filament-generatePrefilterMipmap)
 
 # The JNI shared library
 add_library(filament-jni SHARED
@@ -64,12 +71,15 @@ add_library(filament-jni SHARED
     src/main/cpp/Stream.cpp
     src/main/cpp/MorphTargetBuffer.cpp
     src/main/cpp/SkinningBuffer.cpp
+    src/main/cpp/SurfaceOrientation.cpp
     src/main/cpp/Colors.cpp
     src/main/cpp/MathUtils.cpp
     src/main/cpp/ToneMapper.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
     src/main/cpp/common/VirtualMachineEnv.cpp
+    src/main/cpp/MaterialInstance.cpp
+    src/main/cpp/SwapChain.cpp
 )
 
 target_include_directories(filament-jni PRIVATE
@@ -89,6 +99,13 @@ target_link_libraries(filament-jni
     PRIVATE smol-v
     PRIVATE bluegl
     PRIVATE bluevk
+    PRIVATE ibl
+    PRIVATE image
+    PRIVATE geometry
+    PRIVATE meshoptimizer
+    PRIVATE camutils
+    PRIVATE ktxreader
+    PRIVATE filament-generatePrefilterMipmap
     ${JNI_LIBRARIES}
 )
 

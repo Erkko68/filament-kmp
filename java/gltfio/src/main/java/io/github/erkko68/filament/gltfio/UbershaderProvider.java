@@ -3,51 +3,68 @@ package io.github.erkko68.filament.gltfio;
 import io.github.erkko68.filament.Engine;
 import io.github.erkko68.filament.Material;
 import io.github.erkko68.filament.MaterialInstance;
+import io.github.erkko68.filament.VertexBuffer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class UbershaderProvider implements MaterialProvider {
+    private static final VertexBuffer.VertexAttribute[] sVertexAttributesValues =
+            VertexBuffer.VertexAttribute.values();
+
     private long mNativeObject;
 
-    public UbershaderProvider(Engine engine) {
+    public UbershaderProvider(@NotNull Engine engine) {
         mNativeObject = nCreateUbershaderProvider(engine.getNativeObject());
     }
 
+    public void destroy() {
+        nDestroyUbershaderProvider(mNativeObject);
+        mNativeObject = 0;
+    }
+
     @Override
-    public MaterialInstance createMaterialInstance(MaterialKey config, int[] uvmap, String label, String extras) {
+    @Nullable
+    public MaterialInstance createMaterialInstance(MaterialKey config, @NotNull int[] uvmap, @Nullable String label, @Nullable String extras) {
         long nativeInstance = nCreateMaterialInstance(mNativeObject, config, uvmap, label, extras);
         return nativeInstance != 0 ? new MaterialInstance(nativeInstance) : null;
     }
 
+
     @Override
-    public Material getMaterial(MaterialKey config, int[] uvmap, String label) {
+    @Nullable
+    public Material getMaterial(MaterialKey config, @NotNull int[] uvmap, @Nullable String label) {
         long nativeMaterial = nGetMaterial(mNativeObject, config, uvmap, label);
         return nativeMaterial != 0 ? new Material(nativeMaterial) : null;
     }
 
     @Override
+    @NotNull
     public Material[] getMaterials() {
-        long[] nativeMaterials = new long[nGetMaterialCount(mNativeObject)];
-        nGetMaterials(mNativeObject, nativeMaterials);
-        Material[] materials = new Material[nativeMaterials.length];
-        for (int i = 0; i < nativeMaterials.length; i++) {
-            materials[i] = new Material(nativeMaterials[i]);
+        final int count = nGetMaterialCount(mNativeObject);
+        Material[] result = new Material[count];
+        long[] natives = new long[count];
+        nGetMaterials(mNativeObject, natives);
+        for (int i = 0; i < count; i++) {
+            result[i] = new Material(natives[i]);
         }
-        return materials;
+        return result;
     }
 
     @Override
     public boolean needsDummyData(int attrib) {
-        return nNeedsDummyData(mNativeObject, attrib);
+        VertexBuffer.VertexAttribute vattrib = sVertexAttributesValues[attrib];
+        switch (vattrib) {
+            case UV0:
+            case UV1:
+            case COLOR:
+                return true;
+            default:
+                return false;
+        }
     }
 
-    @Override
     public void destroyMaterials() {
         nDestroyMaterials(mNativeObject);
-    }
-
-    @Override
-    public void destroy() {
-        nDestroy(mNativeObject);
-        mNativeObject = 0;
     }
 
     public long getNativeObject() {
@@ -55,11 +72,11 @@ public class UbershaderProvider implements MaterialProvider {
     }
 
     private static native long nCreateUbershaderProvider(long nativeEngine);
+    private static native void nDestroyUbershaderProvider(long nativeProvider);
+    private static native void nDestroyMaterials(long nativeProvider);
     private static native long nCreateMaterialInstance(long nativeProvider, MaterialKey config, int[] uvmap, String label, String extras);
     private static native long nGetMaterial(long nativeProvider, MaterialKey config, int[] uvmap, String label);
     private static native int nGetMaterialCount(long nativeProvider);
     private static native void nGetMaterials(long nativeProvider, long[] result);
-    private static native boolean nNeedsDummyData(long nativeProvider, int attrib);
-    private static native void nDestroyMaterials(long nativeProvider);
-    private static native void nDestroy(long nativeProvider);
 }
+

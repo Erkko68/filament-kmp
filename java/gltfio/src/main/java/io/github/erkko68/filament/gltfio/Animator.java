@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.gltfio;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Animator {
     private long mNativeObject;
 
@@ -31,6 +33,7 @@ public class Animator {
         return nGetAnimationDuration(getNativeObject(), animationIndex);
     }
 
+    @NotNull
     public String getAnimationName(int animationIndex) {
         return nGetAnimationName(getNativeObject(), animationIndex);
     }
@@ -54,3 +57,4 @@ public class Animator {
     private static native float nGetAnimationDuration(long nativeAnimator, int index);
     private static native String nGetAnimationName(long nativeAnimator, int index);
 }
+

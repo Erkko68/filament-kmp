@@ -33,8 +33,17 @@ struct JniBufferCallback : public JniCallback {
     static JniBufferCallback* make(filament::Engine* engine,
             JNIEnv* env, jobject handler, jobject callback, AutoBuffer&& buffer);
     static void postToJavaAndDestroy(void*, size_t, void* user);
+    AutoBuffer& getBuffer() { return mBuffer; }
 private:
     JniBufferCallback(JNIEnv* env, jobject handler, jobject callback, AutoBuffer&& buffer);
     virtual ~JniBufferCallback();
     AutoBuffer mBuffer;
+};
+
+struct JniImageCallback : public JniCallback {
+    static JniImageCallback* make(filament::Engine* engine,
+            JNIEnv* env, jobject handler, jobject callback, long userdata);
+    static void postToJavaAndDestroy(void* image, void* user);
+private:
+    using JniCallback::JniCallback;
 };

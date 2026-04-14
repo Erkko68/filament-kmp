@@ -2,6 +2,8 @@ package io.github.erkko68.filament.gltfio;
 
 import io.github.erkko68.filament.Box;
 import io.github.erkko68.filament.Engine;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FilamentAsset {
     private long mNativeObject;
@@ -22,7 +24,7 @@ public class FilamentAsset {
         return mPrimaryInstance;
     }
 
-    public long getNativeObject() {
+    long getNativeObject() {
         return mNativeObject;
     }
 
@@ -34,28 +36,32 @@ public class FilamentAsset {
         return nPopRenderable(mNativeObject);
     }
 
-    public int popRenderables(int[] entities) {
+    public int popRenderables(@Nullable int[] entities) {
         return nPopRenderables(mNativeObject, entities);
     }
 
+    @NotNull
     public int[] getEntities() {
         int[] result = new int[nGetEntityCount(mNativeObject)];
         nGetEntities(mNativeObject, result);
         return result;
     }
 
+    @NotNull
     public int[] getLightEntities() {
         int[] result = new int[nGetLightEntityCount(mNativeObject)];
         nGetLightEntities(mNativeObject, result);
         return result;
     }
 
+    @NotNull
     public int[] getRenderableEntities() {
         int[] result = new int[nGetRenderableEntityCount(mNativeObject)];
         nGetRenderableEntities(mNativeObject, result);
         return result;
     }
 
+    @NotNull
     public int[] getCameraEntities() {
         int[] result = new int[nGetCameraEntityCount(mNativeObject)];
         nGetCameraEntities(mNativeObject, result);
@@ -66,18 +72,21 @@ public class FilamentAsset {
         return nGetFirstEntityByName(mNativeObject, name);
     }
 
+    @NotNull
     public int[] getEntitiesByName(String name) {
         int[] result = new int[nGetEntitiesByName(mNativeObject, name, null)];
         nGetEntitiesByName(mNativeObject, name, result);
         return result;
     }
 
+    @NotNull
     public int[] getEntitiesByPrefix(String prefix) {
         int[] result = new int[nGetEntitiesByPrefix(mNativeObject, prefix, null)];
         nGetEntitiesByPrefix(mNativeObject, prefix, result);
         return result;
     }
 
+    @NotNull
     public Box getBoundingBox() {
         float[] box = new float[6];
         nGetBoundingBox(mNativeObject, box);
@@ -88,16 +97,19 @@ public class FilamentAsset {
         return nGetName(getNativeObject(), entity);
     }
 
+    @Nullable
     public String getExtras(int entity) {
         return nGetExtras(mNativeObject, entity);
     }
 
+    @NotNull
     public String[] getMorphTargetNames(int entity) {
         String[] names = new String[nGetMorphTargetCount(mNativeObject, entity)];
         nGetMorphTargetNames(mNativeObject, entity, names);
         return names;
     }
 
+    @NotNull
     public String[] getResourceUris() {
         String[] uris = new String[nGetResourceUriCount(mNativeObject)];
         nGetResourceUris(mNativeObject, uris);
@@ -141,3 +153,4 @@ public class FilamentAsset {
     private static native void nGetResourceUris(long nativeAsset, String[] result);
     private static native void nReleaseSourceData(long nativeAsset);
 }
+

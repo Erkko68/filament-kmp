@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <geometry/SurfaceOrientation.h>
+#include <math/mat3.h>
 #include <math/vec3.h>
 #include <math/vec4.h>
 #include <math/norm.h>
@@ -22,6 +23,6 @@ Java_io_github_erkko68_filament_MathUtils_nPackTangentFrame(JNIEnv* env, jclass,
     m[1] = bitangent;
     m[2] = normal;
     
-    math::quatf q = geometry::SurfaceOrientation::Builder::packTangentFrame(m);
+    math::quatf q = math::mat3f::packTangentFrame(m);
     env->SetFloatArrayRegion(quaternion, offset, 4, (jfloat*) &q);
 }

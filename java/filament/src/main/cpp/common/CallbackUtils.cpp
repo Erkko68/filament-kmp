@@ -61,3 +61,13 @@ void JniBufferCallback::postToJavaAndDestroy(void*, size_t, void* user) {
     releaseCallbackJni(env, callback->mCallbackUtils, callback->mHandler, callback->mCallback);
     delete callback;
 }
+
+JniImageCallback* JniImageCallback::make(filament::Engine*,
+        JNIEnv* env, jobject handler, jobject callback, long) {
+    return new JniImageCallback(env, handler, callback);
+}
+
+void JniImageCallback::postToJavaAndDestroy(void*, void* user) {
+    JniImageCallback* callback = (JniImageCallback*)user;
+    JniCallback::postToJavaAndDestroy(callback);
+}

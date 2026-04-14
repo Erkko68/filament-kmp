@@ -3,9 +3,9 @@ package io.github.erkko68.filament;
 public class Fence {
     private long mNativeObject;
 
-    public enum Type {
-        SOFT,
-        HARD
+    public enum Mode {
+        FLUSH,
+        DONT_FLUSH
     }
 
     public enum FenceStatus {
@@ -21,12 +21,12 @@ public class Fence {
         mNativeObject = nativeFence;
     }
 
-    public FenceStatus wait(Type type, long timeoutNano) {
-        return FenceStatus.values()[nWait(getNativeObject(), type.ordinal(), timeoutNano)];
+    public FenceStatus wait(Mode mode, long timeoutNano) {
+        return FenceStatus.values()[nWait(getNativeObject(), mode.ordinal(), timeoutNano)];
     }
 
-    public static FenceStatus waitAndDestroy(Fence fence, Type type) {
-        return FenceStatus.values()[nWaitAndDestroy(fence.getNativeObject(), type.ordinal())];
+    public static FenceStatus waitAndDestroy(Fence fence, Mode mode) {
+        return FenceStatus.values()[nWaitAndDestroy(fence.getNativeObject(), mode.ordinal())];
     }
 
     public long getNativeObject() {

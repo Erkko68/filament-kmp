@@ -34,7 +34,6 @@ add_filament_library(math)
 add_filament_library(image)
 add_filament_library(camutils)
 add_filament_library(zstd)
-add_filament_library(filameshio)
 add_filament_library(ktxreader)
 add_filament_library(basis_transcoder)
 add_filament_library(imageio-lite)
@@ -42,18 +41,17 @@ add_filament_library(meshoptimizer)
 add_filament_library(filabridge)
 add_filament_library(filaflat)
 add_filament_library(smol-v)
-add_filament_library(bluegl)
-add_filament_library(bluevk)
-add_filament_library(filament-iblprefilter)
+    add_filament_library(bluegl)
+    add_filament_library(bluevk)
 
 # The JNI shared library
 add_library(filament-utils-jni SHARED
-    src/main/cpp/HDRLoader.cpp
-    src/main/cpp/IBLPrefilterContext.cpp
-    src/main/cpp/Manipulator.cpp
     src/main/cpp/Bookmark.cpp
-    src/main/cpp/KtxLoader.cpp
-    src/main/cpp/MeshReader.cpp
+    src/main/cpp/HDRLoader.cpp
+    src/main/cpp/Manipulator.cpp
+    src/main/cpp/KTX1Loader.cpp
+    src/main/cpp/TextureLoader.cpp
+    src/main/cpp/Utils.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
     src/main/cpp/common/VirtualMachineEnv.cpp
@@ -76,7 +74,6 @@ target_link_libraries(filament-utils-jni
     PRIVATE image
     PRIVATE camutils
     PRIVATE zstd
-    PRIVATE filameshio
     PRIVATE ktxreader
     PRIVATE basis_transcoder
     PRIVATE imageio-lite
@@ -86,7 +83,6 @@ target_link_libraries(filament-utils-jni
     PRIVATE smol-v
     PRIVATE bluegl
     PRIVATE bluevk
-    PRIVATE filament-iblprefilter
     ${JNI_LIBRARIES}
 )
 

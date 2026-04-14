@@ -1,18 +1,22 @@
 package io.github.erkko68.filament.gltfio;
 
 import io.github.erkko68.filament.Engine;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.Buffer;
 
 public class ResourceLoader {
     private final long mNativeObject;
     private final long mNativeStbProvider;
     private final long mNativeKtx2Provider;
+    private final long mNativeWebpProvider;
 
-    public ResourceLoader(Engine engine) {
+    public ResourceLoader(@NotNull Engine engine) {
         this(engine, false);
     }
 
-    public ResourceLoader(Engine engine, boolean normalizeSkinningWeights) {
+    public ResourceLoader(@NotNull Engine engine, boolean normalizeSkinningWeights) {
         long nativeEngine = engine.getNativeObject();
         mNativeObject = nCreateResourceLoader(nativeEngine, normalizeSkinningWeights);
         mNativeStbProvider = nCreateStbProvider(nativeEngine);
@@ -21,20 +25,30 @@ public class ResourceLoader {
         nAddTextureProvider(mNativeObject, "image/jpeg", mNativeStbProvider);
         nAddTextureProvider(mNativeObject, "image/png", mNativeStbProvider);
         nAddTextureProvider(mNativeObject, "image/ktx2", mNativeKtx2Provider);
+        if (nIsWebpSupported()) {
+            mNativeWebpProvider = nCreateWebpProvider(nativeEngine);
+            nAddTextureProvider(mNativeObject, "image/webp", mNativeWebpProvider);
+        } else {
+            mNativeWebpProvider = 0;
+        }
     }
 
     public void destroy() {
         nDestroyResourceLoader(mNativeObject);
         nDestroyTextureProvider(mNativeStbProvider);
         nDestroyTextureProvider(mNativeKtx2Provider);
+        if (nIsWebpSupported()) {
+            nDestroyTextureProvider(mNativeWebpProvider);
+        }
     }
 
-    public ResourceLoader addResourceData(String uri, Buffer buffer) {
+    @NotNull
+    public ResourceLoader addResourceData(@NotNull String uri, @NotNull Buffer buffer) {
         nAddResourceData(mNativeObject, uri, buffer, buffer.remaining());
         return this;
     }
 
-    public boolean hasResourceData(String uri) {
+    public boolean hasResourceData(@NotNull String uri) {
         return nHasResourceData(mNativeObject, uri);
     }
 
@@ -42,12 +56,13 @@ public class ResourceLoader {
         nEvictResourceData(mNativeObject);
     }
 
-    public ResourceLoader loadResources(FilamentAsset asset) {
+    @NotNull
+    public ResourceLoader loadResources(@NotNull FilamentAsset asset) {
         nLoadResources(mNativeObject, asset.getNativeObject());
         return this;
     }
 
-    public boolean asyncBeginLoad(FilamentAsset asset) {
+    public boolean asyncBeginLoad(@NotNull FilamentAsset asset) {
         return nAsyncBeginLoad(mNativeObject, asset.getNativeObject());
     }
 
@@ -75,6 +90,9 @@ public class ResourceLoader {
     private static native void nAsyncCancelLoad(long nativeLoader);
     private static native long nCreateStbProvider(long nativeEngine);
     private static native long nCreateKtx2Provider(long nativeEngine);
+    private static native boolean nIsWebpSupported();
+    private static native long nCreateWebpProvider(long nativeEngine);
     private static native void nAddTextureProvider(long nativeLoader, String url, long nativeProvider);
     private static native void nDestroyTextureProvider(long nativeProvider);
 }
+

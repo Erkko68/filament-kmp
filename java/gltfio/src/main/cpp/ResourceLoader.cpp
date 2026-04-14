@@ -1,97 +1,134 @@
 #include <jni.h>
-#include <gltfio/ResourceLoader.h>
-#include <gltfio/FilamentAsset.h>
-#include <gltfio/TextureProvider.h>
 #include <filament/Engine.h>
-#include <backend/BufferDescriptor.h>
+#include <gltfio/ResourceLoader.h>
+#include <gltfio/TextureProvider.h>
+#include "common/NioUtils.h"
 
 using namespace filament;
-using namespace gltfio;
+using namespace filament::gltfio;
+
+static void destroy(void*, size_t, void *userData) {
+    AutoBuffer* buffer = (AutoBuffer*) userData;
+    delete buffer;
+}
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateResourceLoader(JNIEnv* env, jclass, jlong nativeEngine, jboolean normalizeSkinningWeights) {
-    ResourceConfiguration config = {};
-    config.engine = (Engine*) nativeEngine;
-    config.normalizeSkinningWeights = (bool) normalizeSkinningWeights;
-    return (jlong) new ResourceLoader(config);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateResourceLoader(JNIEnv*, jclass,
+        jlong nativeEngine, jboolean normalizeSkinningWeights) {
+    Engine* engine = (Engine*) nativeEngine;
+    return (jlong) new ResourceLoader({ engine, {}, (bool) normalizeSkinningWeights});
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nDestroyResourceLoader(JNIEnv* env, jclass, jlong nativeLoader) {
-    delete (ResourceLoader*) nativeLoader;
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAddResourceData(JNIEnv* env, jclass, jlong nativeLoader, jstring url, jobject buffer, jint remaining) {
-    const char* nativeUrl = env->GetStringUTFChars(url, nullptr);
-    void* data = env->GetDirectBufferAddress(buffer);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nDestroyResourceLoader(JNIEnv*, jclass,
+        jlong nativeLoader) {
     ResourceLoader* loader = (ResourceLoader*) nativeLoader;
-    
-    // Create a BufferDescriptor. We don't provide a callback here because for addResourceData,
-    // Filament usually copies the data or expects the client to manage life cycle.
-    // However, native ResourceLoader::addResourceData takes BufferDescriptor&&
-    loader->addResourceData(nativeUrl, backend::BufferDescriptor(data, (size_t) remaining));
-    
-    env->ReleaseStringUTFChars(url, nativeUrl);
+    delete loader;
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nEvictResourceData(JNIEnv* env, jclass, jlong nativeLoader) {
-    ((ResourceLoader*) nativeLoader)->evictResourceData();
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAddResourceData(JNIEnv* env, jclass,
+        jlong nativeLoader, jstring url, jobject javaBuffer, jint remaining) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    AutoBuffer* buffer = new AutoBuffer(env, javaBuffer, remaining);
+    const char* cstring = env->GetStringUTFChars(url, nullptr);
+    loader->addResourceData(cstring,
+            ResourceLoader::BufferDescriptor(buffer->getData(), buffer->getSize(), &destroy,
+                    buffer));
+    env->ReleaseStringUTFChars(url, cstring);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nHasResourceData(JNIEnv* env, jclass, jlong nativeLoader, jstring url) {
-    const char* nativeUrl = env->GetStringUTFChars(url, nullptr);
-    bool result = ((ResourceLoader*) nativeLoader)->hasResourceData(nativeUrl);
-    env->ReleaseStringUTFChars(url, nativeUrl);
-    return (jboolean) result;
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nHasResourceData(JNIEnv* env, jclass,
+        jlong nativeLoader, jstring url) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    const char* cstring = env->GetStringUTFChars(url, nullptr);
+    bool status = loader->hasResourceData(cstring);
+    env->ReleaseStringUTFChars(url, cstring);
+    return (jboolean) status;
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nLoadResources(JNIEnv* env, jclass, jlong nativeLoader, jlong nativeAsset) {
-    ((ResourceLoader*) nativeLoader)->loadResources((FilamentAsset*) nativeAsset);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nEvictResourceData(JNIEnv*, jclass,
+        jlong nativeLoader) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    loader->evictResourceData();
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nLoadResources(JNIEnv*, jclass,
+        jlong nativeLoader, jlong nativeAsset) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    FilamentAsset* asset = (FilamentAsset*) nativeAsset;
+    loader->loadResources(asset);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncBeginLoad(JNIEnv* env, jclass, jlong nativeLoader, jlong nativeAsset) {
-    return (jboolean) ((ResourceLoader*) nativeLoader)->asyncBeginLoad((FilamentAsset*) nativeAsset);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncBeginLoad(JNIEnv*, jclass,
+        jlong nativeLoader, jlong nativeAsset) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    FilamentAsset* asset = (FilamentAsset*) nativeAsset;
+    return (jboolean) loader->asyncBeginLoad(asset);
 }
 
 extern "C" JNIEXPORT jfloat JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncGetLoadProgress(JNIEnv* env, jclass, jlong nativeLoader) {
-    return ((ResourceLoader*) nativeLoader)->asyncGetLoadProgress();
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncGetLoadProgress(JNIEnv*, jclass,
+        jlong nativeLoader) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    return loader->asyncGetLoadProgress();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncUpdateLoad(JNIEnv* env, jclass, jlong nativeLoader) {
-    ((ResourceLoader*) nativeLoader)->asyncUpdateLoad();
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncUpdateLoad(JNIEnv*, jclass,
+        jlong nativeLoader) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    loader->asyncUpdateLoad();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncCancelLoad(JNIEnv* env, jclass, jlong nativeLoader) {
-    ((ResourceLoader*) nativeLoader)->asyncCancelLoad();
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAsyncCancelLoad(JNIEnv*, jclass,
+        jlong nativeLoader) {
+    ResourceLoader* loader = (ResourceLoader*) nativeLoader;
+    loader->asyncCancelLoad();
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateStbProvider(JNIEnv* env, jclass, jlong nativeEngine) {
-    return (jlong) createStbProvider((Engine*) nativeEngine);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateStbProvider(JNIEnv*, jclass,
+        jlong nativeEngine) {
+    Engine* engine = (Engine*) nativeEngine;
+    return (jlong) createStbProvider(engine);
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateKtx2Provider(JNIEnv* env, jclass, jlong nativeEngine) {
-    return (jlong) createKtx2Provider((Engine*) nativeEngine);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateKtx2Provider(JNIEnv*, jclass,
+        jlong nativeEngine) {
+    Engine* engine = (Engine*) nativeEngine;
+    return (jlong) createKtx2Provider(engine);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nIsWebpSupported(JNIEnv*, jclass) {
+    return (jboolean) isWebpSupported();
+}
+
+extern "C" JNIEXPORT jlong JNICALL
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nCreateWebpProvider(JNIEnv*, jclass,
+        jlong nativeEngine) {
+    Engine* engine = (Engine*) nativeEngine;
+    return (jlong) createWebpProvider(engine);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAddTextureProvider(JNIEnv* env, jclass, jlong nativeLoader, jstring url, jlong nativeProvider) {
-    const char* nativeUrl = env->GetStringUTFChars(url, nullptr);
-    ((ResourceLoader*) nativeLoader)->addTextureProvider(nativeUrl, (TextureProvider*) nativeProvider);
-    env->ReleaseStringUTFChars(url, nativeUrl);
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nDestroyTextureProvider(JNIEnv*, jclass,
+        jlong nativeProvider) {
+    TextureProvider* provider = (TextureProvider*) nativeProvider;
+    delete provider;
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_ResourceLoader_nDestroyTextureProvider(JNIEnv* env, jclass, jlong nativeProvider) {
-    // Providers are typically destroyed by the client or via specialized methods in gltfio.
-    // Native gltfio providers often don't have a virtual destructor but are managed via factory functions.
+Java_io_github_erkko68_filament_gltfio_ResourceLoader_nAddTextureProvider(JNIEnv* env, jclass,
+        jlong nativeLoader, jstring url, jlong nativeProvider) {
+    const char* curl = env->GetStringUTFChars(url, nullptr);
+    ((ResourceLoader*)nativeLoader)->addTextureProvider(curl, (TextureProvider*)nativeProvider);
+    env->ReleaseStringUTFChars(url, curl);
 }

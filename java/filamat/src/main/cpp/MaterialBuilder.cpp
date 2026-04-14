@@ -286,3 +286,22 @@ extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_filamat_MaterialBuilder_nMaterialBuilderUseLegacyMorphing(JNIEnv*, jclass, jlong nativeBuilder) {
     ((MaterialBuilder*) nativeBuilder)->useLegacyMorphing();
 }
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_filamat_MaterialBuilder_nMaterialBuilderQuality(JNIEnv*, jclass, jlong nativeBuilder, jint quality) {
+    ((MaterialBuilder*) nativeBuilder)->quality((filament::ShaderQuality) quality);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_filamat_MaterialBuilder_nMaterialBuilderInstanced(JNIEnv*, jclass, jlong nativeBuilder, jboolean enable) {
+    ((MaterialBuilder*) nativeBuilder)->instanced((bool) enable);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_filamat_MaterialBuilder_nMaterialBuilderShaderDefine(JNIEnv* env, jclass, jlong nativeBuilder, jstring name, jstring value) {
+    const char* nativeName = env->GetStringUTFChars(name, nullptr);
+    const char* nativeValue = env->GetStringUTFChars(value, nullptr);
+    ((MaterialBuilder*) nativeBuilder)->shaderDefine(nativeName, nativeValue);
+    env->ReleaseStringUTFChars(name, nativeName);
+    env->ReleaseStringUTFChars(value, nativeValue);
+}

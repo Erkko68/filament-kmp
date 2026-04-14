@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio;
 
 import io.github.erkko68.filament.Engine;
 import io.github.erkko68.filament.MaterialInstance;
+import org.jetbrains.annotations.NotNull;
 
 public class FilamentInstance {
     private FilamentAsset mAsset;
@@ -22,6 +23,7 @@ public class FilamentInstance {
         mNativeObject = 0;
     }
 
+    @NotNull
     public FilamentAsset getAsset() {
         return mAsset;
     }
@@ -30,12 +32,14 @@ public class FilamentInstance {
         return nGetRoot(mNativeObject);
     }
 
+    @NotNull
     public int[] getEntities() {
         int[] result = new int[nGetEntityCount(mNativeObject)];
         nGetEntities(mNativeObject, result);
         return result;
     }
 
+    @NotNull
     public Animator getAnimator() {
         if (mAnimator != null) {
             return mAnimator;
@@ -48,6 +52,7 @@ public class FilamentInstance {
         return nGetSkinCount(getNativeObject());
     }
 
+    @NotNull
     public String[] getSkinNames() {
         String[] result = new String[getSkinCount()];
         nGetSkinNames(getNativeObject(), result);
@@ -66,6 +71,7 @@ public class FilamentInstance {
         return nGetJointCountAt(getNativeObject(), skinIndex);
     }
 
+    @NotNull
     public int[] getJointsAt(int skinIndex) {
         int[] result = new int[getJointCountAt(skinIndex)];
         nGetJointsAt(getNativeObject(), skinIndex, result);
@@ -76,17 +82,20 @@ public class FilamentInstance {
         nApplyMaterialVariant(mNativeObject, variantIndex);
     }
 
+    @NotNull
     public MaterialInstance[] getMaterialInstances() {
         final int count = nGetMaterialInstanceCount(mNativeObject);
         MaterialInstance[] result = new MaterialInstance[count];
         long[] natives = new long[count];
         nGetMaterialInstances(mNativeObject, natives);
+        Engine engine = mAsset.getEngine();
         for (int i = 0; i < count; i++) {
-            result[i] = new MaterialInstance(natives[i]);
+            result[i] = new MaterialInstance(engine, natives[i]);
         }
         return result;
     }
 
+    @NotNull
     public String[] getMaterialVariantNames() {
         String[] names = new String[nGetMaterialVariantCount(mNativeObject)];
         nGetMaterialVariantNames(mNativeObject, names);
@@ -109,3 +118,4 @@ public class FilamentInstance {
     private static native void nAttachSkin(long nativeInstance, int skinIndex, int entity);
     private static native void nDetachSkin(long nativeInstance, int skinIndex, int entity);
 }
+

@@ -19,10 +19,17 @@ macro(add_filament_library NAME)
 endmacro()
 
 add_filament_library(filamat)
+add_filament_library(shaders)
 add_filament_library(filament)
 add_filament_library(backend)
 add_filament_library(utils)
 add_filament_library(math)
+add_filament_library(filabridge)
+add_filament_library(filaflat)
+add_filament_library(smol-v)
+add_filament_library(zstd)
+add_filament_library(bluegl)
+add_filament_library(bluevk)
 
 add_library(filamat-jni SHARED
     src/main/cpp/MaterialBuilder.cpp
@@ -36,8 +43,26 @@ target_include_directories(filamat-jni PRIVATE
 
 target_link_libraries(filamat-jni
     PRIVATE filamat
+    PRIVATE shaders
     PRIVATE filament
     PRIVATE backend
     PRIVATE utils
+    PRIVATE filabridge
+    PRIVATE filaflat
+    PRIVATE smol-v
+    PRIVATE zstd
+    PRIVATE bluegl
+    PRIVATE bluevk
     ${JNI_LIBRARIES}
 )
+
+if (APPLE)
+    target_link_libraries(filamat-jni PRIVATE
+        "-framework Metal"
+        "-framework Foundation"
+        "-framework AppKit"
+        "-framework QuartzCore"
+        "-framework CoreVideo"
+        "-framework OpenGL"
+    )
+endif()

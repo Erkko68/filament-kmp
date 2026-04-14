@@ -2,6 +2,8 @@ package io.github.erkko68.filament.gltfio;
 
 import io.github.erkko68.filament.Material;
 import io.github.erkko68.filament.MaterialInstance;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface MaterialProvider {
     public static class MaterialKey {
@@ -13,7 +15,7 @@ public interface MaterialProvider {
         public boolean hasOcclusionTexture;
         public boolean hasEmissiveTexture;
         public boolean useSpecularGlossiness;
-        public int alphaMode;                       // 0 = OPAQUE, 1 = MASK, 2 = BLEND
+        public int alphaMode;
         public boolean enableDiagnostics;
         public boolean hasMetallicRoughnessTexture;
         public int metallicRoughnessUV;
@@ -40,23 +42,40 @@ public interface MaterialProvider {
         public int volumeThicknessUV;
         public boolean hasSheen;
         public boolean hasIOR;
+        public boolean hasVolume;
+        public boolean hasDispersion;
+        public boolean hasSpecular;
+        public boolean hasSpecularTexture;
+        public boolean hasSpecularColorTexture;
+        public int specularTextureUV;
+        public int specularColorTextureUV;
+
 
         public MaterialKey() {}
         static {
             Gltfio.init();
         }
 
-        public void constrainMaterial(int[] uvmap) {
+        public void constrainMaterial(@NotNull int[] uvmap) {
             nConstrainMaterial(this, uvmap);
         }
 
         private static native void nConstrainMaterial(MaterialKey materialKey, int[] uvmap);
     };
 
-    public MaterialInstance createMaterialInstance(MaterialKey config, int[] uvmap, String label, String extras);
-    public Material getMaterial(MaterialKey config, int[] uvmap, String label);
+    @Nullable
+    public MaterialInstance createMaterialInstance(MaterialKey config, @NotNull int[] uvmap, @Nullable String label, @Nullable String extras);
+
+    @Nullable
+    public Material getMaterial(MaterialKey config, @NotNull int[] uvmap, @Nullable String label);
+
+    @NotNull
     public Material[] getMaterials();
+
     public boolean needsDummyData(int attrib);
+
     public void destroyMaterials();
+
     public void destroy();
 }
+

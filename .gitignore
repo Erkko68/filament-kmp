@@ -4,6 +4,7 @@
 filament-source/
 /filament-main/
 /prebuilts/
+**/bin/
 
 # Gradle
 .gradle/

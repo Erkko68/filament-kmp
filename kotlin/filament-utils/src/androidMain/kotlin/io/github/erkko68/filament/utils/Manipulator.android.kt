@@ -167,13 +167,19 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         androidHandle.update(deltaTime)
     }
 
-    actual fun getCurrentBookmark(): ManipulatorBookmark = ManipulatorBookmark(androidHandle.currentBookmark)
+    actual fun getCurrentBookmark(): Bookmark = Bookmark(androidHandle.currentBookmark)
 
-    actual fun getHomeBookmark(): ManipulatorBookmark = ManipulatorBookmark(androidHandle.homeBookmark)
+    actual fun getHomeBookmark(): Bookmark = Bookmark(androidHandle.homeBookmark)
 
-    actual fun jumpToBookmark(bookmark: ManipulatorBookmark) {
+    actual fun jumpToBookmark(bookmark: Bookmark) {
         androidHandle.jumpToBookmark(bookmark.androidValue as com.google.android.filament.utils.Bookmark)
     }
-}
 
-actual class ManipulatorBookmark internal constructor(internal val androidValue: Any)
+    actual class Bookmark internal constructor(internal val androidValue: Any)
+
+    companion object {
+        init {
+            Utils.init()
+        }
+    }
+}

@@ -1,114 +1,138 @@
 #include <jni.h>
 #include <gltfio/FilamentInstance.h>
-#include <gltfio/Animator.h>
-#include <filament/MaterialInstance.h>
-#include <utils/Entity.h>
-#include <vector>
+#include <algorithm>
 
 using namespace filament;
-using namespace gltfio;
+using namespace filament::gltfio;
 using namespace utils;
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetRoot(JNIEnv* env, jclass, jlong nativeInstance) {
-    return Entity::smuggle(((FilamentInstance*) nativeInstance)->getRoot());
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetRoot(JNIEnv*, jclass,
+        jlong nativeInstance) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    return instance->getRoot().getId();
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetEntityCount(JNIEnv* env, jclass, jlong nativeInstance) {
-    return (jint) ((FilamentInstance*) nativeInstance)->getEntityCount();
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetEntityCount(JNIEnv*, jclass,
+        jlong nativeInstance) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    return instance->getEntityCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetEntities(JNIEnv* env, jclass, jlong nativeInstance, jintArray result) {
-    jint* entities = env->GetIntArrayElements(result, nullptr);
-    const Entity* assetEntities = ((FilamentInstance*) nativeInstance)->getEntities();
-    size_t count = ((FilamentInstance*) nativeInstance)->getEntityCount();
-    for (size_t i = 0; i < count; i++) {
-        entities[i] = Entity::smuggle(assetEntities[i]);
-    }
-    env->ReleaseIntArrayElements(result, entities, 0);
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetEntities(JNIEnv* env, jclass,
+        jlong nativeInstance, jintArray result) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    jsize available = env->GetArrayLength(result);
+    Entity* entities = (Entity*) env->GetIntArrayElements(result, nullptr);
+    std::copy_n(instance->getEntities(),
+            std::min(available, (jsize) instance->getEntityCount()), entities);
+    env->ReleaseIntArrayElements(result, (jint*) entities, 0);
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetAnimator(JNIEnv* env, jclass, jlong nativeInstance) {
-    return (jlong) ((FilamentInstance*) nativeInstance)->getAnimator();
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetAnimator(JNIEnv* , jclass,
+        jlong nativeInstance) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    return (jlong) instance->getAnimator();
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nApplyMaterialVariant(JNIEnv*, jclass,
+        jlong nativeInstance, jint variantIndex) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    instance->applyMaterialVariant(variantIndex);
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialInstanceCount(JNIEnv* env, jclass, jlong nativeInstance) {
-    return (jint) ((FilamentInstance*) nativeInstance)->getMaterialInstanceCount();
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialInstances(JNIEnv* env, jclass, jlong nativeInstance, jlongArray nativeResults) {
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialVariantCount(JNIEnv*, jclass,
+        jlong nativeInstance) {
     FilamentInstance* instance = (FilamentInstance*) nativeInstance;
-    size_t count = instance->getMaterialInstanceCount();
-    MaterialInstance* const* materialInstances = instance->getMaterialInstances();
-    
-    jlong* data = env->GetLongArrayElements(nativeResults, nullptr);
-    for (size_t i = 0; i < count; i++) {
-        data[i] = (jlong) materialInstances[i];
-    }
-    env->ReleaseLongArrayElements(nativeResults, data, 0);
+    return (jint) instance->getMaterialVariantCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nApplyMaterialVariant(JNIEnv* env, jclass, jlong nativeInstance, jint variantIndex) {
-    ((FilamentInstance*) nativeInstance)->applyMaterialVariant((size_t) variantIndex);
-}
-
-extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialVariantCount(JNIEnv* env, jclass, jlong nativeInstance) {
-    return (jint) ((FilamentInstance*) nativeInstance)->getMaterialVariantCount();
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialVariantNames(JNIEnv* env, jclass, jlong nativeInstance, jobjectArray result) {
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialVariantNames(JNIEnv* env, jclass,
+        jlong nativeInstance, jobjectArray result) {
     FilamentInstance* instance = (FilamentInstance*) nativeInstance;
-    size_t count = instance->getMaterialVariantCount();
-    for (size_t i = 0; i < count; i++) {
-        env->SetObjectArrayElement(result, (jsize) i, env->NewStringUTF(instance->getMaterialVariantName(i)));
-    }
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetJointsAt(JNIEnv* env, jclass, jlong nativeInstance, jint skinIndex, jintArray result) {
-    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
-    const Entity* joints = instance->getJointsAt((size_t) skinIndex);
-    size_t count = instance->getJointCountAt((size_t) skinIndex);
-    jint* data = env->GetIntArrayElements(result, nullptr);
-    for (size_t i = 0; i < count; i++) {
-        data[i] = Entity::smuggle(joints[i]);
-    }
-    env->ReleaseIntArrayElements(result, data, 0);
-}
-
-extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetSkinCount(JNIEnv* env, jclass, jlong nativeInstance) {
-    return (jint) ((FilamentInstance*) nativeInstance)->getSkinCount();
-}
-
-extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetSkinNames(JNIEnv* env, jclass, jlong nativeInstance, jobjectArray result) {
-    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
-    size_t count = instance->getSkinCount();
-    for (size_t i = 0; i < count; i++) {
-        env->SetObjectArrayElement(result, (jsize) i, env->NewStringUTF(instance->getSkinNameAt(i)));
+    for (int i = 0; i < instance->getMaterialVariantCount(); ++i) {
+        const char* name = instance->getMaterialVariantName(i);
+        env->SetObjectArrayElement(result, (jsize) i, env->NewStringUTF(name));
     }
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetJointCountAt(JNIEnv* env, jclass, jlong nativeInstance, jint skinIndex) {
-    return (jint) ((FilamentInstance*) nativeInstance)->getJointCountAt((size_t) skinIndex);
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialInstanceCount(JNIEnv*, jclass,
+        jlong nativeInstance) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    return instance->getMaterialInstanceCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nAttachSkin(JNIEnv* env, jclass, jlong nativeInstance, jint skinIndex, jint entity) {
-    ((FilamentInstance*) nativeInstance)->attachSkin((size_t) skinIndex, Entity::import(entity));
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetMaterialInstances(JNIEnv* env, jclass,
+        jlong nativeInstance, jlongArray result) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    jsize available = env->GetArrayLength(result);
+    jsize count = std::min(available, (jsize) instance->getMaterialInstanceCount());
+    jlong* dst = env->GetLongArrayElements(result, nullptr);
+    const MaterialInstance * const* src = instance->getMaterialInstances();
+    for (jsize i = 0; i < count; i++) {
+        dst[i] = (jlong) src[i];
+    }
+    env->ReleaseLongArrayElements(result, dst, 0);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentInstance_nDetachSkin(JNIEnv* env, jclass, jlong nativeInstance, jint skinIndex, jint entity) {
-    ((FilamentInstance*) nativeInstance)->detachSkin((size_t) skinIndex, Entity::import(entity));
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nAttachSkin(JNIEnv*, jclass,
+        jlong nativeInstance, jint skinIndex, jint targetEntity) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    Entity target = Entity::import(targetEntity);
+    instance->attachSkin(skinIndex, target);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nDetachSkin(JNIEnv*, jclass,
+        jlong nativeInstance, jint skinIndex, jint targetEntity) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    Entity target = Entity::import(targetEntity);
+    instance->detachSkin(skinIndex, target);
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetSkinCount(JNIEnv* , jclass,
+        jlong nativeInstance) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    return (jint) instance->getSkinCount();
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetSkinNames(JNIEnv* env, jclass,
+        jlong nativeInstance, jobjectArray result) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    jsize available = env->GetArrayLength(result);
+    for (int i = 0; i < available; ++i) {
+        const char* name = instance->getSkinNameAt(i);
+        if (name) {
+            env->SetObjectArrayElement(result, (jsize) i, env->NewStringUTF(name));
+        }
+    }
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetJointCountAt(JNIEnv* , jclass,
+        jlong nativeInstance, jint skinIndex) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    return (jint) instance->getJointCountAt(skinIndex);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_gltfio_FilamentInstance_nGetJointsAt(JNIEnv* env, jclass,
+        jlong nativeInstance, jint skinIndex, jintArray result) {
+    FilamentInstance* instance = (FilamentInstance*) nativeInstance;
+    jsize available = env->GetArrayLength(result);
+    Entity* entities = (Entity*) env->GetIntArrayElements(result, nullptr);
+    std::copy_n(instance->getJointsAt(skinIndex),
+        std::min(available, (jsize) instance->getJointCountAt(skinIndex)), entities);
+    env->ReleaseIntArrayElements(result, (jint*) entities, 0);
 }

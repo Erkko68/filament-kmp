@@ -1,14 +1,16 @@
 package io.github.erkko68.filament.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Manipulator {
     private static final Mode[] sModeValues = Mode.values();
-    private final long mNativeObject;
+    private long mNativeObject;
 
     private Manipulator(long nativeObject) {
         mNativeObject = nativeObject;
     }
 
-    public enum Mode { ORBIT, MAP, FREE_FLIGHT }
+    public enum Mode { ORBIT, MAP, FLIGHT }
     public enum Fov { VERTICAL, HORIZONTAL }
     public enum Key { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
 
@@ -122,12 +124,11 @@ public class Manipulator {
         }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
+    public void destroy() {
         if (mNativeObject != 0) {
             nDestroyManipulator(mNativeObject);
+            mNativeObject = 0;
         }
-        super.finalize();
     }
 
     public Mode getMode() { return sModeValues[nGetMode(mNativeObject)]; }
@@ -136,18 +137,12 @@ public class Manipulator {
         nSetViewport(mNativeObject, width, height);
     }
 
-    public void getLookAt(float[] eyePosition, float[] targetPosition, float[] upward) {
-        nGetLookAtFloat(mNativeObject, eyePosition, targetPosition, upward);
+    public void getLookAt(@NotNull float[] outEye, @NotNull float[] outTarget, @NotNull float[] outUp) {
+        nGetLookAt(mNativeObject, outEye, outTarget, outUp);
     }
 
-    public void getLookAt(double[] eyePosition, double[] targetPosition, double[] upward) {
-        nGetLookAtDouble(mNativeObject, eyePosition, targetPosition, upward);
-    }
-
-    public float[] raycast(int x, int y) {
-        float[] result = new float[3];
-        nRaycast(mNativeObject, x, y, result);
-        return result;
+    public void raycast(int x, int y, @NotNull float[] outResult) {
+        nRaycast(mNativeObject, x, y, outResult);
     }
 
     public void grabBegin(int x, int y, boolean strafe) {
@@ -190,6 +185,26 @@ public class Manipulator {
         nJumpToBookmark(mNativeObject, bookmark.getNativeObject());
     }
 
+    public long getNativeObject() { return mNativeObject; }
+
+    public static class Bookmark {
+        private final long mNativeObject;
+
+        Bookmark(long nativeObject) {
+            mNativeObject = nativeObject;
+        }
+
+        public long getNativeObject() {
+            return mNativeObject;
+        }
+
+        public void destroy() {
+            nDestroyBookmark(mNativeObject);
+        }
+
+        private static native void nDestroyBookmark(long nativeBookmark);
+    }
+
     private static native long nCreateBuilder();
     private static native void nDestroyBuilder(long nativeBuilder);
     private static native void nBuilderViewport(long nativeBuilder, int width, int height);
@@ -216,8 +231,7 @@ public class Manipulator {
     private static native void nDestroyManipulator(long nativeManip);
     private static native int nGetMode(long nativeManip);
     private static native void nSetViewport(long nativeManip, int width, int height);
-    private static native void nGetLookAtFloat(long nativeManip, float[] eyePosition, float[] targetPosition, float[] upward);
-    private static native void nGetLookAtDouble(long nativeManip, double[] eyePosition, double[] targetPosition, double[] upward);
+    private static native void nGetLookAt(long nativeManip, float[] eyePosition, float[] targetPosition, float[] upward);
     private static native void nRaycast(long nativeManip, int x, int y, float[] result);
     private static native void nGrabBegin(long nativeManip, int x, int y, boolean strafe);
     private static native void nGrabUpdate(long nativeManip, int x, int y);

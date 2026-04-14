@@ -18,15 +18,28 @@ macro(add_filament_library NAME)
     endif()
 endmacro()
 
+add_filament_library(gltfio)
 add_filament_library(gltfio_core)
 add_filament_library(filament)
 add_filament_library(backend)
+add_filament_library(bluegl)
+add_filament_library(bluevk)
+add_filament_library(filamat)
+add_filament_library(shaders)
+add_filament_library(filabridge)
+add_filament_library(filaflat)
 add_filament_library(utils)
-add_filament_library(math)
+add_filament_library(geometry)
+add_filament_library(smol-v)
+add_filament_library(zstd)
+add_filament_library(uberzlib)
+add_filament_library(uberarchive)
+add_filament_library(ktxreader)
 add_filament_library(dracodec)
 add_filament_library(stb)
-add_filament_library(ktxreader)
-add_filament_library(geometry)
+add_filament_library(meshoptimizer)
+add_filament_library(basis_transcoder)
+add_filament_library(image)
 
 add_library(gltfio-jni SHARED
     src/main/cpp/AssetLoader.cpp
@@ -35,23 +48,42 @@ add_library(gltfio-jni SHARED
     src/main/cpp/FilamentInstance.cpp
     src/main/cpp/Animator.cpp
     src/main/cpp/MaterialProvider.cpp
+    src/main/cpp/MaterialKey.cpp
+    src/main/cpp/Gltfio.cpp
+    ../filament/src/main/cpp/common/NioUtils.cpp
 )
+
 
 target_include_directories(gltfio-jni PRIVATE
     src/main/cpp
+    ../filament/src/main/cpp
     ${JNI_INCLUDE_DIRS}
     ${FILAMENT_INCLUDE_DIR}
 )
 
 target_link_libraries(gltfio-jni
+    PRIVATE gltfio
     PRIVATE gltfio_core
     PRIVATE filament
+    PRIVATE filamat
+    PRIVATE shaders
+    PRIVATE filabridge
+    PRIVATE filaflat
     PRIVATE backend
+    PRIVATE bluegl
+    PRIVATE bluevk
     PRIVATE utils
+    PRIVATE geometry
+    PRIVATE smol-v
+    PRIVATE zstd
+    PRIVATE uberzlib
+    PRIVATE uberarchive
+    PRIVATE ktxreader
     PRIVATE dracodec
     PRIVATE stb
-    PRIVATE ktxreader
-    PRIVATE geometry
+    PRIVATE meshoptimizer
+    PRIVATE basis_transcoder
+    PRIVATE image
     ${JNI_LIBRARIES}
 )
 

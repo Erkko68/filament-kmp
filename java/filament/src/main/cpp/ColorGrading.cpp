@@ -8,62 +8,62 @@
 using namespace filament;
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nCreateBuilder(JNIEnv* env, jclass) {
+Java_io_github_erkko68_filament_ColorGrading_nCreateBuilder(JNIEnv* env, jclass) {
     return (jlong) new ColorGrading::Builder();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nDestroyBuilder(JNIEnv* env, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_ColorGrading_nDestroyBuilder(JNIEnv* env, jclass, jlong nativeBuilder) {
     delete (ColorGrading::Builder*) nativeBuilder;
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderQuality(JNIEnv* env, jclass, jlong nativeBuilder, jint quality) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderQuality(JNIEnv* env, jclass, jlong nativeBuilder, jint quality) {
     ((ColorGrading::Builder*) nativeBuilder)->quality((ColorGrading::QualityLevel) quality);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderFormat(JNIEnv* env, jclass, jlong nativeBuilder, jint format) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderFormat(JNIEnv* env, jclass, jlong nativeBuilder, jint format) {
     ((ColorGrading::Builder*) nativeBuilder)->format((ColorGrading::LutFormat) format);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderDimensions(JNIEnv* env, jclass, jlong nativeBuilder, jint dim) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderDimensions(JNIEnv* env, jclass, jlong nativeBuilder, jint dim) {
     ((ColorGrading::Builder*) nativeBuilder)->dimensions((uint32_t) dim);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderToneMapper(JNIEnv* env, jclass, jlong nativeBuilder, jlong nativeToneMapper) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderToneMapper(JNIEnv* env, jclass, jlong nativeBuilder, jlong nativeToneMapper) {
     ((ColorGrading::Builder*) nativeBuilder)->toneMapper((ToneMapper*) nativeToneMapper);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderLuminanceScaling(JNIEnv* env, jclass, jlong nativeBuilder, jboolean enabled) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderLuminanceScaling(JNIEnv* env, jclass, jlong nativeBuilder, jboolean enabled) {
     ((ColorGrading::Builder*) nativeBuilder)->luminanceScaling((bool) enabled);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderGamutMapping(JNIEnv* env, jclass, jlong nativeBuilder, jboolean enabled) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderGamutMapping(JNIEnv* env, jclass, jlong nativeBuilder, jboolean enabled) {
     ((ColorGrading::Builder*) nativeBuilder)->gamutMapping((bool) enabled);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderExposure(JNIEnv* env, jclass, jlong nativeBuilder, jfloat exposure) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderExposure(JNIEnv* env, jclass, jlong nativeBuilder, jfloat exposure) {
     ((ColorGrading::Builder*) nativeBuilder)->exposure((float) exposure);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderNightAdaptation(JNIEnv* env, jclass, jlong nativeBuilder, jfloat adaptation) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderNightAdaptation(JNIEnv* env, jclass, jlong nativeBuilder, jfloat adaptation) {
     ((ColorGrading::Builder*) nativeBuilder)->nightAdaptation((float) adaptation);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderWhiteBalance(JNIEnv* env, jclass, jlong nativeBuilder, jfloat temperature, jfloat tint) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderWhiteBalance(JNIEnv* env, jclass, jlong nativeBuilder, jfloat temperature, jfloat tint) {
     ((ColorGrading::Builder*) nativeBuilder)->whiteBalance((float) temperature, (float) tint);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderChannelMixer(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray outRed, jfloatArray outGreen, jfloatArray outBlue) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderChannelMixer(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray outRed, jfloatArray outGreen, jfloatArray outBlue) {
     jfloat* r = env->GetFloatArrayElements(outRed, nullptr);
     jfloat* g = env->GetFloatArrayElements(outGreen, nullptr);
     jfloat* b = env->GetFloatArrayElements(outBlue, nullptr);
@@ -74,7 +74,7 @@ Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderChannelMixer(J
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderShadowsMidtonesHighlights(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray shadows, jfloatArray midtones, jfloatArray highlights, jfloatArray ranges) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderShadowsMidtonesHighlights(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray shadows, jfloatArray midtones, jfloatArray highlights, jfloatArray ranges) {
     jfloat* s = env->GetFloatArrayElements(shadows, nullptr);
     jfloat* m = env->GetFloatArrayElements(midtones, nullptr);
     jfloat* h = env->GetFloatArrayElements(highlights, nullptr);
@@ -87,7 +87,7 @@ Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderShadowsMidtone
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderSlopeOffsetPower(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray slope, jfloatArray offset, jfloatArray power) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderSlopeOffsetPower(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray slope, jfloatArray offset, jfloatArray power) {
     jfloat* s = env->GetFloatArrayElements(slope, nullptr);
     jfloat* o = env->GetFloatArrayElements(offset, nullptr);
     jfloat* p = env->GetFloatArrayElements(power, nullptr);
@@ -98,22 +98,22 @@ Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderSlopeOffsetPow
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderContrast(JNIEnv* env, jclass, jlong nativeBuilder, jfloat contrast) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderContrast(JNIEnv* env, jclass, jlong nativeBuilder, jfloat contrast) {
     ((ColorGrading::Builder*) nativeBuilder)->contrast((float) contrast);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderVibrance(JNIEnv* env, jclass, jlong nativeBuilder, jfloat vibrance) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderVibrance(JNIEnv* env, jclass, jlong nativeBuilder, jfloat vibrance) {
     ((ColorGrading::Builder*) nativeBuilder)->vibrance((float) vibrance);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderSaturation(JNIEnv* env, jclass, jlong nativeBuilder, jfloat saturation) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderSaturation(JNIEnv* env, jclass, jlong nativeBuilder, jfloat saturation) {
     ((ColorGrading::Builder*) nativeBuilder)->saturation((float) saturation);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderCurves(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray shadowGamma, jfloatArray midPoint, jfloatArray highlightScale) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderCurves(JNIEnv* env, jclass, jlong nativeBuilder, jfloatArray shadowGamma, jfloatArray midPoint, jfloatArray highlightScale) {
     jfloat* sg = env->GetFloatArrayElements(shadowGamma, nullptr);
     jfloat* mp = env->GetFloatArrayElements(midPoint, nullptr);
     jfloat* hs = env->GetFloatArrayElements(highlightScale, nullptr);
@@ -124,6 +124,6 @@ Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderCurves(JNIEnv*
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_ColorGrading_00024Builder_nBuilderBuild(JNIEnv* env, jclass, jlong nativeBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_ColorGrading_nBuilderBuild(JNIEnv* env, jclass, jlong nativeBuilder, jlong nativeEngine) {
     return (jlong) ((ColorGrading::Builder*) nativeBuilder)->build(*(Engine*) nativeEngine);
 }

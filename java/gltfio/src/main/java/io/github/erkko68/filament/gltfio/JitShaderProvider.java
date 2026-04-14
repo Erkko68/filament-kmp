@@ -6,11 +6,6 @@ import io.github.erkko68.filament.MaterialInstance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Generates materials at run time using the filamat library.
- *
- * <p>This provider produces streamlined shaders but requires filamat to be linked in.</p>
- */
 public class JitShaderProvider implements MaterialProvider {
     private long mNativeObject;
 
@@ -30,6 +25,7 @@ public class JitShaderProvider implements MaterialProvider {
         long nativeMaterialInstance = nCreateMaterialInstance(mNativeObject, config, uvmap, label, extras);
         return nativeMaterialInstance == 0 ? null : new MaterialInstance(nativeMaterialInstance);
     }
+
 
     @Override
     @Nullable
@@ -61,7 +57,6 @@ public class JitShaderProvider implements MaterialProvider {
         return nNeedsDummyData(mNativeObject, attrib);
     }
 
-    @Override
     public long getNativeObject() {
         return mNativeObject;
     }
@@ -75,3 +70,4 @@ public class JitShaderProvider implements MaterialProvider {
     private static native void nGetMaterials(long nativeProvider, long[] result);
     private static native boolean nNeedsDummyData(long nativeProvider, int attrib);
 }
+

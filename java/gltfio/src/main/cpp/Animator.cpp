@@ -1,41 +1,52 @@
 #include <jni.h>
 #include <gltfio/Animator.h>
-#include <utils/Entity.h>
 
 using namespace filament;
-using namespace gltfio;
+using namespace filament::gltfio;
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nApplyAnimation(JNIEnv* env, jclass, jlong nativeAnimator, jint index, jfloat time) {
-    ((Animator*) nativeAnimator)->applyAnimation((size_t) index, (float) time);
+Java_io_github_erkko68_filament_gltfio_Animator_nApplyAnimation(JNIEnv*, jclass, jlong nativeAnimator,
+        jint index, jfloat time) {
+    Animator* animator = (Animator*) nativeAnimator;
+    animator->applyAnimation(static_cast<size_t>(index), time);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nUpdateBoneMatrices(JNIEnv* env, jclass, jlong nativeAnimator) {
-    ((Animator*) nativeAnimator)->updateBoneMatrices();
+Java_io_github_erkko68_filament_gltfio_Animator_nUpdateBoneMatrices(JNIEnv*, jclass, jlong nativeAnimator) {
+    Animator* animator = (Animator*) nativeAnimator;
+    animator->updateBoneMatrices();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nApplyCrossFade(JNIEnv* env, jclass, jlong nativeAnimator, jint animIndex, jfloat animTime, jfloat alpha) {
-    ((Animator*) nativeAnimator)->applyCrossFade((size_t) animIndex, (float) animTime, (float) alpha);
+Java_io_github_erkko68_filament_gltfio_Animator_nApplyCrossFade(JNIEnv*, jclass, jlong nativeAnimator,
+        jint previousAnimIndex, jfloat previousAnimTime, jfloat alpha) {
+    Animator* animator = (Animator*) nativeAnimator;
+    animator->applyCrossFade(previousAnimIndex, previousAnimTime, alpha);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nResetBoneMatrices(JNIEnv* env, jclass, jlong nativeAnimator) {
-    ((Animator*) nativeAnimator)->resetBoneMatrices();
+Java_io_github_erkko68_filament_gltfio_Animator_nResetBoneMatrices(JNIEnv*, jclass, jlong nativeAnimator) {
+    Animator* animator = (Animator*) nativeAnimator;
+    animator->resetBoneMatrices();
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nGetAnimationCount(JNIEnv* env, jclass, jlong nativeAnimator) {
-    return (jint) ((Animator*) nativeAnimator)->getAnimationCount();
+Java_io_github_erkko68_filament_gltfio_Animator_nGetAnimationCount(JNIEnv*, jclass, jlong nativeAnimator) {
+    Animator* animator = (Animator*) nativeAnimator;
+    return (jint) animator->getAnimationCount();
 }
 
-extern "C" JNIEXPORT jfloat JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nGetAnimationDuration(JNIEnv* env, jclass, jlong nativeAnimator, jint index) {
-    return (jfloat) ((Animator*) nativeAnimator)->getAnimationDuration((size_t) index);
+extern "C" JNIEXPORT float JNICALL
+Java_io_github_erkko68_filament_gltfio_Animator_nGetAnimationDuration(JNIEnv*, jclass,
+        jlong nativeAnimator, jint index) {
+    Animator* animator = (Animator*) nativeAnimator;
+    return animator->getAnimationDuration(static_cast<size_t>(index));
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_io_github_erkko68_filament_gltfio_Animator_nGetAnimationName(JNIEnv* env, jclass, jlong nativeAnimator, jint index) {
-    return env->NewStringUTF(((Animator*) nativeAnimator)->getAnimationName((size_t) index));
+Java_io_github_erkko68_filament_gltfio_Animator_nGetAnimationName(JNIEnv* env, jclass,
+        jlong nativeAnimator, jint index) {
+    Animator* animator = (Animator*) nativeAnimator;
+    const char* val = animator->getAnimationName(static_cast<size_t>(index));
+    return val ? env->NewStringUTF(val) : nullptr;
 }

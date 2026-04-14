@@ -40,9 +40,9 @@ expect class Manipulator {
     fun keyUp(key: Key)
     fun scroll(x: Int, y: Int, delta: Float)
     fun update(deltaTime: Float)
-    fun getCurrentBookmark(): ManipulatorBookmark
-    fun getHomeBookmark(): ManipulatorBookmark
-    fun jumpToBookmark(bookmark: ManipulatorBookmark)
-}
+    fun getCurrentBookmark(): Bookmark
+    fun getHomeBookmark(): Bookmark
+    fun jumpToBookmark(bookmark: Bookmark)
 
-expect class ManipulatorBookmark
+    class Bookmark
+}

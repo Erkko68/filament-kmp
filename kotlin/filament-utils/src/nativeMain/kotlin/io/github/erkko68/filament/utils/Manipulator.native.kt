@@ -187,13 +187,13 @@ actual class Manipulator internal constructor(internal val nativeHandle: CPointe
         FilaManipulator_update(nativeHandle, deltaTime)
     }
 
-    actual fun getCurrentBookmark(): ManipulatorBookmark = ManipulatorBookmark(FilaManipulator_getCurrentBookmark(nativeHandle)!!)
+    actual fun getCurrentBookmark(): Bookmark = Bookmark(FilaManipulator_getCurrentBookmark(nativeHandle)!!)
 
-    actual fun getHomeBookmark(): ManipulatorBookmark = ManipulatorBookmark(FilaManipulator_getHomeBookmark(nativeHandle)!!)
+    actual fun getHomeBookmark(): Bookmark = Bookmark(FilaManipulator_getHomeBookmark(nativeHandle)!!)
 
-    actual fun jumpToBookmark(bookmark: ManipulatorBookmark) {
+    actual fun jumpToBookmark(bookmark: Bookmark) {
         FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
     }
-}
 
-actual class ManipulatorBookmark internal constructor(internal val nativeHandle: CPointer<FilaBookmark>)
+    actual class Bookmark internal constructor(internal val nativeHandle: CPointer<FilaBookmark>)
+}
