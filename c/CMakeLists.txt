@@ -95,6 +95,9 @@ add_filament_library(bluevk)
 add_filament_library(png)
 add_filament_library(tinyexr)
 add_filament_library(z)
+add_filament_library(gltfio_core)
+add_filament_library(dracodec)
+add_filament_library(stb)
 
 # The C-wrapper library
 add_library(filament-c STATIC
@@ -259,6 +262,43 @@ target_include_directories(filament-utils-c PUBLIC
 
 target_include_directories(filament-utils-c PRIVATE
     filament-utils/cpp
+    filament/cpp
+    ${FILAMENT_INCLUDE_DIR}
+)
+
+# gltfio-c library
+add_library(gltfio-c STATIC
+    gltfio/cpp/AssetLoader.cpp
+    gltfio/cpp/FilamentAsset.cpp
+    gltfio/cpp/FilamentInstance.cpp
+    gltfio/cpp/Animator.cpp
+    gltfio/cpp/MaterialProvider.cpp
+    gltfio/cpp/ResourceLoader.cpp
+)
+
+target_link_libraries(gltfio-c
+    PRIVATE gltfio_core
+    PRIVATE dracodec
+    PRIVATE stb
+    PRIVATE filament
+    PRIVATE backend
+    PRIVATE utils
+    PRIVATE math
+    PRIVATE filaflat
+    PRIVATE filabridge
+    PRIVATE image
+    PRIVATE imageio-lite
+    PRIVATE ktxreader
+    PRIVATE zstd
+)
+
+target_include_directories(gltfio-c PUBLIC
+    gltfio/c
+    filament/c
+)
+
+target_include_directories(gltfio-c PRIVATE
+    gltfio/cpp
     filament/cpp
     ${FILAMENT_INCLUDE_DIR}
 )
