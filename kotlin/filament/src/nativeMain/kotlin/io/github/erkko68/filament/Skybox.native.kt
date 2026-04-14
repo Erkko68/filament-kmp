@@ -1,11 +1,11 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(ExperimentalForeignApi::class)
 package io.github.erkko68.filament
 
 import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaSkybox
 
-actual class Skybox internal constructor(internal var nativeHandle: CPointer<FilaSkybox>?) {
+actual class Skybox(internal var nativeHandle: CPointer<FilaSkybox>?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaSkyboxBuilder_create()
 
@@ -42,6 +42,3 @@ actual class Skybox internal constructor(internal var nativeHandle: CPointer<Fil
     
     actual fun getIntensity(): Float = FilaSkybox_getIntensity(nativeHandle)
 }
-
-@InternalFilamentApi
-fun createSkybox(handle: CPointer<FilaSkybox>) = Skybox(handle)

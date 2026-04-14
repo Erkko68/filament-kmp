@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.IndirectLight as AndroidIndirectLight
 
-actual class IndirectLight internal constructor(val nativeIndirectLight: AndroidIndirectLight) {
+actual class IndirectLight constructor(val nativeIndirectLight: AndroidIndirectLight) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidIndirectLight.Builder()
 

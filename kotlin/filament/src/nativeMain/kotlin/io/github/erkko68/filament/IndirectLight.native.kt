@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaIndirectLight
 
-actual class IndirectLight internal constructor(internal var nativeHandle: CPointer<FilaIndirectLight>?) {
+actual class IndirectLight constructor(internal var nativeHandle: CPointer<FilaIndirectLight>?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaIndirectLightBuilder_create()
 

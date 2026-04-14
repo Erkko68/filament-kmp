@@ -25,11 +25,11 @@ actual object KTX1Loader {
         val javaOptions = com.google.android.filament.utils.KTX1Loader.Options()
         javaOptions.srgb = options.srgb
         val byteBuffer = ByteBuffer.wrap(buffer)
-        return com.google.android.filament.utils.KTX1Loader.createTexture(
+        return Texture(com.google.android.filament.utils.KTX1Loader.createTexture(
             engine.nativeEngine,
             byteBuffer,
             javaOptions
-        )?.let { Texture(it) }
+        ))
     }
 
     actual fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle {
@@ -42,8 +42,8 @@ actual object KTX1Loader {
             javaOptions
         )
         return IndirectLightBundle(
-            javaBundle?.indirectLight?.let { IndirectLight(it) },
-            javaBundle?.cubemap?.let { Texture(it) }
+            javaBundle.indirectLight?.let { IndirectLight(it) },
+            javaBundle.cubemap?.let { Texture(it) }
         )
     }
 
@@ -57,8 +57,8 @@ actual object KTX1Loader {
             javaOptions
         )
         return SkyboxBundle(
-            javaBundle?.skybox?.let { Skybox(it) },
-            javaBundle?.cubemap?.let { Texture(it) }
+            javaBundle.skybox?.let { Skybox(it) },
+            javaBundle.cubemap?.let { Texture(it) }
         )
     }
 
