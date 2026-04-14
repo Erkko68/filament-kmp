@@ -89,6 +89,7 @@ add_filament_library(filaflat)
 add_filament_library(filabridge)
 add_filament_library(zstd)
 add_filament_library(smol-v)
+add_filament_library(ktxreader)
 add_filament_library(bluegl)
 add_filament_library(bluevk)
 add_filament_library(png)
@@ -233,11 +234,14 @@ add_library(filament-utils-c STATIC
     filament-utils/cpp/IBLPrefilter.cpp
     filament-utils/cpp/Manipulator.cpp
     filament-utils/cpp/HDRLoader.cpp
+    filament-utils/cpp/KTX1Loader.cpp
+    filament-utils/cpp/TextureLoader.cpp
 )
 
 target_link_libraries(filament-utils-c
     PRIVATE filament-c
     PRIVATE iblprefilter
+    PRIVATE ktxreader
     PRIVATE camutils
     PRIVATE image
     PRIVATE imageio-lite

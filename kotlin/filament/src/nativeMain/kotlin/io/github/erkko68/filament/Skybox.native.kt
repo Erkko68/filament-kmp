@@ -42,3 +42,6 @@ actual class Skybox internal constructor(internal var nativeHandle: CPointer<Fil
     
     actual fun getIntensity(): Float = FilaSkybox_getIntensity(nativeHandle)
 }
+
+@InternalFilamentApi
+fun createSkybox(handle: CPointer<FilaSkybox>) = Skybox(handle)
