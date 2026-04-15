@@ -11,7 +11,7 @@ using namespace filament;
 using namespace image;
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_TextureLoader_nLoadTexture(
+Java_io_github_erkko68_filament_utils_jni_TextureLoader_nLoadTexture(
     JNIEnv *env, jclass, jlong nativeEngine, jobject javaBuffer, jint remaining,
     jint type) {
   Engine *engine = (Engine *)nativeEngine;

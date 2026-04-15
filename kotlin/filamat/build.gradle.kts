@@ -61,19 +61,25 @@ kotlin {
 //        browser()
 //        binaries.library()
 //    }
+    jvm()
 
     applyDefaultHierarchyTemplate()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":kotlin:filament"))
+                api(project(":kotlin:filament"))
             }
         }
         val nativeMain by getting
         val androidMain by getting {
             dependencies {
                 implementation("com.google.android.filament:filamat-android:$filamentAndroidVersion")
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                api(project(":java:filamat"))
             }
         }
     }

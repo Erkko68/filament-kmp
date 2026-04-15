@@ -107,7 +107,7 @@ public:
 };
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nCreateAssetLoader(JNIEnv* env, jclass, jlong nativeEngine, jobject provider, jlong nativeEntities) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nCreateAssetLoader(JNIEnv* env, jclass, jlong nativeEngine, jobject provider, jlong nativeEntities) {
     MaterialProvider* mp = nullptr;
     jmethodID getNativeObject = env->GetMethodID(env->GetObjectClass(provider), "getNativeObject", "()J");
     if (getNativeObject) mp = (MaterialProvider*) env->CallLongMethod(provider, getNativeObject);
@@ -118,7 +118,7 @@ Java_io_github_erkko68_filament_gltfio_AssetLoader_nCreateAssetLoader(JNIEnv* en
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nDestroyAssetLoader(JNIEnv*, jclass, jlong nativeLoader) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nDestroyAssetLoader(JNIEnv*, jclass, jlong nativeLoader) {
     AssetLoader* loader = (AssetLoader*) nativeLoader;
     NameComponentManager* names = loader->getNames();
     AssetLoader::destroy(&loader);
@@ -126,13 +126,13 @@ Java_io_github_erkko68_filament_gltfio_AssetLoader_nDestroyAssetLoader(JNIEnv*, 
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nCreateAsset(JNIEnv* env, jclass, jlong nativeLoader, jobject javaBuffer, jint remaining) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nCreateAsset(JNIEnv* env, jclass, jlong nativeLoader, jobject javaBuffer, jint remaining) {
     AutoBuffer buffer(env, javaBuffer, remaining);
     return (jlong) ((AssetLoader*)nativeLoader)->createAsset((const uint8_t*)buffer.getData(), buffer.getSize());
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nCreateInstancedAsset(JNIEnv* env, jclass, jlong nativeLoader, jobject javaBuffer, jint remaining, jlongArray instances) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nCreateInstancedAsset(JNIEnv* env, jclass, jlong nativeLoader, jobject javaBuffer, jint remaining, jlongArray instances) {
     AutoBuffer buffer(env, javaBuffer, remaining);
     jsize num = env->GetArrayLength(instances);
     FilamentInstance** ptrs = new FilamentInstance*[num];
@@ -147,16 +147,16 @@ Java_io_github_erkko68_filament_gltfio_AssetLoader_nCreateInstancedAsset(JNIEnv*
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nCreateInstance(JNIEnv*, jclass, jlong nativeLoader, jlong nativeAsset) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nCreateInstance(JNIEnv*, jclass, jlong nativeLoader, jlong nativeAsset) {
     return (jlong) ((AssetLoader*)nativeLoader)->createInstance((FilamentAsset*)nativeAsset);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nEnableDiagnostics(JNIEnv*, jclass, jlong nativeLoader, jboolean enable) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nEnableDiagnostics(JNIEnv*, jclass, jlong nativeLoader, jboolean enable) {
     ((AssetLoader*)nativeLoader)->enableDiagnostics(enable);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_AssetLoader_nDestroyAsset(JNIEnv*, jclass, jlong nativeLoader, jlong nativeAsset) {
+Java_io_github_erkko68_filament_gltfio_jni_AssetLoader_nDestroyAsset(JNIEnv*, jclass, jlong nativeLoader, jlong nativeAsset) {
     ((AssetLoader*)nativeLoader)->destroyAsset((FilamentAsset*)nativeAsset);
 }

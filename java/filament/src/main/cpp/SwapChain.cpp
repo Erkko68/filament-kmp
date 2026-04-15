@@ -25,7 +25,7 @@ using namespace filament;
 extern "C" {
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_SwapChain_nSetFrameCompletedCallback(JNIEnv* env, jclass, jlong nativeSwapChain, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_SwapChain_nSetFrameCompletedCallback(JNIEnv* env, jclass, jlong nativeSwapChain, jobject handler, jobject runnable) {
     SwapChain* swapChain = (SwapChain*) nativeSwapChain;
     auto* callback = JniCallback::make(env, handler, runnable);
     swapChain->setFrameCompletedCallback(callback->getHandler(), [callback](SwapChain*) {
@@ -34,7 +34,7 @@ Java_io_github_erkko68_filament_SwapChain_nSetFrameCompletedCallback(JNIEnv* env
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_SwapChain_nSetFrameScheduledCallback(JNIEnv* env, jclass, jlong nativeSwapChain, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_SwapChain_nSetFrameScheduledCallback(JNIEnv* env, jclass, jlong nativeSwapChain, jobject handler, jobject runnable) {
     SwapChain* swapChain = (SwapChain*) nativeSwapChain;
     auto* callback = JniCallback::make(env, handler, runnable);
     swapChain->setFrameScheduledCallback(callback->getHandler(), [callback](backend::PresentCallable) {
@@ -43,25 +43,25 @@ Java_io_github_erkko68_filament_SwapChain_nSetFrameScheduledCallback(JNIEnv* env
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_SwapChain_nIsFrameScheduledCallbackSet(JNIEnv *, jclass, jlong nativeSwapChain) {
+Java_io_github_erkko68_filament_jni_SwapChain_nIsFrameScheduledCallbackSet(JNIEnv *, jclass, jlong nativeSwapChain) {
     SwapChain* swapChain = (SwapChain*) nativeSwapChain;
     return (jboolean) swapChain->isFrameScheduledCallbackSet();
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_SwapChain_nIsSRGBSwapChainSupported(JNIEnv *, jclass, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_SwapChain_nIsSRGBSwapChainSupported(JNIEnv *, jclass, jlong nativeEngine) {
     Engine* engine = (Engine*) nativeEngine;
     return (jboolean) SwapChain::isSRGBSwapChainSupported(*engine);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_SwapChain_nIsMSAASwapChainSupported(JNIEnv *, jclass, jlong nativeEngine, jint samples) {
+Java_io_github_erkko68_filament_jni_SwapChain_nIsMSAASwapChainSupported(JNIEnv *, jclass, jlong nativeEngine, jint samples) {
     Engine* engine = (Engine*) nativeEngine;
     return (jboolean) SwapChain::isMSAASwapChainSupported(*engine, samples);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_SwapChain_nIsProtectedContentSupported(JNIEnv *, jclass, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_SwapChain_nIsProtectedContentSupported(JNIEnv *, jclass, jlong nativeEngine) {
     Engine* engine = (Engine*) nativeEngine;
     return (jboolean) SwapChain::isProtectedContentSupported(*engine);
 }

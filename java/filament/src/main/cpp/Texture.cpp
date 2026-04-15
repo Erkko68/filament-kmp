@@ -34,92 +34,92 @@ static size_t getTextureDataSize(const Texture* texture, size_t level, Texture::
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_Texture_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_jni_Texture_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new Texture::Builder();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_jni_Texture_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
     delete (Texture::Builder*) nativeBuilder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderWidth(JNIEnv*, jclass, jlong nativeBuilder, jint width) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderWidth(JNIEnv*, jclass, jlong nativeBuilder, jint width) {
     ((Texture::Builder*) nativeBuilder)->width(width);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderHeight(JNIEnv*, jclass, jlong nativeBuilder, jint height) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderHeight(JNIEnv*, jclass, jlong nativeBuilder, jint height) {
     ((Texture::Builder*) nativeBuilder)->height(height);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderDepth(JNIEnv*, jclass, jlong nativeBuilder, jint depth) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderDepth(JNIEnv*, jclass, jlong nativeBuilder, jint depth) {
     ((Texture::Builder*) nativeBuilder)->depth(depth);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderLevels(JNIEnv*, jclass, jlong nativeBuilder, jint levels) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderLevels(JNIEnv*, jclass, jlong nativeBuilder, jint levels) {
     ((Texture::Builder*) nativeBuilder)->levels(levels);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderSampler(JNIEnv*, jclass, jlong nativeBuilder, jint sampler) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderSampler(JNIEnv*, jclass, jlong nativeBuilder, jint sampler) {
     ((Texture::Builder*) nativeBuilder)->sampler((Texture::Sampler) sampler);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderFormat(JNIEnv*, jclass, jlong nativeBuilder, jint format) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderFormat(JNIEnv*, jclass, jlong nativeBuilder, jint format) {
     ((Texture::Builder*) nativeBuilder)->format((Texture::InternalFormat) format);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderUsage(JNIEnv*, jclass, jlong nativeBuilder, jint usage) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderUsage(JNIEnv*, jclass, jlong nativeBuilder, jint usage) {
     ((Texture::Builder*) nativeBuilder)->usage((Texture::Usage) usage);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderSwizzle(JNIEnv*, jclass, jlong nativeBuilder, jint r, jint g, jint b, jint a) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderSwizzle(JNIEnv*, jclass, jlong nativeBuilder, jint r, jint g, jint b, jint a) {
     ((Texture::Builder*) nativeBuilder)->swizzle((Texture::Swizzle) r, (Texture::Swizzle) g, (Texture::Swizzle) b, (Texture::Swizzle) a);
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
     return (jlong) ((Texture::Builder*) nativeBuilder)->build(*(Engine*) nativeEngine);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetWidth(JNIEnv*, jclass, jlong nativeTexture, jint level) {
+Java_io_github_erkko68_filament_jni_Texture_nGetWidth(JNIEnv*, jclass, jlong nativeTexture, jint level) {
     return (jint) ((Texture*) nativeTexture)->getWidth(level);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetHeight(JNIEnv*, jclass, jlong nativeTexture, jint level) {
+Java_io_github_erkko68_filament_jni_Texture_nGetHeight(JNIEnv*, jclass, jlong nativeTexture, jint level) {
     return (jint) ((Texture*) nativeTexture)->getHeight(level);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetDepth(JNIEnv*, jclass, jlong nativeTexture, jint level) {
+Java_io_github_erkko68_filament_jni_Texture_nGetDepth(JNIEnv*, jclass, jlong nativeTexture, jint level) {
     return (jint) ((Texture*) nativeTexture)->getDepth(level);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetLevels(JNIEnv*, jclass, jlong nativeTexture) {
+Java_io_github_erkko68_filament_jni_Texture_nGetLevels(JNIEnv*, jclass, jlong nativeTexture) {
     return (jint) ((Texture*) nativeTexture)->getLevels();
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetTarget(JNIEnv*, jclass, jlong nativeTexture) {
+Java_io_github_erkko68_filament_jni_Texture_nGetTarget(JNIEnv*, jclass, jlong nativeTexture) {
     return (jint) ((Texture*) nativeTexture)->getTarget();
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetFormat(JNIEnv*, jclass, jlong nativeTexture) {
+Java_io_github_erkko68_filament_jni_Texture_nGetFormat(JNIEnv*, jclass, jlong nativeTexture) {
     return (jint) ((Texture*) nativeTexture)->getFormat();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nSetImage(JNIEnv* env, jclass, jlong nativeTexture, jlong nativeEngine, jint level, jint x, jint y, jint z, jint w, jint h, jint d, jobject storage, jint remaining, jint left, jint top, jint type, jint alignment, jint stride, jint format, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_Texture_nSetImage(JNIEnv* env, jclass, jlong nativeTexture, jlong nativeEngine, jint level, jint x, jint y, jint z, jint w, jint h, jint d, jobject storage, jint remaining, jint left, jint top, jint type, jint alignment, jint stride, jint format, jobject handler, jobject runnable) {
     Texture* texture = (Texture*) nativeTexture;
     Engine* engine = (Engine*) nativeEngine;
     size_t sizeInBytes = getTextureDataSize(texture, level, (Texture::Format) format, (Texture::Type) type, stride, h, alignment) * d;
@@ -130,12 +130,12 @@ Java_io_github_erkko68_filament_Texture_nSetImage(JNIEnv* env, jclass, jlong nat
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nGenerateMipmaps(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_Texture_nGenerateMipmaps(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine) {
     ((Texture*) nativeTexture)->generateMipmaps(*(Engine*) nativeEngine);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nGeneratePrefilterMipmap(JNIEnv* env, jclass, jlong nativeTexture, jlong nativeEngine, jobject storage, jint remaining, jint left, jint top, jint type, jint alignment, jint stride, jint format, jobject handler, jobject runnable, jintArray offsets_, jint sampleCount, jboolean mirror) {
+Java_io_github_erkko68_filament_jni_Texture_nGeneratePrefilterMipmap(JNIEnv* env, jclass, jlong nativeTexture, jlong nativeEngine, jobject storage, jint remaining, jint left, jint top, jint type, jint alignment, jint stride, jint format, jobject handler, jobject runnable, jintArray offsets_, jint sampleCount, jboolean mirror) {
     Texture* texture = (Texture*) nativeTexture;
     Engine* engine = (Engine*) nativeEngine;
     jint* offsets = env->GetIntArrayElements(offsets_, NULL);
@@ -155,62 +155,62 @@ Java_io_github_erkko68_filament_Texture_nGeneratePrefilterMipmap(JNIEnv* env, jc
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderSamples(JNIEnv*, jclass, jlong nativeBuilder, jint samples) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderSamples(JNIEnv*, jclass, jlong nativeBuilder, jint samples) {
     ((Texture::Builder*) nativeBuilder)->samples((uint8_t) samples);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderImportTexture(JNIEnv*, jclass, jlong nativeBuilder, jlong id) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderImportTexture(JNIEnv*, jclass, jlong nativeBuilder, jlong id) {
     ((Texture::Builder*) nativeBuilder)->import((intptr_t) id);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nBuilderExternal(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_jni_Texture_nBuilderExternal(JNIEnv*, jclass, jlong nativeBuilder) {
     ((Texture::Builder*) nativeBuilder)->external();
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_Texture_nValidatePixelFormatAndType(JNIEnv*, jclass, jint internalFormat, jint pixelDataFormat, jint pixelDataType) {
+Java_io_github_erkko68_filament_jni_Texture_nValidatePixelFormatAndType(JNIEnv*, jclass, jint internalFormat, jint pixelDataFormat, jint pixelDataType) {
     return (jboolean) Texture::validatePixelFormatAndType((Texture::InternalFormat) internalFormat, (Texture::Format) pixelDataFormat, (Texture::Type) pixelDataType);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetMaxTextureSize(JNIEnv*, jclass, jlong nativeEngine, jint sampler) {
+Java_io_github_erkko68_filament_jni_Texture_nGetMaxTextureSize(JNIEnv*, jclass, jlong nativeEngine, jint sampler) {
     return (jint) Texture::getMaxTextureSize(*(Engine*) nativeEngine, (Texture::Sampler) sampler);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Texture_nGetMaxArrayTextureLayers(JNIEnv*, jclass, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_Texture_nGetMaxArrayTextureLayers(JNIEnv*, jclass, jlong nativeEngine) {
     return (jint) Texture::getMaxArrayTextureLayers(*(Engine*) nativeEngine);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_Texture_nIsTextureFormatSupported(JNIEnv*, jclass, jlong nativeEngine, jint format) {
+Java_io_github_erkko68_filament_jni_Texture_nIsTextureFormatSupported(JNIEnv*, jclass, jlong nativeEngine, jint format) {
     return (jboolean) Texture::isTextureFormatSupported(*(Engine*) nativeEngine, (Texture::InternalFormat) format);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_Texture_nIsTextureFormatMipmappable(JNIEnv*, jclass, jlong nativeEngine, jint format) {
+Java_io_github_erkko68_filament_jni_Texture_nIsTextureFormatMipmappable(JNIEnv*, jclass, jlong nativeEngine, jint format) {
     return (jboolean) Texture::isTextureFormatMipmappable(*(Engine*) nativeEngine, (Texture::InternalFormat) format);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_Texture_nIsTextureSwizzleSupported(JNIEnv*, jclass, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_Texture_nIsTextureSwizzleSupported(JNIEnv*, jclass, jlong nativeEngine) {
     return (jboolean) Texture::isTextureSwizzleSupported(*(Engine*) nativeEngine);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nSetExternalStream(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeStream) {
+Java_io_github_erkko68_filament_jni_Texture_nSetExternalStream(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeStream) {
     ((Texture*) nativeTexture)->setExternalStream(*(Engine*) nativeEngine, (Stream*) nativeStream);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nSetExternalImage(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeImage) {
+Java_io_github_erkko68_filament_jni_Texture_nSetExternalImage(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeImage) {
     ((Texture*) nativeTexture)->setExternalImage(*(Engine*) nativeEngine, (void*) nativeImage);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Texture_nSetExternalImageByAHB(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jobject nativeImage) {
+Java_io_github_erkko68_filament_jni_Texture_nSetExternalImageByAHB(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jobject nativeImage) {
     // Stub for Desktop/JVM parity. On Android, this would use AHardwareBuffer.
     // For now, we do nothing to avoid UnsatisfiedLinkError.
 }

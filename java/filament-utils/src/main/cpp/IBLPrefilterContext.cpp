@@ -22,26 +22,26 @@
 #include <filament/Texture.h>
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nCreate(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nCreate(JNIEnv* env, jclass,
         jlong nativeEngine) {
     filament::Engine* engine = (filament::Engine*) nativeEngine;
     return (jlong) new IBLPrefilterContext(*engine);
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nDestroy(JNIEnv*, jclass, jlong native) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nDestroy(JNIEnv*, jclass, jlong native) {
     auto* context = (IBLPrefilterContext*) native;
     delete context;
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nCreateEquirectHelper(JNIEnv* env, jclass, jlong nativeContext) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nCreateEquirectHelper(JNIEnv* env, jclass, jlong nativeContext) {
     auto* context = (IBLPrefilterContext*) nativeContext;
     return (jlong) new IBLPrefilterContext::EquirectangularToCubemap(*context);
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nEquirectHelperRun(JNIEnv* env, jclass, jlong nativeHelper, jlong nativeEquirect) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nEquirectHelperRun(JNIEnv* env, jclass, jlong nativeHelper, jlong nativeEquirect) {
     auto helper = (IBLPrefilterContext::EquirectangularToCubemap*) nativeHelper;
     auto* texture = (filament::Texture*) nativeEquirect;
     auto* result = (*helper)(texture);
@@ -49,18 +49,18 @@ Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nEquirectHelperRun(JNI
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nDestroyEquirectHelper(JNIEnv* env, jclass, jlong nativeObject) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nDestroyEquirectHelper(JNIEnv* env, jclass, jlong nativeObject) {
     delete (IBLPrefilterContext::EquirectangularToCubemap*) nativeObject;
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nCreateSpecularFilter(JNIEnv* env, jclass, jlong nativeContext) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nCreateSpecularFilter(JNIEnv* env, jclass, jlong nativeContext) {
     auto* context = (IBLPrefilterContext*) nativeContext;
     return (jlong) new IBLPrefilterContext::SpecularFilter(*context);
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nSpecularFilterRun(JNIEnv* env, jclass, jlong nativeHelper, jlong nativeSkybox) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nSpecularFilterRun(JNIEnv* env, jclass, jlong nativeHelper, jlong nativeSkybox) {
     auto helper = (IBLPrefilterContext::SpecularFilter*) nativeHelper;
     auto* texture = (filament::Texture*) nativeSkybox;
     auto* result = (*helper)(texture);
@@ -68,6 +68,6 @@ Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nSpecularFilterRun(JNI
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_IBLPrefilterContext_nDestroySpecularFilter(JNIEnv* env, jclass, jlong nativeObject) {
+Java_io_github_erkko68_filament_utils_jni_IBLPrefilterContext_nDestroySpecularFilter(JNIEnv* env, jclass, jlong nativeObject) {
     delete (IBLPrefilterContext::SpecularFilter*) nativeObject;
 }

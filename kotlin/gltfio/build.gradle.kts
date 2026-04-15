@@ -52,6 +52,7 @@ kotlin {
             xcf.add(this)
         }
     }
+    jvm()
 
     applyDefaultHierarchyTemplate()
 
@@ -65,6 +66,11 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("com.google.android.filament:gltfio-android:$filamentAndroidVersion")
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                implementation(project(":java:gltfio"))
             }
         }
     }

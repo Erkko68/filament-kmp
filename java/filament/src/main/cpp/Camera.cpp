@@ -25,25 +25,25 @@ using namespace filament;
 extern "C" {
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetProjection(JNIEnv*, jclass, jlong nativeCamera, jint projection, jdouble left, jdouble right, jdouble bottom, jdouble top, jdouble near, jdouble far) {
+Java_io_github_erkko68_filament_jni_Camera_nSetProjection(JNIEnv*, jclass, jlong nativeCamera, jint projection, jdouble left, jdouble right, jdouble bottom, jdouble top, jdouble near, jdouble far) {
     Camera* camera = (Camera*) nativeCamera;
     camera->setProjection((Camera::Projection) projection, left, right, bottom, top, near, far);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetProjectionFov(JNIEnv*, jclass, jlong nativeCamera, jdouble fovInDegrees, jdouble aspect, jdouble near, jdouble far, jint direction) {
+Java_io_github_erkko68_filament_jni_Camera_nSetProjectionFov(JNIEnv*, jclass, jlong nativeCamera, jdouble fovInDegrees, jdouble aspect, jdouble near, jdouble far, jint direction) {
     Camera* camera = (Camera*) nativeCamera;
     camera->setProjection(fovInDegrees, aspect, near, far, (Camera::Fov) direction);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetLensProjection(JNIEnv*, jclass, jlong nativeCamera, jdouble focalLength, jdouble aspect, jdouble near, jdouble far) {
+Java_io_github_erkko68_filament_jni_Camera_nSetLensProjection(JNIEnv*, jclass, jlong nativeCamera, jdouble focalLength, jdouble aspect, jdouble near, jdouble far) {
     Camera* camera = (Camera*) nativeCamera;
     camera->setLensProjection(focalLength, aspect, near, far);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetCustomProjection(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray inProjection_, jdoubleArray inProjectionForCulling_, jdouble near, jdouble far) {
+Java_io_github_erkko68_filament_jni_Camera_nSetCustomProjection(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray inProjection_, jdoubleArray inProjectionForCulling_, jdouble near, jdouble far) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* inProjection = env->GetDoubleArrayElements(inProjection_, NULL);
     jdouble* inProjectionForCulling = env->GetDoubleArrayElements(inProjectionForCulling_, NULL);
@@ -53,7 +53,7 @@ Java_io_github_erkko68_filament_Camera_nSetCustomProjection(JNIEnv* env, jclass,
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetCustomEyeProjection(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray inProjection_, jint count, jdoubleArray inProjectionForCulling_, jdouble near, jdouble far) {
+Java_io_github_erkko68_filament_jni_Camera_nSetCustomEyeProjection(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray inProjection_, jint count, jdoubleArray inProjectionForCulling_, jdouble near, jdouble far) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* inProjection = env->GetDoubleArrayElements(inProjection_, NULL);
     jdouble* inProjectionForCulling = env->GetDoubleArrayElements(inProjectionForCulling_, NULL);
@@ -63,7 +63,7 @@ Java_io_github_erkko68_filament_Camera_nSetCustomEyeProjection(JNIEnv* env, jcla
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetEyeModelMatrix(JNIEnv* env, jclass, jlong nativeCamera, jint eye, jfloatArray in_) {
+Java_io_github_erkko68_filament_jni_Camera_nSetEyeModelMatrix(JNIEnv* env, jclass, jlong nativeCamera, jint eye, jfloatArray in_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* in = env->GetFloatArrayElements(in_, NULL);
     camera->setEyeModelMatrix((size_t) eye, (filament::math::mat4)*(const filament::math::mat4f*)in);
@@ -71,19 +71,19 @@ Java_io_github_erkko68_filament_Camera_nSetEyeModelMatrix(JNIEnv* env, jclass, j
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetScaling(JNIEnv*, jclass, jlong nativeCamera, jdouble x, jdouble y) {
+Java_io_github_erkko68_filament_jni_Camera_nSetScaling(JNIEnv*, jclass, jlong nativeCamera, jdouble x, jdouble y) {
     Camera* camera = (Camera*) nativeCamera;
     camera->setScaling({x, y});
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetShift(JNIEnv*, jclass, jlong nativeCamera, jdouble x, jdouble y) {
+Java_io_github_erkko68_filament_jni_Camera_nSetShift(JNIEnv*, jclass, jlong nativeCamera, jdouble x, jdouble y) {
     Camera* camera = (Camera*) nativeCamera;
     camera->setShift({x, y});
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetShift(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetShift(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* out = env->GetDoubleArrayElements(out_, NULL);
     filament::math::double2 s = camera->getShift();
@@ -93,13 +93,13 @@ Java_io_github_erkko68_filament_Camera_nGetShift(JNIEnv* env, jclass, jlong nati
 }
 
 JNIEXPORT jdouble JNICALL
-Java_io_github_erkko68_filament_Camera_nGetFieldOfViewInDegrees(JNIEnv*, jclass, jlong nativeCamera, jint direction) {
+Java_io_github_erkko68_filament_jni_Camera_nGetFieldOfViewInDegrees(JNIEnv*, jclass, jlong nativeCamera, jint direction) {
     Camera* camera = (Camera*) nativeCamera;
     return camera->getFieldOfViewInDegrees((Camera::Fov) direction);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetModelMatrix(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray in_) {
+Java_io_github_erkko68_filament_jni_Camera_nSetModelMatrix(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray in_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* in = env->GetFloatArrayElements(in_, NULL);
     camera->setModelMatrix((filament::math::mat4)*(const filament::math::mat4f*)in);
@@ -107,7 +107,7 @@ Java_io_github_erkko68_filament_Camera_nSetModelMatrix(JNIEnv* env, jclass, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetModelMatrixFp64(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray in_) {
+Java_io_github_erkko68_filament_jni_Camera_nSetModelMatrixFp64(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray in_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* in = env->GetDoubleArrayElements(in_, NULL);
     camera->setModelMatrix(*(const filament::math::mat4*)in);
@@ -115,23 +115,23 @@ Java_io_github_erkko68_filament_Camera_nSetModelMatrixFp64(JNIEnv* env, jclass, 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nLookAt(JNIEnv*, jclass, jlong nativeCamera, jdouble eyeX, jdouble eyeY, jdouble eyeZ, jdouble centerX, jdouble centerY, double centerZ, jdouble upX, jdouble upY, jdouble upZ) {
+Java_io_github_erkko68_filament_jni_Camera_nLookAt(JNIEnv*, jclass, jlong nativeCamera, jdouble eyeX, jdouble eyeY, jdouble eyeZ, jdouble centerX, jdouble centerY, double centerZ, jdouble upX, jdouble upY, jdouble upZ) {
     Camera* camera = (Camera*) nativeCamera;
     camera->lookAt({eyeX, eyeY, eyeZ}, {centerX, centerY, centerZ}, {upX, upY, upZ});
 }
 
 JNIEXPORT jdouble JNICALL
-Java_io_github_erkko68_filament_Camera_nGetNear(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetNear(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getNear();
 }
 
 JNIEXPORT jdouble JNICALL
-Java_io_github_erkko68_filament_Camera_nGetCullingFar(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetCullingFar(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getCullingFar();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetProjectionMatrix(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetProjectionMatrix(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* out = env->GetDoubleArrayElements(out_, NULL);
     const filament::math::mat4& m = camera->getProjectionMatrix();
@@ -140,7 +140,7 @@ Java_io_github_erkko68_filament_Camera_nGetProjectionMatrix(JNIEnv* env, jclass,
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetCullingProjectionMatrix(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetCullingProjectionMatrix(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* out = env->GetDoubleArrayElements(out_, NULL);
     const filament::math::mat4& m = camera->getCullingProjectionMatrix();
@@ -149,7 +149,7 @@ Java_io_github_erkko68_filament_Camera_nGetCullingProjectionMatrix(JNIEnv* env, 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetScaling(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetScaling(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* out = env->GetDoubleArrayElements(out_, NULL);
     const filament::math::double4& s = camera->getScaling();
@@ -158,7 +158,7 @@ Java_io_github_erkko68_filament_Camera_nGetScaling(JNIEnv* env, jclass, jlong na
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetModelMatrix(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetModelMatrix(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* out = env->GetFloatArrayElements(out_, NULL);
     const filament::math::mat4f& m = (filament::math::mat4f)camera->getModelMatrix();
@@ -167,7 +167,7 @@ Java_io_github_erkko68_filament_Camera_nGetModelMatrix(JNIEnv* env, jclass, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetModelMatrixFp64(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetModelMatrixFp64(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* out = env->GetDoubleArrayElements(out_, NULL);
     const filament::math::mat4& m = camera->getModelMatrix();
@@ -176,7 +176,7 @@ Java_io_github_erkko68_filament_Camera_nGetModelMatrixFp64(JNIEnv* env, jclass, 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetViewMatrix(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetViewMatrix(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* out = env->GetFloatArrayElements(out_, NULL);
     const filament::math::mat4f& m = (filament::math::mat4f)camera->getViewMatrix();
@@ -185,7 +185,7 @@ Java_io_github_erkko68_filament_Camera_nGetViewMatrix(JNIEnv* env, jclass, jlong
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetViewMatrixFp64(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetViewMatrixFp64(JNIEnv* env, jclass, jlong nativeCamera, jdoubleArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jdouble* out = env->GetDoubleArrayElements(out_, NULL);
     const filament::math::mat4& m = camera->getViewMatrix();
@@ -194,7 +194,7 @@ Java_io_github_erkko68_filament_Camera_nGetViewMatrixFp64(JNIEnv* env, jclass, j
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetPosition(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetPosition(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* out = env->GetFloatArrayElements(out_, NULL);
     *(filament::math::float3*)out = camera->getPosition();
@@ -202,7 +202,7 @@ Java_io_github_erkko68_filament_Camera_nGetPosition(JNIEnv* env, jclass, jlong n
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetLeftVector(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetLeftVector(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* out = env->GetFloatArrayElements(out_, NULL);
     *(filament::math::float3*)out = camera->getLeftVector();
@@ -210,7 +210,7 @@ Java_io_github_erkko68_filament_Camera_nGetLeftVector(JNIEnv* env, jclass, jlong
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetUpVector(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetUpVector(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* out = env->GetFloatArrayElements(out_, NULL);
     *(filament::math::float3*)out = camera->getUpVector();
@@ -218,7 +218,7 @@ Java_io_github_erkko68_filament_Camera_nGetUpVector(JNIEnv* env, jclass, jlong n
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nGetForwardVector(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
+Java_io_github_erkko68_filament_jni_Camera_nGetForwardVector(JNIEnv* env, jclass, jlong nativeCamera, jfloatArray out_) {
     Camera* camera = (Camera*) nativeCamera;
     jfloat* out = env->GetFloatArrayElements(out_, NULL);
     *(filament::math::float3*)out = camera->getForwardVector();
@@ -226,37 +226,37 @@ Java_io_github_erkko68_filament_Camera_nGetForwardVector(JNIEnv* env, jclass, jl
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetExposure(JNIEnv*, jclass, jlong nativeCamera, float aperture, float shutterSpeed, float sensitivity) {
+Java_io_github_erkko68_filament_jni_Camera_nSetExposure(JNIEnv*, jclass, jlong nativeCamera, float aperture, float shutterSpeed, float sensitivity) {
     ((Camera*) nativeCamera)->setExposure(aperture, shutterSpeed, sensitivity);
 }
 
 JNIEXPORT jfloat JNICALL
-Java_io_github_erkko68_filament_Camera_nGetAperture(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetAperture(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getAperture();
 }
 
 JNIEXPORT jfloat JNICALL
-Java_io_github_erkko68_filament_Camera_nGetShutterSpeed(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetShutterSpeed(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getShutterSpeed();
 }
 
 JNIEXPORT jfloat JNICALL
-Java_io_github_erkko68_filament_Camera_nGetSensitivity(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetSensitivity(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getSensitivity();
 }
 
 JNIEXPORT jdouble JNICALL
-Java_io_github_erkko68_filament_Camera_nGetFocalLength(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetFocalLength(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getFocalLength();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Camera_nSetFocusDistance(JNIEnv*, jclass, jlong nativeCamera, jfloat distance) {
+Java_io_github_erkko68_filament_jni_Camera_nSetFocusDistance(JNIEnv*, jclass, jlong nativeCamera, jfloat distance) {
     ((Camera*) nativeCamera)->setFocusDistance(distance);
 }
 
 JNIEXPORT jfloat JNICALL
-Java_io_github_erkko68_filament_Camera_nGetFocusDistance(JNIEnv*, jclass, jlong nativeCamera) {
+Java_io_github_erkko68_filament_jni_Camera_nGetFocusDistance(JNIEnv*, jclass, jlong nativeCamera) {
     return ((Camera*) nativeCamera)->getFocusDistance();
 }
 

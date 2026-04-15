@@ -3,7 +3,7 @@
 #include <jni.h>
 #include <gltfio/MaterialProvider.h>
 
-#define JAVA_MATERIAL_KEY "io/github/erkko68/filament/gltfio/MaterialProvider$MaterialKey"
+#define JAVA_MATERIAL_KEY "io/github/erkko68/filament/gltfio/jni/MaterialProvider$MaterialKey"
 
 class MaterialKeyHelper {
 public:

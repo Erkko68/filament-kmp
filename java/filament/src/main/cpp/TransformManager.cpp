@@ -27,21 +27,21 @@ static_assert(sizeof(jint) == sizeof(Entity), "jint and Entity are not compatibl
 extern "C" {
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_TransformManager_nHasComponent(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nHasComponent(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     Entity& entity = *reinterpret_cast<Entity*>(&entity_);
     return (jboolean) tm->hasComponent(entity);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetInstance(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetInstance(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     Entity& entity = *reinterpret_cast<Entity*>(&entity_);
     return tm->getInstance(entity);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_TransformManager_nCreate(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nCreate(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     Entity& entity = *reinterpret_cast<Entity*>(&entity_);
     tm->create(entity);
@@ -49,7 +49,7 @@ Java_io_github_erkko68_filament_TransformManager_nCreate(JNIEnv*, jclass, jlong 
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_TransformManager_nCreateArray(JNIEnv* env, jclass, jlong nativeTransformManager, jint entity_, jint parent, jfloatArray localTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nCreateArray(JNIEnv* env, jclass, jlong nativeTransformManager, jint entity_, jint parent, jfloatArray localTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     Entity& entity = *reinterpret_cast<Entity*>(&entity_);
     if (localTransform_) {
@@ -63,7 +63,7 @@ Java_io_github_erkko68_filament_TransformManager_nCreateArray(JNIEnv* env, jclas
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_TransformManager_nCreateArrayFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint entity_, jint parent, jdoubleArray localTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nCreateArrayFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint entity_, jint parent, jdoubleArray localTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     Entity& entity = *reinterpret_cast<Entity*>(&entity_);
     if (localTransform_) {
@@ -77,32 +77,32 @@ Java_io_github_erkko68_filament_TransformManager_nCreateArrayFp64(JNIEnv* env, j
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nDestroy(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nDestroy(JNIEnv*, jclass, jlong nativeTransformManager, jint entity_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     Entity& entity = *reinterpret_cast<Entity*>(&entity_);
     tm->destroy(entity);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nSetParent(JNIEnv*, jclass, jlong nativeTransformManager, jint i, jint newParent) {
+Java_io_github_erkko68_filament_jni_TransformManager_nSetParent(JNIEnv*, jclass, jlong nativeTransformManager, jint i, jint newParent) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     tm->setParent((TransformManager::Instance) i, (TransformManager::Instance) newParent);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetParent(JNIEnv*, jclass, jlong nativeTransformManager, jint i) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetParent(JNIEnv*, jclass, jlong nativeTransformManager, jint i) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     return tm->getParent((TransformManager::Instance) i).getId();
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetChildCount(JNIEnv*, jclass, jlong nativeTransformManager, jint i) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetChildCount(JNIEnv*, jclass, jlong nativeTransformManager, jint i) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     return tm->getChildCount((TransformManager::Instance) i);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetChildren(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jintArray outEntities_, jint count) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetChildren(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jintArray outEntities_, jint count) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jint* entities = env->GetIntArrayElements(outEntities_, nullptr);
     tm->getChildren((TransformManager::Instance) i, reinterpret_cast<Entity*>(entities), (size_t) count);
@@ -110,7 +110,7 @@ Java_io_github_erkko68_filament_TransformManager_nGetChildren(JNIEnv* env, jclas
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nSetTransform(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jfloatArray localTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nSetTransform(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jfloatArray localTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jfloat* localTransform = env->GetFloatArrayElements(localTransform_, NULL);
     tm->setTransform((TransformManager::Instance) i, *reinterpret_cast<const filament::math::mat4f*>(localTransform));
@@ -118,7 +118,7 @@ Java_io_github_erkko68_filament_TransformManager_nSetTransform(JNIEnv* env, jcla
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nSetTransformFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jdoubleArray localTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nSetTransformFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jdoubleArray localTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jdouble* localTransform = env->GetDoubleArrayElements(localTransform_, NULL);
     tm->setTransform((TransformManager::Instance) i, *reinterpret_cast<const filament::math::mat4*>(localTransform));
@@ -126,7 +126,7 @@ Java_io_github_erkko68_filament_TransformManager_nSetTransformFp64(JNIEnv* env, 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetTransform(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jfloatArray outLocalTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetTransform(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jfloatArray outLocalTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jfloat* outLocalTransform = env->GetFloatArrayElements(outLocalTransform_, NULL);
     *reinterpret_cast<filament::math::mat4f*>(outLocalTransform) = tm->getTransform((TransformManager::Instance) i);
@@ -134,7 +134,7 @@ Java_io_github_erkko68_filament_TransformManager_nGetTransform(JNIEnv* env, jcla
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetTransformFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jdoubleArray outLocalTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetTransformFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jdoubleArray outLocalTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jdouble* outLocalTransform = env->GetDoubleArrayElements(outLocalTransform_, NULL);
     *reinterpret_cast<filament::math::mat4*>(outLocalTransform) = tm->getTransformAccurate((TransformManager::Instance) i);
@@ -142,7 +142,7 @@ Java_io_github_erkko68_filament_TransformManager_nGetTransformFp64(JNIEnv* env, 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetWorldTransform(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jfloatArray outWorldTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetWorldTransform(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jfloatArray outWorldTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jfloat* outWorldTransform = env->GetFloatArrayElements(outWorldTransform_, NULL);
     *reinterpret_cast<filament::math::mat4f*>(outWorldTransform) = tm->getWorldTransform((TransformManager::Instance) i);
@@ -150,7 +150,7 @@ Java_io_github_erkko68_filament_TransformManager_nGetWorldTransform(JNIEnv* env,
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nGetWorldTransformFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jdoubleArray outWorldTransform_) {
+Java_io_github_erkko68_filament_jni_TransformManager_nGetWorldTransformFp64(JNIEnv* env, jclass, jlong nativeTransformManager, jint i, jdoubleArray outWorldTransform_) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     jdouble* outWorldTransform = env->GetDoubleArrayElements(outWorldTransform_, NULL);
     *reinterpret_cast<filament::math::mat4*>(outWorldTransform) = tm->getWorldTransformAccurate((TransformManager::Instance) i);
@@ -158,25 +158,25 @@ Java_io_github_erkko68_filament_TransformManager_nGetWorldTransformFp64(JNIEnv* 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nOpenLocalTransformTransaction(JNIEnv*, jclass, jlong nativeTransformManager) {
+Java_io_github_erkko68_filament_jni_TransformManager_nOpenLocalTransformTransaction(JNIEnv*, jclass, jlong nativeTransformManager) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     tm->openLocalTransformTransaction();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nCommitLocalTransformTransaction(JNIEnv*, jclass, jlong nativeTransformManager) {
+Java_io_github_erkko68_filament_jni_TransformManager_nCommitLocalTransformTransaction(JNIEnv*, jclass, jlong nativeTransformManager) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     tm->commitLocalTransformTransaction();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_TransformManager_nSetAccurateTranslationsEnabled(JNIEnv*, jclass, jlong nativeTransformManager, jboolean enable) {
+Java_io_github_erkko68_filament_jni_TransformManager_nSetAccurateTranslationsEnabled(JNIEnv*, jclass, jlong nativeTransformManager, jboolean enable) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     tm->setAccurateTranslationsEnabled((bool)enable);
 }
 
 JNIEXPORT jboolean JNICALL
-Java_io_github_erkko68_filament_TransformManager_nIsAccurateTranslationsEnabled(JNIEnv*, jclass, jlong nativeTransformManager) {
+Java_io_github_erkko68_filament_jni_TransformManager_nIsAccurateTranslationsEnabled(JNIEnv*, jclass, jlong nativeTransformManager) {
     TransformManager* tm = (TransformManager*) nativeTransformManager;
     return (jboolean)tm->isAccurateTranslationsEnabled();
 }

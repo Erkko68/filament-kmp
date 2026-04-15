@@ -45,30 +45,30 @@ private:
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_Stream_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_jni_Stream_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new StreamBuilder{};
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Stream_nDestroyBuilder(JNIEnv* env, jclass, jlong nativeStreamBuilder) {
+Java_io_github_erkko68_filament_jni_Stream_nDestroyBuilder(JNIEnv* env, jclass, jlong nativeStreamBuilder) {
     StreamBuilder* builder = (StreamBuilder*) nativeStreamBuilder;
     delete builder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Stream_nBuilderWidth(JNIEnv*, jclass, jlong nativeStreamBuilder, jint width) {
+Java_io_github_erkko68_filament_jni_Stream_nBuilderWidth(JNIEnv*, jclass, jlong nativeStreamBuilder, jint width) {
     StreamBuilder* builder = (StreamBuilder*) nativeStreamBuilder;
     builder->builder()->width((uint32_t) width);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Stream_nBuilderHeight(JNIEnv*, jclass, jlong nativeStreamBuilder, jint height) {
+Java_io_github_erkko68_filament_jni_Stream_nBuilderHeight(JNIEnv*, jclass, jlong nativeStreamBuilder, jint height) {
     StreamBuilder* builder = (StreamBuilder*) nativeStreamBuilder;
     builder->builder()->height((uint32_t) height);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Stream_nBuilderStreamSource(JNIEnv*, jclass, jlong nativeStreamBuilder, jobject streamSource) {
+Java_io_github_erkko68_filament_jni_Stream_nBuilderStreamSource(JNIEnv*, jclass, jlong nativeStreamBuilder, jobject streamSource) {
     StreamBuilder* builder = (StreamBuilder*) nativeStreamBuilder;
     // On non-Android JVM, we don't have SurfaceTexture. We just pass the handle if possible, 
     // or ignore it if it's not a supported type. 
@@ -77,32 +77,32 @@ Java_io_github_erkko68_filament_Stream_nBuilderStreamSource(JNIEnv*, jclass, jlo
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_Stream_nBuilderBuild(JNIEnv*, jclass, jlong nativeStreamBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_Stream_nBuilderBuild(JNIEnv*, jclass, jlong nativeStreamBuilder, jlong nativeEngine) {
     StreamBuilder* builder = (StreamBuilder*) nativeStreamBuilder;
     Engine* engine = (Engine*) nativeEngine;
     return (jlong) builder->builder()->build(*engine);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_Stream_nGetStreamType(JNIEnv*, jclass, jlong nativeStream) {
+Java_io_github_erkko68_filament_jni_Stream_nGetStreamType(JNIEnv*, jclass, jlong nativeStream) {
     Stream* stream = (Stream*) nativeStream;
     return (jint) stream->getStreamType();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Stream_nSetDimensions(JNIEnv*, jclass, jlong nativeStream, jint width, jint height) {
+Java_io_github_erkko68_filament_jni_Stream_nSetDimensions(JNIEnv*, jclass, jlong nativeStream, jint width, jint height) {
     Stream* stream = (Stream*) nativeStream;
     stream->setDimensions((uint32_t) width, (uint32_t) height);
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_Stream_nGetTimestamp(JNIEnv*, jclass, jlong nativeStream) {
+Java_io_github_erkko68_filament_jni_Stream_nGetTimestamp(JNIEnv*, jclass, jlong nativeStream) {
     Stream* stream = (Stream*) nativeStream;
     return stream->getTimestamp();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_Stream_nSetAcquiredImage(JNIEnv* env, jclass, jlong nativeStream, jlong nativeEngine, jobject hwbuffer, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_Stream_nSetAcquiredImage(JNIEnv* env, jclass, jlong nativeStream, jlong nativeEngine, jobject hwbuffer, jobject handler, jobject runnable) {
     Engine* engine = (Engine*) nativeEngine;
     Stream* stream = (Stream*) nativeStream;
 

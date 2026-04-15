@@ -34,24 +34,24 @@ using namespace backend;
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_BufferObject_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_jni_BufferObject_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new BufferObject::Builder();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_BufferObject_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_jni_BufferObject_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
     BufferObject::Builder* builder = (BufferObject::Builder*) nativeBuilder;
     delete builder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_BufferObject_nBuilderSize(JNIEnv*, jclass, jlong nativeBuilder, jint byteCount) {
+Java_io_github_erkko68_filament_jni_BufferObject_nBuilderSize(JNIEnv*, jclass, jlong nativeBuilder, jint byteCount) {
     BufferObject::Builder* builder = (BufferObject::Builder*) nativeBuilder;
     builder->size((uint32_t) byteCount);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_BufferObject_nBuilderBindingType(JNIEnv*, jclass, jlong nativeBuilder, jint bindingType) {
+Java_io_github_erkko68_filament_jni_BufferObject_nBuilderBindingType(JNIEnv*, jclass, jlong nativeBuilder, jint bindingType) {
     using BindingType = BufferObject::BindingType;
     BufferObject::Builder* builder = (BufferObject::Builder*) nativeBuilder;
     BindingType types[] = {BindingType::VERTEX};
@@ -59,20 +59,20 @@ Java_io_github_erkko68_filament_BufferObject_nBuilderBindingType(JNIEnv*, jclass
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_BufferObject_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_BufferObject_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
     BufferObject::Builder* builder = (BufferObject::Builder*) nativeBuilder;
     Engine* engine = (Engine*) nativeEngine;
     return (jlong) builder->build(*engine);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_BufferObject_nGetByteCount(JNIEnv*, jclass, jlong nativeBufferObject) {
+Java_io_github_erkko68_filament_jni_BufferObject_nGetByteCount(JNIEnv*, jclass, jlong nativeBufferObject) {
     BufferObject* bufferObject = (BufferObject*) nativeBufferObject;
     return (jint) bufferObject->getByteCount();
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_BufferObject_nSetBuffer(JNIEnv* env, jclass, jlong nativeBufferObject, jlong nativeEngine, jobject buffer, jint remaining, jint destOffsetInBytes, jint count, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_BufferObject_nSetBuffer(JNIEnv* env, jclass, jlong nativeBufferObject, jlong nativeEngine, jobject buffer, jint remaining, jint destOffsetInBytes, jint count, jobject handler, jobject runnable) {
     BufferObject* bufferObject = (BufferObject*) nativeBufferObject;
     Engine* engine = (Engine*) nativeEngine;
 

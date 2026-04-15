@@ -10,19 +10,17 @@
 using namespace filament;
 using namespace image;
 
+#include "common/NioUtils.h"
+
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_HDRLoader_nCreateHDRTexture(JNIEnv* env, jclass, jlong nativeEngine, jbyteArray buffer, jint format) {
+Java_io_github_erkko68_filament_utils_jni_HDRLoader_nCreateHDRTexture(JNIEnv* env, jclass, jlong nativeEngine, jobject javaBuffer, jint remaining, jint format) {
     Engine* engine = (Engine*) nativeEngine;
+    AutoBuffer buffer(env, javaBuffer, remaining);
     
-    jsize length = env->GetArrayLength(buffer);
-    jbyte* data = env->GetByteArrayElements(buffer, nullptr);
-    
-    std::string ins((char const*) data, (size_t) length);
+    std::string ins((char const*) buffer.getData(), buffer.getSize());
     std::istringstream in(ins);
 
     LinearImage image = imageio_lite::ImageDecoder::decode(in, "memory.hdr");
-    
-    env->ReleaseByteArrayElements(buffer, data, JNI_ABORT);
     
     if (!image.isValid()) return 0;
 

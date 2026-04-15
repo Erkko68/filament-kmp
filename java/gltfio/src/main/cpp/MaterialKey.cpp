@@ -151,7 +151,12 @@ void MaterialKeyHelper::copy(JNIEnv* env, jobject dst, const MaterialKey& src) {
 
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_MaterialProvider_00024MaterialKey_nConstrainMaterial(JNIEnv* env, jclass, jobject config, jintArray uvmap) {
+Java_io_github_erkko68_filament_gltfio_jni_MaterialProvider_00024MaterialKey_nGlobalInit(JNIEnv* env, jclass) {
+    MaterialKeyHelper::get().init(env);
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_gltfio_jni_MaterialProvider_00024MaterialKey_nConstrainMaterial(JNIEnv* env, jclass, jobject config, jintArray uvmap) {
     MaterialKey nativeKey = {};
     MaterialKeyHelper::get().copy(env, nativeKey, config);
     jint* uvmapData = env->GetIntArrayElements(uvmap, nullptr);

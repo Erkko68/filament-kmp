@@ -34,36 +34,36 @@ using namespace backend;
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new VertexBuffer::Builder();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     delete builder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nBuilderVertexCount(JNIEnv*, jclass, jlong nativeBuilder, jint vertexCount) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nBuilderVertexCount(JNIEnv*, jclass, jlong nativeBuilder, jint vertexCount) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     builder->vertexCount((uint32_t) vertexCount);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nBuilderEnableBufferObjects(JNIEnv*, jclass, jlong nativeBuilder, jboolean enabled) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nBuilderEnableBufferObjects(JNIEnv*, jclass, jlong nativeBuilder, jboolean enabled) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     builder->enableBufferObjects(enabled);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nBuilderBufferCount(JNIEnv*, jclass, jlong nativeBuilder, jint bufferCount) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nBuilderBufferCount(JNIEnv*, jclass, jlong nativeBuilder, jint bufferCount) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     builder->bufferCount((uint8_t) bufferCount);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nBuilderAttribute(JNIEnv*, jclass, jlong nativeBuilder, jint attribute, jint bufferIndex, jint attributeType, jint byteOffset, jint byteStride) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nBuilderAttribute(JNIEnv*, jclass, jlong nativeBuilder, jint attribute, jint bufferIndex, jint attributeType, jint byteOffset, jint byteStride) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     builder->attribute((VertexAttribute) attribute, (uint8_t) bufferIndex,
                        (VertexBuffer::AttributeType) attributeType,
@@ -71,26 +71,26 @@ Java_io_github_erkko68_filament_VertexBuffer_nBuilderAttribute(JNIEnv*, jclass, 
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nBuilderNormalized(JNIEnv*, jclass, jlong nativeBuilder, jint attribute, jboolean normalized) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nBuilderNormalized(JNIEnv*, jclass, jlong nativeBuilder, jint attribute, jboolean normalized) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     builder->normalized((VertexAttribute) attribute, normalized);
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
     VertexBuffer::Builder* builder = (VertexBuffer::Builder*) nativeBuilder;
     Engine* engine = (Engine*) nativeEngine;
     return (jlong) builder->build(*engine);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nGetVertexCount(JNIEnv*, jclass, jlong nativeVertexBuffer) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nGetVertexCount(JNIEnv*, jclass, jlong nativeVertexBuffer) {
     VertexBuffer* vertexBuffer = (VertexBuffer*) nativeVertexBuffer;
     return (jint) vertexBuffer->getVertexCount();
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nSetBufferAt(JNIEnv* env, jclass, jlong nativeVertexBuffer, jlong nativeEngine, jint bufferIndex, jobject buffer, jint remaining, jint destOffsetInBytes, jint count, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nSetBufferAt(JNIEnv* env, jclass, jlong nativeVertexBuffer, jlong nativeEngine, jint bufferIndex, jobject buffer, jint remaining, jint destOffsetInBytes, jint count, jobject handler, jobject runnable) {
     VertexBuffer* vertexBuffer = (VertexBuffer*) nativeVertexBuffer;
     Engine* engine = (Engine*) nativeEngine;
 
@@ -114,7 +114,7 @@ Java_io_github_erkko68_filament_VertexBuffer_nSetBufferAt(JNIEnv* env, jclass, j
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_VertexBuffer_nSetBufferObjectAt(JNIEnv*, jclass, jlong nativeVertexBuffer, jlong nativeEngine, jint bufferIndex, jlong nativeBufferObject) {
+Java_io_github_erkko68_filament_jni_VertexBuffer_nSetBufferObjectAt(JNIEnv*, jclass, jlong nativeVertexBuffer, jlong nativeEngine, jint bufferIndex, jlong nativeBufferObject) {
     VertexBuffer* vertexBuffer = (VertexBuffer*) nativeVertexBuffer;
     Engine* engine = (Engine*) nativeEngine;
     BufferObject* bufferObject = (BufferObject*) nativeBufferObject;

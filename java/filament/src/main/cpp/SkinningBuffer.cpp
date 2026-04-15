@@ -10,32 +10,32 @@ using namespace filament;
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new SkinningBuffer::Builder();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
     delete (SkinningBuffer::Builder*) nativeBuilder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nBuilderBoneCount(JNIEnv*, jclass, jlong nativeBuilder, jint boneCount) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nBuilderBoneCount(JNIEnv*, jclass, jlong nativeBuilder, jint boneCount) {
     ((SkinningBuffer::Builder*) nativeBuilder)->boneCount((uint32_t) boneCount);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nBuilderInitialize(JNIEnv*, jclass, jlong nativeBuilder, jboolean initialize) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nBuilderInitialize(JNIEnv*, jclass, jlong nativeBuilder, jboolean initialize) {
     ((SkinningBuffer::Builder*) nativeBuilder)->initialize((bool) initialize);
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
     return (jlong) ((SkinningBuffer::Builder*) nativeBuilder)->build(*(Engine*) nativeEngine);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nSetBonesAsMatrices(JNIEnv* env, jclass, jlong nativeBuffer, jlong nativeEngine, jobject matrices, jint remaining, jint boneCount, jint offset) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nSetBonesAsMatrices(JNIEnv* env, jclass, jlong nativeBuffer, jlong nativeEngine, jobject matrices, jint remaining, jint boneCount, jint offset) {
     SkinningBuffer* buffer = (SkinningBuffer*) nativeBuffer;
     Engine* engine = (Engine*) nativeEngine;
     AutoBuffer nioBuffer(env, matrices, boneCount * 16);
@@ -46,7 +46,7 @@ Java_io_github_erkko68_filament_SkinningBuffer_nSetBonesAsMatrices(JNIEnv* env, 
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nSetBonesAsQuaternions(JNIEnv* env, jclass, jlong nativeBuffer, jlong nativeEngine, jobject quaternions, jint remaining, jint boneCount, jint offset) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nSetBonesAsQuaternions(JNIEnv* env, jclass, jlong nativeBuffer, jlong nativeEngine, jobject quaternions, jint remaining, jint boneCount, jint offset) {
     SkinningBuffer* buffer = (SkinningBuffer*) nativeBuffer;
     Engine* engine = (Engine*) nativeEngine;
     AutoBuffer nioBuffer(env, quaternions, boneCount * 8);
@@ -57,7 +57,7 @@ Java_io_github_erkko68_filament_SkinningBuffer_nSetBonesAsQuaternions(JNIEnv* en
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_SkinningBuffer_nGetBoneCount(JNIEnv*, jclass, jlong nativeBuffer) {
+Java_io_github_erkko68_filament_jni_SkinningBuffer_nGetBoneCount(JNIEnv*, jclass, jlong nativeBuffer) {
     return (jint) ((SkinningBuffer*) nativeBuffer)->getBoneCount();
 }
 

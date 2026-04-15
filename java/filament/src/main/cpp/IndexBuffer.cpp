@@ -34,24 +34,24 @@ using namespace backend;
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new IndexBuffer::Builder();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
     IndexBuffer::Builder* builder = (IndexBuffer::Builder*) nativeBuilder;
     delete builder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nBuilderIndexCount(JNIEnv*, jclass, jlong nativeBuilder, jint indexCount) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nBuilderIndexCount(JNIEnv*, jclass, jlong nativeBuilder, jint indexCount) {
     IndexBuffer::Builder* builder = (IndexBuffer::Builder*) nativeBuilder;
     builder->indexCount((uint32_t) indexCount);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nBuilderBufferType(JNIEnv*, jclass, jlong nativeBuilder, jint indexType) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nBuilderBufferType(JNIEnv*, jclass, jlong nativeBuilder, jint indexType) {
     using IndexType = IndexBuffer::IndexType;
     IndexBuffer::Builder* builder = (IndexBuffer::Builder*) nativeBuilder;
     IndexType types[] = {IndexType::USHORT, IndexType::UINT};
@@ -59,20 +59,20 @@ Java_io_github_erkko68_filament_IndexBuffer_nBuilderBufferType(JNIEnv*, jclass, 
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jlong nativeEngine) {
     IndexBuffer::Builder* builder = (IndexBuffer::Builder*) nativeBuilder;
     Engine* engine = (Engine*) nativeEngine;
     return (jlong) builder->build(*engine);
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nGetIndexCount(JNIEnv*, jclass, jlong nativeIndexBuffer) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nGetIndexCount(JNIEnv*, jclass, jlong nativeIndexBuffer) {
     IndexBuffer* indexBuffer = (IndexBuffer*) nativeIndexBuffer;
     return (jint) indexBuffer->getIndexCount();
 }
 
 JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_IndexBuffer_nSetBuffer(JNIEnv* env, jclass, jlong nativeIndexBuffer, jlong nativeEngine, jobject buffer, int remaining, jint destOffsetInBytes, jint count, jobject handler, jobject runnable) {
+Java_io_github_erkko68_filament_jni_IndexBuffer_nSetBuffer(JNIEnv* env, jclass, jlong nativeIndexBuffer, jlong nativeEngine, jobject buffer, int remaining, jint destOffsetInBytes, jint count, jobject handler, jobject runnable) {
     IndexBuffer* indexBuffer = (IndexBuffer*) nativeIndexBuffer;
     Engine* engine = (Engine*) nativeEngine;
 

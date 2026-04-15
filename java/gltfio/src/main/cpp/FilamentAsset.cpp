@@ -8,20 +8,20 @@ using namespace filament::gltfio;
 using namespace utils;
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetRoot(JNIEnv*, jclass, jlong nativeAsset) {
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetRoot(JNIEnv*, jclass, jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return asset->getRoot().getId();
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nPopRenderable(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nPopRenderable(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return asset->popRenderable().getId();
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nPopRenderables(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nPopRenderables(JNIEnv* env, jclass,
         jlong nativeAsset, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     jsize available = env->GetArrayLength(result);
@@ -32,14 +32,14 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nPopRenderables(JNIEnv* env
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntityCount(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetEntityCount(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return asset->getEntityCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntities(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetEntities(JNIEnv* env, jclass,
         jlong nativeAsset, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     jsize available = env->GetArrayLength(result);
@@ -50,7 +50,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntities(JNIEnv* env, j
 }
 
 extern "C" JNIEXPORT jint
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetFirstEntityByName(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetFirstEntityByName(JNIEnv* env, jclass,
         jlong nativeAsset, jstring name) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     const char* cname = env->GetStringUTFChars(name, nullptr);
@@ -60,7 +60,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetFirstEntityByName(JNIEn
 }
 
 extern "C" JNIEXPORT jint
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntitiesByName(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetEntitiesByName(JNIEnv* env, jclass,
         jlong nativeAsset, jstring name, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     const char* cname = env->GetStringUTFChars(name, nullptr);
@@ -77,7 +77,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntitiesByName(JNIEnv* 
 }
 
 extern "C" JNIEXPORT jint
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntitiesByPrefix(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetEntitiesByPrefix(JNIEnv* env, jclass,
         jlong nativeAsset, jstring prefix, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     const char* cprefix = env->GetStringUTFChars(prefix, nullptr);
@@ -94,14 +94,14 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetEntitiesByPrefix(JNIEnv
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetLightEntityCount(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetLightEntityCount(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return asset->getLightEntityCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetLightEntities(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetLightEntities(JNIEnv* env, jclass,
         jlong nativeAsset, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     const jsize available = env->GetArrayLength(result);
@@ -113,14 +113,14 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetLightEntities(JNIEnv* e
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetRenderableEntityCount(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetRenderableEntityCount(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return asset->getRenderableEntityCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetRenderableEntities(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetRenderableEntities(JNIEnv* env, jclass,
         jlong nativeAsset, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     const jsize available = env->GetArrayLength(result);
@@ -132,7 +132,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetRenderableEntities(JNIE
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetCameraEntities(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetCameraEntities(JNIEnv* env, jclass,
         jlong nativeAsset, jintArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     const jsize available = env->GetArrayLength(result);
@@ -144,14 +144,14 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetCameraEntities(JNIEnv* 
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetCameraEntityCount(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetCameraEntityCount(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return asset->getCameraEntityCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetBoundingBox(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetBoundingBox(JNIEnv* env, jclass,
         jlong nativeAsset, jfloatArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     float* values = env->GetFloatArrayElements(result, nullptr);
@@ -164,7 +164,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetBoundingBox(JNIEnv* env
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetName(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetName(JNIEnv* env, jclass,
         jlong nativeAsset, jint entityId) {
     Entity entity = Entity::import(entityId);
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
@@ -173,7 +173,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetName(JNIEnv* env, jclas
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetExtras(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetExtras(JNIEnv* env, jclass,
         jlong nativeAsset, jint entityId) {
     Entity entity = Entity::import(entityId);
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
@@ -182,21 +182,21 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetExtras(JNIEnv* env, jcl
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetInstance(JNIEnv* , jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetInstance(JNIEnv* , jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return (jlong) asset->getInstance();
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetResourceUriCount(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetResourceUriCount(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     return (jint) asset->getResourceUriCount();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetResourceUris(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetResourceUris(JNIEnv* env, jclass,
         jlong nativeAsset, jobjectArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     auto resourceUris = asset->getResourceUris();
@@ -206,7 +206,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetResourceUris(JNIEnv* en
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetMorphTargetCount(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetMorphTargetCount(JNIEnv*, jclass,
         jlong nativeAsset, jint entityId) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     Entity entity = Entity::import(entityId);
@@ -214,7 +214,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetMorphTargetCount(JNIEnv
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetMorphTargetNames(JNIEnv* env, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nGetMorphTargetNames(JNIEnv* env, jclass,
         jlong nativeAsset, jint entityId, jobjectArray result) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     Entity entity = Entity::import(entityId);
@@ -225,7 +225,7 @@ Java_io_github_erkko68_filament_gltfio_FilamentAsset_nGetMorphTargetNames(JNIEnv
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_gltfio_FilamentAsset_nReleaseSourceData(JNIEnv*, jclass,
+Java_io_github_erkko68_filament_gltfio_jni_FilamentAsset_nReleaseSourceData(JNIEnv*, jclass,
         jlong nativeAsset) {
     FilamentAsset* asset = (FilamentAsset*) nativeAsset;
     asset->releaseSourceData();

@@ -19,7 +19,7 @@
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_NativeSurface_nCreateSurface(JNIEnv*, jclass, jint width, jint height) {
+Java_io_github_erkko68_filament_jni_NativeSurface_nCreateSurface(JNIEnv*, jclass, jint width, jint height) {
     // This is platform-specific. On Android it creates a NativeSurface.
     // In KMP, we might not need this if we always use the handle-based constructor.
     // Returning 0 for now as a stub.
@@ -27,7 +27,7 @@ Java_io_github_erkko68_filament_NativeSurface_nCreateSurface(JNIEnv*, jclass, ji
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_NativeSurface_nDestroySurface(JNIEnv*, jclass, jlong surface) {
+Java_io_github_erkko68_filament_jni_NativeSurface_nDestroySurface(JNIEnv*, jclass, jlong surface) {
     // Platform-specific cleanup.
 }
 

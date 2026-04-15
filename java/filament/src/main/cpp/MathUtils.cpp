@@ -8,7 +8,7 @@
 using namespace filament;
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_MathUtils_nPackTangentFrame(JNIEnv* env, jclass, 
+Java_io_github_erkko68_filament_jni_MathUtils_nPackTangentFrame(JNIEnv* env, jclass, 
     jfloat tx, jfloat ty, jfloat tz,
     jfloat bx, jfloat by, jfloat bz,
     jfloat nx, jfloat ny, jfloat nz,
