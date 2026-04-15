@@ -17,12 +17,14 @@
 package io.github.erkko68.filament.utils.jni;
 
 import io.github.erkko68.filament.jni.Filament;
+import io.github.erkko68.filament.jni.internal.NativeLoader;
 
 public class Utils {
     static {
         Filament.init();
-        System.loadLibrary("filament-utils-jni");
+        NativeLoader.load("filament-utils-jni");
     }
+
 
     /**
      * Initializes the utils JNI layer. Internal use only.

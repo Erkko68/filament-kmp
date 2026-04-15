@@ -1,7 +1,9 @@
 package io.github.erkko68.filament.filamat.jni;
 
 import io.github.erkko68.filament.jni.Engine;
+import io.github.erkko68.filament.jni.internal.NativeLoader;
 import io.github.erkko68.filament.jni.internal.NativeRegistry;
+
 import java.lang.ref.Cleaner;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,8 +15,9 @@ public class MaterialBuilder {
     private final Cleaner.Cleanable mCleanable;
 
     static {
-        System.loadLibrary("filamat-jni");
+        NativeLoader.load("filamat-jni");
     }
+
 
     public enum Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     public enum Interpolation { SMOOTH, FLAT }

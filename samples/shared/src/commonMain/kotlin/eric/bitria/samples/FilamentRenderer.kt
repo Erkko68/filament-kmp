@@ -50,9 +50,9 @@ class FilamentRenderer : FilamentViewRenderer {
 
     fun initialize() {
         println("FilamentRenderer: Initializing engine and MaterialBuilder...")
+        engine = Engine.create()
         MaterialBuilder.init()
         Gltfio.init()
-        engine = Engine.create()
         renderer = engine!!.createRenderer()
         scene = engine!!.createScene()
         view = engine!!.createView()
@@ -113,7 +113,7 @@ class FilamentRenderer : FilamentViewRenderer {
         println("FilamentRenderer: Setting up Runtime Material Object...")
         val materialPackage = MaterialBuilder()
             .name("RuntimeMaterial")
-            .platform(MaterialBuilder.Platform.MOBILE)
+            .platform(MaterialBuilder.Platform.ALL)
             .targetApi(MaterialBuilder.TargetApi.ALL)
             .shading(MaterialBuilder.Shading.UNLIT)
             .doubleSided(true)

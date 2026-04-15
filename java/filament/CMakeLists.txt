@@ -80,7 +80,9 @@ add_library(filament-jni SHARED
     src/main/cpp/common/VirtualMachineEnv.cpp
     src/main/cpp/MaterialInstance.cpp
     src/main/cpp/SwapChain.cpp
+    src/main/cpp/common/AwtHelper.cpp
 )
+
 
 target_include_directories(filament-jni PRIVATE
     src/main/cpp

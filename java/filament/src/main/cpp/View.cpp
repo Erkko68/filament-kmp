@@ -479,7 +479,7 @@ Java_io_github_erkko68_filament_jni_View_nPick(JNIEnv* env, jclass, jlong native
         jfieldID fragCoordYFieldId;
         jfieldID fragCoordZFieldId;
         explicit JniState(JNIEnv* env) noexcept {
-            internalOnPickCallbackClass = env->FindClass("io/github/erkko68/filament/View$InternalOnPickCallback");
+            internalOnPickCallbackClass = env->FindClass("io/github/erkko68/filament/jni/View$InternalOnPickCallback");
             renderableFieldId = env->GetFieldID(internalOnPickCallbackClass, "mRenderable", "I");
             depthFieldId = env->GetFieldID(internalOnPickCallbackClass, "mDepth", "F");
             fragCoordXFieldId = env->GetFieldID(internalOnPickCallbackClass, "mFragCoordsX", "F");

@@ -6,7 +6,7 @@ AutoBuffer::AutoBuffer(JNIEnv *env, jobject buffer, jint size, bool commit) noex
         mEnv(env),
         mDoCommit(commit) {
 
-    jclass nioUtilsClass = env->FindClass("io/github/erkko68/filament/internal/NioUtils");
+    jclass nioUtilsClass = env->FindClass("io/github/erkko68/filament/jni/internal/NioUtils");
     jmethodID getBasePointer = env->GetStaticMethodID(nioUtilsClass,
             "getBasePointer", "(Ljava/nio/Buffer;JI)J");
     jmethodID getBaseArray = env->GetStaticMethodID(nioUtilsClass,

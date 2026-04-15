@@ -266,12 +266,6 @@ public class Engine {
         return new SwapChain(nativeSwapChain, null);
     }
 
-    @NotNull
-    public SwapChain createSwapChainFromNativeSurface(@NotNull NativeSurface surface, long flags) {
-        long nativeSwapChain = nCreateSwapChainFromRawPointer(getNativeObject(), surface.getNativeObject(), flags);
-        if (nativeSwapChain == 0) throw new IllegalStateException("Couldn't create SwapChain");
-        return new SwapChain(nativeSwapChain, surface);
-    }
 
     public void destroySwapChain(@NotNull SwapChain swapChain) {
         nDestroySwapChain(getNativeObject(), swapChain.getNativeObject());

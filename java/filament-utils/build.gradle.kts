@@ -71,6 +71,26 @@ tasks.register<Exec>("cmakeBuild") {
     commandLine(cmakePath, "--build", ".")
 }
 
+// Native library bundling
+val hostPlatform = when {
+    System.getProperty("os.name").startsWith("Mac", ignoreCase = true) -> "macos"
+    System.getProperty("os.name").startsWith("Windows", ignoreCase = true) -> "windows"
+    else -> "linux"
+}
+val resPlatform = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
+val resArch = (project.findProperty("filament.arch") as String? ?: "arm64").lowercase().let {
+    if (it == "aarch64" || it == "arm64") "arm64" else "x64"
+}
+
+tasks.processResources {
+    dependsOn("cmakeBuild")
+    from(layout.buildDirectory.dir("cmake")) {
+        include("*.dylib", "*.so", "*.dll")
+        into("natives/${resPlatform}-${resArch}")
+    }
+}
+
 tasks.named("assemble") {
     dependsOn("cmakeBuild")
 }
+

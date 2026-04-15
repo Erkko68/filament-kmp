@@ -140,8 +140,8 @@ actual class Engine(val nativeEngine: JniEngine) {
     actual fun isValidStream(stream: Stream): Boolean = nativeEngine.isValidStream(stream.nativeStream)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
 
-    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.nativeSurface))
-    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.nativeSurface, flags))
+    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.surface))
+    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.surface, flags))
     actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(width, height, flags))
     actual fun destroySwapChain(swapChain: SwapChain) = nativeEngine.destroySwapChain(swapChain.nativeSwapChain)
 

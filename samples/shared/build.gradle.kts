@@ -14,6 +14,8 @@ kotlin {
         }
     }
     
+    jvm()
+    
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -41,6 +43,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
+        jvmMain.dependencies {
+            // Inherits from commonMain
+        }
     }
 }
 
@@ -59,4 +65,5 @@ android {
 
 compose.resources {
     packageOfResClass = "eric.bitria.samples.shared.resources"
+    publicResClass = true
 }

@@ -28,12 +28,12 @@ public:
             mJavaProvider(env->NewGlobalRef(provider)) {
         mMaterialKeyClass = (jclass) env->NewGlobalRef(env->FindClass(JAVA_MATERIAL_KEY));
         mMaterialKeyConstructor = env->GetMethodID(mMaterialKeyClass, "<init>", "()V");
-        mMaterialInstanceGetNativeObject = env->GetMethodID(env->FindClass("io/github/erkko68/filament/MaterialInstance"), "getNativeObject", "()J");
-        mMaterialGetNativeObject = env->GetMethodID(env->FindClass("io/github/erkko68/filament/Material"), "getNativeObject", "()J");
+        mMaterialInstanceGetNativeObject = env->GetMethodID(env->FindClass("io/github/erkko68/filament/jni/MaterialInstance"), "getNativeObject", "()J");
+        mMaterialGetNativeObject = env->GetMethodID(env->FindClass("io/github/erkko68/filament/jni/Material"), "getNativeObject", "()J");
         jclass providerClass = env->GetObjectClass(provider);
-        mCreateMaterialInstance = env->GetMethodID(providerClass, "createMaterialInstance", "(L" JAVA_MATERIAL_KEY ";[ILjava/lang/String;Ljava/lang/String;)Lio/github/erkko68/filament/MaterialInstance;");
-        mGetMaterial = env->GetMethodID(providerClass, "getMaterial", "(L" JAVA_MATERIAL_KEY ";[ILjava/lang/String;)Lio/github/erkko68/filament/Material;");
-        mGetMaterials = env->GetMethodID(providerClass, "getMaterials", "()[Lio/github/erkko68/filament/Material;");
+        mCreateMaterialInstance = env->GetMethodID(providerClass, "createMaterialInstance", "(L" JAVA_MATERIAL_KEY ";[ILjava/lang/String;Ljava/lang/String;)Lio/github/erkko68/filament/jni/MaterialInstance;");
+        mGetMaterial = env->GetMethodID(providerClass, "getMaterial", "(L" JAVA_MATERIAL_KEY ";[ILjava/lang/String;)Lio/github/erkko68/filament/jni/Material;");
+        mGetMaterials = env->GetMethodID(providerClass, "getMaterials", "()[Lio/github/erkko68/filament/jni/Material;");
         mNeedsDummyData = env->GetMethodID(providerClass, "needsDummyData","(I)Z");
         mDestroyMaterials = env->GetMethodID(providerClass, "destroyMaterials", "()V");
     }

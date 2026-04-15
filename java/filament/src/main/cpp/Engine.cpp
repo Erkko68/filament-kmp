@@ -40,6 +40,8 @@
 
 #include "common/CallbackUtils.h"
 #include "common/VirtualMachineEnv.h"
+#include "common/AwtHelper.h"
+
 
 using namespace filament;
 using namespace utils;
@@ -48,9 +50,7 @@ using namespace utils;
 // Platform-specific surface handling
 // ------------------------------------------------------------------------------------------------
 
-// For KMP on Desktop, we might need to handle various surface types.
-// For now, we provide a simple implementation that handles pointers as Long objects.
-static void* getNativeWindow(JNIEnv* env, jclass, jobject surface) {
+static void* getNativeWindow(JNIEnv* env, jobject surface) {
     if (surface == nullptr) return nullptr;
     
     // Check if it's a Long (primitive wrapper) - common way to pass pointers from Kotlin
@@ -59,13 +59,19 @@ static void* getNativeWindow(JNIEnv* env, jclass, jobject surface) {
         jmethodID longValueMethod = env->GetMethodID(longClass, "longValue", "()J");
         return (void*) env->CallLongMethod(surface, longValueMethod);
     }
+
+    // 2. Check if it's a Component (AWT) using our Helper
+    void* awtHandle = AwtHelper::getNativeWindow(env, surface);
+    if (awtHandle != nullptr) {
+        return awtHandle;
+    }
+
     
-    // On Android, this would use ANativeWindow_fromSurface.
-    // On Desktop, this depends on the windowing system. 
-    // For now, we return the object itself if we can't identify it, 
-    // but this is likely to fail unless the backend knows how to handle it.
+    // Fallback: return the object itself. 
+    // This is likely to fail unless the backend knows how to handle it.
     return (void*) surface;
 }
+
 
 // ------------------------------------------------------------------------------------------------
 // JNI Implementation
@@ -91,8 +97,9 @@ Java_io_github_erkko68_filament_jni_Engine_nGetBackend(JNIEnv*, jclass, jlong na
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_jni_Engine_nCreateSwapChain(JNIEnv* env, jclass klass, jlong nativeEngine, jobject surface, jlong flags) {
     Engine* engine = (Engine*) nativeEngine;
-    void* win = getNativeWindow(env, klass, surface);
+    void* win = getNativeWindow(env, surface);
     return (jlong) engine->createSwapChain(win, (uint64_t) flags);
+
 }
 
 extern "C" JNIEXPORT jlong JNICALL
@@ -572,10 +579,11 @@ Java_io_github_erkko68_filament_jni_Engine_nSetBuilderFeatureLevel(JNIEnv*, jcla
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Engine_nSetBuilderSharedContext(JNIEnv* env, jclass klass, jlong nativeBuilder, jobject sharedContext) {
-     void* ctx = getNativeWindow(env, klass, sharedContext);
+Java_io_github_erkko68_filament_jni_Engine_nSetBuilderSharedContext(JNIEnv* env, jclass, jlong nativeBuilder, jobject sharedContext) {
+     void* ctx = getNativeWindow(env, sharedContext);
     ((Engine::Builder*) nativeBuilder)->sharedContext(ctx);
 }
+
 
 extern "C" JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_jni_Engine_nSetBuilderPaused(JNIEnv*, jclass, jlong nativeBuilder, jboolean paused) {

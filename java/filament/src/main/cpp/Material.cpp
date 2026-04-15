@@ -27,7 +27,7 @@ using namespace filament;
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_jni_Material_nBuilderBuild(JNIEnv* env, jclass, jlong nativeEngine, jobject buffer_, jsize size, jint shBandCount, jint shadowQuality, jint uboBatchingMode) {
+Java_io_github_erkko68_filament_jni_Material_00024Builder_nBuilderBuild(JNIEnv* env, jclass, jlong nativeEngine, jobject buffer_, jsize size, jint shBandCount, jint shadowQuality, jint uboBatchingMode) {
     Engine* engine = (Engine*) nativeEngine;
     AutoBuffer buffer(env, buffer_, size);
     auto builder = Material::Builder();
@@ -177,7 +177,7 @@ Java_io_github_erkko68_filament_jni_Material_nGetParameters(JNIEnv* env, jclass,
     Material::ParameterInfo* info = new Material::ParameterInfo[count];
     material->getParameters(info, count);
 
-    jclass parameterClass = env->FindClass("io/github/erkko68/filament/Material$Parameter");
+    jclass parameterClass = env->FindClass("io/github/erkko68/filament/jni/Material$Parameter");
     jmethodID parameterAdd = env->GetStaticMethodID(parameterClass, "add", "(Ljava/util/List;Ljava/lang/String;III)V");
 
     for (size_t i = 0; i < count; i++) {
