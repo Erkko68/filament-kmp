@@ -1,31 +1,50 @@
 plugins {
-    kotlin("jvm")
-    id("application")
+    alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
 
-// Repositories are managed in settings.gradle.kts
-
-dependencies {
-    implementation(project(":shared"))
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.swing)
-    implementation(libs.compose.runtime)
-    implementation(libs.compose.components.resources)
-}
-
 kotlin {
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    jvm {
+        withJava()
+    }
+    
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(project(":shared"))
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.coroutines.swing)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(compose.desktop.currentOs)
+            }
+        }
+        
+        val jvmRuntimeClasspath by configurations.getting {
+            resolutionStrategy {
+                force("org.jetbrains.compose.runtime:runtime:1.7.1")
+                force("org.jetbrains.compose.foundation:foundation:1.7.1")
+                force("org.jetbrains.compose.ui:ui:1.7.1")
+                force("org.jetbrains.compose.material3:material3:1.7.1")
+                force("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.8.18")
+                force("org.jetbrains.skiko:skiko-awt:0.8.18")
+            }
+        }
     }
 }
 
-tasks.withType<JavaCompile> {
-    targetCompatibility = "21"
-    sourceCompatibility = "21"
-}
-
-application {
-    mainClass.set("eric.bitria.samples.MainKt")
+compose.desktop {
+    application {
+        mainClass = "eric.bitria.samples.MainKt"
+        
+        nativeDistributions {
+            targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Pkg, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb)
+            packageName = "eric.bitria.samples"
+            packageVersion = "1.0.0"
+        }
+    }
 }

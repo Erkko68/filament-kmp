@@ -2,57 +2,58 @@ package eric.bitria.samples
 
 import io.github.erkko68.filament.NativeSurface
 import java.awt.Canvas
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.JPanel
-import javax.swing.Timer
+import kotlin.math.ceil
 
 class FilamentPanel(private val renderer: FilamentViewRenderer) : JPanel() {
     private val canvas = Canvas()
     private var nativeSurface: NativeSurface? = null
-    private var renderTimer: Timer? = null
 
     init {
-        layout = java.awt.BorderLayout()
+        // Tight layout with no gaps
+        layout = java.awt.BorderLayout(0, 0)
+        
+        // Match Filament's dark theme to hide any sub-pixel gaps
+        background = Color.BLACK
+        canvas.background = Color.BLACK
+        
+        // Interop blending works best when components handle their own opacity
+        isOpaque = true
+        
         add(canvas, java.awt.BorderLayout.CENTER)
 
         canvas.addComponentListener(object : ComponentAdapter() {
             override fun componentResized(e: ComponentEvent) {
-                renderer.onSurfaceResized(canvas.width, canvas.height)
+                updateViewport()
             }
         })
+    }
+
+    private fun updateViewport() {
+        val scale = canvas.graphicsConfiguration.defaultTransform.scaleX
+        // Use ceil to ensure we cover the entire surface, avoiding 1-pixel black gaps
+        renderer.onSurfaceResized(
+            ceil(canvas.width * scale).toInt(),
+            ceil(canvas.height * scale).toInt()
+        )
     }
 
     fun setupNativeSurface() {
         if (nativeSurface != null) return
 
         if (canvas.isDisplayable) {
+            val scale = canvas.graphicsConfiguration.defaultTransform.scaleX
             nativeSurface = NativeSurface(canvas)
-            renderer.onSurfaceAvailable(nativeSurface!!, canvas.width, canvas.height)
+            renderer.onSurfaceAvailable(
+                nativeSurface!!,
+                ceil(canvas.width * scale).toInt(),
+                ceil(canvas.height * scale).toInt()
+            )
         }
-    }
-
-    fun startRendering() {
-        if (renderTimer != null) return
-        
-        setupNativeSurface()
-
-        renderTimer = Timer(16) { // ~60 FPS
-            if (nativeSurface == null && canvas.isDisplayable) {
-                 setupNativeSurface()
-            }
-            if (nativeSurface != null) {
-                renderer.render(System.nanoTime())
-            }
-        }
-        renderTimer?.start()
-    }
-
-    fun stopRendering() {
-        renderTimer?.stop()
-        renderTimer = null
-        dispose()
     }
 
     fun dispose() {
@@ -70,7 +71,6 @@ class FilamentPanel(private val renderer: FilamentViewRenderer) : JPanel() {
     }
 
     override fun removeNotify() {
-        stopRendering()
         dispose()
         super.removeNotify()
     }
