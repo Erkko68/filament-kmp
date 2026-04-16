@@ -27,9 +27,11 @@ tasks.register<Exec>("cmakeConfig") {
         else -> "linux"
     }
     val p = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
+    val isMacos = p == "macos"
+
     val platform = when (p) {
-        "macos", "linux", "windows" -> p
-        else -> throw GradleException("Unsupported filament.platform '$p'. Use macos, linux, or windows.")
+        "linux", "windows", "macos" -> p
+        else -> throw GradleException("Unsupported filament.platform '$p'. Use linux, windows, or macos.")
     }
 
     val a = (project.findProperty("filament.arch") as String? ?: "arm64").lowercase()
@@ -44,7 +46,8 @@ tasks.register<Exec>("cmakeConfig") {
         cmakePath,
         "../../",
         "-DFILAMENT_PLATFORM=$platform",
-        "-DFILAMENT_ARCH=$arch"
+        "-DFILAMENT_ARCH=$arch",
+        "-DJAVA_HOME=${System.getProperty("java.home")}"
     )
     if (platform == "macos") {
         val osxArch = if (arch == "Arm64") "arm64" else "x86_64"
@@ -57,6 +60,9 @@ tasks.register<Exec>("cmakeConfig") {
 tasks.register<Exec>("cmakeBuild") {
     dependsOn("cmakeConfig")
     workingDir(layout.buildDirectory.dir("cmake").get().asFile)
+    
+    val p = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
+
     val cmakePath = if (File("/opt/homebrew/bin/cmake").exists()) "/opt/homebrew/bin/cmake" else "cmake"
     commandLine(cmakePath, "--build", ".")
 }

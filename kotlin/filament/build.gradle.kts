@@ -54,6 +54,14 @@ kotlin {
         }
     }
 
+    macosArm64 {
+        binaries.framework {
+            baseName = "Filament"
+            isStatic = true
+            xcf.add(this)
+        }
+    }
+
     jvm()
 
 
@@ -120,6 +128,7 @@ kotlin {
             org.jetbrains.kotlin.konan.target.KonanTarget.IOS_ARM64 -> "ios" to "arm64"
             org.jetbrains.kotlin.konan.target.KonanTarget.IOS_SIMULATOR_ARM64 -> "ios-simulator" to "arm64"
             org.jetbrains.kotlin.konan.target.KonanTarget.IOS_X64 -> "ios-simulator" to "x64"
+            org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64 -> "macos" to "arm64"
             else -> "" to ""
         }
         val libPrefix = "lib"

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.19)
-project(filament-jni)
+project(filament-jni LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -74,7 +74,6 @@ add_library(filament-jni SHARED
     src/main/cpp/SurfaceOrientation.cpp
     src/main/cpp/Colors.cpp
     src/main/cpp/MathUtils.cpp
-    src/main/cpp/ToneMapper.cpp
     src/main/cpp/common/NioUtils.cpp
     src/main/cpp/common/CallbackUtils.cpp
     src/main/cpp/common/VirtualMachineEnv.cpp
@@ -82,7 +81,6 @@ add_library(filament-jni SHARED
     src/main/cpp/SwapChain.cpp
     src/main/cpp/common/AwtHelper.cpp
 )
-
 
 target_include_directories(filament-jni PRIVATE
     src/main/cpp
@@ -110,14 +108,19 @@ target_link_libraries(filament-jni
     PRIVATE filament-generatePrefilterMipmap
     ${JNI_LIBRARIES}
 )
-
 if (APPLE)
-    target_link_libraries(filament-jni PRIVATE
-        "-framework Metal"
-        "-framework Foundation"
-        "-framework AppKit"
-        "-framework QuartzCore"
-        "-framework CoreVideo"
-        "-framework OpenGL"
-    )
+    target_link_libraries(filament-jni PRIVATE "-framework Cocoa")
+    target_link_libraries(filament-jni PRIVATE "-framework Metal")
+    target_link_libraries(filament-jni PRIVATE "-framework QuartzCore")
+    target_link_libraries(filament-jni PRIVATE "-framework CoreVideo")
+endif()
+
+# JAWT is required by AwtHelper to extract native window handles.
+# find_package(JNI) sometimes doesn't include libjawt in JNI_LIBRARIES.
+find_library(JAWT_LIB jawt HINTS "${JAVA_HOME}/lib" "${JAVA_HOME}/jre/lib")
+if (JAWT_LIB)
+    message(STATUS "Found JAWT library at: ${JAWT_LIB}")
+    target_link_libraries(filament-jni PRIVATE ${JAWT_LIB})
+else()
+    message(WARNING "JAWT library not found. AwtHelper may fail to link or work at runtime.")
 endif()

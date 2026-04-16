@@ -30,8 +30,6 @@ class FilamentRenderer : FilamentViewRenderer {
 
     // Object 2: Resource-loaded compiled material
     private var resourceCubeEntity: Entity? = null
-    private var resourceVertexBuffer: VertexBuffer? = null
-    private var resourceIndexBuffer: IndexBuffer? = null
     private var resourceMaterial: Material? = null
     private var resourceMaterialInstance: MaterialInstance? = null
 
@@ -49,6 +47,10 @@ class FilamentRenderer : FilamentViewRenderer {
     private var pendingGlbData: ByteArray? = null
 
     fun initialize() {
+        if (engine != null) {
+            println("FilamentRenderer: initialize() called more than once, ignoring")
+            return
+        }
         println("FilamentRenderer: Initializing engine and MaterialBuilder...")
         engine = Engine.create()
         MaterialBuilder.init()
@@ -118,7 +120,7 @@ class FilamentRenderer : FilamentViewRenderer {
             .shading(MaterialBuilder.Shading.UNLIT)
             .doubleSided(true)
             .require(VertexBuffer.VertexAttribute.COLOR)
-            .material("void material(inout MaterialInputs material) { prepareMaterial(material); material.baseColor = getColor(); }")
+            .material("void material(inout MaterialInputs material) { prepareMaterial(material); material.baseColor = float4(1.0, 0.5, 0.5, 1.0); }")
             .build()
         
         if (!materialPackage.isValid()) {
@@ -180,6 +182,8 @@ class FilamentRenderer : FilamentViewRenderer {
             return
         }
 
+        destroyResourceMaterialCube(engine)
+
         println("FilamentRenderer: Setting up Resource Material Object...")
         resourceMaterial = Material.Builder()
             .payload(filamatData)
@@ -211,11 +215,7 @@ class FilamentRenderer : FilamentViewRenderer {
             return
         }
 
-        gltfAsset?.let { existing ->
-            scene?.removeEntities(existing.getEntities())
-            gltfLoader?.destroyAsset(existing)
-            gltfAsset = null
-        }
+        destroyGltfAsset()
 
         println("FilamentRenderer: Setting up GLTF Model Object...")
         gltfAsset = loader.createAsset(glbData)
@@ -247,6 +247,7 @@ class FilamentRenderer : FilamentViewRenderer {
             tm.setTransform(tm.getInstance(asset.getRoot()), initialTransform)
             asset.releaseSourceData()
         } else {
+            gltfBaseTransform = null
             println("FilamentRenderer: FAILED to load GLB asset!")
         }
     }
@@ -260,10 +261,27 @@ class FilamentRenderer : FilamentViewRenderer {
             return
         }
 
-        if (swapChain != null) {
-            engine.destroySwapChain(swapChain!!)
+        destroySwapChain(engine)
+        val createdSwapChain = try {
+            engine.createSwapChain(surface)
+        } catch (_: IllegalStateException) {
+            pendingSurface = surface
+            pendingWidth = width
+            pendingHeight = height
+            return
         }
-        swapChain = engine.createSwapChain(surface)
+        if (!engine.isValidSwapChain(createdSwapChain)) {
+            // On macOS AWT the CAMetalLayer can be unavailable briefly after show().
+            pendingSurface = surface
+            pendingWidth = width
+            pendingHeight = height
+            destroySwapChain(engine)
+            return
+        }
+        swapChain = createdSwapChain
+        pendingSurface = null
+        pendingWidth = 0
+        pendingHeight = 0
         onSurfaceResized(width, height)
     }
 
@@ -276,16 +294,19 @@ class FilamentRenderer : FilamentViewRenderer {
 
     override fun onSurfaceDetached() {
         engine?.let {
-            if (swapChain != null) {
-                it.destroySwapChain(swapChain!!)
-                swapChain = null
-            }
+            destroySwapChain(it)
         }
     }
 
     private var startTime: Long = -1
 
     override fun render(frameTimeNanos: Long) {
+        if (swapChain == null) {
+            pendingSurface?.let { surface ->
+                onSurfaceAvailable(surface, pendingWidth, pendingHeight)
+            }
+        }
+
         val renderer = renderer ?: return
         val swapChain = swapChain ?: return
         val view = view ?: return
@@ -358,12 +379,6 @@ class FilamentRenderer : FilamentViewRenderer {
         )
     }
 
-    private fun rotationX(angle: Double): DoubleArray {
-        val c = kotlin.math.cos(angle)
-        val s = kotlin.math.sin(angle)
-        return doubleArrayOf(1.0, 0.0, 0.0, 0.0, 0.0, c, s, 0.0, 0.0, -s, c, 0.0, 0.0, 0.0, 0.0, 1.0)
-    }
-
     private fun rotationY(angle: Double): DoubleArray {
         val c = kotlin.math.cos(angle)
         val s = kotlin.math.sin(angle)
@@ -382,13 +397,44 @@ class FilamentRenderer : FilamentViewRenderer {
         for (i in 0..15) result[i] = tmp[i]
     }
 
+    private fun destroySwapChain(engine: Engine) {
+        swapChain?.let { current ->
+            engine.destroySwapChain(current)
+            swapChain = null
+        }
+    }
+
+    private fun destroyResourceMaterialCube(engine: Engine) {
+        resourceCubeEntity?.let { e ->
+            engine.getEntityManager().destroy(e)
+            resourceCubeEntity = null
+        }
+        resourceMaterialInstance?.let { m ->
+            engine.destroyMaterialInstance(m)
+            resourceMaterialInstance = null
+        }
+        resourceMaterial?.let { m ->
+            engine.destroyMaterial(m)
+            resourceMaterial = null
+        }
+    }
+
+    private fun destroyGltfAsset() {
+        gltfAsset?.let { existing ->
+            scene?.removeEntities(existing.getEntities())
+            gltfLoader?.destroyAsset(existing)
+            gltfAsset = null
+            gltfBaseTransform = null
+        }
+    }
+
     fun destroy() {
         engine?.let {
             runtimeCubeEntity?.let { e -> it.getEntityManager().destroy(e) }
-            resourceCubeEntity?.let { e -> it.getEntityManager().destroy(e) }
+            destroyResourceMaterialCube(it)
             sunLightEntity?.let { e -> it.destroyEntity(e) }
 
-            gltfAsset?.let { a -> gltfLoader?.destroyAsset(a) }
+            destroyGltfAsset()
             gltfLoader?.let { l -> AssetLoader.destroy(l) }
             gltfResourceLoader?.destroy()
             gltfMaterialProvider?.destroy()
@@ -398,15 +444,12 @@ class FilamentRenderer : FilamentViewRenderer {
             runtimeVertexBuffer?.let { v -> it.destroyVertexBuffer(v) }
             runtimeIndexBuffer?.let { i -> it.destroyIndexBuffer(i) }
 
-            resourceMaterialInstance?.let { m -> it.destroyMaterialInstance(m) }
-            resourceMaterial?.let { m -> it.destroyMaterial(m) }
-
             skybox?.let { s -> it.destroySkybox(s) }
             camera?.let { c -> it.destroyCamera(c) }
             view?.let { v -> it.destroyView(v) }
             scene?.let { s -> it.destroyScene(s) }
             renderer?.let { r -> it.destroyRenderer(r) }
-            swapChain?.let { s -> it.destroySwapChain(s) }
+            destroySwapChain(it)
             it.destroy()
         }
         engine = null
@@ -418,7 +461,23 @@ class FilamentRenderer : FilamentViewRenderer {
         skybox = null
         sunLightEntity = null
         runtimeCubeEntity = null
+        runtimeVertexBuffer = null
+        runtimeIndexBuffer = null
+        runtimeMaterial = null
+        runtimeMaterialInstance = null
         resourceCubeEntity = null
+        resourceMaterial = null
+        resourceMaterialInstance = null
         gltfAsset = null
+        gltfLoader = null
+        gltfResourceLoader = null
+        gltfMaterialProvider = null
+        gltfBaseTransform = null
+        pendingSurface = null
+        pendingWidth = 0
+        pendingHeight = 0
+        pendingFilamatData = null
+        pendingGlbData = null
+        startTime = -1
     }
 }

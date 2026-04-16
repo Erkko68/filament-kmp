@@ -20,16 +20,15 @@ public final class NativeLoader {
             String extension;
             String prefix = "lib";
 
-            if (os.contains("mac")) {
-                platform = "macos";
-                extension = ".dylib";
-            } else if (os.contains("win")) {
+            if (os.contains("win")) {
                 platform = "windows";
                 extension = ".dll";
                 prefix = "";
+            } else if (os.contains("mac") || os.contains("darwin")) {
+                platform = "macos";
+                extension = ".dylib";
             } else {
-                platform = "linux";
-                extension = ".so";
+                throw new UnsupportedOperationException("Unsupported OS: " + os);
             }
 
             if (arch.contains("aarch64") || arch.contains("arm64")) {

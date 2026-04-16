@@ -6,7 +6,6 @@ import java.awt.Dimension
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.JPanel
-import javax.swing.SwingUtilities
 import javax.swing.Timer
 
 class FilamentPanel(private val renderer: FilamentViewRenderer) : JPanel() {
@@ -27,11 +26,10 @@ class FilamentPanel(private val renderer: FilamentViewRenderer) : JPanel() {
 
     fun setupNativeSurface() {
         if (nativeSurface != null) return
-        
-            if (canvas.isDisplayable) {
-                nativeSurface = NativeSurface(canvas)
-                renderer.onSurfaceAvailable(nativeSurface!!, canvas.width, canvas.height)
-            }
+
+        if (canvas.isDisplayable) {
+            nativeSurface = NativeSurface(canvas)
+            renderer.onSurfaceAvailable(nativeSurface!!, canvas.width, canvas.height)
         }
     }
 
@@ -66,8 +64,14 @@ class FilamentPanel(private val renderer: FilamentViewRenderer) : JPanel() {
         return Dimension(800, 600)
     }
     
+    override fun addNotify() {
+        super.addNotify()
+        setupNativeSurface()
+    }
+
     override fun removeNotify() {
         stopRendering()
+        dispose()
         super.removeNotify()
     }
 }

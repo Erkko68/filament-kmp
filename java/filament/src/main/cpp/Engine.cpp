@@ -41,6 +41,7 @@
 #include "common/CallbackUtils.h"
 #include "common/VirtualMachineEnv.h"
 #include "common/AwtHelper.h"
+#include <iostream>
 
 
 using namespace filament;
@@ -54,6 +55,7 @@ static void* getNativeWindow(JNIEnv* env, jobject surface) {
     if (surface == nullptr) return nullptr;
     
     // Check if it's a Long (primitive wrapper) - common way to pass pointers from Kotlin
+    // Note: FindClass should ideally be cached for performance
     jclass longClass = env->FindClass("java/lang/Long");
     if (env->IsInstanceOf(surface, longClass)) {
         jmethodID longValueMethod = env->GetMethodID(longClass, "longValue", "()J");
@@ -66,10 +68,8 @@ static void* getNativeWindow(JNIEnv* env, jobject surface) {
         return awtHandle;
     }
 
-    
-    // Fallback: return the object itself. 
-    // This is likely to fail unless the backend knows how to handle it.
-    return (void*) surface;
+    fprintf(stderr, "Engine: Failed to extract native window from surface object %p\n", surface); fflush(stderr);
+    return nullptr;
 }
 
 
@@ -96,10 +96,15 @@ Java_io_github_erkko68_filament_jni_Engine_nGetBackend(JNIEnv*, jclass, jlong na
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_jni_Engine_nCreateSwapChain(JNIEnv* env, jclass klass, jlong nativeEngine, jobject surface, jlong flags) {
+    std::cout << "Engine: nCreateSwapChain engine=" << nativeEngine << " surface=" << surface << std::endl;
     Engine* engine = (Engine*) nativeEngine;
     void* win = getNativeWindow(env, surface);
+    std::cout << "Engine: nCreateSwapChain native window handle=" << win << std::endl;
+    if (win == nullptr) {
+        std::cerr << "Engine: Cannot create swap chain with null window handle!" << std::endl;
+        return 0;
+    }
     return (jlong) engine->createSwapChain(win, (uint64_t) flags);
-
 }
 
 extern "C" JNIEXPORT jlong JNICALL
