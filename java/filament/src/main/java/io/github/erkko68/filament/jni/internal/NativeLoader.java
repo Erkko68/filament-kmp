@@ -34,6 +34,9 @@ public final class NativeLoader {
             if (arch.contains("aarch64") || arch.contains("arm64")) {
                 arch = "arm64";
             } else {
+                if (platform.equals("macos")) {
+                    throw new UnsupportedOperationException("macOS x64 is not supported in this project. Please use ARM64.");
+                }
                 arch = "x64";
             }
 

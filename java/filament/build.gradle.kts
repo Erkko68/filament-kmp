@@ -50,9 +50,8 @@ tasks.register<Exec>("cmakeConfig") {
         "-DJAVA_HOME=${System.getProperty("java.home")}"
     )
     if (platform == "macos") {
-        val osxArch = if (arch == "Arm64") "arm64" else "x86_64"
         args += "-DCMAKE_OSX_SYSROOT=macosx"
-        args += "-DCMAKE_OSX_ARCHITECTURES=$osxArch"
+        args += "-DCMAKE_OSX_ARCHITECTURES=arm64"
     }
     commandLine(args)
 }
@@ -75,7 +74,7 @@ val hostPlatform = when {
 }
 val resPlatform = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
 val resArch = (project.findProperty("filament.arch") as String? ?: "arm64").lowercase().let {
-    if (it == "aarch64" || it == "arm64") "arm64" else "x64"
+    if (resPlatform == "macos") "arm64" else if (it == "aarch64" || it == "arm64") "arm64" else "x64"
 }
 
 tasks.processResources {
