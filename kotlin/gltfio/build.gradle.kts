@@ -61,6 +61,12 @@ kotlin {
         }
     }
 
+    js {
+        browser {
+            binaries.executable()
+        }
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -75,6 +81,8 @@ kotlin {
                 implementation("com.google.android.filament:gltfio-android:$filamentAndroidVersion")
             }
         }
+
+        val jsMain by getting
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
