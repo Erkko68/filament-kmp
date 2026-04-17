@@ -64,13 +64,6 @@ kotlin {
     }
 
 
-
-//    js(IR) {
-//        browser()
-//        binaries.library()
-//    }
-    jvm()
-
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -83,11 +76,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("com.google.android.filament:filament-utils-android:$filamentAndroidVersion")
-            }
-        }
-        val jvmMain by getting {
-            dependencies {
-                api(project(":java:filament-utils"))
             }
         }
     }
