@@ -5,6 +5,7 @@ include(":kotlin:filament")
 include(":kotlin:filamat")
 include(":kotlin:filament-utils")
 include(":kotlin:gltfio")
+include(":js")
 
 
 pluginManagement {

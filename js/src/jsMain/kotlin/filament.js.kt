@@ -1,4 +1,5 @@
 @file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
+package io.github.erkko68.filament.js
 
 import kotlin.js.*
 import org.khronos.webgl.*
@@ -13,6 +14,14 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
+
+external object glm {
+    interface vec2
+    interface vec3
+    interface vec4
+    interface mat3
+    interface mat4
+}
 
 external fun getSupportedFormatSuffix(desired: String)
 
@@ -58,7 +67,7 @@ typealias PickCallback = (result: PickingQueryResult) -> Unit
 
 external open class ColorGrading {
     companion object {
-        fun Builder(): `ColorGrading$Builder`
+        fun Builder(): `ColorGrading_Builder`
     }
 }
 
@@ -80,7 +89,7 @@ external interface Aabb {
         set(value) = definedExternally
 }
 
-external interface `Renderer$ClearOptions` {
+external interface `Renderer_ClearOptions` {
     var clearColor: dynamic /* glm.vec4? | Array<Number>? */
         get() = definedExternally
         set(value) = definedExternally
@@ -92,7 +101,7 @@ external interface `Renderer$ClearOptions` {
         set(value) = definedExternally
 }
 
-external interface `LightManager$ShadowOptions` {
+external interface `LightManager_ShadowOptions` {
     var mapSize: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -134,26 +143,26 @@ external interface `LightManager$ShadowOptions` {
         set(value) = definedExternally
 }
 
-external open class `driver$PixelBufferDescriptor` {
+external open class `driver_PixelBufferDescriptor` {
     constructor(byteLength: Number, format: PixelDataFormat, datatype: PixelDataType)
     constructor(byteLength: Number, cdtype: CompressedPixelDataType, imageSize: Number, compressed: Boolean)
     open fun getBytes(): ArrayBuffer
 }
 
-external open class `Texture$Builder` {
-    open fun width(width: Number): `Texture$Builder`
-    open fun height(height: Number): `Texture$Builder`
-    open fun depth(depth: Number): `Texture$Builder`
-    open fun levels(levels: Number): `Texture$Builder`
-    open fun sampler(sampler: `Texture$Sampler`): `Texture$Builder`
-    open fun format(format: `Texture$InternalFormat`): `Texture$Builder`
-    open fun usage(usage: Number): `Texture$Builder`
+external open class `Texture_Builder` {
+    open fun width(width: Number): `Texture_Builder`
+    open fun height(height: Number): `Texture_Builder`
+    open fun depth(depth: Number): `Texture_Builder`
+    open fun levels(levels: Number): `Texture_Builder`
+    open fun sampler(sampler: `Texture_Sampler`): `Texture_Builder`
+    open fun format(format: `Texture_InternalFormat`): `Texture_Builder`
+    open fun usage(usage: Number): `Texture_Builder`
     open fun build(engine: Engine): Texture
 }
 
 external open class Texture {
-    open fun setImage(engine: Engine, level: Number, pbd: `driver$PixelBufferDescriptor`)
-    open fun setImageCube(engine: Engine, level: Number, pbd: `driver$PixelBufferDescriptor`)
+    open fun setImage(engine: Engine, level: Number, pbd: `driver_PixelBufferDescriptor`)
+    open fun setImageCube(engine: Engine, level: Number, pbd: `driver_PixelBufferDescriptor`)
     open fun getWidth(engine: Engine, level: Number = definedExternally): Number
     open fun getHeight(engine: Engine, level: Number = definedExternally): Number
     open fun getDepth(engine: Engine, level: Number = definedExternally): Number
@@ -161,7 +170,7 @@ external open class Texture {
     open fun generateMipmaps(engine: Engine)
 
     companion object {
-        fun Builder(): `Texture$Builder`
+        fun Builder(): `Texture_Builder`
     }
 }
 
@@ -176,15 +185,15 @@ external open class Skybox {
     open fun getTexture(): Texture
 }
 
-external open class `LightManager$Instance` {
+external open class `LightManager_Instance` {
     open fun delete()
 }
 
-external open class `RenderableManager$Instance` {
+external open class `RenderableManager_Instance` {
     open fun delete()
 }
 
-external open class `TransformManager$Instance` {
+external open class `TransformManager_Instance` {
     open fun delete()
 }
 
@@ -238,120 +247,120 @@ external open class EntityManager {
     }
 }
 
-external open class `VertexBuffer$Builder` {
-    open fun vertexCount(count: Number): `VertexBuffer$Builder`
-    open fun bufferCount(count: Number): `VertexBuffer$Builder`
-    open fun attribute(attrib: VertexAttribute, bufindex: Number, atype: `VertexBuffer$AttributeType`, offset: Number, stride: Number): `VertexBuffer$Builder`
-    open fun enableBufferObjects(enabled: Boolean): `VertexBuffer$Builder`
-    open fun normalized(attrib: VertexAttribute): `VertexBuffer$Builder`
-    open fun normalizedIf(attrib: VertexAttribute, normalized: Boolean): `VertexBuffer$Builder`
+external open class `VertexBuffer_Builder` {
+    open fun vertexCount(count: Number): `VertexBuffer_Builder`
+    open fun bufferCount(count: Number): `VertexBuffer_Builder`
+    open fun attribute(attrib: VertexAttribute, bufindex: Number, atype: `VertexBuffer_AttributeType`, offset: Number, stride: Number): `VertexBuffer_Builder`
+    open fun enableBufferObjects(enabled: Boolean): `VertexBuffer_Builder`
+    open fun normalized(attrib: VertexAttribute): `VertexBuffer_Builder`
+    open fun normalizedIf(attrib: VertexAttribute, normalized: Boolean): `VertexBuffer_Builder`
     open fun build(engine: Engine): VertexBuffer
 }
 
-external open class `IndexBuffer$Builder` {
-    open fun indexCount(count: Number): `IndexBuffer$Builder`
-    open fun bufferType(type: `IndexBuffer$IndexType`): `IndexBuffer$Builder`
+external open class `IndexBuffer_Builder` {
+    open fun indexCount(count: Number): `IndexBuffer_Builder`
+    open fun bufferType(type: `IndexBuffer_IndexType`): `IndexBuffer_Builder`
     open fun build(engine: Engine): IndexBuffer
 }
 
-external open class `BufferObject$Builder` {
-    open fun size(byteCount: Number): `BufferObject$Builder`
-    open fun bindingType(type: `BufferObject$BindingType`): `BufferObject$Builder`
+external open class `BufferObject_Builder` {
+    open fun size(byteCount: Number): `BufferObject_Builder`
+    open fun bindingType(type: `BufferObject_BindingType`): `BufferObject_Builder`
     open fun build(engine: Engine): BufferObject
 }
 
-external open class `RenderableManager$Builder` {
-    open fun geometry(slot: Number, ptype: `RenderableManager$PrimitiveType`, vb: VertexBuffer, ib: IndexBuffer): `RenderableManager$Builder`
-    open fun geometryOffset(slot: Number, ptype: `RenderableManager$PrimitiveType`, vb: VertexBuffer, ib: IndexBuffer, offset: Number, count: Number): `RenderableManager$Builder`
-    open fun geometryMinMax(slot: Number, ptype: `RenderableManager$PrimitiveType`, vb: VertexBuffer, ib: IndexBuffer, offset: Number, minIndex: Number, maxIndex: Number, count: Number): `RenderableManager$Builder`
-    open fun material(geo: Number, minstance: MaterialInstance): `RenderableManager$Builder`
-    open fun boundingBox(box: Box): `RenderableManager$Builder`
-    open fun layerMask(select: Number, values: Number): `RenderableManager$Builder`
-    open fun priority(value: Number): `RenderableManager$Builder`
-    open fun culling(enable: Boolean): `RenderableManager$Builder`
-    open fun castShadows(enable: Boolean): `RenderableManager$Builder`
-    open fun receiveShadows(enable: Boolean): `RenderableManager$Builder`
-    open fun skinning(boneCount: Number): `RenderableManager$Builder`
-    open fun skinningBones(transforms: Array<`RenderableManager$Bone`>): `RenderableManager$Builder`
-    open fun skinningMatrices(transforms: Array<Any /* glm.mat4 | Array<Number> */>): `RenderableManager$Builder`
-    open fun morphing(enable: Boolean): `RenderableManager$Builder`
-    open fun blendOrder(index: Number, order: Number): `RenderableManager$Builder`
+external open class `RenderableManager_Builder` {
+    open fun geometry(slot: Number, ptype: `RenderableManager_PrimitiveType`, vb: VertexBuffer, ib: IndexBuffer): `RenderableManager_Builder`
+    open fun geometryOffset(slot: Number, ptype: `RenderableManager_PrimitiveType`, vb: VertexBuffer, ib: IndexBuffer, offset: Number, count: Number): `RenderableManager_Builder`
+    open fun geometryMinMax(slot: Number, ptype: `RenderableManager_PrimitiveType`, vb: VertexBuffer, ib: IndexBuffer, offset: Number, minIndex: Number, maxIndex: Number, count: Number): `RenderableManager_Builder`
+    open fun material(geo: Number, minstance: MaterialInstance): `RenderableManager_Builder`
+    open fun boundingBox(box: Box): `RenderableManager_Builder`
+    open fun layerMask(select: Number, values: Number): `RenderableManager_Builder`
+    open fun priority(value: Number): `RenderableManager_Builder`
+    open fun culling(enable: Boolean): `RenderableManager_Builder`
+    open fun castShadows(enable: Boolean): `RenderableManager_Builder`
+    open fun receiveShadows(enable: Boolean): `RenderableManager_Builder`
+    open fun skinning(boneCount: Number): `RenderableManager_Builder`
+    open fun skinningBones(transforms: Array<`RenderableManager_Bone`>): `RenderableManager_Builder`
+    open fun skinningMatrices(transforms: Array<Any /* glm.mat4 | Array<Number> */>): `RenderableManager_Builder`
+    open fun morphing(enable: Boolean): `RenderableManager_Builder`
+    open fun blendOrder(index: Number, order: Number): `RenderableManager_Builder`
     open fun build(engine: Engine, entity: Entity)
 }
 
-external open class `RenderTarget$Builder` {
-    open fun texture(attachment: `RenderTarget$AttachmentPoint`, texture: Texture): `RenderTarget$Builder`
-    open fun mipLevel(attachment: `RenderTarget$AttachmentPoint`, mipLevel: Number): `RenderTarget$Builder`
-    open fun face(attachment: `RenderTarget$AttachmentPoint`, face: `Texture$CubemapFace`): `RenderTarget$Builder`
-    open fun layer(attachment: `RenderTarget$AttachmentPoint`, layer: Number): `RenderTarget$Builder`
+external open class `RenderTarget_Builder` {
+    open fun texture(attachment: `RenderTarget_AttachmentPoint`, texture: Texture): `RenderTarget_Builder`
+    open fun mipLevel(attachment: `RenderTarget_AttachmentPoint`, mipLevel: Number): `RenderTarget_Builder`
+    open fun face(attachment: `RenderTarget_AttachmentPoint`, face: `Texture_CubemapFace`): `RenderTarget_Builder`
+    open fun layer(attachment: `RenderTarget_AttachmentPoint`, layer: Number): `RenderTarget_Builder`
     open fun build(engine: Engine): RenderTarget
 }
 
-external open class `LightManager$Builder` {
+external open class `LightManager_Builder` {
     open fun build(engine: Engine, entity: Entity)
-    open fun castLight(enable: Boolean): `LightManager$Builder`
-    open fun castShadows(enable: Boolean): `LightManager$Builder`
-    open fun shadowOptions(options: `LightManager$ShadowOptions`): `LightManager$Builder`
-    open fun color(rgb: glm.vec3): `LightManager$Builder`
-    open fun color(rgb: Array<Number>): `LightManager$Builder`
-    open fun direction(value: glm.vec3): `LightManager$Builder`
-    open fun direction(value: Array<Number>): `LightManager$Builder`
-    open fun intensity(value: Number): `LightManager$Builder`
-    open fun falloff(value: Number): `LightManager$Builder`
-    open fun position(value: glm.vec3): `LightManager$Builder`
-    open fun position(value: Array<Number>): `LightManager$Builder`
-    open fun spotLightCone(inner: Number, outer: Number): `LightManager$Builder`
-    open fun sunAngularRadius(angularRadius: Number): `LightManager$Builder`
-    open fun sunHaloFalloff(haloFalloff: Number): `LightManager$Builder`
-    open fun sunHaloSize(haloSize: Number): `LightManager$Builder`
+    open fun castLight(enable: Boolean): `LightManager_Builder`
+    open fun castShadows(enable: Boolean): `LightManager_Builder`
+    open fun shadowOptions(options: `LightManager_ShadowOptions`): `LightManager_Builder`
+    open fun color(rgb: glm.vec3): `LightManager_Builder`
+    open fun color(rgb: Array<Number>): `LightManager_Builder`
+    open fun direction(value: glm.vec3): `LightManager_Builder`
+    open fun direction(value: Array<Number>): `LightManager_Builder`
+    open fun intensity(value: Number): `LightManager_Builder`
+    open fun falloff(value: Number): `LightManager_Builder`
+    open fun position(value: glm.vec3): `LightManager_Builder`
+    open fun position(value: Array<Number>): `LightManager_Builder`
+    open fun spotLightCone(inner: Number, outer: Number): `LightManager_Builder`
+    open fun sunAngularRadius(angularRadius: Number): `LightManager_Builder`
+    open fun sunHaloFalloff(haloFalloff: Number): `LightManager_Builder`
+    open fun sunHaloSize(haloSize: Number): `LightManager_Builder`
 }
 
-external open class `Skybox$Builder` {
+external open class `Skybox_Builder` {
     open fun build(engine: Engine): Skybox
-    open fun color(rgba: glm.vec4): `Skybox$Builder`
-    open fun color(rgba: Array<Number>): `Skybox$Builder`
-    open fun environment(envmap: Texture): `Skybox$Builder`
-    open fun showSun(show: Boolean): `Skybox$Builder`
+    open fun color(rgba: glm.vec4): `Skybox_Builder`
+    open fun color(rgba: Array<Number>): `Skybox_Builder`
+    open fun environment(envmap: Texture): `Skybox_Builder`
+    open fun showSun(show: Boolean): `Skybox_Builder`
 }
 
 external open class LightManager {
     open fun hasComponent(entity: Entity): Boolean
-    open fun getInstance(entity: Entity): `LightManager$Instance`
-    open fun getType(instance: `LightManager$Instance`): `LightManager$Type`
-    open fun isDirectional(instance: `LightManager$Instance`): Boolean
-    open fun isPointLight(instance: `LightManager$Instance`): Boolean
-    open fun isSpotLight(instance: `LightManager$Instance`): Boolean
-    open fun setPosition(instance: `LightManager$Instance`, value: glm.vec3)
-    open fun setPosition(instance: `LightManager$Instance`, value: Array<Number>)
-    open fun getPosition(instance: `LightManager$Instance`): dynamic /* glm.vec3 | Array<Number> */
-    open fun setDirection(instance: `LightManager$Instance`, value: glm.vec3)
-    open fun setDirection(instance: `LightManager$Instance`, value: Array<Number>)
-    open fun getDirection(instance: `LightManager$Instance`): dynamic /* glm.vec3 | Array<Number> */
-    open fun setColor(instance: `LightManager$Instance`, value: glm.vec3)
-    open fun setColor(instance: `LightManager$Instance`, value: Array<Number>)
-    open fun getColor(instance: `LightManager$Instance`): dynamic /* glm.vec3 | Array<Number> */
-    open fun setIntensity(instance: `LightManager$Instance`, intensity: Number)
-    open fun setIntensityEnergy(instance: `LightManager$Instance`, watts: Number, efficiency: Number)
-    open fun getIntensity(instance: `LightManager$Instance`): Number
-    open fun setFalloff(instance: `LightManager$Instance`, radius: Number)
-    open fun getFalloff(instance: `LightManager$Instance`): Number
-    open fun setShadowOptions(instance: `LightManager$Instance`, options: `LightManager$ShadowOptions`)
-    open fun setSpotLightCone(instance: `LightManager$Instance`, inner: Number, outer: Number)
-    open fun setSunAngularRadius(instance: `LightManager$Instance`, angularRadius: Number)
-    open fun getSunAngularRadius(instance: `LightManager$Instance`): Number
-    open fun setSunHaloSize(instance: `LightManager$Instance`, haloSize: Number)
-    open fun getSunHaloSize(instance: `LightManager$Instance`): Number
-    open fun setSunHaloFalloff(instance: `LightManager$Instance`, haloFalloff: Number)
-    open fun getSunHaloFalloff(instance: `LightManager$Instance`): Number
-    open fun setShadowCaster(instance: `LightManager$Instance`, shadowCaster: Boolean): Number
-    open fun isShadowCaster(instance: `LightManager$Instance`): Boolean
+    open fun getInstance(entity: Entity): `LightManager_Instance`
+    open fun getType(instance: `LightManager_Instance`): `LightManager_Type`
+    open fun isDirectional(instance: `LightManager_Instance`): Boolean
+    open fun isPointLight(instance: `LightManager_Instance`): Boolean
+    open fun isSpotLight(instance: `LightManager_Instance`): Boolean
+    open fun setPosition(instance: `LightManager_Instance`, value: glm.vec3)
+    open fun setPosition(instance: `LightManager_Instance`, value: Array<Number>)
+    open fun getPosition(instance: `LightManager_Instance`): dynamic /* glm.vec3 | Array<Number> */
+    open fun setDirection(instance: `LightManager_Instance`, value: glm.vec3)
+    open fun setDirection(instance: `LightManager_Instance`, value: Array<Number>)
+    open fun getDirection(instance: `LightManager_Instance`): dynamic /* glm.vec3 | Array<Number> */
+    open fun setColor(instance: `LightManager_Instance`, value: glm.vec3)
+    open fun setColor(instance: `LightManager_Instance`, value: Array<Number>)
+    open fun getColor(instance: `LightManager_Instance`): dynamic /* glm.vec3 | Array<Number> */
+    open fun setIntensity(instance: `LightManager_Instance`, intensity: Number)
+    open fun setIntensityEnergy(instance: `LightManager_Instance`, watts: Number, efficiency: Number)
+    open fun getIntensity(instance: `LightManager_Instance`): Number
+    open fun setFalloff(instance: `LightManager_Instance`, radius: Number)
+    open fun getFalloff(instance: `LightManager_Instance`): Number
+    open fun setShadowOptions(instance: `LightManager_Instance`, options: `LightManager_ShadowOptions`)
+    open fun setSpotLightCone(instance: `LightManager_Instance`, inner: Number, outer: Number)
+    open fun setSunAngularRadius(instance: `LightManager_Instance`, angularRadius: Number)
+    open fun getSunAngularRadius(instance: `LightManager_Instance`): Number
+    open fun setSunHaloSize(instance: `LightManager_Instance`, haloSize: Number)
+    open fun getSunHaloSize(instance: `LightManager_Instance`): Number
+    open fun setSunHaloFalloff(instance: `LightManager_Instance`, haloFalloff: Number)
+    open fun getSunHaloFalloff(instance: `LightManager_Instance`): Number
+    open fun setShadowCaster(instance: `LightManager_Instance`, shadowCaster: Boolean): Number
+    open fun isShadowCaster(instance: `LightManager_Instance`): Boolean
 
     companion object {
-        fun Builder(ltype: `LightManager$Type`): `LightManager$Builder`
+        fun Builder(ltype: `LightManager_Type`): `LightManager_Builder`
     }
 }
 
-external interface `RenderableManager$Bone` {
+external interface `RenderableManager_Bone` {
     var unitQuaternion: dynamic /* glm.quat | Array<Number> */
         get() = definedExternally
         set(value) = definedExternally
@@ -362,28 +371,28 @@ external interface `RenderableManager$Bone` {
 
 external open class RenderableManager {
     open fun hasComponent(entity: Entity): Boolean
-    open fun getInstance(entity: Entity): `RenderableManager$Instance`
+    open fun getInstance(entity: Entity): `RenderableManager_Instance`
     open fun destroy(entity: Entity)
-    open fun setAxisAlignedBoundingBox(instance: `RenderableManager$Instance`, aabb: Box)
-    open fun setLayerMask(instance: `RenderableManager$Instance`, select: Number, values: Number)
-    open fun setPriority(instance: `RenderableManager$Instance`, priority: Number)
-    open fun setCastShadows(instance: `RenderableManager$Instance`, enable: Boolean)
-    open fun setReceiveShadows(inst: `RenderableManager$Instance`, enable: Boolean)
-    open fun isShadowCaster(instance: `RenderableManager$Instance`): Boolean
-    open fun isShadowReceiver(instance: `RenderableManager$Instance`): Boolean
-    open fun setBones(instance: `RenderableManager$Instance`, transforms: Array<`RenderableManager$Bone`>, offset: Number)
-    open fun setBonesFromMatrices(instance: `RenderableManager$Instance`, transforms: Array<Any /* glm.mat4 | Array<Number> */>, offset: Number)
-    open fun setMorphWeights(instance: `RenderableManager$Instance`, a: Number, b: Number, c: Number, d: Number)
-    open fun getAxisAlignedBoundingBox(instance: `RenderableManager$Instance`): Box
-    open fun getPrimitiveCount(instance: `RenderableManager$Instance`): Number
-    open fun setMaterialInstanceAt(instance: `RenderableManager$Instance`, primitiveIndex: Number, materialInstance: MaterialInstance)
-    open fun getMaterialInstanceAt(instance: `RenderableManager$Instance`, primitiveIndex: Number): MaterialInstance
-    open fun setGeometryAt(instance: `RenderableManager$Instance`, primitiveIndex: Number, type: `RenderableManager$PrimitiveType`, vertices: VertexBuffer, indices: IndexBuffer, offset: Number, count: Number)
-    open fun setBlendOrderAt(instance: `RenderableManager$Instance`, primitiveIndex: Number, order: Number)
-    open fun getEnabledAttributesAt(instance: `RenderableManager$Instance`, primitiveIndex: Number): Number
+    open fun setAxisAlignedBoundingBox(instance: `RenderableManager_Instance`, aabb: Box)
+    open fun setLayerMask(instance: `RenderableManager_Instance`, select: Number, values: Number)
+    open fun setPriority(instance: `RenderableManager_Instance`, priority: Number)
+    open fun setCastShadows(instance: `RenderableManager_Instance`, enable: Boolean)
+    open fun setReceiveShadows(inst: `RenderableManager_Instance`, enable: Boolean)
+    open fun isShadowCaster(instance: `RenderableManager_Instance`): Boolean
+    open fun isShadowReceiver(instance: `RenderableManager_Instance`): Boolean
+    open fun setBones(instance: `RenderableManager_Instance`, transforms: Array<`RenderableManager_Bone`>, offset: Number)
+    open fun setBonesFromMatrices(instance: `RenderableManager_Instance`, transforms: Array<Any /* glm.mat4 | Array<Number> */>, offset: Number)
+    open fun setMorphWeights(instance: `RenderableManager_Instance`, a: Number, b: Number, c: Number, d: Number)
+    open fun getAxisAlignedBoundingBox(instance: `RenderableManager_Instance`): Box
+    open fun getPrimitiveCount(instance: `RenderableManager_Instance`): Number
+    open fun setMaterialInstanceAt(instance: `RenderableManager_Instance`, primitiveIndex: Number, materialInstance: MaterialInstance)
+    open fun getMaterialInstanceAt(instance: `RenderableManager_Instance`, primitiveIndex: Number): MaterialInstance
+    open fun setGeometryAt(instance: `RenderableManager_Instance`, primitiveIndex: Number, type: `RenderableManager_PrimitiveType`, vertices: VertexBuffer, indices: IndexBuffer, offset: Number, count: Number)
+    open fun setBlendOrderAt(instance: `RenderableManager_Instance`, primitiveIndex: Number, order: Number)
+    open fun getEnabledAttributesAt(instance: `RenderableManager_Instance`, primitiveIndex: Number): Number
 
     companion object {
-        fun Builder(ngeos: Number): `RenderableManager$Builder`
+        fun Builder(ngeos: Number): `RenderableManager_Builder`
     }
 }
 
@@ -395,7 +404,7 @@ external open class VertexBuffer {
     open fun setBufferObjectAt(engine: Engine, bufindex: Number, bo: BufferObject)
 
     companion object {
-        fun Builder(): `VertexBuffer$Builder`
+        fun Builder(): `VertexBuffer_Builder`
     }
 }
 
@@ -406,7 +415,7 @@ external open class BufferObject {
     open fun setBuffer(engine: Engine, data: ArrayBufferView)
 
     companion object {
-        fun Builder(): `BufferObject$Builder`
+        fun Builder(): `BufferObject_Builder`
     }
 }
 
@@ -417,13 +426,13 @@ external open class IndexBuffer {
     open fun setBuffer(engine: Engine, u16array: ArrayBufferView)
 
     companion object {
-        fun Builder(): `IndexBuffer$Builder`
+        fun Builder(): `IndexBuffer_Builder`
     }
 }
 
 external open class Renderer {
     open fun render(swapChain: SwapChain, view: View)
-    open fun setClearOptions(options: `Renderer$ClearOptions`)
+    open fun setClearOptions(options: `Renderer_ClearOptions`)
     open fun renderView(view: View)
     open fun beginFrame(swapChain: SwapChain): Boolean
     open fun endFrame()
@@ -436,7 +445,7 @@ external open class Material {
     open fun getName(): String
 }
 
-external enum class Material$UboBatchingMode {
+external enum class Material_UboBatchingMode {
     DISABLED,
     DEFAULT
 }
@@ -446,15 +455,15 @@ external open class Frustum {
     constructor(pv: Array<Number>)
     open fun setProjection(pv: glm.mat4)
     open fun setProjection(pv: Array<Number>)
-    open fun getNormalizedPlane(plane: `Frustum$Plane`): dynamic /* glm.vec4 | Array<Number> */
+    open fun getNormalizedPlane(plane: `Frustum_Plane`): dynamic /* glm.vec4 | Array<Number> */
     open fun intersectsBox(box: Box): Boolean
     open fun intersectsSphere(sphere: glm.vec4): Boolean
     open fun intersectsSphere(sphere: Array<Number>): Boolean
 }
 
 external open class Camera {
-    open fun setProjection(proj: `Camera$Projection`, left: Number, right: Number, bottom: Number, top: Number, near: Number, far: Number)
-    open fun setProjectionFov(fovInDegrees: Number, aspect: Number, near: Number, far: Number, fov: `Camera$Fov`)
+    open fun setProjection(proj: `Camera_Projection`, left: Number, right: Number, bottom: Number, top: Number, near: Number, far: Number)
+    open fun setProjectionFov(fovInDegrees: Number, aspect: Number, near: Number, far: Number, fov: `Camera_Fov`)
     open fun setLensProjection(focalLength: Number, aspect: Number, near: Number, far: Number)
     open fun setCustomProjection(projection: glm.mat4, near: Number, far: Number)
     open fun setCustomProjection(projection: Array<Number>, near: Number, far: Number)
@@ -499,51 +508,51 @@ external open class Camera {
     }
 }
 
-external open class `ColorGrading$Builder` {
-    open fun quality(qualityLevel: `ColorGrading$QualityLevel`): `ColorGrading$Builder`
-    open fun format(format: `ColorGrading$LutFormat`): `ColorGrading$Builder`
-    open fun dimensions(dim: Number): `ColorGrading$Builder`
-    open fun toneMapping(toneMapping: `ColorGrading$ToneMapping`): `ColorGrading$Builder`
-    open fun luminanceScaling(luminanceScaling: Boolean): `ColorGrading$Builder`
-    open fun gamutMapping(gamutMapping: Boolean): `ColorGrading$Builder`
-    open fun exposure(exposure: Number): `ColorGrading$Builder`
-    open fun nightAdaptation(adaptation: Boolean): `ColorGrading$Builder`
-    open fun whiteBalance(temperature: Number, tint: Number): `ColorGrading$Builder`
-    open fun channelMixer(outRed: glm.vec3, outGreen: glm.vec3, outBlue: glm.vec3): `ColorGrading$Builder`
-    open fun channelMixer(outRed: glm.vec3, outGreen: glm.vec3, outBlue: Array<Number>): `ColorGrading$Builder`
-    open fun channelMixer(outRed: glm.vec3, outGreen: Array<Number>, outBlue: glm.vec3): `ColorGrading$Builder`
-    open fun channelMixer(outRed: glm.vec3, outGreen: Array<Number>, outBlue: Array<Number>): `ColorGrading$Builder`
-    open fun channelMixer(outRed: Array<Number>, outGreen: glm.vec3, outBlue: glm.vec3): `ColorGrading$Builder`
-    open fun channelMixer(outRed: Array<Number>, outGreen: glm.vec3, outBlue: Array<Number>): `ColorGrading$Builder`
-    open fun channelMixer(outRed: Array<Number>, outGreen: Array<Number>, outBlue: glm.vec3): `ColorGrading$Builder`
-    open fun channelMixer(outRed: Array<Number>, outGreen: Array<Number>, outBlue: Array<Number>): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: glm.vec4, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: glm.vec4, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: Array<Number>, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: Array<Number>, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: glm.vec4, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: glm.vec4, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: Array<Number>, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: Array<Number>, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: glm.vec3, offset: glm.vec3, power: glm.vec3): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: glm.vec3, offset: glm.vec3, power: Array<Number>): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: glm.vec3, offset: Array<Number>, power: glm.vec3): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: glm.vec3, offset: Array<Number>, power: Array<Number>): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: Array<Number>, offset: glm.vec3, power: glm.vec3): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: Array<Number>, offset: glm.vec3, power: Array<Number>): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: Array<Number>, offset: Array<Number>, power: glm.vec3): `ColorGrading$Builder`
-    open fun slopeOffsetPower(slope: Array<Number>, offset: Array<Number>, power: Array<Number>): `ColorGrading$Builder`
-    open fun contrast(contrast: Number): `ColorGrading$Builder`
-    open fun vibrance(vibrance: Number): `ColorGrading$Builder`
-    open fun saturation(saturation: Number): `ColorGrading$Builder`
-    open fun curves(shadowGamma: glm.vec3, midPoint: glm.vec3, highlightScale: glm.vec3): `ColorGrading$Builder`
-    open fun curves(shadowGamma: glm.vec3, midPoint: glm.vec3, highlightScale: Array<Number>): `ColorGrading$Builder`
-    open fun curves(shadowGamma: glm.vec3, midPoint: Array<Number>, highlightScale: glm.vec3): `ColorGrading$Builder`
-    open fun curves(shadowGamma: glm.vec3, midPoint: Array<Number>, highlightScale: Array<Number>): `ColorGrading$Builder`
-    open fun curves(shadowGamma: Array<Number>, midPoint: glm.vec3, highlightScale: glm.vec3): `ColorGrading$Builder`
-    open fun curves(shadowGamma: Array<Number>, midPoint: glm.vec3, highlightScale: Array<Number>): `ColorGrading$Builder`
-    open fun curves(shadowGamma: Array<Number>, midPoint: Array<Number>, highlightScale: glm.vec3): `ColorGrading$Builder`
-    open fun curves(shadowGamma: Array<Number>, midPoint: Array<Number>, highlightScale: Array<Number>): `ColorGrading$Builder`
+external open class `ColorGrading_Builder` {
+    open fun quality(qualityLevel: `ColorGrading_QualityLevel`): `ColorGrading_Builder`
+    open fun format(format: `ColorGrading_LutFormat`): `ColorGrading_Builder`
+    open fun dimensions(dim: Number): `ColorGrading_Builder`
+    open fun toneMapping(toneMapping: `ColorGrading_ToneMapping`): `ColorGrading_Builder`
+    open fun luminanceScaling(luminanceScaling: Boolean): `ColorGrading_Builder`
+    open fun gamutMapping(gamutMapping: Boolean): `ColorGrading_Builder`
+    open fun exposure(exposure: Number): `ColorGrading_Builder`
+    open fun nightAdaptation(adaptation: Boolean): `ColorGrading_Builder`
+    open fun whiteBalance(temperature: Number, tint: Number): `ColorGrading_Builder`
+    open fun channelMixer(outRed: glm.vec3, outGreen: glm.vec3, outBlue: glm.vec3): `ColorGrading_Builder`
+    open fun channelMixer(outRed: glm.vec3, outGreen: glm.vec3, outBlue: Array<Number>): `ColorGrading_Builder`
+    open fun channelMixer(outRed: glm.vec3, outGreen: Array<Number>, outBlue: glm.vec3): `ColorGrading_Builder`
+    open fun channelMixer(outRed: glm.vec3, outGreen: Array<Number>, outBlue: Array<Number>): `ColorGrading_Builder`
+    open fun channelMixer(outRed: Array<Number>, outGreen: glm.vec3, outBlue: glm.vec3): `ColorGrading_Builder`
+    open fun channelMixer(outRed: Array<Number>, outGreen: glm.vec3, outBlue: Array<Number>): `ColorGrading_Builder`
+    open fun channelMixer(outRed: Array<Number>, outGreen: Array<Number>, outBlue: glm.vec3): `ColorGrading_Builder`
+    open fun channelMixer(outRed: Array<Number>, outGreen: Array<Number>, outBlue: Array<Number>): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: glm.vec4, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: glm.vec4, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: Array<Number>, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: glm.vec4, midtones: Array<Number>, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: glm.vec4, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: glm.vec4, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: Array<Number>, highlights: glm.vec4, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun shadowsMidtonesHighlights(shadows: Array<Number>, midtones: Array<Number>, highlights: Array<Number>, ranges: Any /* glm.vec4 | Array<Number> */): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: glm.vec3, offset: glm.vec3, power: glm.vec3): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: glm.vec3, offset: glm.vec3, power: Array<Number>): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: glm.vec3, offset: Array<Number>, power: glm.vec3): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: glm.vec3, offset: Array<Number>, power: Array<Number>): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: Array<Number>, offset: glm.vec3, power: glm.vec3): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: Array<Number>, offset: glm.vec3, power: Array<Number>): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: Array<Number>, offset: Array<Number>, power: glm.vec3): `ColorGrading_Builder`
+    open fun slopeOffsetPower(slope: Array<Number>, offset: Array<Number>, power: Array<Number>): `ColorGrading_Builder`
+    open fun contrast(contrast: Number): `ColorGrading_Builder`
+    open fun vibrance(vibrance: Number): `ColorGrading_Builder`
+    open fun saturation(saturation: Number): `ColorGrading_Builder`
+    open fun curves(shadowGamma: glm.vec3, midPoint: glm.vec3, highlightScale: glm.vec3): `ColorGrading_Builder`
+    open fun curves(shadowGamma: glm.vec3, midPoint: glm.vec3, highlightScale: Array<Number>): `ColorGrading_Builder`
+    open fun curves(shadowGamma: glm.vec3, midPoint: Array<Number>, highlightScale: glm.vec3): `ColorGrading_Builder`
+    open fun curves(shadowGamma: glm.vec3, midPoint: Array<Number>, highlightScale: Array<Number>): `ColorGrading_Builder`
+    open fun curves(shadowGamma: Array<Number>, midPoint: glm.vec3, highlightScale: glm.vec3): `ColorGrading_Builder`
+    open fun curves(shadowGamma: Array<Number>, midPoint: glm.vec3, highlightScale: Array<Number>): `ColorGrading_Builder`
+    open fun curves(shadowGamma: Array<Number>, midPoint: Array<Number>, highlightScale: glm.vec3): `ColorGrading_Builder`
+    open fun curves(shadowGamma: Array<Number>, midPoint: Array<Number>, highlightScale: Array<Number>): `ColorGrading_Builder`
     open fun build(engine: Engine): ColorGrading
 }
 
@@ -558,20 +567,20 @@ external open class IndirectLight {
     open var shfloats: Array<Number>
 
     companion object {
-        fun Builder(): `IndirectLight$Builder`
+        fun Builder(): `IndirectLight_Builder`
         fun getDirectionEstimate(f32array: Any): dynamic /* glm.vec3 | Array<Number> */
         fun getColorEstimate(f32array: Any, direction: glm.vec3): dynamic /* glm.vec4 | Array<Number> */
         fun getColorEstimate(f32array: Any, direction: Array<Number>): dynamic /* glm.vec4 | Array<Number> */
     }
 }
 
-external open class `IndirectLight$Builder` {
-    open fun reflections(cubemap: Texture): `IndirectLight$Builder`
-    open fun irradianceTex(cubemap: Texture): `IndirectLight$Builder`
-    open fun irradianceSh(nbands: Number, f32array: Any): `IndirectLight$Builder`
-    open fun intensity(value: Number): `IndirectLight$Builder`
-    open fun rotation(value: glm.mat3): `IndirectLight$Builder`
-    open fun rotation(value: Array<Number>): `IndirectLight$Builder`
+external open class `IndirectLight_Builder` {
+    open fun reflections(cubemap: Texture): `IndirectLight_Builder`
+    open fun irradianceTex(cubemap: Texture): `IndirectLight_Builder`
+    open fun irradianceSh(nbands: Number, f32array: Any): `IndirectLight_Builder`
+    open fun intensity(value: Number): `IndirectLight_Builder`
+    open fun rotation(value: glm.mat3): `IndirectLight_Builder`
+    open fun rotation(value: Array<Number>): `IndirectLight_Builder`
     open fun build(engine: Engine): IndirectLight
 }
 
@@ -595,11 +604,11 @@ external open class Scene {
 
 external open class RenderTarget {
     open fun getMipLevel(): Number
-    open fun getFace(): `Texture$CubemapFace`
+    open fun getFace(): `Texture_CubemapFace`
     open fun getLayer(): Number
 
     companion object {
-        fun Builder(): `RenderTarget$Builder`
+        fun Builder(): `RenderTarget_Builder`
     }
 }
 
@@ -612,22 +621,22 @@ external open class View {
     open fun setViewport(viewport: Array<Number>)
     open fun setVisibleLayers(select: Number, values: Number)
     open fun setRenderTarget(renderTarget: RenderTarget)
-    open fun setAmbientOcclusionOptions(options: `View$AmbientOcclusionOptions`)
-    open fun setDepthOfFieldOptions(options: `View$DepthOfFieldOptions`)
-    open fun setMultiSampleAntiAliasingOptions(options: `View$MultiSampleAntiAliasingOptions`)
-    open fun setTemporalAntiAliasingOptions(options: `View$TemporalAntiAliasingOptions`)
-    open fun setScreenSpaceReflectionsOptions(options: `View$ScreenSpaceReflectionsOptions`)
-    open fun setBloomOptions(options: `View$BloomOptions`)
-    open fun setFogOptions(options: `View$FogOptions`)
-    open fun setVignetteOptions(options: `View$VignetteOptions`)
-    open fun setGuardBandOptions(options: `View$GuardBandOptions`)
-    open fun setStereoscopicOptions(options: `View$StereoscopicOptions`)
-    open fun setAmbientOcclusion(ambientOcclusion: `View$AmbientOcclusion`)
-    open fun getAmbientOcclusion(): `View$AmbientOcclusion`
-    open fun setBlendMode(mode: `View$BlendMode`)
-    open fun getBlendMode(): `View$BlendMode`
+    open fun setAmbientOcclusionOptions(options: `View_AmbientOcclusionOptions`)
+    open fun setDepthOfFieldOptions(options: `View_DepthOfFieldOptions`)
+    open fun setMultiSampleAntiAliasingOptions(options: `View_MultiSampleAntiAliasingOptions`)
+    open fun setTemporalAntiAliasingOptions(options: `View_TemporalAntiAliasingOptions`)
+    open fun setScreenSpaceReflectionsOptions(options: `View_ScreenSpaceReflectionsOptions`)
+    open fun setBloomOptions(options: `View_BloomOptions`)
+    open fun setFogOptions(options: `View_FogOptions`)
+    open fun setVignetteOptions(options: `View_VignetteOptions`)
+    open fun setGuardBandOptions(options: `View_GuardBandOptions`)
+    open fun setStereoscopicOptions(options: `View_StereoscopicOptions`)
+    open fun setAmbientOcclusion(ambientOcclusion: `View_AmbientOcclusion`)
+    open fun getAmbientOcclusion(): `View_AmbientOcclusion`
+    open fun setBlendMode(mode: `View_BlendMode`)
+    open fun getBlendMode(): `View_BlendMode`
     open fun setPostProcessingEnabled(enabled: Boolean)
-    open fun setAntiAliasing(antialiasing: `View$AntiAliasing`)
+    open fun setAntiAliasing(antialiasing: `View_AntiAliasing`)
     open fun setStencilBufferEnabled(enabled: Boolean)
     open fun isStencilBufferEnabled(): Boolean
     open fun setTransparentPickingEnabled(enabled: Boolean)
@@ -636,14 +645,14 @@ external open class View {
 
 external open class TransformManager {
     open fun hasComponent(entity: Entity): Boolean
-    open fun getInstance(entity: Entity): `TransformManager$Instance`
+    open fun getInstance(entity: Entity): `TransformManager_Instance`
     open fun create(entity: Entity)
     open fun destroy(entity: Entity)
-    open fun setParent(instance: `TransformManager$Instance`, parent: `TransformManager$Instance`)
-    open fun setTransform(instance: `TransformManager$Instance`, xform: glm.mat4)
-    open fun setTransform(instance: `TransformManager$Instance`, xform: Array<Number>)
-    open fun getTransform(instance: `TransformManager$Instance`): dynamic /* glm.mat4 | Array<Number> */
-    open fun getWorldTransform(instance: `TransformManager$Instance`): dynamic /* glm.mat4 | Array<Number> */
+    open fun setParent(instance: `TransformManager_Instance`, parent: `TransformManager_Instance`)
+    open fun setTransform(instance: `TransformManager_Instance`, xform: glm.mat4)
+    open fun setTransform(instance: `TransformManager_Instance`, xform: Array<Number>)
+    open fun getTransform(instance: `TransformManager_Instance`): dynamic /* glm.mat4 | Array<Number> */
+    open fun getWorldTransform(instance: `TransformManager_Instance`): dynamic /* glm.mat4 | Array<Number> */
     open fun openLocalTransformTransaction()
     open fun commitLocalTransformTransaction()
 }
@@ -654,8 +663,8 @@ external interface Filamesh {
     var indexBuffer: IndexBuffer
 }
 
-external interface `T$0` {
-    var uboBatching: `Material$UboBatchingMode`?
+external interface `T_0` {
+    var uboBatching: `Material_UboBatchingMode`?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -663,9 +672,9 @@ external interface `T$0` {
 external open class Engine {
     open fun execute()
     open fun createCamera(entity: Entity): Camera
-    open fun createMaterial(urlOrBuffer: String, options: `T$0` = definedExternally): Material
+    open fun createMaterial(urlOrBuffer: String, options: `T_0` = definedExternally): Material
     open fun createMaterial(urlOrBuffer: String): Material
-    open fun createMaterial(urlOrBuffer: ArrayBufferView, options: `T$0` = definedExternally): Material
+    open fun createMaterial(urlOrBuffer: ArrayBufferView, options: `T_0` = definedExternally): Material
     open fun createMaterial(urlOrBuffer: ArrayBufferView): Material
     open fun createRenderer(): Renderer
     open fun createScene(): Scene
@@ -691,7 +700,7 @@ external open class Engine {
     open fun createTextureFromKtx2(urlOrBuffer: ArrayBufferView, options: Any? = definedExternally): Texture
     open fun createTextureFromKtx2(urlOrBuffer: ArrayBufferView): Texture
     open fun createView(): View
-    open fun createAssetLoader(): `gltfio$AssetLoader`
+    open fun createAssetLoader(): `gltfio_AssetLoader`
     open fun destroySwapChain(swapChain: SwapChain)
     open fun destroyRenderer(renderer: Renderer)
     open fun destroyView(view: View)
@@ -728,23 +737,23 @@ external open class Engine {
 }
 
 external open class Ktx2Reader(engine: Engine, quiet: Boolean) {
-    open fun requestFormat(format: `Texture$InternalFormat`)
-    open fun unrequestFormat(format: `Texture$InternalFormat`)
-    open fun load(urlOrBuffer: String, transfer: TransferFunction): Texture?
-    open fun load(urlOrBuffer: ArrayBufferView, transfer: TransferFunction): Texture?
+    open fun requestFormat(format: `Texture_InternalFormat`)
+    open fun unrequestFormat(format: `Texture_InternalFormat`)
+    open fun load(urlOrBuffer: String, transfer: Ktx2Reader_TransferFunction): Texture?
+    open fun load(urlOrBuffer: ArrayBufferView, transfer: Ktx2Reader_TransferFunction): Texture?
 }
 
-external open class `gltfio$AssetLoader` {
-    open fun createAsset(urlOrBuffer: String): `gltfio$FilamentAsset`
-    open fun createAsset(urlOrBuffer: ArrayBufferView): `gltfio$FilamentAsset`
-    open fun createInstancedAsset(urlOrBuffer: String, instances: Array<`gltfio$FilamentInstance`?>): `gltfio$FilamentAsset`
-    open fun createInstancedAsset(urlOrBuffer: ArrayBufferView, instances: Array<`gltfio$FilamentInstance`?>): `gltfio$FilamentAsset`
-    open fun destroyAsset(asset: `gltfio$FilamentAsset`)
-    open fun createInstance(asset: `gltfio$FilamentAsset`): `gltfio$FilamentInstance`?
+external open class `gltfio_AssetLoader` {
+    open fun createAsset(urlOrBuffer: String): `gltfio_FilamentAsset`
+    open fun createAsset(urlOrBuffer: ArrayBufferView): `gltfio_FilamentAsset`
+    open fun createInstancedAsset(urlOrBuffer: String, instances: Array<`gltfio_FilamentInstance`?>): `gltfio_FilamentAsset`
+    open fun createInstancedAsset(urlOrBuffer: ArrayBufferView, instances: Array<`gltfio_FilamentInstance`?>): `gltfio_FilamentAsset`
+    open fun destroyAsset(asset: `gltfio_FilamentAsset`)
+    open fun createInstance(asset: `gltfio_FilamentAsset`): `gltfio_FilamentInstance`?
     open fun delete()
 }
 
-external open class `gltfio$FilamentAsset` {
+external open class `gltfio_FilamentAsset` {
     open fun loadResources(onDone: () -> Unit?, onFetched: (s: String) -> Unit?, basePath: String?, asyncInterval: Number?, options: Any? = definedExternally)
     open fun getEntities(): Array<Entity>
     open fun getEntitiesByName(name: String): Array<Entity>
@@ -755,8 +764,8 @@ external open class `gltfio$FilamentAsset` {
     open fun getCameraEntities(): Array<Entity>
     open fun getRoot(): Entity
     open fun popRenderable(): Entity
-    open fun getInstance(): `gltfio$FilamentInstance`
-    open fun geAssetInstances(): Array<`gltfio$FilamentInstance`>
+    open fun getInstance(): `gltfio_FilamentInstance`
+    open fun geAssetInstances(): Array<`gltfio_FilamentInstance`>
     open fun getResourceUris(): Array<String>
     open fun getBoundingBox(): Aabb
     open fun getName(entity: Entity): String
@@ -766,11 +775,11 @@ external open class `gltfio$FilamentAsset` {
     open fun releaseSourceData()
 }
 
-external open class `gltfio$FilamentInstance` {
-    open fun getAsset(): `gltfio$FilamentAsset`
+external open class `gltfio_FilamentInstance` {
+    open fun getAsset(): `gltfio_FilamentAsset`
     open fun getEntities(): Vector<Entity>
     open fun getRoot(): Entity
-    open fun getAnimator(): `gltfio$Animator`
+    open fun getAnimator(): `gltfio_Animator`
     open fun getSkinNames(): Vector<String>
     open fun attachSkin(skinIndex: Number, entity: Entity)
     open fun detachSkin(skinIndex: Number, entity: Entity)
@@ -780,7 +789,7 @@ external open class `gltfio$FilamentInstance` {
     open fun applyMaterialVariant(index: Number)
 }
 
-external open class `gltfio$Animator` {
+external open class `gltfio_Animator` {
     open fun applyAnimation(index: Number)
     open fun applyCrossFade(previousAnimIndex: Number, previousAnimTime: Number, alpha: Number)
     open fun updateBoneMatrices()
@@ -790,14 +799,14 @@ external open class `gltfio$Animator` {
     open fun getAnimationName(index: Number): String
 }
 
-external open class `SurfaceOrientation$Builder` {
-    open fun vertexCount(count: Number): `SurfaceOrientation$Builder`
-    open fun normals(vec3array: Float32Array, stride: Number): `SurfaceOrientation$Builder`
-    open fun uvs(vec2array: Float32Array, stride: Number): `SurfaceOrientation$Builder`
-    open fun positions(vec3array: Float32Array, stride: Number): `SurfaceOrientation$Builder`
-    open fun triangleCount(count: Number): `SurfaceOrientation$Builder`
-    open fun triangles16(indices: Uint16Array): `SurfaceOrientation$Builder`
-    open fun triangles32(indices: Uint32Array): `SurfaceOrientation$Builder`
+external open class `SurfaceOrientation_Builder` {
+    open fun vertexCount(count: Number): `SurfaceOrientation_Builder`
+    open fun normals(vec3array: Float32Array, stride: Number): `SurfaceOrientation_Builder`
+    open fun uvs(vec2array: Float32Array, stride: Number): `SurfaceOrientation_Builder`
+    open fun positions(vec3array: Float32Array, stride: Number): `SurfaceOrientation_Builder`
+    open fun triangleCount(count: Number): `SurfaceOrientation_Builder`
+    open fun triangles16(indices: Uint16Array): `SurfaceOrientation_Builder`
+    open fun triangles32(indices: Uint32Array): `SurfaceOrientation_Builder`
     open fun build(): SurfaceOrientation
 }
 
@@ -808,7 +817,7 @@ external open class SurfaceOrientation {
     open fun delete()
 }
 
-external enum class Frustum$Plane {
+external enum class Frustum_Plane {
     LEFT,
     RIGHT,
     BOTTOM,
@@ -817,29 +826,29 @@ external enum class Frustum$Plane {
     NEAR
 }
 
-external enum class Camera$Fov {
+external enum class Camera_Fov {
     VERTICAL,
     HORIZONTAL
 }
 
-external enum class Camera$Projection {
+external enum class Camera_Projection {
     PERSPECTIVE,
     ORTHO
 }
 
-external enum class ColorGrading$QualityLevel {
+external enum class ColorGrading_QualityLevel {
     LOW,
     MEDIUM,
     HIGH,
     ULTRA
 }
 
-external enum class ColorGrading$LutFormat {
+external enum class ColorGrading_LutFormat {
     INTEGER,
     FLOAT
 }
 
-external enum class ColorGrading$ToneMapping {
+external enum class ColorGrading_ToneMapping {
     LINEAR,
     ACES_LEGACY,
     ACES,
@@ -898,16 +907,16 @@ external enum class CompressedPixelDataType {
     SRGB8_ALPHA8_ASTC_12x12
 }
 
-external enum class IndexBuffer$IndexType {
+external enum class IndexBuffer_IndexType {
     USHORT,
     UINT
 }
 
-external enum class BufferObject$BindingType {
+external enum class BufferObject_BindingType {
     VERTEX
 }
 
-external enum class LightManager$Type {
+external enum class LightManager_Type {
     SUN,
     DIRECTIONAL,
     POINT,
@@ -997,7 +1006,7 @@ external enum class PixelDataType {
     USHORT_565
 }
 
-external enum class RenderableManager$PrimitiveType {
+external enum class RenderableManager_PrimitiveType {
     POINTS,
     LINES,
     LINE_STRIP,
@@ -1018,7 +1027,7 @@ external enum class RgbaType {
     PREMULTIPLIED_LINEAR
 }
 
-external enum class Texture$InternalFormat {
+external enum class Texture_InternalFormat {
     R8,
     R8_SNORM,
     R8UI,
@@ -1122,7 +1131,7 @@ external enum class Texture$InternalFormat {
     SRGB8_ALPHA8_ASTC_12x12
 }
 
-external enum class Texture$Sampler {
+external enum class Texture_Sampler {
     SAMPLER_2D,
     SAMPLER_CUBEMAP,
     SAMPLER_EXTERNAL
@@ -1138,7 +1147,7 @@ external enum class TextureUsage {
     DEFAULT /* = UPLOADABLE | SAMPLEABLE */
 }
 
-external enum class Texture$CubemapFace {
+external enum class Texture_CubemapFace {
     POSITIVE_X,
     NEGATIVE_X,
     POSITIVE_Y,
@@ -1147,12 +1156,12 @@ external enum class Texture$CubemapFace {
     NEGATIVE_Z
 }
 
-external enum class RenderTarget$AttachmentPoint {
+external enum class RenderTarget_AttachmentPoint {
     COLOR,
     DEPTH
 }
 
-external enum class View$AmbientOcclusion {
+external enum class View_AmbientOcclusion {
     NONE,
     SSAO
 }
@@ -1184,7 +1193,7 @@ external enum class VertexAttribute {
     MORPH_TANGENTS_3 /* = CUSTOM7 */
 }
 
-external enum class VertexBuffer$AttributeType {
+external enum class VertexBuffer_AttributeType {
     BYTE,
     BYTE2,
     BYTE3,
@@ -1219,12 +1228,12 @@ external enum class WrapMode {
     MIRRORED_REPEAT
 }
 
-external enum class Ktx2Reader$TransferFunction {
+external enum class Ktx2Reader_TransferFunction {
     LINEAR,
     sRGB
 }
 
-external enum class Ktx2Reader$Result {
+external enum class Ktx2Reader_Result {
     SUCCESS,
     COMPRESSED_TRANSCODE_FAILURE,
     UNCOMPRESSED_TRANSCODE_FAILURE,
@@ -1243,19 +1252,19 @@ external interface HeapInterface {
 
 external var HEAPU8: HeapInterface
 
-external enum class View$QualityLevel {
+external enum class View_QualityLevel {
     LOW,
     MEDIUM,
     HIGH,
     ULTRA
 }
 
-external enum class View$BlendMode {
+external enum class View_BlendMode {
     OPAQUE,
     TRANSLUCENT
 }
 
-external interface `View$DynamicResolutionOptions` {
+external interface `View_DynamicResolutionOptions` {
     var minScale: dynamic /* glm.vec2? | Array<Number>? */
         get() = definedExternally
         set(value) = definedExternally
@@ -1271,17 +1280,17 @@ external interface `View$DynamicResolutionOptions` {
     var homogeneousScaling: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var quality: `View$QualityLevel`?
+    var quality: `View_QualityLevel`?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-external enum class View$BloomOptions$BlendMode {
+external enum class View_BloomOptions_BlendMode {
     ADD,
     INTERPOLATE
 }
 
-external interface `View$BloomOptions` {
+external interface `View_BloomOptions` {
     var strength: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1291,7 +1300,7 @@ external interface `View$BloomOptions` {
     var levels: Number?
         get() = definedExternally
         set(value) = definedExternally
-    var blendMode: `View$BloomOptions$BlendMode`?
+    var blendMode: `View_BloomOptions_BlendMode`?
         get() = definedExternally
         set(value) = definedExternally
     var threshold: Boolean?
@@ -1303,7 +1312,7 @@ external interface `View$BloomOptions` {
     var highlight: Number?
         get() = definedExternally
         set(value) = definedExternally
-    var quality: `View$QualityLevel`?
+    var quality: `View_QualityLevel`?
         get() = definedExternally
         set(value) = definedExternally
     var lensFlare: Boolean?
@@ -1335,7 +1344,7 @@ external interface `View$BloomOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$FogOptions` {
+external interface `View_FogOptions` {
     var distance: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1371,13 +1380,13 @@ external interface `View$FogOptions` {
         set(value) = definedExternally
 }
 
-external enum class View$DepthOfFieldOptions$Filter {
+external enum class View_DepthOfFieldOptions_Filter {
     NONE,
     UNUSED,
     MEDIAN
 }
 
-external interface `View$DepthOfFieldOptions` {
+external interface `View_DepthOfFieldOptions` {
     var cocScale: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1390,7 +1399,7 @@ external interface `View$DepthOfFieldOptions` {
     var enabled: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var filter: `View$DepthOfFieldOptions$Filter`?
+    var filter: `View_DepthOfFieldOptions_Filter`?
         get() = definedExternally
         set(value) = definedExternally
     var nativeResolution: Boolean?
@@ -1413,7 +1422,7 @@ external interface `View$DepthOfFieldOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$VignetteOptions` {
+external interface `View_VignetteOptions` {
     var midPoint: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1431,18 +1440,18 @@ external interface `View$VignetteOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$RenderQuality` {
-    var hdrColorBuffer: `View$QualityLevel`?
+external interface `View_RenderQuality` {
+    var hdrColorBuffer: `View_QualityLevel`?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-external enum class View$AmbientOcclusionOptions$AmbientOcclusionType {
+external enum class View_AmbientOcclusionOptions_AmbientOcclusionType {
     SAO,
     GTAO
 }
 
-external interface `View$AmbientOcclusionOptions$Ssct` {
+external interface `View_AmbientOcclusionOptions_Ssct` {
     var lightConeRad: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1475,7 +1484,7 @@ external interface `View$AmbientOcclusionOptions$Ssct` {
         set(value) = definedExternally
 }
 
-external interface `View$AmbientOcclusionOptions$Gtao` {
+external interface `View_AmbientOcclusionOptions_Gtao` {
     var sampleSliceCount: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1496,8 +1505,8 @@ external interface `View$AmbientOcclusionOptions$Gtao` {
         set(value) = definedExternally
 }
 
-external interface `View$AmbientOcclusionOptions` {
-    var aoType: `View$AmbientOcclusionOptions$AmbientOcclusionType`?
+external interface `View_AmbientOcclusionOptions` {
+    var aoType: `View_AmbientOcclusionOptions_AmbientOcclusionType`?
         get() = definedExternally
         set(value) = definedExternally
     var radius: Number?
@@ -1518,13 +1527,13 @@ external interface `View$AmbientOcclusionOptions` {
     var bilateralThreshold: Number?
         get() = definedExternally
         set(value) = definedExternally
-    var quality: `View$QualityLevel`?
+    var quality: `View_QualityLevel`?
         get() = definedExternally
         set(value) = definedExternally
-    var lowPassFilter: `View$QualityLevel`?
+    var lowPassFilter: `View_QualityLevel`?
         get() = definedExternally
         set(value) = definedExternally
-    var upsampling: `View$QualityLevel`?
+    var upsampling: `View_QualityLevel`?
         get() = definedExternally
         set(value) = definedExternally
     var enabled: Boolean?
@@ -1538,7 +1547,7 @@ external interface `View$AmbientOcclusionOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$MultiSampleAntiAliasingOptions` {
+external interface `View_MultiSampleAntiAliasingOptions` {
     var enabled: Boolean?
         get() = definedExternally
         set(value) = definedExternally
@@ -1550,18 +1559,18 @@ external interface `View$MultiSampleAntiAliasingOptions` {
         set(value) = definedExternally
 }
 
-external enum class View$TemporalAntiAliasingOptions$BoxType {
+external enum class View_TemporalAntiAliasingOptions_BoxType {
     AABB,
     AABB_VARIANCE
 }
 
-external enum class View$TemporalAntiAliasingOptions$BoxClipping {
+external enum class View_TemporalAntiAliasingOptions_BoxClipping {
     ACCURATE,
     CLAMP,
     NONE
 }
 
-external enum class View$TemporalAntiAliasingOptions$JitterPattern {
+external enum class View_TemporalAntiAliasingOptions_JitterPattern {
     RGSS_X4,
     UNIFORM_HELIX_X4,
     HALTON_23_X8,
@@ -1569,7 +1578,7 @@ external enum class View$TemporalAntiAliasingOptions$JitterPattern {
     HALTON_23_X32
 }
 
-external interface `View$TemporalAntiAliasingOptions` {
+external interface `View_TemporalAntiAliasingOptions` {
     var filterWidth: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1600,13 +1609,13 @@ external interface `View$TemporalAntiAliasingOptions` {
     var hdr: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var boxType: `View$TemporalAntiAliasingOptions$BoxType`?
+    var boxType: `View_TemporalAntiAliasingOptions_BoxType`?
         get() = definedExternally
         set(value) = definedExternally
-    var boxClipping: `View$TemporalAntiAliasingOptions$BoxClipping`?
+    var boxClipping: `View_TemporalAntiAliasingOptions_BoxClipping`?
         get() = definedExternally
         set(value) = definedExternally
-    var jitterPattern: `View$TemporalAntiAliasingOptions$JitterPattern`?
+    var jitterPattern: `View_TemporalAntiAliasingOptions_JitterPattern`?
         get() = definedExternally
         set(value) = definedExternally
     var varianceGamma: Number?
@@ -1620,7 +1629,7 @@ external interface `View$TemporalAntiAliasingOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$ScreenSpaceReflectionsOptions` {
+external interface `View_ScreenSpaceReflectionsOptions` {
     var thickness: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1638,23 +1647,23 @@ external interface `View$ScreenSpaceReflectionsOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$GuardBandOptions` {
+external interface `View_GuardBandOptions` {
     var enabled: Boolean?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-external enum class View$AntiAliasing {
+external enum class View_AntiAliasing {
     NONE,
     FXAA
 }
 
-external enum class View$Dithering {
+external enum class View_Dithering {
     NONE,
     TEMPORAL
 }
 
-external enum class View$ShadowType {
+external enum class View_ShadowType {
     PCF,
     VSM,
     DPCF,
@@ -1662,7 +1671,7 @@ external enum class View$ShadowType {
     PCFd
 }
 
-external interface `View$VsmShadowOptions` {
+external interface `View_VsmShadowOptions` {
     var anisotropy: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1683,7 +1692,7 @@ external interface `View$VsmShadowOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$SoftShadowOptions` {
+external interface `View_SoftShadowOptions` {
     var penumbraScale: Number?
         get() = definedExternally
         set(value) = definedExternally
@@ -1692,7 +1701,7 @@ external interface `View$SoftShadowOptions` {
         set(value) = definedExternally
 }
 
-external interface `View$StereoscopicOptions` {
+external interface `View_StereoscopicOptions` {
     var enabled: Boolean?
         get() = definedExternally
         set(value) = definedExternally

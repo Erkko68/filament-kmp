@@ -84,7 +84,11 @@ kotlin {
             }
         }
 
-        val jsMain by getting
+        val jsMain by getting {
+            dependencies {
+                implementation(project(":js"))
+            }
+        }
     }
 
     targets.withType<KotlinNativeTarget>().configureEach {
