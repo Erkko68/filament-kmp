@@ -40,7 +40,6 @@
 
 #include "common/CallbackUtils.h"
 #include "common/VirtualMachineEnv.h"
-#include "common/AwtHelper.h"
 #include <iostream>
 
 
@@ -55,17 +54,10 @@ static void* getNativeWindow(JNIEnv* env, jobject surface) {
     if (surface == nullptr) return nullptr;
     
     // Check if it's a Long (primitive wrapper) - common way to pass pointers from Kotlin
-    // Note: FindClass should ideally be cached for performance
     jclass longClass = env->FindClass("java/lang/Long");
     if (env->IsInstanceOf(surface, longClass)) {
         jmethodID longValueMethod = env->GetMethodID(longClass, "longValue", "()J");
         return (void*) env->CallLongMethod(surface, longValueMethod);
-    }
-
-    // 2. Check if it's a Component (AWT) using our Helper
-    void* awtHandle = AwtHelper::getNativeWindow(env, surface);
-    if (awtHandle != nullptr) {
-        return awtHandle;
     }
 
     fprintf(stderr, "Engine: Failed to extract native window from surface object %p\n", surface); fflush(stderr);

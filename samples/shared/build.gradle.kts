@@ -45,7 +45,10 @@ kotlin {
         }
 
         jvmMain.dependencies {
-            // Inherits from commonMain
+            implementation(libs.lwjgl)
+            implementation(libs.lwjgl.opengl)
+            runtimeOnly("org.lwjgl:lwjgl:${libs.versions.lwjgl.get()}:natives-macos-arm64")
+            runtimeOnly("org.lwjgl:lwjgl-opengl:${libs.versions.lwjgl.get()}:natives-macos-arm64")
         }
     }
 }

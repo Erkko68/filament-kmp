@@ -30,8 +30,6 @@ kotlin {
                 force("org.jetbrains.compose.foundation:foundation:1.7.1")
                 force("org.jetbrains.compose.ui:ui:1.7.1")
                 force("org.jetbrains.compose.material3:material3:1.7.1")
-                force("org.jetbrains.skiko:skiko-awt-runtime-macos-arm64:0.8.18")
-                force("org.jetbrains.skiko:skiko-awt:0.8.18")
             }
         }
     }

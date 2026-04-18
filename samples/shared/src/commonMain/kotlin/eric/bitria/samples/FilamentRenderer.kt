@@ -3,6 +3,7 @@ package eric.bitria.samples
 import io.github.erkko68.filament.*
 import io.github.erkko68.filament.filamat.*
 import io.github.erkko68.filament.gltfio.*
+import androidx.compose.runtime.mutableStateOf
 
 class FilamentRenderer : FilamentViewRenderer {
     var engine: Engine? = null
@@ -18,6 +19,10 @@ class FilamentRenderer : FilamentViewRenderer {
     var swapChain: SwapChain? = null
         private set
     var skybox: Skybox? = null
+        private set
+    var renderTarget: RenderTarget? = null
+        private set
+    var colorTexture: Texture? = null
         private set
     private var sunLightEntity: Entity? = null
 
@@ -52,7 +57,7 @@ class FilamentRenderer : FilamentViewRenderer {
             return
         }
         println("FilamentRenderer: Initializing engine and MaterialBuilder...")
-        engine = Engine.create()
+        engine = Engine.create(Engine.Backend.METAL)
         MaterialBuilder.init()
         Gltfio.init()
         renderer = engine!!.createRenderer()
@@ -109,6 +114,46 @@ class FilamentRenderer : FilamentViewRenderer {
         }
     }
 
+    fun initializeOffscreen(width: Int, height: Int, textureId: Long) {
+        if (engine == null) initialize()
+        val engine = engine!!
+        
+        // 1. Import the external texture
+        colorTexture = Texture.Builder()
+            .width(width)
+            .height(height)
+            .levels(1)
+            .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
+            .format(Texture.InternalFormat.RGBA8)
+            .importTexture(textureId)
+            .build(engine)
+        
+        // 2. Create RenderTarget
+        renderTarget = RenderTarget.Builder()
+            .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture)
+            .build(engine)
+            
+        // 3. Set target on view
+        view?.setRenderTarget(renderTarget)
+        
+        // 4. Create headless swapchain
+        swapChain = engine.createSwapChain(width, height, 0)
+        
+        onSurfaceResized(width, height)
+    }
+
+    fun createMetalTexture(width: Int, height: Int): Long {
+        return io.github.erkko68.filament.jni.Texture.nCreateMetalTexture(width, height)
+    }
+
+    fun getMetalDevice(): Long {
+        return io.github.erkko68.filament.jni.Engine.nGetMetalDevice(engine!!.nativeEngine.getNativeObject())
+    }
+
+    fun getMetalQueue(): Long {
+        return io.github.erkko68.filament.jni.Engine.nGetMetalQueue(engine!!.nativeEngine.getNativeObject())
+    }
+
     private fun setupRuntimeMaterialCube() {
         val engine = engine!!
         
@@ -116,7 +161,7 @@ class FilamentRenderer : FilamentViewRenderer {
         val materialPackage = MaterialBuilder()
             .name("RuntimeMaterial")
             .platform(MaterialBuilder.Platform.ALL)
-            .targetApi(MaterialBuilder.TargetApi.ALL)
+            .targetApi(MaterialBuilder.TargetApi.METAL)
             .shading(MaterialBuilder.Shading.UNLIT)
             .doubleSided(true)
             .require(VertexBuffer.VertexAttribute.COLOR)
@@ -298,6 +343,9 @@ class FilamentRenderer : FilamentViewRenderer {
         }
     }
 
+    var frameCount = mutableStateOf(0L)
+        private set
+
     private var startTime: Long = -1
 
     override fun render(frameTimeNanos: Long) {
@@ -319,6 +367,8 @@ class FilamentRenderer : FilamentViewRenderer {
         if (renderer.beginFrame(swapChain, frameTimeNanos)) {
             renderer.render(view)
             renderer.endFrame()
+            engine!!.flush()
+            frameCount.value++
         }
     }
 
@@ -439,6 +489,9 @@ class FilamentRenderer : FilamentViewRenderer {
             gltfResourceLoader?.destroy()
             gltfMaterialProvider?.destroy()
 
+            colorTexture?.let { t -> it.destroyTexture(t) }
+            renderTarget?.let { rt -> it.destroyRenderTarget(rt) }
+
             runtimeMaterialInstance?.let { m -> it.destroyMaterialInstance(m) }
             runtimeMaterial?.let { m -> it.destroyMaterial(m) }
             runtimeVertexBuffer?.let { v -> it.destroyVertexBuffer(v) }
@@ -459,6 +512,8 @@ class FilamentRenderer : FilamentViewRenderer {
         camera = null
         swapChain = null
         skybox = null
+        renderTarget = null
+        colorTexture = null
         sunLightEntity = null
         runtimeCubeEntity = null
         runtimeVertexBuffer = null

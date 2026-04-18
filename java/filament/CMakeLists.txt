@@ -82,9 +82,9 @@ add_library(filament-jni SHARED
 )
 
 if (APPLE)
-    target_sources(filament-jni PRIVATE src/main/cpp/common/AwtHelper.mm)
-else()
-    target_sources(filament-jni PRIVATE src/main/cpp/common/AwtHelper.cpp)
+    target_sources(filament-jni PRIVATE 
+        src/main/cpp/MetalUtils.mm
+    )
 endif()
 
 target_include_directories(filament-jni PRIVATE
@@ -118,23 +118,4 @@ if (APPLE)
     target_link_libraries(filament-jni PRIVATE "-framework Metal")
     target_link_libraries(filament-jni PRIVATE "-framework QuartzCore")
     target_link_libraries(filament-jni PRIVATE "-framework CoreVideo")
-endif()
-
-# JAWT is required by AwtHelper to extract native window handles.
-set(JAVA_LIB_HINTS "${JAVA_HOME}/lib" "${JAVA_HOME}/jre/lib")
-find_library(JAWT_LIB jawt HINTS ${JAVA_LIB_HINTS})
-if (JAWT_LIB)
-    message(STATUS "Found JAWT library at: ${JAWT_LIB}")
-    target_link_libraries(filament-jni PRIVATE ${JAWT_LIB})
-    
-    if (APPLE)
-        # On macOS, JAWT relies on libawt_lwawt.dylib
-        find_library(AWT_LWAWT_LIB awt_lwawt HINTS ${JAVA_LIB_HINTS})
-        if (AWT_LWAWT_LIB)
-            message(STATUS "Found AWT LWAWT library at: ${AWT_LWAWT_LIB}")
-            target_link_libraries(filament-jni PRIVATE ${AWT_LWAWT_LIB})
-        endif()
-    endif()
-else()
-    message(WARNING "JAWT library not found. AwtHelper may fail to link or work at runtime.")
 endif()

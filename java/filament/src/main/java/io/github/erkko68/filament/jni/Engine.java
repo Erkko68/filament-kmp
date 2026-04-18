@@ -586,4 +586,7 @@ public class Engine {
     private static native void nSetBuilderFeature(long nativeBuilder, String name, boolean value);
     private static native void nCompile(long nativeEngine, int priority, long nativeMaterial, long nativeView, int shadowReceiver, int skinning, Object handler, Runnable callback);
     private static native long nBuilderBuild(long nativeBuilder);
+
+    public static native long nGetMetalDevice(long nativeEngine);
+    public static native long nGetMetalQueue(long nativeEngine);
 }
