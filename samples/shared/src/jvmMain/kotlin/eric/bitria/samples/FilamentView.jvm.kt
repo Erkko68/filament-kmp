@@ -15,20 +15,22 @@ import java.lang.reflect.Method
 fun createReflectiveMetalRenderTarget(width: Int, height: Int, textureHandle: Long): BackendRenderTarget? {
     return try {
         // Target BackendRenderTargetKt where _nMakeMetal resides
-        val rtKtClass = Class.forName("org.jetbrains.skia.BackendRenderTargetKt")
+        val rtKtClass = try {
+            Class.forName("org.jetbrains.skia.BackendRenderTargetKt")
+        } catch (e: ClassNotFoundException) {
+            Class.forName("org.jetbrains.skia.BackendRenderTarget")
+        }
         
         // Find the native method: _nMakeMetal(int, int, long)
-        val makeMetalMethod: Method = rtKtClass.getDeclaredMethod(
-            "_nMakeMetal", 
-            Int::class.java, // width
-            Int::class.java, // height
-            Long::class.java // texturePtr
-        )
+        val makeMetalMethod: Method = rtKtClass.getDeclaredMethods().find { it.name == "_nMakeMetal" } 
+            ?: throw NoSuchMethodException("_nMakeMetal not found in ${rtKtClass.name}")
+            
         makeMetalMethod.isAccessible = true
         
         // Invoke the native method to get the Skia C++ pointer
         val skiaPtr = makeMetalMethod.invoke(null, width, height, textureHandle) as Long
-        
+        if (skiaPtr == 0L) throw IllegalStateException("_nMakeMetal returned 0")
+
         // Use the internal constructor of BackendRenderTarget(long nativePtr)
         val constructor = BackendRenderTarget::class.java.getDeclaredConstructor(Long::class.java)
         constructor.isAccessible = true
@@ -53,19 +55,23 @@ actual fun FilamentView(
     // Read frameCount to trigger redraw every frame
     val frameCount by jvmRenderer.frameCount
 
-    LaunchedEffect(textureSize) {
-        if (textureSize.width > 0 && textureSize.height > 0) {
+    LaunchedEffect(textureSize.width, textureSize.height) {
+        val w = textureSize.width
+        val h = textureSize.height
+        if (w > 0 && h > 0) {
+            println("FilamentView: Recreating texture for size $w x $h")
             // Clean up old texture
             if (textureHandle != 0L) {
                 io.github.erkko68.filament.jni.Texture.nReleaseMetalTexture(textureHandle)
             }
             
             // 1. Create a native Metal texture
-            textureHandle = jvmRenderer.createMetalTexture(textureSize.width, textureSize.height)
+            textureHandle = jvmRenderer.createMetalTexture(w, h)
             
             // 2. Give this handle to Filament for offscreen rendering
-            jvmRenderer.initializeOffscreen(textureSize.width, textureSize.height, textureHandle)
+            jvmRenderer.initializeOffscreen(w, h, textureHandle)
         }
+
     }
 
     // Reuse Skia context to avoid per-frame allocation overhead
@@ -74,6 +80,7 @@ actual fun FilamentView(
         if (engine != null) {
             val device = jvmRenderer.getMetalDevice()
             val queue = jvmRenderer.getMetalQueue()
+            println("Creating DirectContext with device=$device queue=$queue")
             DirectContext.makeMetal(device, queue)
         } else null
     }
@@ -92,12 +99,13 @@ actual fun FilamentView(
     // Reuse Surface based on context/target
     val skiaSurface = remember(directContext, renderTarget) {
         if (directContext != null && renderTarget != null) {
+            println("Creating Skia Surface (BGRA) for texture $textureHandle")
             Surface.makeFromBackendRenderTarget(
                 directContext,
                 renderTarget,
                 SurfaceOrigin.TOP_LEFT,
-                SurfaceColorFormat.RGBA_8888,
-                ColorSpace.sRGB
+                SurfaceColorFormat.BGRA_8888,
+                null // ColorSpace
             )
         } else null
     }
@@ -120,14 +128,40 @@ actual fun FilamentView(
                 val _trigger = frameCount
                 
                 if (skiaSurface != null) {
+                    directContext?.flushAndSubmit(skiaSurface)
                     val skiaImage = skiaSurface.makeImageSnapshot()
+
+                    
                     drawIntoCanvas { canvas ->
-                        canvas.nativeCanvas.drawImage(skiaImage, 0f, 0f)
+                        // Background fallback (Dark Gray)
+                        canvas.nativeCanvas.drawRect(org.jetbrains.skia.Rect.makeXYWH(0f, 0f, 4000f, 4000f), org.jetbrains.skia.Paint().apply { color = 0xFF333333.toInt() })
+
+
+                        if (skiaImage != null) {
+                            canvas.nativeCanvas.drawImage(skiaImage, 0f, 0f)
+                            
+                            // Debug overlay: Small green circle
+                            val paint = org.jetbrains.skia.Paint().apply { color = 0xFF00FF00.toInt() }
+                            canvas.nativeCanvas.drawCircle(30f, 30f, 20f, paint)
+                        }
+                    }
+                    
+                    // Flush our surface
+                    skiaSurface.flushAndSubmit(true)
+                } else {
+                    drawIntoCanvas { canvas ->
+                        // Draw red background if surface is missing
+                        canvas.nativeCanvas.drawRect(org.jetbrains.skia.Rect.makeXYWH(0f, 0f, 4000f, 4000f), org.jetbrains.skia.Paint().apply { color = 0xFFFF0000.toInt() })
+                        if (frameCount % 60L == 0L) {
+                            println("FilamentView: Surface is NULL. Target=$renderTarget Context=$directContext")
+                        }
                     }
                 }
             }
+
     )
 
     // Use the common render loop
     FilamentRenderLoop(renderer)
 }
+

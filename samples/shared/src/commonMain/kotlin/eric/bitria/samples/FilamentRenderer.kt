@@ -24,7 +24,10 @@ class FilamentRenderer : FilamentViewRenderer {
         private set
     var colorTexture: Texture? = null
         private set
+    var depthTexture: Texture? = null
+        private set
     private var sunLightEntity: Entity? = null
+
 
     // Object 1: Runtime compiled material
     private var runtimeCubeEntity: Entity? = null
@@ -68,11 +71,12 @@ class FilamentRenderer : FilamentViewRenderer {
         view!!.setScene(scene)
         view!!.setCamera(camera)
 
-        // Simple skybox
+        // Simple skybox - RED for extreme contrast during debugging
         skybox = Skybox.Builder()
-            .color(0.1f, 0.12f, 0.15f, 1.0f) // Darker blueish background
+            .color(1.0f, 0.0f, 0.0f, 1.0f) 
             .build(engine!!)
         scene!!.setSkybox(skybox)
+
 
         // glTF PBR materials need some light; a simple directional light is enough for samples.
         sunLightEntity = engine!!.getEntityManager().create()
@@ -83,11 +87,22 @@ class FilamentRenderer : FilamentViewRenderer {
             .build(engine!!, sunLightEntity!!)
         scene!!.addEntity(sunLightEntity!!)
 
+        // Clear to BLUE to verify Filament is writing
+        renderer!!.setClearOptions(Renderer.ClearOptions().apply {
+            clear = true
+            clearColor = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f) // BLUE
+        })
+
         // Setup initial camera
+
         camera!!.setProjection(45.0, 1.0, 0.1, 100.0, Camera.Fov.VERTICAL)
         camera!!.lookAt(0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+        camera!!.setExposure(16.0f, 1.2f, 100.0f) // Standard outdoor exposure
 
+        view!!.setPostProcessingEnabled(false) // Disable to see raw colors
+        
         setupRuntimeMaterialCube()
+
         
         // Initialize gltfio components
         gltfMaterialProvider = UbershaderProvider(engine!!)
@@ -118,7 +133,8 @@ class FilamentRenderer : FilamentViewRenderer {
         if (engine == null) initialize()
         val engine = engine!!
         
-        // 1. Import the external texture
+        // 1. Import or recreate the external color texture
+        colorTexture?.let { engine.destroyTexture(it) }
         colorTexture = Texture.Builder()
             .width(width)
             .height(height)
@@ -128,19 +144,36 @@ class FilamentRenderer : FilamentViewRenderer {
             .importTexture(textureId)
             .build(engine)
         
-        // 2. Create RenderTarget
+        // 2. Create/Recreate Depth RenderTarget
+        // We need a depth buffer for 3D rendering to work correctly
+        depthTexture?.let { engine.destroyTexture(it) }
+        depthTexture = Texture.Builder()
+            .width(width)
+            .height(height)
+            .levels(1)
+            .usage(Texture.Usage.DEPTH_ATTACHMENT)
+            .format(Texture.InternalFormat.DEPTH32F) // Use 32F for better compatibility on Metal
+            .build(engine)
+        
+        renderTarget?.let { engine.destroyRenderTarget(it) }
         renderTarget = RenderTarget.Builder()
-            .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture)
+            .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture!!)
+            .texture(RenderTarget.AttachmentPoint.DEPTH, depthTexture!!)
             .build(engine)
             
-        // 3. Set target on view
+        view?.setMultiSampleAntiAliasingOptions(View.MultiSampleAntiAliasingOptions().apply {
+            enabled = false
+        })
         view?.setRenderTarget(renderTarget)
+
         
         // 4. Create headless swapchain
+        destroySwapChain(engine)
         swapChain = engine.createSwapChain(width, height, 0)
         
         onSurfaceResized(width, height)
     }
+
 
     fun createMetalTexture(width: Int, height: Int): Long {
         return io.github.erkko68.filament.jni.Texture.nCreateMetalTexture(width, height)
@@ -364,13 +397,19 @@ class FilamentRenderer : FilamentViewRenderer {
 
         updateRotation(elapsed)
 
-        if (renderer.beginFrame(swapChain, frameTimeNanos)) {
+        val beginSucceeded = renderer.beginFrame(swapChain, frameTimeNanos)
+        if (frameCount.value % 60 == 0L) {
+            println("FilamentRenderer: render frame=${frameCount.value} beginSucceeded=$beginSucceeded swapChain=$swapChain")
+        }
+
+        if (beginSucceeded) {
             renderer.render(view)
             renderer.endFrame()
-            engine!!.flush()
+            engine!!.flushAndWait() 
             frameCount.value++
         }
     }
+
 
     private fun updateRotation(time: Double) {
         val engine = engine ?: return
@@ -490,6 +529,7 @@ class FilamentRenderer : FilamentViewRenderer {
             gltfMaterialProvider?.destroy()
 
             colorTexture?.let { t -> it.destroyTexture(t) }
+            depthTexture?.let { t -> it.destroyTexture(t) }
             renderTarget?.let { rt -> it.destroyRenderTarget(rt) }
 
             runtimeMaterialInstance?.let { m -> it.destroyMaterialInstance(m) }
