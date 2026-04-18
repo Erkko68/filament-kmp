@@ -158,13 +158,13 @@ actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
         }
     }
 
-    // Cached read-surface in Skiko's context — must use same context as Compose canvas.
-    val cachedReadSurface = remember { mutableStateOf<Pair<Surface, Long>?>(null) }
+    // Keep the previous frame's snapshot alive until the next frame so Skiko can replay it.
+    val prevSnapshot = remember { mutableStateOf<Image?>(null) }
 
     DisposableEffect(Unit) {
         onDispose {
             if (textureHandle != 0L) io.github.erkko68.filament.jni.Texture.nReleaseMetalTexture(textureHandle)
-            cachedReadSurface.value?.first?.close()
+            prevSnapshot.value?.close()
         }
     }
 
@@ -183,29 +183,31 @@ actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
 
                     val skiaCtx = getSkikoContext(nativeCanvas) ?: return@drawIntoCanvas
 
-                    val cached = cachedReadSurface.value
-                    val readSurface = if (cached == null || cached.second != textureHandle) {
-                        cached?.first?.close()
-                        val rt = createMetalRenderTarget(textureSize.width, textureSize.height, textureHandle)
-                            ?: return@drawIntoCanvas
-                        Surface.makeFromBackendRenderTarget(
-                            skiaCtx, rt, SurfaceOrigin.TOP_LEFT, SurfaceColorFormat.BGRA_8888,
-                            ColorSpace.sRGB, SurfaceProps()
-                        )?.also { cachedReadSurface.value = it to textureHandle }
-                            ?: run {
-                                println("drawBehind: makeFromBackendRenderTarget failed")
-                                return@drawIntoCanvas
-                            }
-                    } else {
-                        cached.first
+                    // Recreate Surface every frame: Skia caches snapshots on surfaces it considers
+                    // "unchanged"; a fresh surface forces it to re-adopt the current texture content.
+                    val rt = createMetalRenderTarget(textureSize.width, textureSize.height, textureHandle)
+                        ?: return@drawIntoCanvas
+                    val readSurface = Surface.makeFromBackendRenderTarget(
+                        skiaCtx, rt, SurfaceOrigin.TOP_LEFT, SurfaceColorFormat.BGRA_8888,
+                        ColorSpace.sRGB, SurfaceProps()
+                    ) ?: run {
+                        println("drawBehind: makeFromBackendRenderTarget failed")
+                        return@drawIntoCanvas
                     }
 
-                    val snapshot = readSurface.makeImageSnapshot() ?: run {
+                    val snapshot = readSurface.makeImageSnapshot()
+                    readSurface.close()
+
+                    if (snapshot == null) {
                         println("drawBehind: makeImageSnapshot null")
                         return@drawIntoCanvas
                     }
+
                     nativeCanvas.drawImage(snapshot, 0f, 0f)
-                    snapshot.close()
+
+                    // Close previous frame's snapshot now that a new one is recorded.
+                    prevSnapshot.value?.close()
+                    prevSnapshot.value = snapshot
 
                     // Blue dot — proof of draw path reached
                     nativeCanvas.drawCircle(30f, 30f, 10f, Paint().apply { color = 0xFF0000FF.toInt() })
