@@ -99,12 +99,12 @@ actual fun FilamentView(
     // Reuse Surface based on context/target
     val skiaSurface = remember(directContext, renderTarget) {
         if (directContext != null && renderTarget != null) {
-            println("Creating Skia Surface (BGRA) for texture $textureHandle")
+            println("Creating Skia Surface (RGBA) for texture $textureHandle")
             Surface.makeFromBackendRenderTarget(
                 directContext,
                 renderTarget,
                 SurfaceOrigin.TOP_LEFT,
-                SurfaceColorFormat.BGRA_8888,
+                SurfaceColorFormat.RGBA_8888,
                 null // ColorSpace
             )
         } else null
@@ -128,35 +128,44 @@ actual fun FilamentView(
                 val _trigger = frameCount
                 
                 if (skiaSurface != null) {
-                    directContext?.flushAndSubmit(skiaSurface)
-                    val skiaImage = skiaSurface.makeImageSnapshot()
-
+                    var snapshotImage = skiaSurface.makeImageSnapshot()
                     
-                    drawIntoCanvas { canvas ->
-                        // Background fallback (Dark Gray)
-                        canvas.nativeCanvas.drawRect(org.jetbrains.skia.Rect.makeXYWH(0f, 0f, 4000f, 4000f), org.jetbrains.skia.Paint().apply { color = 0xFF333333.toInt() })
+                    // Fallback: If snapshot is transparent or null, try readPixels nuclear option
+                    val finalImage = if (snapshotImage == null || snapshotImage.isOpaque.not()) {
+                        try {
+                            val bitmap = org.jetbrains.skia.Bitmap()
+                            bitmap.allocN32Pixels(textureSize.width, textureSize.height)
+                            if (skiaSurface.readPixels(bitmap, 0, 0)) {
+                                org.jetbrains.skia.Image.makeFromBitmap(bitmap)
+                            } else snapshotImage
 
+                        } catch (e: Exception) { snapshotImage }
+                    } else snapshotImage
 
-                        if (skiaImage != null) {
-                            canvas.nativeCanvas.drawImage(skiaImage, 0f, 0f)
-                            
-                            // Debug overlay: Small green circle
-                            val paint = org.jetbrains.skia.Paint().apply { color = 0xFF00FF00.toInt() }
-                            canvas.nativeCanvas.drawCircle(30f, 30f, 20f, paint)
-                        }
-                    }
-                    
-                    // Flush our surface
-                    skiaSurface.flushAndSubmit(true)
-                } else {
                     drawIntoCanvas { canvas ->
-                        // Draw red background if surface is missing
-                        canvas.nativeCanvas.drawRect(org.jetbrains.skia.Rect.makeXYWH(0f, 0f, 4000f, 4000f), org.jetbrains.skia.Paint().apply { color = 0xFFFF0000.toInt() })
-                        if (frameCount % 60L == 0L) {
-                            println("FilamentView: Surface is NULL. Target=$renderTarget Context=$directContext")
+                        // Background: DARK BLUE (diagnostic)
+                        canvas.nativeCanvas.drawRect(org.jetbrains.skia.Rect.makeXYWH(0f, 0f, 4000f, 4000f), org.jetbrains.skia.Paint().apply { color = 0xFF000044.toInt() })
+
+                        if (finalImage != null) {
+                            canvas.nativeCanvas.drawImage(finalImage, 0f, 0f)
+                            // SUCCESS: WHITE DOT
+                            val paint = org.jetbrains.skia.Paint().apply { color = 0xFFFFFFFF.toInt() }
+                            canvas.nativeCanvas.drawCircle(30f, 30f, 10f, paint)
+                        } else {
+                            // FAILURE: RED DOT
+                            val paint = org.jetbrains.skia.Paint().apply { color = 0xFFFF0000.toInt() }
+                            canvas.nativeCanvas.drawCircle(30f, 30f, 10f, paint)
                         }
                     }
                 }
+
+ else {
+                    drawIntoCanvas { canvas ->
+                        // Surface missing
+                        canvas.nativeCanvas.drawRect(org.jetbrains.skia.Rect.makeXYWH(0f, 0f, 4000f, 4000f), org.jetbrains.skia.Paint().apply { color = 0xFFFF0000.toInt() })
+                    }
+                }
+
             }
 
     )

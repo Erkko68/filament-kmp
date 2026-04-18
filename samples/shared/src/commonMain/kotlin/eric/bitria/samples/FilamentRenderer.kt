@@ -6,7 +6,11 @@ import io.github.erkko68.filament.gltfio.*
 import androidx.compose.runtime.mutableStateOf
 
 class FilamentRenderer : FilamentViewRenderer {
+    var width = 0
+    var height = 0
+    
     var engine: Engine? = null
+
         private set
     var renderer: Renderer? = null
         private set
@@ -87,11 +91,14 @@ class FilamentRenderer : FilamentViewRenderer {
             .build(engine!!, sunLightEntity!!)
         scene!!.addEntity(sunLightEntity!!)
 
-        // Clear to BLUE to verify Filament is writing
+        // Clear to YELLOW to verify Filament is writing
         renderer!!.setClearOptions(Renderer.ClearOptions().apply {
             clear = true
-            clearColor = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f) // BLUE
+            clearColor = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f) // YELLOW
         })
+
+
+
 
         // Setup initial camera
 
@@ -132,6 +139,9 @@ class FilamentRenderer : FilamentViewRenderer {
     fun initializeOffscreen(width: Int, height: Int, textureId: Long) {
         if (engine == null) initialize()
         val engine = engine!!
+        
+        this.width = width
+        this.height = height
         
         // 1. Import or recreate the external color texture
         colorTexture?.let { engine.destroyTexture(it) }
@@ -403,7 +413,13 @@ class FilamentRenderer : FilamentViewRenderer {
         }
 
         if (beginSucceeded) {
+            // Ensure viewport matches texture size
+            view.setViewport(Viewport(0, 0, width, height))
+        
             renderer.render(view)
+
+
+
             renderer.endFrame()
             engine!!.flushAndWait() 
             frameCount.value++
