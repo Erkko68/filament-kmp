@@ -1,140 +1,115 @@
 package io.github.erkko68.filament
 
-actual class Renderer {
-    actual fun getEngine(): Engine {
-        TODO("Not yet implemented")
-    }
+import io.github.erkko68.filament.js.Renderer as JSRenderer
+import io.github.erkko68.filament.js.`Renderer_ClearOptions` as JSRendererClearOptions
+import io.github.erkko68.filament.js.Renderer_DisplayInfo as JSRendererDisplayInfo
+import io.github.erkko68.filament.js.Renderer_FrameRateOptions as JSRendererFrameRateOptions
 
-    actual fun setDisplayInfo(info: DisplayInfo) {
+actual class Renderer(internal val jsRenderer: JSRenderer) {
+    private var _userTime: Double = 0.0
+    private var _displayInfo = DisplayInfo()
+    private var _frameRateOptions = FrameRateOptions()
+    private var _clearOptions = ClearOptions()
+
+    actual fun render(swapChain: SwapChain, view: View) {
+        jsRenderer.render(swapChain.jsSwapChain, view.jsView)
     }
 
     actual fun getDisplayInfo(): DisplayInfo {
-        TODO("Not yet implemented")
+        return _displayInfo
     }
 
     actual fun setFrameRateOptions(options: FrameRateOptions) {
+        _frameRateOptions = options
+        // JS bindings for setFrameRateOptions are often missing or simplified
     }
 
     actual fun getFrameRateOptions(): FrameRateOptions {
-        TODO("Not yet implemented")
+        return _frameRateOptions
     }
 
     actual fun setClearOptions(options: ClearOptions) {
+        _clearOptions = options
+        val jsOptions = js("{}").unsafeCast<JSRendererClearOptions>()
+        jsOptions.clearColor = options.clearColor.toTypedArray() as Array<Number>
+        jsOptions.clearStencil = options.clearStencil
+        jsOptions.clear = options.clear
+        jsOptions.discardStart = options.discardStart
+        jsOptions.discardEnd = options.discardEnd
+        jsRenderer.setClearOptions(jsOptions)
     }
 
     actual fun getClearOptions(): ClearOptions {
-        TODO("Not yet implemented")
+        return _clearOptions
     }
 
-    actual fun setPresentationTime(monotonicClockNanos: Long) {
-    }
-
-    actual fun setVsyncTime(steadyClockTimeNano: Long) {
-    }
-
-    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
+    actual fun renderView(view: View) {
+        jsRenderer.renderView(view.jsView)
     }
 
     actual fun shouldRenderFrame(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     actual fun beginFrame(
         swapChain: SwapChain,
-        frameTimeNanos: Long
+        frameTime: Long
     ): Boolean {
-        TODO("Not yet implemented")
+        // JS beginFrame doesn't take frameTime in current bindings
+        return jsRenderer.beginFrame(swapChain.jsSwapChain)
+    }
+
+    actual fun setPresentationTime(frameTime: Long) {
     }
 
     actual fun endFrame() {
-    }
-
-    actual fun render(view: View) {
-    }
-
-    actual fun renderStandaloneView(view: View) {
-    }
-
-    actual fun copyFrame(
-        dstSwapChain: SwapChain,
-        dstViewport: Viewport,
-        srcViewport: Viewport,
-        flags: Int
-    ) {
-    }
-
-    actual fun readPixels(
-        xoffset: Int,
-        yoffset: Int,
-        width: Int,
-        height: Int,
-        buffer: Texture.PixelBufferDescriptor
-    ) {
-    }
-
-    actual fun readPixels(
-        renderTarget: RenderTarget,
-        xoffset: Int,
-        yoffset: Int,
-        width: Int,
-        height: Int,
-        buffer: Texture.PixelBufferDescriptor
-    ) {
+        jsRenderer.endFrame()
     }
 
     actual fun getUserTime(): Double {
-        TODO("Not yet implemented")
+        return _userTime
     }
 
     actual fun resetUserTime() {
-    }
-
-    actual fun skipNextFrames(frameCount: Int) {
+        _userTime = 0.0
     }
 
     actual fun getFrameToSkipCount(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual class DisplayInfo {
-        actual var refreshRate: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var refreshRate: Float = 60.0f
+            get() = field
+            set(value) { field = value }
     }
 
     actual class FrameRateOptions {
-        actual var interval: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var headRoomRatio: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var scaleRate: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var history: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var interval: Float = 1.0f
+            get() = field
+            set(value) { field = value }
+        actual var headRoomRatio: Float = 1.0f
+            get() = field
+            set(value) { field = value }
+        actual var scaleRate: Float = 1.0f
+            get() = field
+            set(value) { field = value }
+        actual var history: Int = 1
+            get() = field
+            set(value) { field = value }
     }
 
     actual class ClearOptions {
-        actual var clearColor: FloatArray
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var clear: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var discard: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        actual var clearStencil: Boolean = false
+        actual var clear: Boolean = false
+        actual var discardStart: Boolean = false
+        actual var discardEnd: Boolean = false
     }
 
     actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int
-            get() = TODO("Not yet implemented")
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int
-            get() = TODO("Not yet implemented")
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int
-            get() = TODO("Not yet implemented")
+        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 1
+        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 2
+        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 4
     }
 }

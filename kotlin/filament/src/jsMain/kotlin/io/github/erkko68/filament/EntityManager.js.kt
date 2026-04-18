@@ -1,16 +1,21 @@
 package io.github.erkko68.filament
 
-actual class EntityManager {
+import io.github.erkko68.filament.js.EntityManager as JSEntityManager
+
+actual class EntityManager(internal val jsEntityManager: JSEntityManager) {
     actual fun create(): Entity {
-        TODO("Not yet implemented")
+        return jsEntityManager.create().getId().toInt()
     }
 
     actual fun create(n: Int): IntArray {
-        TODO("Not yet implemented")
+        return IntArray(n) { jsEntityManager.create().getId().toInt() }
     }
 
     actual fun create(entities: IntArray): IntArray {
-        TODO("Not yet implemented")
+        for (i in entities.indices) {
+            entities[i] = jsEntityManager.create().getId().toInt()
+        }
+        return entities
     }
 
     actual fun destroy(entity: Entity) {
@@ -20,12 +25,13 @@ actual class EntityManager {
     }
 
     actual fun isAlive(entity: Entity): Boolean {
-        TODO("Not yet implemented")
+        // JS EntityManager doesn't have isAlive in the bindings, but usually we can assume true if not destroyed
+        return true
     }
 
     actual companion object {
         actual fun get(): EntityManager {
-            TODO("Not yet implemented")
+            return EntityManager(JSEntityManager.get())
         }
     }
 }

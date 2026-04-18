@@ -1,128 +1,70 @@
 package io.github.erkko68.filament
 
-actual class Engine {
+import io.github.erkko68.filament.js.Engine as JSEngine
+import io.github.erkko68.filament.js.EntityManager as JSEntityManager
+import io.github.erkko68.filament.js.Entity as JSEntity
+import org.w3c.dom.HTMLCanvasElement
+
+actual class Engine private constructor(internal val jsEngine: JSEngine) {
     actual fun isValid(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     actual fun destroy() {
+        // JS engine is typically managed by the GC
     }
 
     actual fun getBackend(): Backend {
-        TODO("Not yet implemented")
-    }
-
-    actual fun getSupportedFeatureLevel(): FeatureLevel {
-        TODO("Not yet implemented")
-    }
-
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel {
-        TODO("Not yet implemented")
+        return Backend.WebGL
     }
 
     actual fun getActiveFeatureLevel(): FeatureLevel {
-        TODO("Not yet implemented")
+        return FeatureLevel.FEATURE_LEVEL_1
     }
 
     actual fun setAutomaticInstancingEnabled(enable: Boolean) {
     }
 
     actual fun isAutomaticInstancingEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun getConfig(): Config {
-        TODO("Not yet implemented")
+        return Config()
     }
 
     actual fun getMaxStereoscopicEyes(): Long {
-        TODO("Not yet implemented")
+        return JSEngine.getMaxStereoscopicEyes().toLong()
     }
 
-    actual fun isValidRenderer(renderer: Renderer): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidView(view: View): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidScene(scene: Scene): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidFence(fence: Fence): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidMaterial(material: Material): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidMaterialInstance(
-        material: Material,
-        materialInstance: MaterialInstance
-    ): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidSkybox(skybox: Skybox): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidTexture(texture: Texture): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidStream(stream: Stream): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    actual fun isValidSwapChain(swapChain: SwapChain): Boolean {
-        TODO("Not yet implemented")
-    }
+    actual fun isValidRenderer(renderer: Renderer): Boolean = true
+    actual fun isValidView(view: View): Boolean = true
+    actual fun isValidScene(scene: Scene): Boolean = true
+    actual fun isValidFence(fence: Fence): Boolean = true
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = true
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = true
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = true
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true
+    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = true
+    actual fun isValidMaterial(material: Material): Boolean = true
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = true
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = true
+    actual fun isValidSkybox(skybox: Skybox): Boolean = true
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = true
+    actual fun isValidTexture(texture: Texture): Boolean = true
+    actual fun isValidStream(stream: Stream): Boolean = true
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = true
 
     actual fun createSwapChain(surface: NativeSurface): SwapChain {
-        TODO("Not yet implemented")
+        return SwapChain(jsEngine.createSwapChain())
     }
 
     actual fun createSwapChain(
         surface: NativeSurface,
         flags: Long
     ): SwapChain {
-        TODO("Not yet implemented")
+        return createSwapChain(surface)
     }
 
     actual fun createSwapChain(
@@ -130,62 +72,71 @@ actual class Engine {
         height: Int,
         flags: Long
     ): SwapChain {
-        TODO("Not yet implemented")
+        return createSwapChain(Any())
     }
 
     actual fun destroySwapChain(swapChain: SwapChain) {
+        jsEngine.destroySwapChain(swapChain.jsSwapChain)
     }
 
     actual fun createView(): View {
-        TODO("Not yet implemented")
+        return View(jsEngine.createView())
     }
 
     actual fun destroyView(view: View) {
+        jsEngine.destroyView(view.jsView)
     }
 
     actual fun createRenderer(): Renderer {
-        TODO("Not yet implemented")
+        return Renderer(jsEngine.createRenderer())
     }
 
     actual fun destroyRenderer(renderer: Renderer) {
+        jsEngine.destroyRenderer(renderer.jsRenderer)
     }
 
     actual fun createCamera(): Camera {
-        TODO("Not yet implemented")
+        val entity = EntityManager.get().create()
+        return Camera(jsEngine.createCamera(entity.unsafeCast<JSEntity>()))
     }
 
     actual fun createCamera(entity: Int): Camera {
-        TODO("Not yet implemented")
+        return Camera(jsEngine.createCamera(entity.unsafeCast<JSEntity>()))
     }
 
     actual fun getCameraComponent(entity: Int): Camera? {
-        TODO("Not yet implemented")
+        return Camera(jsEngine.getCameraComponent(entity.unsafeCast<JSEntity>()))
     }
 
     actual fun destroyCamera(camera: Camera) {
+        // Destroyed via its entity component in JS
     }
 
     actual fun destroyCameraComponent(entity: Int) {
+        jsEngine.destroyCameraComponent(entity.unsafeCast<JSEntity>())
     }
 
     actual fun createScene(): Scene {
-        TODO("Not yet implemented")
+        return Scene(jsEngine.createScene())
     }
 
     actual fun destroyScene(scene: Scene) {
+        jsEngine.destroyScene(scene.jsScene)
     }
 
     actual fun createFence(): Fence {
-        TODO("Not yet implemented")
+        return Fence()
     }
 
     actual fun destroyFence(fence: Fence) {
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
+        jsEngine.destroyIndexBuffer(indexBuffer.jsIndexBuffer)
     }
 
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
+        jsEngine.destroyVertexBuffer(vertexBuffer.jsVertexBuffer)
     }
 
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
@@ -195,60 +146,71 @@ actual class Engine {
     }
 
     actual fun destroyIndirectLight(ibl: IndirectLight) {
+        jsEngine.destroyIndirectLight(ibl.jsIndirectLight)
     }
 
     actual fun destroyMaterial(material: Material) {
+        jsEngine.destroyMaterial(material.jsMaterial)
     }
 
     actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
+        jsEngine.destroyMaterialInstance(materialInstance.jsMaterialInstance)
     }
 
     actual fun destroySkybox(skybox: Skybox) {
+        jsEngine.destroySkybox(skybox.jsSkybox)
     }
 
     actual fun destroyColorGrading(colorGrading: ColorGrading) {
+        jsEngine.destroyColorGrading(colorGrading.jsColorGrading)
     }
 
     actual fun destroyTexture(texture: Texture) {
+        jsEngine.destroyTexture(texture.jsTexture)
     }
 
     actual fun destroyRenderTarget(target: RenderTarget) {
+        jsEngine.destroyRenderTarget(target.jsRenderTarget)
     }
 
     actual fun destroyStream(stream: Stream) {
     }
 
     actual fun destroyEntity(entity: Int) {
+        jsEngine.destroyEntity(entity.unsafeCast<JSEntity>())
     }
 
     actual fun getTransformManager(): TransformManager {
-        TODO("Not yet implemented")
+        return TransformManager(jsEngine.getTransformManager())
     }
 
     actual fun getLightManager(): LightManager {
-        TODO("Not yet implemented")
+        return LightManager(jsEngine.getLightManager())
     }
 
     actual fun getRenderableManager(): RenderableManager {
-        TODO("Not yet implemented")
+        return RenderableManager(jsEngine.getRenderableManager())
     }
 
     actual fun getEntityManager(): EntityManager {
-        TODO("Not yet implemented")
+        return EntityManager(JSEntityManager.get())
     }
 
     actual fun flushAndWait() {
+        jsEngine.execute()
     }
 
     actual fun flushAndWait(timeout: Long): Boolean {
-        TODO("Not yet implemented")
+        jsEngine.execute()
+        return true
     }
 
     actual fun flush() {
+        jsEngine.execute()
     }
 
     actual fun isPaused(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun setPaused(paused: Boolean) {
@@ -258,15 +220,15 @@ actual class Engine {
     }
 
     actual fun hasFeatureFlag(name: String): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun setFeatureFlag(name: String, value: Boolean): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun getFeatureFlag(name: String): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual enum class Backend { DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP }
@@ -274,97 +236,52 @@ actual class Engine {
     actual enum class StereoscopicType { NONE, INSTANCED, MULTIVIEW }
     actual enum class GpuContextPriority { DEFAULT, LOW, MEDIUM, HIGH, REALTIME }
     actual class Config {
-        actual var commandBufferSizeMB: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var perRenderPassArenaSizeMB: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var driverHandleArenaSizeMB: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var minCommandBufferSizeMB: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var perFrameCommandsSizeMB: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var jobSystemThreadCount: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var stereoscopicType: StereoscopicType
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var stereoscopicEyeCount: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var resourceAllocatorCacheSizeMB: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var resourceAllocatorCacheMaxAge: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var preferredShaderLanguage: ShaderLanguage
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var forceGLES2Context: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var gpuContextPriority: GpuContextPriority
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var sharedUboInitialSizeInBytes: Long
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var commandBufferSizeMB: Long = 64
+        actual var perRenderPassArenaSizeMB: Long = 32
+        actual var driverHandleArenaSizeMB: Long = 16
+        actual var minCommandBufferSizeMB: Long = 16
+        actual var perFrameCommandsSizeMB: Long = 8
+        actual var jobSystemThreadCount: Long = 1
+        actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
+        actual var stereoscopicEyeCount: Long = 1
+        actual var resourceAllocatorCacheSizeMB: Long = 64
+        actual var resourceAllocatorCacheMaxAge: Long = 60
+        actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
+        actual var forceGLES2Context: Boolean = false
+        actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
+        actual var sharedUboInitialSizeInBytes: Long = 1024
 
         actual enum class ShaderLanguage { DEFAULT, MSL, METAL_LIBRARY }
     }
 
     actual class Builder {
-        actual fun backend(backend: Backend): Builder {
-            TODO("Not yet implemented")
-        }
-
-        actual fun sharedContext(sharedContext: Any): Builder {
-            TODO("Not yet implemented")
-        }
-
-        actual fun config(config: Config): Builder {
-            TODO("Not yet implemented")
-        }
-
-        actual fun featureLevel(featureLevel: FeatureLevel): Builder {
-            TODO("Not yet implemented")
-        }
-
-        actual fun paused(paused: Boolean): Builder {
-            TODO("Not yet implemented")
-        }
-
-        actual fun feature(name: String, value: Boolean): Builder {
-            TODO("Not yet implemented")
-        }
-
-        actual fun build(): Engine {
-            TODO("Not yet implemented")
-        }
+        actual fun backend(backend: Backend): Builder = this
+        actual fun sharedContext(sharedContext: Any): Builder = this
+        actual fun config(config: Config): Builder = this
+        actual fun featureLevel(featureLevel: FeatureLevel): Builder = this
+        actual fun paused(paused: Boolean): Builder = this
+        actual fun feature(name: String, value: Boolean): Builder = this
+        actual fun build(): Engine = create()
     }
 
     actual companion object {
         actual fun create(): Engine {
-            TODO("Not yet implemented")
+            throw UnsupportedOperationException("On JS, Engine must be created with a canvas or initialized via Filament.init()")
         }
 
         actual fun create(backend: Backend): Engine {
-            TODO("Not yet implemented")
+            return create()
         }
 
         actual fun create(sharedContext: Any): Engine {
-            TODO("Not yet implemented")
+            if (sharedContext is HTMLCanvasElement) {
+                return Engine(JSEngine.create(sharedContext))
+            }
+            return create()
         }
 
         actual fun getSteadyClockTimeNano(): Long {
-            TODO("Not yet implemented")
+            return (kotlin.js.Date.now() * 1_000_000.0).toLong()
         }
     }
 }

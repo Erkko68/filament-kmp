@@ -1,28 +1,48 @@
-package io.github.erkko68.filament
+import io.github.erkko68.filament.js.RenderableManager as JSRenderableManager
+import io.github.erkko68.filament.js.`RenderableManager_Builder` as JSRenderableManagerBuilder
+import io.github.erkko68.filament.js.RenderableManager_PrimitiveType
+import io.github.erkko68.filament.js.Entity as JSEntity
+import io.github.erkko68.filament.js.RenderableManager_Instance as JSRenderableManagerInstance
 
-actual class RenderableManager {
+actual class RenderableManager(internal val jsRenderableManager: JSRenderableManager) {
     actual fun hasComponent(entity: Entity): Boolean {
-        TODO("Not yet implemented")
+        return jsRenderableManager.hasComponent(entity.unsafeCast<JSEntity>())
     }
 
     actual fun getInstance(entity: Entity): EntityInstance {
-        TODO("Not yet implemented")
+        return jsRenderableManager.getInstance(entity.unsafeCast<JSEntity>()).unsafeCast<EntityInstance>()
     }
 
     actual fun destroy(entity: Entity) {
+        jsRenderableManager.destroy(entity.unsafeCast<JSEntity>())
     }
 
     actual fun setAxisAlignedBoundingBox(
         instance: EntityInstance,
         box: Box
     ) {
+        val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.js.Box>()
+        jsBox.center = box.center.toTypedArray() as Array<Number>
+        jsBox.halfExtent = box.halfExtent.toTypedArray() as Array<Number>
+        jsRenderableManager.setAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>(), jsBox)
     }
 
     actual fun getAxisAlignedBoundingBox(
         instance: EntityInstance,
         outBox: Box?
     ): Box {
-        TODO("Not yet implemented")
+        val jsBox = jsRenderableManager.getAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>())
+        val center = jsBox.center.unsafeCast<Array<Number>>()
+        val halfExtent = jsBox.halfExtent.unsafeCast<Array<Number>>()
+        
+        val result = outBox ?: Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(0f, 0f, 0f))
+        result.center[0] = center[0].toFloat()
+        result.center[1] = center[1].toFloat()
+        result.center[2] = center[2].toFloat()
+        result.halfExtent[0] = halfExtent[0].toFloat()
+        result.halfExtent[1] = halfExtent[1].toFloat()
+        result.halfExtent[2] = halfExtent[2].toFloat()
+        return result
     }
 
     actual fun setLayerMask(
@@ -30,40 +50,44 @@ actual class RenderableManager {
         select: Int,
         value: Int
     ) {
+        jsRenderableManager.setLayerMask(instance.unsafeCast<JSRenderableManagerInstance>(), select, value)
     }
 
     actual fun setPriority(instance: EntityInstance, priority: Int) {
+        jsRenderableManager.setPriority(instance.unsafeCast<JSRenderableManagerInstance>(), priority)
     }
 
     actual fun getPriority(instance: EntityInstance): Int {
-        TODO("Not yet implemented")
+        return 0 
     }
 
     actual fun setChannel(instance: EntityInstance, channel: Int) {
     }
 
     actual fun getChannel(instance: EntityInstance): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun setCulling(instance: EntityInstance, enabled: Boolean) {
     }
 
     actual fun isCullingEnabled(instance: EntityInstance): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) {
     }
 
     actual fun getFogEnabled(instance: EntityInstance): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) {
+        jsRenderableManager.setCastShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
     actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) {
+        jsRenderableManager.setReceiveShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
     actual fun setScreenSpaceContactShadows(
@@ -73,23 +97,23 @@ actual class RenderableManager {
     }
 
     actual fun isShadowCaster(instance: EntityInstance): Boolean {
-        TODO("Not yet implemented")
+        return jsRenderableManager.isShadowCaster(instance.unsafeCast<JSRenderableManagerInstance>())
     }
 
     actual fun isShadowReceiver(instance: EntityInstance): Boolean {
-        TODO("Not yet implemented")
+        return jsRenderableManager.isShadowReceiver(instance.unsafeCast<JSRenderableManagerInstance>())
     }
 
     actual fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun getPrimitiveCount(instance: EntityInstance): Int {
-        TODO("Not yet implemented")
+        return jsRenderableManager.getPrimitiveCount(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
     }
 
     actual fun getInstanceCount(instance: EntityInstance): Int {
-        TODO("Not yet implemented")
+        return 1
     }
 
     actual fun setMaterialInstanceAt(
@@ -97,13 +121,15 @@ actual class RenderableManager {
         primitiveIndex: Int,
         materialInstance: MaterialInstance
     ) {
+        jsRenderableManager.setMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, materialInstance.jsMaterialInstance)
     }
 
     actual fun getMaterialInstanceAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): MaterialInstance? {
-        TODO("Not yet implemented")
+        val jsMat = jsRenderableManager.getMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
+        return if (jsMat != null) MaterialInstance(jsMat) else null
     }
 
     actual fun setGeometryAt(
@@ -115,6 +141,14 @@ actual class RenderableManager {
         offset: Int,
         count: Int
     ) {
+        val jsType = when (type) {
+            PrimitiveType.POINTS -> RenderableManager_PrimitiveType.POINTS
+            PrimitiveType.LINES -> RenderableManager_PrimitiveType.LINES
+            PrimitiveType.LINE_STRIP -> RenderableManager_PrimitiveType.LINE_STRIP
+            PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
+            PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
+        }
+        jsRenderableManager.setGeometryAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, count)
     }
 
     actual fun setBlendOrderAt(
@@ -122,13 +156,14 @@ actual class RenderableManager {
         primitiveIndex: Int,
         blendOrder: Int
     ) {
+        jsRenderableManager.setBlendOrderAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, blendOrder)
     }
 
     actual fun getBlendOrderAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun setGlobalBlendOrderEnabledAt(
@@ -142,7 +177,7 @@ actual class RenderableManager {
         instance: EntityInstance,
         primitiveIndex: Int
     ): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun setLightChannel(
@@ -156,11 +191,11 @@ actual class RenderableManager {
         instance: EntityInstance,
         channel: Int
     ): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     actual fun getMorphTargetCount(instance: EntityInstance): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun setSkinningBuffer(
@@ -176,6 +211,9 @@ actual class RenderableManager {
         weights: FloatArray,
         offset: Int
     ) {
+        if (weights.size >= 4) {
+            jsRenderableManager.setMorphWeights(instance.unsafeCast<JSRenderableManagerInstance>(), weights[0], weights[1], weights[2], weights[3])
+        }
     }
 
     actual fun setMorphTargetBufferOffsetAt(
@@ -189,13 +227,23 @@ actual class RenderableManager {
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
     actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
     actual class Builder actual constructor(count: Int) {
+        private val jsBuilder: JSRenderableManagerBuilder = JSRenderableManager.Builder(count)
+
         actual fun geometry(
             index: Int,
             type: PrimitiveType,
             vb: VertexBuffer,
             ib: IndexBuffer
         ): Builder {
-            TODO("Not yet implemented")
+            val jsType = when (type) {
+                PrimitiveType.POINTS -> RenderableManager_PrimitiveType.POINTS
+                PrimitiveType.LINES -> RenderableManager_PrimitiveType.LINES
+                PrimitiveType.LINE_STRIP -> RenderableManager_PrimitiveType.LINE_STRIP
+                PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
+                PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
+            }
+            jsBuilder.geometry(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer)
+            return this
         }
 
         actual fun geometry(
@@ -206,7 +254,15 @@ actual class RenderableManager {
             offset: Int,
             count: Int
         ): Builder {
-            TODO("Not yet implemented")
+            val jsType = when (type) {
+                PrimitiveType.POINTS -> RenderableManager_PrimitiveType.POINTS
+                PrimitiveType.LINES -> RenderableManager_PrimitiveType.LINES
+                PrimitiveType.LINE_STRIP -> RenderableManager_PrimitiveType.LINE_STRIP
+                PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
+                PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
+            }
+            jsBuilder.geometryOffset(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, count)
+            return this
         }
 
         actual fun geometry(
@@ -219,78 +275,98 @@ actual class RenderableManager {
             maxIndex: Int,
             count: Int
         ): Builder {
-            TODO("Not yet implemented")
+            val jsType = when (type) {
+                PrimitiveType.POINTS -> RenderableManager_PrimitiveType.POINTS
+                PrimitiveType.LINES -> RenderableManager_PrimitiveType.LINES
+                PrimitiveType.LINE_STRIP -> RenderableManager_PrimitiveType.LINE_STRIP
+                PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
+                PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
+            }
+            jsBuilder.geometryMinMax(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, minIndex, maxIndex, count)
+            return this
         }
 
         actual fun geometryType(type: GeometryType): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun material(
             index: Int,
             materialInstance: MaterialInstance
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.material(index, materialInstance.jsMaterialInstance)
+            return this
         }
 
         actual fun blendOrder(
             index: Int,
             blendOrder: Int
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.asDynamic().blendOrder(index, blendOrder)
+            return this
         }
 
         actual fun globalBlendOrderEnabled(
             index: Int,
             enabled: Boolean
         ): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun boundingBox(box: Box): Builder {
-            TODO("Not yet implemented")
+            val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.js.Box>()
+            jsBox.center = box.center.toTypedArray() as Array<Number>
+            jsBox.halfExtent = box.halfExtent.toTypedArray() as Array<Number>
+            jsBuilder.boundingBox(jsBox)
+            return this
         }
 
         actual fun layerMask(
             select: Int,
             value: Int
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.layerMask(select, value)
+            return this
         }
 
         actual fun priority(priority: Int): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.priority(priority)
+            return this
         }
 
         actual fun channel(channel: Int): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun culling(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.culling(enabled)
+            return this
         }
 
         actual fun castShadows(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.castShadows(enabled)
+            return this
         }
 
         actual fun receiveShadows(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.receiveShadows(enabled)
+            return this
         }
 
         actual fun screenSpaceContactShadows(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun skinning(boneCount: Int): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.asDynamic().skinning(boneCount)
+            return this
         }
 
         actual fun skinning(
             boneCount: Int,
             bones: FloatArray
         ): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun skinning(
@@ -298,33 +374,35 @@ actual class RenderableManager {
             boneCount: Int,
             offset: Int
         ): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun morphing(targetCount: Int): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.asDynamic().morphing(targetCount > 0)
+            return this
         }
 
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun fog(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun lightChannel(
             channel: Int,
             enable: Boolean
         ): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun instances(instanceCount: Int): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun build(engine: Engine, entity: Entity) {
+            jsBuilder.build(engine.jsEngine, entity.unsafeCast<JSEntity>())
         }
     }
 }

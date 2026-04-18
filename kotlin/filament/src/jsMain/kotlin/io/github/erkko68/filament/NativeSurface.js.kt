@@ -1,3 +1,5 @@
 package io.github.erkko68.filament
 
-actual class NativeSurface
+import org.w3c.dom.HTMLCanvasElement
+
+actual class NativeSurface(internal val canvas: HTMLCanvasElement)

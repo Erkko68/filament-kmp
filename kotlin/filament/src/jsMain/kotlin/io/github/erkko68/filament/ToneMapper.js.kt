@@ -1,14 +1,17 @@
 package io.github.erkko68.filament
 
-actual open class ToneMapper {
-    actual class Linear : ToneMapper()
-    actual class ACES : ToneMapper()
-    actual class ACESLegacy : ToneMapper()
-    actual class Filmic : ToneMapper()
-    actual class PBRNeutralToneMapper : ToneMapper()
-    actual class GT7ToneMapper : ToneMapper()
+import io.github.erkko68.filament.js.ColorGrading_ToneMapping
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+actual open class ToneMapper(internal val jsToneMapping: ColorGrading_ToneMapping) {
+    actual class Linear : ToneMapper(ColorGrading_ToneMapping.LINEAR)
+    actual class ACES : ToneMapper(ColorGrading_ToneMapping.ACES)
+    actual class ACESLegacy : ToneMapper(ColorGrading_ToneMapping.ACES_LEGACY)
+    actual class Filmic : ToneMapper(ColorGrading_ToneMapping.FILMIC)
+    actual class PBRNeutralToneMapper : ToneMapper(ColorGrading_ToneMapping.asDynamic().PBR_NEUTRAL ?: ColorGrading_ToneMapping.ACES)
+    actual class GT7ToneMapper : ToneMapper(ColorGrading_ToneMapping.asDynamic().GT7 ?: ColorGrading_ToneMapping.ACES)
     actual class Agx actual constructor(look: AgxLook) :
-        ToneMapper() {
+        ToneMapper(ColorGrading_ToneMapping.asDynamic().AGX ?: ColorGrading_ToneMapping.ACES) {
         actual enum class AgxLook { NONE, PUNCHY, GOLDEN }
     }
 
@@ -17,20 +20,12 @@ actual open class ToneMapper {
         midGrayIn: Float,
         midGrayOut: Float,
         hdrMax: Float
-    ) : ToneMapper() {
-        actual var contrast: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var midGrayIn: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var midGrayOut: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var hdrMax: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
+    ) : ToneMapper(ColorGrading_ToneMapping.asDynamic().UBER ?: ColorGrading_ToneMapping.ACES) {
+        actual var contrast: Float = contrast
+        actual var midGrayIn: Float = midGrayIn
+        actual var midGrayOut: Float = midGrayOut
+        actual var hdrMax: Float = hdrMax
     }
 
-    actual class DisplayRange : ToneMapper()
+    actual class DisplayRange : ToneMapper(ColorGrading_ToneMapping.DISPLAY_RANGE)
 }

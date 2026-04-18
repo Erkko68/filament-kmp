@@ -5,6 +5,7 @@ filament-source/
 /filament-main/
 /prebuilts/
 **/bin/
+/kotlin-js-store/
 
 # Gradle
 .gradle/

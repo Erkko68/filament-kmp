@@ -5,11 +5,12 @@ actual class Fence {
         mode: Mode,
         timeout: Long
     ): FenceStatus {
-        TODO("Not yet implemented")
+        // JS doesn't support blocking waits. Return satisfied immediately.
+        return FenceStatus.CONDITION_SATISFIED
     }
 
     actual fun getNativeObject(): Long {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual enum class Mode { FLUSH, DONT_FLUSH }

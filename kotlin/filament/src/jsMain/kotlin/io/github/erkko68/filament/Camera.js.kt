@@ -1,6 +1,16 @@
 package io.github.erkko68.filament
 
-actual class Camera {
+import io.github.erkko68.filament.js.Camera as JSCamera
+import io.github.erkko68.filament.js.Camera_Projection
+import io.github.erkko68.filament.js.Camera_Fov
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+actual class Camera(internal val jsCamera: JSCamera) {
+    private var _projectionMatrix = DoubleArray(16)
+    private var _modelMatrix = DoubleArray(16)
+    private var _near = 0.1
+    private var _far = 100.0
+
     actual fun setProjection(
         projection: Projection,
         left: Double,
@@ -10,6 +20,10 @@ actual class Camera {
         near: Double,
         far: Double
     ) {
+        _near = near
+        _far = far
+        val jsProj = if (projection == Projection.PERSPECTIVE) Camera_Projection.PERSPECTIVE else Camera_Projection.ORTHO
+        jsCamera.setProjection(jsProj, left, right, bottom, top, near, far)
     }
 
     actual fun setProjection(
@@ -19,6 +33,10 @@ actual class Camera {
         far: Double,
         direction: Fov
     ) {
+        _near = near
+        _far = far
+        val jsFov = if (direction == Fov.VERTICAL) Camera_Fov.VERTICAL else Camera_Fov.HORIZONTAL
+        jsCamera.setProjectionFov(fovInDegrees, aspect, near, far, jsFov)
     }
 
     actual fun setLensProjection(
@@ -27,9 +45,16 @@ actual class Camera {
         near: Double,
         far: Double
     ) {
+        _near = near
+        _far = far
+        jsCamera.setLensProjection(focalLength, aspect, near, far)
     }
 
     actual fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
+        _projectionMatrix = matrix.copyOf()
+        _near = near
+        _far = far
+        jsCamera.setCustomProjection(matrix.toTypedArray() as Array<Number>, near, far)
     }
 
     actual fun setCustomProjection(
@@ -38,6 +63,12 @@ actual class Camera {
         near: Double,
         far: Double
     ) {
+        _projectionMatrix = matrix.copyOf()
+        _near = near
+        _far = far
+        // JS bindings don't expose a separate culling matrix setter easily, 
+        // we use the main projection matrix.
+        jsCamera.setCustomProjection(matrix.toTypedArray() as Array<Number>, near, far)
     }
 
     actual fun setCustomEyeProjection(
@@ -47,23 +78,28 @@ actual class Camera {
         near: Double,
         far: Double
     ) {
+        // Multi-eye projection is specialized in C++, not directly exposed in simple JS bindings
     }
 
     actual fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray) {
     }
 
     actual fun setScaling(x: Double, y: Double) {
+        jsCamera.setScaling(arrayOf(x, y) as Array<Number>)
     }
 
     actual fun getScaling(out: DoubleArray?): DoubleArray {
-        TODO("Not yet implemented")
+        val result = out ?: DoubleArray(4)
+        val jsVec = jsCamera.getScaling() as Array<Double>
+        for (i in 0 until jsVec.size.coerceAtMost(result.size)) result[i] = jsVec[i]
+        return result
     }
 
     actual fun setShift(x: Double, y: Double) {
     }
 
     actual fun getShift(out: DoubleArray?): DoubleArray {
-        TODO("Not yet implemented")
+        return out ?: DoubleArray(2)
     }
 
     actual fun lookAt(
@@ -77,99 +113,156 @@ actual class Camera {
         upY: Double,
         upZ: Double
     ) {
+        jsCamera.lookAt(
+            arrayOf(eyeX, eyeY, eyeZ) as Array<Number>,
+            arrayOf(centerX, centerY, centerZ) as Array<Number>,
+            arrayOf(upX, upY, upZ) as Array<Number>
+        )
     }
 
     actual fun setModelMatrix(modelMatrix: FloatArray) {
+        jsCamera.setModelMatrix(modelMatrix.toTypedArray() as Array<Number>)
     }
 
     actual fun setModelMatrix(modelMatrix: DoubleArray) {
+        jsCamera.setModelMatrix(modelMatrix.toTypedArray() as Array<Number>)
     }
 
     actual fun getProjectionMatrix(out: DoubleArray?): DoubleArray {
-        TODO("Not yet implemented")
+        val result = out ?: DoubleArray(16)
+        val jsMatrix = jsCamera.getProjectionMatrix() as Array<Double>
+        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        return result
     }
 
     actual fun getCullingProjectionMatrix(out: DoubleArray?): DoubleArray {
-        TODO("Not yet implemented")
+        val result = out ?: DoubleArray(16)
+        val jsMatrix = jsCamera.getCullingProjectionMatrix() as Array<Double>
+        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        return result
     }
 
     actual fun getModelMatrix(out: FloatArray?): FloatArray {
-        TODO("Not yet implemented")
+        val result = out ?: FloatArray(16)
+        val jsMatrix = jsCamera.getModelMatrix() as Array<Double>
+        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i].toFloat()
+        return result
     }
 
     actual fun getModelMatrix(out: DoubleArray?): DoubleArray {
-        TODO("Not yet implemented")
+        val result = out ?: DoubleArray(16)
+        val jsMatrix = jsCamera.getModelMatrix() as Array<Double>
+        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        return result
     }
 
     actual fun getViewMatrix(out: FloatArray?): FloatArray {
-        TODO("Not yet implemented")
+        val result = out ?: FloatArray(16)
+        val jsMatrix = jsCamera.getViewMatrix() as Array<Double>
+        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i].toFloat()
+        return result
     }
 
     actual fun getViewMatrix(out: DoubleArray?): DoubleArray {
-        TODO("Not yet implemented")
+        val result = out ?: DoubleArray(16)
+        val jsMatrix = jsCamera.getViewMatrix() as Array<Double>
+        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        return result
     }
 
     actual fun getPosition(out: FloatArray?): FloatArray {
-        TODO("Not yet implemented")
+        val result = out ?: FloatArray(3)
+        val pos = jsCamera.getPosition() as Array<Double>
+        for (i in 0 until 3.coerceAtMost(pos.size)) result[i] = pos[i].toFloat()
+        return result
     }
 
     actual fun getLeftVector(out: FloatArray?): FloatArray {
-        TODO("Not yet implemented")
+        val result = out ?: FloatArray(3)
+        val vec = jsCamera.getLeftVector() as Array<Double>
+        for (i in 0 until 3.coerceAtMost(vec.size)) result[i] = vec[i].toFloat()
+        return result
     }
 
     actual fun getUpVector(out: FloatArray?): FloatArray {
-        TODO("Not yet implemented")
+        val result = out ?: FloatArray(3)
+        val vec = jsCamera.getUpVector() as Array<Double>
+        for (i in 0 until 3.coerceAtMost(vec.size)) result[i] = vec[i].toFloat()
+        return result
     }
 
     actual fun getForwardVector(out: FloatArray?): FloatArray {
-        TODO("Not yet implemented")
+        val result = out ?: FloatArray(3)
+        val vec = jsCamera.getForwardVector() as Array<Double>
+        for (i in 0 until 3.coerceAtMost(vec.size)) result[i] = vec[i].toFloat()
+        return result
     }
 
     actual fun getNear(): Float {
-        TODO("Not yet implemented")
+        return _near.toFloat()
     }
 
     actual fun getCullingFar(): Float {
-        TODO("Not yet implemented")
+        return jsCamera.getCullingFar().toFloat()
     }
 
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
+        jsCamera.setExposure(aperture, shutterSpeed, sensitivity)
     }
 
     actual fun setExposure(exposure: Float) {
+        jsCamera.setExposureDirect(exposure)
     }
 
     actual fun getAperture(): Float {
-        TODO("Not yet implemented")
+        return jsCamera.getAperture().toFloat()
     }
 
     actual fun getShutterSpeed(): Float {
-        TODO("Not yet implemented")
+        return jsCamera.getShutterSpeed().toFloat()
     }
 
     actual fun getSensitivity(): Float {
-        TODO("Not yet implemented")
+        return jsCamera.getSensitivity().toFloat()
     }
 
     actual fun getFocalLength(): Double {
-        TODO("Not yet implemented")
+        return jsCamera.getFocalLength().toDouble()
     }
 
     actual fun setFocusDistance(distance: Float) {
+        jsCamera.setFocusDistance(distance)
     }
 
     actual fun getFocusDistance(): Float {
-        TODO("Not yet implemented")
+        return jsCamera.getFocusDistance().toFloat()
     }
 
     actual fun getFieldOfViewInDegrees(direction: Fov): Double {
-        TODO("Not yet implemented")
+        return 0.0 // No direct FOV getter in JS without reverse projection
     }
 
     actual fun getEntity(): Int {
-        TODO("Not yet implemented")
+        return jsCamera.unsafeCast<io.github.erkko68.filament.js.Entity>().getId().toInt()
     }
 
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }
+
+    actual companion object {
+        actual fun inverseProjection(projection: DoubleArray, out: DoubleArray?): DoubleArray {
+            val result = out ?: DoubleArray(16)
+            val res = JSCamera.inverseProjection(projection.toTypedArray() as Array<Number>) as Array<Double>
+            for (i in 0 until 16.coerceAtMost(res.size)) result[i] = res[i]
+            return result
+        }
+
+        actual fun computeEffectiveFocalLength(focalLength: Double, focusDistance: Double): Double {
+            return JSCamera.computeEffectiveFocalLength(focalLength, focusDistance).toDouble()
+        }
+
+        actual fun computeEffectiveFov(fovInDegrees: Double, focusDistance: Double): Double {
+            return JSCamera.computeEffectiveFov(fovInDegrees, focusDistance).toDouble()
+        }
+    }
 }

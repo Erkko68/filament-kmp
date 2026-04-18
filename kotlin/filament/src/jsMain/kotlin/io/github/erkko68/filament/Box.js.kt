@@ -1,28 +1,35 @@
 package io.github.erkko68.filament
 
 actual class Box {
+    private val _center = FloatArray(3)
+    private val _halfExtent = FloatArray(3)
+
     actual val center: FloatArray
-        get() = TODO("Not yet implemented")
+        get() = _center
     actual val halfExtent: FloatArray
-        get() = TODO("Not yet implemented")
+        get() = _halfExtent
 
     actual fun setCenter(x: Float, y: Float, z: Float) {
+        _center[0] = x
+        _center[1] = y
+        _center[2] = z
     }
 
     actual fun setHalfExtent(x: Float, y: Float, z: Float) {
+        _halfExtent[0] = x
+        _halfExtent[1] = y
+        _halfExtent[2] = z
     }
 
     actual fun getMin(): FloatArray {
-        TODO("Not yet implemented")
+        return floatArrayOf(_center[0] - _halfExtent[0], _center[1] - _halfExtent[1], _center[2] - _halfExtent[2])
     }
 
     actual fun getMax(): FloatArray {
-        TODO("Not yet implemented")
+        return floatArrayOf(_center[0] + _halfExtent[0], _center[1] + _halfExtent[1], _center[2] + _halfExtent[2])
     }
 
-    actual constructor() {
-        TODO("Not yet implemented")
-    }
+    actual constructor()
 
     actual constructor(
         centerX: Float,
@@ -32,6 +39,7 @@ actual class Box {
         halfExtentY: Float,
         halfExtentZ: Float
     ) {
-        TODO("Not yet implemented")
+        setCenter(centerX, centerY, centerZ)
+        setHalfExtent(halfExtentX, halfExtentY, halfExtentZ)
     }
 }

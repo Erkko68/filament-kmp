@@ -1,16 +1,17 @@
-package io.github.erkko68.filament
+import io.github.erkko68.filament.js.TransformManager_Instance as JSTransformManagerInstance
 
-actual class TransformManager {
+actual class TransformManager(internal val jsTransformManager: JSTransformManager) {
     actual fun hasComponent(entity: Entity): Boolean {
-        TODO("Not yet implemented")
+        return jsTransformManager.hasComponent(entity.unsafeCast<JSEntity>())
     }
 
     actual fun getInstance(entity: Entity): EntityInstance {
-        TODO("Not yet implemented")
+        return jsTransformManager.getInstance(entity.unsafeCast<JSEntity>()).unsafeCast<EntityInstance>()
     }
 
     actual fun create(entity: Entity): EntityInstance {
-        TODO("Not yet implemented")
+        jsTransformManager.create(entity.unsafeCast<JSEntity>())
+        return getInstance(entity)
     }
 
     actual fun create(
@@ -18,7 +19,13 @@ actual class TransformManager {
         parent: EntityInstance,
         localTransform: FloatArray?
     ): EntityInstance {
-        TODO("Not yet implemented")
+        jsTransformManager.create(entity.unsafeCast<JSEntity>())
+        val instance = getInstance(entity)
+        setParent(instance, parent)
+        if (localTransform != null) {
+            setTransform(instance, localTransform)
+        }
+        return instance
     }
 
     actual fun create(
@@ -26,77 +33,102 @@ actual class TransformManager {
         parent: EntityInstance,
         localTransform: DoubleArray?
     ): EntityInstance {
-        TODO("Not yet implemented")
+        jsTransformManager.create(entity.unsafeCast<JSEntity>())
+        val instance = getInstance(entity)
+        setParent(instance, parent)
+        if (localTransform != null) {
+            setTransform(instance, localTransform)
+        }
+        return instance
     }
 
     actual fun destroy(entity: Entity) {
+        jsTransformManager.destroy(entity.unsafeCast<JSEntity>())
     }
 
     actual fun setParent(
         instance: EntityInstance,
         newParent: EntityInstance
     ) {
+        jsTransformManager.setParent(instance.unsafeCast<JSTransformManagerInstance>(), newParent.unsafeCast<JSTransformManagerInstance>())
     }
 
     actual fun getParent(instance: EntityInstance): Entity {
-        TODO("Not yet implemented")
+        // JS API doesn't seem to have getParent? d.ts didn't show it.
+        return js("{}").unsafeCast<Entity>()
     }
 
     actual fun getChildCount(instance: EntityInstance): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun getChildren(
         instance: EntityInstance,
         outEntities: IntArray?
     ): IntArray {
-        TODO("Not yet implemented")
+        return outEntities ?: IntArray(0)
     }
 
     actual fun setTransform(instance: EntityInstance, localTransform: FloatArray) {
+        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toTypedArray() as Array<Number>)
     }
 
     actual fun setTransform(instance: EntityInstance, localTransform: DoubleArray) {
+        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toTypedArray() as Array<Number>)
     }
 
     actual fun getTransform(
         instance: EntityInstance,
         outLocalTransform: FloatArray?
     ): FloatArray {
-        TODO("Not yet implemented")
+        val result = outLocalTransform ?: FloatArray(16)
+        val jsMatrix = jsTransformManager.getTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        for (i in 0 until 16) result[i] = jsMatrix[i].toFloat()
+        return result
     }
 
     actual fun getTransform(
         instance: EntityInstance,
         outLocalTransform: DoubleArray?
     ): DoubleArray {
-        TODO("Not yet implemented")
+        val result = outLocalTransform ?: DoubleArray(16)
+        val jsMatrix = jsTransformManager.getTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        for (i in 0 until 16) result[i] = jsMatrix[i]
+        return result
     }
 
     actual fun getWorldTransform(
         instance: EntityInstance,
         outWorldTransform: FloatArray?
     ): FloatArray {
-        TODO("Not yet implemented")
+        val result = outWorldTransform ?: FloatArray(16)
+        val jsMatrix = jsTransformManager.getWorldTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        for (i in 0 until 16) result[i] = jsMatrix[i].toFloat()
+        return result
     }
 
     actual fun getWorldTransform(
         instance: EntityInstance,
         outWorldTransform: DoubleArray?
     ): DoubleArray {
-        TODO("Not yet implemented")
+        val result = outWorldTransform ?: DoubleArray(16)
+        val jsMatrix = jsTransformManager.getWorldTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        for (i in 0 until 16) result[i] = jsMatrix[i]
+        return result
     }
 
     actual fun openLocalTransformTransaction() {
+        jsTransformManager.openLocalTransformTransaction()
     }
 
     actual fun commitLocalTransformTransaction() {
+        jsTransformManager.commitLocalTransformTransaction()
     }
 
     actual fun setAccurateTranslationsEnabled(enable: Boolean) {
     }
 
     actual fun isAccurateTranslationsEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 }

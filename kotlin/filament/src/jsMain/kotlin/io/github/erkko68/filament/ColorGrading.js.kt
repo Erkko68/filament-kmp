@@ -1,36 +1,54 @@
 package io.github.erkko68.filament
 
-actual class ColorGrading {
+import io.github.erkko68.filament.js.ColorGrading as JSColorGrading
+import io.github.erkko68.filament.js.`ColorGrading_Builder` as JSColorGradingBuilder
+import io.github.erkko68.filament.js.ColorGrading_QualityLevel
+
+actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
     actual class Builder {
+        private val jsBuilder = JSColorGradingBuilder()
+
         actual fun quality(qualityLevel: QualityLevel): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.quality(when (qualityLevel) {
+                QualityLevel.LOW -> ColorGrading_QualityLevel.LOW
+                QualityLevel.MEDIUM -> ColorGrading_QualityLevel.MEDIUM
+                QualityLevel.HIGH -> ColorGrading_QualityLevel.HIGH
+                QualityLevel.ULTRA -> ColorGrading_QualityLevel.ULTRA
+            })
+            return this
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.toneMapping(toneMapper.jsToneMapping)
+            return this
         }
 
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.luminanceScaling(luminanceScaling)
+            return this
         }
 
         actual fun gamutMapping(gamutMapping: Boolean): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.gamutMapping(gamutMapping)
+            return this
         }
 
         actual fun exposure(exposure: Float): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.exposure(exposure)
+            return this
         }
 
         actual fun nightAdaptation(adaptation: Float): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.nightAdaptation(adaptation > 0.5f) // JS might take bool
+            return this
         }
 
         actual fun whiteBalance(
             temperature: Float,
             tint: Float
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.whiteBalance(temperature, tint)
+            return this
         }
 
         actual fun channelMixer(
@@ -38,7 +56,12 @@ actual class ColorGrading {
             outGreen: FloatArray,
             outBlue: FloatArray
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.channelMixer(
+                outRed.toTypedArray() as Array<Number>,
+                outGreen.toTypedArray() as Array<Number>,
+                outBlue.toTypedArray() as Array<Number>
+            )
+            return this
         }
 
         actual fun shadowsMidtonesHighlights(
@@ -47,7 +70,13 @@ actual class ColorGrading {
             highlights: FloatArray,
             ranges: FloatArray
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.shadowsMidtonesHighlights(
+                shadows.toTypedArray() as Array<Number>,
+                midtones.toTypedArray() as Array<Number>,
+                highlights.toTypedArray() as Array<Number>,
+                ranges.toTypedArray() as Array<Number>
+            )
+            return this
         }
 
         actual fun slopeOffsetPower(
@@ -55,19 +84,27 @@ actual class ColorGrading {
             offset: FloatArray,
             power: FloatArray
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.slopeOffsetPower(
+                slope.toTypedArray() as Array<Number>,
+                offset.toTypedArray() as Array<Number>,
+                power.toTypedArray() as Array<Number>
+            )
+            return this
         }
 
         actual fun contrast(contrast: Float): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.contrast(contrast)
+            return this
         }
 
         actual fun vibrance(vibrance: Float): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.vibrance(vibrance)
+            return this
         }
 
         actual fun saturation(saturation: Float): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.saturation(saturation)
+            return this
         }
 
         actual fun curves(
@@ -75,11 +112,16 @@ actual class ColorGrading {
             midPoint: FloatArray,
             highlightScale: FloatArray
         ): Builder {
-            TODO("Not yet implemented")
+            jsBuilder.curves(
+                shadowGamma.toTypedArray() as Array<Number>,
+                midPoint.toTypedArray() as Array<Number>,
+                highlightScale.toTypedArray() as Array<Number>
+            )
+            return this
         }
 
         actual fun build(engine: Engine): ColorGrading {
-            TODO("Not yet implemented")
+            return ColorGrading(jsBuilder.build(engine.jsEngine))
         }
     }
 

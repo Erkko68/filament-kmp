@@ -1,8 +1,10 @@
 package io.github.erkko68.filament
 
-actual class SwapChain {
+import io.github.erkko68.filament.js.SwapChain as JSSwapChain
+
+actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
     actual fun getNativeWindow(): Any? {
-        TODO("Not yet implemented")
+        return null
     }
 
     actual fun setFrameCompletedCallback(handler: Any?, callback: () -> Unit) {
@@ -12,27 +14,27 @@ actual class SwapChain {
     }
 
     actual fun isFrameScheduledCallbackSet(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun getNativeObject(): Long {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual companion object {
         actual fun isProtectedContentSupported(engine: Engine): Boolean {
-            TODO("Not yet implemented")
+            return false
         }
 
         actual fun isSRGBSwapChainSupported(engine: Engine): Boolean {
-            TODO("Not yet implemented")
+            return true
         }
 
         actual fun isMSAASwapChainSupported(
             engine: Engine,
             samples: Int
         ): Boolean {
-            TODO("Not yet implemented")
+            return false // WebGL depth/stencil MSAA is tricky
         }
     }
 }

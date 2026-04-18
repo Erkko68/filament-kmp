@@ -1,224 +1,466 @@
 package io.github.erkko68.filament
 
-actual class View {
+import io.github.erkko68.filament.js.View as JSView
+
+actual class View(internal val jsView: JSView) {
+    private var _scene: Scene? = null
+    private var _camera: Camera? = null
+    private var _viewport: Viewport = Viewport(0, 0, 0, 0)
+    private var _visibleLayersSelect: Int = 0
+    private var _visibleLayersValues: Int = 0
+    private var _dithering: Dithering = Dithering.NONE
+    private var _antiAliasing: AntiAliasing = AntiAliasing.NONE
+    private var _ambientOcclusion: AmbientOcclusion = AmbientOcclusion.NONE
+    private var _dynamicResolutionOptions = DynamicResolutionOptions()
+    private var _renderQuality = RenderQuality()
+    private var _bloomOptions = BloomOptions()
+    private var _fogOptions = FogOptions()
+    private var _depthOfFieldOptions = DepthOfFieldOptions()
+    private var _vignetteOptions = VignetteOptions()
+    private var _ambientOcclusionOptions = AmbientOcclusionOptions()
+    private var _temporalAntiAliasingOptions = TemporalAntiAliasingOptions()
+    private var _screenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions()
+    private var _vsmShadowOptions = VsmShadowOptions()
+    private var _softShadowOptions = SoftShadowOptions()
+    private var _guardBandOptions = GuardBandOptions()
+    private var _stereoscopicOptions = StereoscopicOptions()
+    private var _multiSampleAntiAliasingOptions = MultiSampleAntiAliasingOptions()
+    private var _shadowType = ShadowType.PCF
+    private var _renderTarget: RenderTarget? = null
+
     actual fun setName(name: String) {
+        // Not in JS bindings
     }
 
     actual fun getName(): String? {
-        TODO("Not yet implemented")
+        return null
     }
 
     actual fun setScene(scene: Scene?) {
+        _scene = scene
+        jsView.setScene(scene?.jsScene)
     }
 
     actual fun getScene(): Scene? {
-        TODO("Not yet implemented")
+        return _scene
     }
 
     actual fun setCamera(camera: Camera?) {
+        _camera = camera
+        jsView.setCamera(camera?.jsCamera)
     }
 
     actual fun getCamera(): Camera? {
-        TODO("Not yet implemented")
+        return _camera
     }
 
     actual fun hasCamera(): Boolean {
-        TODO("Not yet implemented")
+        return _camera != null
     }
 
     actual fun setViewport(viewport: Viewport) {
+        _viewport = viewport
+        jsView.setViewport(arrayOf(viewport.left, viewport.bottom, viewport.width, viewport.height) as Array<Number>)
     }
 
     actual fun getViewport(): Viewport {
-        TODO("Not yet implemented")
+        return _viewport
     }
 
     actual fun setBlendMode(blendMode: BlendMode) {
+        jsView.setBlendMode(when (blendMode) {
+            View.BlendMode.OPAQUE -> io.github.erkko68.filament.js.View_BlendMode.OPAQUE
+            View.BlendMode.TRANSLUCENT -> io.github.erkko68.filament.js.View_BlendMode.TRANSLUCENT
+        })
     }
 
     actual fun getBlendMode(): BlendMode {
-        TODO("Not yet implemented")
+        return when (jsView.getBlendMode()) {
+            io.github.erkko68.filament.js.View_BlendMode.OPAQUE -> View.BlendMode.OPAQUE
+            io.github.erkko68.filament.js.View_BlendMode.TRANSLUCENT -> View.BlendMode.TRANSLUCENT
+            else -> View.BlendMode.OPAQUE
+        }
     }
 
     actual fun setVisibleLayers(select: Int, values: Int) {
+        _visibleLayersSelect = select
+        _visibleLayersValues = values
+        jsView.setVisibleLayers(select, values)
     }
 
     actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
+        val select = 1 shl layer
+        val values = if (enabled) select else 0
+        setVisibleLayers(select, values)
     }
 
     actual fun getVisibleLayers(): Int {
-        TODO("Not yet implemented")
+        return _visibleLayersValues
     }
 
     actual fun setPostProcessingEnabled(enabled: Boolean) {
+        jsView.setPostProcessingEnabled(enabled)
     }
 
     actual fun isPostProcessingEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return jsView.isPostProcessingEnabled()
+    }
+
+    actual fun setAntiAliasing(antialiasing: AntiAliasing) {
+        _antiAliasing = antialiasing
+        jsView.setAntiAliasing(when (antialiasing) {
+            AntiAliasing.NONE -> io.github.erkko68.filament.js.View_AntiAliasing.NONE
+            AntiAliasing.FXAA -> io.github.erkko68.filament.js.View_AntiAliasing.FXAA
+        })
+    }
+
+    actual fun getAntiAliasing(): AntiAliasing {
+        return _antiAliasing
     }
 
     actual fun setDithering(dithering: Dithering) {
+        _dithering = dithering
+        val jsDith = when(dithering) {
+            Dithering.NONE -> io.github.erkko68.filament.js.View_Dithering.NONE
+            Dithering.TEMPORAL -> io.github.erkko68.filament.js.View_Dithering.TEMPORAL
+        }
+        val jsViewExt = jsView.asDynamic()
+        if (jsViewExt.setDithering != null) {
+            jsViewExt.setDithering(jsDith)
+        }
     }
 
     actual fun getDithering(): Dithering {
-        TODO("Not yet implemented")
+        return _dithering
     }
 
     actual fun setDynamicResolutionOptions(options: DynamicResolutionOptions) {
+        _dynamicResolutionOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_DynamicResolutionOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.homogeneousScaling = options.homogeneousScaling
+        jsOptions.minScale = arrayOf(options.minScale, options.minScale) as Array<Number>
+        jsOptions.maxScale = arrayOf(options.maxScale, options.maxScale) as Array<Number>
+        jsOptions.sharpness = options.sharpness
+        jsOptions.quality = when(options.quality) {
+            View.Quality.LOW -> io.github.erkko68.filament.js.View_QualityLevel.LOW
+            View.Quality.MEDIUM -> io.github.erkko68.filament.js.View_QualityLevel.MEDIUM
+            View.Quality.HIGH -> io.github.erkko68.filament.js.View_QualityLevel.HIGH
+            View.Quality.ULTRA -> io.github.erkko68.filament.js.View_QualityLevel.ULTRA
+        }
+        val jsViewExt = jsView.asDynamic()
+        if (jsViewExt.setDynamicResolutionOptions != null) {
+            jsViewExt.setDynamicResolutionOptions(jsOptions)
+        }
     }
 
     actual fun getDynamicResolutionOptions(): DynamicResolutionOptions {
-        TODO("Not yet implemented")
+        return _dynamicResolutionOptions
     }
 
     actual fun setRenderQuality(renderQuality: RenderQuality) {
+        _renderQuality = renderQuality
+        val jsQuality = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_RenderQuality`>()
+        jsQuality.hdrColorBuffer = when(renderQuality.hdrColorBuffer) {
+            View.Quality.LOW -> io.github.erkko68.filament.js.View_QualityLevel.LOW
+            View.Quality.MEDIUM -> io.github.erkko68.filament.js.View_QualityLevel.MEDIUM
+            View.Quality.HIGH -> io.github.erkko68.filament.js.View_QualityLevel.HIGH
+            View.Quality.ULTRA -> io.github.erkko68.filament.js.View_QualityLevel.ULTRA
+        }
     }
 
     actual fun getRenderQuality(): RenderQuality {
-        TODO("Not yet implemented")
+        return _renderQuality
     }
 
     actual fun setBloomOptions(options: BloomOptions) {
+        _bloomOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_BloomOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.levels = options.levels
+        jsOptions.resolution = options.resolution
+        jsOptions.strength = options.strength
+        jsOptions.threshold = options.threshold
+        jsOptions.blendMode = when (options.blendMode) {
+            View.BloomOptions.BlendMode.ADD -> io.github.erkko68.filament.js.View_BloomOptions_BlendMode.ADD
+            View.BloomOptions.BlendMode.INTERPOLATE -> io.github.erkko68.filament.js.View_BloomOptions_BlendMode.INTERPOLATE
+        }
+        jsOptions.asDynamic().highlight = options.highlight
+        jsOptions.asDynamic().dirt = options.dirt?.jsTexture
+        jsOptions.asDynamic().dirtStrength = options.dirtStrength
+        jsView.setBloomOptions(jsOptions)
     }
 
     actual fun getBloomOptions(): BloomOptions {
-        TODO("Not yet implemented")
+        return _bloomOptions
     }
 
     actual fun setFogOptions(options: FogOptions) {
+        _fogOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_FogOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.distance = options.distance
+        jsOptions.density = options.density
+        jsOptions.height = options.height
+        jsOptions.heightFalloff = options.heightFalloff
+        jsOptions.color = options.color.toTypedArray() as Array<Number>
+        jsOptions.cutOffDistance = options.cutOffDistance
+        jsOptions.maximumOpacity = options.maximumOpacity
+        jsOptions.asDynamic().densityMap = options.densityMap?.jsTexture
+        jsView.setFogOptions(jsOptions)
     }
 
     actual fun getFogOptions(): FogOptions {
-        TODO("Not yet implemented")
+        return _fogOptions
     }
 
     actual fun setDepthOfFieldOptions(options: DepthOfFieldOptions) {
+        _depthOfFieldOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_DepthOfFieldOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.cocScale = options.cocScale
+        jsOptions.maxApertureDiameter = options.maxApertureDiameter
+        jsOptions.nativeResolution = options.nativeResolution
+        jsOptions.filter = when (options.filter) {
+            View.DepthOfFieldOptions.Filter.NONE -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.NONE
+            View.DepthOfFieldOptions.Filter.MEDIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.MEDIAN
+            View.DepthOfFieldOptions.Filter.GAUSSIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.GAUSSIAN
+        }
+        jsView.setDepthOfFieldOptions(jsOptions)
     }
 
     actual fun getDepthOfFieldOptions(): DepthOfFieldOptions {
-        TODO("Not yet implemented")
+        return _depthOfFieldOptions
     }
 
     actual fun setVignetteOptions(options: VignetteOptions) {
+        _vignetteOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_VignetteOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.midPoint = options.midPoint
+        jsOptions.roundness = options.roundness
+        jsOptions.feather = options.feather
+        jsOptions.color = options.color.toTypedArray() as Array<Number>
+        jsView.setVignetteOptions(jsOptions)
     }
 
     actual fun getVignetteOptions(): VignetteOptions {
-        TODO("Not yet implemented")
+        return _vignetteOptions
+    }
+
+    actual fun setAmbientOcclusion(ambientOcclusion: AmbientOcclusion) {
+        _ambientOcclusion = ambientOcclusion
+        jsView.setAmbientOcclusion(when (ambientOcclusion) {
+            AmbientOcclusion.NONE -> io.github.erkko68.filament.js.View_AmbientOcclusion.NONE
+            AmbientOcclusion.SSAO -> io.github.erkko68.filament.js.View_AmbientOcclusion.SSAO
+        })
+    }
+
+    actual fun getAmbientOcclusion(): AmbientOcclusion {
+        return _ambientOcclusion
     }
 
     actual fun setAmbientOcclusionOptions(options: AmbientOcclusionOptions) {
+        _ambientOcclusionOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_AmbientOcclusionOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.radius = options.radius
+        jsOptions.bias = options.bias
+        jsOptions.intensity = options.intensity
+        jsOptions.power = options.power
+        jsOptions.resolution = options.resolution
+        jsOptions.bilateralThreshold = options.bilateralThreshold
+        
+        val jsSsct = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_AmbientOcclusionOptions_Ssct`>()
+        jsSsct.enabled = options.ssct.enabled
+        jsSsct.lightConeRad = options.ssct.lightConeRad
+        jsSsct.shadowDistance = options.ssct.shadowDistance
+        jsSsct.contactDistanceMax = options.ssct.contactDistanceMax
+        jsOptions.asDynamic().ssct = jsSsct
+        
+        jsView.setAmbientOcclusionOptions(jsOptions)
     }
 
     actual fun getAmbientOcclusionOptions(): AmbientOcclusionOptions {
-        TODO("Not yet implemented")
+        return _ambientOcclusionOptions
     }
 
     actual fun setTemporalAntiAliasingOptions(options: TemporalAntiAliasingOptions) {
+        _temporalAntiAliasingOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_TemporalAntiAliasingOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.feedback = options.feedback
+        jsOptions.lodBias = options.lodBias
+        jsOptions.sharpness = options.sharpness
+        jsOptions.upscaling = options.upscaling
+        jsOptions.filterHistory = options.filterHistory
+        jsView.setTemporalAntiAliasingOptions(jsOptions)
     }
 
     actual fun getTemporalAntiAliasingOptions(): TemporalAntiAliasingOptions {
-        TODO("Not yet implemented")
+        return _temporalAntiAliasingOptions
     }
 
     actual fun setScreenSpaceReflectionsOptions(options: ScreenSpaceReflectionsOptions) {
+        _screenSpaceReflectionsOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_ScreenSpaceReflectionsOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.thickness = options.thickness
+        jsOptions.bias = options.bias
+        jsOptions.maxDistance = options.maxDistance
+        jsOptions.stride = options.stride
+        jsView.setScreenSpaceReflectionsOptions(jsOptions)
     }
 
     actual fun getScreenSpaceReflectionsOptions(): ScreenSpaceReflectionsOptions {
-        TODO("Not yet implemented")
+        return _screenSpaceReflectionsOptions
     }
 
     actual fun setRenderTarget(target: RenderTarget?) {
+        _renderTarget = target
+        jsView.setRenderTarget(target?.jsRenderTarget)
     }
 
     actual fun getRenderTarget(): RenderTarget? {
-        TODO("Not yet implemented")
+        return _renderTarget
     }
 
     actual fun setShadowType(type: ShadowType) {
+        _shadowType = type
+        val jsViewExt = jsView.asDynamic()
+        if (jsViewExt.setShadowType != null) {
+            val jsType = when(type) {
+                ShadowType.PCF -> io.github.erkko68.filament.js.View_ShadowType.PCF
+                ShadowType.VSM -> io.github.erkko68.filament.js.View_ShadowType.VSM
+                ShadowType.DPCF -> io.github.erkko68.filament.js.View_ShadowType.DPCF
+                ShadowType.PCSS -> io.github.erkko68.filament.js.View_ShadowType.PCSS
+                ShadowType.PCFd -> io.github.erkko68.filament.js.View_ShadowType.PCFd
+            }
+            jsViewExt.setShadowType(jsType)
+        }
     }
 
     actual fun getShadowType(): ShadowType {
-        TODO("Not yet implemented")
+        return _shadowType
     }
 
     actual fun setVsmShadowOptions(options: VsmShadowOptions) {
+        _vsmShadowOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_VsmShadowOptions`>()
+        jsOptions.anisotropy = options.anisotropy
+        jsOptions.mipmapping = options.mipmapping
+        jsOptions.msaaSamples = options.msaaSamples
+        jsOptions.highPrecision = options.highPrecision
+        jsOptions.lightBleedReduction = options.lightBleedReduction
+        val jsViewExt = jsView.asDynamic()
+        if (jsViewExt.setVsmShadowOptions != null) {
+            jsViewExt.setVsmShadowOptions(jsOptions)
+        }
     }
 
     actual fun getVsmShadowOptions(): VsmShadowOptions {
-        TODO("Not yet implemented")
+        return _vsmShadowOptions
     }
 
     actual fun setSoftShadowOptions(options: SoftShadowOptions) {
+        _softShadowOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_SoftShadowOptions`>()
+        jsOptions.penumbraScale = options.penumbraScale
+        jsOptions.penumbraRatioScale = options.penumbraRatioScale
+        val jsViewExt = jsView.asDynamic()
+        if (jsViewExt.setSoftShadowOptions != null) {
+            jsViewExt.setSoftShadowOptions(jsOptions)
+        }
     }
 
     actual fun getSoftShadowOptions(): SoftShadowOptions {
-        TODO("Not yet implemented")
+        return _softShadowOptions
     }
 
     actual fun setGuardBandOptions(options: GuardBandOptions) {
+        _guardBandOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_GuardBandOptions`>()
+        jsOptions.enabled = options.enabled
+        jsView.setGuardBandOptions(jsOptions)
     }
 
     actual fun getGuardBandOptions(): GuardBandOptions {
-        TODO("Not yet implemented")
+        return _guardBandOptions
     }
 
     actual fun setStereoscopicOptions(options: StereoscopicOptions) {
+        _stereoscopicOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_StereoscopicOptions`>()
+        jsOptions.enabled = options.enabled
+        jsView.setStereoscopicOptions(jsOptions)
     }
 
     actual fun getStereoscopicOptions(): StereoscopicOptions {
-        TODO("Not yet implemented")
+        return _stereoscopicOptions
     }
 
     actual fun setMultiSampleAntiAliasingOptions(options: MultiSampleAntiAliasingOptions) {
+        _multiSampleAntiAliasingOptions = options
+        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.`View_MultiSampleAntiAliasingOptions`>()
+        jsOptions.enabled = options.enabled
+        jsOptions.sampleCount = options.sampleCount
+        jsOptions.customResolve = options.customResolve
+        jsView.setMultiSampleAntiAliasingOptions(jsOptions)
     }
 
     actual fun getMultiSampleAntiAliasingOptions(): MultiSampleAntiAliasingOptions {
-        TODO("Not yet implemented")
+        return _multiSampleAntiAliasingOptions
     }
 
     actual fun setFrustumCullingEnabled(enabled: Boolean) {
+        jsView.setFrustumCullingEnabled(enabled)
     }
 
     actual fun isFrustumCullingEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return jsView.isFrustumCullingEnabled()
     }
 
     actual fun setShadowingEnabled(enabled: Boolean) {
+        jsView.setShadowingEnabled(enabled)
     }
 
     actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) {
+        jsView.setScreenSpaceRefractionEnabled(enabled)
     }
 
     actual fun setStencilBufferEnabled(enabled: Boolean) {
+        jsView.setStencilBufferEnabled(enabled)
     }
 
     actual fun isStencilBufferEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return jsView.isStencilBufferEnabled()
     }
 
     actual fun setFrontFaceWindingInverted(inverted: Boolean) {
+        jsView.setFrontFaceWindingInverted(inverted)
     }
 
     actual fun isFrontFaceWindingInverted(): Boolean {
-        TODO("Not yet implemented")
+        return jsView.isFrontFaceWindingInverted()
     }
 
     actual fun setTransparentPickingEnabled(enabled: Boolean) {
+        jsView.setTransparentPickingEnabled(enabled)
     }
 
     actual fun isTransparentPickingEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return jsView.isTransparentPickingEnabled()
     }
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
     }
 
     actual fun getMaterialGlobal(index: Int): FloatArray {
-        TODO("Not yet implemented")
+        return floatArrayOf()
     }
 
     actual fun getFogEntity(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun clearFrameHistory(engine: Engine) {
@@ -227,386 +469,162 @@ actual class View {
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
     }
 
+    actual fun pick(
+        x: Int,
+        y: Int,
+        handler: (Int, Int, Int, Float, Float, Float) -> Unit
+    ) {
+        jsView.pick(x, y) { result ->
+            handler(result.renderable.toInt(), 0, 0, result.fragCoords[0].toFloat(), result.fragCoords[1].toFloat(), result.fragCoords[2].toFloat())
+        }
+    }
+
     actual enum class Dithering { NONE, TEMPORAL }
+    actual enum class AntiAliasing { NONE, FXAA }
+    actual enum class AmbientOcclusion { NONE, SSAO }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
     actual class DynamicResolutionOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var homogeneousScaling: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var minScale: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var maxScale: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var sharpness: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var quality: Quality
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
+        actual var homogeneousScaling: Boolean = false
+        actual var minScale: Float = 0.5f
+        actual var maxScale: Float = 1.0f
+        actual var sharpness: Float = 0.9f
+        actual var quality: Quality = Quality.MEDIUM
     }
-
     actual class RenderQuality {
-        actual var hdrColorBuffer: Quality
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var hdrColorBuffer: Quality = Quality.MEDIUM
     }
-
     actual class BloomOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var levels: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var resolution: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var strength: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var threshold: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var dirt: Texture?
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var dirtStrength: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var quality: Quality
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var lensFlare: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var starburst: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var chromaticAberration: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var ghostCount: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var ghostSpacing: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var ghostThreshold: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var haloRadius: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var haloThickness: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var haloThreshold: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var highlight: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var blendMode: BlendMode
-            get() = TODO("Not yet implemented")
-            set(value) {}
-
+        actual var enabled: Boolean = false
+        actual var levels: Int = 6
+        actual var resolution: Int = 0
+        actual var strength: Float = 0.10f
+        actual var threshold: Boolean = true
+        actual var dirt: Texture? = null
+        actual var dirtStrength: Float = 0.20f
+        actual var quality: Quality = Quality.MEDIUM
+        actual var lensFlare: Boolean = false
+        actual var starburst: Boolean = false
+        actual var chromaticAberration: Float = 0.0f
+        actual var ghostCount: Int = 0
+        actual var ghostSpacing: Float = 0.0f
+        actual var ghostThreshold: Float = 0.0f
+        actual var haloRadius: Float = 0.0f
+        actual var haloThickness: Float = 0.0f
+        actual var haloThreshold: Float = 0.0f
+        actual var highlight: Float = 0.0f
+        actual var blendMode: BlendMode = BlendMode.ADD
         actual enum class BlendMode { ADD, INTERPOLATE }
     }
-
     actual class FogOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var distance: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var density: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var height: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var heightFalloff: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var color: FloatArray
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var densityMap: Texture?
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var cutOffDistance: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var maximumOpacity: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var inScatteringStart: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var inScatteringSize: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var fogColorFromIbl: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var skyColor: Texture?
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
+        actual var distance: Float = 0.0f
+        actual var density: Float = 0.1f
+        actual var height: Float = 0.0f
+        actual var heightFalloff: Float = 1.0f
+        actual var color: FloatArray = floatArrayOf(0.5f, 0.5f, 0.5f)
+        actual var densityMap: Texture? = null
+        actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
+        actual var maximumOpacity: Float = 1.0f
+        actual var inScatteringStart: Float = 0.0f
+        actual var inScatteringSize: Float = -1.0f
+        actual var fogColorFromIbl: Boolean = false
+        actual var skyColor: Texture? = null
     }
-
     actual class DepthOfFieldOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var cocScale: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var maxApertureDiameter: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var filter: Filter
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var nativeResolution: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var foregroundRingCount: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var backgroundRingCount: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var fastGatherRingCount: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var maxForegroundCOC: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var maxBackgroundCOC: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-
+        actual var enabled: Boolean = false
+        actual var cocScale: Float = 1.0f
+        actual var maxApertureDiameter: Float = 0.01f
+        actual var filter: Filter = Filter.GAUSSIAN
+        actual var nativeResolution: Boolean = false
+        actual var foregroundRingCount: Int = 0
+        actual var backgroundRingCount: Int = 0
+        actual var fastGatherRingCount: Int = 0
+        actual var maxForegroundCOC: Int = 0
+        actual var maxBackgroundCOC: Int = 0
         actual enum class Filter { NONE, MEDIAN, GAUSSIAN }
     }
-
     actual class VignetteOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var midPoint: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var roundness: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var feather: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var color: FloatArray
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
+        actual var midPoint: Float = 0.5f
+        actual var roundness: Float = 0.0f
+        actual var feather: Float = 0.0f
+        actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
     }
-
     actual class AmbientOcclusionOptions {
-        actual var radius: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var bias: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var intensity: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var scale: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var power: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var minConeAngle: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var quality: Quality
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var lowPassFilter: Quality
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var upsampling: Quality
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var bentNormals: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var bilateralThreshold: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var resolution: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var ssct: Ssct
-            get() = TODO("Not yet implemented")
-            set(value) {}
-
+        actual var radius: Float = 0.3f
+        actual var bias: Float = 0.005f
+        actual var intensity: Float = 1.0f
+        actual var scale: Float = 1.0f
+        actual var power: Float = 1.0f
+        actual var minConeAngle: Float = 0.0f
+        actual var quality: Quality = Quality.MEDIUM
+        actual var lowPassFilter: Quality = Quality.MEDIUM
+        actual var upsampling: Quality = Quality.MEDIUM
+        actual var enabled: Boolean = false
+        actual var bentNormals: Boolean = false
+        actual var bilateralThreshold: Float = 0.005f
+        actual var resolution: Float = 0.5f
+        actual var ssct: Ssct = Ssct()
         actual class Ssct {
-            actual var enabled: Boolean
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var lightConeRad: Float
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var shadowDistance: Float
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var contactDistanceMax: Float
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var intensity: Float
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var lightDirection: FloatArray
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var depthBias: Float
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var depthSlopeBias: Float
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var sampleCount: Int
-                get() = TODO("Not yet implemented")
-                set(value) {}
-            actual var rayCount: Int
-                get() = TODO("Not yet implemented")
-                set(value) {}
+            actual var enabled: Boolean = false
+            actual var lightConeRad: Float = 1.0f
+            actual var shadowDistance: Float = 0.3f
+            actual var contactDistanceMax: Float = 1.0f
+            actual var intensity: Float = 1.0f
+            actual var lightDirection: FloatArray = floatArrayOf(0.0f, -1.0f, 0.0f)
+            actual var depthBias: Float = 0.01f
+            actual var depthSlopeBias: Float = 0.01f
+            actual var sampleCount: Int = 4
+            actual var rayCount: Int = 1
         }
     }
-
     actual class TemporalAntiAliasingOptions {
-        actual var feedback: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var lodBias: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var sharpness: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var upscaling: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var filterHistory: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var filterInput: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var useYCoCg: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var hdr: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var boxType: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var boxClipping: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var jitterPattern: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var varianceGamma: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var preventFlickering: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var historyReprojection: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var feedback: Float = 0.95f
+        actual var lodBias: Float = -1.0f
+        actual var sharpness: Float = 0.0f
+        actual var enabled: Boolean = false
+        actual var upscaling: Float = 1.0f
+        actual var filterHistory: Boolean = true
+        actual var filterInput: Boolean = true
+        actual var useYCoCg: Boolean = true
+        actual var hdr: Boolean = true
+        actual var boxType: Int = 1
+        actual var boxClipping: Int = 1
+        actual var jitterPattern: Int = 2
+        actual var varianceGamma: Float = 1.0f
+        actual var preventFlickering: Boolean = false
+        actual var historyReprojection: Boolean = true
     }
-
     actual class ScreenSpaceReflectionsOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var thickness: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var bias: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var maxDistance: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var stride: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
+        actual var thickness: Float = 0.1f
+        actual var bias: Float = 0.01f
+        actual var maxDistance: Float = 3.0f
+        actual var stride: Float = 2.0f
     }
-
     actual class VsmShadowOptions {
-        actual var anisotropy: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var mipmapping: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var msaaSamples: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var highPrecision: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var lightBleedReduction: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var anisotropy: Int = 0
+        actual var mipmapping: Boolean = false
+        actual var msaaSamples: Int = 1
+        actual var highPrecision: Boolean = false
+        actual var lightBleedReduction: Float = 0.0f
     }
-
     actual class SoftShadowOptions {
-        actual var penumbraScale: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var penumbraRatioScale: Float
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var penumbraScale: Float = 1.0f
+        actual var penumbraRatioScale: Float = 1.0f
     }
-
     actual class GuardBandOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
     }
-
     actual class StereoscopicOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
     }
-
     actual class MultiSampleAntiAliasingOptions {
-        actual var enabled: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var sampleCount: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
-        actual var customResolve: Boolean
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        actual var enabled: Boolean = false
+        actual var sampleCount: Int = 4
+        actual var customResolve: Boolean = false
     }
 }

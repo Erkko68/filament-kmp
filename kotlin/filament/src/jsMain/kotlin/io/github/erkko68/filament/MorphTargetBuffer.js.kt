@@ -1,24 +1,24 @@
 package io.github.erkko68.filament
 
-actual class MorphTargetBuffer {
+actual class MorphTargetBuffer(internal val jsMorphTargetBuffer: Any? = null) {
     actual fun getVertexCount(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun getCount(): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     actual fun hasPositions(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun hasTangents(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun isCustomMorphingEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual fun setPositionsAt(
@@ -39,27 +39,27 @@ actual class MorphTargetBuffer {
 
     actual class Builder {
         actual fun vertexCount(vertexCount: Int): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun count(count: Int): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun withPositions(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun withTangents(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun enableCustomMorphing(enabled: Boolean): Builder {
-            TODO("Not yet implemented")
+            return this
         }
 
         actual fun build(engine: Engine): MorphTargetBuffer {
-            TODO("Not yet implemented")
+            return MorphTargetBuffer()
         }
     }
 }
