@@ -45,6 +45,7 @@ kotlin {
         }
 
         jvmMain.dependencies {
+            implementation(compose.desktop.currentOs) // ENSURES SKIKO RUNTIME IS PRESENT
             implementation(libs.lwjgl)
             implementation(libs.lwjgl.opengl)
             runtimeOnly("org.lwjgl:lwjgl:${libs.versions.lwjgl.get()}:natives-macos-arm64")

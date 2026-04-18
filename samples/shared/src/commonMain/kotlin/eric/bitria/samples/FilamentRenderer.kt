@@ -91,10 +91,10 @@ class FilamentRenderer : FilamentViewRenderer {
             .build(engine!!, sunLightEntity!!)
         scene!!.addEntity(sunLightEntity!!)
 
-        // Clear to YELLOW to verify Filament is writing
+        // Clear to CYAN for stress testing visibility
         renderer!!.setClearOptions(Renderer.ClearOptions().apply {
             clear = true
-            clearColor = floatArrayOf(1.0f, 1.0f, 0.0f, 1.0f) // YELLOW
+            clearColor = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f) // CYAN
         })
 
 
