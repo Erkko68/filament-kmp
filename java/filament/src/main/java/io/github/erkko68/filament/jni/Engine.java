@@ -589,4 +589,5 @@ public class Engine {
 
     public static native long nGetMetalDevice(long nativeEngine);
     public static native long nGetMetalQueue(long nativeEngine);
+    public static native void nSetMetalContext(long device, long queue);
 }

@@ -197,6 +197,10 @@ class FilamentRenderer : FilamentViewRenderer {
         return io.github.erkko68.filament.jni.Engine.nGetMetalQueue(engine!!.nativeEngine.getNativeObject())
     }
 
+    fun setMetalContext(device: Long, queue: Long) {
+        io.github.erkko68.filament.jni.Engine.nSetMetalContext(device, queue)
+    }
+
     private fun setupRuntimeMaterialCube() {
         val engine = engine!!
         

@@ -34,8 +34,12 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.components.resources)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:${libs.versions.androidx.lifecycle.get()}") {
+                exclude(group = "androidx.activity", module = "activity-compose")
+            }
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:${libs.versions.androidx.lifecycle.get()}") {
+                exclude(group = "androidx.activity", module = "activity-compose")
+            }
             implementation("io.github.erkko68.filament:filament")
             implementation("io.github.erkko68.filament:filamat")
             implementation("io.github.erkko68.filament:gltfio")
@@ -45,11 +49,7 @@ kotlin {
         }
 
         jvmMain.dependencies {
-            implementation(compose.desktop.currentOs) // ENSURES SKIKO RUNTIME IS PRESENT
-            implementation(libs.lwjgl)
-            implementation(libs.lwjgl.opengl)
-            runtimeOnly("org.lwjgl:lwjgl:${libs.versions.lwjgl.get()}:natives-macos-arm64")
-            runtimeOnly("org.lwjgl:lwjgl-opengl:${libs.versions.lwjgl.get()}:natives-macos-arm64")
+            implementation(compose.desktop.currentOs)
         }
     }
 }

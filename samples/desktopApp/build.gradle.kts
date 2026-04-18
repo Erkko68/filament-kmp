@@ -5,32 +5,12 @@ plugins {
 }
 
 kotlin {
-    jvm {
-        withJava()
-    }
-    
+    jvm{}
+
     sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(project(":shared"))
-                implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.kotlinx.coroutines.swing)
-                implementation(libs.compose.runtime)
-                implementation(libs.compose.foundation)
-                implementation(libs.compose.material3)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.components.resources)
-                implementation(compose.desktop.currentOs)
-            }
-        }
-        
-        val jvmRuntimeClasspath by configurations.getting {
-            resolutionStrategy {
-                force("org.jetbrains.compose.runtime:runtime:1.7.1")
-                force("org.jetbrains.compose.foundation:foundation:1.7.1")
-                force("org.jetbrains.compose.ui:ui:1.7.1")
-                force("org.jetbrains.compose.material3:material3:1.7.1")
-            }
+        jvmMain.dependencies {
+            implementation(project(":shared"))
+            implementation(compose.desktop.currentOs)
         }
     }
 }
