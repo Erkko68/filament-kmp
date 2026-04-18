@@ -299,6 +299,7 @@ public class Texture {
     private static native void nSetExternalImage(long nativeTexture, long nativeEngine, long nativeImage);
     private static native void nSetExternalImageByAHB(long nativeTexture, long nativeEngine, Object nativeImage);
     public static native long nGetNativeHandle(long nativeTexture);
-    public static native long nCreateMetalTexture(int width, int height);
+    // macOS: devicePtr is a MTLDevice* obtained from Skiko (skikoMetalDevicePtr()).
+    public static native long nCreateMetalTexture(long devicePtr, int width, int height);
     public static native void nReleaseMetalTexture(long handle);
 }

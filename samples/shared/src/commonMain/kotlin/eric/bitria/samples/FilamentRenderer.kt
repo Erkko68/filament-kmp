@@ -185,20 +185,8 @@ class FilamentRenderer : FilamentViewRenderer {
     }
 
 
-    fun createMetalTexture(width: Int, height: Int): Long {
-        return io.github.erkko68.filament.jni.Texture.nCreateMetalTexture(width, height)
-    }
-
-    fun getMetalDevice(): Long {
-        return io.github.erkko68.filament.jni.Engine.nGetMetalDevice(engine!!.nativeEngine.getNativeObject())
-    }
-
-    fun getMetalQueue(): Long {
-        return io.github.erkko68.filament.jni.Engine.nGetMetalQueue(engine!!.nativeEngine.getNativeObject())
-    }
-
-    fun setMetalContext(device: Long, queue: Long) {
-        io.github.erkko68.filament.jni.Engine.nSetMetalContext(device, queue)
+    fun createMetalTexture(devicePtr: Long, width: Int, height: Int): Long {
+        return io.github.erkko68.filament.jni.Texture.nCreateMetalTexture(devicePtr, width, height)
     }
 
     private fun setupRuntimeMaterialCube() {
