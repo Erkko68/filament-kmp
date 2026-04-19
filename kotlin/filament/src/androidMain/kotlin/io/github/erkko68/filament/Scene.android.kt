@@ -20,6 +20,7 @@ actual class Scene internal constructor(val nativeScene: com.google.android.fila
     actual fun addEntities(entities: IntArray) = nativeScene.addEntities(entities)
 
     actual fun removeEntity(entity: Int) = nativeScene.removeEntity(entity)
+    actual fun remove(entity: Int) = nativeScene.removeEntity(entity)
     actual fun removeEntities(entities: IntArray) = nativeScene.removeEntities(entities)
 
     actual fun getEntityCount(): Int = nativeScene.entityCount

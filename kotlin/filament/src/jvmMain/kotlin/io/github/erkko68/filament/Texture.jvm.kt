@@ -137,5 +137,7 @@ actual class Texture(val nativeTexture: JniTexture) {
             JniTexture.validatePixelFormatAndType(internalFormat.toJni(), pixelDataFormat.toJni(), pixelDataType.toJni())
         actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int = JniTexture.getMaxTextureSize(engine.nativeEngine, type.toJni())
         actual fun getMaxArrayTextureLayers(engine: Engine): Int = JniTexture.getMaxArrayTextureLayers(engine.nativeEngine)
+        actual fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
+            JniTexture.PixelBufferDescriptor.computeDataSize(format.toJni(), type.toJni(), stride, height, alignment)
     }
 }

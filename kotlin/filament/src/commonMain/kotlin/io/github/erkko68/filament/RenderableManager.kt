@@ -24,6 +24,7 @@ expect class RenderableManager {
         fun skinning(boneCount: Int): Builder
         fun skinning(boneCount: Int, bones: FloatArray): Builder
         fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder
+        fun enableSkinningBuffers(enabled: Boolean): Builder
         fun morphing(targetCount: Int): Builder
         fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder
         fun fog(enabled: Boolean): Builder
@@ -75,4 +76,8 @@ expect class RenderableManager {
     fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int)
     fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int = 0)
     fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int)
+
+    fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int)
+    fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int)
+    fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int)
 }

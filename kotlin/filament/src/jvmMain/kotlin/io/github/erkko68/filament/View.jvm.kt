@@ -4,22 +4,34 @@ import io.github.erkko68.filament.jni.View as JniView
 import io.github.erkko68.filament.jni.Viewport as JniViewport
 
 actual class View(val nativeView: JniView) {
-    actual enum class Dithering { 
+    actual enum class Dithering {
         NONE, TEMPORAL;
         internal fun toJni() = JniView.Dithering.values()[ordinal]
     }
-    actual enum class BlendMode { 
+    actual enum class BlendMode {
         OPAQUE, TRANSLUCENT;
         internal fun toJni() = JniView.BlendMode.values()[ordinal]
     }
-    actual enum class Quality { 
+    actual enum class Quality {
         LOW, MEDIUM, HIGH, ULTRA;
         internal fun toJni() = JniView.QualityLevel.values()[ordinal]
     }
-    actual enum class ShadowType { 
+    actual enum class ShadowType {
         PCF, VSM, DPCF, PCSS, PCFd;
         internal fun toJni() = JniView.ShadowType.values()[Math.min(ordinal, JniView.ShadowType.values().size - 1)]
     }
+    actual enum class AntiAliasing {
+        NONE, FXAA;
+        internal fun toJni() = JniView.AntiAliasing.values()[ordinal]
+    }
+
+    actual class PickingQueryResult actual constructor(
+        actual val renderable: Int,
+        actual val depth: Float,
+        actual val fragCoords: FloatArray
+    )
+
+    private var mColorGrading: ColorGrading? = null
 
     actual class DynamicResolutionOptions actual constructor() {
         val jni = JniView.DynamicResolutionOptions()
@@ -473,6 +485,21 @@ actual class View(val nativeView: JniView) {
     actual fun getFogEntity(): Int = nativeView.getFogEntity()
     actual fun clearFrameHistory(engine: Engine) : Unit { nativeView.clearFrameHistory(engine.nativeEngine) }
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) : Unit { nativeView.setDynamicLightingOptions(zNear, zFar) }
+
+    actual fun setAntiAliasing(type: AntiAliasing) : Unit { nativeView.setAntiAliasing(type.toJni()) }
+    actual fun getAntiAliasing(): AntiAliasing = AntiAliasing.values()[nativeView.getAntiAliasing().ordinal]
+
+    actual fun setColorGrading(colorGrading: ColorGrading?) {
+        mColorGrading = colorGrading
+        nativeView.setColorGrading(colorGrading?.nativeColorGrading)
+    }
+    actual fun getColorGrading(): ColorGrading? = mColorGrading
+
+    actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
+        nativeView.pick(x, y, null) { r ->
+            callback(PickingQueryResult(r.renderable, r.depth, r.fragCoords.copyOf()))
+        }
+    }
 
     actual fun getViewport(): Viewport {
         val v = nativeView.getViewport()

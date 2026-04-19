@@ -91,6 +91,15 @@ expect class Material {
     
     fun getParameterCount(): Int
     fun getParameters(): List<Parameter>
-    
+
+    fun hasParameter(name: String): Boolean
+    fun getParameterTransformName(samplerName: String): String?
+    fun setDefaultParameter(name: String, value: Boolean)
+    fun setDefaultParameter(name: String, value: Float)
+    fun setDefaultParameter(name: String, value: Int)
+    fun setDefaultParameter(name: String, x: Float, y: Float)
+    fun setDefaultParameter(name: String, x: Float, y: Float, z: Float)
+    fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float)
+
     fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute>
 }

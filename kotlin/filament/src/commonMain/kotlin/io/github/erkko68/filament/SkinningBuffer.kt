@@ -9,4 +9,5 @@ expect class SkinningBuffer {
 
     fun getBoneCount(): Int
     fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int)
+    fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int)
 }

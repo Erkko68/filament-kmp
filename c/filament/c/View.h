@@ -9,6 +9,11 @@ extern "C" {
 
 
 
+typedef enum FilaViewAntiAliasing {
+    FILA_VIEW_ANTI_ALIASING_NONE = 0,
+    FILA_VIEW_ANTI_ALIASING_FXAA = 1,
+} FilaViewAntiAliasing;
+
 typedef enum FilaViewDithering {
     FILA_VIEW_DITHERING_NONE = 0,
     FILA_VIEW_DITHERING_TEMPORAL = 1,
@@ -200,6 +205,9 @@ void FilaView_setVisibleLayers(FilaView* view, uint8_t select, uint8_t value);
 uint8_t FilaView_getVisibleLayers(const FilaView* view);
 
 void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget);
+
+void FilaView_setAntiAliasing(FilaView* view, FilaViewAntiAliasing type);
+FilaViewAntiAliasing FilaView_getAntiAliasing(const FilaView* view);
 
 void FilaView_setDithering(FilaView* view, FilaViewDithering dithering);
 FilaViewDithering FilaView_getDithering(const FilaView* view);

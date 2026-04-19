@@ -56,6 +56,9 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
         actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
             FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount.toUInt(), offset.toUInt())
         }
+        actual fun enableSkinningBuffers(enabled: Boolean): Builder = apply {
+            FilaRenderableManagerBuilder_enableSkinningBuffers(nativeBuilder, enabled)
+        }
         actual fun morphing(targetCount: Int): Builder = apply { FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount.toUInt()) }
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
             FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
@@ -154,7 +157,31 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
     actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
         FilaRenderableManager_setMorphTargetBufferOffsetAt(nativeHandle, instance.toUInt(), level.toUByte(), primitiveIndex.toULong(), offset.toULong())
     }
- 
+
+    actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) {
+        matrices.usePinned { pinned ->
+            FilaRenderableManager_setBonesAsMatrices(
+                nativeHandle, instance.toUInt(),
+                pinned.addressOf(0),
+                boneCount.toUInt(), offset.toUInt()
+            )
+        }
+    }
+
+    actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) {
+        quaternions.usePinned { pinned ->
+            FilaRenderableManager_setBonesAsQuaternions(
+                nativeHandle, instance.toUInt(),
+                pinned.addressOf(0),
+                boneCount.toUInt(), offset.toUInt()
+            )
+        }
+    }
+
+    actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
+        FilaRenderableManager_clearMaterialInstanceAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong())
+    }
+
 }
 
 private fun toNative(type: RenderableManager.PrimitiveType): UInt = when (type) {

@@ -194,4 +194,16 @@ actual class Engine(val nativeEngine: JniEngine) {
     actual fun hasFeatureFlag(name: String): Boolean = nativeEngine.hasFeatureFlag(name)
     actual fun setFeatureFlag(name: String, value: Boolean): Boolean = nativeEngine.setFeatureFlag(name, value)
     actual fun getFeatureFlag(name: String): Boolean = nativeEngine.getFeatureFlag(name)
+
+    actual fun enableAccurateTranslations() = nativeEngine.enableAccurateTranslations()
+
+    actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
+    actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
+
+    actual fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)?) {
+        val jniPriority = io.github.erkko68.filament.jni.Material.CompilerPriorityQueue.values()[priority.ordinal]
+        val jniShadow = JniEngine.FeatureState.values()[shadowReceiver.ordinal]
+        val jniSkinning = JniEngine.FeatureState.values()[skinning.ordinal]
+        nativeEngine.compile(jniPriority, material.nativeMaterial, view.nativeView, jniShadow, jniSkinning, null, callback?.let { Runnable { it() } })
+    }
 }

@@ -30,4 +30,11 @@ actual class SkinningBuffer(val nativeSkinningBuffer: JniSkinningBuffer) {
         buffer.rewind()
         nativeSkinningBuffer.setBonesAsMatrices(engine.nativeEngine, buffer, boneCount, offset)
     }
+
+    actual fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int) {
+        val buffer = ByteBuffer.allocateDirect(bones.size * 4).order(ByteOrder.nativeOrder()).asFloatBuffer()
+        buffer.put(bones)
+        buffer.rewind()
+        nativeSkinningBuffer.setBonesAsQuaternions(engine.nativeEngine, buffer, boneCount, offset)
+    }
 }

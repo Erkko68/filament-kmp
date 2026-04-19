@@ -21,6 +21,8 @@
 
 #include <utils/Entity.h>
 #include <utils/EntityManager.h>
+#include <utils/Invocable.h>
+#include <utils/tribool.h>
 
 #include "../c/Engine.h"
 #include "FilaCommon.h"
@@ -441,6 +443,32 @@ bool FilaEngine_getFeatureFlag(FilaEngine *engine, const char *name) {
 
 uint64_t FilaEngine_getSteadyClockTimeNano() {
   return Engine::getSteadyClockTimeNano();
+}
+
+void FilaEngine_enableAccurateTranslations(FilaEngine* engine) {
+    FILA_CAST(Engine, engine)->enableAccurateTranslations();
+}
+
+void FilaEngine_compile(FilaEngine* engine, uint8_t priority, FilaMaterial* material, FilaView* view,
+        uint8_t shadowReceiver, uint8_t skinning, FilaEngineCompileCallback callback, void* userData) {
+    using CPQ = filament::backend::CompilerPriorityQueue;
+    auto toTribool = [](uint8_t v) -> utils::tribool {
+        if (v == 0) return utils::tribool(false);
+        if (v == 1) return utils::tribool(true);
+        return utils::tribool(utils::tribool::Indeterminate);
+    };
+    auto cb = callback
+        ? utils::Invocable<void(Material* UTILS_NONNULL)>([callback, userData](Material*) { callback(userData); })
+        : utils::Invocable<void(Material* UTILS_NONNULL)>{};
+    FILA_CAST(Engine, engine)->compile(
+        static_cast<CPQ>(priority),
+        FILA_CAST(Material, material),
+        FILA_CAST(View, view),
+        toTribool(shadowReceiver),
+        toTribool(skinning),
+        nullptr,
+        std::move(cb)
+    );
 }
 
 } // extern "C"

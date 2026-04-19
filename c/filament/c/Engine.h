@@ -140,6 +140,13 @@ bool FilaEngine_getFeatureFlag(FilaEngine* engine, const char* name);
 
 uint64_t FilaEngine_getSteadyClockTimeNano();
 
+void FilaEngine_enableAccurateTranslations(FilaEngine* engine);
+
+// priority: 0=CRITICAL, 1=HIGH, 2=LOW
+// shadowReceiver/skinning: 0=FALSE, 1=TRUE, 2=INDETERMINATE
+typedef void (*FilaEngineCompileCallback)(void* userData);
+void FilaEngine_compile(FilaEngine* engine, uint8_t priority, FilaMaterial* material, FilaView* view, uint8_t shadowReceiver, uint8_t skinning, FilaEngineCompileCallback callback, void* userData);
+
 #ifdef __cplusplus
 }
 #endif

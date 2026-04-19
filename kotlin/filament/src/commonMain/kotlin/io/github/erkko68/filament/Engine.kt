@@ -185,4 +185,11 @@ expect class Engine {
     fun hasFeatureFlag(name: String): Boolean
     fun setFeatureFlag(name: String, value: Boolean): Boolean
     fun getFeatureFlag(name: String): Boolean
+
+    fun enableAccurateTranslations()
+
+    enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
+    enum class FeatureState { FALSE, TRUE, INDETERMINATE }
+
+    fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)? = null)
 }

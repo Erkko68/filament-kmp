@@ -124,5 +124,6 @@ expect class Texture {
         fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean
         fun getMaxTextureSize(engine: Engine, type: Sampler): Int
         fun getMaxArrayTextureLayers(engine: Engine): Int
+        fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int
     }
 }

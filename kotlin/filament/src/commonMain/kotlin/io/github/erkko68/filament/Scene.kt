@@ -10,6 +10,7 @@ expect class Scene {
     fun addEntities(entities: IntArray)
     
     fun removeEntity(entity: Int)
+    fun remove(entity: Int)
     fun removeEntities(entities: IntArray)
     
     fun getEntityCount(): Int

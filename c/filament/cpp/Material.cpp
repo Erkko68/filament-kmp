@@ -163,4 +163,8 @@ void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQu
     );
 }
 
+const char* FilaMaterial_getParameterTransformName(const FilaMaterial* material, const char* samplerName) {
+    return FILA_CONST_CAST(Material, material)->getParameterTransformName(samplerName);
+}
+
 } // extern "C"

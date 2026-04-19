@@ -6,6 +6,7 @@ actual class Scene(val nativeScene: JniScene) {
     actual fun addEntity(entity: Int) : Unit { nativeScene.addEntity(entity) }
     actual fun addEntities(entities: IntArray) : Unit { nativeScene.addEntities(entities) }
     actual fun removeEntity(entity: Int) : Unit { nativeScene.removeEntity(entity) }
+    actual fun remove(entity: Int) : Unit { nativeScene.removeEntity(entity) }
     actual fun removeEntities(entities: IntArray) : Unit { nativeScene.removeEntities(entities) }
     
     actual fun getEntityCount(): Int = nativeScene.getEntityCount()

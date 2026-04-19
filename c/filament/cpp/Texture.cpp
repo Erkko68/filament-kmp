@@ -147,4 +147,11 @@ void FilaTexture_generateMipmaps(const FilaTexture* texture, FilaEngine* engine)
     FILA_CONST_CAST(Texture, texture)->generateMipmaps(*FILA_CAST(Engine, engine));
 }
 
+size_t FilaTexture_computeDataSize(FilaPixelDataFormat format, FilaPixelDataType type, size_t stride, size_t height, size_t alignment) {
+    return filament::backend::PixelBufferDescriptor::computeDataSize(
+        static_cast<filament::backend::PixelDataFormat>(format),
+        static_cast<filament::backend::PixelDataType>(type),
+        stride, height, alignment);
+}
+
 } // extern "C"

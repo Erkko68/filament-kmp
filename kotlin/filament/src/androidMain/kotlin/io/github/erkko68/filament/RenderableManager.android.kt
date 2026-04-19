@@ -114,6 +114,11 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
             return this
         }
 
+        actual fun enableSkinningBuffers(enabled: Boolean): Builder {
+            nativeBuilder.enableSkinningBuffers(enabled)
+            return this
+        }
+
         actual fun morphing(targetCount: Int): Builder {
             nativeBuilder.morphing(targetCount)
             return this
@@ -228,5 +233,17 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
  
     actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
         nativeRenderableManager.setMorphTargetBufferOffsetAt(instance, level, primitiveIndex, offset)
+    }
+
+    actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) {
+        nativeRenderableManager.setBonesAsMatrices(instance, java.nio.FloatBuffer.wrap(matrices), boneCount, offset)
+    }
+
+    actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) {
+        nativeRenderableManager.setBonesAsQuaternions(instance, java.nio.FloatBuffer.wrap(quaternions), boneCount, offset)
+    }
+
+    actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
+        nativeRenderableManager.clearMaterialInstanceAt(instance, primitiveIndex)
     }
 }

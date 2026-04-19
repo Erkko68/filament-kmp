@@ -313,5 +313,8 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
 
         actual fun getMaxArrayTextureLayers(engine: Engine): Int =
             FilaTexture_getMaxArrayTextureLayers(engine.nativeHandle).toInt()
+
+        actual fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
+            FilaTexture_computeDataSize(format.toNative(), type.toNative(), stride.toULong(), height.toULong(), alignment.toULong()).toInt()
     }
 }

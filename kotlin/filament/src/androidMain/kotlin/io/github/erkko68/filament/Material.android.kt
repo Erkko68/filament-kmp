@@ -143,4 +143,13 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
         }
         return result
     }
+
+    actual fun hasParameter(name: String): Boolean = nativeMaterial.hasParameter(name)
+    actual fun getParameterTransformName(samplerName: String): String? = nativeMaterial.getParameterTransformName(samplerName)
+    actual fun setDefaultParameter(name: String, value: Boolean) = nativeMaterial.setDefaultParameter(name, value)
+    actual fun setDefaultParameter(name: String, value: Float) = nativeMaterial.setDefaultParameter(name, value)
+    actual fun setDefaultParameter(name: String, value: Int) = nativeMaterial.setDefaultParameter(name, value)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float) = nativeMaterial.setDefaultParameter(name, x, y)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) = nativeMaterial.setDefaultParameter(name, x, y, z)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) = nativeMaterial.setDefaultParameter(name, x, y, z, w)
 }

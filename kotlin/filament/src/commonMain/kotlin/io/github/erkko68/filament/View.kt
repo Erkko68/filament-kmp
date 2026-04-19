@@ -5,6 +5,17 @@ expect class View {
     enum class BlendMode { OPAQUE, TRANSLUCENT }
     enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
+    enum class AntiAliasing { NONE, FXAA }
+
+    class PickingQueryResult(
+        renderable: Int,
+        depth: Float,
+        fragCoords: FloatArray
+    ) {
+        val renderable: Int
+        val depth: Float
+        val fragCoords: FloatArray
+    }
 
     class DynamicResolutionOptions() {
         var enabled: Boolean
@@ -233,5 +244,13 @@ expect class View {
     fun clearFrameHistory(engine: Engine)
     
     fun setDynamicLightingOptions(zNear: Float, zFar: Float)
+
+    fun setAntiAliasing(type: AntiAliasing)
+    fun getAntiAliasing(): AntiAliasing
+
+    fun setColorGrading(colorGrading: ColorGrading?)
+    fun getColorGrading(): ColorGrading?
+
+    fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit)
 }
 

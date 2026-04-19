@@ -6,4 +6,8 @@ expect class Fence {
 
     fun wait(mode: Mode, timeout: Long): FenceStatus
     fun getNativeObject(): Long
+
+    companion object {
+        fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus
+    }
 }

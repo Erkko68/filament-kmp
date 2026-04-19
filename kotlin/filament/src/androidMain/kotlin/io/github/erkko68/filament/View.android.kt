@@ -15,8 +15,16 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
+    actual enum class AntiAliasing { NONE, FXAA }
+
+    actual class PickingQueryResult actual constructor(
+        actual val renderable: Int,
+        actual val depth: Float,
+        actual val fragCoords: FloatArray
+    )
 
     private var mShadowType: ShadowType = ShadowType.PCF
+    private var mColorGrading: ColorGrading? = null
 
     actual class DynamicResolutionOptions actual constructor() {
         val native = FilamentView.DynamicResolutionOptions()
@@ -540,5 +548,23 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
         nativeView.setDynamicLightingOptions(zNear, zFar)
+    }
+
+    actual fun setAntiAliasing(type: AntiAliasing) {
+        nativeView.antiAliasing = FilamentView.AntiAliasing.values()[type.ordinal]
+    }
+    actual fun getAntiAliasing(): AntiAliasing =
+        AntiAliasing.values()[nativeView.antiAliasing.ordinal]
+
+    actual fun setColorGrading(colorGrading: ColorGrading?) {
+        mColorGrading = colorGrading
+        nativeView.setColorGrading(colorGrading?.nativeColorGrading)
+    }
+    actual fun getColorGrading(): ColorGrading? = mColorGrading
+
+    actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
+        nativeView.pick(x, y, null) { r ->
+            callback(PickingQueryResult(r.renderable, r.depth, r.fragCoords.copyOf()))
+        }
     }
 }

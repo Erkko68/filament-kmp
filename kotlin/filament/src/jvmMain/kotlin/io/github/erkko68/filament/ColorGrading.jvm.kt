@@ -4,12 +4,23 @@ import io.github.erkko68.filament.jni.ColorGrading as JniColorGrading
 
 actual class ColorGrading(val nativeColorGrading: JniColorGrading) {
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    actual enum class LutFormat { INTEGER, FLOAT }
 
     actual class Builder actual constructor() {
         private val jni = JniColorGrading.Builder()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
             jni.quality(JniColorGrading.QualityLevel.values()[qualityLevel.ordinal])
+            return this
+        }
+
+        actual fun format(format: LutFormat): Builder {
+            jni.format(JniColorGrading.LutFormat.values()[format.ordinal])
+            return this
+        }
+
+        actual fun dimensions(dim: Int): Builder {
+            jni.dimensions(dim)
             return this
         }
 

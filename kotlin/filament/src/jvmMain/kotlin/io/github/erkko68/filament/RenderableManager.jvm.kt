@@ -109,6 +109,11 @@ actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.fi
             return this
         }
 
+        actual fun enableSkinningBuffers(enabled: Boolean): Builder {
+            jni.enableSkinningBuffers(enabled)
+            return this
+        }
+
         actual fun morphing(targetCount: Int): Builder {
             jni.morphing(targetCount)
             return this
@@ -209,4 +214,13 @@ actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.fi
     actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) = nativeRenderableManager.setMorphWeights(instance, weights, offset)
     actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) =
         nativeRenderableManager.setMorphTargetBufferOffsetAt(instance, level, primitiveIndex, offset)
+
+    actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) =
+        nativeRenderableManager.setBonesAsMatrices(instance, java.nio.FloatBuffer.wrap(matrices), boneCount, offset)
+
+    actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) =
+        nativeRenderableManager.setBonesAsQuaternions(instance, java.nio.FloatBuffer.wrap(quaternions), boneCount, offset)
+
+    actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) =
+        nativeRenderableManager.clearMaterialInstanceAt(instance, primitiveIndex)
 }
