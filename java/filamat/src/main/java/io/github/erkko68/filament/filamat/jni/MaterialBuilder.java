@@ -57,7 +57,7 @@ public class MaterialBuilder {
     }
 
     public enum TargetApi {
-        OPENGL(1), VULKAN(2), METAL(4), WEBGPU(8), ALL(15);
+        OPENGL(1), VULKAN(2), METAL(4), WEBGPU(8), ALL(7); // prebuilt compiled without FILAMENT_SUPPORTS_WEBGPU; ALL = OpenGL|Vulkan|Metal
         final int bit;
         TargetApi(int bit) { this.bit = bit; }
     }

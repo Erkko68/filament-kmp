@@ -56,7 +56,7 @@ class SampleScene(private val controller: FilamentController) {
         val materialPackage = MaterialBuilder()
             .name("RuntimeMaterial")
             .platform(MaterialBuilder.Platform.ALL)
-            .targetApi(MaterialBuilder.TargetApi.METAL)
+            .targetApi(MaterialBuilder.TargetApi.ALL)
             .shading(MaterialBuilder.Shading.UNLIT)
             .doubleSided(true)
             .require(VertexBuffer.VertexAttribute.COLOR)
