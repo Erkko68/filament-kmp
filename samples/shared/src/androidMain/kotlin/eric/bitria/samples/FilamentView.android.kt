@@ -10,7 +10,7 @@ import io.github.erkko68.filament.NativeSurface
 @Composable
 actual fun FilamentView(
     modifier: Modifier,
-    renderer: FilamentViewRenderer
+    controller: FilamentController
 ) {
     AndroidView(
         modifier = modifier,
@@ -18,7 +18,7 @@ actual fun FilamentView(
             SurfaceView(context).apply {
                 holder.addCallback(object : SurfaceHolder.Callback {
                     override fun surfaceCreated(holder: SurfaceHolder) {
-                        renderer.onSurfaceAvailable(
+                        controller.setSurface(
                             NativeSurface(holder.surface),
                             width,
                             height
@@ -26,11 +26,11 @@ actual fun FilamentView(
                     }
 
                     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-                        renderer.onSurfaceResized(width, height)
+                        controller.updateViewport(width, height)
                     }
 
                     override fun surfaceDestroyed(holder: SurfaceHolder) {
-                        // SwapChain cleanup is handled by engine destroy or new surface
+                        // Cleanup handled by controller
                     }
                 })
             }
@@ -38,5 +38,7 @@ actual fun FilamentView(
         update = {}
     )
 
-    FilamentRenderLoop(renderer)
+    FilamentRenderLoop { frameTime ->
+        controller.render(frameTime)
+    }
 }

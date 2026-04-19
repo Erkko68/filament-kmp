@@ -21,7 +21,7 @@ import platform.UIKit.UIView
 @Composable
 actual fun FilamentView(
     modifier: Modifier,
-    renderer: FilamentViewRenderer
+    controller: FilamentController
 ) {
     UIKitView(
         factory = {
@@ -52,12 +52,12 @@ actual fun FilamentView(
                     if (width > 0 && height > 0) {
                         if (!surfaceAttached) {
                             val surface = NativeSurface(interpretCPointer(metalLayer.objcPtr()))
-                            renderer.onSurfaceAvailable(surface, width, height)
+                            controller.setSurface(surface, width, height)
                             surfaceAttached = true
                         }
 
                         metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
-                        renderer.onSurfaceResized(width, height)
+                        controller.updateViewport(width, height)
                     }
                 }
             }
@@ -65,9 +65,11 @@ actual fun FilamentView(
         modifier = modifier,
         update = {},
         onRelease = {
-            renderer.onSurfaceDetached()
+            // Controller handles cleanup
         }
     )
 
-    FilamentRenderLoop(renderer)
+    FilamentRenderLoop { frameTime ->
+        controller.render(frameTime)
+    }
 }

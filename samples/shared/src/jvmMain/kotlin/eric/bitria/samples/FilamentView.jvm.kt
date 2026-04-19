@@ -8,132 +8,66 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import kotlinx.coroutines.isActive
+import io.github.erkko68.filament.RenderTarget
+import io.github.erkko68.filament.Texture
 import org.jetbrains.skia.*
-import java.lang.reflect.Method
-
-// Walks the superclass chain to find and read a field by name.
-private fun reflectField(obj: Any, name: String): Any? = runCatching {
-    var cls: Class<*>? = obj.javaClass
-    while (cls != null) {
-        cls.declaredFields.firstOrNull { it.name == name }
-            ?.apply { isAccessible = true }
-            ?.let { return@runCatching it.get(obj) }
-        cls = cls.superclass
-    }
-    null
-}.getOrNull()
-
-// Cached Method references so Class.forName + method lookup don't run every frame.
-private val metalBackendRTMethod: Method? by lazy {
-    runCatching {
-        Class.forName("org.jetbrains.skia.BackendRenderTargetKt")
-            .methods.first { it.name == "access\$_nMakeMetal" }
-    }.getOrNull()
-}
-private val vulkanBackendRTMethod: Method? by lazy {
-    runCatching {
-        Class.forName("org.jetbrains.skia.BackendRenderTargetKt")
-            .methods.first { it.name == "access\$_nMakeVulkan" }
-    }.getOrNull()
-}
-private val backendRTConstructor by lazy {
-    runCatching {
-        BackendRenderTarget::class.java.getDeclaredConstructor(Long::class.java)
-            .apply { isAccessible = true }
-    }.getOrNull()
-}
-
-private fun makeMetalBackendRT(width: Int, height: Int, ptr: Long): BackendRenderTarget? = runCatching {
-    val handle = metalBackendRTMethod!!.invoke(null, width, height, ptr) as Long
-    backendRTConstructor!!.newInstance(handle) as BackendRenderTarget
-}.getOrNull()
-
-private fun makeVulkanBackendRT(width: Int, height: Int, imageInfoPtr: Long): BackendRenderTarget? = runCatching {
-    val handle = vulkanBackendRTMethod!!.invoke(null, width, height, imageInfoPtr) as Long
-    backendRTConstructor!!.newInstance(handle) as BackendRenderTarget
-}.getOrNull()
-
-private val isMacOS = System.getProperty("os.name", "").startsWith("Mac", ignoreCase = true)
-
-private fun makeBackendRT(width: Int, height: Int, handle: Long): BackendRenderTarget? =
-    if (isMacOS) makeMetalBackendRT(width, height, handle)
-    else         makeVulkanBackendRT(width, height, handle)
-
-// Returns the MTLDevice* that Skiko selected, for creating the shared texture on the same GPU.
-private fun skikoMetalDevicePtr(): Long = runCatching {
-    val gpuPriority = Class.forName("org.jetbrains.skiko.GpuPriority")
-    val auto = gpuPriority.getMethod("valueOf", String::class.java).invoke(null, "Auto")
-    val adapter = Class.forName("org.jetbrains.skiko.MetalApiKt")
-        .getDeclaredMethod("chooseMetalAdapter", gpuPriority).invoke(null, auto)
-    adapter.javaClass.getDeclaredField("ptr").apply { isAccessible = true }.get(adapter) as Long
-}.getOrElse { 0L }
-
-// Reflects Skiko's VulkanDevice: redrawerManager → redrawer → device → {VkDevice*, VkPhysicalDevice*}
-private fun skikoVulkanDevicePtrs(): Pair<Long, Long> {
-    fun search(c: java.awt.Component): Pair<Long, Long>? {
-        runCatching {
-            val redrawerMgr = reflectField(c, "redrawerManager") ?: return@runCatching
-            val redrawer    = reflectField(redrawerMgr, "redrawer") ?: return@runCatching
-            val vulkanDev   = reflectField(redrawer, "device") ?: return@runCatching
-            val dev  = reflectField(vulkanDev, "device")         as? Long ?: return@runCatching
-            val phys = reflectField(vulkanDev, "physicalDevice") as? Long ?: return@runCatching
-            return Pair(dev, phys)
-        }
-        return if (c is java.awt.Container) c.components.firstNotNullOfOrNull { search(it) } else null
-    }
-    return java.awt.Window.getWindows().firstNotNullOfOrNull { search(it) } ?: Pair(0L, 0L)
-}
-
-private fun skikoDevicePtrs(): Pair<Long, Long> =
-    if (isMacOS) Pair(skikoMetalDevicePtr(), 0L)
-    else         skikoVulkanDevicePtrs()
-
-// Walks WindowSkiaLayerComponent → redrawerManager → redrawer → contextHandler → context
-private fun findSkikoContext(): DirectContext? {
-    fun search(c: java.awt.Component): DirectContext? {
-        runCatching {
-            val ctx = reflectField(reflectField(reflectField(reflectField(c, "redrawerManager")!!, "redrawer")!!, "contextHandler")!!, "context")
-            if (ctx is DirectContext) return ctx
-        }
-        return if (c is java.awt.Container) c.components.firstNotNullOfOrNull { search(it) } else null
-    }
-    return java.awt.Window.getWindows().firstNotNullOfOrNull { search(it) }
-}
-
-private var cachedSkikoCtx: DirectContext? = null
-private fun skikoContext(): DirectContext? {
-    if (cachedSkikoCtx != null) return cachedSkikoCtx
-    return findSkikoContext().also { cachedSkikoCtx = it }
-}
 
 @Composable
-actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
-    val jvmRenderer = renderer as FilamentRenderer
+actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
     var textureSize by remember { mutableStateOf(IntSize.Zero) }
     var textureHandle by remember { mutableStateOf(0L) }
     val prevSnapshot = remember { mutableStateOf<Image?>(null) }
 
     LaunchedEffect(textureSize) {
         if (textureSize.width <= 0 || textureSize.height <= 0) return@LaunchedEffect
+        
+        val engine = controller.engine ?: return@LaunchedEffect
+        
+        // Clean up previous texture/snapshot
         prevSnapshot.value?.close()
         prevSnapshot.value = null
-        jvmRenderer.releaseSharedTexture(textureHandle)
-        val (devicePtr, physDevicePtr) = skikoDevicePtrs()
-        textureHandle = jvmRenderer.createSharedTexture(devicePtr, physDevicePtr, textureSize.width, textureSize.height)
-        jvmRenderer.initializeOffscreen(textureSize.width, textureSize.height, textureHandle)
+        TextureUtils.releaseSharedTexture(textureHandle)
+        
+        // Create new shared texture
+        val (devicePtr, physDevicePtr) = SkikoInterop.skikoDevicePtrs()
+        textureHandle = TextureUtils.createSharedTexture(
+            devicePtr, physDevicePtr, textureSize.width, textureSize.height
+        )
+        
+        // Configure Filament for offscreen rendering to this texture
+        val colorTexture = Texture.Builder()
+            .width(textureSize.width)
+            .height(textureSize.height)
+            .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
+            .format(Texture.InternalFormat.RGBA8)
+            .importTexture(textureHandle)
+            .build(engine)
+        
+        val depthTexture = Texture.Builder()
+            .width(textureSize.width)
+            .height(textureSize.height)
+            .usage(Texture.Usage.DEPTH_ATTACHMENT)
+            .format(Texture.InternalFormat.DEPTH32F)
+            .build(engine)
+        
+        val renderTarget = RenderTarget.Builder()
+            .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture)
+            .texture(RenderTarget.AttachmentPoint.DEPTH, depthTexture)
+            .build(engine)
+            
+        val swapChain = engine.createSwapChain(textureSize.width, textureSize.height, 0)
+        
+        controller.setOffscreenSurface(textureSize.width, textureSize.height, renderTarget, swapChain)
     }
 
     var frameTime by remember { mutableStateOf(0L) }
-    LaunchedEffect(Unit) {
-        while (isActive) { withFrameNanos { frameTime = it } }
-    }
+    FilamentRenderLoop { frameTime = it }
 
     DisposableEffect(Unit) {
         onDispose {
             prevSnapshot.value?.close()
             prevSnapshot.value = null
-            jvmRenderer.releaseSharedTexture(textureHandle)
+            TextureUtils.releaseSharedTexture(textureHandle)
         }
     }
 
@@ -143,14 +77,13 @@ actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
             .drawBehind {
                 if (textureHandle == 0L) return@drawBehind
 
-                jvmRenderer.render(frameTime)
+                controller.render(frameTime)
 
                 drawIntoCanvas { canvas ->
-                    val ctx = skikoContext() ?: return@drawIntoCanvas
-                    val rt = makeBackendRT(textureSize.width, textureSize.height, textureHandle)
+                    val ctx = SkikoInterop.skikoContext() ?: return@drawIntoCanvas
+                    val rt = SkikoInterop.makeBackendRT(textureSize.width, textureSize.height, textureHandle)
                         ?: return@drawIntoCanvas
 
-                    // Fresh surface each frame: forces Skia to re-adopt texture content written by Filament.
                     val surface = Surface.makeFromBackendRenderTarget(
                         ctx, rt, SurfaceOrigin.TOP_LEFT, SurfaceColorFormat.BGRA_8888,
                         ColorSpace.sRGB, SurfaceProps()
@@ -163,6 +96,7 @@ actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
                     snapshot ?: return@drawIntoCanvas
 
                     canvas.nativeCanvas.drawImage(snapshot, 0f, 0f)
+                    
                     prevSnapshot.value?.close()
                     prevSnapshot.value = snapshot
                 }
