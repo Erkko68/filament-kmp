@@ -91,7 +91,6 @@ expect class Texture {
         left: Int = 0,
         top: Int = 0,
         stride: Int = 0,
-        handler: Any? = null,
         callback: (() -> Unit)? = null
     ) {
         val storage: ByteArray
@@ -102,7 +101,6 @@ expect class Texture {
         val left: Int
         val top: Int
         val stride: Int
-        val handler: Any?
         val callback: (() -> Unit)?
     }
 

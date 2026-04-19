@@ -220,7 +220,6 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
         actual val left: Int,
         actual val top: Int,
         actual val stride: Int,
-        actual val handler: Any?,
         actual val callback: (() -> Unit)?
     )
 

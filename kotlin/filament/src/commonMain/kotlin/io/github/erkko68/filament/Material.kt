@@ -64,7 +64,7 @@ expect class Material {
         fun build(engine: Engine): Material
     }
 
-    fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any? = null, callback: (() -> Unit)? = null)
+    fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)? = null)
     fun createInstance(): MaterialInstance
     fun createInstance(name: String): MaterialInstance
     fun getDefaultInstance(): MaterialInstance

@@ -44,12 +44,11 @@ actual class IndexBuffer(val nativeIndexBuffer: io.github.erkko68.filament.jni.I
         nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count)
     }
 
-    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
         val buffer = ByteBuffer.allocateDirect(data.size).order(ByteOrder.nativeOrder())
         buffer.put(data)
         buffer.rewind()
         val runnable: java.lang.Runnable? = if (callback != null) Runnable { callback() } else null
-        // JNI order: handler, callback
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count, handler, runnable)
+        nativeIndexBuffer.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count, null, runnable)
     }
 }

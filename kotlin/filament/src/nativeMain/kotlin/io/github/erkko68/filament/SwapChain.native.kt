@@ -17,7 +17,7 @@ actual class SwapChain internal constructor(internal var nativeHandle: CPointer<
     private var frameCompletedRef: StableRef<() -> Unit>? = null
     private var frameScheduledRef: StableRef<() -> Unit>? = null
 
-    actual fun setFrameCompletedCallback(handler: Any?, callback: () -> Unit) {
+    actual fun setFrameCompletedCallback(callback: () -> Unit) {
         frameCompletedRef?.dispose()
         val stableRef = StableRef.create(callback)
         frameCompletedRef = stableRef
@@ -28,7 +28,7 @@ actual class SwapChain internal constructor(internal var nativeHandle: CPointer<
         FilaSwapChain_setFrameCompletedCallback(nativeHandle, null, callbackWrapper, stableRef.asCPointer())
     }
 
-    actual fun setFrameScheduledCallback(handler: Any?, callback: () -> Unit) {
+    actual fun setFrameScheduledCallback(callback: () -> Unit) {
         frameScheduledRef?.dispose()
         val stableRef = StableRef.create(callback)
         frameScheduledRef = stableRef

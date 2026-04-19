@@ -46,12 +46,11 @@ actual class BufferObject(val nativeBufferObject: io.github.erkko68.filament.jni
         nativeBufferObject.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count)
     }
 
-    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
         val buffer = ByteBuffer.allocateDirect(data.size).order(ByteOrder.nativeOrder())
         buffer.put(data)
         buffer.rewind()
         val runnable: java.lang.Runnable? = if (callback != null) Runnable { callback() } else null
-        // JNI order: handler, callback
-        nativeBufferObject.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count, handler, runnable)
+        nativeBufferObject.setBuffer(engine.nativeEngine, buffer, destOffsetInBytes, count, null, runnable)
     }
 }

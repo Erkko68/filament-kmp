@@ -58,10 +58,8 @@ actual class BufferObject internal constructor(val nativeBufferObject: AndroidBu
         data: ByteArray,
         destOffsetInBytes: Int,
         count: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
-        val executor = handler as? java.util.concurrent.Executor ?: Runnable::run
         val runnable = if (callback != null) Runnable { callback() } else null
         val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
             order(java.nio.ByteOrder.nativeOrder())
@@ -73,7 +71,7 @@ actual class BufferObject internal constructor(val nativeBufferObject: AndroidBu
             byteBuffer,
             destOffsetInBytes,
             count,
-            executor,
+            Runnable::run,
             runnable
         )
     }

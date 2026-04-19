@@ -85,10 +85,9 @@ actual class Material(val nativeMaterial: io.github.erkko68.filament.jni.Materia
             Material(jni.build(engine.nativeEngine))
     }
 
-    actual fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)?) {
         val runnable: java.lang.Runnable? = if (callback != null) Runnable { callback() } else null
-        // JNI order: handler, callback
-        nativeMaterial.compile(io.github.erkko68.filament.jni.Material.CompilerPriorityQueue.values()[priority.ordinal], variants, handler, runnable)
+        nativeMaterial.compile(io.github.erkko68.filament.jni.Material.CompilerPriorityQueue.values()[priority.ordinal], variants, null, runnable)
     }
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(nativeMaterial.createInstance())

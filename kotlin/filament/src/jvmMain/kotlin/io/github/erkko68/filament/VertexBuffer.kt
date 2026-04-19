@@ -56,8 +56,8 @@ actual class VertexBuffer(val nativeVertexBuffer: JniVertexBuffer) {
         nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, java.nio.ByteBuffer.wrap(data), destOffsetInBytes, count)
     }
 
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, java.nio.ByteBuffer.wrap(data), destOffsetInBytes, count, handler, callback?.let { Runnable { it() } })
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, java.nio.ByteBuffer.wrap(data), destOffsetInBytes, count, null, callback?.let { Runnable { it() } })
     }
 
     actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
