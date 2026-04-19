@@ -46,12 +46,7 @@ public class Stream {
         @NotNull public Builder width(int width) { nBuilderWidth(mNativeBuilder, width); return this; }
         @NotNull public Builder height(int height) { nBuilderHeight(mNativeBuilder, height); return this; }
 
-        @NotNull public Builder stream(@NotNull Object streamSource) {
-            nBuilderStreamSource(mNativeBuilder, streamSource);
-            return this;
-        }
-
-        @NotNull public Stream build(@NotNull Engine engine) {
+@NotNull public Stream build(@NotNull Engine engine) {
             long nativeObject = nBuilderBuild(mNativeBuilder, engine.getNativeObject());
             if (nativeObject == 0) throw new IllegalStateException("Couldn't create Stream");
             return new Stream(nativeObject, engine);
@@ -95,7 +90,6 @@ public class Stream {
     private static native void nDestroyBuilder(long nativeBuilder);
     private static native void nBuilderWidth(long nativeBuilder, int width);
     private static native void nBuilderHeight(long nativeBuilder, int height);
-    private static native void nBuilderStreamSource(long nativeBuilder, Object streamSource);
     private static native long nBuilderBuild(long nativeBuilder, long nativeEngine);
 
     private static native int nGetStreamType(long nativeStream);

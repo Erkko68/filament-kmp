@@ -70,15 +70,14 @@ actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVe
         nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, byteBuffer, destOffsetInBytes, count)
     }
 
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
-        val executor = handler as? java.util.concurrent.Executor ?: Runnable::run
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
         val runnable = if (callback != null) Runnable { callback() } else null
         val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
             order(java.nio.ByteOrder.nativeOrder())
             put(data)
             flip()
         }
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, byteBuffer, destOffsetInBytes, count, executor, runnable)
+        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, byteBuffer, destOffsetInBytes, count, Runnable::run, runnable)
     }
 
     actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {

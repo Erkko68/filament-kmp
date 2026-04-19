@@ -67,14 +67,6 @@ Java_io_github_erkko68_filament_jni_Stream_nBuilderHeight(JNIEnv*, jclass, jlong
     builder->builder()->height((uint32_t) height);
 }
 
-JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Stream_nBuilderStreamSource(JNIEnv*, jclass, jlong nativeStreamBuilder, jobject streamSource) {
-    StreamBuilder* builder = (StreamBuilder*) nativeStreamBuilder;
-    // On non-Android JVM, we don't have SurfaceTexture. We just pass the handle if possible,
-    // or ignore it if it's not a supported type.
-    // For now, we provide the symbol for parity.
-    builder->builder()->stream(streamSource);
-}
 
 JNIEXPORT jlong JNICALL
 Java_io_github_erkko68_filament_jni_Stream_nBuilderBuild(JNIEnv*, jclass, jlong nativeStreamBuilder, jlong nativeEngine) {

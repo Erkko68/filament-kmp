@@ -1,7 +1,9 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.jni.SurfaceOrientation as JniSurfaceOrientation
-import java.nio.Buffer
+import java.nio.FloatBuffer
+import java.nio.ShortBuffer
+import java.nio.IntBuffer
 
 actual class SurfaceOrientation(val nativeSurfaceOrientation: JniSurfaceOrientation) {
     actual class Builder actual constructor() {
@@ -12,23 +14,23 @@ actual class SurfaceOrientation(val nativeSurfaceOrientation: JniSurfaceOrientat
             return this
         }
 
-        actual fun normals(buffer: Any, stride: Int): Builder {
-            jni.normals(buffer as Buffer)
+        actual fun normals(buffer: FloatArray, stride: Int): Builder {
+            jni.normals(FloatBuffer.wrap(buffer))
             return this
         }
 
-        actual fun tangents(buffer: Any, stride: Int): Builder {
-            jni.tangents(buffer as Buffer)
+        actual fun tangents(buffer: FloatArray, stride: Int): Builder {
+            jni.tangents(FloatBuffer.wrap(buffer))
             return this
         }
 
-        actual fun uvs(buffer: Any, stride: Int): Builder {
-            jni.uvs(buffer as Buffer)
+        actual fun uvs(buffer: FloatArray, stride: Int): Builder {
+            jni.uvs(FloatBuffer.wrap(buffer))
             return this
         }
 
-        actual fun positions(buffer: Any, stride: Int): Builder {
-            jni.positions(buffer as Buffer)
+        actual fun positions(buffer: FloatArray, stride: Int): Builder {
+            jni.positions(FloatBuffer.wrap(buffer))
             return this
         }
 
@@ -37,13 +39,13 @@ actual class SurfaceOrientation(val nativeSurfaceOrientation: JniSurfaceOrientat
             return this
         }
 
-        actual fun triangles16(buffer: Any): Builder {
-            jni.triangles_uint16(buffer as Buffer)
+        actual fun triangles16(buffer: ShortArray): Builder {
+            jni.triangles_uint16(ShortBuffer.wrap(buffer))
             return this
         }
 
-        actual fun triangles32(buffer: Any): Builder {
-            jni.triangles_uint32(buffer as Buffer)
+        actual fun triangles32(buffer: IntArray): Builder {
+            jni.triangles_uint32(IntBuffer.wrap(buffer))
             return this
         }
 
@@ -53,16 +55,16 @@ actual class SurfaceOrientation(val nativeSurfaceOrientation: JniSurfaceOrientat
 
     actual fun getVertexCount(): Int = nativeSurfaceOrientation.vertexCount
 
-    actual fun getQuatsAsFloat(buffer: Any, count: Int) {
-        nativeSurfaceOrientation.getQuatsAsFloat(buffer as Buffer)
+    actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
+        nativeSurfaceOrientation.getQuatsAsFloat(FloatBuffer.wrap(buffer))
     }
 
-    actual fun getQuatsAsHalf(buffer: Any, count: Int) {
-        nativeSurfaceOrientation.getQuatsAsHalf(buffer as Buffer)
+    actual fun getQuatsAsHalf(buffer: ShortArray, count: Int) {
+        nativeSurfaceOrientation.getQuatsAsHalf(ShortBuffer.wrap(buffer))
     }
 
-    actual fun getQuatsAsShort(buffer: Any, count: Int) {
-        nativeSurfaceOrientation.getQuatsAsShort(buffer as Buffer)
+    actual fun getQuatsAsShort(buffer: ShortArray, count: Int) {
+        nativeSurfaceOrientation.getQuatsAsShort(ShortBuffer.wrap(buffer))
     }
 
     actual fun destroy() {

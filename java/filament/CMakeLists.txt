@@ -81,10 +81,13 @@ add_library(filament-jni SHARED
     src/main/cpp/SwapChain.cpp
 )
 
+# Platform-specific GPU interop: each file provides nCreateMetalTexture / nReleaseMetalTexture
+# (or the Vulkan equivalents) so the JVM side can create a shared texture on the correct GPU.
 if (APPLE)
-    target_sources(filament-jni PRIVATE src/main/cpp/common/AwtHelper.mm)
-else()
-    target_sources(filament-jni PRIVATE src/main/cpp/common/AwtHelper.cpp)
+    target_sources(filament-jni PRIVATE src/main/cpp/MetalUtils.mm)
+    set_source_files_properties(src/main/cpp/MetalUtils.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+elseif (UNIX OR WIN32)
+    target_sources(filament-jni PRIVATE src/main/cpp/VulkanUtils.cpp)
 endif()
 
 target_include_directories(filament-jni PRIVATE
@@ -114,27 +117,10 @@ target_link_libraries(filament-jni
     ${JNI_LIBRARIES}
 )
 if (APPLE)
-    target_link_libraries(filament-jni PRIVATE "-framework Cocoa")
-    target_link_libraries(filament-jni PRIVATE "-framework Metal")
-    target_link_libraries(filament-jni PRIVATE "-framework QuartzCore")
-    target_link_libraries(filament-jni PRIVATE "-framework CoreVideo")
-endif()
-
-# JAWT is required by AwtHelper to extract native window handles.
-set(JAVA_LIB_HINTS "${JAVA_HOME}/lib" "${JAVA_HOME}/jre/lib")
-find_library(JAWT_LIB jawt HINTS ${JAVA_LIB_HINTS})
-if (JAWT_LIB)
-    message(STATUS "Found JAWT library at: ${JAWT_LIB}")
-    target_link_libraries(filament-jni PRIVATE ${JAWT_LIB})
-    
-    if (APPLE)
-        # On macOS, JAWT relies on libawt_lwawt.dylib
-        find_library(AWT_LWAWT_LIB awt_lwawt HINTS ${JAVA_LIB_HINTS})
-        if (AWT_LWAWT_LIB)
-            message(STATUS "Found AWT LWAWT library at: ${AWT_LWAWT_LIB}")
-            target_link_libraries(filament-jni PRIVATE ${AWT_LWAWT_LIB})
-        endif()
-    endif()
-else()
-    message(WARNING "JAWT library not found. AwtHelper may fail to link or work at runtime.")
+    target_link_libraries(filament-jni PRIVATE "-framework Cocoa" "-framework Metal"
+                                               "-framework QuartzCore" "-framework CoreVideo")
+elseif (UNIX)
+    target_link_libraries(filament-jni PRIVATE vulkan)
+elseif (WIN32)
+    target_link_libraries(filament-jni PRIVATE vulkan-1)
 endif()

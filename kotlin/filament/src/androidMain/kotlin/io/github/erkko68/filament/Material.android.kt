@@ -89,13 +89,12 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
     actual fun compile(
         priority: CompilerPriorityQueue,
         variants: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
         nativeMaterial.compile(
             AndroidMaterial.CompilerPriorityQueue.values()[priority.ordinal],
             variants,
-            handler as? android.os.Handler, // Cast to Android Handler
+            null,
             callback
         )
     }

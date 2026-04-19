@@ -44,14 +44,14 @@ actual class BufferObject internal constructor(internal var nativeHandle: CPoint
     private class BufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
-        setBuffer(engine, data, 0, 0, null, null)
+        setBuffer(engine, data, 0, 0, null)
     }
 
     actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int) {
-        setBuffer(engine, data, destOffsetInBytes, count, null, null)
+        setBuffer(engine, data, destOffsetInBytes, count, null)
     }
 
-    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
         val pinned = data.pin()
         val ptr = pinned.addressOf(0).reinterpret<ByteVar>()
         val sizeInBytes = if (count > 0) count.toULong() else data.size.toULong()

@@ -91,7 +91,6 @@ actual class Texture(val nativeTexture: JniTexture) {
         actual val left: Int,
         actual val top: Int,
         actual val stride: Int,
-        actual val handler: Any?,
         actual val callback: (() -> Unit)?
     ) {
         internal val jni: JniTexture.PixelBufferDescriptor
@@ -99,7 +98,7 @@ actual class Texture(val nativeTexture: JniTexture) {
             val buffer = ByteBuffer.allocateDirect(sizeInBytes).order(ByteOrder.nativeOrder())
             buffer.put(storage, 0, minOf(storage.size, sizeInBytes))
             buffer.flip()
-            jni = JniTexture.PixelBufferDescriptor(buffer, format.toJni(), type.toJni(), alignment, left, top, stride, handler, callback?.let { Runnable { it() } })
+            jni = JniTexture.PixelBufferDescriptor(buffer, format.toJni(), type.toJni(), alignment, left, top, stride, null, callback?.let { Runnable { it() } })
         }
     }
 

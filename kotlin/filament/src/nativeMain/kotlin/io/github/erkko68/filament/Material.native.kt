@@ -78,7 +78,7 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
         }
     }
 
-    actual fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)?) {
         if (callback == null) {
             FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, null, null)
         } else {

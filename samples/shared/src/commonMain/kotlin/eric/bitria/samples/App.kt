@@ -16,13 +16,22 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
-    val renderer = remember { FilamentRenderer() }
+    val controller = remember { FilamentController() }
+    val scene = remember { SampleScene(controller) }
     
+    // Initialize engine once
+    val initialized = remember { mutableStateOf(false) }
+    if (!initialized.value) {
+        controller.initialize()
+        scene.setup()
+        initialized.value = true
+    }
+
     // Load assets from composeResources
     LaunchedEffect(Unit) {
         try {
             val filamatBytes = Res.readBytes("files/materials/textured.filamat")
-            renderer.setupResourceMaterialCube(filamatBytes)
+            scene.loadMaterialCube(filamatBytes)
             println("App: Loaded textured.filamat from resources")
         } catch (e: Exception) {
             println("App: Failed to load textured.filamat: ${e.message}")
@@ -30,17 +39,25 @@ fun App() {
 
         try {
             val glbBytes = Res.readBytes("files/models/Duck.glb")
-            renderer.setupGltfModel(glbBytes)
+            scene.loadGltfModel(glbBytes)
             println("App: Loaded model.glb from resources")
         } catch (e: Exception) {
-            println("App: Failed to load model.glb (this is expected if not yet added): ${e.message}")
+            println("App: Failed to load model.glb: ${e.message}")
         }
     }
 
+    // Animation loop
+    var startTime by remember { mutableStateOf(-1L) }
+    FilamentRenderLoop { frameTimeNanos ->
+        if (startTime < 0) startTime = frameTimeNanos
+        val elapsed = (frameTimeNanos - startTime).toDouble() / 1_000_000_000.0
+        scene.updateAnimations(elapsed)
+    }
+
     DisposableEffect(Unit) {
-        renderer.initialize()
         onDispose {
-            renderer.destroy()
+            scene.destroy()
+            controller.destroy()
         }
     }
 
@@ -48,7 +65,7 @@ fun App() {
         Box(modifier = Modifier.fillMaxSize()) {
             FilamentView(
                 modifier = Modifier.fillMaxSize(),
-                renderer = renderer
+                controller = controller
             )
             
             Text(

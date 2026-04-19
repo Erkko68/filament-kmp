@@ -22,6 +22,9 @@
 #include "common/NioUtils.h"
 #include "common/CallbackUtils.h"
 #include <filament-generatePrefilterMipmap/generatePrefilterMipmap.h>
+#if defined(__APPLE__)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 using namespace filament;
 
@@ -161,6 +164,11 @@ Java_io_github_erkko68_filament_jni_Texture_nBuilderSamples(JNIEnv*, jclass, jlo
 
 JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_jni_Texture_nBuilderImportTexture(JNIEnv*, jclass, jlong nativeBuilder, jlong id) {
+#if defined(__APPLE__)
+    // Filament calls CFRelease when it destroys an imported Metal texture.
+    // CFBridgingRetain gives it ownership of one reference; our JVM handle retains the other.
+    CFRetain((CFTypeRef)(intptr_t) id);
+#endif
     ((Texture::Builder*) nativeBuilder)->import((intptr_t) id);
 }
 
@@ -202,17 +210,6 @@ Java_io_github_erkko68_filament_jni_Texture_nIsTextureSwizzleSupported(JNIEnv*, 
 JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_jni_Texture_nSetExternalStream(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeStream) {
     ((Texture*) nativeTexture)->setExternalStream(*(Engine*) nativeEngine, (Stream*) nativeStream);
-}
-
-JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Texture_nSetExternalImage(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeImage) {
-    ((Texture*) nativeTexture)->setExternalImage(*(Engine*) nativeEngine, (void*) nativeImage);
-}
-
-JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Texture_nSetExternalImageByAHB(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jobject nativeImage) {
-    // Stub for Desktop/JVM parity. On Android, this would use AHardwareBuffer.
-    // For now, we do nothing to avoid UnsatisfiedLinkError.
 }
 
 } // extern "C"

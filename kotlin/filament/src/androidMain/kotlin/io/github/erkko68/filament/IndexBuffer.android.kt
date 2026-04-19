@@ -31,14 +31,13 @@ actual class IndexBuffer internal constructor(val nativeIndexBuffer: AndroidInde
         }
         nativeIndexBuffer.setBuffer(engine.nativeEngine, byteBuffer, destOffsetInBytes, count)
     }
-    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
-        val executor = handler as? java.util.concurrent.Executor ?: Runnable::run
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
         val runnable = if (callback != null) Runnable { callback() } else null
         val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
             order(java.nio.ByteOrder.nativeOrder())
             put(data)
             flip()
         }
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, byteBuffer, destOffsetInBytes, count, executor, runnable)
+        nativeIndexBuffer.setBuffer(engine.nativeEngine, byteBuffer, destOffsetInBytes, count, Runnable::run, runnable)
     }
 }

@@ -134,7 +134,6 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
         actual val left: Int,
         actual val top: Int,
         actual val stride: Int,
-        actual val handler: Any?,
         actual val callback: (() -> Unit)?
     ) {
         internal fun toNative(): AndroidTexture.PixelBufferDescriptor {
@@ -148,7 +147,7 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
                 byteBuffer,
                 AndroidTexture.Format.values()[format.ordinal],
                 AndroidTexture.Type.values()[type.ordinal],
-                alignment, left, top, stride, handler, runnable
+                alignment, left, top, stride, null, runnable
             )
         }
     }

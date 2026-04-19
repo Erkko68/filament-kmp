@@ -5,12 +5,12 @@ import io.github.erkko68.filament.jni.SwapChain as JniSwapChain
 actual class SwapChain(val nativeSwapChain: JniSwapChain) {
     actual fun getNativeWindow(): Any? = nativeSwapChain.nativeWindow
     
-    actual fun setFrameCompletedCallback(handler: Any?, callback: () -> Unit) {
-        nativeSwapChain.setFrameCompletedCallback(handler ?: Any(), Runnable { callback() })
+    actual fun setFrameCompletedCallback(callback: () -> Unit) {
+        nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback() })
     }
 
-    actual fun setFrameScheduledCallback(handler: Any?, callback: () -> Unit) {
-        nativeSwapChain.setFrameScheduledCallback(handler ?: Any(), Runnable { callback() })
+    actual fun setFrameScheduledCallback(callback: () -> Unit) {
+        nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback() })
     }
 
     actual fun isFrameScheduledCallbackSet(): Boolean = nativeSwapChain.isFrameScheduledCallbackSet()
