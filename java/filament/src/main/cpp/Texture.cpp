@@ -204,15 +204,4 @@ Java_io_github_erkko68_filament_jni_Texture_nSetExternalStream(JNIEnv*, jclass, 
     ((Texture*) nativeTexture)->setExternalStream(*(Engine*) nativeEngine, (Stream*) nativeStream);
 }
 
-JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Texture_nSetExternalImage(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jlong nativeImage) {
-    ((Texture*) nativeTexture)->setExternalImage(*(Engine*) nativeEngine, (void*) nativeImage);
-}
-
-JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Texture_nSetExternalImageByAHB(JNIEnv*, jclass, jlong nativeTexture, jlong nativeEngine, jobject nativeImage) {
-    // Stub for Desktop/JVM parity. On Android, this would use AHardwareBuffer.
-    // For now, we do nothing to avoid UnsatisfiedLinkError.
-}
-
 } // extern "C"

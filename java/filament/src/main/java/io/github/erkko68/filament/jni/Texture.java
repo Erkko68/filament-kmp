@@ -247,15 +247,6 @@ public class Texture {
         nSetExternalStream(getNativeObject(), engine.getNativeObject(), stream.getNativeObject());
     }
 
-    public void setExternalImage(@NotNull Engine engine, long externalImage) {
-        nSetExternalImage(getNativeObject(), engine.getNativeObject(), externalImage);
-    }
-
-    public void setExternalImage(@NotNull Engine engine, @NotNull Object externalImageRef) {
-        nSetExternalImageByAHB(getNativeObject(), engine.getNativeObject(), externalImageRef);
-    }
-
-
     public long getNativeObject() {
         if (mNativeObject == 0) throw new IllegalStateException("Calling method on destroyed Texture");
         return mNativeObject;
@@ -296,10 +287,9 @@ public class Texture {
     private static native int nGetMaxTextureSize(long nativeEngine, int sampler);
     private static native int nGetMaxArrayTextureLayers(long nativeEngine);
     private static native void nSetExternalStream(long nativeTexture, long nativeEngine, long nativeStream);
-    private static native void nSetExternalImage(long nativeTexture, long nativeEngine, long nativeImage);
-    private static native void nSetExternalImageByAHB(long nativeTexture, long nativeEngine, Object nativeImage);
-    public static native long nGetNativeHandle(long nativeTexture);
-    // macOS: devicePtr is a MTLDevice* obtained from Skiko (skikoMetalDevicePtr()).
-    public static native long nCreateMetalTexture(long devicePtr, int width, int height);
-    public static native void nReleaseMetalTexture(long handle);
+    // devicePtr: MTLDevice* (macOS) or VkDevice* (Linux/Windows) from Skiko.
+    // physDevicePtr: VkPhysicalDevice* (Linux/Windows only; ignored on macOS).
+    // Returns the GPU-native handle: MTLTexture* on Metal, VkImage on Vulkan.
+    public static native long nCreateSharedTexture(long devicePtr, long physDevicePtr, int width, int height);
+    public static native void nReleaseSharedTexture(long handle);
 }

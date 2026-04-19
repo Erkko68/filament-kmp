@@ -103,65 +103,52 @@ The Compose rendering pipeline records draw commands into a `RenderNode` during 
 
 ---
 
-## Adding a new JVM platform
+## Linux / Windows (Vulkan) — implementation
 
-### Linux / Windows (Vulkan)
+Skiko on Linux and Windows uses a **Vulkan** backend. The approach is the same but the texture type changes. The implementation is complete in the same `jvmMain` source set; platform dispatch happens at runtime via `System.getProperty("os.name")`.
 
-Skiko on Linux and Windows uses a **Vulkan** backend. The approach is the same but the texture type changes.
+### JNI layer (`VulkanUtils.cpp`)
 
-**1. Create `java/filament/src/main/cpp/VulkanUtils.cpp`:**
+Three functions, opaque handle pattern:
 
 ```cpp
-// Implement these two functions for Vulkan:
-//
-// jlong nCreateVulkanTexture(jlong devicePtr, jlong physDevicePtr, jint width, jint height)
-//   - Cast devicePtr to VkDevice, physDevicePtr to VkPhysicalDevice
-//   - Create VkImage with:
-//       format:     VK_FORMAT_B8G8R8A8_UNORM
-//       usage:      VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
-//       tiling:     VK_IMAGE_TILING_OPTIMAL
-//       layout:     VK_IMAGE_LAYOUT_UNDEFINED (transition before first use)
-//   - Allocate VkDeviceMemory (VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
-//   - Return the VkImage handle cast to jlong
-//
-// void nReleaseVulkanTexture(jlong imageHandle, jlong devicePtr)
-//   - Cast handles, call vkDestroyImage + vkFreeMemory
+// Returns opaque VulkanTextureHandle* (wraps VkImage + VkDeviceMemory).
+// devicePtr: VkDevice*, physDevicePtr: VkPhysicalDevice* — both from Skiko reflection.
+jlong nCreateVulkanTexture(jlong devicePtr, jlong physDevicePtr, jint width, jint height)
+
+// Destroys VkImage + frees VkDeviceMemory, then deletes the handle struct.
+void  nReleaseVulkanTexture(jlong handlePtr)
+
+// Returns the VkImage handle from the opaque struct (for Filament importTexture).
+jlong nGetVulkanImage(jlong handlePtr)
 ```
 
-**2. Update `CMakeLists.txt`** (already stubbed):
-```cmake
-elseif (UNIX)
-    target_sources(filament-jni PRIVATE src/main/cpp/VulkanUtils.cpp)
-    target_link_libraries(filament-jni PRIVATE vulkan)
+Unlike Metal where the `MTLTexture*` is passed directly to both Filament and Skia, the Vulkan path separates the concerns:
+- `nCreateVulkanTexture` → opaque handle (owns `VkImage` + `VkDeviceMemory`)
+- `nGetVulkanImage(handle)` → raw `VkImage` cast to `jlong` — passed to `importTexture()` and to the Skia `BackendRenderTarget`
+
+### Skiko Vulkan device discovery
+
+```
+WindowSkiaLayerComponent
+  └─ redrawerManager  (RedrawerManager)
+       └─ redrawer     (VulkanRedrawer)
+            └─ device  (VulkanDevice)
+                 ├─ .device         → VkDevice*
+                 └─ .physicalDevice → VkPhysicalDevice*
 ```
 
-**3. Update `Texture.java`:**
-```java
-// Add alongside the macOS declarations:
-public static native long nCreateVulkanTexture(long devicePtr, long physDevicePtr, int width, int height);
-public static native void nReleaseVulkanTexture(long imageHandle, long devicePtr);
-```
+Field names verified against Skiko **0.9.37.4**. If they differ on your version, print `redrawer.javaClass.declaredFields.map { it.name }` to discover the correct names.
 
-**4. Get Skiko's Vulkan device pointers:**
+### `BackendRenderTarget` wrapping
 
-On the Kotlin side the reflection path differs. Skiko's `VulkanContextHandler` exposes the Vulkan handles — use the same depth-5 field walk (`findSkikoContext()`) to locate a `GrDirectContext` on Linux/Windows. You will also need:
-- `VkDevice*` for texture creation
-- `VkPhysicalDevice*` for memory type selection
+`BackendRenderTargetKt._nMakeVulkan(width, height, imageInfoPtr)` is package-private. `imageInfoPtr` is a native `GrVkImageInfo*` pointer; the raw `VkImage` is passed here. Access pattern mirrors the Metal path (reflection on `access$_nMakeVulkan`).
 
-These live in Skiko's `VulkanDevice` / `VulkanExtensions` structures and can be retrieved similarly to how `MetalContextHandler.context` is reached.
+> **Note:** verify the exact parameter signature of `_nMakeVulkan` in your Skiko version by inspecting `BackendRenderTargetKt` at runtime if the reflection call returns null.
 
-**5. Create `FilamentView.linux.kt` / `FilamentView.windows.kt`:**
+### Synchronisation on Vulkan
 
-The composable structure is identical to the macOS version. Replace:
-- `skikoMetalDevicePtr()` → `skikoVulkanDevicePtr()` (reflecting Skiko's VkDevice)
-- `makeMetalBackendRT(…)` → `makeVulkanBackendRT(…)` (via `BackendRenderTargetKt._nMakeVulkan`)
-- `nCreateMetalTexture` → `nCreateVulkanTexture`
-- `nReleaseMetalTexture` → `nReleaseVulkanTexture`
-- The surface format may differ: check Skiko's Vulkan surface format (commonly `VK_FORMAT_B8G8R8A8_UNORM`)
-
-**Synchronisation on Vulkan:**
-
-`flushAndWait()` still provides the CPU barrier. For full pipeline correctness, consider adding a Vulkan pipeline barrier (image layout transition `COLOR_ATTACHMENT_OPTIMAL → SHADER_READ_ONLY_OPTIMAL`) after Filament's render pass completes and before Skia samples the image.
+`flushAndWait()` still provides the CPU barrier. For full pipeline correctness, consider a Vulkan pipeline barrier (image layout transition `COLOR_ATTACHMENT_OPTIMAL → SHADER_READ_ONLY_OPTIMAL`) after Filament's render pass and before Skia samples the image.
 
 ---
 

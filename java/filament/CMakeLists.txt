@@ -85,13 +85,9 @@ add_library(filament-jni SHARED
 # (or the Vulkan equivalents) so the JVM side can create a shared texture on the correct GPU.
 if (APPLE)
     target_sources(filament-jni PRIVATE src/main/cpp/MetalUtils.mm)
-elseif (UNIX)
-    # TODO: add src/main/cpp/VulkanUtils.cpp for Linux (Vulkan backend)
-    # Skiko on Linux exposes a VkDevice* via GrVkBackendContext; use it to allocate a VkImage
-    # with VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT.
-elseif (WIN32)
-    # TODO: add src/main/cpp/VulkanUtils.cpp for Windows (Vulkan backend)
-    # Same approach as Linux; alternatively D3D12 interop via VK_KHR_external_memory_win32.
+    set_source_files_properties(src/main/cpp/MetalUtils.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+elseif (UNIX OR WIN32)
+    target_sources(filament-jni PRIVATE src/main/cpp/VulkanUtils.cpp)
 endif()
 
 target_include_directories(filament-jni PRIVATE
@@ -124,7 +120,7 @@ if (APPLE)
     target_link_libraries(filament-jni PRIVATE "-framework Cocoa" "-framework Metal"
                                                "-framework QuartzCore" "-framework CoreVideo")
 elseif (UNIX)
-    # TODO: target_link_libraries(filament-jni PRIVATE vulkan)
+    target_link_libraries(filament-jni PRIVATE vulkan)
 elseif (WIN32)
-    # TODO: target_link_libraries(filament-jni PRIVATE vulkan-1)
+    target_link_libraries(filament-jni PRIVATE vulkan-1)
 endif()

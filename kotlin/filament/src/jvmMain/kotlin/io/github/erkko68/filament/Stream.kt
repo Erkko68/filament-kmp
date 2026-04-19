@@ -16,11 +16,6 @@ actual class Stream(val nativeStream: JniStream) {
             return this
         }
 
-        actual fun stream(streamSource: Any): Builder {
-            jni.stream(streamSource)
-            return this
-        }
-
         actual fun build(engine: Engine): Stream =
             Stream(jni.build(engine.nativeEngine))
     }

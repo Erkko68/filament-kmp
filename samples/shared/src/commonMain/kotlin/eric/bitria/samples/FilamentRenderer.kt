@@ -33,19 +33,16 @@ class FilamentRenderer : FilamentViewRenderer {
     private var sunLightEntity: Entity? = null
 
 
-    // Object 1: Runtime compiled material
     private var runtimeCubeEntity: Entity? = null
     private var runtimeVertexBuffer: VertexBuffer? = null
     private var runtimeIndexBuffer: IndexBuffer? = null
     private var runtimeMaterial: Material? = null
     private var runtimeMaterialInstance: MaterialInstance? = null
 
-    // Object 2: Resource-loaded compiled material
     private var resourceCubeEntity: Entity? = null
     private var resourceMaterial: Material? = null
     private var resourceMaterialInstance: MaterialInstance? = null
 
-    // Object 3: GLTFIO loaded model
     private var gltfLoader: AssetLoader? = null
     private var gltfResourceLoader: ResourceLoader? = null
     private var gltfAsset: FilamentAsset? = null
@@ -59,11 +56,7 @@ class FilamentRenderer : FilamentViewRenderer {
     private var pendingGlbData: ByteArray? = null
 
     fun initialize() {
-        if (engine != null) {
-            println("FilamentRenderer: initialize() called more than once, ignoring")
-            return
-        }
-        println("FilamentRenderer: Initializing engine and MaterialBuilder...")
+        if (engine != null) return
         engine = Engine.create(Engine.Backend.METAL)
         MaterialBuilder.init()
         Gltfio.init()
@@ -75,14 +68,12 @@ class FilamentRenderer : FilamentViewRenderer {
         view!!.setScene(scene)
         view!!.setCamera(camera)
 
-        // Simple skybox - RED for extreme contrast during debugging
         skybox = Skybox.Builder()
-            .color(1.0f, 0.0f, 0.0f, 1.0f) 
+            .color(1.0f, 0.0f, 0.0f, 1.0f)
             .build(engine!!)
         scene!!.setSkybox(skybox)
 
 
-        // glTF PBR materials need some light; a simple directional light is enough for samples.
         sunLightEntity = engine!!.getEntityManager().create()
         LightManager.Builder(LightManager.Type.DIRECTIONAL)
             .color(1.0f, 1.0f, 1.0f)
@@ -91,10 +82,9 @@ class FilamentRenderer : FilamentViewRenderer {
             .build(engine!!, sunLightEntity!!)
         scene!!.addEntity(sunLightEntity!!)
 
-        // Clear to CYAN for stress testing visibility
         renderer!!.setClearOptions(Renderer.ClearOptions().apply {
             clear = true
-            clearColor = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f) // CYAN
+            clearColor = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f)
         })
 
 
@@ -104,9 +94,9 @@ class FilamentRenderer : FilamentViewRenderer {
 
         camera!!.setProjection(45.0, 1.0, 0.1, 100.0, Camera.Fov.VERTICAL)
         camera!!.lookAt(0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
-        camera!!.setExposure(16.0f, 1.2f, 100.0f) // Standard outdoor exposure
+        camera!!.setExposure(16.0f, 1.2f, 100.0f)
 
-        view!!.setPostProcessingEnabled(false) // Disable to see raw colors
+        view!!.setPostProcessingEnabled(false)
         
         setupRuntimeMaterialCube()
 
@@ -116,30 +106,26 @@ class FilamentRenderer : FilamentViewRenderer {
         gltfLoader = AssetLoader.create(engine!!, gltfMaterialProvider!!, engine!!.getEntityManager())
         gltfResourceLoader = ResourceLoader(engine!!, true)
 
-        // Handle surface if it became available before engine was ready
         pendingSurface?.let {
-            println("FilamentRenderer: Applying pending surface...")
             onSurfaceAvailable(it, pendingWidth, pendingHeight)
             pendingSurface = null
         }
 
         pendingFilamatData?.let {
-            println("FilamentRenderer: Applying pending filamat...")
             setupResourceMaterialCube(it)
             pendingFilamatData = null
         }
 
         pendingGlbData?.let {
-            println("FilamentRenderer: Applying pending glb...")
             setupGltfModel(it)
             pendingGlbData = null
         }
     }
 
-    fun initializeOffscreen(width: Int, height: Int, textureId: Long) {
+    fun initializeOffscreen(width: Int, height: Int, textureHandle: Long) {
         if (engine == null) initialize()
         val engine = engine!!
-        
+
         this.width = width
         this.height = height
         
@@ -151,7 +137,7 @@ class FilamentRenderer : FilamentViewRenderer {
             .levels(1)
             .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
             .format(Texture.InternalFormat.RGBA8)
-            .importTexture(textureId)
+            .importTexture(textureHandle)
             .build(engine)
         
         // 2. Create/Recreate Depth RenderTarget
@@ -185,14 +171,16 @@ class FilamentRenderer : FilamentViewRenderer {
     }
 
 
-    fun createMetalTexture(devicePtr: Long, width: Int, height: Int): Long {
-        return io.github.erkko68.filament.jni.Texture.nCreateMetalTexture(devicePtr, width, height)
+    fun createSharedTexture(devicePtr: Long, physDevicePtr: Long, width: Int, height: Int): Long =
+        io.github.erkko68.filament.jni.Texture.nCreateSharedTexture(devicePtr, physDevicePtr, width, height)
+
+    fun releaseSharedTexture(handle: Long) {
+        if (handle != 0L) io.github.erkko68.filament.jni.Texture.nReleaseSharedTexture(handle)
     }
 
     private fun setupRuntimeMaterialCube() {
         val engine = engine!!
         
-        println("FilamentRenderer: Setting up Runtime Material Object...")
         val materialPackage = MaterialBuilder()
             .name("RuntimeMaterial")
             .platform(MaterialBuilder.Platform.ALL)
@@ -248,8 +236,6 @@ class FilamentRenderer : FilamentViewRenderer {
             .build(engine, runtimeCubeEntity!!)
 
         scene!!.addEntity(runtimeCubeEntity!!)
-        
-        // Position it on the left
         val tm = engine.getTransformManager()
         tm.setTransform(tm.getInstance(runtimeCubeEntity!!), translation(-2.5, 0.0, 0.0))
     }
@@ -258,20 +244,17 @@ class FilamentRenderer : FilamentViewRenderer {
         val engine = engine
         if (engine == null) {
             pendingFilamatData = filamatData
-            println("FilamentRenderer: Engine not ready, queued filamat setup")
             return
         }
 
         destroyResourceMaterialCube(engine)
 
-        println("FilamentRenderer: Setting up Resource Material Object...")
         resourceMaterial = Material.Builder()
             .payload(filamatData)
             .build(engine)
         resourceMaterialInstance = resourceMaterial!!.createInstance()
-        resourceMaterialInstance!!.setParameter("color", 0.3f, 1.0f, 0.3f, 1.0f) // Set to green
+        resourceMaterialInstance!!.setParameter("color", 0.3f, 1.0f, 0.3f, 1.0f)
 
-        // Shared geometry for simplicity
         resourceCubeEntity = engine.getEntityManager().create()
         RenderableManager.Builder(1)
             .boundingBox(Box(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f))
@@ -280,8 +263,6 @@ class FilamentRenderer : FilamentViewRenderer {
             .build(engine, resourceCubeEntity!!)
 
         scene!!.addEntity(resourceCubeEntity!!)
-        
-        // Position it in the center
         val tm = engine.getTransformManager()
         tm.setTransform(tm.getInstance(resourceCubeEntity!!), translation(0.0, 0.0, 0.0))
     }
@@ -291,23 +272,17 @@ class FilamentRenderer : FilamentViewRenderer {
         val loader = gltfLoader
         if (engine == null || loader == null) {
             pendingGlbData = glbData
-            println("FilamentRenderer: GLTF loader not ready, queued glb setup")
             return
         }
 
         destroyGltfAsset()
 
-        println("FilamentRenderer: Setting up GLTF Model Object...")
         gltfAsset = loader.createAsset(glbData)
         if (gltfAsset != null) {
             val asset = gltfAsset!!
-            val loaded = gltfResourceLoader?.loadResources(asset) ?: false
+            gltfResourceLoader?.loadResources(asset)
             scene!!.addEntities(asset.getEntities())
-            println(
-                "FilamentRenderer: GLTF loaded=$loaded entities=${asset.getEntityCount()} renderables=${asset.getRenderableEntities().size}"
-            )
 
-            // Calculate auto-scale and centering
             val box = asset.getBoundingBox()
             val center = box.center
             val halfExtent = box.halfExtent
@@ -315,12 +290,10 @@ class FilamentRenderer : FilamentViewRenderer {
             val scale = if (maxDim > 0) 3.5 / (maxDim * 2.0) else 1.0
             
             val transform = identity()
-            // Transform = Scale(s) * Translation(-center)
             multiplyMatrices(transform, scaling(scale), transform)
             multiplyMatrices(transform, translation(-center[0].toDouble(), -center[1].toDouble(), -center[2].toDouble()), transform)
             gltfBaseTransform = transform
 
-            // Initial position on the right
             val tm = engine.getTransformManager()
             val initialTransform = translation(2.5, 0.0, 0.0)
             multiplyMatrices(initialTransform, gltfBaseTransform!!, initialTransform)
@@ -400,9 +373,6 @@ class FilamentRenderer : FilamentViewRenderer {
         updateRotation(elapsed)
 
         val beginSucceeded = renderer.beginFrame(swapChain, frameTimeNanos)
-        if (frameCount.value % 60 == 0L) {
-            println("FilamentRenderer: render frame=${frameCount.value} beginSucceeded=$beginSucceeded swapChain=$swapChain")
-        }
 
         if (beginSucceeded) {
             // Ensure viewport matches texture size
