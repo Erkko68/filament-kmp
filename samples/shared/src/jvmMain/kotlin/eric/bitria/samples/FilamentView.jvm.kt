@@ -112,9 +112,12 @@ actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
     val jvmRenderer = renderer as FilamentRenderer
     var textureSize by remember { mutableStateOf(IntSize.Zero) }
     var textureHandle by remember { mutableStateOf(0L) }
+    val prevSnapshot = remember { mutableStateOf<Image?>(null) }
 
     LaunchedEffect(textureSize) {
         if (textureSize.width <= 0 || textureSize.height <= 0) return@LaunchedEffect
+        prevSnapshot.value?.close()
+        prevSnapshot.value = null
         jvmRenderer.releaseSharedTexture(textureHandle)
         val (devicePtr, physDevicePtr) = skikoDevicePtrs()
         textureHandle = jvmRenderer.createSharedTexture(devicePtr, physDevicePtr, textureSize.width, textureSize.height)
@@ -126,12 +129,11 @@ actual fun FilamentView(modifier: Modifier, renderer: FilamentViewRenderer) {
         while (isActive) { withFrameNanos { frameTime = it } }
     }
 
-    val prevSnapshot = remember { mutableStateOf<Image?>(null) }
-
     DisposableEffect(Unit) {
         onDispose {
-            jvmRenderer.releaseSharedTexture(textureHandle)
             prevSnapshot.value?.close()
+            prevSnapshot.value = null
+            jvmRenderer.releaseSharedTexture(textureHandle)
         }
     }
 

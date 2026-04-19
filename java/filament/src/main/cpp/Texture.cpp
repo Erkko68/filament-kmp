@@ -22,6 +22,9 @@
 #include "common/NioUtils.h"
 #include "common/CallbackUtils.h"
 #include <filament-generatePrefilterMipmap/generatePrefilterMipmap.h>
+#if defined(__APPLE__)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 using namespace filament;
 
@@ -161,6 +164,11 @@ Java_io_github_erkko68_filament_jni_Texture_nBuilderSamples(JNIEnv*, jclass, jlo
 
 JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_jni_Texture_nBuilderImportTexture(JNIEnv*, jclass, jlong nativeBuilder, jlong id) {
+#if defined(__APPLE__)
+    // Filament calls CFRelease when it destroys an imported Metal texture.
+    // CFBridgingRetain gives it ownership of one reference; our JVM handle retains the other.
+    CFRetain((CFTypeRef)(intptr_t) id);
+#endif
     ((Texture::Builder*) nativeBuilder)->import((intptr_t) id);
 }
 
