@@ -240,6 +240,12 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
     actual fun getDynamicResolutionOptions(): DynamicResolutionOptions = DynamicResolutionOptions()
 
+    actual fun getLastDynamicResolutionScale(): FloatArray = memScoped {
+        val out = allocArray<FloatVar>(2)
+        FilaView_getLastDynamicResolutionScale(nativeHandle, out)
+        floatArrayOf(out[0], out[1])
+    }
+
     actual fun setRenderQuality(renderQuality: RenderQuality) {
         FilaView_setRenderQuality(nativeHandle, renderQuality.hdrColorBuffer.ordinal.toUInt())
     }

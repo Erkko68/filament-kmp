@@ -255,6 +255,12 @@ actual class View(val nativeView: JniView) {
         return k
     }
 
+    actual fun getLastDynamicResolutionScale(): FloatArray {
+        val out = FloatArray(2)
+        nativeView.getLastDynamicResolutionScale(out)
+        return out
+    }
+
     actual fun setRenderQuality(renderQuality: RenderQuality) : Unit { nativeView.setRenderQuality(renderQuality.jni) }
     actual fun getRenderQuality(): RenderQuality {
         val o = nativeView.getRenderQuality()

@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Engine
 
 expect class FilamentAsset {
     fun getRoot(): Int
@@ -28,4 +29,7 @@ expect class FilamentAsset {
     fun getResourceUris(): Array<String>
     
     fun releaseSourceData()
+
+    fun getEngine(): Engine
+    fun getInstance(): FilamentInstance
 }

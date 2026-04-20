@@ -278,6 +278,12 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         return kmp
     }
 
+    actual fun getLastDynamicResolutionScale(): FloatArray {
+        val out = FloatArray(2)
+        this@View.nativeView.getLastDynamicResolutionScale(out)
+        return out
+    }
+
     actual fun setRenderQuality(renderQuality: RenderQuality) {
         this@View.nativeView.setRenderQuality(renderQuality.native)
     }

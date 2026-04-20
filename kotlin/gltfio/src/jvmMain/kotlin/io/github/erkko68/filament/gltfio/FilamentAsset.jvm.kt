@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.gltfio.jni.FilamentAsset as JniFilamentAsset
 import io.github.erkko68.filament.jni.Box as JniBox
 
@@ -38,4 +39,8 @@ actual class FilamentAsset(internal val jni: JniFilamentAsset) {
     actual fun releaseSourceData() {
         jni.releaseSourceData()
     }
+
+    actual fun getEngine(): Engine = Engine(jni.getEngine())
+
+    actual fun getInstance(): FilamentInstance = FilamentInstance(jni.getInstance())
 }

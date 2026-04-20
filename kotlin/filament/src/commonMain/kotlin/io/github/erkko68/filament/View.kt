@@ -193,6 +193,7 @@ expect class View {
     fun getDithering(): Dithering
     fun setDynamicResolutionOptions(options: DynamicResolutionOptions)
     fun getDynamicResolutionOptions(): DynamicResolutionOptions
+    fun getLastDynamicResolutionScale(): FloatArray
     fun setRenderQuality(renderQuality: RenderQuality)
     fun getRenderQuality(): RenderQuality
     
