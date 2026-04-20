@@ -1,5 +1,7 @@
 package eric.bitria.samples
 
+import eric.bitria.samples.skiko.SkikoInterop
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -20,7 +22,7 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
 
     LaunchedEffect(textureSize) {
         if (textureSize.width <= 0 || textureSize.height <= 0) return@LaunchedEffect
-        
+
         val engine = controller.engine ?: return@LaunchedEffect
         
         // Clean up previous texture/snapshot
@@ -29,7 +31,7 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
         TextureUtils.releaseSharedTexture(textureHandle)
         
         // Create new shared texture
-        val (devicePtr, physDevicePtr) = SkikoInterop.skikoDevicePtrs()
+        val (devicePtr, physDevicePtr) = SkikoInterop.getDevicePtrs()
         textureHandle = TextureUtils.createSharedTexture(
             devicePtr, physDevicePtr, textureSize.width, textureSize.height
         )
@@ -80,8 +82,8 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
                 controller.render(frameTime)
 
                 drawIntoCanvas { canvas ->
-                    val ctx = SkikoInterop.skikoContext() ?: return@drawIntoCanvas
-                    val rt = SkikoInterop.makeBackendRT(textureSize.width, textureSize.height, textureHandle)
+                    val ctx = SkikoInterop.getDirectContext() ?: return@drawIntoCanvas
+                    val rt = SkikoInterop.makeBackendRenderTarget(textureSize.width, textureSize.height, textureHandle)
                         ?: return@drawIntoCanvas
 
                     val surface = Surface.makeFromBackendRenderTarget(
