@@ -14,11 +14,6 @@ actual class Stream internal constructor(internal var nativeHandle: CPointer<Fil
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaStreamBuilder_create()
 
-        actual fun stream(streamSource: Any): Builder {
-            FilaStreamBuilder_stream(nativeBuilder, streamSource as? CPointer<*>)
-            return this
-        }
-
         actual fun width(width: Int): Builder {
             FilaStreamBuilder_width(nativeBuilder, width.toUInt())
             return this

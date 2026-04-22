@@ -43,6 +43,9 @@ void FilaFilamentAsset_getAssetInstances(FilaFilamentAsset* asset, FilaFilamentI
 
 void FilaFilamentAsset_releaseSourceData(FilaFilamentAsset* asset);
 
+FilaEngine* FilaFilamentAsset_getEngine(const FilaFilamentAsset* asset);
+FilaFilamentInstance* FilaFilamentAsset_getInstance(FilaFilamentAsset* asset);
+
 #ifdef __cplusplus
 }
 #endif

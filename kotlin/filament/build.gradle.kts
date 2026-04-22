@@ -62,6 +62,8 @@ kotlin {
         }
     }
 
+    jvm()
+
     js {
         browser {
             binaries.executable()
@@ -84,6 +86,12 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("com.google.android.filament:filament-android:$filamentAndroidVersion")
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                api(project(":java:filament"))
             }
         }
 

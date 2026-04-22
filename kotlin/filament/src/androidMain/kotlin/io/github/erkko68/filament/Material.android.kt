@@ -89,13 +89,12 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
     actual fun compile(
         priority: CompilerPriorityQueue,
         variants: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
         nativeMaterial.compile(
             AndroidMaterial.CompilerPriorityQueue.values()[priority.ordinal],
             variants,
-            handler as? android.os.Handler, // Cast to Android Handler
+            null,
             callback
         )
     }
@@ -144,4 +143,13 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
         }
         return result
     }
+
+    actual fun hasParameter(name: String): Boolean = nativeMaterial.hasParameter(name)
+    actual fun getParameterTransformName(samplerName: String): String? = nativeMaterial.getParameterTransformName(samplerName)
+    actual fun setDefaultParameter(name: String, value: Boolean) = nativeMaterial.setDefaultParameter(name, value)
+    actual fun setDefaultParameter(name: String, value: Float) = nativeMaterial.setDefaultParameter(name, value)
+    actual fun setDefaultParameter(name: String, value: Int) = nativeMaterial.setDefaultParameter(name, value)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float) = nativeMaterial.setDefaultParameter(name, x, y)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) = nativeMaterial.setDefaultParameter(name, x, y, z)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) = nativeMaterial.setDefaultParameter(name, x, y, z, w)
 }

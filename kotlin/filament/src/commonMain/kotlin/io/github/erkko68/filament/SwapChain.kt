@@ -8,8 +8,8 @@ expect class SwapChain {
     }
 
     fun getNativeWindow(): Any?
-    fun setFrameCompletedCallback(handler: Any?, callback: () -> Unit)
-    fun setFrameScheduledCallback(handler: Any?, callback: () -> Unit)
+    fun setFrameCompletedCallback(callback: () -> Unit)
+    fun setFrameScheduledCallback(callback: () -> Unit)
     fun isFrameScheduledCallbackSet(): Boolean
     
     fun getNativeObject(): Long

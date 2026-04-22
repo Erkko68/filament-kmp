@@ -56,6 +56,14 @@ void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget) {
     FILA_CAST(View, view)->setRenderTarget(FILA_CAST(RenderTarget, renderTarget));
 }
 
+void FilaView_setAntiAliasing(FilaView* view, FilaViewAntiAliasing type) {
+    FILA_CAST(View, view)->setAntiAliasing(static_cast<View::AntiAliasing>(type));
+}
+
+FilaViewAntiAliasing FilaView_getAntiAliasing(const FilaView* view) {
+    return static_cast<FilaViewAntiAliasing>(FILA_CONST_CAST(View, view)->getAntiAliasing());
+}
+
 void FilaView_setDithering(FilaView* view, FilaViewDithering dithering) {
     FILA_CAST(View, view)->setDithering(static_cast<View::Dithering>(dithering));
 }

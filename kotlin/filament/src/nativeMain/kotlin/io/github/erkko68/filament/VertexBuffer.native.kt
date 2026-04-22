@@ -61,16 +61,16 @@ actual class VertexBuffer internal constructor(internal var nativeHandle: CPoint
     actual fun getVertexCount(): Int = FilaVertexBuffer_getVertexCount(nativeHandle).toInt()
     
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) {
-        setBufferAt(engine, bufferIndex, data, 0, 0, null, null)
+        setBufferAt(engine, bufferIndex, data, 0, 0, null)
     }
 
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int) {
-        setBufferAt(engine, bufferIndex, data, destOffsetInBytes, count, null, null)
+        setBufferAt(engine, bufferIndex, data, destOffsetInBytes, count, null)
     }
 
     private class BufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 
-    actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
         val pinned = data.pin()
         val ptr = pinned.addressOf(0).reinterpret<ByteVar>()
         val sizeInBytes = if (count > 0) count.toULong() else data.size.toULong()

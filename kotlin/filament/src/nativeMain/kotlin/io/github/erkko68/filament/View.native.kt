@@ -10,12 +10,20 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
-    
+    actual enum class AntiAliasing { NONE, FXAA }
+
+    actual class PickingQueryResult actual constructor(
+        actual val renderable: Int,
+        actual val depth: Float,
+        actual val fragCoords: FloatArray
+    )
+
     private var mScene: Scene? = null
     private var mCamera: Camera? = null
     private var mRenderTarget: RenderTarget? = null
-
     private var mShadowType: ShadowType = ShadowType.PCF
+    private var mColorGrading: ColorGrading? = null
+    private var mPickCallbackRef: kotlinx.cinterop.StableRef<(PickingQueryResult) -> Unit>? = null
 
     actual class DynamicResolutionOptions actual constructor() {
         actual var enabled: Boolean = false
@@ -231,6 +239,12 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
     }
     actual fun getDynamicResolutionOptions(): DynamicResolutionOptions = DynamicResolutionOptions()
+
+    actual fun getLastDynamicResolutionScale(): FloatArray = memScoped {
+        val out = allocArray<FloatVar>(2)
+        FilaView_getLastDynamicResolutionScale(nativeHandle, out)
+        floatArrayOf(out[0], out[1])
+    }
 
     actual fun setRenderQuality(renderQuality: RenderQuality) {
         FilaView_setRenderQuality(nativeHandle, renderQuality.hdrColorBuffer.ordinal.toUInt())
@@ -475,5 +489,34 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
         FilaView_setDynamicLightingOptions(nativeHandle, zNear, zFar)
+    }
+
+    actual fun setAntiAliasing(type: AntiAliasing) {
+        FilaView_setAntiAliasing(nativeHandle, type.ordinal.toUInt())
+    }
+    actual fun getAntiAliasing(): AntiAliasing = AntiAliasing.values()[FilaView_getAntiAliasing(nativeHandle).toInt()]
+
+    actual fun setColorGrading(colorGrading: ColorGrading?) {
+        mColorGrading = colorGrading
+        FilaView_setColorGrading(nativeHandle, colorGrading?.nativeHandle)
+    }
+    actual fun getColorGrading(): ColorGrading? = mColorGrading
+
+    actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
+        mPickCallbackRef?.dispose()
+        val stableRef = kotlinx.cinterop.StableRef.create(callback)
+        mPickCallbackRef = stableRef
+        val cCallback = staticCFunction { result: CPointer<FilaViewPickingQueryResult>?, user: COpaquePointer? ->
+            val ref = user!!.asStableRef<(PickingQueryResult) -> Unit>()
+            result?.pointed?.let { r ->
+                ref.get().invoke(PickingQueryResult(
+                    r.renderable.toInt(),
+                    r.depth,
+                    floatArrayOf(r.fragCoords[0], r.fragCoords[1], r.fragCoords[2])
+                ))
+            }
+            ref.dispose()
+        }
+        FilaView_pick(nativeHandle, x.toUInt(), y.toUInt(), null, cCallback, stableRef.asCPointer())
     }
 }

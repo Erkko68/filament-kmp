@@ -134,7 +134,6 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
         actual val left: Int,
         actual val top: Int,
         actual val stride: Int,
-        actual val handler: Any?,
         actual val callback: (() -> Unit)?
     ) {
         internal fun toNative(): AndroidTexture.PixelBufferDescriptor {
@@ -148,7 +147,7 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
                 byteBuffer,
                 AndroidTexture.Format.values()[format.ordinal],
                 AndroidTexture.Type.values()[type.ordinal],
-                alignment, left, top, stride, handler, runnable
+                alignment, left, top, stride, null, runnable
             )
         }
     }
@@ -197,5 +196,11 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
             AndroidTexture.getMaxTextureSize(engine.nativeEngine, AndroidTexture.Sampler.values()[type.ordinal])
         actual fun getMaxArrayTextureLayers(engine: Engine): Int =
             AndroidTexture.getMaxArrayTextureLayers(engine.nativeEngine)
+        actual fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
+            AndroidTexture.PixelBufferDescriptor.computeDataSize(
+                AndroidTexture.Format.values()[format.ordinal],
+                AndroidTexture.Type.values()[type.ordinal],
+                stride, height, alignment
+            )
     }
 }

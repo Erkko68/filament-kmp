@@ -78,7 +78,7 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
         }
     }
 
-    actual fun compile(priority: CompilerPriorityQueue, variants: Int, handler: Any?, callback: (() -> Unit)?) {
+    actual fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)?) {
         if (callback == null) {
             FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, null, null)
         } else {
@@ -147,4 +147,14 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
         }
         return result
     }
+
+    // hasParameter, getParameterTransformName, and setDefaultParameter are not exposed by the Filament C API.
+    actual fun hasParameter(name: String): Boolean = false
+    actual fun getParameterTransformName(samplerName: String): String? = FilaMaterial_getParameterTransformName(nativeHandle, samplerName)?.toKString()
+    actual fun setDefaultParameter(name: String, value: Boolean) {}
+    actual fun setDefaultParameter(name: String, value: Float) {}
+    actual fun setDefaultParameter(name: String, value: Int) {}
+    actual fun setDefaultParameter(name: String, x: Float, y: Float) {}
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) {}
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) {}
 }

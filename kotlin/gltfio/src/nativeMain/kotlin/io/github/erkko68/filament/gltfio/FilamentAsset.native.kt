@@ -135,4 +135,10 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
     actual fun releaseSourceData() {
         FilaFilamentAsset_releaseSourceData(nativeHandle)
     }
+
+    actual fun getEngine(): io.github.erkko68.filament.Engine =
+        io.github.erkko68.filament.Engine(FilaFilamentAsset_getEngine(nativeHandle))
+
+    actual fun getInstance(): FilamentInstance =
+        FilamentInstance(FilaFilamentAsset_getInstance(nativeHandle))
 }

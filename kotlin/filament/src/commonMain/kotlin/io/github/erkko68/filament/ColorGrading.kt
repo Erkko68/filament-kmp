@@ -3,6 +3,8 @@ package io.github.erkko68.filament
 expect class ColorGrading {
     class Builder() {
         fun quality(qualityLevel: QualityLevel): Builder
+        fun format(format: LutFormat): Builder
+        fun dimensions(dim: Int): Builder
         fun toneMapper(toneMapper: ToneMapper): Builder
         fun luminanceScaling(luminanceScaling: Boolean): Builder
         fun gamutMapping(gamutMapping: Boolean): Builder
@@ -20,4 +22,5 @@ expect class ColorGrading {
     }
 
     enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    enum class LutFormat { INTEGER, FLOAT }
 }

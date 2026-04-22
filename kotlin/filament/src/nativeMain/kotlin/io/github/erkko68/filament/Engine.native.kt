@@ -283,4 +283,30 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         return true
     }
     actual fun getFeatureFlag(name: String): Boolean = FilaEngine_getFeatureFlag(nativeHandle, name)
+
+    actual fun enableAccurateTranslations() = FilaEngine_enableAccurateTranslations(nativeHandle)
+
+    actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
+    actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
+
+    actual fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)?) {
+        val stableRef = callback?.let { kotlinx.cinterop.StableRef.create(it) }
+        val cCallback: FilaEngineCompileCallback? = if (callback != null) {
+            staticCFunction { userData: COpaquePointer? ->
+                val ref = userData!!.asStableRef<() -> Unit>()
+                ref.get().invoke()
+                ref.dispose()
+            }
+        } else null
+        FilaEngine_compile(
+            nativeHandle,
+            priority.ordinal.toUByte(),
+            material.nativeHandle,
+            view.nativeHandle,
+            shadowReceiver.ordinal.toUByte(),
+            skinning.ordinal.toUByte(),
+            cCallback,
+            stableRef?.asCPointer()
+        )
+    }
 }

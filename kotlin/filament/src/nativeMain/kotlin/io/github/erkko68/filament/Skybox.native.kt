@@ -28,7 +28,12 @@ actual class Skybox(internal var nativeHandle: CPointer<FilaSkybox>?) {
             FilaSkyboxBuilder_color(nativeBuilder, r, g, b, a)
             return this
         }
-        
+
+        actual fun priority(priority: Int): Builder {
+            FilaSkyboxBuilder_priority(nativeBuilder, priority.toUByte())
+            return this
+        }
+
         actual fun build(engine: Engine): Skybox {
             val handle = FilaSkyboxBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaSkyboxBuilder_destroy(nativeBuilder)
@@ -39,6 +44,9 @@ actual class Skybox(internal var nativeHandle: CPointer<FilaSkybox>?) {
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
         FilaSkybox_setColor(nativeHandle, r, g, b, a)
     }
-    
     actual fun getIntensity(): Float = FilaSkybox_getIntensity(nativeHandle)
+    actual fun setLayerMask(select: Int, value: Int) =
+        FilaSkybox_setLayerMask(nativeHandle, select.toUByte(), value.toUByte())
+    actual fun getLayerMask(): Int = FilaSkybox_getLayerMask(nativeHandle).toInt()
+    actual fun getTexture(): Texture? = FilaSkybox_getTexture(nativeHandle)?.let { Texture(it) }
 }

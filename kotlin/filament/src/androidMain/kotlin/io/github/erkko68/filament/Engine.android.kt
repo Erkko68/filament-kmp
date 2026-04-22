@@ -257,4 +257,16 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun hasFeatureFlag(name: String): Boolean = nativeEngine.hasFeatureFlag(name)
     actual fun setFeatureFlag(name: String, value: Boolean): Boolean = nativeEngine.setFeatureFlag(name, value)
     actual fun getFeatureFlag(name: String): Boolean = nativeEngine.getFeatureFlag(name)
+
+    actual fun enableAccurateTranslations() = nativeEngine.enableAccurateTranslations()
+
+    actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
+    actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
+
+    actual fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)?) {
+        val androidPriority = com.google.android.filament.Material.CompilerPriorityQueue.values()[priority.ordinal]
+        val androidShadow = AndroidEngine.FeatureState.values()[shadowReceiver.ordinal]
+        val androidSkinning = AndroidEngine.FeatureState.values()[skinning.ordinal]
+        nativeEngine.compile(androidPriority, material.nativeMaterial, view.nativeView, androidShadow, androidSkinning, null, callback?.let { Runnable { it() } })
+    }
 }

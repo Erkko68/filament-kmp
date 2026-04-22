@@ -16,5 +16,5 @@ expect class BufferObject {
     fun getByteCount(): Int
     fun setBuffer(engine: Engine, data: ByteArray)
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int)
-    fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, handler: Any? = null, callback: (() -> Unit)? = null)
+    fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null)
 }

@@ -11,6 +11,16 @@ actual class ColorGrading internal constructor(internal val nativeColorGrading: 
             return this
         }
 
+        actual fun format(format: LutFormat): Builder {
+            nativeBuilder.format(FilamentColorGrading.LutFormat.entries[format.ordinal])
+            return this
+        }
+
+        actual fun dimensions(dim: Int): Builder {
+            nativeBuilder.dimensions(dim)
+            return this
+        }
+
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
             nativeBuilder.toneMapper(toneMapper.nativeToneMapper)
             return this
@@ -82,4 +92,5 @@ actual class ColorGrading internal constructor(internal val nativeColorGrading: 
     }
 
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    actual enum class LutFormat { INTEGER, FLOAT }
 }

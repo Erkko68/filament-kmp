@@ -11,11 +11,6 @@ actual class Stream internal constructor(val nativeStream: AndroidStream) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidStream.Builder()
 
-        actual fun stream(streamSource: Any): Builder {
-            nativeBuilder.stream(streamSource)
-            return this
-        }
-
         actual fun width(width: Int): Builder {
             nativeBuilder.width(width)
             return this

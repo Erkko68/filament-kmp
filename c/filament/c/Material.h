@@ -123,6 +123,7 @@ uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialPa
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material);
 
 void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQueue priority, uint32_t variants, void* handler, FilaMaterialCompileCallback callback, void* userData);
+const char* FilaMaterial_getParameterTransformName(const FilaMaterial* material, const char* samplerName);
 
 #ifdef __cplusplus
 }

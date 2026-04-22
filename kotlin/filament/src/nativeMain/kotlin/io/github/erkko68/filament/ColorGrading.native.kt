@@ -15,6 +15,16 @@ actual class ColorGrading internal constructor(internal var nativeHandle: CPoint
             return this
         }
 
+        actual fun format(format: LutFormat): Builder {
+            FilaColorGradingBuilder_format(nativeHandle, format.ordinal.toUInt())
+            return this
+        }
+
+        actual fun dimensions(dim: Int): Builder {
+            FilaColorGradingBuilder_dimensions(nativeHandle, dim.toUByte())
+            return this
+        }
+
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
             FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
             return this
@@ -94,4 +104,5 @@ actual class ColorGrading internal constructor(internal var nativeHandle: CPoint
     }
 
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    actual enum class LutFormat { INTEGER, FLOAT }
 }

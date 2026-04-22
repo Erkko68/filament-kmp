@@ -31,11 +31,20 @@ actual class SkinningBuffer internal constructor(internal var nativeHandle: CPoi
     actual fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
         matrices.usePinned { pinned ->
             FilaSkinningBuffer_setBonesMat4f(
-                nativeHandle,
-                engine.nativeHandle,
+                nativeHandle, engine.nativeHandle,
                 pinned.addressOf(0),
-                boneCount.toULong(),
-                offset.toULong()
+                boneCount.toULong(), offset.toULong()
+            )
+        }
+    }
+
+    actual fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int) {
+        // Each bone is 8 floats: [qx,qy,qz,qw, tx,ty,tz,1] — matches FilaBone memory layout.
+        bones.usePinned { pinned ->
+            FilaSkinningBuffer_setBonesQuaternions(
+                nativeHandle, engine.nativeHandle,
+                pinned.addressOf(0).reinterpret(),
+                boneCount.toULong(), offset.toULong()
             )
         }
     }

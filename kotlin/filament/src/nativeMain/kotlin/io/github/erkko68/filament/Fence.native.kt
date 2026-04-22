@@ -15,4 +15,12 @@ actual class Fence internal constructor(internal var nativeHandle: CPointer<Fila
     }
 
     actual fun getNativeObject(): Long = nativeHandle?.rawValue?.toLong() ?: 0L
+
+    actual companion object {
+        actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
+            val result = FilaFence_waitAndDestroy(fence.nativeHandle, mode.ordinal.toUInt())
+            fence.nativeHandle = null
+            return FenceStatus.values()[result.toInt() + 1]
+        }
+    }
 }

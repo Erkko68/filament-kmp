@@ -141,4 +141,12 @@ void FilaFilamentAsset_releaseSourceData(FilaFilamentAsset* asset) {
     ((FilamentAsset*) asset)->releaseSourceData();
 }
 
+FilaEngine* FilaFilamentAsset_getEngine(const FilaFilamentAsset* asset) {
+    return (FilaEngine*) ((const FilamentAsset*) asset)->getEngine();
+}
+
+FilaFilamentInstance* FilaFilamentAsset_getInstance(FilaFilamentAsset* asset) {
+    return (FilaFilamentInstance*) ((FilamentAsset*) asset)->getInstance();
+}
+
 }

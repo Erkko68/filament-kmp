@@ -6,9 +6,13 @@ expect class Skybox {
         fun showSun(show: Boolean): Builder
         fun intensity(envIntensity: Float): Builder
         fun color(r: Float, g: Float, b: Float, a: Float): Builder
+        fun priority(priority: Int): Builder
         fun build(engine: Engine): Skybox
     }
 
     fun setColor(r: Float, g: Float, b: Float, a: Float)
     fun getIntensity(): Float
+    fun setLayerMask(select: Int, value: Int)
+    fun getLayerMask(): Int
+    fun getTexture(): Texture?
 }

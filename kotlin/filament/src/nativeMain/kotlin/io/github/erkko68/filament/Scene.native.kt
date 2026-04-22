@@ -30,6 +30,7 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
     }
 
     actual fun removeEntity(entity: Int) = FilaScene_remove(nativeHandle, entity.toUInt())
+    actual fun remove(entity: Int) = FilaScene_remove(nativeHandle, entity.toUInt())
 
     actual fun removeEntities(entities: IntArray) {
         entities.usePinned { pinned ->

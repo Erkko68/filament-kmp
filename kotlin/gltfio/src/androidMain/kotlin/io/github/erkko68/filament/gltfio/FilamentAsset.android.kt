@@ -62,4 +62,8 @@ actual class FilamentAsset internal constructor(
     actual fun releaseSourceData() {
         nativeObject.releaseSourceData()
     }
+
+    actual fun getEngine(): Engine = Engine(nativeObject.engine)
+
+    actual fun getInstance(): FilamentInstance = resolveKnownInstances().first()
 }
