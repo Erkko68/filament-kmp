@@ -6,6 +6,8 @@ actual object HDRLoader {
         buffer: ByteArray,
         internalFormat: io.github.erkko68.filament.Texture.InternalFormat
     ): io.github.erkko68.filament.Texture? {
-        TODO("Not yet implemented")
+        // HDR (Radiance/Rgbe) format loading is not directly supported in the JS Filament bindings.
+        // Consider converting HDR files to KTX2 format for use in web applications.
+        return null
     }
 }

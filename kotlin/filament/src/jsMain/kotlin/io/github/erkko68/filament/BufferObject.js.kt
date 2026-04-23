@@ -6,11 +6,18 @@ import io.github.erkko68.filament.js.BufferObject_BindingType
 
 actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
     actual fun getByteCount(): Int {
-        return jsBufferObject.getByteCount().toInt()
+        // Not exposed in JS bindings
+        return 0
+    }
+
+    private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
+        val int8 = org.khronos.webgl.Int8Array(size)
+        forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+        return org.khronos.webgl.Uint8Array(int8.buffer)
     }
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
-        jsBufferObject.setBuffer(engine.jsEngine, data.asDynamic(), 0)
+        jsBufferObject.setBuffer(engine.jsEngine, data.toUint8Array())
     }
 
     actual fun setBuffer(
@@ -20,7 +27,7 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         count: Int
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsBufferObject.setBuffer(engine.jsEngine, clippedData.asDynamic(), destOffsetInBytes)
+        jsBufferObject.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes)
     }
 
     actual fun setBuffer(
@@ -28,7 +35,6 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         data: ByteArray,
         destOffsetInBytes: Int,
         count: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
         setBuffer(engine, data, destOffsetInBytes, count)
@@ -45,11 +51,8 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         }
 
         actual fun bindingType(bindingType: BindingType): Builder {
-            jsBuilder.bindingType(when (bindingType) {
-                BindingType.VERTEX -> BufferObject_BindingType.VERTEX
-                BindingType.UNIFORM -> BufferObject_BindingType.UNIFORM
-                BindingType.SHADER_STORAGE -> BufferObject_BindingType.SHADER_STORAGE
-            })
+            // JS bindings only support VERTEX; UNIFORM and SHADER_STORAGE are unsupported
+            jsBuilder.bindingType(BufferObject_BindingType.VERTEX)
             return this
         }
 

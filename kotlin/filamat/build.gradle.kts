@@ -86,12 +86,6 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
-            dependencies {
-                api(project(":java:filamat"))
-            }
-        }
-
         val jsMain by getting {
             dependencies {
                 implementation(project(":js"))

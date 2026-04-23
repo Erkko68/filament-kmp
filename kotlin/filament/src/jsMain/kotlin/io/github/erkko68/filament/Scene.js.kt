@@ -50,6 +50,10 @@ actual class Scene(internal val jsScene: JSScene) {
         }
     }
 
+    actual fun remove(entity: Int) {
+        removeEntity(entity)
+    }
+
     actual fun removeEntities(entities: IntArray) {
         val toRemove = mutableListOf<JSEntity>()
         for (entity in entities) {

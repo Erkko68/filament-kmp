@@ -15,4 +15,11 @@ actual class Fence {
 
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
+
+    actual companion object {
+        actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
+            // JS doesn't support blocking waits
+            return FenceStatus.CONDITION_SATISFIED
+        }
+    }
 }

@@ -7,11 +7,18 @@ import io.github.erkko68.filament.js.IndexBuffer_IndexType
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer) {
     actual fun getIndexCount(): Int {
-        return jsIndexBuffer.getIndexCount().toInt()
+        // Not exposed in JS bindings
+        return 0
+    }
+
+    private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
+        val int8 = org.khronos.webgl.Int8Array(size)
+        forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+        return org.khronos.webgl.Uint8Array(int8.buffer)
     }
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
-        jsIndexBuffer.setBuffer(engine.jsEngine, data.asDynamic())
+        jsIndexBuffer.setBuffer(engine.jsEngine, data.toUint8Array())
     }
 
     actual fun setBuffer(
@@ -21,7 +28,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer) {
         count: Int
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.asDynamic(), destOffsetInBytes)
+        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes)
     }
 
     actual fun setBuffer(
@@ -29,11 +36,10 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer) {
         data: ByteArray,
         destOffsetInBytes: Int,
         count: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.asDynamic(), destOffsetInBytes)
+        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes)
         callback?.invoke()
     }
 

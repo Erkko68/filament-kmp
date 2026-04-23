@@ -8,7 +8,7 @@ import io.github.erkko68.filament.js.PixelDataType
 import io.github.erkko68.filament.js.Texture_Builder as JSTextureBuilder
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Texture(internal val jsTexture: JSTexture) {
+actual class Texture(val jsTexture: JSTexture) {
     private var _width = 0
     private var _height = 0
     private var _depth = 0
@@ -141,7 +141,6 @@ actual class Texture(internal val jsTexture: JSTexture) {
         actual val left: Int,
         actual val top: Int,
         actual val stride: Int,
-        actual val handler: Any?,
         actual val callback: (() -> Unit)?
     ) {
         internal val jsPbd: JSPixelBufferDescriptor = js("new Filament.PixelBufferDescriptor(storage, mapFormat(format), mapType(type))").unsafeCast<JSPixelBufferDescriptor>()
@@ -192,8 +191,8 @@ actual class Texture(internal val jsTexture: JSTexture) {
         height: Int,
         descriptor: PixelBufferDescriptor
     ) {
-        // Offset setImage in JS bindings often takes Engine, level, x, y, w, h, pbd
-        jsTexture.setImage(engine.jsEngine, level, xoffset, yoffset, width, height, descriptor.jsPbd)
+        // JS bindings only support setImage(engine, level, pbd); sub-region upload not available
+        jsTexture.setImage(engine.jsEngine, level, descriptor.jsPbd)
     }
 
     actual fun setImage(
@@ -257,6 +256,24 @@ actual class Texture(internal val jsTexture: JSTexture) {
 
         actual fun getMaxArrayTextureLayers(engine: Engine): Int {
             return 256
+        }
+
+        actual fun computeDataSize(
+            format: Format,
+            type: Type,
+            stride: Int,
+            height: Int,
+            alignment: Int
+        ): Int {
+            val bytesPerPixel = when (type) {
+                Type.UBYTE, Type.BYTE -> 1
+                Type.USHORT, Type.SHORT, Type.HALF -> 2
+                Type.UINT, Type.INT, Type.FLOAT -> 4
+                else -> 1
+            }
+            val rowSize = stride * bytesPerPixel
+            val alignedRowSize = if (alignment > 1) ((rowSize + alignment - 1) / alignment) * alignment else rowSize
+            return alignedRowSize * height
         }
     }
 }

@@ -1,11 +1,11 @@
 package io.github.erkko68.filament.filamat
 
-actual class MaterialPackage {
+actual class MaterialPackage(private val buffer: ByteArray = ByteArray(0)) {
     actual fun getBuffer(): ByteArray {
-        TODO("Not yet implemented")
+        return buffer
     }
 
     actual fun isValid(): Boolean {
-        TODO("Not yet implemented")
+        return buffer.isNotEmpty()
     }
 }

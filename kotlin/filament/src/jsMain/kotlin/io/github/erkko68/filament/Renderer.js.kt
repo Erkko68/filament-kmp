@@ -2,18 +2,12 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.js.Renderer as JSRenderer
 import io.github.erkko68.filament.js.`Renderer_ClearOptions` as JSRendererClearOptions
-import io.github.erkko68.filament.js.Renderer_DisplayInfo as JSRendererDisplayInfo
-import io.github.erkko68.filament.js.Renderer_FrameRateOptions as JSRendererFrameRateOptions
 
-actual class Renderer(internal val jsRenderer: JSRenderer) {
+actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
     private var _userTime: Double = 0.0
     private var _displayInfo = DisplayInfo()
     private var _frameRateOptions = FrameRateOptions()
     private var _clearOptions = ClearOptions()
-
-    actual fun render(swapChain: SwapChain, view: View) {
-        jsRenderer.render(swapChain.jsSwapChain, view.jsView)
-    }
 
     actual fun getDisplayInfo(): DisplayInfo {
         return _displayInfo
@@ -32,19 +26,12 @@ actual class Renderer(internal val jsRenderer: JSRenderer) {
         _clearOptions = options
         val jsOptions = js("{}").unsafeCast<JSRendererClearOptions>()
         jsOptions.clearColor = options.clearColor.toTypedArray() as Array<Number>
-        jsOptions.clearStencil = options.clearStencil
         jsOptions.clear = options.clear
-        jsOptions.discardStart = options.discardStart
-        jsOptions.discardEnd = options.discardEnd
         jsRenderer.setClearOptions(jsOptions)
     }
 
     actual fun getClearOptions(): ClearOptions {
         return _clearOptions
-    }
-
-    actual fun renderView(view: View) {
-        jsRenderer.renderView(view.jsView)
     }
 
     actual fun shouldRenderFrame(): Boolean {
@@ -53,13 +40,13 @@ actual class Renderer(internal val jsRenderer: JSRenderer) {
 
     actual fun beginFrame(
         swapChain: SwapChain,
-        frameTime: Long
+        frameTimeNanos: Long
     ): Boolean {
-        // JS beginFrame doesn't take frameTime in current bindings
+        // JS beginFrame doesn't take frameTimeNanos in current bindings
         return jsRenderer.beginFrame(swapChain.jsSwapChain)
     }
 
-    actual fun setPresentationTime(frameTime: Long) {
+    actual fun setPresentationTime(monotonicClockNanos: Long) {
     }
 
     actual fun endFrame() {
@@ -76,6 +63,83 @@ actual class Renderer(internal val jsRenderer: JSRenderer) {
 
     actual fun getFrameToSkipCount(): Int {
         return 0
+    }
+
+    actual fun getEngine(): Engine {
+        return _engine ?: throw UnsupportedOperationException("Engine reference not available - Renderer was not created with Engine context")
+    }
+
+    actual fun setDisplayInfo(info: DisplayInfo) {
+        _displayInfo = info
+        // Renderer_DisplayInfo not in JS bindings
+    }
+
+    actual fun setVsyncTime(steadyClockTimeNano: Long) {
+        val jsRend = jsRenderer.asDynamic()
+        if (jsRend.setVsyncTime != null) {
+            jsRend.setVsyncTime(steadyClockTimeNano)
+        }
+    }
+
+    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
+        val jsRend = jsRenderer.asDynamic()
+        if (jsRend.skipFrame != null) {
+            jsRend.skipFrame(vsyncSteadyClockTimeNano)
+        }
+    }
+
+    actual fun render(view: View) {
+        jsRenderer.renderView(view.jsView)
+    }
+
+    actual fun renderStandaloneView(view: View) {
+        jsRenderer.renderView(view.jsView)
+    }
+
+    actual fun copyFrame(
+        dstSwapChain: SwapChain,
+        dstViewport: Viewport,
+        srcViewport: Viewport,
+        flags: Int
+    ) {
+        val jsRend = jsRenderer.asDynamic()
+        if (jsRend.copyFrame != null) {
+            jsRend.copyFrame(dstSwapChain.jsSwapChain, dstViewport, srcViewport, flags)
+        }
+    }
+
+    actual fun readPixels(
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        buffer: Texture.PixelBufferDescriptor
+    ) {
+        val jsRend = jsRenderer.asDynamic()
+        if (jsRend.readPixels != null) {
+            jsRend.readPixels(xoffset, yoffset, width, height, buffer)
+        }
+    }
+
+    actual fun readPixels(
+        renderTarget: RenderTarget,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        buffer: Texture.PixelBufferDescriptor
+    ) {
+        val jsRend = jsRenderer.asDynamic()
+        if (jsRend.readPixels != null) {
+            jsRend.readPixels(renderTarget.jsRenderTarget, xoffset, yoffset, width, height, buffer)
+        }
+    }
+
+    actual fun skipNextFrames(frameCount: Int) {
+        val jsRend = jsRenderer.asDynamic()
+        if (jsRend.skipNextFrames != null) {
+            jsRend.skipNextFrames(frameCount)
+        }
     }
 
     actual class DisplayInfo {
@@ -101,10 +165,8 @@ actual class Renderer(internal val jsRenderer: JSRenderer) {
 
     actual class ClearOptions {
         actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
-        actual var clearStencil: Boolean = false
         actual var clear: Boolean = false
-        actual var discardStart: Boolean = false
-        actual var discardEnd: Boolean = false
+        actual var discard: Boolean = false
     }
 
     actual companion object {

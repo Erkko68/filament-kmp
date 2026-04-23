@@ -24,14 +24,16 @@ actual interface MaterialProvider {
     actual fun destroy()
 }
 
-actual class UbershaderProvider : MaterialProvider {
+actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
+    private val materials = mutableListOf<Material>()
+
     actual override fun createMaterialInstance(
         config: MaterialKey,
         uvmap: IntArray,
         label: String?,
         extras: String?
     ): MaterialInstance? {
-        TODO("Not yet implemented")
+        return null
     }
 
     actual override fun getMaterial(
@@ -39,24 +41,22 @@ actual class UbershaderProvider : MaterialProvider {
         uvmap: IntArray,
         label: String?
     ): Material? {
-        TODO("Not yet implemented")
+        return null
     }
 
     actual override fun getMaterials(): Array<Material> {
-        TODO("Not yet implemented")
+        return materials.toTypedArray()
     }
 
     actual override fun needsDummyData(attrib: Int): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     actual override fun destroyMaterials() {
+        materials.clear()
     }
 
     actual override fun destroy() {
-    }
-
-    actual constructor(engine: Engine) {
-        TODO("Not yet implemented")
+        materials.clear()
     }
 }

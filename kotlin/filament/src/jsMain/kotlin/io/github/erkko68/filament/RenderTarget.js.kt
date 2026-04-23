@@ -76,7 +76,7 @@ actual class RenderTarget(internal val jsRenderTarget: JSRenderTarget) {
         private fun mapAttachment(attachment: AttachmentPoint): RenderTarget_AttachmentPoint {
             return when (attachment) {
                 AttachmentPoint.COLOR -> RenderTarget_AttachmentPoint.COLOR
-                AttachmentPoint.COLOR1 -> RenderTarget_AttachmentPoint.COLOR0 // JS might only have COLOR (0)
+                AttachmentPoint.COLOR1 -> RenderTarget_AttachmentPoint.COLOR // JS only has COLOR and DEPTH
                 else -> RenderTarget_AttachmentPoint.DEPTH
             }
         }

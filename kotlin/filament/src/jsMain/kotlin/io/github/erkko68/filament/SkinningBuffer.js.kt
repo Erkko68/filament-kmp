@@ -14,6 +14,15 @@ actual class SkinningBuffer(internal val jsSkinningBuffer: Any? = null) {
         // In JS, skinning is handled via RenderableManager.Builder
     }
 
+    actual fun setBonesAsQuaternions(
+        engine: Engine,
+        bones: FloatArray,
+        boneCount: Int,
+        offset: Int
+    ) {
+        // Not exposed in JS bindings
+    }
+
     actual class Builder {
         actual fun boneCount(boneCount: Int): Builder {
             return this

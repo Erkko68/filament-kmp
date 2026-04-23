@@ -5,7 +5,26 @@ import io.github.erkko68.filament.js.`SurfaceOrientation_Builder` as JSSurfaceOr
 import org.khronos.webgl.Float32Array
 import org.khronos.webgl.Uint16Array
 import org.khronos.webgl.Uint32Array
-import org.khronos.webgl.Int16Array
+import org.khronos.webgl.get
+import org.khronos.webgl.set
+
+private fun FloatArray.toFloat32Array(): Float32Array {
+    val fa = Float32Array(size)
+    forEachIndexed { i, v -> fa[i] = v }
+    return fa
+}
+
+private fun ShortArray.toUint16Array(): Uint16Array {
+    val ua = Uint16Array(size)
+    forEachIndexed { i, v -> ua.asDynamic()[i] = v.toInt() }
+    return ua
+}
+
+private fun IntArray.toUint32Array(): Uint32Array {
+    val ua = Uint32Array(size)
+    forEachIndexed { i, v -> ua[i] = v }
+    return ua
+}
 
 actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrientation) {
     actual class Builder {
@@ -16,23 +35,23 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
             return this
         }
 
-        actual fun normals(buffer: Any, stride: Int): Builder {
-            jsBuilder.normals(buffer.unsafeCast<Float32Array>(), stride)
+        actual fun normals(buffer: FloatArray, stride: Int): Builder {
+            jsBuilder.normals(buffer.toFloat32Array(), stride)
             return this
         }
 
-        actual fun tangents(buffer: Any, stride: Int): Builder {
-            // JS Builder doesn't have tangents() directly
+        actual fun tangents(buffer: FloatArray, stride: Int): Builder {
+            // Not in JS SurfaceOrientation_Builder bindings
             return this
         }
 
-        actual fun uvs(buffer: Any, stride: Int): Builder {
-            jsBuilder.uvs(buffer.unsafeCast<Float32Array>(), stride)
+        actual fun uvs(buffer: FloatArray, stride: Int): Builder {
+            jsBuilder.uvs(buffer.toFloat32Array(), stride)
             return this
         }
 
-        actual fun positions(buffer: Any, stride: Int): Builder {
-            jsBuilder.positions(buffer.unsafeCast<Float32Array>(), stride)
+        actual fun positions(buffer: FloatArray, stride: Int): Builder {
+            jsBuilder.positions(buffer.toFloat32Array(), stride)
             return this
         }
 
@@ -41,13 +60,13 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
             return this
         }
 
-        actual fun triangles16(buffer: Any): Builder {
-            jsBuilder.triangles16(buffer.unsafeCast<Uint16Array>())
+        actual fun triangles16(buffer: ShortArray): Builder {
+            jsBuilder.triangles16(buffer.toUint16Array())
             return this
         }
 
-        actual fun triangles32(buffer: Any): Builder {
-            jsBuilder.triangles32(buffer.unsafeCast<Uint32Array>())
+        actual fun triangles32(buffer: IntArray): Builder {
+            jsBuilder.triangles32(buffer.toUint32Array())
             return this
         }
 
@@ -57,26 +76,26 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
     }
 
     actual fun getVertexCount(): Int {
-        // Not in JS bindings, returning 0
+        // Not in JS bindings
         return 0
     }
 
-    actual fun getQuatsAsFloat(buffer: Any, count: Int) {
+    actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
         val quats = jsSurfaceOrientation.getQuatsFloat4(count)
-        val dst = buffer.unsafeCast<Float32Array>()
-        dst.set(quats)
+        val n = minOf(count * 4, buffer.size)
+        for (i in 0 until n) buffer[i] = quats[i]
     }
 
-    actual fun getQuatsAsHalf(buffer: Any, count: Int) {
+    actual fun getQuatsAsHalf(buffer: ShortArray, count: Int) {
         val quats = jsSurfaceOrientation.getQuatsHalf4(count)
-        val dst = buffer.unsafeCast<Uint16Array>()
-        dst.set(quats)
+        val n = minOf(count * 4, buffer.size)
+        for (i in 0 until n) buffer[i] = quats[i].toShort()
     }
 
-    actual fun getQuatsAsShort(buffer: Any, count: Int) {
+    actual fun getQuatsAsShort(buffer: ShortArray, count: Int) {
         val quats = jsSurfaceOrientation.getQuats(count)
-        val dst = buffer.unsafeCast<Int16Array>()
-        dst.set(quats)
+        val n = minOf(count * 4, buffer.size)
+        for (i in 0 until n) buffer[i] = quats[i]
     }
 
     actual fun destroy() {

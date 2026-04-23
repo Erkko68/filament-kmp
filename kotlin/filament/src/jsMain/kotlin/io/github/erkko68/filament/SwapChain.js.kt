@@ -7,10 +7,10 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
         return null
     }
 
-    actual fun setFrameCompletedCallback(handler: Any?, callback: () -> Unit) {
+    actual fun setFrameCompletedCallback(callback: () -> Unit) {
     }
 
-    actual fun setFrameScheduledCallback(handler: Any?, callback: () -> Unit) {
+    actual fun setFrameScheduledCallback(callback: () -> Unit) {
     }
 
     actual fun isFrameScheduledCallbackSet(): Boolean {

@@ -86,11 +86,6 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
-            dependencies {
-                api(project(":java:filament-utils"))
-            }
-        }
 
         val jsMain by getting {
             dependencies {

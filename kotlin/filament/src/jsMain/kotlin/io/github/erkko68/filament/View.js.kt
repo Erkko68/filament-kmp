@@ -10,7 +10,6 @@ actual class View(internal val jsView: JSView) {
     private var _visibleLayersValues: Int = 0
     private var _dithering: Dithering = Dithering.NONE
     private var _antiAliasing: AntiAliasing = AntiAliasing.NONE
-    private var _ambientOcclusion: AmbientOcclusion = AmbientOcclusion.NONE
     private var _dynamicResolutionOptions = DynamicResolutionOptions()
     private var _renderQuality = RenderQuality()
     private var _bloomOptions = BloomOptions()
@@ -38,7 +37,7 @@ actual class View(internal val jsView: JSView) {
 
     actual fun setScene(scene: Scene?) {
         _scene = scene
-        jsView.setScene(scene?.jsScene)
+        if (scene != null) jsView.setScene(scene.jsScene)
     }
 
     actual fun getScene(): Scene? {
@@ -47,7 +46,7 @@ actual class View(internal val jsView: JSView) {
 
     actual fun setCamera(camera: Camera?) {
         _camera = camera
-        jsView.setCamera(camera?.jsCamera)
+        if (camera != null) jsView.setCamera(camera.jsCamera)
     }
 
     actual fun getCamera(): Camera? {
@@ -103,12 +102,13 @@ actual class View(internal val jsView: JSView) {
     }
 
     actual fun isPostProcessingEnabled(): Boolean {
-        return jsView.isPostProcessingEnabled()
+        // Not exposed in JS bindings
+        return true
     }
 
-    actual fun setAntiAliasing(antialiasing: AntiAliasing) {
-        _antiAliasing = antialiasing
-        jsView.setAntiAliasing(when (antialiasing) {
+    actual fun setAntiAliasing(type: AntiAliasing) {
+        _antiAliasing = type
+        jsView.setAntiAliasing(when (type) {
             AntiAliasing.NONE -> io.github.erkko68.filament.js.View_AntiAliasing.NONE
             AntiAliasing.FXAA -> io.github.erkko68.filament.js.View_AntiAliasing.FXAA
         })
@@ -224,7 +224,7 @@ actual class View(internal val jsView: JSView) {
         jsOptions.filter = when (options.filter) {
             View.DepthOfFieldOptions.Filter.NONE -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.NONE
             View.DepthOfFieldOptions.Filter.MEDIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.MEDIAN
-            View.DepthOfFieldOptions.Filter.GAUSSIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.GAUSSIAN
+            View.DepthOfFieldOptions.Filter.GAUSSIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.MEDIAN // GAUSSIAN not in JS bindings
         }
         jsView.setDepthOfFieldOptions(jsOptions)
     }
@@ -246,18 +246,6 @@ actual class View(internal val jsView: JSView) {
 
     actual fun getVignetteOptions(): VignetteOptions {
         return _vignetteOptions
-    }
-
-    actual fun setAmbientOcclusion(ambientOcclusion: AmbientOcclusion) {
-        _ambientOcclusion = ambientOcclusion
-        jsView.setAmbientOcclusion(when (ambientOcclusion) {
-            AmbientOcclusion.NONE -> io.github.erkko68.filament.js.View_AmbientOcclusion.NONE
-            AmbientOcclusion.SSAO -> io.github.erkko68.filament.js.View_AmbientOcclusion.SSAO
-        })
-    }
-
-    actual fun getAmbientOcclusion(): AmbientOcclusion {
-        return _ambientOcclusion
     }
 
     actual fun setAmbientOcclusionOptions(options: AmbientOcclusionOptions) {
@@ -318,7 +306,7 @@ actual class View(internal val jsView: JSView) {
 
     actual fun setRenderTarget(target: RenderTarget?) {
         _renderTarget = target
-        jsView.setRenderTarget(target?.jsRenderTarget)
+        if (target != null) jsView.setRenderTarget(target.jsRenderTarget)
     }
 
     actual fun getRenderTarget(): RenderTarget? {
@@ -413,19 +401,19 @@ actual class View(internal val jsView: JSView) {
     }
 
     actual fun setFrustumCullingEnabled(enabled: Boolean) {
-        jsView.setFrustumCullingEnabled(enabled)
+        // Not in JS bindings
     }
 
     actual fun isFrustumCullingEnabled(): Boolean {
-        return jsView.isFrustumCullingEnabled()
+        return true
     }
 
     actual fun setShadowingEnabled(enabled: Boolean) {
-        jsView.setShadowingEnabled(enabled)
+        // Not in JS bindings
     }
 
     actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) {
-        jsView.setScreenSpaceRefractionEnabled(enabled)
+        // Not in JS bindings
     }
 
     actual fun setStencilBufferEnabled(enabled: Boolean) {
@@ -437,11 +425,11 @@ actual class View(internal val jsView: JSView) {
     }
 
     actual fun setFrontFaceWindingInverted(inverted: Boolean) {
-        jsView.setFrontFaceWindingInverted(inverted)
+        // Not in JS bindings
     }
 
     actual fun isFrontFaceWindingInverted(): Boolean {
-        return jsView.isFrontFaceWindingInverted()
+        return false
     }
 
     actual fun setTransparentPickingEnabled(enabled: Boolean) {
@@ -469,19 +457,37 @@ actual class View(internal val jsView: JSView) {
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
     }
 
-    actual fun pick(
-        x: Int,
-        y: Int,
-        handler: (Int, Int, Int, Float, Float, Float) -> Unit
-    ) {
+    actual fun setColorGrading(colorGrading: ColorGrading?) {
+        if (colorGrading != null) jsView.setColorGrading(colorGrading.jsColorGrading)
+    }
+
+    actual fun getColorGrading(): ColorGrading? {
+        val jsColorGrading = jsView.asDynamic().getColorGrading()
+        return if (jsColorGrading != null) ColorGrading(jsColorGrading) else null
+    }
+
+    actual fun getLastDynamicResolutionScale(): FloatArray {
+        return floatArrayOf(1.0f, 1.0f)
+    }
+
+    actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         jsView.pick(x, y) { result ->
-            handler(result.renderable.toInt(), 0, 0, result.fragCoords[0].toFloat(), result.fragCoords[1].toFloat(), result.fragCoords[2].toFloat())
+            callback(PickingQueryResult(
+                result.renderable.toInt(),
+                result.depth.toFloat(),
+                floatArrayOf(result.fragCoords[0].toFloat(), result.fragCoords[1].toFloat(), result.fragCoords[2].toFloat())
+            ))
         }
     }
 
+    actual class PickingQueryResult actual constructor(
+        actual val renderable: Int,
+        actual val depth: Float,
+        actual val fragCoords: FloatArray
+    )
+
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class AntiAliasing { NONE, FXAA }
-    actual enum class AmbientOcclusion { NONE, SSAO }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }

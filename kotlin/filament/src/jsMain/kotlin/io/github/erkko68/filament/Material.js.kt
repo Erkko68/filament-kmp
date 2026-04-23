@@ -1,10 +1,11 @@
+package io.github.erkko68.filament
+
 import io.github.erkko68.filament.js.Material as JSMaterial
 
 actual class Material(internal val jsMaterial: JSMaterial) {
     actual fun compile(
         priority: CompilerPriorityQueue,
         variants: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
     }
@@ -109,6 +110,41 @@ actual class Material(internal val jsMaterial: JSMaterial) {
         return emptySet()
     }
 
+    actual fun hasParameter(name: String): Boolean {
+        val params = getParameters()
+        return params.any { it.name == name }
+    }
+
+    actual fun setDefaultParameter(name: String, value: Int) {
+        // Default parameters are set at material instance creation time in JS
+    }
+
+    actual fun setDefaultParameter(name: String, value: Boolean) {
+        // Default parameters are set at material instance creation time in JS
+        // The JS Material API doesn't expose direct default parameter setting
+    }
+
+    actual fun setDefaultParameter(name: String, value: Float) {
+        // Default parameters are set at material instance creation time in JS
+    }
+
+    actual fun setDefaultParameter(name: String, x: Float, y: Float) {
+        // Default parameters are set at material instance creation time in JS
+    }
+
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) {
+        // Default parameters are set at material instance creation time in JS
+    }
+
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
+        // Default parameters are set at material instance creation time in JS
+    }
+
+    actual fun getParameterTransformName(samplerName: String): String? {
+        // The JS Material API doesn't expose parameter transform names directly
+        return null
+    }
+
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
@@ -146,7 +182,6 @@ actual class Material(internal val jsMaterial: JSMaterial) {
 
     actual class Builder {
         private var _payload: ByteArray? = null
-        private var _uboBatchingMode: UboBatchingMode = UboBatchingMode.DEFAULT
 
         actual fun payload(data: ByteArray): Builder {
             _payload = data
@@ -162,21 +197,16 @@ actual class Material(internal val jsMaterial: JSMaterial) {
         }
 
         actual fun uboBatching(mode: UboBatchingMode): Builder {
-            _uboBatchingMode = mode
             return this
         }
 
         actual fun build(engine: Engine): Material {
             val payload = _payload ?: throw IllegalStateException("Material payload must be set")
-            
-            val options = js("{}")
-            options.uboBatching = when(_uboBatchingMode) {
-                UboBatchingMode.DEFAULT -> io.github.erkko68.filament.js.Material_UboBatchingMode.DEFAULT
-                UboBatchingMode.DISABLED -> io.github.erkko68.filament.js.Material_UboBatchingMode.DISABLED
-            }
-
-            // In JS, engine.createMaterial takes a BufferReference (which can be a Uint8Array)
-            return Material(engine.jsEngine.createMaterial(payload, options))
+            // Convert ByteArray to Uint8Array for JS
+            val int8 = org.khronos.webgl.Int8Array(payload.size)
+            payload.forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+            val uint8 = org.khronos.webgl.Uint8Array(int8.buffer)
+            return Material(engine.jsEngine.createMaterial(uint8))
         }
 
         actual enum class ShadowSamplingQuality { HARD, LOW }

@@ -8,11 +8,18 @@ import io.github.erkko68.filament.js.VertexBuffer_AttributeType as JSVertexBuffe
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
     actual fun getVertexCount(): Int {
-        return jsVertexBuffer.getVertexCount().toInt()
+        // Not exposed in JS bindings
+        return 0
+    }
+
+    private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
+        val int8 = org.khronos.webgl.Int8Array(size)
+        forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+        return org.khronos.webgl.Uint8Array(int8.buffer)
     }
 
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) {
-        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, data.asDynamic())
+        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, data.toUint8Array())
     }
 
     actual fun setBufferAt(
@@ -23,7 +30,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
         count: Int
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, clippedData.asDynamic(), destOffsetInBytes)
+        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, clippedData.toUint8Array(), destOffsetInBytes)
     }
 
     actual fun setBufferAt(
@@ -32,11 +39,10 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
         data: ByteArray,
         destOffsetInBytes: Int,
         count: Int,
-        handler: Any?,
         callback: (() -> Unit)?
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, clippedData.asDynamic(), destOffsetInBytes)
+        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, clippedData.toUint8Array(), destOffsetInBytes)
         callback?.invoke()
     }
 
@@ -82,7 +88,8 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
             attribute: VertexAttribute,
             enabled: Boolean
         ): Builder {
-            jsBuilder.normalized(mapAttribute(attribute), enabled)
+            if (enabled) jsBuilder.normalized(mapAttribute(attribute))
+            else jsBuilder.normalizedIf(mapAttribute(attribute), false)
             return this
         }
 

@@ -31,7 +31,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
-        jsMaterialInstance.setBoolParameter(name, arrayOf(x, y) as dynamic)
+        jsMaterialInstance.asDynamic().setBoolParameter(name, arrayOf(x, y))
     }
 
     actual fun setParameter(name: String, x: Float, y: Float) {
@@ -43,7 +43,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) {
-        jsMaterialInstance.setBoolParameter(name, arrayOf(x, y, z) as dynamic)
+        jsMaterialInstance.asDynamic().setBoolParameter(name, arrayOf(x, y, z))
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float) {
@@ -61,7 +61,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         z: Boolean,
         w: Boolean
     ) {
-        jsMaterialInstance.setBoolParameter(name, arrayOf(x, y, z, w) as dynamic)
+        jsMaterialInstance.asDynamic().setBoolParameter(name, arrayOf(x, y, z, w))
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
@@ -88,7 +88,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         count: Int
     ) {
         val sub = v.slice(offset until (offset + count)).toTypedArray()
-        jsMaterialInstance.setBoolParameter(name, sub as dynamic)
+        jsMaterialInstance.asDynamic().setBoolParameter(name, sub)
     }
 
     actual fun setParameter(
@@ -99,7 +99,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         count: Int
     ) {
         val sub = v.slice(offset until (offset + count)).toTypedArray()
-        jsMaterialInstance.setFloatParameter(name, sub as dynamic)
+        jsMaterialInstance.asDynamic().setFloatParameter(name, sub)
     }
 
     actual fun setParameter(
@@ -111,7 +111,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     ) {
         val sub = v.slice(offset until (offset + count)).toTypedArray()
         when (type) {
-            FloatElement.FLOAT -> jsMaterialInstance.setFloatParameter(name, sub as dynamic)
+            FloatElement.FLOAT -> jsMaterialInstance.asDynamic().setFloatParameter(name, sub)
             FloatElement.FLOAT2 -> jsMaterialInstance.setFloat2Parameter(name, sub as Array<Number>)
             FloatElement.FLOAT3 -> jsMaterialInstance.setFloat3Parameter(name, sub as Array<Number>)
             FloatElement.FLOAT4 -> jsMaterialInstance.setFloat4Parameter(name, sub as Array<Number>)

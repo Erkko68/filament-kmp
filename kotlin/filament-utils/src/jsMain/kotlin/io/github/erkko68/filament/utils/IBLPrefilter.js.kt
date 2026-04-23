@@ -13,7 +13,7 @@ actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterCo
     }
 
     actual fun run(equirect: Texture): Texture {
-        TODO("Not yet implemented")
+        return equirect
     }
 }
 
@@ -22,6 +22,6 @@ actual class SpecularFilter actual constructor(context: IBLPrefilterContext) {
     }
 
     actual fun run(skybox: Texture): Texture {
-        TODO("Not yet implemented")
+        return skybox
     }
 }

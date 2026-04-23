@@ -5,7 +5,7 @@ import io.github.erkko68.filament.js.EntityManager as JSEntityManager
 import io.github.erkko68.filament.js.Entity as JSEntity
 import org.w3c.dom.HTMLCanvasElement
 
-actual class Engine private constructor(internal val jsEngine: JSEngine) {
+actual class Engine private constructor(val jsEngine: JSEngine) {
     actual fun isValid(): Boolean {
         return true
     }
@@ -15,7 +15,15 @@ actual class Engine private constructor(internal val jsEngine: JSEngine) {
     }
 
     actual fun getBackend(): Backend {
-        return Backend.WebGL
+        return Backend.WEBGPU
+    }
+
+    actual fun getSupportedFeatureLevel(): FeatureLevel {
+        return FeatureLevel.FEATURE_LEVEL_1
+    }
+
+    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel {
+        return FeatureLevel.FEATURE_LEVEL_1
     }
 
     actual fun getActiveFeatureLevel(): FeatureLevel {
@@ -72,7 +80,7 @@ actual class Engine private constructor(internal val jsEngine: JSEngine) {
         height: Int,
         flags: Long
     ): SwapChain {
-        return createSwapChain(Any())
+        return SwapChain(jsEngine.createSwapChain())
     }
 
     actual fun destroySwapChain(swapChain: SwapChain) {
@@ -88,7 +96,7 @@ actual class Engine private constructor(internal val jsEngine: JSEngine) {
     }
 
     actual fun createRenderer(): Renderer {
-        return Renderer(jsEngine.createRenderer())
+        return Renderer(jsEngine.createRenderer(), this)
     }
 
     actual fun destroyRenderer(renderer: Renderer) {
@@ -219,6 +227,10 @@ actual class Engine private constructor(internal val jsEngine: JSEngine) {
     actual fun unprotected() {
     }
 
+    actual fun enableAccurateTranslations() {
+        // Not needed for JS
+    }
+
     actual fun hasFeatureFlag(name: String): Boolean {
         return false
     }
@@ -230,6 +242,21 @@ actual class Engine private constructor(internal val jsEngine: JSEngine) {
     actual fun getFeatureFlag(name: String): Boolean {
         return false
     }
+
+    actual fun compile(
+        priority: CompilerPriorityQueue,
+        material: Material,
+        view: View,
+        shadowReceiver: FeatureState,
+        skinning: FeatureState,
+        callback: (() -> Unit)?
+    ) {
+        // Material compilation happens offline in JS
+        callback?.invoke()
+    }
+
+    actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
+    actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
 
     actual enum class Backend { DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP }
     actual enum class FeatureLevel { FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3 }

@@ -4,7 +4,7 @@ import io.github.erkko68.filament.js.IndirectLight as JSIndirectLight
 import io.github.erkko68.filament.js.`IndirectLight_Builder` as JSIndirectLightBuilder
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class IndirectLight(internal val jsIndirectLight: JSIndirectLight) {
+actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
     actual fun setIntensity(intensity: Float) {
         jsIndirectLight.setIntensity(intensity)
     }

@@ -1,3 +1,5 @@
+package io.github.erkko68.filament
+
 import io.github.erkko68.filament.js.RenderableManager as JSRenderableManager
 import io.github.erkko68.filament.js.`RenderableManager_Builder` as JSRenderableManagerBuilder
 import io.github.erkko68.filament.js.RenderableManager_PrimitiveType
@@ -35,7 +37,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         val center = jsBox.center.unsafeCast<Array<Number>>()
         val halfExtent = jsBox.halfExtent.unsafeCast<Array<Number>>()
         
-        val result = outBox ?: Box(floatArrayOf(0f, 0f, 0f), floatArrayOf(0f, 0f, 0f))
+        val result = outBox ?: Box()
         result.center[0] = center[0].toFloat()
         result.center[1] = center[1].toFloat()
         result.center[2] = center[2].toFloat()
@@ -98,6 +100,32 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
 
     actual fun isShadowCaster(instance: EntityInstance): Boolean {
         return jsRenderableManager.isShadowCaster(instance.unsafeCast<JSRenderableManagerInstance>())
+    }
+
+    actual fun setBonesAsMatrices(
+        instance: EntityInstance,
+        matrices: FloatArray,
+        boneCount: Int,
+        offset: Int
+    ) {
+        val boneMatrices = matrices.toTypedArray() as Array<Any>
+        jsRenderableManager.asDynamic().setBonesFromMatrices(instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset)
+    }
+
+    actual fun setBonesAsQuaternions(
+        instance: EntityInstance,
+        quaternions: FloatArray,
+        boneCount: Int,
+        offset: Int
+    ) {
+        // Not exposed in JS bindings
+    }
+
+    actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
+        val jsInst = jsRenderableManager.asDynamic()
+        if (jsInst.clearMaterialInstanceAt != null) {
+            jsInst.clearMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
+        }
     }
 
     actual fun isShadowReceiver(instance: EntityInstance): Boolean {
@@ -394,6 +422,10 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             channel: Int,
             enable: Boolean
         ): Builder {
+            return this
+        }
+
+        actual fun enableSkinningBuffers(enabled: Boolean): Builder {
             return this
         }
 

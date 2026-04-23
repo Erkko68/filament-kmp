@@ -8,10 +8,10 @@ actual open class ToneMapper(internal val jsToneMapping: ColorGrading_ToneMappin
     actual class ACES : ToneMapper(ColorGrading_ToneMapping.ACES)
     actual class ACESLegacy : ToneMapper(ColorGrading_ToneMapping.ACES_LEGACY)
     actual class Filmic : ToneMapper(ColorGrading_ToneMapping.FILMIC)
-    actual class PBRNeutralToneMapper : ToneMapper(ColorGrading_ToneMapping.asDynamic().PBR_NEUTRAL ?: ColorGrading_ToneMapping.ACES)
-    actual class GT7ToneMapper : ToneMapper(ColorGrading_ToneMapping.asDynamic().GT7 ?: ColorGrading_ToneMapping.ACES)
-    actual class Agx actual constructor(look: AgxLook) :
-        ToneMapper(ColorGrading_ToneMapping.asDynamic().AGX ?: ColorGrading_ToneMapping.ACES) {
+    // PBR_NEUTRAL, GT7, AGX not in JS bindings — fall back to ACES
+    actual class PBRNeutralToneMapper : ToneMapper(ColorGrading_ToneMapping.ACES)
+    actual class GT7ToneMapper : ToneMapper(ColorGrading_ToneMapping.ACES)
+    actual class Agx actual constructor(look: AgxLook) : ToneMapper(ColorGrading_ToneMapping.ACES) {
         actual enum class AgxLook { NONE, PUNCHY, GOLDEN }
     }
 
@@ -20,7 +20,7 @@ actual open class ToneMapper(internal val jsToneMapping: ColorGrading_ToneMappin
         midGrayIn: Float,
         midGrayOut: Float,
         hdrMax: Float
-    ) : ToneMapper(ColorGrading_ToneMapping.asDynamic().UBER ?: ColorGrading_ToneMapping.ACES) {
+    ) : ToneMapper(ColorGrading_ToneMapping.ACES) {
         actual var contrast: Float = contrast
         actual var midGrayIn: Float = midGrayIn
         actual var midGrayOut: Float = midGrayOut

@@ -18,6 +18,20 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             return this
         }
 
+        actual fun format(format: LutFormat): Builder {
+            val jsFormat = when (format) {
+                LutFormat.INTEGER -> io.github.erkko68.filament.js.ColorGrading_LutFormat.INTEGER
+                LutFormat.FLOAT -> io.github.erkko68.filament.js.ColorGrading_LutFormat.FLOAT
+            }
+            jsBuilder.format(jsFormat)
+            return this
+        }
+
+        actual fun dimensions(dim: Int): Builder {
+            jsBuilder.dimensions(dim)
+            return this
+        }
+
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
             jsBuilder.toneMapping(toneMapper.jsToneMapping)
             return this
@@ -126,4 +140,5 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
     }
 
     actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    actual enum class LutFormat { INTEGER, FLOAT }
 }

@@ -249,20 +249,4 @@ actual class Camera(internal val jsCamera: JSCamera) {
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }
 
-    actual companion object {
-        actual fun inverseProjection(projection: DoubleArray, out: DoubleArray?): DoubleArray {
-            val result = out ?: DoubleArray(16)
-            val res = JSCamera.inverseProjection(projection.toTypedArray() as Array<Number>) as Array<Double>
-            for (i in 0 until 16.coerceAtMost(res.size)) result[i] = res[i]
-            return result
-        }
-
-        actual fun computeEffectiveFocalLength(focalLength: Double, focusDistance: Double): Double {
-            return JSCamera.computeEffectiveFocalLength(focalLength, focusDistance).toDouble()
-        }
-
-        actual fun computeEffectiveFov(fovInDegrees: Double, focusDistance: Double): Double {
-            return JSCamera.computeEffectiveFov(fovInDegrees, focusDistance).toDouble()
-        }
-    }
 }

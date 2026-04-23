@@ -9,7 +9,8 @@ import io.github.erkko68.filament.js.LightManager_Instance as JSLightManagerInst
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
     actual fun getComponentCount(): Int {
-        return jsLightManager.getComponentCount().toInt()
+        // Not exposed in JS bindings
+        return 0
     }
 
     actual fun hasComponent(entity: Int): Boolean {
@@ -17,7 +18,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun getInstance(entity: Int): Int {
-        return jsLightManager.getInstance(entity.unsafeCast<JSEntity>()).toInt()
+        return jsLightManager.getInstance(entity.unsafeCast<JSEntity>()).unsafeCast<Int>()
     }
 
     actual fun destroy(entity: Int) {
@@ -142,22 +143,6 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         return true
     }
 
-    actual fun setShadowOptions(instance: Int, options: ShadowOptions) {
-        val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.LightManager_ShadowOptions>()
-        jsOptions.mapSize = options.mapSize
-        jsOptions.shadowCascades = options.shadowCascades
-        jsOptions.constantBias = options.constantBias
-        jsOptions.normalBias = options.normalBias
-        jsOptions.shadowFar = options.shadowFar
-        jsOptions.shadowNearHint = options.shadowNearHint
-        jsOptions.shadowFarHint = options.shadowFarHint
-        jsOptions.stable = options.stable
-        jsOptions.screenSpaceContactShadows = options.screenSpaceContactShadows
-        jsOptions.stepCount = options.stepCount
-        jsOptions.maxShadowDistance = options.maxShadowDistance
-        jsLightManager.setShadowOptions(instance.unsafeCast<JSLightManagerInstance>(), jsOptions)
-    }
-
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
     actual class ShadowOptions {
         actual var mapSize: Int = 512
@@ -200,7 +185,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         )
 
         actual fun lightChannel(channel: Int, enable: Boolean): Builder {
-            jsBuilder.lightChannel(channel, enable)
+            // Not exposed in JS LightManager.Builder bindings
             return this
         }
 
@@ -252,7 +237,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun intensity(watts: Float, efficiency: Float): Builder {
-            jsBuilder.intensityEnergy(watts, efficiency)
+            // intensityEnergy not in JS builder bindings; use intensity instead
+            jsBuilder.intensity(watts)
             return this
         }
 

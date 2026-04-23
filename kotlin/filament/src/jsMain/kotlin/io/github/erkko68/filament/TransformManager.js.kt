@@ -1,4 +1,8 @@
+package io.github.erkko68.filament
+
+import io.github.erkko68.filament.js.TransformManager as JSTransformManager
 import io.github.erkko68.filament.js.TransformManager_Instance as JSTransformManagerInstance
+import io.github.erkko68.filament.js.Entity as JSEntity
 
 actual class TransformManager(internal val jsTransformManager: JSTransformManager) {
     actual fun hasComponent(entity: Entity): Boolean {

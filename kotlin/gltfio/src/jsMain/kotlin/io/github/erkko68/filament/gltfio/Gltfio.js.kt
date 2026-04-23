@@ -2,6 +2,6 @@ package io.github.erkko68.filament.gltfio
 
 actual object Gltfio {
     actual fun init() {
-        // TODO
+        // In JS, gltfio initialization is handled by the Filament.init() call
     }
 }
