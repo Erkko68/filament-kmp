@@ -33,7 +33,7 @@ actual class Skybox(val jsSkybox: JSSkybox) {
     }
 
     actual class Builder {
-        private val jsBuilder = JSSkyboxBuilder()
+        private val jsBuilder = JSSkybox.Builder()
 
         actual fun environment(cubemap: Texture): Builder {
             jsBuilder.environment(cubemap.jsTexture)

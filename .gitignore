@@ -22,3 +22,4 @@ filament-source/
 **/.DS_Store
 # Filament sources downloaded by scripts/download_filament.py
 scripts/filament-*/
+kotlin-js-store/

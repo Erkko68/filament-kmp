@@ -105,15 +105,15 @@ actual class Engine private constructor(val jsEngine: JSEngine) {
 
     actual fun createCamera(): Camera {
         val entity = EntityManager.get().create()
-        return Camera(jsEngine.createCamera(entity.unsafeCast<JSEntity>()))
+        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun createCamera(entity: Int): Camera {
-        return Camera(jsEngine.createCamera(entity.unsafeCast<JSEntity>()))
+        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun getCameraComponent(entity: Int): Camera? {
-        return Camera(jsEngine.getCameraComponent(entity.unsafeCast<JSEntity>()))
+        return Camera(jsEngine.getCameraComponent(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun destroyCamera(camera: Camera) {
@@ -121,7 +121,7 @@ actual class Engine private constructor(val jsEngine: JSEngine) {
     }
 
     actual fun destroyCameraComponent(entity: Int) {
-        jsEngine.destroyCameraComponent(entity.unsafeCast<JSEntity>())
+        jsEngine.destroyCameraComponent(EntityManager.jsEntityOf(entity))
     }
 
     actual fun createScene(): Scene {
@@ -185,7 +185,7 @@ actual class Engine private constructor(val jsEngine: JSEngine) {
     }
 
     actual fun destroyEntity(entity: Int) {
-        jsEngine.destroyEntity(entity.unsafeCast<JSEntity>())
+        jsEngine.destroyEntity(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getTransformManager(): TransformManager {

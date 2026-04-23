@@ -38,7 +38,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
     }
 
     actual class Builder {
-        private val jsBuilder = JSIndirectLightBuilder()
+        private val jsBuilder = JSIndirectLight.Builder()
 
         actual fun reflections(cubemap: Texture): Builder {
             jsBuilder.reflections(cubemap.jsTexture)

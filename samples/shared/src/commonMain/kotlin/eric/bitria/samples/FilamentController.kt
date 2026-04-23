@@ -24,11 +24,11 @@ class FilamentController {
     private var swapChain: SwapChain? = null
     private var renderTarget: RenderTarget? = null
 
-    fun initialize() {
+    fun initialize(sharedContext: Any? = null) {
         if (engine != null) return
-        
+
         // Initialize global Filament systems
-        engine = Engine.create()
+        engine = if (sharedContext != null) Engine.create(sharedContext) else Engine.create()
         MaterialBuilder.init()
         Gltfio.init()
         

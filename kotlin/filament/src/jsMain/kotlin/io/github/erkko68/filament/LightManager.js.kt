@@ -14,11 +14,11 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun hasComponent(entity: Int): Boolean {
-        return jsLightManager.hasComponent(entity.unsafeCast<JSEntity>())
+        return jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getInstance(entity: Int): Int {
-        return jsLightManager.getInstance(entity.unsafeCast<JSEntity>()).unsafeCast<Int>()
+        return jsLightManager.getInstance(EntityManager.jsEntityOf(entity)).unsafeCast<Int>()
     }
 
     actual fun destroy(entity: Int) {
@@ -273,7 +273,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun build(engine: Engine, entity: Int) {
-            jsBuilder.build(engine.jsEngine, entity.unsafeCast<JSEntity>())
+            jsBuilder.build(engine.jsEngine, EntityManager.jsEntityOf(entity))
         }
     }
 }

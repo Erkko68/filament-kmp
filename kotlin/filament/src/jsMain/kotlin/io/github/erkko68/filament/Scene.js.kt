@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.js.Scene as JSScene
-import io.github.erkko68.filament.js.Entity as JSEntity
 
 actual class Scene(internal val jsScene: JSScene) {
     private var _skybox: Skybox? = null
@@ -28,25 +27,20 @@ actual class Scene(internal val jsScene: JSScene) {
 
     actual fun addEntity(entity: Int) {
         if (_entities.add(entity)) {
-            jsScene.addEntity(entity.unsafeCast<JSEntity>())
+            jsScene.addEntity(EntityManager.jsEntityOf(entity))
         }
     }
 
     actual fun addEntities(entities: IntArray) {
-        val toAdd = mutableListOf<JSEntity>()
-        for (entity in entities) {
-            if (_entities.add(entity)) {
-                toAdd.add(entity.unsafeCast<JSEntity>())
-            }
-        }
-        if (toAdd.isNotEmpty()) {
-            jsScene.addEntities(toAdd.toTypedArray())
-        }
+        val toAdd = entities.filter { _entities.add(it) }
+            .map { EntityManager.jsEntityOf(it) }
+            .toTypedArray()
+        if (toAdd.isNotEmpty()) jsScene.addEntities(toAdd)
     }
 
     actual fun removeEntity(entity: Int) {
         if (_entities.remove(entity)) {
-            jsScene.remove(entity.unsafeCast<JSEntity>())
+            jsScene.remove(EntityManager.jsEntityOf(entity))
         }
     }
 
@@ -55,15 +49,10 @@ actual class Scene(internal val jsScene: JSScene) {
     }
 
     actual fun removeEntities(entities: IntArray) {
-        val toRemove = mutableListOf<JSEntity>()
-        for (entity in entities) {
-            if (_entities.remove(entity)) {
-                toRemove.add(entity.unsafeCast<JSEntity>())
-            }
-        }
-        if (toRemove.isNotEmpty()) {
-            jsScene.removeEntities(toRemove.toTypedArray())
-        }
+        val toRemove = entities.filter { _entities.remove(it) }
+            .map { EntityManager.jsEntityOf(it) }
+            .toTypedArray()
+        if (toRemove.isNotEmpty()) jsScene.removeEntities(toRemove)
     }
 
     actual fun getEntityCount(): Int {

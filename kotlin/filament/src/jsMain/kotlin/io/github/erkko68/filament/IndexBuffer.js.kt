@@ -44,7 +44,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer) {
     }
 
     actual class Builder {
-        private val jsBuilder: JSIndexBufferBuilder = JSIndexBufferBuilder()
+        private val jsBuilder: JSIndexBufferBuilder = JSIndexBuffer.Builder()
 
         actual fun indexCount(indexCount: Int): Builder {
             jsBuilder.indexCount(indexCount)

@@ -6,7 +6,7 @@ import io.github.erkko68.filament.js.ColorGrading_QualityLevel
 
 actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
     actual class Builder {
-        private val jsBuilder = JSColorGradingBuilder()
+        private val jsBuilder = JSColorGrading.Builder()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
             jsBuilder.quality(when (qualityLevel) {

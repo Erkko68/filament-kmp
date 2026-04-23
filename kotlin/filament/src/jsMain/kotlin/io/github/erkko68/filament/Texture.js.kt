@@ -26,7 +26,7 @@ actual class Texture(val jsTexture: JSTexture) {
     }
 
     actual class Builder actual constructor() {
-        private val jsBuilder: JSTextureBuilder = JSTextureBuilder()
+        private val jsBuilder: JSTextureBuilder = JSTexture.Builder()
         private var _width = 1
         private var _height = 1
         private var _depth = 1

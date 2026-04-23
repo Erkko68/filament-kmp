@@ -183,6 +183,10 @@ external open class Skybox {
     open fun setColor(color: glm.vec4)
     open fun setColor(color: Array<Number>)
     open fun getTexture(): Texture
+
+    companion object {
+        fun Builder(): `Skybox_Builder`
+    }
 }
 
 external open class `LightManager_Instance` {
@@ -815,6 +819,10 @@ external open class SurfaceOrientation {
     open fun getQuatsHalf4(quatCount: Number): Uint16Array
     open fun getQuatsFloat4(quatCount: Number): Float32Array
     open fun delete()
+
+    companion object {
+        fun Builder(): `SurfaceOrientation_Builder`
+    }
 }
 
 external enum class Frustum_Plane {

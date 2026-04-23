@@ -43,7 +43,7 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
 
     actual enum class BindingType { VERTEX, UNIFORM, SHADER_STORAGE }
     actual class Builder {
-        private val jsBuilder = JSBufferObjectBuilder()
+        private val jsBuilder = JSBufferObject.Builder()
 
         actual fun size(byteCount: Int): Builder {
             jsBuilder.size(byteCount)

@@ -25,7 +25,7 @@ actual class RenderTarget(internal val jsRenderTarget: JSRenderTarget) {
 
     actual enum class AttachmentPoint { COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH }
     actual class Builder {
-        private val jsBuilder = JSRenderTargetBuilder()
+        private val jsBuilder = JSRenderTarget.Builder()
 
         actual fun texture(
             attachment: AttachmentPoint,

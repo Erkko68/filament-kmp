@@ -8,15 +8,15 @@ import io.github.erkko68.filament.js.RenderableManager_Instance as JSRenderableM
 
 actual class RenderableManager(internal val jsRenderableManager: JSRenderableManager) {
     actual fun hasComponent(entity: Entity): Boolean {
-        return jsRenderableManager.hasComponent(entity.unsafeCast<JSEntity>())
+        return jsRenderableManager.hasComponent(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getInstance(entity: Entity): EntityInstance {
-        return jsRenderableManager.getInstance(entity.unsafeCast<JSEntity>()).unsafeCast<EntityInstance>()
+        return jsRenderableManager.getInstance(EntityManager.jsEntityOf(entity)).unsafeCast<EntityInstance>()
     }
 
     actual fun destroy(entity: Entity) {
-        jsRenderableManager.destroy(entity.unsafeCast<JSEntity>())
+        jsRenderableManager.destroy(EntityManager.jsEntityOf(entity))
     }
 
     actual fun setAxisAlignedBoundingBox(
@@ -434,7 +434,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun build(engine: Engine, entity: Entity) {
-            jsBuilder.build(engine.jsEngine, entity.unsafeCast<JSEntity>())
+            jsBuilder.build(engine.jsEngine, EntityManager.jsEntityOf(entity))
         }
     }
 }

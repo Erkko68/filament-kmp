@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.js.`gltfio_FilamentAsset` as JSFilamentAsset
 import io.github.erkko68.filament.js.Entity
 import io.github.erkko68.filament.js.Aabb
@@ -10,77 +11,35 @@ actual class FilamentAsset(
     internal val jsAsset: JSFilamentAsset,
     private val _engine: Engine? = null
 ) {
-    actual fun getRoot(): Int {
-        return jsAsset.getRoot().getId().toInt()
+    private fun Entity.registerAndGetId(): Int {
+        val id = getId().toInt()
+        EntityManager.register(id, this)
+        return id
     }
 
-    actual fun popRenderable(): Int {
-        return jsAsset.popRenderable().getId().toInt()
+    private fun Array<Entity>.registerAndGetIds(): IntArray {
+        return IntArray(size) { i -> this[i].registerAndGetId() }
     }
 
-    actual fun popRenderables(entities: IntArray): Int {
-        // popRenderables is not available in JS bindings, returning 0
-        return 0
-    }
+    actual fun getRoot(): Int = jsAsset.getRoot().registerAndGetId()
 
-    actual fun getEntities(): IntArray {
-        val jsEntities = jsAsset.getEntities()
-        val result = IntArray(jsEntities.size)
-        for (i in jsEntities.indices) {
-            result[i] = jsEntities[i].getId().toInt()
-        }
-        return result
-    }
+    actual fun popRenderable(): Int = jsAsset.popRenderable().registerAndGetId()
 
-    actual fun getLightEntities(): IntArray {
-        val jsEntities = jsAsset.getLightEntities()
-        val result = IntArray(jsEntities.size)
-        for (i in jsEntities.indices) {
-            result[i] = jsEntities[i].getId().toInt()
-        }
-        return result
-    }
+    actual fun popRenderables(entities: IntArray): Int = 0
 
-    actual fun getRenderableEntities(): IntArray {
-        val jsEntities = jsAsset.getRenderableEntities()
-        val result = IntArray(jsEntities.size)
-        for (i in jsEntities.indices) {
-            result[i] = jsEntities[i].getId().toInt()
-        }
-        return result
-    }
+    actual fun getEntities(): IntArray = jsAsset.getEntities().registerAndGetIds()
 
-    actual fun getCameraEntities(): IntArray {
-        val jsEntities = jsAsset.getCameraEntities()
-        val result = IntArray(jsEntities.size)
-        for (i in jsEntities.indices) {
-            result[i] = jsEntities[i].getId().toInt()
-        }
-        return result
-    }
+    actual fun getLightEntities(): IntArray = jsAsset.getLightEntities().registerAndGetIds()
 
-    actual fun getEntitiesByName(name: String): IntArray {
-        val jsEntities = jsAsset.getEntitiesByName(name)
-        val result = IntArray(jsEntities.size)
-        for (i in jsEntities.indices) {
-            result[i] = jsEntities[i].getId().toInt()
-        }
-        return result
-    }
+    actual fun getRenderableEntities(): IntArray = jsAsset.getRenderableEntities().registerAndGetIds()
 
-    actual fun getEntitiesByPrefix(prefix: String): IntArray {
-        val jsEntities = jsAsset.getEntitiesByPrefix(prefix)
-        val result = IntArray(jsEntities.size)
-        for (i in jsEntities.indices) {
-            result[i] = jsEntities[i].getId().toInt()
-        }
-        return result
-    }
+    actual fun getCameraEntities(): IntArray = jsAsset.getCameraEntities().registerAndGetIds()
 
-    actual fun getFirstEntityByName(name: String): Int {
-        // JS binding provides getEntityByName which returns the first matching entity
-        return jsAsset.getEntityByName(name).getId().toInt()
-    }
+    actual fun getEntitiesByName(name: String): IntArray = jsAsset.getEntitiesByName(name).registerAndGetIds()
+
+    actual fun getEntitiesByPrefix(prefix: String): IntArray = jsAsset.getEntitiesByPrefix(prefix).registerAndGetIds()
+
+    actual fun getFirstEntityByName(name: String): Int = jsAsset.getEntityByName(name).registerAndGetId()
 
     actual fun getEntityCount(): Int {
         return jsAsset.getEntities().size
@@ -111,12 +70,12 @@ actual class FilamentAsset(
 
     actual fun getName(entity: Int): String? {
         // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
-        return jsAsset.getName(entity.unsafeCast<Entity>()).let { if (it.isEmpty()) null else it }
+        return jsAsset.getName(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
     actual fun getExtras(entity: Int): String? {
         // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
-        return jsAsset.getExtras(entity.unsafeCast<Entity>()).let { if (it.isEmpty()) null else it }
+        return jsAsset.getExtras(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
     actual fun getMorphTargetNames(entity: Int): Array<String> {

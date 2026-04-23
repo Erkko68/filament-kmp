@@ -2,19 +2,18 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.js.TransformManager as JSTransformManager
 import io.github.erkko68.filament.js.TransformManager_Instance as JSTransformManagerInstance
-import io.github.erkko68.filament.js.Entity as JSEntity
 
 actual class TransformManager(internal val jsTransformManager: JSTransformManager) {
     actual fun hasComponent(entity: Entity): Boolean {
-        return jsTransformManager.hasComponent(entity.unsafeCast<JSEntity>())
+        return jsTransformManager.hasComponent(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getInstance(entity: Entity): EntityInstance {
-        return jsTransformManager.getInstance(entity.unsafeCast<JSEntity>()).unsafeCast<EntityInstance>()
+        return jsTransformManager.getInstance(EntityManager.jsEntityOf(entity)).unsafeCast<EntityInstance>()
     }
 
     actual fun create(entity: Entity): EntityInstance {
-        jsTransformManager.create(entity.unsafeCast<JSEntity>())
+        jsTransformManager.create(EntityManager.jsEntityOf(entity))
         return getInstance(entity)
     }
 
@@ -23,7 +22,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         parent: EntityInstance,
         localTransform: FloatArray?
     ): EntityInstance {
-        jsTransformManager.create(entity.unsafeCast<JSEntity>())
+        jsTransformManager.create(EntityManager.jsEntityOf(entity))
         val instance = getInstance(entity)
         setParent(instance, parent)
         if (localTransform != null) {
@@ -37,7 +36,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         parent: EntityInstance,
         localTransform: DoubleArray?
     ): EntityInstance {
-        jsTransformManager.create(entity.unsafeCast<JSEntity>())
+        jsTransformManager.create(EntityManager.jsEntityOf(entity))
         val instance = getInstance(entity)
         setParent(instance, parent)
         if (localTransform != null) {
@@ -47,7 +46,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
     }
 
     actual fun destroy(entity: Entity) {
-        jsTransformManager.destroy(entity.unsafeCast<JSEntity>())
+        jsTransformManager.destroy(EntityManager.jsEntityOf(entity))
     }
 
     actual fun setParent(

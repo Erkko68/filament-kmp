@@ -57,7 +57,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
     actual enum class AttributeType { BYTE, BYTE2, BYTE3, BYTE4, UBYTE, UBYTE2, UBYTE3, UBYTE4, SHORT, SHORT2, SHORT3, SHORT4, USHORT, USHORT2, USHORT3, USHORT4, INT, UINT, FLOAT, FLOAT2, FLOAT3, FLOAT4, HALF, HALF2, HALF3, HALF4 }
     
     actual class Builder {
-        private val jsBuilder: JSVertexBufferBuilder = JSVertexBufferBuilder()
+        private val jsBuilder: JSVertexBufferBuilder = JSVertexBuffer.Builder()
 
         actual fun vertexCount(vertexCount: Int): Builder {
             jsBuilder.vertexCount(vertexCount)
