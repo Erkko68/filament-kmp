@@ -14,6 +14,9 @@ import io.github.erkko68.filament.NativeSurface
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
 
+// Limitations:
+//TODO: https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8521
+
 @Composable
 actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
     var size by remember { mutableStateOf(IntSize.Zero) }
