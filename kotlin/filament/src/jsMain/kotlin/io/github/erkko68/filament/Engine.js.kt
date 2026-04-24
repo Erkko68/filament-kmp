@@ -300,7 +300,11 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             val canvas = doc.createElement("canvas") as HTMLCanvasElement
             canvas.width = 1
             canvas.height = 1
-            canvas.style.display = "none"
+            // Parked on body until a consumer (e.g. FilamentView via HtmlElementView)
+            // adopts it into the Compose-managed DOM subtree.
+            canvas.style.position = "absolute"
+            canvas.style.left = "-9999px"
+            canvas.style.top = "0"
             doc.body?.appendChild(canvas)
             return Engine(JSEngine.create(canvas), canvas)
         }
