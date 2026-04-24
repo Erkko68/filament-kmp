@@ -19,6 +19,10 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
     }
 
     actual fun loadResources(asset: FilamentAsset): Boolean {
+        // Delegate to the JS FilamentAsset's built-in loadResources which handles
+        // WASM resource loader creation, buffer uploads, and async texture decoding.
+        // This is required even for .glb files to upload vertex data to WebGL.
+        asset.jsAsset.asDynamic().loadResources()
         return true
     }
 

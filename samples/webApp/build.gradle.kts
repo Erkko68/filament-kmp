@@ -20,8 +20,11 @@ kotlin {
                 implementation(project(":shared"))
                 implementation("io.github.erkko68.filament:filament")
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(compose.html.core)
-                implementation(compose.runtime)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
             }
         }
     }

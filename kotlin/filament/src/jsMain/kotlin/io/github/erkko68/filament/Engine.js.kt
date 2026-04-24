@@ -5,7 +5,7 @@ import io.github.erkko68.filament.js.EntityManager as JSEntityManager
 import io.github.erkko68.filament.js.Entity as JSEntity
 import org.w3c.dom.HTMLCanvasElement
 
-actual class Engine private constructor(val jsEngine: JSEngine) {
+actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HTMLCanvasElement? = null) {
     actual fun isValid(): Boolean {
         return true
     }
@@ -293,7 +293,16 @@ actual class Engine private constructor(val jsEngine: JSEngine) {
 
     actual companion object {
         actual fun create(): Engine {
-            throw UnsupportedOperationException("On JS, Engine must be created with a canvas or initialized via Filament.init()")
+            // On JS, Filament needs a WebGL-backed canvas. If no shared context is
+            // provided, allocate a hidden offscreen <canvas> that the consumer can
+            // read back from (see Engine.jsCanvas).
+            val doc = kotlinx.browser.document
+            val canvas = doc.createElement("canvas") as HTMLCanvasElement
+            canvas.width = 1
+            canvas.height = 1
+            canvas.style.display = "none"
+            doc.body?.appendChild(canvas)
+            return Engine(JSEngine.create(canvas), canvas)
         }
 
         actual fun create(backend: Backend): Engine {
@@ -302,7 +311,7 @@ actual class Engine private constructor(val jsEngine: JSEngine) {
 
         actual fun create(sharedContext: Any): Engine {
             if (sharedContext is HTMLCanvasElement) {
-                return Engine(JSEngine.create(sharedContext))
+                return Engine(JSEngine.create(sharedContext), sharedContext)
             }
             return create()
         }

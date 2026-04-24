@@ -5,15 +5,15 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.js.`gltfio_AssetLoader` as JSAssetLoader
 import io.github.erkko68.filament.js.Engine as JSEngine
 
-private fun ByteArray.toInt8Array(): org.khronos.webgl.Int8Array {
+private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
     val int8 = org.khronos.webgl.Int8Array(size)
     forEachIndexed { i, b -> int8.asDynamic()[i] = b }
-    return int8
+    return org.khronos.webgl.Uint8Array(int8.buffer)
 }
 
 actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine: Engine) {
     actual fun createAsset(buffer: ByteArray): FilamentAsset? {
-        val jsAsset = jsLoader.createAsset(buffer.toInt8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>())
+        val jsAsset = jsLoader.createAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>())
         return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
     }
 
@@ -22,7 +22,7 @@ actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine
         instances: Array<FilamentInstance>
     ): FilamentAsset? {
         val jsInstances: Array<io.github.erkko68.filament.js.`gltfio_FilamentInstance`?> = instances.map { it.jsInstance }.toTypedArray()
-        val jsAsset = jsLoader.createInstancedAsset(buffer.toInt8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>(), jsInstances)
+        val jsAsset = jsLoader.createInstancedAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>(), jsInstances)
         return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
     }
 

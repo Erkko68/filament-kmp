@@ -164,7 +164,10 @@ actual class MaterialBuilder {
     }
 
     actual fun build(): MaterialPackage {
-        return MaterialPackage(ByteArray(0))
+        throw UnsupportedOperationException(
+            "MaterialBuilder.build() is not supported on JS. " +
+            "Materials must be pre-compiled offline and loaded as .filamat binary packages."
+        )
     }
 
     actual fun name(name: String): MaterialBuilder = this
