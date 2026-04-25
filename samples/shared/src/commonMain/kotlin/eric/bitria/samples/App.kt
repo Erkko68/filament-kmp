@@ -62,7 +62,7 @@ fun App() {
     }
 
     MaterialTheme {
-        Box(modifier = Modifier.fillMaxSize(0.5f)) {
+        Box(modifier = Modifier.fillMaxSize()) {
             FilamentView(
                 modifier = Modifier.fillMaxSize(),
                 controller = controller

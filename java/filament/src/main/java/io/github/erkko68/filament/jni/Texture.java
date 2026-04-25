@@ -287,9 +287,4 @@ public class Texture {
     private static native int nGetMaxTextureSize(long nativeEngine, int sampler);
     private static native int nGetMaxArrayTextureLayers(long nativeEngine);
     private static native void nSetExternalStream(long nativeTexture, long nativeEngine, long nativeStream);
-    // devicePtr: MTLDevice* (macOS) or VkDevice* (Linux/Windows) from Skiko.
-    // physDevicePtr: VkPhysicalDevice* (Linux/Windows only; ignored on macOS).
-    // Returns the GPU-native handle: MTLTexture* on Metal, VkImage on Vulkan.
-    public static native long nCreateSharedTexture(long devicePtr, long physDevicePtr, int width, int height);
-    public static native void nReleaseSharedTexture(long handle);
 }

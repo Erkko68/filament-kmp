@@ -97,16 +97,6 @@ add_library(filament-jni SHARED
     src/main/cpp/SwapChain.cpp
 )
 
-# Platform-specific GPU interop: each file provides nCreateMetalTexture / nReleaseMetalTexture
-# (or the Vulkan equivalents) so the JVM side can create a shared texture on the correct GPU.
-if (APPLE)
-    target_sources(filament-jni PRIVATE src/main/cpp/MetalUtils.mm)
-    set_source_files_properties(src/main/cpp/MetalUtils.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
-elseif (UNIX)
-elseif (WIN32)
-    target_sources(filament-jni PRIVATE src/main/cpp/VulkanUtils.cpp)
-endif()
-
 target_include_directories(filament-jni PRIVATE
     src/main/cpp
     ${JNI_INCLUDE_DIRS}
@@ -139,5 +129,4 @@ if (APPLE)
 elseif (UNIX)
     target_link_libraries(filament-jni PRIVATE GL)
 elseif (WIN32)
-    target_link_libraries(filament-jni PRIVATE vulkan-1)
 endif()
