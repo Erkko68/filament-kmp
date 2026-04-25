@@ -13,9 +13,15 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     jvm()
-    
+
+    js {
+        browser {
+            binaries.executable()
+        }
+    }
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -50,6 +56,14 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation("io.github.erkko68.filament:filament")
+                implementation("io.github.erkko68.filament:filamat")
+                implementation("io.github.erkko68.filament:gltfio")
+            }
         }
     }
 }

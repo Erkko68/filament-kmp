@@ -63,13 +63,13 @@ kotlin {
         }
     }
 
-
-
-//    js(IR) {
-//        browser()
-//        binaries.library()
-//    }
     jvm()
+
+    js {
+        browser {
+            binaries.executable()
+        }
+    }
 
     applyDefaultHierarchyTemplate()
 
@@ -85,9 +85,17 @@ kotlin {
                 implementation("com.google.android.filament:filament-utils-android:$filamentAndroidVersion")
             }
         }
+
+
         val jvmMain by getting {
             dependencies {
                 api(project(":java:filament-utils"))
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(project(":js"))
             }
         }
     }

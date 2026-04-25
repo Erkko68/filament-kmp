@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Engine
 
 actual class FilamentAsset internal constructor(
     internal val nativeObject: com.google.android.filament.gltfio.FilamentAsset

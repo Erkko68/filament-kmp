@@ -30,11 +30,11 @@ class FilamentController {
     var targetHeight: Int = 0
         private set
 
-    fun initialize(backend: Engine.Backend = Engine.Backend.DEFAULT) {
+    fun initialize(backend: Engine.Backend = Engine.Backend.DEFAULT, sharedContext: Any? = null) {
         if (engine != null) return
-        
+
         // Initialize global Filament systems
-        engine = Engine.create(backend)
+        engine = if (sharedContext != null) Engine.create(sharedContext) else Engine.create(backend)
         MaterialBuilder.init()
         Gltfio.init()
         

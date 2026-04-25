@@ -45,30 +45,17 @@ class SampleScene(private val controller: FilamentController) {
         gltfLoader = AssetLoader.create(engine, gltfMaterialProvider!!, engine.getEntityManager())
         gltfResourceLoader = ResourceLoader(engine, true)
 
-        // 3. Setup initial runtime content
-        setupRuntimeCube()
+        // 3. Setup initial runtime content (may throw on platforms without runtime material compilation)
+        try {
+            setupRuntimeCube()
+        } catch (e: UnsupportedOperationException) {
+            println("SampleScene: Skipping runtime cube: ${e.message}")
+        }
     }
 
-    private fun setupRuntimeCube() {
+    private fun ensureCubeGeometry() {
+        if (runtimeVertexBuffer != null) return
         val engine = controller.engine ?: return
-        val scene = controller.scene ?: return
-
-        val materialPackage = MaterialBuilder()
-            .name("RuntimeMaterial")
-            .platform(MaterialBuilder.Platform.ALL)
-            .targetApi(MaterialBuilder.TargetApi.ALL)
-            .shading(MaterialBuilder.Shading.UNLIT)
-            .doubleSided(true)
-            .require(VertexBuffer.VertexAttribute.COLOR)
-            .material("void material(inout MaterialInputs material) { prepareMaterial(material); material.baseColor = float4(1.0, 0.5, 0.5, 1.0); }")
-            .build()
-        
-        if (!materialPackage.isValid()) return
-
-        runtimeMaterial = Material.Builder()
-            .payload(materialPackage.getBuffer())
-            .build(engine)
-        runtimeMaterialInstance = runtimeMaterial!!.createInstance()
 
         val side = 1.0f
         val vertices = floatArrayOf(
@@ -96,6 +83,31 @@ class SampleScene(private val controller: FilamentController) {
             .bufferType(IndexBuffer.Builder.IndexType.UINT)
             .build(engine)
         runtimeIndexBuffer!!.setBuffer(engine, indices.toBytes())
+    }
+
+    private fun setupRuntimeCube() {
+        val engine = controller.engine ?: return
+        val scene = controller.scene ?: return
+
+        val materialPackage = MaterialBuilder()
+            .name("RuntimeMaterial")
+            .platform(MaterialBuilder.Platform.ALL)
+            .targetApi(MaterialBuilder.TargetApi.ALL)
+            .shading(MaterialBuilder.Shading.UNLIT)
+            .doubleSided(true)
+            .require(VertexBuffer.VertexAttribute.COLOR)
+            .material("void material(inout MaterialInputs material) { prepareMaterial(material); material.baseColor = float4(1.0, 0.5, 0.5, 1.0); }")
+            .build()
+        
+        if (!materialPackage.isValid()) return
+
+        runtimeMaterial = Material.Builder()
+            .payload(materialPackage.getBuffer())
+            .build(engine)
+        runtimeMaterialInstance = runtimeMaterial!!.createInstance()
+
+        ensureCubeGeometry()
+
 
         runtimeCubeEntity = engine.getEntityManager().create()
         RenderableManager.Builder(1)
@@ -113,6 +125,10 @@ class SampleScene(private val controller: FilamentController) {
         val engine = controller.engine ?: return
         val scene = controller.scene ?: return
 
+        ensureCubeGeometry()
+        val vb = runtimeVertexBuffer ?: return
+        val ib = runtimeIndexBuffer ?: return
+
         destroyResourceMaterialCube()
 
         resourceMaterial = Material.Builder().payload(filamatData).build(engine)
@@ -122,7 +138,7 @@ class SampleScene(private val controller: FilamentController) {
         resourceCubeEntity = engine.getEntityManager().create()
         RenderableManager.Builder(1)
             .boundingBox(Box(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f))
-            .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, runtimeVertexBuffer!!, runtimeIndexBuffer!!)
+            .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vb, ib)
             .material(0, resourceMaterialInstance!!)
             .build(engine, resourceCubeEntity!!)
 

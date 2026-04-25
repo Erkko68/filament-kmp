@@ -60,7 +60,14 @@ kotlin {
             xcf.add(this)
         }
     }
+
     jvm()
+
+    js {
+        browser {
+            binaries.executable()
+        }
+    }
 
     applyDefaultHierarchyTemplate()
 
@@ -76,9 +83,16 @@ kotlin {
                 implementation("com.google.android.filament:gltfio-android:$filamentAndroidVersion")
             }
         }
+
         val jvmMain by getting {
             dependencies {
                 implementation(project(":java:gltfio"))
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(project(":js"))
             }
         }
     }

@@ -12,6 +12,10 @@ include(":java:filamat")
 include(":java:gltfio")
 include(":java:filament-utils")
 
+// JS modules
+include(":js")
+
+
 pluginManagement {
     repositories {
         google()

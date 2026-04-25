@@ -64,11 +64,11 @@ kotlin {
 
     jvm()
 
-
-//    js(IR) {
-//        browser()
-//        binaries.library()
-//    }
+    js {
+        browser {
+            binaries.executable()
+        }
+    }
 
     applyDefaultHierarchyTemplate()
 
@@ -92,6 +92,12 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 api(project(":java:filament"))
+            }
+        }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(project(":js"))
             }
         }
     }

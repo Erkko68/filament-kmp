@@ -4,6 +4,7 @@ includeBuild("../") {
         substitute(module("io.github.erkko68.filament:filament")).using(project(":kotlin:filament"))
         substitute(module("io.github.erkko68.filament:filamat")).using(project(":kotlin:filamat"))
         substitute(module("io.github.erkko68.filament:gltfio")).using(project(":kotlin:gltfio"))
+        substitute(module("io.github.erkko68.filament:filament-utils")).using(project(":kotlin:filament-utils"))
     }
 }
 
@@ -23,7 +24,7 @@ pluginManagement {
     }
 }
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 dependencyResolutionManagement {
@@ -42,3 +43,4 @@ dependencyResolutionManagement {
 include(":shared")
 include(":androidApp")
 include(":desktopApp")
+include(":webApp")
