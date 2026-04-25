@@ -18,7 +18,9 @@ import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
 
 // Limitations:
-//TODO: https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8521
+// https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8521
+// Workarround:
+// https://youtrack.jetbrains.com/projects/CMP/issues/CMP-6858/Be-able-to-use-HTML-elements-from-Compose-Web-HtmlElement
 
 @Composable
 actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
