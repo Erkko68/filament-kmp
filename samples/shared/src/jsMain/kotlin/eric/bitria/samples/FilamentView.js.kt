@@ -9,9 +9,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.WebElementView
 import io.github.erkko68.filament.NativeSurface
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
 
 // Limitations:
@@ -45,9 +48,20 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
                 val container = document.createElement("div") as HTMLElement
                 container.style.width = "100%"
                 container.style.height = "100%"
+
+                // Set parent z-index to -1 to place behind Compose canvas
+                window.requestAnimationFrame {
+                    (container.parentElement as? HTMLElement)?.style?.zIndex = "-1"
+                }
+
                 container
             },
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().drawBehind {
+                drawRect(
+                    color = Color.Transparent,
+                    blendMode = BlendMode.Clear
+                )
+            },
             update = { container ->
                 val canvas = controller.engine?.jsCanvas ?: return@WebElementView
                 if (canvas.parentNode !== container) {
