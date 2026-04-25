@@ -1,7 +1,23 @@
 cmake_minimum_required(VERSION 3.19)
+
+# Filament prebuilts are built with clang/libc++ — use the same toolchain on Linux
+if (UNIX AND NOT APPLE)
+    find_program(CLANGPP clang++)
+    if (CLANGPP)
+        set(CMAKE_CXX_COMPILER ${CLANGPP})
+    else()
+        message(FATAL_ERROR "clang++ not found. Install it with: sudo apt install clang libc++-dev libc++abi-dev")
+    endif()
+endif()
+
 project(filament-jni LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+
+if (UNIX AND NOT APPLE)
+    add_compile_options(-stdlib=libc++)
+    add_link_options(-stdlib=libc++)
+endif()
 
 # --- Platform specific setup (Similar to c/CMakeLists.txt) ---
 set(FILAMENT_PLATFORM "macos" CACHE STRING "Target platform (ios, ios-simulator, macos, linux, windows)")
@@ -86,7 +102,8 @@ add_library(filament-jni SHARED
 if (APPLE)
     target_sources(filament-jni PRIVATE src/main/cpp/MetalUtils.mm)
     set_source_files_properties(src/main/cpp/MetalUtils.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
-elseif (UNIX OR WIN32)
+elseif (UNIX)
+elseif (WIN32)
     target_sources(filament-jni PRIVATE src/main/cpp/VulkanUtils.cpp)
 endif()
 
@@ -120,7 +137,7 @@ if (APPLE)
     target_link_libraries(filament-jni PRIVATE "-framework Cocoa" "-framework Metal"
                                                "-framework QuartzCore" "-framework CoreVideo")
 elseif (UNIX)
-    target_link_libraries(filament-jni PRIVATE vulkan)
+    target_link_libraries(filament-jni PRIVATE GL)
 elseif (WIN32)
     target_link_libraries(filament-jni PRIVATE vulkan-1)
 endif()

@@ -18,6 +18,8 @@ import platform.QuartzCore.CAMetalLayer
 import platform.UIKit.UIScreen
 import platform.UIKit.UIView
 
+actual fun getPlatformBackend() = io.github.erkko68.filament.Engine.Backend.METAL
+    
 @Composable
 actual fun FilamentView(
     modifier: Modifier,

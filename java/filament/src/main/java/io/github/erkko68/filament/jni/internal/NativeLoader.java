@@ -27,16 +27,18 @@ public final class NativeLoader {
             } else if (os.contains("mac") || os.contains("darwin")) {
                 platform = "macos";
                 extension = ".dylib";
+            } else if (os.contains("nux") || os.contains("nix") || os.contains("aix")) {
+                platform = "linux";
+                extension = ".so";
             } else {
                 throw new UnsupportedOperationException("Unsupported OS: " + os);
             }
 
             if (arch.contains("aarch64") || arch.contains("arm64")) {
                 arch = "arm64";
+            } else if (platform.equals("macos")) {
+                throw new UnsupportedOperationException("macOS x64 is not supported in this project. Please use ARM64.");
             } else {
-                if (platform.equals("macos")) {
-                    throw new UnsupportedOperationException("macOS x64 is not supported in this project. Please use ARM64.");
-                }
                 arch = "x64";
             }
 

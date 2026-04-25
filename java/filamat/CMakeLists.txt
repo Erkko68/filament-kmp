@@ -1,7 +1,22 @@
 cmake_minimum_required(VERSION 3.19)
+
+if (UNIX AND NOT APPLE)
+    find_program(CLANGPP clang++)
+    if (CLANGPP)
+        set(CMAKE_CXX_COMPILER ${CLANGPP})
+    else()
+        message(FATAL_ERROR "clang++ not found. Install it with: sudo apt install clang libc++-dev libc++abi-dev")
+    endif()
+endif()
+
 project(filamat-jni)
 
 set(CMAKE_CXX_STANDARD 20)
+
+if (UNIX AND NOT APPLE)
+    add_compile_options(-stdlib=libc++)
+    add_link_options(-stdlib=libc++)
+endif()
 
 # Paths
 set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")

@@ -1,7 +1,22 @@
 cmake_minimum_required(VERSION 3.19)
+
+if (UNIX AND NOT APPLE)
+    find_program(CLANGPP clang++)
+    if (CLANGPP)
+        set(CMAKE_CXX_COMPILER ${CLANGPP})
+    else()
+        message(FATAL_ERROR "clang++ not found. Install it with: sudo apt install clang libc++-dev libc++abi-dev")
+    endif()
+endif()
+
 project(filament-utils-jni)
 
 set(CMAKE_CXX_STANDARD 20)
+
+if (UNIX AND NOT APPLE)
+    add_compile_options(-stdlib=libc++)
+    add_link_options(-stdlib=libc++)
+endif()
 
 # --- Platform specific setup ---
 set(FILAMENT_PLATFORM "macos" CACHE STRING "Target platform (ios, ios-simulator, macos, linux, windows)")

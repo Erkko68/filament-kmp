@@ -98,7 +98,14 @@ actual class Texture(val nativeTexture: JniTexture) {
             val buffer = ByteBuffer.allocateDirect(sizeInBytes).order(ByteOrder.nativeOrder())
             buffer.put(storage, 0, minOf(storage.size, sizeInBytes))
             buffer.flip()
-            jni = JniTexture.PixelBufferDescriptor(buffer, format.toJni(), type.toJni(), alignment, left, top, stride, null, callback?.let { Runnable { it() } })
+            val wrappedCallback = Runnable {
+                buffer.position(0)
+                buffer.get(storage, 0, minOf(storage.size, sizeInBytes))
+                buffer.position(0)
+                callback?.invoke()
+            }
+            val executor = java.util.concurrent.Executor { command -> command.run() }
+            jni = JniTexture.PixelBufferDescriptor(buffer, format.toJni(), type.toJni(), alignment, left, top, stride, executor, wrappedCallback)
         }
     }
 

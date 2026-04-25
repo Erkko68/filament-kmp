@@ -22,7 +22,7 @@ fun App() {
     // Initialize engine once
     val initialized = remember { mutableStateOf(false) }
     if (!initialized.value) {
-        controller.initialize()
+        controller.initialize(getPlatformBackend())
         scene.setup()
         initialized.value = true
     }
@@ -62,7 +62,7 @@ fun App() {
     }
 
     MaterialTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize(0.5f)) {
             FilamentView(
                 modifier = Modifier.fillMaxSize(),
                 controller = controller

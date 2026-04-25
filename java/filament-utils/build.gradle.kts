@@ -42,7 +42,10 @@ tasks.register<Exec>("cmakeConfig") {
         else -> throw GradleException("Unsupported filament.platform '$p'. Use macos, linux, or windows.")
     }
 
-    val a = (project.findProperty("filament.arch") as String? ?: "arm64").lowercase()
+    val hostArch = System.getProperty("os.arch").lowercase().let {
+        if (it.contains("aarch64") || it.contains("arm64")) "arm64" else "x64"
+    }
+    val a = (project.findProperty("filament.arch") as String? ?: hostArch).lowercase()
     val arch = when (a) {
         "arm64" -> "Arm64"
         "x64", "amd64" -> "X64"
@@ -78,7 +81,10 @@ val hostPlatform = when {
     else -> "linux"
 }
 val resPlatform = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
-val resArch = (project.findProperty("filament.arch") as String? ?: "arm64").lowercase().let {
+val hostArchDefault = System.getProperty("os.arch").lowercase().let {
+    if (it.contains("aarch64") || it.contains("arm64")) "arm64" else "x64"
+}
+val resArch = (project.findProperty("filament.arch") as String? ?: hostArchDefault).lowercase().let {
     if (it == "aarch64" || it == "arm64") "arm64" else "x64"
 }
 

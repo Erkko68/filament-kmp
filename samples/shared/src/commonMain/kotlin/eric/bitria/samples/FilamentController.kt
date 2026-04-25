@@ -21,14 +21,20 @@ class FilamentController {
         private set
 
     // Current surface resources
-    private var swapChain: SwapChain? = null
-    private var renderTarget: RenderTarget? = null
+    var swapChain: SwapChain? = null
+        private set
+    var renderTarget: RenderTarget? = null
+        private set
+    var targetWidth: Int = 0
+        private set
+    var targetHeight: Int = 0
+        private set
 
-    fun initialize() {
+    fun initialize(backend: Engine.Backend = Engine.Backend.DEFAULT) {
         if (engine != null) return
         
         // Initialize global Filament systems
-        engine = Engine.create()
+        engine = Engine.create(backend)
         MaterialBuilder.init()
         Gltfio.init()
         
@@ -82,6 +88,8 @@ class FilamentController {
         
         renderTarget = target
         swapChain = sc
+        targetWidth = width
+        targetHeight = height
         
         view?.setRenderTarget(renderTarget)
         updateViewport(width, height)
