@@ -22,7 +22,7 @@ fun App() {
     // Initialize engine once
     val initialized = remember { mutableStateOf(false) }
     if (!initialized.value) {
-        controller.initialize(getPlatformBackend())
+        controller.initialize()
         scene.setup()
         initialized.value = true
     }

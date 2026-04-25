@@ -14,7 +14,6 @@ expect fun FilamentView(
     controller: FilamentController
 )
 
-expect fun getPlatformBackend(): io.github.erkko68.filament.Engine.Backend
 
 @Composable
 internal fun FilamentRenderLoop(onFrame: (Long) -> Unit) {

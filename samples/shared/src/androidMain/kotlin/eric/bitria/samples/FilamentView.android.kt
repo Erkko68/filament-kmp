@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.erkko68.filament.NativeSurface
 
-actual fun getPlatformBackend() = io.github.erkko68.filament.Engine.Backend.DEFAULT
     
 @Composable
 actual fun FilamentView(

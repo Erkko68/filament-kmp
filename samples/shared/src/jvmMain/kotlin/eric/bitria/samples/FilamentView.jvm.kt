@@ -15,10 +15,6 @@ import org.jetbrains.skia.ColorType
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
 
-actual fun getPlatformBackend(): io.github.erkko68.filament.Engine.Backend {
-    // For the unified JVM approach, we use OpenGL as it is most compatible with the readPixels strategy
-    return io.github.erkko68.filament.Engine.Backend.OPENGL
-}
 
 @Composable
 actual fun FilamentView(modifier: Modifier, controller: FilamentController) {

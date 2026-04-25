@@ -30,11 +30,18 @@ class FilamentController {
     var targetHeight: Int = 0
         private set
 
-    fun initialize(backend: Engine.Backend = Engine.Backend.DEFAULT, sharedContext: Any? = null) {
+    fun initialize(backend: Engine.Backend? = null, sharedContext: Any? = null) {
         if (engine != null) return
 
+        val finalBackend = backend ?: if (sharedContext == null) {
+            // Force OpenGL on Desktop to support the unified readPixels approach
+            Engine.Backend.OPENGL
+        } else {
+            Engine.Backend.DEFAULT
+        }
+
         // Initialize global Filament systems
-        engine = if (sharedContext != null) Engine.create(sharedContext) else Engine.create(backend)
+        engine = if (sharedContext != null) Engine.create(sharedContext) else Engine.create(finalBackend)
         MaterialBuilder.init()
         Gltfio.init()
         
