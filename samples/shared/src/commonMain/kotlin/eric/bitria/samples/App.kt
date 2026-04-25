@@ -19,16 +19,10 @@ fun App() {
     val controller = remember { FilamentController() }
     val scene = remember { SampleScene(controller) }
     
-    // Initialize engine once
-    val initialized = remember { mutableStateOf(false) }
-    if (!initialized.value) {
+    LaunchedEffect(Unit) {
         controller.initialize()
         scene.setup()
-        initialized.value = true
-    }
 
-    // Load assets from composeResources
-    LaunchedEffect(Unit) {
         try {
             val filamatBytes = Res.readBytes("files/materials/textured.filamat")
             scene.loadMaterialCube(filamatBytes)
