@@ -748,10 +748,10 @@ external open class Ktx2Reader(engine: Engine, quiet: Boolean) {
 }
 
 external open class `gltfio_AssetLoader` {
-    open fun createAsset(urlOrBuffer: String): `gltfio_FilamentAsset`
-    open fun createAsset(urlOrBuffer: ArrayBufferView): `gltfio_FilamentAsset`
-    open fun createInstancedAsset(urlOrBuffer: String, instances: Array<`gltfio_FilamentInstance`?>): `gltfio_FilamentAsset`
-    open fun createInstancedAsset(urlOrBuffer: ArrayBufferView, instances: Array<`gltfio_FilamentInstance`?>): `gltfio_FilamentAsset`
+    open fun createAsset(urlOrBuffer: String): `gltfio_FilamentAsset`?
+    open fun createAsset(urlOrBuffer: ArrayBufferView): `gltfio_FilamentAsset`?
+    open fun createInstancedAsset(urlOrBuffer: String, instances: Array<`gltfio_FilamentInstance`?>): `gltfio_FilamentAsset`?
+    open fun createInstancedAsset(urlOrBuffer: ArrayBufferView, instances: Array<`gltfio_FilamentInstance`?>): `gltfio_FilamentAsset`?
     open fun destroyAsset(asset: `gltfio_FilamentAsset`)
     open fun createInstance(asset: `gltfio_FilamentAsset`): `gltfio_FilamentInstance`?
     open fun delete()

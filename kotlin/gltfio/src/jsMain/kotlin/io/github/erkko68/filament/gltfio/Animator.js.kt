@@ -29,6 +29,6 @@ actual class Animator(internal val jsAnimator: JSAnimator) {
     }
 
     actual fun getAnimationName(index: Int): String? {
-        return jsAnimator.getAnimationName(index)?.let { if (it.isEmpty()) null else it }
+        return jsAnimator.getAnimationName(index).let { if (it.isEmpty()) null else it }
     }
 }

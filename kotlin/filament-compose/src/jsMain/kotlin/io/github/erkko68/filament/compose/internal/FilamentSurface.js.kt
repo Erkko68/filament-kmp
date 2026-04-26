@@ -28,11 +28,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.HTMLElement
 
-// Limitations:
-// https://youtrack.jetbrains.com/projects/CMP/issues/CMP-8521
-// Workaround:
-// https://youtrack.jetbrains.com/projects/CMP/issues/CMP-6858
-
 @Composable
 internal actual fun FilamentSurface(
     modifier: Modifier,
@@ -41,19 +36,43 @@ internal actual fun FilamentSurface(
     view: View,
     camera: Camera,
 ) {
-    var size by remember { mutableStateOf(IntSize.Zero) }
+    var layoutSize by remember { mutableStateOf(IntSize.Zero) }
+    var renderSize by remember { mutableStateOf(IntSize.Zero) }
     val swapChainHolder = remember { arrayOfNulls<SwapChain>(1) }
 
-    LaunchedEffect(size) {
-        val w = size.width
-        val h = size.height
+    LaunchedEffect(layoutSize) {
+        val w = layoutSize.width
+        val h = layoutSize.height
+        if (w <= 0 || h <= 0) return@LaunchedEffect
+        if (renderSize.width <= 0) {
+            renderSize = layoutSize
+        } else {
+            kotlinx.coroutines.delay(150L)
+            renderSize = layoutSize
+        }
+    }
+
+    LaunchedEffect(renderSize) {
+        val w = renderSize.width
+        val h = renderSize.height
         if (w <= 0 || h <= 0) return@LaunchedEffect
         val canvas = engine.jsCanvas ?: return@LaunchedEffect
+        
+        swapChainHolder[0]?.let { engine.destroySwapChain(it) }
+        
         canvas.width = w
         canvas.height = h
-        swapChainHolder[0] = engine.createSwapChain(NativeSurface(canvas))
+        val sc = engine.createSwapChain(NativeSurface(canvas))
+        swapChainHolder[0] = sc
         view.setViewport(Viewport(0, 0, w, h))
         camera.setProjection(45.0, w.toDouble() / h.toDouble(), 0.1, 100.0, Camera.Fov.VERTICAL)
+
+        // Force an immediate render to fill the newly resized canvas before the next browser paint
+        if (renderer.beginFrame(sc, Engine.getSteadyClockTimeNano())) {
+            renderer.render(view)
+            renderer.endFrame()
+        }
+        engine.flush()
     }
 
     FilamentRenderLoop { frameTime ->
@@ -65,7 +84,7 @@ internal actual fun FilamentSurface(
     }
 
     Box(
-        modifier = modifier.onGloballyPositioned { size = it.size }
+        modifier = modifier.onGloballyPositioned { layoutSize = it.size }
     ) {
         WebElementView(
             factory = {

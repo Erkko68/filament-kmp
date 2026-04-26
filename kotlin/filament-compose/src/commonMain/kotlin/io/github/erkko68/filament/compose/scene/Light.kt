@@ -104,3 +104,40 @@ fun PointLight(
         }
     }
 }
+
+/**
+ * Adds a spot light at a world-space position.
+ */
+@Composable
+fun SpotLight(
+    position: Float3 = Float3(0f, 2f, 0f),
+    direction: Float3 = Float3(0f, -1f, 0f),
+    color: Float3 = Float3(1f, 1f, 1f),
+    intensity: Float = 100_000f,
+    falloffRadius: Float = 10f,
+    innerConeAngle: Float = 0.5f,
+    outerConeAngle: Float = 0.6f,
+    castShadows: Boolean = false,
+) {
+    val engine = LocalFilamentEngine.current
+    val scene = LocalFilamentScene.current
+
+    DisposableEffect(position, direction, color, intensity, falloffRadius, innerConeAngle, outerConeAngle, castShadows) {
+        val entity = engine.getEntityManager().create()
+        LightManager.Builder(LightManager.Type.SPOT)
+            .position(position.x, position.y, position.z)
+            .direction(direction.x, direction.y, direction.z)
+            .color(color.x, color.y, color.z)
+            .intensity(intensity)
+            .falloff(falloffRadius)
+            .spotLightCone(innerConeAngle, outerConeAngle)
+            .castShadows(castShadows)
+            .build(engine, entity)
+        scene.addEntity(entity)
+        onDispose {
+            scene.removeEntity(entity)
+            engine.getLightManager().destroy(entity)
+            engine.getEntityManager().destroy(entity)
+        }
+    }
+}

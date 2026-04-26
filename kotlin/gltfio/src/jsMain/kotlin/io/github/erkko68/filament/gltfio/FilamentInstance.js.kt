@@ -48,7 +48,7 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         val vector = jsInstance.getSkinNames()
         val result = Array(vector.size().toInt()) { "" }
         for (i in 0 until vector.size().toInt()) {
-            result[i] = vector.get(i) as String
+            result[i] = vector.get(i)
         }
         return result
     }
@@ -78,7 +78,7 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
     actual fun getMaterialInstances(): Array<MaterialInstance> {
         val vector = jsInstance.getMaterialInstances()
         return Array(vector.size().toInt()) { i ->
-            MaterialInstance(vector.get(i) as JSMaterialInstance)
+            MaterialInstance(vector.get(i))
         }
     }
 
