@@ -2,7 +2,6 @@ package io.github.erkko68.filament.compose.internal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.View
@@ -10,6 +9,7 @@ import io.github.erkko68.filament.View
 /**
  * Platform-specific rendering surface.
  * Manages SwapChain lifecycle, viewport updates, and the render loop.
+ * Calls [onResize] with the new aspect ratio whenever the drawable size changes.
  */
 @Composable
 internal expect fun FilamentSurface(
@@ -17,5 +17,5 @@ internal expect fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
-    camera: Camera,
+    onResize: (aspect: Double) -> Unit,
 )

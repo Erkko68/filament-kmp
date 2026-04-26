@@ -9,7 +9,6 @@ import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.ResourceLoader
-import io.github.erkko68.filament.utils.Float3
 import io.github.erkko68.filament.utils.Quaternion
 
 /**
@@ -21,14 +20,14 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param bytes Raw glb/glTF binary data.
  * @param position World-space translation.
  * @param rotation World-space rotation as a quaternion.
- * @param scale Per-axis scale. Use [Float3] with equal components for uniform scale.
+ * @param scale Per-axis scale. Use [Scale] with equal components for uniform scale.
  */
 @Composable
 fun GltfModel(
     bytes: ByteArray,
-    position: Float3 = Float3(0f),
+    position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
-    scale: Float3 = Float3(1f),
+    scale: Scale = Scale(1f),
 ) {
     val engine = LocalFilamentEngine.current
     val scene = LocalFilamentScene.current

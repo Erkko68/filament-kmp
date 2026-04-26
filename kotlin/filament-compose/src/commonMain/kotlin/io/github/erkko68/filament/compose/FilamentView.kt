@@ -3,21 +3,31 @@ package io.github.erkko68.filament.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.internal.FilamentSurface
+import io.github.erkko68.filament.compose.scene.CameraConfig
+import io.github.erkko68.filament.compose.scene.Exposure
+import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.UbershaderProvider
+import io.github.erkko68.filament.utils.Float2
+import io.github.erkko68.filament.compose.scene.Direction
+import io.github.erkko68.filament.compose.scene.Position
 
 /**
  * A Filament rendering surface with a declarative scene DSL.
  *
  * @param engine Optional shared engine. If null, a dedicated engine is created and destroyed
  *   with this composable. Pass a [rememberFilamentEngine] value to share an engine across views.
- * @param content Scene composables: [ColorSkybox], [DirectionalLight], [PerspectiveCamera],
- *   [GltfModel], etc. Use [FilamentEffect] to access raw Filament objects.
+ * @param content Scene composables: [scene.Skybox], [scene.Light], [scene.Camera],
+ *   [scene.GltfModel], etc. Use [FilamentEffect] to access raw Filament objects.
  */
 @Composable
 fun FilamentView(
@@ -28,24 +38,47 @@ fun FilamentView(
     val activeEngine = engine ?: rememberFilamentEngine()
 
     val renderer = remember(activeEngine) { activeEngine.createRenderer() }
-    val scene = remember(activeEngine) { activeEngine.createScene() }
-    val view = remember(activeEngine) { activeEngine.createView() }
-    val camera = remember(activeEngine) { activeEngine.createCamera() }
+    val scene    = remember(activeEngine) { activeEngine.createScene() }
+    val view     = remember(activeEngine) { activeEngine.createView() }
+    val camera   = remember(activeEngine) { activeEngine.createCamera() }
+
+    val defaultConfig = remember {
+        CameraConfig(
+            eye        = Position(0f, 1f, 10f),
+            target     = Position(0f, 0f, 0f),
+            up         = Direction(0f, 1f, 0f),
+            projection = Projection.Perspective(),
+            exposure   = Exposure(),
+            shift      = Float2(0f, 0f),
+            scaling    = Float2(1f, 1f),
+        )
+    }
+    var cameraConfig by remember { mutableStateOf(defaultConfig) }
 
     remember(view, scene, camera) {
         view.setScene(scene)
         view.setCamera(camera)
-        // Defaults — overridden by PerspectiveCamera composable when present
-        camera.setProjection(45.0, 1.0, 0.1, 100.0, Camera.Fov.VERTICAL)
-        camera.lookAt(0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
-        camera.setExposure(16.0f, 1.0f / 125.0f, 100.0f)
         view.setPostProcessingEnabled(false)
+        cameraConfig.applyTo(camera, 1.0)
     }
 
-    // Shared gltf context — all GltfModel composables in this view share one AssetLoader
-    // and UbershaderProvider so materials are deduplicated automatically.
+    val aspectRef       = remember { doubleArrayOf(1.0) }
+    val cameraConfigRef = remember { Array<CameraConfig>(1) { cameraConfig } }
+    SideEffect { cameraConfigRef[0] = cameraConfig }
+
+    LaunchedEffect(cameraConfig) {
+        cameraConfig.applyTo(camera, aspectRef[0])
+    }
+
+    val onResize: (Double) -> Unit = remember(camera) {
+        { aspect ->
+            aspectRef[0] = aspect
+            cameraConfigRef[0].applyTo(camera, aspect)
+        }
+    }
+
     val gltfMaterials = remember(activeEngine) { UbershaderProvider(activeEngine) }
-    val assetLoader = remember(activeEngine) {
+    val assetLoader   = remember(activeEngine) {
         AssetLoader.create(activeEngine, gltfMaterials, activeEngine.getEntityManager())
     }
 
@@ -61,20 +94,22 @@ fun FilamentView(
     }
 
     CompositionLocalProvider(
-        LocalFilamentEngine provides activeEngine,
-        LocalFilamentScene provides scene,
-        LocalFilamentCamera provides camera,
-        LocalFilamentView provides view,
-        LocalFilamentRenderer provides renderer,
-        LocalAssetLoader provides assetLoader,
+        LocalFilamentEngine         provides activeEngine,
+        LocalFilamentScene          provides scene,
+        LocalFilamentCamera         provides camera,
+        LocalFilamentView           provides view,
+        LocalFilamentRenderer       provides renderer,
+        LocalAssetLoader            provides assetLoader,
+        LocalCameraConfig           provides cameraConfig,
+        LocalCameraConfigController provides { cameraConfig = it },
     ) {
         content()
         FilamentSurface(
             modifier = modifier,
-            engine = activeEngine,
+            engine   = activeEngine,
             renderer = renderer,
-            view = view,
-            camera = camera,
+            view     = view,
+            onResize = onResize,
         )
     }
 }

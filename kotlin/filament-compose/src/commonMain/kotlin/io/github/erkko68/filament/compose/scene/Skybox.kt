@@ -2,51 +2,75 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import io.github.erkko68.filament.Skybox
+import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.Skybox as FilamentSkybox
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 
+
 /**
- * Adds a solid-color skybox to the scene.
+ * Source for a [Skybox]: either a solid color or a cubemap texture.
+ */
+sealed class SkyboxSource {
+    /**
+     * Solid-color skybox. [rgb] is (r, g, b); [alpha] controls blending with the clear color.
+     */
+    data class Color(
+        val rgb: io.github.erkko68.filament.compose.scene.Color = io.github.erkko68.filament.compose.scene.Color(0.1f, 0.125f, 0.15f),
+        val alpha: Float = 1.0f,
+    ) : SkyboxSource()
+
+    /**
+     * Environment cubemap skybox. [texture] must be a CUBEMAP-type [Texture].
+     */
+    data class Cubemap(val texture: Texture) : SkyboxSource()
+}
+
+/**
+ * Attaches a skybox to the scene.
+ *
+ * @param source     Color or cubemap skybox — see [SkyboxSource].
+ * @param showSun    Render a sun disk (only meaningful with a directional SUN light).
+ * @param intensity  Environment intensity applied on top of the skybox.
+ * @param priority   Render priority; lower values render first (default 0).
+ *
+ * Example:
+ * ```kotlin
+ * Skybox(source = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+ *
+ * Skybox(
+ *     source    = SkyboxSource.Cubemap(environmentTexture),
+ *     showSun   = true,
+ *     intensity = 30_000f,
+ * )
+ * ```
  */
 @Composable
-fun ColorSkybox(
-    r: Float = 0.1f,
-    g: Float = 0.125f,
-    b: Float = 0.15f,
-    a: Float = 1.0f,
+fun Skybox(
+    source: SkyboxSource = SkyboxSource.Color(),
+    showSun: Boolean = false,
+    intensity: Float = 1.0f,
+    priority: Int = 0,
 ) {
     val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
+    val scene  = LocalFilamentScene.current
 
-    DisposableEffect(r, g, b, a) {
-        val skybox = Skybox.Builder()
-            .color(r, g, b, a)
-            .build(engine)
+    DisposableEffect(source, showSun, intensity, priority) {
+        val builder = FilamentSkybox.Builder()
+            .showSun(showSun)
+            .intensity(intensity)
+            .priority(priority)
+
+        when (source) {
+            is SkyboxSource.Color   -> builder.color(source.rgb.r, source.rgb.g, source.rgb.b, source.alpha)
+            is SkyboxSource.Cubemap -> builder.environment(source.texture)
+        }
+
+        val skybox = builder.build(engine)
         scene.setSkybox(skybox)
         onDispose {
             scene.setSkybox(null)
             engine.destroySkybox(skybox)
         }
-    }
-}
-
-/**
- * Adds a texture-based skybox from an IBL KTX cubemap.
- */
-@Composable
-fun ImageBasedSkybox(
-    cubemapBytes: ByteArray,
-    intensity: Float = 30_000f,
-    showSun: Boolean = false,
-) {
-    val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
-
-    DisposableEffect(cubemapBytes, intensity, showSun) {
-        // KTX1Loader is in filament-utils — caller loads the Texture and passes it directly.
-        // This composable is a placeholder for the texture-based variant.
-        // See IndirectLight composable for IBL reflections.
-        onDispose { }
     }
 }

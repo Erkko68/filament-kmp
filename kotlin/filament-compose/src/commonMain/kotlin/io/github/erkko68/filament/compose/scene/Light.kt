@@ -2,137 +2,108 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
-import io.github.erkko68.filament.utils.Float3
+
+
+// ── Public: type-specific parameter groups ────────────────────────────────────
 
 /**
- * Adds a directional light (infinite distance, like the sun without disk).
+ * Spot / focused-spot cone angles (half-angles in radians).
+ * [innerAngle] must be ≤ [outerAngle].
  */
-@Composable
-fun DirectionalLight(
-    direction: Float3 = Float3(0.3f, -1f, -0.5f),
-    color: Float3 = Float3(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    castShadows: Boolean = false,
-) {
-    val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
+data class SpotCone(
+    val innerAngle: Float = 0.5f,
+    val outerAngle: Float = 0.6f,
+)
 
-    DisposableEffect(direction, color, intensity, castShadows) {
-        val entity = engine.getEntityManager().create()
-        LightManager.Builder(LightManager.Type.DIRECTIONAL)
+/**
+ * Sun-disk appearance parameters for [LightManager.Type.SUN] lights.
+ */
+data class SunParams(
+    val angularRadius: Float = 1.9f,
+    val haloSize: Float = 10f,
+    val haloFalloff: Float = 80f,
+)
+
+// ── Internal: change-detection key ───────────────────────────────────────────
+
+internal data class LightSnapshot(
+    val type: LightManager.Type,
+    val direction: Direction,
+    val position: Position,
+    val color: Color,
+    val intensity: Float,
+    val castShadows: Boolean,
+    val falloff: Float,
+    val cone: SpotCone,
+    val sun: SunParams,
+) {
+    fun buildInto(engine: Engine, entity: Int) {
+        LightManager.Builder(type)
             .direction(direction.x, direction.y, direction.z)
-            .color(color.x, color.y, color.z)
-            .intensity(intensity)
-            .castShadows(castShadows)
-            .build(engine, entity)
-        scene.addEntity(entity)
-        onDispose {
-            scene.removeEntity(entity)
-            engine.getLightManager().destroy(entity)
-            engine.getEntityManager().destroy(entity)
-        }
-    }
-}
-
-/**
- * Adds a sun light (directional + visible disk in sky).
- */
-@Composable
-fun SunLight(
-    direction: Float3 = Float3(0.3f, -1f, -0.5f),
-    color: Float3 = Float3(1f, 0.98f, 0.95f),
-    intensity: Float = 110_000f,
-    angularRadius: Float = 1.9f,
-    haloSize: Float = 10f,
-    haloFalloff: Float = 80f,
-    castShadows: Boolean = true,
-) {
-    val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
-
-    DisposableEffect(direction, color, intensity, angularRadius, haloSize, haloFalloff, castShadows) {
-        val entity = engine.getEntityManager().create()
-        LightManager.Builder(LightManager.Type.SUN)
-            .direction(direction.x, direction.y, direction.z)
-            .color(color.x, color.y, color.z)
-            .intensity(intensity)
-            .sunAngularRadius(angularRadius)
-            .sunHaloSize(haloSize)
-            .sunHaloFalloff(haloFalloff)
-            .castShadows(castShadows)
-            .build(engine, entity)
-        scene.addEntity(entity)
-        onDispose {
-            scene.removeEntity(entity)
-            engine.getLightManager().destroy(entity)
-            engine.getEntityManager().destroy(entity)
-        }
-    }
-}
-
-/**
- * Adds a point light at a world-space position.
- */
-@Composable
-fun PointLight(
-    position: Float3 = Float3(0f, 2f, 0f),
-    color: Float3 = Float3(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    falloffRadius: Float = 10f,
-    castShadows: Boolean = false,
-) {
-    val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
-
-    DisposableEffect(position, color, intensity, falloffRadius, castShadows) {
-        val entity = engine.getEntityManager().create()
-        LightManager.Builder(LightManager.Type.POINT)
             .position(position.x, position.y, position.z)
-            .color(color.x, color.y, color.z)
+            .color(color.r, color.g, color.b)
             .intensity(intensity)
-            .falloff(falloffRadius)
             .castShadows(castShadows)
+            .falloff(falloff)
+            .spotLightCone(cone.innerAngle, cone.outerAngle)
+            .sunAngularRadius(sun.angularRadius)
+            .sunHaloSize(sun.haloSize)
+            .sunHaloFalloff(sun.haloFalloff)
             .build(engine, entity)
-        scene.addEntity(entity)
-        onDispose {
-            scene.removeEntity(entity)
-            engine.getLightManager().destroy(entity)
-            engine.getEntityManager().destroy(entity)
-        }
     }
 }
 
+// ── Composable ────────────────────────────────────────────────────────────────
+
 /**
- * Adds a spot light at a world-space position.
+ * Adds a light to the scene. [type] is Filament's own [LightManager.Type] enum.
+ *
+ * Set only the parameters relevant to your light type — irrelevant ones are ignored
+ * by Filament's builder. Type-specific groups ([cone], [sun]) use sensible defaults.
+ *
+ * Example:
+ * ```kotlin
+ * Light(
+ *     type      = LightManager.Type.SUN,
+ *     direction = Direction(0.3f, -1f, -0.5f),
+ *     intensity = 110_000f,
+ *     sun       = SunParams(angularRadius = 2.4f),
+ *     castShadows = true,
+ * )
+ *
+ * Light(
+ *     type      = LightManager.Type.SPOT,
+ *     position  = Position(2f, 3f, 0f),
+ *     direction = Direction(0f, -1f, 0f),
+ *     intensity = 50_000f,
+ *     falloff   = 8f,
+ *     cone      = SpotCone(innerAngle = 0.3f, outerAngle = 0.5f),
+ * )
+ * ```
  */
 @Composable
-fun SpotLight(
-    position: Float3 = Float3(0f, 2f, 0f),
-    direction: Float3 = Float3(0f, -1f, 0f),
-    color: Float3 = Float3(1f, 1f, 1f),
+fun Light(
+    type: LightManager.Type,
+    color: Color = Color(1f, 1f, 1f),
     intensity: Float = 100_000f,
-    falloffRadius: Float = 10f,
-    innerConeAngle: Float = 0.5f,
-    outerConeAngle: Float = 0.6f,
     castShadows: Boolean = false,
+    direction: Direction = Direction(0.3f, -1f, -0.5f),
+    position: Position = Position(0f, 2f, 0f),
+    falloff: Float = 10f,
+    cone: SpotCone = SpotCone(),
+    sun: SunParams = SunParams(),
 ) {
     val engine = LocalFilamentEngine.current
     val scene = LocalFilamentScene.current
+    val snapshot = LightSnapshot(type, direction, position, color, intensity, castShadows, falloff, cone, sun)
 
-    DisposableEffect(position, direction, color, intensity, falloffRadius, innerConeAngle, outerConeAngle, castShadows) {
+    DisposableEffect(snapshot) {
         val entity = engine.getEntityManager().create()
-        LightManager.Builder(LightManager.Type.SPOT)
-            .position(position.x, position.y, position.z)
-            .direction(direction.x, direction.y, direction.z)
-            .color(color.x, color.y, color.z)
-            .intensity(intensity)
-            .falloff(falloffRadius)
-            .spotLightCone(innerConeAngle, outerConeAngle)
-            .castShadows(castShadows)
-            .build(engine, entity)
+        snapshot.buildInto(engine, entity)
         scene.addEntity(entity)
         onDispose {
             scene.removeEntity(entity)

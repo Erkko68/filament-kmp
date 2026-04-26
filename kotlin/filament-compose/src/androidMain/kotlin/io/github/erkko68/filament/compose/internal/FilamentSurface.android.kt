@@ -4,9 +4,10 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.NativeSurface
 import io.github.erkko68.filament.Renderer
@@ -20,14 +21,18 @@ internal actual fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
-    camera: Camera,
+    onResize: (aspect: Double) -> Unit,
 ) {
     var swapChain: SwapChain? = null
+
+    // Keep a mutable ref so the SurfaceHolder callback always dispatches to the latest lambda.
+    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
+    SideEffect { onResizeRef[0] = onResize }
 
     fun updateViewport(width: Int, height: Int) {
         if (width <= 0 || height <= 0) return
         view.setViewport(Viewport(0, 0, width, height))
-        camera.setProjection(45.0, width.toDouble() / height.toDouble(), 0.1, 100.0, Camera.Fov.VERTICAL)
+        onResizeRef[0](width.toDouble() / height.toDouble())
     }
 
     AndroidView(

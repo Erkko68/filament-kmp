@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.viewinterop.WebElementView
-import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.NativeSurface
 import io.github.erkko68.filament.Renderer
@@ -34,11 +34,15 @@ internal actual fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
-    camera: Camera,
+    onResize: (aspect: Double) -> Unit,
 ) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
     var renderSize by remember { mutableStateOf(IntSize.Zero) }
     val swapChainHolder = remember { arrayOfNulls<SwapChain>(1) }
+
+    // Keep a mutable ref so the resize effect always dispatches to the latest lambda.
+    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
+    SideEffect { onResizeRef[0] = onResize }
 
     LaunchedEffect(layoutSize) {
         val w = layoutSize.width
@@ -57,17 +61,17 @@ internal actual fun FilamentSurface(
         val h = renderSize.height
         if (w <= 0 || h <= 0) return@LaunchedEffect
         val canvas = engine.jsCanvas ?: return@LaunchedEffect
-        
+
         swapChainHolder[0]?.let { engine.destroySwapChain(it) }
-        
+
         canvas.width = w
         canvas.height = h
         val sc = engine.createSwapChain(NativeSurface(canvas))
         swapChainHolder[0] = sc
         view.setViewport(Viewport(0, 0, w, h))
-        camera.setProjection(45.0, w.toDouble() / h.toDouble(), 0.1, 100.0, Camera.Fov.VERTICAL)
+        onResizeRef[0](w.toDouble() / h.toDouble())
 
-        // Force an immediate render to fill the newly resized canvas before the next browser paint
+        // Force an immediate render to fill the newly resized canvas before the next browser paint.
         if (renderer.beginFrame(sc, Engine.getSteadyClockTimeNano())) {
             renderer.render(view)
             renderer.endFrame()

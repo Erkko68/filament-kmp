@@ -1,12 +1,13 @@
 package io.github.erkko68.filament.compose.internal
 
-import io.github.erkko68.filament.utils.Float3
+import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * Builds a column-major 4x4 TRS matrix as FloatArray for TransformManager.setTransform.
  */
-internal fun transformMatrix(position: Float3, rotation: Quaternion, scale: Float3): FloatArray {
+internal fun transformMatrix(position: Position, rotation: Quaternion, scale: Scale): FloatArray {
     val x = rotation.x; val y = rotation.y; val z = rotation.z; val w = rotation.w
     return floatArrayOf(
         // column 0

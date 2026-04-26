@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,7 +15,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
-import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.RenderTarget
@@ -53,13 +53,17 @@ internal actual fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
-    camera: Camera,
+    onResize: (aspect: Double) -> Unit,
 ) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
     var textureSize by remember { mutableStateOf(IntSize.Zero) }
     var snapshotImage by remember { mutableStateOf<Image?>(null) }
     var readPixelsPending by remember { mutableStateOf(false) }
     var surface by remember { mutableStateOf<OffscreenSurface?>(null) }
+
+    // Keep a mutable ref so DisposableEffect(textureSize) always dispatches to the latest lambda.
+    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
+    SideEffect { onResizeRef[0] = onResize }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -132,7 +136,7 @@ internal actual fun FilamentSurface(
             val swapChain = engine.createSwapChain(w, h, 0)
             view.setRenderTarget(renderTarget)
             view.setViewport(Viewport(0, 0, w, h))
-            camera.setProjection(45.0, w.toDouble() / h.toDouble(), 0.1, 100.0, Camera.Fov.VERTICAL)
+            onResizeRef[0](w.toDouble() / h.toDouble())
             surface = OffscreenSurface(colorTexture, depthTexture, renderTarget, swapChain, w, h)
         }
 
