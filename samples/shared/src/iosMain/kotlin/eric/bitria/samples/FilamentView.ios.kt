@@ -35,6 +35,7 @@ actual fun FilamentView(
                 }
 
                 init {
+                    controller.initialize()
                     layer.addSublayer(metalLayer)
                 }
 

@@ -24,6 +24,8 @@ import org.w3c.dom.HTMLElement
 
 @Composable
 actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
+    remember { controller.initialize() }
+
     var size by remember { mutableStateOf(IntSize.Zero) }
 
     LaunchedEffect(size) {

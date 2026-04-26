@@ -16,6 +16,7 @@ actual fun FilamentView(
     AndroidView(
         modifier = modifier,
         factory = { context ->
+            controller.initialize()
             SurfaceView(context).apply {
                 holder.addCallback(object : SurfaceHolder.Callback {
                     override fun surfaceCreated(holder: SurfaceHolder) {

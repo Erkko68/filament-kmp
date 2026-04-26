@@ -29,7 +29,6 @@ fun App() {
     val scene = remember { SampleScene(controller) }
     
     LaunchedEffect(Unit) {
-        controller.initialize()
         scene.setup()
 
         try {
