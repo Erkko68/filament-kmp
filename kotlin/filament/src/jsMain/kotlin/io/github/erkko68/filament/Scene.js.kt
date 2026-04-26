@@ -25,7 +25,7 @@ actual class Scene(internal val jsScene: JSScene) {
         return _indirectLight
     }
 
-    actual fun addEntity(entity: Int) {
+    actual fun addEntity(entity: Entity) {
         if (_entities.add(entity)) {
             jsScene.addEntity(EntityManager.jsEntityOf(entity))
         }
@@ -38,13 +38,13 @@ actual class Scene(internal val jsScene: JSScene) {
         if (toAdd.isNotEmpty()) jsScene.addEntities(toAdd)
     }
 
-    actual fun removeEntity(entity: Int) {
+    actual fun removeEntity(entity: Entity) {
         if (_entities.remove(entity)) {
             jsScene.remove(EntityManager.jsEntityOf(entity))
         }
     }
 
-    actual fun remove(entity: Int) {
+    actual fun remove(entity: Entity) {
         removeEntity(entity)
     }
 
@@ -67,7 +67,7 @@ actual class Scene(internal val jsScene: JSScene) {
         return jsScene.getLightCount().toInt()
     }
 
-    actual fun hasEntity(entity: Int): Boolean {
+    actual fun hasEntity(entity: Entity): Boolean {
         return _entities.contains(entity)
     }
 
@@ -81,7 +81,7 @@ actual class Scene(internal val jsScene: JSScene) {
         return result
     }
 
-    actual fun forEach(block: (Int) -> Unit) {
+    actual fun forEach(block: (Entity) -> Unit) {
         _entities.forEach(block)
     }
 }

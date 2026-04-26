@@ -7,7 +7,7 @@ actual class EntityManager(val nativeEntityManager: JniEntityManager) {
         actual fun get(): EntityManager = EntityManager(JniEntityManager.get())
     }
 
-    actual fun create(): Int = nativeEntityManager.create()
+    actual fun create(): Entity = nativeEntityManager.create()
     
     actual fun create(n: Int): IntArray {
         val entities = IntArray(n)
@@ -24,7 +24,7 @@ actual class EntityManager(val nativeEntityManager: JniEntityManager) {
         return entities
     }
 
-    actual fun destroy(entity: Int) = nativeEntityManager.destroy(entity)
+    actual fun destroy(entity: Entity) = nativeEntityManager.destroy(entity)
     
     actual fun destroy(entities: IntArray) {
         for (entity in entities) {
@@ -32,5 +32,5 @@ actual class EntityManager(val nativeEntityManager: JniEntityManager) {
         }
     }
 
-    actual fun isAlive(entity: Int): Boolean = nativeEntityManager.isAlive(entity)
+    actual fun isAlive(entity: Entity): Boolean = nativeEntityManager.isAlive(entity)
 }

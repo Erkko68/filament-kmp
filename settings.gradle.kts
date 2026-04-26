@@ -6,6 +6,8 @@ include(":kotlin:filamat")
 include(":kotlin:filament-utils")
 include(":kotlin:gltfio")
 
+include(":kotlin:filament-compose")
+
 // Java modules
 include(":java:filament")
 include(":java:filamat")

@@ -138,56 +138,56 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
         actual fun sunAngularRadius(angularRadius: Float): Builder = apply { FilaLightManagerBuilder_sunAngularRadius(nativeBuilder, angularRadius) }
         actual fun sunHaloSize(haloSize: Float): Builder = apply { FilaLightManagerBuilder_sunHaloSize(nativeBuilder, haloSize) }
         actual fun sunHaloFalloff(haloFalloff: Float): Builder = apply { FilaLightManagerBuilder_sunHaloFalloff(nativeBuilder, haloFalloff) }
-        actual fun build(engine: Engine, entity: Int) {
+        actual fun build(engine: Engine, entity: Entity) {
             FilaLightManagerBuilder_build(nativeBuilder, engine.nativeHandle!!, entity.toUInt())
             FilaLightManagerBuilder_destroy(nativeBuilder)
         }
     }
 
     actual fun getComponentCount(): Int = FilaLightManager_getComponentCount(nativeLightManager).toInt()
-    actual fun hasComponent(entity: Int): Boolean = FilaLightManager_hasComponent(nativeLightManager, entity.toUInt())
-    actual fun getInstance(entity: Int): Int = FilaLightManager_getInstance(nativeLightManager, entity.toUInt()).toInt()
-    actual fun destroy(entity: Int) { FilaLightManager_destroy(nativeLightManager, entity.toUInt()) }
+    actual fun hasComponent(entity: Entity): Boolean = FilaLightManager_hasComponent(nativeLightManager, entity.toUInt())
+    actual fun getInstance(entity: Entity): EntityInstance = FilaLightManager_getInstance(nativeLightManager, entity.toUInt()).toInt()
+    actual fun destroy(entity: Entity) { FilaLightManager_destroy(nativeLightManager, entity.toUInt()) }
 
-    actual fun getType(instance: Int): Type = Type.values()[FilaLightManager_getType(nativeLightManager, instance.toUInt()).toInt()]
-    actual fun setDirection(instance: Int, x: Float, y: Float, z: Float) { FilaLightManager_setDirection(nativeLightManager, instance.toUInt(), x, y, z) }
-    actual fun getDirection(instance: Int, out: FloatArray): FloatArray {
+    actual fun getType(instance: EntityInstance): Type = Type.values()[FilaLightManager_getType(nativeLightManager, instance.toUInt()).toInt()]
+    actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { FilaLightManager_setDirection(nativeLightManager, instance.toUInt(), x, y, z) }
+    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
         out.usePinned { pinned ->
             FilaLightManager_getDirection(nativeLightManager, instance.toUInt(), pinned.addressOf(0))
         }
         return out
     }
-    actual fun setPosition(instance: Int, x: Float, y: Float, z: Float) { FilaLightManager_setPosition(nativeLightManager, instance.toUInt(), x, y, z) }
-    actual fun getPosition(instance: Int, out: FloatArray): FloatArray {
+    actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { FilaLightManager_setPosition(nativeLightManager, instance.toUInt(), x, y, z) }
+    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
         out.usePinned { pinned ->
             FilaLightManager_getPosition(nativeLightManager, instance.toUInt(), pinned.addressOf(0))
         }
         return out
     }
-    actual fun setColor(instance: Int, r: Float, g: Float, b: Float) { FilaLightManager_setColor(nativeLightManager, instance.toUInt(), r, g, b) }
-    actual fun getColor(instance: Int, out: FloatArray): FloatArray {
+    actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { FilaLightManager_setColor(nativeLightManager, instance.toUInt(), r, g, b) }
+    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
         out.usePinned { pinned ->
             FilaLightManager_getColor(nativeLightManager, instance.toUInt(), pinned.addressOf(0))
         }
         return out
     }
-    actual fun setIntensity(instance: Int, intensity: Float) { FilaLightManager_setIntensity(nativeLightManager, instance.toUInt(), intensity) }
-    actual fun setIntensity(instance: Int, watts: Float, efficiency: Float) { FilaLightManager_setIntensityEfficiency(nativeLightManager, instance.toUInt(), watts, efficiency) }
-    actual fun setIntensityCandela(instance: Int, intensity: Float) { FilaLightManager_setIntensityCandela(nativeLightManager, instance.toUInt(), intensity) }
-    actual fun getIntensity(instance: Int): Float = FilaLightManager_getIntensity(nativeLightManager, instance.toUInt())
-    actual fun setFalloff(instance: Int, radius: Float) { FilaLightManager_setFalloff(nativeLightManager, instance.toUInt(), radius) }
-    actual fun getFalloff(instance: Int): Float = FilaLightManager_getFalloff(nativeLightManager, instance.toUInt())
-    actual fun setSpotLightCone(instance: Int, inner: Float, outer: Float) { FilaLightManager_setSpotLightCone(nativeLightManager, instance.toUInt(), inner, outer) }
-    actual fun getInnerConeAngle(instance: Int): Float = FilaLightManager_getSpotLightInnerCone(nativeLightManager, instance.toUInt())
-    actual fun getOuterConeAngle(instance: Int): Float = FilaLightManager_getSpotLightOuterCone(nativeLightManager, instance.toUInt())
-    actual fun setSunAngularRadius(instance: Int, angularRadius: Float) { FilaLightManager_setSunAngularRadius(nativeLightManager, instance.toUInt(), angularRadius) }
-    actual fun getSunAngularRadius(instance: Int): Float = FilaLightManager_getSunAngularRadius(nativeLightManager, instance.toUInt())
-    actual fun setSunHaloSize(instance: Int, haloSize: Float) { FilaLightManager_setSunHaloSize(nativeLightManager, instance.toUInt(), haloSize) }
-    actual fun getSunHaloSize(instance: Int): Float = FilaLightManager_getSunHaloSize(nativeLightManager, instance.toUInt())
-    actual fun setSunHaloFalloff(instance: Int, haloFalloff: Float) { FilaLightManager_setSunHaloFalloff(nativeLightManager, instance.toUInt(), haloFalloff) }
-    actual fun getSunHaloFalloff(instance: Int): Float = FilaLightManager_getSunHaloFalloff(nativeLightManager, instance.toUInt())
-    actual fun setShadowCaster(instance: Int, shadowCaster: Boolean) { FilaLightManager_setShadowCaster(nativeLightManager, instance.toUInt(), shadowCaster) }
-    actual fun isShadowCaster(instance: Int): Boolean = FilaLightManager_isShadowCaster(nativeLightManager, instance.toUInt())
-    actual fun setLightChannel(instance: Int, channel: Int, enable: Boolean) { FilaLightManager_setLightChannel(nativeLightManager, instance.toUInt(), channel.toUInt(), enable) }
-    actual fun getLightChannel(instance: Int, channel: Int): Boolean = FilaLightManager_getLightChannel(nativeLightManager, instance.toUInt(), channel.toUInt())
+    actual fun setIntensity(instance: EntityInstance, intensity: Float) { FilaLightManager_setIntensity(nativeLightManager, instance.toUInt(), intensity) }
+    actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) { FilaLightManager_setIntensityEfficiency(nativeLightManager, instance.toUInt(), watts, efficiency) }
+    actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) { FilaLightManager_setIntensityCandela(nativeLightManager, instance.toUInt(), intensity) }
+    actual fun getIntensity(instance: EntityInstance): Float = FilaLightManager_getIntensity(nativeLightManager, instance.toUInt())
+    actual fun setFalloff(instance: EntityInstance, radius: Float) { FilaLightManager_setFalloff(nativeLightManager, instance.toUInt(), radius) }
+    actual fun getFalloff(instance: EntityInstance): Float = FilaLightManager_getFalloff(nativeLightManager, instance.toUInt())
+    actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) { FilaLightManager_setSpotLightCone(nativeLightManager, instance.toUInt(), inner, outer) }
+    actual fun getInnerConeAngle(instance: EntityInstance): Float = FilaLightManager_getSpotLightInnerCone(nativeLightManager, instance.toUInt())
+    actual fun getOuterConeAngle(instance: EntityInstance): Float = FilaLightManager_getSpotLightOuterCone(nativeLightManager, instance.toUInt())
+    actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) { FilaLightManager_setSunAngularRadius(nativeLightManager, instance.toUInt(), angularRadius) }
+    actual fun getSunAngularRadius(instance: EntityInstance): Float = FilaLightManager_getSunAngularRadius(nativeLightManager, instance.toUInt())
+    actual fun setSunHaloSize(instance: EntityInstance, haloSize: Float) { FilaLightManager_setSunHaloSize(nativeLightManager, instance.toUInt(), haloSize) }
+    actual fun getSunHaloSize(instance: EntityInstance): Float = FilaLightManager_getSunHaloSize(nativeLightManager, instance.toUInt())
+    actual fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float) { FilaLightManager_setSunHaloFalloff(nativeLightManager, instance.toUInt(), haloFalloff) }
+    actual fun getSunHaloFalloff(instance: EntityInstance): Float = FilaLightManager_getSunHaloFalloff(nativeLightManager, instance.toUInt())
+    actual fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean) { FilaLightManager_setShadowCaster(nativeLightManager, instance.toUInt(), shadowCaster) }
+    actual fun isShadowCaster(instance: EntityInstance): Boolean = FilaLightManager_isShadowCaster(nativeLightManager, instance.toUInt())
+    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) { FilaLightManager_setLightChannel(nativeLightManager, instance.toUInt(), channel.toUInt(), enable) }
+    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = FilaLightManager_getLightChannel(nativeLightManager, instance.toUInt(), channel.toUInt())
 }

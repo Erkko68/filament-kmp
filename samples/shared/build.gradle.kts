@@ -46,9 +46,7 @@ kotlin {
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:${libs.versions.androidx.lifecycle.get()}") {
                 exclude(group = "androidx.activity", module = "activity-compose")
             }
-            implementation("io.github.erkko68.filament:filament")
-            implementation("io.github.erkko68.filament:filamat")
-            implementation("io.github.erkko68.filament:gltfio")
+            implementation("io.github.erkko68.filament:filament-compose")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -60,9 +58,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation("io.github.erkko68.filament:filament")
-                implementation("io.github.erkko68.filament:filamat")
-                implementation("io.github.erkko68.filament:gltfio")
+                implementation("io.github.erkko68.filament:filament-compose")
             }
         }
     }

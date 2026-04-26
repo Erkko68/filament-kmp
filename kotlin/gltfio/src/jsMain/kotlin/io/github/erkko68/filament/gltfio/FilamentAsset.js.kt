@@ -2,28 +2,29 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.js.`gltfio_FilamentAsset` as JSFilamentAsset
-import io.github.erkko68.filament.js.Entity
+import io.github.erkko68.filament.js.Entity as JSEntity
 import io.github.erkko68.filament.js.Aabb
 
 actual class FilamentAsset(
     internal val jsAsset: JSFilamentAsset,
     private val _engine: Engine? = null
 ) {
-    private fun Entity.registerAndGetId(): Int {
+    private fun JSEntity.registerAndGetId(): Entity {
         val id = getId().toInt()
         EntityManager.register(id, this)
         return id
     }
 
-    private fun Array<Entity>.registerAndGetIds(): IntArray {
+    private fun Array<JSEntity>.registerAndGetIds(): IntArray {
         return IntArray(size) { i -> this[i].registerAndGetId() }
     }
 
-    actual fun getRoot(): Int = jsAsset.getRoot().registerAndGetId()
+    actual fun getRoot(): Entity = jsAsset.getRoot().registerAndGetId()
 
-    actual fun popRenderable(): Int = jsAsset.popRenderable().registerAndGetId()
+    actual fun popRenderable(): Entity = jsAsset.popRenderable().registerAndGetId()
 
     actual fun popRenderables(entities: IntArray): Int = 0
 
@@ -39,7 +40,7 @@ actual class FilamentAsset(
 
     actual fun getEntitiesByPrefix(prefix: String): IntArray = jsAsset.getEntitiesByPrefix(prefix).registerAndGetIds()
 
-    actual fun getFirstEntityByName(name: String): Int = jsAsset.getEntityByName(name).registerAndGetId()
+    actual fun getFirstEntityByName(name: String): Entity = jsAsset.getEntityByName(name).registerAndGetId()
 
     actual fun getEntityCount(): Int {
         return jsAsset.getEntities().size
@@ -68,17 +69,17 @@ actual class FilamentAsset(
         )
     }
 
-    actual fun getName(entity: Int): String? {
+    actual fun getName(entity: Entity): String? {
         // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
         return jsAsset.getName(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
-    actual fun getExtras(entity: Int): String? {
+    actual fun getExtras(entity: Entity): String? {
         // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
         return jsAsset.getExtras(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
-    actual fun getMorphTargetNames(entity: Int): Array<String> {
+    actual fun getMorphTargetNames(entity: Entity): Array<String> {
         // getMorphTargetNames is not available in JS bindings
         return emptyArray()
     }

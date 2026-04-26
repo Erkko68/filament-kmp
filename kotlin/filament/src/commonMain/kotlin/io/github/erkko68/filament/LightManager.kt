@@ -48,38 +48,38 @@ expect class LightManager {
         fun sunAngularRadius(angularRadius: Float): Builder
         fun sunHaloSize(haloSize: Float): Builder
         fun sunHaloFalloff(haloFalloff: Float): Builder
-        fun build(engine: Engine, entity: Int)
+        fun build(engine: Engine, entity: Entity)
     }
 
     fun getComponentCount(): Int
-    fun hasComponent(entity: Int): Boolean
-    fun getInstance(entity: Int): Int
-    fun destroy(entity: Int)
+    fun hasComponent(entity: Entity): Boolean
+    fun getInstance(entity: Entity): EntityInstance
+    fun destroy(entity: Entity)
 
-    fun getType(instance: Int): Type
-    fun setDirection(instance: Int, x: Float, y: Float, z: Float)
-    fun getDirection(instance: Int, out: FloatArray): FloatArray
-    fun setPosition(instance: Int, x: Float, y: Float, z: Float)
-    fun getPosition(instance: Int, out: FloatArray): FloatArray
-    fun setColor(instance: Int, r: Float, g: Float, b: Float)
-    fun getColor(instance: Int, out: FloatArray): FloatArray
-    fun setIntensity(instance: Int, intensity: Float)
-    fun setIntensity(instance: Int, watts: Float, efficiency: Float)
-    fun setIntensityCandela(instance: Int, intensity: Float)
-    fun getIntensity(instance: Int): Float
-    fun setFalloff(instance: Int, radius: Float)
-    fun getFalloff(instance: Int): Float
-    fun setSpotLightCone(instance: Int, inner: Float, outer: Float)
-    fun getInnerConeAngle(instance: Int): Float
-    fun getOuterConeAngle(instance: Int): Float
-    fun setSunAngularRadius(instance: Int, angularRadius: Float)
-    fun getSunAngularRadius(instance: Int): Float
-    fun setSunHaloSize(instance: Int, haloSize: Float)
-    fun getSunHaloSize(instance: Int): Float
-    fun setSunHaloFalloff(instance: Int, haloFalloff: Float)
-    fun getSunHaloFalloff(instance: Int): Float
-    fun setShadowCaster(instance: Int, shadowCaster: Boolean)
-    fun isShadowCaster(instance: Int): Boolean
-    fun setLightChannel(instance: Int, channel: Int, enable: Boolean)
-    fun getLightChannel(instance: Int, channel: Int): Boolean
+    fun getType(instance: EntityInstance): Type
+    fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float)
+    fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray
+    fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float)
+    fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray
+    fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float)
+    fun getColor(instance: EntityInstance, out: FloatArray): FloatArray
+    fun setIntensity(instance: EntityInstance, intensity: Float)
+    fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float)
+    fun setIntensityCandela(instance: EntityInstance, intensity: Float)
+    fun getIntensity(instance: EntityInstance): Float
+    fun setFalloff(instance: EntityInstance, radius: Float)
+    fun getFalloff(instance: EntityInstance): Float
+    fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float)
+    fun getInnerConeAngle(instance: EntityInstance): Float
+    fun getOuterConeAngle(instance: EntityInstance): Float
+    fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float)
+    fun getSunAngularRadius(instance: EntityInstance): Float
+    fun setSunHaloSize(instance: EntityInstance, haloSize: Float)
+    fun getSunHaloSize(instance: EntityInstance): Float
+    fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float)
+    fun getSunHaloFalloff(instance: EntityInstance): Float
+    fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean)
+    fun isShadowCaster(instance: EntityInstance): Boolean
+    fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean)
+    fun getLightChannel(instance: EntityInstance, channel: Int): Boolean
 }

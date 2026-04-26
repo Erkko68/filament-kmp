@@ -141,10 +141,10 @@ expect class Engine {
 
     // Camera
     fun createCamera(): Camera
-    fun createCamera(entity: Int): Camera
-    fun getCameraComponent(entity: Int): Camera?
+    fun createCamera(entity: Entity): Camera
+    fun getCameraComponent(entity: Entity): Camera?
     fun destroyCamera(camera: Camera)
-    fun destroyCameraComponent(entity: Int)
+    fun destroyCameraComponent(entity: Entity)
 
     // Scene
     fun createScene(): Scene
@@ -167,7 +167,7 @@ expect class Engine {
     fun destroyTexture(texture: Texture)
     fun destroyRenderTarget(target: RenderTarget)
     fun destroyStream(stream: Stream)
-    fun destroyEntity(entity: Int)
+    fun destroyEntity(entity: Entity)
 
     // Managers
     fun getTransformManager(): TransformManager

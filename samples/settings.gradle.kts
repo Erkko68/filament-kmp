@@ -5,6 +5,7 @@ includeBuild("../") {
         substitute(module("io.github.erkko68.filament:filamat")).using(project(":kotlin:filamat"))
         substitute(module("io.github.erkko68.filament:gltfio")).using(project(":kotlin:gltfio"))
         substitute(module("io.github.erkko68.filament:filament-utils")).using(project(":kotlin:filament-utils"))
+        substitute(module("io.github.erkko68.filament:filament-compose")).using(project(":kotlin:filament-compose"))
     }
 }
 

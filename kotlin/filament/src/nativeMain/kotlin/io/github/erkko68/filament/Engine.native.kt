@@ -197,8 +197,8 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         val entity = FilaCamera_getEntity(handle).toInt()
         return Camera(handle, entity)
     }
-    actual fun createCamera(entity: Int): Camera = Camera(FilaEngine_createCamera(nativeHandle, entity.toUInt()), entity)
-    actual fun getCameraComponent(entity: Int): Camera? {
+    actual fun createCamera(entity: Entity): Camera = Camera(FilaEngine_createCamera(nativeHandle, entity.toUInt()), entity)
+    actual fun getCameraComponent(entity: Entity): Camera? {
         val handle = FilaEngine_getCameraComponent(nativeHandle, entity.toUInt())
         return if (handle != null) Camera(handle, entity) else null
     }
@@ -206,7 +206,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         FilaEngine_destroyCamera(nativeHandle, camera.nativeHandle)
         camera.nativeHandle = null
     }
-    actual fun destroyCameraComponent(entity: Int) = FilaEngine_destroyCameraComponent(nativeHandle, entity.toUInt())
+    actual fun destroyCameraComponent(entity: Entity) = FilaEngine_destroyCameraComponent(nativeHandle, entity.toUInt())
 
     actual fun createScene(): Scene = Scene(FilaEngine_createScene(nativeHandle))
     actual fun destroyScene(scene: Scene) {
@@ -264,7 +264,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         FilaEngine_destroyStream(nativeHandle, stream.nativeHandle)
         stream.nativeHandle = null
     }
-    actual fun destroyEntity(entity: Int) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
+    actual fun destroyEntity(entity: Entity) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
 
     actual fun getTransformManager(): TransformManager = mTransformManager
     actual fun getLightManager(): LightManager = mLightManager

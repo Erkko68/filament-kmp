@@ -21,7 +21,7 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
     }
     actual fun getIndirectLight(): IndirectLight? = indirectLight
 
-    actual fun addEntity(entity: Int) = FilaScene_addEntity(nativeHandle, entity.toUInt())
+    actual fun addEntity(entity: Entity) = FilaScene_addEntity(nativeHandle, entity.toUInt())
 
     actual fun addEntities(entities: IntArray) {
         entities.usePinned { pinned ->
@@ -29,8 +29,8 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
         }
     }
 
-    actual fun removeEntity(entity: Int) = FilaScene_remove(nativeHandle, entity.toUInt())
-    actual fun remove(entity: Int) = FilaScene_remove(nativeHandle, entity.toUInt())
+    actual fun removeEntity(entity: Entity) = FilaScene_remove(nativeHandle, entity.toUInt())
+    actual fun remove(entity: Entity) = FilaScene_remove(nativeHandle, entity.toUInt())
 
     actual fun removeEntities(entities: IntArray) {
         entities.usePinned { pinned ->
@@ -41,7 +41,7 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
     actual fun getEntityCount(): Int = FilaScene_getEntityCount(nativeHandle).toInt()
     actual fun getRenderableCount(): Int = FilaScene_getRenderableCount(nativeHandle).toInt()
     actual fun getLightCount(): Int = FilaScene_getLightCount(nativeHandle).toInt()
-    actual fun hasEntity(entity: Int): Boolean = FilaScene_hasEntity(nativeHandle, entity.toUInt())
+    actual fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity.toUInt())
 
     actual fun getEntities(): IntArray = getEntities(null)
 
@@ -56,7 +56,7 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
         return result
     }
 
-    actual fun forEach(block: (Int) -> Unit) {
+    actual fun forEach(block: (Entity) -> Unit) {
         getEntities().forEach(block)
     }
 }

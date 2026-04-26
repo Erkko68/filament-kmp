@@ -53,5 +53,5 @@ expect class Camera {
     
     fun getFieldOfViewInDegrees(direction: Fov): Double
 
-    fun getEntity(): Int
+    fun getEntity(): Entity
 }

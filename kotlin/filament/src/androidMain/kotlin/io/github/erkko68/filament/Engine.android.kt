@@ -218,10 +218,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         val entity = EntityManager.get().create()
         return Camera(nativeEngine.createCamera(entity))
     }
-    actual fun createCamera(entity: Int): Camera = Camera(nativeEngine.createCamera(entity))
-    actual fun getCameraComponent(entity: Int): Camera? = nativeEngine.getCameraComponent(entity)?.let { Camera(it) }
+    actual fun createCamera(entity: Entity): Camera = Camera(nativeEngine.createCamera(entity))
+    actual fun getCameraComponent(entity: Entity): Camera? = nativeEngine.getCameraComponent(entity)?.let { Camera(it) }
     actual fun destroyCamera(camera: Camera) { nativeEngine.destroyCameraComponent(camera.nativeCamera.entity) }
-    actual fun destroyCameraComponent(entity: Int) { nativeEngine.destroyCameraComponent(entity) }
+    actual fun destroyCameraComponent(entity: Entity) { nativeEngine.destroyCameraComponent(entity) }
 
     actual fun createScene(): Scene = Scene(nativeEngine.createScene())
     actual fun destroyScene(scene: Scene) { nativeEngine.destroyScene(scene.nativeScene) }
@@ -241,7 +241,7 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun destroyTexture(texture: Texture) { nativeEngine.destroyTexture(texture.nativeTexture) }
     actual fun destroyRenderTarget(target: RenderTarget) { nativeEngine.destroyRenderTarget(target.nativeRenderTarget) }
     actual fun destroyStream(stream: Stream) { nativeEngine.destroyStream(stream.nativeStream) }
-    actual fun destroyEntity(entity: Int) { nativeEngine.destroyEntity(entity) }
+    actual fun destroyEntity(entity: Entity) { nativeEngine.destroyEntity(entity) }
 
     actual fun getTransformManager(): TransformManager = mTransformManager
     actual fun getLightManager(): LightManager = mLightManager

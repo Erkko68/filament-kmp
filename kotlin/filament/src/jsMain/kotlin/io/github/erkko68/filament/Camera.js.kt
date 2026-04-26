@@ -242,7 +242,7 @@ actual class Camera(internal val jsCamera: JSCamera) {
         return 0.0 // No direct FOV getter in JS without reverse projection
     }
 
-    actual fun getEntity(): Int {
+    actual fun getEntity(): Entity {
         return jsCamera.unsafeCast<io.github.erkko68.filament.js.Entity>().getId().toInt()
     }
 

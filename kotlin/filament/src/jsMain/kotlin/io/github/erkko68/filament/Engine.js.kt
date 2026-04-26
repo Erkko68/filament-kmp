@@ -108,11 +108,11 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
     }
 
-    actual fun createCamera(entity: Int): Camera {
+    actual fun createCamera(entity: Entity): Camera {
         return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
     }
 
-    actual fun getCameraComponent(entity: Int): Camera? {
+    actual fun getCameraComponent(entity: Entity): Camera? {
         return Camera(jsEngine.getCameraComponent(EntityManager.jsEntityOf(entity)))
     }
 
@@ -120,7 +120,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         // Destroyed via its entity component in JS
     }
 
-    actual fun destroyCameraComponent(entity: Int) {
+    actual fun destroyCameraComponent(entity: Entity) {
         jsEngine.destroyCameraComponent(EntityManager.jsEntityOf(entity))
     }
 
@@ -184,7 +184,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun destroyStream(stream: Stream) {
     }
 
-    actual fun destroyEntity(entity: Int) {
+    actual fun destroyEntity(entity: Entity) {
         jsEngine.destroyEntity(EntityManager.jsEntityOf(entity))
     }
 

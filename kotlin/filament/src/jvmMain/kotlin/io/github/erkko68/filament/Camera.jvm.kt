@@ -134,5 +134,5 @@ actual class Camera(val nativeCamera: JniCamera) {
     actual fun getFieldOfViewInDegrees(direction: Fov): Double =
         nativeCamera.getFieldOfViewInDegrees(JniCamera.Fov.values()[direction.ordinal])
 
-    actual fun getEntity(): Int = nativeCamera.entity
+    actual fun getEntity(): Entity = nativeCamera.entity
 }

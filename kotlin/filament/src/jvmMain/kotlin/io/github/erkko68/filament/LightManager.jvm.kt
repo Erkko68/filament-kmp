@@ -93,44 +93,44 @@ actual class LightManager(val nativeLightManager: JniLightManager) {
         actual fun sunAngularRadius(angularRadius: Float): Builder { jni.sunAngularRadius(angularRadius); return this }
         actual fun sunHaloSize(haloSize: Float): Builder { jni.sunHaloSize(haloSize); return this }
         actual fun sunHaloFalloff(haloFalloff: Float): Builder { jni.sunHaloFalloff(haloFalloff); return this }
-        actual fun build(engine: Engine, entity: Int) { jni.build(engine.nativeEngine, entity) }
+        actual fun build(engine: Engine, entity: Entity) { jni.build(engine.nativeEngine, entity) }
     }
 
     actual fun getComponentCount(): Int = nativeLightManager.componentCount
-    actual fun hasComponent(entity: Int): Boolean = nativeLightManager.hasComponent(entity)
-    actual fun getInstance(entity: Int): Int = nativeLightManager.getInstance(entity)
-    actual fun destroy(entity: Int) = nativeLightManager.destroy(entity)
+    actual fun hasComponent(entity: Entity): Boolean = nativeLightManager.hasComponent(entity)
+    actual fun getInstance(entity: Entity): EntityInstance = nativeLightManager.getInstance(entity)
+    actual fun destroy(entity: Entity) = nativeLightManager.destroy(entity)
 
-    actual fun getType(instance: Int): Type = Type.values()[nativeLightManager.getType(instance).ordinal]
-    actual fun setDirection(instance: Int, x: Float, y: Float, z: Float) = nativeLightManager.setDirection(instance, x, y, z)
-    actual fun getDirection(instance: Int, out: FloatArray): FloatArray { nativeLightManager.getDirection(instance, out); return out }
-    actual fun setPosition(instance: Int, x: Float, y: Float, z: Float) = nativeLightManager.setPosition(instance, x, y, z)
-    actual fun getPosition(instance: Int, out: FloatArray): FloatArray { nativeLightManager.getPosition(instance, out); return out }
-    actual fun setColor(instance: Int, r: Float, g: Float, b: Float) = nativeLightManager.setColor(instance, r, g, b)
-    actual fun getColor(instance: Int, out: FloatArray): FloatArray { nativeLightManager.getColor(instance, out); return out }
-    actual fun setIntensity(instance: Int, intensity: Float) = nativeLightManager.setIntensity(instance, intensity)
-    actual fun setIntensity(instance: Int, watts: Float, efficiency: Float) {
+    actual fun getType(instance: EntityInstance): Type = Type.values()[nativeLightManager.getType(instance).ordinal]
+    actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) = nativeLightManager.setDirection(instance, x, y, z)
+    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getDirection(instance, out); return out }
+    actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) = nativeLightManager.setPosition(instance, x, y, z)
+    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getPosition(instance, out); return out }
+    actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) = nativeLightManager.setColor(instance, r, g, b)
+    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getColor(instance, out); return out }
+    actual fun setIntensity(instance: EntityInstance, intensity: Float) = nativeLightManager.setIntensity(instance, intensity)
+    actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) {
         // Find if JNI has this overload. If not, we might need to calculate or use intensity.
         // Actually JNI LightManager has: public void setIntensity(int instance, float intensity)
         // It doesn't seem to have the watts/efficiency overload in the instance methods.
         // I'll calculate it if needed, or for now just call setIntensity with watts.
         nativeLightManager.setIntensity(instance, watts * efficiency * 683.0f) 
     }
-    actual fun setIntensityCandela(instance: Int, intensity: Float) = nativeLightManager.setIntensityCandela(instance, intensity)
-    actual fun getIntensity(instance: Int): Float = nativeLightManager.getIntensity(instance)
-    actual fun setFalloff(instance: Int, radius: Float) = nativeLightManager.setFalloff(instance, radius)
-    actual fun getFalloff(instance: Int): Float = nativeLightManager.getFalloff(instance)
-    actual fun setSpotLightCone(instance: Int, inner: Float, outer: Float) = nativeLightManager.setSpotLightCone(instance, inner, outer)
-    actual fun getInnerConeAngle(instance: Int): Float = nativeLightManager.getInnerConeAngle(instance)
-    actual fun getOuterConeAngle(instance: Int): Float = nativeLightManager.getOuterConeAngle(instance)
-    actual fun setSunAngularRadius(instance: Int, angularRadius: Float) = nativeLightManager.setSunAngularRadius(instance, angularRadius)
-    actual fun getSunAngularRadius(instance: Int): Float = nativeLightManager.getSunAngularRadius(instance)
-    actual fun setSunHaloSize(instance: Int, haloSize: Float) = nativeLightManager.setSunHaloSize(instance, haloSize)
-    actual fun getSunHaloSize(instance: Int): Float = nativeLightManager.getSunHaloSize(instance)
-    actual fun setSunHaloFalloff(instance: Int, haloFalloff: Float) = nativeLightManager.setSunHaloFalloff(instance, haloFalloff)
-    actual fun getSunHaloFalloff(instance: Int): Float = nativeLightManager.getSunHaloFalloff(instance)
-    actual fun setShadowCaster(instance: Int, shadowCaster: Boolean) = nativeLightManager.setShadowCaster(instance, shadowCaster)
-    actual fun isShadowCaster(instance: Int): Boolean = nativeLightManager.isShadowCaster(instance)
-    actual fun setLightChannel(instance: Int, channel: Int, enable: Boolean) = nativeLightManager.setLightChannel(instance, channel, enable)
-    actual fun getLightChannel(instance: Int, channel: Int): Boolean = nativeLightManager.getLightChannel(instance, channel)
+    actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) = nativeLightManager.setIntensityCandela(instance, intensity)
+    actual fun getIntensity(instance: EntityInstance): Float = nativeLightManager.getIntensity(instance)
+    actual fun setFalloff(instance: EntityInstance, radius: Float) = nativeLightManager.setFalloff(instance, radius)
+    actual fun getFalloff(instance: EntityInstance): Float = nativeLightManager.getFalloff(instance)
+    actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) = nativeLightManager.setSpotLightCone(instance, inner, outer)
+    actual fun getInnerConeAngle(instance: EntityInstance): Float = nativeLightManager.getInnerConeAngle(instance)
+    actual fun getOuterConeAngle(instance: EntityInstance): Float = nativeLightManager.getOuterConeAngle(instance)
+    actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) = nativeLightManager.setSunAngularRadius(instance, angularRadius)
+    actual fun getSunAngularRadius(instance: EntityInstance): Float = nativeLightManager.getSunAngularRadius(instance)
+    actual fun setSunHaloSize(instance: EntityInstance, haloSize: Float) = nativeLightManager.setSunHaloSize(instance, haloSize)
+    actual fun getSunHaloSize(instance: EntityInstance): Float = nativeLightManager.getSunHaloSize(instance)
+    actual fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float) = nativeLightManager.setSunHaloFalloff(instance, haloFalloff)
+    actual fun getSunHaloFalloff(instance: EntityInstance): Float = nativeLightManager.getSunHaloFalloff(instance)
+    actual fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean) = nativeLightManager.setShadowCaster(instance, shadowCaster)
+    actual fun isShadowCaster(instance: EntityInstance): Boolean = nativeLightManager.isShadowCaster(instance)
+    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = nativeLightManager.setLightChannel(instance, channel, enable)
+    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = nativeLightManager.getLightChannel(instance, channel)
 }

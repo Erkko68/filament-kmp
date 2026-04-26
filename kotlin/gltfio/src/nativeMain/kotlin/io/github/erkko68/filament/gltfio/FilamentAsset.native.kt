@@ -9,9 +9,9 @@ import cnames.structs.FilaFilamentAsset
 import cnames.structs.FilaFilamentInstance
 
 actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?) {
-    actual fun getRoot(): Int = FilaFilamentAsset_getRoot(nativeHandle).toInt()
+    actual fun getRoot(): Entity = FilaFilamentAsset_getRoot(nativeHandle).toInt()
 
-    actual fun popRenderable(): Int = FilaFilamentAsset_popRenderable(nativeHandle).toInt()
+    actual fun popRenderable(): Entity = FilaFilamentAsset_popRenderable(nativeHandle).toInt()
 
     actual fun popRenderables(entities: IntArray): Int {
         val count = entities.size
@@ -85,7 +85,7 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         }
     }
     
-    actual fun getFirstEntityByName(name: String): Int = FilaFilamentAsset_getFirstEntityByName(nativeHandle, name).toInt()
+    actual fun getFirstEntityByName(name: String): Entity = FilaFilamentAsset_getFirstEntityByName(nativeHandle, name).toInt()
 
     actual fun getEntityCount(): Int = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
 
@@ -110,11 +110,11 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         }
     }
 
-    actual fun getName(entity: Int): String? = FilaFilamentAsset_getName(nativeHandle, entity.toUInt())?.toKString()
+    actual fun getName(entity: Entity): String? = FilaFilamentAsset_getName(nativeHandle, entity.toUInt())?.toKString()
 
-    actual fun getExtras(entity: Int): String? = FilaFilamentAsset_getExtras(nativeHandle, entity.toUInt())?.toKString()
+    actual fun getExtras(entity: Entity): String? = FilaFilamentAsset_getExtras(nativeHandle, entity.toUInt())?.toKString()
 
-    actual fun getMorphTargetNames(entity: Int): Array<String> {
+    actual fun getMorphTargetNames(entity: Entity): Array<String> {
         val count = FilaFilamentAsset_getMorphTargetCountAt(nativeHandle, entity.toUInt()).toInt()
         if (count == 0) return emptyArray()
         return Array(count) {

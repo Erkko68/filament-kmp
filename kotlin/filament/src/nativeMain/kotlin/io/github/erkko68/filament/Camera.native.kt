@@ -7,7 +7,7 @@ import cnames.structs.FilaCamera
 
 actual class Camera internal constructor(
     internal var nativeHandle: CPointer<FilaCamera>?,
-    private val entity: Int
+    private val entity: Entity
 ) {
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }
@@ -180,5 +180,5 @@ actual class Camera internal constructor(
     
     actual fun getFieldOfViewInDegrees(direction: Fov): Double = FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal.toUInt())
 
-    actual fun getEntity(): Int = entity
+    actual fun getEntity(): Entity = entity
 }

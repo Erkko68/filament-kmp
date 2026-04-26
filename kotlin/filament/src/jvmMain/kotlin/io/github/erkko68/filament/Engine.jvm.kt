@@ -152,13 +152,13 @@ actual class Engine(val nativeEngine: JniEngine) {
     actual fun destroyRenderer(renderer: Renderer) = nativeEngine.destroyRenderer(renderer.nativeRenderer)
 
     actual fun createCamera(): Camera = Camera(nativeEngine.createCamera(EntityManager.get().create()))
-    actual fun createCamera(entity: Int): Camera = Camera(nativeEngine.createCamera(entity))
-    actual fun getCameraComponent(entity: Int): Camera? {
+    actual fun createCamera(entity: Entity): Camera = Camera(nativeEngine.createCamera(entity))
+    actual fun getCameraComponent(entity: Entity): Camera? {
         val jni = nativeEngine.getCameraComponent(entity) ?: return null
         return Camera(jni)
     }
     actual fun destroyCamera(camera: Camera) = nativeEngine.destroyCameraComponent(camera.nativeCamera.entity)
-    actual fun destroyCameraComponent(entity: Int) = nativeEngine.destroyCameraComponent(entity)
+    actual fun destroyCameraComponent(entity: Entity) = nativeEngine.destroyCameraComponent(entity)
 
     actual fun createScene(): Scene = Scene(nativeEngine.createScene())
     actual fun destroyScene(scene: Scene) = nativeEngine.destroyScene(scene.nativeScene)
@@ -178,7 +178,7 @@ actual class Engine(val nativeEngine: JniEngine) {
     actual fun destroyTexture(texture: Texture) = nativeEngine.destroyTexture(texture.nativeTexture)
     actual fun destroyRenderTarget(target: RenderTarget) = nativeEngine.destroyRenderTarget(target.nativeRenderTarget)
     actual fun destroyStream(stream: Stream) = nativeEngine.destroyStream(stream.nativeStream)
-    actual fun destroyEntity(entity: Int) = nativeEngine.destroyEntity(entity)
+    actual fun destroyEntity(entity: Entity) = nativeEngine.destroyEntity(entity)
 
     actual fun getTransformManager(): TransformManager = TransformManager(nativeEngine.transformManager)
     actual fun getLightManager(): LightManager = LightManager(nativeEngine.lightManager)

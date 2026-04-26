@@ -91,5 +91,5 @@ actual class Camera internal constructor(val nativeCamera: AndroidCamera) {
     
     actual fun getFieldOfViewInDegrees(direction: Fov): Double = nativeCamera.getFieldOfViewInDegrees(direction.toAndroid())
 
-    actual fun getEntity(): Int = nativeCamera.entity
+    actual fun getEntity(): Entity = nativeCamera.entity
 }

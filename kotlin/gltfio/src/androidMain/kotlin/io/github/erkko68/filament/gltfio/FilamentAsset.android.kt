@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Entity
 
 actual class FilamentAsset internal constructor(
     internal val nativeObject: com.google.android.filament.gltfio.FilamentAsset
@@ -18,9 +19,9 @@ actual class FilamentAsset internal constructor(
         return arrayOf(primary).also { knownInstances = it }
     }
 
-    actual fun getRoot(): Int = nativeObject.root
+    actual fun getRoot(): Entity = nativeObject.root
     
-    actual fun popRenderable(): Int = nativeObject.popRenderable()
+    actual fun popRenderable(): Entity = nativeObject.popRenderable()
     
     actual fun popRenderables(entities: IntArray): Int = nativeObject.popRenderables(entities)
 
@@ -36,7 +37,7 @@ actual class FilamentAsset internal constructor(
 
     actual fun getEntitiesByPrefix(prefix: String): IntArray = nativeObject.getEntitiesByPrefix(prefix)
     
-    actual fun getFirstEntityByName(name: String): Int = nativeObject.getFirstEntityByName(name)
+    actual fun getFirstEntityByName(name: String): Entity = nativeObject.getFirstEntityByName(name)
 
     actual fun getEntityCount(): Int = nativeObject.entities.size
 
@@ -52,11 +53,11 @@ actual class FilamentAsset internal constructor(
         )
     }
 
-    actual fun getName(entity: Int): String? = nativeObject.getName(entity)
+    actual fun getName(entity: Entity): String? = nativeObject.getName(entity)
 
-    actual fun getExtras(entity: Int): String? = nativeObject.getExtras(entity)
+    actual fun getExtras(entity: Entity): String? = nativeObject.getExtras(entity)
     
-    actual fun getMorphTargetNames(entity: Int): Array<String> = nativeObject.getMorphTargetNames(entity)
+    actual fun getMorphTargetNames(entity: Entity): Array<String> = nativeObject.getMorphTargetNames(entity)
     
     actual fun getResourceUris(): Array<String> = nativeObject.resourceUris
 
