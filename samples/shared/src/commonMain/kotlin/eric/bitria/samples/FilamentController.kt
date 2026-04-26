@@ -4,10 +4,6 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.filamat.MaterialBuilder
 import io.github.erkko68.filament.gltfio.Gltfio
 
-/**
- * Manages the core Filament engine resources and the rendering life-cycle.
- * This class is platform-agnostic and relies on external surface configuration.
- */
 class FilamentController {
     var engine: Engine? = null
         private set
@@ -20,31 +16,15 @@ class FilamentController {
     var camera: Camera? = null
         private set
 
-    // Current surface resources
-    var swapChain: SwapChain? = null
-        private set
-    var renderTarget: RenderTarget? = null
-        private set
-    var targetWidth: Int = 0
-        private set
-    var targetHeight: Int = 0
-        private set
+    private var swapChain: SwapChain? = null
 
-    fun initialize(backend: Engine.Backend? = null, sharedContext: Any? = null) {
+    fun initialize(backend: Engine.Backend = Engine.Backend.DEFAULT, sharedContext: Any? = null) {
         if (engine != null) return
 
-        val finalBackend = backend ?: if (sharedContext == null) {
-            // Force OpenGL on Desktop to support the unified readPixels approach
-            Engine.Backend.OPENGL
-        } else {
-            Engine.Backend.DEFAULT
-        }
-
-        // Initialize global Filament systems
-        engine = if (sharedContext != null) Engine.create(sharedContext) else Engine.create(finalBackend)
+        engine = if (sharedContext != null) Engine.create(sharedContext) else Engine.create(backend)
         MaterialBuilder.init()
         Gltfio.init()
-        
+
         val engine = engine!!
         renderer = engine.createRenderer()
         scene = engine.createScene()
@@ -54,52 +34,31 @@ class FilamentController {
         view!!.setScene(scene)
         view!!.setCamera(camera)
 
-        // Setup default camera
         camera!!.setProjection(45.0, 1.0, 0.1, 100.0, Camera.Fov.VERTICAL)
         camera!!.lookAt(0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
         camera!!.setExposure(16.0f, 1.2f, 100.0f)
-        
+
         view!!.setPostProcessingEnabled(false)
-        
-        // Neutral skybox
+
         val skybox = Skybox.Builder()
             .color(0.1f, 0.125f, 0.15f, 1.0f)
             .build(engine)
         scene!!.setSkybox(skybox)
     }
 
-    /**
-     * Configures the controller to use a direct native surface (e.g., a window).
-     */
     fun setSurface(surface: NativeSurface, width: Int, height: Int) {
         val engine = engine ?: return
         destroySurface()
-        
+
         swapChain = try {
             engine.createSwapChain(surface)
         } catch (_: Exception) {
             null
         }
-        
+
         if (swapChain != null) {
             updateViewport(width, height)
         }
-    }
-
-    /**
-     * Configures the controller to use an offscreen render target and swapchain.
-     */
-    fun setOffscreenSurface(width: Int, height: Int, target: RenderTarget, sc: SwapChain) {
-        val engine = engine ?: return
-        destroySurface()
-        
-        renderTarget = target
-        swapChain = sc
-        targetWidth = width
-        targetHeight = height
-        
-        view?.setRenderTarget(renderTarget)
-        updateViewport(width, height)
     }
 
     fun updateViewport(width: Int, height: Int) {
@@ -109,41 +68,38 @@ class FilamentController {
         camera?.setProjection(45.0, aspect, 0.1, 100.0, Camera.Fov.VERTICAL)
     }
 
-    fun render(frameTimeNanos: Long) {
-        val renderer = renderer ?: return
-        val swapChain = swapChain ?: return
-        val view = view ?: return
+    fun render(frameTimeNanos: Long, swapChain: SwapChain? = this.swapChain): Boolean {
+        val renderer = renderer ?: return false
+        val sc = swapChain ?: return false
+        val view = view ?: return false
 
-        if (renderer.beginFrame(swapChain, frameTimeNanos)) {
+        if (renderer.beginFrame(sc, frameTimeNanos)) {
             renderer.render(view)
             renderer.endFrame()
             engine?.flushAndWait()
+            return true
         }
+        return false
     }
 
     private fun destroySurface() {
         val engine = engine ?: return
         swapChain?.let { engine.destroySwapChain(it) }
         swapChain = null
-        
-        renderTarget?.let { engine.destroyRenderTarget(it) }
-        renderTarget = null
-        
-        view?.setRenderTarget(null)
     }
 
     fun destroy() {
         val engine = engine ?: return
         destroySurface()
-        
+
         camera?.let { engine.destroyCamera(it) }
         view?.let { engine.destroyView(it) }
-        scene?.let { s -> 
+        scene?.let { s ->
             s.getSkybox()?.let { engine.destroySkybox(it) }
-            engine.destroyScene(s) 
+            engine.destroyScene(s)
         }
         renderer?.let { engine.destroyRenderer(it) }
-        
+
         engine.destroy()
         this.engine = null
     }
