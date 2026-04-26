@@ -68,7 +68,11 @@ class FilamentController {
         camera?.setProjection(45.0, aspect, 0.1, 100.0, Camera.Fov.VERTICAL)
     }
 
-    fun render(frameTimeNanos: Long, swapChain: SwapChain? = this.swapChain): Boolean {
+    fun render(
+        frameTimeNanos: Long,
+        swapChain: SwapChain? = this.swapChain,
+        flush: Boolean = true,
+    ): Boolean {
         val renderer = renderer ?: return false
         val sc = swapChain ?: return false
         val view = view ?: return false
@@ -76,7 +80,7 @@ class FilamentController {
         if (renderer.beginFrame(sc, frameTimeNanos)) {
             renderer.render(view)
             renderer.endFrame()
-            engine?.flushAndWait()
+            if (flush) engine?.flushAndWait()
             return true
         }
         return false

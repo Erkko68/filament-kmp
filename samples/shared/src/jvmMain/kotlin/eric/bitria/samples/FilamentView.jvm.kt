@@ -64,13 +64,15 @@ private fun createSurface(engine: Engine, capacity: Int): OffscreenSurface {
 actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
     var snapshotImage by remember { mutableStateOf<Image?>(null) }
-    var readPixelsPending by remember { mutableStateOf(false) }
     var surface by remember { mutableStateOf<OffscreenSurface?>(null) }
 
-    // Pixel buffer + descriptor are reallocated whenever capacity grows. A generation
-    // counter lets us discard readPixels callbacks that complete after a reallocation.
-    val pixelBufferRef = remember { arrayOfNulls<ByteArray>(1) }
-    val descriptorRef = remember { arrayOfNulls<Texture.PixelBufferDescriptor>(1) }
+    // Two pixel buffers + descriptors so the GPU can be writing one while Skia
+    // displays the other. `pending` tracks in-flight reads per slot. A generation
+    // counter discards readPixels callbacks that land after a capacity reallocation.
+    val pixelBuffers = remember { arrayOfNulls<ByteArray>(2) }
+    val descriptors = remember { arrayOfNulls<Texture.PixelBufferDescriptor>(2) }
+    val pending = remember { booleanArrayOf(false, false) }
+    val nextSlot = remember { intArrayOf(0) }
     val generation = remember { intArrayOf(0) }
 
     fun ensureCapacity(engine: Engine, requested: Int): OffscreenSurface? {
@@ -86,35 +88,39 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
         generation[0]++
         val gen = generation[0]
         val fresh = createSurface(engine, newCap)
-        val buffer = ByteArray(newCap * newCap * 4)
-        val descriptor = Texture.PixelBufferDescriptor(
-            storage = buffer,
-            sizeInBytes = buffer.size,
-            format = Texture.Format.RGBA,
-            type = Texture.Type.UBYTE,
-            alignment = 1,
-            left = 0,
-            top = 0,
-            stride = newCap,
-            callback = {
-                // Drop callbacks from a previous capacity generation.
-                if (generation[0] == gen) {
-                    val w = layoutSize.width
-                    val h = layoutSize.height
-                    if (w > 0 && h > 0 && w <= newCap && h <= newCap) {
-                        val info = ImageInfo(w, h, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
-                        val newImage = Image.makeRaster(info, buffer, newCap * 4)
-                        val old = snapshotImage
-                        snapshotImage = newImage
-                        old?.close()
+        for (i in 0..1) {
+            val slot = i
+            val buffer = ByteArray(newCap * newCap * 4)
+            val descriptor = Texture.PixelBufferDescriptor(
+                storage = buffer,
+                sizeInBytes = buffer.size,
+                format = Texture.Format.RGBA,
+                type = Texture.Type.UBYTE,
+                alignment = 1,
+                left = 0,
+                top = 0,
+                stride = newCap,
+                callback = {
+                    // Drop callbacks from a previous capacity generation.
+                    if (generation[0] == gen) {
+                        val w = layoutSize.width
+                        val h = layoutSize.height
+                        if (w > 0 && h > 0 && w <= newCap && h <= newCap) {
+                            val info = ImageInfo(w, h, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
+                            val newImage = Image.makeRaster(info, buffer, newCap * 4)
+                            val old = snapshotImage
+                            snapshotImage = newImage
+                            old?.close()
+                        }
+                        pending[slot] = false
                     }
-                    readPixelsPending = false
                 }
-            }
-        )
-        pixelBufferRef[0] = buffer
-        descriptorRef[0] = descriptor
-        readPixelsPending = false
+            )
+            pixelBuffers[slot] = buffer
+            descriptors[slot] = descriptor
+            pending[slot] = false
+        }
+        nextSlot[0] = 0
         snapshotImage?.close()
         snapshotImage = null
         controller.view?.setRenderTarget(fresh.renderTarget)
@@ -131,7 +137,7 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
             val s = surface ?: return@onDispose
             val eng = controller.engine ?: return@onDispose
             controller.view?.setRenderTarget(null)
-            readPixelsPending = false
+            pending[0] = false; pending[1] = false
             eng.flushAndWait()
             s.destroy(eng)
             surface = null
@@ -156,13 +162,15 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
 
     FilamentRenderLoop { frameTime ->
         val s = surface ?: return@FilamentRenderLoop
-        val descriptor = descriptorRef[0] ?: return@FilamentRenderLoop
         val w = layoutSize.width
         val h = layoutSize.height
         if (w <= 0 || h <= 0 || w > s.capacity || h > s.capacity) return@FilamentRenderLoop
-        controller.render(frameTime, s.swapChain)
-        if (!readPixelsPending) {
-            readPixelsPending = true
+        controller.render(frameTime, s.swapChain, flush = false)
+        val slot = nextSlot[0]
+        if (!pending[slot]) {
+            val descriptor = descriptors[slot] ?: return@FilamentRenderLoop
+            pending[slot] = true
+            nextSlot[0] = slot xor 1
             controller.renderer?.readPixels(
                 renderTarget = s.renderTarget,
                 xoffset = 0,
