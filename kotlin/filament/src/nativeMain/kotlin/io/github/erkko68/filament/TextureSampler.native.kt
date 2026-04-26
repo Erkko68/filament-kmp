@@ -45,29 +45,29 @@ actual class TextureSampler {
 
     actual constructor() {
         nativeHandle = FilaTextureSampler_create(
-            FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR.toUInt(),
-            FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR.toUInt(),
-            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT.toUInt(),
-            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT.toUInt(),
-            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT.toUInt()
+            FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR,
+            FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT
         )
     }
 
     actual constructor(minMag: MagFilter) {
         val min = if (minMag == MagFilter.NEAREST) FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST else FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR
         nativeHandle = FilaTextureSampler_create(
-            min.toUInt(),
+            min,
             minMag.toFila(),
-            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE.toUInt(),
-            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE.toUInt(),
-            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE.toUInt()
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE
         )
     }
 
     actual constructor(minMag: MagFilter, wrap: WrapMode) {
         val min = if (minMag == MagFilter.NEAREST) FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST else FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR
         nativeHandle = FilaTextureSampler_create(
-            min.toUInt(),
+            min,
             minMag.toFila(),
             wrap.toFila(),
             wrap.toFila(),
@@ -96,7 +96,7 @@ actual class TextureSampler {
     }
 
     actual constructor(mode: CompareMode) {
-        nativeHandle = FilaTextureSampler_createCompare(mode.toFila(), FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE.toUInt())
+        nativeHandle = FilaTextureSampler_createCompare(mode.toFila(), FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE)
     }
 
     actual constructor(mode: CompareMode, function: CompareFunction) {

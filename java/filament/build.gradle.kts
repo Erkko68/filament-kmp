@@ -6,7 +6,7 @@ val projectGroup: String by project
 group = "$projectGroup.java"
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:24.0.0")
+    compileOnly(libs.annotations)
 }
 
 java {
@@ -27,7 +27,6 @@ tasks.register<Exec>("cmakeConfig") {
         else -> "linux"
     }
     val p = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
-    val isMacos = p == "macos"
 
     val platform = when (p) {
         "linux", "windows", "macos" -> p
@@ -63,7 +62,6 @@ tasks.register<Exec>("cmakeBuild") {
     dependsOn("cmakeConfig")
     workingDir(layout.buildDirectory.dir("cmake").get().asFile)
     
-    val p = (project.findProperty("filament.platform") as String? ?: hostPlatform).lowercase()
 
     val cmakePath = if (File("/opt/homebrew/bin/cmake").exists()) "/opt/homebrew/bin/cmake" else "cmake"
     commandLine(cmakePath, "--build", ".")

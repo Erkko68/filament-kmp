@@ -74,9 +74,9 @@ kotlin {
                 api(project(":kotlin:filament-utils"))
                 api(project(":kotlin:gltfio"))
                 api(project(":kotlin:filamat"))
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.ui)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.ui)
             }
         }
 

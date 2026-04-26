@@ -12,7 +12,7 @@ java {
 
 dependencies {
     implementation(project(":java:filament"))
-    compileOnly("org.jetbrains:annotations:24.1.0")
+    compileOnly(libs.annotations)
 }
 
 tasks.register<Exec>("cmakeConfig") {

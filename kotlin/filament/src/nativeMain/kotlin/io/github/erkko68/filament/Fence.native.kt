@@ -11,7 +11,7 @@ actual class Fence internal constructor(internal var nativeHandle: CPointer<Fila
 
     actual fun wait(mode: Mode, timeout: Long): FenceStatus {
         val result = FilaFence_wait(nativeHandle, mode.ordinal.toUInt(), timeout.toULong())
-        return FenceStatus.values()[result.toInt() + 1] // ERROR is -1, ordinal 0
+        return FenceStatus.values()[result + 1] // ERROR is -1, ordinal 0
     }
 
     actual fun getNativeObject(): Long = nativeHandle?.rawValue?.toLong() ?: 0L
@@ -20,7 +20,7 @@ actual class Fence internal constructor(internal var nativeHandle: CPointer<Fila
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
             val result = FilaFence_waitAndDestroy(fence.nativeHandle, mode.ordinal.toUInt())
             fence.nativeHandle = null
-            return FenceStatus.values()[result.toInt() + 1]
+            return FenceStatus.values()[result + 1]
         }
     }
 }

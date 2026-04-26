@@ -38,14 +38,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
-            implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.components.resources)
-            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:${libs.versions.androidx.lifecycle.get()}") {
-                exclude(group = "androidx.activity", module = "activity-compose")
-            }
-            implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:${libs.versions.androidx.lifecycle.get()}") {
-                exclude(group = "androidx.activity", module = "activity-compose")
-            }
             implementation("io.github.erkko68.filament:filament-compose")
         }
         commonTest.dependencies {
@@ -54,13 +47,15 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.compose.uiToolingPreview)
         }
 
-        val jsMain by getting {
+        val androidMain by getting {
             dependencies {
-                implementation("io.github.erkko68.filament:filament-compose")
+                implementation(libs.compose.uiToolingPreview)
             }
         }
+
     }
 }
 
