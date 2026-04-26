@@ -1,8 +1,17 @@
 package eric.bitria.samples
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -55,18 +64,46 @@ fun App() {
         }
     }
 
+    var menuExpanded by remember { mutableStateOf(false) }
+    val menuWidth by animateDpAsState(if (menuExpanded) 200.dp else 70.dp)
+
     MaterialTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            FilamentView(
-                modifier = Modifier.fillMaxSize(),
-                controller = controller
-            )
-            
-            Text(
-                "Filament KMP: Runtime Obj | Res Obj | Gltfio Obj",
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = 48.dp),
-                color = Color.White
-            )
+        Row(modifier = Modifier.fillMaxSize()) {
+            // Expandable side menu
+            Column(
+                modifier = Modifier
+                    .width(menuWidth)
+                    .fillMaxHeight()
+                    .background(Color.DarkGray)
+                    .padding(8.dp)
+            ) {
+                Button(onClick = { menuExpanded = !menuExpanded }) {
+                    Text(if (menuExpanded) "<" else ">")
+                }
+
+                if (menuExpanded) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Menu Item 1", color = Color.White)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Menu Item 2", color = Color.White)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Menu Item 3", color = Color.White)
+                }
+            }
+
+            // Main Filament content
+            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                FilamentView(
+                    modifier = Modifier.fillMaxSize(),
+                    controller = controller
+                )
+
+                Text(
+                    "Filament KMP: Runtime Obj | Res Obj | Gltfio Obj",
+                    modifier = Modifier.align(Alignment.TopCenter).padding(top = 48.dp),
+                    color = Color.White
+                )
+            }
         }
     }
 }

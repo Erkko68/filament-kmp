@@ -12,26 +12,22 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.Texture
+import kotlinx.coroutines.delay
 import org.jetbrains.skia.ColorAlphaType
 import org.jetbrains.skia.ColorType
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.ImageInfo
+import org.jetbrains.skia.Rect
 
-private const val INITIAL_CAPACITY = 1024
-private const val MAX_CAPACITY = 16384
-
-private fun nextPow2(v: Int): Int {
-    var n = 1
-    while (n < v) n = n shl 1
-    return n.coerceAtMost(MAX_CAPACITY)
-}
+private const val RESIZE_DEBOUNCE_MS = 150L
 
 private class OffscreenSurface(
-    val capacity: Int,
     val colorTexture: Texture,
     val depthTexture: Texture,
     val renderTarget: RenderTarget,
     val swapChain: SwapChain,
+    val width: Int,
+    val height: Int,
 ) {
     fun destroy(engine: Engine) {
         engine.destroySwapChain(swapChain)
@@ -41,143 +37,118 @@ private class OffscreenSurface(
     }
 }
 
-private fun createSurface(engine: Engine, capacity: Int): OffscreenSurface {
-    val colorTexture = Texture.Builder()
-        .width(capacity).height(capacity).levels(1)
-        .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.BLIT_SRC or Texture.Usage.SAMPLEABLE)
-        .format(Texture.InternalFormat.RGBA8)
-        .build(engine)
-    val depthTexture = Texture.Builder()
-        .width(capacity).height(capacity)
-        .usage(Texture.Usage.DEPTH_ATTACHMENT)
-        .format(Texture.InternalFormat.DEPTH32F)
-        .build(engine)
-    val renderTarget = RenderTarget.Builder()
-        .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture)
-        .texture(RenderTarget.AttachmentPoint.DEPTH, depthTexture)
-        .build(engine)
-    val swapChain = engine.createSwapChain(capacity, capacity, 0)
-    return OffscreenSurface(capacity, colorTexture, depthTexture, renderTarget, swapChain)
-}
-
 @Composable
 actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
+    // textureSize is the debounced version of layoutSize: immediate on first layout,
+    // delayed by RESIZE_DEBOUNCE_MS on subsequent changes so animations don't thrash GPU resources.
+    var textureSize by remember { mutableStateOf(IntSize.Zero) }
     var snapshotImage by remember { mutableStateOf<Image?>(null) }
+    var readPixelsPending by remember { mutableStateOf(false) }
     var surface by remember { mutableStateOf<OffscreenSurface?>(null) }
-
-    // Two pixel buffers + descriptors so the GPU can be writing one while Skia
-    // displays the other. `pending` tracks in-flight reads per slot. A generation
-    // counter discards readPixels callbacks that land after a capacity reallocation.
-    val pixelBuffers = remember { arrayOfNulls<ByteArray>(2) }
-    val descriptors = remember { arrayOfNulls<Texture.PixelBufferDescriptor>(2) }
-    val pending = remember { booleanArrayOf(false, false) }
-    val nextSlot = remember { intArrayOf(0) }
-    val generation = remember { intArrayOf(0) }
-
-    fun ensureCapacity(engine: Engine, requested: Int): OffscreenSurface? {
-        val current = surface
-        if (current != null && requested <= current.capacity) return current
-        val newCap = nextPow2(maxOf(requested, current?.capacity ?: INITIAL_CAPACITY))
-        // Tear down the old surface and any in-flight read.
-        if (current != null) {
-            controller.view?.setRenderTarget(null)
-            engine.flushAndWait()
-            current.destroy(engine)
-        }
-        generation[0]++
-        val gen = generation[0]
-        val fresh = createSurface(engine, newCap)
-        for (i in 0..1) {
-            val slot = i
-            val buffer = ByteArray(newCap * newCap * 4)
-            val descriptor = Texture.PixelBufferDescriptor(
-                storage = buffer,
-                sizeInBytes = buffer.size,
-                format = Texture.Format.RGBA,
-                type = Texture.Type.UBYTE,
-                alignment = 1,
-                left = 0,
-                top = 0,
-                stride = newCap,
-                callback = {
-                    // Drop callbacks from a previous capacity generation.
-                    if (generation[0] == gen) {
-                        val w = layoutSize.width
-                        val h = layoutSize.height
-                        if (w > 0 && h > 0 && w <= newCap && h <= newCap) {
-                            val info = ImageInfo(w, h, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
-                            val newImage = Image.makeRaster(info, buffer, newCap * 4)
-                            val old = snapshotImage
-                            snapshotImage = newImage
-                            old?.close()
-                        }
-                        pending[slot] = false
-                    }
-                }
-            )
-            pixelBuffers[slot] = buffer
-            descriptors[slot] = descriptor
-            pending[slot] = false
-        }
-        nextSlot[0] = 0
-        snapshotImage?.close()
-        snapshotImage = null
-        controller.view?.setRenderTarget(fresh.renderTarget)
-        surface = fresh
-        return fresh
-    }
 
     DisposableEffect(Unit) {
         controller.initialize()
-        val engine = controller.engine
-        if (engine != null) ensureCapacity(engine, INITIAL_CAPACITY)
-
         onDispose {
-            val s = surface ?: return@onDispose
-            val eng = controller.engine ?: return@onDispose
-            controller.view?.setRenderTarget(null)
-            pending[0] = false; pending[1] = false
-            eng.flushAndWait()
-            s.destroy(eng)
-            surface = null
             snapshotImage?.close()
             snapshotImage = null
         }
     }
 
+    // On the first layout pass apply the size immediately so there's no blank-screen delay.
+    // On every subsequent change, wait for the layout to stabilise before committing GPU resources.
+    // LaunchedEffect auto-cancels when layoutSize changes mid-wait, so only the final size wins.
     LaunchedEffect(layoutSize) {
         val w = layoutSize.width
         val h = layoutSize.height
-        if (w > 0 && h > 0) {
-            val engine = controller.engine
-            val needed = maxOf(w, h)
-            val current = surface
-            if (engine != null && (current == null || needed > current.capacity)) {
-                ensureCapacity(engine, needed)
+        if (w <= 0 || h <= 0) return@LaunchedEffect
+        if (textureSize.width <= 0) {
+            textureSize = IntSize(w, h)
+        } else {
+            delay(RESIZE_DEBOUNCE_MS)
+            textureSize = IntSize(w, h)
+        }
+    }
+
+    val pixelBuffer = remember(textureSize) {
+        if (textureSize.width > 0 && textureSize.height > 0)
+            ByteArray(textureSize.width * textureSize.height * 4)
+        else null
+    }
+
+    val pixelBufferDescriptor = remember(pixelBuffer) {
+        if (pixelBuffer == null) return@remember null
+        val tw = textureSize.width
+        val th = textureSize.height
+        Texture.PixelBufferDescriptor(
+            storage = pixelBuffer,
+            sizeInBytes = pixelBuffer.size,
+            format = Texture.Format.RGBA,
+            type = Texture.Type.UBYTE,
+            alignment = 1,
+            left = 0,
+            top = 0,
+            stride = tw,
+            callback = {
+                val info = ImageInfo(tw, th, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
+                val newImage = Image.makeRaster(info, pixelBuffer, tw * 4)
+                val old = snapshotImage
+                snapshotImage = newImage
+                old?.close()
+                readPixelsPending = false
             }
+        )
+    }
+
+    DisposableEffect(textureSize) {
+        val w = textureSize.width
+        val h = textureSize.height
+        val engine = controller.engine
+
+        if (w > 0 && h > 0 && engine != null) {
+            val colorTexture = Texture.Builder()
+                .width(w).height(h).levels(1)
+                .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.BLIT_SRC or Texture.Usage.SAMPLEABLE)
+                .format(Texture.InternalFormat.RGBA8)
+                .build(engine)
+            val depthTexture = Texture.Builder()
+                .width(w).height(h)
+                .usage(Texture.Usage.DEPTH_ATTACHMENT)
+                .format(Texture.InternalFormat.DEPTH32F)
+                .build(engine)
+            val renderTarget = RenderTarget.Builder()
+                .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture)
+                .texture(RenderTarget.AttachmentPoint.DEPTH, depthTexture)
+                .build(engine)
+            val swapChain = engine.createSwapChain(w, h, 0)
+            controller.view?.setRenderTarget(renderTarget)
             controller.updateViewport(w, h)
+            surface = OffscreenSurface(colorTexture, depthTexture, renderTarget, swapChain, w, h)
+        }
+
+        onDispose {
+            val s = surface ?: return@onDispose
+            val eng = controller.engine ?: return@onDispose
+            controller.view?.setRenderTarget(null)
+            surface = null
+            // readPixels is async — flush before destroying the render target it references.
+            eng.flushAndWait()
+            s.destroy(eng)
         }
     }
 
     FilamentRenderLoop { frameTime ->
         val s = surface ?: return@FilamentRenderLoop
-        val w = layoutSize.width
-        val h = layoutSize.height
-        if (w <= 0 || h <= 0 || w > s.capacity || h > s.capacity) return@FilamentRenderLoop
-        controller.render(frameTime, s.swapChain, flush = false)
-        val slot = nextSlot[0]
-        if (!pending[slot]) {
-            val descriptor = descriptors[slot] ?: return@FilamentRenderLoop
-            pending[slot] = true
-            nextSlot[0] = slot xor 1
+        controller.render(frameTime, s.swapChain)
+        if (!readPixelsPending && pixelBufferDescriptor != null) {
+            readPixelsPending = true
             controller.renderer?.readPixels(
                 renderTarget = s.renderTarget,
                 xoffset = 0,
                 yoffset = 0,
-                width = w,
-                height = h,
-                buffer = descriptor
+                width = s.width,
+                height = s.height,
+                buffer = pixelBufferDescriptor
             )
         }
     }
@@ -188,7 +159,13 @@ actual fun FilamentView(modifier: Modifier, controller: FilamentController) {
             .drawBehind {
                 val image = snapshotImage ?: return@drawBehind
                 drawIntoCanvas { canvas ->
-                    canvas.nativeCanvas.drawImage(image, 0f, 0f)
+                    // Scale the last stable image to fill the current layout bounds.
+                    // During the debounce window the image may be a different size than the
+                    // container; drawImageRect stretches it so the view never shows blank space.
+                    canvas.nativeCanvas.drawImageRect(
+                        image,
+                        Rect.makeWH(size.width, size.height)
+                    )
                 }
             }
     )
