@@ -77,7 +77,6 @@ actual class View(internal val jsView: JSView) {
         return when (jsView.getBlendMode()) {
             io.github.erkko68.filament.js.View_BlendMode.OPAQUE -> View.BlendMode.OPAQUE
             io.github.erkko68.filament.js.View_BlendMode.TRANSLUCENT -> View.BlendMode.TRANSLUCENT
-            else -> View.BlendMode.OPAQUE
         }
     }
 

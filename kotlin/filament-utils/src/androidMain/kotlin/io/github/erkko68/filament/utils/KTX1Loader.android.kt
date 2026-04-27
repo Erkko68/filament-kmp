@@ -7,6 +7,9 @@ import io.github.erkko68.filament.Texture
 import java.nio.ByteBuffer
 
 actual object KTX1Loader {
+
+    init { com.google.android.filament.utils.Utils.init() }
+
     actual class Options {
         actual var srgb: Boolean = false
     }

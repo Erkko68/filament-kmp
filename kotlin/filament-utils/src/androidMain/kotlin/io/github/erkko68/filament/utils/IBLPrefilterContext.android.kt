@@ -5,6 +5,7 @@ import io.github.erkko68.filament.Texture
 import com.google.android.filament.utils.IBLPrefilterContext as AndroidIBLPrefilterContext
 
 actual class IBLPrefilterContext actual constructor(engine: Engine) {
+    init { com.google.android.filament.utils.Utils.init() }
     internal val androidHandle = AndroidIBLPrefilterContext(engine.nativeEngine)
 
     actual fun destroy() {

@@ -15,6 +15,7 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
     }
 
     actual class Builder actual constructor() {
+        init { com.google.android.filament.utils.Utils.init() }
         private val builder = com.google.android.filament.utils.Manipulator.Builder()
 
         actual fun viewport(width: Int, height: Int): Builder {

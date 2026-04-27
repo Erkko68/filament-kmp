@@ -6,6 +6,9 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 
 actual object TextureLoader {
+
+    init { com.google.android.filament.utils.Utils.init() }
+
     actual enum class TextureType {
         COLOR,
         NORMAL,
