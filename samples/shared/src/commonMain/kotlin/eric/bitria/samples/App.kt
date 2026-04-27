@@ -10,12 +10,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentView
+import io.github.erkko68.filament.compose.orbitGestures
+import io.github.erkko68.filament.compose.rememberOrbitCameraState
 import io.github.erkko68.filament.compose.scene.*
-import io.github.erkko68.filament.utils.Quaternion
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -31,11 +33,10 @@ fun App() {
         }
     }
 
-    var rotationAngle by remember { mutableStateOf(0f) }
-
-    FilamentRenderLoop { frameTimeNanos ->
-        rotationAngle = (frameTimeNanos / 1_000_000_000f) * 45f
-    }
+    val orbit = rememberOrbitCameraState(
+        eye    = Position(0f, 1f, 4f),
+        target = Position(0f, 0.5f, 0f),
+    )
 
     var menuExpanded by remember { mutableStateOf(false) }
     val menuWidth by animateDpAsState(if (menuExpanded) 200.dp else 70.dp)
@@ -63,8 +64,12 @@ fun App() {
             }
 
             Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                FilamentView(modifier = Modifier.fillMaxSize()) {
-
+                FilamentView(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onSizeChanged { orbit.setViewport(it.width, it.height) }
+                        .orbitGestures(orbit),
+                ) {
                     Skybox(source = SkyboxSource.Color(Color(0.1f, 0.125f, 0.15f)))
 
                     Light(
@@ -74,8 +79,9 @@ fun App() {
                     )
 
                     Camera(
-                        eye        = Position(0f, 1f, 4f),
-                        target     = Position(0f, 0.5f, 0f),
+                        eye        = orbit.eye,
+                        target     = orbit.target,
+                        up         = orbit.up,
                         projection = Projection.Perspective(fovDegrees = 45.0),
                     )
 
@@ -85,10 +91,9 @@ fun App() {
 
                     duckBytes?.let { bytes ->
                         GltfModel(
-                            bytes          = bytes,
-                            position       = Position(0f, 0f, 0f),
-                            rotation       = Quaternion.fromAxisAngle(Direction(0f, 1f, 0f), rotationAngle),
-                            scale          = Scale(1f),
+                            bytes     = bytes,
+                            position  = Position(0f, 0f, 0f),
+                            scale     = Scale(1f),
                         )
                     }
                 }
@@ -98,18 +103,6 @@ fun App() {
                     modifier = Modifier.align(Alignment.TopCenter).padding(top = 48.dp),
                     color    = ComposeColor.White,
                 )
-            }
-        }
-    }
-}
-
-@Composable
-internal fun FilamentRenderLoop(onFrame: (Long) -> Unit) {
-    val currentOnFrame by rememberUpdatedState(onFrame)
-    LaunchedEffect(Unit) {
-        while (true) {
-            withFrameNanos { frameTimeNanos ->
-                currentOnFrame(frameTimeNanos)
             }
         }
     }

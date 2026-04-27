@@ -229,11 +229,133 @@ fun ColorGrade(
 /**
  * A shortcut to set the tone mapper for the view.
  *
- * This internally uses [ColorGrading].
+ * This internally uses [ColorGrade].
  */
 @Composable
 fun ToneMapping(
     toneMapper: ToneMapper = ToneMapper.ACES(),
 ) {
     ColorGrade(toneMapper = toneMapper)
+}
+
+/**
+ * Configures depth-of-field (bokeh) post-processing for the view.
+ *
+ * The camera's focus distance and aperture control the plane of focus and blur amount.
+ *
+ * @param enabled Whether depth-of-field is active.
+ * @param cocScale Scales the circle-of-confusion radius. Larger = more blur.
+ * @param maxApertureDiameter Maximum physical aperture diameter in metres.
+ * @param filter Bokeh filter shape.
+ * @param nativeResolution Run DoF at native resolution (higher quality, more expensive).
+ */
+@Composable
+fun DepthOfField(
+    enabled: Boolean = true,
+    cocScale: Float = 1.0f,
+    maxApertureDiameter: Float = 0.01f,
+    filter: View.DepthOfFieldOptions.Filter = View.DepthOfFieldOptions.Filter.MEDIAN,
+    nativeResolution: Boolean = false,
+) {
+    val view = LocalFilamentView.current
+    DisposableEffect(enabled, cocScale, maxApertureDiameter, filter, nativeResolution) {
+        val options = view.getDepthOfFieldOptions().apply {
+            this.enabled = enabled
+            this.cocScale = cocScale
+            this.maxApertureDiameter = maxApertureDiameter
+            this.filter = filter
+            this.nativeResolution = nativeResolution
+        }
+        view.setDepthOfFieldOptions(options)
+        onDispose {
+            options.enabled = false
+            view.setDepthOfFieldOptions(options)
+        }
+    }
+}
+
+/**
+ * Configures shadow rendering for the view.
+ *
+ * [type] selects the shadow algorithm. VSM and soft-shadow params are only meaningful for
+ * their respective types — Filament ignores irrelevant options.
+ *
+ * @param type          Shadow algorithm: PCF, VSM, DPCF, PCSS, or PCFd.
+ * @param vsmAnisotropy VSM: anisotropy level (power of 2, e.g. 1, 2, 4).
+ * @param vsmMipmapping VSM: enable mip-map filtering.
+ * @param vsmMsaaSamples VSM: MSAA sample count for variance computation.
+ * @param vsmHighPrecision VSM: use 32-bit float instead of 16-bit.
+ * @param vsmLightBleedReduction VSM: light-bleed reduction factor (0–1).
+ * @param penumbraScale DPCF/PCSS: scales penumbra size.
+ * @param penumbraRatioScale DPCF/PCSS: penumbra ratio scale.
+ */
+@Composable
+fun Shadows(
+    type: View.ShadowType = View.ShadowType.PCF,
+    vsmAnisotropy: Int = 1,
+    vsmMipmapping: Boolean = false,
+    vsmMsaaSamples: Int = 1,
+    vsmHighPrecision: Boolean = false,
+    vsmLightBleedReduction: Float = 0.0f,
+    penumbraScale: Float = 1.0f,
+    penumbraRatioScale: Float = 1.0f,
+) {
+    val view = LocalFilamentView.current
+    DisposableEffect(type, vsmAnisotropy, vsmMipmapping, vsmMsaaSamples, vsmHighPrecision, vsmLightBleedReduction, penumbraScale, penumbraRatioScale) {
+        view.setShadowType(type)
+        val vsmOptions = view.getVsmShadowOptions().apply {
+            this.anisotropy = vsmAnisotropy
+            this.mipmapping = vsmMipmapping
+            this.msaaSamples = vsmMsaaSamples
+            this.highPrecision = vsmHighPrecision
+            this.lightBleedReduction = vsmLightBleedReduction
+        }
+        view.setVsmShadowOptions(vsmOptions)
+        val softOptions = view.getSoftShadowOptions().apply {
+            this.penumbraScale = penumbraScale
+            this.penumbraRatioScale = penumbraRatioScale
+        }
+        view.setSoftShadowOptions(softOptions)
+        onDispose {
+            view.setShadowType(View.ShadowType.PCF)
+        }
+    }
+}
+
+/**
+ * Enables dynamic resolution scaling, allowing the renderer to lower internal resolution
+ * under GPU load and upscale to the target size.
+ *
+ * @param enabled Whether dynamic resolution is active.
+ * @param minScale Minimum scale factor (e.g. 0.5 = half resolution).
+ * @param maxScale Maximum scale factor (1.0 = native).
+ * @param sharpness Upscale sharpness (0–1).
+ * @param quality Quality of the upscaling filter.
+ * @param homogeneousScaling Lock X and Y scaling together.
+ */
+@Composable
+fun DynamicResolution(
+    enabled: Boolean = true,
+    minScale: Float = 0.5f,
+    maxScale: Float = 1.0f,
+    sharpness: Float = 0.9f,
+    quality: View.Quality = View.Quality.LOW,
+    homogeneousScaling: Boolean = false,
+) {
+    val view = LocalFilamentView.current
+    DisposableEffect(enabled, minScale, maxScale, sharpness, quality, homogeneousScaling) {
+        val options = view.getDynamicResolutionOptions().apply {
+            this.enabled = enabled
+            this.minScale = minScale
+            this.maxScale = maxScale
+            this.sharpness = sharpness
+            this.quality = quality
+            this.homogeneousScaling = homogeneousScaling
+        }
+        view.setDynamicResolutionOptions(options)
+        onDispose {
+            options.enabled = false
+            view.setDynamicResolutionOptions(options)
+        }
+    }
 }

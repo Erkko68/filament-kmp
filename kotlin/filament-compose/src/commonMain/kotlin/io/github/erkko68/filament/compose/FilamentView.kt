@@ -26,6 +26,16 @@ import io.github.erkko68.filament.compose.scene.Position
  *
  * @param engine Optional shared engine. If null, a dedicated engine is created and destroyed
  *   with this composable. Pass a [rememberFilamentEngine] value to share an engine across views.
+ * @param postProcessingEnabled Master switch for all post-processing effects. Disabling this
+ *   also disables tone-mapping, bloom, AO, etc. regardless of individual effect composables.
+ * @param frustumCullingEnabled Skip rendering of objects outside the camera frustum. Disable
+ *   only if you have a custom culling strategy.
+ * @param shadowingEnabled Allow lights to cast and receive shadows. Disabling globally is a
+ *   quick performance win when shadows are not needed.
+ * @param screenSpaceRefractionEnabled Enable screen-space refraction for transparent materials
+ *   that declare refraction. Has a GPU cost even for scenes without refractive objects.
+ * @param stencilBufferEnabled Allocate a stencil buffer. Required for stencil-based effects
+ *   such as outlines or masks. Off by default to save memory bandwidth.
  * @param content Scene composables: [scene.Skybox], [scene.Light], [scene.Camera],
  *   [scene.GltfModel], etc. Use [FilamentEffect] to access raw Filament objects.
  */
@@ -34,6 +44,10 @@ fun FilamentView(
     modifier: Modifier = Modifier,
     engine: Engine? = null,
     postProcessingEnabled: Boolean = true,
+    frustumCullingEnabled: Boolean = true,
+    shadowingEnabled: Boolean = true,
+    screenSpaceRefractionEnabled: Boolean = false,
+    stencilBufferEnabled: Boolean = false,
     content: @Composable () -> Unit = {},
 ) {
     val activeEngine = engine ?: rememberFilamentEngine()
@@ -56,10 +70,14 @@ fun FilamentView(
     }
     var cameraConfig by remember { mutableStateOf(defaultConfig) }
 
-    remember(view, scene, camera, postProcessingEnabled) {
+    remember(view, scene, camera, postProcessingEnabled, frustumCullingEnabled, shadowingEnabled, screenSpaceRefractionEnabled, stencilBufferEnabled) {
         view.setScene(scene)
         view.setCamera(camera)
         view.setPostProcessingEnabled(postProcessingEnabled)
+        view.setFrustumCullingEnabled(frustumCullingEnabled)
+        view.setShadowingEnabled(shadowingEnabled)
+        view.setScreenSpaceRefractionEnabled(screenSpaceRefractionEnabled)
+        view.setStencilBufferEnabled(stencilBufferEnabled)
         cameraConfig.applyTo(camera, 1.0)
     }
 

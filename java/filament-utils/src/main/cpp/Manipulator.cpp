@@ -9,112 +9,112 @@ using CameraManipulator = Manipulator<float>;
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nCreateBuilder(JNIEnv*, jclass) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nCreateBuilder(JNIEnv*, jclass) {
     return (jlong) new CameraManipulator::Builder();
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nDestroyBuilder(JNIEnv*, jclass, jlong nativeBuilder) {
     delete (CameraManipulator::Builder*) nativeBuilder;
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderViewport(JNIEnv*, jclass, jlong nativeBuilder, jint width, jint height) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderViewport(JNIEnv*, jclass, jlong nativeBuilder, jint width, jint height) {
     ((CameraManipulator::Builder*) nativeBuilder)->viewport(width, height);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderTargetPosition(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderTargetPosition(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
     ((CameraManipulator::Builder*) nativeBuilder)->targetPosition(x, y, z);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderUpVector(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderUpVector(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
     ((CameraManipulator::Builder*) nativeBuilder)->upVector(x, y, z);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderZoomSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat arg) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderZoomSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat arg) {
     ((CameraManipulator::Builder*) nativeBuilder)->zoomSpeed(arg);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderOrbitHomePosition(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderOrbitHomePosition(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
     ((CameraManipulator::Builder*) nativeBuilder)->orbitHomePosition(x, y, z);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderOrbitSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderOrbitSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y) {
     ((CameraManipulator::Builder*) nativeBuilder)->orbitSpeed(x, y);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFovDirection(JNIEnv*, jclass, jlong nativeBuilder, jint arg) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFovDirection(JNIEnv*, jclass, jlong nativeBuilder, jint arg) {
     ((CameraManipulator::Builder*) nativeBuilder)->fovDirection((Fov) arg);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFovDegrees(JNIEnv*, jclass, jlong nativeBuilder, jfloat arg) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFovDegrees(JNIEnv*, jclass, jlong nativeBuilder, jfloat arg) {
     ((CameraManipulator::Builder*) nativeBuilder)->fovDegrees(arg);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFarPlane(JNIEnv*, jclass, jlong nativeBuilder, jfloat distance) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFarPlane(JNIEnv*, jclass, jlong nativeBuilder, jfloat distance) {
     ((CameraManipulator::Builder*) nativeBuilder)->farPlane(distance);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderMapExtent(JNIEnv*, jclass, jlong nativeBuilder, jfloat width, jfloat height) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderMapExtent(JNIEnv*, jclass, jlong nativeBuilder, jfloat width, jfloat height) {
     ((CameraManipulator::Builder*) nativeBuilder)->mapExtent(width, height);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderMapMinDistance(JNIEnv*, jclass, jlong nativeBuilder, jfloat arg) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderMapMinDistance(JNIEnv*, jclass, jlong nativeBuilder, jfloat arg) {
     ((CameraManipulator::Builder*) nativeBuilder)->mapMinDistance(arg);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFlightStartPosition(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFlightStartPosition(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y, jfloat z) {
     ((CameraManipulator::Builder*) nativeBuilder)->flightStartPosition(x, y, z);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFlightStartOrientation(JNIEnv*, jclass, jlong nativeBuilder, jfloat pitch, jfloat yaw) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFlightStartOrientation(JNIEnv*, jclass, jlong nativeBuilder, jfloat pitch, jfloat yaw) {
     ((CameraManipulator::Builder*) nativeBuilder)->flightStartOrientation(pitch, yaw);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFlightMaxMoveSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat maxSpeed) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFlightMaxMoveSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat maxSpeed) {
     ((CameraManipulator::Builder*) nativeBuilder)->flightMaxMoveSpeed(maxSpeed);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFlightSpeedSteps(JNIEnv*, jclass, jlong nativeBuilder, jint steps) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFlightSpeedSteps(JNIEnv*, jclass, jlong nativeBuilder, jint steps) {
     ((CameraManipulator::Builder*) nativeBuilder)->flightSpeedSteps(steps);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFlightPanSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFlightPanSpeed(JNIEnv*, jclass, jlong nativeBuilder, jfloat x, jfloat y) {
     ((CameraManipulator::Builder*) nativeBuilder)->flightPanSpeed(x, y);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderFlightMoveDamping(JNIEnv*, jclass, jlong nativeBuilder, jfloat damping) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderFlightMoveDamping(JNIEnv*, jclass, jlong nativeBuilder, jfloat damping) {
     ((CameraManipulator::Builder*) nativeBuilder)->flightMoveDamping(damping);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderGroundPlane(JNIEnv*, jclass, jlong nativeBuilder, jfloat a, jfloat b, jfloat c, jfloat d) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderGroundPlane(JNIEnv*, jclass, jlong nativeBuilder, jfloat a, jfloat b, jfloat c, jfloat d) {
     ((CameraManipulator::Builder*) nativeBuilder)->groundPlane(a, b, c, d);
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderPanning(JNIEnv*, jclass, jlong nativeBuilder, jboolean enabled) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderPanning(JNIEnv*, jclass, jlong nativeBuilder, jboolean enabled) {
     ((CameraManipulator::Builder*) nativeBuilder)->panning(enabled);
 }
 
 JNIEXPORT jlong JNICALL
-Java_io_github_erkko68_filament_utils_jni_Manipulator_00024Builder_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jint mode) {
+Java_io_github_erkko68_filament_utils_jni_Manipulator_nBuilderBuild(JNIEnv*, jclass, jlong nativeBuilder, jint mode) {
     return (jlong) ((CameraManipulator::Builder*) nativeBuilder)->build((Mode) mode);
 }
 
