@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
  * Utilities for consuming KTX1 files and producing Filament textures, IBLs, and sky boxes.
  */
 public class KTX1Loader {
+
+    static { Utils.init(); }
+
     public static class Options {
         public boolean srgb = false;
     }

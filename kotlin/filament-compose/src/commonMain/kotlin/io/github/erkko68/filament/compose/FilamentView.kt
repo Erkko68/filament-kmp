@@ -16,6 +16,7 @@ import io.github.erkko68.filament.compose.scene.CameraConfig
 import io.github.erkko68.filament.compose.scene.Exposure
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.gltfio.AssetLoader
+import io.github.erkko68.filament.gltfio.Gltfio
 import io.github.erkko68.filament.gltfio.UbershaderProvider
 import io.github.erkko68.filament.utils.Float2
 import io.github.erkko68.filament.compose.scene.Direction
@@ -50,6 +51,7 @@ fun FilamentView(
     stencilBufferEnabled: Boolean = false,
     content: @Composable () -> Unit = {},
 ) {
+    Gltfio.init()
     val activeEngine = engine ?: rememberFilamentEngine()
 
     val renderer = remember(activeEngine) { activeEngine.createRenderer() }

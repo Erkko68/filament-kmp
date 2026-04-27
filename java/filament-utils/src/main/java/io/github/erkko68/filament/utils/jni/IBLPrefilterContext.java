@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
  * supported. Typically, only one instance per filament Engine of this object needs to exist.
  */
 public class IBLPrefilterContext {
-    static {
-        Utils.init();
-    }
+
+    static { Utils.init(); }
+
     private long mNativeObject;
 
     public IBLPrefilterContext(@NotNull Engine engine) {

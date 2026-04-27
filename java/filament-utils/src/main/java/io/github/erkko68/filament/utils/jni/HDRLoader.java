@@ -25,9 +25,9 @@ import org.jetbrains.annotations.Nullable;
  * Utility for decoding an HDR file and producing a Filament texture.
  */
 public class HDRLoader {
-    static {
-        Utils.init();
-    }
+
+    static { Utils.init(); }
+
     /**
      * Consumes the content of an HDR file and produces a {@link Texture} object.
      *

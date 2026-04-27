@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.jni.Engine as JniEngine
-import io.github.erkko68.filament.jni.Filament
 
 actual class Engine(val nativeEngine: JniEngine) {
     actual enum class Backend { 
@@ -85,22 +84,18 @@ actual class Engine(val nativeEngine: JniEngine) {
         actual fun paused(paused: Boolean): Builder { jni.paused(paused); return this }
         actual fun feature(name: String, value: Boolean): Builder { jni.feature(name, value); return this }
         actual fun build(): Engine {
-            Filament.init()
             return Engine(jni.build())
         }
     }
 
     actual companion object {
         actual fun create(): Engine {
-            Filament.init()
             return Engine(JniEngine.create())
         }
         actual fun create(backend: Backend): Engine {
-            Filament.init()
             return Engine(JniEngine.create(backend.toJni()))
         }
         actual fun create(sharedContext: Any): Engine {
-            Filament.init()
             return Engine(JniEngine.create(sharedContext))
         }
         actual fun getSteadyClockTimeNano(): Long = JniEngine.getSteadyClockTimeNano()

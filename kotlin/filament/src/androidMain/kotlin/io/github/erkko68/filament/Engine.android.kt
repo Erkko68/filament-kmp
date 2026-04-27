@@ -135,22 +135,18 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
 
     actual companion object {
         actual fun create(): Engine {
-            com.google.android.filament.Filament.init()
             return Engine(AndroidEngine.create())
         }
 
         actual fun create(backend: Backend): Engine {
-            com.google.android.filament.Filament.init()
             return Engine(AndroidEngine.create(backend.toAndroid()))
         }
 
         actual fun create(sharedContext: Any): Engine {
-            com.google.android.filament.Filament.init()
             return Engine(AndroidEngine.create(sharedContext))
         }
 
         actual fun getSteadyClockTimeNano(): Long {
-            com.google.android.filament.Filament.init()
             return AndroidEngine.getSteadyClockTimeNano()
         }
     }

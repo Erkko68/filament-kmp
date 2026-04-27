@@ -10,12 +10,6 @@ actual class IBLPrefilterContext actual constructor(engine: Engine) {
     actual fun destroy() {
         androidHandle.destroy()
     }
-
-    companion object {
-        init {
-            com.google.android.filament.utils.Utils.init()
-        }
-    }
 }
 
 actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterContext) {

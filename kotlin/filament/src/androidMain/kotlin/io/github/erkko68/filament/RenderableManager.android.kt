@@ -196,7 +196,7 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         nativeRenderableManager.setMaterialInstanceAt(instance, primitiveIndex, materialInstance.nativeMaterialInstance)
         
     actual fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance? {
-        val nativeInstance = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex)
+        val nativeInstance = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex) ?: return null
         return MaterialInstance(nativeInstance)
     }
     

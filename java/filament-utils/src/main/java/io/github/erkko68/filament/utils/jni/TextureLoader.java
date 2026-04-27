@@ -1,16 +1,16 @@
 package io.github.erkko68.filament.utils.jni;
 
-import io.github.erkko68.filament.jni.Engine;
-import io.github.erkko68.filament.jni.Texture;
 import java.nio.Buffer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * High-level utility for loading textures from common image formats (PNG, JPG,
  * etc.).
  */
 public class TextureLoader {
+
+    static { Utils.init(); }
+
     public enum TextureType {
         COLOR, NORMAL, DATA
     }

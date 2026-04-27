@@ -177,9 +177,4 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
 
     actual class Bookmark internal constructor(internal val androidValue: Any)
 
-    companion object {
-        init {
-            com.google.android.filament.utils.Utils.init()
-        }
-    }
 }

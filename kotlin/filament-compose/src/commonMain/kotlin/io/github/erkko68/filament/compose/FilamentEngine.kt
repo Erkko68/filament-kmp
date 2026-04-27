@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.filamat.MaterialBuilder
-import io.github.erkko68.filament.gltfio.Gltfio
+import io.github.erkko68.filament.Filament
 
 /**
  * Creates and remembers a [Engine] for the lifetime of the composition.
@@ -15,12 +14,7 @@ import io.github.erkko68.filament.gltfio.Gltfio
  */
 @Composable
 fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine {
-    val engine = remember(backend) {
-        val e = Engine.create(backend)
-        MaterialBuilder.init()
-        Gltfio.init()
-        e
-    }
+    val engine = remember(backend) { Filament.init(); Engine.create(backend) }
     DisposableEffect(engine) {
         onDispose { engine.destroy() }
     }

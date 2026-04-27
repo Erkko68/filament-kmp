@@ -103,7 +103,7 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual companion object {
-        actual fun init() = JniMaterialBuilder.init()
+        actual fun init() = Filamat.init()
         actual fun shutdown() = JniMaterialBuilder.shutdown()
     }
 

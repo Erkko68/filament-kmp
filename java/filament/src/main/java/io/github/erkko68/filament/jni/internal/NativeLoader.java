@@ -7,10 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 public final class NativeLoader {
+    private static final java.util.Set<String> sLoaded =
+            java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+
     private NativeLoader() {
     }
 
     public static void load(String libName) {
+        if (sLoaded.contains(libName)) return;
         try {
             // 1. Detect platform
             String os = System.getProperty("os.name").toLowerCase();
@@ -37,7 +41,8 @@ public final class NativeLoader {
             if (arch.contains("aarch64") || arch.contains("arm64")) {
                 arch = "arm64";
             } else if (platform.equals("macos")) {
-                throw new UnsupportedOperationException("macOS x64 is not supported in this project. Please use ARM64.");
+                throw new UnsupportedOperationException(
+                        "macOS x64 is not supported in this project. Please use ARM64.");
             } else {
                 arch = "x64";
             }
@@ -49,12 +54,14 @@ public final class NativeLoader {
             // 3. Try to load from resources
             InputStream is = NativeLoader.class.getResourceAsStream(resourcePath);
             if (is == null) {
-                // Fallback to System.loadLibrary if resource not found (allows manual dev setup)
+                // Fallback to System.loadLibrary if resource not found (allows manual dev
+                // setup)
                 try {
                     System.loadLibrary(libName);
                     return;
                 } catch (UnsatisfiedLinkError e) {
-                    throw new FileNotFoundException("Native library not found in resources: " + resourcePath + " (and loadLibrary failed: " + e.getMessage() + ")");
+                    throw new FileNotFoundException("Native library not found in resources: " + resourcePath
+                            + " (and loadLibrary failed: " + e.getMessage() + ")");
                 }
             }
 
@@ -67,7 +74,8 @@ public final class NativeLoader {
 
             // 5. Load
             System.load(tempLib.getAbsolutePath());
-            
+            sLoaded.add(libName);
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to load native library '" + libName + "': " + e.getMessage(), e);
         }

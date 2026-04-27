@@ -88,7 +88,7 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual companion object {
-        actual fun init() = AndroidMaterialBuilder.init()
+        actual fun init() = Filamat.init()
         actual fun shutdown() = AndroidMaterialBuilder.shutdown()
     }
 

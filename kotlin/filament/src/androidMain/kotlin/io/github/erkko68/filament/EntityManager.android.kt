@@ -4,8 +4,7 @@ import com.google.android.filament.EntityManager as AndroidEntityManager
 
 actual class EntityManager internal constructor(val nativeEntityManager: AndroidEntityManager) {
     actual companion object {
-        private val instance = EntityManager(AndroidEntityManager.get())
-        actual fun get(): EntityManager = instance
+        actual fun get(): EntityManager = EntityManager(AndroidEntityManager.get())
     }
 
     actual fun create(): Entity = nativeEntityManager.create()

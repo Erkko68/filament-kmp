@@ -7,6 +7,8 @@ import java.nio.ByteOrder
 import com.google.android.filament.utils.HDRLoader as AndroidHDRLoader
 
 actual object HDRLoader {
+    
+    
     actual fun createTexture(engine: Engine, buffer: ByteArray, internalFormat: Texture.InternalFormat): Texture? {
         val byteBuffer = ByteBuffer.allocateDirect(buffer.size).apply {
             order(ByteOrder.nativeOrder())
@@ -15,9 +17,5 @@ actual object HDRLoader {
         }
         val androidTexture = AndroidHDRLoader.createTexture(engine.nativeEngine, byteBuffer)
         return androidTexture?.let { Texture(it) }
-    }
-
-    init {
-        com.google.android.filament.utils.Utils.init()
     }
 }

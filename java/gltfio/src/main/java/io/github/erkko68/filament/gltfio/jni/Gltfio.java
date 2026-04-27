@@ -4,9 +4,13 @@ import io.github.erkko68.filament.jni.Filament;
 import io.github.erkko68.filament.jni.internal.NativeLoader;
 
 public class Gltfio {
-    public static void init() {
+    private static boolean sInitialized = false;
+
+    public static synchronized void init() {
+        if (sInitialized) return;
         Filament.init();
         NativeLoader.load("gltfio-jni");
+        sInitialized = true;
     }
 }
 
