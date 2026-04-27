@@ -33,6 +33,7 @@ import io.github.erkko68.filament.compose.scene.Position
 fun FilamentView(
     modifier: Modifier = Modifier,
     engine: Engine? = null,
+    postProcessingEnabled: Boolean = true,
     content: @Composable () -> Unit = {},
 ) {
     val activeEngine = engine ?: rememberFilamentEngine()
@@ -55,10 +56,10 @@ fun FilamentView(
     }
     var cameraConfig by remember { mutableStateOf(defaultConfig) }
 
-    remember(view, scene, camera) {
+    remember(view, scene, camera, postProcessingEnabled) {
         view.setScene(scene)
         view.setCamera(camera)
-        view.setPostProcessingEnabled(false)
+        view.setPostProcessingEnabled(postProcessingEnabled)
         cameraConfig.applyTo(camera, 1.0)
     }
 

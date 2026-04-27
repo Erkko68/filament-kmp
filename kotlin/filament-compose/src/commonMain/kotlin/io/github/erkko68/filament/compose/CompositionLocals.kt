@@ -56,3 +56,4 @@ val LocalFilamentRenderer = compositionLocalOf<Renderer> {
 internal val LocalAssetLoader = compositionLocalOf<AssetLoader> {
     error("No AssetLoader in scope — wrap with FilamentView { }")
 }
+

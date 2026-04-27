@@ -79,12 +79,16 @@ fun App() {
                         projection = Projection.Perspective(fovDegrees = 45.0),
                     )
 
+                    Bloom(strength = 0.2f)
+                    Fog(enabled = true, color = Color(0.1f, 0.125f, 0.15f), density = 0.05f)
+                    AntiAliasing(fxaaEnabled = true)
+
                     duckBytes?.let { bytes ->
                         GltfModel(
-                            bytes    = bytes,
-                            position = Position(0f, 0f, 0f),
-                            rotation = Quaternion.fromAxisAngle(Direction(0f, 1f, 0f), rotationAngle),
-                            scale    = Scale(1f),
+                            bytes          = bytes,
+                            position       = Position(0f, 0f, 0f),
+                            rotation       = Quaternion.fromAxisAngle(Direction(0f, 1f, 0f), rotationAngle),
+                            scale          = Scale(1f),
                         )
                     }
                 }
