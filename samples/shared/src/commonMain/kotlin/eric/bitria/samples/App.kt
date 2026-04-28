@@ -63,11 +63,8 @@ fun App() {
                 AntiAliasing(fxaaEnabled = true)
 
                 duckBytes?.let { bytes ->
-                    GltfModel(
-                        bytes     = bytes,
-                        position  = Position(0f, 0f, 0f),
-                        scale     = Scale(1f),
-                    )
+                    val duck = rememberGltfAsset(bytes)
+                    GltfInstance(duck, position = Position(0f, 0f, 0f), scale = Scale(1f))
                 }
             }
 

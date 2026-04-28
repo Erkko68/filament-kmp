@@ -202,9 +202,12 @@ actual class View(internal val jsView: JSView) {
         jsOptions.density = options.density
         jsOptions.height = options.height
         jsOptions.heightFalloff = options.heightFalloff
-        jsOptions.color = options.color.toTypedArray() as Array<Number>
+        jsOptions.color = arrayOf(options.color[0], options.color[1], options.color[2])
         jsOptions.cutOffDistance = options.cutOffDistance
         jsOptions.maximumOpacity = options.maximumOpacity
+        jsOptions.inScatteringStart = options.inScatteringStart
+        jsOptions.inScatteringSize = options.inScatteringSize
+        jsOptions.fogColorFromIbl = options.fogColorFromIbl
         jsOptions.asDynamic().densityMap = options.densityMap?.jsTexture
         jsView.setFogOptions(jsOptions)
     }
@@ -239,7 +242,7 @@ actual class View(internal val jsView: JSView) {
         jsOptions.midPoint = options.midPoint
         jsOptions.roundness = options.roundness
         jsOptions.feather = options.feather
-        jsOptions.color = options.color.toTypedArray() as Array<Number>
+        jsOptions.color = arrayOf(options.color[0], options.color[1], options.color[2], options.color[3])
         jsView.setVignetteOptions(jsOptions)
     }
 
@@ -529,7 +532,7 @@ actual class View(internal val jsView: JSView) {
         actual var density: Float = 0.1f
         actual var height: Float = 0.0f
         actual var heightFalloff: Float = 1.0f
-        actual var color: FloatArray = floatArrayOf(0.5f, 0.5f, 0.5f)
+        actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f)
         actual var densityMap: Texture? = null
         actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
         actual var maximumOpacity: Float = 1.0f

@@ -67,7 +67,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var density: Float = 0.1f
         actual var height: Float = 0.0f
         actual var heightFalloff: Float = 1.0f
-        actual var color: FloatArray = floatArrayOf(1.0f, 1.0f, 1.0f)
+        actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f)
         actual var densityMap: Texture? = null
         actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
         actual var maximumOpacity: Float = 1.0f

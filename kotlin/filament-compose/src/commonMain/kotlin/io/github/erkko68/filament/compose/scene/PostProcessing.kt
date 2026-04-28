@@ -81,7 +81,7 @@ fun Fog(
     density: Float = 0.1f,
     height: Float = 0.0f,
     heightFalloff: Float = 1.0f,
-    color: Color = Color(0.5f, 0.5f, 0.5f),
+    color: Color = Color(0f, 0f, 0f),
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, distance, density, height, heightFalloff, color) {
