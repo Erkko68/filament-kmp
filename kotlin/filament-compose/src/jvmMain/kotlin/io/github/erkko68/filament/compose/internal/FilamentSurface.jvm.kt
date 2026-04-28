@@ -58,7 +58,6 @@ internal actual fun FilamentSurface(
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
     var textureSize by remember { mutableStateOf(IntSize.Zero) }
     var snapshotImage by remember { mutableStateOf<Image?>(null) }
-    var readPixelsPending by remember { mutableStateOf(false) }
     var surface by remember { mutableStateOf<OffscreenSurface?>(null) }
 
     // Keep a mutable ref so DisposableEffect(textureSize) always dispatches to the latest lambda.
@@ -84,34 +83,41 @@ internal actual fun FilamentSurface(
         }
     }
 
-    val pixelBuffer = remember(textureSize) {
+    // Double-buffered readback: while one buffer's GPU→CPU copy is in flight, the other can
+    // be issued, so the readback pipelines with rendering instead of stalling the next frame.
+    val pixelBuffers = remember(textureSize) {
         if (textureSize.width > 0 && textureSize.height > 0)
-            ByteArray(textureSize.width * textureSize.height * 4)
+            Array(2) { ByteArray(textureSize.width * textureSize.height * 4) }
         else null
     }
 
-    val pixelBufferDescriptor = remember(pixelBuffer) {
-        if (pixelBuffer == null) return@remember null
+    val pendingFlags = remember(pixelBuffers) { BooleanArray(2) }
+    val nextBufIndex = remember(pixelBuffers) { intArrayOf(0) }
+
+    val pixelBufferDescriptors = remember(pixelBuffers) {
+        val buffers = pixelBuffers ?: return@remember null
         val tw = textureSize.width
         val th = textureSize.height
-        Texture.PixelBufferDescriptor(
-            storage = pixelBuffer,
-            sizeInBytes = pixelBuffer.size,
-            format = Texture.Format.RGBA,
-            type = Texture.Type.UBYTE,
-            alignment = 1,
-            left = 0,
-            top = 0,
-            stride = tw,
-            callback = {
-                val info = ImageInfo(tw, th, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
-                val newImage = Image.makeRaster(info, pixelBuffer, tw * 4)
-                val old = snapshotImage
-                snapshotImage = newImage
-                old?.close()
-                readPixelsPending = false
-            }
-        )
+        Array(2) { i ->
+            Texture.PixelBufferDescriptor(
+                storage = buffers[i],
+                sizeInBytes = buffers[i].size,
+                format = Texture.Format.RGBA,
+                type = Texture.Type.UBYTE,
+                alignment = 1,
+                left = 0,
+                top = 0,
+                stride = tw,
+                callback = {
+                    val info = ImageInfo(tw, th, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
+                    val newImage = Image.makeRaster(info, buffers[i], tw * 4)
+                    val old = snapshotImage
+                    snapshotImage = newImage
+                    old?.close()
+                    pendingFlags[i] = false
+                }
+            )
+        }
     }
 
     DisposableEffect(textureSize) {
@@ -154,18 +160,20 @@ internal actual fun FilamentSurface(
         if (renderer.beginFrame(s.swapChain, frameTime)) {
             renderer.render(view)
             renderer.endFrame()
-            engine.flushAndWait()
         }
-        if (!readPixelsPending && pixelBufferDescriptor != null) {
-            readPixelsPending = true
+        val descs = pixelBufferDescriptors ?: return@FilamentRenderLoop
+        val i = nextBufIndex[0]
+        if (!pendingFlags[i]) {
+            pendingFlags[i] = true
             renderer.readPixels(
                 renderTarget = s.renderTarget,
                 xoffset = 0,
                 yoffset = 0,
                 width = s.width,
                 height = s.height,
-                buffer = pixelBufferDescriptor,
+                buffer = descs[i],
             )
+            nextBufIndex[0] = (i + 1) % 2
         }
     }
 
