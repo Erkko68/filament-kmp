@@ -62,12 +62,11 @@ internal actual fun FilamentSurface(
         if (w <= 0 || h <= 0) return@LaunchedEffect
         val canvas = engine.jsCanvas ?: return@LaunchedEffect
 
-        swapChainHolder[0]?.let { engine.destroySwapChain(it) }
-
         canvas.width = w
         canvas.height = h
-        val sc = engine.createSwapChain(NativeSurface(canvas))
-        swapChainHolder[0] = sc
+        val sc = swapChainHolder[0] ?: engine.createSwapChain(NativeSurface(canvas)).also {
+            swapChainHolder[0] = it
+        }
         view.setViewport(Viewport(0, 0, w, h))
         onResizeRef[0](w.toDouble() / h.toDouble())
 
