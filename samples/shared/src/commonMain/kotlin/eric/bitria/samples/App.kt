@@ -3,7 +3,7 @@ package eric.bitria.samples
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color as ComposeColor
@@ -20,16 +20,6 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
-    var duckBytes by remember { mutableStateOf<ByteArray?>(null) }
-
-    LaunchedEffect(Unit) {
-        try {
-            duckBytes = Res.readBytes("files/models/Duck.glb")
-        } catch (e: Exception) {
-            println("App: Failed to load Duck.glb: ${e.message}")
-        }
-    }
-
     val orbit = rememberOrbitCameraState(
         eye    = Position(0f, 1f, 4f),
         target = Position(0f, 0.5f, 0f),
@@ -62,10 +52,11 @@ fun App() {
                 Fog(enabled = true, color = Color(0.1f, 0.125f, 0.15f), density = 0.05f)
                 AntiAliasing(fxaaEnabled = true)
 
-                duckBytes?.let { bytes ->
-                    val duck = rememberGltfAsset(bytes)
-                    GltfInstance(duck, position = Position(0f, 0f, 0f), scale = Scale(1f))
-                }
+                GltfInstance(
+                    asset = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") },
+                    position = Position(0f, 0f, 0f),
+                    scale = Scale(1f),
+                )
             }
 
             Text(

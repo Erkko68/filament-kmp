@@ -33,14 +33,28 @@ private class GltfInstanceScopeImpl(
  * Each call creates its own [FilamentInstance] with independent transform, animation state,
  * and material overrides. GPU resources (geometry, textures) are shared from the asset.
  *
+ * Accepts a nullable [asset] so it composes naturally with [rememberGltfAsset]'s suspend-lambda
+ * overload, which returns null while loading. When [asset] is null this composable is a no-op.
+ *
  * Typical usage:
  * ```kotlin
- * val tree = rememberGltfAsset(treeBytes)
+ * // single static model — loading handled internally
+ * GltfInstance(
+ *     asset = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") },
+ *     position = Position(0f, 0f, 0f),
+ * )
+ *
+ * // multiple copies from a shared asset
+ * val tree = rememberGltfAsset { Res.readBytes("files/models/Tree.glb") }
  * GltfInstance(tree, position = Position(0f, 0f, 0f))
  * GltfInstance(tree, position = Position(5f, 0f, 0f))
  * ```
+ * ### Lifecycle Note
+ * Filament's `gltfio` does not have a `destroyInstance` API; instances are automatically
+ * destroyed when the parent [GltfAsset] is destroyed. To avoid memory pressure, avoid
+ * creating hundreds of dynamic instances from a single long-lived asset.
  *
- * @param asset A loaded asset obtained from [rememberGltfAsset].
+ * @param asset A loaded asset from [rememberGltfAsset], or null while still loading.
  * @param position World-space translation.
  * @param rotation World-space rotation as a quaternion.
  * @param scale Per-axis scale.
@@ -53,7 +67,7 @@ private class GltfInstanceScopeImpl(
  */
 @Composable
 fun GltfInstance(
-    asset: GltfAsset,
+    asset: GltfAsset?,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
@@ -62,6 +76,8 @@ fun GltfInstance(
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
 ) {
+    if (asset == null) return
+
     val engine = LocalFilamentEngine.current
     val scene = LocalFilamentScene.current
 
@@ -69,6 +85,8 @@ fun GltfInstance(
         asset.assetLoader.createInstance(asset.filamentAsset)
             ?: asset.filamentAsset.getInstance()
     }
+
+    if (!asset.isReady) return
 
     DisposableEffect(instance) {
         scene.addEntities(instance.getEntities())

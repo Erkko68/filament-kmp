@@ -26,8 +26,13 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
         return true
     }
 
+    private var currentAsset: FilamentAsset? = null
+    private var isLoadStarted = false
+
     actual fun asyncBeginLoad(asset: FilamentAsset): Boolean {
+        currentAsset = asset
         loadProgress = 0f
+        isLoadStarted = false
         return true
     }
 
@@ -36,11 +41,22 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
     }
 
     actual fun asyncUpdateLoad() {
-        loadProgress = 1f
+        val asset = currentAsset ?: return
+        if (!isLoadStarted) {
+            isLoadStarted = true
+            // On JS, loadResources is asynchronous. We use the callback to set progress to 1.0.
+            // We set it to 0.1 initially so the calling loop knows we are working.
+            loadProgress = 0.1f
+            asset.jsAsset.asDynamic().loadResources({
+                loadProgress = 1f
+            }, null, null, null)
+        }
     }
 
     actual fun asyncCancelLoad() {
+        currentAsset = null
         loadProgress = 0f
+        isLoadStarted = false
     }
 
     actual fun evictResourceData() {
