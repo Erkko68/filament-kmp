@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.js.`gltfio_FilamentInstance` as JSFilamentInstance
 import io.github.erkko68.filament.js.Vector
@@ -12,14 +13,20 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
     private val skinJoints = mutableMapOf<Int, IntArray>()
 
     actual fun getRoot(): Int {
-        return jsInstance.getRoot().getId().toInt()
+        val jsEntity = jsInstance.getRoot()
+        val id = jsEntity.getId().toInt()
+        EntityManager.register(id, jsEntity)
+        return id
     }
 
     actual fun getEntities(): IntArray {
         val vector = jsInstance.getEntities()
         val result = IntArray(vector.size().toInt())
         for (i in 0 until vector.size().toInt()) {
-            result[i] = vector.get(i).getId().toInt()
+            val jsEntity = vector.get(i)
+            val id = jsEntity.getId().toInt()
+            EntityManager.register(id, jsEntity)
+            result[i] = id
         }
         return result
     }
