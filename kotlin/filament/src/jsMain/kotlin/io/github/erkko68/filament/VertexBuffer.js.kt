@@ -7,10 +7,7 @@ import io.github.erkko68.filament.js.VertexBuffer_AttributeType as JSVertexBuffe
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
-    actual fun getVertexCount(): Int {
-        // Not exposed in JS bindings
-        return 0
-    }
+    actual val vertexCount: Int get() = 0 // not exposed in JS bindings
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
         val int8 = org.khronos.webgl.Int8Array(size)

@@ -7,10 +7,9 @@ expect class SwapChain {
         fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean
     }
 
-    fun getNativeWindow(): Any?
+    val nativeWindow: Any?
+    val nativeObject: Long
+    val isFrameScheduledCallbackSet: Boolean
     fun setFrameCompletedCallback(callback: () -> Unit)
     fun setFrameScheduledCallback(callback: () -> Unit)
-    fun isFrameScheduledCallbackSet(): Boolean
-    
-    fun getNativeObject(): Long
 }

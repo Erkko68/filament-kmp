@@ -13,7 +13,7 @@ expect class BufferObject {
         fun build(engine: Engine): BufferObject
     }
 
-    fun getByteCount(): Int
+    val byteCount: Int
     fun setBuffer(engine: Engine, data: ByteArray)
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int)
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null)

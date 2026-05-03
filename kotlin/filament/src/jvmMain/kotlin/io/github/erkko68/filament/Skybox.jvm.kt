@@ -36,8 +36,8 @@ actual class Skybox(val nativeSkybox: JniSkybox) {
     }
 
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) { nativeSkybox.setColor(r, g, b, a) }
-    actual fun getIntensity(): Float = nativeSkybox.intensity
+    actual val intensity: Float get() = nativeSkybox.intensity
+    actual val layerMask: Int get() = nativeSkybox.getLayerMask()
+    actual val texture: Texture? get() = nativeSkybox.getTexture()?.let { Texture(it) }
     actual fun setLayerMask(select: Int, value: Int) = nativeSkybox.setLayerMask(select, value)
-    actual fun getLayerMask(): Int = nativeSkybox.getLayerMask()
-    actual fun getTexture(): Texture? = nativeSkybox.getTexture()?.let { Texture(it) }
 }

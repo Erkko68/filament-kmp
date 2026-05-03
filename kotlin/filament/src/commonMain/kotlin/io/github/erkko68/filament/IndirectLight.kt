@@ -11,13 +11,11 @@ expect class IndirectLight {
         fun build(engine: Engine): IndirectLight
     }
 
-    fun setIntensity(intensity: Float)
-    fun getIntensity(): Float
-    fun setRotation(rotation: FloatArray)
-    fun getRotation(out: FloatArray? = null): FloatArray
-    
-    fun getReflectionsTexture(): Texture?
-    fun getIrradianceTexture(): Texture?
+    var intensity: Float
+    var rotation: FloatArray
+
+    val reflectionsTexture: Texture?
+    val irradianceTexture: Texture?
 
     companion object {
         fun getDirectionEstimate(sh: FloatArray, out: FloatArray? = null): FloatArray

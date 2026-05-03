@@ -16,7 +16,7 @@ actual class Fence(val nativeFence: JniFence) {
     actual fun wait(mode: Mode, timeout: Long): FenceStatus =
         FenceStatus.values()[nativeFence.wait(mode.toJni(), timeout).ordinal]
     
-    actual fun getNativeObject(): Long = nativeFence.nativeObject
+    actual val nativeObject: Long get() = nativeFence.nativeObject
 
     actual companion object {
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus =

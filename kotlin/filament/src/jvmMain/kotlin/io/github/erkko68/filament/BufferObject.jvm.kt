@@ -30,7 +30,7 @@ actual class BufferObject(val nativeBufferObject: io.github.erkko68.filament.jni
             BufferObject(jni.build(engine.nativeEngine))
     }
 
-    actual fun getByteCount(): Int = nativeBufferObject.byteCount
+    actual val byteCount: Int get() = nativeBufferObject.byteCount
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
         val buffer = ByteBuffer.allocateDirect(data.size).order(ByteOrder.nativeOrder())

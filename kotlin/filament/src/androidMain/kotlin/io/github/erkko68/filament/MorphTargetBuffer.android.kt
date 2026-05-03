@@ -36,11 +36,11 @@ actual class MorphTargetBuffer internal constructor(val nativeMorphTargetBuffer:
         }
     }
 
-    actual fun getVertexCount(): Int = nativeMorphTargetBuffer.vertexCount
-    actual fun getCount(): Int = nativeMorphTargetBuffer.count
-    actual fun hasPositions(): Boolean = nativeMorphTargetBuffer.hasPositions()
-    actual fun hasTangents(): Boolean = nativeMorphTargetBuffer.hasTangents()
-    actual fun isCustomMorphingEnabled(): Boolean = nativeMorphTargetBuffer.isCustomMorphingEnabled
+    actual val vertexCount: Int get() = nativeMorphTargetBuffer.vertexCount
+    actual val count: Int get() = nativeMorphTargetBuffer.count
+    actual val hasPositions: Boolean get() = nativeMorphTargetBuffer.hasPositions()
+    actual val hasTangents: Boolean get() = nativeMorphTargetBuffer.hasTangents()
+    actual val isCustomMorphingEnabled: Boolean get() = nativeMorphTargetBuffer.isCustomMorphingEnabled
 
     actual fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int) {
         nativeMorphTargetBuffer.setPositionsAt(engine.nativeEngine, targetIndex, positions, count)

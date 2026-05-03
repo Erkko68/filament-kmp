@@ -28,7 +28,7 @@ actual class IndexBuffer(val nativeIndexBuffer: io.github.erkko68.filament.jni.I
             IndexBuffer(jni.build(engine.nativeEngine))
     }
 
-    actual fun getIndexCount(): Int = nativeIndexBuffer.indexCount
+    actual val indexCount: Int get() = nativeIndexBuffer.indexCount
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
         val buffer = ByteBuffer.allocateDirect(data.size).order(ByteOrder.nativeOrder())

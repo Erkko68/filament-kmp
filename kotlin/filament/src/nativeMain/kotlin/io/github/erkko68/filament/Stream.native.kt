@@ -31,12 +31,11 @@ actual class Stream internal constructor(internal var nativeHandle: CPointer<Fil
         }
     }
 
-    actual fun getStreamType(): StreamType =
-        StreamType.values()[FilaStream_getStreamType(nativeHandle).toInt()]
+    actual val streamType: StreamType get() = StreamType.values()[FilaStream_getStreamType(nativeHandle).toInt()]
 
     actual fun setDimensions(width: Int, height: Int) {
         FilaStream_setDimensions(nativeHandle, width.toUInt(), height.toUInt())
     }
 
-    actual fun getTimestamp(): Long = FilaStream_getTimestamp(nativeHandle)
+    actual val timestamp: Long get() = FilaStream_getTimestamp(nativeHandle)
 }

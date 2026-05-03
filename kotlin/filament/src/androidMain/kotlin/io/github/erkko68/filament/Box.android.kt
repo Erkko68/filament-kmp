@@ -15,15 +15,12 @@ actual class Box internal constructor(val nativeBox: com.google.android.filament
         nativeBox.setHalfExtent(x, y, z)
     }
 
-    actual fun getMin(): FloatArray {
-        val center = nativeBox.center
-        val half = nativeBox.halfExtent
-        return floatArrayOf(center[0] - half[0], center[1] - half[1], center[2] - half[2])
+    actual val min: FloatArray get() {
+        val c = nativeBox.center; val h = nativeBox.halfExtent
+        return floatArrayOf(c[0] - h[0], c[1] - h[1], c[2] - h[2])
     }
-
-    actual fun getMax(): FloatArray {
-        val center = nativeBox.center
-        val half = nativeBox.halfExtent
-        return floatArrayOf(center[0] + half[0], center[1] + half[1], center[2] + half[2])
+    actual val max: FloatArray get() {
+        val c = nativeBox.center; val h = nativeBox.halfExtent
+        return floatArrayOf(c[0] + h[0], c[1] + h[1], c[2] + h[2])
     }
 }

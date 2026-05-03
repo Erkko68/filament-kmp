@@ -12,7 +12,7 @@ actual class SwapChain internal constructor(internal var nativeHandle: CPointer<
         actual fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = FilaSwapChain_isMSAASwapChainSupported(engine.nativeHandle, samples)
     }
 
-    actual fun getNativeWindow(): Any? = null
+    actual val nativeWindow: Any? get() = null
 
     private var frameCompletedRef: StableRef<() -> Unit>? = null
     private var frameScheduledRef: StableRef<() -> Unit>? = null
@@ -39,7 +39,7 @@ actual class SwapChain internal constructor(internal var nativeHandle: CPointer<
         FilaSwapChain_setFrameScheduledCallback(nativeHandle, null, callbackWrapper, stableRef.asCPointer())
     }
 
-    actual fun isFrameScheduledCallbackSet(): Boolean = FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
+    actual val isFrameScheduledCallbackSet: Boolean get() = FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
     
-    actual fun getNativeObject(): Long = nativeHandle?.rawValue?.toLong() ?: 0L
+    actual val nativeObject: Long get() = nativeHandle?.rawValue?.toLong() ?: 0L
 }

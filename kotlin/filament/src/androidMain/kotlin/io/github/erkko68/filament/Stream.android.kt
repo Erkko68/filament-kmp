@@ -26,12 +26,11 @@ actual class Stream internal constructor(val nativeStream: AndroidStream) {
         }
     }
 
-    actual fun getStreamType(): StreamType =
-        StreamType.values()[nativeStream.getStreamType().ordinal]
+    actual val streamType: StreamType get() = StreamType.values()[nativeStream.getStreamType().ordinal]
 
     actual fun setDimensions(width: Int, height: Int) {
         nativeStream.setDimensions(width, height)
     }
 
-    actual fun getTimestamp(): Long = nativeStream.timestamp
+    actual val timestamp: Long get() = nativeStream.timestamp
 }

@@ -5,37 +5,24 @@ import io.github.erkko68.filament.js.`IndirectLight_Builder` as JSIndirectLightB
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
-    actual fun setIntensity(intensity: Float) {
-        jsIndirectLight.setIntensity(intensity)
-    }
+    actual var intensity: Float
+        get() = jsIndirectLight.getIntensity().toFloat()
+        set(value) { jsIndirectLight.setIntensity(value) }
 
-    actual fun getIntensity(): Float {
-        return jsIndirectLight.getIntensity().toFloat()
-    }
-
-    actual fun setRotation(rotation: FloatArray) {
-        jsIndirectLight.setRotation(rotation.toTypedArray() as Array<Number>)
-    }
-
-    actual fun getRotation(out: FloatArray?): FloatArray {
-        val result = out ?: FloatArray(9)
-        val jsVec = jsIndirectLight.getRotation()
-        if (jsVec != null) {
-            val arr = jsVec.unsafeCast<Array<Double>>()
-            for (i in 0 until 9.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
+    actual var rotation: FloatArray
+        get() {
+            val result = FloatArray(9)
+            val jsVec = jsIndirectLight.getRotation()
+            if (jsVec != null) {
+                val arr = jsVec.unsafeCast<Array<Double>>()
+                for (i in 0 until 9.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
+            }
+            return result
         }
-        return result
-    }
+        set(value) { jsIndirectLight.setRotation(value.toTypedArray() as Array<Number>) }
 
-    actual fun getReflectionsTexture(): Texture? {
-        val jsTex = jsIndirectLight.getReflectionsTexture()
-        return if (jsTex != null) Texture(jsTex) else null
-    }
-
-    actual fun getIrradianceTexture(): Texture? {
-        val jsTex = jsIndirectLight.getIrradianceTexture()
-        return if (jsTex != null) Texture(jsTex) else null
-    }
+    actual val reflectionsTexture: Texture? get() = jsIndirectLight.getReflectionsTexture()?.let { Texture(it) }
+    actual val irradianceTexture: Texture? get() = jsIndirectLight.getIrradianceTexture()?.let { Texture(it) }
 
     actual class Builder {
         private val jsBuilder = JSIndirectLight.Builder()

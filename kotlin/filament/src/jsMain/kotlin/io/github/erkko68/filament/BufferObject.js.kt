@@ -5,10 +5,7 @@ import io.github.erkko68.filament.js.`BufferObject_Builder` as JSBufferObjectBui
 import io.github.erkko68.filament.js.BufferObject_BindingType
 
 actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
-    actual fun getByteCount(): Int {
-        // Not exposed in JS bindings
-        return 0
-    }
+    actual val byteCount: Int get() = 0 // not exposed in JS bindings
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
         val int8 = org.khronos.webgl.Int8Array(size)

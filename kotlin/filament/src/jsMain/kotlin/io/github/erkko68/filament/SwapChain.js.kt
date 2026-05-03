@@ -3,9 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.js.SwapChain as JSSwapChain
 
 actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
-    actual fun getNativeWindow(): Any? {
-        return null
-    }
+    actual val nativeWindow: Any? get() = null
 
     actual fun setFrameCompletedCallback(callback: () -> Unit) {
     }
@@ -13,13 +11,9 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
     actual fun setFrameScheduledCallback(callback: () -> Unit) {
     }
 
-    actual fun isFrameScheduledCallbackSet(): Boolean {
-        return false
-    }
+    actual val isFrameScheduledCallbackSet: Boolean get() = false
 
-    actual fun getNativeObject(): Long {
-        return 0
-    }
+    actual val nativeObject: Long get() = 0
 
     actual companion object {
         actual fun isProtectedContentSupported(engine: Engine): Boolean {

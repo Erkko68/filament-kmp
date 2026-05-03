@@ -107,66 +107,37 @@ actual class TextureSampler {
         nativeHandle = sampler
     }
 
-    actual fun getMinFilter(): MinFilter {
-        val f = FilaTextureSampler_getMinFilter(nativeHandle)
-        return MinFilter.entries[f.toInt()]
-    }
-    actual fun setMinFilter(filter: MinFilter) {
-        nativeHandle = FilaTextureSampler_setMinFilter(nativeHandle, filter.toFila())
-    }
+    actual var minFilter: MinFilter
+        get() = MinFilter.entries[FilaTextureSampler_getMinFilter(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setMinFilter(nativeHandle, value.toFila()) }
 
-    actual fun getMagFilter(): MagFilter {
-        val f = FilaTextureSampler_getMagFilter(nativeHandle)
-        return MagFilter.entries[f.toInt()]
-    }
-    actual fun setMagFilter(filter: MagFilter) {
-        nativeHandle = FilaTextureSampler_setMagFilter(nativeHandle, filter.toFila())
-    }
+    actual var magFilter: MagFilter
+        get() = MagFilter.entries[FilaTextureSampler_getMagFilter(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setMagFilter(nativeHandle, value.toFila()) }
 
-    actual fun getWrapModeS(): WrapMode {
-        val f = FilaTextureSampler_getWrapModeS(nativeHandle)
-        return WrapMode.entries[f.toInt()]
-    }
-    actual fun setWrapModeS(mode: WrapMode) {
-        nativeHandle = FilaTextureSampler_setWrapModeS(nativeHandle, mode.toFila())
-    }
+    actual var wrapModeS: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeS(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setWrapModeS(nativeHandle, value.toFila()) }
 
-    actual fun getWrapModeT(): WrapMode {
-        val f = FilaTextureSampler_getWrapModeT(nativeHandle)
-        return WrapMode.entries[f.toInt()]
-    }
-    actual fun setWrapModeT(mode: WrapMode) {
-        nativeHandle = FilaTextureSampler_setWrapModeT(nativeHandle, mode.toFila())
-    }
+    actual var wrapModeT: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeT(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setWrapModeT(nativeHandle, value.toFila()) }
 
-    actual fun getWrapModeR(): WrapMode {
-        val f = FilaTextureSampler_getWrapModeR(nativeHandle)
-        return WrapMode.entries[f.toInt()]
-    }
-    actual fun setWrapModeR(mode: WrapMode) {
-        nativeHandle = FilaTextureSampler_setWrapModeR(nativeHandle, mode.toFila())
-    }
+    actual var wrapModeR: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeR(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setWrapModeR(nativeHandle, value.toFila()) }
 
-    actual fun getAnisotropy(): Float = FilaTextureSampler_getAnisotropy(nativeHandle)
-    actual fun setAnisotropy(anisotropy: Float) {
-        nativeHandle = FilaTextureSampler_setAnisotropy(nativeHandle, anisotropy)
-    }
+    actual var anisotropy: Float
+        get() = FilaTextureSampler_getAnisotropy(nativeHandle)
+        set(value) { nativeHandle = FilaTextureSampler_setAnisotropy(nativeHandle, value) }
 
-    actual fun getCompareMode(): CompareMode {
-        val f = FilaTextureSampler_getCompareMode(nativeHandle)
-        return CompareMode.entries[f.toInt()]
-    }
-    actual fun setCompareMode(mode: CompareMode) {
-        nativeHandle = FilaTextureSampler_setCompareMode(nativeHandle, mode.toFila())
-    }
+    actual var compareMode: CompareMode
+        get() = CompareMode.entries[FilaTextureSampler_getCompareMode(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setCompareMode(nativeHandle, value.toFila()) }
 
-    actual fun getCompareFunction(): CompareFunction {
-        val f = FilaTextureSampler_getCompareFunction(nativeHandle)
-        return if (f.toInt() == 0) CompareFunction.LESS_EQUAL else mappingFilaToCompareFunction(f)
-    }
-    actual fun setCompareFunction(function: CompareFunction) {
-        nativeHandle = FilaTextureSampler_setCompareFunction(nativeHandle, function.toFila())
-    }
+    actual var compareFunction: CompareFunction
+        get() = CompareFunction.entries[FilaTextureSampler_getCompareFunction(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setCompareFunction(nativeHandle, value.toFila()) }
 
     private fun WrapMode.toFila(): FilaTextureSamplerWrapMode = this.ordinal.toUInt()
     private fun MinFilter.toFila(): FilaTextureSamplerMinFilter = this.ordinal.toUInt()
@@ -174,7 +145,4 @@ actual class TextureSampler {
     private fun CompareMode.toFila(): FilaTextureSamplerCompareMode = this.ordinal.toUInt()
     private fun CompareFunction.toFila(): FilaTextureSamplerCompareFunc = this.ordinal.toUInt()
 
-    private fun mappingFilaToCompareFunction(f: FilaTextureSamplerCompareFunc): CompareFunction {
-        return CompareFunction.entries[f.toInt()]
-    }
 }

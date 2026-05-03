@@ -10,11 +10,11 @@ expect class MorphTargetBuffer {
         fun build(engine: Engine): MorphTargetBuffer
     }
 
-    fun getVertexCount(): Int
-    fun getCount(): Int
-    fun hasPositions(): Boolean
-    fun hasTangents(): Boolean
-    fun isCustomMorphingEnabled(): Boolean
+    val vertexCount: Int
+    val count: Int
+    val hasPositions: Boolean
+    val hasTangents: Boolean
+    val isCustomMorphingEnabled: Boolean
 
     fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int)
     fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int)

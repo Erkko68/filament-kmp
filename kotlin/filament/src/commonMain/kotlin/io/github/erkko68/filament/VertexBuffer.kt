@@ -39,7 +39,7 @@ expect class VertexBuffer {
         fun build(engine: Engine): VertexBuffer
     }
 
-    fun getVertexCount(): Int
+    val vertexCount: Int
     fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray)
     fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int)
     fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null)

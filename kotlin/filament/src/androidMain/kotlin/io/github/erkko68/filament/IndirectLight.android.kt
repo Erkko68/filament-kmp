@@ -15,20 +15,16 @@ actual class IndirectLight constructor(val nativeIndirectLight: AndroidIndirectL
         actual fun build(engine: Engine): IndirectLight = IndirectLight(nativeBuilder.build(engine.nativeEngine))
     }
 
-    actual fun setIntensity(intensity: Float) { nativeIndirectLight.intensity = intensity }
-    actual fun getIntensity(): Float = nativeIndirectLight.intensity
-    
-    actual fun setRotation(rotation: FloatArray) { nativeIndirectLight.setRotation(rotation) }
-    actual fun getRotation(out: FloatArray?): FloatArray = nativeIndirectLight.getRotation(out)
+    actual var intensity: Float
+        get() = nativeIndirectLight.intensity
+        set(value) { nativeIndirectLight.intensity = value }
 
-    actual fun getReflectionsTexture(): Texture? {
-        val tex = nativeIndirectLight.reflectionsTexture
-        return if (tex != null) Texture(tex) else null
-    }
-    actual fun getIrradianceTexture(): Texture? {
-        val tex = nativeIndirectLight.irradianceTexture
-        return if (tex != null) Texture(tex) else null
-    }
+    actual var rotation: FloatArray
+        get() = nativeIndirectLight.getRotation(FloatArray(9))
+        set(value) { nativeIndirectLight.setRotation(value) }
+
+    actual val reflectionsTexture: Texture? get() = nativeIndirectLight.reflectionsTexture?.let { Texture(it) }
+    actual val irradianceTexture: Texture? get() = nativeIndirectLight.irradianceTexture?.let { Texture(it) }
 
     actual companion object {
         actual fun getDirectionEstimate(sh: FloatArray, out: FloatArray?): FloatArray =

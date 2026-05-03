@@ -16,7 +16,7 @@ actual class IndexBuffer internal constructor(internal var nativeHandle: CPointe
         actual fun build(engine: Engine): IndexBuffer = IndexBuffer(FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle))
     }
 
-    actual fun getIndexCount(): Int = FilaIndexBuffer_getIndexCount(nativeHandle).toInt()
+    actual val indexCount: Int get() = FilaIndexBuffer_getIndexCount(nativeHandle).toInt()
     
     actual fun setBuffer(engine: Engine, data: ByteArray) {
         setBuffer(engine, data, 0, 0, null)

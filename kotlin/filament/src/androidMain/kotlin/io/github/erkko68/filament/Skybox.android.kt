@@ -32,8 +32,8 @@ actual class Skybox constructor(val nativeSkybox: AndroidSkybox) {
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
         nativeSkybox.setColor(r, g, b, a)
     }
-    actual fun getIntensity(): Float = nativeSkybox.intensity
+    actual val intensity: Float get() = nativeSkybox.intensity
+    actual val layerMask: Int get() = nativeSkybox.layerMask
+    actual val texture: Texture? get() = nativeSkybox.texture?.let { Texture(it) }
     actual fun setLayerMask(select: Int, value: Int) = nativeSkybox.setLayerMask(select, value)
-    actual fun getLayerMask(): Int = nativeSkybox.layerMask
-    actual fun getTexture(): Texture? = nativeSkybox.texture?.let { Texture(it) }
 }

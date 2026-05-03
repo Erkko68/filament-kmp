@@ -75,10 +75,7 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
         }
     }
 
-    actual fun getVertexCount(): Int {
-        // Not in JS bindings
-        return 0
-    }
+    actual val vertexCount: Int get() = 0 // not exposed in JS bindings
 
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
         val quats = jsSurfaceOrientation.getQuatsFloat4(count)

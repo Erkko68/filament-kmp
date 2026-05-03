@@ -24,7 +24,7 @@ actual class SkinningBuffer internal constructor(val nativeSkinningBuffer: Andro
         }
     }
 
-    actual fun getBoneCount(): Int = nativeSkinningBuffer.boneCount
+    actual val boneCount: Int get() = nativeSkinningBuffer.boneCount
 
     actual fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
         val buffer = ByteBuffer.allocateDirect(matrices.size * 4)

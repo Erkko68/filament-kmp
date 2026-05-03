@@ -1,25 +1,11 @@
 package io.github.erkko68.filament
 
 actual class MorphTargetBuffer(internal val jsMorphTargetBuffer: Any? = null) {
-    actual fun getVertexCount(): Int {
-        return 0
-    }
-
-    actual fun getCount(): Int {
-        return 0
-    }
-
-    actual fun hasPositions(): Boolean {
-        return false
-    }
-
-    actual fun hasTangents(): Boolean {
-        return false
-    }
-
-    actual fun isCustomMorphingEnabled(): Boolean {
-        return false
-    }
+    actual val vertexCount: Int get() = 0 // not exposed in JS bindings
+    actual val count: Int get() = 0 // not exposed in JS bindings
+    actual val hasPositions: Boolean get() = false // not exposed in JS bindings
+    actual val hasTangents: Boolean get() = false // not exposed in JS bindings
+    actual val isCustomMorphingEnabled: Boolean get() = false // not exposed in JS bindings
 
     actual fun setPositionsAt(
         engine: Engine,

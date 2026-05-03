@@ -26,7 +26,7 @@ actual class SkinningBuffer internal constructor(internal var nativeHandle: CPoi
         }
     }
 
-    actual fun getBoneCount(): Int = FilaSkinningBuffer_getBoneCount(nativeHandle).toInt()
+    actual val boneCount: Int get() = FilaSkinningBuffer_getBoneCount(nativeHandle).toInt()
 
     actual fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
         matrices.usePinned { pinned ->

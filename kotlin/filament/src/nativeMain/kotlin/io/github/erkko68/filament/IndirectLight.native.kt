@@ -34,30 +34,16 @@ actual class IndirectLight constructor(internal var nativeHandle: CPointer<FilaI
         }
     }
 
-    actual fun setIntensity(intensity: Float) = FilaIndirectLight_setIntensity(nativeHandle, intensity)
-    actual fun getIntensity(): Float = FilaIndirectLight_getIntensity(nativeHandle)
-    
-    actual fun setRotation(rotation: FloatArray) {
-        rotation.usePinned { pinned ->
-            FilaIndirectLight_setRotation(nativeHandle, pinned.addressOf(0))
-        }
-    }
-    actual fun getRotation(out: FloatArray?): FloatArray {
-        val result = out ?: FloatArray(9)
-        result.usePinned { pinned ->
-            FilaIndirectLight_getRotation(nativeHandle, pinned.addressOf(0))
-        }
-        return result
-    }
+    actual var intensity: Float
+        get() = FilaIndirectLight_getIntensity(nativeHandle)
+        set(value) { FilaIndirectLight_setIntensity(nativeHandle, value) }
 
-    actual fun getReflectionsTexture(): Texture? {
-        val tex = FilaIndirectLight_getReflectionsTexture(nativeHandle)
-        return if (tex != null) Texture(tex) else null
-    }
-    actual fun getIrradianceTexture(): Texture? {
-        val tex = FilaIndirectLight_getIrradianceTexture(nativeHandle)
-        return if (tex != null) Texture(tex) else null
-    }
+    actual var rotation: FloatArray
+        get() = FloatArray(9).also { result -> result.usePinned { FilaIndirectLight_getRotation(nativeHandle, it.addressOf(0)) } }
+        set(value) { value.usePinned { FilaIndirectLight_setRotation(nativeHandle, it.addressOf(0)) } }
+
+    actual val reflectionsTexture: Texture? get() = FilaIndirectLight_getReflectionsTexture(nativeHandle)?.let { Texture(it) }
+    actual val irradianceTexture: Texture? get() = FilaIndirectLight_getIrradianceTexture(nativeHandle)?.let { Texture(it) }
 
     actual companion object {
         actual fun getDirectionEstimate(sh: FloatArray, out: FloatArray?): FloatArray {

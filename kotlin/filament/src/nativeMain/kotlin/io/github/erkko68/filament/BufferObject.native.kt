@@ -39,7 +39,7 @@ actual class BufferObject internal constructor(internal var nativeHandle: CPoint
         }
     }
 
-    actual fun getByteCount(): Int = FilaBufferObject_getByteCount(nativeHandle).toInt()
+    actual val byteCount: Int get() = FilaBufferObject_getByteCount(nativeHandle).toInt()
 
     private class BufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 

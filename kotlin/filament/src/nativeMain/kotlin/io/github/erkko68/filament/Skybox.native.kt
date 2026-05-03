@@ -44,9 +44,8 @@ actual class Skybox(internal var nativeHandle: CPointer<FilaSkybox>?) {
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
         FilaSkybox_setColor(nativeHandle, r, g, b, a)
     }
-    actual fun getIntensity(): Float = FilaSkybox_getIntensity(nativeHandle)
-    actual fun setLayerMask(select: Int, value: Int) =
-        FilaSkybox_setLayerMask(nativeHandle, select.toUByte(), value.toUByte())
-    actual fun getLayerMask(): Int = FilaSkybox_getLayerMask(nativeHandle).toInt()
-    actual fun getTexture(): Texture? = FilaSkybox_getTexture(nativeHandle)?.let { Texture(it) }
+    actual val intensity: Float get() = FilaSkybox_getIntensity(nativeHandle)
+    actual val layerMask: Int get() = FilaSkybox_getLayerMask(nativeHandle).toInt()
+    actual val texture: Texture? get() = FilaSkybox_getTexture(nativeHandle)?.let { Texture(it) }
+    actual fun setLayerMask(select: Int, value: Int) = FilaSkybox_setLayerMask(nativeHandle, select.toUByte(), value.toUByte())
 }

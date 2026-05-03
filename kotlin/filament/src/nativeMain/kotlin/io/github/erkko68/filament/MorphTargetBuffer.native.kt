@@ -41,11 +41,11 @@ actual class MorphTargetBuffer internal constructor(internal var nativeHandle: C
         }
     }
 
-    actual fun getVertexCount(): Int = FilaMorphTargetBuffer_getVertexCount(nativeHandle).toInt()
-    actual fun getCount(): Int = FilaMorphTargetBuffer_getCount(nativeHandle).toInt()
-    actual fun hasPositions(): Boolean = FilaMorphTargetBuffer_hasPositions(nativeHandle)
-    actual fun hasTangents(): Boolean = FilaMorphTargetBuffer_hasTangents(nativeHandle)
-    actual fun isCustomMorphingEnabled(): Boolean = FilaMorphTargetBuffer_isCustomMorphingEnabled(nativeHandle)
+    actual val vertexCount: Int get() = FilaMorphTargetBuffer_getVertexCount(nativeHandle).toInt()
+    actual val count: Int get() = FilaMorphTargetBuffer_getCount(nativeHandle).toInt()
+    actual val hasPositions: Boolean get() = FilaMorphTargetBuffer_hasPositions(nativeHandle)
+    actual val hasTangents: Boolean get() = FilaMorphTargetBuffer_hasTangents(nativeHandle)
+    actual val isCustomMorphingEnabled: Boolean get() = FilaMorphTargetBuffer_isCustomMorphingEnabled(nativeHandle)
 
     actual fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int) {
         positions.usePinned { pinned ->

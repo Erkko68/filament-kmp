@@ -14,7 +14,7 @@ actual class Fence internal constructor(internal var nativeHandle: CPointer<Fila
         return FenceStatus.values()[result + 1] // ERROR is -1, ordinal 0
     }
 
-    actual fun getNativeObject(): Long = nativeHandle?.rawValue?.toLong() ?: 0L
+    actual val nativeObject: Long get() = nativeHandle?.rawValue?.toLong() ?: 0L
 
     actual companion object {
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {

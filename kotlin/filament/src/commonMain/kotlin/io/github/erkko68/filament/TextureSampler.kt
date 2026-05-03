@@ -45,20 +45,12 @@ expect class TextureSampler {
     constructor(mode: CompareMode)
     constructor(mode: CompareMode, function: CompareFunction)
 
-    fun getMinFilter(): MinFilter
-    fun setMinFilter(filter: MinFilter)
-    fun getMagFilter(): MagFilter
-    fun setMagFilter(filter: MagFilter)
-    fun getWrapModeS(): WrapMode
-    fun setWrapModeS(mode: WrapMode)
-    fun getWrapModeT(): WrapMode
-    fun setWrapModeT(mode: WrapMode)
-    fun getWrapModeR(): WrapMode
-    fun setWrapModeR(mode: WrapMode)
-    fun getAnisotropy(): Float
-    fun setAnisotropy(anisotropy: Float)
-    fun getCompareMode(): CompareMode
-    fun setCompareMode(mode: CompareMode)
-    fun getCompareFunction(): CompareFunction
-    fun setCompareFunction(function: CompareFunction)
+    var minFilter: MinFilter
+    var magFilter: MagFilter
+    var wrapModeS: WrapMode
+    var wrapModeT: WrapMode
+    var wrapModeR: WrapMode
+    var anisotropy: Float
+    var compareMode: CompareMode
+    var compareFunction: CompareFunction
 }

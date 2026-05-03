@@ -10,26 +10,14 @@ actual class Skybox(val jsSkybox: JSSkybox) {
         jsSkybox.setColor(arrayOf(r, g, b, a) as Array<Number>)
     }
 
-    actual fun getIntensity(): Float {
-        // Skybox intensity is typically handled in the builder, no direct getter in JS
-        return 1.0f
-    }
-
-    actual fun getTexture(): Texture? {
-        val jsTex = jsSkybox.getTexture()
-        return if (jsTex != null) Texture(jsTex) else null
-    }
+    actual val intensity: Float get() = 1.0f // not exposed in JS bindings, handled in builder
+    actual val texture: Texture? get() = jsSkybox.getTexture()?.let { Texture(it) }
+    actual val layerMask: Int get() = _layerMask
 
     actual fun setLayerMask(select: Int, value: Int) {
         _layerMask = value
         val jsInst = jsSkybox.asDynamic()
-        if (jsInst.setLayerMask != null) {
-            jsInst.setLayerMask(select, value)
-        }
-    }
-
-    actual fun getLayerMask(): Int {
-        return _layerMask
+        if (jsInst.setLayerMask != null) jsInst.setLayerMask(select, value)
     }
 
     actual class Builder {

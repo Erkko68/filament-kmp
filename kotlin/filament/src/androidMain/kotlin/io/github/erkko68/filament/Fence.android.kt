@@ -16,7 +16,7 @@ actual class Fence internal constructor(val nativeFence: AndroidFence) {
         }
     }
 
-    actual fun getNativeObject(): Long = nativeFence.nativeObject
+    actual val nativeObject: Long get() = nativeFence.nativeObject
 
     actual companion object {
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {

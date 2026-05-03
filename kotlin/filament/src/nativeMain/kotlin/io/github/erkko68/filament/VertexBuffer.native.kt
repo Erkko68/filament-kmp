@@ -58,7 +58,7 @@ actual class VertexBuffer internal constructor(internal var nativeHandle: CPoint
         }
     }
 
-    actual fun getVertexCount(): Int = FilaVertexBuffer_getVertexCount(nativeHandle).toInt()
+    actual val vertexCount: Int get() = FilaVertexBuffer_getVertexCount(nativeHandle).toInt()
     
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) {
         setBufferAt(engine, bufferIndex, data, 0, 0, null)

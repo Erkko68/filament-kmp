@@ -14,7 +14,7 @@ expect class IndexBuffer {
         fun build(engine: Engine): IndexBuffer
     }
 
-    fun getIndexCount(): Int
+    val indexCount: Int
     fun setBuffer(engine: Engine, data: ByteArray)
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int)
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null)

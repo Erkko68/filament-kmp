@@ -13,6 +13,6 @@ expect class Box {
     fun setCenter(x: Float, y: Float, z: Float)
     fun setHalfExtent(x: Float, y: Float, z: Float)
 
-    fun getMin(): FloatArray
-    fun getMax(): FloatArray
+    val min: FloatArray
+    val max: FloatArray
 }

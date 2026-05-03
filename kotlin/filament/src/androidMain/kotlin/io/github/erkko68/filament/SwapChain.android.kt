@@ -9,7 +9,7 @@ actual class SwapChain internal constructor(val nativeSwapChain: AndroidSwapChai
         actual fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = AndroidSwapChain.isMSAASwapChainSupported(engine.nativeEngine, samples)
     }
 
-    actual fun getNativeWindow(): Any? = nativeSwapChain.nativeWindow
+    actual val nativeWindow: Any? get() = nativeSwapChain.nativeWindow
     
     actual fun setFrameCompletedCallback(callback: () -> Unit) {
         nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback() })
@@ -19,7 +19,7 @@ actual class SwapChain internal constructor(val nativeSwapChain: AndroidSwapChai
         nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback() })
     }
 
-    actual fun isFrameScheduledCallbackSet(): Boolean = nativeSwapChain.isFrameScheduledCallbackSet
+    actual val isFrameScheduledCallbackSet: Boolean get() = nativeSwapChain.isFrameScheduledCallbackSet
     
-    actual fun getNativeObject(): Long = nativeSwapChain.nativeObject
+    actual val nativeObject: Long get() = nativeSwapChain.nativeObject
 }

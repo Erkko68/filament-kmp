@@ -22,7 +22,7 @@ actual class SkinningBuffer(val nativeSkinningBuffer: JniSkinningBuffer) {
             SkinningBuffer(jni.build(engine.nativeEngine))
     }
 
-    actual fun getBoneCount(): Int = nativeSkinningBuffer.boneCount
+    actual val boneCount: Int get() = nativeSkinningBuffer.boneCount
 
     actual fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
         val buffer = ByteBuffer.allocateDirect(matrices.size * 4).order(ByteOrder.nativeOrder()).asFloatBuffer()

@@ -46,7 +46,7 @@ actual class VertexBuffer(val nativeVertexBuffer: JniVertexBuffer) {
             VertexBuffer(jni.build(engine.nativeEngine))
     }
 
-    actual fun getVertexCount(): Int = nativeVertexBuffer.vertexCount
+    actual val vertexCount: Int get() = nativeVertexBuffer.vertexCount
 
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) {
         nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, java.nio.ByteBuffer.wrap(data))

@@ -12,7 +12,7 @@ expect class Stream {
         fun build(engine: Engine): Stream
     }
 
-    fun getStreamType(): StreamType
+    val streamType: StreamType
+    val timestamp: Long
     fun setDimensions(width: Int, height: Int)
-    fun getTimestamp(): Long
 }

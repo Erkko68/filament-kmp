@@ -9,9 +9,7 @@ actual class Fence {
         return FenceStatus.CONDITION_SATISFIED
     }
 
-    actual fun getNativeObject(): Long {
-        return 0
-    }
+    actual val nativeObject: Long get() = 0
 
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }

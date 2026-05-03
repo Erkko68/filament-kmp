@@ -23,15 +23,6 @@ actual class Box(
         halfExtent[2] = z
     }
 
-    actual fun getMin(): FloatArray = floatArrayOf(
-        center[0] - halfExtent[0],
-        center[1] - halfExtent[1],
-        center[2] - halfExtent[2]
-    )
-
-    actual fun getMax(): FloatArray = floatArrayOf(
-        center[0] + halfExtent[0],
-        center[1] + halfExtent[1],
-        center[2] + halfExtent[2]
-    )
+    actual val min: FloatArray get() = floatArrayOf(center[0] - halfExtent[0], center[1] - halfExtent[1], center[2] - halfExtent[2])
+    actual val max: FloatArray get() = floatArrayOf(center[0] + halfExtent[0], center[1] + halfExtent[1], center[2] + halfExtent[2])
 }

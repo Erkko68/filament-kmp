@@ -14,7 +14,7 @@ actual class IndexBuffer internal constructor(val nativeIndexBuffer: AndroidInde
         actual fun build(engine: Engine): IndexBuffer = IndexBuffer(nativeBuilder.build(engine.nativeEngine))
     }
 
-    actual fun getIndexCount(): Int = nativeIndexBuffer.indexCount
+    actual val indexCount: Int get() = nativeIndexBuffer.indexCount
     actual fun setBuffer(engine: Engine, data: ByteArray) {
         val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
             order(java.nio.ByteOrder.nativeOrder())

@@ -54,7 +54,7 @@ actual class SurfaceOrientation internal constructor(val nativeSurfaceOrientatio
         }
     }
 
-    actual fun getVertexCount(): Int = nativeSurfaceOrientation.vertexCount
+    actual val vertexCount: Int get() = nativeSurfaceOrientation.vertexCount
 
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
         nativeSurfaceOrientation.getQuatsAsFloat(FloatBuffer.wrap(buffer))

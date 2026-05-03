@@ -33,7 +33,7 @@ actual class BufferObject internal constructor(val nativeBufferObject: AndroidBu
         }
     }
 
-    actual fun getByteCount(): Int = nativeBufferObject.byteCount
+    actual val byteCount: Int get() = nativeBufferObject.byteCount
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
         val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {

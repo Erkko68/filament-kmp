@@ -1,9 +1,7 @@
 package io.github.erkko68.filament
 
 actual class SkinningBuffer(internal val jsSkinningBuffer: Any? = null) {
-    actual fun getBoneCount(): Int {
-        return 0
-    }
+    actual val boneCount: Int get() = 0 // not exposed in JS bindings
 
     actual fun setBonesAsMatrices(
         engine: Engine,

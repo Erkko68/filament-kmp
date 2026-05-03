@@ -73,29 +73,37 @@ actual class TextureSampler {
         nativeSampler = sampler
     }
 
-    actual fun getMinFilter(): MinFilter = MinFilter.values()[nativeSampler.minFilter.ordinal]
-    actual fun setMinFilter(filter: MinFilter) { nativeSampler.minFilter = filter.toFila() }
+    actual var minFilter: MinFilter
+        get() = MinFilter.values()[nativeSampler.minFilter.ordinal]
+        set(value) { nativeSampler.minFilter = value.toFila() }
 
-    actual fun getMagFilter(): MagFilter = MagFilter.values()[nativeSampler.magFilter.ordinal]
-    actual fun setMagFilter(filter: MagFilter) { nativeSampler.magFilter = filter.toFila() }
+    actual var magFilter: MagFilter
+        get() = MagFilter.values()[nativeSampler.magFilter.ordinal]
+        set(value) { nativeSampler.magFilter = value.toFila() }
 
-    actual fun getWrapModeS(): WrapMode = WrapMode.values()[nativeSampler.wrapModeS.ordinal]
-    actual fun setWrapModeS(mode: WrapMode) { nativeSampler.wrapModeS = mode.toFila() }
+    actual var wrapModeS: WrapMode
+        get() = WrapMode.values()[nativeSampler.wrapModeS.ordinal]
+        set(value) { nativeSampler.wrapModeS = value.toFila() }
 
-    actual fun getWrapModeT(): WrapMode = WrapMode.values()[nativeSampler.wrapModeT.ordinal]
-    actual fun setWrapModeT(mode: WrapMode) { nativeSampler.wrapModeT = mode.toFila() }
+    actual var wrapModeT: WrapMode
+        get() = WrapMode.values()[nativeSampler.wrapModeT.ordinal]
+        set(value) { nativeSampler.wrapModeT = value.toFila() }
 
-    actual fun getWrapModeR(): WrapMode = WrapMode.values()[nativeSampler.wrapModeR.ordinal]
-    actual fun setWrapModeR(mode: WrapMode) { nativeSampler.wrapModeR = mode.toFila() }
+    actual var wrapModeR: WrapMode
+        get() = WrapMode.values()[nativeSampler.wrapModeR.ordinal]
+        set(value) { nativeSampler.wrapModeR = value.toFila() }
 
-    actual fun getAnisotropy(): Float = nativeSampler.anisotropy
-    actual fun setAnisotropy(anisotropy: Float) { nativeSampler.anisotropy = anisotropy }
+    actual var anisotropy: Float
+        get() = nativeSampler.anisotropy
+        set(value) { nativeSampler.anisotropy = value }
 
-    actual fun getCompareMode(): CompareMode = CompareMode.values()[nativeSampler.compareMode.ordinal]
-    actual fun setCompareMode(mode: CompareMode) { nativeSampler.compareMode = mode.toFila() }
+    actual var compareMode: CompareMode
+        get() = CompareMode.values()[nativeSampler.compareMode.ordinal]
+        set(value) { nativeSampler.compareMode = value.toFila() }
 
-    actual fun getCompareFunction(): CompareFunction = CompareFunction.values()[nativeSampler.compareFunction.ordinal]
-    actual fun setCompareFunction(function: CompareFunction) { nativeSampler.compareFunction = function.toFila() }
+    actual var compareFunction: CompareFunction
+        get() = CompareFunction.values()[nativeSampler.compareFunction.ordinal]
+        set(value) { nativeSampler.compareFunction = value.toFila() }
 
     private fun WrapMode.toFila() = FilaTextureSampler.WrapMode.values()[this.ordinal]
     private fun MinFilter.toFila() = FilaTextureSampler.MinFilter.values()[this.ordinal]

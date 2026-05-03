@@ -11,8 +11,8 @@ expect class Skybox {
     }
 
     fun setColor(r: Float, g: Float, b: Float, a: Float)
-    fun getIntensity(): Float
+    val intensity: Float
+    val layerMask: Int
+    val texture: Texture?
     fun setLayerMask(select: Int, value: Int)
-    fun getLayerMask(): Int
-    fun getTexture(): Texture?
 }

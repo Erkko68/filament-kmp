@@ -71,7 +71,7 @@ actual class SurfaceOrientation internal constructor(internal val nativeHandle: 
         }
     }
 
-    actual fun getVertexCount(): Int = FilaSurfaceOrientation_getVertexCount(nativeHandle).toInt()
+    actual val vertexCount: Int get() = FilaSurfaceOrientation_getVertexCount(nativeHandle).toInt()
 
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
         buffer.usePinned { pinned ->

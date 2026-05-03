@@ -16,7 +16,7 @@ expect class SurfaceOrientation {
         fun build(): SurfaceOrientation
     }
 
-    fun getVertexCount(): Int
+    val vertexCount: Int
     fun getQuatsAsFloat(buffer: FloatArray, count: Int)
     fun getQuatsAsHalf(buffer: ShortArray, count: Int)
     fun getQuatsAsShort(buffer: ShortArray, count: Int)

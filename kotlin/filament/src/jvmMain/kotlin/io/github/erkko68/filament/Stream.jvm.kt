@@ -24,11 +24,11 @@ actual class Stream(val nativeStream: JniStream) {
         NATIVE, ACQUIRED
     }
 
-    actual fun getStreamType(): StreamType = StreamType.values()[nativeStream.streamType.ordinal]
+    actual val streamType: StreamType get() = StreamType.values()[nativeStream.streamType.ordinal]
 
     actual fun setDimensions(width: Int, height: Int) {
         nativeStream.setDimensions(width, height)
     }
 
-    actual fun getTimestamp(): Long = nativeStream.timestamp
+    actual val timestamp: Long get() = nativeStream.timestamp
 }
