@@ -47,9 +47,7 @@ actual class TransformManager internal constructor(val nativeTransformManager: A
     actual fun openLocalTransformTransaction() = nativeTransformManager.openLocalTransformTransaction()
     actual fun commitLocalTransformTransaction() = nativeTransformManager.commitLocalTransformTransaction()
     
-    actual fun setAccurateTranslationsEnabled(enable: Boolean) = 
-        nativeTransformManager.setAccurateTranslationsEnabled(enable)
-        
-    actual fun isAccurateTranslationsEnabled(): Boolean = 
-        nativeTransformManager.isAccurateTranslationsEnabled()
+    actual var isAccurateTranslationsEnabled: Boolean
+        get() = nativeTransformManager.isAccurateTranslationsEnabled()
+        set(value) { nativeTransformManager.setAccurateTranslationsEnabled(value) }
 }

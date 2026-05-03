@@ -7,7 +7,7 @@ import cnames.structs.FilaCamera
 
 actual class Camera internal constructor(
     internal var nativeHandle: CPointer<FilaCamera>?,
-    private val entity: Entity
+    actual val entity: Entity
 ) {
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }
@@ -159,8 +159,8 @@ actual class Camera internal constructor(
         return result
     }
     
-    actual fun getNear(): Float = FilaCamera_getNear(nativeHandle).toFloat()
-    actual fun getCullingFar(): Float = FilaCamera_getCullingFar(nativeHandle).toFloat()
+    actual val near: Float get() = FilaCamera_getNear(nativeHandle).toFloat()
+    actual val cullingFar: Float get() = FilaCamera_getCullingFar(nativeHandle).toFloat()
     
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
         FilaCamera_setExposure(nativeHandle, aperture, shutterSpeed, sensitivity)
@@ -168,17 +168,16 @@ actual class Camera internal constructor(
     actual fun setExposure(exposure: Float) {
         setExposure(1.0f, 1.2f, 100.0f * (1.0f / exposure))
     }
-    actual fun getAperture(): Float = FilaCamera_getAperture(nativeHandle)
-    actual fun getShutterSpeed(): Float = FilaCamera_getShutterSpeed(nativeHandle)
-    actual fun getSensitivity(): Float = FilaCamera_getSensitivity(nativeHandle)
-    actual fun getFocalLength(): Double = FilaCamera_getFocalLength(nativeHandle)
+    actual val aperture: Float get() = FilaCamera_getAperture(nativeHandle)
+    actual val shutterSpeed: Float get() = FilaCamera_getShutterSpeed(nativeHandle)
+    actual val sensitivity: Float get() = FilaCamera_getSensitivity(nativeHandle)
+    actual val focalLength: Double get() = FilaCamera_getFocalLength(nativeHandle)
     
-    actual fun setFocusDistance(distance: Float) {
-        FilaCamera_setFocusDistance(nativeHandle, distance)
-    }
-    actual fun getFocusDistance(): Float = FilaCamera_getFocusDistance(nativeHandle)
+    actual var focusDistance: Float
+        get() = FilaCamera_getFocusDistance(nativeHandle)
+        set(value) { FilaCamera_setFocusDistance(nativeHandle, value) }
     
     actual fun getFieldOfViewInDegrees(direction: Fov): Double = FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal.toUInt())
 
-    actual fun getEntity(): Entity = entity
+
 }

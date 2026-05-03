@@ -9,9 +9,9 @@ actual class Scene(val nativeScene: JniScene) {
     actual fun remove(entity: Entity) : Unit { nativeScene.removeEntity(entity) }
     actual fun removeEntities(entities: IntArray) : Unit { nativeScene.removeEntities(entities) }
     
-    actual fun getEntityCount(): Int = nativeScene.getEntityCount()
-    actual fun getRenderableCount(): Int = nativeScene.getRenderableCount()
-    actual fun getLightCount(): Int = nativeScene.getLightCount()
+    actual val entityCount: Int get() = nativeScene.getEntityCount()
+    actual val renderableCount: Int get() = nativeScene.getRenderableCount()
+    actual val lightCount: Int get() = nativeScene.getLightCount()
     actual fun hasEntity(entity: Entity): Boolean = nativeScene.hasEntity(entity)
 
     actual fun getEntities(): IntArray = nativeScene.getEntities()
@@ -21,9 +21,11 @@ actual class Scene(val nativeScene: JniScene) {
         nativeScene.forEach { entity -> block(entity) }
     }
 
-    actual fun getSkybox(): Skybox? = nativeScene.getSkybox()?.let { Skybox(it) }
-    actual fun setSkybox(skybox: Skybox?) : Unit { nativeScene.setSkybox(skybox?.nativeSkybox) }
+    actual var skybox: Skybox?
+        get() = nativeScene.getSkybox()?.let { Skybox(it) }
+        set(value) { nativeScene.setSkybox(value?.nativeSkybox) }
     
-    actual fun getIndirectLight(): IndirectLight? = nativeScene.getIndirectLight()?.let { IndirectLight(it) }
-    actual fun setIndirectLight(ibl: IndirectLight?) : Unit { nativeScene.setIndirectLight(ibl?.nativeIndirectLight) }
+    actual var indirectLight: IndirectLight?
+        get() = nativeScene.getIndirectLight()?.let { IndirectLight(it) }
+        set(value) { nativeScene.setIndirectLight(value?.nativeIndirectLight) }
 }

@@ -98,9 +98,7 @@ actual class TransformManager internal constructor(internal var nativeHandle: CP
     actual fun openLocalTransformTransaction() = FilaTransformManager_openLocalTransformTransaction(nativeHandle)
     actual fun commitLocalTransformTransaction() = FilaTransformManager_commitLocalTransformTransaction(nativeHandle)
     
-    actual fun setAccurateTranslationsEnabled(enable: Boolean) = 
-        FilaTransformManager_setAccurateTranslationsEnabled(nativeHandle, enable)
-        
-    actual fun isAccurateTranslationsEnabled(): Boolean = 
-        FilaTransformManager_isAccurateTranslationsEnabled(nativeHandle)
+    actual var isAccurateTranslationsEnabled: Boolean
+        get() = FilaTransformManager_isAccurateTranslationsEnabled(nativeHandle)
+        set(value) { FilaTransformManager_setAccurateTranslationsEnabled(nativeHandle, value) }
 }

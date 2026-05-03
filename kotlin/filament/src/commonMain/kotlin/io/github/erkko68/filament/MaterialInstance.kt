@@ -15,8 +15,8 @@ expect class MaterialInstance {
         fun duplicate(other: MaterialInstance, name: String? = null): MaterialInstance
     }
 
-    fun getMaterial(): Material
-    fun getName(): String
+    val material: Material
+    val name: String
 
     fun setParameter(name: String, x: Boolean)
     fun setParameter(name: String, x: Float)
@@ -45,34 +45,23 @@ expect class MaterialInstance {
     fun unsetScissor()
     
     fun setPolygonOffset(scale: Float, constant: Float)
-    fun setMaskThreshold(threshold: Float)
-    fun getMaskThreshold(): Float
-    fun setSpecularAntiAliasingVariance(variance: Float)
-    fun getSpecularAntiAliasingVariance(): Float
-    fun setSpecularAntiAliasingThreshold(threshold: Float)
-    fun getSpecularAntiAliasingThreshold(): Float
-    fun setDoubleSided(doubleSided: Boolean)
-    fun isDoubleSided(): Boolean
+    var maskThreshold: Float
+    var specularAntiAliasingVariance: Float
+    var specularAntiAliasingThreshold: Float
+    var isDoubleSided: Boolean
     
-    fun setTransparencyMode(mode: Material.TransparencyMode)
-    fun getTransparencyMode(): Material.TransparencyMode
+    var transparencyMode: Material.TransparencyMode
     
-    fun setCullingMode(mode: Material.CullingMode)
+    var cullingMode: Material.CullingMode
     fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode)
-    fun getCullingMode(): Material.CullingMode
-    fun getShadowCullingMode(): Material.CullingMode
+    val shadowCullingMode: Material.CullingMode
     
-    fun setColorWrite(enable: Boolean)
-    fun isColorWriteEnabled(): Boolean
-    fun setDepthWrite(enable: Boolean)
-    fun isDepthWriteEnabled(): Boolean
-    fun setStencilWrite(enable: Boolean)
-    fun isStencilWriteEnabled(): Boolean
+    var isColorWriteEnabled: Boolean
+    var isDepthWriteEnabled: Boolean
+    var isStencilWriteEnabled: Boolean
     
-    fun setDepthCulling(enable: Boolean)
-    fun setDepthFunc(func: TextureSampler.CompareFunction)
-    fun isDepthCullingEnabled(): Boolean
-    fun getDepthFunc(): TextureSampler.CompareFunction
+    var isDepthCullingEnabled: Boolean
+    var depthFunc: TextureSampler.CompareFunction
     
     fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace)
     fun setStencilCompareFunction(func: TextureSampler.CompareFunction)

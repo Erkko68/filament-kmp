@@ -38,20 +38,20 @@ expect class Camera {
     fun getUpVector(out: FloatArray? = null): FloatArray
     fun getForwardVector(out: FloatArray? = null): FloatArray
     
-    fun getNear(): Float
-    fun getCullingFar(): Float
+    val near: Float
+    val cullingFar: Float
     
     fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float)
     fun setExposure(exposure: Float)
-    fun getAperture(): Float
-    fun getShutterSpeed(): Float
-    fun getSensitivity(): Float
-    fun getFocalLength(): Double
+    val aperture: Float
+    val shutterSpeed: Float
+    val sensitivity: Float
+    val focalLength: Double
     
-    fun setFocusDistance(distance: Float)
-    fun getFocusDistance(): Float
+    var focusDistance: Float
+    
     
     fun getFieldOfViewInDegrees(direction: Fov): Double
 
-    fun getEntity(): Entity
+    val entity: Entity
 }

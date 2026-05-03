@@ -181,64 +181,64 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var customResolve: Boolean = false
     }
 
-    actual fun setName(name: String) { FilaView_setName(nativeHandle, name) }
-    actual fun getName(): String? = null
+    actual var name: String?
+        get() = null
+        set(value) { FilaView_setName(nativeHandle, value ?: "") }
 
-    actual fun setScene(scene: Scene?) { 
-        mScene = scene
-        FilaView_setScene(nativeHandle, scene?.nativeHandle) 
-    }
-    actual fun getScene(): Scene? = mScene
+    actual var scene: Scene?
+        get() = mScene
+        set(value) {
+            mScene = value
+            FilaView_setScene(nativeHandle, value?.nativeHandle)
+        }
     
-    actual fun setCamera(camera: Camera?) { 
-        mCamera = camera
-        FilaView_setCamera(nativeHandle, camera?.nativeHandle) 
-    }
-    actual fun getCamera(): Camera? = mCamera
-    actual fun hasCamera(): Boolean = FilaView_hasCamera(nativeHandle)
+    actual var camera: Camera?
+        get() = mCamera
+        set(value) {
+            mCamera = value
+            FilaView_setCamera(nativeHandle, value?.nativeHandle)
+        }
+    actual val hasCamera: Boolean get() = FilaView_hasCamera(nativeHandle)
 
-    actual fun setViewport(viewport: Viewport) {
-        FilaView_setViewport(nativeHandle, viewport.left, viewport.bottom, viewport.width.toUInt(), viewport.height.toUInt())
-    }
-    actual fun getViewport(): Viewport = Viewport(0, 0, 0, 0)
+    actual var viewport: Viewport
+        get() = Viewport(0, 0, 0, 0)
+        set(value) { FilaView_setViewport(nativeHandle, value.left, value.bottom, value.width.toUInt(), value.height.toUInt()) }
 
-    actual fun setBlendMode(blendMode: BlendMode) {
-        FilaView_setBlendMode(nativeHandle, blendMode.ordinal.toUInt())
-    }
-    actual fun getBlendMode(): BlendMode = BlendMode.values()[FilaView_getBlendMode(nativeHandle).toInt()]
+    actual var blendMode: BlendMode
+        get() = BlendMode.values()[FilaView_getBlendMode(nativeHandle).toInt()]
+        set(value) { FilaView_setBlendMode(nativeHandle, value.ordinal.toUInt()) }
 
-    actual fun setVisibleLayers(select: Int, values: Int) {
-        FilaView_setVisibleLayers(nativeHandle, select.toUByte(), values.toUByte())
-    }
+    actual fun setVisibleLayers(select: Int, values: Int) { FilaView_setVisibleLayers(nativeHandle, select.toUByte(), values.toUByte()) }
     actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
         val mask = (1 shl layer).toUByte()
-        FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0.toUByte())
+        FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0u)
     }
     actual fun getVisibleLayers(): Int = FilaView_getVisibleLayers(nativeHandle).toInt()
 
-    actual fun setPostProcessingEnabled(enabled: Boolean) { FilaView_setPostProcessingEnabled(nativeHandle, enabled) }
-    actual fun isPostProcessingEnabled(): Boolean = FilaView_isPostProcessingEnabled(nativeHandle)
+    actual var isPostProcessingEnabled: Boolean
+        get() = FilaView_isPostProcessingEnabled(nativeHandle)
+        set(value) { FilaView_setPostProcessingEnabled(nativeHandle, value) }
 
-    actual fun setDithering(dithering: Dithering) {
-        FilaView_setDithering(nativeHandle, dithering.ordinal.toUInt())
-    }
-    actual fun getDithering(): Dithering = Dithering.values()[FilaView_getDithering(nativeHandle).toInt()]
+    actual var dithering: Dithering
+        get() = Dithering.values()[FilaView_getDithering(nativeHandle).toInt()]
+        set(value) { FilaView_setDithering(nativeHandle, value.ordinal.toUInt()) }
 
-    actual fun setDynamicResolutionOptions(options: DynamicResolutionOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewDynamicResolutionOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.homogeneousScaling = options.homogeneousScaling
-            cOptions.minScale[0] = options.minScale
-            cOptions.minScale[1] = options.minScale
-            cOptions.maxScale[0] = options.maxScale
-            cOptions.maxScale[1] = options.maxScale
-            cOptions.sharpness = options.sharpness
-            cOptions.quality = options.quality.ordinal.toUInt()
-            FilaView_setDynamicResolutionOptions(nativeHandle, cOptions.ptr)
+    actual var dynamicResolutionOptions: DynamicResolutionOptions
+        get() = DynamicResolutionOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewDynamicResolutionOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.homogeneousScaling = value.homogeneousScaling
+                cOptions.minScale[0] = value.minScale
+                cOptions.minScale[1] = value.minScale
+                cOptions.maxScale[0] = value.maxScale
+                cOptions.maxScale[1] = value.maxScale
+                cOptions.sharpness = value.sharpness
+                cOptions.quality = value.quality.ordinal.toUInt()
+                FilaView_setDynamicResolutionOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getDynamicResolutionOptions(): DynamicResolutionOptions = DynamicResolutionOptions()
 
     actual fun getLastDynamicResolutionScale(): FloatArray = memScoped {
         val out = allocArray<FloatVar>(2)
@@ -246,231 +246,252 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         floatArrayOf(out[0], out[1])
     }
 
-    actual fun setRenderQuality(renderQuality: RenderQuality) {
-        FilaView_setRenderQuality(nativeHandle, renderQuality.hdrColorBuffer.ordinal.toUInt())
-    }
-    actual fun getRenderQuality(): RenderQuality = RenderQuality()
+    actual var renderQuality: RenderQuality
+        get() = RenderQuality()
+        set(value) { FilaView_setRenderQuality(nativeHandle, value.hdrColorBuffer.ordinal.toUInt()) }
     
-    actual fun setBloomOptions(options: BloomOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewBloomOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.levels = options.levels.toUByte()
-            cOptions.resolution = options.resolution.toUInt()
-            cOptions.strength = options.strength
-            cOptions.threshold = options.threshold
-            cOptions.dirt = options.dirt?.nativeHandle
-            cOptions.dirtStrength = options.dirtStrength
-            cOptions.quality = options.quality.ordinal.toUInt()
-            cOptions.highlight = options.highlight
-            cOptions.blendMode = options.blendMode.ordinal
-            cOptions.chromaticAberration = options.chromaticAberration
-            cOptions.lensFlare = options.lensFlare
-            cOptions.starburst = options.starburst
-            cOptions.ghostCount = options.ghostCount.toUByte()
-            cOptions.ghostSpacing = options.ghostSpacing
-            cOptions.ghostThreshold = options.ghostThreshold
-            cOptions.haloRadius = options.haloRadius
-            cOptions.haloThickness = options.haloThickness
-            cOptions.haloThreshold = options.haloThreshold
-            FilaView_setBloomOptions(nativeHandle, cOptions.ptr)
+    actual var bloomOptions: BloomOptions
+        get() = BloomOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewBloomOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.levels = value.levels.toUByte()
+                cOptions.resolution = value.resolution.toUInt()
+                cOptions.strength = value.strength
+                cOptions.threshold = value.threshold
+                cOptions.dirt = value.dirt?.nativeHandle
+                cOptions.dirtStrength = value.dirtStrength
+                cOptions.quality = value.quality.ordinal.toUInt()
+                cOptions.highlight = value.highlight
+                cOptions.blendMode = value.blendMode.ordinal
+                cOptions.chromaticAberration = value.chromaticAberration
+                cOptions.lensFlare = value.lensFlare
+                cOptions.starburst = value.starburst
+                cOptions.ghostCount = value.ghostCount.toUByte()
+                cOptions.ghostSpacing = value.ghostSpacing
+                cOptions.ghostThreshold = value.ghostThreshold
+                cOptions.haloRadius = value.haloRadius
+                cOptions.haloThickness = value.haloThickness
+                cOptions.haloThreshold = value.haloThreshold
+                FilaView_setBloomOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getBloomOptions(): BloomOptions = BloomOptions()
 
-    actual fun setFogOptions(options: FogOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewFogOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.distance = options.distance
-            cOptions.density = options.density
-            cOptions.height = options.height
-            cOptions.heightFalloff = options.heightFalloff
-            cOptions.color[0] = options.color[0]; cOptions.color[1] = options.color[1]; cOptions.color[2] = options.color[2]
-            cOptions.cutOffDistance = options.cutOffDistance
-            cOptions.maximumOpacity = options.maximumOpacity
-            cOptions.inScatteringStart = options.inScatteringStart
-            cOptions.inScatteringSize = options.inScatteringSize
-            cOptions.fogColorFromIbl = options.fogColorFromIbl
-            cOptions.skyColor = options.skyColor?.nativeHandle
-            FilaView_setFogOptions(nativeHandle, cOptions.ptr)
+    actual var fogOptions: FogOptions
+        get() = FogOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewFogOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.distance = value.distance
+                cOptions.density = value.density
+                cOptions.height = value.height
+                cOptions.heightFalloff = value.heightFalloff
+                cOptions.color[0] = value.color[0]; cOptions.color[1] = value.color[1]; cOptions.color[2] = value.color[2]
+                cOptions.cutOffDistance = value.cutOffDistance
+                cOptions.maximumOpacity = value.maximumOpacity
+                cOptions.inScatteringStart = value.inScatteringStart
+                cOptions.inScatteringSize = value.inScatteringSize
+                cOptions.fogColorFromIbl = value.fogColorFromIbl
+                cOptions.skyColor = value.skyColor?.nativeHandle
+                FilaView_setFogOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getFogOptions(): FogOptions = FogOptions()
 
-    actual fun setDepthOfFieldOptions(options: DepthOfFieldOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewDepthOfFieldOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.cocScale = options.cocScale
-            cOptions.maxApertureDiameter = options.maxApertureDiameter
-            cOptions.filter = options.filter.ordinal
-            cOptions.nativeResolution = options.nativeResolution
-            cOptions.foregroundRingCount = options.foregroundRingCount.toUByte()
-            cOptions.backgroundRingCount = options.backgroundRingCount.toUByte()
-            cOptions.fastGatherRingCount = options.fastGatherRingCount.toUByte()
-            cOptions.maxForegroundCOC = options.maxForegroundCOC.toUShort()
-            cOptions.maxBackgroundCOC = options.maxBackgroundCOC.toUShort()
-            FilaView_setDepthOfFieldOptions(nativeHandle, cOptions.ptr)
+    actual var depthOfFieldOptions: DepthOfFieldOptions
+        get() = DepthOfFieldOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewDepthOfFieldOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.cocScale = value.cocScale
+                cOptions.maxApertureDiameter = value.maxApertureDiameter
+                cOptions.filter = value.filter.ordinal
+                cOptions.nativeResolution = value.nativeResolution
+                cOptions.foregroundRingCount = value.foregroundRingCount.toUByte()
+                cOptions.backgroundRingCount = value.backgroundRingCount.toUByte()
+                cOptions.fastGatherRingCount = value.fastGatherRingCount.toUByte()
+                cOptions.maxForegroundCOC = value.maxForegroundCOC.toUShort()
+                cOptions.maxBackgroundCOC = value.maxBackgroundCOC.toUShort()
+                FilaView_setDepthOfFieldOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getDepthOfFieldOptions(): DepthOfFieldOptions = DepthOfFieldOptions()
 
-    actual fun setVignetteOptions(options: VignetteOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewVignetteOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.midPoint = options.midPoint
-            cOptions.roundness = options.roundness
-            cOptions.feather = options.feather
-            cOptions.color[0] = options.color[0]; cOptions.color[1] = options.color[1]; cOptions.color[2] = options.color[2]; cOptions.color[3] = options.color[3]
-            FilaView_setVignetteOptions(nativeHandle, cOptions.ptr)
+    actual var vignetteOptions: VignetteOptions
+        get() = VignetteOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewVignetteOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.midPoint = value.midPoint
+                cOptions.roundness = value.roundness
+                cOptions.feather = value.feather
+                cOptions.color[0] = value.color[0]; cOptions.color[1] = value.color[1]; cOptions.color[2] = value.color[2]; cOptions.color[3] = value.color[3]
+                FilaView_setVignetteOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getVignetteOptions(): VignetteOptions = VignetteOptions()
 
-    actual fun setAmbientOcclusionOptions(options: AmbientOcclusionOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewAmbientOcclusionOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.radius = options.radius
-            cOptions.bias = options.bias
-            cOptions.intensity = options.intensity
-            cOptions.resolution = options.resolution
-            cOptions.power = options.power
-            cOptions.minHorizonAngleRad = options.minConeAngle
-            cOptions.quality = options.quality.ordinal.toUInt()
-            cOptions.lowPassFilter = options.lowPassFilter.ordinal.toUInt()
-            cOptions.upsampling = options.upsampling.ordinal.toUInt()
-            cOptions.bentNormals = options.bentNormals
-            cOptions.bilateralThreshold = options.bilateralThreshold
-            cOptions.ssct.enabled = options.ssct.enabled
-            cOptions.ssct.lightConeRad = options.ssct.lightConeRad
-            cOptions.ssct.shadowDistance = options.ssct.shadowDistance
-            cOptions.ssct.contactDistanceMax = options.ssct.contactDistanceMax
-            cOptions.ssct.intensity = options.ssct.intensity
-            cOptions.ssct.lightDirection[0] = options.ssct.lightDirection[0]
-            cOptions.ssct.lightDirection[1] = options.ssct.lightDirection[1]
-            cOptions.ssct.lightDirection[2] = options.ssct.lightDirection[2]
-            cOptions.ssct.depthBias = options.ssct.depthBias
-            cOptions.ssct.depthSlopeBias = options.ssct.depthSlopeBias
-            cOptions.ssct.sampleCount = options.ssct.sampleCount.toUByte()
-            cOptions.ssct.rayCount = options.ssct.rayCount.toUByte()
-            FilaView_setAmbientOcclusionOptions(nativeHandle, cOptions.ptr)
+    actual var ambientOcclusionOptions: AmbientOcclusionOptions
+        get() = AmbientOcclusionOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewAmbientOcclusionOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.radius = value.radius
+                cOptions.bias = value.bias
+                cOptions.intensity = value.intensity
+                cOptions.resolution = value.resolution
+                cOptions.power = value.power
+                cOptions.minHorizonAngleRad = value.minConeAngle
+                cOptions.quality = value.quality.ordinal.toUInt()
+                cOptions.lowPassFilter = value.lowPassFilter.ordinal.toUInt()
+                cOptions.upsampling = value.upsampling.ordinal.toUInt()
+                cOptions.bentNormals = value.bentNormals
+                cOptions.bilateralThreshold = value.bilateralThreshold
+                cOptions.ssct.enabled = value.ssct.enabled
+                cOptions.ssct.lightConeRad = value.ssct.lightConeRad
+                cOptions.ssct.shadowDistance = value.ssct.shadowDistance
+                cOptions.ssct.contactDistanceMax = value.ssct.contactDistanceMax
+                cOptions.ssct.intensity = value.ssct.intensity
+                cOptions.ssct.lightDirection[0] = value.ssct.lightDirection[0]
+                cOptions.ssct.lightDirection[1] = value.ssct.lightDirection[1]
+                cOptions.ssct.lightDirection[2] = value.ssct.lightDirection[2]
+                cOptions.ssct.depthBias = value.ssct.depthBias
+                cOptions.ssct.depthSlopeBias = value.ssct.depthSlopeBias
+                cOptions.ssct.sampleCount = value.ssct.sampleCount.toUByte()
+                cOptions.ssct.rayCount = value.ssct.rayCount.toUByte()
+                FilaView_setAmbientOcclusionOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getAmbientOcclusionOptions(): AmbientOcclusionOptions = AmbientOcclusionOptions()
 
-    actual fun setTemporalAntiAliasingOptions(options: TemporalAntiAliasingOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewTemporalAntiAliasingOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.feedback = options.feedback
-            cOptions.lodBias = options.lodBias
-            cOptions.sharpness = options.sharpness
-            cOptions.upscaling = options.upscaling
-            cOptions.filterHistory = options.filterHistory
-            cOptions.filterInput = options.filterInput
-            cOptions.useYCoCg = options.useYCoCg
-            cOptions.hdr = options.hdr
-            cOptions.boxType = options.boxType
-            cOptions.boxClipping = options.boxClipping
-            cOptions.jitterPattern = options.jitterPattern
-            cOptions.varianceGamma = options.varianceGamma
-            cOptions.preventFlickering = options.preventFlickering
-            cOptions.historyReprojection = options.historyReprojection
-            FilaView_setTemporalAntiAliasingOptions(nativeHandle, cOptions.ptr)
+    actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
+        get() = TemporalAntiAliasingOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewTemporalAntiAliasingOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.feedback = value.feedback
+                cOptions.lodBias = value.lodBias
+                cOptions.sharpness = value.sharpness
+                cOptions.upscaling = value.upscaling
+                cOptions.filterHistory = value.filterHistory
+                cOptions.filterInput = value.filterInput
+                cOptions.useYCoCg = value.useYCoCg
+                cOptions.hdr = value.hdr
+                cOptions.boxType = value.boxType
+                cOptions.boxClipping = value.boxClipping
+                cOptions.jitterPattern = value.jitterPattern
+                cOptions.varianceGamma = value.varianceGamma
+                cOptions.preventFlickering = value.preventFlickering
+                cOptions.historyReprojection = value.historyReprojection
+                FilaView_setTemporalAntiAliasingOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getTemporalAntiAliasingOptions(): TemporalAntiAliasingOptions = TemporalAntiAliasingOptions()
 
-    actual fun setScreenSpaceReflectionsOptions(options: ScreenSpaceReflectionsOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewScreenSpaceReflectionsOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.thickness = options.thickness
-            cOptions.bias = options.bias
-            cOptions.maxDistance = options.maxDistance
-            cOptions.stride = options.stride
-            FilaView_setScreenSpaceReflectionsOptions(nativeHandle, cOptions.ptr)
+    actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
+        get() = ScreenSpaceReflectionsOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewScreenSpaceReflectionsOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.thickness = value.thickness
+                cOptions.bias = value.bias
+                cOptions.maxDistance = value.maxDistance
+                cOptions.stride = value.stride
+                FilaView_setScreenSpaceReflectionsOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getScreenSpaceReflectionsOptions(): ScreenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions()
 
-    actual fun setRenderTarget(target: RenderTarget?) {
-        mRenderTarget = target
-        FilaView_setRenderTarget(nativeHandle, target?.nativeHandle)
-    }
-    actual fun getRenderTarget(): RenderTarget? = mRenderTarget
-
-    actual fun setShadowType(type: ShadowType) {
-        mShadowType = type
-        FilaView_setShadowType(nativeHandle, type.ordinal.toUInt())
-    }
-    actual fun getShadowType(): ShadowType = mShadowType
-
-    actual fun setVsmShadowOptions(options: VsmShadowOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewVsmShadowOptions>()
-            cOptions.anisotropy = options.anisotropy.toUByte()
-            cOptions.mipmapping = options.mipmapping
-            cOptions.msaaSamples = options.msaaSamples.toUByte()
-            cOptions.highPrecision = options.highPrecision
-            cOptions.lightBleedReduction = options.lightBleedReduction
-            FilaView_setVsmShadowOptions(nativeHandle, cOptions.ptr)
+    actual var renderTarget: RenderTarget?
+        get() = mRenderTarget
+        set(value) {
+            mRenderTarget = value
+            FilaView_setRenderTarget(nativeHandle, value?.nativeHandle)
         }
-    }
-    actual fun getVsmShadowOptions(): VsmShadowOptions = VsmShadowOptions()
 
-    actual fun setSoftShadowOptions(options: SoftShadowOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewSoftShadowOptions>()
-            cOptions.penumbraScale = options.penumbraScale
-            cOptions.penumbraRatioScale = options.penumbraRatioScale
-            FilaView_setSoftShadowOptions(nativeHandle, cOptions.ptr)
+    actual var shadowType: ShadowType
+        get() = mShadowType
+        set(value) {
+            mShadowType = value
+            FilaView_setShadowType(nativeHandle, value.ordinal.toUInt())
         }
-    }
-    actual fun getSoftShadowOptions(): SoftShadowOptions = SoftShadowOptions()
 
-    actual fun setGuardBandOptions(options: GuardBandOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewGuardBandOptions>()
-            cOptions.enabled = options.enabled
-            FilaView_setGuardBandOptions(nativeHandle, cOptions.ptr)
+    actual var vsmShadowOptions: VsmShadowOptions
+        get() = VsmShadowOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewVsmShadowOptions>()
+                cOptions.anisotropy = value.anisotropy.toUByte()
+                cOptions.mipmapping = value.mipmapping
+                cOptions.msaaSamples = value.msaaSamples.toUByte()
+                cOptions.highPrecision = value.highPrecision
+                cOptions.lightBleedReduction = value.lightBleedReduction
+                FilaView_setVsmShadowOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getGuardBandOptions(): GuardBandOptions = GuardBandOptions()
 
-    actual fun setStereoscopicOptions(options: StereoscopicOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewStereoscopicOptions>()
-            cOptions.enabled = options.enabled
-            FilaView_setStereoscopicOptions(nativeHandle, cOptions.ptr)
+    actual var softShadowOptions: SoftShadowOptions
+        get() = SoftShadowOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewSoftShadowOptions>()
+                cOptions.penumbraScale = value.penumbraScale
+                cOptions.penumbraRatioScale = value.penumbraRatioScale
+                FilaView_setSoftShadowOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getStereoscopicOptions(): StereoscopicOptions = StereoscopicOptions()
 
-    actual fun setMultiSampleAntiAliasingOptions(options: MultiSampleAntiAliasingOptions) {
-        memScoped {
-            val cOptions = alloc<FilaViewMultiSampleAntiAliasingOptions>()
-            cOptions.enabled = options.enabled
-            cOptions.sampleCount = options.sampleCount.toUByte()
-            cOptions.customResolve = options.customResolve
-            FilaView_setMultiSampleAntiAliasingOptions(nativeHandle, cOptions.ptr)
+    actual var guardBandOptions: GuardBandOptions
+        get() = GuardBandOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewGuardBandOptions>()
+                cOptions.enabled = value.enabled
+                FilaView_setGuardBandOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-    actual fun getMultiSampleAntiAliasingOptions(): MultiSampleAntiAliasingOptions = MultiSampleAntiAliasingOptions()
 
-    actual fun setFrustumCullingEnabled(enabled: Boolean) { FilaView_setFrustumCullingEnabled(nativeHandle, enabled) }
-    actual fun isFrustumCullingEnabled(): Boolean = FilaView_isFrustumCullingEnabled(nativeHandle)
-    actual fun setShadowingEnabled(enabled: Boolean) { FilaView_setShadowingEnabled(nativeHandle, enabled) }
-    actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) { FilaView_setScreenSpaceRefractionEnabled(nativeHandle, enabled) }
-    actual fun setStencilBufferEnabled(enabled: Boolean) { FilaView_setStencilBufferEnabled(nativeHandle, enabled) }
-    actual fun isStencilBufferEnabled(): Boolean = FilaView_isStencilBufferEnabled(nativeHandle)
-    actual fun setFrontFaceWindingInverted(inverted: Boolean) { FilaView_setFrontFaceWindingInverted(nativeHandle, inverted) }
-    actual fun isFrontFaceWindingInverted(): Boolean = FilaView_isFrontFaceWindingInverted(nativeHandle)
-    actual fun setTransparentPickingEnabled(enabled: Boolean) { FilaView_setTransparentPickingEnabled(nativeHandle, enabled) }
-    actual fun isTransparentPickingEnabled(): Boolean = FilaView_isTransparentPickingEnabled(nativeHandle)
+    actual var stereoscopicOptions: StereoscopicOptions
+        get() = StereoscopicOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewStereoscopicOptions>()
+                cOptions.enabled = value.enabled
+                FilaView_setStereoscopicOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
+        get() = MultiSampleAntiAliasingOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaViewMultiSampleAntiAliasingOptions>()
+                cOptions.enabled = value.enabled
+                cOptions.sampleCount = value.sampleCount.toUByte()
+                cOptions.customResolve = value.customResolve
+                FilaView_setMultiSampleAntiAliasingOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var isFrustumCullingEnabled: Boolean
+        get() = FilaView_isFrustumCullingEnabled(nativeHandle)
+        set(value) { FilaView_setFrustumCullingEnabled(nativeHandle, value) }
+    actual var isShadowingEnabled: Boolean
+        get() = FilaView_isShadowingEnabled(nativeHandle)
+        set(value) { FilaView_setShadowingEnabled(nativeHandle, value) }
+    actual var isScreenSpaceRefractionEnabled: Boolean
+        get() = FilaView_isScreenSpaceRefractionEnabled(nativeHandle)
+        set(value) { FilaView_setScreenSpaceRefractionEnabled(nativeHandle, value) }
+    actual var isStencilBufferEnabled: Boolean
+        get() = FilaView_isStencilBufferEnabled(nativeHandle)
+        set(value) { FilaView_setStencilBufferEnabled(nativeHandle, value) }
+    actual var isFrontFaceWindingInverted: Boolean
+        get() = FilaView_isFrontFaceWindingInverted(nativeHandle)
+        set(value) { FilaView_setFrontFaceWindingInverted(nativeHandle, value) }
+    actual var isTransparentPickingEnabled: Boolean
+        get() = FilaView_isTransparentPickingEnabled(nativeHandle)
+        set(value) { FilaView_setTransparentPickingEnabled(nativeHandle, value) }
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
         FilaView_setMaterialGlobal(nativeHandle, index.toUInt(), value[0], value[1], value[2], value[3])
@@ -484,23 +505,23 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
         return result
     }
-    actual fun getFogEntity(): Int = FilaView_getFogEntity(nativeHandle).toInt()
+    actual val fogEntity: Int get() = FilaView_getFogEntity(nativeHandle).toInt()
     actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
         FilaView_setDynamicLightingOptions(nativeHandle, zNear, zFar)
     }
 
-    actual fun setAntiAliasing(type: AntiAliasing) {
-        FilaView_setAntiAliasing(nativeHandle, type.ordinal.toUInt())
-    }
-    actual fun getAntiAliasing(): AntiAliasing = AntiAliasing.values()[FilaView_getAntiAliasing(nativeHandle).toInt()]
+    actual var antiAliasing: AntiAliasing
+        get() = AntiAliasing.values()[FilaView_getAntiAliasing(nativeHandle).toInt()]
+        set(value) { FilaView_setAntiAliasing(nativeHandle, value.ordinal.toUInt()) }
 
-    actual fun setColorGrading(colorGrading: ColorGrading?) {
-        mColorGrading = colorGrading
-        FilaView_setColorGrading(nativeHandle, colorGrading?.nativeHandle)
-    }
-    actual fun getColorGrading(): ColorGrading? = mColorGrading
+    actual var colorGrading: ColorGrading?
+        get() = mColorGrading
+        set(value) {
+            mColorGrading = value
+            FilaView_setColorGrading(nativeHandle, value?.nativeHandle)
+        }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         mPickCallbackRef?.dispose()

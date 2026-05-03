@@ -128,10 +128,8 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         jsTransformManager.commitLocalTransformTransaction()
     }
 
-    actual fun setAccurateTranslationsEnabled(enable: Boolean) {
-    }
-
-    actual fun isAccurateTranslationsEnabled(): Boolean {
-        return false
-    }
+    actual var isAccurateTranslationsEnabled: Boolean = false
+        set(value) {
+            field = value
+        }
 }

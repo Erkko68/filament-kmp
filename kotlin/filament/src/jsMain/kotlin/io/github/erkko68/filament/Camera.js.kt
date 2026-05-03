@@ -198,13 +198,11 @@ actual class Camera(internal val jsCamera: JSCamera) {
         return result
     }
 
-    actual fun getNear(): Float {
-        return _near.toFloat()
-    }
+    actual val near: Float
+        get() = _near.toFloat()
 
-    actual fun getCullingFar(): Float {
-        return jsCamera.getCullingFar().toFloat()
-    }
+    actual val cullingFar: Float
+        get() = jsCamera.getCullingFar().toFloat()
 
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
         jsCamera.setExposure(aperture, shutterSpeed, sensitivity)
@@ -214,37 +212,28 @@ actual class Camera(internal val jsCamera: JSCamera) {
         jsCamera.setExposureDirect(exposure)
     }
 
-    actual fun getAperture(): Float {
-        return jsCamera.getAperture().toFloat()
-    }
+    actual val aperture: Float
+        get() = jsCamera.getAperture().toFloat()
 
-    actual fun getShutterSpeed(): Float {
-        return jsCamera.getShutterSpeed().toFloat()
-    }
+    actual val shutterSpeed: Float
+        get() = jsCamera.getShutterSpeed().toFloat()
 
-    actual fun getSensitivity(): Float {
-        return jsCamera.getSensitivity().toFloat()
-    }
+    actual val sensitivity: Float
+        get() = jsCamera.getSensitivity().toFloat()
 
-    actual fun getFocalLength(): Double {
-        return jsCamera.getFocalLength().toDouble()
-    }
+    actual val focalLength: Double
+        get() = jsCamera.getFocalLength().toDouble()
 
-    actual fun setFocusDistance(distance: Float) {
-        jsCamera.setFocusDistance(distance)
-    }
-
-    actual fun getFocusDistance(): Float {
-        return jsCamera.getFocusDistance().toFloat()
-    }
+    actual var focusDistance: Float
+        get() = jsCamera.getFocusDistance().toFloat()
+        set(value) { jsCamera.setFocusDistance(value.toDouble()) }
 
     actual fun getFieldOfViewInDegrees(direction: Fov): Double {
         return 0.0 // No direct FOV getter in JS without reverse projection
     }
 
-    actual fun getEntity(): Entity {
-        return jsCamera.unsafeCast<io.github.erkko68.filament.js.Entity>().getId().toInt()
-    }
+    actual val entity: Entity
+        get() = jsCamera.unsafeCast<io.github.erkko68.filament.js.Entity>().getId().toInt()
 
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }

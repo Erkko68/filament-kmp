@@ -5,34 +5,27 @@ import io.github.erkko68.filament.js.`Renderer_ClearOptions` as JSRendererClearO
 
 actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
     private var _userTime: Double = 0.0
-    private var _displayInfo = DisplayInfo()
-    private var _frameRateOptions = FrameRateOptions()
-    private var _clearOptions = ClearOptions()
 
-    actual fun getDisplayInfo(): DisplayInfo {
-        return _displayInfo
-    }
+    actual var displayInfo: DisplayInfo = DisplayInfo()
+        set(value) {
+            field = value
+            // Renderer_DisplayInfo not in JS bindings
+        }
 
-    actual fun setFrameRateOptions(options: FrameRateOptions) {
-        _frameRateOptions = options
-        // JS bindings for setFrameRateOptions are often missing or simplified
-    }
+    actual var frameRateOptions: FrameRateOptions = FrameRateOptions()
+        set(value) {
+            field = value
+            // JS bindings for setFrameRateOptions are often missing or simplified
+        }
 
-    actual fun getFrameRateOptions(): FrameRateOptions {
-        return _frameRateOptions
-    }
-
-    actual fun setClearOptions(options: ClearOptions) {
-        _clearOptions = options
-        val jsOptions = js("{}").unsafeCast<JSRendererClearOptions>()
-        jsOptions.clearColor = options.clearColor.toTypedArray() as Array<Number>
-        jsOptions.clear = options.clear
-        jsRenderer.setClearOptions(jsOptions)
-    }
-
-    actual fun getClearOptions(): ClearOptions {
-        return _clearOptions
-    }
+    actual var clearOptions: ClearOptions = ClearOptions()
+        set(value) {
+            field = value
+            val jsOptions = js("{}").unsafeCast<JSRendererClearOptions>()
+            jsOptions.clearColor = value.clearColor.toTypedArray() as Array<Number>
+            jsOptions.clear = value.clear
+            jsRenderer.setClearOptions(jsOptions)
+        }
 
     actual fun shouldRenderFrame(): Boolean {
         return true
@@ -53,26 +46,20 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         jsRenderer.endFrame()
     }
 
-    actual fun getUserTime(): Double {
-        return _userTime
-    }
+    actual val userTime: Double
+        get() = _userTime
 
     actual fun resetUserTime() {
         _userTime = 0.0
     }
 
-    actual fun getFrameToSkipCount(): Int {
-        return 0
-    }
+    actual val frameToSkipCount: Int
+        get() = 0
 
-    actual fun getEngine(): Engine {
-        return _engine ?: throw UnsupportedOperationException("Engine reference not available - Renderer was not created with Engine context")
-    }
+    actual val engine: Engine
+        get() = _engine ?: throw UnsupportedOperationException("Engine reference not available - Renderer was not created with Engine context")
 
-    actual fun setDisplayInfo(info: DisplayInfo) {
-        _displayInfo = info
-        // Renderer_DisplayInfo not in JS bindings
-    }
+
 
     actual fun setVsyncTime(steadyClockTimeNano: Long) {
         val jsRend = jsRenderer.asDynamic()

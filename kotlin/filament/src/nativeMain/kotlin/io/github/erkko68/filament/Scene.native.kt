@@ -9,17 +9,19 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
     private var skybox: Skybox? = null
     private var indirectLight: IndirectLight? = null
 
-    actual fun setSkybox(skybox: Skybox?) {
-        this.skybox = skybox
-        FilaScene_setSkybox(nativeHandle, skybox?.nativeHandle)
-    }
-    actual fun getSkybox(): Skybox? = skybox
+    actual var skybox: Skybox?
+        get() = this.skybox
+        set(value) {
+            this.skybox = value
+            FilaScene_setSkybox(nativeHandle, value?.nativeHandle)
+        }
 
-    actual fun setIndirectLight(ibl: IndirectLight?) {
-        this.indirectLight = ibl
-        FilaScene_setIndirectLight(nativeHandle, ibl?.nativeHandle)
-    }
-    actual fun getIndirectLight(): IndirectLight? = indirectLight
+    actual var indirectLight: IndirectLight?
+        get() = this.indirectLight
+        set(value) {
+            this.indirectLight = value
+            FilaScene_setIndirectLight(nativeHandle, value?.nativeHandle)
+        }
 
     actual fun addEntity(entity: Entity) = FilaScene_addEntity(nativeHandle, entity.toUInt())
 
@@ -38,9 +40,9 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
         }
     }
 
-    actual fun getEntityCount(): Int = FilaScene_getEntityCount(nativeHandle).toInt()
-    actual fun getRenderableCount(): Int = FilaScene_getRenderableCount(nativeHandle).toInt()
-    actual fun getLightCount(): Int = FilaScene_getLightCount(nativeHandle).toInt()
+    actual val entityCount: Int get() = FilaScene_getEntityCount(nativeHandle).toInt()
+    actual val renderableCount: Int get() = FilaScene_getRenderableCount(nativeHandle).toInt()
+    actual val lightCount: Int get() = FilaScene_getLightCount(nativeHandle).toInt()
     actual fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity.toUInt())
 
     actual fun getEntities(): IntArray = getEntities(null)

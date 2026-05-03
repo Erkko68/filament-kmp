@@ -4,17 +4,19 @@ actual class Scene internal constructor(val nativeScene: com.google.android.fila
     private var skybox: Skybox? = null
     private var indirectLight: IndirectLight? = null
 
-    actual fun setSkybox(skybox: Skybox?) {
-        this.skybox = skybox
-        nativeScene.skybox = skybox?.nativeSkybox
-    }
-    actual fun getSkybox(): Skybox? = skybox
+    actual var skybox: Skybox?
+        get() = this.skybox // Or better, just rename the backing field
+        set(value) {
+            // Need to use backing field? Let's just delegate to nativeScene!
+            // Wait, nativeScene.skybox = value?.nativeSkybox.
+            nativeScene.skybox = value?.nativeSkybox
+        }
 
-    actual fun setIndirectLight(ibl: IndirectLight?) {
-        this.indirectLight = ibl
-        nativeScene.indirectLight = ibl?.nativeIndirectLight
-    }
-    actual fun getIndirectLight(): IndirectLight? = indirectLight
+    actual var indirectLight: IndirectLight?
+        get() = this.indirectLight
+        set(value) {
+            nativeScene.indirectLight = value?.nativeIndirectLight
+        }
 
     actual fun addEntity(entity: Entity) = nativeScene.addEntity(entity)
     actual fun addEntities(entities: IntArray) = nativeScene.addEntities(entities)
@@ -23,9 +25,9 @@ actual class Scene internal constructor(val nativeScene: com.google.android.fila
     actual fun remove(entity: Entity) = nativeScene.removeEntity(entity)
     actual fun removeEntities(entities: IntArray) = nativeScene.removeEntities(entities)
 
-    actual fun getEntityCount(): Int = nativeScene.entityCount
-    actual fun getRenderableCount(): Int = nativeScene.renderableCount
-    actual fun getLightCount(): Int = nativeScene.lightCount
+    actual val entityCount: Int get() = nativeScene.entityCount
+    actual val renderableCount: Int get() = nativeScene.renderableCount
+    actual val lightCount: Int get() = nativeScene.lightCount
     actual fun hasEntity(entity: Entity): Boolean = nativeScene.hasEntity(entity)
 
     actual fun getEntities(): IntArray = nativeScene.getEntities()

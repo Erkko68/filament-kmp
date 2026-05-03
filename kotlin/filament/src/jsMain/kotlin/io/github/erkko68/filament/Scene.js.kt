@@ -7,23 +7,19 @@ actual class Scene(internal val jsScene: JSScene) {
     private var _indirectLight: IndirectLight? = null
     private val _entities = mutableSetOf<Int>()
 
-    actual fun setSkybox(skybox: Skybox?) {
-        _skybox = skybox
-        jsScene.setSkybox(skybox?.jsSkybox)
-    }
+    actual var skybox: Skybox?
+        get() = _skybox
+        set(value) {
+            _skybox = value
+            jsScene.setSkybox(value?.jsSkybox)
+        }
 
-    actual fun getSkybox(): Skybox? {
-        return _skybox
-    }
-
-    actual fun setIndirectLight(ibl: IndirectLight?) {
-        _indirectLight = ibl
-        jsScene.setIndirectLight(ibl?.jsIndirectLight)
-    }
-
-    actual fun getIndirectLight(): IndirectLight? {
-        return _indirectLight
-    }
+    actual var indirectLight: IndirectLight?
+        get() = _indirectLight
+        set(value) {
+            _indirectLight = value
+            jsScene.setIndirectLight(value?.jsIndirectLight)
+        }
 
     actual fun addEntity(entity: Entity) {
         if (_entities.add(entity)) {
@@ -55,17 +51,14 @@ actual class Scene(internal val jsScene: JSScene) {
         if (toRemove.isNotEmpty()) jsScene.removeEntities(toRemove)
     }
 
-    actual fun getEntityCount(): Int {
-        return _entities.size
-    }
+    actual val entityCount: Int
+        get() = _entities.size
 
-    actual fun getRenderableCount(): Int {
-        return jsScene.getRenderableCount().toInt()
-    }
+    actual val renderableCount: Int
+        get() = jsScene.getRenderableCount().toInt()
 
-    actual fun getLightCount(): Int {
-        return jsScene.getLightCount().toInt()
-    }
+    actual val lightCount: Int
+        get() = jsScene.getLightCount().toInt()
 
     actual fun hasEntity(entity: Entity): Boolean {
         return _entities.contains(entity)

@@ -24,13 +24,10 @@ expect class Renderer {
         val MIRROR_FRAME_FLAG_CLEAR: Int
     }
 
-    fun getEngine(): Engine
-    fun setDisplayInfo(info: DisplayInfo)
-    fun getDisplayInfo(): DisplayInfo
-    fun setFrameRateOptions(options: FrameRateOptions)
-    fun getFrameRateOptions(): FrameRateOptions
-    fun setClearOptions(options: ClearOptions)
-    fun getClearOptions(): ClearOptions
+    val engine: Engine
+    var displayInfo: DisplayInfo
+    var frameRateOptions: FrameRateOptions
+    var clearOptions: ClearOptions
     fun setPresentationTime(monotonicClockNanos: Long)
     fun setVsyncTime(steadyClockTimeNano: Long)
     fun skipFrame(vsyncSteadyClockTimeNano: Long)
@@ -44,8 +41,8 @@ expect class Renderer {
     fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
     fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
 
-    fun getUserTime(): Double
+    val userTime: Double
     fun resetUserTime()
     fun skipNextFrames(frameCount: Int)
-    fun getFrameToSkipCount(): Int
+    val frameToSkipCount: Int
 }

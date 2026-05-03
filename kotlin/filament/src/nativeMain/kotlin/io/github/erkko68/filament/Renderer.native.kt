@@ -34,42 +34,42 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         this.engine = engine
         return this
     }
-    actual fun getEngine(): Engine = engine
+    actual val engine: Engine get() = engine
 
-    actual fun setDisplayInfo(info: DisplayInfo) {
-        memScoped {
-            val cInfo = alloc<FilaRendererDisplayInfo>()
-            cInfo.refreshRate = info.refreshRate
-            FilaRenderer_setDisplayInfo(nativeHandle, cInfo.ptr)
+    actual var displayInfo: DisplayInfo
+        get() = DisplayInfo() // Cache not implemented
+        set(value) {
+            memScoped {
+                val cInfo = alloc<FilaRendererDisplayInfo>()
+                cInfo.refreshRate = value.refreshRate
+                FilaRenderer_setDisplayInfo(nativeHandle, cInfo.ptr)
+            }
         }
-    }
 
-    actual fun getDisplayInfo(): DisplayInfo = DisplayInfo() // Cache not implemented
-
-    actual fun setFrameRateOptions(options: FrameRateOptions) {
-        memScoped {
-            val cOptions = alloc<FilaRendererFrameRateOptions>()
-            cOptions.interval = options.interval
-            cOptions.headRoomRatio = options.headRoomRatio
-            cOptions.scaleRate = options.scaleRate
-            cOptions.history = options.history.toUByte()
-            FilaRenderer_setFrameRateOptions(nativeHandle, cOptions.ptr)
+    actual var frameRateOptions: FrameRateOptions
+        get() = FrameRateOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaRendererFrameRateOptions>()
+                cOptions.interval = value.interval
+                cOptions.headRoomRatio = value.headRoomRatio
+                cOptions.scaleRate = value.scaleRate
+                cOptions.history = value.history.toUByte()
+                FilaRenderer_setFrameRateOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
 
-    actual fun getFrameRateOptions(): FrameRateOptions = FrameRateOptions()
-
-    actual fun setClearOptions(options: ClearOptions) {
-        memScoped {
-            val cOptions = alloc<FilaRendererClearOptions>()
-            options.clearColor.forEachIndexed { i, v -> cOptions.clearColor[i] = v }
-            cOptions.clear = options.clear
-            cOptions.discard = options.discard
-            FilaRenderer_setClearOptions(nativeHandle, cOptions.ptr)
+    actual var clearOptions: ClearOptions
+        get() = ClearOptions()
+        set(value) {
+            memScoped {
+                val cOptions = alloc<FilaRendererClearOptions>()
+                value.clearColor.forEachIndexed { i, v -> cOptions.clearColor[i] = v }
+                cOptions.clear = value.clear
+                cOptions.discard = value.discard
+                FilaRenderer_setClearOptions(nativeHandle, cOptions.ptr)
+            }
         }
-    }
-
-    actual fun getClearOptions(): ClearOptions = ClearOptions()
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos.toULong())
     actual fun setVsyncTime(steadyClockTimeNano: Long) = FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano.toULong())
@@ -136,8 +136,8 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         )
     }
 
-    actual fun getUserTime(): Double = FilaRenderer_getUserTime(nativeHandle)
+    actual val userTime: Double get() = FilaRenderer_getUserTime(nativeHandle)
     actual fun resetUserTime() = FilaRenderer_resetUserTime(nativeHandle)
     actual fun skipNextFrames(frameCount: Int) = FilaRenderer_skipNextFrames(nativeHandle, frameCount.toUInt())
-    actual fun getFrameToSkipCount(): Int = FilaRenderer_getFrameToSkipCount(nativeHandle).toInt()
+    actual val frameToSkipCount: Int get() = FilaRenderer_getFrameToSkipCount(nativeHandle).toInt()
 }

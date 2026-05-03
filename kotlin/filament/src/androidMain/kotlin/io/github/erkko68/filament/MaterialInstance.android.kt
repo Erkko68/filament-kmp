@@ -13,20 +13,21 @@ actual class MaterialInstance constructor(
     
     actual companion object {
         actual fun duplicate(other: MaterialInstance, name: String?): MaterialInstance {
-            return MaterialInstance(other.getMaterial(), AndroidMaterialInstance.duplicate(other.nativeMaterialInstance, name))
+            return MaterialInstance(other.material, AndroidMaterialInstance.duplicate(other.nativeMaterialInstance, name))
         }
     }
     
     actual enum class StencilOperation { KEEP, ZERO, REPLACE, INCR_CLAMP, INCR_WRAP, DECR_CLAMP, DECR_WRAP, INVERT }
     actual enum class StencilFace { FRONT, BACK, FRONT_AND_BACK }
 
-    actual fun getMaterial(): Material {
-        if (mMaterial == null) {
-            mMaterial = Material(nativeMaterialInstance.material)
+    actual val material: Material
+        get() {
+            if (mMaterial == null) {
+                mMaterial = Material(nativeMaterialInstance.material)
+            }
+            return mMaterial!!
         }
-        return mMaterial!!
-    }
-    actual fun getName(): String = nativeMaterialInstance.name
+    actual val name: String get() = nativeMaterialInstance.name
 
     actual fun setParameter(name: String, x: Boolean) { nativeMaterialInstance.setParameter(name, x) }
     actual fun setParameter(name: String, x: Float) { nativeMaterialInstance.setParameter(name, x) }
@@ -69,45 +70,60 @@ actual class MaterialInstance constructor(
     actual fun unsetScissor() { nativeMaterialInstance.unsetScissor() }
     
     actual fun setPolygonOffset(scale: Float, constant: Float) { nativeMaterialInstance.setPolygonOffset(scale, constant) }
-    actual fun setMaskThreshold(threshold: Float) { nativeMaterialInstance.setMaskThreshold(threshold) }
-    actual fun getMaskThreshold(): Float = nativeMaterialInstance.maskThreshold
-    actual fun setSpecularAntiAliasingVariance(variance: Float) { nativeMaterialInstance.setSpecularAntiAliasingVariance(variance) }
-    actual fun getSpecularAntiAliasingVariance(): Float = nativeMaterialInstance.specularAntiAliasingVariance
-    actual fun setSpecularAntiAliasingThreshold(threshold: Float) { nativeMaterialInstance.setSpecularAntiAliasingThreshold(threshold) }
-    actual fun getSpecularAntiAliasingThreshold(): Float = nativeMaterialInstance.specularAntiAliasingThreshold
-    actual fun setDoubleSided(doubleSided: Boolean) { nativeMaterialInstance.setDoubleSided(doubleSided) }
-    actual fun isDoubleSided(): Boolean = nativeMaterialInstance.isDoubleSided
+    actual var maskThreshold: Float
+        get() = nativeMaterialInstance.maskThreshold
+        set(value) { nativeMaterialInstance.setMaskThreshold(value) }
+    actual var specularAntiAliasingVariance: Float
+        get() = nativeMaterialInstance.specularAntiAliasingVariance
+        set(value) { nativeMaterialInstance.setSpecularAntiAliasingVariance(value) }
+    actual var specularAntiAliasingThreshold: Float
+        get() = nativeMaterialInstance.specularAntiAliasingThreshold
+        set(value) { nativeMaterialInstance.setSpecularAntiAliasingThreshold(value) }
+    actual var isDoubleSided: Boolean
+        get() = nativeMaterialInstance.isDoubleSided
+        set(value) { nativeMaterialInstance.setDoubleSided(value) }
     
-    actual fun setTransparencyMode(mode: Material.TransparencyMode) {
-        nativeMaterialInstance.setTransparencyMode(com.google.android.filament.Material.TransparencyMode.values()[mode.ordinal])
-    }
-    actual fun getTransparencyMode(): Material.TransparencyMode = Material.TransparencyMode.values()[nativeMaterialInstance.transparencyMode.ordinal]
+    actual var transparencyMode: Material.TransparencyMode
+        get() = Material.TransparencyMode.values()[nativeMaterialInstance.transparencyMode.ordinal]
+        set(value) {
+            nativeMaterialInstance.setTransparencyMode(com.google.android.filament.Material.TransparencyMode.values()[value.ordinal])
+        }
     
-    actual fun setCullingMode(mode: Material.CullingMode) {
-        nativeMaterialInstance.setCullingMode(com.google.android.filament.Material.CullingMode.values()[mode.ordinal])
-    }
+    actual var cullingMode: Material.CullingMode
+        get() = Material.CullingMode.values()[nativeMaterialInstance.cullingMode.ordinal]
+        set(value) {
+            nativeMaterialInstance.setCullingMode(com.google.android.filament.Material.CullingMode.values()[value.ordinal])
+        }
+
     actual fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode) {
         nativeMaterialInstance.setCullingMode(
             com.google.android.filament.Material.CullingMode.values()[colorPassCullingMode.ordinal],
             com.google.android.filament.Material.CullingMode.values()[shadowPassCullingMode.ordinal]
         )
     }
-    actual fun getCullingMode(): Material.CullingMode = Material.CullingMode.values()[nativeMaterialInstance.cullingMode.ordinal]
-    actual fun getShadowCullingMode(): Material.CullingMode = Material.CullingMode.values()[nativeMaterialInstance.shadowCullingMode.ordinal]
+
+    actual val shadowCullingMode: Material.CullingMode 
+        get() = Material.CullingMode.values()[nativeMaterialInstance.shadowCullingMode.ordinal]
     
-    actual fun setColorWrite(enable: Boolean) { nativeMaterialInstance.setColorWrite(enable) }
-    actual fun isColorWriteEnabled(): Boolean = nativeMaterialInstance.isColorWriteEnabled
-    actual fun setDepthWrite(enable: Boolean) { nativeMaterialInstance.setDepthWrite(enable) }
-    actual fun isDepthWriteEnabled(): Boolean = nativeMaterialInstance.isDepthWriteEnabled
-    actual fun setStencilWrite(enable: Boolean) { nativeMaterialInstance.setStencilWrite(enable) }
-    actual fun isStencilWriteEnabled(): Boolean = nativeMaterialInstance.isStencilWriteEnabled
+    actual var isColorWriteEnabled: Boolean
+        get() = nativeMaterialInstance.isColorWriteEnabled
+        set(value) { nativeMaterialInstance.setColorWrite(value) }
+    actual var isDepthWriteEnabled: Boolean
+        get() = nativeMaterialInstance.isDepthWriteEnabled
+        set(value) { nativeMaterialInstance.setDepthWrite(value) }
+    actual var isStencilWriteEnabled: Boolean
+        get() = nativeMaterialInstance.isStencilWriteEnabled
+        set(value) { nativeMaterialInstance.setStencilWrite(value) }
     
-    actual fun setDepthCulling(enable: Boolean) { nativeMaterialInstance.setDepthCulling(enable) }
-    actual fun setDepthFunc(func: TextureSampler.CompareFunction) {
-        nativeMaterialInstance.setDepthFunc(com.google.android.filament.TextureSampler.CompareFunction.values()[func.ordinal])
-    }
-    actual fun isDepthCullingEnabled(): Boolean = nativeMaterialInstance.isDepthCullingEnabled
-    actual fun getDepthFunc(): TextureSampler.CompareFunction = TextureSampler.CompareFunction.values()[nativeMaterialInstance.depthFunc.ordinal]
+    actual var isDepthCullingEnabled: Boolean
+        get() = nativeMaterialInstance.isDepthCullingEnabled
+        set(value) { nativeMaterialInstance.setDepthCulling(value) }
+
+    actual var depthFunc: TextureSampler.CompareFunction
+        get() = TextureSampler.CompareFunction.values()[nativeMaterialInstance.depthFunc.ordinal]
+        set(value) {
+            nativeMaterialInstance.setDepthFunc(com.google.android.filament.TextureSampler.CompareFunction.values()[value.ordinal])
+        }
     
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace) {
         nativeMaterialInstance.setStencilCompareFunction(

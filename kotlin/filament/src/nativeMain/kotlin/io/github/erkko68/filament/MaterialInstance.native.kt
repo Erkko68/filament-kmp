@@ -21,8 +21,8 @@ actual class MaterialInstance constructor(
         }
     }
 
-    actual fun getMaterial(): Material = Material(FilaMaterialInstance_getMaterial(nativeHandle))
-    actual fun getName(): String = FilaMaterialInstance_getName(nativeHandle)?.toKString() ?: ""
+    actual val material: Material get() = Material(FilaMaterialInstance_getMaterial(nativeHandle))
+    actual val name: String get() = FilaMaterialInstance_getName(nativeHandle)?.toKString() ?: ""
 
     actual fun setParameter(name: String, x: Boolean) { FilaMaterialInstance_setParameterBool(nativeHandle, name, x) }
     actual fun setParameter(name: String, x: Float) { FilaMaterialInstance_setParameterFloat(nativeHandle, name, x) }
@@ -88,42 +88,50 @@ actual class MaterialInstance constructor(
     actual fun unsetScissor() { FilaMaterialInstance_unsetScissor(nativeHandle) }
     
     actual fun setPolygonOffset(scale: Float, constant: Float) { FilaMaterialInstance_setPolygonOffset(nativeHandle, scale, constant) }
-    actual fun setMaskThreshold(threshold: Float) { FilaMaterialInstance_setMaskThreshold(nativeHandle, threshold) }
-    actual fun getMaskThreshold(): Float = FilaMaterialInstance_getMaskThreshold(nativeHandle)
-    actual fun setSpecularAntiAliasingVariance(variance: Float) { FilaMaterialInstance_setSpecularAntiAliasingVariance(nativeHandle, variance) }
-    actual fun getSpecularAntiAliasingVariance(): Float = FilaMaterialInstance_getSpecularAntiAliasingVariance(nativeHandle)
-    actual fun setSpecularAntiAliasingThreshold(threshold: Float) { FilaMaterialInstance_setSpecularAntiAliasingThreshold(nativeHandle, threshold) }
-    actual fun getSpecularAntiAliasingThreshold(): Float = FilaMaterialInstance_getSpecularAntiAliasingThreshold(nativeHandle)
-    actual fun setDoubleSided(doubleSided: Boolean) { FilaMaterialInstance_setDoubleSided(nativeHandle, doubleSided) }
-    actual fun isDoubleSided(): Boolean = FilaMaterialInstance_isDoubleSided(nativeHandle)
+    actual var maskThreshold: Float
+        get() = FilaMaterialInstance_getMaskThreshold(nativeHandle)
+        set(value) { FilaMaterialInstance_setMaskThreshold(nativeHandle, value) }
+    actual var specularAntiAliasingVariance: Float
+        get() = FilaMaterialInstance_getSpecularAntiAliasingVariance(nativeHandle)
+        set(value) { FilaMaterialInstance_setSpecularAntiAliasingVariance(nativeHandle, value) }
+    actual var specularAntiAliasingThreshold: Float
+        get() = FilaMaterialInstance_getSpecularAntiAliasingThreshold(nativeHandle)
+        set(value) { FilaMaterialInstance_setSpecularAntiAliasingThreshold(nativeHandle, value) }
+    actual var isDoubleSided: Boolean
+        get() = FilaMaterialInstance_isDoubleSided(nativeHandle)
+        set(value) { FilaMaterialInstance_setDoubleSided(nativeHandle, value) }
     
-    actual fun setTransparencyMode(mode: Material.TransparencyMode) {
-        FilaMaterialInstance_setTransparencyMode(nativeHandle, mode.ordinal.toUInt())
-    }
-    actual fun getTransparencyMode(): Material.TransparencyMode = Material.TransparencyMode.values()[FilaMaterialInstance_getTransparencyMode(nativeHandle).toInt()]
+    actual var transparencyMode: Material.TransparencyMode
+        get() = Material.TransparencyMode.values()[FilaMaterialInstance_getTransparencyMode(nativeHandle).toInt()]
+        set(value) { FilaMaterialInstance_setTransparencyMode(nativeHandle, value.ordinal.toUInt()) }
     
-    actual fun setCullingMode(mode: Material.CullingMode) {
-        FilaMaterialInstance_setCullingMode(nativeHandle, mode.ordinal.toUInt())
-    }
+    actual var cullingMode: Material.CullingMode
+        get() = Material.CullingMode.values()[FilaMaterialInstance_getCullingMode(nativeHandle).toInt()]
+        set(value) { FilaMaterialInstance_setCullingMode(nativeHandle, value.ordinal.toUInt()) }
+
     actual fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode) {
         FilaMaterialInstance_setCullingModeSeparate(nativeHandle, colorPassCullingMode.ordinal.toUInt(), shadowPassCullingMode.ordinal.toUInt())
     }
-    actual fun getCullingMode(): Material.CullingMode = Material.CullingMode.values()[FilaMaterialInstance_getCullingMode(nativeHandle).toInt()]
-    actual fun getShadowCullingMode(): Material.CullingMode = Material.CullingMode.values()[FilaMaterialInstance_getShadowCullingMode(nativeHandle).toInt()]
+
+    actual val shadowCullingMode: Material.CullingMode get() = Material.CullingMode.values()[FilaMaterialInstance_getShadowCullingMode(nativeHandle).toInt()]
     
-    actual fun setColorWrite(enable: Boolean) { FilaMaterialInstance_setColorWrite(nativeHandle, enable) }
-    actual fun isColorWriteEnabled(): Boolean = FilaMaterialInstance_isColorWriteEnabled(nativeHandle)
-    actual fun setDepthWrite(enable: Boolean) { FilaMaterialInstance_setDepthWrite(nativeHandle, enable) }
-    actual fun isDepthWriteEnabled(): Boolean = FilaMaterialInstance_isDepthWriteEnabled(nativeHandle)
-    actual fun setStencilWrite(enable: Boolean) { FilaMaterialInstance_setStencilWrite(nativeHandle, enable) }
-    actual fun isStencilWriteEnabled(): Boolean = FilaMaterialInstance_isStencilWriteEnabled(nativeHandle)
+    actual var isColorWriteEnabled: Boolean
+        get() = FilaMaterialInstance_isColorWriteEnabled(nativeHandle)
+        set(value) { FilaMaterialInstance_setColorWrite(nativeHandle, value) }
+    actual var isDepthWriteEnabled: Boolean
+        get() = FilaMaterialInstance_isDepthWriteEnabled(nativeHandle)
+        set(value) { FilaMaterialInstance_setDepthWrite(nativeHandle, value) }
+    actual var isStencilWriteEnabled: Boolean
+        get() = FilaMaterialInstance_isStencilWriteEnabled(nativeHandle)
+        set(value) { FilaMaterialInstance_setStencilWrite(nativeHandle, value) }
     
-    actual fun setDepthCulling(enable: Boolean) { FilaMaterialInstance_setDepthCulling(nativeHandle, enable) }
-    actual fun setDepthFunc(func: TextureSampler.CompareFunction) {
-        FilaMaterialInstance_setDepthFunc(nativeHandle, func.ordinal.toUInt())
-    }
-    actual fun isDepthCullingEnabled(): Boolean = FilaMaterialInstance_isDepthCullingEnabled(nativeHandle)
-    actual fun getDepthFunc(): TextureSampler.CompareFunction = TextureSampler.CompareFunction.values()[FilaMaterialInstance_getDepthFunc(nativeHandle).toInt()]
+    actual var isDepthCullingEnabled: Boolean
+        get() = FilaMaterialInstance_isDepthCullingEnabled(nativeHandle)
+        set(value) { FilaMaterialInstance_setDepthCulling(nativeHandle, value) }
+
+    actual var depthFunc: TextureSampler.CompareFunction
+        get() = TextureSampler.CompareFunction.values()[FilaMaterialInstance_getDepthFunc(nativeHandle).toInt()]
+        set(value) { FilaMaterialInstance_setDepthFunc(nativeHandle, value.ordinal.toUInt()) }
     
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace) {
         FilaMaterialInstance_setStencilCompareFunction(nativeHandle, func.ordinal.toUInt(), face.native)

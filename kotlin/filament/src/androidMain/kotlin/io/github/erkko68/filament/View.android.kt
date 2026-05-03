@@ -212,37 +212,40 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var customResolve: Boolean get() = native.customResolve; set(v) { native.customResolve = v }
     }
 
-    actual fun setName(name: String) { this@View.nativeView.setName(name) }
-    actual fun getName(): String? = this@View.nativeView.name
+    actual var name: String?
+        get() = this@View.nativeView.name
+        set(value) { this@View.nativeView.setName(value ?: "") }
 
-    actual fun setScene(scene: Scene?) { 
-        this@View.mScene = scene
-        this@View.nativeView.scene = scene?.nativeScene 
-    }
-    actual fun getScene(): Scene? = mScene
+    actual var scene: Scene?
+        get() = mScene
+        set(value) {
+            this@View.mScene = value
+            this@View.nativeView.scene = value?.nativeScene 
+        }
 
-    actual fun setCamera(camera: Camera?) { 
-        this@View.mCamera = camera
-        this@View.nativeView.camera = camera?.nativeCamera 
-    }
-    actual fun getCamera(): Camera? = mCamera
-    actual fun hasCamera(): Boolean = this@View.nativeView.hasCamera()
+    actual var camera: Camera?
+        get() = mCamera
+        set(value) {
+            this@View.mCamera = value
+            this@View.nativeView.camera = value?.nativeCamera 
+        }
+    actual val hasCamera: Boolean get() = this@View.nativeView.hasCamera()
 
-    actual fun setViewport(viewport: Viewport) {
-        val nativeVp = FilamentViewport(viewport.left, viewport.bottom, viewport.width, viewport.height)
-        this@View.nativeView.setViewport(nativeVp)
-    }
-    actual fun getViewport(): Viewport {
-        val vp = this@View.nativeView.viewport
-        return Viewport(vp.left, vp.bottom, vp.width, vp.height)
-    }
+    actual var viewport: Viewport
+        get() {
+            val vp = this@View.nativeView.viewport
+            return Viewport(vp.left, vp.bottom, vp.width, vp.height)
+        }
+        set(value) {
+            val nativeVp = FilamentViewport(value.left, value.bottom, value.width, value.height)
+            this@View.nativeView.setViewport(nativeVp)
+        }
 
-    actual fun setBlendMode(blendMode: BlendMode) {
-        this@View.nativeView.blendMode = FilamentView.BlendMode.values()[blendMode.ordinal]
-    }
-    actual fun getBlendMode(): BlendMode {
-        return io.github.erkko68.filament.View.BlendMode.values()[this@View.nativeView.blendMode.ordinal]
-    }
+    actual var blendMode: BlendMode
+        get() = io.github.erkko68.filament.View.BlendMode.values()[this@View.nativeView.blendMode.ordinal]
+        set(value) {
+            this@View.nativeView.blendMode = FilamentView.BlendMode.values()[value.ordinal]
+        }
 
     actual fun setVisibleLayers(select: Int, values: Int) {
         this@View.nativeView.setVisibleLayers(select, values)
@@ -252,31 +255,28 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     }
     actual fun getVisibleLayers(): Int = this@View.nativeView.visibleLayers
 
-    actual fun setPostProcessingEnabled(enabled: Boolean) { this@View.nativeView.setPostProcessingEnabled(enabled) }
-    actual fun isPostProcessingEnabled(): Boolean = this@View.nativeView.isPostProcessingEnabled
+    actual var isPostProcessingEnabled: Boolean
+        get() = this@View.nativeView.isPostProcessingEnabled
+        set(value) { this@View.nativeView.isPostProcessingEnabled = value }
 
 
-    actual fun setDithering(dithering: Dithering) {
-        this@View.nativeView.dithering = FilamentView.Dithering.values()[dithering.ordinal]
-    }
-    actual fun getDithering(): Dithering {
-        return io.github.erkko68.filament.View.Dithering.values()[this@View.nativeView.dithering.ordinal]
-    }
+    actual var dithering: Dithering
+        get() = io.github.erkko68.filament.View.Dithering.values()[this@View.nativeView.dithering.ordinal]
+        set(value) { this@View.nativeView.dithering = FilamentView.Dithering.values()[value.ordinal] }
 
-    actual fun setDynamicResolutionOptions(options: DynamicResolutionOptions) {
-        this@View.nativeView.setDynamicResolutionOptions(options.native)
-    }
-    actual fun getDynamicResolutionOptions(): DynamicResolutionOptions {
-        val o = this@View.nativeView.dynamicResolutionOptions
-        val kmp = DynamicResolutionOptions()
-        kmp.enabled = o.enabled
-        kmp.homogeneousScaling = o.homogeneousScaling
-        kmp.minScale = o.minScale
-        kmp.maxScale = o.maxScale
-        kmp.sharpness = o.sharpness
-        kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
-        return kmp
-    }
+    actual var dynamicResolutionOptions: DynamicResolutionOptions
+        get() {
+            val o = this@View.nativeView.dynamicResolutionOptions
+            val kmp = DynamicResolutionOptions()
+            kmp.enabled = o.enabled
+            kmp.homogeneousScaling = o.homogeneousScaling
+            kmp.minScale = o.minScale
+            kmp.maxScale = o.maxScale
+            kmp.sharpness = o.sharpness
+            kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
+            return kmp
+        }
+        set(value) { this@View.nativeView.setDynamicResolutionOptions(value.native) }
 
     actual fun getLastDynamicResolutionScale(): FloatArray {
         val out = FloatArray(2)
@@ -284,289 +284,287 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         return out
     }
 
-    actual fun setRenderQuality(renderQuality: RenderQuality) {
-        this@View.nativeView.setRenderQuality(renderQuality.native)
-    }
-    actual fun getRenderQuality(): RenderQuality {
-        val o = this@View.nativeView.renderQuality
-        val kmp = RenderQuality()
-        kmp.hdrColorBuffer = io.github.erkko68.filament.View.Quality.values()[o.hdrColorBuffer.ordinal]
-        return kmp
-    }
+    actual var renderQuality: RenderQuality
+        get() {
+            val o = this@View.nativeView.renderQuality
+            val kmp = RenderQuality()
+            kmp.hdrColorBuffer = io.github.erkko68.filament.View.Quality.values()[o.hdrColorBuffer.ordinal]
+            return kmp
+        }
+        set(value) { this@View.nativeView.setRenderQuality(value.native) }
     
-    actual fun setBloomOptions(options: BloomOptions) {
-        this@View.nativeView.setBloomOptions(options.native)
-    }
-    actual fun getBloomOptions(): BloomOptions {
-        val o = this@View.nativeView.bloomOptions
-        val kmp = BloomOptions()
-        kmp.enabled = o.enabled
-        kmp.levels = o.levels
-        kmp.resolution = o.resolution
-        kmp.strength = o.strength
-        kmp.threshold = o.threshold
-        kmp.dirtStrength = o.dirtStrength
-        kmp.lensFlare = o.lensFlare
-        kmp.starburst = o.starburst
-        kmp.chromaticAberration = o.chromaticAberration
-        kmp.ghostCount = o.ghostCount
-        kmp.ghostSpacing = o.ghostSpacing
-        kmp.ghostThreshold = o.ghostThreshold
-        kmp.haloRadius = o.haloRadius
-        kmp.haloThickness = o.haloThickness
-        kmp.haloThreshold = o.haloThreshold
-        kmp.highlight = o.highlight
-        kmp.blendMode = io.github.erkko68.filament.View.BloomOptions.BlendMode.values()[o.blendMode.ordinal]
-        kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
-        return kmp
-    }
+    actual var bloomOptions: BloomOptions
+        get() {
+            val o = this@View.nativeView.bloomOptions
+            val kmp = BloomOptions()
+            kmp.enabled = o.enabled
+            kmp.levels = o.levels
+            kmp.resolution = o.resolution
+            kmp.strength = o.strength
+            kmp.threshold = o.threshold
+            kmp.dirtStrength = o.dirtStrength
+            kmp.lensFlare = o.lensFlare
+            kmp.starburst = o.starburst
+            kmp.chromaticAberration = o.chromaticAberration
+            kmp.ghostCount = o.ghostCount
+            kmp.ghostSpacing = o.ghostSpacing
+            kmp.ghostThreshold = o.ghostThreshold
+            kmp.haloRadius = o.haloRadius
+            kmp.haloThickness = o.haloThickness
+            kmp.haloThreshold = o.haloThreshold
+            kmp.highlight = o.highlight
+            kmp.blendMode = io.github.erkko68.filament.View.BloomOptions.BlendMode.values()[o.blendMode.ordinal]
+            kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
+            return kmp
+        }
+        set(value) { this@View.nativeView.setBloomOptions(value.native) }
 
-    actual fun setFogOptions(options: FogOptions) {
-        this@View.nativeView.setFogOptions(options.native)
-    }
-    actual fun getFogOptions(): FogOptions {
-        val o = this@View.nativeView.fogOptions
-        val kmp = FogOptions()
-        kmp.enabled = o.enabled
-        kmp.distance = o.distance
-        kmp.density = o.density
-        kmp.height = o.height
-        kmp.heightFalloff = o.heightFalloff
-        kmp.color = o.color
-        kmp.cutOffDistance = o.cutOffDistance
-        kmp.maximumOpacity = o.maximumOpacity
-        kmp.inScatteringStart = o.inScatteringStart
-        kmp.inScatteringSize = o.inScatteringSize
-        kmp.fogColorFromIbl = o.fogColorFromIbl
-        return kmp
-    }
+    actual var fogOptions: FogOptions
+        get() {
+            val o = this@View.nativeView.fogOptions
+            val kmp = FogOptions()
+            kmp.enabled = o.enabled
+            kmp.distance = o.distance
+            kmp.density = o.density
+            kmp.height = o.height
+            kmp.heightFalloff = o.heightFalloff
+            kmp.color = o.color
+            kmp.cutOffDistance = o.cutOffDistance
+            kmp.maximumOpacity = o.maximumOpacity
+            kmp.inScatteringStart = o.inScatteringStart
+            kmp.inScatteringSize = o.inScatteringSize
+            kmp.fogColorFromIbl = o.fogColorFromIbl
+            return kmp
+        }
+        set(value) { this@View.nativeView.setFogOptions(value.native) }
 
-    actual fun setDepthOfFieldOptions(options: DepthOfFieldOptions) {
-        this@View.nativeView.setDepthOfFieldOptions(options.native)
-    }
-    actual fun getDepthOfFieldOptions(): DepthOfFieldOptions {
-        val o = this@View.nativeView.depthOfFieldOptions
-        val kmp = DepthOfFieldOptions()
-        kmp.enabled = o.enabled
-        kmp.cocScale = o.cocScale
-        kmp.maxApertureDiameter = o.maxApertureDiameter
-        kmp.filter = io.github.erkko68.filament.View.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
-        kmp.nativeResolution = o.nativeResolution
-        kmp.foregroundRingCount = o.foregroundRingCount
-        kmp.backgroundRingCount = o.backgroundRingCount
-        kmp.fastGatherRingCount = o.fastGatherRingCount
-        kmp.maxForegroundCOC = o.maxForegroundCOC
-        kmp.maxBackgroundCOC = o.maxBackgroundCOC
-        return kmp
-    }
+    actual var depthOfFieldOptions: DepthOfFieldOptions
+        get() {
+            val o = this@View.nativeView.depthOfFieldOptions
+            val kmp = DepthOfFieldOptions()
+            kmp.enabled = o.enabled
+            kmp.cocScale = o.cocScale
+            kmp.maxApertureDiameter = o.maxApertureDiameter
+            kmp.filter = io.github.erkko68.filament.View.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
+            kmp.nativeResolution = o.nativeResolution
+            kmp.foregroundRingCount = o.foregroundRingCount
+            kmp.backgroundRingCount = o.backgroundRingCount
+            kmp.fastGatherRingCount = o.fastGatherRingCount
+            kmp.maxForegroundCOC = o.maxForegroundCOC
+            kmp.maxBackgroundCOC = o.maxBackgroundCOC
+            return kmp
+        }
+        set(value) { this@View.nativeView.setDepthOfFieldOptions(value.native) }
 
-    actual fun setVignetteOptions(options: VignetteOptions) {
-        this@View.nativeView.setVignetteOptions(options.native)
-    }
-    actual fun getVignetteOptions(): VignetteOptions {
-        val o = this@View.nativeView.vignetteOptions
-        val kmp = VignetteOptions()
-        kmp.enabled = o.enabled
-        kmp.midPoint = o.midPoint
-        kmp.roundness = o.roundness
-        kmp.feather = o.feather
-        kmp.color = o.color
-        return kmp
-    }
+    actual var vignetteOptions: VignetteOptions
+        get() {
+            val o = this@View.nativeView.vignetteOptions
+            val kmp = VignetteOptions()
+            kmp.enabled = o.enabled
+            kmp.midPoint = o.midPoint
+            kmp.roundness = o.roundness
+            kmp.feather = o.feather
+            kmp.color = o.color
+            return kmp
+        }
+        set(value) { this@View.nativeView.setVignetteOptions(value.native) }
 
-    actual fun setAmbientOcclusionOptions(options: AmbientOcclusionOptions) {
-        val n = options.native
-        n.radius = options.radius
-        n.bias = options.bias
-        n.intensity = options.intensity
-        n.power = options.power
-        n.minHorizonAngleRad = options.minConeAngle
-        n.quality = FilamentView.QualityLevel.values()[options.quality.ordinal]
-        n.lowPassFilter = FilamentView.QualityLevel.values()[options.lowPassFilter.ordinal]
-        n.upsampling = FilamentView.QualityLevel.values()[options.upsampling.ordinal]
-        n.enabled = options.enabled
-        n.bentNormals = options.bentNormals
-        n.resolution = options.resolution
-        // Map flattened
-        n.ssctEnabled = options.ssct.enabled
-        n.ssctLightConeRad = options.ssct.lightConeRad
-        n.ssctShadowDistance = options.ssct.shadowDistance
-        n.ssctContactDistanceMax = options.ssct.contactDistanceMax
-        n.ssctIntensity = options.ssct.intensity
-        n.ssctLightDirection = options.ssct.lightDirection
-        n.ssctDepthBias = options.ssct.depthBias
-        n.ssctDepthSlopeBias = options.ssct.depthSlopeBias
-        n.ssctSampleCount = options.ssct.sampleCount
-        n.ssctRayCount = options.ssct.rayCount
-        this@View.nativeView.setAmbientOcclusionOptions(n)
-    }
-    actual fun getAmbientOcclusionOptions(): AmbientOcclusionOptions {
-        val o = this@View.nativeView.ambientOcclusionOptions
-        val kmp = AmbientOcclusionOptions()
-        kmp.radius = o.radius
-        kmp.bias = o.bias
-        kmp.intensity = o.intensity
-        kmp.power = o.power
-        kmp.minConeAngle = o.minHorizonAngleRad
-        kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
-        kmp.lowPassFilter = io.github.erkko68.filament.View.Quality.values()[o.lowPassFilter.ordinal]
-        kmp.upsampling = io.github.erkko68.filament.View.Quality.values()[o.upsampling.ordinal]
-        kmp.enabled = o.enabled
-        kmp.bentNormals = o.bentNormals
-        kmp.resolution = o.resolution
-        
-        val kmpSsct = io.github.erkko68.filament.View.AmbientOcclusionOptions.Ssct()
-        kmpSsct.enabled = o.ssctEnabled
-        kmpSsct.lightConeRad = o.ssctLightConeRad
-        kmpSsct.shadowDistance = o.ssctShadowDistance
-        kmpSsct.contactDistanceMax = o.ssctContactDistanceMax
-        kmpSsct.intensity = o.ssctIntensity
-        kmpSsct.lightDirection = o.ssctLightDirection
-        kmpSsct.depthBias = o.ssctDepthBias
-        kmpSsct.depthSlopeBias = o.ssctDepthSlopeBias
-        kmpSsct.sampleCount = o.ssctSampleCount
-        kmpSsct.rayCount = o.ssctRayCount
-        kmp.ssct = kmpSsct
-        
-        return kmp
-    }
+    actual var ambientOcclusionOptions: AmbientOcclusionOptions
+        get() {
+            val o = this@View.nativeView.ambientOcclusionOptions
+            val kmp = AmbientOcclusionOptions()
+            kmp.radius = o.radius
+            kmp.bias = o.bias
+            kmp.intensity = o.intensity
+            kmp.power = o.power
+            kmp.minConeAngle = o.minHorizonAngleRad
+            kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
+            kmp.lowPassFilter = io.github.erkko68.filament.View.Quality.values()[o.lowPassFilter.ordinal]
+            kmp.upsampling = io.github.erkko68.filament.View.Quality.values()[o.upsampling.ordinal]
+            kmp.enabled = o.enabled
+            kmp.bentNormals = o.bentNormals
+            kmp.resolution = o.resolution
+            
+            val kmpSsct = io.github.erkko68.filament.View.AmbientOcclusionOptions.Ssct()
+            kmpSsct.enabled = o.ssctEnabled
+            kmpSsct.lightConeRad = o.ssctLightConeRad
+            kmpSsct.shadowDistance = o.ssctShadowDistance
+            kmpSsct.contactDistanceMax = o.ssctContactDistanceMax
+            kmpSsct.intensity = o.ssctIntensity
+            kmpSsct.lightDirection = o.ssctLightDirection
+            kmpSsct.depthBias = o.ssctDepthBias
+            kmpSsct.depthSlopeBias = o.ssctDepthSlopeBias
+            kmpSsct.sampleCount = o.ssctSampleCount
+            kmpSsct.rayCount = o.ssctRayCount
+            kmp.ssct = kmpSsct
+            
+            return kmp
+        }
+        set(value) {
+            val n = value.native
+            n.radius = value.radius
+            n.bias = value.bias
+            n.intensity = value.intensity
+            n.power = value.power
+            n.minHorizonAngleRad = value.minConeAngle
+            n.quality = FilamentView.QualityLevel.values()[value.quality.ordinal]
+            n.lowPassFilter = FilamentView.QualityLevel.values()[value.lowPassFilter.ordinal]
+            n.upsampling = FilamentView.QualityLevel.values()[value.upsampling.ordinal]
+            n.enabled = value.enabled
+            n.bentNormals = value.bentNormals
+            n.resolution = value.resolution
+            // Map flattened
+            n.ssctEnabled = value.ssct.enabled
+            n.ssctLightConeRad = value.ssct.lightConeRad
+            n.ssctShadowDistance = value.ssct.shadowDistance
+            n.ssctContactDistanceMax = value.ssct.contactDistanceMax
+            n.ssctIntensity = value.ssct.intensity
+            n.ssctLightDirection = value.ssct.lightDirection
+            n.ssctDepthBias = value.ssct.depthBias
+            n.ssctDepthSlopeBias = value.ssct.depthSlopeBias
+            n.ssctSampleCount = value.ssct.sampleCount
+            n.ssctRayCount = value.ssct.rayCount
+            this@View.nativeView.setAmbientOcclusionOptions(n)
+        }
 
-    actual fun setTemporalAntiAliasingOptions(options: TemporalAntiAliasingOptions) {
-        this@View.nativeView.setTemporalAntiAliasingOptions(options.native)
-    }
-    actual fun getTemporalAntiAliasingOptions(): TemporalAntiAliasingOptions {
-        val o = this@View.nativeView.temporalAntiAliasingOptions
-        val kmp = TemporalAntiAliasingOptions()
-        kmp.enabled = o.enabled
-        kmp.feedback = o.feedback
-        kmp.lodBias = o.lodBias
-        kmp.sharpness = o.sharpness
-        kmp.upscaling = o.upscaling
-        kmp.filterHistory = o.filterHistory
-        kmp.filterInput = o.filterInput
-        kmp.useYCoCg = o.useYCoCg
-        kmp.hdr = o.hdr
-        kmp.boxType = o.boxType.ordinal
-        kmp.boxClipping = o.boxClipping.ordinal
-        kmp.jitterPattern = o.jitterPattern.ordinal
-        kmp.varianceGamma = o.varianceGamma
-        kmp.preventFlickering = o.preventFlickering
-        kmp.historyReprojection = o.historyReprojection
-        return kmp
-    }
+    actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
+        get() {
+            val o = this@View.nativeView.temporalAntiAliasingOptions
+            val kmp = TemporalAntiAliasingOptions()
+            kmp.enabled = o.enabled
+            kmp.feedback = o.feedback
+            kmp.lodBias = o.lodBias
+            kmp.sharpness = o.sharpness
+            kmp.upscaling = o.upscaling
+            kmp.filterHistory = o.filterHistory
+            kmp.filterInput = o.filterInput
+            kmp.useYCoCg = o.useYCoCg
+            kmp.hdr = o.hdr
+            kmp.boxType = o.boxType.ordinal
+            kmp.boxClipping = o.boxClipping.ordinal
+            kmp.jitterPattern = o.jitterPattern.ordinal
+            kmp.varianceGamma = o.varianceGamma
+            kmp.preventFlickering = o.preventFlickering
+            kmp.historyReprojection = o.historyReprojection
+            return kmp
+        }
+        set(value) { this@View.nativeView.setTemporalAntiAliasingOptions(value.native) }
 
-    actual fun setScreenSpaceReflectionsOptions(options: ScreenSpaceReflectionsOptions) {
-        this@View.nativeView.setScreenSpaceReflectionsOptions(options.native)
-    }
-    actual fun getScreenSpaceReflectionsOptions(): ScreenSpaceReflectionsOptions {
-        val o = this@View.nativeView.screenSpaceReflectionsOptions
-        val kmp = ScreenSpaceReflectionsOptions()
-        kmp.enabled = o.enabled
-        kmp.thickness = o.thickness
-        kmp.bias = o.bias
-        kmp.maxDistance = o.maxDistance
-        kmp.stride = o.stride
-        return kmp
-    }
+    actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
+        get() {
+            val o = this@View.nativeView.screenSpaceReflectionsOptions
+            val kmp = ScreenSpaceReflectionsOptions()
+            kmp.enabled = o.enabled
+            kmp.thickness = o.thickness
+            kmp.bias = o.bias
+            kmp.maxDistance = o.maxDistance
+            kmp.stride = o.stride
+            return kmp
+        }
+        set(value) { this@View.nativeView.setScreenSpaceReflectionsOptions(value.native) }
 
-    actual fun setRenderTarget(target: RenderTarget?) {
-        this@View.mRenderTarget = target
-        this@View.nativeView.setRenderTarget(target?.nativeRenderTarget)
-    }
-    actual fun getRenderTarget(): RenderTarget? = mRenderTarget
+    actual var renderTarget: RenderTarget?
+        get() = mRenderTarget
+        set(value) {
+            this@View.mRenderTarget = value
+            this@View.nativeView.setRenderTarget(value?.nativeRenderTarget)
+        }
 
-    actual fun setShadowType(type: ShadowType) {
-        this@View.mShadowType = type
-        this@View.nativeView.setShadowType(FilamentView.ShadowType.values()[type.ordinal])
-    }
-    actual fun getShadowType(): ShadowType = this@View.mShadowType
+    actual var shadowType: ShadowType
+        get() = this@View.mShadowType
+        set(value) {
+            this@View.mShadowType = value
+            this@View.nativeView.setShadowType(FilamentView.ShadowType.values()[value.ordinal])
+        }
 
-    actual fun setVsmShadowOptions(options: VsmShadowOptions) {
-        this@View.nativeView.setVsmShadowOptions(options.native)
-    }
-    actual fun getVsmShadowOptions(): VsmShadowOptions {
-        val o = this@View.nativeView.vsmShadowOptions
-        val kmp = VsmShadowOptions()
-        kmp.anisotropy = o.anisotropy
-        kmp.mipmapping = o.mipmapping
-        kmp.msaaSamples = o.msaaSamples
-        kmp.highPrecision = o.highPrecision
-        kmp.lightBleedReduction = o.lightBleedReduction
-        return kmp
-    }
-    actual fun setSoftShadowOptions(options: SoftShadowOptions) {
-        this@View.nativeView.setSoftShadowOptions(options.native)
-    }
-    actual fun getSoftShadowOptions(): SoftShadowOptions {
-        val o = this@View.nativeView.softShadowOptions
-        val kmp = SoftShadowOptions()
-        kmp.penumbraScale = o.penumbraScale
-        kmp.penumbraRatioScale = o.penumbraRatioScale
-        return kmp
-    }
-    actual fun setGuardBandOptions(options: GuardBandOptions) {
-        this@View.nativeView.setGuardBandOptions(options.native)
-    }
-    actual fun getGuardBandOptions(): GuardBandOptions {
-        val o = this@View.nativeView.guardBandOptions
-        val kmp = GuardBandOptions()
-        kmp.enabled = o.enabled
-        return kmp
-    }
-    actual fun setStereoscopicOptions(options: StereoscopicOptions) {
-        this@View.nativeView.setStereoscopicOptions(options.native)
-    }
-    actual fun getStereoscopicOptions(): StereoscopicOptions {
-        val o = this@View.nativeView.stereoscopicOptions
-        val kmp = StereoscopicOptions()
-        kmp.enabled = o.enabled
-        return kmp
-    }
-    actual fun setMultiSampleAntiAliasingOptions(options: MultiSampleAntiAliasingOptions) {
-        this@View.nativeView.setMultiSampleAntiAliasingOptions(options.native)
-    }
-    actual fun getMultiSampleAntiAliasingOptions(): MultiSampleAntiAliasingOptions {
-        val o = this@View.nativeView.multiSampleAntiAliasingOptions
-        val kmp = MultiSampleAntiAliasingOptions()
-        kmp.enabled = o.enabled
-        kmp.sampleCount = o.sampleCount
-        kmp.customResolve = o.customResolve
-        return kmp
-    }
+    actual var vsmShadowOptions: VsmShadowOptions
+        get() {
+            val o = this@View.nativeView.vsmShadowOptions
+            val kmp = VsmShadowOptions()
+            kmp.anisotropy = o.anisotropy
+            kmp.mipmapping = o.mipmapping
+            kmp.msaaSamples = o.msaaSamples
+            kmp.highPrecision = o.highPrecision
+            kmp.lightBleedReduction = o.lightBleedReduction
+            return kmp
+        }
+        set(value) { this@View.nativeView.setVsmShadowOptions(value.native) }
+    actual var softShadowOptions: SoftShadowOptions
+        get() {
+            val o = this@View.nativeView.softShadowOptions
+            val kmp = SoftShadowOptions()
+            kmp.penumbraScale = o.penumbraScale
+            kmp.penumbraRatioScale = o.penumbraRatioScale
+            return kmp
+        }
+        set(value) { this@View.nativeView.setSoftShadowOptions(value.native) }
+    actual var guardBandOptions: GuardBandOptions
+        get() {
+            val o = this@View.nativeView.guardBandOptions
+            val kmp = GuardBandOptions()
+            kmp.enabled = o.enabled
+            return kmp
+        }
+        set(value) { this@View.nativeView.setGuardBandOptions(value.native) }
+    actual var stereoscopicOptions: StereoscopicOptions
+        get() {
+            val o = this@View.nativeView.stereoscopicOptions
+            val kmp = StereoscopicOptions()
+            kmp.enabled = o.enabled
+            return kmp
+        }
+        set(value) { this@View.nativeView.setStereoscopicOptions(value.native) }
+    actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
+        get() {
+            val o = this@View.nativeView.multiSampleAntiAliasingOptions
+            val kmp = MultiSampleAntiAliasingOptions()
+            kmp.enabled = o.enabled
+            kmp.sampleCount = o.sampleCount
+            kmp.customResolve = o.customResolve
+            return kmp
+        }
+        set(value) { this@View.nativeView.setMultiSampleAntiAliasingOptions(value.native) }
 
-    actual fun setFrustumCullingEnabled(enabled: Boolean) { this@View.nativeView.setFrustumCullingEnabled(enabled) }
-    actual fun isFrustumCullingEnabled(): Boolean = this@View.nativeView.isFrustumCullingEnabled
-    actual fun setShadowingEnabled(enabled: Boolean) { this@View.nativeView.setShadowingEnabled(enabled) }
-    actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) { this@View.nativeView.setScreenSpaceRefractionEnabled(enabled) }
-    actual fun setStencilBufferEnabled(enabled: Boolean) { this@View.nativeView.setStencilBufferEnabled(enabled) }
-    actual fun isStencilBufferEnabled(): Boolean = this@View.nativeView.isStencilBufferEnabled
-    actual fun setFrontFaceWindingInverted(inverted: Boolean) { this@View.nativeView.setFrontFaceWindingInverted(inverted) }
-    actual fun isFrontFaceWindingInverted(): Boolean = this@View.nativeView.isFrontFaceWindingInverted
-    actual fun setTransparentPickingEnabled(enabled: Boolean) { this@View.nativeView.setTransparentPickingEnabled(enabled) }
-    actual fun isTransparentPickingEnabled(): Boolean = this@View.nativeView.isTransparentPickingEnabled
+    actual var isFrustumCullingEnabled: Boolean
+        get() = this@View.nativeView.isFrustumCullingEnabled
+        set(value) { this@View.nativeView.setFrustumCullingEnabled(value) }
+    actual var isShadowingEnabled: Boolean
+        get() = this@View.nativeView.isShadowingEnabled
+        set(value) { this@View.nativeView.setShadowingEnabled(value) }
+    actual var isScreenSpaceRefractionEnabled: Boolean
+        get() = this@View.nativeView.isScreenSpaceRefractionEnabled
+        set(value) { this@View.nativeView.setScreenSpaceRefractionEnabled(value) }
+    actual var isStencilBufferEnabled: Boolean
+        get() = this@View.nativeView.isStencilBufferEnabled
+        set(value) { this@View.nativeView.setStencilBufferEnabled(value) }
+    actual var isFrontFaceWindingInverted: Boolean
+        get() = this@View.nativeView.isFrontFaceWindingInverted
+        set(value) { this@View.nativeView.setFrontFaceWindingInverted(value) }
+    actual var isTransparentPickingEnabled: Boolean
+        get() = this@View.nativeView.isTransparentPickingEnabled
+        set(value) { this@View.nativeView.setTransparentPickingEnabled(value) }
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
         this@View.nativeView.setMaterialGlobal(index, value)
     }
     actual fun getMaterialGlobal(index: Int): FloatArray = this@View.nativeView.getMaterialGlobal(index, null)
-    actual fun getFogEntity(): Int = this@View.nativeView.fogEntity
+    actual val fogEntity: Int get() = this@View.nativeView.fogEntity
     actual fun clearFrameHistory(engine: Engine) { this@View.nativeView.clearFrameHistory(engine.nativeEngine) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
         nativeView.setDynamicLightingOptions(zNear, zFar)
     }
 
-    actual fun setAntiAliasing(type: AntiAliasing) {
-        nativeView.antiAliasing = FilamentView.AntiAliasing.values()[type.ordinal]
-    }
-    actual fun getAntiAliasing(): AntiAliasing =
-        AntiAliasing.values()[nativeView.antiAliasing.ordinal]
+    actual var antiAliasing: AntiAliasing
+        get() = AntiAliasing.values()[nativeView.antiAliasing.ordinal]
+        set(value) { nativeView.antiAliasing = FilamentView.AntiAliasing.values()[value.ordinal] }
 
-    actual fun setColorGrading(colorGrading: ColorGrading?) {
-        mColorGrading = colorGrading
-        nativeView.setColorGrading(colorGrading?.nativeColorGrading)
-    }
-    actual fun getColorGrading(): ColorGrading? = mColorGrading
+    actual var colorGrading: ColorGrading?
+        get() = mColorGrading
+        set(value) {
+            mColorGrading = value
+            nativeView.setColorGrading(value?.nativeColorGrading)
+        }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         nativeView.pick(x, y, null) { r ->

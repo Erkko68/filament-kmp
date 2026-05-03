@@ -52,34 +52,37 @@ actual class Renderer internal constructor(
         actual val MIRROR_FRAME_FLAG_CLEAR: Int = AndroidRenderer.MIRROR_FRAME_FLAG_CLEAR
     }
 
-    actual fun getEngine(): Engine = engine
+    actual val engine: Engine get() = engine
 
-    actual fun setDisplayInfo(info: DisplayInfo) {
-        mDisplayInfo = info
-        nativeRenderer.setDisplayInfo(info.nativeInfo)
-    }
-    actual fun getDisplayInfo(): DisplayInfo {
-        if (mDisplayInfo == null) mDisplayInfo = DisplayInfo()
-        return mDisplayInfo!!
-    }
+    actual var displayInfo: DisplayInfo
+        get() {
+            if (mDisplayInfo == null) mDisplayInfo = DisplayInfo()
+            return mDisplayInfo!!
+        }
+        set(value) {
+            mDisplayInfo = value
+            nativeRenderer.setDisplayInfo(value.nativeInfo)
+        }
 
-    actual fun setFrameRateOptions(options: FrameRateOptions) {
-        mFrameRateOptions = options
-        nativeRenderer.setFrameRateOptions(options.nativeOptions)
-    }
-    actual fun getFrameRateOptions(): FrameRateOptions {
-        if (mFrameRateOptions == null) mFrameRateOptions = FrameRateOptions()
-        return mFrameRateOptions!!
-    }
+    actual var frameRateOptions: FrameRateOptions
+        get() {
+            if (mFrameRateOptions == null) mFrameRateOptions = FrameRateOptions()
+            return mFrameRateOptions!!
+        }
+        set(value) {
+            mFrameRateOptions = value
+            nativeRenderer.setFrameRateOptions(value.nativeOptions)
+        }
 
-    actual fun setClearOptions(options: ClearOptions) {
-        mClearOptions = options
-        nativeRenderer.setClearOptions(options.nativeOptions)
-    }
-    actual fun getClearOptions(): ClearOptions {
-        if (mClearOptions == null) mClearOptions = ClearOptions()
-        return mClearOptions!!
-    }
+    actual var clearOptions: ClearOptions
+        get() {
+            if (mClearOptions == null) mClearOptions = ClearOptions()
+            return mClearOptions!!
+        }
+        set(value) {
+            mClearOptions = value
+            nativeRenderer.setClearOptions(value.nativeOptions)
+        }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = nativeRenderer.setPresentationTime(monotonicClockNanos)
     actual fun setVsyncTime(steadyClockTimeNano: Long) = nativeRenderer.setVsyncTime(steadyClockTimeNano)
@@ -103,8 +106,8 @@ actual class Renderer internal constructor(
         nativeRenderer.readPixels(renderTarget.nativeRenderTarget, xoffset, yoffset, width, height, buffer.toNative())
     }
 
-    actual fun getUserTime(): Double = nativeRenderer.userTime
+    actual val userTime: Double get() = nativeRenderer.userTime
     actual fun resetUserTime() = nativeRenderer.resetUserTime()
     actual fun skipNextFrames(frameCount: Int) = nativeRenderer.skipNextFrames(frameCount)
-    actual fun getFrameToSkipCount(): Int = nativeRenderer.frameToSkipCount
+    actual val frameToSkipCount: Int get() = nativeRenderer.frameToSkipCount
 }

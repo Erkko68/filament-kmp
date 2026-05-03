@@ -55,36 +55,39 @@ actual class Renderer(private val engineRef: Engine, val nativeRenderer: JniRend
         actual val MIRROR_FRAME_FLAG_CLEAR: Int = JniRenderer.MIRROR_FRAME_FLAG_CLEAR
     }
 
-    actual fun getEngine(): Engine = engineRef
+    actual val engine: Engine get() = engineRef
 
-    actual fun setDisplayInfo(info: DisplayInfo) : Unit { nativeRenderer.setDisplayInfo(info.toJni()) }
-    actual fun getDisplayInfo(): DisplayInfo {
-        val jni = nativeRenderer.getDisplayInfo()
-        val info = DisplayInfo()
-        info.refreshRate = jni.refreshRate
-        return info
-    }
+    actual var displayInfo: DisplayInfo
+        get() {
+            val jni = nativeRenderer.getDisplayInfo()
+            val info = DisplayInfo()
+            info.refreshRate = jni.refreshRate
+            return info
+        }
+        set(value) { nativeRenderer.setDisplayInfo(value.toJni()) }
 
-    actual fun setFrameRateOptions(options: FrameRateOptions) : Unit { nativeRenderer.setFrameRateOptions(options.toJni()) }
-    actual fun getFrameRateOptions(): FrameRateOptions {
-        val jni = nativeRenderer.getFrameRateOptions()
-        val options = FrameRateOptions()
-        options.interval = jni.interval
-        options.headRoomRatio = jni.headRoomRatio
-        options.scaleRate = jni.scaleRate
-        options.history = jni.history
-        return options
-    }
+    actual var frameRateOptions: FrameRateOptions
+        get() {
+            val jni = nativeRenderer.getFrameRateOptions()
+            val options = FrameRateOptions()
+            options.interval = jni.interval
+            options.headRoomRatio = jni.headRoomRatio
+            options.scaleRate = jni.scaleRate
+            options.history = jni.history
+            return options
+        }
+        set(value) { nativeRenderer.setFrameRateOptions(value.toJni()) }
 
-    actual fun setClearOptions(options: ClearOptions) : Unit { nativeRenderer.setClearOptions(options.toJni()) }
-    actual fun getClearOptions(): ClearOptions {
-        val jni = nativeRenderer.getClearOptions()
-        val options = ClearOptions()
-        options.clearColor = jni.clearColor
-        options.clear = jni.clear
-        options.discard = jni.discard
-        return options
-    }
+    actual var clearOptions: ClearOptions
+        get() {
+            val jni = nativeRenderer.getClearOptions()
+            val options = ClearOptions()
+            options.clearColor = jni.clearColor
+            options.clear = jni.clear
+            options.discard = jni.discard
+            return options
+        }
+        set(value) { nativeRenderer.setClearOptions(value.toJni()) }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) : Unit { nativeRenderer.setPresentationTime(monotonicClockNanos) }
     actual fun setVsyncTime(steadyClockTimeNano: Long) : Unit { nativeRenderer.setVsyncTime(steadyClockTimeNano) }
@@ -116,8 +119,8 @@ actual class Renderer(private val engineRef: Engine, val nativeRenderer: JniRend
         nativeRenderer.readPixels(renderTarget.nativeRenderTarget, xoffset, yoffset, width, height, buffer.jni)
     }
 
-    actual fun getUserTime(): Double = nativeRenderer.getUserTime()
+    actual val userTime: Double get() = nativeRenderer.getUserTime()
     actual fun resetUserTime() : Unit { nativeRenderer.resetUserTime() }
     actual fun skipNextFrames(frameCount: Int) : Unit { nativeRenderer.skipNextFrames(frameCount) }
-    actual fun getFrameToSkipCount(): Int = nativeRenderer.getFrameToSkipCount()
+    actual val frameToSkipCount: Int get() = nativeRenderer.getFrameToSkipCount()
 }

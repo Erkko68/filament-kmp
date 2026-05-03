@@ -115,24 +115,25 @@ actual class Camera(val nativeCamera: JniCamera) {
         return result
     }
 
-    actual fun getNear(): Float = nativeCamera.near
-    actual fun getCullingFar(): Float = nativeCamera.cullingFar
+    actual val near: Float get() = nativeCamera.near
+    actual val cullingFar: Float get() = nativeCamera.cullingFar
     
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) =
         nativeCamera.setExposure(aperture, shutterSpeed, sensitivity)
 
     actual fun setExposure(exposure: Float) = nativeCamera.setExposure(exposure)
 
-    actual fun getAperture(): Float = nativeCamera.aperture
-    actual fun getShutterSpeed(): Float = nativeCamera.shutterSpeed
-    actual fun getSensitivity(): Float = nativeCamera.sensitivity
-    actual fun getFocalLength(): Double = nativeCamera.focalLength
+    actual val aperture: Float get() = nativeCamera.aperture
+    actual val shutterSpeed: Float get() = nativeCamera.shutterSpeed
+    actual val sensitivity: Float get() = nativeCamera.sensitivity
+    actual val focalLength: Double get() = nativeCamera.focalLength
 
-    actual fun setFocusDistance(distance: Float) = nativeCamera.setFocusDistance(distance)
-    actual fun getFocusDistance(): Float = nativeCamera.focusDistance
+    actual var focusDistance: Float
+        get() = nativeCamera.focusDistance
+        set(value) { nativeCamera.setFocusDistance(value) }
 
     actual fun getFieldOfViewInDegrees(direction: Fov): Double =
         nativeCamera.getFieldOfViewInDegrees(JniCamera.Fov.values()[direction.ordinal])
 
-    actual fun getEntity(): Entity = nativeCamera.entity
+    actual val entity: Entity get() = nativeCamera.entity
 }

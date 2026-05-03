@@ -173,84 +173,53 @@ expect class View {
         var customResolve: Boolean
     }
 
-    fun setName(name: String)
-    fun getName(): String?
-    fun setScene(scene: Scene?)
-    fun getScene(): Scene?
-    fun setCamera(camera: Camera?)
-    fun getCamera(): Camera?
-    fun hasCamera(): Boolean
-    fun setViewport(viewport: Viewport)
-    fun getViewport(): Viewport
-    fun setBlendMode(blendMode: BlendMode)
-    fun getBlendMode(): BlendMode
+    var name: String?
+    var scene: Scene?
+    var camera: Camera?
+    val hasCamera: Boolean
+    var viewport: Viewport
+    var blendMode: BlendMode
     fun setVisibleLayers(select: Int, values: Int)
     fun setLayerEnabled(layer: Int, enabled: Boolean)
     fun getVisibleLayers(): Int
-    fun setPostProcessingEnabled(enabled: Boolean)
-    fun isPostProcessingEnabled(): Boolean
-    fun setDithering(dithering: Dithering)
-    fun getDithering(): Dithering
-    fun setDynamicResolutionOptions(options: DynamicResolutionOptions)
-    fun getDynamicResolutionOptions(): DynamicResolutionOptions
+    var isPostProcessingEnabled: Boolean
+    var dithering: Dithering
+    var dynamicResolutionOptions: DynamicResolutionOptions
     fun getLastDynamicResolutionScale(): FloatArray
-    fun setRenderQuality(renderQuality: RenderQuality)
-    fun getRenderQuality(): RenderQuality
-    
-    fun setBloomOptions(options: BloomOptions)
-    fun getBloomOptions(): BloomOptions
-    fun setFogOptions(options: FogOptions)
-    fun getFogOptions(): FogOptions
-    fun setDepthOfFieldOptions(options: DepthOfFieldOptions)
-    fun getDepthOfFieldOptions(): DepthOfFieldOptions
-    fun setVignetteOptions(options: VignetteOptions)
-    fun getVignetteOptions(): VignetteOptions
-    fun setAmbientOcclusionOptions(options: AmbientOcclusionOptions)
-    fun getAmbientOcclusionOptions(): AmbientOcclusionOptions
-    fun setTemporalAntiAliasingOptions(options: TemporalAntiAliasingOptions)
-    fun getTemporalAntiAliasingOptions(): TemporalAntiAliasingOptions
-    fun setScreenSpaceReflectionsOptions(options: ScreenSpaceReflectionsOptions)
-    fun getScreenSpaceReflectionsOptions(): ScreenSpaceReflectionsOptions
+    var renderQuality: RenderQuality
+    var bloomOptions: BloomOptions
+    var fogOptions: FogOptions
+    var depthOfFieldOptions: DepthOfFieldOptions
+    var vignetteOptions: VignetteOptions
+    var ambientOcclusionOptions: AmbientOcclusionOptions
+    var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
+    var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
 
-    fun setRenderTarget(target: RenderTarget?)
-    fun getRenderTarget(): RenderTarget?
+    var renderTarget: RenderTarget?
 
-    fun setShadowType(type: ShadowType)
-    fun getShadowType(): ShadowType
-    fun setVsmShadowOptions(options: VsmShadowOptions)
-    fun getVsmShadowOptions(): VsmShadowOptions
-    fun setSoftShadowOptions(options: SoftShadowOptions)
-    fun getSoftShadowOptions(): SoftShadowOptions
-    fun setGuardBandOptions(options: GuardBandOptions)
-    fun getGuardBandOptions(): GuardBandOptions
-    fun setStereoscopicOptions(options: StereoscopicOptions)
-    fun getStereoscopicOptions(): StereoscopicOptions
-    fun setMultiSampleAntiAliasingOptions(options: MultiSampleAntiAliasingOptions)
-    fun getMultiSampleAntiAliasingOptions(): MultiSampleAntiAliasingOptions
+    var shadowType: ShadowType
+    var vsmShadowOptions: VsmShadowOptions
+    var softShadowOptions: SoftShadowOptions
+    var guardBandOptions: GuardBandOptions
+    var stereoscopicOptions: StereoscopicOptions
+    var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
 
-    fun setFrustumCullingEnabled(enabled: Boolean)
-    fun isFrustumCullingEnabled(): Boolean
-    fun setShadowingEnabled(enabled: Boolean)
-    fun setScreenSpaceRefractionEnabled(enabled: Boolean)
-    fun setStencilBufferEnabled(enabled: Boolean)
-    fun isStencilBufferEnabled(): Boolean
-    fun setFrontFaceWindingInverted(inverted: Boolean)
-    fun isFrontFaceWindingInverted(): Boolean
-    fun setTransparentPickingEnabled(enabled: Boolean)
-    fun isTransparentPickingEnabled(): Boolean
+    var isFrustumCullingEnabled: Boolean
+    var isShadowingEnabled: Boolean
+    var isScreenSpaceRefractionEnabled: Boolean
+    var isStencilBufferEnabled: Boolean
+    var isFrontFaceWindingInverted: Boolean
+    var isTransparentPickingEnabled: Boolean
 
     fun setMaterialGlobal(index: Int, value: FloatArray)
     fun getMaterialGlobal(index: Int): FloatArray
-    fun getFogEntity(): Int
     fun clearFrameHistory(engine: Engine)
     
     fun setDynamicLightingOptions(zNear: Float, zFar: Float)
 
-    fun setAntiAliasing(type: AntiAliasing)
-    fun getAntiAliasing(): AntiAliasing
-
-    fun setColorGrading(colorGrading: ColorGrading?)
-    fun getColorGrading(): ColorGrading?
+    val fogEntity: Int
+    var antiAliasing: AntiAliasing
+    var colorGrading: ColorGrading?
 
     fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit)
 }

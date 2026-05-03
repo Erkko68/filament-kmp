@@ -28,6 +28,5 @@ expect class TransformManager {
     fun openLocalTransformTransaction()
     fun commitLocalTransformTransaction()
     
-    fun setAccurateTranslationsEnabled(enable: Boolean)
-    fun isAccurateTranslationsEnabled(): Boolean
+    var isAccurateTranslationsEnabled: Boolean
 }

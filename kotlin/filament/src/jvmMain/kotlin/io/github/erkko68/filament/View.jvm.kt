@@ -31,6 +31,8 @@ actual class View(val nativeView: JniView) {
         actual val fragCoords: FloatArray
     )
 
+    private var mScene: Scene? = null
+    private var mCamera: Camera? = null
     private var mColorGrading: ColorGrading? = null
 
     actual class DynamicResolutionOptions actual constructor() {
@@ -219,41 +221,59 @@ actual class View(val nativeView: JniView) {
         actual var customResolve: Boolean get() = jni.customResolve; set(v) { jni.customResolve = v }
     }
 
-    actual fun setName(name: String) : Unit { nativeView.setName(name) }
-    actual fun getName(): String? = nativeView.getName()
-    actual fun setScene(scene: Scene?) : Unit { nativeView.setScene(scene?.nativeScene) }
-    actual fun getScene(): Scene? = null // TODO: Track scene
-    actual fun setCamera(camera: Camera?) : Unit { nativeView.setCamera(camera?.nativeCamera) }
-    actual fun getCamera(): Camera? = null // TODO: Track camera
-    actual fun hasCamera(): Boolean = nativeView.hasCamera()
+    actual var name: String?
+        get() = nativeView.getName()
+        set(value) { nativeView.setName(value ?: "") }
+    actual var scene: Scene?
+        get() = mScene
+        set(value) {
+            mScene = value
+            nativeView.setScene(value?.nativeScene)
+        }
+    actual var camera: Camera?
+        get() = mCamera
+        set(value) {
+            mCamera = value
+            nativeView.setCamera(value?.nativeCamera)
+        }
+    actual val hasCamera: Boolean get() = nativeView.hasCamera()
     
-    actual fun setViewport(viewport: Viewport) : Unit { nativeView.setViewport(JniViewport(viewport.left, viewport.bottom, viewport.width, viewport.height)) }
+    actual var viewport: Viewport
+        get() {
+            val v = nativeView.getViewport()
+            return Viewport(v.left, v.bottom, v.width, v.height)
+        }
+        set(value) { nativeView.setViewport(JniViewport(value.left, value.bottom, value.width, value.height)) }
 
-    actual fun setBlendMode(blendMode: BlendMode) : Unit { nativeView.setBlendMode(blendMode.toJni()) }
-    actual fun getBlendMode(): BlendMode = nativeView.getBlendMode()?.let { BlendMode.values()[it.ordinal] } ?: BlendMode.OPAQUE
+    actual var blendMode: BlendMode
+        get() = nativeView.getBlendMode()?.let { BlendMode.values()[it.ordinal] } ?: BlendMode.OPAQUE
+        set(value) { nativeView.setBlendMode(value.toJni()) }
 
-    actual fun setVisibleLayers(select: Int, values: Int) : Unit { nativeView.setVisibleLayers(select, values) }
-    actual fun setLayerEnabled(layer: Int, enabled: Boolean) : Unit { nativeView.setLayerEnabled(layer, enabled) }
+    actual fun setVisibleLayers(select: Int, values: Int) { nativeView.setVisibleLayers(select, values) }
+    actual fun setLayerEnabled(layer: Int, enabled: Boolean) { nativeView.setLayerEnabled(layer, enabled) }
     actual fun getVisibleLayers(): Int = nativeView.getVisibleLayers()
 
-    actual fun setPostProcessingEnabled(enabled: Boolean) : Unit { nativeView.setPostProcessingEnabled(enabled) }
-    actual fun isPostProcessingEnabled(): Boolean = nativeView.isPostProcessingEnabled()
+    actual var isPostProcessingEnabled: Boolean
+        get() = nativeView.isPostProcessingEnabled()
+        set(value) { nativeView.setPostProcessingEnabled(value) }
     
-    actual fun setDithering(dithering: Dithering) : Unit { nativeView.setDithering(dithering.toJni()) }
-    actual fun getDithering(): Dithering = Dithering.values()[nativeView.getDithering().ordinal]
+    actual var dithering: Dithering
+        get() = Dithering.values()[nativeView.getDithering().ordinal]
+        set(value) { nativeView.setDithering(value.toJni()) }
 
-    actual fun setDynamicResolutionOptions(options: DynamicResolutionOptions) : Unit { nativeView.setDynamicResolutionOptions(options.jni) }
-    actual fun getDynamicResolutionOptions(): DynamicResolutionOptions {
-        val o = nativeView.getDynamicResolutionOptions()
-        val k = DynamicResolutionOptions()
-        k.enabled = o.enabled
-        k.homogeneousScaling = o.homogeneousScaling
-        k.minScale = o.minScale
-        k.maxScale = o.maxScale
-        k.sharpness = o.sharpness
-        k.quality = Quality.values()[o.quality.ordinal]
-        return k
-    }
+    actual var dynamicResolutionOptions: DynamicResolutionOptions
+        get() {
+            val o = nativeView.getDynamicResolutionOptions()
+            val k = DynamicResolutionOptions()
+            k.enabled = o.enabled
+            k.homogeneousScaling = o.homogeneousScaling
+            k.minScale = o.minScale
+            k.maxScale = o.maxScale
+            k.sharpness = o.sharpness
+            k.quality = Quality.values()[o.quality.ordinal]
+            return k
+        }
+        set(value) { nativeView.setDynamicResolutionOptions(value.jni) }
 
     actual fun getLastDynamicResolutionScale(): FloatArray {
         val out = FloatArray(2)
@@ -261,226 +281,248 @@ actual class View(val nativeView: JniView) {
         return out
     }
 
-    actual fun setRenderQuality(renderQuality: RenderQuality) : Unit { nativeView.setRenderQuality(renderQuality.jni) }
-    actual fun getRenderQuality(): RenderQuality {
-        val o = nativeView.getRenderQuality()
-        val k = RenderQuality()
-        k.hdrColorBuffer = Quality.values()[o.hdrColorBuffer.ordinal]
-        return k
-    }
+    actual var renderQuality: RenderQuality
+        get() {
+            val o = nativeView.getRenderQuality()
+            val k = RenderQuality()
+            k.hdrColorBuffer = Quality.values()[o.hdrColorBuffer.ordinal]
+            return k
+        }
+        set(value) { nativeView.setRenderQuality(value.jni) }
     
-    actual fun setBloomOptions(options: BloomOptions) : Unit { nativeView.setBloomOptions(options.jni) }
-    actual fun getBloomOptions(): BloomOptions {
-        val o = nativeView.getBloomOptions()
-        val k = BloomOptions()
-        k.enabled = o.enabled
-        k.levels = o.levels
-        k.resolution = o.resolution
-        k.strength = o.strength
-        k.threshold = o.threshold
-        k.dirtStrength = o.dirtStrength
-        k.quality = Quality.values()[o.quality.ordinal]
-        k.lensFlare = o.lensFlare
-        k.starburst = o.starburst
-        k.chromaticAberration = o.chromaticAberration
-        k.ghostCount = o.ghostCount
-        k.ghostSpacing = o.ghostSpacing
-        k.ghostThreshold = o.ghostThreshold
-        k.haloRadius = o.haloRadius
-        k.haloThickness = o.haloThickness
-        k.haloThreshold = o.haloThreshold
-        k.highlight = o.highlight
-        k.blendMode = BloomOptions.BlendMode.values()[o.blendMode.ordinal]
-        return k
-    }
+    actual var bloomOptions: BloomOptions
+        get() {
+            val o = nativeView.getBloomOptions()
+            val k = BloomOptions()
+            k.enabled = o.enabled
+            k.levels = o.levels
+            k.resolution = o.resolution
+            k.strength = o.strength
+            k.threshold = o.threshold
+            k.dirtStrength = o.dirtStrength
+            k.quality = Quality.values()[o.quality.ordinal]
+            k.lensFlare = o.lensFlare
+            k.starburst = o.starburst
+            k.chromaticAberration = o.chromaticAberration
+            k.ghostCount = o.ghostCount
+            k.ghostSpacing = o.ghostSpacing
+            k.ghostThreshold = o.ghostThreshold
+            k.haloRadius = o.haloRadius
+            k.haloThickness = o.haloThickness
+            k.haloThreshold = o.haloThreshold
+            k.highlight = o.highlight
+            k.blendMode = BloomOptions.BlendMode.values()[o.blendMode.ordinal]
+            return k
+        }
+        set(value) { nativeView.setBloomOptions(value.jni) }
 
-    actual fun setFogOptions(options: FogOptions) : Unit { nativeView.setFogOptions(options.jni) }
-    actual fun getFogOptions(): FogOptions {
-        val o = nativeView.getFogOptions()
-        val k = FogOptions()
-        k.enabled = o.enabled
-        k.distance = o.distance
-        k.maximumOpacity = o.maximumOpacity
-        k.height = o.height
-        k.heightFalloff = o.heightFalloff
-        k.cutOffDistance = o.cutOffDistance
-        k.color = o.color
-        k.density = o.density
-        k.inScatteringStart = o.inScatteringStart
-        k.inScatteringSize = o.inScatteringSize
-        k.fogColorFromIbl = o.fogColorFromIbl
-        return k
-    }
+    actual var fogOptions: FogOptions
+        get() {
+            val o = nativeView.getFogOptions()
+            val k = FogOptions()
+            k.enabled = o.enabled
+            k.distance = o.distance
+            k.maximumOpacity = o.maximumOpacity
+            k.height = o.height
+            k.heightFalloff = o.heightFalloff
+            k.cutOffDistance = o.cutOffDistance
+            k.color = o.color
+            k.density = o.density
+            k.inScatteringStart = o.inScatteringStart
+            k.inScatteringSize = o.inScatteringSize
+            k.fogColorFromIbl = o.fogColorFromIbl
+            return k
+        }
+        set(value) { nativeView.setFogOptions(value.jni) }
 
-    actual fun setDepthOfFieldOptions(options: DepthOfFieldOptions) : Unit { nativeView.setDepthOfFieldOptions(options.jni) }
-    actual fun getDepthOfFieldOptions(): DepthOfFieldOptions {
-        val o = nativeView.getDepthOfFieldOptions()
-        val k = DepthOfFieldOptions()
-        k.enabled = o.enabled
-        k.cocScale = o.cocScale
-        k.maxApertureDiameter = o.maxApertureDiameter
-        k.filter = DepthOfFieldOptions.Filter.values()[Math.min(o.filter.ordinal, DepthOfFieldOptions.Filter.values().size - 1)]
-        k.nativeResolution = o.nativeResolution
-        k.foregroundRingCount = o.foregroundRingCount
-        k.backgroundRingCount = o.backgroundRingCount
-        k.fastGatherRingCount = o.fastGatherRingCount
-        k.maxForegroundCOC = o.maxForegroundCOC
-        k.maxBackgroundCOC = o.maxBackgroundCOC
-        return k
-    }
+    actual var depthOfFieldOptions: DepthOfFieldOptions
+        get() {
+            val o = nativeView.getDepthOfFieldOptions()
+            val k = DepthOfFieldOptions()
+            k.enabled = o.enabled
+            k.cocScale = o.cocScale
+            k.maxApertureDiameter = o.maxApertureDiameter
+            k.filter = DepthOfFieldOptions.Filter.values()[Math.min(o.filter.ordinal, DepthOfFieldOptions.Filter.values().size - 1)]
+            k.nativeResolution = o.nativeResolution
+            k.foregroundRingCount = o.foregroundRingCount
+            k.backgroundRingCount = o.backgroundRingCount
+            k.fastGatherRingCount = o.fastGatherRingCount
+            k.maxForegroundCOC = o.maxForegroundCOC
+            k.maxBackgroundCOC = o.maxBackgroundCOC
+            return k
+        }
+        set(value) { nativeView.setDepthOfFieldOptions(value.jni) }
 
-    actual fun setVignetteOptions(options: VignetteOptions) : Unit { nativeView.setVignetteOptions(options.jni) }
-    actual fun getVignetteOptions(): VignetteOptions {
-        val o = nativeView.getVignetteOptions()
-        val k = VignetteOptions()
-        k.enabled = o.enabled
-        k.midPoint = o.midPoint
-        k.roundness = o.roundness
-        k.feather = o.feather
-        k.color = o.color
-        return k
-    }
+    actual var vignetteOptions: VignetteOptions
+        get() {
+            val o = nativeView.getVignetteOptions()
+            val k = VignetteOptions()
+            k.enabled = o.enabled
+            k.midPoint = o.midPoint
+            k.roundness = o.roundness
+            k.feather = o.feather
+            k.color = o.color
+            return k
+        }
+        set(value) { nativeView.setVignetteOptions(value.jni) }
 
-    actual fun setAmbientOcclusionOptions(options: AmbientOcclusionOptions) : Unit {
-        // Map ssct manually
-        options.jni.ssctEnabled = options.ssct.enabled
-        options.jni.ssctLightConeRad = options.ssct.lightConeRad
-        options.jni.ssctShadowDistance = options.ssct.shadowDistance
-        options.jni.ssctContactDistanceMax = options.ssct.contactDistanceMax
-        options.jni.ssctIntensity = options.ssct.intensity
-        options.jni.ssctLightDirection = options.ssct.lightDirection
-        options.jni.ssctDepthBias = options.ssct.depthBias
-        options.jni.ssctDepthSlopeBias = options.ssct.depthSlopeBias
-        options.jni.ssctSampleCount = options.ssct.sampleCount
-        options.jni.ssctRayCount = options.ssct.rayCount
-        nativeView.setAmbientOcclusionOptions(options.jni)
-    }
+    actual var ambientOcclusionOptions: AmbientOcclusionOptions
+        get() {
+            val o = nativeView.getAmbientOcclusionOptions()
+            val k = AmbientOcclusionOptions()
+            k.radius = o.radius
+            k.bias = o.bias
+            k.intensity = o.intensity
+            k.power = o.power
+            k.minConeAngle = o.minHorizonAngleRad
+            k.quality = Quality.values()[o.quality.ordinal]
+            k.lowPassFilter = Quality.values()[o.lowPassFilter.ordinal]
+            k.upsampling = Quality.values()[o.upsampling.ordinal]
+            k.enabled = o.enabled
+            k.bentNormals = o.bentNormals
+            k.bilateralThreshold = o.bilateralThreshold
+            k.resolution = o.resolution
+            k.ssct.enabled = o.ssctEnabled
+            k.ssct.lightConeRad = o.ssctLightConeRad
+            k.ssct.shadowDistance = o.ssctShadowDistance
+            k.ssct.contactDistanceMax = o.ssctContactDistanceMax
+            k.ssct.intensity = o.ssctIntensity
+            k.ssct.lightDirection = o.ssctLightDirection
+            k.ssct.depthBias = o.ssctDepthBias
+            k.ssct.depthSlopeBias = o.ssctDepthSlopeBias
+            k.ssct.sampleCount = o.ssctSampleCount
+            k.ssct.rayCount = o.ssctRayCount
+            return k
+        }
+        set(value) {
+            // Map ssct manually
+            value.jni.ssctEnabled = value.ssct.enabled
+            value.jni.ssctLightConeRad = value.ssct.lightConeRad
+            value.jni.ssctShadowDistance = value.ssct.shadowDistance
+            value.jni.ssctContactDistanceMax = value.ssct.contactDistanceMax
+            value.jni.ssctIntensity = value.ssct.intensity
+            value.jni.ssctLightDirection = value.ssct.lightDirection
+            value.jni.ssctDepthBias = value.ssct.depthBias
+            value.jni.ssctDepthSlopeBias = value.ssct.depthSlopeBias
+            value.jni.ssctSampleCount = value.ssct.sampleCount
+            value.jni.ssctRayCount = value.ssct.rayCount
+            nativeView.setAmbientOcclusionOptions(value.jni)
+        }
 
-    actual fun getAmbientOcclusionOptions(): AmbientOcclusionOptions {
-        val o = nativeView.getAmbientOcclusionOptions()
-        val k = AmbientOcclusionOptions()
-        k.radius = o.radius
-        k.bias = o.bias
-        k.intensity = o.intensity
-        k.power = o.power
-        k.minConeAngle = o.minHorizonAngleRad
-        k.quality = Quality.values()[o.quality.ordinal]
-        k.lowPassFilter = Quality.values()[o.lowPassFilter.ordinal]
-        k.upsampling = Quality.values()[o.upsampling.ordinal]
-        k.enabled = o.enabled
-        k.bentNormals = o.bentNormals
-        k.bilateralThreshold = o.bilateralThreshold
-        k.resolution = o.resolution
-        k.ssct.enabled = o.ssctEnabled
-        k.ssct.lightConeRad = o.ssctLightConeRad
-        k.ssct.shadowDistance = o.ssctShadowDistance
-        k.ssct.contactDistanceMax = o.ssctContactDistanceMax
-        k.ssct.intensity = o.ssctIntensity
-        k.ssct.lightDirection = o.ssctLightDirection
-        k.ssct.depthBias = o.ssctDepthBias
-        k.ssct.depthSlopeBias = o.ssctDepthSlopeBias
-        k.ssct.sampleCount = o.ssctSampleCount
-        k.ssct.rayCount = o.ssctRayCount
-        return k
-    }
+    actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
+        get() {
+            val o = nativeView.getTemporalAntiAliasingOptions()
+            val k = TemporalAntiAliasingOptions()
+            k.enabled = o.enabled
+            k.feedback = o.feedback
+            k.lodBias = o.lodBias
+            k.sharpness = o.sharpness
+            k.upscaling = o.upscaling
+            k.filterHistory = o.filterHistory
+            k.filterInput = o.filterInput
+            k.useYCoCg = o.useYCoCg
+            k.hdr = o.hdr
+            k.boxType = o.boxType.ordinal
+            k.boxClipping = o.boxClipping.ordinal
+            k.jitterPattern = o.jitterPattern.ordinal
+            k.varianceGamma = o.varianceGamma
+            k.preventFlickering = o.preventFlickering
+            k.historyReprojection = o.historyReprojection
+            return k
+        }
+        set(value) { nativeView.setTemporalAntiAliasingOptions(value.jni) }
 
-    actual fun setTemporalAntiAliasingOptions(options: TemporalAntiAliasingOptions) : Unit { nativeView.setTemporalAntiAliasingOptions(options.jni) }
-    actual fun getTemporalAntiAliasingOptions(): TemporalAntiAliasingOptions {
-        val o = nativeView.getTemporalAntiAliasingOptions()
-        val k = TemporalAntiAliasingOptions()
-        k.enabled = o.enabled
-        k.feedback = o.feedback
-        k.lodBias = o.lodBias
-        k.sharpness = o.sharpness
-        k.upscaling = o.upscaling
-        k.filterHistory = o.filterHistory
-        k.filterInput = o.filterInput
-        k.useYCoCg = o.useYCoCg
-        k.hdr = o.hdr
-        k.boxType = o.boxType.ordinal
-        k.boxClipping = o.boxClipping.ordinal
-        k.jitterPattern = o.jitterPattern.ordinal
-        k.varianceGamma = o.varianceGamma
-        k.preventFlickering = o.preventFlickering
-        k.historyReprojection = o.historyReprojection
-        return k
-    }
+    actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
+        get() {
+            val o = nativeView.getScreenSpaceReflectionsOptions()
+            val k = ScreenSpaceReflectionsOptions()
+            k.enabled = o.enabled
+            k.thickness = o.thickness
+            k.bias = o.bias
+            k.maxDistance = o.maxDistance
+            k.stride = o.stride
+            return k
+        }
+        set(value) { nativeView.setScreenSpaceReflectionsOptions(value.jni) }
 
-    actual fun setScreenSpaceReflectionsOptions(options: ScreenSpaceReflectionsOptions) : Unit { nativeView.setScreenSpaceReflectionsOptions(options.jni) }
-    actual fun getScreenSpaceReflectionsOptions(): ScreenSpaceReflectionsOptions {
-        val o = nativeView.getScreenSpaceReflectionsOptions()
-        val k = ScreenSpaceReflectionsOptions()
-        k.enabled = o.enabled
-        k.thickness = o.thickness
-        k.bias = o.bias
-        k.maxDistance = o.maxDistance
-        k.stride = o.stride
-        return k
-    }
+    actual var renderTarget: RenderTarget?
+        get() = nativeView.getRenderTarget()?.let { RenderTarget(it) }
+        set(value) { nativeView.setRenderTarget(value?.nativeRenderTarget) }
 
-    actual fun setRenderTarget(target: RenderTarget?) : Unit { nativeView.setRenderTarget(target?.nativeRenderTarget) }
-    actual fun getRenderTarget(): RenderTarget? = nativeView.getRenderTarget()?.let { RenderTarget(it) }
-
-    actual fun setShadowType(type: ShadowType) : Unit { nativeView.setShadowType(type.toJni()) }
-    actual fun getShadowType(): ShadowType = ShadowType.values()[Math.min(nativeView.getShadowType().ordinal, ShadowType.values().size - 1)]
+    actual var shadowType: ShadowType
+        get() = ShadowType.values()[Math.min(nativeView.getShadowType().ordinal, ShadowType.values().size - 1)]
+        set(value) { nativeView.setShadowType(value.toJni()) }
     
-    actual fun setVsmShadowOptions(options: VsmShadowOptions) : Unit { nativeView.setVsmShadowOptions(options.jni) }
-    actual fun getVsmShadowOptions(): VsmShadowOptions {
-        val o = nativeView.getVsmShadowOptions()
-        val k = VsmShadowOptions()
-        k.anisotropy = o.anisotropy
-        k.mipmapping = o.mipmapping
-        k.highPrecision = o.highPrecision
-        // k.msaaSamples missing?
-        k.lightBleedReduction = o.lightBleedReduction
-        return k
-    }
+    actual var vsmShadowOptions: VsmShadowOptions
+        get() {
+            val o = nativeView.getVsmShadowOptions()
+            val k = VsmShadowOptions()
+            k.anisotropy = o.anisotropy
+            k.mipmapping = o.mipmapping
+            k.highPrecision = o.highPrecision
+            // k.msaaSamples missing?
+            k.lightBleedReduction = o.lightBleedReduction
+            return k
+        }
+        set(value) { nativeView.setVsmShadowOptions(value.jni) }
 
-    actual fun setSoftShadowOptions(options: SoftShadowOptions) : Unit { nativeView.setSoftShadowOptions(options.jni) }
-    actual fun getSoftShadowOptions(): SoftShadowOptions {
-        val o = nativeView.getSoftShadowOptions()
-        val k = SoftShadowOptions()
-        k.penumbraScale = o.penumbraScale
-        k.penumbraRatioScale = o.penumbraRatioScale
-        return k
-    }
+    actual var softShadowOptions: SoftShadowOptions
+        get() {
+            val o = nativeView.getSoftShadowOptions()
+            val k = SoftShadowOptions()
+            k.penumbraScale = o.penumbraScale
+            k.penumbraRatioScale = o.penumbraRatioScale
+            return k
+        }
+        set(value) { nativeView.setSoftShadowOptions(value.jni) }
 
-    actual fun setGuardBandOptions(options: GuardBandOptions) : Unit { nativeView.setGuardBandOptions(options.jni) }
-    actual fun getGuardBandOptions(): GuardBandOptions {
-        val o = nativeView.getGuardBandOptions()
-        val k = GuardBandOptions()
-        k.enabled = o.enabled
-        return k
-    }
+    actual var guardBandOptions: GuardBandOptions
+        get() {
+            val o = nativeView.getGuardBandOptions()
+            val k = GuardBandOptions()
+            k.enabled = o.enabled
+            return k
+        }
+        set(value) { nativeView.setGuardBandOptions(value.jni) }
 
-    actual fun setStereoscopicOptions(options: StereoscopicOptions) : Unit { nativeView.setStereoscopicOptions(options.jni) }
-    actual fun getStereoscopicOptions(): StereoscopicOptions {
-        val o = nativeView.getStereoscopicOptions()
-        val k = StereoscopicOptions()
-        k.enabled = o.enabled
-        return k
-    }
+    actual var stereoscopicOptions: StereoscopicOptions
+        get() {
+            val o = nativeView.getStereoscopicOptions()
+            val k = StereoscopicOptions()
+            k.enabled = o.enabled
+            return k
+        }
+        set(value) { nativeView.setStereoscopicOptions(value.jni) }
 
-    actual fun setMultiSampleAntiAliasingOptions(options: MultiSampleAntiAliasingOptions) : Unit { nativeView.setMultiSampleAntiAliasingOptions(options.jni) }
-    actual fun getMultiSampleAntiAliasingOptions(): MultiSampleAntiAliasingOptions {
-        val o = nativeView.getMultiSampleAntiAliasingOptions()
-        val k = MultiSampleAntiAliasingOptions()
-        k.enabled = o.enabled
-        k.sampleCount = o.sampleCount
-        k.customResolve = o.customResolve
-        return k
-    }
+    actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
+        get() {
+            val o = nativeView.getMultiSampleAntiAliasingOptions()
+            val k = MultiSampleAntiAliasingOptions()
+            k.enabled = o.enabled
+            k.sampleCount = o.sampleCount
+            k.customResolve = o.customResolve
+            return k
+        }
+        set(value) { nativeView.setMultiSampleAntiAliasingOptions(value.jni) }
 
-    actual fun setFrustumCullingEnabled(enabled: Boolean) : Unit { nativeView.setFrustumCullingEnabled(enabled) }
-    actual fun isFrustumCullingEnabled(): Boolean = nativeView.isFrustumCullingEnabled()
-    actual fun setShadowingEnabled(enabled: Boolean) : Unit { nativeView.setShadowingEnabled(enabled) }
-    actual fun setScreenSpaceRefractionEnabled(enabled: Boolean) : Unit { nativeView.setScreenSpaceRefractionEnabled(enabled) }
-    actual fun setStencilBufferEnabled(enabled: Boolean) : Unit { nativeView.setStencilBufferEnabled(enabled) }
-    actual fun isStencilBufferEnabled(): Boolean = nativeView.isStencilBufferEnabled()
-    actual fun setFrontFaceWindingInverted(inverted: Boolean) : Unit { nativeView.setFrontFaceWindingInverted(inverted) }
-    actual fun isFrontFaceWindingInverted(): Boolean = nativeView.isFrontFaceWindingInverted()
-    actual fun setTransparentPickingEnabled(enabled: Boolean) : Unit { nativeView.setTransparentPickingEnabled(enabled) }
-    actual fun isTransparentPickingEnabled(): Boolean = nativeView.isTransparentPickingEnabled()
+    actual var isFrustumCullingEnabled: Boolean
+        get() = nativeView.isFrustumCullingEnabled()
+        set(value) { nativeView.setFrustumCullingEnabled(value) }
+    actual var isShadowingEnabled: Boolean
+        get() = nativeView.isShadowingEnabled()
+        set(value) { nativeView.setShadowingEnabled(value) }
+    actual var isScreenSpaceRefractionEnabled: Boolean
+        get() = nativeView.isScreenSpaceRefractionEnabled()
+        set(value) { nativeView.setScreenSpaceRefractionEnabled(value) }
+    actual var isStencilBufferEnabled: Boolean
+        get() = nativeView.isStencilBufferEnabled()
+        set(value) { nativeView.setStencilBufferEnabled(value) }
+    actual var isFrontFaceWindingInverted: Boolean
+        get() = nativeView.isFrontFaceWindingInverted()
+        set(value) { nativeView.setFrontFaceWindingInverted(value) }
+    actual var isTransparentPickingEnabled: Boolean
+        get() = nativeView.isTransparentPickingEnabled()
+        set(value) { nativeView.setTransparentPickingEnabled(value) }
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) : Unit { nativeView.setMaterialGlobal(index, value) }
     actual fun getMaterialGlobal(index: Int): FloatArray {
@@ -488,18 +530,20 @@ actual class View(val nativeView: JniView) {
         nativeView.getMaterialGlobal(index, out)
         return out
     }
-    actual fun getFogEntity(): Int = nativeView.getFogEntity()
+    actual val fogEntity: Int get() = nativeView.getFogEntity()
     actual fun clearFrameHistory(engine: Engine) : Unit { nativeView.clearFrameHistory(engine.nativeEngine) }
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) : Unit { nativeView.setDynamicLightingOptions(zNear, zFar) }
 
-    actual fun setAntiAliasing(type: AntiAliasing) : Unit { nativeView.setAntiAliasing(type.toJni()) }
-    actual fun getAntiAliasing(): AntiAliasing = AntiAliasing.values()[nativeView.getAntiAliasing().ordinal]
+    actual var antiAliasing: AntiAliasing
+        get() = AntiAliasing.values()[nativeView.getAntiAliasing().ordinal]
+        set(value) { nativeView.setAntiAliasing(value.toJni()) }
 
-    actual fun setColorGrading(colorGrading: ColorGrading?) {
-        mColorGrading = colorGrading
-        nativeView.setColorGrading(colorGrading?.nativeColorGrading)
-    }
-    actual fun getColorGrading(): ColorGrading? = mColorGrading
+    actual var colorGrading: ColorGrading?
+        get() = mColorGrading
+        set(value) {
+            mColorGrading = value
+            nativeView.setColorGrading(value?.nativeColorGrading)
+        }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         nativeView.pick(x, y, null) { r ->
@@ -507,8 +551,4 @@ actual class View(val nativeView: JniView) {
         }
     }
 
-    actual fun getViewport(): Viewport {
-        val v = nativeView.getViewport()
-        return Viewport(v.left, v.bottom, v.width, v.height)
-    }
 }
