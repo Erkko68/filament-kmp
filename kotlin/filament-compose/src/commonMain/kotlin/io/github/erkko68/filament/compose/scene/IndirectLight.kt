@@ -75,9 +75,9 @@ fun IndirectLight(
         rotation?.let { builder.rotation(it) }
 
         val ibl = builder.build(engine)
-        scene.setIndirectLight(ibl)
+        scene.indirectLight = ibl
         onDispose {
-            scene.setIndirectLight(null)
+            scene.indirectLight = null
             engine.destroyIndirectLight(ibl)
         }
     }

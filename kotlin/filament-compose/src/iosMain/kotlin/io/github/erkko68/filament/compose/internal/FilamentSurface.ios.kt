@@ -75,7 +75,7 @@ internal actual fun FilamentSurface(
                             surfaceAttached = true
                         }
                         metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
-                        view.setViewport(Viewport(0, 0, width, height))
+                        view.viewport = Viewport(0, 0, width, height)
                         onResizeRef[0](width.toDouble() / height.toDouble())
                     }
                 }

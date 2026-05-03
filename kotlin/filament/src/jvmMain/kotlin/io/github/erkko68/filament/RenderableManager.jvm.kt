@@ -189,7 +189,7 @@ actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.fi
         nativeRenderableManager.setMaterialInstanceAt(instance, primitiveIndex, materialInstance.nativeMaterialInstance)
     
     actual fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance? {
-        val jni = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex) ?: return null
+        val jni = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex)
         return MaterialInstance(jni)
     }
     

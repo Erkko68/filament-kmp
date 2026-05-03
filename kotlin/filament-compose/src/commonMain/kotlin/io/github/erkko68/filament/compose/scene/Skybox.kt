@@ -67,9 +67,9 @@ fun Skybox(
         }
 
         val skybox = builder.build(engine)
-        scene.setSkybox(skybox)
+        scene.skybox = skybox
         onDispose {
-            scene.setSkybox(null)
+            scene.skybox = null
             engine.destroySkybox(skybox)
         }
     }

@@ -73,13 +73,13 @@ fun FilamentView(
     var cameraConfig by remember { mutableStateOf(defaultConfig) }
 
     remember(view, scene, camera, postProcessingEnabled, frustumCullingEnabled, shadowingEnabled, screenSpaceRefractionEnabled, stencilBufferEnabled) {
-        view.setScene(scene)
-        view.setCamera(camera)
-        view.setPostProcessingEnabled(postProcessingEnabled)
-        view.setFrustumCullingEnabled(frustumCullingEnabled)
-        view.setShadowingEnabled(shadowingEnabled)
-        view.setScreenSpaceRefractionEnabled(screenSpaceRefractionEnabled)
-        view.setStencilBufferEnabled(stencilBufferEnabled)
+        view.scene = scene
+        view.camera = camera
+        view.isPostProcessingEnabled = postProcessingEnabled
+        view.isFrustumCullingEnabled = frustumCullingEnabled
+        view.isShadowingEnabled = shadowingEnabled
+        view.isScreenSpaceRefractionEnabled = screenSpaceRefractionEnabled
+        view.isStencilBufferEnabled = stencilBufferEnabled
         cameraConfig.applyTo(camera, 1.0)
     }
 

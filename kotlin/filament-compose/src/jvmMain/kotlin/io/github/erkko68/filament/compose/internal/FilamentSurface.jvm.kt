@@ -140,15 +140,15 @@ internal actual fun FilamentSurface(
                 .texture(RenderTarget.AttachmentPoint.DEPTH, depthTexture)
                 .build(engine)
             val swapChain = engine.createSwapChain(w, h, 0)
-            view.setRenderTarget(renderTarget)
-            view.setViewport(Viewport(0, 0, w, h))
+            view.renderTarget = renderTarget
+            view.viewport = Viewport(0, 0, w, h)
             onResizeRef[0](w.toDouble() / h.toDouble())
             surface = OffscreenSurface(colorTexture, depthTexture, renderTarget, swapChain, w, h)
         }
 
         onDispose {
             val s = surface ?: return@onDispose
-            view.setRenderTarget(null)
+            view.renderTarget = null
             surface = null
             engine.flushAndWait()
             s.destroy(engine)

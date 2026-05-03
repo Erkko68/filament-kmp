@@ -67,7 +67,7 @@ internal actual fun FilamentSurface(
         val sc = swapChainHolder[0] ?: engine.createSwapChain(NativeSurface(canvas)).also {
             swapChainHolder[0] = it
         }
-        view.setViewport(Viewport(0, 0, w, h))
+        view.viewport = Viewport(0, 0, w, h)
         onResizeRef[0](w.toDouble() / h.toDouble())
 
         // Force an immediate render to fill the newly resized canvas before the next browser paint.

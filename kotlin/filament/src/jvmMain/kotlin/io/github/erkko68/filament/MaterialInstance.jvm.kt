@@ -31,7 +31,7 @@ actual class MaterialInstance(val nativeMaterialInstance: JniMaterialInstance) {
     }
 
     actual val material: Material get() = Material(nativeMaterialInstance.material)
-    actual val name: String get() = nativeMaterialInstance.name ?: ""
+    actual val name: String get() = nativeMaterialInstance.name
 
     actual fun setParameter(name: String, x: Boolean) = nativeMaterialInstance.setParameter(name, x)
     actual fun setParameter(name: String, x: Float) = nativeMaterialInstance.setParameter(name, x)

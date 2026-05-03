@@ -27,16 +27,14 @@ fun Bloom(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, strength, threshold, quality) {
-        val options = view.getBloomOptions().apply {
+        view.bloomOptions = view.bloomOptions.apply {
             this.enabled = enabled
             this.strength = strength
             this.threshold = threshold
             this.quality = quality
         }
-        view.setBloomOptions(options)
         onDispose {
-            options.enabled = false
-            view.setBloomOptions(options)
+            view.bloomOptions = view.bloomOptions.apply { this.enabled = false }
         }
     }
 }
@@ -56,17 +54,15 @@ fun Vignette(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, midPoint, roundness, feather, color) {
-        val options = view.getVignetteOptions().apply {
+        view.vignetteOptions = view.vignetteOptions.apply {
             this.enabled = enabled
             this.midPoint = midPoint
             this.roundness = roundness
             this.feather = feather
             this.color = floatArrayOf(color.r, color.g, color.b, 1.0f)
         }
-        view.setVignetteOptions(options)
         onDispose {
-            options.enabled = false
-            view.setVignetteOptions(options)
+            view.vignetteOptions = view.vignetteOptions.apply { this.enabled = false }
         }
     }
 }
@@ -85,7 +81,7 @@ fun Fog(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, distance, density, height, heightFalloff, color) {
-        val options = view.getFogOptions().apply {
+        view.fogOptions = view.fogOptions.apply {
             this.enabled = enabled
             this.distance = distance
             this.density = density
@@ -93,10 +89,8 @@ fun Fog(
             this.heightFalloff = heightFalloff
             this.color = floatArrayOf(color.r, color.g, color.b)
         }
-        view.setFogOptions(options)
         onDispose {
-            options.enabled = false
-            view.setFogOptions(options)
+            view.fogOptions = view.fogOptions.apply { this.enabled = false }
         }
     }
 }
@@ -114,17 +108,15 @@ fun AmbientOcclusion(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, radius, bias, intensity, quality) {
-        val options = view.getAmbientOcclusionOptions().apply {
+        view.ambientOcclusionOptions = view.ambientOcclusionOptions.apply {
             this.enabled = enabled
             this.radius = radius
             this.bias = bias
             this.intensity = intensity
             this.quality = quality
         }
-        view.setAmbientOcclusionOptions(options)
         onDispose {
-            options.enabled = false
-            view.setAmbientOcclusionOptions(options)
+            view.ambientOcclusionOptions = view.ambientOcclusionOptions.apply { this.enabled = false }
         }
     }
 }
@@ -143,25 +135,18 @@ fun AntiAliasing(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(msaaEnabled, msaaSampleCount, fxaaEnabled, taaEnabled) {
-        val msaaOptions = view.getMultiSampleAntiAliasingOptions().apply {
+        view.multiSampleAntiAliasingOptions = view.multiSampleAntiAliasingOptions.apply {
             this.enabled = msaaEnabled
             this.sampleCount = msaaSampleCount
         }
-        view.setMultiSampleAntiAliasingOptions(msaaOptions)
-
-        view.setAntiAliasing(if (fxaaEnabled) View.AntiAliasing.FXAA else View.AntiAliasing.NONE)
-
-        val taaOptions = view.getTemporalAntiAliasingOptions().apply {
+        view.antiAliasing = if (fxaaEnabled) View.AntiAliasing.FXAA else View.AntiAliasing.NONE
+        view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply {
             this.enabled = taaEnabled
         }
-        view.setTemporalAntiAliasingOptions(taaOptions)
-
         onDispose {
-            msaaOptions.enabled = false
-            view.setMultiSampleAntiAliasingOptions(msaaOptions)
-            view.setAntiAliasing(View.AntiAliasing.NONE)
-            taaOptions.enabled = false
-            view.setTemporalAntiAliasingOptions(taaOptions)
+            view.multiSampleAntiAliasingOptions = view.multiSampleAntiAliasingOptions.apply { this.enabled = false }
+            view.antiAliasing = View.AntiAliasing.NONE
+            view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply { this.enabled = false }
         }
     }
 }
@@ -178,16 +163,14 @@ fun ScreenSpaceReflections(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, thickness, bias, maxDistance) {
-        val options = view.getScreenSpaceReflectionsOptions().apply {
+        view.screenSpaceReflectionsOptions = view.screenSpaceReflectionsOptions.apply {
             this.enabled = enabled
             this.thickness = thickness
             this.bias = bias
             this.maxDistance = maxDistance
         }
-        view.setScreenSpaceReflectionsOptions(options)
         onDispose {
-            options.enabled = false
-            view.setScreenSpaceReflectionsOptions(options)
+            view.screenSpaceReflectionsOptions = view.screenSpaceReflectionsOptions.apply { this.enabled = false }
         }
     }
 }
@@ -218,9 +201,9 @@ fun ColorGrade(
             .whiteBalance(whiteBalanceTemperature, whiteBalanceTint)
             .toneMapper(toneMapper)
             .build(engine)
-        view.setColorGrading(colorGrading)
+        view.colorGrading = colorGrading
         onDispose {
-            view.setColorGrading(null)
+            view.colorGrading = null
             engine.destroyColorGrading(colorGrading)
         }
     }
@@ -259,17 +242,15 @@ fun DepthOfField(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, cocScale, maxApertureDiameter, filter, nativeResolution) {
-        val options = view.getDepthOfFieldOptions().apply {
+        view.depthOfFieldOptions = view.depthOfFieldOptions.apply {
             this.enabled = enabled
             this.cocScale = cocScale
             this.maxApertureDiameter = maxApertureDiameter
             this.filter = filter
             this.nativeResolution = nativeResolution
         }
-        view.setDepthOfFieldOptions(options)
         onDispose {
-            options.enabled = false
-            view.setDepthOfFieldOptions(options)
+            view.depthOfFieldOptions = view.depthOfFieldOptions.apply { this.enabled = false }
         }
     }
 }
@@ -302,22 +283,20 @@ fun Shadows(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(type, vsmAnisotropy, vsmMipmapping, vsmMsaaSamples, vsmHighPrecision, vsmLightBleedReduction, penumbraScale, penumbraRatioScale) {
-        view.setShadowType(type)
-        val vsmOptions = view.getVsmShadowOptions().apply {
+        view.shadowType = type
+        view.vsmShadowOptions = view.vsmShadowOptions.apply {
             this.anisotropy = vsmAnisotropy
             this.mipmapping = vsmMipmapping
             this.msaaSamples = vsmMsaaSamples
             this.highPrecision = vsmHighPrecision
             this.lightBleedReduction = vsmLightBleedReduction
         }
-        view.setVsmShadowOptions(vsmOptions)
-        val softOptions = view.getSoftShadowOptions().apply {
+        view.softShadowOptions = view.softShadowOptions.apply {
             this.penumbraScale = penumbraScale
             this.penumbraRatioScale = penumbraRatioScale
         }
-        view.setSoftShadowOptions(softOptions)
         onDispose {
-            view.setShadowType(View.ShadowType.PCF)
+            view.shadowType = View.ShadowType.PCF
         }
     }
 }
@@ -344,7 +323,7 @@ fun DynamicResolution(
 ) {
     val view = LocalFilamentView.current
     DisposableEffect(enabled, minScale, maxScale, sharpness, quality, homogeneousScaling) {
-        val options = view.getDynamicResolutionOptions().apply {
+        view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply {
             this.enabled = enabled
             this.minScale = minScale
             this.maxScale = maxScale
@@ -352,10 +331,8 @@ fun DynamicResolution(
             this.quality = quality
             this.homogeneousScaling = homogeneousScaling
         }
-        view.setDynamicResolutionOptions(options)
         onDispose {
-            options.enabled = false
-            view.setDynamicResolutionOptions(options)
+            view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply { this.enabled = false }
         }
     }
 }

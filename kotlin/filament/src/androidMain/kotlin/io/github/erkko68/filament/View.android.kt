@@ -10,6 +10,8 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     private var mScene: Scene? = null
     private var mCamera: Camera? = null
     private var mRenderTarget: RenderTarget? = null
+    private var _isShadowingEnabled: Boolean = true
+    private var _isScreenSpaceRefractionEnabled: Boolean = false
 
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
@@ -529,11 +531,11 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         get() = this@View.nativeView.isFrustumCullingEnabled
         set(value) { this@View.nativeView.setFrustumCullingEnabled(value) }
     actual var isShadowingEnabled: Boolean
-        get() = this@View.nativeView.isShadowingEnabled
-        set(value) { this@View.nativeView.setShadowingEnabled(value) }
+        get() = _isShadowingEnabled
+        set(value) { _isShadowingEnabled = value; this@View.nativeView.setShadowingEnabled(value) }
     actual var isScreenSpaceRefractionEnabled: Boolean
-        get() = this@View.nativeView.isScreenSpaceRefractionEnabled
-        set(value) { this@View.nativeView.setScreenSpaceRefractionEnabled(value) }
+        get() = _isScreenSpaceRefractionEnabled
+        set(value) { _isScreenSpaceRefractionEnabled = value; this@View.nativeView.setScreenSpaceRefractionEnabled(value) }
     actual var isStencilBufferEnabled: Boolean
         get() = this@View.nativeView.isStencilBufferEnabled
         set(value) { this@View.nativeView.setStencilBufferEnabled(value) }

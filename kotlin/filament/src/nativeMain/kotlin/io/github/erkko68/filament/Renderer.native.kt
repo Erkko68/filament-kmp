@@ -29,12 +29,12 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         actual val MIRROR_FRAME_FLAG_CLEAR: Int = 0x4
     }
 
-    private lateinit var engine: Engine
+    private lateinit var _engine: Engine
     internal fun setEngine(engine: Engine): Renderer {
-        this.engine = engine
+        this._engine = engine
         return this
     }
-    actual val engine: Engine get() = engine
+    actual val engine: Engine get() = _engine
 
     actual var displayInfo: DisplayInfo
         get() = DisplayInfo() // Cache not implemented

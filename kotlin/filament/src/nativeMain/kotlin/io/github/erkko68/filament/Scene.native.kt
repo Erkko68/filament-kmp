@@ -6,20 +6,20 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaScene
 
 actual class Scene internal constructor(internal var nativeHandle: CPointer<FilaScene>?) {
-    private var skybox: Skybox? = null
-    private var indirectLight: IndirectLight? = null
+    private var _skybox: Skybox? = null
+    private var _indirectLight: IndirectLight? = null
 
     actual var skybox: Skybox?
-        get() = this.skybox
+        get() = _skybox
         set(value) {
-            this.skybox = value
+            _skybox = value
             FilaScene_setSkybox(nativeHandle, value?.nativeHandle)
         }
 
     actual var indirectLight: IndirectLight?
-        get() = this.indirectLight
+        get() = _indirectLight
         set(value) {
-            this.indirectLight = value
+            _indirectLight = value
             FilaScene_setIndirectLight(nativeHandle, value?.nativeHandle)
         }
 
@@ -48,7 +48,7 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
     actual fun getEntities(): IntArray = getEntities(null)
 
     actual fun getEntities(outArray: IntArray?): IntArray {
-        val count = getEntityCount()
+        val count = entityCount
         val result = if (outArray != null && outArray.size >= count) outArray else IntArray(count)
         if (count > 0) {
             result.usePinned { pinned ->

@@ -1,20 +1,20 @@
 package io.github.erkko68.filament
 
 actual class Scene internal constructor(val nativeScene: com.google.android.filament.Scene) {
-    private var skybox: Skybox? = null
-    private var indirectLight: IndirectLight? = null
+    private var _skybox: Skybox? = null
+    private var _indirectLight: IndirectLight? = null
 
     actual var skybox: Skybox?
-        get() = this.skybox // Or better, just rename the backing field
+        get() = _skybox
         set(value) {
-            // Need to use backing field? Let's just delegate to nativeScene!
-            // Wait, nativeScene.skybox = value?.nativeSkybox.
+            _skybox = value
             nativeScene.skybox = value?.nativeSkybox
         }
 
     actual var indirectLight: IndirectLight?
-        get() = this.indirectLight
+        get() = _indirectLight
         set(value) {
+            _indirectLight = value
             nativeScene.indirectLight = value?.nativeIndirectLight
         }
 

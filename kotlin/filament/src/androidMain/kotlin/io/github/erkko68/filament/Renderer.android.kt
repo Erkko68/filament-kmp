@@ -4,7 +4,7 @@ import com.google.android.filament.Renderer as AndroidRenderer
 import com.google.android.filament.Viewport as AndroidViewport
 
 actual class Renderer internal constructor(
-    private val engine: Engine,
+    private val _engine: Engine,
     val nativeRenderer: AndroidRenderer
 ) {
     private var mDisplayInfo: DisplayInfo? = null
@@ -52,7 +52,7 @@ actual class Renderer internal constructor(
         actual val MIRROR_FRAME_FLAG_CLEAR: Int = AndroidRenderer.MIRROR_FRAME_FLAG_CLEAR
     }
 
-    actual val engine: Engine get() = engine
+    actual val engine: Engine get() = _engine
 
     actual var displayInfo: DisplayInfo
         get() {
