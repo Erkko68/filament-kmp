@@ -182,7 +182,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
 
     actual var name: String?
-        get() = null
+        get() = FilaView_getName(nativeHandle)?.toKString()
         set(value) { FilaView_setName(nativeHandle, value ?: "") }
 
     actual var scene: Scene?

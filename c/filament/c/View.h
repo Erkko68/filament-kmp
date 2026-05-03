@@ -195,6 +195,7 @@ typedef void (*FilaViewPickingCallback)(const FilaViewPickingQueryResult* result
 
 // View
 void FilaView_setName(FilaView* view, const char* name);
+const char* FilaView_getName(const FilaView* view);
 void FilaView_setScene(FilaView* view, FilaScene* scene);
 void FilaView_setCamera(FilaView* view, FilaCamera* camera);
 bool FilaView_hasCamera(const FilaView* view);

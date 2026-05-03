@@ -24,6 +24,10 @@ void FilaView_setName(FilaView* view, const char* name) {
     FILA_CAST(View, view)->setName(name);
 }
 
+const char* FilaView_getName(const FilaView* view) {
+    return FILA_CONST_CAST(View, view)->getName();
+}
+
 void FilaView_setScene(FilaView* view, FilaScene* scene) {
     FILA_CAST(View, view)->setScene(FILA_CAST(Scene, scene));
 }
