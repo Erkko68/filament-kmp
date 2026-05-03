@@ -110,11 +110,7 @@ actual class LightManager(val nativeLightManager: JniLightManager) {
     actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getColor(instance, out); return out }
     actual fun setIntensity(instance: EntityInstance, intensity: Float) = nativeLightManager.setIntensity(instance, intensity)
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) {
-        // Find if JNI has this overload. If not, we might need to calculate or use intensity.
-        // Actually JNI LightManager has: public void setIntensity(int instance, float intensity)
-        // It doesn't seem to have the watts/efficiency overload in the instance methods.
-        // I'll calculate it if needed, or for now just call setIntensity with watts.
-        nativeLightManager.setIntensity(instance, watts * efficiency * 683.0f) 
+        nativeLightManager.setIntensity(instance, watts * efficiency * 683.0f)
     }
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) = nativeLightManager.setIntensityCandela(instance, intensity)
     actual fun getIntensity(instance: EntityInstance): Float = nativeLightManager.getIntensity(instance)

@@ -26,6 +26,15 @@ FilaToneMapper* FilaToneMapper_DisplayRange();
 
 void FilaToneMapper_destroy(FilaToneMapper* toneMapper);
 
+float FilaToneMapper_Generic_getContrast(const FilaToneMapper* toneMapper);
+float FilaToneMapper_Generic_getMidGrayIn(const FilaToneMapper* toneMapper);
+float FilaToneMapper_Generic_getMidGrayOut(const FilaToneMapper* toneMapper);
+float FilaToneMapper_Generic_getHdrMax(const FilaToneMapper* toneMapper);
+void FilaToneMapper_Generic_setContrast(FilaToneMapper* toneMapper, float contrast);
+void FilaToneMapper_Generic_setMidGrayIn(FilaToneMapper* toneMapper, float midGrayIn);
+void FilaToneMapper_Generic_setMidGrayOut(FilaToneMapper* toneMapper, float midGrayOut);
+void FilaToneMapper_Generic_setHdrMax(FilaToneMapper* toneMapper, float hdrMax);
+
 #ifdef __cplusplus
 }
 #endif

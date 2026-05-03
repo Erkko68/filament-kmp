@@ -47,4 +47,36 @@ void FilaToneMapper_destroy(FilaToneMapper* toneMapper) {
     delete reinterpret_cast<ToneMapper*>(toneMapper);
 }
 
+float FilaToneMapper_Generic_getContrast(const FilaToneMapper* toneMapper) {
+    return reinterpret_cast<const GenericToneMapper*>(toneMapper)->getContrast();
+}
+
+float FilaToneMapper_Generic_getMidGrayIn(const FilaToneMapper* toneMapper) {
+    return reinterpret_cast<const GenericToneMapper*>(toneMapper)->getMidGrayIn();
+}
+
+float FilaToneMapper_Generic_getMidGrayOut(const FilaToneMapper* toneMapper) {
+    return reinterpret_cast<const GenericToneMapper*>(toneMapper)->getMidGrayOut();
+}
+
+float FilaToneMapper_Generic_getHdrMax(const FilaToneMapper* toneMapper) {
+    return reinterpret_cast<const GenericToneMapper*>(toneMapper)->getHdrMax();
+}
+
+void FilaToneMapper_Generic_setContrast(FilaToneMapper* toneMapper, float contrast) {
+    reinterpret_cast<GenericToneMapper*>(toneMapper)->setContrast(contrast);
+}
+
+void FilaToneMapper_Generic_setMidGrayIn(FilaToneMapper* toneMapper, float midGrayIn) {
+    reinterpret_cast<GenericToneMapper*>(toneMapper)->setMidGrayIn(midGrayIn);
+}
+
+void FilaToneMapper_Generic_setMidGrayOut(FilaToneMapper* toneMapper, float midGrayOut) {
+    reinterpret_cast<GenericToneMapper*>(toneMapper)->setMidGrayOut(midGrayOut);
+}
+
+void FilaToneMapper_Generic_setHdrMax(FilaToneMapper* toneMapper, float hdrMax) {
+    reinterpret_cast<GenericToneMapper*>(toneMapper)->setHdrMax(hdrMax);
+}
+
 } // extern "C"

@@ -125,6 +125,14 @@ uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material);
 void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQueue priority, uint32_t variants, void* handler, FilaMaterialCompileCallback callback, void* userData);
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* material, const char* samplerName);
 
+bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name);
+void FilaMaterial_setDefaultParameter_bool(FilaMaterial* material, const char* name, bool value);
+void FilaMaterial_setDefaultParameter_float(FilaMaterial* material, const char* name, float value);
+void FilaMaterial_setDefaultParameter_int(FilaMaterial* material, const char* name, int32_t value);
+void FilaMaterial_setDefaultParameter_float2(FilaMaterial* material, const char* name, float x, float y);
+void FilaMaterial_setDefaultParameter_float3(FilaMaterial* material, const char* name, float x, float y, float z);
+void FilaMaterial_setDefaultParameter_float4(FilaMaterial* material, const char* name, float x, float y, float z, float w);
+
 #ifdef __cplusplus
 }
 #endif

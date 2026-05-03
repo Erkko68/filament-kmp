@@ -4,6 +4,7 @@
 
 #include <utils/Entity.h>
 #include <utils/EntityManager.h>
+#include <math/vec4.h>
 
 #include <assert.h>
 
@@ -165,6 +166,34 @@ void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQu
 
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* material, const char* samplerName) {
     return FILA_CONST_CAST(Material, material)->getParameterTransformName(samplerName);
+}
+
+bool FilaMaterial_hasParameter(const FilaMaterial* material, const char* name) {
+    return FILA_CONST_CAST(Material, material)->hasParameter(name);
+}
+
+void FilaMaterial_setDefaultParameter_bool(FilaMaterial* material, const char* name, bool value) {
+    FILA_CAST(Material, material)->setDefaultParameter(name, value);
+}
+
+void FilaMaterial_setDefaultParameter_float(FilaMaterial* material, const char* name, float value) {
+    FILA_CAST(Material, material)->setDefaultParameter(name, value);
+}
+
+void FilaMaterial_setDefaultParameter_int(FilaMaterial* material, const char* name, int32_t value) {
+    FILA_CAST(Material, material)->setDefaultParameter(name, value);
+}
+
+void FilaMaterial_setDefaultParameter_float2(FilaMaterial* material, const char* name, float x, float y) {
+    FILA_CAST(Material, material)->setDefaultParameter(name, math::float2{x, y});
+}
+
+void FilaMaterial_setDefaultParameter_float3(FilaMaterial* material, const char* name, float x, float y, float z) {
+    FILA_CAST(Material, material)->setDefaultParameter(name, math::float3{x, y, z});
+}
+
+void FilaMaterial_setDefaultParameter_float4(FilaMaterial* material, const char* name, float x, float y, float z, float w) {
+    FILA_CAST(Material, material)->setDefaultParameter(name, math::float4{x, y, z, w});
 }
 
 } // extern "C"

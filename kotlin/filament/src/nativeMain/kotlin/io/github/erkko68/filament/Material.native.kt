@@ -148,13 +148,12 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
         return result
     }
 
-    // hasParameter, getParameterTransformName, and setDefaultParameter are not exposed by the Filament C API.
-    actual fun hasParameter(name: String): Boolean = false
+    actual fun hasParameter(name: String): Boolean = FilaMaterial_hasParameter(nativeHandle, name)
     actual fun getParameterTransformName(samplerName: String): String? = FilaMaterial_getParameterTransformName(nativeHandle, samplerName)?.toKString()
-    actual fun setDefaultParameter(name: String, value: Boolean) {}
-    actual fun setDefaultParameter(name: String, value: Float) {}
-    actual fun setDefaultParameter(name: String, value: Int) {}
-    actual fun setDefaultParameter(name: String, x: Float, y: Float) {}
-    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) {}
-    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) {}
+    actual fun setDefaultParameter(name: String, value: Boolean) = FilaMaterial_setDefaultParameter_bool(nativeHandle, name, value)
+    actual fun setDefaultParameter(name: String, value: Float) = FilaMaterial_setDefaultParameter_float(nativeHandle, name, value)
+    actual fun setDefaultParameter(name: String, value: Int) = FilaMaterial_setDefaultParameter_int(nativeHandle, name, value)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float) = FilaMaterial_setDefaultParameter_float2(nativeHandle, name, x, y)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) = FilaMaterial_setDefaultParameter_float3(nativeHandle, name, x, y, z)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) = FilaMaterial_setDefaultParameter_float4(nativeHandle, name, x, y, z, w)
 }

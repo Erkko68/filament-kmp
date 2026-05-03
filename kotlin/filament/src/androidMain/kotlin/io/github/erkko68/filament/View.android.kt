@@ -54,7 +54,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var resolution: Int get() = native.resolution; set(v) { native.resolution = v }
         actual var strength: Float get() = native.strength; set(v) { native.strength = v }
         actual var threshold: Boolean get() = native.threshold; set(v) { native.threshold = v }
-        actual var dirt: Texture? = null
+        actual var dirt: Texture?
+            get() = native.dirt?.let { Texture(it) }
+            set(v) { native.dirt = v?.nativeTexture }
         actual var dirtStrength: Float get() = native.dirtStrength; set(v) { native.dirtStrength = v }
         actual var quality: Quality 
             get() = Quality.values()[native.quality.ordinal]
@@ -304,6 +306,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             kmp.resolution = o.resolution
             kmp.strength = o.strength
             kmp.threshold = o.threshold
+            kmp.dirt = o.dirt?.let { Texture(it) }
             kmp.dirtStrength = o.dirtStrength
             kmp.lensFlare = o.lensFlare
             kmp.starburst = o.starburst

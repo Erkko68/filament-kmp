@@ -61,7 +61,9 @@ actual class View(val nativeView: JniView) {
         actual var resolution: Int get() = jni.resolution; set(v) { jni.resolution = v }
         actual var strength: Float get() = jni.strength; set(v) { jni.strength = v }
         actual var threshold: Boolean get() = jni.threshold; set(v) { jni.threshold = v }
-        actual var dirt: Texture? = null // Handled manually for now
+        actual var dirt: Texture?
+            get() = jni.dirt?.let { Texture(it) }
+            set(v) { jni.dirt = v?.nativeTexture }
         actual var dirtStrength: Float get() = jni.dirtStrength; set(v) { jni.dirtStrength = v }
         actual var quality: Quality 
             get() = Quality.values()[jni.quality.ordinal]
@@ -193,7 +195,7 @@ actual class View(val nativeView: JniView) {
         val jni = JniView.VsmShadowOptions()
         actual var anisotropy: Int get() = jni.anisotropy; set(v) { jni.anisotropy = v }
         actual var mipmapping: Boolean get() = jni.mipmapping; set(v) { jni.mipmapping = v }
-        actual var msaaSamples: Int get() = 0; set(v) {} // Missing in JNI
+        actual var msaaSamples: Int get() = jni.msaaSamples; set(v) { jni.msaaSamples = v }
         actual var highPrecision: Boolean get() = jni.highPrecision; set(v) { jni.highPrecision = v }
         actual var lightBleedReduction: Float get() = jni.lightBleedReduction; set(v) { jni.lightBleedReduction = v }
     }
@@ -299,6 +301,7 @@ actual class View(val nativeView: JniView) {
             k.resolution = o.resolution
             k.strength = o.strength
             k.threshold = o.threshold
+            k.dirt = o.dirt?.let { Texture(it) }
             k.dirtStrength = o.dirtStrength
             k.quality = Quality.values()[o.quality.ordinal]
             k.lensFlare = o.lensFlare
@@ -459,8 +462,8 @@ actual class View(val nativeView: JniView) {
             val k = VsmShadowOptions()
             k.anisotropy = o.anisotropy
             k.mipmapping = o.mipmapping
+            k.msaaSamples = o.msaaSamples
             k.highPrecision = o.highPrecision
-            // k.msaaSamples missing?
             k.lightBleedReduction = o.lightBleedReduction
             return k
         }

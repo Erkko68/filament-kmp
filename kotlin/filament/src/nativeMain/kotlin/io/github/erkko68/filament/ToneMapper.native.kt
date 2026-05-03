@@ -25,12 +25,18 @@ actual open class ToneMapper(internal val nativeHandle: CPointer<FilaToneMapper>
         midGrayOut: Float,
         hdrMax: Float
     ) : ToneMapper(FilaToneMapper_Generic(contrast, midGrayIn, midGrayOut, hdrMax)) {
-        actual var contrast: Float = contrast
-        actual var midGrayIn: Float = midGrayIn
-        actual var midGrayOut: Float = midGrayOut
-        actual var hdrMax: Float = hdrMax
-        // Note: C wrapper doesn't have getters/setters for GenericToneMapper yet.
-        // We could add them if needed, but for now we initialize in constructor.
+        actual var contrast: Float
+            get() = FilaToneMapper_Generic_getContrast(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setContrast(nativeHandle, value) }
+        actual var midGrayIn: Float
+            get() = FilaToneMapper_Generic_getMidGrayIn(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setMidGrayIn(nativeHandle, value) }
+        actual var midGrayOut: Float
+            get() = FilaToneMapper_Generic_getMidGrayOut(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setMidGrayOut(nativeHandle, value) }
+        actual var hdrMax: Float
+            get() = FilaToneMapper_Generic_getHdrMax(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setHdrMax(nativeHandle, value) }
     }
     
     actual class DisplayRange actual constructor() : ToneMapper(FilaToneMapper_Linear()) // Placeholder to match parity with Android if we kept it

@@ -173,11 +173,12 @@ Java_io_github_erkko68_filament_jni_View_nGetShadowType(JNIEnv*, jclass, jlong n
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_View_nSetVsmShadowOptions(JNIEnv*, jclass, jlong nativeView, jint anisotropy, jboolean mipmapping, jboolean highPrecision, jfloat minVarianceScale, jfloat lightBleedReduction) {
+Java_io_github_erkko68_filament_jni_View_nSetVsmShadowOptions(JNIEnv*, jclass, jlong nativeView, jint anisotropy, jboolean mipmapping, jint msaaSamples, jboolean highPrecision, jfloat minVarianceScale, jfloat lightBleedReduction) {
     View* view = (View*) nativeView;
     View::VsmShadowOptions options;
     options.anisotropy = (uint8_t) anisotropy;
     options.mipmapping = (bool) mipmapping;
+    options.msaaSamples = (uint8_t) msaaSamples;
     options.highPrecision = (bool) highPrecision;
     options.minVarianceScale = minVarianceScale;
     options.lightBleedReduction = lightBleedReduction;

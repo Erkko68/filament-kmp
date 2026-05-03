@@ -275,7 +275,7 @@ public class View {
 
     public void setVsmShadowOptions(@NotNull VsmShadowOptions options) {
         mVsmShadowOptions = options;
-        nSetVsmShadowOptions(getNativeObject(), options.anisotropy, options.mipmapping, options.highPrecision, options.minVarianceScale, options.lightBleedReduction);
+        nSetVsmShadowOptions(getNativeObject(), options.anisotropy, options.mipmapping, options.msaaSamples, options.highPrecision, options.minVarianceScale, options.lightBleedReduction);
     }
 
     @NotNull
@@ -528,6 +528,7 @@ public class View {
     public static class VsmShadowOptions {
         public int anisotropy = 0;
         public boolean mipmapping = false;
+        public int msaaSamples = 1;
         public boolean highPrecision = false;
         public float minVarianceScale = 0.5f;
         public float lightBleedReduction = 0.35f;
@@ -598,7 +599,7 @@ public class View {
     private static native void nSetDynamicLightingOptions(long nativeView, float zLightNear, float zLightFar);
     private static native void nSetShadowType(long nativeView, int type);
     private static native int nGetShadowType(long nativeView);
-    private static native void nSetVsmShadowOptions(long nativeView, int anisotropy, boolean mipmapping, boolean highPrecision, float minVarianceScale, float lightBleedReduction);
+    private static native void nSetVsmShadowOptions(long nativeView, int anisotropy, boolean mipmapping, int msaaSamples, boolean highPrecision, float minVarianceScale, float lightBleedReduction);
     private static native void nSetSoftShadowOptions(long nativeView, float penumbraScale, float penumbraRatioScale);
     private static native void nSetColorGrading(long nativeView, long nativeColorGrading);
     private static native void nSetPostProcessingEnabled(long nativeView, boolean enabled);
