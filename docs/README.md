@@ -1,28 +1,16 @@
 # Filament KMP Documentation
 
-Welcome to the documentation for the `filament-kmp` project, a Kotlin Multiplatform wrapper for the Filament rendering engine.
+Welcome to the documentation for the `filament-kmp` project.
 
-## Getting Started
+## Core Documentation
 
-### [Repository Structure](repo-structure.md)
-Understand how the project is organized, including the C++ wrapper, JNI layers, and KMP modules.
-
-### [Compose Multiplatform Integration](compose/README.md)
-Deep dive into how we integrate Filament with Compose UI, including rendering strategies and platform-specific optimizations.
-
-### [Automation & Utility Scripts](scripts/README.md)
-Documentation for our Python-based automation tools for API coverage and library management.
-
-### [JVM GPU Rendering (Advanced)](jvm-gpu-rendering.md)
-Technical details on the low-level GPU-to-GPU sharing implementation for JVM targets.
+- **[Repository Structure](repo-structure.md)**: Overview of the project organization across C++, JNI, and Kotlin.
+- **[Compose Multiplatform Integration](compose/README.md)**: Deep dive into the `filament-compose` module.
+- **[Automation & Scripts](scripts/README.md)**: Documentation for internal tools and automation.
 
 ---
 
-## Key Modules
+## Quick Links
 
-- **`kotlin/`**: The main KMP API.
-- **`filament-compose/`**: The Compose UI layer.
-- **`samples/`**: Example applications for all platforms.
-
-## Contributing
-Please refer to the [main README](../README.md) for build instructions and contribution guidelines.
+- **Main README**: [Back to root](../README.md)
+- **Filament Official Docs**: [google/filament](https://google.github.io/filament/)

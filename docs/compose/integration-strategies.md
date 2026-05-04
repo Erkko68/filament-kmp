@@ -1,39 +1,46 @@
-# Compose Integration: ReadPixel Approach
+# Compose Integration Strategies
 
-To integrate the Filament 3D engine with Compose Multiplatform, we need a way to display Filament's rendered output within the Compose UI tree. Since Filament and Skia (the rendering engine behind Compose) usually manage their own GPU contexts and surfaces, sharing data between them can be challenging.
+To integrate the Filament 3D engine with Compose Multiplatform, a mechanism is required to display Filament's rendered output within the Compose UI tree. `filament-compose` supports two primary strategies depending on the platform and performance requirements.
 
-## How it Works
+## 1. Pixel Readback Approach (Default)
 
-The primary integration strategy used in `filament-compose` is the **Pixel Readback** approach. This method is highly compatible across platforms, including Android, JVM (Windows/Linux/macOS), and potentially Web.
+The **Pixel Readback** approach is the most portable method and is used by default on most platforms (Windows, Linux, Android).
 
-### 1. Offscreen Rendering
-Instead of rendering directly to the screen, we configure Filament to render into a `RenderTarget` backed by a `Texture`.
-- A `SwapChain` is created with the size of the Composable.
-- Filament renders the scene normally into this offscreen buffer.
+### How it Works
+1. **Offscreen Rendering**: Filament renders the scene into a `RenderTarget` backed by an offscreen texture.
+2. **`readPixels` Synchronization**: Once a frame is rendered, `Renderer.readPixels` is used to pull the image data from the GPU into a CPU-accessible `ByteArray`. This is performed asynchronously to minimize pipeline stalls.
+3. **Skia Image Wrapping**: The pixel data is wrapped into a Skia `Image` using `Image.makeRaster`.
+4. **Compose Drawing**: The resulting image is drawn onto the Compose canvas using a `Spacer` with a `drawBehind` modifier.
 
-### 2. `readPixels` Synchronization
-Once the frame is rendered, we use Filament's `Renderer.readPixels` method to pull the image data from the GPU back into a CPU-accessible `ByteArray`.
-- This is an asynchronous operation in Filament to minimize pipeline stalls.
-- We use a `PixelBufferDescriptor` with a callback that notifies Compose when the pixels are ready.
+### Trade-offs
+- **Pros**: Highly portable; allows easy overlaying of Compose widgets on top of the 3D content.
+- **Cons**: CPU overhead from GPU-to-CPU copies; slight latency (1-2 frames) due to asynchronous readback.
 
-### 3. Skia Image Wrapping
-When the pixel data arrives on the CPU:
-- We wrap the `ByteArray` into a Skia `Image` using `Image.makeRaster`.
-- This `Image` is then stored in a Compose `mutableStateOf`.
+---
 
-### 4. Compose Drawing
-The final step is drawing the captured image onto the Compose canvas:
-- We use a `Spacer` with a `drawBehind` modifier.
-- Inside `drawBehind`, we call `canvas.nativeCanvas.drawImageRect` to paint the latest Filament frame.
+## 2. Zero-Copy Rendering (macOS - Experimental)
 
-## Performance Considerations
+> [!WARNING]
+> **Experimental**: The Zero-Copy implementation is currently in an experimental stage, considered "hacky," and is not fully supported in the main branch. This code has been moved to a specific testing branch for further evaluation.
 
-### Advantages
-- **Portability**: Works on any platform that supports basic Filament and Skia.
-- **Layering**: Since the result is a standard Compose drawing operation, you can easily overlay Compose widgets (Buttons, Text, etc.) on top of the 3D content.
+Zero-copy rendering allows Filament and Skia (Compose's renderer) to share the same GPU memory, eliminating the need to copy pixel data to the CPU.
 
-### Disadvantages
-- **CPU Overhead**: Moving pixels from GPU to CPU and back is expensive, especially at high resolutions (4K).
-- **Latency**: There is a 1-2 frame delay between the Filament render and the Compose display due to the asynchronous readback.
+### The Metal Approach
+On macOS, this is achieved using **Metal texture sharing**:
+1. A native `MTLTexture` is allocated that is accessible to both engines.
+2. Filament renders directly into this texture.
+3. Skia wraps the same texture handle as a `BackendRenderTarget`, allowing Compose to draw it directly.
 
-For high-performance desktop applications on macOS, we also support a **Zero-Copy** approach (see [Zero-Copy Rendering](zero-copy.md)).
+This results in near-zero overhead and is recommended for high-performance experiments on macOS, though it remains unsupported for production use in its current state.
+
+### Why not Windows/Linux?
+On Windows and Linux, achieving zero-copy is currently blocked by limitations in the current version of Skiko (the rendering layer for Compose Desktop). This would require consistent Vulkan/DirectX interop, which is not yet fully exposed or managed by the underlying framework.
+
+---
+
+## Summary Table
+
+| Strategy | Platform Support | Performance | Status |
+| :--- | :--- | :--- | :--- |
+| **ReadPixel** | All (Windows, Linux, Android, iOS) | Medium | **Stable** |
+| **Zero-Copy** | macOS (Metal) | High | **Experimental** (Testing Branch) |
