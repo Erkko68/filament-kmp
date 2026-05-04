@@ -18,10 +18,11 @@ The API is modernized to provide a better Kotlin experience:
 
 ## Project Structure
 
-- **`kotlin/`**: Core KMP modules including `filament`, `filamat`, `gltfio`, and `filament-utils`.
-- **`kotlin/filament-compose/`**: High-level UI integration layer for Compose Multiplatform.
-- **`c/`**: C++ wrapper providing a C-compatible API for Native targets (iOS, macOS).
-- **`java/`**: JNI bindings and specific logic for JVM and Android targets.
+- **`kotlin/`**: Core KMP modules — `filament`, `filamat`, `gltfio`, `filament-utils`, and `filament-compose`.
+- **`c/`**: C++ wrapper providing a C-compatible API for **Kotlin Native** targets (iOS, macOS) via `cinterop`.
+- **`java/`**: JNI bindings for the **JVM/Desktop** target. Android uses the official `com.google.android.filament` package and does not depend on this module.
+- **`js/`**: Kotlin/JS external declarations wrapping the official Filament.js/WASM library for the **Web** target.
+- **`prebuilts/`**: Prebuilt Filament static libraries for iOS, macOS, and WASM targets.
 - **`samples/`**: Multiplatform example applications for all supported targets.
 
 ## Documentation
