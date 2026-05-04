@@ -9,7 +9,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
-import io.github.erkko68.filament.compose.LocalAssetLoader
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
@@ -41,14 +40,17 @@ class GltfAsset internal constructor(
  * For async loading (resources, network) prefer the suspend-lambda overload:
  * `rememberGltfAsset { Res.readBytes("model.glb") }`.
  *
- * @param bytes Raw glb/glTF binary data. The asset is reloaded only when the reference changes.
+ * @param bytes Raw glb/glTF binary data. The asset is reloaded only when the *reference*
+ *   changes (identity, not contents) — pass a stable reference (e.g. via `remember`) or
+ *   prefer the suspend-lambda overload to avoid accidental reloads on every recomposition.
  */
 @Composable
 fun rememberGltfAsset(bytes: ByteArray): GltfAsset {
     val engine = LocalFilamentEngine.current
-    val assetLoader = LocalAssetLoader.current
+    val gltfioContext = rememberGltfioContext()
+    val assetLoader = gltfioContext.assetLoader
 
-    val gltfAsset = remember(bytes) {
+    val gltfAsset = remember(bytes, assetLoader) {
         val filamentAsset = requireNotNull(assetLoader.createAsset(bytes)) {
             "AssetLoader.createAsset returned null — check that the bytes are valid glb/glTF"
         }

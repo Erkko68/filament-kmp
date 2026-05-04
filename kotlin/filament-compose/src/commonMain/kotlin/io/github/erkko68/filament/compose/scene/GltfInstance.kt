@@ -96,13 +96,19 @@ fun GltfInstance(
         }
     }
 
-    SideEffect {
+    // Push the transform to Filament only when the inputs actually change. SideEffect
+    // would re-run on every recomposition, but the transform math and JNI call are
+    // wasted if nothing moved.
+    DisposableEffect(instance, position, rotation, scale) {
         val tm = engine.getTransformManager()
         val root = instance.getRoot()
         if (tm.hasComponent(root)) {
             tm.setTransform(tm.getInstance(root), transformMatrix(position, rotation, scale))
         }
+        onDispose { }
+    }
 
+    DisposableEffect(instance, animationIndex, animationTime) {
         if (animationIndex != null) {
             val animator = instance.getAnimator()
             if (animationIndex >= 0 && animationIndex < animator.getAnimationCount()) {
@@ -110,7 +116,10 @@ fun GltfInstance(
                 animator.updateBoneMatrices()
             }
         }
+        onDispose { }
+    }
 
+    SideEffect {
         GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onUpdate()
     }
 }

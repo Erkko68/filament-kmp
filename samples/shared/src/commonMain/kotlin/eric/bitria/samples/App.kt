@@ -20,10 +20,13 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
-    val orbit = rememberOrbitCameraState(
-        eye    = Position(0f, 1f, 4f),
-        target = Position(0f, 0.5f, 0f),
+    val cameraState = rememberCameraState(
+        eye        = Position(0f, 1f, 4f),
+        target     = Position(0f, 0.5f, 0f),
+        projection = Projection.Perspective(fovDegrees = 45.0),
     )
+    val orbit = rememberOrbitCameraState(cameraState)
+    val skybox = rememberSkyboxState(source = SkyboxSource.Color(Color(0.1f, 0.125f, 0.15f)))
 
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -32,20 +35,13 @@ fun App() {
                     .fillMaxSize()
                     .onSizeChanged { orbit.setViewport(it.width, it.height) }
                     .orbitGestures(orbit),
+                cameraState = cameraState,
+                skyboxState = skybox,
             ) {
-                Skybox(source = SkyboxSource.Color(Color(0.1f, 0.125f, 0.15f)))
-
                 Light(
                     type      = LightManager.Type.DIRECTIONAL,
                     direction = Direction(0.3f, -1f, -0.5f),
                     intensity = 100_000f,
-                )
-
-                Camera(
-                    eye        = orbit.eye,
-                    target     = orbit.target,
-                    up         = orbit.up,
-                    projection = Projection.Perspective(fovDegrees = 45.0),
                 )
 
                 Bloom(strength = 0.2f)

@@ -2,14 +2,17 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.Skybox as FilamentSkybox
-import io.github.erkko68.filament.compose.LocalFilamentEngine
-import io.github.erkko68.filament.compose.LocalFilamentScene
-
 
 /**
- * Source for a [Skybox]: either a solid color or a cubemap texture.
+ * Source for a [SkyboxState]: either a solid color or a cubemap texture.
  */
 sealed class SkyboxSource {
     /**
@@ -27,50 +30,80 @@ sealed class SkyboxSource {
 }
 
 /**
- * Attaches a skybox to the scene.
+ * Hoisted, observable skybox state. Pass to
+ * [io.github.erkko68.filament.compose.FilamentView] via `skyboxState = ...`. A null
+ * [source] removes the skybox entirely.
  *
- * @param source     Color or cubemap skybox — see [SkyboxSource].
- * @param showSun    Render a sun disk (only meaningful with a directional SUN light).
- * @param intensity  Environment intensity applied on top of the skybox.
- * @param priority   Render priority; lower values render first (default 0).
- *
- * Example:
  * ```kotlin
- * Skybox(source = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+ * val sky = rememberSkyboxState(source = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+ * FilamentView(skyboxState = sky) { ... }
  *
- * Skybox(
- *     source    = SkyboxSource.Cubemap(environmentTexture),
- *     showSun   = true,
- *     intensity = 30_000f,
- * )
+ * // Toggle at runtime
+ * sky.source = SkyboxSource.Cubemap(envTexture)
+ * sky.intensity = 30_000f
  * ```
  */
+class SkyboxState internal constructor(
+    initialSource: SkyboxSource?,
+    initialShowSun: Boolean,
+    initialIntensity: Float,
+    initialPriority: Int,
+) {
+    var source: SkyboxSource? by mutableStateOf(initialSource)
+    var showSun: Boolean      by mutableStateOf(initialShowSun)
+    var intensity: Float      by mutableStateOf(initialIntensity)
+    var priority: Int         by mutableStateOf(initialPriority)
+}
+
+/**
+ * Creates and remembers a [SkyboxState].
+ *
+ * @param source     Color or cubemap skybox. Null = no skybox.
+ * @param showSun    Render a sun disk (only meaningful with a directional SUN light).
+ * @param intensity  Environment intensity applied on top of the skybox.
+ * @param priority   Render priority; lower values render first.
+ */
 @Composable
-fun Skybox(
-    source: SkyboxSource = SkyboxSource.Color(),
+fun rememberSkyboxState(
+    source: SkyboxSource? = null,
     showSun: Boolean = false,
     intensity: Float = 1.0f,
     priority: Int = 0,
-) {
-    val engine = LocalFilamentEngine.current
-    val scene  = LocalFilamentScene.current
+): SkyboxState = remember {
+    SkyboxState(source, showSun, intensity, priority)
+}
 
-    DisposableEffect(source, showSun, intensity, priority) {
-        val builder = FilamentSkybox.Builder()
-            .showSun(showSun)
-            .intensity(intensity)
-            .priority(priority)
+/**
+ * Internal: applies [SkyboxState] to the scene. Builds a fresh Filament [FilamentSkybox]
+ * whenever any field of the state changes, and tears down the old one.
+ */
+@Composable
+internal fun ApplySkybox(state: SkyboxState, engine: Engine, scene: Scene) {
+    val source    = state.source
+    val showSun   = state.showSun
+    val intensity = state.intensity
+    val priority  = state.priority
 
-        when (source) {
-            is SkyboxSource.Color   -> builder.color(source.rgb.r, source.rgb.g, source.rgb.b, source.alpha)
-            is SkyboxSource.Cubemap -> builder.environment(source.texture)
-        }
-
-        val skybox = builder.build(engine)
-        scene.skybox = skybox
-        onDispose {
+    DisposableEffect(scene, source, showSun, intensity, priority) {
+        val skybox: FilamentSkybox? = if (source == null) {
             scene.skybox = null
-            engine.destroySkybox(skybox)
+            null
+        } else {
+            val builder = FilamentSkybox.Builder()
+                .showSun(showSun)
+                .intensity(intensity)
+                .priority(priority)
+            when (source) {
+                is SkyboxSource.Color   -> builder.color(source.rgb.r, source.rgb.g, source.rgb.b, source.alpha)
+                is SkyboxSource.Cubemap -> builder.environment(source.texture)
+            }
+            builder.build(engine).also { scene.skybox = it }
+        }
+        onDispose {
+            if (skybox != null) {
+                scene.skybox = null
+                engine.destroySkybox(skybox)
+            }
         }
     }
 }

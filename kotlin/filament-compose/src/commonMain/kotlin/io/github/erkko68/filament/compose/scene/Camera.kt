@@ -1,10 +1,11 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import io.github.erkko68.filament.Camera as FilamentCamera
-import io.github.erkko68.filament.compose.LocalCameraConfig
-import io.github.erkko68.filament.compose.LocalCameraConfigController
 import io.github.erkko68.filament.utils.Float2
 
 // ── Public: projection type ───────────────────────────────────────────────────
@@ -53,9 +54,72 @@ data class Exposure(
     val sensitivity: Float = 100f,
 )
 
-// ── Internal: change-detection key ───────────────────────────────────────────
+// ── Hoisted state ─────────────────────────────────────────────────────────────
 
-internal data class CameraConfig(
+/**
+ * Hoisted, observable camera state. Create with [rememberCameraState] and pass to
+ * [io.github.erkko68.filament.compose.FilamentView] for full control over the camera.
+ *
+ * All fields are observable [androidx.compose.runtime.MutableState] — read them inside a
+ * composable to subscribe to changes, or write them from anywhere on the main thread to
+ * drive the camera imperatively.
+ *
+ * Read-only matrices ([viewMatrix], [projectionMatrix]) reflect the underlying Filament
+ * camera and are valid only while the state is attached to a [FilamentView].
+ *
+ * ```kotlin
+ * val cameraState = rememberCameraState(eye = Position(0f, 2f, 5f))
+ * FilamentView(cameraState = cameraState) { ... }
+ *
+ * // Read the view matrix from anywhere
+ * LaunchedEffect(cameraState.eye) {
+ *     val v = cameraState.viewMatrix  // may be null until attached
+ * }
+ * ```
+ */
+class CameraState internal constructor(
+    initialEye: Position,
+    initialTarget: Position,
+    initialUp: Direction,
+    initialProjection: Projection,
+    initialExposure: Exposure,
+    initialShift: Float2,
+    initialScaling: Float2,
+) {
+    var eye:        Position   by mutableStateOf(initialEye)
+    var target:     Position   by mutableStateOf(initialTarget)
+    var up:         Direction  by mutableStateOf(initialUp)
+    var projection: Projection by mutableStateOf(initialProjection)
+    var exposure:   Exposure   by mutableStateOf(initialExposure)
+    var shift:      Float2     by mutableStateOf(initialShift)
+    var scaling:    Float2     by mutableStateOf(initialScaling)
+
+    internal var attachedCamera: FilamentCamera? = null
+    internal var aspect: Double = 1.0
+
+    /**
+     * 4×4 column-major view matrix (world→view) computed by Filament. Null until this
+     * state is attached to a [io.github.erkko68.filament.compose.FilamentView].
+     */
+    val viewMatrix: FloatArray?
+        get() = attachedCamera?.getViewMatrix(null as FloatArray?)
+
+    /**
+     * 4×4 column-major projection matrix (view→clip) computed by Filament. Null until
+     * this state is attached to a [io.github.erkko68.filament.compose.FilamentView].
+     */
+    val projectionMatrix: DoubleArray?
+        get() = attachedCamera?.getProjectionMatrix(null as DoubleArray?)
+
+    internal fun snapshot(): CameraSnapshot =
+        CameraSnapshot(eye, target, up, projection, exposure, shift, scaling)
+}
+
+/**
+ * Immutable snapshot of [CameraState] used to push values to the underlying Filament
+ * camera without holding a reference to the state object.
+ */
+internal data class CameraSnapshot(
     val eye: Position,
     val target: Position,
     val up: Direction,
@@ -81,38 +145,23 @@ internal data class CameraConfig(
     }
 }
 
-// ── Composable ────────────────────────────────────────────────────────────────
-
 /**
- * Configures the scene camera.
+ * Creates and remembers a [CameraState].
  *
- * [eye] and [target] are required — a camera that isn't positioned is not useful.
- * All other parameters have sensible defaults and can be overridden as needed.
- *
- * Example:
- * ```kotlin
- * Camera(
- *     eye        = Position(0f, 5f, 10f),
- *     target     = Position(0f, 0f, 0f),
- *     projection = Projection.Perspective(fovDegrees = 60.0),
- *     exposure   = Exposure(aperture = 8f, shutterSpeed = 1f / 60f),
- * )
- * ```
+ * The initial values are used only on first composition; subsequent recompositions return
+ * the same instance regardless of changes to the parameters. To programmatically change
+ * the camera, mutate the returned state's fields.
  */
 @Composable
-fun Camera(
-    eye: Position,
-    target: Position,
+fun rememberCameraState(
+    eye: Position = Position(0f, 1f, 10f),
+    target: Position = Position(0f, 0f, 0f),
     up: Direction = Direction(0f, 1f, 0f),
     projection: Projection = Projection.Perspective(),
     exposure: Exposure = Exposure(),
     shift: Float2 = Float2(0f, 0f),
     scaling: Float2 = Float2(1f, 1f),
-) {
-    val currentConfig = LocalCameraConfig.current
-    val controller = LocalCameraConfigController.current
-    val config = CameraConfig(eye, target, up, projection, exposure, shift, scaling)
-    SideEffect {
-        if (config != currentConfig) controller(config)
-    }
+): CameraState = remember {
+    CameraState(eye, target, up, projection, exposure, shift, scaling)
 }
+
