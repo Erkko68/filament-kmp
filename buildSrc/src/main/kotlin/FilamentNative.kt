@@ -1,0 +1,109 @@
+import org.gradle.api.Project
+import org.gradle.api.tasks.Exec
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
+
+private data class FilamentPlatform(
+    val cmakePlatform: String,
+    val cmakeArch: String,
+    val prebuiltDir: String,
+)
+
+private fun KonanTarget.filamentPlatform(): FilamentPlatform? = when (this) {
+    KonanTarget.IOS_ARM64           -> FilamentPlatform("ios",           "arm64", "iosArm64")
+    KonanTarget.IOS_SIMULATOR_ARM64 -> FilamentPlatform("ios-simulator", "arm64", "iosSimulatorArm64")
+    KonanTarget.IOS_X64             -> FilamentPlatform("ios-simulator", "x64",   "iosX64")
+    KonanTarget.MACOS_ARM64         -> FilamentPlatform("macos",         "arm64", "macosArm64")
+    KonanTarget.LINUX_X64           -> FilamentPlatform("linux",         "x64",   "linuxX64")
+    KonanTarget.LINUX_ARM64         -> FilamentPlatform("linux",         "arm64", "linuxArm64")
+    KonanTarget.MINGW_X64           -> FilamentPlatform("windows",       "x64",   "mingwX64")
+    else                            -> null
+}
+
+/**
+ * Wires up the Filament C-wrapper CMake build and cinterop static-library packing for one
+ * native target.  Call this inside a `targets.withType<KotlinNativeTarget>().configureEach`
+ * block, AFTER the cinterop has been created with `create(cinteropName) { ... }`.
+ *
+ * @param project        The Gradle project (pass `project`).
+ * @param cinteropName   Name used in `create(...)` — e.g. "filament", "filamat", "filament_utils".
+ * @param cmakeTarget    CMake library target to build — e.g. "filament-c", "gltfio-c".
+ *                       Also used as the filename stem of the produced archive (lib<cmakeTarget>.a).
+ * @param prebuiltLibs   Prebuilt Filament static-library filenames to embed in the klib.
+ *                       List only the libraries that this module adds beyond its KMP dependencies.
+ */
+fun KotlinNativeTarget.applyFilamentNative(
+    project: Project,
+    cinteropName: String,
+    cmakeTarget: String,
+    prebuiltLibs: List<String>,
+) {
+    val platform = konanTarget.filamentPlatform() ?: return
+
+    if (konanTarget.family == Family.IOS) {
+        binaries.all {
+            freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
+        }
+    }
+
+    // Windows Kotlin Native uses .lib / no prefix; everything else uses lib*.a
+    val isWindows  = konanTarget == KonanTarget.MINGW_X64
+    val libPrefix  = if (isWindows) "" else "lib"
+    val libSuffix  = if (isWindows) ".lib" else ".a"
+
+    val buildDir    = project.file("../../c/build/$name")
+    val prebuiltDir = project.file("../../prebuilts/${platform.prebuiltDir}/lib")
+
+    // CMake: configure + build the C wrapper in one step
+    val cmake = resolveCmake()
+    val cmakeTask = project.tasks.register("buildCWrapper_${cmakeTarget}_$name", Exec::class.java) {
+        buildDir.mkdirs()
+        workingDir(buildDir)
+        commandLine(
+            "sh", "-c",
+            "$cmake ../../ -DFILAMENT_PLATFORM=${platform.cmakePlatform}" +
+            " -DFILAMENT_ARCH=${platform.cmakeArch}" +
+            " -DCMAKE_BUILD_TYPE=Release" +
+            " && $cmake --build . --target $cmakeTarget",
+        )
+        doFirst {
+            project.logger.lifecycle("[$name] CMake: building $cmakeTarget (${platform.cmakePlatform}/${platform.cmakeArch})")
+        }
+    }
+
+    // Kotlin compilation and the generated cinterop task both depend on the C wrapper being built.
+    compilations.getByName("main").compileTaskProvider.configure { dependsOn(cmakeTask) }
+
+    // Gradle names the cinterop task cinterop<CinteropName><TargetName> (first char capitalised only).
+    val cinteropTask = "cinterop" +
+        cinteropName.replaceFirstChar { it.uppercaseChar() } +
+        name.replaceFirstChar { it.uppercaseChar() }
+    project.tasks.matching { it.name == cinteropTask }.configureEach { dependsOn(cmakeTask) }
+
+    // Pack all static libraries into the klib so they are embedded for final binary linking.
+    compilations.getByName("main").cinterops.getByName(cinteropName) {
+        extraOpts("-libraryPath", prebuiltDir.absolutePath)
+        extraOpts("-libraryPath", buildDir.absolutePath)
+
+        val resolved = if (prebuiltDir.exists()) {
+            project.fileTree(prebuiltDir) { include(prebuiltLibs) }.files.map { it.name }
+        } else {
+            project.logger.error(
+                "\nFilament prebuilts not found for target '$name' at: ${prebuiltDir.absolutePath}" +
+                "\nRun scripts/download_filament.py to fetch them.\n",
+            )
+            emptyList()
+        }
+
+        // Prebuilt Filament libs + the freshly compiled C-wrapper archive
+        (resolved + "$libPrefix$cmakeTarget$libSuffix").forEach { lib ->
+            extraOpts("-staticLibrary", lib)
+        }
+    }
+}
+
+private fun resolveCmake(): String =
+    listOf("/opt/homebrew/bin/cmake", "/usr/local/bin/cmake")
+        .firstOrNull { java.io.File(it).exists() }
+        ?: "cmake"

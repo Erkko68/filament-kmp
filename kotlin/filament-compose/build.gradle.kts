@@ -14,8 +14,8 @@ val filaVersion: String by project
 val libVersion: String by project
 val projectGroup: String by project
 
-group = projectGroup
-version = "${filaVersion}-${libVersion}"
+group   = projectGroup
+version = libVersion
 
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
@@ -105,7 +105,7 @@ android {
 }
 
 mavenPublishing {
-    coordinates(projectGroup, "filament-compose", "${filaVersion}-${libVersion}")
+    coordinates(projectGroup, "filament-compose", libVersion)
 
     pom {
         name.set("Filament Compose KMP")
