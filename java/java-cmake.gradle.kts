@@ -37,21 +37,11 @@ val prebuiltsTarget = when (platform) {
     else      -> error("Unsupported platform '$platform'")
 }
 
-val filaVersion: String by project
-val pythonExe = providers.environmentVariable("PYTHON").orElse("python3")
-val downloadScript = rootDir.parentFile.resolve("scripts/download_filament_prebuilts.py")
-
-tasks.register<Exec>("downloadPrebuilts") {
-    group = "filament"
-    description = "Downloads Filament $filaVersion prebuilt static libraries for $prebuiltsTarget."
-    val outDir = rootDir.parentFile.resolve("prebuilts/$prebuiltsTarget/lib")
-    outputs.dir(outDir)
-    outputs.upToDateWhen { outDir.exists() && outDir.listFiles()?.isNotEmpty() == true }
-    commandLine(pythonExe.get(), downloadScript.absolutePath, filaVersion, prebuiltsTarget)
-}
+// Prebuilt static libs are downloaded by the root-level task in build.gradle.kts.
+val downloadPrebuiltsTask = rootProject.tasks.named("downloadPrebuilts_$prebuiltsTarget")
 
 tasks.register<Exec>("cmakeConfig") {
-    dependsOn("downloadPrebuilts")
+    dependsOn(downloadPrebuiltsTask)
     val cmakeBuildDir = layout.buildDirectory.dir("cmake").get().asFile
     doFirst { cmakeBuildDir.mkdirs() }
     workingDir(cmakeBuildDir)

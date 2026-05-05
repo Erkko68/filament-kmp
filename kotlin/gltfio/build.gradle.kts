@@ -33,7 +33,7 @@ kotlin {
             implementation("com.google.android.filament:gltfio-android:$filaVersion")
         }
         jvmMain.dependencies {
-            implementation("io.github.erkko68.filament.java:gltfio:$libVersion")
+            api(project(":java:gltfio"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

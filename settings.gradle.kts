@@ -16,24 +16,23 @@ dependencyResolutionManagement {
 }
 
 
-// Java JVM bindings — standalone composite build.
-includeBuild("java/") {
-    dependencySubstitution {
-        substitute(module("io.github.erkko68.filament.java:filament")).using(project(":filament"))
-        substitute(module("io.github.erkko68.filament.java:filamat")).using(project(":filamat"))
-        substitute(module("io.github.erkko68.filament.java:gltfio")).using(project(":gltfio"))
-        substitute(module("io.github.erkko68.filament.java:filament-utils")).using(project(":filament-utils"))
-    }
-}
+// All bindings live in a single Gradle build as flat subprojects.
+// kotlin/* — KMP orchestrator modules (cinterop + JVM/Android/JS shims).
+// java/*  — JVM bindings (filament-jni, filamat-jni, etc.).
+// :js     — Kotlin/JS external declarations.
+//
+// js/ must remain a subproject (not a composite build) so the Kotlin/JS plugin
+// can coordinate its single `rootPackageJson` across every `js()` target.
 
-// JS Kotlin/JS external declarations — kept as a subproject (not a composite)
-// because the Kotlin/JS plugin needs a single root for its `rootPackageJson` task
-// across every `js()` target in the build (including samples consumers).
-include(":js")
-
-// Kotlin KMP modules (orchestrator layer).
 include(":kotlin:filament")
 include(":kotlin:filamat")
 include(":kotlin:filament-utils")
 include(":kotlin:gltfio")
 include(":kotlin:filament-compose")
+
+include(":java:filament")
+include(":java:filamat")
+include(":java:gltfio")
+include(":java:filament-utils")
+
+include(":js")

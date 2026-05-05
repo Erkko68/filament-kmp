@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
 }
 
-apply(from = rootProject.file("java-cmake.gradle.kts"))
+apply(from = rootProject.file("java/java-cmake.gradle.kts"))
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
@@ -14,6 +14,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-    implementation(project(":filament"))
+    implementation(project(":java:filament"))
     implementation(libs.kotlin.stdlib)
 }

@@ -38,7 +38,7 @@ kotlin {
             implementation("com.google.android.filament:filament-android:$filaVersion")
         }
         jvmMain.dependencies {
-            api("io.github.erkko68.filament.java:filament:$libVersion")
+            api(project(":java:filament"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

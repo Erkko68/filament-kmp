@@ -29,7 +29,7 @@ kotlin {
             implementation("com.google.android.filament:filamat-android:$filaVersion")
         }
         jvmMain.dependencies {
-            api("io.github.erkko68.filament.java:filamat:$libVersion")
+            api(project(":java:filamat"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

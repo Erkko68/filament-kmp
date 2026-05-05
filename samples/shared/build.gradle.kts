@@ -39,9 +39,7 @@ kotlin {
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
-            implementation(libs.filament)
-            implementation(libs.filament.utils)
-            implementation(libs.filament.compose)
+            implementation("io.github.erkko68.filament:filament-compose")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

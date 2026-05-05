@@ -34,7 +34,6 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
     iosX64()
-    macosArm64()
     jvm()
 
     js {
@@ -64,7 +63,6 @@ afterEvaluate {
             targets.getByName("iosArm64")           as KotlinNativeTarget,
             targets.getByName("iosSimulatorArm64")   as KotlinNativeTarget,
             targets.getByName("iosX64")              as KotlinNativeTarget,
-            targets.getByName("macosArm64")          as KotlinNativeTarget,
         ).forEach {
             it.binaries.framework {
                 baseName = xcfName
