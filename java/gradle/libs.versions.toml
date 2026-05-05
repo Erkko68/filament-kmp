@@ -1,0 +1,7 @@
+[versions]
+annotations = "26.1.0"
+kotlin = "2.3.21"
+
+[libraries]
+annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

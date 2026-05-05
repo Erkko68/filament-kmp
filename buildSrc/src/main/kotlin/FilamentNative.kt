@@ -55,9 +55,13 @@ fun KotlinNativeTarget.applyFilamentNative(
     val buildDir    = project.file("../../c/build/$name")
     val prebuiltDir = project.file("../../prebuilts/${platform.prebuiltDir}/lib")
 
+    // Prebuilt static libs are downloaded by a root-level task (see kotlin/build.gradle.kts).
+    val downloadTask = project.rootProject.tasks.named("downloadPrebuilts_$name")
+
     // CMake: configure + build the C wrapper in one step
     val cmake = resolveCmake()
     val cmakeTask = project.tasks.register("buildCWrapper_${cmakeTarget}_$name", Exec::class.java) {
+        dependsOn(downloadTask)
         buildDir.mkdirs()
         workingDir(buildDir)
         commandLine(
@@ -67,8 +71,11 @@ fun KotlinNativeTarget.applyFilamentNative(
             " -DCMAKE_BUILD_TYPE=Release" +
             " && $cmake --build . --target $cmakeTarget",
         )
+        val targetName = name
+        val cmakePlatform = platform.cmakePlatform
+        val cmakeArch = platform.cmakeArch
         doFirst {
-            project.logger.lifecycle("[$name] CMake: building $cmakeTarget (${platform.cmakePlatform}/${platform.cmakeArch})")
+            logger.lifecycle("[$targetName] CMake: building $cmakeTarget ($cmakePlatform/$cmakeArch)")
         }
     }
 
@@ -91,7 +98,7 @@ fun KotlinNativeTarget.applyFilamentNative(
         } else {
             project.logger.error(
                 "\nFilament prebuilts not found for target '$name' at: ${prebuiltDir.absolutePath}" +
-                "\nRun scripts/download_filament.py to fetch them.\n",
+                "\nRun ./gradlew downloadPrebuilts (or scripts/download_filament_prebuilts.py) to fetch them.\n",
             )
             emptyList()
         }

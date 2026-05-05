@@ -3,11 +3,15 @@ plugins {
 }
 
 repositories {
+    google()
     mavenCentral()
     gradlePluginPortal()
 }
 
 dependencies {
-    // Needed to access KotlinNativeTarget and KonanTarget in convention helpers
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10")
+    implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.compose.compiler.gradlePlugin)
+    implementation(libs.android.gradlePlugin)
+    implementation(libs.vanniktech.publish.gradlePlugin)
+    implementation(libs.compose.gradlePlugin)
 }
