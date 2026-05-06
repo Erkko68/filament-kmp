@@ -18,7 +18,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(project(":shared"))
-                implementation("io.github.erkko68.filament:filament")
+                implementation(libs.filament)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.foundation)

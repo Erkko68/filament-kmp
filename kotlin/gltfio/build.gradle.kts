@@ -22,6 +22,8 @@ val GLTFIO_PREBUILT_LIBS = listOf(
     "libimage.a",
     "libimageio-lite.a",
     "libktxreader.a",
+    "libuberarchive.a",       // ubershader package (UBERARCHIVE_PACKAGE, uberz::*)
+    "libuberzlib.a",          // ubershader archive helpers (transitive of uberarchive)
 )
 
 kotlin {

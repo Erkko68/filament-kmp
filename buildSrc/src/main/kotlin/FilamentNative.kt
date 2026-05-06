@@ -10,11 +10,12 @@ private data class FilamentPlatform(
     val prebuiltDir: String,
 )
 
+// macOS desktop runs on the JVM (see :java:* modules and the desktopApp sample),
+// so MACOS_ARM64 is intentionally not declared as a Kotlin/Native target here.
 private fun KonanTarget.filamentPlatform(): FilamentPlatform? = when (this) {
     KonanTarget.IOS_ARM64           -> FilamentPlatform("ios",           "arm64", "iosArm64")
     KonanTarget.IOS_SIMULATOR_ARM64 -> FilamentPlatform("ios-simulator", "arm64", "iosSimulatorArm64")
     KonanTarget.IOS_X64             -> FilamentPlatform("ios-simulator", "x64",   "iosX64")
-    KonanTarget.MACOS_ARM64         -> FilamentPlatform("macos",         "arm64", "macosArm64")
     KonanTarget.LINUX_X64           -> FilamentPlatform("linux",         "x64",   "linuxX64")
     KonanTarget.LINUX_ARM64         -> FilamentPlatform("linux",         "arm64", "linuxArm64")
     KonanTarget.MINGW_X64           -> FilamentPlatform("windows",       "x64",   "mingwX64")

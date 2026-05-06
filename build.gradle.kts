@@ -4,16 +4,23 @@
 
 // ── Filament prebuilts download ───────────────────────────────────────────────
 //
-// One Exec task per native target — invokes scripts/download_filament_prebuilts.py.
-// Tasks live at the root project so they are shared across :kotlin:* modules.
+// One Exec task per prebuilt target — invokes scripts/download_filament_prebuilts.py.
+// Tasks live at the root project so they are shared across :kotlin:* and :java:*.
+//
+// Targets correspond to:
+//   • iosArm64 / iosSimulatorArm64 / iosX64 — Kotlin/Native iOS targets.
+//   • macosArm64 / macosX64                 — JVM/JNI host (:java:*); macOS uses
+//                                              the JVM build, not Kotlin/Native.
+//   • linuxX64 / linuxArm64 / mingwX64      — JVM/JNI host on Linux/Windows.
 
 val filaVersion: String by project
 
-val NATIVE_TARGETS = listOf(
+val PREBUILT_TARGETS = listOf(
     "iosArm64",
     "iosSimulatorArm64",
     "iosX64",
     "macosArm64",
+    "macosX64",
     "linuxX64",
     "linuxArm64",
     "mingwX64",
@@ -22,7 +29,7 @@ val NATIVE_TARGETS = listOf(
 val pythonExe = providers.environmentVariable("PYTHON").orElse("python3")
 val downloadScript = layout.projectDirectory.file("scripts/download_filament_prebuilts.py")
 
-NATIVE_TARGETS.forEach { target ->
+PREBUILT_TARGETS.forEach { target ->
     tasks.register<Exec>("downloadPrebuilts_$target") {
         group = "filament"
         description = "Downloads Filament $filaVersion prebuilt static libraries for $target."
@@ -35,6 +42,6 @@ NATIVE_TARGETS.forEach { target ->
 
 tasks.register("downloadPrebuilts") {
     group = "filament"
-    description = "Downloads Filament $filaVersion prebuilt libraries for all native targets."
-    dependsOn(NATIVE_TARGETS.map { "downloadPrebuilts_$it" })
+    description = "Downloads Filament $filaVersion prebuilt libraries for all targets."
+    dependsOn(PREBUILT_TARGETS.map { "downloadPrebuilts_$it" })
 }
