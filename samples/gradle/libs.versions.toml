@@ -6,6 +6,7 @@ android-targetSdk = "36"
 androidx-activity = "1.13.0"
 annotations = "26.1.0"
 composeMultiplatform = "1.10.3"
+filament = "0.1.0-SNAPSHOT"
 junit = "4.13.2"
 kotlin = "2.3.21"
 kotlinx-coroutines = "1.10.2"
@@ -13,8 +14,8 @@ material3 = "1.9.0"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
-filament = { module = "io.github.erkko68.filament:filament" }
-filament-compose = { module = "io.github.erkko68.filament:filament-compose" }
+filament = { module = "io.github.erkko68.filament:filament", version.ref = "filament" }
+filament-compose = { module = "io.github.erkko68.filament:filament-compose", version.ref = "filament" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
