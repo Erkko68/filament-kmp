@@ -39,7 +39,11 @@ kotlin {
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
+            implementation(libs.filament)
             implementation(libs.filament.compose)
+            implementation(libs.filamat)
+            implementation(libs.utils)
+            implementation(libs.gltfio)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

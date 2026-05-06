@@ -16,6 +16,9 @@ material3 = "1.9.0"
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
 filament = { module = "io.github.erkko68.filament:filament", version.ref = "filament" }
 filament-compose = { module = "io.github.erkko68.filament:filament-compose", version.ref = "filament" }
+filamat = { module = "io.github.erkko68.filament:filamat", version.ref = "filament" }
+utils = { module = "io.github.erkko68.filament:filament-utils", version.ref = "filament" }
+gltfio = { module = "io.github.erkko68.filament:gltfio", version.ref = "filament" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
