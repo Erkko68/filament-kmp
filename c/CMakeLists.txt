@@ -14,9 +14,14 @@ if (FILAMENT_PLATFORM STREQUAL "ios")
 elseif (FILAMENT_PLATFORM STREQUAL "ios-simulator")
     set(CMAKE_SYSTEM_NAME iOS)
     set(CMAKE_OSX_SYSROOT iphonesimulator)
-    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
     set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0")
-    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosSimulatorArm64/lib")
+    if (FILAMENT_ARCH STREQUAL "x64")
+        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+        set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosX64/lib")
+    else()
+        set(CMAKE_OSX_ARCHITECTURES "arm64")
+        set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosSimulatorArm64/lib")
+    endif()
 endif()
 
 project(filament-c)
@@ -60,11 +65,10 @@ endmacro()
 add_filament_library(filament)
 add_filament_library(backend)
 add_filament_library(utils)
-add_filament_library(math)
 
 add_library(geometry STATIC IMPORTED)
 set_target_properties(geometry PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}geometry_combined${LIB_SUFFIX})
+        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}geometry${LIB_SUFFIX})
 
 add_library(ibl-lite STATIC IMPORTED)
 set_target_properties(ibl-lite PROPERTIES IMPORTED_LOCATION
@@ -72,7 +76,7 @@ set_target_properties(ibl-lite PROPERTIES IMPORTED_LOCATION
 
 add_library(filamat STATIC IMPORTED)
 set_target_properties(filamat PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}filamat_combined${LIB_SUFFIX})
+        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}filamat${LIB_SUFFIX})
 
 add_library(shaders STATIC IMPORTED)
 set_target_properties(shaders PROPERTIES IMPORTED_LOCATION
@@ -90,8 +94,6 @@ add_filament_library(filabridge)
 add_filament_library(zstd)
 add_filament_library(smol-v)
 add_filament_library(ktxreader)
-add_filament_library(bluegl)
-add_filament_library(bluevk)
 add_filament_library(png)
 add_filament_library(tinyexr)
 add_filament_library(z)
@@ -179,8 +181,6 @@ target_link_libraries(filament-c
     PRIVATE filabridge
     PRIVATE zstd
     PRIVATE smol-v
-    PRIVATE bluegl
-    PRIVATE bluevk
 )
 
 if (APPLE)
@@ -191,7 +191,6 @@ if (APPLE)
             "-framework UIKit"
             "-framework QuartzCore"
             "-framework CoreVideo"
-            "-framework OpenGLES"
         )
     else()
         target_link_libraries(filament-c PRIVATE
@@ -200,7 +199,6 @@ if (APPLE)
             "-framework AppKit"
             "-framework QuartzCore"
             "-framework CoreVideo"
-            "-framework OpenGL"
         )
     endif()
 endif()
@@ -218,7 +216,6 @@ target_link_libraries(filamat-c
     PRIVATE shaders
     PRIVATE smol-v
     PRIVATE utils
-    PRIVATE math
 )
 
 target_include_directories(filamat-c PUBLIC
@@ -250,7 +247,6 @@ target_link_libraries(filament-utils-c
     PRIVATE imageio-lite
     PRIVATE zstd
     PRIVATE utils
-    PRIVATE math
     PRIVATE filaflat
     PRIVATE filabridge
 )
@@ -283,7 +279,6 @@ target_link_libraries(gltfio-c
     PRIVATE filament
     PRIVATE backend
     PRIVATE utils
-    PRIVATE math
     PRIVATE filaflat
     PRIVATE filabridge
     PRIVATE image

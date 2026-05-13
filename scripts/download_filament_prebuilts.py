@@ -7,10 +7,16 @@ survive ./gradlew clean and are shared across all targets that use the same
 asset. Each target's .a / .lib files are extracted into:
     <repo>/prebuilts/<target>/lib/
 
+Since Filament 1.71.4 the iOS tarball ships xcframeworks: each library lives at
+    filament/lib/lib<name>.xcframework/<slice>/lib<name>.a
+where <slice> is "ios-arm64" (device) or "ios-arm64_x86_64-simulator" (fat
+simulator binary covering both arm64 and x86_64). Targets that reference an
+xcframework slice use the "xcf:<slice>" prefix notation in TARGETS below.
+
 Usage:
-    python3 download_filament_prebuilts.py 1.71.0 iosArm64 macosArm64
-    python3 download_filament_prebuilts.py 1.71.0 --all
-    python3 download_filament_prebuilts.py 1.71.0 host          # host JVM target
+    python3 download_filament_prebuilts.py 1.71.4 iosArm64 macosArm64
+    python3 download_filament_prebuilts.py 1.71.4 --all
+    python3 download_filament_prebuilts.py 1.71.4 host          # host JVM target
 """
 
 import argparse
@@ -26,11 +32,15 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = REPO_ROOT / ".gradle" / "filament-prebuilts-cache"
 PREBUILTS_DIR = REPO_ROOT / "prebuilts"
 
-# (tarball-asset, path-prefix-inside-tarball, output-subdir-name)
+# (tarball-asset, path-prefix-inside-tarball OR "xcf:<slice-name>")
+#
+# iOS targets use xcframework slices (since 1.71.4). Both simulator targets
+# point to the same fat simulator slice; each gets its own output directory so
+# the build system can address them independently.
 TARGETS = {
-    "iosArm64":          ("ios",       "filament/lib/universal"),
-    "iosSimulatorArm64": ("ios",       "filament/lib/universal"),
-    "iosX64":            ("ios",       "filament/lib/universal"),
+    "iosArm64":          ("ios",       "xcf:ios-arm64"),
+    "iosSimulatorArm64": ("ios",       "xcf:ios-arm64_x86_64-simulator"),
+    "iosX64":            ("ios",       "xcf:ios-arm64_x86_64-simulator"),
     "macosArm64":        ("mac",       "filament/lib/arm64"),
     "macosX64":          ("mac",       "filament/lib/x86_64"),
     "linuxX64":          ("linux",     "filament/lib/x86_64"),
@@ -80,6 +90,7 @@ def download_tarball(version: str, suffix: str) -> Path:
 
 
 def extract(tarball: Path, lib_prefix: str, out_dir: Path) -> int:
+    """Extract .a/.lib files from a flat directory inside the tarball."""
     out_dir.mkdir(parents=True, exist_ok=True)
     prefix = lib_prefix.rstrip("/") + "/"
     n = 0
@@ -100,6 +111,34 @@ def extract(tarball: Path, lib_prefix: str, out_dir: Path) -> int:
     return n
 
 
+def extract_xcframework(tarball: Path, xcf_slice: str, out_dir: Path) -> int:
+    """Extract .a files from xcframework-structured iOS tarballs (since 1.71.4).
+
+    Expected path pattern inside the tarball:
+        filament/lib/lib<name>.xcframework/<slice>/lib<name>.a
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    n = 0
+    with tarfile.open(tarball, "r:gz") as tar:
+        for m in tar:
+            if not m.isfile():
+                continue
+            parts = m.name.split("/")
+            # Expect exactly: filament / lib / <name>.xcframework / <slice> / <file>
+            if (len(parts) == 5 and
+                    parts[1] == "lib" and
+                    parts[2].endswith(".xcframework") and
+                    parts[3] == xcf_slice):
+                base = parts[4]
+                if base.endswith(".a") or base.endswith(".lib"):
+                    f = tar.extractfile(m)
+                    if f is None:
+                        continue
+                    (out_dir / base).write_bytes(f.read())
+                    n += 1
+    return n
+
+
 def fetch(version: str, target: str, force: bool) -> None:
     if target not in TARGETS:
         sys.exit(f"ERROR: unknown target '{target}'. Known: {', '.join(TARGETS)}")
@@ -112,13 +151,16 @@ def fetch(version: str, target: str, force: bool) -> None:
 
     print(f"[{target}]")
     tarball = download_tarball(version, suffix)
-    count = extract(tarball, lib_prefix, out_dir)
+    if lib_prefix.startswith("xcf:"):
+        count = extract_xcframework(tarball, lib_prefix[4:], out_dir)
+    else:
+        count = extract(tarball, lib_prefix, out_dir)
     print(f"  extracted {count} libs → {out_dir.relative_to(REPO_ROOT)}")
 
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("version", help="Filament version, e.g. 1.71.0")
+    p.add_argument("version", help="Filament version, e.g. 1.71.4")
     p.add_argument("targets", nargs="*", help="Target names (or 'host' for current JVM host)")
     p.add_argument("--all", action="store_true", help="Fetch all known targets")
     p.add_argument("--force", action="store_true", help="Re-extract even if output is non-empty")

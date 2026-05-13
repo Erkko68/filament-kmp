@@ -23,8 +23,6 @@ val FILAMENT_PREBUILT_LIBS = listOf(
     "libfilaflat.a",
     "libfilabridge.a",
     "libsmol-v.a",
-    "libbluegl.a",
-    "libbluevk.a",
     "libzstd.a",
     "libmeshoptimizer.a",  // transitive dep of libfilament.a
 )
