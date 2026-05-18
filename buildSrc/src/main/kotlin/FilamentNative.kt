@@ -61,8 +61,9 @@ fun KotlinNativeTarget.applyFilamentNative(
 
     // Per-(target, cmakeTarget) build dir: when multiple modules run cmake concurrently for the
     // same konan target, sharing one dir causes them to clobber each other's libfilament-c.a.
-    val buildDir    = project.file("../../c/build/$name/$cmakeTarget")
-    val prebuiltDir = project.file("../../prebuilts/${platform.prebuiltDir}/lib")
+    val cmakeSourceDir = project.file("../../c")
+    val buildDir       = project.file("../../c/build/$name/$cmakeTarget")
+    val prebuiltDir    = project.file("../../prebuilts/${platform.prebuiltDir}/lib")
 
     // Prebuilt static libs are downloaded by a root-level task (see kotlin/build.gradle.kts).
     val downloadTask = project.rootProject.tasks.named("downloadPrebuilts_$name")
@@ -74,7 +75,7 @@ fun KotlinNativeTarget.applyFilamentNative(
         workingDir(buildDir)
         commandLine(
             "sh", "-c",
-            "$cmake ../../ -DFILAMENT_PLATFORM=${platform.cmakePlatform}" +
+            "$cmake ${cmakeSourceDir.absolutePath} -DFILAMENT_PLATFORM=${platform.cmakePlatform}" +
             " -DFILAMENT_ARCH=${platform.cmakeArch}" +
             " -DCMAKE_BUILD_TYPE=Release" +
             " && $cmake --build . --target $cmakeTarget",

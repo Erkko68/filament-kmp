@@ -1,4 +1,4 @@
-name: Build
+name: Samples
 
 on:
   push:
@@ -16,16 +16,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-      - run: ./gradlew compileReleaseKotlinAndroid --no-configuration-cache
+      - working-directory: samples
+        run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
 
-  js:
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { java-version: '17', distribution: 'temurin' }
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew compileKotlinJs --no-configuration-cache
+      - working-directory: samples
+        run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
 
   ios:
     runs-on: macos-latest
@@ -48,15 +50,29 @@ jobs:
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-ios
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_iosArm64 downloadPrebuilts_iosSimulatorArm64 downloadPrebuilts_iosX64
-      - name: Build library
+      - name: Assemble XCFrameworks
         run: |
           ./gradlew \
-            compileKotlinIosArm64 \
-            compileKotlinIosSimulatorArm64 \
-            compileKotlinIosX64 \
+            assembleFilamentXCFramework \
+            assembleFilamatXCFramework \
+            assembleFilamentUtilsXCFramework \
+            assembleGltfioXCFramework \
+            assembleFilamentComposeXCFramework \
             --no-configuration-cache
+      - name: Build iOS sample (Simulator)
+        working-directory: samples/iosApp
+        run: |
+          xcodebuild \
+            -project iosApp.xcodeproj \
+            -scheme iosApp \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
 
-  jvm:
+  desktop:
     strategy:
       fail-fast: false
       matrix:
@@ -65,8 +81,6 @@ jobs:
             target: macosArm64
           - os: ubuntu-latest
             target: linuxX64
-          - os: ubuntu-24.04-arm
-            target: linuxArm64
           - os: windows-latest
             target: mingwX64
     runs-on: ${{ matrix.os }}
@@ -90,5 +104,5 @@ jobs:
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
-      - name: Build library
-        run: ./gradlew compileKotlinJvm --no-configuration-cache
+      - working-directory: samples
+        run: ./gradlew :desktopApp:compileKotlinJvm --no-configuration-cache

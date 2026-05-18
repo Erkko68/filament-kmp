@@ -155,7 +155,7 @@ def fetch(version: str, target: str, force: bool) -> None:
         count = extract_xcframework(tarball, lib_prefix[4:], out_dir)
     else:
         count = extract(tarball, lib_prefix, out_dir)
-    print(f"  extracted {count} libs → {out_dir.relative_to(REPO_ROOT)}")
+    print(f"  extracted {count} libs -> {out_dir.relative_to(REPO_ROOT)}")
 
 
 def main() -> None:
