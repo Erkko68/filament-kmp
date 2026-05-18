@@ -52,6 +52,7 @@ tasks.register<Exec>("cmakeConfig") {
         cmakePath, "../../",
         "-DFILAMENT_PLATFORM=$platform",
         "-DFILAMENT_ARCH=$arch",
+        "-DCMAKE_BUILD_TYPE=Release",
         "-DJAVA_HOME=$javaHome",
     )
     if (platform == "macos") {
@@ -65,7 +66,9 @@ tasks.register<Exec>("cmakeConfig") {
 tasks.register<Exec>("cmakeBuild") {
     dependsOn("cmakeConfig")
     workingDir(layout.buildDirectory.dir("cmake").get().asFile)
-    commandLine(cmakePath, "--build", ".")
+    // --config Release is needed for multi-config generators (Visual Studio on Windows);
+    // it's a no-op for single-config generators (Make / Ninja on macOS / Linux).
+    commandLine(cmakePath, "--build", ".", "--config", "Release")
 }
 
 val resArch = if (arch == "Arm64") "arm64" else "x64"
@@ -73,7 +76,11 @@ val resArch = if (arch == "Arm64") "arm64" else "x64"
 tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") {
     dependsOn("cmakeBuild")
     from(layout.buildDirectory.dir("cmake")) {
-        include("*.dylib", "*.so", "*.dll")
+        // Visual Studio puts DLLs under build/cmake/Release/, single-config generators
+        // put them directly in build/cmake/ — match both with **/ and flatten.
+        include("**/*.dylib", "**/*.so", "**/*.dll")
+        eachFile { path = name }
+        includeEmptyDirs = false
         into("natives/$platform-$resArch")
     }
     // Bundle pre-compiled natives from other platforms (used in CI publish job).
