@@ -2,6 +2,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 private data class FilamentPlatform(
@@ -42,6 +43,11 @@ fun KotlinNativeTarget.applyFilamentNative(
 ) {
     val platform = konanTarget.filamentPlatform() ?: return
 
+    // Skip targets that can't be built on this host (e.g. iOS on Windows/Linux).
+    // Kotlin/Native disables them anyway; bailing here also avoids spurious
+    // "prebuilts not found" errors during configuration.
+    if (!HostManager().isEnabled(konanTarget)) return
+
     if (konanTarget.family == Family.IOS) {
         binaries.all {
             freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
@@ -53,7 +59,9 @@ fun KotlinNativeTarget.applyFilamentNative(
     val libPrefix  = if (isWindows) "" else "lib"
     val libSuffix  = if (isWindows) ".lib" else ".a"
 
-    val buildDir    = project.file("../../c/build/$name")
+    // Per-(target, cmakeTarget) build dir: when multiple modules run cmake concurrently for the
+    // same konan target, sharing one dir causes them to clobber each other's libfilament-c.a.
+    val buildDir    = project.file("../../c/build/$name/$cmakeTarget")
     val prebuiltDir = project.file("../../prebuilts/${platform.prebuiltDir}/lib")
 
     // Prebuilt static libs are downloaded by a root-level task (see kotlin/build.gradle.kts).
