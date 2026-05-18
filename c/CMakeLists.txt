@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.19...3.28)
 
 # --- Platform specific setup ---
 set(FILAMENT_PLATFORM "ios-simulator" CACHE STRING "Target platform (ios, ios-simulator)")

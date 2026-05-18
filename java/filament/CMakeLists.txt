@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.19...3.28)
 
 # Filament prebuilts are built with clang/libc++ — use the same toolchain on Linux
 if (UNIX AND NOT APPLE)
@@ -25,7 +25,12 @@ set(FILAMENT_ARCH "arm64" CACHE STRING "Target architecture (arm64, x64)")
 
 # Paths
 set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")
-set(FILAMENT_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prebuilts/${FILAMENT_PLATFORM}${FILAMENT_ARCH}/lib")
+# On Windows the prebuilts are stored under mingw<Arch>/ (Kotlin/Native target name convention)
+set(FILAMENT_PREBUILT_PREFIX ${FILAMENT_PLATFORM})
+if (WIN32)
+    set(FILAMENT_PREBUILT_PREFIX "mingw")
+endif()
+set(FILAMENT_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prebuilts/${FILAMENT_PREBUILT_PREFIX}${FILAMENT_ARCH}/lib")
 
 # JNI setup
 find_package(JNI REQUIRED)

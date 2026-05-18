@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.19...3.28)
 
 if (UNIX AND NOT APPLE)
     find_program(CLANGPP clang++)
@@ -20,7 +20,11 @@ endif()
 
 # Paths
 set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../include")
-set(FILAMENT_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prebuilts/${FILAMENT_PLATFORM}${FILAMENT_ARCH}/lib")
+set(FILAMENT_PREBUILT_PREFIX ${FILAMENT_PLATFORM})
+if (WIN32)
+    set(FILAMENT_PREBUILT_PREFIX "mingw")
+endif()
+set(FILAMENT_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../prebuilts/${FILAMENT_PREBUILT_PREFIX}${FILAMENT_ARCH}/lib")
 
 find_package(JNI REQUIRED)
 

@@ -139,6 +139,9 @@ jobs:
           path: prebuilts/linuxX64
           key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxX64
 
+      - name: Install C++ build dependencies
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
+
       - name: Download Linux x64 prebuilts
         run: ./gradlew downloadPrebuilts_linuxX64
 
@@ -167,6 +170,9 @@ jobs:
       - name: Read Filament version
         id: fila_version
         run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Install C++ build dependencies
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
 
       - name: Cache Linux arm64 prebuilts
         uses: actions/cache@v4
@@ -293,6 +299,10 @@ jobs:
         with:
           path: prebuilts/${{ matrix.prebuilt-target }}
           key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-${{ matrix.prebuilt-target }}
+
+      - name: Install C++ build dependencies (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
 
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_${{ matrix.prebuilt-target }}

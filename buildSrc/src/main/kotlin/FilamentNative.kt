@@ -63,7 +63,6 @@ fun KotlinNativeTarget.applyFilamentNative(
     val cmake = resolveCmake()
     val cmakeTask = project.tasks.register("buildCWrapper_${cmakeTarget}_$name", Exec::class.java) {
         dependsOn(downloadTask)
-        buildDir.mkdirs()
         workingDir(buildDir)
         commandLine(
             "sh", "-c",
@@ -76,6 +75,7 @@ fun KotlinNativeTarget.applyFilamentNative(
         val cmakePlatform = platform.cmakePlatform
         val cmakeArch = platform.cmakeArch
         doFirst {
+            buildDir.mkdirs()
             logger.lifecycle("[$targetName] CMake: building $cmakeTarget ($cmakePlatform/$cmakeArch)")
         }
     }

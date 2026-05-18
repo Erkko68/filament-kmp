@@ -98,6 +98,9 @@ jobs:
           path: prebuilts/linuxX64
           key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxX64
 
+      - name: Install C++ build dependencies
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
+
       - name: Download Linux x64 prebuilts
         run: ./gradlew downloadPrebuilts_linuxX64
 
@@ -154,6 +157,9 @@ jobs:
         with:
           path: prebuilts/linuxArm64
           key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxArm64
+
+      - name: Install C++ build dependencies
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
 
       - name: Download Linux arm64 prebuilts
         run: ./gradlew downloadPrebuilts_linuxArm64
