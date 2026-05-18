@@ -6,7 +6,12 @@
 // projects created by `include(":kotlin:filament")` — carries valid coordinates,
 // so nothing accidentally publishes with group = rootProject.name.
 allprojects {
-    group = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
+    val baseGroup = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
+    group = if (path.startsWith(":java")) {
+        "$baseGroup-jni"
+    } else {
+        baseGroup
+    }
     version = project.findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
 }
 

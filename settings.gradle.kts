@@ -1,4 +1,4 @@
-rootProject.name = "filament-kmp"
+rootProject.name = "filament-umbrella"
 
 pluginManagement {
     repositories {

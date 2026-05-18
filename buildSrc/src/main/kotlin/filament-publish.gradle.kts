@@ -37,5 +37,7 @@ mavenPublishing {
     }
 
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    if (project.hasProperty("signingInMemoryKeyId")) {
+        signAllPublications()
+    }
 }
