@@ -1,5 +1,8 @@
 # Filament KMP
 
+> [!NOTE]
+> **Disclaimer:** This is an unofficial, community-maintained Kotlin Multiplatform wrapper for [Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
+
 > [!WARNING]
 > **Early Stages**: This project is in its early stages of development. APIs and features are subject to change.
 
