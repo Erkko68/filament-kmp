@@ -85,7 +85,7 @@ if (APPLE)
         "-framework OpenGL"
     )
 elseif (WIN32)
-    target_link_libraries(filamat-jni PRIVATE opengl32 gdi32 user32)
+    target_link_libraries(filamat-jni PRIVATE opengl32 gdi32 user32 shlwapi)
 elseif (UNIX)
     target_link_libraries(filamat-jni PRIVATE GL)
 endif()
