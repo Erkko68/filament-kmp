@@ -256,7 +256,16 @@ jobs:
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
 
   build-samples-desktop:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            prebuilt-target: macosArm64
+          - os: ubuntu-latest
+            prebuilt-target: linuxX64
+          - os: windows-latest
+            prebuilt-target: mingwX64
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
 
@@ -276,16 +285,17 @@ jobs:
 
       - name: Read Filament version
         id: fila_version
+        shell: bash
         run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
 
-      - name: Cache Linux x64 prebuilts
+      - name: Cache prebuilts
         uses: actions/cache@v4
         with:
-          path: prebuilts/linuxX64
-          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxX64
+          path: prebuilts/${{ matrix.prebuilt-target }}
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-${{ matrix.prebuilt-target }}
 
-      - name: Download Linux x64 prebuilts
-        run: ./gradlew downloadPrebuilts_linuxX64
+      - name: Download prebuilts
+        run: ./gradlew downloadPrebuilts_${{ matrix.prebuilt-target }}
 
       - name: Build desktop sample
         working-directory: samples
@@ -366,4 +376,7 @@ jobs:
             -scheme iosApp \
             -destination 'generic/platform=iOS Simulator' \
             -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
             build

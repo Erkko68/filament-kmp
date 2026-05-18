@@ -73,7 +73,7 @@ def download_tarball(version: str, suffix: str) -> Path:
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         url = f"https://github.com/google/filament/releases/download/v{version}/{name}"
         print(f"  download: {url}")
-        tmp = cached.with_suffix(cached.suffix + ".part")
+        tmp = cached.with_name(cached.name + f".{os.getpid()}.part")
         try:
             with urllib.request.urlopen(url) as resp, tmp.open("wb") as out:
                 while True:
