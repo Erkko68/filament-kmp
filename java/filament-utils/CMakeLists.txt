@@ -126,4 +126,8 @@ if (APPLE)
             "-framework CoreVideo"
         )
     endif()
+elseif (WIN32)
+    target_link_libraries(filament-utils-jni PRIVATE opengl32 gdi32 user32)
+elseif (UNIX)
+    target_link_libraries(filament-utils-jni PRIVATE GL)
 endif()

@@ -134,4 +134,6 @@ if (APPLE)
 elseif (UNIX)
     target_link_libraries(filament-jni PRIVATE GL)
 elseif (WIN32)
+    # PlatformWGL / BlueGLWindows need the Win32 OpenGL + GDI libs.
+    target_link_libraries(filament-jni PRIVATE opengl32 gdi32 user32)
 endif()

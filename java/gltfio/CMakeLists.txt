@@ -115,4 +115,8 @@ if (APPLE)
         "-framework CoreVideo"
         "-framework OpenGL"
     )
+elseif (WIN32)
+    target_link_libraries(gltfio-jni PRIVATE opengl32 gdi32 user32)
+elseif (UNIX)
+    target_link_libraries(gltfio-jni PRIVATE GL)
 endif()
