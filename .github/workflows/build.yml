@@ -1,0 +1,369 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Library targets ───────────────────────────────────────────────────────────
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Android targets
+        run: ./gradlew compileReleaseKotlinAndroid --no-configuration-cache
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache iOS prebuilts
+        uses: actions/cache@v4
+        with:
+          path: |
+            prebuilts/iosArm64
+            prebuilts/iosSimulatorArm64
+            prebuilts/iosX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-ios
+
+      - name: Download iOS prebuilts
+        run: |
+          ./gradlew \
+            downloadPrebuilts_iosArm64 \
+            downloadPrebuilts_iosSimulatorArm64 \
+            downloadPrebuilts_iosX64
+
+      - name: Build iOS targets
+        run: |
+          ./gradlew \
+            compileKotlinIosArm64 \
+            compileKotlinIosSimulatorArm64 \
+            compileKotlinIosX64 \
+            --no-configuration-cache
+
+  build-jvm-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache macOS prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/macosArm64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-macosArm64
+
+      - name: Download macOS prebuilts
+        run: ./gradlew downloadPrebuilts_macosArm64
+
+      - name: Build JVM target (macOS arm64)
+        run: ./gradlew compileKotlinJvm --no-configuration-cache
+
+  build-jvm-linux-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Linux x64 prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/linuxX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxX64
+
+      - name: Download Linux x64 prebuilts
+        run: ./gradlew downloadPrebuilts_linuxX64
+
+      - name: Build JVM target (Linux x64)
+        run: ./gradlew compileKotlinJvm --no-configuration-cache
+
+  build-jvm-linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Linux arm64 prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/linuxArm64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxArm64
+
+      - name: Download Linux arm64 prebuilts
+        run: ./gradlew downloadPrebuilts_linuxArm64
+
+      - name: Build JVM target (Linux arm64)
+        run: ./gradlew compileKotlinJvm --no-configuration-cache
+
+  build-jvm-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        shell: bash
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Windows prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/mingwX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-mingwX64
+
+      - name: Download Windows prebuilts
+        run: ./gradlew downloadPrebuilts_mingwX64
+
+      - name: Build JVM target (Windows x64)
+        run: ./gradlew compileKotlinJvm --no-configuration-cache
+
+  build-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build JS target
+        run: ./gradlew compileKotlinJs --no-configuration-cache
+
+  # ── Samples ───────────────────────────────────────────────────────────────────
+  build-samples-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Android sample
+        working-directory: samples
+        run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
+
+  build-samples-desktop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Linux x64 prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/linuxX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxX64
+
+      - name: Download Linux x64 prebuilts
+        run: ./gradlew downloadPrebuilts_linuxX64
+
+      - name: Build desktop sample
+        working-directory: samples
+        run: ./gradlew :desktopApp:compileKotlinJvm --no-configuration-cache
+
+  build-samples-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build web sample
+        working-directory: samples
+        run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
+
+  build-samples-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache iOS prebuilts
+        uses: actions/cache@v4
+        with:
+          path: |
+            prebuilts/iosArm64
+            prebuilts/iosSimulatorArm64
+            prebuilts/iosX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-ios
+
+      - name: Download iOS prebuilts
+        run: |
+          ./gradlew \
+            downloadPrebuilts_iosArm64 \
+            downloadPrebuilts_iosSimulatorArm64 \
+            downloadPrebuilts_iosX64
+
+      - name: Assemble XCFrameworks
+        run: |
+          ./gradlew \
+            assembleFilamentXCFramework \
+            assembleFilamatXCFramework \
+            assembleFilamentUtilsXCFramework \
+            assembleGltfioXCFramework \
+            assembleFilamentComposeXCFramework \
+            --no-configuration-cache
+
+      - name: Build iOS sample (Simulator)
+        working-directory: samples/iosApp
+        run: |
+          xcodebuild \
+            -project iosApp.xcodeproj \
+            -scheme iosApp \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            build

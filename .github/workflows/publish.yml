@@ -1,0 +1,324 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. 0.1.0)'
+        required: true
+
+jobs:
+  # ── Build JNI natives per platform (cmake only, no Kotlin compilation) ────────
+  build-jvm-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache macOS prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/macosArm64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-macosArm64
+
+      - name: Download macOS prebuilts
+        run: ./gradlew downloadPrebuilts_macosArm64
+
+      - name: Build JNI natives (macOS arm64)
+        run: |
+          ./gradlew \
+            :java:filament:cmakeBuild \
+            :java:filamat:cmakeBuild \
+            :java:gltfio:cmakeBuild \
+            :java:filament-utils:cmakeBuild \
+            --no-configuration-cache
+
+      - name: Collect natives
+        run: |
+          mkdir -p jni-output
+          for module in filament filamat gltfio filament-utils; do
+            mkdir -p "jni-output/java-${module}"
+            find "java/${module}/build/cmake" \
+              \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
+              -exec cp {} "jni-output/java-${module}/" \; 2>/dev/null || true
+          done
+
+      - name: Upload JNI natives
+        uses: actions/upload-artifact@v4
+        with:
+          name: jni-macos-arm64
+          path: jni-output/
+
+  build-jvm-linux-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Linux x64 prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/linuxX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxX64
+
+      - name: Download Linux x64 prebuilts
+        run: ./gradlew downloadPrebuilts_linuxX64
+
+      - name: Build JNI natives (Linux x64)
+        run: |
+          ./gradlew \
+            :java:filament:cmakeBuild \
+            :java:filamat:cmakeBuild \
+            :java:gltfio:cmakeBuild \
+            :java:filament-utils:cmakeBuild \
+            --no-configuration-cache
+
+      - name: Collect natives
+        run: |
+          mkdir -p jni-output
+          for module in filament filamat gltfio filament-utils; do
+            mkdir -p "jni-output/java-${module}"
+            find "java/${module}/build/cmake" \
+              \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
+              -exec cp {} "jni-output/java-${module}/" \; 2>/dev/null || true
+          done
+
+      - name: Upload JNI natives
+        uses: actions/upload-artifact@v4
+        with:
+          name: jni-linux-x64
+          path: jni-output/
+
+  build-jvm-linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Linux arm64 prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/linuxArm64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-linuxArm64
+
+      - name: Download Linux arm64 prebuilts
+        run: ./gradlew downloadPrebuilts_linuxArm64
+
+      - name: Build JNI natives (Linux arm64)
+        run: |
+          ./gradlew \
+            :java:filament:cmakeBuild \
+            :java:filamat:cmakeBuild \
+            :java:gltfio:cmakeBuild \
+            :java:filament-utils:cmakeBuild \
+            --no-configuration-cache
+
+      - name: Collect natives
+        run: |
+          mkdir -p jni-output
+          for module in filament filamat gltfio filament-utils; do
+            mkdir -p "jni-output/java-${module}"
+            find "java/${module}/build/cmake" \
+              \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
+              -exec cp {} "jni-output/java-${module}/" \; 2>/dev/null || true
+          done
+
+      - name: Upload JNI natives
+        uses: actions/upload-artifact@v4
+        with:
+          name: jni-linux-arm64
+          path: jni-output/
+
+  build-jvm-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Read Filament version
+        id: fila_version
+        shell: bash
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache Windows prebuilts
+        uses: actions/cache@v4
+        with:
+          path: prebuilts/mingwX64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-mingwX64
+
+      - name: Download Windows prebuilts
+        run: ./gradlew downloadPrebuilts_mingwX64
+
+      - name: Build JNI natives (Windows x64)
+        run: |
+          ./gradlew `
+            :java:filament:cmakeBuild `
+            :java:filamat:cmakeBuild `
+            :java:gltfio:cmakeBuild `
+            :java:filament-utils:cmakeBuild `
+            --no-configuration-cache
+
+      - name: Collect natives
+        shell: bash
+        run: |
+          mkdir -p jni-output
+          for module in filament filamat gltfio filament-utils; do
+            mkdir -p "jni-output/java-${module}"
+            find "java/${module}/build/cmake" \
+              \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
+              -exec cp {} "jni-output/java-${module}/" \; 2>/dev/null || true
+          done
+
+      - name: Upload JNI natives
+        uses: actions/upload-artifact@v4
+        with:
+          name: jni-windows-x64
+          path: jni-output/
+
+  # ── Publish all modules ───────────────────────────────────────────────────────
+  publish:
+    needs: [build-jvm-macos, build-jvm-linux-x64, build-jvm-linux-arm64, build-jvm-windows]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Read Filament version
+        id: fila_version
+        run: echo "version=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+
+      - name: Cache iOS + macOS prebuilts
+        uses: actions/cache@v4
+        with:
+          path: |
+            prebuilts/iosArm64
+            prebuilts/iosSimulatorArm64
+            prebuilts/iosX64
+            prebuilts/macosArm64
+          key: filament-prebuilts-${{ steps.fila_version.outputs.version }}-ios-macos
+
+      - name: Download iOS + macOS prebuilts
+        run: |
+          ./gradlew \
+            downloadPrebuilts_iosArm64 \
+            downloadPrebuilts_iosSimulatorArm64 \
+            downloadPrebuilts_iosX64 \
+            downloadPrebuilts_macosArm64
+
+      - name: Download all JNI natives
+        uses: actions/download-artifact@v4
+        with:
+          pattern: jni-*
+          path: jni-download/
+
+      - name: Organize JNI artifacts
+        run: |
+          mkdir -p jni-artifacts
+          for artifact_dir in jni-download/jni-*/; do
+            platform_arch="${artifact_dir#jni-download/jni-}"
+            platform_arch="${platform_arch%/}"
+            cp -r "${artifact_dir}." "jni-artifacts/${platform_arch}/"
+          done
+
+      - name: Publish to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVENCENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVENCENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          ./gradlew \
+            -PlibVersion=${{ steps.version.outputs.version }} \
+            -PjniArtifactsDir=${{ github.workspace }}/jni-artifacts \
+            publishAllPublicationsToMavenCentralRepository \
+            --no-configuration-cache

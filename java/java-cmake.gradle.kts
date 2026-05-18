@@ -73,6 +73,20 @@ tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") 
         include("*.dylib", "*.so", "*.dll")
         into("natives/$platform-$resArch")
     }
+    // Bundle pre-compiled natives from other platforms (used in CI publish job).
+    // Pass -PjniArtifactsDir=<path> where the dir has {platform}-{arch}/{module}/ subdirs.
+    val jniArtifactsDir = (project.findProperty("jniArtifactsDir") as? String)?.let { file(it) }
+    if (jniArtifactsDir != null && jniArtifactsDir.exists()) {
+        jniArtifactsDir.listFiles { f -> f.isDirectory }?.forEach { platformDir ->
+            val moduleDir = File(platformDir, project.name)
+            if (moduleDir.exists()) {
+                from(moduleDir) {
+                    include("*.dylib", "*.so", "*.dll")
+                    into("natives/${platformDir.name}")
+                }
+            }
+        }
+    }
 }
 
 tasks.named("assemble") {
