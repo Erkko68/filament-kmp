@@ -2,6 +2,14 @@
 // onto the classpath through buildSrc/build.gradle.kts and applied by the
 // `filament-kmp-module` convention plugin in each :kotlin:* module.
 
+// Ensure every project — including the implicit :kotlin and :java parent
+// projects created by `include(":kotlin:filament")` — carries valid coordinates,
+// so nothing accidentally publishes with group = rootProject.name.
+allprojects {
+    group = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
+    version = project.findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
+}
+
 // ── Filament prebuilts download ───────────────────────────────────────────────
 //
 // One Exec task per prebuilt target — invokes scripts/download_filament_prebuilts.py.
