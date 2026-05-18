@@ -45,11 +45,14 @@ tasks.register<Exec>("cmakeConfig") {
     val cmakeBuildDir = layout.buildDirectory.dir("cmake").get().asFile
     doFirst { cmakeBuildDir.mkdirs() }
     workingDir(cmakeBuildDir)
+    // CMake parses backslashes in cache vars as escapes (FindJNI.cmake regex chokes on
+    // "\h" in "C:\hostedtoolcache\..."). Pass forward slashes — CMake handles them on Windows.
+    val javaHome = System.getProperty("java.home").replace('\\', '/')
     val args = mutableListOf(
         cmakePath, "../../",
         "-DFILAMENT_PLATFORM=$platform",
         "-DFILAMENT_ARCH=$arch",
-        "-DJAVA_HOME=${System.getProperty("java.home")}",
+        "-DJAVA_HOME=$javaHome",
     )
     if (platform == "macos") {
         val osxArch = if (arch == "Arm64") "arm64" else "x86_64"

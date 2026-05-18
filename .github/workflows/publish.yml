@@ -11,7 +11,10 @@ on:
         required: true
 
 jobs:
-  # ── Build JNI natives per platform (cmake only, no Kotlin compilation) ────────
+  # ── Build JNI natives per platform (cmake only) ───────────────────────────────
+  # Each job uploads its natives in the final on-disk layout used by the publish
+  # job: <platform-arch>/<module>/<libs>. download-artifact + merge-multiple
+  # later collapses all of them into one directory with no reshuffling.
   build-jni:
     strategy:
       fail-fast: false
@@ -19,16 +22,16 @@ jobs:
         include:
           - os: macos-latest
             target: macosArm64
-            artifact: macos-arm64
+            arch: macos-arm64
           - os: ubuntu-latest
             target: linuxX64
-            artifact: linux-x64
+            arch: linux-x64
           - os: ubuntu-24.04-arm
             target: linuxArm64
-            artifact: linux-arm64
+            arch: linux-arm64
           - os: windows-latest
             target: mingwX64
-            artifact: windows-x64
+            arch: windows-x64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -59,20 +62,20 @@ jobs:
             :java:gltfio:cmakeBuild \
             :java:filament-utils:cmakeBuild \
             --no-configuration-cache
-      - name: Collect natives
+      - name: Stage natives
         shell: bash
         run: |
-          mkdir -p jni-output
           for module in filament filamat gltfio filament-utils; do
-            mkdir -p "jni-output/java-${module}"
+            dest="jni-artifacts/${{ matrix.arch }}/${module}"
+            mkdir -p "$dest"
             find "java/${module}/build/cmake" \
               \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
-              -exec cp {} "jni-output/java-${module}/" \; 2>/dev/null || true
+              -exec cp {} "$dest/" \; 2>/dev/null || true
           done
       - uses: actions/upload-artifact@v4
         with:
-          name: jni-${{ matrix.artifact }}
-          path: jni-output/
+          name: jni-${{ matrix.arch }}
+          path: jni-artifacts/
 
   # ── Publish all modules ───────────────────────────────────────────────────────
   publish:
@@ -111,18 +114,12 @@ jobs:
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_iosX64 \
             downloadPrebuilts_macosArm64
-      - uses: actions/download-artifact@v4
+      - name: Download JNI natives
+        uses: actions/download-artifact@v4
         with:
           pattern: jni-*
-          path: jni-download/
-      - name: Organize JNI artifacts
-        run: |
-          mkdir -p jni-artifacts
-          for d in jni-download/jni-*/; do
-            name="${d#jni-download/jni-}"
-            name="${name%/}"
-            cp -r "${d}." "jni-artifacts/${name}/"
-          done
+          path: jni-artifacts/
+          merge-multiple: true
       - name: Publish to Maven Central
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVENCENTRAL_USERNAME }}

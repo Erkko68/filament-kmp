@@ -2,8 +2,23 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+
+// Returns true if the konan target can be built on the current host machine.
+// We avoid Kotlin's HostManager here because older embedded versions don't
+// recognise some hosts (e.g. linux aarch64) and throw at instantiation time.
+private fun isTargetBuildableOnHost(target: KonanTarget): Boolean {
+    val osName = System.getProperty("os.name").lowercase()
+    val isMac     = osName.startsWith("mac") || osName.contains("darwin")
+    val isWindows = osName.startsWith("windows")
+    val isLinux   = osName.startsWith("linux")
+    return when (target.family) {
+        Family.OSX, Family.IOS, Family.TVOS, Family.WATCHOS -> isMac
+        Family.MINGW                                        -> isWindows
+        Family.LINUX                                        -> isLinux
+        else                                                -> true
+    }
+}
 
 private data class FilamentPlatform(
     val cmakePlatform: String,
@@ -46,7 +61,7 @@ fun KotlinNativeTarget.applyFilamentNative(
     // Skip targets that can't be built on this host (e.g. iOS on Windows/Linux).
     // Kotlin/Native disables them anyway; bailing here also avoids spurious
     // "prebuilts not found" errors during configuration.
-    if (!HostManager().isEnabled(konanTarget)) return
+    if (!isTargetBuildableOnHost(konanTarget)) return
 
     if (konanTarget.family == Family.IOS) {
         binaries.all {
