@@ -131,6 +131,10 @@ jobs:
           ./gradlew \
             -PlibVersion=${{ steps.version.outputs.version }} \
             -PjniArtifactsDir=${{ github.workspace }}/jni-artifacts \
+            :java:filament:publishAllPublicationsToMavenCentralRepository \
+            :java:filamat:publishAllPublicationsToMavenCentralRepository \
+            :java:filament-utils:publishAllPublicationsToMavenCentralRepository \
+            :java:gltfio:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \

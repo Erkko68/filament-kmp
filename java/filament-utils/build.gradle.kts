@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     `java-library`
     kotlin("jvm")
+    id("filament-publish")
 }
 
 apply(from = rootProject.file("java/java-cmake.gradle.kts"))
