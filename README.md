@@ -1,35 +1,105 @@
 # Filament KMP
 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.erkko68.filament/filament-compose?label=Maven%20Central&color=blue)](https://central.sonatype.com/namespace/io.github.erkko68.filament)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Filament](https://img.shields.io/badge/Filament-1.71.4-orange)](https://github.com/google/filament)
+[![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform/)
+
 > [!NOTE]
-> **Disclaimer:** This is an unofficial, community-maintained Kotlin Multiplatform wrapper for [Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
+> **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
 > [!WARNING]
-> **Early Stages**: This project is in its early stages of development. APIs and features are subject to change.
+> **Early stage (`0.1.0-alpha`).** Public APIs may change between releases. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
 
-Filament KMP is a Kotlin Multiplatform (KMP) wrapper for Google's [Filament](https://github.com/google/filament) rendering engine.
+**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/WASM**, with first-class **Compose Multiplatform** integration.
 
-The main goal of this project is to provide the same high-performance 3D rendering experience as **Android Filament**, but for the rest of the platforms (**iOS**, **Desktop/JVM**, **Web/WASM**) with first-class integration for **Compose Multiplatform**.
+```kotlin
+FilamentView(
+    modifier    = Modifier.fillMaxSize(),
+    cameraState = rememberCameraState(eye = Position(0f, 1f, 4f)),
+    skyboxState = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f))),
+) {
+    Light(type = LightManager.Type.DIRECTIONAL, intensity = 100_000f)
+    GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/Duck.glb") })
+    Bloom(strength = 0.2f)
+}
+```
 
-## API Strategy
+## Platform support
 
-The core philosophy of this project is to keep the API as close as possible to the **Android Filament API**. Developers with experience using Filament on Android will find familiar classes and naming conventions here.
+| Platform | Backend | Binding | Status |
+| :--- | :--- | :--- | :--- |
+| **Android** | OpenGL ES 3.x / Vulkan | Official `com.google.android.filament` | ✅ Stable |
+| **iOS / macOS** | Metal | C wrapper + cinterop | ✅ Stable |
+| **JVM / Desktop** (Windows, Linux, macOS) | Vulkan / Metal / OpenGL | Custom JNI | ✅ Stable |
+| **Web / WASM** | WebGL 2.0 | Filament.js bindings | ⚠️ Experimental |
 
-The API is modernized to provide a better Kotlin experience:
-- **Kotlin-First**: Kotlin properties are used instead of traditional getters and setters for single values.
-- **Clean API**: Methods that are already deprecated in Filament or are strictly specific to the Android platform (e.g., those requiring Android `Context` or specific Android UI classes) are removed.
-- **Parity**: This ensures that while the project stays true to Filament's architecture, the developer experience is optimized for modern Multiplatform projects.
+## Quick start
 
-## Project Structure
+Add the Maven Central repository and depend on the modules you need:
 
-- **`kotlin/`**: Core KMP modules — `filament`, `filamat`, `gltfio`, `filament-utils`, and `filament-compose`.
-- **`c/`**: C++ wrapper providing a C-compatible API for **Kotlin Native** targets (iOS, macOS) via `cinterop`.
-- **`java/`**: JNI bindings for the **JVM/Desktop** target. Android uses the official `com.google.android.filament` package and does not depend on this module.
-- **`js/`**: Kotlin/JS external declarations wrapping the official Filament.js/WASM library for the **Web** target.
-- **`prebuilts/`**: Prebuilt Filament static libraries for iOS, macOS, and WASM targets.
-- **`samples/`**: Multiplatform example applications for all supported targets.
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+```
+
+```kotlin
+// build.gradle.kts
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("io.github.erkko68.filament:filament-compose:0.1.0-alpha01")
+        }
+    }
+}
+```
+
+For the full setup (Compose Multiplatform plugin, JNI runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**.
+
+## Modules
+
+| Artifact | Description |
+| :--- | :--- |
+| `filament` | Core renderer — `Engine`, `Scene`, `View`, `Renderer`, `Camera`, `Texture`, `Material`. |
+| `filament-compose` | Compose Multiplatform integration — `FilamentView`, scene DSL, camera state, post-processing. |
+| `gltfio` | glTF / GLB asset loading — `AssetLoader`, `FilamentAsset`, `Animator`. |
+| `filamat` | Runtime material compilation — `MaterialBuilder`. |
+| `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
+
+All published under `io.github.erkko68.filament`. JNI-only runtime JARs are published separately under `io.github.erkko68.filament-jni` and pulled in automatically. See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
+
+## API strategy
+
+The public API stays as close as possible to the **Android Filament API**, so existing Filament knowledge transfers directly. Differences:
+
+- **Kotlin properties** instead of `get*()` / `set*()` for single-value accessors.
+- **Removed** APIs that are deprecated upstream or strictly Android-only (require `Context` or Android UI classes).
+- **Compose DSL** layered on top — fully optional; the raw `Engine` and friends remain accessible via `FilamentEffect`.
 
 ## Documentation
 
-- [Getting Started](docs/README.md)
-- [Repository Architecture](docs/repo-structure.md)
-- [Compose Integration](docs/compose/README.md)
+### This project
+- **[Getting Started](docs/getting-started.md)** — per-platform Gradle setup, first scene.
+- **[Modules](docs/modules.md)** — published artifacts, dependency graph, when you need what.
+- **[Platform Notes](docs/platform-notes.md)** — backends, gotchas (Windows JVM shutdown, web limits, iOS embedding).
+- **[Compose Integration](docs/compose/README.md)** — `FilamentView`, scene DSL, post-processing.
+- **[Repository Structure](docs/repo-structure.md)** — for contributors.
+
+### Upstream Filament (authoritative for engine concepts)
+- **[Filament Engine](https://google.github.io/filament/Filament.md.html)** — PBR theory, scene graph, lighting model, render pipeline.
+- **[Materials](https://google.github.io/filament/Materials.md.html)** — material system, surface shading model, `matc` reference.
+- **[Filament samples](https://github.com/google/filament/tree/main/samples)** — reference scenes ported one-to-one in this project's `samples/`.
+
+## Samples
+
+The [`samples/`](samples/) directory contains a shared Compose scene running on all four targets. See [`samples/README.md`](samples/README.md) for build commands.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](LICENSE). Filament itself is also Apache-2.0 licensed by Google.
