@@ -75,12 +75,14 @@ val resArch = if (arch == "Arm64") "arm64" else "x64"
 
 tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") {
     dependsOn("cmakeBuild")
+    // Single-config generators (Make / Ninja on macOS / Linux) put libs directly in build/cmake/.
     from(layout.buildDirectory.dir("cmake")) {
-        // Visual Studio puts DLLs under build/cmake/Release/, single-config generators
-        // put them directly in build/cmake/ — match both with **/ and flatten.
-        include("**/*.dylib", "**/*.so", "**/*.dll")
-        eachFile { path = name }
-        includeEmptyDirs = false
+        include("*.dylib", "*.so", "*.dll")
+        into("natives/$platform-$resArch")
+    }
+    // Multi-config generators (Visual Studio on Windows) put DLLs in build/cmake/Release/.
+    from(layout.buildDirectory.dir("cmake/Release")) {
+        include("*.dll")
         into("natives/$platform-$resArch")
     }
     // Bundle pre-compiled natives from other platforms (used in CI publish job).
