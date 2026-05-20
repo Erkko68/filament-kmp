@@ -17,12 +17,11 @@
 package io.github.erkko68.filament.utils.jni;
 
 import io.github.erkko68.filament.jni.Filament;
-import io.github.erkko68.filament.jni.internal.NativeLoader;
 
 public class Utils {
     static {
+        // All JNI symbols live in the combined filament-jni dylib loaded by Filament.init().
         Filament.init();
-        NativeLoader.load("filament-utils-jni");
     }
 
 

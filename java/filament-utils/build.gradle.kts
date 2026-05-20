@@ -6,7 +6,13 @@ plugins {
     id("filament-publish")
 }
 
-apply(from = rootProject.file("java/java-cmake.gradle.kts"))
+// Native code lives in the combined libfilament-jni built by :java:filament.
+// This module is pure-Kotlin/Java glue; the dylib reaches it transitively at runtime.
+
+configure<JavaPluginExtension> {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
@@ -17,4 +23,5 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
     implementation(project(":java:filament"))
     implementation(libs.kotlin.stdlib)
+    compileOnly(libs.annotations)
 }

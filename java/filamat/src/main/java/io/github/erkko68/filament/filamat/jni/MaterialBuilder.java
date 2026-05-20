@@ -1,7 +1,6 @@
 package io.github.erkko68.filament.filamat.jni;
 
 import io.github.erkko68.filament.jni.Engine;
-import io.github.erkko68.filament.jni.internal.NativeLoader;
 import io.github.erkko68.filament.jni.internal.NativeRegistry;
 
 import java.lang.ref.Cleaner;
@@ -110,8 +109,8 @@ public class MaterialBuilder {
 
     public static synchronized void init() {
         if (sInitialized) return;
+        // All JNI symbols live in the combined filament-jni dylib loaded here.
         io.github.erkko68.filament.jni.Filament.init();
-        NativeLoader.load("filamat-jni");
         nMaterialBuilderInit();
         sInitialized = true;
     }

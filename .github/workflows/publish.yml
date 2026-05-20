@@ -11,10 +11,14 @@ on:
         required: true
 
 jobs:
-  # ── Build JNI natives per platform (cmake only) ───────────────────────────────
-  # Each job uploads its natives in the final on-disk layout used by the publish
-  # job: <platform-arch>/<module>/<libs>. download-artifact + merge-multiple
-  # later collapses all of them into one directory with no reshuffling.
+  # ── Build the combined JNI native per platform (cmake only) ──────────────────
+  # Filament + filamat + gltfio + filament-utils are all built into ONE shared lib
+  # (libfilament-jni) by :java:filament. The other three java/* modules are pure-Java
+  # glue and ship no natives — they pick up the dylib transitively from :java:filament.
+  #
+  # Layout uploaded: <platform-arch>/<libfilament-jni.{dylib,so,dll}>.
+  # download-artifact + merge-multiple later collapses every platform into one
+  # jni-artifacts/ dir that's consumed via -PjniArtifactsDir in :java:filament.
   build-jni:
     strategy:
       fail-fast: false
@@ -53,25 +57,17 @@ jobs:
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
-      - name: Build JNI natives
+      - name: Build combined JNI native
+        shell: bash
+        run: ./gradlew :java:filament:cmakeBuild --no-configuration-cache
+      - name: Stage native
         shell: bash
         run: |
-          ./gradlew \
-            :java:filament:cmakeBuild \
-            :java:filamat:cmakeBuild \
-            :java:gltfio:cmakeBuild \
-            :java:filament-utils:cmakeBuild \
-            --no-configuration-cache
-      - name: Stage natives
-        shell: bash
-        run: |
-          for module in filament filamat gltfio filament-utils; do
-            dest="jni-artifacts/${{ matrix.arch }}/${module}"
-            mkdir -p "$dest"
-            find "java/${module}/build/cmake" \
-              \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
-              -exec cp {} "$dest/" \; 2>/dev/null || true
-          done
+          dest="jni-artifacts/${{ matrix.arch }}"
+          mkdir -p "$dest"
+          find "java/filament/build/cmake" \
+            \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
+            -exec cp {} "$dest/" \;
       - uses: actions/upload-artifact@v4
         with:
           name: jni-${{ matrix.arch }}

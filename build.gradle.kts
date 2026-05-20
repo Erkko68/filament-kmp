@@ -13,6 +13,14 @@ allprojects {
         baseGroup
     }
     version = project.findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
+
+    // Module declarations live under java/*. The "erkko68" component triggers a JLS §6.1
+    // advisory warning about terminal digits in module names; harmless but noisy in CI.
+    if (path.startsWith(":java")) {
+        tasks.withType<JavaCompile>().configureEach {
+            options.compilerArgs.add("-Xlint:-module")
+        }
+    }
 }
 
 // ── Filament prebuilts download ───────────────────────────────────────────────
