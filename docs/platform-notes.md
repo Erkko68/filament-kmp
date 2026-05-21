@@ -26,6 +26,21 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 - `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
 - Minimum `compileSdk`: **34**. Minimum `minSdk`: **24**.
 
+### Screen rotation and configuration changes
+
+By default Android destroys and recreates the `Activity` on rotation, which tears down the Compose composition and reloads all Filament assets. This behavior predates Compose — it existed to reload XML layouts and resource qualifiers (`layout-land/`, `values-night/`) automatically.
+
+In a pure Compose app none of that applies: layouts are code, theming reacts to system broadcasts, and Filament's `SurfaceView` already handles the viewport update via `surfaceChanged`. To keep the composition alive across rotation, add `android:configChanges` to your `<activity>` in `AndroidManifest.xml`:
+
+```xml
+<activity
+    android:name=".MainActivity"
+    android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode|keyboard|keyboardHidden|navigation"
+    ...>
+```
+
+This is standard practice for graphics, video, and game apps on Android. The `SurfaceView` still receives `surfaceChanged` on resize, so the viewport and aspect ratio update correctly without any extra code.
+
 ## iOS / macOS (Kotlin/Native)
 
 - Renders via `CAMetalLayer` embedded in a `UIKitView`.
