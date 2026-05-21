@@ -28,12 +28,10 @@ FilamentView(
 
 ## Platform support
 
-| Platform | Backend | Binding | Status |
-| :--- | :--- | :--- | :--- |
-| **Android** | OpenGL ES 3.x / Vulkan | Official `com.google.android.filament` | ✅ Stable |
-| **iOS / macOS** | Metal | C wrapper + cinterop | ✅ Stable |
-| **JVM / Desktop** (Windows, Linux, macOS) | Vulkan / Metal / OpenGL | Custom JNI | ✅ Stable |
-| **Web / WASM** | WebGL 2.0 | Filament.js bindings | ⚠️ Experimental |
+- **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
+- **iOS** — Metal via C wrapper + Kotlin/Native cinterop
+- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via custom JNI bindings
+- **Web / WASM** — WebGL 2.0 via Filament.js *(experimental)*
 
 ## Quick start
 
@@ -54,7 +52,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.0-alpha01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.0-alpha02")
         }
     }
 }

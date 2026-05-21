@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """
-Download Filament prebuilt static libraries for one or more native targets.
+Download Filament prebuilt static libraries for one or more native targets,
+or the Filament.js + WASM web bundle.
 
 Tarballs are cached under <repo>/.gradle/filament-prebuilts-cache/ so they
 survive ./gradlew clean and are shared across all targets that use the same
 asset. Each target's .a / .lib files are extracted into:
     <repo>/prebuilts/<target>/lib/
+
+The special 'web' target extracts filament.js + filament.wasm into:
+    <repo>/prebuilts/web/
 
 Since Filament 1.71.4 the iOS tarball ships xcframeworks: each library lives at
     filament/lib/lib<name>.xcframework/<slice>/lib<name>.a
@@ -15,6 +19,7 @@ xcframework slice use the "xcf:<slice>" prefix notation in TARGETS below.
 
 Usage:
     python3 download_filament_prebuilts.py 1.71.4 iosArm64 macosArm64
+    python3 download_filament_prebuilts.py 1.71.4 web
     python3 download_filament_prebuilts.py 1.71.4 --all
     python3 download_filament_prebuilts.py 1.71.4 host          # host JVM target
 """
@@ -60,6 +65,11 @@ PREBUILTS_DIR = REPO_ROOT / "prebuilts"
 # iOS targets use xcframework slices (since 1.71.4). Both simulator targets
 # point to the same fat simulator slice; each gets its own output directory so
 # the build system can address them independently.
+#
+# The "web" target extracts filament.js + filament.wasm from the web release
+# tarball into prebuilts/web/ (no lib/ subdirectory). The :js Gradle module
+# exposes that directory as a jsMain resource root so webpack bundles the files
+# automatically into any app that depends on the library.
 TARGETS = {
     "iosArm64":          ("ios",       "xcf:ios-arm64"),
     "iosSimulatorArm64": ("ios",       "xcf:ios-arm64_x86_64-simulator"),
@@ -69,6 +79,7 @@ TARGETS = {
     "linuxX64":          ("linux",     "filament/lib/x86_64"),
     "linuxArm64":        ("arm-linux", "filament/lib/aarch64"),
     "mingwX64":          ("windows",   "lib/x86_64/md"),
+    "web":               ("web",       ""),
 }
 
 _lock = threading.Lock()
@@ -122,18 +133,26 @@ def download_tarball(version: str, suffix: str) -> Path:
 
 
 def extract(tarball: Path, lib_prefix: str, out_dir: Path) -> int:
-    """Extract .a/.lib files from a flat directory inside the tarball."""
+    """Extract prebuilt files from a flat directory inside the tarball.
+
+    Native targets: extracts .a / .lib static libraries.
+    Web target:     extracts .js / .wasm files.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
-    prefix = lib_prefix.rstrip("/") + "/"
+    # Empty prefix means files are at the tarball root (no subdirectory).
+    prefix = (lib_prefix.rstrip("/") + "/") if lib_prefix else ""
+    _NATIVE_EXTS = (".a", ".lib")
+    _WEB_EXTS    = (".js", ".wasm")
     n = 0
     with tarfile.open(tarball, "r:gz") as tar:
         for m in tar:
             if not m.isfile():
                 continue
-            if not m.name.startswith(prefix):
+            if prefix and not m.name.startswith(prefix):
                 continue
             base = os.path.basename(m.name)
-            if not (base.endswith(".a") or base.endswith(".lib")):
+            if not (any(base.endswith(e) for e in _NATIVE_EXTS) or
+                    any(base.endswith(e) for e in _WEB_EXTS)):
                 continue
             f = tar.extractfile(m)
             if f is None:
@@ -175,7 +194,9 @@ def fetch(version: str, target: str, force: bool) -> None:
     if target not in TARGETS:
         sys.exit(f"ERROR: unknown target '{target}'. Known: {', '.join(TARGETS)}")
     suffix, lib_prefix = TARGETS[target]
-    out_dir = PREBUILTS_DIR / target / "lib"
+    # Web prebuilts go directly into prebuilts/web/ (no lib/ subdirectory).
+    # Native prebuilts go into prebuilts/<target>/lib/.
+    out_dir = PREBUILTS_DIR / target if target == "web" else PREBUILTS_DIR / target / "lib"
 
     if out_dir.exists() and any(out_dir.iterdir()) and not force:
         print(f"[{target}] up-to-date ({out_dir.relative_to(REPO_ROOT)})")

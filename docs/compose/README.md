@@ -7,6 +7,26 @@ The `filament-compose` module provides the integration between the [Filament](ht
 - **[Scope & Philosophy](scope.md)**: Understand the goals and design principles behind `filament-compose`.
 - **[Integration Strategies](integration-strategies.md)**: Details on the mechanism used to bridge Filament's GPU output with the Compose canvas (Pixel Readback vs. Zero-Copy).
 
+## Lifecycle and resource management
+
+The Compose DSL manages Filament resource lifetimes through `DisposableEffect`:
+
+- `rememberFilamentEngine` — destroys the `Engine` when leaving composition.
+- `FilamentView` — destroys its `Renderer`, `Scene`, `View`, and `Camera`.
+- `rememberGltfAsset` — destroys the loaded asset.
+- `GltfInstance` — removes its entities from the scene.
+
+If you create raw Filament objects through `FilamentEffect`, you are responsible for destroying them:
+
+```kotlin
+FilamentEffect { engine, _, _ ->
+    val mat = Material.Builder().payload(bytes, bytes.size).build(engine)
+    onDispose { engine.destroyMaterial(mat) }
+}
+```
+
+Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itself is destroyed.
+
 ## Component Reference
 
 ### Core

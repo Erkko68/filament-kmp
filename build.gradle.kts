@@ -33,6 +33,8 @@ allprojects {
 //   • macosArm64 / macosX64                 — JVM/JNI host (:java:*); macOS uses
 //                                              the JVM build, not Kotlin/Native.
 //   • linuxX64 / linuxArm64 / mingwX64      — JVM/JNI host on Linux/Windows.
+//   • web                                   — Filament.js + WASM for the :js module;
+//                                              output goes to prebuilts/web/ (no lib/ subdir).
 
 val filaVersion: String by project
 
@@ -45,6 +47,7 @@ val PREBUILT_TARGETS = listOf(
     "linuxX64",
     "linuxArm64",
     "mingwX64",
+    "web",
 )
 
 val pythonExe = providers.environmentVariable("PYTHON").orElse("python3")
@@ -54,8 +57,13 @@ val downloadIncludesScript = layout.projectDirectory.file("scripts/download_fila
 PREBUILT_TARGETS.forEach { target ->
     tasks.register<Exec>("downloadPrebuilts_$target") {
         group = "filament"
-        description = "Downloads Filament $filaVersion prebuilt static libraries for $target."
-        val outDir = layout.projectDirectory.dir("prebuilts/$target/lib").asFile
+        description = "Downloads Filament $filaVersion prebuilt libraries for $target."
+        // Web prebuilts land directly in prebuilts/web/; all others in prebuilts/<target>/lib/.
+        val outDir = if (target == "web") {
+            layout.projectDirectory.dir("prebuilts/web").asFile
+        } else {
+            layout.projectDirectory.dir("prebuilts/$target/lib").asFile
+        }
         outputs.dir(outDir)
         outputs.upToDateWhen { outDir.exists() && outDir.listFiles()?.isNotEmpty() == true }
         commandLine(pythonExe.get(), downloadScript.asFile.absolutePath, filaVersion, target)

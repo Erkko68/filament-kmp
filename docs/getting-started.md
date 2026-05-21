@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.0-alpha01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.0-alpha02")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.1.0-alpha01")
+            implementation("io.github.erkko68.filament:gltfio:0.1.0-alpha02")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.1.0-alpha01")
+            implementation("io.github.erkko68.filament:filament-utils:0.1.0-alpha02")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.1.0-alpha01")
+            implementation("io.github.erkko68.filament:filamat:0.1.0-alpha02")
         }
     }
 }
@@ -57,6 +57,19 @@ android {
 }
 ```
 
+Entry point:
+
+```kotlin
+// androidApp/src/androidMain/kotlin/MainActivity.kt
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        setContent { App() }
+    }
+}
+```
+
 ### iOS / macOS
 
 The native Filament libraries ship in the Kotlin/Native klib, so there's nothing to download manually. Just declare the framework in your `iosMain` source set as usual:
@@ -72,7 +85,26 @@ kotlin {
 }
 ```
 
-In Xcode, link the produced `Shared.framework` from your app target. See [`samples/iosApp`](../samples/iosApp) for a working SwiftUI entry point.
+In Xcode, link the produced `Shared.framework` from your app target. Entry point:
+
+```swift
+// iosApp/ContentView.swift
+import SwiftUI
+import shared
+
+struct ComposeView: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        MainViewControllerKt.MainViewController()
+    }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+struct ContentView: View {
+    var body: some View {
+        ComposeView().ignoresSafeArea()
+    }
+}
+```
 
 ### JVM / Desktop
 
@@ -94,17 +126,16 @@ kotlin {
 }
 ```
 
-> [!WARNING]
-> **Windows JVM shutdown crash.** On Windows, the JVM occasionally crashes in Filament's native static destructors during process teardown, producing a non-zero exit code (so Gradle reports `BUILD FAILED` even when your app ran successfully). Work around this by calling `exitProcess(0)` after your Compose application returns:
->
-> ```kotlin
-> fun main() {
->     singleWindowApplication(title = "My App") { App() }
->     kotlin.system.exitProcess(0)
-> }
-> ```
->
-> See [Platform Notes](platform-notes.md#jvm--desktop) for context.
+Entry point:
+
+```kotlin
+// desktopApp/src/jvmMain/kotlin/Main.kt
+fun main() {
+    singleWindowApplication(title = "My App") {
+        App()
+    }
+}
+```
 
 ### Web / WASM
 
@@ -128,7 +159,55 @@ kotlin {
 }
 ```
 
-The prebuilt Filament.js / WebAssembly bundle is included in the published artifact and loaded by the wrapper.
+**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the helper script included in the repo:
+
+```bash
+python3 scripts/download_filament_prebuilts.py <version> web
+# outputs to prebuilts/web/ — copy filament.js and filament.wasm to src/jsMain/resources/
+```
+
+**`index.html`.** Load `filament.js` before your app script, and give the root element a stacking context so any Compose overlay elements (HUDs, buttons) can be layered on top via `z-index`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        #root { width: 100%; height: 100%; position: relative; z-index: 0; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="filament.js"></script>
+    <script src="webApp.js"></script>
+</body>
+</html>
+```
+
+Entry point:
+
+```kotlin
+// webApp/src/jsMain/kotlin/Main.kt
+fun main() {
+    window.asDynamic()._filamentReady = ::startApp
+    js("""
+        Filament.init([], function() {
+            var nativeFetch = window.fetch;
+            Object.assign(window, Filament);
+            window.fetch = nativeFetch;
+            window._filamentReady();
+        });
+    """)
+}
+
+@JsExport
+fun startApp() {
+    val container = document.getElementById("root") ?: error("No #root element")
+    ComposeViewport(container) { App() }
+}
+```
 
 ## 4. Your first scene
 
@@ -175,7 +254,7 @@ fun App() {
 }
 ```
 
-That's the complete shared code for all four targets. See [`samples/`](../samples/) for the platform-specific entry points (`Main.kt` on Desktop, `ContentView.swift` on iOS, etc.).
+That's the complete shared code for all four targets. The platform-specific entry points shown in step 3 wire it up for each target.
 
 ## Next steps
 
