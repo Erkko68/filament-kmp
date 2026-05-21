@@ -89,6 +89,7 @@ tasks.register<Exec>("cmakeBuild") {
 val resArch = if (arch == "Arm64") "arm64" else "x64"
 
 tasks.named<org.gradle.language.jvm.tasks.ProcessResources>("processResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn("cmakeBuild")
     // Single-config generators (Make / Ninja) put libs directly in build/cmake/.
     from(layout.buildDirectory.dir("cmake")) {
