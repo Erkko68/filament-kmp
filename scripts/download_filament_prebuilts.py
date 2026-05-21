@@ -22,11 +22,34 @@ Usage:
 import argparse
 import os
 import platform
+import ssl
 import sys
 import tarfile
 import threading
 import urllib.request
 from pathlib import Path
+
+def _make_ssl_context() -> ssl.SSLContext:
+    # certifi provides a bundled, up-to-date CA store — use it when available.
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        pass
+    ctx = ssl.create_default_context()
+    if sys.platform == "win32":
+        # Python's embeddable/Store installs on Windows don't load the system
+        # root CA store automatically. Pull it from the Windows certificate store.
+        for store in ("ROOT", "CA"):
+            for cert, _enc, _trust in ssl.enum_certificates(store):  # type: ignore[attr-defined]
+                try:
+                    ctx.load_verify_locations(cadata=cert)
+                except ssl.SSLError:
+                    pass
+    return ctx
+
+
+_SSL_CTX = _make_ssl_context()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CACHE_DIR = REPO_ROOT / ".gradle" / "filament-prebuilts-cache"
@@ -75,12 +98,21 @@ def download_tarball(version: str, suffix: str) -> Path:
         print(f"  download: {url}")
         tmp = cached.with_name(cached.name + f".{os.getpid()}.part")
         try:
-            with urllib.request.urlopen(url) as resp, tmp.open("wb") as out:
+            with urllib.request.urlopen(url, context=_SSL_CTX, timeout=120) as resp, tmp.open("wb") as out:
+                total = int(resp.headers.get("Content-Length") or 0)
+                downloaded = 0
                 while True:
                     chunk = resp.read(1 << 16)
                     if not chunk:
                         break
                     out.write(chunk)
+                    downloaded += len(chunk)
+                    if total:
+                        pct = downloaded * 100 // total
+                        print(f"\r  {pct:3d}%  {downloaded >> 20}/{total >> 20} MB", end="", flush=True)
+                    else:
+                        print(f"\r  {downloaded >> 20} MB", end="", flush=True)
+                print()
             tmp.replace(cached)
         except BaseException:
             if tmp.exists():
