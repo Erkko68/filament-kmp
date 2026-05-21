@@ -14,6 +14,8 @@
 
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/WASM**, with first-class **Compose Multiplatform** integration.
 
+<img src="docs/images/platforms-hero.png" alt="The same scene rendering on Android, iOS, Desktop and Web" width="800"/>
+
 ```kotlin
 FilamentView(
     modifier    = Modifier.fillMaxSize(),

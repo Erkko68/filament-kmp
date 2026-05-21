@@ -16,6 +16,7 @@ mavenPublishing {
         name.set(project.property("maven.name").toString())
         description.set(project.property("maven.description").toString())
         url.set(project.property("maven.url").toString())
+        inceptionYear.set(project.property("maven.inceptionYear").toString())
         licenses {
             license {
                 name.set(project.property("maven.license.name").toString())
@@ -31,8 +32,12 @@ mavenPublishing {
         }
         scm {
             connection.set(project.property("maven.scm").toString())
-            developerConnection.set(project.property("maven.scm").toString())
+            developerConnection.set(project.property("maven.scm.dev").toString())
             url.set(project.property("maven.url").toString())
+        }
+        issueManagement {
+            system.set("GitHub")
+            url.set(project.property("maven.url").toString() + "/issues")
         }
     }
 
