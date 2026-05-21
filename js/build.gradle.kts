@@ -3,8 +3,6 @@ plugins {
     id("filament-publish")
 }
 
-val base = findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
-group   = "$base.js"
 version = findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
 
 kotlin {

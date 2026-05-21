@@ -136,4 +136,5 @@ jobs:
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \
             :kotlin:gltfio:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-compose:publishAllPublicationsToMavenCentralRepository \
+            :js:publishAllPublicationsToMavenCentralRepository \
             --no-configuration-cache
