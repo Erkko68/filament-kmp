@@ -49,6 +49,7 @@ val PREBUILT_TARGETS = listOf(
 
 val pythonExe = providers.environmentVariable("PYTHON").orElse("python3")
 val downloadScript = layout.projectDirectory.file("scripts/download_filament_prebuilts.py")
+val downloadIncludesScript = layout.projectDirectory.file("scripts/download_filament_includes.py")
 
 PREBUILT_TARGETS.forEach { target ->
     tasks.register<Exec>("downloadPrebuilts_$target") {
@@ -61,8 +62,19 @@ PREBUILT_TARGETS.forEach { target ->
     }
 }
 
+tasks.register<Exec>("downloadIncludes") {
+    group = "filament"
+    description = "Downloads Filament $filaVersion public headers into include/."
+    val stamp = layout.projectDirectory.file("include/.filament-version").asFile
+    val expectedVersion = filaVersion  // capture as local so the closure isn't tied to script scope
+    outputs.file(stamp)
+    outputs.upToDateWhen { stamp.exists() && stamp.readText().trim() == expectedVersion }
+    commandLine(pythonExe.get(), downloadIncludesScript.asFile.absolutePath, filaVersion)
+}
+
 tasks.register("downloadPrebuilts") {
     group = "filament"
-    description = "Downloads Filament $filaVersion prebuilt libraries for all targets."
+    description = "Downloads Filament $filaVersion prebuilt libraries + headers for all targets."
     dependsOn(PREBUILT_TARGETS.map { "downloadPrebuilts_$it" })
+    dependsOn("downloadIncludes")
 }

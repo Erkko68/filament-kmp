@@ -48,12 +48,14 @@ val prebuiltsTarget = when (platform) {
 }
 
 val downloadPrebuiltsTask = rootProject.tasks.named("downloadPrebuilts_$prebuiltsTarget")
+val downloadIncludesTask = rootProject.tasks.named("downloadIncludes")
 
 // ── CMake driver ─────────────────────────────────────────────────────────────
 val combinedCmakeSourceDir = rootProject.file("java")
 
 tasks.register<Exec>("cmakeConfig") {
     dependsOn(downloadPrebuiltsTask)
+    dependsOn(downloadIncludesTask)
     val cmakeBuildDir = layout.buildDirectory.dir("cmake").get().asFile
     doFirst { cmakeBuildDir.mkdirs() }
     workingDir(cmakeBuildDir)

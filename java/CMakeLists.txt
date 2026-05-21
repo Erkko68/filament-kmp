@@ -209,4 +209,14 @@ elseif (WIN32)
     target_link_libraries(filament-jni PRIVATE opengl32 gdi32 user32 shlwapi)
 elseif (UNIX)
     target_link_libraries(filament-jni PRIVATE GL)
+    # GNU ld scans static archives left-to-right in a single pass, so cross-refs
+    # between Filament archives (e.g. gltfio → ktxreader → filament → backend)
+    # can drop members if ordering is wrong. Wrap them in a group so ld rescans
+    # until all references resolve. Also force a non-executable stack — one of
+    # the prebuilt .S objects is missing the .note.GNU-stack marker.
+    target_link_options(filament-jni PRIVATE
+        "LINKER:-z,noexecstack"
+        "LINKER:--start-group"
+    )
+    target_link_libraries(filament-jni PRIVATE "-Wl,--end-group")
 endif()
