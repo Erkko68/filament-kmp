@@ -82,11 +82,14 @@ fun KotlinNativeTarget.applyFilamentNative(
 
     // Prebuilt static libs are downloaded by a root-level task (see kotlin/build.gradle.kts).
     val downloadTask = project.rootProject.tasks.named("downloadPrebuilts_$name")
+    // Headers must match the prebuilts version (ABI breaks across patch versions).
+    val downloadIncludesTask = project.rootProject.tasks.named("downloadIncludes")
 
     // CMake: configure + build the C wrapper in one step
     val cmake = resolveCmake()
     val cmakeTask = project.tasks.register("buildCWrapper_${cmakeTarget}_$name", Exec::class.java) {
         dependsOn(downloadTask)
+        dependsOn(downloadIncludesTask)
         workingDir(buildDir)
         commandLine(
             "sh", "-c",
