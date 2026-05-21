@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    id("filament-publish")
 }
 
 val base = findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"

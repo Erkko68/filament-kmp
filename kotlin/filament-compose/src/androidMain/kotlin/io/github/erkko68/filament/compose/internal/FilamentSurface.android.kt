@@ -7,13 +7,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.node.Ref
 import androidx.compose.ui.viewinterop.AndroidView
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.NativeSurface
-import io.github.erkko68.filament.Renderer
-import io.github.erkko68.filament.SwapChain
-import io.github.erkko68.filament.View
-import io.github.erkko68.filament.Viewport
+import io.github.erkko68.filament.*
 
 @Composable
 internal actual fun FilamentSurface(
@@ -23,16 +19,16 @@ internal actual fun FilamentSurface(
     view: View,
     onResize: (aspect: Double) -> Unit,
 ) {
-    var swapChain: SwapChain? = null
+    val swapChainRef = remember { Ref<SwapChain>() }
 
     // Keep a mutable ref so the SurfaceHolder callback always dispatches to the latest lambda.
-    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
-    SideEffect { onResizeRef[0] = onResize }
+    val onResizeRef = remember { Ref<(Double) -> Unit>() }
+    SideEffect { onResizeRef.value = onResize }
 
     fun updateViewport(width: Int, height: Int) {
         if (width <= 0 || height <= 0) return
         view.viewport = Viewport(0, 0, width, height)
-        onResizeRef[0](width.toDouble() / height.toDouble())
+        onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
     }
 
     AndroidView(
@@ -41,15 +37,15 @@ internal actual fun FilamentSurface(
             SurfaceView(context).apply {
                 holder.addCallback(object : SurfaceHolder.Callback {
                     override fun surfaceCreated(holder: SurfaceHolder) {
-                        swapChain = engine.createSwapChain(NativeSurface(holder.surface))
+                        swapChainRef.value = engine.createSwapChain(NativeSurface(holder.surface))
                         updateViewport(width, height)
                     }
                     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
                         updateViewport(width, height)
                     }
                     override fun surfaceDestroyed(holder: SurfaceHolder) {
-                        swapChain?.let { engine.destroySwapChain(it) }
-                        swapChain = null
+                        swapChainRef.value?.let { engine.destroySwapChain(it) }
+                        swapChainRef.value = null
                     }
                 })
             }
@@ -59,13 +55,13 @@ internal actual fun FilamentSurface(
 
     DisposableEffect(Unit) {
         onDispose {
-            swapChain?.let { engine.destroySwapChain(it) }
-            swapChain = null
+            swapChainRef.value?.let { engine.destroySwapChain(it) }
+            swapChainRef.value = null
         }
     }
 
     FilamentRenderLoop { frameTime ->
-        val sc = swapChain ?: return@FilamentRenderLoop
+        val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)
             renderer.endFrame()
