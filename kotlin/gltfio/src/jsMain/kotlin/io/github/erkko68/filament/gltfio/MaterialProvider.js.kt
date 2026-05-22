@@ -33,7 +33,11 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         label: String?,
         extras: String?
     ): MaterialInstance? {
-        return null
+        throw UnsupportedOperationException(
+            "MaterialProvider.createMaterialInstance is not supported on the JS/Web target. The " +
+            "default ubershader path is not exposed by Filament.js. Supply your own precompiled " +
+            "materials via Material.Builder().payload(...)."
+        )
     }
 
     actual override fun getMaterial(
@@ -41,7 +45,11 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         uvmap: IntArray,
         label: String?
     ): Material? {
-        return null
+        throw UnsupportedOperationException(
+            "MaterialProvider.getMaterial is not supported on the JS/Web target. The default " +
+            "ubershader path is not exposed by Filament.js. Supply your own precompiled materials " +
+            "via Material.Builder().payload(...)."
+        )
     }
 
     actual override fun getMaterials(): Array<Material> {

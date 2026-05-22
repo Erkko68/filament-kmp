@@ -2,10 +2,17 @@ package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 
-// MaterialBuilder is NOT available in JS runtime bindings. Material compilation (filamat) is an offline process.
-// This is a stub implementation that accepts all builder methods but does not perform compilation.
-// In web applications, materials must be pre-compiled and loaded as binary packages.
+// MaterialBuilder is NOT available in JS runtime bindings. Material compilation (filamat) is an
+// offline process. On the JS/Web target, materials must be pre-compiled with `matc` and loaded as
+// .filamat binary packages via `Material.Builder().payload(bytes).build(engine)`.
 actual class MaterialBuilder {
+    init {
+        throw UnsupportedOperationException(
+            "MaterialBuilder is not supported on the JS/Web target. Filamat (runtime material " +
+            "compilation) has no JS bindings. Compile materials offline with `matc` and load " +
+            "the resulting .filamat bytes via Material.Builder().payload(...).build(engine)."
+        )
+    }
     private val materialCode = StringBuilder()
     private val vertexCode = StringBuilder()
 

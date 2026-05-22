@@ -83,11 +83,16 @@ Then copy them into your `src/jsMain/resources/`.
 
 ### Current limitations
 
-- `MaterialProvider.createMaterialInstance()` and `getMaterial()` return `null` — the default ubershader path doesn't work. Supply your own precompiled materials.
-- `KTX1Loader`, `HDRLoader`, `TextureLoader` factories return `null` on JS. Use simpler image formats and the standard `Texture.Builder`.
-- `Manipulator` builder methods return `null`. Use `filament-compose`'s `rememberOrbitCameraState` (pure Kotlin implementation) instead.
+APIs without a Filament.js equivalent throw `UnsupportedOperationException` with a workaround pointer:
 
-Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines or image-based lighting via KTX.
+- **`filamat.MaterialBuilder`** — runtime material compilation is unavailable. Compile materials offline with `matc` and load the resulting `.filamat` via `Material.Builder().payload(...)`.
+- **`gltfio.MaterialProvider.createMaterialInstance()` / `getMaterial()`** — the default ubershader path is not exposed. Supply your own precompiled materials.
+- **`filament-utils.HDRLoader.createTexture`** — Radiance/RGBE decoding is unavailable. Convert HDRs to KTX1 offline with `cmgen`.
+- **`filament-utils.KTX1Loader.getSphericalHarmonics`** — SH extraction is unavailable. Precompute SH offline and bake the coefficients into your app data.
+
+`TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraState` from `filament-compose` is the recommended ergonomic wrapper.
+
+Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
 
 ### Bundle size
 

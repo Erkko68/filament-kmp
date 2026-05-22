@@ -64,7 +64,10 @@ actual object KTX1Loader {
     }
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? {
-        // Not available in JS bindings
-        return null
+        throw UnsupportedOperationException(
+            "KTX1Loader.getSphericalHarmonics is not supported on the JS/Web target. " +
+            "Filament.js does not expose KTX1 spherical-harmonics extraction. Precompute SH " +
+            "offline (e.g. with `cmgen`) and bake the coefficients into your app data."
+        )
     }
 }
