@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.node.Ref
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -38,11 +39,11 @@ internal actual fun FilamentSurface(
 ) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
     var renderSize by remember { mutableStateOf(IntSize.Zero) }
-    val swapChainHolder = remember { arrayOfNulls<SwapChain>(1) }
+    val swapChainRef = remember { Ref<SwapChain>() }
 
     // Keep a mutable ref so the resize effect always dispatches to the latest lambda.
-    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
-    SideEffect { onResizeRef[0] = onResize }
+    val onResizeRef = remember { Ref<(Double) -> Unit>() }
+    SideEffect { onResizeRef.value = onResize }
 
     LaunchedEffect(layoutSize) {
         val w = layoutSize.width
@@ -64,11 +65,11 @@ internal actual fun FilamentSurface(
 
         canvas.width = w
         canvas.height = h
-        val sc = swapChainHolder[0] ?: engine.createSwapChain(NativeSurface(canvas)).also {
-            swapChainHolder[0] = it
+        val sc = swapChainRef.value ?: engine.createSwapChain(NativeSurface(canvas)).also {
+            swapChainRef.value = it
         }
         view.viewport = Viewport(0, 0, w, h)
-        onResizeRef[0](w.toDouble() / h.toDouble())
+        onResizeRef.value?.invoke(w.toDouble() / h.toDouble())
 
         // Force an immediate render to fill the newly resized canvas before the next browser paint.
         if (renderer.beginFrame(sc, Engine.getSteadyClockTimeNano())) {
@@ -79,7 +80,7 @@ internal actual fun FilamentSurface(
     }
 
     FilamentRenderLoop { frameTime ->
-        val sc = swapChainHolder[0] ?: return@FilamentRenderLoop
+        val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)
             renderer.endFrame()

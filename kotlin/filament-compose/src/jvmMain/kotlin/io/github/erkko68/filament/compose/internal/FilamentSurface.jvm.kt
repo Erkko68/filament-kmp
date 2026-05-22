@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.node.Ref
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
@@ -61,8 +62,8 @@ internal actual fun FilamentSurface(
     var surface by remember { mutableStateOf<OffscreenSurface?>(null) }
 
     // Keep a mutable ref so DisposableEffect(textureSize) always dispatches to the latest lambda.
-    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
-    SideEffect { onResizeRef[0] = onResize }
+    val onResizeRef = remember { Ref<(Double) -> Unit>() }
+    SideEffect { onResizeRef.value = onResize }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -93,6 +94,10 @@ internal actual fun FilamentSurface(
 
     val pendingFlags = remember(pixelBuffers) { BooleanArray(2) }
     val nextBufIndex = remember(pixelBuffers) { intArrayOf(0) }
+    // Tracks which buffer the current snapshotImage was built from (-1 = none).
+    // We must not mark buffer[j] free until buffer[j] is no longer the backing store
+    // of snapshotImage — i.e. only when the *next* callback fires and replaces it.
+    val snapshotBufIndex = remember(pixelBuffers) { intArrayOf(-1) }
 
     val pixelBufferDescriptors = remember(pixelBuffers) {
         val buffers = pixelBuffers ?: return@remember null
@@ -112,9 +117,13 @@ internal actual fun FilamentSurface(
                     val info = ImageInfo(tw, th, ColorType.RGBA_8888, ColorAlphaType.PREMUL)
                     val newImage = Image.makeRaster(info, buffers[i], tw * 4)
                     val old = snapshotImage
+                    val oldBuf = snapshotBufIndex[0]
                     snapshotImage = newImage
+                    snapshotBufIndex[0] = i
                     old?.close()
-                    pendingFlags[i] = false
+                    // Release the buffer the *old* image was using, not the current one.
+                    // buffers[i] must stay alive until the next callback replaces snapshotImage.
+                    if (oldBuf >= 0) pendingFlags[oldBuf] = false
                 }
             )
         }
@@ -142,7 +151,7 @@ internal actual fun FilamentSurface(
             val swapChain = engine.createSwapChain(w, h, 0)
             view.renderTarget = renderTarget
             view.viewport = Viewport(0, 0, w, h)
-            onResizeRef[0](w.toDouble() / h.toDouble())
+            onResizeRef.value?.invoke(w.toDouble() / h.toDouble())
             surface = OffscreenSurface(colorTexture, depthTexture, renderTarget, swapChain, w, h)
         }
 

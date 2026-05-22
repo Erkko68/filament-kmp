@@ -7,6 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.node.Ref
 import androidx.compose.ui.viewinterop.UIKitView
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.NativeSurface
@@ -35,11 +36,11 @@ internal actual fun FilamentSurface(
     view: View,
     onResize: (aspect: Double) -> Unit,
 ) {
-    val swapChainHolder = remember { arrayOfNulls<SwapChain>(1) }
+    val swapChainRef = remember { Ref<SwapChain>() }
 
     // Keep a mutable ref so layoutSubviews always dispatches to the latest lambda.
-    val onResizeRef = remember { Array<(Double) -> Unit>(1) { onResize } }
-    SideEffect { onResizeRef[0] = onResize }
+    val onResizeRef = remember { Ref<(Double) -> Unit>() }
+    SideEffect { onResizeRef.value = onResize }
 
     UIKitView(
         factory = {
@@ -69,14 +70,14 @@ internal actual fun FilamentSurface(
 
                     if (width > 0 && height > 0) {
                         if (!surfaceAttached) {
-                            swapChainHolder[0] = engine.createSwapChain(
+                            swapChainRef.value = engine.createSwapChain(
                                 NativeSurface(interpretCPointer(metalLayer.objcPtr()))
                             )
                             surfaceAttached = true
                         }
                         metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
                         view.viewport = Viewport(0, 0, width, height)
-                        onResizeRef[0](width.toDouble() / height.toDouble())
+                        onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
                     }
                 }
             }
@@ -88,13 +89,13 @@ internal actual fun FilamentSurface(
 
     DisposableEffect(Unit) {
         onDispose {
-            swapChainHolder[0]?.let { engine.destroySwapChain(it) }
-            swapChainHolder[0] = null
+            swapChainRef.value?.let { engine.destroySwapChain(it) }
+            swapChainRef.value = null
         }
     }
 
     FilamentRenderLoop { frameTime ->
-        val sc = swapChainHolder[0] ?: return@FilamentRenderLoop
+        val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)
             renderer.endFrame()
