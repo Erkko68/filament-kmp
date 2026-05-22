@@ -54,12 +54,9 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.compose.uiToolingPreview)
-            }
+        androidMain.dependencies {
+            implementation(libs.compose.uiToolingPreview)
         }
-
     }
 }
 
