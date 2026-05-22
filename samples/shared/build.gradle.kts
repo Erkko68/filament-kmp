@@ -41,9 +41,9 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.filament)
             implementation(libs.filament.compose)
-            implementation(libs.filamat)
             implementation(libs.utils)
             implementation(libs.gltfio)
+            implementation(libs.navigation.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

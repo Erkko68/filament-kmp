@@ -1,0 +1,23 @@
+// Tiny LIT material with a single `baseColor` parameter. Set the colour per-instance via
+// `materialInstance.setParameter("baseColor", r, g, b)` — same API as the runtime build, just
+// compiled ahead of time with matc.
+//
+// Compile (all backends, all features):
+//   matc -p all -a all -o lit_color.filamat lit_color.mat
+
+material {
+    name : LitColor,
+    shadingModel : lit,
+    parameters : [
+        { type : float3, name : baseColor }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+        material.roughness = 0.45;
+        material.metallic  = 0.0;
+    }
+}
