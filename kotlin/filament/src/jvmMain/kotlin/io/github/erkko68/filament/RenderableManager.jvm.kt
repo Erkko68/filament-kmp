@@ -215,11 +215,22 @@ actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.fi
     actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) =
         nativeRenderableManager.setMorphTargetBufferOffsetAt(instance, level, primitiveIndex, offset)
 
-    actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) =
-        nativeRenderableManager.setBonesAsMatrices(instance, java.nio.FloatBuffer.wrap(matrices), boneCount, offset)
+    // The native bone-upload methods read via `GetDirectBufferAddress`, which only works on
+    // direct NIO buffers — heap-backed `FloatBuffer.wrap(FloatArray)` causes a SIGBUS on
+    // aarch64. Copy into a direct, native-order buffer.
+    actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) {
+        val direct = java.nio.ByteBuffer.allocateDirect(matrices.size * 4)
+            .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
+        direct.put(matrices); direct.flip()
+        nativeRenderableManager.setBonesAsMatrices(instance, direct, boneCount, offset)
+    }
 
-    actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) =
-        nativeRenderableManager.setBonesAsQuaternions(instance, java.nio.FloatBuffer.wrap(quaternions), boneCount, offset)
+    actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) {
+        val direct = java.nio.ByteBuffer.allocateDirect(quaternions.size * 4)
+            .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
+        direct.put(quaternions); direct.flip()
+        nativeRenderableManager.setBonesAsQuaternions(instance, direct, boneCount, offset)
+    }
 
     actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) =
         nativeRenderableManager.clearMaterialInstanceAt(instance, primitiveIndex)
