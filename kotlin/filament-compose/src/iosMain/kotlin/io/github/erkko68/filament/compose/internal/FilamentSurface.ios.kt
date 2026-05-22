@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalForeignApi::class)
+@file:OptIn(ExperimentalForeignApi::class, ExperimentalComposeUiApi::class)
 
 package io.github.erkko68.filament.compose.internal
 
@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.Ref
+import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.NativeSurface
@@ -54,6 +56,7 @@ internal actual fun FilamentSurface(
                 }
 
                 init {
+                    userInteractionEnabled = false
                     layer.addSublayer(metalLayer)
                 }
 
@@ -85,6 +88,7 @@ internal actual fun FilamentSurface(
         modifier = modifier,
         update = {},
         onRelease = {},
+        properties = UIKitInteropProperties(interactionMode = null),
     )
 
     DisposableEffect(Unit) {

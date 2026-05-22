@@ -49,7 +49,7 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 | `Modifier.orbitGestures` | Attaches touch/mouse gestures for orbit camera control. |
 | `Modifier.mapGestures` | Attaches touch/mouse gestures for map camera control. |
 | `Modifier.flightGestures` | Attaches touch/mouse gestures for flight camera control. |
-| `Modifier.pickOnTap` | Issues a Filament picking query on tap and delivers the result. |
+| `Modifier.pickOnTap` | Issues a Filament picking query on tap and delivers the result. **Note:** the WebGL backend currently has a format-mismatch bug that breaks picking on the web target — see [Platform Notes](../platform-notes.md#gpu-picking-does-not-work-reliably). |
 
 ### Scene Objects
 
@@ -57,8 +57,18 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 | :--- | :--- |
 | `Light` | Adds a light entity to the scene. Supports all Filament light types (directional, sun, point, spot, focused spot). |
 | `GltfInstance` | Declarative glTF model instance. Requires a `GltfAsset` loaded with `rememberGltfAsset`. |
-| `rememberGltfAsset(bytes)` | Loads a glTF asset synchronously from a `ByteArray`. |
-| `rememberGltfAsset(key, load)` | Loads a glTF asset asynchronously via a suspending lambda. Returns `null` while loading. |
+| `rememberGltfAsset(engine?, key?, load)` | Loads a glTF asset asynchronously via a suspending lambda. Returns `null` while loading. `engine` defaults to the engine in scope from `FilamentView`; pass it explicitly to load the asset *outside* a `FilamentView`. |
+
+### Primitives
+
+Pure-Kotlin mesh primitives that build a `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place inside `FilamentView { }`.
+
+| Composable | Description |
+| :--- | :--- |
+| `Cube` | Axis-aligned cube centered on the origin. Per-face vertices so each face has its own normal. |
+| `Sphere` | UV sphere with configurable `rings` × `segments` subdivision. |
+| `Cylinder` | Y-axis cylinder with side wall + top/bottom caps. |
+| `Plane` | Flat quad in the XZ plane. Two-sided by default — lit correctly from above *and* below without needing a `doubleSided` material. |
 
 ### Environment
 
@@ -71,9 +81,21 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 
 | Composable | Description |
 | :--- | :--- |
-| `rememberMaterial` | Loads a compiled Filament material from a `ByteArray` and remembers it. |
-| `rememberMaterialInstance` | Creates and remembers a `MaterialInstance` from a `Material`. |
-| `rememberTexture` | Uploads a texture to the GPU and remembers it. |
+| `rememberMaterial(engine?, key?, load)` | Loads a compiled `.filamat` payload asynchronously and remembers the resulting `Material`. Returns `null` while loading. |
+| `rememberMaterialInstance(material, engine?)` | Creates and remembers a `MaterialInstance` from a `Material`. Destroys it when leaving composition. |
+| `rememberTexture(engine?, type?, key?, load)` | Asynchronously loads image bytes (PNG/JPEG/KTX1 depending on platform) and uploads the texture. Returns `null` while loading. |
+
+`engine` defaults to the engine in scope from `FilamentView`; pass it explicitly to allocate the resource *outside* a `FilamentView` (e.g. when sharing assets across multiple views, or loading before rendering starts):
+
+```kotlin
+val engine = rememberFilamentEngine()
+val mat    = rememberMaterial(engine) { Res.readBytes("files/materials/lit_color.filamat") }
+val duck   = rememberGltfAsset(engine) { Res.readBytes("files/models/Duck.glb") }
+
+FilamentView(engine = engine, ...) {
+    GltfInstance(asset = duck, ...)
+}
+```
 
 ### Post-Processing
 

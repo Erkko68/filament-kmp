@@ -77,6 +77,8 @@ private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {
     }
 
     // Indices: each quad (r,s)→(r+1,s+1) split into two CCW triangles when viewed from outside.
+    // Vertex layout: a=(r,s), b=(r,s+1), c=(r+1,s), d=(r+1,s+1). The CCW order from outside is
+    // a→b→c (and b→d→c) — checked via cross-product at the equator: (b−a)×(c−a) points outward.
     val indices = IntArray(rings * segments * 6)
     var i = 0
     val stride = segments + 1
@@ -86,8 +88,8 @@ private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {
             val b = a + 1
             val c = a + stride
             val d = c + 1
-            indices[i++] = a; indices[i++] = c; indices[i++] = b
-            indices[i++] = b; indices[i++] = c; indices[i++] = d
+            indices[i++] = a; indices[i++] = b; indices[i++] = c
+            indices[i++] = b; indices[i++] = d; indices[i++] = c
         }
     }
 

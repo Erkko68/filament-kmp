@@ -9,16 +9,19 @@ import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.utils.Quaternion
 
 /**
- * A flat quad lying in the XZ plane (normal = +Y) centered on the origin. Use [rotation] to
- * orient it as a wall or ceiling.
+ * A flat quad lying in the XZ plane centered on the origin. The mesh is two-sided by default:
+ * we emit a full set of vertices/triangles for both the +Y face and the -Y face with correctly
+ * oriented normals, so lighting works from above *and* below without disabling face culling or
+ * requiring a `doubleSided` material.
  *
- * @param material  Material applied to the front face. The plane is single-sided unless the
- *   material is built with `doubleSided(true)`.
+ * @param material  Material applied to both faces.
  * @param position  World-space center.
- * @param rotation  World-space rotation.
+ * @param rotation  World-space rotation. Use this to make a wall or a ceiling.
  * @param scale     Per-axis scale.
  * @param width     Size along the X axis in mesh space.
  * @param depth     Size along the Z axis in mesh space.
+ * @param doubleSided  When true (default) the mesh has both faces. Set false to omit the back
+ *   side when you know nothing will ever look at it from below.
  */
 @Composable
 fun Plane(
@@ -28,34 +31,46 @@ fun Plane(
     scale: Scale = Scale(1f),
     width: Float = 1f,
     depth: Float = 1f,
+    doubleSided: Boolean = true,
 ) {
-    val mesh = remember(width, depth) { planeMesh(width, depth) }
+    val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
     Mesh(mesh, material, position, rotation, scale)
 }
 
-private fun planeMesh(width: Float, depth: Float): MeshData {
+private fun planeMesh(width: Float, depth: Float, doubleSided: Boolean): MeshData {
     val w = width * 0.5f
     val d = depth * 0.5f
 
-    val positions = floatArrayOf(
+    // Top face — normal +Y, CCW when viewed from above.
+    val topPositions = floatArrayOf(
         -w, 0f,  d,
          w, 0f,  d,
          w, 0f, -d,
         -w, 0f, -d,
     )
-    val normals = floatArrayOf(
-        0f, 1f, 0f,
-        0f, 1f, 0f,
-        0f, 1f, 0f,
-        0f, 1f, 0f,
+    val topNormals = floatArrayOf(
+        0f, 1f, 0f,  0f, 1f, 0f,  0f, 1f, 0f,  0f, 1f, 0f,
     )
-    val uvs = floatArrayOf(
-        0f, 0f,
-        1f, 0f,
-        1f, 1f,
-        0f, 1f,
+    val topUvs = floatArrayOf(
+        0f, 0f,  1f, 0f,  1f, 1f,  0f, 1f,
     )
-    val indices = intArrayOf(0, 1, 2,  0, 2, 3)
+    val topIndices = intArrayOf(0, 1, 2,  0, 2, 3)
+
+    if (!doubleSided) {
+        return MeshData(
+            positions = topPositions, normals = topNormals, uvs = topUvs, indices = topIndices,
+            boundingBox = Box(0f, 0f, 0f, w, 0.001f, d),
+        )
+    }
+
+    // Bottom face — same vertices duplicated with normal -Y. Winding reversed so it's CCW
+    // when viewed from below.
+    val positions = topPositions + topPositions
+    val normals   = topNormals + floatArrayOf(
+        0f, -1f, 0f,  0f, -1f, 0f,  0f, -1f, 0f,  0f, -1f, 0f,
+    )
+    val uvs       = topUvs + topUvs
+    val indices   = topIndices + intArrayOf(4, 6, 5,  4, 7, 6)
 
     return MeshData(
         positions   = positions,

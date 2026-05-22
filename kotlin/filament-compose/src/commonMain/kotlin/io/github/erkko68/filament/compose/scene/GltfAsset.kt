@@ -9,6 +9,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
+import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
@@ -33,21 +34,15 @@ class GltfAsset internal constructor(
 }
 
 /**
- * Loads a glTF/glb asset once and keeps it alive as long as the calling composable is in the
- * composition. Pass the returned [GltfAsset] to [GltfInstance] to place one or more copies of
- * the model in the scene.
+ * Sync overload used internally by the suspend-lambda version once the bytes are ready.
+ * Kept internal because in Compose Multiplatform every realistic byte source ([Res.readBytes],
+ * disk, network) is suspending — public callers should use the suspend-lambda overload.
  *
- * For async loading (resources, network) prefer the suspend-lambda overload:
- * `rememberGltfAsset { Res.readBytes("model.glb") }`.
- *
- * @param bytes Raw glb/glTF binary data. The asset is reloaded only when the *reference*
- *   changes (identity, not contents) — pass a stable reference (e.g. via `remember`) or
- *   prefer the suspend-lambda overload to avoid accidental reloads on every recomposition.
+ * @param bytes Raw glb/glTF binary data. Reloaded only when the *reference* changes.
  */
 @Composable
-fun rememberGltfAsset(bytes: ByteArray): GltfAsset {
-    val engine = LocalFilamentEngine.current
-    val gltfioContext = rememberGltfioContext()
+internal fun rememberGltfAsset(engine: Engine, bytes: ByteArray): GltfAsset {
+    val gltfioContext = rememberGltfioContext(engine)
     val assetLoader = gltfioContext.assetLoader
 
     val gltfAsset = remember(bytes, assetLoader) {
@@ -84,21 +79,32 @@ fun rememberGltfAsset(bytes: ByteArray): GltfAsset {
  * Asynchronously loads a glTF/glb asset and keeps it alive as long as the calling composable
  * is in the composition. Returns null while the bytes are still loading.
  *
- * Typical usage:
+ * Can be called either inside `FilamentView { }` (engine is picked up from
+ * [LocalFilamentEngine]) or outside it by hoisting the engine via [rememberFilamentEngine]:
+ *
  * ```kotlin
- * GltfInstance(
- *     asset = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") },
- *     position = Position(0f, 0f, 0f),
- * )
+ * // Inside FilamentView — engine implicit
+ * GltfInstance(asset = rememberGltfAsset { Res.readBytes("Duck.glb") }, ...)
+ *
+ * // Outside FilamentView — engine hoisted, asset can outlive any single view
+ * val engine = rememberFilamentEngine()
+ * val duck   = rememberGltfAsset(engine) { Res.readBytes("Duck.glb") }
+ * FilamentView(engine = engine, ...) { GltfInstance(asset = duck, ...) }
  * ```
  *
+ * @param engine The Filament engine that owns the asset's GPU resources. Defaults to the
+ *   engine in the current composition scope.
  * @param key Reloads the asset when this value changes. Defaults to [Unit] for static assets.
  * @param load Suspend function that produces the raw glb/glTF bytes.
  */
 @Composable
-fun rememberGltfAsset(key: Any = Unit, load: suspend () -> ByteArray): GltfAsset? {
+fun rememberGltfAsset(
+    engine: Engine = LocalFilamentEngine.current,
+    key: Any = Unit,
+    load: suspend () -> ByteArray,
+): GltfAsset? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {
         value = load()
     }
-    return bytes?.let { rememberGltfAsset(it) }
+    return bytes?.let { rememberGltfAsset(engine, it) }
 }

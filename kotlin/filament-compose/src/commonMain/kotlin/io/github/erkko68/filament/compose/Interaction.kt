@@ -437,7 +437,10 @@ fun Modifier.pickOnTap(onPick: (View.PickingQueryResult) -> Unit): Modifier {
     val view = LocalFilamentView.current
     return pointerInput(view, onPick) {
         detectTapGestures { offset ->
-            view.pick(offset.x.toInt(), offset.y.toInt(), onPick)
+            // Filament uses OpenGL viewport conventions: origin at the bottom-left.
+            // Compose offsets are top-left, so flip Y against the current viewport height.
+            val y = view.viewport.height - offset.y.toInt()
+            view.pick(offset.x.toInt(), y, onPick)
         }
     }
 }
