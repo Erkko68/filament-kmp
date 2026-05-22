@@ -23,7 +23,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     private var mRenderTarget: RenderTarget? = null
     private var mShadowType: ShadowType = ShadowType.PCF
     private var mColorGrading: ColorGrading? = null
-    private var mPickCallbackRef: kotlinx.cinterop.StableRef<(PickingQueryResult) -> Unit>? = null
 
     actual class DynamicResolutionOptions actual constructor() {
         actual var enabled: Boolean = false
@@ -201,7 +200,14 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual val hasCamera: Boolean get() = FilaView_hasCamera(nativeHandle)
 
     actual var viewport: Viewport
-        get() = Viewport(0, 0, 0, 0)
+        get() = memScoped {
+            val left   = alloc<IntVar>()
+            val bottom = alloc<IntVar>()
+            val width  = alloc<UIntVar>()
+            val height = alloc<UIntVar>()
+            FilaView_getViewport(nativeHandle, left.ptr, bottom.ptr, width.ptr, height.ptr)
+            Viewport(left.value, bottom.value, width.value.toInt(), height.value.toInt())
+        }
         set(value) { FilaView_setViewport(nativeHandle, value.left, value.bottom, value.width.toUInt(), value.height.toUInt()) }
 
     actual var blendMode: BlendMode
@@ -524,9 +530,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
-        mPickCallbackRef?.dispose()
         val stableRef = kotlinx.cinterop.StableRef.create(callback)
-        mPickCallbackRef = stableRef
         val cCallback = staticCFunction { result: CPointer<FilaViewPickingQueryResult>?, user: COpaquePointer? ->
             val ref = user!!.asStableRef<(PickingQueryResult) -> Unit>()
             result?.pointed?.let { r ->

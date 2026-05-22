@@ -572,8 +572,14 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
-        nativeView.pick(x, y, null) { r ->
+        // Filament's JNI bridge only delivers the callback when `handler` is an Executor;
+        // null silently drops results. See View.jvm.kt for the longer note.
+        nativeView.pick(x, y, directExecutor) { r ->
             callback(PickingQueryResult(r.renderable, r.depth, r.fragCoords.copyOf()))
         }
+    }
+
+    private companion object {
+        private val directExecutor = java.util.concurrent.Executor { it.run() }
     }
 }

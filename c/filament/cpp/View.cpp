@@ -48,6 +48,14 @@ void FilaView_setViewport(FilaView* view, int left, int bottom, uint32_t width, 
     FILA_CAST(View, view)->setViewport({left, bottom, width, height});
 }
 
+void FilaView_getViewport(const FilaView* view, int* left, int* bottom, uint32_t* width, uint32_t* height) {
+    const auto& vp = FILA_CONST_CAST(View, view)->getViewport();
+    if (left)   *left   = vp.left;
+    if (bottom) *bottom = vp.bottom;
+    if (width)  *width  = vp.width;
+    if (height) *height = vp.height;
+}
+
 void FilaView_setVisibleLayers(FilaView* view, uint8_t select, uint8_t value) {
     FILA_CAST(View, view)->setVisibleLayers(select, value);
 }

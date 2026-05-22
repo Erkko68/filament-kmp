@@ -549,9 +549,18 @@ actual class View(val nativeView: JniView) {
         }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
-        nativeView.pick(x, y, null) { r ->
+        // The native pick JNI delivers results through `releaseCallbackJni`, which only invokes
+        // the Runnable if `handler` is a non-null `java.util.concurrent.Executor`. Passing null
+        // (the obvious choice for "run on the current thread") silently drops every result.
+        // A direct executor (run-on-caller-thread) keeps semantics simple: the callback fires
+        // on whichever thread Filament's driver completes the picking-buffer readback on.
+        nativeView.pick(x, y, directExecutor) { r ->
             callback(PickingQueryResult(r.renderable, r.depth, r.fragCoords.copyOf()))
         }
+    }
+
+    private companion object {
+        private val directExecutor = java.util.concurrent.Executor { it.run() }
     }
 
 }

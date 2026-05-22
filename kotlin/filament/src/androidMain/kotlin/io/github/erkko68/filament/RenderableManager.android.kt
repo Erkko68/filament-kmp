@@ -104,8 +104,12 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         }
 
         actual fun skinning(boneCount: Int, bones: FloatArray): Builder {
-            // Android uses Buffer, but we can wrap it
-            nativeBuilder.skinning(boneCount, java.nio.FloatBuffer.wrap(bones))
+            // Bone matrices are read native-side via GetDirectBufferAddress; heap-backed
+            // FloatBuffer.wrap silently fails. Copy to a direct, native-order buffer.
+            val direct = java.nio.ByteBuffer.allocateDirect(bones.size * 4)
+                .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
+            direct.put(bones); direct.flip()
+            nativeBuilder.skinning(boneCount, direct)
             return this
         }
 
@@ -235,12 +239,20 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         nativeRenderableManager.setMorphTargetBufferOffsetAt(instance, level, primitiveIndex, offset)
     }
 
+    // Bone-upload methods read via GetDirectBufferAddress; heap buffers from FloatBuffer.wrap
+    // silently fail (same root cause as the SurfaceOrientation fix above). Copy to direct.
     actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) {
-        nativeRenderableManager.setBonesAsMatrices(instance, java.nio.FloatBuffer.wrap(matrices), boneCount, offset)
+        val direct = java.nio.ByteBuffer.allocateDirect(matrices.size * 4)
+            .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
+        direct.put(matrices); direct.flip()
+        nativeRenderableManager.setBonesAsMatrices(instance, direct, boneCount, offset)
     }
 
     actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) {
-        nativeRenderableManager.setBonesAsQuaternions(instance, java.nio.FloatBuffer.wrap(quaternions), boneCount, offset)
+        val direct = java.nio.ByteBuffer.allocateDirect(quaternions.size * 4)
+            .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
+        direct.put(quaternions); direct.flip()
+        nativeRenderableManager.setBonesAsQuaternions(instance, direct, boneCount, offset)
     }
 
     actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {

@@ -202,6 +202,7 @@ bool FilaView_hasCamera(const FilaView* view);
 
 void FilaView_setColorGrading(FilaView* view, FilaColorGrading* colorGrading);
 void FilaView_setViewport(FilaView* view, int left, int bottom, uint32_t width, uint32_t height);
+void FilaView_getViewport(const FilaView* view, int* left, int* bottom, uint32_t* width, uint32_t* height);
 void FilaView_setVisibleLayers(FilaView* view, uint8_t select, uint8_t value);
 uint8_t FilaView_getVisibleLayers(const FilaView* view);
 
