@@ -13,6 +13,7 @@ Welcome. These docs cover everything you need to build with `filament-kmp` — f
 - **[Overview](compose/README.md)** — Component reference for the `filament-compose` DSL.
 - **[Scope & Philosophy](compose/scope.md)** — What `filament-compose` is and isn't.
 - **[Integration Strategies](compose/integration-strategies.md)** — How Filament's GPU output reaches the Compose canvas on each platform.
+- **[Materials](compose/materials.md)** — Author `.mat` source, compile with `matc`, load and parameterise at runtime.
 
 ## For contributors
 

@@ -6,6 +6,7 @@ The `filament-compose` module provides the integration between the [Filament](ht
 
 - **[Scope & Philosophy](scope.md)**: Understand the goals and design principles behind `filament-compose`.
 - **[Integration Strategies](integration-strategies.md)**: Details on the mechanism used to bridge Filament's GPU output with the Compose canvas (Pixel Readback vs. Zero-Copy).
+- **[Materials](materials.md)**: Authoring `.mat` source, compiling with `matc`, loading at runtime, parameterising per-instance, and when to use runtime `filamat` instead.
 
 ## Lifecycle and resource management
 
@@ -36,6 +37,7 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 | `FilamentView` | Main entry point. Creates an Engine, Scene, View, and Renderer; accepts hoisted state for camera, skybox, and IBL; renders into a platform surface. |
 | `FilamentEffect` | Escape hatch for raw Filament access. Provides the Engine, Scene, View, and a per-frame callback. |
 | `rememberFilamentEngine` | Creates and remembers a shared `Engine` instance tied to the composition lifecycle. Pass the result to multiple `FilamentView`s to share a single GPU context. |
+| `rememberSceneClock` | Returns a `State<Float>` ticking every frame (seconds since first composition). Drives ambient animation loops without boilerplate. |
 
 ### Camera
 
@@ -56,12 +58,18 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 | Composable | Description |
 | :--- | :--- |
 | `Light` | Adds a light entity to the scene. Supports all Filament light types (directional, sun, point, spot, focused spot). |
-| `GltfInstance` | Declarative glTF model instance. Requires a `GltfAsset` loaded with `rememberGltfAsset`. |
+| `GltfInstance` | Declarative glTF model instance. Requires a `GltfAsset` loaded with `rememberGltfAsset`. Accepts `position` / `rotation` / `scale` / `pivot` (mesh-space point that rotation/scale revolve around — defaults to the glTF's root origin). |
 | `rememberGltfAsset(engine?, key?, load)` | Loads a glTF asset asynchronously via a suspending lambda. Returns `null` while loading. `engine` defaults to the engine in scope from `FilamentView`; pass it explicitly to load the asset *outside* a `FilamentView`. |
+
+### Grouping
+
+| Composable | Description |
+| :--- | :--- |
+| `Group` | Parents nested scene composables under a single transform entity. `position`/`rotation`/`scale`/`pivot` apply to the whole assembly; children's own transforms become local to the group. Groups nest cleanly and accept `Light`, `GltfInstance`, and primitive children. |
 
 ### Primitives
 
-Pure-Kotlin mesh primitives that build a `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place inside `FilamentView { }`.
+Pure-Kotlin mesh primitives that build a `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place inside `FilamentView { }`. Every primitive accepts the same transform set — `position`, `rotation`, `scale`, `pivot` — plus an `onCreate: (entity: Int) -> Unit` callback that fires once the renderable is added to the scene (use it to register the entity with `view.pick` callbacks). When wrapped in a `Group { }` the primitive's transform becomes local to the group.
 
 | Composable | Description |
 | :--- | :--- |
@@ -114,3 +122,5 @@ All post-processing composables must be placed inside the `content` lambda of `F
 | `DepthOfField` | Depth-of-field blur. |
 | `Shadows` | Shadow rendering options. |
 | `DynamicResolution` | Dynamic resolution scaling. |
+| `Dithering` | Tonemap-time dithering. `TEMPORAL` (default) hides 8-bit banding in dark gradients and bloom halos. |
+| `RenderQuality` | Precision of the View's HDR color buffer (`HIGH` = RGBA16F where available). Lower precision causes emissive values above 1.0 to clip into bloom and produce banding. |
