@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { java-version: '17', distribution: 'temurin' }
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/setup-gradle-cached
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
       - run: ./gradlew compileReleaseKotlinAndroid --no-configuration-cache
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { java-version: '17', distribution: 'temurin' }
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/setup-gradle-cached
       - run: ./gradlew compileKotlinJs --no-configuration-cache
 
   ios:
@@ -35,7 +35,7 @@ jobs:
         with: { java-version: '17', distribution: 'temurin' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/setup-gradle-cached
       - name: Read Filament version
         id: ver
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
@@ -76,7 +76,7 @@ jobs:
         with: { java-version: '17', distribution: 'temurin' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev

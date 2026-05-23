@@ -1,0 +1,32 @@
+name: Setup Gradle (cached)
+description: |
+  Wraps gradle/actions/setup-gradle@v4 with our cache size/scope tuning.
+  Single source of truth — change cache policy here, not in every workflow.
+
+runs:
+  using: composite
+  steps:
+    - uses: gradle/actions/setup-gradle@v4
+      with:
+        # Only the default branch writes caches; PRs and feature branches read but never
+        # upload. Without this every PR push duplicated ~5 GB of gradle-home caches that
+        # were almost identical to main's, evicting genuinely useful entries from the
+        # 10 GB per-repo quota.
+        cache-write-only-on-default-branch: true
+
+        # Compact the Gradle user home before tar-and-upload so the cache reflects only
+        # what was actually used by this build, not whatever crud accumulated.
+        cache-cleanup: on-success
+
+        # Skip the largest sub-caches that don't pull their weight:
+        #   - jdks/                — JDK distributions restored by setup-java in seconds.
+        #   - caches/transforms-*  — Gradle 8+ artifact transform outputs; regenerated
+        #                            cheaply from the (cached) module artifacts. Often
+        #                            500 MB – 1 GB per job.
+        #   - caches/build-cache-* — Local build cache outputs we don't share between
+        #                            jobs anyway.
+        gradle-home-cache-excludes: |
+          jdks
+          caches/transforms-*
+          caches/*/transforms-*
+          caches/build-cache-*
