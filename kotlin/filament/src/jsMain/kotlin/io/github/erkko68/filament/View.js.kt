@@ -7,7 +7,7 @@ actual class View(internal val jsView: JSView) {
     private var _camera: Camera? = null
     private var _viewport: Viewport = Viewport(0, 0, 0, 0)
     private var _visibleLayersValues: Int = 0
-    private var _dithering: Dithering = Dithering.NONE
+    private var _dithering: Dithering = Dithering.TEMPORAL
     private var _antiAliasing: AntiAliasing = AntiAliasing.NONE
     private var _dynamicResolutionOptions = DynamicResolutionOptions()
     private var _renderQuality = RenderQuality()
@@ -138,6 +138,12 @@ actual class View(internal val jsView: JSView) {
                 View.Quality.MEDIUM -> io.github.erkko68.filament.js.View_QualityLevel.MEDIUM
                 View.Quality.HIGH -> io.github.erkko68.filament.js.View_QualityLevel.HIGH
                 View.Quality.ULTRA -> io.github.erkko68.filament.js.View_QualityLevel.ULTRA
+            }
+            // Push to the JS view — without this the setter was a silent no-op and the
+            // hdrColorBuffer quality stayed at whatever Filament.js defaults to.
+            val jsViewExt = jsView.asDynamic()
+            if (jsViewExt.setRenderQuality != null) {
+                jsViewExt.setRenderQuality(jsQuality)
             }
         }
 
@@ -423,7 +429,10 @@ actual class View(internal val jsView: JSView) {
         actual var quality: Quality = Quality.MEDIUM
     }
     actual class RenderQuality {
-        actual var hdrColorBuffer: Quality = Quality.MEDIUM
+        // Mirror Filament's native default of HIGH so an FP16 buffer is used when the WebGL
+        // extension is available; the previous MEDIUM default forced an 11_11_10 buffer that
+        // caused visible banding on emissive bloom halos.
+        actual var hdrColorBuffer: Quality = Quality.HIGH
     }
     actual class BloomOptions {
         actual var enabled: Boolean = false
