@@ -20,6 +20,7 @@ private val ENTRIES = listOf(
     "Duck"       to Screen.Duck,
     "Primitives" to Screen.Primitives,
     "Picking"    to Screen.Picking,
+    "Solar"      to Screen.Solar,
 )
 
 @Composable

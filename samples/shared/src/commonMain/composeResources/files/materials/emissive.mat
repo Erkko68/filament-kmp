@@ -1,0 +1,27 @@
+// Pure-emissive UNLIT material — the sphere ignores scene lighting and outputs a flat
+// colour plus an emissive contribution (which bloom + tonemapping turn into a glow).
+//
+// Per-instance parameters:
+//   color     — base RGB visible on the sphere itself.
+//   intensity — scalar multiplier added to `emissive`. Values > 1 push pixels above the
+//               bloom threshold and produce the halo around the sun.
+//
+// Compile (all backends, all features):
+//   matc -p all -a all -o emissive.filamat emissive.mat
+
+material {
+    name : Emissive,
+    shadingModel : unlit,
+    parameters : [
+        { type : float3, name : color },
+        { type : float,  name : intensity }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.color;
+        material.emissive = vec4(materialParams.color * materialParams.intensity, 0.0);
+    }
+}

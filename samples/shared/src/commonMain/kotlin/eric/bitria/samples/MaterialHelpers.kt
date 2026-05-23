@@ -41,3 +41,31 @@ fun rememberColorInstance(template: Material, color: Color): MaterialInstance {
     }
     return instance
 }
+
+/**
+ * Loads `emissive.filamat` — UNLIT material with `color` (float3) and `intensity` (float)
+ * parameters. Use with [rememberEmissiveInstance].
+ */
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun rememberEmissiveTemplate(): Material? =
+    rememberMaterial { Res.readBytes("files/materials/emissive.filamat") }
+
+/**
+ * Creates an emissive [MaterialInstance] tuned to [color] and [intensity]. Intensity values
+ * above ~1 push the surface past the bloom threshold and produce a halo.
+ */
+@Composable
+fun rememberEmissiveInstance(template: Material, color: Color, intensity: Float): MaterialInstance {
+    val engine = LocalFilamentEngine.current
+    val instance = remember(template, color, intensity) {
+        template.createInstance().also {
+            it.setParameter("color", color.x, color.y, color.z)
+            it.setParameter("intensity", intensity)
+        }
+    }
+    DisposableEffect(instance) {
+        onDispose { engine.destroyMaterialInstance(instance) }
+    }
+    return instance
+}

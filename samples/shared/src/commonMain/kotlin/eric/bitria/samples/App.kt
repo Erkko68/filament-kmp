@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import eric.bitria.samples.scenes.DuckScene
 import eric.bitria.samples.scenes.PickingScene
 import eric.bitria.samples.scenes.PrimitivesScene
+import eric.bitria.samples.scenes.SolarScene
 
 @Composable
 fun App() {
@@ -19,6 +20,7 @@ fun App() {
             Screen.Duck       -> DuckScene(onBack = { screen = Screen.Home })
             Screen.Primitives -> PrimitivesScene(onBack = { screen = Screen.Home })
             Screen.Picking    -> PickingScene(onBack = { screen = Screen.Home })
+            Screen.Solar      -> SolarScene(onBack = { screen = Screen.Home })
         }
     }
 }
