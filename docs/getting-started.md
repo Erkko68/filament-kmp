@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.0-beta01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.1-rc01")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.1.0-beta01")
+            implementation("io.github.erkko68.filament:gltfio:0.1.1-rc01")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.1.0-beta01")
+            implementation("io.github.erkko68.filament:filament-utils:0.1.1-rc01")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.1.0-beta01")
+            implementation("io.github.erkko68.filament:filamat:0.1.1-rc01")
         }
     }
 }

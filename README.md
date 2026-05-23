@@ -10,7 +10,7 @@
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
 > [!WARNING]
-> **Beta (`0.1.0-beta`).** Public APIs are stabilizing but may still change between releases. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
+> **Release candidate (`0.1.1-rc`).** Public APIs are essentially frozen at this point — only critical fixes before the `0.1.1` stable tag. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
 
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/WASM**, with first-class **Compose Multiplatform** integration.
 
@@ -54,7 +54,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.0-beta01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.1-rc01")
         }
     }
 }
