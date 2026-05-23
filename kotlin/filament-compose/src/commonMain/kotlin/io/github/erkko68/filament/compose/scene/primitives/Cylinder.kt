@@ -19,12 +19,14 @@ import kotlin.math.sin
  * `4 * (segments + 1)` vertices and `4 * segments` triangles.
  *
  * @param material  Material applied to side and caps.
- * @param position  World-space center.
+ * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation.
  * @param scale     Per-axis scale.
+ * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the cylinder centre.
  * @param radius    Cylinder radius in mesh space.
  * @param height    Full height along Y in mesh space.
  * @param segments  Number of radial subdivisions. Minimum 3.
+ * @param onCreate  Receives the renderable entity ID once the cylinder is added to the scene.
  */
 @Composable
 fun Cylinder(
@@ -32,12 +34,14 @@ fun Cylinder(
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
+    pivot: Position = Position(0f),
     radius: Float = 0.5f,
     height: Float = 1f,
     segments: Int = 32,
+    onCreate: (entity: Int) -> Unit = {},
 ) {
     val mesh = remember(radius, height, segments) { cylinderMesh(radius, height, segments) }
-    Mesh(mesh, material, position, rotation, scale)
+    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
 }
 
 private fun cylinderMesh(radius: Float, height: Float, segments: Int): MeshData {

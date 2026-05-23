@@ -16,10 +16,14 @@ import io.github.erkko68.filament.utils.Quaternion
  *
  * @param material  The material to apply to every face. Use [rememberMaterial] +
  *   [rememberMaterialInstance] to construct one.
- * @param position  World-space position of the center.
+ * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation as a quaternion.
  * @param scale     Per-axis scale applied after [size].
+ * @param pivot     Point in mesh space that rotation/scale revolve around and that ends up at
+ *   [position]. Defaults to the cube centre.
  * @param size      Edge length in mesh space. The mesh is rebuilt when this changes.
+ * @param onCreate  Receives the renderable entity ID once the cube is added to the scene.
+ *   Use it to register the cube with `view.pick` callbacks or other entity-keyed maps.
  */
 @Composable
 fun Cube(
@@ -27,10 +31,12 @@ fun Cube(
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
+    pivot: Position = Position(0f),
     size: Float = 1f,
+    onCreate: (entity: Int) -> Unit = {},
 ) {
     val mesh = remember(size) { cubeMesh(size) }
-    Mesh(mesh, material, position, rotation, scale)
+    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
 }
 
 private fun cubeMesh(size: Float): MeshData {

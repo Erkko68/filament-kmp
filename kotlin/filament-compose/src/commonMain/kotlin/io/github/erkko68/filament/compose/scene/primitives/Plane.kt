@@ -15,13 +15,15 @@ import io.github.erkko68.filament.utils.Quaternion
  * requiring a `doubleSided` material.
  *
  * @param material  Material applied to both faces.
- * @param position  World-space center.
+ * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation. Use this to make a wall or a ceiling.
  * @param scale     Per-axis scale.
+ * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the plane centre.
  * @param width     Size along the X axis in mesh space.
  * @param depth     Size along the Z axis in mesh space.
  * @param doubleSided  When true (default) the mesh has both faces. Set false to omit the back
  *   side when you know nothing will ever look at it from below.
+ * @param onCreate  Receives the renderable entity ID once the plane is added to the scene.
  */
 @Composable
 fun Plane(
@@ -29,12 +31,14 @@ fun Plane(
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
+    pivot: Position = Position(0f),
     width: Float = 1f,
     depth: Float = 1f,
     doubleSided: Boolean = true,
+    onCreate: (entity: Int) -> Unit = {},
 ) {
     val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
-    Mesh(mesh, material, position, rotation, scale)
+    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
 }
 
 private fun planeMesh(width: Float, depth: Float, doubleSided: Boolean): MeshData {

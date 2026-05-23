@@ -15,6 +15,7 @@ import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
+import io.github.erkko68.filament.compose.scene.LocalParentEntity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.toBytes
@@ -77,7 +78,10 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
 /**
  * Builds and manages a single-primitive renderable entity from a [MeshData] and a
  * [MaterialInstance]. Recreates the entity when [mesh] or [material] changes; updates the
- * transform in place when only [position]/[rotation]/[scale] change.
+ * transform in place when only [position]/[rotation]/[scale]/[pivot] change.
+ *
+ * [onCreate] fires once when the renderable entity is added to the scene — pass the entity
+ * to e.g. an `entityToIndex` map so `view.pick` callbacks can identify the primitive.
  *
  * Internal — all public primitive composables (Cube, Sphere, Plane, Cylinder) call this.
  */
@@ -88,9 +92,12 @@ internal fun Mesh(
     position: Position,
     rotation: Quaternion,
     scale: Scale,
+    pivot: Position,
+    onCreate: (entity: Int) -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
     val scene  = LocalFilamentScene.current
+    val parent = LocalParentEntity.current
 
     val handles = remember(mesh) { mesh.upload(engine) }
     DisposableEffect(handles) {
@@ -112,6 +119,7 @@ internal fun Mesh(
 
     DisposableEffect(entity) {
         scene.addEntity(entity)
+        onCreate(entity)
         onDispose {
             scene.removeEntity(entity)
             engine.getRenderableManager().destroy(entity)
@@ -119,9 +127,24 @@ internal fun Mesh(
         }
     }
 
-    DisposableEffect(entity, position, rotation, scale) {
+    DisposableEffect(entity, position, rotation, scale, pivot) {
         val tm = engine.getTransformManager()
-        tm.setTransform(tm.getInstance(entity), transformMatrix(position, rotation, scale))
+        // Ensure the renderable entity has a transform component before we touch it. The
+        // RenderableManager.Builder.build() above doesn't add one; parenting and setTransform
+        // both need it.
+        if (!tm.hasComponent(entity)) tm.create(entity)
+        tm.setTransform(tm.getInstance(entity), transformMatrix(position, rotation, scale, pivot))
+        onDispose { }
+    }
+
+    // Reparent to the surrounding Group, if any. Re-runs when the parent identity changes
+    // (e.g. the user moves this composable into/out of a Group at runtime).
+    DisposableEffect(entity, parent) {
+        if (parent != null) {
+            val tm = engine.getTransformManager()
+            if (!tm.hasComponent(entity)) tm.create(entity)
+            tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
+        }
         onDispose { }
     }
 }

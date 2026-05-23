@@ -13,10 +13,15 @@ import io.github.erkko68.filament.compose.LocalFilamentView
  *
  * Bloom produces "glow" around bright areas of the scene.
  *
- * @param enabled   Whether bloom is enabled.
- * @param strength  Overall bloom intensity (0.0 to 1.0).
- * @param threshold If true, only colors brighter than 1.0 will bloom.
- * @param quality   Bloom filter quality.
+ * @param enabled    Whether bloom is enabled.
+ * @param strength   Overall bloom intensity (0.0 to 1.0).
+ * @param threshold  If true, only colors brighter than 1.0 will bloom.
+ * @param quality    Bloom filter quality.
+ * @param resolution Width in pixels of the largest mip in the bloom downsample chain. `0`
+ *   lets Filament pick a default (~360 px), which often looks pixelated on high-DPI displays.
+ *   Bump this to roughly half your render width for a smoother halo on retina/iOS screens.
+ * @param levels     Number of mip levels in the bloom chain. Higher values give a wider, softer
+ *   halo at slightly more GPU cost. Range 3..12.
  */
 @Composable
 fun Bloom(
@@ -24,14 +29,18 @@ fun Bloom(
     strength: Float = 0.10f,
     threshold: Boolean = true,
     quality: View.Quality = View.Quality.LOW,
+    resolution: Int = 0,
+    levels: Int = 6,
 ) {
     val view = LocalFilamentView.current
-    DisposableEffect(enabled, strength, threshold, quality) {
+    DisposableEffect(enabled, strength, threshold, quality, resolution, levels) {
         view.bloomOptions = view.bloomOptions.apply {
             this.enabled = enabled
             this.strength = strength
             this.threshold = threshold
             this.quality = quality
+            this.resolution = resolution
+            this.levels = levels
         }
         onDispose {
             view.bloomOptions = view.bloomOptions.apply { this.enabled = false }
@@ -334,5 +343,36 @@ fun DynamicResolution(
         onDispose {
             view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply { this.enabled = false }
         }
+    }
+}
+
+/**
+ * Selects the dithering applied at tonemap time. [View.Dithering.TEMPORAL] (Filament's
+ * native default) hides 8-bit banding in dark gradients and bloom halos by jittering the
+ * quantised output between frames. Disable only if you measure a banding pattern that
+ * outweighs the noise.
+ */
+@Composable
+fun Dithering(mode: View.Dithering = View.Dithering.TEMPORAL) {
+    val view = LocalFilamentView.current
+    DisposableEffect(mode) {
+        val previous = view.dithering
+        view.dithering = mode
+        onDispose { view.dithering = previous }
+    }
+}
+
+/**
+ * Selects the precision of the View's HDR color buffer. [View.Quality.HIGH] (the native
+ * default) is RGBA16F where the backend supports it — necessary for emissive values
+ * above 1.0 to survive without clipping into bloom. Drop to [View.Quality.MEDIUM] for
+ * a smaller intermediate buffer when memory pressure outweighs banding.
+ */
+@Composable
+fun RenderQuality(hdrColorBuffer: View.Quality = View.Quality.HIGH) {
+    val view = LocalFilamentView.current
+    DisposableEffect(hdrColorBuffer) {
+        view.renderQuality = view.renderQuality.apply { this.hdrColorBuffer = hdrColorBuffer }
+        onDispose { }
     }
 }

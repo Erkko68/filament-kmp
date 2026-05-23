@@ -17,12 +17,14 @@ import kotlin.math.sin
  * (`rings * segments * 2` triangles total).
  *
  * @param material  The material applied to the whole sphere.
- * @param position  World-space center.
+ * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation.
  * @param scale     Per-axis scale.
+ * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the sphere centre.
  * @param radius    Sphere radius in mesh space.
  * @param rings     Latitude subdivisions. Minimum 2.
  * @param segments  Longitude subdivisions. Minimum 3.
+ * @param onCreate  Receives the renderable entity ID once the sphere is added to the scene.
  */
 @Composable
 fun Sphere(
@@ -30,12 +32,14 @@ fun Sphere(
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
+    pivot: Position = Position(0f),
     radius: Float = 0.5f,
     rings: Int = 16,
     segments: Int = 32,
+    onCreate: (entity: Int) -> Unit = {},
 ) {
     val mesh = remember(radius, rings, segments) { sphereMesh(radius, rings, segments) }
-    Mesh(mesh, material, position, rotation, scale)
+    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
 }
 
 private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {

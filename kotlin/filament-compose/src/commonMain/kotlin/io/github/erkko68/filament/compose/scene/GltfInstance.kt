@@ -58,6 +58,10 @@ private class GltfInstanceScopeImpl(
  * @param position World-space translation.
  * @param rotation World-space rotation as a quaternion.
  * @param scale Per-axis scale.
+ * @param pivot The point in mesh space that rotation and scale revolve around, and that
+ *   ends up at [position] in world space. Defaults to `(0,0,0)` — the glTF's own root origin.
+ *   Use this to e.g. rotate a model around its centre when the glTF was authored with the
+ *   origin at one corner.
  * @param animationIndex Index of the skeletal animation to play. Null to disable.
  * @param animationTime Current time in seconds for the animation.
  * @param onCreate Called once when the instance is added to the scene. Use for one-time setup
@@ -71,6 +75,7 @@ fun GltfInstance(
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
+    pivot: Position = Position(0f),
     animationIndex: Int? = null,
     animationTime: Float = 0f,
     onCreate: GltfInstanceScope.() -> Unit = {},
@@ -80,6 +85,7 @@ fun GltfInstance(
 
     val engine = LocalFilamentEngine.current
     val scene = LocalFilamentScene.current
+    val parent = LocalParentEntity.current
 
     val instance = remember(asset) {
         asset.assetLoader.createInstance(asset.filamentAsset)
@@ -99,11 +105,24 @@ fun GltfInstance(
     // Push the transform to Filament only when the inputs actually change. SideEffect
     // would re-run on every recomposition, but the transform math and JNI call are
     // wasted if nothing moved.
-    DisposableEffect(instance, position, rotation, scale) {
+    DisposableEffect(instance, position, rotation, scale, pivot) {
         val tm = engine.getTransformManager()
         val root = instance.getRoot()
         if (tm.hasComponent(root)) {
-            tm.setTransform(tm.getInstance(root), transformMatrix(position, rotation, scale))
+            tm.setTransform(tm.getInstance(root), transformMatrix(position, rotation, scale, pivot))
+        }
+        onDispose { }
+    }
+
+    // Reparent the asset root to the surrounding Group, if any. gltfio always creates a
+    // transform component on the root, so no need to create one here.
+    DisposableEffect(instance, parent) {
+        if (parent != null) {
+            val tm = engine.getTransformManager()
+            val root = instance.getRoot()
+            if (tm.hasComponent(root)) {
+                tm.setParent(tm.getInstance(root), tm.getInstance(parent))
+            }
         }
         onDispose { }
     }

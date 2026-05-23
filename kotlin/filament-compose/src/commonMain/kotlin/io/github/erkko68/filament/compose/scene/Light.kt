@@ -2,6 +2,8 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.LocalFilamentEngine
@@ -98,17 +100,75 @@ fun Light(
     sun: SunParams = SunParams(),
 ) {
     val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
-    val snapshot = LightSnapshot(type, direction, position, color, intensity, castShadows, falloff, cone, sun)
+    val scene  = LocalFilamentScene.current
+    val parent = LocalParentEntity.current
 
-    DisposableEffect(snapshot) {
-        val entity = engine.getEntityManager().create()
-        snapshot.buildInto(engine, entity)
+    val entity = remember { engine.getEntityManager().create() }
+
+    // Entity destruction is registered *first* so it runs *last* on dispose (Compose tears
+    // effects down in reverse registration order). That way the light/transform cleanup
+    // below still sees a live entity when it runs.
+    DisposableEffect(entity) {
+        onDispose { engine.getEntityManager().destroy(entity) }
+    }
+
+    // Build light + transform components once (rebuild only if the light type changes — type
+    // is locked at LightManager.Builder construction). Keeping the entity stable across
+    // parameter changes lets the per-frame setters below stay cheap.
+    DisposableEffect(entity, type) {
+        // Initial component setup uses the current snapshot of values so the first frame is
+        // correct; subsequent changes flow through the in-place setters in the SideEffect.
+        LightSnapshot(type, direction, position, color, intensity, castShadows, falloff, cone, sun)
+            .buildInto(engine, entity)
+
+        // A transform component lets the light obey Group transforms. When present, Filament
+        // computes the light's world position from the transform chain instead of the builder's
+        // position(). For an ungrouped light, an identity-ish transform with the requested
+        // translation gives the same effective position.
+        val tm = engine.getTransformManager()
+        if (!tm.hasComponent(entity)) tm.create(entity)
+
         scene.addEntity(entity)
         onDispose {
             scene.removeEntity(entity)
             engine.getLightManager().destroy(entity)
-            engine.getEntityManager().destroy(entity)
+            tm.destroy(entity)
         }
+    }
+
+    // Per-recomposition updates — cheap setters, no entity churn.
+    SideEffect {
+        val lm = engine.getLightManager()
+        val li = lm.getInstance(entity)
+        lm.setColor(li, color.r, color.g, color.b)
+        lm.setIntensity(li, intensity)
+        lm.setDirection(li, direction.x, direction.y, direction.z)
+        lm.setFalloff(li, falloff)
+        lm.setSpotLightCone(li, cone.innerAngle, cone.outerAngle)
+        lm.setSunAngularRadius(li, sun.angularRadius)
+        lm.setSunHaloSize(li, sun.haloSize)
+        lm.setSunHaloFalloff(li, sun.haloFalloff)
+        lm.setShadowCaster(li, castShadows)
+
+        // Position via transform so Group hierarchy works. Translation only — directional
+        // lights derive their direction from `direction`, not the transform's rotation.
+        val tm = engine.getTransformManager()
+        tm.setTransform(
+            tm.getInstance(entity),
+            floatArrayOf(
+                1f, 0f, 0f, 0f,
+                0f, 1f, 0f, 0f,
+                0f, 0f, 1f, 0f,
+                position.x, position.y, position.z, 1f,
+            ),
+        )
+    }
+
+    DisposableEffect(entity, parent) {
+        if (parent != null) {
+            val tm = engine.getTransformManager()
+            tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
+        }
+        onDispose { }
     }
 }
