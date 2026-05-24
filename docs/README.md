@@ -18,7 +18,7 @@ Welcome. These docs cover everything you need to build with `filament-kmp` — f
 ## For contributors
 
 - **[Repository Structure](repo-structure.md)** — How the C++, JNI, Kotlin, and prebuilt layers fit together.
-- **[Automation & Scripts](scripts/README.md)** — Internal tooling for prebuilts, API coverage, releases.
+- **[Automation & Scripts](../scripts/README.md)** — Internal tooling for prebuilts and Filament-version upgrade diffs.
 
 ## Upstream Filament documentation
 

@@ -20,6 +20,6 @@ filament-source/
 *.log
 .DS_Store
 **/.DS_Store
-# Filament sources downloaded by scripts/download_filament.py
-scripts/filament-*/
+# Upstream Filament clone kept by scripts/upgrade-diff.sh
+scripts/.filament-src-cache/
 kotlin-js-store/
