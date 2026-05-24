@@ -429,30 +429,27 @@ actual class View(internal val jsView: JSView) {
         actual var quality: Quality = Quality.MEDIUM
     }
     actual class RenderQuality {
-        // Mirror Filament's native default of HIGH so an FP16 buffer is used when the WebGL
-        // extension is available; the previous MEDIUM default forced an 11_11_10 buffer that
-        // caused visible banding on emissive bloom halos.
         actual var hdrColorBuffer: Quality = Quality.HIGH
     }
     actual class BloomOptions {
         actual var enabled: Boolean = false
         actual var levels: Int = 6
-        actual var resolution: Int = 0
+        actual var resolution: Int = 384
         actual var strength: Float = 0.10f
         actual var threshold: Boolean = true
         actual var dirt: Texture? = null
         actual var dirtStrength: Float = 0.20f
-        actual var quality: Quality = Quality.MEDIUM
+        actual var quality: Quality = Quality.LOW
         actual var lensFlare: Boolean = false
-        actual var starburst: Boolean = false
-        actual var chromaticAberration: Float = 0.0f
-        actual var ghostCount: Int = 0
-        actual var ghostSpacing: Float = 0.0f
-        actual var ghostThreshold: Float = 0.0f
-        actual var haloRadius: Float = 0.0f
-        actual var haloThickness: Float = 0.0f
-        actual var haloThreshold: Float = 0.0f
-        actual var highlight: Float = 0.0f
+        actual var starburst: Boolean = true
+        actual var chromaticAberration: Float = 0.005f
+        actual var ghostCount: Int = 4
+        actual var ghostSpacing: Float = 0.6f
+        actual var ghostThreshold: Float = 10.0f
+        actual var haloRadius: Float = 0.4f
+        actual var haloThickness: Float = 0.1f
+        actual var haloThreshold: Float = 10.0f
+        actual var highlight: Float = 1000.0f
         actual var blendMode: BlendMode = BlendMode.ADD
         actual enum class BlendMode { ADD, INTERPOLATE }
     }

@@ -40,19 +40,19 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual class BloomOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var levels: Int = 6
-        actual var resolution: Int = 0
+        actual var resolution: Int = 384
         actual var strength: Float = 0.10f
         actual var threshold: Boolean = true
         actual var dirt: Texture? = null
         actual var dirtStrength: Float = 0.2f
         actual var quality: Quality = Quality.LOW
         actual var lensFlare: Boolean = false
-        actual var starburst: Boolean = false
+        actual var starburst: Boolean = true
         actual var chromaticAberration: Float = 0.005f
         actual var ghostCount: Int = 4
-        actual var ghostSpacing: Float = 0.3f
+        actual var ghostSpacing: Float = 0.6f
         actual var ghostThreshold: Float = 10.0f
-        actual var haloRadius: Float = 0.45f
+        actual var haloRadius: Float = 0.4f
         actual var haloThickness: Float = 0.1f
         actual var haloThreshold: Float = 10.0f
         actual var highlight: Float = 1000.0f
