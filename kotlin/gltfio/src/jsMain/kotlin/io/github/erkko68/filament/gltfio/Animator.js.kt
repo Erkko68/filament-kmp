@@ -4,8 +4,7 @@ import io.github.erkko68.filament.js.`gltfio_Animator` as JSAnimator
 
 actual class Animator(internal val jsAnimator: JSAnimator) {
     actual fun applyAnimation(index: Int, time: Float) {
-        // JS binding only supports applyAnimation(index), time parameter is not available
-        jsAnimator.applyAnimation(index)
+        jsAnimator.asDynamic().applyAnimation(index, time)
     }
 
     actual fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float) {

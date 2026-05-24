@@ -5,7 +5,9 @@ import io.github.erkko68.filament.js.`BufferObject_Builder` as JSBufferObjectBui
 import io.github.erkko68.filament.js.BufferObject_BindingType
 
 actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
-    actual val byteCount: Int get() = 0 // not exposed in JS bindings
+    // jsbindings.cpp exposes `getByteCount` via embind; the auto-generated d.ts misses
+    // it, so we fall through to the underlying JS object dynamically.
+    actual val byteCount: Int get() = (jsBufferObject.asDynamic().getByteCount() as Number).toInt()
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
         val int8 = org.khronos.webgl.Int8Array(size)

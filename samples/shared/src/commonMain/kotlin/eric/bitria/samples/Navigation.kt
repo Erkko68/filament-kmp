@@ -7,4 +7,5 @@ sealed class Screen {
     data object Primitives : Screen()
     data object Picking : Screen()
     data object Solar : Screen()
+    data object Animation : Screen()
 }

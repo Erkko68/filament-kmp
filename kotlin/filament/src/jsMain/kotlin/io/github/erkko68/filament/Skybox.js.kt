@@ -10,7 +10,10 @@ actual class Skybox(val jsSkybox: JSSkybox) {
         jsSkybox.setColor(arrayOf(r, g, b, a) as Array<Number>)
     }
 
-    actual val intensity: Float get() = 1.0f // not exposed in JS bindings, handled in builder
+    // jsbindings.cpp binds Skybox::getIntensity; the d.ts misses it. The Builder still
+    // can't set intensity (only `priority`, `color`, `environment`, `showSun` are bound),
+    // so the value is whatever Filament defaulted it to at construction time.
+    actual val intensity: Float get() = (jsSkybox.asDynamic().getIntensity() as Number).toFloat()
     actual val texture: Texture? get() = jsSkybox.getTexture()?.let { Texture(it) }
     actual val layerMask: Int get() = _layerMask
 
@@ -39,7 +42,8 @@ actual class Skybox(val jsSkybox: JSSkybox) {
         }
 
         actual fun priority(priority: Int): Builder {
-            // priority not in JS Skybox_Builder bindings
+            // jsbindings.cpp binds `priority` on Skybox$Builder; the d.ts misses it.
+            jsBuilder.asDynamic().priority(priority)
             return this
         }
 

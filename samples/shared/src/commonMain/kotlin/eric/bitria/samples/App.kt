@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import eric.bitria.samples.scenes.AnimationScene
 import eric.bitria.samples.scenes.DuckScene
 import eric.bitria.samples.scenes.PickingScene
 import eric.bitria.samples.scenes.PrimitivesScene
@@ -21,6 +22,7 @@ fun App() {
             Screen.Primitives -> PrimitivesScene(onBack = { screen = Screen.Home })
             Screen.Picking    -> PickingScene(onBack = { screen = Screen.Home })
             Screen.Solar      -> SolarScene(onBack = { screen = Screen.Home })
+            Screen.Animation  -> AnimationScene(onBack = { screen = Screen.Home })
         }
     }
 }

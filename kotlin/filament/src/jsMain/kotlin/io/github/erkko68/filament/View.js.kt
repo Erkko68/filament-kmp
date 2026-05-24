@@ -349,41 +349,64 @@ actual class View(internal val jsView: JSView) {
             jsView.setMultiSampleAntiAliasingOptions(jsOptions)
         }
 
+    // Only setters are bound on JS for these three; the getters stay tracked locally.
+    private var _isFrustumCullingEnabled: Boolean = true
     actual var isFrustumCullingEnabled: Boolean
-        get() = true
-        set(value) {} // Not in JS bindings
+        get() = _isFrustumCullingEnabled
+        set(value) {
+            _isFrustumCullingEnabled = value
+            // setFrustumCullingEnabled isn't bound in jsbindings.cpp — leave as a no-op so
+            // the local mirror still reflects the user's intent for the getter.
+        }
+    private var _isShadowingEnabled: Boolean = true
     actual var isShadowingEnabled: Boolean
-        get() = true
-        set(value) {} // Not in JS bindings
+        get() = _isShadowingEnabled
+        set(value) {
+            _isShadowingEnabled = value
+            jsView.asDynamic().setShadowingEnabled(value)
+        }
     actual var isScreenSpaceRefractionEnabled: Boolean
         get() = true
-        set(value) {} // Not in JS bindings
+        set(value) {} // setScreenSpaceRefractionEnabled isn't bound in jsbindings.cpp
 
     actual var isStencilBufferEnabled: Boolean
         get() = jsView.isStencilBufferEnabled()
         set(value) { jsView.setStencilBufferEnabled(value) }
 
+    private var _isFrontFaceWindingInverted: Boolean = false
     actual var isFrontFaceWindingInverted: Boolean
-        get() = false
-        set(value) {} // Not in JS bindings
+        get() = _isFrontFaceWindingInverted
+        set(value) {
+            _isFrontFaceWindingInverted = value
+            jsView.asDynamic().setFrontFaceWindingInverted(value)
+        }
 
     actual var isTransparentPickingEnabled: Boolean
         get() = jsView.isTransparentPickingEnabled()
         set(value) { jsView.setTransparentPickingEnabled(value) }
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
+        require(value.size == 4) { "setMaterialGlobal expects a float4; got size ${value.size}" }
+        jsView.asDynamic().setMaterialGlobal(index, value.toTypedArray())
     }
 
     actual fun getMaterialGlobal(index: Int): FloatArray {
-        return floatArrayOf()
+        val arr = jsView.asDynamic().getMaterialGlobal(index)
+        return FloatArray(4) { i -> (arr[i] as Number).toFloat() }
     }
 
-    actual val fogEntity: Int get() = 0 // Not in JS bindings?
+    actual val fogEntity: Int
+        get() {
+            val jsEntity = jsView.asDynamic().getFogEntity()
+            return (jsEntity.getId() as Number).toInt()
+        }
 
     actual fun clearFrameHistory(engine: Engine) {
+        jsView.asDynamic().clearFrameHistory(engine.jsEngine)
     }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
+        jsView.asDynamic().setDynamicLightingOptions(zNear, zFar)
     }
 
     actual var colorGrading: ColorGrading?
