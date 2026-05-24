@@ -197,9 +197,9 @@ actual class View(internal val jsView: JSView) {
             jsOptions.maxApertureDiameter = value.maxApertureDiameter
             jsOptions.nativeResolution = value.nativeResolution
             jsOptions.filter = when (value.filter) {
-                View.DepthOfFieldOptions.Filter.NONE -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.NONE
+                View.DepthOfFieldOptions.Filter.NONE   -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.NONE
+                View.DepthOfFieldOptions.Filter.UNUSED -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.UNUSED
                 View.DepthOfFieldOptions.Filter.MEDIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.MEDIAN
-                View.DepthOfFieldOptions.Filter.GAUSSIAN -> io.github.erkko68.filament.js.View_DepthOfFieldOptions_Filter.MEDIAN // GAUSSIAN not in JS bindings
             }
             jsView.setDepthOfFieldOptions(jsOptions)
         }
@@ -426,7 +426,7 @@ actual class View(internal val jsView: JSView) {
         actual var minScale: Float = 0.5f
         actual var maxScale: Float = 1.0f
         actual var sharpness: Float = 0.9f
-        actual var quality: Quality = Quality.MEDIUM
+        actual var quality: Quality = Quality.LOW
     }
     actual class RenderQuality {
         actual var hdrColorBuffer: Quality = Quality.HIGH
@@ -459,7 +459,7 @@ actual class View(internal val jsView: JSView) {
         actual var density: Float = 0.1f
         actual var height: Float = 0.0f
         actual var heightFalloff: Float = 1.0f
-        actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f)
+        actual var color: FloatArray = floatArrayOf(1.0f, 1.0f, 1.0f)
         actual var densityMap: Texture? = null
         actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
         actual var maximumOpacity: Float = 1.0f
@@ -472,35 +472,35 @@ actual class View(internal val jsView: JSView) {
         actual var enabled: Boolean = false
         actual var cocScale: Float = 1.0f
         actual var maxApertureDiameter: Float = 0.01f
-        actual var filter: Filter = Filter.GAUSSIAN
+        actual var filter: Filter = Filter.MEDIAN
         actual var nativeResolution: Boolean = false
         actual var foregroundRingCount: Int = 0
         actual var backgroundRingCount: Int = 0
         actual var fastGatherRingCount: Int = 0
         actual var maxForegroundCOC: Int = 0
         actual var maxBackgroundCOC: Int = 0
-        actual enum class Filter { NONE, MEDIAN, GAUSSIAN }
+        actual enum class Filter { NONE, UNUSED, MEDIAN }
     }
     actual class VignetteOptions {
         actual var enabled: Boolean = false
         actual var midPoint: Float = 0.5f
-        actual var roundness: Float = 0.0f
-        actual var feather: Float = 0.0f
+        actual var roundness: Float = 0.5f
+        actual var feather: Float = 0.5f
         actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
     }
     actual class AmbientOcclusionOptions {
         actual var radius: Float = 0.3f
-        actual var bias: Float = 0.005f
+        actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
-        actual var scale: Float = 1.0f
+        actual var scale: Float = 0.5f
         actual var power: Float = 1.0f
         actual var minConeAngle: Float = 0.0f
-        actual var quality: Quality = Quality.MEDIUM
+        actual var quality: Quality = Quality.LOW
         actual var lowPassFilter: Quality = Quality.MEDIUM
-        actual var upsampling: Quality = Quality.MEDIUM
+        actual var upsampling: Quality = Quality.LOW
         actual var enabled: Boolean = false
         actual var bentNormals: Boolean = false
-        actual var bilateralThreshold: Float = 0.005f
+        actual var bilateralThreshold: Float = 0.05f
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
         actual class Ssct {
@@ -508,7 +508,7 @@ actual class View(internal val jsView: JSView) {
             actual var lightConeRad: Float = 1.0f
             actual var shadowDistance: Float = 0.3f
             actual var contactDistanceMax: Float = 1.0f
-            actual var intensity: Float = 1.0f
+            actual var intensity: Float = 0.8f
             actual var lightDirection: FloatArray = floatArrayOf(0.0f, -1.0f, 0.0f)
             actual var depthBias: Float = 0.01f
             actual var depthSlopeBias: Float = 0.01f
@@ -517,18 +517,18 @@ actual class View(internal val jsView: JSView) {
         }
     }
     actual class TemporalAntiAliasingOptions {
-        actual var feedback: Float = 0.95f
+        actual var feedback: Float = 0.12f
         actual var lodBias: Float = -1.0f
         actual var sharpness: Float = 0.0f
         actual var enabled: Boolean = false
         actual var upscaling: Float = 1.0f
         actual var filterHistory: Boolean = true
         actual var filterInput: Boolean = true
-        actual var useYCoCg: Boolean = true
+        actual var useYCoCg: Boolean = false
         actual var hdr: Boolean = true
-        actual var boxType: Int = 1
-        actual var boxClipping: Int = 1
-        actual var jitterPattern: Int = 2
+        actual var boxType: Int = 0          // BoxType.AABB
+        actual var boxClipping: Int = 0      // BoxClipping.ACCURATE
+        actual var jitterPattern: Int = 3    // JitterPattern.HALTON_23_X16
         actual var varianceGamma: Float = 1.0f
         actual var preventFlickering: Boolean = false
         actual var historyReprojection: Boolean = true
@@ -545,7 +545,7 @@ actual class View(internal val jsView: JSView) {
         actual var mipmapping: Boolean = false
         actual var msaaSamples: Int = 1
         actual var highPrecision: Boolean = false
-        actual var lightBleedReduction: Float = 0.0f
+        actual var lightBleedReduction: Float = 0.15f
     }
     actual class SoftShadowOptions {
         actual var penumbraScale: Float = 1.0f

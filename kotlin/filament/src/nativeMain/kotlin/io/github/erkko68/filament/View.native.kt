@@ -29,7 +29,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var homogeneousScaling: Boolean = false
         actual var minScale: Float = 0.5f
         actual var maxScale: Float = 1.0f
-        actual var sharpness: Float = 1.0f
+        actual var sharpness: Float = 0.9f
         actual var quality: Quality = Quality.LOW
     }
 
@@ -66,7 +66,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var density: Float = 0.1f
         actual var height: Float = 0.0f
         actual var heightFalloff: Float = 1.0f
-        actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f)
+        actual var color: FloatArray = floatArrayOf(1.0f, 1.0f, 1.0f)
         actual var densityMap: Texture? = null
         actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
         actual var maximumOpacity: Float = 1.0f
@@ -87,7 +87,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var fastGatherRingCount: Int = 0
         actual var maxForegroundCOC: Int = 0
         actual var maxBackgroundCOC: Int = 0
-        actual enum class Filter { NONE, MEDIAN, GAUSSIAN }
+        actual enum class Filter { NONE, UNUSED, MEDIAN }
     }
 
     actual class VignetteOptions actual constructor() {
@@ -139,7 +139,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var hdr: Boolean = true
         actual var boxType: Int = 0
         actual var boxClipping: Int = 0
-        actual var jitterPattern: Int = 2
+        actual var jitterPattern: Int = 3
         actual var varianceGamma: Float = 1.0f
         actual var preventFlickering: Boolean = false
         actual var historyReprojection: Boolean = true

@@ -80,7 +80,7 @@ expect class View {
         var fastGatherRingCount: Int
         var maxForegroundCOC: Int
         var maxBackgroundCOC: Int
-        enum class Filter { NONE, MEDIAN, GAUSSIAN }
+        enum class Filter { NONE, UNUSED, MEDIAN }
     }
 
     class VignetteOptions() {

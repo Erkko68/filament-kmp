@@ -115,7 +115,7 @@ actual class View(val nativeView: JniView) {
         actual var fastGatherRingCount: Int get() = jni.fastGatherRingCount; set(v) { jni.fastGatherRingCount = v }
         actual var maxForegroundCOC: Int get() = jni.maxForegroundCOC; set(v) { jni.maxForegroundCOC = v }
         actual var maxBackgroundCOC: Int get() = jni.maxBackgroundCOC; set(v) { jni.maxBackgroundCOC = v }
-        actual enum class Filter { NONE, MEDIAN, GAUSSIAN }
+        actual enum class Filter { NONE, UNUSED, MEDIAN }
     }
 
     actual class VignetteOptions actual constructor() {

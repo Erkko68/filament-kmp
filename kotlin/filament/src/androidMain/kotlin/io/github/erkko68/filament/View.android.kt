@@ -108,7 +108,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var fastGatherRingCount: Int get() = native.fastGatherRingCount; set(v) { native.fastGatherRingCount = v }
         actual var maxForegroundCOC: Int get() = native.maxForegroundCOC; set(v) { native.maxForegroundCOC = v }
         actual var maxBackgroundCOC: Int get() = native.maxBackgroundCOC; set(v) { native.maxBackgroundCOC = v }
-        actual enum class Filter { NONE, MEDIAN, GAUSSIAN }
+        actual enum class Filter { NONE, UNUSED, MEDIAN }
     }
 
     actual class VignetteOptions actual constructor() {
