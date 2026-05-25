@@ -1,0 +1,60 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'samples/webApp/**'
+      - 'samples/shared/**'
+      - 'kotlin/**/src/jsMain/**'
+      - 'kotlin/**/src/commonMain/**'
+      - 'js/**'
+      - 'prebuilts/web/**'
+      - 'gradle/**'
+      - 'samples/gradle/**'
+      - 'samples/settings.gradle.kts'
+      - 'gradle.properties'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+# Concurrency: only one Pages deploy at a time. In-progress runs are cancelled
+# so the latest main always wins.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin' }
+      - uses: ./.github/actions/setup-gradle-cached
+
+      - name: Build production webpack bundle
+        working-directory: samples
+        # jsBrowserDistribution produces the static site under
+        # samples/webApp/build/dist/js/productionExecutable/ — that directory
+        # is what Pages serves, no post-processing needed.
+        run: ./gradlew :webApp:jsBrowserDistribution --no-configuration-cache
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: samples/webApp/build/dist/js/productionExecutable
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
