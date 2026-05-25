@@ -8,6 +8,8 @@ repo's bindings in sync with upstream Filament releases and to support local dev
 | [`download_filament_prebuilts.py`](download_filament_prebuilts.py) | Downloads the official Filament prebuilt static libraries (or Filament.js + WASM for `web`) for one or more targets into `prebuilts/<target>/`. Invoked by every `downloadPrebuilts_<target>` Gradle task in [build.gradle.kts](../build.gradle.kts). Python because it does xcframework-slice extraction, SSL with Windows cert store, and multi-target dispatch — would be markedly uglier in bash. |
 | [`download_filament_includes.py`](download_filament_includes.py) | Downloads Filament's public C/C++ headers from the GitHub source tarball into `include/`. **Required by both the native (cinterop) and JNI builds** — see [c/CMakeLists.txt](../c/CMakeLists.txt) and [java/CMakeLists.txt](../java/CMakeLists.txt). Headers must match the prebuilt ABI exactly — version drift causes runtime crashes. Invoked by the `downloadIncludes` Gradle task. |
 | [`upgrade-diff.sh`](upgrade-diff.sh) | Diffs upstream Filament between two tags across every surface that drives this repo's bindings: public C++ headers, backend headers, Android Java sources, **web JS bindings (`jsbindings.cpp`, not just `filament.d.ts`)**, material/engine enums, feature-flag defaults, and `RELEASE_NOTES.md`. Run on every `filaVersion` bump. `--summary` for a file-level overview; omit for full unified diffs. Keeps a shallow clone in `scripts/.filament-src-cache/`. |
+| [`check-js-bindings.sh`](check-js-bindings.sh) | Cross-checks the JS bindings registered in `web/filament-js/jsbindings.cpp` against the Kotlin externals in `js/src/jsMain/kotlin/filament.js.kt` and the actuals in `kotlin/*/src/jsMain/`. Prints (1) bindings present upstream but not declared in our externals (actionable — add a declaration), (2) bindings declared in externals but no actual references them (informational), and (3) JS-shaped calls in `*.js.kt` files that don't match any binding (likely typos). Catches the class of bug where `filament.d.ts` is incomplete and stubs end up returning placeholder values. Run on every `filaVersion` bump alongside `upgrade-diff.sh`. |
+| [`check-common-api.sh`](check-common-api.sh) | Cross-checks the public Filament **Android** Java API against this repo's `commonMain` `expect` declarations. Filament's Android API is the canonical Kotlin public surface; KMP common should mirror it (modulo property accessors and Android-only types). Reports public methods present upstream but missing from common, per module (`filament` / `filamat` / `gltfio` / `filament-utils`). Property-bridged (`getFoo` ↔ `foo`) and JNI plumbing (`n*`, `nativeObject`, etc.) are auto-skipped; Android-only classes (`DisplayHelper`, `UiHelper`, `Stream`, `AutomationEngine`, etc.) are in a skip-list at the top of the script. Run on every `filaVersion` bump after `check-js-bindings.sh`. |
 | [`clean_all.sh`](clean_all.sh) | Nukes every Gradle/CMake/Kotlin build directory in the repo. Last-resort cache reset. |
 
 ## Python requirements
@@ -34,6 +36,14 @@ PATH; you can override via the `PYTHON` env var (the Gradle tasks honor it).
 2. Bump `filaVersion` in [gradle.properties](../gradle.properties).
 3. Delete the matching `prebuilts/*/` and `include/` so they re-download.
 4. Run `./gradlew downloadPrebuilts` to refresh natives and headers.
-5. Walk every sample on every target platform — silent renderer behavior changes
+5. Run `scripts/check-js-bindings.sh` to surface any newly added (or removed)
+   JS bindings. Add the missing declarations to `js/src/jsMain/kotlin/filament.js.kt`
+   with the correct signature from `web/filament-js/jsbindings.cpp`, then use them
+   in the corresponding `*.js.kt` actual (no `asDynamic()` needed).
+6. Run `scripts/check-common-api.sh` to surface any new Filament Android Java
+   methods that don't have a matching `expect` in this repo's `commonMain`.
+   Either add the expect+actuals or document the omission in the script's
+   skip regex.
+7. Walk every sample on every target platform — silent renderer behavior changes
    (default values in `BloomOptions`, `FogOptions`, etc.) don't show up in any
    header diff.

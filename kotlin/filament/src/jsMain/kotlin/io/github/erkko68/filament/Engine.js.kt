@@ -14,55 +14,66 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         // JS engine is typically managed by the GC
     }
 
-    actual fun getBackend(): Backend {
-        return Backend.WEBGPU
-    }
+    actual fun getBackend(): Backend = fromJsBackend(jsEngine.getBackend())
 
-    actual fun getSupportedFeatureLevel(): FeatureLevel {
-        return FeatureLevel.FEATURE_LEVEL_1
-    }
+    actual fun getSupportedFeatureLevel(): FeatureLevel = fromJsFeatureLevel(jsEngine.getSupportedFeatureLevel())
 
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel {
-        return FeatureLevel.FEATURE_LEVEL_1
-    }
+    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel =
+        fromJsFeatureLevel(jsEngine.setActiveFeatureLevel(toJsFeatureLevel(featureLevel)))
 
-    actual fun getActiveFeatureLevel(): FeatureLevel {
-        return FeatureLevel.FEATURE_LEVEL_1
-    }
+    actual fun getActiveFeatureLevel(): FeatureLevel = fromJsFeatureLevel(jsEngine.getActiveFeatureLevel())
 
     actual fun setAutomaticInstancingEnabled(enable: Boolean) {
+        jsEngine.setAutomaticInstancingEnabled(enable)
     }
 
-    actual fun isAutomaticInstancingEnabled(): Boolean {
-        return false
-    }
+    actual fun isAutomaticInstancingEnabled(): Boolean = jsEngine.isAutomaticInstancingEnabled()
 
     actual fun getConfig(): Config {
-        return Config()
+        // The JS binding's getConfig() returns a JS object with the same shape
+        // as Engine.Config. Map it back into our actual class. Fields the JS
+        // binding doesn't expose (stereoscopicType, gpuContextPriority,
+        // preferredShaderLanguage as enum) keep their defaults.
+        val jsCfg = jsEngine.getConfig()
+        return Config().apply {
+            jsCfg.commandBufferSizeMB?.let { commandBufferSizeMB = it.toLong() }
+            jsCfg.perRenderPassArenaSizeMB?.let { perRenderPassArenaSizeMB = it.toLong() }
+            jsCfg.driverHandleArenaSizeMB?.let { driverHandleArenaSizeMB = it.toLong() }
+            jsCfg.minCommandBufferSizeMB?.let { minCommandBufferSizeMB = it.toLong() }
+            jsCfg.perFrameCommandsSizeMB?.let { perFrameCommandsSizeMB = it.toLong() }
+            jsCfg.jobSystemThreadCount?.let { jobSystemThreadCount = it.toLong() }
+            jsCfg.stereoscopicEyeCount?.let { stereoscopicEyeCount = it.toLong() }
+            jsCfg.resourceAllocatorCacheSizeMB?.let { resourceAllocatorCacheSizeMB = it.toLong() }
+            jsCfg.resourceAllocatorCacheMaxAge?.let { resourceAllocatorCacheMaxAge = it.toLong() }
+            jsCfg.sharedUboInitialSizeInBytes?.let { sharedUboInitialSizeInBytes = it.toLong() }
+            jsCfg.forceGLES2Context?.let { forceGLES2Context = it }
+        }
     }
 
     actual fun getMaxStereoscopicEyes(): Long {
         return JSEngine.getMaxStereoscopicEyes().toLong()
     }
 
-    actual fun isValidRenderer(renderer: Renderer): Boolean = true
-    actual fun isValidView(view: View): Boolean = true
-    actual fun isValidScene(scene: Scene): Boolean = true
-    actual fun isValidFence(fence: Fence): Boolean = true
-    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = true
-    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = true
-    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = true
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true
-    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = true
-    actual fun isValidMaterial(material: Material): Boolean = true
-    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = true
-    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = true
-    actual fun isValidSkybox(skybox: Skybox): Boolean = true
-    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = true
-    actual fun isValidTexture(texture: Texture): Boolean = true
-    actual fun isValidStream(stream: Stream): Boolean = true
-    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = true
+    actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
+    actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
+    actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
+    actual fun isValidFence(fence: Fence): Boolean = true // Fence isn't exposed in JS — see UPSTREAM_INCONSISTENCIES.md
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true // SkinningBuffer isn't exposed in JS
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true // MorphTargetBuffer isn't exposed in JS
+    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = jsEngine.isValidIndirectLight(ibl.jsIndirectLight)
+    actual fun isValidMaterial(material: Material): Boolean = jsEngine.isValidMaterial(material.jsMaterial)
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean =
+        jsEngine.isValidMaterialInstance(material.jsMaterial, materialInstance.jsMaterialInstance)
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean =
+        jsEngine.isValidExpensiveMaterialInstance(materialInstance.jsMaterialInstance)
+    actual fun isValidSkybox(skybox: Skybox): Boolean = jsEngine.isValidSkybox(skybox.jsSkybox)
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = jsEngine.isValidColorGrading(colorGrading.jsColorGrading)
+    actual fun isValidTexture(texture: Texture): Boolean = jsEngine.isValidTexture(texture.jsTexture)
+    actual fun isValidStream(stream: Stream): Boolean = true // Stream isn't exposed in JS
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
     actual fun createSwapChain(surface: NativeSurface): SwapChain {
         return SwapChain(jsEngine.createSwapChain())
@@ -105,15 +116,15 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
     actual fun createCamera(): Camera {
         val entity = EntityManager.get().create()
-        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
+        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)), entity)
     }
 
     actual fun createCamera(entity: Entity): Camera {
-        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
+        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)), entity)
     }
 
     actual fun getCameraComponent(entity: Entity): Camera? {
-        return Camera(jsEngine.getCameraComponent(EntityManager.jsEntityOf(entity)))
+        return Camera(jsEngine.getCameraComponent(EntityManager.jsEntityOf(entity)), entity)
     }
 
     actual fun destroyCamera(camera: Camera) {
@@ -225,10 +236,13 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 
     actual fun unprotected() {
+        // jsEngine.unprotected() returns Boolean upstream; common API returns Unit.
+        // Call and discard so the underlying state transition still happens.
+        jsEngine.unprotected()
     }
 
     actual fun enableAccurateTranslations() {
-        // Not needed for JS
+        jsEngine.enableAccurateTranslations()
     }
 
     actual fun hasFeatureFlag(name: String): Boolean {
@@ -321,7 +335,42 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         }
 
         actual fun getSteadyClockTimeNano(): Long {
-            return (kotlin.js.Date.now() * 1_000_000.0).toLong()
+            val jsVal = JSEngine.getSteadyClockTimeNano().asDynamic()
+            val num = js("Number")(jsVal) as Double
+            return num.toLong()
         }
     }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Enum bridges. The common Engine.Backend / Engine.FeatureLevel mirror the
+// Android API; the external JS enums live in filament.js.kt under different
+// names. These keep the mapping in one place.
+//
+// Note: common Engine.FeatureLevel includes FEATURE_LEVEL_0 (ES2-class
+// hardware) which the JS binding does not expose — Filament's WebGL build
+// targets GLES3/WebGL2 only. Mapping for FEATURE_LEVEL_0 falls back to
+// FEATURE_LEVEL_1 on the JS side. See patches/UPSTREAM_INCONSISTENCIES.md.
+// ──────────────────────────────────────────────────────────────────────────────
+
+private fun fromJsBackend(b: io.github.erkko68.filament.js.Backend): Engine.Backend = when (b) {
+    io.github.erkko68.filament.js.Backend.DEFAULT -> Engine.Backend.DEFAULT
+    io.github.erkko68.filament.js.Backend.OPENGL  -> Engine.Backend.OPENGL
+    io.github.erkko68.filament.js.Backend.VULKAN  -> Engine.Backend.VULKAN
+    io.github.erkko68.filament.js.Backend.METAL   -> Engine.Backend.METAL
+    io.github.erkko68.filament.js.Backend.WEBGPU  -> Engine.Backend.WEBGPU
+    io.github.erkko68.filament.js.Backend.NOOP    -> Engine.Backend.NOOP
+}
+
+private fun fromJsFeatureLevel(fl: io.github.erkko68.filament.js.FeatureLevel): Engine.FeatureLevel = when (fl) {
+    io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_1 -> Engine.FeatureLevel.FEATURE_LEVEL_1
+    io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
+    io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
+}
+
+private fun toJsFeatureLevel(fl: Engine.FeatureLevel): io.github.erkko68.filament.js.FeatureLevel = when (fl) {
+    Engine.FeatureLevel.FEATURE_LEVEL_0,
+    Engine.FeatureLevel.FEATURE_LEVEL_1 -> io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_1
+    Engine.FeatureLevel.FEATURE_LEVEL_2 -> io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_2
+    Engine.FeatureLevel.FEATURE_LEVEL_3 -> io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_3
 }

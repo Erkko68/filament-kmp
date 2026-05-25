@@ -55,10 +55,150 @@ external interface Vector<T> {
     fun get(i: Number): T
 }
 
-external open class SwapChain
+external open class SwapChain {
+    companion object {
+        fun isSRGBSwapChainSupported(engine: Engine): Boolean
+    }
+}
+
+external open class Fence
+external open class Stream
+external open class SkinningBuffer
+
+external open class Ktx1Bundle {
+    open fun getNumMipLevels(): Number
+    open fun getArrayLength(): Number
+    open fun getInternalFormat(srgb: Boolean): `Texture_InternalFormat`
+    open fun getPixelDataFormat(): `PixelDataFormat`
+    open fun getPixelDataType(): `PixelDataType`
+    open fun getCompressedPixelDataType(): `CompressedPixelDataType`
+    open fun isCompressed(): Boolean
+    open fun isCubemap(): Boolean
+    open fun getBlob(index: dynamic /* { mipmap, arrayIndex, cubeFace } */): dynamic /* BufferDescriptor */
+    open fun getCubeBlob(miplevel: Number): dynamic /* BufferDescriptor */
+    open fun info(): dynamic /* KtxInfo accessor */
+    open fun getMetadata(key: String): String
+}
+
+external open class `gltfio_ResourceLoader` {
+    open fun addResourceData(uri: String, data: dynamic /* BufferDescriptor */)
+    open fun hasResourceData(uri: String): Boolean
+    open fun addStbProvider()
+    open fun addKtx2Provider()
+    open fun addWebpProvider()
+    open fun asyncBeginLoad(asset: `gltfio_FilamentAsset`): Boolean
+    open fun asyncGetLoadProgress(): Number
+    open fun asyncUpdateLoad()
+}
+
+external open class `gltfio_UbershaderProvider` {
+    open fun destroyMaterials()
+}
+
+external open class `gltfio_WebpProvider` {
+    open fun isWebpSupported(): Boolean
+}
+
+external interface `Engine_Config` {
+    var commandBufferSizeMB: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var perRenderPassArenaSizeMB: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var driverHandleArenaSizeMB: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var minCommandBufferSizeMB: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var perFrameCommandsSizeMB: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var jobSystemThreadCount: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var metalUploadBufferSizeBytes: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var metalDisablePanicOnDrawableFailure: Boolean?
+        get() = definedExternally
+        set(value) = definedExternally
+    var disableParallelShaderCompile: Boolean?
+        get() = definedExternally
+        set(value) = definedExternally
+    var stereoscopicEyeCount: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var resourceAllocatorCacheSizeMB: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var resourceAllocatorCacheMaxAge: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var disableHandleUseAfterFreeCheck: Boolean?
+        get() = definedExternally
+        set(value) = definedExternally
+    var forceGLES2Context: Boolean?
+        get() = definedExternally
+        set(value) = definedExternally
+    var assertNativeWindowIsValid: Boolean?
+        get() = definedExternally
+        set(value) = definedExternally
+    var sharedUboInitialSizeInBytes: Number?
+        get() = definedExternally
+        set(value) = definedExternally
+    var asynchronousMode: Boolean?
+        get() = definedExternally
+        set(value) = definedExternally
+}
+
+external open class JsonSerializer {
+    open fun writeJson(view: View): String
+}
+
+external open class ViewerGui(engine: Engine, scene: Scene, view: View, sidebarWidth: Number) {
+    open fun renderUserInterface(timeStepSeconds: Number, view: View, scaleFactor: Number)
+    open fun getSettings(): dynamic /* Settings */
+    open fun mouseEvent(mouseX: Number, mouseY: Number, mouseDown: Boolean, modifierShift: Boolean = definedExternally)
+    open fun keyDownEvent(keyCode: Number)
+    open fun keyUpEvent(keyCode: Number)
+    open fun keyPressEvent(charCode: Number)
+}
+
+external open class MeshReader {
+    companion object {
+        fun loadMeshFromBuffer(engine: Engine, buffer: ArrayBufferView, materials: `MeshReader_MaterialRegistry`): Filamesh
+    }
+}
+
+external open class `MeshReader_MaterialRegistry` {
+    constructor()
+    open fun size(): Number
+    open fun get(name: String): MaterialInstance
+    open fun set(name: String, material: MaterialInstance)
+    open fun keys(): Array<String>
+}
+
+external enum class Backend {
+    DEFAULT,
+    OPENGL,
+    VULKAN,
+    METAL,
+    WEBGPU,
+    NOOP
+}
+
+external enum class FeatureLevel {
+    FEATURE_LEVEL_1,
+    FEATURE_LEVEL_2,
+    FEATURE_LEVEL_3
+}
 
 external interface PickingQueryResult {
-    var renderable: Number
+    // jsbindings.cpp wraps the C++ Entity via Emval — this is a JS Entity
+    // wrapper, not a primitive. The d.ts declares it as Number, which is wrong.
+    var renderable: Entity
     var depth: Number
     var fragCoords: Array<Number>
 }
@@ -171,6 +311,8 @@ external open class Texture {
 
     companion object {
         fun Builder(): `Texture_Builder`
+        fun isTextureFormatMipmappable(engine: Engine, format: `Texture_InternalFormat`): Boolean
+        fun validatePixelFormatAndType(internalFormat: `Texture_InternalFormat`, format: `PixelDataFormat`, type: `PixelDataType`): Boolean
     }
 }
 
@@ -182,6 +324,9 @@ external open class Entity {
 external open class Skybox {
     open fun setColor(color: glm.vec4)
     open fun setColor(color: Array<Number>)
+    open fun setLayerMask(select: Number, value: Number)
+    open fun getLayerMask(): Number
+    open fun getIntensity(): Number
     open fun getTexture(): Texture
 
     companion object {
@@ -241,6 +386,27 @@ external open class MaterialInstance {
     open fun setStencilReferenceValue(value: Number, face: StencilFace = definedExternally)
     open fun setStencilReadMask(readMask: Number, face: StencilFace = definedExternally)
     open fun setStencilWriteMask(writeMask: Number, face: StencilFace = definedExternally)
+    open fun getCullingMode(): CullingMode
+    open fun setCullingModeSeparate(color: CullingMode, shadows: CullingMode)
+    open fun getShadowCullingMode(): CullingMode
+    open fun getDepthFunc(): CompareFunc
+    open fun setTransparencyMode(mode: TransparencyMode)
+    open fun getTransparencyMode(): TransparencyMode
+    open fun isColorWriteEnabled(): Boolean
+    open fun isDepthCullingEnabled(): Boolean
+    open fun isDepthWriteEnabled(): Boolean
+    open fun isDoubleSided(): Boolean
+    open fun getMaskThreshold(): Number
+    open fun getSpecularAntiAliasingThreshold(): Number
+    open fun setSpecularAntiAliasingThreshold(value: Number)
+    open fun getSpecularAntiAliasingVariance(): Number
+    open fun setSpecularAntiAliasingVariance(value: Number)
+}
+
+external enum class TransparencyMode {
+    DEFAULT,
+    TWO_PASSES_ONE_SIDE,
+    TWO_PASSES_TWO_SIDES
 }
 
 external open class EntityManager {
@@ -248,6 +414,7 @@ external open class EntityManager {
 
     companion object {
         fun get(): EntityManager
+        fun getActiveEntityCount(): Number
     }
 }
 
@@ -289,6 +456,15 @@ external open class `RenderableManager_Builder` {
     open fun skinningMatrices(transforms: Array<Any /* glm.mat4 | Array<Number> */>): `RenderableManager_Builder`
     open fun morphing(enable: Boolean): `RenderableManager_Builder`
     open fun blendOrder(index: Number, order: Number): `RenderableManager_Builder`
+    open fun globalBlendOrderEnabled(index: Number, enabled: Boolean): `RenderableManager_Builder`
+    open fun fog(enable: Boolean): `RenderableManager_Builder`
+    open fun lightChannel(channel: Number, enable: Boolean): `RenderableManager_Builder`
+    // RenderableManager::Builder::GeometryType — not bound as a JS-side enum, so the
+    // binding accepts the raw ordinal (0=DYNAMIC, 1=STATIC_BOUNDS, 2=STATIC).
+    open fun geometryType(type: Number): `RenderableManager_Builder`
+    open fun channel(value: Number): `RenderableManager_Builder`
+    open fun screenSpaceContactShadows(enable: Boolean): `RenderableManager_Builder`
+    open fun instances(instanceCount: Number): `RenderableManager_Builder`
     open fun build(engine: Engine, entity: Entity)
 }
 
@@ -317,6 +493,7 @@ external open class `LightManager_Builder` {
     open fun sunAngularRadius(angularRadius: Number): `LightManager_Builder`
     open fun sunHaloFalloff(haloFalloff: Number): `LightManager_Builder`
     open fun sunHaloSize(haloSize: Number): `LightManager_Builder`
+    open fun lightChannel(channel: Number, enable: Boolean): `LightManager_Builder`
 }
 
 external open class `Skybox_Builder` {
@@ -325,6 +502,7 @@ external open class `Skybox_Builder` {
     open fun color(rgba: Array<Number>): `Skybox_Builder`
     open fun environment(envmap: Texture): `Skybox_Builder`
     open fun showSun(show: Boolean): `Skybox_Builder`
+    open fun priority(priority: Number): `Skybox_Builder`
 }
 
 external open class LightManager {
@@ -358,6 +536,8 @@ external open class LightManager {
     open fun getSunHaloFalloff(instance: `LightManager_Instance`): Number
     open fun setShadowCaster(instance: `LightManager_Instance`, shadowCaster: Boolean): Number
     open fun isShadowCaster(instance: `LightManager_Instance`): Boolean
+    open fun getLightChannel(instance: `LightManager_Instance`, channel: Number): Boolean
+    open fun setLightChannel(instance: `LightManager_Instance`, channel: Number, enable: Boolean)
 
     companion object {
         fun Builder(ltype: `LightManager_Type`): `LightManager_Builder`
@@ -393,7 +573,23 @@ external open class RenderableManager {
     open fun getMaterialInstanceAt(instance: `RenderableManager_Instance`, primitiveIndex: Number): MaterialInstance
     open fun setGeometryAt(instance: `RenderableManager_Instance`, primitiveIndex: Number, type: `RenderableManager_PrimitiveType`, vertices: VertexBuffer, indices: IndexBuffer, offset: Number, count: Number)
     open fun setBlendOrderAt(instance: `RenderableManager_Instance`, primitiveIndex: Number, order: Number)
+    open fun getBlendOrderAt(instance: `RenderableManager_Instance`, primitiveIndex: Number): Number
+    open fun setGlobalBlendOrderEnabledAt(instance: `RenderableManager_Instance`, primitiveIndex: Number, enabled: Boolean)
+    open fun isGlobalBlendOrderEnabledAt(instance: `RenderableManager_Instance`, primitiveIndex: Number): Boolean
+    open fun clearMaterialInstanceAt(instance: `RenderableManager_Instance`, primitiveIndex: Number)
     open fun getEnabledAttributesAt(instance: `RenderableManager_Instance`, primitiveIndex: Number): Number
+    open fun getInstanceCount(instance: `RenderableManager_Instance`): Number
+    open fun getPriority(instance: `RenderableManager_Instance`): Number
+    open fun getChannel(instance: `RenderableManager_Instance`): Number
+    open fun setChannel(instance: `RenderableManager_Instance`, channel: Number)
+    open fun getLightChannel(instance: `RenderableManager_Instance`, channel: Number): Boolean
+    open fun setLightChannel(instance: `RenderableManager_Instance`, channel: Number, enable: Boolean)
+    open fun getFogEnabled(instance: `RenderableManager_Instance`): Boolean
+    open fun setFogEnabled(instance: `RenderableManager_Instance`, enabled: Boolean)
+    open fun isCullingEnabled(instance: `RenderableManager_Instance`): Boolean
+    open fun setCulling(instance: `RenderableManager_Instance`, enable: Boolean)
+    open fun isScreenSpaceContactShadowsEnabled(instance: `RenderableManager_Instance`): Boolean
+    open fun setScreenSpaceContactShadows(instance: `RenderableManager_Instance`, enabled: Boolean)
 
     companion object {
         fun Builder(ngeos: Number): `RenderableManager_Builder`
@@ -417,6 +613,7 @@ external open class BufferObject {
     open fun setBuffer(engine: Engine, data: String)
     open fun setBuffer(engine: Engine, data: ArrayBufferView, byteOffset: Number = definedExternally)
     open fun setBuffer(engine: Engine, data: ArrayBufferView)
+    open fun getByteCount(): Number
 
     companion object {
         fun Builder(): `BufferObject_Builder`
@@ -437,9 +634,19 @@ external open class IndexBuffer {
 external open class Renderer {
     open fun render(swapChain: SwapChain, view: View)
     open fun setClearOptions(options: `Renderer_ClearOptions`)
+    open fun getClearOptions(): `Renderer_ClearOptions`
     open fun renderView(view: View)
     open fun beginFrame(swapChain: SwapChain): Boolean
     open fun endFrame()
+    open fun getUserTime(): Number
+    open fun resetUserTime()
+    open fun skipNextFrames(frames: Number)
+    open fun getFrameToSkipCount(): Number
+    open fun shouldRenderFrame(): Boolean
+    open fun setPresentationTime(monotonicClockNanos: Number)
+    open fun setVsyncTime(steadyClockTimeNano: Number)
+    open fun skipFrame()
+    open fun renderStandaloneView(view: View)
 }
 
 external open class Material {
@@ -447,6 +654,7 @@ external open class Material {
     open fun createNamedInstance(name: String): MaterialInstance
     open fun getDefaultInstance(): MaterialInstance
     open fun getName(): String
+    open fun getParameterTransformName(parameter: String): String
 }
 
 external enum class Material_UboBatchingMode {
@@ -503,6 +711,9 @@ external open class Camera {
     open fun getFocalLength(): Number
     open fun getFocusDistance(): Number
     open fun setFocusDistance(distance: Number)
+    open fun setShift(shift: glm.vec2)
+    open fun setShift(shift: Array<Number>)
+    open fun getShift(): dynamic /* glm.vec2 | Array<Number> */
 
     companion object {
         fun inverseProjection(p: glm.mat4): dynamic /* glm.mat4 | Array<Number> */
@@ -603,7 +814,11 @@ external open class Scene {
     open fun remove(entity: Entity)
     open fun removeEntities(entities: Array<Entity>)
     open fun setIndirectLight(ibl: IndirectLight?)
+    open fun getIndirectLight(): IndirectLight?
     open fun setSkybox(sky: Skybox?)
+    open fun getSkybox(): Skybox?
+    open fun getEntityCount(): Number
+    open fun hasEntity(entity: Entity): Boolean
 }
 
 external open class RenderTarget {
@@ -613,6 +828,7 @@ external open class RenderTarget {
 
     companion object {
         fun Builder(): `RenderTarget_Builder`
+        fun getSupportedColorAttachmentsCount(): Number
     }
 }
 
@@ -625,6 +841,16 @@ external open class View {
     open fun setViewport(viewport: Array<Number>)
     open fun setVisibleLayers(select: Number, values: Number)
     open fun setRenderTarget(renderTarget: RenderTarget)
+    open fun getViewport(): dynamic /* { left, bottom, width, height } */
+    open fun setSampleCount(count: Number)
+    open fun getSampleCount(): Number
+    open fun getAntiAliasing(): `View_AntiAliasing`
+    open fun setGridSize(size: Number)
+    open fun getGridSize(): Number
+    open fun getEffectiveGridSize(): Number
+    open fun getDynamicResolutionOptions(): `View_DynamicResolutionOptions`
+    open fun isChannelDepthClearEnabled(channel: Number): Boolean
+    open fun setChannelDepthClearEnabled(channel: Number, enabled: Boolean)
     open fun setAmbientOcclusionOptions(options: `View_AmbientOcclusionOptions`)
     open fun setDepthOfFieldOptions(options: `View_DepthOfFieldOptions`)
     open fun setMultiSampleAntiAliasingOptions(options: `View_MultiSampleAntiAliasingOptions`)
@@ -645,6 +871,20 @@ external open class View {
     open fun isStencilBufferEnabled(): Boolean
     open fun setTransparentPickingEnabled(enabled: Boolean)
     open fun isTransparentPickingEnabled(): Boolean
+    open fun setShadowingEnabled(enabled: Boolean)
+    open fun setFrontFaceWindingInverted(inverted: Boolean)
+    open fun isFrontFaceWindingInverted(): Boolean
+    open fun hasCamera(): Boolean
+    open fun setDithering(dithering: `View_Dithering`)
+    open fun setDynamicResolutionOptions(options: `View_DynamicResolutionOptions`)
+    open fun setRenderQuality(options: `View_RenderQuality`)
+    open fun getLastDynamicResolutionScale(): dynamic /* glm.vec2 | Array<Number> */
+    open fun setMaterialGlobal(index: Number, value: Array<Number>)
+    open fun setMaterialGlobal(index: Number, value: glm.vec4)
+    open fun getMaterialGlobal(index: Number): Array<Number>
+    open fun getFogEntity(): Entity
+    open fun clearFrameHistory(engine: Engine)
+    open fun setDynamicLightingOptions(zLightNear: Number, zLightFar: Number)
 }
 
 external open class TransformManager {
@@ -653,6 +893,8 @@ external open class TransformManager {
     open fun create(entity: Entity)
     open fun destroy(entity: Entity)
     open fun setParent(instance: `TransformManager_Instance`, parent: `TransformManager_Instance`)
+    open fun getParent(instance: `TransformManager_Instance`): Entity
+    open fun getChildren(instance: `TransformManager_Instance`): dynamic /* Vector<Entity> */
     open fun setTransform(instance: `TransformManager_Instance`, xform: glm.mat4)
     open fun setTransform(instance: `TransformManager_Instance`, xform: Array<Number>)
     open fun getTransform(instance: `TransformManager_Instance`): dynamic /* glm.mat4 | Array<Number> */
@@ -726,6 +968,35 @@ external open class Engine {
     open fun getSupportedFormatSuffix(suffix: String)
     open fun getTransformManager(): TransformManager
     open fun init(assets: Array<String>, onready: () -> Unit)
+    open fun enableAccurateTranslations()
+    open fun isAutomaticInstancingEnabled(): Boolean
+    open fun setAutomaticInstancingEnabled(enabled: Boolean)
+    open fun hasUnrecoverableFailure(): Boolean
+    open fun unprotected(): Boolean
+    open fun getEntityManager(): EntityManager
+    open fun isValidRenderer(renderer: Renderer): Boolean
+    open fun isValidView(view: View): Boolean
+    open fun isValidScene(scene: Scene): Boolean
+    open fun isValidFence(fence: Fence): Boolean
+    open fun isValidStream(stream: Stream): Boolean
+    open fun isValidIndexBuffer(buffer: IndexBuffer): Boolean
+    open fun isValidVertexBuffer(buffer: VertexBuffer): Boolean
+    open fun isValidSkinningBuffer(buffer: SkinningBuffer): Boolean
+    open fun isValidIndirectLight(light: IndirectLight): Boolean
+    open fun isValidMaterial(material: Material): Boolean
+    open fun isValidMaterialInstance(material: Material, instance: MaterialInstance): Boolean
+    open fun isValidExpensiveMaterialInstance(instance: MaterialInstance): Boolean
+    open fun isValidSkybox(skybox: Skybox): Boolean
+    open fun isValidColorGrading(colorGrading: ColorGrading): Boolean
+    open fun isValidTexture(texture: Texture): Boolean
+    open fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
+    open fun isValidSwapChain(swapChain: SwapChain): Boolean
+    open fun getBackend(): Backend
+    open fun getActiveFeatureLevel(): FeatureLevel
+    open fun getSupportedFeatureLevel(): FeatureLevel
+    open fun setActiveFeatureLevel(level: FeatureLevel): FeatureLevel
+    open fun getConfig(): `Engine_Config`
+    open fun createSwapChainForCanvas(canvasSelector: String): SwapChain
     open fun loadFilamesh(urlOrBuffer: String, definstance: MaterialInstance = definedExternally, matinstances: Any? = definedExternally): Filamesh
     open fun loadFilamesh(urlOrBuffer: String): Filamesh
     open fun loadFilamesh(urlOrBuffer: String, definstance: MaterialInstance = definedExternally): Filamesh
@@ -737,6 +1008,8 @@ external open class Engine {
         fun create(canvas: HTMLCanvasElement, contextOptions: Any? = definedExternally): Engine
         fun destroy(engine: Engine)
         fun getMaxStereoscopicEyes(): Number
+        fun getSteadyClockTimeNano(): Number
+        fun createDefaultConfig(): `Engine_Config`
     }
 }
 
@@ -769,7 +1042,8 @@ external open class `gltfio_FilamentAsset` {
     open fun getRoot(): Entity
     open fun popRenderable(): Entity
     open fun getInstance(): `gltfio_FilamentInstance`
-    open fun geAssetInstances(): Array<`gltfio_FilamentInstance`>
+    open fun getAssetInstances(): Array<`gltfio_FilamentInstance`>
+    open fun getFirstEntityByName(name: String): Entity
     open fun getResourceUris(): Array<String>
     open fun getBoundingBox(): Aabb
     open fun getName(entity: Entity): String
@@ -794,7 +1068,7 @@ external open class `gltfio_FilamentInstance` {
 }
 
 external open class `gltfio_Animator` {
-    open fun applyAnimation(index: Number)
+    open fun applyAnimation(index: Number, time: Number = definedExternally)
     open fun applyCrossFade(previousAnimIndex: Number, previousAnimTime: Number, alpha: Number)
     open fun updateBoneMatrices()
     open fun resetBoneMatrices()
@@ -856,13 +1130,15 @@ external enum class ColorGrading_LutFormat {
     FLOAT
 }
 
+// Only the values actually registered in jsenums.cpp. The d.ts previously
+// listed EVILS and REINHARD, but they're not bound on the JS side — passing
+// either to setToneMapping at runtime would fail. Filament's other tone
+// mappers (PBR_NEUTRAL, GT7, AGX) are not bound on web either.
 external enum class ColorGrading_ToneMapping {
     LINEAR,
     ACES_LEGACY,
     ACES,
     FILMIC,
-    EVILS,
-    REINHARD,
     DISPLAY_RANGE
 }
 

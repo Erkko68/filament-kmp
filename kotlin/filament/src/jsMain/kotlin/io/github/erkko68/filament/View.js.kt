@@ -363,7 +363,7 @@ actual class View(internal val jsView: JSView) {
         get() = _isShadowingEnabled
         set(value) {
             _isShadowingEnabled = value
-            jsView.asDynamic().setShadowingEnabled(value)
+            jsView.setShadowingEnabled(value)
         }
     actual var isScreenSpaceRefractionEnabled: Boolean
         get() = true
@@ -373,13 +373,9 @@ actual class View(internal val jsView: JSView) {
         get() = jsView.isStencilBufferEnabled()
         set(value) { jsView.setStencilBufferEnabled(value) }
 
-    private var _isFrontFaceWindingInverted: Boolean = false
     actual var isFrontFaceWindingInverted: Boolean
-        get() = _isFrontFaceWindingInverted
-        set(value) {
-            _isFrontFaceWindingInverted = value
-            jsView.asDynamic().setFrontFaceWindingInverted(value)
-        }
+        get() = jsView.isFrontFaceWindingInverted()
+        set(value) { jsView.setFrontFaceWindingInverted(value) }
 
     actual var isTransparentPickingEnabled: Boolean
         get() = jsView.isTransparentPickingEnabled()
@@ -387,26 +383,24 @@ actual class View(internal val jsView: JSView) {
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
         require(value.size == 4) { "setMaterialGlobal expects a float4; got size ${value.size}" }
-        jsView.asDynamic().setMaterialGlobal(index, value.toTypedArray())
+        @Suppress("UNCHECKED_CAST")
+        jsView.setMaterialGlobal(index, value.toTypedArray() as Array<Number>)
     }
 
     actual fun getMaterialGlobal(index: Int): FloatArray {
-        val arr = jsView.asDynamic().getMaterialGlobal(index)
-        return FloatArray(4) { i -> (arr[i] as Number).toFloat() }
+        val arr = jsView.getMaterialGlobal(index)
+        return FloatArray(4) { i -> arr[i].toFloat() }
     }
 
     actual val fogEntity: Int
-        get() {
-            val jsEntity = jsView.asDynamic().getFogEntity()
-            return (jsEntity.getId() as Number).toInt()
-        }
+        get() = jsView.getFogEntity().getId().toInt()
 
     actual fun clearFrameHistory(engine: Engine) {
-        jsView.asDynamic().clearFrameHistory(engine.jsEngine)
+        jsView.clearFrameHistory(engine.jsEngine)
     }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
-        jsView.asDynamic().setDynamicLightingOptions(zNear, zFar)
+        jsView.setDynamicLightingOptions(zNear, zFar)
     }
 
     actual var colorGrading: ColorGrading?
@@ -425,7 +419,7 @@ actual class View(internal val jsView: JSView) {
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         jsView.pick(x, y) { result ->
             callback(PickingQueryResult(
-                result.renderable.toInt(),
+                result.renderable.getId().toInt(),
                 result.depth.toFloat(),
                 floatArrayOf(result.fragCoords[0].toFloat(), result.fragCoords[1].toFloat(), result.fragCoords[2].toFloat())
             ))

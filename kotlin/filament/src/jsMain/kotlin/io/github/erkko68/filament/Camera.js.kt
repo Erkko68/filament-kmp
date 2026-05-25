@@ -5,11 +5,7 @@ import io.github.erkko68.filament.js.Camera_Projection
 import io.github.erkko68.filament.js.Camera_Fov
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Camera(internal val jsCamera: JSCamera) {
-    private var _projectionMatrix = DoubleArray(16)
-    private var _modelMatrix = DoubleArray(16)
-    private var _near = 0.1
-    private var _far = 100.0
+actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity = 0) {
 
     actual fun setProjection(
         projection: Projection,
@@ -20,8 +16,6 @@ actual class Camera(internal val jsCamera: JSCamera) {
         near: Double,
         far: Double
     ) {
-        _near = near
-        _far = far
         val jsProj = if (projection == Projection.PERSPECTIVE) Camera_Projection.PERSPECTIVE else Camera_Projection.ORTHO
         jsCamera.setProjection(jsProj, left, right, bottom, top, near, far)
     }
@@ -33,8 +27,6 @@ actual class Camera(internal val jsCamera: JSCamera) {
         far: Double,
         direction: Fov
     ) {
-        _near = near
-        _far = far
         val jsFov = if (direction == Fov.VERTICAL) Camera_Fov.VERTICAL else Camera_Fov.HORIZONTAL
         jsCamera.setProjectionFov(fovInDegrees, aspect, near, far, jsFov)
     }
@@ -45,15 +37,10 @@ actual class Camera(internal val jsCamera: JSCamera) {
         near: Double,
         far: Double
     ) {
-        _near = near
-        _far = far
         jsCamera.setLensProjection(focalLength, aspect, near, far)
     }
 
     actual fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
-        _projectionMatrix = matrix.copyOf()
-        _near = near
-        _far = far
         jsCamera.setCustomProjection(matrix.toTypedArray() as Array<Number>, near, far)
     }
 
@@ -63,10 +50,7 @@ actual class Camera(internal val jsCamera: JSCamera) {
         near: Double,
         far: Double
     ) {
-        _projectionMatrix = matrix.copyOf()
-        _near = near
-        _far = far
-        // JS bindings don't expose a separate culling matrix setter easily, 
+        // JS bindings don't expose a separate culling matrix setter easily,
         // we use the main projection matrix.
         jsCamera.setCustomProjection(matrix.toTypedArray() as Array<Number>, near, far)
     }
@@ -96,10 +80,14 @@ actual class Camera(internal val jsCamera: JSCamera) {
     }
 
     actual fun setShift(x: Double, y: Double) {
+        jsCamera.setShift(arrayOf(x, y) as Array<Number>)
     }
 
     actual fun getShift(out: DoubleArray?): DoubleArray {
-        return out ?: DoubleArray(2)
+        val result = out ?: DoubleArray(2)
+        val jsVec = jsCamera.getShift() as Array<Double>
+        for (i in 0 until jsVec.size.coerceAtMost(result.size)) result[i] = jsVec[i]
+        return result
     }
 
     actual fun lookAt(
@@ -199,7 +187,7 @@ actual class Camera(internal val jsCamera: JSCamera) {
     }
 
     actual val near: Float
-        get() = _near.toFloat()
+        get() = jsCamera.getNear().toFloat()
 
     actual val cullingFar: Float
         get() = jsCamera.getCullingFar().toFloat()
@@ -229,11 +217,20 @@ actual class Camera(internal val jsCamera: JSCamera) {
         set(value) { jsCamera.setFocusDistance(value.toDouble()) }
 
     actual fun getFieldOfViewInDegrees(direction: Fov): Double {
-        return 0.0 // No direct FOV getter in JS without reverse projection
+        // Upstream jsbindings.cpp does not bind `Camera::getFieldOfViewInDegrees`,
+        // so we can't recover the FOV from the projection matrix on the JS side
+        // without re-implementing the math. Stubbed to 0; see
+        // patches/UPSTREAM_INCONSISTENCIES.md.
+        return 0.0
     }
 
     actual val entity: Entity
-        get() = jsCamera.unsafeCast<io.github.erkko68.filament.js.Entity>().getId().toInt()
+        // Upstream Camera::getEntity() exists in C++ but is not bound in
+        // jsbindings.cpp. We instead remember the entity at construction time
+        // (Engine.createCamera passes it in). For Cameras obtained via
+        // Engine.getCameraComponent() the value will be the entity argument
+        // that was used. Returns 0 only if Camera was constructed without one.
+        get() = _entity
 
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }

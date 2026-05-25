@@ -4,8 +4,6 @@ import io.github.erkko68.filament.js.Renderer as JSRenderer
 import io.github.erkko68.filament.js.`Renderer_ClearOptions` as JSRendererClearOptions
 
 actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
-    private var _userTime: Double = 0.0
-
     actual var displayInfo: DisplayInfo = DisplayInfo()
         set(value) {
             field = value
@@ -28,7 +26,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         }
 
     actual fun shouldRenderFrame(): Boolean {
-        return true
+        return jsRenderer.shouldRenderFrame()
     }
 
     actual fun beginFrame(
@@ -47,32 +45,28 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     }
 
     actual val userTime: Double
-        get() = _userTime
+        get() = jsRenderer.getUserTime().toDouble()
 
     actual fun resetUserTime() {
-        _userTime = 0.0
+        jsRenderer.resetUserTime()
     }
 
     actual val frameToSkipCount: Int
-        get() = 0
+        get() = jsRenderer.getFrameToSkipCount().toInt()
 
     actual val engine: Engine
         get() = _engine ?: throw UnsupportedOperationException("Engine reference not available - Renderer was not created with Engine context")
 
-
-
     actual fun setVsyncTime(steadyClockTimeNano: Long) {
-        val jsRend = jsRenderer.asDynamic()
-        if (jsRend.setVsyncTime != null) {
-            jsRend.setVsyncTime(steadyClockTimeNano)
-        }
+        val jsVal = js("BigInt")(steadyClockTimeNano.toString())
+        jsRenderer.setVsyncTime(jsVal.unsafeCast<Number>())
     }
 
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
-        val jsRend = jsRenderer.asDynamic()
-        if (jsRend.skipFrame != null) {
-            jsRend.skipFrame(vsyncSteadyClockTimeNano)
-        }
+        // The JS binding's `skipFrame` takes no parameter — the C++ overload that
+        // accepts a vsync time isn't exposed via embind. Pass-through anyway so
+        // the common API stays consistent across platforms.
+        jsRenderer.skipFrame()
     }
 
     actual fun render(view: View) {

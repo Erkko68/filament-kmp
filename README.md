@@ -102,9 +102,6 @@ The [`samples/`](samples/) directory contains a shared Compose scene running on 
 
 The web build is also deployed live to **[erkko68.github.io/filament-kmp](https://erkko68.github.io/filament-kmp/)** — open it on any WebGL 2.0–capable browser to try every scene without a local toolchain.
 
-> [!WARNING]
-> A handful of known issues affect the web target only — the picking pass logs a `glClearBufferfv` validation error, and the solar-system scene's planets are invisible on Chromium-on-Windows and some Android GPUs due to the `CONFIG_MAX_INSTANCES` UBO mismatch in Filament 1.71.4's WebGL backend. Both have fixes already merged upstream and will clear up once the next official Filament release ships and the bundled `filament.wasm` is bumped.
-
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE). Filament itself is also Apache-2.0 licensed by Google.

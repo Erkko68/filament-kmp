@@ -59,30 +59,29 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         jsRenderableManager.setPriority(instance.unsafeCast<JSRenderableManagerInstance>(), priority)
     }
 
-    actual fun getPriority(instance: EntityInstance): Int {
-        return 0 
-    }
+    actual fun getPriority(instance: EntityInstance): Int =
+        jsRenderableManager.getPriority(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
 
     actual fun setChannel(instance: EntityInstance, channel: Int) {
+        jsRenderableManager.setChannel(instance.unsafeCast<JSRenderableManagerInstance>(), channel)
     }
 
-    actual fun getChannel(instance: EntityInstance): Int {
-        return 0
-    }
+    actual fun getChannel(instance: EntityInstance): Int =
+        jsRenderableManager.getChannel(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
 
     actual fun setCulling(instance: EntityInstance, enabled: Boolean) {
+        jsRenderableManager.setCulling(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
-    actual fun isCullingEnabled(instance: EntityInstance): Boolean {
-        return true
-    }
+    actual fun isCullingEnabled(instance: EntityInstance): Boolean =
+        jsRenderableManager.isCullingEnabled(instance.unsafeCast<JSRenderableManagerInstance>())
 
     actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) {
+        jsRenderableManager.setFogEnabled(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
-    actual fun getFogEnabled(instance: EntityInstance): Boolean {
-        return true
-    }
+    actual fun getFogEnabled(instance: EntityInstance): Boolean =
+        jsRenderableManager.getFogEnabled(instance.unsafeCast<JSRenderableManagerInstance>())
 
     actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setCastShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
@@ -96,6 +95,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         instance: EntityInstance,
         enabled: Boolean
     ) {
+        jsRenderableManager.setScreenSpaceContactShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
     actual fun isShadowCaster(instance: EntityInstance): Boolean {
@@ -108,8 +108,10 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         boneCount: Int,
         offset: Int
     ) {
+        @Suppress("UNCHECKED_CAST")
         val boneMatrices = matrices.toTypedArray() as Array<Any>
-        jsRenderableManager.asDynamic().setBonesFromMatrices(instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset)
+        jsRenderableManager.setBonesFromMatrices(
+            instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset)
     }
 
     actual fun setBonesAsQuaternions(
@@ -118,31 +120,41 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         boneCount: Int,
         offset: Int
     ) {
-        // Not exposed in JS bindings
+        // jsRenderableManager.setBones accepts an Array<{ unitQuaternion, translation }>.
+        // Pack each 4-float slice of the flat input into one Bone object with an
+        // identity translation (this overload only carries rotations).
+        @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+        val bones = Array<io.github.erkko68.filament.js.`RenderableManager_Bone`>(boneCount) { i ->
+            val b = i * 4
+            val bone = js("{}").unsafeCast<io.github.erkko68.filament.js.`RenderableManager_Bone`>()
+            bone.unitQuaternion = arrayOf(
+                quaternions[b + 0], quaternions[b + 1],
+                quaternions[b + 2], quaternions[b + 3]
+            )
+            bone.translation = arrayOf(0f, 0f, 0f)
+            bone
+        }
+        jsRenderableManager.setBones(instance.unsafeCast<JSRenderableManagerInstance>(), bones, offset)
     }
 
     actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
-        val jsInst = jsRenderableManager.asDynamic()
-        if (jsInst.clearMaterialInstanceAt != null) {
-            jsInst.clearMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
-        }
+        jsRenderableManager.clearMaterialInstanceAt(
+            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
     }
 
     actual fun isShadowReceiver(instance: EntityInstance): Boolean {
         return jsRenderableManager.isShadowReceiver(instance.unsafeCast<JSRenderableManagerInstance>())
     }
 
-    actual fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean {
-        return false
-    }
+    actual fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean =
+        jsRenderableManager.isScreenSpaceContactShadowsEnabled(instance.unsafeCast<JSRenderableManagerInstance>())
 
     actual fun getPrimitiveCount(instance: EntityInstance): Int {
         return jsRenderableManager.getPrimitiveCount(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
     }
 
-    actual fun getInstanceCount(instance: EntityInstance): Int {
-        return 1
-    }
+    actual fun getInstanceCount(instance: EntityInstance): Int =
+        jsRenderableManager.getInstanceCount(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
 
     actual fun setMaterialInstanceAt(
         instance: EntityInstance,
@@ -190,37 +202,38 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     actual fun getBlendOrderAt(
         instance: EntityInstance,
         primitiveIndex: Int
-    ): Int {
-        return 0
-    }
+    ): Int = jsRenderableManager.getBlendOrderAt(
+        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex).toInt()
 
     actual fun setGlobalBlendOrderEnabledAt(
         instance: EntityInstance,
         primitiveIndex: Int,
         enabled: Boolean
     ) {
+        jsRenderableManager.setGlobalBlendOrderEnabledAt(
+            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, enabled)
     }
 
     actual fun isGlobalBlendOrderEnabledAt(
         instance: EntityInstance,
         primitiveIndex: Int
-    ): Boolean {
-        return false
-    }
+    ): Boolean = jsRenderableManager.isGlobalBlendOrderEnabledAt(
+        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
 
     actual fun setLightChannel(
         instance: EntityInstance,
         channel: Int,
         enable: Boolean
     ) {
+        jsRenderableManager.setLightChannel(
+            instance.unsafeCast<JSRenderableManagerInstance>(), channel, enable)
     }
 
     actual fun getLightChannel(
         instance: EntityInstance,
         channel: Int
-    ): Boolean {
-        return true
-    }
+    ): Boolean = jsRenderableManager.getLightChannel(
+        instance.unsafeCast<JSRenderableManagerInstance>(), channel)
 
     actual fun getMorphTargetCount(instance: EntityInstance): Int {
         return 0
@@ -315,6 +328,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun geometryType(type: GeometryType): Builder {
+            // GeometryType isn't bound as a JS enum upstream — pass the ordinal.
+            // Filament's C++ enum order: DYNAMIC=0, STATIC_BOUNDS=1, STATIC=2.
+            jsBuilder.geometryType(type.ordinal)
             return this
         }
 
@@ -330,7 +346,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             index: Int,
             blendOrder: Int
         ): Builder {
-            jsBuilder.asDynamic().blendOrder(index, blendOrder)
+            jsBuilder.blendOrder(index, blendOrder)
             return this
         }
 
@@ -338,6 +354,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             index: Int,
             enabled: Boolean
         ): Builder {
+            jsBuilder.globalBlendOrderEnabled(index, enabled)
             return this
         }
 
@@ -363,6 +380,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun channel(channel: Int): Builder {
+            jsBuilder.channel(channel)
             return this
         }
 
@@ -382,11 +400,12 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun screenSpaceContactShadows(enabled: Boolean): Builder {
+            jsBuilder.screenSpaceContactShadows(enabled)
             return this
         }
 
         actual fun skinning(boneCount: Int): Builder {
-            jsBuilder.asDynamic().skinning(boneCount)
+            jsBuilder.skinning(boneCount)
             return this
         }
 
@@ -406,7 +425,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun morphing(targetCount: Int): Builder {
-            jsBuilder.asDynamic().morphing(targetCount > 0)
+            // The JS Builder's morphing() takes only a boolean enable — the per-target
+            // count overload isn't bound. Pass `enable = (count > 0)`.
+            jsBuilder.morphing(targetCount > 0)
             return this
         }
 
@@ -415,6 +436,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun fog(enabled: Boolean): Builder {
+            jsBuilder.fog(enabled)
             return this
         }
 
@@ -422,14 +444,18 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             channel: Int,
             enable: Boolean
         ): Builder {
+            jsBuilder.lightChannel(channel, enable)
             return this
         }
 
         actual fun enableSkinningBuffers(enabled: Boolean): Builder {
+            // Not exposed in the JS Builder; SkinningBuffer itself isn't bound,
+            // so the underlying API is unreachable on web.
             return this
         }
 
         actual fun instances(instanceCount: Int): Builder {
+            jsBuilder.instances(instanceCount)
             return this
         }
 

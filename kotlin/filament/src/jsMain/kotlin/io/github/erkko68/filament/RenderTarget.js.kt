@@ -12,15 +12,25 @@ actual class RenderTarget(internal val jsRenderTarget: JSRenderTarget) {
     }
 
     actual fun getMipLevel(attachment: AttachmentPoint): Int {
-        return 0
+        // JS RenderTarget exposes a no-arg getMipLevel() — the attachment-aware
+        // overload isn't bound, so this returns the level set by the Builder
+        // regardless of which attachment is queried.
+        return jsRenderTarget.getMipLevel().toInt()
     }
 
     actual fun getFace(attachment: AttachmentPoint): Texture.CubemapFace {
-        return Texture.CubemapFace.POSITIVE_X
+        return when (jsRenderTarget.getFace()) {
+            Texture_CubemapFace.POSITIVE_X -> Texture.CubemapFace.POSITIVE_X
+            Texture_CubemapFace.NEGATIVE_X -> Texture.CubemapFace.NEGATIVE_X
+            Texture_CubemapFace.POSITIVE_Y -> Texture.CubemapFace.POSITIVE_Y
+            Texture_CubemapFace.NEGATIVE_Y -> Texture.CubemapFace.NEGATIVE_Y
+            Texture_CubemapFace.POSITIVE_Z -> Texture.CubemapFace.POSITIVE_Z
+            Texture_CubemapFace.NEGATIVE_Z -> Texture.CubemapFace.NEGATIVE_Z
+        }
     }
 
     actual fun getLayer(attachment: AttachmentPoint): Int {
-        return 0
+        return jsRenderTarget.getLayer().toInt()
     }
 
     actual enum class AttachmentPoint { COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH }

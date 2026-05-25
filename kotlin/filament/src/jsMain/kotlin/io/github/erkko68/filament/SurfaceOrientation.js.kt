@@ -41,7 +41,11 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
         }
 
         actual fun tangents(buffer: FloatArray, stride: Int): Builder {
-            // Not in JS SurfaceOrientation_Builder bindings
+            // jsbindings.cpp binds `_tangents(intptr_t, int stride)`, but extensions.js
+            // wraps only `_normals`, `_uvs`, `_positions` into user-facing builder
+            // calls — there's no JS-side `tangents(buffer, stride)` wrapper doing the
+            // malloc/HEAPU8 dance, so the function is unreachable without
+            // re-implementing that here. Stubbed no-op; see UPSTREAM_INCONSISTENCIES.md.
             return this
         }
 

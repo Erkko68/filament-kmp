@@ -21,7 +21,7 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
         }
 
         actual fun isSRGBSwapChainSupported(engine: Engine): Boolean {
-            return true
+            return JSSwapChain.isSRGBSwapChainSupported(engine.jsEngine)
         }
 
         actual fun isMSAASwapChainSupported(

@@ -47,11 +47,11 @@ actual class FilamentAsset(
     }
 
     actual fun getAssetInstanceCount(): Int {
-        return jsAsset.geAssetInstances().size
+        return jsAsset.getAssetInstances().size
     }
 
     actual fun getAssetInstances(): Array<FilamentInstance> {
-        val jsInstances = jsAsset.geAssetInstances()
+        val jsInstances = jsAsset.getAssetInstances()
         return Array(jsInstances.size) { i -> FilamentInstance(jsInstances[i]) }
     }
 

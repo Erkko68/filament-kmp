@@ -168,74 +168,87 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual var maskThreshold: Float
-        get() = 0.4f
+        get() = jsMaterialInstance.getMaskThreshold().toFloat()
         set(value) { jsMaterialInstance.setMaskThreshold(value) }
 
     actual var specularAntiAliasingVariance: Float
-        get() = 0.0f
-        set(value) {
-            val jsInst = jsMaterialInstance.asDynamic()
-            if (jsInst.setSpecularAntiAliasingVariance != null) {
-                jsInst.setSpecularAntiAliasingVariance(value)
-            }
-        }
+        get() = jsMaterialInstance.getSpecularAntiAliasingVariance().toFloat()
+        set(value) { jsMaterialInstance.setSpecularAntiAliasingVariance(value) }
 
     actual var specularAntiAliasingThreshold: Float
-        get() = 0.0f
-        set(value) {
-            val jsInst = jsMaterialInstance.asDynamic()
-            if (jsInst.setSpecularAntiAliasingThreshold != null) {
-                jsInst.setSpecularAntiAliasingThreshold(value)
-            }
-        }
+        get() = jsMaterialInstance.getSpecularAntiAliasingThreshold().toFloat()
+        set(value) { jsMaterialInstance.setSpecularAntiAliasingThreshold(value) }
 
     actual var isDoubleSided: Boolean
-        get() = false
+        get() = jsMaterialInstance.isDoubleSided()
         set(value) { jsMaterialInstance.setDoubleSided(value) }
 
     actual var transparencyMode: Material.TransparencyMode
-        get() = Material.TransparencyMode.DEFAULT
-        set(value) {}
-
-    actual var cullingMode: Material.CullingMode
-        get() = Material.CullingMode.BACK
+        get() = when (jsMaterialInstance.getTransparencyMode()) {
+            io.github.erkko68.filament.js.TransparencyMode.DEFAULT -> Material.TransparencyMode.DEFAULT
+            io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_ONE_SIDE -> Material.TransparencyMode.TWO_PASSES_ONE_SIDE
+            io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_TWO_SIDES -> Material.TransparencyMode.TWO_PASSES_TWO_SIDES
+        }
         set(value) {
-            jsMaterialInstance.setCullingMode(when(value) {
-                Material.CullingMode.NONE -> io.github.erkko68.filament.js.CullingMode.NONE
-                Material.CullingMode.FRONT -> io.github.erkko68.filament.js.CullingMode.FRONT
-                Material.CullingMode.BACK -> io.github.erkko68.filament.js.CullingMode.BACK
-                Material.CullingMode.FRONT_AND_BACK -> io.github.erkko68.filament.js.CullingMode.FRONT_AND_BACK
+            jsMaterialInstance.setTransparencyMode(when (value) {
+                Material.TransparencyMode.DEFAULT -> io.github.erkko68.filament.js.TransparencyMode.DEFAULT
+                Material.TransparencyMode.TWO_PASSES_ONE_SIDE -> io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_ONE_SIDE
+                Material.TransparencyMode.TWO_PASSES_TWO_SIDES -> io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_TWO_SIDES
             })
         }
+
+    actual var cullingMode: Material.CullingMode
+        get() = fromJsCullingMode(jsMaterialInstance.getCullingMode())
+        set(value) { jsMaterialInstance.setCullingMode(toJsCullingMode(value)) }
 
     actual fun setCullingMode(
         colorPassCullingMode: Material.CullingMode,
         shadowPassCullingMode: Material.CullingMode
     ) {
-        cullingMode = colorPassCullingMode
+        // Now properly maps color/shadow passes separately, matching the
+        // Android API instead of dropping the shadow argument.
+        jsMaterialInstance.setCullingModeSeparate(
+            toJsCullingMode(colorPassCullingMode),
+            toJsCullingMode(shadowPassCullingMode),
+        )
     }
 
     actual val shadowCullingMode: Material.CullingMode
-        get() = Material.CullingMode.BACK
+        get() = fromJsCullingMode(jsMaterialInstance.getShadowCullingMode())
 
     actual var isColorWriteEnabled: Boolean
-        get() = true
+        get() = jsMaterialInstance.isColorWriteEnabled()
         set(value) { jsMaterialInstance.setColorWrite(value) }
 
     actual var isDepthWriteEnabled: Boolean
-        get() = true
+        get() = jsMaterialInstance.isDepthWriteEnabled()
         set(value) { jsMaterialInstance.setDepthWrite(value) }
 
     actual var isStencilWriteEnabled: Boolean
-        get() = true
+        // Upstream oversight: `MaterialInstance::isStencilWriteEnabled()` exists in C++
+        // and every sibling (`isColorWriteEnabled`, `isDepthWriteEnabled`,
+        // `isDepthCullingEnabled`, `isDoubleSided`) is bound in jsbindings.cpp, but this
+        // one was missed. Falling back to the Filament runtime default (StencilState's
+        // `stencilWrite = false` in backend/DriverEnums.h). TODO: file a one-line PR
+        // upstream to bind it next to `setStencilWrite`.
+        get() = false
         set(value) { jsMaterialInstance.setStencilWrite(value) }
 
     actual var isDepthCullingEnabled: Boolean
-        get() = true
+        get() = jsMaterialInstance.isDepthCullingEnabled()
         set(value) { jsMaterialInstance.setDepthCulling(value) }
 
     actual var depthFunc: TextureSampler.CompareFunction
-        get() = TextureSampler.CompareFunction.LESS_EQUAL
+        get() = when (jsMaterialInstance.getDepthFunc()) {
+            CompareFunc.LESS_EQUAL -> TextureSampler.CompareFunction.LESS_EQUAL
+            CompareFunc.GREATER_EQUAL -> TextureSampler.CompareFunction.GREATER_EQUAL
+            CompareFunc.LESS -> TextureSampler.CompareFunction.LESS
+            CompareFunc.GREATER -> TextureSampler.CompareFunction.GREATER
+            CompareFunc.EQUAL -> TextureSampler.CompareFunction.EQUAL
+            CompareFunc.NOT_EQUAL -> TextureSampler.CompareFunction.NOT_EQUAL
+            CompareFunc.ALWAYS -> TextureSampler.CompareFunction.ALWAYS
+            CompareFunc.NEVER -> TextureSampler.CompareFunction.NEVER
+        }
         set(value) {
             jsMaterialInstance.setDepthFunc(when(value) {
                 TextureSampler.CompareFunction.LESS_EQUAL -> CompareFunc.LESS_EQUAL
@@ -374,4 +387,18 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
             return other
         }
     }
+}
+
+private fun toJsCullingMode(mode: Material.CullingMode): CullingMode = when (mode) {
+    Material.CullingMode.NONE -> CullingMode.NONE
+    Material.CullingMode.FRONT -> CullingMode.FRONT
+    Material.CullingMode.BACK -> CullingMode.BACK
+    Material.CullingMode.FRONT_AND_BACK -> CullingMode.FRONT_AND_BACK
+}
+
+private fun fromJsCullingMode(mode: CullingMode): Material.CullingMode = when (mode) {
+    CullingMode.NONE -> Material.CullingMode.NONE
+    CullingMode.FRONT -> Material.CullingMode.FRONT
+    CullingMode.BACK -> Material.CullingMode.BACK
+    CullingMode.FRONT_AND_BACK -> Material.CullingMode.FRONT_AND_BACK
 }

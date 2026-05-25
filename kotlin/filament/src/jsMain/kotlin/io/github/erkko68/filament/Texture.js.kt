@@ -232,10 +232,11 @@ actual class Texture(val jsTexture: JSTexture) {
             engine: Engine,
             format: InternalFormat
         ): Boolean {
-            return true
+            return JSTexture.isTextureFormatMipmappable(engine.jsEngine, mapInternalFormat(format))
         }
 
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean {
+            // Not bound in jsbindings.cpp — see patches/UPSTREAM_INCONSISTENCIES.md.
             return false
         }
 
@@ -244,7 +245,11 @@ actual class Texture(val jsTexture: JSTexture) {
             pixelDataFormat: Format,
             pixelDataType: Type
         ): Boolean {
-            return true
+            return JSTexture.validatePixelFormatAndType(
+                mapInternalFormat(internalFormat),
+                mapFormat(pixelDataFormat),
+                mapType(pixelDataType),
+            )
         }
 
         actual fun getMaxTextureSize(

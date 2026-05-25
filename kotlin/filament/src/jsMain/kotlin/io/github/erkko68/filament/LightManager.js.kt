@@ -137,10 +137,11 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) {
+        jsLightManager.setLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel, enable)
     }
 
     actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean {
-        return true
+        return jsLightManager.getLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel)
     }
 
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
@@ -185,7 +186,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         )
 
         actual fun lightChannel(channel: Int, enable: Boolean): Builder {
-            // Not exposed in JS LightManager.Builder bindings
+            jsBuilder.lightChannel(channel, enable)
             return this
         }
 

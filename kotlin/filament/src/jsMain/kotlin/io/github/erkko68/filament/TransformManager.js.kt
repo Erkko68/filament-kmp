@@ -57,13 +57,12 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
     }
 
     actual fun getParent(instance: EntityInstance): Entity {
-        // jsbindings.cpp binds TransformManager::getParent; the d.ts misses it. Returned
-        // JS Entity wrapper is registered so subsequent JS calls (setParent, getInstance,
-        // …) can resolve it back through EntityManager.jsEntityOf().
-        val jsEntity = jsTransformManager.asDynamic()
-            .getParent(instance.unsafeCast<JSTransformManagerInstance>())
-        val id = (jsEntity.getId() as Number).toInt()
-        if (id != 0) EntityManager.register(id, jsEntity.unsafeCast<io.github.erkko68.filament.js.Entity>())
+        // Register the returned JS Entity wrapper so subsequent JS calls
+        // (setParent, getInstance, …) can resolve it back through
+        // EntityManager.jsEntityOf().
+        val jsEntity = jsTransformManager.getParent(instance.unsafeCast<JSTransformManagerInstance>())
+        val id = jsEntity.getId().toInt()
+        if (id != 0) EntityManager.register(id, jsEntity)
         return id
     }
 

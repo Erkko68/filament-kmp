@@ -52,7 +52,7 @@ actual class Scene(internal val jsScene: JSScene) {
     }
 
     actual val entityCount: Int
-        get() = _entities.size
+        get() = jsScene.getEntityCount().toInt()
 
     actual val renderableCount: Int
         get() = jsScene.getRenderableCount().toInt()
@@ -61,7 +61,7 @@ actual class Scene(internal val jsScene: JSScene) {
         get() = jsScene.getLightCount().toInt()
 
     actual fun hasEntity(entity: Entity): Boolean {
-        return _entities.contains(entity)
+        return jsScene.hasEntity(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getEntities(): IntArray {

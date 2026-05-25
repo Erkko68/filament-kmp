@@ -141,8 +141,9 @@ actual class Material(internal val jsMaterial: JSMaterial) {
     }
 
     actual fun getParameterTransformName(samplerName: String): String? {
-        // The JS Material API doesn't expose parameter transform names directly
-        return null
+        val name = jsMaterial.getParameterTransformName(samplerName)
+        // JS binding returns an empty string when no transform name exists.
+        return name.takeIf { it.isNotEmpty() }
     }
 
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
