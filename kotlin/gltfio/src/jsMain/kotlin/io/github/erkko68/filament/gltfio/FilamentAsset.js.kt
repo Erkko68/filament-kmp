@@ -40,7 +40,7 @@ actual class FilamentAsset(
 
     actual fun getEntitiesByPrefix(prefix: String): IntArray = jsAsset.getEntitiesByPrefix(prefix).registerAndGetIds()
 
-    actual fun getFirstEntityByName(name: String): Entity = jsAsset.getEntityByName(name).registerAndGetId()
+    actual fun getFirstEntityByName(name: String): Entity = jsAsset.getFirstEntityByName(name).registerAndGetId()
 
     actual fun getEntityCount(): Int {
         return jsAsset.getEntities().size

@@ -1,17 +1,25 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.js.assets
+
+private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
+    val int8 = org.khronos.webgl.Int8Array(size)
+    forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+    return org.khronos.webgl.Uint8Array(int8.buffer)
+}
 
 actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
     private val resourceData = mutableMapOf<String, ByteArray>()
     private var loadProgress = 0f
 
     actual fun destroy() {
-        resourceData.clear()
+        evictResourceData()
     }
 
     actual fun addResourceData(url: String, data: ByteArray) {
         resourceData[url] = data
+        assets[url] = data.toUint8Array()
     }
 
     actual fun hasResourceData(url: String): Boolean {
@@ -60,6 +68,9 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
     }
 
     actual fun evictResourceData() {
+        for (url in resourceData.keys) {
+            assets.asDynamic()[url] = null
+        }
         resourceData.clear()
     }
 }

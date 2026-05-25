@@ -22,6 +22,7 @@ actual object TextureLoader {
         return try {
             val jsTexture: JSTexture? = when {
                 isKtx1(buffer) -> jsEngine.createTextureFromKtx1(arrayBuffer)
+                isKtx2(buffer) -> jsEngine.asDynamic().createTextureFromKtx2(arrayBuffer)
                 isPng(buffer) -> jsEngine.createTextureFromPng(arrayBuffer)
                 isJpeg(buffer) -> jsEngine.createTextureFromJpeg(arrayBuffer)
                 else -> null
@@ -40,6 +41,17 @@ actual object TextureLoader {
                buffer[3] == 0x58.toByte() &&
                buffer[4] == 0x20.toByte() &&
                buffer[5] == 0x31.toByte()
+    }
+
+    private fun isKtx2(buffer: ByteArray): Boolean {
+        return buffer.size >= 12 &&
+               buffer[0] == 0xAB.toByte() &&
+               buffer[1] == 0x4B.toByte() &&
+               buffer[2] == 0x54.toByte() &&
+               buffer[3] == 0x58.toByte() &&
+               buffer[4] == 0x20.toByte() &&
+               buffer[5] == 0x32.toByte() &&
+               buffer[6] == 0x30.toByte()
     }
 
     private fun isPng(buffer: ByteArray): Boolean {

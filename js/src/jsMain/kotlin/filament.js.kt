@@ -1034,7 +1034,8 @@ external open class `gltfio_FilamentAsset` {
     open fun loadResources(onDone: () -> Unit?, onFetched: (s: String) -> Unit?, basePath: String?, asyncInterval: Number?, options: Any? = definedExternally)
     open fun getEntities(): Array<Entity>
     open fun getEntitiesByName(name: String): Array<Entity>
-    open fun getEntityByName(name: String): Entity
+    // Doesn't seem to exist in the jscpp bindings
+    //open fun getEntityByName(name: String): Entity
     open fun getEntitiesByPrefix(name: String): Array<Entity>
     open fun getLightEntities(): Array<Entity>
     open fun getRenderableEntities(): Array<Entity>
@@ -1062,7 +1063,6 @@ external open class `gltfio_FilamentInstance` {
     open fun attachSkin(skinIndex: Number, entity: Entity)
     open fun detachSkin(skinIndex: Number, entity: Entity)
     open fun getMaterialInstances(): Vector<MaterialInstance>
-    open fun detachMaterialInstances()
     open fun getMaterialVariantNames(): Array<String>
     open fun applyMaterialVariant(index: Number)
 }

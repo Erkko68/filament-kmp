@@ -48,7 +48,9 @@ actual object KTX1Loader {
     actual fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle {
         return try {
             val jsIbl = engine.jsEngine.createIblFromKtx1(buffer.toArrayBufferView())
-            IndirectLightBundle(IndirectLight(jsIbl), null)
+            val indirectLight = IndirectLight(jsIbl)
+            val cubemap = indirectLight.reflectionsTexture
+            IndirectLightBundle(indirectLight, cubemap)
         } catch (e: Exception) {
             IndirectLightBundle(null, null)
         }
@@ -57,17 +59,31 @@ actual object KTX1Loader {
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
         return try {
             val jsSky = engine.jsEngine.createSkyFromKtx1(buffer.toArrayBufferView())
-            SkyboxBundle(Skybox(jsSky), null)
+            val skybox = Skybox(jsSky)
+            val cubemap = skybox.texture
+            SkyboxBundle(skybox, cubemap)
         } catch (e: Exception) {
             SkyboxBundle(null, null)
         }
     }
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? {
-        throw UnsupportedOperationException(
-            "KTX1Loader.getSphericalHarmonics is not supported on the JS/Web target. " +
-            "Filament.js does not expose KTX1 spherical-harmonics extraction. Precompute SH " +
-            "offline (e.g. with `cmgen`) and bake the coefficients into your app data."
-        )
+        return try {
+            val arrayBufferView = buffer.toArrayBufferView()
+            val kbd = js("Filament.Buffer(arrayBufferView)")
+            val ktx = js("new Filament.Ktx1Bundle(kbd)")
+            val shString = ktx.getMetadata("sh").unsafeCast<String>()
+            ktx.delete()
+            kbd.delete()
+            if (shString.isEmpty()) return null
+            val parts = shString.trim().split(Regex("\\s+"))
+            if (parts.size >= 27) {
+                FloatArray(27) { i -> parts[i].toFloat() }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 }
