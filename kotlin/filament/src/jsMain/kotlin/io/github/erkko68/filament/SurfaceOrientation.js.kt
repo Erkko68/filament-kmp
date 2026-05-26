@@ -26,11 +26,13 @@ private fun IntArray.toUint32Array(): Uint32Array {
     return ua
 }
 
-actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrientation) {
+actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrientation, actual val vertexCount: Int = 0) {
     actual class Builder {
         private val jsBuilder = JSSurfaceOrientationBuilder()
+        private var vertexCount: Int = 0
 
         actual fun vertexCount(vertexCount: Int): Builder {
+            this.vertexCount = vertexCount
             jsBuilder.vertexCount(vertexCount)
             return this
         }
@@ -75,11 +77,10 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
         }
 
         actual fun build(): SurfaceOrientation {
-            return SurfaceOrientation(jsBuilder.build())
+            return SurfaceOrientation(jsBuilder.build(), vertexCount)
         }
     }
 
-    actual val vertexCount: Int get() = 0 // not exposed in JS bindings
 
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
         val quats = jsSurfaceOrientation.getQuatsFloat4(count)

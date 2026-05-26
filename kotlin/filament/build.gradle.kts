@@ -43,6 +43,22 @@ kotlin {
         }
     }
 
+    // Stage filament.js + filament.wasm from prebuilts into a build dir, then expose
+    // that dir as an extra jsTest resources source so jsTestProcessResources picks
+    // them up alongside src/jsTest/resources (Karma serves them — see
+    // src/jsTest/resources/karma.config.d/filament-setup.js).
+    val stagedWebAssets = layout.buildDirectory.dir("filamentWebAssets")
+    val stageFilamentWebAssetsForJsTest = tasks.register<Sync>("stageFilamentWebAssetsForJsTest") {
+        dependsOn(rootProject.tasks.named("downloadPrebuilts_web"))
+        from(rootProject.layout.projectDirectory.dir("prebuilts/web")) {
+            include("filament.js", "filament.wasm")
+        }
+        into(stagedWebAssets)
+    }
+    sourceSets.named("jsTest") {
+        resources.srcDir(stageFilamentWebAssetsForJsTest)
+    }
+
     targets.withType<KotlinNativeTarget>().configureEach {
         compilations.getByName("main").cinterops {
             create("filament") {

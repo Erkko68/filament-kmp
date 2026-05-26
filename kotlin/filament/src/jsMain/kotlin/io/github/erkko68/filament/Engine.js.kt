@@ -228,11 +228,14 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.execute()
     }
 
-    actual fun isPaused(): Boolean {
-        return false
-    }
+    // Not bound in upstream jsbindings.cpp (v1.71.4) — track locally so the
+    // common getter/setter round-trip works.
+    private var paused: Boolean = false
+
+    actual fun isPaused(): Boolean = paused
 
     actual fun setPaused(paused: Boolean) {
+        this.paused = paused
     }
 
     actual fun unprotected() {

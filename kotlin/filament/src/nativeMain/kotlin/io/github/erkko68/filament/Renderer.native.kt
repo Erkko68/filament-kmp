@@ -36,9 +36,11 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
     }
     actual val engine: Engine get() = _engine
 
+    private var _displayInfo = DisplayInfo()
     actual var displayInfo: DisplayInfo
-        get() = DisplayInfo() // Cache not implemented
+        get() = _displayInfo
         set(value) {
+            _displayInfo = value
             memScoped {
                 val cInfo = alloc<FilaRendererDisplayInfo>()
                 cInfo.refreshRate = value.refreshRate
@@ -46,9 +48,11 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
             }
         }
 
+    private var _frameRateOptions = FrameRateOptions()
     actual var frameRateOptions: FrameRateOptions
-        get() = FrameRateOptions()
+        get() = _frameRateOptions
         set(value) {
+            _frameRateOptions = value
             memScoped {
                 val cOptions = alloc<FilaRendererFrameRateOptions>()
                 cOptions.interval = value.interval
@@ -60,7 +64,15 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         }
 
     actual var clearOptions: ClearOptions
-        get() = ClearOptions()
+        get() = memScoped {
+            val out = alloc<FilaRendererClearOptions>()
+            FilaRenderer_getClearOptions(nativeHandle, out.ptr)
+            ClearOptions().apply {
+                clearColor = floatArrayOf(out.clearColor[0], out.clearColor[1], out.clearColor[2], out.clearColor[3])
+                clear = out.clear
+                discard = out.discard
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaRendererClearOptions>()

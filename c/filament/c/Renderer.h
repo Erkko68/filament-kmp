@@ -58,6 +58,7 @@ void FilaRenderer_resetUserTime(FilaRenderer* renderer);
 void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info);
 void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options);
 void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClearOptions* options);
+void FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClearOptions* out);
 
 void FilaRenderer_setPresentationTime(FilaRenderer* renderer, uint64_t monotonicClockNanos);
 void FilaRenderer_setVsyncTime(FilaRenderer* renderer, uint64_t steadyClockTimeNano);

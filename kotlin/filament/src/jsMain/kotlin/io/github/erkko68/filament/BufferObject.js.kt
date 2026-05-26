@@ -53,7 +53,9 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         }
 
         actual fun build(engine: Engine): BufferObject {
-            return BufferObject(jsBuilder.build(engine.jsEngine))
+            val obj = jsBuilder.build(engine.jsEngine)
+            jsBuilder.delete()
+            return BufferObject(obj)
         }
     }
 }

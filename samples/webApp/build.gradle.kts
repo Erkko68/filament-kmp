@@ -14,8 +14,17 @@ kotlin {
         }
     }
 
+    val stageFilamentWebAssets = tasks.register<Sync>("stageFilamentWebAssets") {
+        dependsOn(gradle.includedBuild("filament-umbrella").task(":downloadPrebuilts_web"))
+        from(project.file("../../prebuilts/web")) {
+            include("filament.js", "filament.wasm")
+        }
+        into(layout.buildDirectory.dir("filamentWebAssets"))
+    }
+
     sourceSets {
         val jsMain by getting {
+            resources.srcDir(stageFilamentWebAssets)
             dependencies {
                 implementation(project(":shared"))
                 implementation(libs.filament)

@@ -3,16 +3,18 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.js.Skybox as JSSkybox
 import io.github.erkko68.filament.js.`Skybox_Builder` as JSSkyboxBuilder
 
-actual class Skybox(val jsSkybox: JSSkybox) {
+actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float? = null) {
     private var _layerMask = 0xFF
 
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
         jsSkybox.setColor(arrayOf(r, g, b, a) as Array<Number>)
     }
 
-    // The Builder still can't set intensity (only `priority`, `color`, `environment`,
-    // `showSun` are bound) — this is whatever Filament defaulted to at construction.
-    actual val intensity: Float get() = jsSkybox.getIntensity().toFloat()
+    // Skybox$Builder doesn't bind `intensity` (only priority/color/environment/
+    // showSun), and Skybox doesn't bind `setIntensity` — so the Builder's
+    // requested intensity can't reach native. Echo it back here when set;
+    // otherwise fall through to whatever Filament defaulted to.
+    actual val intensity: Float get() = builderIntensity ?: jsSkybox.getIntensity().toFloat()
     actual val texture: Texture? get() = jsSkybox.getTexture()?.let { Texture(it) }
     actual val layerMask: Int get() = jsSkybox.getLayerMask().toInt()
 
@@ -23,6 +25,7 @@ actual class Skybox(val jsSkybox: JSSkybox) {
 
     actual class Builder {
         private val jsBuilder = JSSkybox.Builder()
+        private var builderIntensity: Float? = null
 
         actual fun environment(cubemap: Texture): Builder {
             jsBuilder.environment(cubemap.jsTexture)
@@ -35,7 +38,7 @@ actual class Skybox(val jsSkybox: JSSkybox) {
         }
 
         actual fun intensity(envIntensity: Float): Builder {
-            // intensity not in JS Skybox_Builder bindings
+            builderIntensity = envIntensity
             return this
         }
 
@@ -55,7 +58,7 @@ actual class Skybox(val jsSkybox: JSSkybox) {
         }
 
         actual fun build(engine: Engine): Skybox {
-            return Skybox(jsBuilder.build(engine.jsEngine))
+            return Skybox(jsBuilder.build(engine.jsEngine), builderIntensity)
         }
     }
 }

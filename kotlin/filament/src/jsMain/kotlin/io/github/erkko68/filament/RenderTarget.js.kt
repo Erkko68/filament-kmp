@@ -5,21 +5,21 @@ import io.github.erkko68.filament.js.`RenderTarget_Builder` as JSRenderTargetBui
 import io.github.erkko68.filament.js.RenderTarget_AttachmentPoint
 import io.github.erkko68.filament.js.Texture_CubemapFace
 
-actual class RenderTarget(internal val jsRenderTarget: JSRenderTarget) {
+actual class RenderTarget internal constructor(
+    internal val jsRenderTarget: JSRenderTarget,
+    private val engine: Engine? = null,
+) {
     actual fun getTexture(attachment: AttachmentPoint): Texture? {
-        // No getTexture in JS bindings
-        return null
+        return jsRenderTarget.getTexture(mapAttachment(attachment))
+            .let { Texture(it).also { t -> t.engine = engine } }
     }
 
     actual fun getMipLevel(attachment: AttachmentPoint): Int {
-        // JS RenderTarget exposes a no-arg getMipLevel() — the attachment-aware
-        // overload isn't bound, so this returns the level set by the Builder
-        // regardless of which attachment is queried.
-        return jsRenderTarget.getMipLevel().toInt()
+        return jsRenderTarget.getMipLevel(mapAttachment(attachment)).toInt()
     }
 
     actual fun getFace(attachment: AttachmentPoint): Texture.CubemapFace {
-        return when (jsRenderTarget.getFace()) {
+        return when (jsRenderTarget.getFace(mapAttachment(attachment))) {
             Texture_CubemapFace.POSITIVE_X -> Texture.CubemapFace.POSITIVE_X
             Texture_CubemapFace.NEGATIVE_X -> Texture.CubemapFace.NEGATIVE_X
             Texture_CubemapFace.POSITIVE_Y -> Texture.CubemapFace.POSITIVE_Y
@@ -30,7 +30,15 @@ actual class RenderTarget(internal val jsRenderTarget: JSRenderTarget) {
     }
 
     actual fun getLayer(attachment: AttachmentPoint): Int {
-        return jsRenderTarget.getLayer().toInt()
+        return jsRenderTarget.getLayer(mapAttachment(attachment)).toInt()
+    }
+
+    private fun mapAttachment(attachment: AttachmentPoint): RenderTarget_AttachmentPoint {
+        return when (attachment) {
+            AttachmentPoint.COLOR -> RenderTarget_AttachmentPoint.COLOR
+            AttachmentPoint.DEPTH -> RenderTarget_AttachmentPoint.DEPTH
+            else -> RenderTarget_AttachmentPoint.COLOR
+        }
     }
 
     actual enum class AttachmentPoint { COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH }
@@ -80,7 +88,7 @@ actual class RenderTarget(internal val jsRenderTarget: JSRenderTarget) {
         }
 
         actual fun build(engine: Engine): RenderTarget {
-            return RenderTarget(jsBuilder.build(engine.jsEngine))
+            return RenderTarget(jsBuilder.build(engine.jsEngine), engine)
         }
 
         private fun mapAttachment(attachment: AttachmentPoint): RenderTarget_AttachmentPoint {

@@ -230,7 +230,18 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         set(value) { FilaView_setDithering(nativeHandle, value.ordinal.toUInt()) }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
-        get() = DynamicResolutionOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewDynamicResolutionOptions>()
+            FilaView_getDynamicResolutionOptions(nativeHandle, out.ptr)
+            DynamicResolutionOptions().apply {
+                enabled = out.enabled
+                homogeneousScaling = out.homogeneousScaling
+                minScale = out.minScale[0]
+                maxScale = out.maxScale[0]
+                sharpness = out.sharpness
+                quality = Quality.entries[out.quality.toInt()]
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewDynamicResolutionOptions>()
@@ -253,11 +264,36 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
 
     actual var renderQuality: RenderQuality
-        get() = RenderQuality()
+        get() = RenderQuality().apply {
+            hdrColorBuffer = Quality.entries[FilaView_getRenderQuality(nativeHandle).toInt()]
+        }
         set(value) { FilaView_setRenderQuality(nativeHandle, value.hdrColorBuffer.ordinal.toUInt()) }
     
     actual var bloomOptions: BloomOptions
-        get() = BloomOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewBloomOptions>()
+            FilaView_getBloomOptions(nativeHandle, out.ptr)
+            BloomOptions().apply {
+                enabled = out.enabled
+                levels = out.levels.toInt()
+                resolution = out.resolution.toInt()
+                strength = out.strength
+                threshold = out.threshold
+                dirtStrength = out.dirtStrength
+                quality = Quality.entries[out.quality.toInt()]
+                lensFlare = out.lensFlare
+                starburst = out.starburst
+                chromaticAberration = out.chromaticAberration
+                ghostCount = out.ghostCount.toInt()
+                ghostSpacing = out.ghostSpacing
+                ghostThreshold = out.ghostThreshold
+                haloRadius = out.haloRadius
+                haloThickness = out.haloThickness
+                haloThreshold = out.haloThreshold
+                highlight = out.highlight
+                blendMode = BloomOptions.BlendMode.entries[out.blendMode]
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewBloomOptions>()
@@ -285,7 +321,23 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var fogOptions: FogOptions
-        get() = FogOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewFogOptions>()
+            FilaView_getFogOptions(nativeHandle, out.ptr)
+            FogOptions().apply {
+                enabled = out.enabled
+                distance = out.distance
+                density = out.density
+                height = out.height
+                heightFalloff = out.heightFalloff
+                color = floatArrayOf(out.color[0], out.color[1], out.color[2])
+                cutOffDistance = out.cutOffDistance
+                maximumOpacity = out.maximumOpacity
+                inScatteringStart = out.inScatteringStart
+                inScatteringSize = out.inScatteringSize
+                fogColorFromIbl = out.fogColorFromIbl
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewFogOptions>()
@@ -306,7 +358,22 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var depthOfFieldOptions: DepthOfFieldOptions
-        get() = DepthOfFieldOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewDepthOfFieldOptions>()
+            FilaView_getDepthOfFieldOptions(nativeHandle, out.ptr)
+            DepthOfFieldOptions().apply {
+                enabled = out.enabled
+                cocScale = out.cocScale
+                maxApertureDiameter = out.maxApertureDiameter
+                filter = DepthOfFieldOptions.Filter.entries[out.filter]
+                nativeResolution = out.nativeResolution
+                foregroundRingCount = out.foregroundRingCount.toInt()
+                backgroundRingCount = out.backgroundRingCount.toInt()
+                fastGatherRingCount = out.fastGatherRingCount.toInt()
+                maxForegroundCOC = out.maxForegroundCOC.toInt()
+                maxBackgroundCOC = out.maxBackgroundCOC.toInt()
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewDepthOfFieldOptions>()
@@ -325,7 +392,17 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var vignetteOptions: VignetteOptions
-        get() = VignetteOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewVignetteOptions>()
+            FilaView_getVignetteOptions(nativeHandle, out.ptr)
+            VignetteOptions().apply {
+                enabled = out.enabled
+                midPoint = out.midPoint
+                roundness = out.roundness
+                feather = out.feather
+                color = floatArrayOf(out.color[0], out.color[1], out.color[2], out.color[3])
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewVignetteOptions>()
@@ -339,7 +416,36 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var ambientOcclusionOptions: AmbientOcclusionOptions
-        get() = AmbientOcclusionOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewAmbientOcclusionOptions>()
+            FilaView_getAmbientOcclusionOptions(nativeHandle, out.ptr)
+            AmbientOcclusionOptions().apply {
+                enabled = out.enabled
+                radius = out.radius
+                bias = out.bias
+                intensity = out.intensity
+                resolution = out.resolution
+                power = out.power
+                minConeAngle = out.minHorizonAngleRad
+                quality = Quality.entries[out.quality.toInt()]
+                lowPassFilter = Quality.entries[out.lowPassFilter.toInt()]
+                upsampling = Quality.entries[out.upsampling.toInt()]
+                bentNormals = out.bentNormals
+                bilateralThreshold = out.bilateralThreshold
+                ssct = AmbientOcclusionOptions.Ssct().apply {
+                    enabled = out.ssct.enabled
+                    lightConeRad = out.ssct.lightConeRad
+                    shadowDistance = out.ssct.shadowDistance
+                    contactDistanceMax = out.ssct.contactDistanceMax
+                    intensity = out.ssct.intensity
+                    lightDirection = floatArrayOf(out.ssct.lightDirection[0], out.ssct.lightDirection[1], out.ssct.lightDirection[2])
+                    depthBias = out.ssct.depthBias
+                    depthSlopeBias = out.ssct.depthSlopeBias
+                    sampleCount = out.ssct.sampleCount.toInt()
+                    rayCount = out.ssct.rayCount.toInt()
+                }
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewAmbientOcclusionOptions>()
@@ -372,7 +478,27 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
-        get() = TemporalAntiAliasingOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewTemporalAntiAliasingOptions>()
+            FilaView_getTemporalAntiAliasingOptions(nativeHandle, out.ptr)
+            TemporalAntiAliasingOptions().apply {
+                enabled = out.enabled
+                feedback = out.feedback
+                lodBias = out.lodBias
+                sharpness = out.sharpness
+                upscaling = out.upscaling
+                filterHistory = out.filterHistory
+                filterInput = out.filterInput
+                useYCoCg = out.useYCoCg
+                hdr = out.hdr
+                boxType = out.boxType
+                boxClipping = out.boxClipping
+                jitterPattern = out.jitterPattern
+                varianceGamma = out.varianceGamma
+                preventFlickering = out.preventFlickering
+                historyReprojection = out.historyReprojection
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewTemporalAntiAliasingOptions>()
@@ -396,7 +522,17 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
-        get() = ScreenSpaceReflectionsOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewScreenSpaceReflectionsOptions>()
+            FilaView_getScreenSpaceReflectionsOptions(nativeHandle, out.ptr)
+            ScreenSpaceReflectionsOptions().apply {
+                enabled = out.enabled
+                thickness = out.thickness
+                bias = out.bias
+                maxDistance = out.maxDistance
+                stride = out.stride
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewScreenSpaceReflectionsOptions>()
@@ -424,7 +560,17 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var vsmShadowOptions: VsmShadowOptions
-        get() = VsmShadowOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewVsmShadowOptions>()
+            FilaView_getVsmShadowOptions(nativeHandle, out.ptr)
+            VsmShadowOptions().apply {
+                anisotropy = out.anisotropy.toInt()
+                mipmapping = out.mipmapping
+                msaaSamples = out.msaaSamples.toInt()
+                highPrecision = out.highPrecision
+                lightBleedReduction = out.lightBleedReduction
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewVsmShadowOptions>()
@@ -438,7 +584,14 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var softShadowOptions: SoftShadowOptions
-        get() = SoftShadowOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewSoftShadowOptions>()
+            FilaView_getSoftShadowOptions(nativeHandle, out.ptr)
+            SoftShadowOptions().apply {
+                penumbraScale = out.penumbraScale
+                penumbraRatioScale = out.penumbraRatioScale
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewSoftShadowOptions>()
@@ -449,7 +602,11 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var guardBandOptions: GuardBandOptions
-        get() = GuardBandOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewGuardBandOptions>()
+            FilaView_getGuardBandOptions(nativeHandle, out.ptr)
+            GuardBandOptions().apply { enabled = out.enabled }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewGuardBandOptions>()
@@ -459,7 +616,11 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var stereoscopicOptions: StereoscopicOptions
-        get() = StereoscopicOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewStereoscopicOptions>()
+            FilaView_getStereoscopicOptions(nativeHandle, out.ptr)
+            StereoscopicOptions().apply { enabled = out.enabled }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewStereoscopicOptions>()
@@ -469,7 +630,15 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
 
     actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
-        get() = MultiSampleAntiAliasingOptions()
+        get() = memScoped {
+            val out = alloc<FilaViewMultiSampleAntiAliasingOptions>()
+            FilaView_getMultiSampleAntiAliasingOptions(nativeHandle, out.ptr)
+            MultiSampleAntiAliasingOptions().apply {
+                enabled = out.enabled
+                sampleCount = out.sampleCount.toInt()
+                customResolve = out.customResolve
+            }
+        }
         set(value) {
             memScoped {
                 val cOptions = alloc<FilaViewMultiSampleAntiAliasingOptions>()

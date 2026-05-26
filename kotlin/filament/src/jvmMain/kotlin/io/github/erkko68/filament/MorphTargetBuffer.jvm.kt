@@ -46,14 +46,16 @@ actual class MorphTargetBuffer(val nativeMorphTargetBuffer: JniMorphTargetBuffer
     actual fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int) {
         val buffer = ByteBuffer.allocateDirect(positions.size * 4).order(ByteOrder.nativeOrder()).asFloatBuffer()
         buffer.put(positions)
-        buffer.rewind()
+        buffer.position(0)
+        buffer.limit(count)
         nativeMorphTargetBuffer.setPositionsAt(engine.nativeEngine, targetIndex, buffer, 0)
     }
 
     actual fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int) {
         val buffer = ByteBuffer.allocateDirect(tangents.size * 2).order(ByteOrder.nativeOrder()).asShortBuffer()
         buffer.put(tangents)
-        buffer.rewind()
+        buffer.position(0)
+        buffer.limit(count)
         nativeMorphTargetBuffer.setTangentsAt(engine.nativeEngine, targetIndex, buffer, 0)
     }
 }

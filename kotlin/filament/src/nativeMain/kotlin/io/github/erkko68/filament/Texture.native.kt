@@ -75,6 +75,11 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
 
         internal fun toNative(): FilaTextureInternalFormat {
             return when (this) {
+                R8 -> FILA_TEXTURE_INTERNAL_FORMAT_R8
+                R8_SNORM -> FILA_TEXTURE_INTERNAL_FORMAT_R8_SNORM
+                R8UI -> FILA_TEXTURE_INTERNAL_FORMAT_R8UI
+                R8I -> FILA_TEXTURE_INTERNAL_FORMAT_R8I
+                STENCIL8 -> FILA_TEXTURE_INTERNAL_FORMAT_STENCIL8
                 R16F -> FILA_TEXTURE_INTERNAL_FORMAT_R16F
                 R16UI -> FILA_TEXTURE_INTERNAL_FORMAT_R16UI
                 R16I -> FILA_TEXTURE_INTERNAL_FORMAT_R16I

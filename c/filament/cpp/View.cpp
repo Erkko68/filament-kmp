@@ -95,6 +95,16 @@ void FilaView_setDynamicResolutionOptions(FilaView* view, const FilaViewDynamicR
     FILA_CAST(View, view)->setDynamicResolutionOptions(cppOptions);
 }
 
+void FilaView_getDynamicResolutionOptions(const FilaView* view, FilaViewDynamicResolutionOptions* out) {
+    const View::DynamicResolutionOptions& opts = FILA_CONST_CAST(View, view)->getDynamicResolutionOptions();
+    out->minScale[0] = opts.minScale.x; out->minScale[1] = opts.minScale.y;
+    out->maxScale[0] = opts.maxScale.x; out->maxScale[1] = opts.maxScale.y;
+    out->sharpness = opts.sharpness;
+    out->enabled = opts.enabled;
+    out->homogeneousScaling = opts.homogeneousScaling;
+    out->quality = static_cast<FilaViewQualityLevel>(opts.quality);
+}
+
 void FilaView_getLastDynamicResolutionScale(const FilaView* view, float out[2]) {
     filament::math::float2 scale = FILA_CONST_CAST(View, view)->getLastDynamicResolutionScale();
     out[0] = scale.x; out[1] = scale.y;
@@ -122,10 +132,30 @@ void FilaView_setSoftShadowOptions(FilaView* view, const FilaViewSoftShadowOptio
     FILA_CAST(View, view)->setSoftShadowOptions(cppOptions);
 }
 
+void FilaView_getVsmShadowOptions(const FilaView* view, FilaViewVsmShadowOptions* out) {
+    const View::VsmShadowOptions& opts = FILA_CONST_CAST(View, view)->getVsmShadowOptions();
+    out->anisotropy = opts.anisotropy;
+    out->mipmapping = opts.mipmapping;
+    out->msaaSamples = opts.msaaSamples;
+    out->highPrecision = opts.highPrecision;
+    out->minVarianceScale = opts.minVarianceScale;
+    out->lightBleedReduction = opts.lightBleedReduction;
+}
+
+void FilaView_getSoftShadowOptions(const FilaView* view, FilaViewSoftShadowOptions* out) {
+    const View::SoftShadowOptions& opts = FILA_CONST_CAST(View, view)->getSoftShadowOptions();
+    out->penumbraScale = opts.penumbraScale;
+    out->penumbraRatioScale = opts.penumbraRatioScale;
+}
+
 void FilaView_setRenderQuality(FilaView* view, FilaViewQualityLevel hdrColorBufferQuality) {
     View::RenderQuality renderQuality;
     renderQuality.hdrColorBuffer = static_cast<View::QualityLevel>(hdrColorBufferQuality);
     FILA_CAST(View, view)->setRenderQuality(renderQuality);
+}
+
+FilaViewQualityLevel FilaView_getRenderQuality(const FilaView* view) {
+    return static_cast<FilaViewQualityLevel>(FILA_CONST_CAST(View, view)->getRenderQuality().hdrColorBuffer);
 }
 
 void FilaView_setDynamicLightingOptions(FilaView* view, float zLightNear, float zLightFar) {

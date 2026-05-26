@@ -13,7 +13,14 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         return 0
     }
 
+    // Upstream LightManager binding doesn't expose `destroy(Entity)` —
+    // components are usually torn down via `engine.destroyEntity`, but we
+    // don't have an Engine reference here. Track local removals so the
+    // common API's destroy / hasComponent round-trip behaves as expected.
+    private val destroyed = mutableSetOf<Entity>()
+
     actual fun hasComponent(entity: Entity): Boolean {
+        if (entity in destroyed) return false
         return jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))
     }
 
@@ -22,7 +29,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun destroy(entity: Entity) {
-        // Destroyed via engine.destroyEntity or component manager specific destroy if exposed
+        destroyed += entity
     }
 
     actual fun getType(instance: EntityInstance): Type {
@@ -92,17 +99,19 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         return jsLightManager.getFalloff(instance.unsafeCast<JSLightManagerInstance>()).toFloat()
     }
 
+    // get{Inner,Outer}ConeAngle aren't bound in upstream jsbindings.cpp (v1.71.4) —
+    // mirror the last setSpotLightCone value per-instance so the common getters
+    // return what was set.
+    private val coneAngles = mutableMapOf<Int, Pair<Float, Float>>()
+
     actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) {
+        coneAngles[instance] = inner to outer
         jsLightManager.setSpotLightCone(instance.unsafeCast<JSLightManagerInstance>(), inner, outer)
     }
 
-    actual fun getInnerConeAngle(instance: EntityInstance): Float {
-        return 0.0f
-    }
+    actual fun getInnerConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.first ?: 0f
 
-    actual fun getOuterConeAngle(instance: EntityInstance): Float {
-        return 0.0f
-    }
+    actual fun getOuterConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.second ?: 0f
 
     actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) {
         jsLightManager.setSunAngularRadius(instance.unsafeCast<JSLightManagerInstance>(), angularRadius)
@@ -196,19 +205,16 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun shadowOptions(options: ShadowOptions): Builder {
-            val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.js.LightManager_ShadowOptions>()
-            jsOptions.mapSize = options.mapSize
-            jsOptions.shadowCascades = options.shadowCascades
-            jsOptions.constantBias = options.constantBias
-            jsOptions.normalBias = options.normalBias
-            jsOptions.shadowFar = options.shadowFar
-            jsOptions.shadowNearHint = options.shadowNearHint
-            jsOptions.shadowFarHint = options.shadowFarHint
-            jsOptions.stable = options.stable
-            jsOptions.screenSpaceContactShadows = options.screenSpaceContactShadows
-            jsOptions.stepCount = options.stepCount
-            jsOptions.maxShadowDistance = options.maxShadowDistance
-            jsBuilder.shadowOptions(jsOptions)
+            // No-op on JS — see UPSTREAM_INCONSISTENCIES.md "LightManager
+            // shadowOptions". jsbindings.cpp registers the ShadowOptions
+            // value_object with a `transform` field typed as mat4f, but the
+            // only mat4 type in the embind registry is `flatmat4` — a wrapper
+            // struct registered under a different RTTI. embind looks up mat4f,
+            // finds nothing, and throws "unbound types" for any input. The
+            // upstream `Filament.shadowOptions(overrides)` wrapper itself
+            // omits `transform`/`lispsm`/`shadowBulbRadius` from its defaults
+            // because no JS caller can populate them. Until upstream registers
+            // mat4f (or changes the field to flatmat4), this is unreachable.
             return this
         }
 

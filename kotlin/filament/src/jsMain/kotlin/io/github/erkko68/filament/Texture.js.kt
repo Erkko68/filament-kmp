@@ -9,6 +9,10 @@ import io.github.erkko68.filament.js.Texture_Builder as JSTextureBuilder
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class Texture(val jsTexture: JSTexture) {
+    // Filament JS exposes dimensions only via `_getWidth(engine, level)` etc.
+    // (see jsbindings.cpp), so when an engine is known we delegate; otherwise
+    // we fall back to the dimensions captured when the Texture was built.
+    internal var engine: Engine? = null
     private var _width = 0
     private var _height = 0
     private var _depth = 0
@@ -16,7 +20,8 @@ actual class Texture(val jsTexture: JSTexture) {
     private var _format = InternalFormat.RGBA8
     private var _target = Sampler.SAMPLER_2D
 
-    internal constructor(jsTexture: JSTexture, width: Int, height: Int, depth: Int, levels: Int, format: InternalFormat, target: Sampler) : this(jsTexture) {
+    internal constructor(jsTexture: JSTexture, engine: Engine, width: Int, height: Int, depth: Int, levels: Int, format: InternalFormat, target: Sampler) : this(jsTexture) {
+        this.engine = engine
         _width = width
         _height = height
         _depth = depth
@@ -65,7 +70,18 @@ actual class Texture(val jsTexture: JSTexture) {
 
         actual fun sampler(target: Sampler): Builder {
             _target = target
-            // JS builder might not have sampler(), target is often determined by dimensions
+            // Upstream binds only SAMPLER_2D / SAMPLER_CUBEMAP / SAMPLER_EXTERNAL.
+            // Map common-API samplers to the closest JS-bound option so the
+            // native side knows e.g. that a texture is a cubemap (needed by
+            // Skybox/IndirectLight which assert isCubemap()).
+            val jsSampler = when (target) {
+                Sampler.SAMPLER_CUBEMAP, Sampler.SAMPLER_CUBEMAP_ARRAY ->
+                    io.github.erkko68.filament.js.Texture_Sampler.SAMPLER_CUBEMAP
+                Sampler.SAMPLER_EXTERNAL ->
+                    io.github.erkko68.filament.js.Texture_Sampler.SAMPLER_EXTERNAL
+                else -> io.github.erkko68.filament.js.Texture_Sampler.SAMPLER_2D
+            }
+            jsBuilder.sampler(jsSampler)
             return this
         }
 
@@ -98,7 +114,7 @@ actual class Texture(val jsTexture: JSTexture) {
         }
 
         actual fun build(engine: Engine): Texture {
-            return Texture(jsBuilder.build(engine.jsEngine), _width, _height, _depth, _levels, _format, _target)
+            return Texture(jsBuilder.build(engine.jsEngine), engine, _width, _height, _depth, _levels, _format, _target)
         }
     }
 
@@ -143,22 +159,36 @@ actual class Texture(val jsTexture: JSTexture) {
         actual val stride: Int,
         actual val callback: (() -> Unit)?
     ) {
-        internal val jsPbd: JSPixelBufferDescriptor = js("new Filament.PixelBufferDescriptor(storage, mapFormat(format), mapType(type))").unsafeCast<JSPixelBufferDescriptor>()
+        internal val jsPbd: JSPixelBufferDescriptor = run {
+            // Upstream exposes `Filament.PixelBuffer(typedarray, format, datatype)` (a
+            // function, not a constructor) which copies the typed array into the WASM
+            // heap and returns a driver$PixelBufferDescriptor. The class itself is
+            // `Filament.driver$PixelBufferDescriptor`; there's no `Filament.PixelBufferDescriptor`.
+            val u8 = org.khronos.webgl.Int8Array(storage.size).also { arr ->
+                storage.forEachIndexed { i, b -> arr.asDynamic()[i] = b }
+            }
+            val typed = org.khronos.webgl.Uint8Array(u8.buffer)
+            (js("Filament").PixelBuffer)(typed, mapFormat(format), mapType(type)).unsafeCast<JSPixelBufferDescriptor>()
+        }
     }
 
     actual fun getWidth(level: Int): Int {
+        engine?.let { return jsTexture.getWidth(it.jsEngine, level).toInt() }
         return if (level == 0) _width else (_width shr level).coerceAtLeast(1)
     }
 
     actual fun getHeight(level: Int): Int {
+        engine?.let { return jsTexture.getHeight(it.jsEngine, level).toInt() }
         return if (level == 0) _height else (_height shr level).coerceAtLeast(1)
     }
 
     actual fun getDepth(level: Int): Int {
+        engine?.let { return jsTexture.getDepth(it.jsEngine, level).toInt() }
         return if (level == 0) _depth else (_depth shr level).coerceAtLeast(1)
     }
 
     actual fun getLevels(): Int {
+        engine?.let { return jsTexture.getLevels(it.jsEngine).toInt() }
         return _levels
     }
 

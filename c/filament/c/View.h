@@ -215,13 +215,17 @@ void FilaView_setDithering(FilaView* view, FilaViewDithering dithering);
 FilaViewDithering FilaView_getDithering(const FilaView* view);
 
 void FilaView_setDynamicResolutionOptions(FilaView* view, const FilaViewDynamicResolutionOptions* options);
+void FilaView_getDynamicResolutionOptions(const FilaView* view, FilaViewDynamicResolutionOptions* out);
 void FilaView_getLastDynamicResolutionScale(const FilaView* view, float out[2]);
 
 void FilaView_setShadowType(FilaView* view, FilaViewShadowType type);
 void FilaView_setVsmShadowOptions(FilaView* view, const FilaViewVsmShadowOptions* options);
+void FilaView_getVsmShadowOptions(const FilaView* view, FilaViewVsmShadowOptions* out);
 void FilaView_setSoftShadowOptions(FilaView* view, const FilaViewSoftShadowOptions* options);
+void FilaView_getSoftShadowOptions(const FilaView* view, FilaViewSoftShadowOptions* out);
 
 void FilaView_setRenderQuality(FilaView* view, FilaViewQualityLevel hdrColorBufferQuality);
+FilaViewQualityLevel FilaView_getRenderQuality(const FilaView* view);
 void FilaView_setDynamicLightingOptions(FilaView* view, float zLightNear, float zLightFar);
 
 void FilaView_setShadowingEnabled(FilaView* view, bool enabled);

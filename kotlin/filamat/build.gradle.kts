@@ -25,6 +25,9 @@ kotlin {
         commonMain.dependencies {
             api(project(":kotlin:filament"))
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         androidMain.dependencies {
             implementation("com.google.android.filament:filamat-android:$filaVersion")
         }

@@ -437,7 +437,12 @@ external open class `IndexBuffer_Builder` {
 external open class `BufferObject_Builder` {
     open fun size(byteCount: Number): `BufferObject_Builder`
     open fun bindingType(type: `BufferObject_BindingType`): `BufferObject_Builder`
+    // Upstream filament.js's loadClassExtensions doesn't install a `.build`
+    // wrapper on this $Builder (unlike VertexBuffer/IndexBuffer/etc.), so
+    // only the underscore-prefixed embind binding is callable.
+    @JsName("_build")
     open fun build(engine: Engine): BufferObject
+    open fun delete()
 }
 
 external open class `RenderableManager_Builder` {
@@ -645,7 +650,7 @@ external open class Renderer {
     open fun shouldRenderFrame(): Boolean
     open fun setPresentationTime(monotonicClockNanos: Number)
     open fun setVsyncTime(steadyClockTimeNano: Number)
-    open fun skipFrame()
+    open fun skipFrame(vsyncSteadyClockTimeNano: dynamic)
     open fun renderStandaloneView(view: View)
 }
 
@@ -822,9 +827,10 @@ external open class Scene {
 }
 
 external open class RenderTarget {
-    open fun getMipLevel(): Number
-    open fun getFace(): `Texture_CubemapFace`
-    open fun getLayer(): Number
+    open fun getMipLevel(attachment: `RenderTarget_AttachmentPoint`): Number
+    open fun getFace(attachment: `RenderTarget_AttachmentPoint`): `Texture_CubemapFace`
+    open fun getLayer(attachment: `RenderTarget_AttachmentPoint`): Number
+    open fun getTexture(attachment: `RenderTarget_AttachmentPoint`): Texture
 
     companion object {
         fun Builder(): `RenderTarget_Builder`

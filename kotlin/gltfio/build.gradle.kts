@@ -31,6 +31,9 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":kotlin:filament"))
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         androidMain.dependencies {
             implementation("com.google.android.filament:gltfio-android:$filaVersion")
         }

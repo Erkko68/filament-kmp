@@ -63,10 +63,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     }
 
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
-        // The JS binding's `skipFrame` takes no parameter — the C++ overload that
-        // accepts a vsync time isn't exposed via embind. Pass-through anyway so
-        // the common API stays consistent across platforms.
-        jsRenderer.skipFrame()
+        jsRenderer.skipFrame(js("BigInt")(vsyncSteadyClockTimeNano.toString()))
     }
 
     actual fun render(view: View) {

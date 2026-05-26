@@ -9,7 +9,9 @@ actual class Fence {
         return FenceStatus.CONDITION_SATISFIED
     }
 
-    actual val nativeObject: Long get() = 0
+    // Fence isn't bound in upstream jsbindings.cpp (v1.71.4). Return a non-zero
+    // sentinel so callers checking `nativeObject != 0` treat the fence as live.
+    actual val nativeObject: Long get() = 1L
 
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }

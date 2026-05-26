@@ -105,6 +105,14 @@ void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClea
     });
 }
 
+void FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClearOptions* out) {
+    const Renderer::ClearOptions& opts = FILA_CONST_CAST(Renderer, renderer)->getClearOptions();
+    out->clearColor[0] = opts.clearColor.r; out->clearColor[1] = opts.clearColor.g;
+    out->clearColor[2] = opts.clearColor.b; out->clearColor[3] = opts.clearColor.a;
+    out->clear = opts.clear;
+    out->discard = opts.discard;
+}
+
 void FilaRenderer_setPresentationTime(FilaRenderer* renderer, uint64_t monotonicClockNanos) {
     FILA_CAST(Renderer, renderer)->setPresentationTime(monotonicClockNanos);
 }

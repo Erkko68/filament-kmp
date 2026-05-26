@@ -1,8 +1,12 @@
 package io.github.erkko68.filament
 
-actual class SkinningBuffer(internal val jsSkinningBuffer: Any? = null) {
-    actual val boneCount: Int get() = 0 // not exposed in JS bindings
-
+// SkinningBuffer is not bound in upstream jsbindings.cpp (v1.71.4); skinning
+// runs through RenderableManager.Builder. The actual stores Builder inputs so
+// common-tests reading `boneCount` pass.
+actual class SkinningBuffer internal constructor(
+    internal val jsSkinningBuffer: Any? = null,
+    actual val boneCount: Int = 0,
+) {
     actual fun setBonesAsMatrices(
         engine: Engine,
         matrices: FloatArray,
@@ -22,7 +26,10 @@ actual class SkinningBuffer(internal val jsSkinningBuffer: Any? = null) {
     }
 
     actual class Builder {
+        private var boneCount: Int = 0
+
         actual fun boneCount(boneCount: Int): Builder {
+            this.boneCount = boneCount
             return this
         }
 
@@ -31,7 +38,7 @@ actual class SkinningBuffer(internal val jsSkinningBuffer: Any? = null) {
         }
 
         actual fun build(engine: Engine): SkinningBuffer {
-            return SkinningBuffer()
+            return SkinningBuffer(boneCount = boneCount)
         }
     }
 }

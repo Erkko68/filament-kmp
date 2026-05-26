@@ -1,0 +1,147 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin' }
+      - uses: ./.github/actions/setup-gradle-cached
+      - name: Run JS tests
+        run: |
+          ./gradlew \
+            :kotlin:filament:jsTest \
+            :kotlin:filamat:jsTest \
+            :kotlin:filament-utils:jsTest \
+            :kotlin:gltfio:jsTest \
+            --no-configuration-cache
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-test-reports
+          path: kotlin/*/build/reports/tests/
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.x' }
+      - uses: ./.github/actions/setup-gradle-cached
+      - name: Read Filament version
+        id: ver
+        run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        with:
+          path: prebuilts/iosSimulatorArm64
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-iosSimulatorArm64
+      - name: Download prebuilts
+        run: ./gradlew downloadPrebuilts_iosSimulatorArm64
+      - name: Run iOS simulator tests
+        run: |
+          ./gradlew \
+            :kotlin:filament:iosSimulatorArm64Test \
+            :kotlin:filamat:iosSimulatorArm64Test \
+            :kotlin:filament-utils:iosSimulatorArm64Test \
+            :kotlin:gltfio:iosSimulatorArm64Test \
+            --no-configuration-cache
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-reports
+          path: kotlin/*/build/reports/tests/
+
+  jvm:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: macosArm64
+          - os: ubuntu-latest
+            target: linuxX64
+          - os: ubuntu-24.04-arm
+            target: linuxArm64
+          - os: windows-latest
+            target: mingwX64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin' }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.x' }
+      - uses: ./.github/actions/setup-gradle-cached
+      - name: Install C++ deps (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
+      - name: Read Filament version
+        id: ver
+        shell: bash
+        run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        with:
+          path: prebuilts/${{ matrix.target }}
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
+      - name: Download prebuilts
+        run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+      - name: Run JVM tests
+        run: |
+          ./gradlew \
+            :kotlin:filament:jvmTest \
+            :kotlin:filamat:jvmTest \
+            :kotlin:filament-utils:jvmTest \
+            :kotlin:gltfio:jvmTest \
+            --no-configuration-cache
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jvm-test-reports-${{ matrix.target }}
+          path: kotlin/*/build/reports/tests/
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin' }
+      - uses: ./.github/actions/setup-gradle-cached
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+      - name: Enable KVM (for android emulator)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          script: |
+            ./gradlew \
+              :kotlin:filament:connectedDebugAndroidTest \
+              :kotlin:filamat:connectedDebugAndroidTest \
+              :kotlin:filament-utils:connectedDebugAndroidTest \
+              :kotlin:gltfio:connectedDebugAndroidTest \
+              --no-configuration-cache
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-reports
+          path: kotlin/*/build/reports/androidTests/

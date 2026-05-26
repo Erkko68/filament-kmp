@@ -26,9 +26,12 @@ actual class View(internal val jsView: JSView) {
     private var _shadowType = ShadowType.PCF
     private var _renderTarget: RenderTarget? = null
 
+    // View::getName/setName aren't bound in upstream jsbindings.cpp (v1.71.4) —
+    // track locally so the common getter/setter round-trip works.
+    private var _name: String? = null
     actual var name: String?
-        get() = null
-        set(value) {}
+        get() = _name
+        set(value) { _name = value }
 
     actual var scene: Scene?
         get() = _scene

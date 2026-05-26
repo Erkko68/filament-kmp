@@ -26,8 +26,14 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
-    androidTarget() {
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+    androidTarget {
         publishLibraryVariants("release", "debug")
+        // Make `androidInstrumentedTest` inherit from `commonTest` so the
+        // shared `expect`s (e.g. createTestSurface, TestMaterials) line up
+        // with the per-Android `actual`s. The default hierarchy template
+        // only wires `androidUnitTest` to commonTest.
+        instrumentedTestVariant.sourceSetTree.set(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.test)
     }
 
     // Declare all targets
@@ -49,6 +55,18 @@ kotlin {
                 freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
             }
         }
+    }
+}
+
+// ── androidx.test runner deps for connectedDebugAndroidTest ───────────────────
+// `connectedDebugAndroidTest` needs an instrumentation runner on the device;
+// commonTest sources flow into androidInstrumentedTest via the default
+// hierarchy template, so every module that applies this plugin gets the deps.
+val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
+kotlin.sourceSets.named("androidInstrumentedTest").configure {
+    dependencies {
+        implementation(libs.findLibrary("androidx-test-runner").get())
+        implementation(libs.findLibrary("androidx-test-ext-junit").get())
     }
 }
 
@@ -79,5 +97,8 @@ android {
     val modulePart = project.name.replace("-", ".")
     namespace  = "$groupStr.$modulePart"
     compileSdk = 36
-    defaultConfig { minSdk = 24 }
+    defaultConfig {
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
