@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.gltfio.jni.AssetLoader as JniAssetLoader
+import io.github.erkko68.filament.gltfio.jni.FilamentInstance as JniFilamentInstance
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -32,9 +33,16 @@ actual class AssetLoader(val jni: JniAssetLoader) {
         val byteBuffer = ByteBuffer.allocateDirect(buffer.size).order(ByteOrder.nativeOrder())
         byteBuffer.put(buffer)
         byteBuffer.rewind()
-        val jniInstances = instances.map { it.jni }.toTypedArray()
-        val jniAsset = jni.createInstancedAsset(byteBuffer, jniInstances)
-        return jniAsset?.let { FilamentAsset(it) }
+        // The JNI wrapper writes a fresh JniFilamentInstance into each slot; we then
+        // hand those back to the Kotlin wrappers (which may have been constructed empty).
+        val jniInstances = arrayOfNulls<JniFilamentInstance>(instances.size)
+        @Suppress("UNCHECKED_CAST")
+        val jniAsset = jni.createInstancedAsset(byteBuffer, jniInstances as Array<JniFilamentInstance>)
+        if (jniAsset == null) return null
+        for (i in instances.indices) {
+            instances[i].jni = jniInstances[i]
+        }
+        return FilamentAsset(jniAsset)
     }
 
     actual fun createInstance(asset: FilamentAsset): FilamentInstance? {

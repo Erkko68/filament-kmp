@@ -46,6 +46,28 @@ kotlin {
         browser { binaries.executable() }
     }
 
+    // ── JS test bootstrapping ────────────────────────────────────────────────
+    // Karma needs filament.js + filament.wasm loaded before any Kotlin test
+    // code references globals like `Engine` / `Renderer`. Stage the WASM
+    // loader, binary, and bootstrap script into every module's jsTest
+    // resources. Each module also keeps a karma.config.d/filament-setup.js
+    // committed alongside its build.gradle.kts (Karma reads that automatically
+    // from <projectDir>/karma.config.d).
+    val stagedWebAssets = layout.buildDirectory.dir("filamentWebAssets")
+    val stageFilamentWebAssets = tasks.register<Sync>("stageFilamentWebAssetsForJsTest") {
+        dependsOn(rootProject.tasks.named("downloadPrebuilts_web"))
+        from(rootProject.layout.projectDirectory.dir("prebuilts/web")) {
+            include("filament.js", "filament.wasm")
+        }
+        from(rootProject.layout.projectDirectory.file(
+            "gradle/karma/filament-karma-bootstrap.js"
+        ))
+        into(stagedWebAssets)
+    }
+    sourceSets.named("jsTest") {
+        resources.srcDir(stageFilamentWebAssets)
+    }
+
     applyDefaultHierarchyTemplate()
 
     // iOS minimum deployment target for native binaries

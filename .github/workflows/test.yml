@@ -95,8 +95,10 @@ jobs:
           path: prebuilts/${{ matrix.target }}
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
       - name: Download prebuilts
+        shell: bash
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
       - name: Run JVM tests
+        shell: bash
         run: |
           ./gradlew \
             :kotlin:filament:jvmTest \
@@ -132,13 +134,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: |
-            ./gradlew \
-              :kotlin:filament:connectedDebugAndroidTest \
-              :kotlin:filamat:connectedDebugAndroidTest \
-              :kotlin:filament-utils:connectedDebugAndroidTest \
-              :kotlin:gltfio:connectedDebugAndroidTest \
-              --no-configuration-cache
+          script: ./gradlew :kotlin:filament:connectedDebugAndroidTest :kotlin:filamat:connectedDebugAndroidTest :kotlin:filament-utils:connectedDebugAndroidTest :kotlin:gltfio:connectedDebugAndroidTest --no-configuration-cache
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v4

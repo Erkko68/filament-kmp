@@ -41,11 +41,17 @@ public class UbershaderProvider implements MaterialProvider {
     @NotNull
     public Material[] getMaterials() {
         final int count = nGetMaterialCount(mNativeObject);
-        Material[] result = new Material[count];
         long[] natives = new long[count];
         nGetMaterials(mNativeObject, natives);
+        // ArchiveCache pre-allocates a slot per ubershader spec but populates them
+        // lazily as getMaterial() is called, so unpopulated slots come back as 0.
+        // Drop them — wrapping a null pointer in Material would crash in its ctor.
+        int populated = 0;
+        for (int i = 0; i < count; i++) if (natives[i] != 0) populated++;
+        Material[] result = new Material[populated];
+        int j = 0;
         for (int i = 0; i < count; i++) {
-            result[i] = new Material(natives[i]);
+            if (natives[i] != 0) result[j++] = new Material(natives[i]);
         }
         return result;
     }
