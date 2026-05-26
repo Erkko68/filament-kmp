@@ -51,7 +51,7 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 | `Modifier.orbitGestures` | Attaches touch/mouse gestures for orbit camera control. |
 | `Modifier.mapGestures` | Attaches touch/mouse gestures for map camera control. |
 | `Modifier.flightGestures` | Attaches touch/mouse gestures for flight camera control. |
-| `Modifier.pickOnTap` | Issues a Filament picking query on tap and delivers the result. **Note:** the WebGL backend currently has a format-mismatch bug that breaks picking on the web target — see [Platform Notes](../platform-notes.md#gpu-picking-does-not-work-reliably). |
+| `Modifier.pickOnTap` | Issues a Filament picking query on tap and delivers the result. |
 
 ### Scene Objects
 

@@ -94,18 +94,6 @@ APIs without a Filament.js equivalent throw `UnsupportedOperationException` with
 
 Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
 
-### GPU picking does not work reliably
-
-`View.pick()` (and `Modifier.pickOnTap`) compile and the callback fires, but the result is always `renderable = 0` — i.e. every tap reports a miss. Filament's WebGL backend has a format-mismatch bug on the integer-formatted picking render target: clears go through `glClearBufferfv` (float) instead of `glClearBufferuiv` (uint), and the readback hits the same class of mismatch. You'll see the symptom in the browser console:
-
-```
-GL_INVALID_OPERATION: glClearBufferfv: No defined conversion between clear value and attachment format.
-```
-
-The warning starts firing the first time you call `view.pick()` and repeats every frame the picking pass stays attached. This is a bug in the prebuilt `filament.js` / `filament.wasm`, not in this binding — fixing it requires patching upstream Filament's WebGL backend and shipping a custom build.
-
-Workaround until then: implement CPU ray–AABB picking against your known scene entities (compute a world-space ray from the camera + tap NDC, intersect each renderable's AABB via `RenderableManager.getAxisAlignedBoundingBox`). The same code path works on every backend.
-
 ### Bundle size
 
 The Filament.js + WASM blob adds **~2 MB compressed** to your web bundle. Lazy-load the `FilamentView`-containing screen if startup time matters.

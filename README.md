@@ -54,7 +54,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.1-rc01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.1-rc02")
         }
     }
 }
