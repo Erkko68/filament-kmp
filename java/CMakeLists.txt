@@ -139,6 +139,15 @@ add_library(filament-jni SHARED
     filament-utils/src/main/cpp/TextureLoader.cpp
 )
 
+# Platform-specific Filament <-> Skia texture-sharing helpers.
+if (APPLE AND FILAMENT_PLATFORM STREQUAL "macos")
+    target_sources(filament-jni PRIVATE filament/src/main/cpp/interop/MetalInterop.mm)
+    set_source_files_properties(filament/src/main/cpp/interop/MetalInterop.mm
+        PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+elseif (WIN32 OR (UNIX AND NOT APPLE))
+    target_sources(filament-jni PRIVATE filament/src/main/cpp/interop/GLInterop.cpp)
+endif()
+
 target_include_directories(filament-jni PRIVATE
     filament/src/main/cpp
     filamat/src/main/cpp

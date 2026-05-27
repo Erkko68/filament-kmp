@@ -20,3 +20,17 @@ fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): En
     }
     return engine
 }
+
+/**
+ * Default engine used by [FilamentView] when the caller does not pass one in.
+ *
+ * On JVM this defers Engine creation until Skiko's on-screen renderer is up so the
+ * Engine can be initialized with that renderer's GPU device/context as its
+ * shared context. That makes GPU textures created by Filament directly visible to
+ * Skia (no readback). While the renderer is still booting this returns null —
+ * [FilamentView] short-circuits until it becomes available.
+ *
+ * On Android / iOS / JS this is just an eager [rememberFilamentEngine] wrapper.
+ */
+@Composable
+internal expect fun rememberDefaultViewEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine?

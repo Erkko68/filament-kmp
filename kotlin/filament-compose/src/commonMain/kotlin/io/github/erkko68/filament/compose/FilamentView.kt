@@ -49,7 +49,10 @@ fun FilamentView(
     stencilBufferEnabled: Boolean = false,
     content: @Composable () -> Unit = {},
 ) {
-    val activeEngine = engine ?: rememberFilamentEngine()
+    // When no engine is provided, the platform decides how to create the default one.
+    // On JVM that creation is async (waits for Skiko's renderer so Filament can share
+    // its GPU context) and may return null for a few frames — short-circuit while we wait.
+    val activeEngine = engine ?: rememberDefaultViewEngine() ?: return
 
     val renderer = remember(activeEngine) { activeEngine.createRenderer() }
     val scene    = remember(activeEngine) { activeEngine.createScene() }
