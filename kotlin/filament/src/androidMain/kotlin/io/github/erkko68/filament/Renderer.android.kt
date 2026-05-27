@@ -35,7 +35,7 @@ actual class Renderer internal constructor(
  
     actual class ClearOptions actual constructor() {
         val nativeOptions = AndroidRenderer.ClearOptions()
-        actual var clearColor: FloatArray
+        actual var clearColor: DoubleArray
             get() = nativeOptions.clearColor
             set(value) { nativeOptions.clearColor = value }
         actual var clear: Boolean

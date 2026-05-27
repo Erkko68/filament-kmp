@@ -35,6 +35,16 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
             return this
         }
 
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
+            nativeBuilder.geometry(index, type.toNative(), vb.nativeVertexBuffer, offset, count)
+            return this
+        }
+
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder {
+            nativeBuilder.geometry(index, type.toNative(), vb.nativeVertexBuffer)
+            return this
+        }
+
         actual fun geometryType(type: GeometryType): Builder {
             nativeBuilder.geometryType(type.toNative())
             return this
@@ -204,8 +214,11 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         return MaterialInstance(nativeInstance)
     }
     
-    actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) = 
+    actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
         nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toNative(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, count)
+
+    actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
+        nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toNative(), vb.nativeVertexBuffer, offset, count)
     
     actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) = 
         nativeRenderableManager.setBlendOrderAt(instance, primitiveIndex, blendOrder)

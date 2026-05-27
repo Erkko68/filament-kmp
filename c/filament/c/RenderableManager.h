@@ -37,6 +37,10 @@ void FilaRenderableManagerBuilder_geometryAt(FilaRenderableManagerBuilder* build
         FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t count);
 void FilaRenderableManagerBuilder_geometryWithIndices(FilaRenderableManagerBuilder* builder, size_t index,
         FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t minIndex, size_t maxIndex, size_t count);
+void FilaRenderableManagerBuilder_geometryNonIndexed(FilaRenderableManagerBuilder* builder, size_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, size_t offset, size_t count);
+void FilaRenderableManagerBuilder_geometryNonIndexedNone(FilaRenderableManagerBuilder* builder, size_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb);
 
 void FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* builder, FilaRenderableManagerGeometryType type);
 void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder, size_t index, const FilaMaterialInstance* materialInstance);
@@ -100,6 +104,7 @@ void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* rm, Fi
 FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex);
 
 void FilaRenderableManager_setGeometryAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t count);
+void FilaRenderableManager_setGeometryAtNonIndexed(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, size_t offset, size_t count);
 
 void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, uint16_t blendOrder);
 uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex);

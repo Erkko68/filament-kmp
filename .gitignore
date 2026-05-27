@@ -4,6 +4,7 @@
 filament-source/
 /filament-main/
 /prebuilts/
+/include/
 **/bin/
 /kotlin-js-store/
 

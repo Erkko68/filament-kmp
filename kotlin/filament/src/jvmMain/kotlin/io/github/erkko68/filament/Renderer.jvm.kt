@@ -36,7 +36,7 @@ actual class Renderer(private val engineRef: Engine, val nativeRenderer: JniRend
     actual class ClearOptions actual constructor() {
         private val jni = JniRenderer.ClearOptions()
 
-        actual var clearColor: FloatArray
+        actual var clearColor: DoubleArray
             get() = jni.clearColor
             set(value) { jni.clearColor = value }
         actual var clear: Boolean

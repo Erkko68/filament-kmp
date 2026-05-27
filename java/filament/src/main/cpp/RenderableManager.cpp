@@ -76,6 +76,16 @@ Java_io_github_erkko68_filament_jni_RenderableManager_nBuilderGeometryNone(JNIEn
 }
 
 JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_jni_RenderableManager_nBuilderGeometryNonIndexed(JNIEnv*, jclass, jlong nativeBuilder, jint index, jint type, jlong nativeVb, jint offset, jint count) {
+    ((RenderableManager::Builder*) nativeBuilder)->geometry((size_t) index, (RenderableManager::PrimitiveType) type, (VertexBuffer*) nativeVb, (size_t) offset, (size_t) count);
+}
+
+JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_jni_RenderableManager_nBuilderGeometryNonIndexedNone(JNIEnv*, jclass, jlong nativeBuilder, jint index, jint type, jlong nativeVb) {
+    ((RenderableManager::Builder*) nativeBuilder)->geometry((size_t) index, (RenderableManager::PrimitiveType) type, (VertexBuffer*) nativeVb);
+}
+
+JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_jni_RenderableManager_nBuilderGeometryType(JNIEnv*, jclass, jlong nativeBuilder, jint type) {
     ((RenderableManager::Builder*) nativeBuilder)->geometryType((RenderableManager::Builder::GeometryType) type);
 }
@@ -374,6 +384,12 @@ JNIEXPORT void JNICALL
 Java_io_github_erkko68_filament_jni_RenderableManager_nSetGeometryAt(JNIEnv*, jclass, jlong nativeManager, jint i, jint primitiveIndex, jint primitiveType, jlong nativeVertexBuffer, jlong nativeIndexBuffer, jint offset, jint count) {
     RenderableManager* rm = (RenderableManager*) nativeManager;
     rm->setGeometryAt((RenderableManager::Instance) i, (size_t) primitiveIndex, (RenderableManager::PrimitiveType) primitiveType, (VertexBuffer*) nativeVertexBuffer, (IndexBuffer*) nativeIndexBuffer, (size_t) offset, (size_t) count);
+}
+
+JNIEXPORT void JNICALL
+Java_io_github_erkko68_filament_jni_RenderableManager_nSetGeometryAtNonIndexed(JNIEnv*, jclass, jlong nativeManager, jint i, jint primitiveIndex, jint primitiveType, jlong nativeVertexBuffer, jint offset, jint count) {
+    RenderableManager* rm = (RenderableManager*) nativeManager;
+    rm->setGeometryAt((RenderableManager::Instance) i, (size_t) primitiveIndex, (RenderableManager::PrimitiveType) primitiveType, (VertexBuffer*) nativeVertexBuffer, (size_t) offset, (size_t) count);
 }
 
 JNIEXPORT jboolean JNICALL

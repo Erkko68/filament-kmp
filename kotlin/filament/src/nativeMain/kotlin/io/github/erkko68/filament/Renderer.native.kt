@@ -18,7 +18,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
     }
 
     actual class ClearOptions actual constructor() {
-        actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        actual var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
         actual var clear: Boolean = false
         actual var discard: Boolean = true
     }
@@ -68,7 +68,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
             val out = alloc<FilaRendererClearOptions>()
             FilaRenderer_getClearOptions(nativeHandle, out.ptr)
             ClearOptions().apply {
-                clearColor = floatArrayOf(out.clearColor[0], out.clearColor[1], out.clearColor[2], out.clearColor[3])
+                clearColor = doubleArrayOf(out.clearColor[0], out.clearColor[1], out.clearColor[2], out.clearColor[3])
                 clear = out.clear
                 discard = out.discard
             }

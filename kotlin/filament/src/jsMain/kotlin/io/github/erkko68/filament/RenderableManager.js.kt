@@ -191,6 +191,21 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         jsRenderableManager.setGeometryAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, count)
     }
 
+    // Non-indexed setGeometryAt is not exposed in jsbindings.cpp as of Filament 1.71.5
+    // (only the indexed overload is bound). Web/WASM cannot reach this path.
+    actual fun setGeometryAt(
+        instance: EntityInstance,
+        primitiveIndex: Int,
+        type: PrimitiveType,
+        vb: VertexBuffer,
+        offset: Int,
+        count: Int
+    ) {
+        throw UnsupportedOperationException(
+            "Non-indexed setGeometryAt is not available on web — Filament.js does not bind this overload."
+        )
+    }
+
     actual fun setBlendOrderAt(
         instance: EntityInstance,
         primitiveIndex: Int,
@@ -325,6 +340,20 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             }
             jsBuilder.geometryMinMax(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, minIndex, maxIndex, count)
             return this
+        }
+
+        // Non-indexed (attribute-less / procedural) geometry overloads are not bound in
+        // jsbindings.cpp as of Filament 1.71.5 — only the indexed overloads are exposed.
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
+            throw UnsupportedOperationException(
+                "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
+            )
+        }
+
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder {
+            throw UnsupportedOperationException(
+                "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
+            )
         }
 
         actual fun geometryType(type: GeometryType): Builder {

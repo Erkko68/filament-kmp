@@ -151,7 +151,7 @@ Java_io_github_erkko68_filament_jni_Renderer_nSetFrameRateOptions(JNIEnv*, jclas
 }
 
 JNIEXPORT void JNICALL
-Java_io_github_erkko68_filament_jni_Renderer_nSetClearOptions(JNIEnv *, jclass, jlong nativeRenderer, jfloat r, jfloat g, jfloat b, jfloat a, jboolean clear, jboolean discard) {
+Java_io_github_erkko68_filament_jni_Renderer_nSetClearOptions(JNIEnv *, jclass, jlong nativeRenderer, jdouble r, jdouble g, jdouble b, jdouble a, jboolean clear, jboolean discard) {
     Renderer* renderer = (Renderer*) nativeRenderer;
     renderer->setClearOptions({ .clearColor = {r, g, b, a}, .clear = (bool) clear, .discard = (bool) discard});
 }

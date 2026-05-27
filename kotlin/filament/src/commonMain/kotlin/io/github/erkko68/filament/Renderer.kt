@@ -13,7 +13,7 @@ expect class Renderer {
     }
 
     class ClearOptions() {
-        var clearColor: FloatArray
+        var clearColor: DoubleArray
         var clear: Boolean
         var discard: Boolean
     }

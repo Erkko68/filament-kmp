@@ -72,6 +72,16 @@ public class RenderableManager {
             return this;
         }
 
+        @NotNull public Builder geometry(int index, @NotNull PrimitiveType type, @NotNull VertexBuffer vertices, int offset, int count) {
+            nBuilderGeometryNonIndexed(mNativeBuilder, index, type.getValue(), vertices.getNativeObject(), offset, count);
+            return this;
+        }
+
+        @NotNull public Builder geometry(int index, @NotNull PrimitiveType type, @NotNull VertexBuffer vertices) {
+            nBuilderGeometryNonIndexedNone(mNativeBuilder, index, type.getValue(), vertices.getNativeObject());
+            return this;
+        }
+
         public enum GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 
         @NotNull public Builder geometryType(@NotNull GeometryType type) { nBuilderGeometryType(mNativeBuilder, type.ordinal()); return this; }
@@ -228,6 +238,10 @@ public class RenderableManager {
         nSetGeometryAt(mNativeObject, i, primitiveIndex, type.getValue(), vertices.getNativeObject(), indices.getNativeObject(), 0, (int) indices.getIndexCount());
     }
 
+    public void setGeometryAt(@io.github.erkko68.filament.jni.proguard.EntityInstance int i, int primitiveIndex, @NotNull PrimitiveType type, @NotNull VertexBuffer vertices, int offset, int count) {
+        nSetGeometryAtNonIndexed(mNativeObject, i, primitiveIndex, type.getValue(), vertices.getNativeObject(), offset, count);
+    }
+
     public void setGlobalBlendOrderEnabledAt(@io.github.erkko68.filament.jni.proguard.EntityInstance int instance, int primitiveIndex, boolean enabled) {
         nSetGlobalBlendOrderEnabledAt(mNativeObject, instance, primitiveIndex, enabled);
     }
@@ -263,6 +277,8 @@ public class RenderableManager {
     private static native void nBuilderGeometry(long nativeBuilder, int index, int type, long nativeVb, long nativeIb, int offset, int minIndex, int maxIndex, int count);
     private static native void nBuilderGeometryShort(long nativeBuilder, int index, int type, long nativeVb, long nativeIb, int offset, int count);
     private static native void nBuilderGeometryNone(long nativeBuilder, int index, int type, long nativeVb, long nativeIb);
+    private static native void nBuilderGeometryNonIndexed(long nativeBuilder, int index, int type, long nativeVb, int offset, int count);
+    private static native void nBuilderGeometryNonIndexedNone(long nativeBuilder, int index, int type, long nativeVb);
     private static native void nBuilderGeometryType(long nativeBuilder, int type);
     private static native void nBuilderMaterial(long nativeBuilder, int index, long nativeMi);
     private static native void nBuilderBlendOrder(long nativeBuilder, int index, int blendOrder);
@@ -313,6 +329,7 @@ public class RenderableManager {
     private static native int nGetInstanceCount(long nativeManager, int i);
     private static native void nClearMaterialInstanceAt(long nativeManager, int i, int primitiveIndex);
     private static native void nSetGeometryAt(long nativeManager, int i, int primitiveIndex, int primitiveType, long nativeVertexBuffer, long nativeIndexBuffer, int offset, int count);
+    private static native void nSetGeometryAtNonIndexed(long nativeManager, int i, int primitiveIndex, int primitiveType, long nativeVertexBuffer, int offset, int count);
     private static native boolean nIsShadowCaster(long nativeManager, int i);
     private static native boolean nIsShadowReceiver(long nativeManager, int i);
     private static native boolean nIsScreenSpaceContactShadowsEnabled(long nativeManager, int i);

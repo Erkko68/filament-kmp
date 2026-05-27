@@ -46,7 +46,7 @@ public class Renderer {
     }
 
     public static class ClearOptions {
-        @NotNull public float[] clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+        @NotNull public double[] clearColor = { 0.0, 0.0, 0.0, 0.0 };
         public boolean clear = false;
         public boolean discard = true;
     }
@@ -165,7 +165,7 @@ public class Renderer {
     private static native void nResetUserTime(long nativeRenderer);
     private static native void nSetDisplayInfo(long nativeRenderer, float refreshRate);
     private static native void nSetFrameRateOptions(long nativeRenderer, float interval, float headRoomRatio, float scaleRate, int history);
-    private static native void nSetClearOptions(long nativeRenderer, float r, float g, float b, float a, boolean clear, boolean discard);
+    private static native void nSetClearOptions(long nativeRenderer, double r, double g, double b, double a, boolean clear, boolean discard);
     private static native void nSkipNextFrames(long nativeObject, int frameCount);
     private static native int nGetFrameToSkipCount(long nativeObject);
 }

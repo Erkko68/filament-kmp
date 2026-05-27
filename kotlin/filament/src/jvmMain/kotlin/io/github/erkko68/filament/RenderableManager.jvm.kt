@@ -30,7 +30,17 @@ actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.fi
             jni.geometry(index, type.toJni(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, minIndex, maxIndex, count)
             return this
         }
-        
+
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
+            jni.geometry(index, type.toJni(), vb.nativeVertexBuffer, offset, count)
+            return this
+        }
+
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder {
+            jni.geometry(index, type.toJni(), vb.nativeVertexBuffer)
+            return this
+        }
+
         actual fun geometryType(type: GeometryType): Builder {
             jni.geometryType(type.toJni())
             return this
@@ -195,6 +205,9 @@ actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.fi
     
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
         nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toJni(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, count)
+
+    actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
+        nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toJni(), vb.nativeVertexBuffer, offset, count)
     
     actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) = nativeRenderableManager.setBlendOrderAt(instance, primitiveIndex, blendOrder)
     actual fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int = nativeRenderableManager.getBlendOrderAt(instance, primitiveIndex)
