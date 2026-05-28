@@ -1,0 +1,11 @@
+{
+  "name": "filament-kmp-karakum",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Karakum configuration for regenerating Filament.js Kotlin externals.",
+  "devDependencies": {
+    "karakum": "1.0.0-alpha.107",
+    "typescript": "^6.0.2"
+  }
+}
