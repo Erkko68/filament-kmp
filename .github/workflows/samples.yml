@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
+        with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
+        with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
+        with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
@@ -89,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
+        with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
@@ -106,5 +106,8 @@ jobs:
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+      - name: Install jextract
+        shell: bash
+        run: python3 scripts/gradle/download_jextract.py
       - working-directory: samples
         run: ./gradlew :desktopApp:compileKotlinJvm --no-configuration-cache

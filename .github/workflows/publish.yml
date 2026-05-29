@@ -11,15 +11,16 @@ on:
         required: true
 
 jobs:
-  # ── Build the combined JNI native per platform (cmake only) ──────────────────
-  # Filament + filamat + gltfio + filament-utils are all built into ONE shared lib
-  # (libfilament-jni) by :java:filament. The other three java/* modules are pure-Java
-  # glue and ship no natives — they pick up the dylib transitively from :java:filament.
+  # ── Build the combined FFM native per platform (cmake only) ──────────────────
+  # filament + filamat + filament-utils + gltfio are all linked into ONE shared lib
+  # (libfilament-c) by :java:filament-ffm via c/CMakeLists.txt -DFILAMENT_BUILD_SHARED=ON.
+  # That single module owns the natives for the whole JVM/Panama (FFM) stack; the
+  # :kotlin:* jvm artifacts pick it up transitively as a published dependency.
   #
-  # Layout uploaded: <platform-arch>/<libfilament-jni.{dylib,so,dll}>.
+  # Layout uploaded: <platform-arch>/libfilament-c.{dylib,so,dll}.
   # download-artifact + merge-multiple later collapses every platform into one
-  # jni-artifacts/ dir that's consumed via -PjniArtifactsDir in :java:filament.
-  build-jni:
+  # c-artifacts/ dir that's consumed via -PcArtifactsDir in :java:filament-ffm.
+  build-natives:
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
+        with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
@@ -57,30 +58,32 @@ jobs:
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
-      - name: Build combined JNI native
+      # cmakeBuildFilamentCJvm only links the shared lib — no jextract needed here
+      # (the generated Java is produced by the publish job, where it's compiled).
+      - name: Build combined FFM native
         shell: bash
-        run: ./gradlew :java:filament:cmakeBuild --no-configuration-cache
+        run: ./gradlew :java:filament-ffm:cmakeBuildFilamentCJvm --no-configuration-cache
       - name: Stage native
         shell: bash
         run: |
-          dest="jni-artifacts/${{ matrix.arch }}"
+          dest="c-artifacts/${{ matrix.arch }}"
           mkdir -p "$dest"
-          find "java/filament/build/cmake" \
+          find "java/filament-ffm/build/cmake" \
             \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
             -exec cp {} "$dest/" \;
       - uses: actions/upload-artifact@v4
         with:
-          name: jni-${{ matrix.arch }}
-          path: jni-artifacts/
+          name: c-${{ matrix.arch }}
+          path: c-artifacts/
 
   # ── Publish all modules ───────────────────────────────────────────────────────
   publish:
-    needs: build-jni
+    needs: build-natives
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { java-version: '17', distribution: 'temurin' }
+        with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
@@ -110,12 +113,17 @@ jobs:
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_iosX64 \
             downloadPrebuilts_macosArm64
-      - name: Download JNI natives
+      - name: Download FFM natives
         uses: actions/download-artifact@v4
         with:
-          pattern: jni-*
-          path: jni-artifacts/
+          pattern: c-*
+          path: c-artifacts/
           merge-multiple: true
+      # The publish host (macOS) rebuilds its own macos-arm64 native via
+      # processResources, and bundles the other platforms from -PcArtifactsDir.
+      # Compiling the FFM bindings needs jextract.
+      - name: Install jextract
+        run: python3 scripts/gradle/download_jextract.py
       - name: Publish to Maven Central
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVENCENTRAL_USERNAME }}
@@ -126,11 +134,8 @@ jobs:
         run: |
           ./gradlew \
             -PlibVersion=${{ steps.version.outputs.version }} \
-            -PjniArtifactsDir=${{ github.workspace }}/jni-artifacts \
-            :java:filament:publishAllPublicationsToMavenCentralRepository \
-            :java:filamat:publishAllPublicationsToMavenCentralRepository \
-            :java:filament-utils:publishAllPublicationsToMavenCentralRepository \
-            :java:gltfio:publishAllPublicationsToMavenCentralRepository \
+            -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
+            :java:filament-ffm:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \
