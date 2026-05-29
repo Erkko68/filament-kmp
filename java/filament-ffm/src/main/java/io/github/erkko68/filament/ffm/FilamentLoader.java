@@ -79,9 +79,7 @@ public final class FilamentLoader {
             System.load(tempLib.getAbsolutePath());
             sLoaded = true;
         } catch (Throwable e) {
-            // Catch Throwable, not Exception: System.load throws UnsatisfiedLinkError (an Error),
-            // so catching only Exception let the real dlopen/LoadLibrary message escape unlabeled
-            // (e.g. "...: undefined symbol: X"). Wrap it so the cause is always visible.
+            // Throwable, not Exception: System.load throws UnsatisfiedLinkError (an Error).
             throw new RuntimeException("Failed to load native library 'filament-c': " + e, e);
         }
     }

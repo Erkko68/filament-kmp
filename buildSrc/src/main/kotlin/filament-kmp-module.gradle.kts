@@ -97,10 +97,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 // warning. Downstream app launchers need the same flag.
 tasks.withType<Test>().configureEach {
     jvmArgs("--enable-native-access=ALL-UNNAMED")
-    // Print the full exception (message + stack trace + causes) for failed tests. The default
-    // console summary prints only the exception class chain and truncates the message — which hides
-    // the actual cause of native load failures (e.g. a dlopen "undefined symbol: …"). FULL surfaces
-    // it inline in the CI log.
+    // Full exception output for failed tests — the default summary truncates the message,
+    // hiding causes like a native "undefined symbol".
     testLogging {
         events("failed")
         exceptionFormat = TestExceptionFormat.FULL

@@ -372,11 +372,8 @@ if (FILAMENT_BUILD_SHARED)
         ${GLTFIO_C_SOURCES}
     )
 
-    # OUTPUT_NAME: emit libfilament-c.{dylib,so} / filament-c.dll, matching FilamentLoader.
-    # WINDOWS_EXPORT_ALL_SYMBOLS: a Windows DLL exports nothing unless symbols are dllexport'd
-    # or a .def lists them. Our wrapper funcs are plain `extern "C"`, so without this the DLL
-    # loads but exposes zero symbols and jextract's loaderLookup() fails with "unresolved
-    # symbol". macOS/Linux export by default; Windows must be told to.
+    # A Windows DLL exports nothing unless told to, so loaderLookup() would find no symbols
+    # (macOS/Linux export by default).
     set_target_properties(filament-c-jvm PROPERTIES
         OUTPUT_NAME "filament-c"
         WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -421,8 +418,11 @@ if (FILAMENT_BUILD_SHARED)
         # shlwapi is used by utils::Path.
         target_link_libraries(filament-c-jvm PRIVATE opengl32 gdi32 user32 shlwapi)
     elseif (UNIX)
-        add_compile_options(-stdlib=libc++)
-        add_link_options(-stdlib=libc++)
+        # Prebuilts are built against libc++, so the wrapper must compile + link against it too,
+        # or the .so won't dlopen (undefined std::__1 symbols). Must be target_* options:
+        # add_compile_options/add_link_options are directory-scoped and only affect later targets.
+        target_compile_options(filament-c-jvm PRIVATE -stdlib=libc++)
+        target_link_options(filament-c-jvm PRIVATE -stdlib=libc++)
         target_link_libraries(filament-c-jvm PRIVATE GL)
         # GNU ld scans static archives left-to-right in a single pass, so cross-refs
         # between Filament archives can drop members if ordering is wrong. Wrap them
