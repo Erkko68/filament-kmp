@@ -38,7 +38,9 @@ kotlin {
             implementation("com.google.android.filament:gltfio-android:$filaVersion")
         }
         jvmMain.dependencies {
-            api(project(":java:gltfio"))
+            // Project Panama (FFM): the combined libfilament-c image + jextract-generated
+            // FilamentC already cover the gltfio surface. Replaces the JNI :java:gltfio dep.
+            api(project(":java:filament-ffm"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

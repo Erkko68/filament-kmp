@@ -18,7 +18,7 @@ dependencyResolutionManagement {
 
 // All bindings live in a single Gradle build as flat subprojects.
 // kotlin/* — KMP orchestrator modules (cinterop + JVM/Android/JS shims).
-// java/*  — JVM bindings (filament-jni, filamat-jni, etc.).
+// :java:filament-ffm — the single Project Panama (FFM) JVM binding module.
 // :js     — Kotlin/JS external declarations.
 //
 // js/ must remain a subproject (not a composite build) so the Kotlin/JS plugin
@@ -30,13 +30,9 @@ include(":kotlin:filament-utils")
 include(":kotlin:gltfio")
 include(":kotlin:filament-compose")
 
-include(":java:filament")
-include(":java:filamat")
-include(":java:gltfio")
-include(":java:filament-utils")
-
-// JVM/Panama (FFM) bindings: combined libfilament-c + jextract-generated bindings.
-// Replaces the JNI :java:filament dependency for kotlin:filament's jvmMain.
+// JVM/Panama (FFM) bindings: one combined libfilament-c image (filament + filamat +
+// filament-utils + gltfio) plus jextract-generated bindings. All four kotlin JVM modules
+// depend on it; it replaced the per-module hand-written JNI stack (java/filament*, java/gltfio).
 include(":java:filament-ffm")
 
 include(":js")

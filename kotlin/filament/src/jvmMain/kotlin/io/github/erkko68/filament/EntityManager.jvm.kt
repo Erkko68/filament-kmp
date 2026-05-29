@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class EntityManager internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class EntityManager internal constructor(var nativeHandle: MemorySegment?) {
     actual companion object {
         private val instance: EntityManager by lazy {
             ensureFilamentLoaded()

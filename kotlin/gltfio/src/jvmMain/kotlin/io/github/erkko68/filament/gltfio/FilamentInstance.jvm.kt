@@ -2,35 +2,88 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.MaterialInstance
-import io.github.erkko68.filament.gltfio.jni.FilamentInstance as JniFilamentInstance
+import io.github.erkko68.filament.confined
+import io.github.erkko68.filament.cString
+import io.github.erkko68.filament.ffm.FilaBox
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.isNullPtr
+import io.github.erkko68.filament.toInts
+import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout
 
-actual class FilamentInstance internal constructor(internal var jni: JniFilamentInstance?) {
+actual class FilamentInstance internal constructor(var nativeHandle: MemorySegment?) {
     actual constructor() : this(null)
 
-    private val requireJni: JniFilamentInstance
-        get() = jni ?: throw IllegalStateException("FilamentInstance is uninitialized")
+    actual fun getRoot(): Int = FilamentC.FilaFilamentInstance_getRoot(nativeHandle)
 
-    actual fun getRoot(): Int = requireJni.getRoot()
-    actual fun getEntities(): IntArray = requireJni.getEntities()
-    actual fun getEntityCount(): Int = requireJni.getEntities().size
-
-    actual fun getAnimator(): Animator = Animator(requireJni.getAnimator())
-    actual fun getBoundingBox(): Box {
-        return getAsset().getBoundingBox()
+    actual fun getEntities(): IntArray {
+        val count = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
+        if (count == 0) return IntArray(0)
+        return confined { a ->
+            val seg = a.allocate(ValueLayout.JAVA_INT, count.toLong())
+            FilamentC.FilaFilamentInstance_getEntities(nativeHandle, seg)
+            seg.toInts()
+        }
     }
 
-    actual fun getAsset(): FilamentAsset = FilamentAsset(requireJni.getAsset())
+    actual fun getEntityCount(): Int = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
 
-    actual fun getSkinCount(): Int = requireJni.getSkinCount()
-    actual fun getSkinNames(): Array<String> = requireJni.getSkinNames()
-    actual fun attachSkin(skinIndex: Int, target: Int) = requireJni.attachSkin(skinIndex, target)
-    actual fun detachSkin(skinIndex: Int, target: Int) = requireJni.detachSkin(skinIndex, target)
-    actual fun getJointCountAt(skinIndex: Int): Int = requireJni.getJointCountAt(skinIndex)
-    actual fun getJointsAt(skinIndex: Int): IntArray = requireJni.getJointsAt(skinIndex)
+    actual fun getAnimator(): Animator = Animator(FilamentC.FilaFilamentInstance_getAnimator(nativeHandle))
 
-    actual fun applyMaterialVariant(variantIndex: Int) = requireJni.applyMaterialVariant(variantIndex)
+    actual fun getBoundingBox(): Box = confined { a ->
+        val b = FilamentC.FilaFilamentInstance_getBoundingBox(a, nativeHandle)
+        Box(FilaBox.centerX(b), FilaBox.centerY(b), FilaBox.centerZ(b),
+            FilaBox.halfExtentX(b), FilaBox.halfExtentY(b), FilaBox.halfExtentZ(b))
+    }
+
+    actual fun getAsset(): FilamentAsset = FilamentAsset(FilamentC.FilaFilamentInstance_getAsset(nativeHandle))
+
+    actual fun getSkinCount(): Int = FilamentC.FilaFilamentInstance_getSkinCount(nativeHandle).toInt()
+
+    actual fun getSkinNames(): Array<String> {
+        val count = getSkinCount()
+        if (count == 0) return emptyArray()
+        return confined { a ->
+            val names = a.allocate(ValueLayout.ADDRESS, count.toLong())
+            FilamentC.FilaFilamentInstance_getSkinNames(nativeHandle, names)
+            Array(count) { names.getAtIndex(ValueLayout.ADDRESS, it.toLong()).let { p -> if (p.isNullPtr()) "" else p.cString() } }
+        }
+    }
+
+    actual fun attachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toLong(), target)
+    actual fun detachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toLong(), target)
+
+    actual fun getJointCountAt(skinIndex: Int): Int = FilamentC.FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex.toLong()).toInt()
+
+    actual fun getJointsAt(skinIndex: Int): IntArray {
+        val count = getJointCountAt(skinIndex)
+        if (count == 0) return IntArray(0)
+        return confined { a ->
+            val seg = a.allocate(ValueLayout.JAVA_INT, count.toLong())
+            FilamentC.FilaFilamentInstance_getJointsAt(nativeHandle, skinIndex.toLong(), seg)
+            seg.toInts()
+        }
+    }
+
+    actual fun applyMaterialVariant(variantIndex: Int) = FilamentC.FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex.toLong())
+
     actual fun getMaterialInstances(): Array<MaterialInstance> {
-        return requireJni.getMaterialInstances().map { MaterialInstance(it) }.toTypedArray()
+        val count = FilamentC.FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
+        if (count == 0) return emptyArray()
+        return confined { a ->
+            val out = a.allocate(ValueLayout.ADDRESS, count.toLong())
+            FilamentC.FilaFilamentInstance_getMaterialInstances(nativeHandle, out)
+            Array(count) { MaterialInstance(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
+        }
     }
-    actual fun getMaterialVariantNames(): Array<String> = requireJni.getMaterialVariantNames()
+
+    actual fun getMaterialVariantNames(): Array<String> {
+        val count = FilamentC.FilaFilamentInstance_getMaterialVariantCount(nativeHandle).toInt()
+        if (count == 0) return emptyArray()
+        return confined { a ->
+            val names = a.allocate(ValueLayout.ADDRESS, count.toLong())
+            FilamentC.FilaFilamentInstance_getMaterialVariantNames(nativeHandle, names)
+            Array(count) { names.getAtIndex(ValueLayout.ADDRESS, it.toLong()).let { p -> if (p.isNullPtr()) "" else p.cString() } }
+        }
+    }
 }

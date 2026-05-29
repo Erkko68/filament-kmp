@@ -179,11 +179,11 @@ typedef enum FilaMaterialBuilderShaderQuality {
 } FilaMaterialBuilderShaderQuality;
 
 // Static methods
-void FilaMaterialBuilder_init();
-void FilaMaterialBuilder_shutdown();
+void FilaMaterialBuilder_init(void);
+void FilaMaterialBuilder_shutdown(void);
 
 // Builder methods
-FilaMaterialBuilder* FilaMaterialBuilder_create();
+FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* builder);
 FilaPackage* FilaMaterialBuilder_build(FilaMaterialBuilder* builder);
 

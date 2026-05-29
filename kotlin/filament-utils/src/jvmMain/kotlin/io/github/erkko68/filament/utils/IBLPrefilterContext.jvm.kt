@@ -2,21 +2,24 @@ package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.utils.jni.IBLPrefilterContext as JniIBLPrefilterContext
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
 actual class IBLPrefilterContext actual constructor(engine: Engine) {
-    val jni = JniIBLPrefilterContext(engine.nativeEngine)
-    actual fun destroy() = jni.destroy()
+    internal val nativeHandle: MemorySegment = FilamentC.FilaIBLPrefilterContext_create(engine.nativeHandle)
+    actual fun destroy() = FilamentC.FilaIBLPrefilterContext_destroy(nativeHandle)
 }
 
 actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterContext) {
-    private val jni = JniIBLPrefilterContext.EquirectangularToCubemap(context.jni)
-    actual fun destroy() = jni.destroy()
-    actual fun run(equirect: Texture): Texture = Texture(jni.run(equirect.nativeTexture))
+    private val nativeHandle: MemorySegment = FilamentC.FilaIBLPrefilterEquirectangularToCubemap_create(context.nativeHandle)
+    actual fun destroy() = FilamentC.FilaIBLPrefilterEquirectangularToCubemap_destroy(nativeHandle)
+    actual fun run(equirect: Texture): Texture =
+        Texture(FilamentC.FilaIBLPrefilterEquirectangularToCubemap_run(nativeHandle, equirect.nativeHandle))
 }
 
 actual class SpecularFilter actual constructor(context: IBLPrefilterContext) {
-    private val jni = JniIBLPrefilterContext.SpecularFilter(context.jni)
-    actual fun destroy() = jni.destroy()
-    actual fun run(skybox: Texture): Texture = Texture(jni.run(skybox.nativeTexture))
+    private val nativeHandle: MemorySegment = FilamentC.FilaIBLPrefilterSpecularFilter_create(context.nativeHandle)
+    actual fun destroy() = FilamentC.FilaIBLPrefilterSpecularFilter_destroy(nativeHandle)
+    actual fun run(skybox: Texture): Texture =
+        Texture(FilamentC.FilaIBLPrefilterSpecularFilter_run(nativeHandle, skybox.nativeHandle))
 }

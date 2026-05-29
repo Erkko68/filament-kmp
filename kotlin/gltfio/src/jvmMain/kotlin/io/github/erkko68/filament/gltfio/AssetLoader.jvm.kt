@@ -2,59 +2,53 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.gltfio.jni.AssetLoader as JniAssetLoader
-import io.github.erkko68.filament.gltfio.jni.FilamentInstance as JniFilamentInstance
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import io.github.erkko68.filament.NULL
+import io.github.erkko68.filament.bytes
+import io.github.erkko68.filament.confined
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.isNullPtr
+import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout
 
-actual class AssetLoader(val jni: JniAssetLoader) {
+actual class AssetLoader(var nativeHandle: MemorySegment?) {
     actual companion object {
         actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
-            // Need to map MaterialProvider to JNI MaterialProvider. Since UbershaderProvider is the only implementation for now:
-            val jniProvider = (materials as UbershaderProvider).jni
-            val jniLoader = JniAssetLoader(engine.nativeEngine, jniProvider, entities!!.nativeEntityManager)
-            return AssetLoader(jniLoader)
+            val handle = FilamentC.FilaAssetLoader_create(
+                engine.nativeHandle, materials.getNativeHandle(), entities?.nativeHandle ?: NULL,
+            )
+            return AssetLoader(handle)
         }
 
         actual fun destroy(loader: AssetLoader) {
-            loader.jni.destroy()
+            FilamentC.FilaAssetLoader_destroy(loader.nativeHandle)
+            loader.nativeHandle = null
         }
     }
 
-    actual fun createAsset(buffer: ByteArray): FilamentAsset? {
-        val byteBuffer = ByteBuffer.allocateDirect(buffer.size).order(ByteOrder.nativeOrder())
-        byteBuffer.put(buffer)
-        byteBuffer.rewind()
-        val jniAsset = jni.createAsset(byteBuffer)
-        return jniAsset?.let { FilamentAsset(it) }
+    actual fun createAsset(buffer: ByteArray): FilamentAsset? = confined { a ->
+        val handle = FilamentC.FilaAssetLoader_createAsset(nativeHandle, a.bytes(buffer), buffer.size.toLong())
+        handle.takeUnless { it.isNullPtr() }?.let { FilamentAsset(it) }
     }
 
-    actual fun createInstancedAsset(buffer: ByteArray, instances: Array<FilamentInstance>): FilamentAsset? {
-        val byteBuffer = ByteBuffer.allocateDirect(buffer.size).order(ByteOrder.nativeOrder())
-        byteBuffer.put(buffer)
-        byteBuffer.rewind()
-        // The JNI wrapper writes a fresh JniFilamentInstance into each slot; we then
-        // hand those back to the Kotlin wrappers (which may have been constructed empty).
-        val jniInstances = arrayOfNulls<JniFilamentInstance>(instances.size)
-        @Suppress("UNCHECKED_CAST")
-        val jniAsset = jni.createInstancedAsset(byteBuffer, jniInstances as Array<JniFilamentInstance>)
-        if (jniAsset == null) return null
-        for (i in instances.indices) {
-            instances[i].jni = jniInstances[i]
-        }
-        return FilamentAsset(jniAsset)
+    actual fun createInstancedAsset(buffer: ByteArray, instances: Array<FilamentInstance>): FilamentAsset? = confined { a ->
+        val out = a.allocate(ValueLayout.ADDRESS, instances.size.toLong())
+        val handle = FilamentC.FilaAssetLoader_createInstancedAsset(
+            nativeHandle, a.bytes(buffer), buffer.size.toLong(), out, instances.size.toLong(),
+        )
+        if (handle.isNullPtr()) return@confined null
+        for (i in instances.indices) instances[i].nativeHandle = out.getAtIndex(ValueLayout.ADDRESS, i.toLong())
+        FilamentAsset(handle)
     }
 
     actual fun createInstance(asset: FilamentAsset): FilamentInstance? {
-        val jniInstance = jni.createInstance(asset.jni)
-        return jniInstance?.let { FilamentInstance(it) }
+        val handle = FilamentC.FilaAssetLoader_createInstance(nativeHandle, asset.nativeHandle)
+        return handle.takeUnless { it.isNullPtr() }?.let { FilamentInstance(it) }
     }
 
-    actual fun enableDiagnostics(enable: Boolean) {
-        jni.enableDiagnostics(enable)
-    }
+    actual fun enableDiagnostics(enable: Boolean) = FilamentC.FilaAssetLoader_enableDiagnostics(nativeHandle, enable)
 
     actual fun destroyAsset(asset: FilamentAsset) {
-        jni.destroyAsset(asset.jni)
+        FilamentC.FilaAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
+        asset.nativeHandle = null
     }
 }

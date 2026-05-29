@@ -22,53 +22,57 @@ import java.util.concurrent.atomic.AtomicLong
  */
 
 /** Ensures the combined libfilament-c image is loaded before the first downcall. Idempotent. */
-internal fun ensureFilamentLoaded() = FilamentLoader.load()
+public fun ensureFilamentLoaded() = FilamentLoader.load()
 
 /** The C `NULL` pointer. */
-internal val NULL: MemorySegment = MemorySegment.NULL
+public val NULL: MemorySegment = MemorySegment.NULL
 
 /** Runs [block] with a confined [Arena] whose allocations are freed when it returns. */
-internal inline fun <T> confined(block: (Arena) -> T): T = Arena.ofConfined().use(block)
+public inline fun <T> confined(block: (Arena) -> T): T = Arena.ofConfined().use(block)
 
 /** Allocates a NUL-terminated UTF-8 C string in this allocator's memory. */
-internal fun SegmentAllocator.cstr(s: String): MemorySegment = allocateFrom(s)
+public fun SegmentAllocator.cstr(s: String): MemorySegment = allocateFrom(s)
 
 /** True for a null/destroyed handle. */
-internal fun MemorySegment?.isNullPtr(): Boolean = this == null || address() == 0L
+public fun MemorySegment?.isNullPtr(): Boolean = this == null || address() == 0L
 
 /** Reads a NUL-terminated UTF-8 C string from a `const char*` returned by native code. */
-internal fun MemorySegment.cString(): String = reinterpret(Long.MAX_VALUE).getString(0)
+public fun MemorySegment.cString(): String = reinterpret(Long.MAX_VALUE).getString(0)
 
 // ── Primitive array <-> off-heap segment helpers ─────────────────────────────
-internal fun SegmentAllocator.ints(a: IntArray): MemorySegment = allocateFrom(ValueLayout.JAVA_INT, *a)
-internal fun SegmentAllocator.floats(a: FloatArray): MemorySegment = allocateFrom(ValueLayout.JAVA_FLOAT, *a)
-internal fun SegmentAllocator.shorts(a: ShortArray): MemorySegment = allocateFrom(ValueLayout.JAVA_SHORT, *a)
-internal fun SegmentAllocator.bytes(a: ByteArray): MemorySegment = allocateFrom(ValueLayout.JAVA_BYTE, *a)
-internal fun SegmentAllocator.booleans(a: BooleanArray): MemorySegment {
+public fun SegmentAllocator.ints(a: IntArray): MemorySegment = allocateFrom(ValueLayout.JAVA_INT, *a)
+public fun SegmentAllocator.floats(a: FloatArray): MemorySegment = allocateFrom(ValueLayout.JAVA_FLOAT, *a)
+public fun SegmentAllocator.shorts(a: ShortArray): MemorySegment = allocateFrom(ValueLayout.JAVA_SHORT, *a)
+public fun SegmentAllocator.bytes(a: ByteArray): MemorySegment = allocateFrom(ValueLayout.JAVA_BYTE, *a)
+public fun SegmentAllocator.booleans(a: BooleanArray): MemorySegment {
     // FFM has no allocateFrom(OfBoolean, boolean...) vararg overload; set elements individually.
     val seg = allocate(ValueLayout.JAVA_BOOLEAN, a.size.toLong())
     for (i in a.indices) seg.set(ValueLayout.JAVA_BOOLEAN, i.toLong(), a[i])
     return seg
 }
 
-internal fun SegmentAllocator.doubles(a: DoubleArray): MemorySegment = allocateFrom(ValueLayout.JAVA_DOUBLE, *a)
+public fun SegmentAllocator.doubles(a: DoubleArray): MemorySegment = allocateFrom(ValueLayout.JAVA_DOUBLE, *a)
 
-internal fun SegmentAllocator.intArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_INT, n.toLong())
-internal fun SegmentAllocator.floatArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_FLOAT, n.toLong())
-internal fun SegmentAllocator.shortArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_SHORT, n.toLong())
-internal fun SegmentAllocator.doubleArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_DOUBLE, n.toLong())
+public fun SegmentAllocator.intArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_INT, n.toLong())
+public fun SegmentAllocator.floatArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_FLOAT, n.toLong())
+public fun SegmentAllocator.shortArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_SHORT, n.toLong())
+public fun SegmentAllocator.doubleArr(n: Int): MemorySegment = allocate(ValueLayout.JAVA_DOUBLE, n.toLong())
 
 // Element access on a struct array-field slice. jextract 22's indexed array-field accessors
 // (e.g. `field(struct, index)`) have a bug: their VarHandle omits the field's base offset, so
 // they read/write at the struct base. Always go through the single-arg slice accessor — which
 // applies the correct offset — and index into it with these helpers.
-internal fun MemorySegment.getFloatAt(i: Int): Float = getAtIndex(ValueLayout.JAVA_FLOAT, i.toLong())
-internal fun MemorySegment.setFloatAt(i: Int, v: Float) = setAtIndex(ValueLayout.JAVA_FLOAT, i.toLong(), v)
+public fun MemorySegment.getFloatAt(i: Int): Float = getAtIndex(ValueLayout.JAVA_FLOAT, i.toLong())
+public fun MemorySegment.setFloatAt(i: Int, v: Float) = setAtIndex(ValueLayout.JAVA_FLOAT, i.toLong(), v)
 
-internal fun MemorySegment.toInts(): IntArray = toArray(ValueLayout.JAVA_INT)
-internal fun MemorySegment.toFloats(): FloatArray = toArray(ValueLayout.JAVA_FLOAT)
-internal fun MemorySegment.toShorts(): ShortArray = toArray(ValueLayout.JAVA_SHORT)
-internal fun MemorySegment.toDoubles(): DoubleArray = toArray(ValueLayout.JAVA_DOUBLE)
+/** Copies [size] bytes out of a native `void*`/`const char*` buffer into a fresh ByteArray. */
+public fun MemorySegment.readBytes(size: Int): ByteArray =
+    if (isNullPtr() || size <= 0) ByteArray(0) else reinterpret(size.toLong()).toArray(ValueLayout.JAVA_BYTE)
+
+public fun MemorySegment.toInts(): IntArray = toArray(ValueLayout.JAVA_INT)
+public fun MemorySegment.toFloats(): FloatArray = toArray(ValueLayout.JAVA_FLOAT)
+public fun MemorySegment.toShorts(): ShortArray = toArray(ValueLayout.JAVA_SHORT)
+public fun MemorySegment.toDoubles(): DoubleArray = toArray(ValueLayout.JAVA_DOUBLE)
 
 // ── One-shot completion callbacks ────────────────────────────────────────────
 //
@@ -77,7 +81,7 @@ internal fun MemorySegment.toDoubles(): DoubleArray = toArray(ValueLayout.JAVA_D
 // per C callback signature and pass the registry key as the `userData` pointer's address. When
 // the native side fires the stub, we look the action up by key, run it once, and drop it — no
 // stub is ever freed, and per-call buffers live in their own shared arena closed by the action.
-internal object Completions {
+public object Completions {
     private val arena: Arena = Arena.ofShared()
     private val actions = ConcurrentHashMap<Long, () -> Unit>()
     private val counter = AtomicLong(1L)

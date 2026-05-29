@@ -33,7 +33,9 @@ kotlin {
             implementation("com.google.android.filament:filament-utils-android:$filaVersion")
         }
         jvmMain.dependencies {
-            api(project(":java:filament-utils"))
+            // Project Panama (FFM): the combined libfilament-c image + jextract-generated
+            // FilamentC already cover the filament-utils surface. Replaces :java:filament-utils.
+            api(project(":java:filament-ffm"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

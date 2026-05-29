@@ -1,15 +1,19 @@
 package io.github.erkko68.filament.filamat
 
-import io.github.erkko68.filament.filamat.jni.MaterialPackage as JniMaterialPackage
-import java.nio.ByteBuffer
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.readBytes
+import java.lang.foreign.MemorySegment
 
-actual class MaterialPackage(val nativePackage: JniMaterialPackage) {
+actual class MaterialPackage internal constructor(private var nativeHandle: MemorySegment?) {
     actual fun getBuffer(): ByteArray {
-        val buffer = nativePackage.buffer
-        val bytes = ByteArray(buffer.remaining())
-        buffer.get(bytes)
-        return bytes
+        val size = FilamentC.FilaPackage_getSize(nativeHandle).toInt()
+        return FilamentC.FilaPackage_getData(nativeHandle).readBytes(size)
     }
 
-    actual fun isValid(): Boolean = nativePackage.isValid
+    actual fun isValid(): Boolean = FilamentC.FilaPackage_isValid(nativeHandle)
+
+    protected fun finalize() {
+        nativeHandle?.let { FilamentC.FilaPackage_destroy(it) }
+        nativeHandle = null
+    }
 }

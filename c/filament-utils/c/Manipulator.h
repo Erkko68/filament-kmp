@@ -29,7 +29,7 @@ typedef enum FilaManipulatorKey {
 } FilaManipulatorKey;
 
 // Builder
-FilaManipulatorBuilder* FilaManipulatorBuilder_create();
+FilaManipulatorBuilder* FilaManipulatorBuilder_create(void);
 void FilaManipulatorBuilder_destroy(FilaManipulatorBuilder* builder);
 FilaManipulator* FilaManipulatorBuilder_build(FilaManipulatorBuilder* builder, FilaManipulatorMode mode);
 

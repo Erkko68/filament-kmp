@@ -12,14 +12,8 @@ plugins {
 // kotlin:filament's jvmMain depends on this module and writes the idiomatic Kotlin
 // actuals on top of the generated FilamentC class.
 
-// FFM was finalized in JDK 22; build with a 22 release floor on the installed JDK 25 (LTS)
-// toolchain so the published artifact is usable on any JDK 22+.
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    }
-}
-
+// FFM was finalized in JDK 22. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties),
+// so we just pin a JVM 22 release floor here to keep the published artifact usable on any JDK 22+.
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(22)
 }
