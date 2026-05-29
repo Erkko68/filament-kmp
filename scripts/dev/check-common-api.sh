@@ -19,9 +19,9 @@
 # `getFoo()`/`setFoo(...)` automatically, so `foo` matching either is fine.
 #
 # Usage:
-#   scripts/check-common-api.sh                 # uses .filament-src-cache @ filaVersion
-#   scripts/check-common-api.sh --tag v1.71.4   # specific tag
-#   scripts/check-common-api.sh /path/to/clone  # explicit Filament tree
+#   scripts/dev/check-common-api.sh                 # uses .filament-src-cache @ filaVersion
+#   scripts/dev/check-common-api.sh --tag v1.71.4   # specific tag
+#   scripts/dev/check-common-api.sh /path/to/clone  # explicit Filament tree
 #
 # Output: per-module list of public Java methods absent from common Kotlin
 # code, plus a summary count. Same caveats as check-js-bindings.sh — token-
@@ -74,7 +74,7 @@ if [[ -n "$FILAMENT_SRC" ]]; then
   show_file() { cat "$FILAMENT_SRC/$1"; }
   list_files() { find "$FILAMENT_SRC/$1" -name '*.java' 2>/dev/null; }
 else
-  [[ -d "$CACHE_DIR/.git" ]] || { echo "No Filament cache. Seed it with scripts/upgrade-diff.sh first." >&2; exit 1; }
+  [[ -d "$CACHE_DIR/.git" ]] || { echo "No Filament cache. Seed it with scripts/dev/upgrade-diff.sh first." >&2; exit 1; }
   if [[ -z "$TAG" ]]; then
     TAG="$(grep -E '^filaVersion=' "$REPO_ROOT/gradle.properties" | cut -d= -f2)"
   fi

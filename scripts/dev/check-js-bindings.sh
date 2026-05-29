@@ -26,9 +26,9 @@
 #        Kotlin code, but occasionally catches a removed upstream binding.
 #
 # Usage:
-#   scripts/check-js-bindings.sh                # uses .filament-src-cache
-#   scripts/check-js-bindings.sh /path/to/src   # use a specific clone
-#   scripts/check-js-bindings.sh --tag v1.71.4  # check a specific tag from cache
+#   scripts/dev/check-js-bindings.sh                # uses .filament-src-cache
+#   scripts/dev/check-js-bindings.sh /path/to/src   # use a specific clone
+#   scripts/dev/check-js-bindings.sh --tag v1.71.4  # check a specific tag from cache
 
 set -euo pipefail
 
@@ -62,7 +62,7 @@ elif [[ -d "$CACHE_DIR/.git" ]]; then
   fi
   JSBINDINGS="$(git -C "$CACHE_DIR" show "$TAG:web/filament-js/jsbindings.cpp")"
 else
-  echo "No Filament source available. Either pass a clone path or run scripts/upgrade-diff.sh once to seed $CACHE_DIR." >&2
+  echo "No Filament source available. Either pass a clone path or run scripts/dev/upgrade-diff.sh once to seed $CACHE_DIR." >&2
   exit 1
 fi
 

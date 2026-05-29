@@ -25,7 +25,7 @@ allprojects {
 
 // ── Filament prebuilts download ───────────────────────────────────────────────
 //
-// One Exec task per prebuilt target — invokes scripts/download_filament_prebuilts.py.
+// One Exec task per prebuilt target — invokes scripts/gradle/download_filament_prebuilts.py.
 // Tasks live at the root project so they are shared across :kotlin:* and :java:*.
 //
 // Targets correspond to:
@@ -51,8 +51,8 @@ val PREBUILT_TARGETS = listOf(
 )
 
 val pythonExe = providers.environmentVariable("PYTHON").orElse("python3")
-val downloadScript = layout.projectDirectory.file("scripts/download_filament_prebuilts.py")
-val downloadIncludesScript = layout.projectDirectory.file("scripts/download_filament_includes.py")
+val downloadScript = layout.projectDirectory.file("scripts/gradle/download_filament_prebuilts.py")
+val downloadIncludesScript = layout.projectDirectory.file("scripts/gradle/download_filament_includes.py")
 
 PREBUILT_TARGETS.forEach { target ->
     tasks.register<Exec>("downloadPrebuilts_$target") {

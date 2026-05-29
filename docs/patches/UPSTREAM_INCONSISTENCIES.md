@@ -5,7 +5,7 @@ can't faithfully implement the common API because of a gap in Filament's
 upstream WebAssembly bindings. Each entry records the symptom, the upstream
 cause, and the workaround we shipped.
 
-Refresh by running `scripts/check-js-bindings.sh` against a new `filaVersion`.
+Refresh by running `scripts/dev/check-js-bindings.sh` against a new `filaVersion`.
 
 ---
 

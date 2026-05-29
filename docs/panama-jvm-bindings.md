@@ -90,7 +90,7 @@ Key files to read alongside this proposal:
   Konan target.
 - [java/filament/src/main/java/io/github/erkko68/filament/jni/internal/NativeLoader.java](../java/filament/src/main/java/io/github/erkko68/filament/jni/internal/NativeLoader.java)
   — extracts the dylib from the JAR to a tmpfile and `System.load`s it.
-- [scripts/download_filament_prebuilts.py](../scripts/download_filament_prebuilts.py)
+- [scripts/gradle/download_filament_prebuilts.py](../scripts/gradle/download_filament_prebuilts.py)
   — `host` pseudo-target already exists for the JNI flow.
 - [build.gradle.kts](../build.gradle.kts) (root) — `downloadPrebuilts_<target>`
   task fan-out; `PREBUILT_TARGETS` already lists every host we'd need.
@@ -262,7 +262,7 @@ libdracodec.a            libstb.a
 Every one of these is already present under
 [prebuilts/macosArm64/lib/](../prebuilts/macosArm64/lib/) (verified by listing
 the directory) and is downloaded by
-[scripts/download_filament_prebuilts.py](../scripts/download_filament_prebuilts.py)
+[scripts/gradle/download_filament_prebuilts.py](../scripts/gradle/download_filament_prebuilts.py)
 for `macosArm64`, `macosX64`, `linuxX64`, `linuxArm64`, `mingwX64`.
 
 **This means: zero changes to the prebuilts download script.** The same tree

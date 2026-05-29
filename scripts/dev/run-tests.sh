@@ -20,10 +20,10 @@
 #                (needs ANDROID_HOME, an AVD, adb on PATH)
 #
 # Usage:
-#   scripts/run-tests.sh                 # run everything the host supports
-#   scripts/run-tests.sh jvm js          # run just those targets
-#   scripts/run-tests.sh --no-android    # skip android (everything else)
-#   scripts/run-tests.sh --no-ios        # skip ios (everything else)
+#   scripts/dev/run-tests.sh                 # run everything the host supports
+#   scripts/dev/run-tests.sh jvm js          # run just those targets
+#   scripts/dev/run-tests.sh --no-android    # skip android (everything else)
+#   scripts/dev/run-tests.sh --no-ios        # skip ios (everything else)
 #
 # Exit code is the OR of every gradle invocation: any failure → non-zero, but
 # we run all selected targets before returning so you see every failure.

@@ -10,7 +10,7 @@
 #   - IDE convergence files that often hold stale paths (.kotlin/)
 #
 # What it does NOT touch:
-#   - prebuilts/ (download is slow — use scripts/download_filament_prebuilts.py if you want fresh)
+#   - prebuilts/ (download is slow — use scripts/build/download_filament_prebuilts.py if you want fresh)
 #   - ~/.gradle/caches (global; rarely the cause; nuking it slows down every other project)
 #   - .idea/ (your IDE settings)
 #
@@ -60,4 +60,4 @@ if [ "$HARD" -eq 1 ]; then
     rm -rf "$HOME/.gradle/caches/transforms-"* 2>/dev/null || true
 fi
 
-echo "✓ Done. prebuilts/ kept — run scripts/download_filament_prebuilts.py if you need to refresh those too."
+echo "✓ Done. prebuilts/ kept — run scripts/build/download_filament_prebuilts.py if you need to refresh those too."

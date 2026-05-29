@@ -75,7 +75,7 @@ The JNI runtime JAR (`io.github.erkko68.filament-jni:filament:...`) bundles plat
 Download the files matching your `filaVersion` using the helper script in the repo:
 
 ```bash
-python3 scripts/download_filament_prebuilts.py <version> web
+python3 scripts/gradle/download_filament_prebuilts.py <version> web
 # outputs prebuilts/web/filament.js and prebuilts/web/filament.wasm
 ```
 

@@ -8,7 +8,8 @@ import java.io.File
 // jextract major version. Pinned to 22 (not the toolchain's 25) so the generated bindings
 // target the JDK 22 FFM API — i.e. they use find().orElseThrow() rather than the
 // JDK 23+ SymbolLookup.findOrThrow(), keeping the consumer floor at JDK 22 (release 22).
-// scripts/download_jextract.py pins the exact early-access build coordinates.
+// jextract is a manual dev prerequisite — run scripts/dev/download-jextract.sh once to install it
+// (the build does not auto-download it). That script pins the exact early-access build coordinates.
 private const val JEXTRACT_MAJOR = "22"
 
 /**
@@ -72,7 +73,6 @@ fun Project.applyFilamentJvmNative(
 
     val cmakePath = listOf("/opt/homebrew/bin/cmake", "/usr/local/bin/cmake")
         .firstOrNull { File(it).exists() } ?: "cmake"
-    val pythonExe = providers.environmentVariable("PYTHON").orElse("python3").get()
 
     val cmakeSourceDir = rootProject.file("c")
     val cmakeBuildDir = layout.buildDirectory.dir("cmake").get().asFile
@@ -109,18 +109,13 @@ fun Project.applyFilamentJvmNative(
         commandLine(cmakePath, "--build", ".", "--target", "filament-c-jvm", "--config", "Release")
     }
 
-    // ── jextract: download the tool, then generate bindings from the headers ──
-    val downloadScript = rootProject.file("scripts/download_jextract.py")
+    // ── jextract: generate the bindings from the headers ─────────────────────
+    // jextract is a manual dev prerequisite (not auto-downloaded). Install it once with
+    // scripts/dev/download-jextract.sh; the task below fails with that hint if it's missing.
     val jextractBin = rootProject.file(
         ".gradle/jextract/jextract-$JEXTRACT_MAJOR/bin/" +
             if (platform == "windows") "jextract.bat" else "jextract",
     )
-
-    val downloadJextract = tasks.register("downloadJextract", Exec::class.java) {
-        commandLine(pythonExe, downloadScript.absolutePath, JEXTRACT_MAJOR)
-        outputs.file(jextractBin)
-        outputs.upToDateWhen { jextractBin.exists() }
-    }
 
     val absHeaderDirs = headerDirs.map { it.absolutePath }
     val absIncludeDirs = includeDirs.map { it.absolutePath }
@@ -129,10 +124,17 @@ fun Project.applyFilamentJvmNative(
     }.sortedBy { it.name }
 
     val jextract = tasks.register("jextractFilamentC", Exec::class.java) {
-        dependsOn(downloadJextract, downloadIncludes)
+        dependsOn(downloadIncludes)
         inputs.files(headerFiles)
         outputs.dir(generatedDir)
         doFirst {
+            if (!jextractBin.exists()) {
+                throw org.gradle.api.GradleException(
+                    "jextract $JEXTRACT_MAJOR not found at $jextractBin.\n" +
+                        "It is a one-time dev prerequisite — install it with:\n" +
+                        "    scripts/dev/download-jextract.sh $JEXTRACT_MAJOR",
+                )
+            }
             generatedDir.deleteRecursively()
             generatedDir.mkdirs()
             // jextract takes a single header; build an umbrella that #includes every C header.

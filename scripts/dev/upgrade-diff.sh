@@ -18,11 +18,11 @@
 #                                aren't API breaks.
 #
 # Usage:
-#   scripts/upgrade-diff.sh <old-tag> <new-tag> [--summary] [--output file]
+#   scripts/dev/upgrade-diff.sh <old-tag> <new-tag> [--summary] [--output file]
 #
 # Examples:
-#   scripts/upgrade-diff.sh v1.71.4 v1.72.0
-#   scripts/upgrade-diff.sh v1.71.4 v1.72.0 --summary > upgrade.md
+#   scripts/dev/upgrade-diff.sh v1.71.4 v1.72.0
+#   scripts/dev/upgrade-diff.sh v1.71.4 v1.72.0 --summary > upgrade.md
 #
 # Modes:
 #   default     — full unified diffs per area, separated by banner.

@@ -126,7 +126,7 @@ fun KotlinNativeTarget.applyFilamentNative(
         } else {
             project.logger.error(
                 "\nFilament prebuilts not found for target '$name' at: ${prebuiltDir.absolutePath}" +
-                "\nRun ./gradlew downloadPrebuilts (or scripts/download_filament_prebuilts.py) to fetch them.\n",
+                "\nRun ./gradlew downloadPrebuilts (or scripts/gradle/download_filament_prebuilts.py) to fetch them.\n",
             )
             emptyList()
         }

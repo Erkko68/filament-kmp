@@ -33,7 +33,7 @@ From the repository root:
 ./gradlew build
 ```
 
-The first build downloads Filament prebuilts via `scripts/download_filament_prebuilts.py` — expect a few minutes.
+The first build downloads Filament prebuilts via `scripts/gradle/download_filament_prebuilts.py` — expect a few minutes.
 
 ## Contributing
 

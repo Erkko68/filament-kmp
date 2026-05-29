@@ -56,7 +56,7 @@ def _make_ssl_context() -> ssl.SSLContext:
 
 _SSL_CTX = _make_ssl_context()
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 CACHE_DIR = REPO_ROOT / ".gradle" / "filament-prebuilts-cache"
 PREBUILTS_DIR = REPO_ROOT / "prebuilts"
 

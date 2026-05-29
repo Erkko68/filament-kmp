@@ -17,7 +17,7 @@ The `filament-kmp` project is organized into several modules to handle the cross
     - `filament-utils` — Math utilities, camera manipulators, HDR/KTX loaders.
     - `filament-compose` — Compose Multiplatform UI integration layer (see [Compose docs](compose/README.md)).
 
-- **`prebuilts/`**: Prebuilt Filament static libraries for platforms that do not have an official Maven package: `iosArm64`, `iosSimulatorArm64`, `iosX64`, `macosArm64`, and WASM/JS. Downloaded via `scripts/download_filament_prebuilts.py` (invoked by the `downloadPrebuilts` Gradle task). The matching public headers land in `include/` via `scripts/download_filament_includes.py`.
+- **`prebuilts/`**: Prebuilt Filament static libraries for platforms that do not have an official Maven package: `iosArm64`, `iosSimulatorArm64`, `iosX64`, `macosArm64`, and WASM/JS. Downloaded via `scripts/gradle/download_filament_prebuilts.py` (invoked by the `downloadPrebuilts` Gradle task). The matching public headers land in `include/` via `scripts/gradle/download_filament_includes.py`.
 
 - **`samples/`**: Multiplatform example applications for Android, iOS, Desktop (JVM), and Web.
 
