@@ -8,7 +8,7 @@ import java.io.File
 // jextract major version. Pinned to 22 (not the toolchain's 25) so the generated bindings
 // target the JDK 22 FFM API — i.e. they use find().orElseThrow() rather than the
 // JDK 23+ SymbolLookup.findOrThrow(), keeping the consumer floor at JDK 22 (release 22).
-// jextract is a manual dev prerequisite — run scripts/dev/download-jextract.sh once to install it
+// jextract is a manual dev prerequisite — run scripts/gradle/download_jextract.py once to install it
 // (the build does not auto-download it). That script pins the exact early-access build coordinates.
 private const val JEXTRACT_MAJOR = "22"
 
@@ -111,7 +111,7 @@ fun Project.applyFilamentJvmNative(
 
     // ── jextract: generate the bindings from the headers ─────────────────────
     // jextract is a manual dev prerequisite (not auto-downloaded). Install it once with
-    // scripts/dev/download-jextract.sh; the task below fails with that hint if it's missing.
+    // scripts/gradle/download_jextract.py; the task below fails with that hint if it's missing.
     val jextractBin = rootProject.file(
         ".gradle/jextract/jextract-$JEXTRACT_MAJOR/bin/" +
             if (platform == "windows") "jextract.bat" else "jextract",
@@ -132,7 +132,7 @@ fun Project.applyFilamentJvmNative(
                 throw org.gradle.api.GradleException(
                     "jextract $JEXTRACT_MAJOR not found at $jextractBin.\n" +
                         "It is a one-time dev prerequisite — install it with:\n" +
-                        "    scripts/dev/download-jextract.sh $JEXTRACT_MAJOR",
+                        "    python3 scripts/gradle/download_jextract.py $JEXTRACT_MAJOR",
                 )
             }
             generatedDir.deleteRecursively()

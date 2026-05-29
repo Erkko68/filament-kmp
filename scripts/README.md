@@ -5,15 +5,17 @@ repo's bindings in sync with upstream Filament releases and to support local dev
 
 Two categories:
 
-- **`build/`** — invoked automatically by the Gradle build. Python (stdlib only, no `pip`).
-- **`dev/`** — manual developer utilities (setup + upgrade workflows). Bash, by convention.
+- **`gradle/`** — build-time Python helpers (stdlib only, no `pip`). Cross-platform so they run on
+  any developer's machine, Windows included.
+- **`dev/`** — manual developer utilities (upgrade + maintenance workflows). Bash, by convention.
 
-## `build/` — invoked by Gradle
+## `gradle/` — build-time Python helpers
 
 | Script | Purpose |
 | :--- | :--- |
-| [`build/download_filament_prebuilts.py`](build/download_filament_prebuilts.py) | Downloads the official Filament prebuilt static libraries (or Filament.js + WASM for `web`) for one or more targets into `prebuilts/<target>/`. Invoked by every `downloadPrebuilts_<target>` Gradle task in [build.gradle.kts](../build.gradle.kts). Python because it does xcframework-slice extraction, SSL with Windows cert store, and multi-target dispatch — would be markedly uglier in bash. |
-| [`build/download_filament_includes.py`](build/download_filament_includes.py) | Downloads Filament's public C/C++ headers from the GitHub source tarball into `include/`. Required by both the native (cinterop) and the combined FFM builds — see [c/CMakeLists.txt](../c/CMakeLists.txt). Headers must match the prebuilt ABI exactly — version drift causes runtime crashes. Invoked by the `downloadIncludes` Gradle task. |
+| [`gradle/download_filament_prebuilts.py`](gradle/download_filament_prebuilts.py) | Downloads the official Filament prebuilt static libraries (or Filament.js + WASM for `web`) for one or more targets into `prebuilts/<target>/`. Invoked by every `downloadPrebuilts_<target>` Gradle task in [build.gradle.kts](../build.gradle.kts). Python because it does xcframework-slice extraction, SSL with Windows cert store, and multi-target dispatch — would be markedly uglier in bash. |
+| [`gradle/download_filament_includes.py`](gradle/download_filament_includes.py) | Downloads Filament's public C/C++ headers from the GitHub source tarball into `include/`. Required by both the native (cinterop) and the combined FFM builds — see [c/CMakeLists.txt](../c/CMakeLists.txt). Headers must match the prebuilt ABI exactly — version drift causes runtime crashes. Invoked by the `downloadIncludes` Gradle task. |
+| [`gradle/download_jextract.py`](gradle/download_jextract.py) | **One-time setup.** Installs the jextract tool used to generate the JVM/Panama (FFM) bindings into `.gradle/jextract/jextract-<major>/`. The Gradle build does **not** auto-download it — it expects the binary to already be present and fails with this hint otherwise. Run once after cloning (and again only when the pinned version in [buildSrc/FilamentJvmNative.kt](../buildSrc/src/main/kotlin/FilamentJvmNative.kt) changes). CI invokes it before building any JVM target. |
 
 These use only the Python stdlib — no `pip install`. They expect `python3` on PATH; override via the
 `PYTHON` env var (the Gradle tasks honor it).
@@ -22,7 +24,6 @@ These use only the Python stdlib — no `pip install`. They expect `python3` on 
 
 | Script | Purpose |
 | :--- | :--- |
-| [`dev/download-jextract.sh`](dev/download-jextract.sh) | **One-time setup.** Installs the jextract tool used to generate the JVM/Panama (FFM) bindings into `.gradle/jextract/jextract-<major>/`. The Gradle build does **not** auto-download it — it expects the binary to already be present and fails with this hint otherwise. Run once after cloning (and again only when the pinned version in [buildSrc/FilamentJvmNative.kt](../buildSrc/src/main/kotlin/FilamentJvmNative.kt) changes). |
 | [`dev/upgrade-diff.sh`](dev/upgrade-diff.sh) | Diffs upstream Filament between two tags across every surface that drives this repo's bindings: public C++ headers, backend headers, Android Java sources, **web JS bindings (`jsbindings.cpp`, not just `filament.d.ts`)**, material/engine enums, feature-flag defaults, and `RELEASE_NOTES.md`. Run on every `filaVersion` bump. `--summary` for a file-level overview; omit for full unified diffs. Keeps a shallow clone in `scripts/.filament-src-cache/`. |
 | [`dev/check-js-bindings.sh`](dev/check-js-bindings.sh) | Cross-checks the JS bindings registered in `web/filament-js/jsbindings.cpp` against the Kotlin externals in `js/src/jsMain/kotlin/filament.js.kt` and the actuals in `kotlin/*/src/jsMain/`. Prints (1) bindings present upstream but not declared in our externals (actionable — add a declaration), (2) bindings declared in externals but no actual references them (informational), and (3) JS-shaped calls in `*.js.kt` files that don't match any binding (likely typos). Catches the class of bug where `filament.d.ts` is incomplete and stubs end up returning placeholder values. Run on every `filaVersion` bump alongside `upgrade-diff.sh`. |
 | [`dev/check-common-api.sh`](dev/check-common-api.sh) | Cross-checks the public Filament **Android** Java API against this repo's `commonMain` `expect` declarations. Filament's Android API is the canonical Kotlin public surface; KMP common should mirror it (modulo property accessors and Android-only types). Reports public methods present upstream but missing from common, per module (`filament` / `filamat` / `gltfio` / `filament-utils`). Property-bridged (`getFoo` ↔ `foo`) and JNI plumbing (`n*`, `nativeObject`, etc.) are auto-skipped; Android-only classes (`DisplayHelper`, `UiHelper`, `Stream`, `AutomationEngine`, etc.) are in a skip-list at the top of the script. Run on every `filaVersion` bump after `check-js-bindings.sh`. |
@@ -32,8 +33,8 @@ These use only the Python stdlib — no `pip install`. They expect `python3` on 
 ## First-time setup
 
 ```sh
-scripts/dev/download-jextract.sh     # install jextract (needed to build the JVM/FFM bindings)
-./gradlew downloadPrebuilts           # fetch Filament natives + headers
+python3 scripts/gradle/download_jextract.py   # install jextract (needed to build the JVM/FFM bindings)
+./gradlew downloadPrebuilts                    # fetch Filament natives + headers
 ```
 
 ## Updating the Filament version
