@@ -372,7 +372,14 @@ if (FILAMENT_BUILD_SHARED)
         ${GLTFIO_C_SOURCES}
     )
 
-    set_target_properties(filament-c-jvm PROPERTIES OUTPUT_NAME "filament-c")
+    # OUTPUT_NAME: emit libfilament-c.{dylib,so} / filament-c.dll, matching FilamentLoader.
+    # WINDOWS_EXPORT_ALL_SYMBOLS: a Windows DLL exports nothing unless symbols are dllexport'd
+    # or a .def lists them. Our wrapper funcs are plain `extern "C"`, so without this the DLL
+    # loads but exposes zero symbols and jextract's loaderLookup() fails with "unresolved
+    # symbol". macOS/Linux export by default; Windows must be told to.
+    set_target_properties(filament-c-jvm PROPERTIES
+        OUTPUT_NAME "filament-c"
+        WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
     target_include_directories(filament-c-jvm PRIVATE
         filament/c
