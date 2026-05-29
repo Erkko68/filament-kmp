@@ -21,7 +21,7 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
     }
 
     actual class ClearOptions actual constructor() {
-        actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        actual var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
         actual var clear: Boolean = false
         actual var discard: Boolean = true
     }
@@ -67,7 +67,8 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
             FilamentC.FilaRenderer_getClearOptions(nativeHandle, out)
             val cc = FilaRendererClearOptions.clearColor(out)
             ClearOptions().apply {
-                clearColor = FloatArray(4) { cc.getFloatAt(it) }
+                // Filament 1.71.5: ClearOptions.clearColor is double[4] in the C wrapper too.
+                clearColor = DoubleArray(4) { cc.getAtIndex(ValueLayout.JAVA_DOUBLE, it.toLong()) }
                 clear = FilaRendererClearOptions.clear(out)
                 discard = FilaRendererClearOptions.discard(out)
             }
@@ -75,7 +76,8 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
         set(value) {
             confined { arena ->
                 val c = FilaRendererClearOptions.allocate(arena)
-                for (i in 0 until 4.coerceAtMost(value.clearColor.size)) FilaRendererClearOptions.clearColor(c, i.toLong(), value.clearColor[i])
+                val cc = FilaRendererClearOptions.clearColor(c)
+                for (i in 0 until 4.coerceAtMost(value.clearColor.size)) cc.setAtIndex(ValueLayout.JAVA_DOUBLE, i.toLong(), value.clearColor[i])
                 FilaRendererClearOptions.clear(c, value.clear)
                 FilaRendererClearOptions.discard(c, value.discard)
                 FilamentC.FilaRenderer_setClearOptions(nativeHandle, c)

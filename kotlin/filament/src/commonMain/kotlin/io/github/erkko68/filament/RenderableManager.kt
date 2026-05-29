@@ -8,7 +8,9 @@ expect class RenderableManager {
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder
-        
+        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder
+        fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder
+
         fun geometryType(type: GeometryType): Builder
         fun material(index: Int, materialInstance: MaterialInstance): Builder
         fun blendOrder(index: Int, blendOrder: Int): Builder
@@ -63,6 +65,7 @@ expect class RenderableManager {
     fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance?
     
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int)
+    fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int)
     
     fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int)
     fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int

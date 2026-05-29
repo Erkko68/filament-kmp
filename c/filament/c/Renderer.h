@@ -19,7 +19,7 @@ typedef struct FilaRendererFrameRateOptions {
 } FilaRendererFrameRateOptions;
 
 typedef struct FilaRendererClearOptions {
-    float clearColor[4];
+    double clearColor[4];
     bool clear;
     bool discard;
 } FilaRendererClearOptions;

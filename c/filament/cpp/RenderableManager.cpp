@@ -49,6 +49,18 @@ void FilaRenderableManagerBuilder_geometryWithIndices(FilaRenderableManagerBuild
             FILA_CAST(VertexBuffer, vb), FILA_CAST(IndexBuffer, ib), offset, minIndex, maxIndex, count);
 }
 
+void FilaRenderableManagerBuilder_geometryNonIndexed(FilaRenderableManagerBuilder* builder, size_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, size_t offset, size_t count) {
+    FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
+            FILA_CAST(VertexBuffer, vb), offset, count);
+}
+
+void FilaRenderableManagerBuilder_geometryNonIndexedNone(FilaRenderableManagerBuilder* builder, size_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb) {
+    FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
+            FILA_CAST(VertexBuffer, vb));
+}
+
 void FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* builder, FilaRenderableManagerGeometryType type) {
     FILA_CAST(RenderableManager::Builder, builder)->geometryType(static_cast<RenderableManager::Builder::GeometryType>(type));
 }
@@ -270,6 +282,10 @@ FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRend
 
 void FilaRenderableManager_setGeometryAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t count) {
     FILA_CAST(RenderableManager, rm)->setGeometryAt(RenderableManager::Instance(instance), primitiveIndex, static_cast<RenderableManager::PrimitiveType>(type), FILA_CAST(VertexBuffer, vb), FILA_CAST(IndexBuffer, ib), offset, count);
+}
+
+void FilaRenderableManager_setGeometryAtNonIndexed(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, size_t offset, size_t count) {
+    FILA_CAST(RenderableManager, rm)->setGeometryAt(RenderableManager::Instance(instance), primitiveIndex, static_cast<RenderableManager::PrimitiveType>(type), FILA_CAST(VertexBuffer, vb), offset, count);
 }
 
 void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, uint16_t blendOrder) {

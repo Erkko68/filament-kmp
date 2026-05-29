@@ -13,6 +13,12 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 - Dokka HTML published as the `-javadoc` artifact (replaces empty placeholder jar).
 - KDocs on every `commonMain` `expect` declaration.
+- Filament bumped to **1.71.5**.
+  - **Breaking:** `Renderer.ClearOptions.clearColor` is now `DoubleArray` (was `FloatArray`), matching the upstream Android API change. JNI `nSetClearOptions` and the C wrapper's `FilaRendererClearOptions::clearColor` follow suit.
+  - **Added:** non-indexed (attribute-less / procedural) overloads of `RenderableManager.Builder.geometry(...)` and `RenderableManager.setGeometryAt(...)` (requires `FEATURE_LEVEL_1`+; not bound in Filament.js, so the web actuals throw `UnsupportedOperationException`).
+  - **Added:** `VertexBuffer.Builder.bufferCount` now accepts `0` for attribute-less rendering (passthrough — no client-side validation existed).
+  - `scripts/download_filament_includes.py` now synthesizes a cross-platform `gltfio/materials/uberarchive.h` from the per-platform release tarballs (the source tarball doesn't ship this auto-generated header).
+- `include/` is no longer checked into the repo — it's regenerated on every build by the `downloadIncludes` Gradle task (CMake/cinterop tasks depend on it). Mirrors how `prebuilts/` already worked.
 
 ## [0.1.1-rc02] — 2026-05-26
 

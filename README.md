@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.erkko68.filament/filament-compose?label=Maven%20Central&color=blue)](https://central.sonatype.com/namespace/io.github.erkko68.filament)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Filament](https://img.shields.io/badge/Filament-1.71.4-orange)](https://github.com/google/filament)
+[![Filament](https://img.shields.io/badge/Filament-1.71.5-orange)](https://github.com/google/filament)
 [![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform/)
 

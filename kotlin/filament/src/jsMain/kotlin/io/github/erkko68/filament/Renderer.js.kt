@@ -142,7 +142,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     }
 
     actual class ClearOptions {
-        actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        actual var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
         actual var clear: Boolean = false
         actual var discard: Boolean = false
     }

@@ -28,12 +28,12 @@ class RendererTest : FilamentTestFixture() {
         assertEquals(8, fro.history)
 
         val co = Renderer.ClearOptions().apply {
-            clearColor = floatArrayOf(0.1f, 0.2f, 0.3f, 1f)
+            clearColor = doubleArrayOf(0.1, 0.2, 0.3, 1.0)
             clear = true
             discard = true
         }
-        assertEquals(0.1f, co.clearColor[0], 1e-6f)
-        assertEquals(0.2f, co.clearColor[1], 1e-6f)
+        assertEquals(0.1, co.clearColor[0], 1e-9)
+        assertEquals(0.2, co.clearColor[1], 1e-9)
         assertTrue(co.clear)
         assertTrue(co.discard)
     }
