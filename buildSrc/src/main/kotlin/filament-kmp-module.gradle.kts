@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform")
@@ -78,6 +80,22 @@ kotlin {
             }
         }
     }
+}
+
+// ── JVM/Panama floor ──────────────────────────────────────────────────────────
+// The jvmMain actuals call java.lang.foreign (finalized in JDK 22) and depend on
+// :java:filament-ffm. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties), so
+// the toolchain and the requested org.gradle.jvm.version are already 22+ — no per-module toolchain
+// or attribute forcing is needed. We only pin the jvm bytecode to a JVM 22 floor so the artifact
+// stays usable on any JDK 22+ (Android/native/JS targets are untouched — different task types).
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_22)
+}
+
+// jvmTest runs FFM downcalls into libfilament-c; silence the JDK 22+ restricted-native-access
+// warning. Downstream app launchers need the same flag.
+tasks.withType<Test>().configureEach {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
 }
 
 // ── androidx.test runner deps for connectedDebugAndroidTest ───────────────────

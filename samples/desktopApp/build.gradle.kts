@@ -15,15 +15,17 @@ kotlin {
     }
 }
 
+// The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties), so the compose `run`
+// task and dependency resolution already use 25 — no toolchain or javaHome override needed for the
+// filament FFM bindings (JVM 22 bytecode, java.lang.foreign).
 compose.desktop {
     application {
         mainClass = "eric.bitria.samples.MainKt"
 
-        // Silence "restricted method java.lang.System::load" warnings from Skiko and
-        // from our own NativeLoader. JDK 22+ requires native access to be explicitly
-        // granted; ALL-UNNAMED grants it to every classpath jar.
-        // If consumers run on the module path they can narrow this to
-        //   --enable-native-access=io.github.erkko68.filament.jni
+        // Silence "restricted method java.lang.System::load" warnings from Skiko and from our own
+        // FFM loader. JDK 22+ requires native access to be explicitly granted; ALL-UNNAMED grants
+        // it to every classpath jar. On the module path this can be narrowed to
+        //   --enable-native-access=io.github.erkko68.filament.ffm
         jvmArgs += "--enable-native-access=ALL-UNNAMED"
 
         nativeDistributions {
