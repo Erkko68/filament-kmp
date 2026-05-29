@@ -36,8 +36,10 @@ actual class Renderer internal constructor(
     actual class ClearOptions actual constructor() {
         val nativeOptions = AndroidRenderer.ClearOptions()
         actual var clearColor: FloatArray
-            get() = nativeOptions.clearColor
-            set(value) { nativeOptions.clearColor = value }
+            // Filament 1.71.5 changed Android's ClearOptions.clearColor to double[]; the common
+            // API (and every other target) keeps it FloatArray, so bridge between the two.
+            get() = nativeOptions.clearColor.let { FloatArray(it.size) { i -> it[i].toFloat() } }
+            set(value) { nativeOptions.clearColor = DoubleArray(value.size) { value[it].toDouble() } }
         actual var clear: Boolean
             get() = nativeOptions.clear
             set(value) { nativeOptions.clear = value }
