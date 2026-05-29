@@ -39,7 +39,7 @@ typedef enum FilaAttributeType {
 // Builder
 typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
 
-FilaVertexBufferBuilder* FilaVertexBufferBuilder_create();
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_create(void);
 void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* builder);
 FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder, FilaEngine* engine);
 

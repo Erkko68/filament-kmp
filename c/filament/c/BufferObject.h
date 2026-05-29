@@ -16,7 +16,7 @@ typedef enum FilaBufferObjectBindingType {
 // Builder
 typedef struct FilaBufferObjectBuilder FilaBufferObjectBuilder;
 
-FilaBufferObjectBuilder* FilaBufferObjectBuilder_create();
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void);
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* builder);
 FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* builder, FilaEngine* engine);
 

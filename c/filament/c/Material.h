@@ -83,7 +83,7 @@ typedef struct FilaMaterialParameterInfo {
 typedef void (*FilaMaterialCompileCallback)(FilaMaterial* material, void* userData);
 
 // Persistent Builder
-FilaMaterial_Builder* FilaMaterial_Builder_create();
+FilaMaterial_Builder* FilaMaterial_Builder_create(void);
 void FilaMaterial_Builder_destroy(FilaMaterial_Builder* builder);
 void FilaMaterial_Builder_package(FilaMaterial_Builder* builder, const void* payload, size_t size);
 void FilaMaterial_Builder_sphericalHarmonicsBandCount(FilaMaterial_Builder* builder, int count);

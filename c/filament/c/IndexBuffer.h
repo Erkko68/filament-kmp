@@ -15,7 +15,7 @@ typedef enum FilaIndexBufferType {
 // Builder
 typedef struct FilaIndexBufferBuilder FilaIndexBufferBuilder;
 
-FilaIndexBufferBuilder* FilaIndexBufferBuilder_create();
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void);
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* builder);
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* builder, FilaEngine* engine);
 

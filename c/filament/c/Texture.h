@@ -113,7 +113,7 @@ typedef struct FilaTextureFaceOffsets {
 // Builder
 typedef struct FilaTextureBuilder FilaTextureBuilder;
 
-FilaTextureBuilder* FilaTextureBuilder_create();
+FilaTextureBuilder* FilaTextureBuilder_create(void);
 void FilaTextureBuilder_destroy(FilaTextureBuilder* builder);
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* builder, FilaEngine* engine);
 

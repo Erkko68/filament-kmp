@@ -10,7 +10,7 @@ extern "C" {
 // Builder
 typedef struct FilaSkyboxBuilder FilaSkyboxBuilder;
 
-FilaSkyboxBuilder* FilaSkyboxBuilder_create();
+FilaSkyboxBuilder* FilaSkyboxBuilder_create(void);
 void FilaSkyboxBuilder_destroy(FilaSkyboxBuilder* builder);
 FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* builder, FilaEngine* engine);
 

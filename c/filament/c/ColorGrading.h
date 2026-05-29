@@ -24,7 +24,7 @@ typedef enum FilaColorGradingLutFormat {
 // Builder
 typedef struct FilaColorGradingBuilder FilaColorGradingBuilder;
 
-FilaColorGradingBuilder* FilaColorGradingBuilder_create();
+FilaColorGradingBuilder* FilaColorGradingBuilder_create(void);
 void FilaColorGradingBuilder_destroy(FilaColorGradingBuilder* builder);
 FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* builder, FilaEngine* engine);
 

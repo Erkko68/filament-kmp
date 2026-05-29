@@ -11,7 +11,7 @@ extern "C" {
 typedef struct FilaSurfaceOrientationBuilder FilaSurfaceOrientationBuilder;
 typedef struct FilaSurfaceOrientation FilaSurfaceOrientation;
 
-FilaSurfaceOrientationBuilder* FilaSurfaceOrientationBuilder_create();
+FilaSurfaceOrientationBuilder* FilaSurfaceOrientationBuilder_create(void);
 void FilaSurfaceOrientationBuilder_destroy(FilaSurfaceOrientationBuilder* builder);
 
 void FilaSurfaceOrientationBuilder_vertexCount(FilaSurfaceOrientationBuilder* builder, uint32_t vertexCount);

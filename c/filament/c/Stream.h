@@ -15,7 +15,7 @@ typedef enum FilaStreamType {
 // Builder
 typedef struct FilaStreamBuilder FilaStreamBuilder;
 
-FilaStreamBuilder* FilaStreamBuilder_create();
+FilaStreamBuilder* FilaStreamBuilder_create(void);
 void FilaStreamBuilder_destroy(FilaStreamBuilder* builder);
 FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* builder, FilaEngine* engine);
 

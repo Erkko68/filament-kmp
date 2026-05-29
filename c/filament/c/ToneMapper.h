@@ -14,15 +14,15 @@ typedef enum FilaAgxLook {
 } FilaAgxLook;
 
 // ToneMapper Factories
-FilaToneMapper* FilaToneMapper_Linear();
-FilaToneMapper* FilaToneMapper_ACES();
-FilaToneMapper* FilaToneMapper_ACESLegacy();
-FilaToneMapper* FilaToneMapper_Filmic();
-FilaToneMapper* FilaToneMapper_PBRNeutral();
-FilaToneMapper* FilaToneMapper_GT7();
+FilaToneMapper* FilaToneMapper_Linear(void);
+FilaToneMapper* FilaToneMapper_ACES(void);
+FilaToneMapper* FilaToneMapper_ACESLegacy(void);
+FilaToneMapper* FilaToneMapper_Filmic(void);
+FilaToneMapper* FilaToneMapper_PBRNeutral(void);
+FilaToneMapper* FilaToneMapper_GT7(void);
 FilaToneMapper* FilaToneMapper_Agx(FilaAgxLook look);
 FilaToneMapper* FilaToneMapper_Generic(float contrast, float midGrayIn, float midGrayOut, float hdrMax);
-FilaToneMapper* FilaToneMapper_DisplayRange();
+FilaToneMapper* FilaToneMapper_DisplayRange(void);
 
 void FilaToneMapper_destroy(FilaToneMapper* toneMapper);
 

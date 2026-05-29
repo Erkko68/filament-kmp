@@ -42,7 +42,7 @@ void FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* bui
 void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder, size_t index, const FilaMaterialInstance* materialInstance);
 void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, size_t index, uint16_t blendOrder);
 void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, size_t index, bool enabled);
-void FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* builder, float cx, float cy, float cz, float ex, float ey, float ez);
+void FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* builder, float cx, float cy, float cz, float hx, float hy, float hz);
 void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint8_t select, uint8_t value);
 void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint8_t priority);
 void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint8_t channel);
@@ -73,7 +73,7 @@ void FilaRenderableManager_setMorphWeights(FilaRenderableManager* rm, FilaRender
 void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t level, size_t primitiveIndex, size_t offset);
 uint32_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance);
 
-void FilaRenderableManager_setAxisAlignedBoundingBox(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, float cx, float cy, float cz, float ex, float ey, float ez);
+void FilaRenderableManager_setAxisAlignedBoundingBox(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, float cx, float cy, float cz, float hx, float hy, float hz);
 void FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, float center[3], float halfExtent[3]);
 
 void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t select, uint8_t value);

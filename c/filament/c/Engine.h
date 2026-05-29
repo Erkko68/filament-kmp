@@ -41,7 +41,7 @@ typedef struct FilaEngineConfig {
 // Builder
 typedef struct FilaEngineBuilder FilaEngineBuilder;
 
-FilaEngineBuilder* FilaEngineBuilder_create();
+FilaEngineBuilder* FilaEngineBuilder_create(void);
 void FilaEngineBuilder_destroy(FilaEngineBuilder* builder);
 void FilaEngineBuilder_backend(FilaEngineBuilder* builder, FilaEngineBackend backend);
 void FilaEngineBuilder_config(FilaEngineBuilder* builder, const FilaEngineConfig* config);
@@ -138,7 +138,7 @@ bool FilaEngine_hasFeatureFlag(FilaEngine* engine, const char* name);
 void FilaEngine_setFeatureFlag(FilaEngine* engine, const char* name, bool value);
 bool FilaEngine_getFeatureFlag(FilaEngine* engine, const char* name);
 
-uint64_t FilaEngine_getSteadyClockTimeNano();
+uint64_t FilaEngine_getSteadyClockTimeNano(void);
 
 void FilaEngine_enableAccurateTranslations(FilaEngine* engine);
 

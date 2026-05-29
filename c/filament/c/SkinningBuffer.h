@@ -10,7 +10,7 @@ extern "C" {
 // Builder
 typedef struct FilaSkinningBufferBuilder FilaSkinningBufferBuilder;
 
-FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_create();
+FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_create(void);
 void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* builder);
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* builder, FilaEngine* engine);
 

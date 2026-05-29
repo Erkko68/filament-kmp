@@ -32,7 +32,7 @@ typedef enum FilaRenderTargetCubemapFace {
 // Builder
 typedef struct FilaRenderTargetBuilder FilaRenderTargetBuilder;
 
-FilaRenderTargetBuilder* FilaRenderTargetBuilder_create();
+FilaRenderTargetBuilder* FilaRenderTargetBuilder_create(void);
 void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* builder);
 FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* builder, FilaEngine* engine);
 

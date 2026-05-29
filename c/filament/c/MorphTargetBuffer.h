@@ -10,7 +10,7 @@ extern "C" {
 // Builder
 typedef struct FilaMorphTargetBufferBuilder FilaMorphTargetBufferBuilder;
 
-FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create();
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create(void);
 void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* builder);
 FilaMorphTargetBuffer* FilaMorphTargetBufferBuilder_build(FilaMorphTargetBufferBuilder* builder, FilaEngine* engine);
 

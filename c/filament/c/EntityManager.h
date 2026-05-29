@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 // EntityManager is a singleton
-FilaEntityManager* FilaEntityManager_get();
+FilaEntityManager* FilaEntityManager_get(void);
 
 FilaEntity FilaEntityManager_create(FilaEntityManager* em);
 void FilaEntityManager_createArray(FilaEntityManager* em, size_t n, FilaEntity* outEntities);

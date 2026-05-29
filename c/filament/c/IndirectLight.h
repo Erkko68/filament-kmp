@@ -10,7 +10,7 @@ extern "C" {
 // Builder
 typedef struct FilaIndirectLightBuilder FilaIndirectLightBuilder;
 
-FilaIndirectLightBuilder* FilaIndirectLightBuilder_create();
+FilaIndirectLightBuilder* FilaIndirectLightBuilder_create(void);
 void FilaIndirectLightBuilder_destroy(FilaIndirectLightBuilder* builder);
 FilaIndirectLight* FilaIndirectLightBuilder_build(FilaIndirectLightBuilder* builder, FilaEngine* engine);
 

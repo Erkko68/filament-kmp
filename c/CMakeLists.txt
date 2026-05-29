@@ -1,5 +1,22 @@
 cmake_minimum_required(VERSION 3.19...3.28)
 
+# --- Build options ---
+# When ON, builds a single combined SHARED library (libfilament-c) that statically
+# links all four C-wrapper source sets and the union of their Filament archives.
+# This is the JVM/Panama path. Default OFF keeps the iOS static-only build untouched.
+option(FILAMENT_BUILD_SHARED "Build the combined libfilament-c shared library for the JVM" OFF)
+
+# Filament prebuilts are built with clang/libc++ — use the same toolchain on Linux
+# for the SHARED build (mixing with libstdc++ fails to link). Must run before project().
+if (FILAMENT_BUILD_SHARED AND UNIX AND NOT APPLE)
+    find_program(CLANGPP clang++)
+    if (CLANGPP)
+        set(CMAKE_CXX_COMPILER ${CLANGPP})
+    else()
+        message(FATAL_ERROR "clang++ not found. Install it with: sudo apt install clang libc++-dev libc++abi-dev")
+    endif()
+endif()
+
 # --- Platform specific setup ---
 set(FILAMENT_PLATFORM "ios-simulator" CACHE STRING "Target platform (ios, ios-simulator)")
 set(FILAMENT_ARCH "arm64" CACHE STRING "Target architecture (arm64, x64)")
@@ -22,6 +39,20 @@ elseif (FILAMENT_PLATFORM STREQUAL "ios-simulator")
         set(CMAKE_OSX_ARCHITECTURES "arm64")
         set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosSimulatorArm64/lib")
     endif()
+elseif (FILAMENT_BUILD_SHARED)
+    # JVM/Panama host build (macos, linux, windows). The prebuilt dir name combines the
+    # platform (windows → mingw) with the capitalised arch, e.g. macosArm64, linuxX64, mingwX64.
+    if (FILAMENT_ARCH STREQUAL "x64" OR FILAMENT_ARCH STREQUAL "X64")
+        set(_FILA_ARCH_DIR "X64")
+    else()
+        set(_FILA_ARCH_DIR "Arm64")
+    endif()
+    if (FILAMENT_PLATFORM STREQUAL "windows")
+        set(_FILA_PLAT_DIR "mingw")
+    else()
+        set(_FILA_PLAT_DIR "${FILAMENT_PLATFORM}")
+    endif()
+    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/${_FILA_PLAT_DIR}${_FILA_ARCH_DIR}/lib")
 endif()
 
 project(filament-c)
@@ -102,7 +133,7 @@ add_filament_library(dracodec)
 add_filament_library(stb)
 
 # The C-wrapper library
-add_library(filament-c STATIC
+set(FILAMENT_C_SOURCES
     # Engine
     filament/cpp/Engine.cpp
     # Camera
@@ -162,6 +193,8 @@ add_library(filament-c STATIC
     filament/cpp/SurfaceOrientation.cpp
 )
 
+add_library(filament-c STATIC ${FILAMENT_C_SOURCES})
+
 target_include_directories(filament-c PUBLIC
     filament/c
 )
@@ -204,9 +237,11 @@ if (APPLE)
 endif()
 
 # filamat-c library
-add_library(filamat-c STATIC
+set(FILAMAT_C_SOURCES
     filamat/cpp/MaterialBuilder.cpp
 )
+
+add_library(filamat-c STATIC ${FILAMAT_C_SOURCES})
 
 target_link_libraries(filamat-c
     PRIVATE filamat
@@ -230,13 +265,15 @@ target_include_directories(filamat-c PRIVATE
 )
 
 # filament-utils-c library
-add_library(filament-utils-c STATIC
+set(FILAMENT_UTILS_C_SOURCES
     filament-utils/cpp/IBLPrefilter.cpp
     filament-utils/cpp/Manipulator.cpp
     filament-utils/cpp/HDRLoader.cpp
     filament-utils/cpp/KTX1Loader.cpp
     filament-utils/cpp/TextureLoader.cpp
 )
+
+add_library(filament-utils-c STATIC ${FILAMENT_UTILS_C_SOURCES})
 
 target_link_libraries(filament-utils-c
     PRIVATE filament-c
@@ -263,7 +300,7 @@ target_include_directories(filament-utils-c PRIVATE
 )
 
 # gltfio-c library
-add_library(gltfio-c STATIC
+set(GLTFIO_C_SOURCES
     gltfio/cpp/AssetLoader.cpp
     gltfio/cpp/FilamentAsset.cpp
     gltfio/cpp/FilamentInstance.cpp
@@ -271,6 +308,8 @@ add_library(gltfio-c STATIC
     gltfio/cpp/MaterialProvider.cpp
     gltfio/cpp/ResourceLoader.cpp
 )
+
+add_library(gltfio-c STATIC ${GLTFIO_C_SOURCES})
 
 target_link_libraries(gltfio-c
     PRIVATE gltfio_core
@@ -303,4 +342,89 @@ if (FILAMENT_SUPPORTS_VULKAN)
     # Add bluevk/smol-v if vulkan is enabled
 else()
     add_definitions(-DFILAMENT_SUPPORTS_VULKAN=0)
+endif()
+
+# ── Combined SHARED library for the JVM (Project Panama / FFM) ─────────────────
+#
+# One shared image links all four C-wrapper source sets and the *union* of their
+# Filament static archives, each included exactly once. Shipping a single image
+# (instead of four) keeps Filament's process-global singletons — notably
+# EntityManager — to a single instance, the same reason java/CMakeLists.txt
+# combines its JNI submodules into one libfilament-jni.
+if (FILAMENT_BUILD_SHARED)
+    # Extra archives the combined image needs beyond the four static targets' imports.
+    # Mirrors the proven java/CMakeLists.txt (libfilament-jni) link set, which exercises
+    # the same Filament APIs through a different wrapper.
+    add_filament_library(meshoptimizer)
+    add_filament_library(bluegl)
+    add_filament_library(bluevk)
+    add_filament_library(ibl)
+    add_filament_library(filament-generatePrefilterMipmap)
+    add_filament_library(gltfio)
+    add_filament_library(uberzlib)
+    add_filament_library(uberarchive)
+    add_filament_library(basis_transcoder)
+
+    add_library(filament-c-jvm SHARED
+        ${FILAMENT_C_SOURCES}
+        ${FILAMAT_C_SOURCES}
+        ${FILAMENT_UTILS_C_SOURCES}
+        ${GLTFIO_C_SOURCES}
+    )
+
+    set_target_properties(filament-c-jvm PROPERTIES OUTPUT_NAME "filament-c")
+
+    target_include_directories(filament-c-jvm PRIVATE
+        filament/c
+        filamat/c
+        filament-utils/c
+        gltfio/c
+        filament/cpp
+        filamat/cpp
+        filament-utils/cpp
+        gltfio/cpp
+        ${FILAMENT_INCLUDE_DIR}
+    )
+
+    # Union of every archive the combined image references, each listed once.
+    # Note: full `ibl` (not ibl-lite) — the combined build pulls in gltfio/iblprefilter
+    # IBL paths, matching the JNI build (doc §3.3).
+    target_link_libraries(filament-c-jvm PRIVATE
+        filament backend utils
+        filaflat filabridge zstd smol-v
+        bluegl bluevk ibl image geometry meshoptimizer
+        camutils ktxreader filament-generatePrefilterMipmap
+        filamat shaders
+        gltfio gltfio_core uberzlib uberarchive dracodec stb basis_transcoder
+        imageio-lite iblprefilter
+    )
+
+    if (APPLE)
+        target_link_libraries(filament-c-jvm PRIVATE
+            "-framework Cocoa"
+            "-framework Metal"
+            "-framework Foundation"
+            "-framework AppKit"
+            "-framework QuartzCore"
+            "-framework CoreVideo"
+            "-framework OpenGL"
+        )
+    elseif (WIN32)
+        # PlatformWGL / BlueGLWindows need the Win32 OpenGL + GDI libs;
+        # shlwapi is used by utils::Path.
+        target_link_libraries(filament-c-jvm PRIVATE opengl32 gdi32 user32 shlwapi)
+    elseif (UNIX)
+        add_compile_options(-stdlib=libc++)
+        add_link_options(-stdlib=libc++)
+        target_link_libraries(filament-c-jvm PRIVATE GL)
+        # GNU ld scans static archives left-to-right in a single pass, so cross-refs
+        # between Filament archives can drop members if ordering is wrong. Wrap them
+        # in a group so ld rescans until all references resolve. Also force a
+        # non-executable stack — one prebuilt .S object lacks the .note.GNU-stack marker.
+        target_link_options(filament-c-jvm PRIVATE
+            "LINKER:-z,noexecstack"
+            "LINKER:--start-group"
+        )
+        target_link_libraries(filament-c-jvm PRIVATE "-Wl,--end-group")
+    endif()
 endif()
