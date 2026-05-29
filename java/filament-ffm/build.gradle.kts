@@ -1,0 +1,90 @@
+plugins {
+    `java-library`
+    id("filament-publish")
+}
+
+// JVM/Panama (FFM) bindings module. Drives the combined CMake build at c/CMakeLists.txt
+// (-DFILAMENT_BUILD_SHARED=ON → one libfilament-c shared lib with the Filament static
+// archives linked exactly once), runs jextract over the C headers to generate the
+// low-level binding classes, packages the dylib into this module's resources, and ships
+// a loader that System.loads it so jextract's loaderLookup resolves the symbols.
+//
+// kotlin:filament's jvmMain depends on this module and writes the idiomatic Kotlin
+// actuals on top of the generated FilamentC class.
+
+// FFM was finalized in JDK 22; build with a 22 release floor on the installed JDK 25 (LTS)
+// toolchain so the published artifact is usable on any JDK 22+.
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(22)
+}
+
+// ── Native build + jextract generation (see buildSrc/FilamentJvmNative.kt) ────
+// Extract the full C surface — filament + filamat + filament-utils + gltfio — into one
+// FilamentC class. The combined libfilament-c shared library already links all four wrappers
+// (one Filament image → one EntityManager), so a single jextract run over every header keeps
+// the generated FilaTypes structs consistent and lets all four kotlin JVM modules share it.
+val ffm = applyFilamentJvmNative(
+    headerDirs = listOf(
+        rootProject.file("c/filament/c"),
+        rootProject.file("c/filamat/c"),
+        rootProject.file("c/filament-utils/c"),
+        rootProject.file("c/gltfio/c"),
+    ),
+    includeDirs = listOf(
+        rootProject.file("c/filament/c"),
+        rootProject.file("c/filamat/c"),
+        rootProject.file("c/filament-utils/c"),
+        rootProject.file("c/gltfio/c"),
+        rootProject.file("include"),
+    ),
+    ffmPackage = "io.github.erkko68.filament.ffm",
+    headerClassName = "FilamentC",
+)
+
+// Generated jextract sources compile alongside the hand-written loader.
+sourceSets.named("main") {
+    java.srcDir(ffm.generatedJavaDir)
+}
+
+tasks.named<JavaCompile>("compileJava") {
+    dependsOn(ffm.jextract)
+}
+
+// ── Package the combined dylib into resources (mirrors java/filament) ─────────
+tasks.named<ProcessResources>("processResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn(ffm.cmakeBuild)
+    val platformArch = ffm.platformArch
+    // Single-config generators (Make / Ninja) put libs directly in build/cmake/.
+    from(ffm.dylibDir) {
+        include("*.dylib", "*.so", "*.dll")
+        into("natives/$platformArch")
+    }
+    // Multi-config generators (Visual Studio) put DLLs in build/cmake/Release/.
+    from(ffm.dylibDir.map { it.dir("Release") }) {
+        include("*.dll")
+        into("natives/$platformArch")
+    }
+    // Bundle pre-compiled natives from other platforms (CI publish job). Pass
+    // -PcArtifactsDir=<path> where the dir has {platform}-{arch}/ subdirs each
+    // containing the combined libfilament-c for that platform.
+    val cArtifactsDir = (project.findProperty("cArtifactsDir") as? String)?.let { file(it) }
+    if (cArtifactsDir != null && cArtifactsDir.exists()) {
+        cArtifactsDir.listFiles { f -> f.isDirectory }?.forEach { platformDir ->
+            from(platformDir) {
+                include("*.dylib", "*.so", "*.dll")
+                into("natives/${platformDir.name}")
+            }
+        }
+    }
+}
+
+tasks.named("assemble") {
+    dependsOn(ffm.cmakeBuild)
+}

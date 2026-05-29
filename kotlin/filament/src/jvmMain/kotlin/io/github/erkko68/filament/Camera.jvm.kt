@@ -1,139 +1,194 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.Camera as JniCamera
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class Camera(val nativeCamera: JniCamera) {
+actual class Camera internal constructor(
+    internal var nativeHandle: MemorySegment?,
+    actual val entity: Entity
+) {
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }
 
-    actual fun setProjection(projection: Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double) =
-        nativeCamera.setProjection(JniCamera.Projection.values()[projection.ordinal], left, right, bottom, top, near, far)
-    
-    actual fun setProjection(fovInDegrees: Double, aspect: Double, near: Double, far: Double, direction: Fov) =
-        nativeCamera.setProjection(fovInDegrees, aspect, near, far, JniCamera.Fov.values()[direction.ordinal])
-
-    actual fun setLensProjection(focalLength: Double, aspect: Double, near: Double, far: Double) =
-        nativeCamera.setLensProjection(focalLength, aspect, near, far)
-
-    actual fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) =
-        nativeCamera.setCustomProjection(matrix, near, far)
-
-    actual fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double) =
-        nativeCamera.setCustomProjection(matrix, matrixForCulling, near, far)
+    actual fun setProjection(projection: Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double) {
+        FilamentC.FilaCamera_setProjection(nativeHandle, projection.ordinal, left, right, bottom, top, near, far)
+    }
+    actual fun setProjection(fovInDegrees: Double, aspect: Double, near: Double, far: Double, direction: Fov) {
+        FilamentC.FilaCamera_setProjectionFov(nativeHandle, fovInDegrees, aspect, near, far, direction.ordinal)
+    }
+    actual fun setLensProjection(focalLength: Double, aspect: Double, near: Double, far: Double) {
+        FilamentC.FilaCamera_setLensProjection(nativeHandle, focalLength, aspect, near, far)
+    }
+    actual fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
+        confined { arena ->
+            val m = arena.doubles(matrix)
+            FilamentC.FilaCamera_setCustomProjection(nativeHandle, m, m, near, far)
+        }
+    }
+    actual fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double) {
+        confined { arena ->
+            FilamentC.FilaCamera_setCustomProjection(nativeHandle, arena.doubles(matrix), arena.doubles(matrixForCulling), near, far)
+        }
+    }
 
     actual fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double) {
-        nativeCamera.setCustomEyeProjection(projection, count, projectionForCulling, near, far)
+        confined { arena ->
+            FilamentC.FilaCamera_setCustomEyeProjection(nativeHandle, arena.doubles(projection), count.toLong(), arena.doubles(projectionForCulling), near, far)
+        }
     }
 
     actual fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray) {
-        // JNI setEyeModelMatrix takes float[]. We might need to convert.
-        val floatModel = FloatArray(modelMatrix.size)
-        for (i in modelMatrix.indices) floatModel[i] = modelMatrix[i].toFloat()
-        nativeCamera.setEyeModelMatrix(eyeId, floatModel)
+        confined { arena -> FilamentC.FilaCamera_setEyeModelMatrix(nativeHandle, eyeId, arena.doubles(modelMatrix)) }
     }
 
-    actual fun setScaling(x: Double, y: Double) = nativeCamera.setScaling(x, y)
-    
+    actual fun setScaling(x: Double, y: Double) {
+        FilamentC.FilaCamera_setScaling(nativeHandle, x, y)
+    }
     actual fun getScaling(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(4)
-        nativeCamera.getScaling(result)
+        confined { arena ->
+            val seg = arena.doubleArr(4)
+            FilamentC.FilaCamera_getScaling(nativeHandle, seg)
+            System.arraycopy(seg.toDoubles(), 0, result, 0, 4)
+        }
         return result
     }
-
-    actual fun setShift(x: Double, y: Double) = nativeCamera.setShift(x, y)
-
+    actual fun setShift(x: Double, y: Double) {
+        FilamentC.FilaCamera_setShift(nativeHandle, x, y)
+    }
     actual fun getShift(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(2)
-        nativeCamera.getShift(result)
+        confined { arena ->
+            val seg = arena.doubleArr(2)
+            FilamentC.FilaCamera_getShift(nativeHandle, seg)
+            System.arraycopy(seg.toDoubles(), 0, result, 0, 2)
+        }
         return result
     }
 
     actual fun lookAt(eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double, upY: Double, upZ: Double) {
-        nativeCamera.lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ)
+        FilamentC.FilaCamera_lookAt(nativeHandle, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ)
     }
 
-    actual fun setModelMatrix(modelMatrix: FloatArray) = nativeCamera.setModelMatrix(modelMatrix)
-    actual fun setModelMatrix(modelMatrix: DoubleArray) = nativeCamera.setModelMatrix(modelMatrix)
+    actual fun setModelMatrix(modelMatrix: FloatArray) {
+        confined { arena -> FilamentC.FilaCamera_setModelMatrix(nativeHandle, arena.floats(modelMatrix)) }
+    }
+    actual fun setModelMatrix(modelMatrix: DoubleArray) {
+        confined { arena -> FilamentC.FilaCamera_setModelMatrixFp64(nativeHandle, arena.doubles(modelMatrix)) }
+    }
 
     actual fun getProjectionMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        nativeCamera.getProjectionMatrix(result)
+        confined { arena ->
+            val seg = arena.doubleArr(16)
+            FilamentC.FilaCamera_getProjectionMatrix(nativeHandle, seg)
+            System.arraycopy(seg.toDoubles(), 0, result, 0, 16)
+        }
         return result
     }
-
     actual fun getCullingProjectionMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        nativeCamera.getCullingProjectionMatrix(result)
+        confined { arena ->
+            val seg = arena.doubleArr(16)
+            FilamentC.FilaCamera_getCullingProjectionMatrix(nativeHandle, seg)
+            System.arraycopy(seg.toDoubles(), 0, result, 0, 16)
+        }
         return result
     }
 
     actual fun getModelMatrix(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(16)
-        nativeCamera.getModelMatrix(result)
+        confined { arena ->
+            val seg = arena.floatArr(16)
+            FilamentC.FilaCamera_getModelMatrix(nativeHandle, seg)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 16)
+        }
         return result
     }
-
     actual fun getModelMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        nativeCamera.getModelMatrix(result)
+        confined { arena ->
+            val seg = arena.doubleArr(16)
+            FilamentC.FilaCamera_getModelMatrixFp64(nativeHandle, seg)
+            System.arraycopy(seg.toDoubles(), 0, result, 0, 16)
+        }
         return result
     }
 
     actual fun getViewMatrix(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(16)
-        nativeCamera.getViewMatrix(result)
+        confined { arena ->
+            val seg = arena.floatArr(16)
+            FilamentC.FilaCamera_getViewMatrix(nativeHandle, seg)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 16)
+        }
         return result
     }
-
     actual fun getViewMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        nativeCamera.getViewMatrix(result)
+        confined { arena ->
+            val seg = arena.doubleArr(16)
+            FilamentC.FilaCamera_getViewMatrixFp64(nativeHandle, seg)
+            System.arraycopy(seg.toDoubles(), 0, result, 0, 16)
+        }
         return result
     }
 
     actual fun getPosition(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        nativeCamera.getPosition(result)
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaCamera_getPosition(nativeHandle, seg)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
+        }
         return result
     }
 
     actual fun getLeftVector(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        nativeCamera.getLeftVector(result)
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaCamera_getLeftVector(nativeHandle, seg)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
+        }
         return result
     }
-
     actual fun getUpVector(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        nativeCamera.getUpVector(result)
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaCamera_getUpVector(nativeHandle, seg)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
+        }
         return result
     }
-
     actual fun getForwardVector(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        nativeCamera.getForwardVector(result)
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaCamera_getForwardVector(nativeHandle, seg)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
+        }
         return result
     }
 
-    actual val near: Float get() = nativeCamera.near
-    actual val cullingFar: Float get() = nativeCamera.cullingFar
-    
-    actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) =
-        nativeCamera.setExposure(aperture, shutterSpeed, sensitivity)
+    actual val near: Float get() = FilamentC.FilaCamera_getNear(nativeHandle).toFloat()
+    actual val cullingFar: Float get() = FilamentC.FilaCamera_getCullingFar(nativeHandle).toFloat()
 
-    actual fun setExposure(exposure: Float) = nativeCamera.setExposure(exposure)
-
-    actual val aperture: Float get() = nativeCamera.aperture
-    actual val shutterSpeed: Float get() = nativeCamera.shutterSpeed
-    actual val sensitivity: Float get() = nativeCamera.sensitivity
-    actual val focalLength: Double get() = nativeCamera.focalLength
+    actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
+        FilamentC.FilaCamera_setExposure(nativeHandle, aperture, shutterSpeed, sensitivity)
+    }
+    actual fun setExposure(exposure: Float) {
+        setExposure(1.0f, 1.2f, 100.0f * (1.0f / exposure))
+    }
+    actual val aperture: Float get() = FilamentC.FilaCamera_getAperture(nativeHandle)
+    actual val shutterSpeed: Float get() = FilamentC.FilaCamera_getShutterSpeed(nativeHandle)
+    actual val sensitivity: Float get() = FilamentC.FilaCamera_getSensitivity(nativeHandle)
+    actual val focalLength: Double get() = FilamentC.FilaCamera_getFocalLength(nativeHandle)
 
     actual var focusDistance: Float
-        get() = nativeCamera.focusDistance
-        set(value) { nativeCamera.setFocusDistance(value) }
+        get() = FilamentC.FilaCamera_getFocusDistance(nativeHandle)
+        set(value) { FilamentC.FilaCamera_setFocusDistance(nativeHandle, value) }
 
-    actual fun getFieldOfViewInDegrees(direction: Fov): Double =
-        nativeCamera.getFieldOfViewInDegrees(JniCamera.Fov.values()[direction.ordinal])
-
-    actual val entity: Entity get() = nativeCamera.entity
+    actual fun getFieldOfViewInDegrees(direction: Fov): Double = FilamentC.FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal)
 }

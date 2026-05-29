@@ -1,25 +1,42 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.SwapChain as JniSwapChain
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.ffm.FilaSwapChainFrameCompletedCallback
+import io.github.erkko68.filament.ffm.FilaSwapChainFrameScheduledCallback
+import java.lang.foreign.Arena
+import java.lang.foreign.MemorySegment
 
-actual class SwapChain(val nativeSwapChain: JniSwapChain) {
-    actual val nativeWindow: Any? get() = nativeSwapChain.nativeWindow
-    
+actual class SwapChain internal constructor(internal var nativeHandle: MemorySegment?) {
+    actual companion object {
+        actual fun isProtectedContentSupported(engine: Engine): Boolean = FilamentC.FilaSwapChain_isProtectedContentSupported(engine.nativeHandle)
+        actual fun isSRGBSwapChainSupported(engine: Engine): Boolean = FilamentC.FilaSwapChain_isSRGBSwapChainSupported(engine.nativeHandle)
+        actual fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = FilamentC.FilaSwapChain_isMSAASwapChainSupported(engine.nativeHandle, samples)
+    }
+
+    actual val nativeWindow: Any? get() = null
+
+    // Persistent upcall stubs: the arena must outlive the swapchain, so it is replaced (and the
+    // old one closed) on each re-set. The lambda is captured directly — userData stays NULL.
+    private var frameCompletedArena: Arena? = null
+    private var frameScheduledArena: Arena? = null
+
     actual fun setFrameCompletedCallback(callback: () -> Unit) {
-        nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback() })
+        frameCompletedArena?.close()
+        val arena = Arena.ofShared()
+        frameCompletedArena = arena
+        val cb = FilaSwapChainFrameCompletedCallback.allocate({ _, _ -> callback() }, arena)
+        FilamentC.FilaSwapChain_setFrameCompletedCallback(nativeHandle, NULL, cb, NULL)
     }
 
     actual fun setFrameScheduledCallback(callback: () -> Unit) {
-        nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback() })
+        frameScheduledArena?.close()
+        val arena = Arena.ofShared()
+        frameScheduledArena = arena
+        val cb = FilaSwapChainFrameScheduledCallback.allocate({ _ -> callback() }, arena)
+        FilamentC.FilaSwapChain_setFrameScheduledCallback(nativeHandle, NULL, cb, NULL)
     }
 
-    actual val isFrameScheduledCallbackSet: Boolean get() = nativeSwapChain.isFrameScheduledCallbackSet()
+    actual val isFrameScheduledCallbackSet: Boolean get() = FilamentC.FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
 
-    actual val nativeObject: Long get() = nativeSwapChain.nativeObject
-
-    actual companion object {
-        actual fun isProtectedContentSupported(engine: Engine): Boolean = JniSwapChain.isProtectedContentSupported(engine.nativeEngine)
-        actual fun isSRGBSwapChainSupported(engine: Engine): Boolean = JniSwapChain.isSRGBSwapChainSupported(engine.nativeEngine)
-        actual fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = JniSwapChain.isMSAASwapChainSupported(engine.nativeEngine, samples)
-    }
+    actual val nativeObject: Long get() = nativeHandle?.address() ?: 0L
 }

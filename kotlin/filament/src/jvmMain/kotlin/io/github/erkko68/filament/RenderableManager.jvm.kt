@@ -1,237 +1,182 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.Box as JniBox
-import java.nio.Buffer
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class RenderableManager(val nativeRenderableManager: io.github.erkko68.filament.jni.RenderableManager) {
-    actual enum class PrimitiveType { 
-        POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP;
-        internal fun toJni() = io.github.erkko68.filament.jni.RenderableManager.PrimitiveType.values()[ordinal]
-    }
-    actual enum class GeometryType { 
-        DYNAMIC, STATIC_BOUNDS, STATIC;
-        internal fun toJni() = io.github.erkko68.filament.jni.RenderableManager.Builder.GeometryType.values()[ordinal]
-    }
+// PrimitiveType is non-sequential in Filament (LINE_LOOP=2 is unused), so map explicitly
+// (matches nativeMain / the Android API). GeometryType uses the generated C constants.
+private fun RenderableManager.PrimitiveType.toNative(): Int = when (this) {
+    RenderableManager.PrimitiveType.POINTS -> 0
+    RenderableManager.PrimitiveType.LINES -> 1
+    RenderableManager.PrimitiveType.LINE_STRIP -> 3
+    RenderableManager.PrimitiveType.TRIANGLES -> 4
+    RenderableManager.PrimitiveType.TRIANGLE_STRIP -> 5
+}
+
+private fun RenderableManager.GeometryType.toNative(): Int = when (this) {
+    RenderableManager.GeometryType.DYNAMIC -> FilamentC.FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_DYNAMIC()
+    RenderableManager.GeometryType.STATIC_BOUNDS -> FilamentC.FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC_BOUNDS()
+    RenderableManager.GeometryType.STATIC -> FilamentC.FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC()
+}
+
+actual class RenderableManager internal constructor(internal val nativeHandle: MemorySegment) {
+    actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
+    actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 
     actual class Builder actual constructor(count: Int) {
-        private val jni = io.github.erkko68.filament.jni.RenderableManager.Builder(count)
+        private val nativeBuilder = FilamentC.FilaRenderableManagerBuilder_create(count.toLong())
 
-        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder {
-            jni.geometry(index, type.toJni(), vb.nativeVertexBuffer, ib.nativeIndexBuffer)
-            return this
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_geometry(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle)
+        }
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), count.toLong())
+        }
+        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), minIndex.toLong(), maxIndex.toLong(), count.toLong())
         }
 
-        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder {
-            jni.geometry(index, type.toJni(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, count)
-            return this
+        actual fun geometryType(type: GeometryType): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_geometryType(nativeBuilder, type.toNative())
         }
-
-        actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder {
-            jni.geometry(index, type.toJni(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, minIndex, maxIndex, count)
-            return this
+        actual fun material(index: Int, materialInstance: MaterialInstance): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_material(nativeBuilder, index.toLong(), materialInstance.nativeHandle)
         }
-        
-        actual fun geometryType(type: GeometryType): Builder {
-            jni.geometryType(type.toJni())
-            return this
+        actual fun blendOrder(index: Int, blendOrder: Int): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_blendOrder(nativeBuilder, index.toLong(), blendOrder.toShort())
         }
-
-        actual fun material(index: Int, materialInstance: MaterialInstance): Builder {
-            jni.material(index, materialInstance.nativeMaterialInstance)
-            return this
+        actual fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_globalBlendOrderEnabled(nativeBuilder, index.toLong(), enabled)
         }
-
-        actual fun blendOrder(index: Int, blendOrder: Int): Builder {
-            jni.blendOrder(index, blendOrder)
-            return this
+        actual fun boundingBox(box: Box): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_boundingBox(nativeBuilder,
+                box.center[0], box.center[1], box.center[2],
+                box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
         }
-
-        actual fun globalBlendOrderEnabled(index: Int, enabled: Boolean): Builder {
-            jni.globalBlendOrderEnabled(index, enabled)
-            return this
+        actual fun layerMask(select: Int, value: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_layerMask(nativeBuilder, select.toByte(), value.toByte()) }
+        actual fun priority(priority: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_priority(nativeBuilder, priority.toByte()) }
+        actual fun channel(channel: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_channel(nativeBuilder, channel.toByte()) }
+        actual fun culling(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_culling(nativeBuilder, enabled) }
+        actual fun castShadows(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_castShadows(nativeBuilder, enabled) }
+        actual fun receiveShadows(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_receiveShadows(nativeBuilder, enabled) }
+        actual fun screenSpaceContactShadows(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enabled) }
+        actual fun skinning(boneCount: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_skinning(nativeBuilder, boneCount) }
+        actual fun skinning(boneCount: Int, bones: FloatArray): Builder = apply {
+            confined { arena -> FilamentC.FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount, arena.floats(bones)) }
         }
-
-        actual fun boundingBox(box: Box): Builder {
-            jni.boundingBox(JniBox(box.center, box.halfExtent))
-            return this
+        actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount, offset)
         }
-
-        actual fun layerMask(select: Int, value: Int): Builder {
-            jni.layerMask(select, value)
-            return this
+        actual fun enableSkinningBuffers(enabled: Boolean): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_enableSkinningBuffers(nativeBuilder, enabled)
         }
-
-        actual fun priority(priority: Int): Builder {
-            jni.priority(priority)
-            return this
+        actual fun morphing(targetCount: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount) }
+        actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
+            FilamentC.FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
         }
-
-        actual fun channel(channel: Int): Builder {
-            jni.channel(channel)
-            return this
-        }
-
-        actual fun culling(enabled: Boolean): Builder {
-            jni.culling(enabled)
-            return this
-        }
-
-        actual fun castShadows(enabled: Boolean): Builder {
-            jni.castShadows(enabled)
-            return this
-        }
-
-        actual fun receiveShadows(enabled: Boolean): Builder {
-            jni.receiveShadows(enabled)
-            return this
-        }
-
-        actual fun screenSpaceContactShadows(enabled: Boolean): Builder {
-            jni.screenSpaceContactShadows(enabled)
-            return this
-        }
-
-        actual fun skinning(boneCount: Int): Builder {
-            jni.skinning(boneCount)
-            return this
-        }
-
-        actual fun skinning(boneCount: Int, bones: FloatArray): Builder {
-            val buffer = java.nio.ByteBuffer.allocateDirect(bones.size * 4).order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
-            buffer.put(bones)
-            buffer.rewind()
-            jni.skinning(boneCount, buffer)
-            return this
-        }
-
-        actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder {
-            jni.skinning(skinningBuffer.nativeSkinningBuffer, boneCount, offset)
-            return this
-        }
-
-        actual fun enableSkinningBuffers(enabled: Boolean): Builder {
-            jni.enableSkinningBuffers(enabled)
-            return this
-        }
-
-        actual fun morphing(targetCount: Int): Builder {
-            jni.morphing(targetCount)
-            return this
-        }
-
-        actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder {
-            jni.morphing(morphTargetBuffer.nativeMorphTargetBuffer)
-            return this
-        }
-
-        actual fun fog(enabled: Boolean): Builder {
-            jni.fog(enabled)
-            return this
-        }
-
-        actual fun lightChannel(channel: Int, enable: Boolean): Builder {
-            jni.lightChannel(channel, enable)
-            return this
-        }
-
-        actual fun instances(instanceCount: Int): Builder {
-            jni.instances(instanceCount)
-            return this
-        }
-
+        actual fun fog(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
+        actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
+        actual fun instances(instanceCount: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_instances(nativeBuilder, instanceCount.toLong()) }
         actual fun build(engine: Engine, entity: Entity) {
-            jni.build(engine.nativeEngine, entity)
+            FilamentC.FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
+            FilamentC.FilaRenderableManagerBuilder_destroy(nativeBuilder)
         }
     }
 
-    actual fun hasComponent(entity: Entity): Boolean = nativeRenderableManager.hasComponent(entity)
-    actual fun getInstance(entity: Entity): EntityInstance = nativeRenderableManager.getInstance(entity)
-    actual fun destroy(entity: Entity) = nativeRenderableManager.destroy(entity)
-    
+    actual fun hasComponent(entity: Entity): Boolean = FilamentC.FilaRenderableManager_hasComponent(nativeHandle, entity)
+    actual fun getInstance(entity: Entity): EntityInstance = FilamentC.FilaRenderableManager_getInstance(nativeHandle, entity)
+    actual fun destroy(entity: Entity) = FilamentC.FilaRenderableManager_destroy(nativeHandle, entity)
+
     actual fun setAxisAlignedBoundingBox(instance: EntityInstance, box: Box) {
-        nativeRenderableManager.setAxisAlignedBoundingBox(instance, JniBox(box.center, box.halfExtent))
+        FilamentC.FilaRenderableManager_setAxisAlignedBoundingBox(nativeHandle, instance,
+            box.center[0], box.center[1], box.center[2],
+            box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
     }
-    
     actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
-        val result = outBox ?: Box()
-        val jniBox = nativeRenderableManager.getAxisAlignedBoundingBox(instance, null)
-        val center = jniBox.center
-        val halfExtent = jniBox.halfExtent
-        result.center[0] = center[0]
-        result.center[1] = center[1]
-        result.center[2] = center[2]
-        result.halfExtent[0] = halfExtent[0]
-        result.halfExtent[1] = halfExtent[1]
-        result.halfExtent[2] = halfExtent[2]
-        return result
+        return confined { arena ->
+            val center = arena.floatArr(3)
+            val halfExtent = arena.floatArr(3)
+            FilamentC.FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance, center, halfExtent)
+            val result = outBox ?: Box()
+            val c = center.toFloats(); val h = halfExtent.toFloats()
+            result.center[0] = c[0]; result.center[1] = c[1]; result.center[2] = c[2]
+            result.halfExtent[0] = h[0]; result.halfExtent[1] = h[1]; result.halfExtent[2] = h[2]
+            result
+        }
     }
-    
-    actual fun setLayerMask(instance: EntityInstance, select: Int, value: Int) = nativeRenderableManager.setLayerMask(instance, select, value)
-    actual fun setPriority(instance: EntityInstance, priority: Int) = nativeRenderableManager.setPriority(instance, priority)
-    actual fun getPriority(instance: EntityInstance): Int = nativeRenderableManager.getPriority(instance)
-    actual fun setChannel(instance: EntityInstance, channel: Int) = nativeRenderableManager.setChannel(instance, channel)
-    actual fun getChannel(instance: EntityInstance): Int = nativeRenderableManager.getChannel(instance)
-    actual fun setCulling(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setCulling(instance, enabled)
-    actual fun isCullingEnabled(instance: EntityInstance): Boolean = nativeRenderableManager.isCullingEnabled(instance)
-    actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setFogEnabled(instance, enabled)
-    actual fun getFogEnabled(instance: EntityInstance): Boolean = nativeRenderableManager.getFogEnabled(instance)
-    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setCastShadows(instance, enabled)
-    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setReceiveShadows(instance, enabled)
-    actual fun setScreenSpaceContactShadows(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setScreenSpaceContactShadows(instance, enabled)
-    actual fun isShadowCaster(instance: EntityInstance): Boolean = nativeRenderableManager.isShadowCaster(instance)
-    actual fun isShadowReceiver(instance: EntityInstance): Boolean = nativeRenderableManager.isShadowReceiver(instance)
-    actual fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean = nativeRenderableManager.isScreenSpaceContactShadowsEnabled(instance)
-    
-    actual fun getPrimitiveCount(instance: EntityInstance): Int = nativeRenderableManager.getPrimitiveCount(instance)
-    actual fun getInstanceCount(instance: EntityInstance): Int = nativeRenderableManager.getInstanceCount(instance)
-    
-    actual fun setMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int, materialInstance: MaterialInstance) =
-        nativeRenderableManager.setMaterialInstanceAt(instance, primitiveIndex, materialInstance.nativeMaterialInstance)
-    
+
+    actual fun setLayerMask(instance: EntityInstance, select: Int, value: Int) = FilamentC.FilaRenderableManager_setLayerMask(nativeHandle, instance, select.toByte(), value.toByte())
+    actual fun setPriority(instance: EntityInstance, priority: Int) = FilamentC.FilaRenderableManager_setPriority(nativeHandle, instance, priority.toByte())
+    actual fun getPriority(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getPriority(nativeHandle, instance).toInt()
+    actual fun setChannel(instance: EntityInstance, channel: Int) = FilamentC.FilaRenderableManager_setChannel(nativeHandle, instance, channel.toByte())
+    actual fun getChannel(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getChannel(nativeHandle, instance).toInt()
+    actual fun setCulling(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setCulling(nativeHandle, instance, enabled)
+    actual fun isCullingEnabled(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isCullingEnabled(nativeHandle, instance)
+    actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setFogEnabled(nativeHandle, instance, enabled)
+    actual fun getFogEnabled(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_getFogEnabled(nativeHandle, instance)
+    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setCastShadows(nativeHandle, instance, enabled)
+    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setReceiveShadows(nativeHandle, instance, enabled)
+    actual fun setScreenSpaceContactShadows(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setScreenSpaceContactShadows(nativeHandle, instance, enabled)
+    actual fun isShadowCaster(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isShadowCaster(nativeHandle, instance)
+    actual fun isShadowReceiver(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isShadowReceiver(nativeHandle, instance)
+    actual fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isScreenSpaceContactShadowsEnabled(nativeHandle, instance)
+
+    actual fun getPrimitiveCount(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getPrimitiveCount(nativeHandle, instance)
+    actual fun getInstanceCount(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getInstanceCount(nativeHandle, instance)
+
+    actual fun setMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int, materialInstance: MaterialInstance) {
+        FilamentC.FilaRenderableManager_setMaterialInstanceAt(nativeHandle, instance, primitiveIndex.toLong(), materialInstance.nativeHandle)
+    }
+
     actual fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance? {
-        val jni = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex)
-        return MaterialInstance(jni)
+        val handle = FilamentC.FilaRenderableManager_getMaterialInstanceAt(nativeHandle, instance, primitiveIndex.toLong())
+        return if (!handle.isNullPtr()) MaterialInstance(handle) else null
     }
-    
+
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
-        nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toJni(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, count)
-    
-    actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) = nativeRenderableManager.setBlendOrderAt(instance, primitiveIndex, blendOrder)
-    actual fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int = nativeRenderableManager.getBlendOrderAt(instance, primitiveIndex)
-    actual fun setGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int, enabled: Boolean) = nativeRenderableManager.setGlobalBlendOrderEnabledAt(instance, primitiveIndex, enabled)
-    actual fun isGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int): Boolean = nativeRenderableManager.isGlobalBlendOrderEnabledAt(instance, primitiveIndex)
-    
-    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) =
-        nativeRenderableManager.setLightChannel(instance, channel, enable)
+        FilamentC.FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), count.toLong())
 
-    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean =
-        nativeRenderableManager.getLightChannel(instance, channel)
- 
-    actual fun getMorphTargetCount(instance: EntityInstance): Int = nativeRenderableManager.getMorphTargetCount(instance)
-    actual fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) =
-        nativeRenderableManager.setSkinningBuffer(instance, skinningBuffer.nativeSkinningBuffer, count, offset)
-    
-    actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) = nativeRenderableManager.setMorphWeights(instance, weights, offset)
-    actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) =
-        nativeRenderableManager.setMorphTargetBufferOffsetAt(instance, level, primitiveIndex, offset)
+    actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) =
+        FilamentC.FilaRenderableManager_setBlendOrderAt(nativeHandle, instance, primitiveIndex.toLong(), blendOrder.toShort())
+    actual fun getBlendOrderAt(instance: EntityInstance, primitiveIndex: Int): Int = FilamentC.FilaRenderableManager_getBlendOrderAt(nativeHandle, instance, primitiveIndex.toLong()).toInt()
+    actual fun setGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int, enabled: Boolean) =
+        FilamentC.FilaRenderableManager_setGlobalBlendOrderEnabledAt(nativeHandle, instance, primitiveIndex.toLong(), enabled)
+    actual fun isGlobalBlendOrderEnabledAt(instance: EntityInstance, primitiveIndex: Int): Boolean =
+        FilamentC.FilaRenderableManager_isGlobalBlendOrderEnabledAt(nativeHandle, instance, primitiveIndex.toLong())
 
-    // The native bone-upload methods read via `GetDirectBufferAddress`, which only works on
-    // direct NIO buffers — heap-backed `FloatBuffer.wrap(FloatArray)` causes a SIGBUS on
-    // aarch64. Copy into a direct, native-order buffer.
+    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = FilamentC.FilaRenderableManager_setLightChannel(nativeHandle, instance, channel, enable)
+    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = FilamentC.FilaRenderableManager_getLightChannel(nativeHandle, instance, channel)
+
+    actual fun getMorphTargetCount(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getMorphTargetCount(nativeHandle, instance)
+
+    actual fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
+        FilamentC.FilaRenderableManager_setSkinningBuffer(nativeHandle, instance, skinningBuffer.nativeHandle, count, offset)
+    }
+
+    actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {
+        confined { arena ->
+            val seg = arena.floats(weights)
+            FilamentC.FilaRenderableManager_setMorphWeights(nativeHandle, instance, seg.asSlice(offset.toLong() * 4L), weights.size - offset, offset)
+        }
+    }
+
+    actual fun setMorphTargetBufferOffsetAt(instance: EntityInstance, level: Int, primitiveIndex: Int, offset: Int) {
+        FilamentC.FilaRenderableManager_setMorphTargetBufferOffsetAt(nativeHandle, instance, level.toByte(), primitiveIndex.toLong(), offset.toLong())
+    }
+
     actual fun setBonesAsMatrices(instance: EntityInstance, matrices: FloatArray, boneCount: Int, offset: Int) {
-        val direct = java.nio.ByteBuffer.allocateDirect(matrices.size * 4)
-            .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
-        direct.put(matrices); direct.flip()
-        nativeRenderableManager.setBonesAsMatrices(instance, direct, boneCount, offset)
+        confined { arena ->
+            FilamentC.FilaRenderableManager_setBonesAsMatrices(nativeHandle, instance, arena.floats(matrices), boneCount, offset)
+        }
     }
 
     actual fun setBonesAsQuaternions(instance: EntityInstance, quaternions: FloatArray, boneCount: Int, offset: Int) {
-        val direct = java.nio.ByteBuffer.allocateDirect(quaternions.size * 4)
-            .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer()
-        direct.put(quaternions); direct.flip()
-        nativeRenderableManager.setBonesAsQuaternions(instance, direct, boneCount, offset)
+        confined { arena ->
+            FilamentC.FilaRenderableManager_setBonesAsQuaternions(nativeHandle, instance, arena.floats(quaternions), boneCount, offset)
+        }
     }
 
-    actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) =
-        nativeRenderableManager.clearMaterialInstanceAt(instance, primitiveIndex)
+    actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
+        FilamentC.FilaRenderableManager_clearMaterialInstanceAt(nativeHandle, instance, primitiveIndex.toLong())
+    }
 }

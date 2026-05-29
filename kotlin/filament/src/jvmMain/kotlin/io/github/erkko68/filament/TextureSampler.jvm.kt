@@ -1,87 +1,146 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.TextureSampler as JniTextureSampler
+import io.github.erkko68.filament.ffm.FilamentC
 
-actual class TextureSampler(var nativeSampler: Long) {
+actual class TextureSampler {
+    // FilaTextureSampler is a uint64 value type (packed sampler params), not a pointer.
+    internal var nativeHandle: Long = 0L
+
     actual enum class WrapMode {
-        CLAMP_TO_EDGE, REPEAT, MIRRORED_REPEAT;
-        internal fun toJni() = JniTextureSampler.WrapMode.values()[ordinal]
-        companion object {
-            internal fun fromJni(jni: JniTextureSampler.WrapMode) = values()[jni.ordinal]
-        }
+        CLAMP_TO_EDGE,
+        REPEAT,
+        MIRRORED_REPEAT
     }
 
     actual enum class MinFilter {
-        NEAREST, LINEAR, NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR;
-        internal fun toJni() = JniTextureSampler.MinFilter.values()[ordinal]
-        companion object {
-            internal fun fromJni(jni: JniTextureSampler.MinFilter) = values()[jni.ordinal]
-        }
+        NEAREST,
+        LINEAR,
+        NEAREST_MIPMAP_NEAREST,
+        LINEAR_MIPMAP_NEAREST,
+        NEAREST_MIPMAP_LINEAR,
+        LINEAR_MIPMAP_LINEAR,
     }
 
     actual enum class MagFilter {
-        NEAREST, LINEAR;
-        internal fun toJni() = JniTextureSampler.MagFilter.values()[ordinal]
-        companion object {
-            internal fun fromJni(jni: JniTextureSampler.MagFilter) = values()[jni.ordinal]
-        }
+        NEAREST,
+        LINEAR
     }
 
     actual enum class CompareMode {
-        NONE, COMPARE_TO_TEXTURE;
-        internal fun toJni() = JniTextureSampler.CompareMode.values()[ordinal]
-        companion object {
-            internal fun fromJni(jni: JniTextureSampler.CompareMode) = values()[jni.ordinal]
-        }
+        NONE,
+        COMPARE_TO_TEXTURE
     }
 
     actual enum class CompareFunction {
-        LESS_EQUAL, GREATER_EQUAL, LESS, GREATER, EQUAL, NOT_EQUAL, ALWAYS, NEVER;
-        internal fun toJni() = JniTextureSampler.CompareFunction.values()[ordinal]
-        companion object {
-            internal fun fromJni(jni: JniTextureSampler.CompareFunction) = values()[jni.ordinal]
-        }
+        LESS_EQUAL,
+        GREATER_EQUAL,
+        LESS,
+        GREATER,
+        EQUAL,
+        NOT_EQUAL,
+        ALWAYS,
+        NEVER
     }
 
-    private constructor(jni: JniTextureSampler) : this(jni.sampler)
+    actual constructor() {
+        nativeHandle = FilamentC.FilaTextureSampler_create(
+            MinFilter.LINEAR_MIPMAP_LINEAR.toFila(),
+            MagFilter.LINEAR.toFila(),
+            WrapMode.REPEAT.toFila(),
+            WrapMode.REPEAT.toFila(),
+            WrapMode.REPEAT.toFila()
+        )
+    }
 
-    actual constructor() : this(JniTextureSampler())
-    actual constructor(minMag: MagFilter) : this(JniTextureSampler(minMag.toJni()))
-    actual constructor(minMag: MagFilter, wrap: WrapMode) : this(JniTextureSampler(minMag.toJni(), wrap.toJni()))
-    actual constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) : this(JniTextureSampler(min.toJni(), mag.toJni(), wrap.toJni()))
-    actual constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) : this(JniTextureSampler(min.toJni(), mag.toJni(), s.toJni(), t.toJni(), r.toJni()))
-    actual constructor(mode: CompareMode) : this(JniTextureSampler(mode.toJni()))
-    actual constructor(mode: CompareMode, function: CompareFunction) : this(JniTextureSampler(mode.toJni(), function.toJni()))
+    actual constructor(minMag: MagFilter) {
+        val min = if (minMag == MagFilter.NEAREST) MinFilter.NEAREST else MinFilter.LINEAR
+        nativeHandle = FilamentC.FilaTextureSampler_create(
+            min.toFila(),
+            minMag.toFila(),
+            WrapMode.CLAMP_TO_EDGE.toFila(),
+            WrapMode.CLAMP_TO_EDGE.toFila(),
+            WrapMode.CLAMP_TO_EDGE.toFila()
+        )
+    }
+
+    actual constructor(minMag: MagFilter, wrap: WrapMode) {
+        val min = if (minMag == MagFilter.NEAREST) MinFilter.NEAREST else MinFilter.LINEAR
+        nativeHandle = FilamentC.FilaTextureSampler_create(
+            min.toFila(),
+            minMag.toFila(),
+            wrap.toFila(),
+            wrap.toFila(),
+            wrap.toFila()
+        )
+    }
+
+    actual constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) {
+        nativeHandle = FilamentC.FilaTextureSampler_create(
+            min.toFila(),
+            mag.toFila(),
+            wrap.toFila(),
+            wrap.toFila(),
+            wrap.toFila()
+        )
+    }
+
+    actual constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) {
+        nativeHandle = FilamentC.FilaTextureSampler_create(
+            min.toFila(),
+            mag.toFila(),
+            s.toFila(),
+            t.toFila(),
+            r.toFila()
+        )
+    }
+
+    actual constructor(mode: CompareMode) {
+        nativeHandle = FilamentC.FilaTextureSampler_createCompare(mode.toFila(), CompareFunction.LESS_EQUAL.toFila())
+    }
+
+    actual constructor(mode: CompareMode, function: CompareFunction) {
+        nativeHandle = FilamentC.FilaTextureSampler_createCompare(mode.toFila(), function.toFila())
+    }
+
+    internal constructor(sampler: Long) {
+        nativeHandle = sampler
+    }
 
     actual var minFilter: MinFilter
-        get() = MinFilter.fromJni(JniTextureSampler(nativeSampler).minFilter)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setMinFilter(value.toJni()); nativeSampler = jni.sampler }
+        get() = MinFilter.entries[FilamentC.FilaTextureSampler_getMinFilter(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setMinFilter(nativeHandle, value.toFila()) }
 
     actual var magFilter: MagFilter
-        get() = MagFilter.fromJni(JniTextureSampler(nativeSampler).magFilter)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setMagFilter(value.toJni()); nativeSampler = jni.sampler }
+        get() = MagFilter.entries[FilamentC.FilaTextureSampler_getMagFilter(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setMagFilter(nativeHandle, value.toFila()) }
 
     actual var wrapModeS: WrapMode
-        get() = WrapMode.fromJni(JniTextureSampler(nativeSampler).wrapModeS)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setWrapModeS(value.toJni()); nativeSampler = jni.sampler }
+        get() = WrapMode.entries[FilamentC.FilaTextureSampler_getWrapModeS(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setWrapModeS(nativeHandle, value.toFila()) }
 
     actual var wrapModeT: WrapMode
-        get() = WrapMode.fromJni(JniTextureSampler(nativeSampler).wrapModeT)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setWrapModeT(value.toJni()); nativeSampler = jni.sampler }
+        get() = WrapMode.entries[FilamentC.FilaTextureSampler_getWrapModeT(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setWrapModeT(nativeHandle, value.toFila()) }
 
     actual var wrapModeR: WrapMode
-        get() = WrapMode.fromJni(JniTextureSampler(nativeSampler).wrapModeR)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setWrapModeR(value.toJni()); nativeSampler = jni.sampler }
+        get() = WrapMode.entries[FilamentC.FilaTextureSampler_getWrapModeR(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setWrapModeR(nativeHandle, value.toFila()) }
 
     actual var anisotropy: Float
-        get() = JniTextureSampler(nativeSampler).anisotropy
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setAnisotropy(value); nativeSampler = jni.sampler }
+        get() = FilamentC.FilaTextureSampler_getAnisotropy(nativeHandle)
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setAnisotropy(nativeHandle, value) }
 
     actual var compareMode: CompareMode
-        get() = CompareMode.fromJni(JniTextureSampler(nativeSampler).compareMode)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setCompareMode(value.toJni()); nativeSampler = jni.sampler }
+        get() = CompareMode.entries[FilamentC.FilaTextureSampler_getCompareMode(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setCompareMode(nativeHandle, value.toFila()) }
 
     actual var compareFunction: CompareFunction
-        get() = CompareFunction.fromJni(JniTextureSampler(nativeSampler).compareFunction)
-        set(value) { val jni = JniTextureSampler(nativeSampler); jni.setCompareFunction(value.toJni()); nativeSampler = jni.sampler }
+        get() = CompareFunction.entries[FilamentC.FilaTextureSampler_getCompareFunction(nativeHandle)]
+        set(value) { nativeHandle = FilamentC.FilaTextureSampler_setCompareFunction(nativeHandle, value.toFila()) }
+
+    private fun WrapMode.toFila(): Int = this.ordinal
+    private fun MinFilter.toFila(): Int = this.ordinal
+    private fun MagFilter.toFila(): Int = this.ordinal
+    private fun CompareMode.toFila(): Int = this.ordinal
+    private fun CompareFunction.toFila(): Int = this.ordinal
 }

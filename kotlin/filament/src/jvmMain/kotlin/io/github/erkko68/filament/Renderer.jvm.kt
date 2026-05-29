@@ -1,126 +1,144 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.Renderer as JniRenderer
-import io.github.erkko68.filament.jni.Viewport as JniViewport
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.ffm.FilaRendererClearOptions
+import io.github.erkko68.filament.ffm.FilaRendererDisplayInfo
+import io.github.erkko68.filament.ffm.FilaRendererFrameRateOptions
+import java.lang.foreign.Arena
+import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout
 
-actual class Renderer(private val engineRef: Engine, val nativeRenderer: JniRenderer) {
+actual class Renderer constructor(private val engineRef: Engine, public var nativeHandle: MemorySegment?) {
     actual class DisplayInfo actual constructor() {
         actual var refreshRate: Float = 60.0f
-        
-        internal fun toJni(): JniRenderer.DisplayInfo {
-            val jni = JniRenderer.DisplayInfo()
-            jni.refreshRate = refreshRate
-            return jni
-        }
     }
 
     actual class FrameRateOptions actual constructor() {
-        private val jni = JniRenderer.FrameRateOptions()
-        
-        actual var interval: Float
-            get() = jni.interval
-            set(value) { jni.interval = value }
-        actual var headRoomRatio: Float
-            get() = jni.headRoomRatio
-            set(value) { jni.headRoomRatio = value }
-        actual var scaleRate: Float
-            get() = jni.scaleRate
-            set(value) { jni.scaleRate = value }
-        actual var history: Int
-            get() = jni.history
-            set(value) { jni.history = value }
-            
-        internal fun toJni() = jni
+        actual var interval: Float = 1.0f
+        actual var headRoomRatio: Float = 0.0f
+        actual var scaleRate: Float = 1.0f / 15.0f
+        actual var history: Int = 15
     }
 
     actual class ClearOptions actual constructor() {
-        private val jni = JniRenderer.ClearOptions()
-
-        actual var clearColor: FloatArray
-            get() = jni.clearColor
-            set(value) { jni.clearColor = value }
-        actual var clear: Boolean
-            get() = jni.clear
-            set(value) { jni.clear = value }
-        actual var discard: Boolean
-            get() = jni.discard
-            set(value) { jni.discard = value }
-
-        internal fun toJni() = jni
+        actual var clearColor: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        actual var clear: Boolean = false
+        actual var discard: Boolean = true
     }
 
     actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = JniRenderer.MIRROR_FRAME_FLAG_COMMIT
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = JniRenderer.MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = JniRenderer.MIRROR_FRAME_FLAG_CLEAR
+        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 0x1
+        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 0x2
+        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 0x4
     }
 
     actual val engine: Engine get() = engineRef
 
+    private var _displayInfo = DisplayInfo()
     actual var displayInfo: DisplayInfo
-        get() {
-            val jni = nativeRenderer.getDisplayInfo()
-            val info = DisplayInfo()
-            info.refreshRate = jni.refreshRate
-            return info
+        get() = _displayInfo
+        set(value) {
+            _displayInfo = value
+            confined { arena ->
+                val c = FilaRendererDisplayInfo.allocate(arena)
+                FilaRendererDisplayInfo.refreshRate(c, value.refreshRate)
+                FilamentC.FilaRenderer_setDisplayInfo(nativeHandle, c)
+            }
         }
-        set(value) { nativeRenderer.setDisplayInfo(value.toJni()) }
 
+    private var _frameRateOptions = FrameRateOptions()
     actual var frameRateOptions: FrameRateOptions
-        get() {
-            val jni = nativeRenderer.getFrameRateOptions()
-            val options = FrameRateOptions()
-            options.interval = jni.interval
-            options.headRoomRatio = jni.headRoomRatio
-            options.scaleRate = jni.scaleRate
-            options.history = jni.history
-            return options
+        get() = _frameRateOptions
+        set(value) {
+            _frameRateOptions = value
+            confined { arena ->
+                val c = FilaRendererFrameRateOptions.allocate(arena)
+                FilaRendererFrameRateOptions.interval(c, value.interval)
+                FilaRendererFrameRateOptions.headRoomRatio(c, value.headRoomRatio)
+                FilaRendererFrameRateOptions.scaleRate(c, value.scaleRate)
+                FilaRendererFrameRateOptions.history(c, value.history.toByte())
+                FilamentC.FilaRenderer_setFrameRateOptions(nativeHandle, c)
+            }
         }
-        set(value) { nativeRenderer.setFrameRateOptions(value.toJni()) }
 
     actual var clearOptions: ClearOptions
-        get() {
-            val jni = nativeRenderer.getClearOptions()
-            val options = ClearOptions()
-            options.clearColor = jni.clearColor
-            options.clear = jni.clear
-            options.discard = jni.discard
-            return options
+        get() = confined { arena ->
+            val out = FilaRendererClearOptions.allocate(arena)
+            FilamentC.FilaRenderer_getClearOptions(nativeHandle, out)
+            val cc = FilaRendererClearOptions.clearColor(out)
+            ClearOptions().apply {
+                clearColor = FloatArray(4) { cc.getFloatAt(it) }
+                clear = FilaRendererClearOptions.clear(out)
+                discard = FilaRendererClearOptions.discard(out)
+            }
         }
-        set(value) { nativeRenderer.setClearOptions(value.toJni()) }
+        set(value) {
+            confined { arena ->
+                val c = FilaRendererClearOptions.allocate(arena)
+                for (i in 0 until 4.coerceAtMost(value.clearColor.size)) FilaRendererClearOptions.clearColor(c, i.toLong(), value.clearColor[i])
+                FilaRendererClearOptions.clear(c, value.clear)
+                FilaRendererClearOptions.discard(c, value.discard)
+                FilamentC.FilaRenderer_setClearOptions(nativeHandle, c)
+            }
+        }
 
-    actual fun setPresentationTime(monotonicClockNanos: Long) : Unit { nativeRenderer.setPresentationTime(monotonicClockNanos) }
-    actual fun setVsyncTime(steadyClockTimeNano: Long) : Unit { nativeRenderer.setVsyncTime(steadyClockTimeNano) }
-    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) : Unit { nativeRenderer.skipFrame(vsyncSteadyClockTimeNano) }
-    actual fun shouldRenderFrame(): Boolean = nativeRenderer.shouldRenderFrame()
+    actual fun setPresentationTime(monotonicClockNanos: Long) = FilamentC.FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos)
+    actual fun setVsyncTime(steadyClockTimeNano: Long) = FilamentC.FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano)
+    actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilamentC.FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano)
+    actual fun shouldRenderFrame(): Boolean = FilamentC.FilaRenderer_shouldRenderFrame(nativeHandle)
+    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilamentC.FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos)
+    actual fun endFrame() = FilamentC.FilaRenderer_endFrame(nativeHandle)
+    actual fun render(view: View) = FilamentC.FilaRenderer_render(nativeHandle, view.nativeHandle)
+    actual fun renderStandaloneView(view: View) = FilamentC.FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
+    actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
+        FilamentC.FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle,
+            dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
+            srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
+            flags)
+    }
 
-    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = 
-        nativeRenderer.beginFrame(swapChain.nativeSwapChain, frameTimeNanos)
+    // readPixels writes pixels into an off-heap buffer asynchronously; on completion we copy them
+    // back into the caller's ByteArray, invoke the callback, and free the buffer.
+    private fun readPixelsInto(buffer: Texture.PixelBufferDescriptor): Pair<MemorySegment, MemorySegment> {
+        val dataArena = Arena.ofShared()
+        val seg = dataArena.allocate(buffer.storage.size.toLong())
+        val userData = Completions.register {
+            try {
+                MemorySegment.copy(seg, ValueLayout.JAVA_BYTE, 0L, buffer.storage, 0, buffer.storage.size)
+                buffer.callback?.invoke()
+            } finally {
+                dataArena.close()
+            }
+        }
+        return seg to userData
+    }
 
-    actual fun endFrame() : Unit { nativeRenderer.endFrame() }
-    
-    actual fun render(view: View) : Unit { nativeRenderer.render(view.nativeView) }
-    actual fun renderStandaloneView(view: View) : Unit { nativeRenderer.renderStandaloneView(view.nativeView) }
-
-    actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) : Unit {
-        nativeRenderer.copyFrame(
-            dstSwapChain.nativeSwapChain,
-            JniViewport(dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height),
-            JniViewport(srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height),
-            flags
+    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        val (seg, userData) = readPixelsInto(buffer)
+        FilamentC.FilaRenderer_readPixels(
+            nativeHandle,
+            xoffset, yoffset, width, height,
+            seg, buffer.sizeInBytes.toLong(),
+            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.alignment.toByte(), buffer.left, buffer.top, buffer.stride,
+            NULL, Completions.bufferStub, userData
         )
     }
 
-    actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) : Unit {
-        nativeRenderer.readPixels(xoffset, yoffset, width, height, buffer.jni)
+    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
+        val (seg, userData) = readPixelsInto(buffer)
+        FilamentC.FilaRenderer_readPixelsRenderTarget(
+            nativeHandle, renderTarget.nativeHandle,
+            xoffset, yoffset, width, height,
+            seg, buffer.sizeInBytes.toLong(),
+            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.alignment.toByte(), buffer.left, buffer.top, buffer.stride,
+            NULL, Completions.bufferStub, userData
+        )
     }
 
-    actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) : Unit {
-        nativeRenderer.readPixels(renderTarget.nativeRenderTarget, xoffset, yoffset, width, height, buffer.jni)
-    }
-
-    actual val userTime: Double get() = nativeRenderer.getUserTime()
-    actual fun resetUserTime() : Unit { nativeRenderer.resetUserTime() }
-    actual fun skipNextFrames(frameCount: Int) : Unit { nativeRenderer.skipNextFrames(frameCount) }
-    actual val frameToSkipCount: Int get() = nativeRenderer.getFrameToSkipCount()
+    actual val userTime: Double get() = FilamentC.FilaRenderer_getUserTime(nativeHandle)
+    actual fun resetUserTime() = FilamentC.FilaRenderer_resetUserTime(nativeHandle)
+    actual fun skipNextFrames(frameCount: Int) = FilamentC.FilaRenderer_skipNextFrames(nativeHandle, frameCount)
+    actual val frameToSkipCount: Int get() = FilamentC.FilaRenderer_getFrameToSkipCount(nativeHandle)
 }

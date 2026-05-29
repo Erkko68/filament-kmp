@@ -35,4 +35,8 @@ include(":java:filamat")
 include(":java:gltfio")
 include(":java:filament-utils")
 
+// JVM/Panama (FFM) bindings: combined libfilament-c + jextract-generated bindings.
+// Replaces the JNI :java:filament dependency for kotlin:filament's jvmMain.
+include(":java:filament-ffm")
+
 include(":js")

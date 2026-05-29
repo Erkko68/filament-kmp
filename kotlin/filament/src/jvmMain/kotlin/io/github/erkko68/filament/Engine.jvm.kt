@@ -1,204 +1,316 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.Engine as JniEngine
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.ffm.FilaEngineConfig
+import java.lang.foreign.Arena
+import java.lang.foreign.MemorySegment
 
-actual class Engine(val nativeEngine: JniEngine) {
-    actual enum class Backend { 
+actual class Engine public constructor(public var nativeHandle: MemorySegment?) {
+    private val mTransformManager by lazy { TransformManager(FilamentC.FilaEngine_getTransformManager(nativeHandle)) }
+    private val mLightManager by lazy { LightManager(FilamentC.FilaEngine_getLightManager(nativeHandle)) }
+    private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle)) }
+    private val mEntityManager by lazy { EntityManager(FilamentC.FilaEngine_getEntityManager(nativeHandle)) }
+
+    actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
-        internal fun toJni() = JniEngine.Backend.values()[ordinal]
+        internal fun toNative(): Int = ordinal
+        companion object {
+            internal fun fromNative(backend: Int): Backend = values()[backend]
+        }
     }
 
-    actual enum class FeatureLevel { 
+    actual enum class FeatureLevel {
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
-        internal fun toJni() = JniEngine.FeatureLevel.values()[ordinal]
+        internal fun toNative(): Int = ordinal
+        companion object {
+            internal fun fromNative(level: Int): FeatureLevel = values()[level]
+        }
     }
 
-    actual enum class StereoscopicType { 
+    actual enum class StereoscopicType {
         NONE, INSTANCED, MULTIVIEW;
-        internal fun toJni() = JniEngine.StereoscopicType.values()[ordinal]
+        internal fun toNative(): Int = ordinal
+        companion object {
+            internal fun fromNative(type: Int): StereoscopicType = values()[type]
+        }
     }
 
-    actual enum class GpuContextPriority { 
+    actual enum class GpuContextPriority {
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
-        internal fun toJni() = JniEngine.GpuContextPriority.values()[ordinal]
+        internal fun toNative(): Int = ordinal
+        companion object {
+            internal fun fromNative(priority: Int): GpuContextPriority = values()[priority]
+        }
     }
 
     actual class Config actual constructor() {
-        private val jni = JniEngine.Config()
+        actual var commandBufferSizeMB: Long = 3 * 1
+        actual var perRenderPassArenaSizeMB: Long = 3
+        actual var driverHandleArenaSizeMB: Long = 0
+        actual var minCommandBufferSizeMB: Long = 1
+        actual var perFrameCommandsSizeMB: Long = 2
+        actual var jobSystemThreadCount: Long = 0
+        actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
+        actual var stereoscopicEyeCount: Long = 2
+        actual var resourceAllocatorCacheSizeMB: Long = 64
+        actual var resourceAllocatorCacheMaxAge: Long = 1
 
-        actual var commandBufferSizeMB: Long
-            get() = jni.commandBufferSizeMB
-            set(value) { jni.commandBufferSizeMB = value }
-        actual var perRenderPassArenaSizeMB: Long
-            get() = jni.perRenderPassArenaSizeMB
-            set(value) { jni.perRenderPassArenaSizeMB = value }
-        actual var driverHandleArenaSizeMB: Long
-            get() = jni.driverHandleArenaSizeMB
-            set(value) { jni.driverHandleArenaSizeMB = value }
-        actual var minCommandBufferSizeMB: Long
-            get() = jni.minCommandBufferSizeMB
-            set(value) { jni.minCommandBufferSizeMB = value }
-        actual var perFrameCommandsSizeMB: Long
-            get() = jni.perFrameCommandsSizeMB
-            set(value) { jni.perFrameCommandsSizeMB = value }
-        actual var jobSystemThreadCount: Long
-            get() = jni.jobSystemThreadCount
-            set(value) { jni.jobSystemThreadCount = value }
-        actual var stereoscopicType: StereoscopicType
-            get() = StereoscopicType.values()[jni.stereoscopicType.ordinal]
-            set(value) { jni.stereoscopicType = JniEngine.StereoscopicType.values()[value.ordinal] }
-        actual var stereoscopicEyeCount: Long
-            get() = jni.stereoscopicEyeCount
-            set(value) { jni.stereoscopicEyeCount = value }
-        actual var resourceAllocatorCacheSizeMB: Long
-            get() = jni.resourceAllocatorCacheSizeMB
-            set(value) { jni.resourceAllocatorCacheSizeMB = value }
-        actual var resourceAllocatorCacheMaxAge: Long
-            get() = jni.resourceAllocatorCacheMaxAge
-            set(value) { jni.resourceAllocatorCacheMaxAge = value }
+        actual enum class ShaderLanguage {
+            DEFAULT, MSL, METAL_LIBRARY;
+        }
+        actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
+        actual var forceGLES2Context: Boolean = false
+        actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
+        actual var sharedUboInitialSizeInBytes: Long = 256 * 64
 
-        actual enum class ShaderLanguage { DEFAULT, MSL, METAL_LIBRARY }
-        actual var preferredShaderLanguage: ShaderLanguage
-            get() = ShaderLanguage.values()[jni.preferredShaderLanguage.ordinal]
-            set(value) { jni.preferredShaderLanguage = JniEngine.Config.ShaderLanguage.values()[value.ordinal] }
-        actual var forceGLES2Context: Boolean
-            get() = jni.forceGLES2Context
-            set(value) { jni.forceGLES2Context = value }
-        actual var gpuContextPriority: GpuContextPriority
-            get() = GpuContextPriority.values()[jni.gpuContextPriority.ordinal]
-            set(value) { jni.gpuContextPriority = JniEngine.GpuContextPriority.values()[value.ordinal] }
-        actual var sharedUboInitialSizeInBytes: Long
-            get() = jni.sharedUboInitialSizeInBytes
-            set(value) { jni.sharedUboInitialSizeInBytes = value }
-
-        internal fun toJni() = jni
+        internal fun toNative(arena: Arena): MemorySegment {
+            val s = FilaEngineConfig.allocate(arena)
+            FilaEngineConfig.commandBufferSizeMB(s, commandBufferSizeMB.toInt())
+            FilaEngineConfig.perRenderPassArenaSizeMB(s, perRenderPassArenaSizeMB.toInt())
+            FilaEngineConfig.driverHandleArenaSizeMB(s, driverHandleArenaSizeMB.toInt())
+            FilaEngineConfig.minCommandBufferSizeMB(s, minCommandBufferSizeMB.toInt())
+            FilaEngineConfig.perFrameCommandsSizeMB(s, perFrameCommandsSizeMB.toInt())
+            FilaEngineConfig.jobSystemThreadCount(s, jobSystemThreadCount.toInt())
+            FilaEngineConfig.stereoscopicType(s, stereoscopicType.toNative())
+            FilaEngineConfig.stereoscopicEyeCount(s, stereoscopicEyeCount.toByte())
+            FilaEngineConfig.resourceAllocatorCacheSizeMB(s, resourceAllocatorCacheSizeMB.toInt())
+            FilaEngineConfig.resourceAllocatorCacheMaxAge(s, resourceAllocatorCacheMaxAge.toByte())
+            FilaEngineConfig.preferredShaderLanguage(s, preferredShaderLanguage.ordinal)
+            FilaEngineConfig.forceGLES2Context(s, forceGLES2Context)
+            FilaEngineConfig.gpuContextPriority(s, gpuContextPriority.toNative())
+            FilaEngineConfig.sharedUboInitialSizeInBytes(s, sharedUboInitialSizeInBytes.toInt())
+            return s
+        }
     }
 
     actual class Builder actual constructor() {
-        private val jni = JniEngine.Builder()
+        init { ensureFilamentLoaded() }
+        private val nativeBuilder = FilamentC.FilaEngineBuilder_create()
 
-        actual fun backend(backend: Backend): Builder { jni.backend(backend.toJni()); return this }
-        actual fun sharedContext(sharedContext: Any): Builder { jni.sharedContext(sharedContext); return this }
-        actual fun config(config: Config): Builder { jni.config(config.toJni()); return this }
-        actual fun featureLevel(featureLevel: FeatureLevel): Builder { jni.featureLevel(featureLevel.toJni()); return this }
-        actual fun paused(paused: Boolean): Builder { jni.paused(paused); return this }
-        actual fun feature(name: String, value: Boolean): Builder { jni.feature(name, value); return this }
+        actual fun backend(backend: Backend): Builder {
+            FilamentC.FilaEngineBuilder_backend(nativeBuilder, backend.toNative())
+            return this
+        }
+
+        actual fun sharedContext(sharedContext: Any): Builder {
+            // sharedContext is void* in C, but Any in KMP. Only a Long address is meaningful here.
+            if (sharedContext is Long) {
+                FilamentC.FilaEngineBuilder_sharedContext(nativeBuilder, MemorySegment.ofAddress(sharedContext))
+            }
+            return this
+        }
+
+        actual fun config(config: Config): Builder {
+            confined { arena -> FilamentC.FilaEngineBuilder_config(nativeBuilder, config.toNative(arena)) }
+            return this
+        }
+
+        actual fun featureLevel(featureLevel: FeatureLevel): Builder {
+            FilamentC.FilaEngineBuilder_featureLevel(nativeBuilder, featureLevel.toNative())
+            return this
+        }
+
+        actual fun paused(paused: Boolean): Builder {
+            FilamentC.FilaEngineBuilder_paused(nativeBuilder, paused)
+            return this
+        }
+
+        actual fun feature(name: String, value: Boolean): Builder {
+            confined { arena -> FilamentC.FilaEngineBuilder_feature(nativeBuilder, arena.cstr(name), value) }
+            return this
+        }
+
         actual fun build(): Engine {
-            return Engine(jni.build())
+            val handle = FilamentC.FilaEngineBuilder_build(nativeBuilder)
+            FilamentC.FilaEngineBuilder_destroy(nativeBuilder)
+            if (handle.isNullPtr()) throw IllegalStateException("Failed to build Engine")
+            return Engine(handle)
         }
     }
 
     actual companion object {
-        actual fun create(): Engine {
-            return Engine(JniEngine.create())
+        actual fun create(): Engine = Builder().build()
+        actual fun create(backend: Backend): Engine = Builder().backend(backend).build()
+        actual fun create(sharedContext: Any): Engine = Builder().sharedContext(sharedContext).build()
+        actual fun getSteadyClockTimeNano(): Long {
+            ensureFilamentLoaded()
+            return FilamentC.FilaEngine_getSteadyClockTimeNano()
         }
-        actual fun create(backend: Backend): Engine {
-            return Engine(JniEngine.create(backend.toJni()))
-        }
-        actual fun create(sharedContext: Any): Engine {
-            return Engine(JniEngine.create(sharedContext))
-        }
-        actual fun getSteadyClockTimeNano(): Long = JniEngine.getSteadyClockTimeNano()
     }
 
-    actual fun isValid(): Boolean = nativeEngine.isValid()
-    actual fun destroy() = nativeEngine.destroy()
-    actual fun getBackend(): Backend = Backend.values()[nativeEngine.backend.ordinal]
-    actual fun getSupportedFeatureLevel(): FeatureLevel = FeatureLevel.values()[nativeEngine.supportedFeatureLevel.ordinal]
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.values()[nativeEngine.setActiveFeatureLevel(featureLevel.toJni()).ordinal]
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.values()[nativeEngine.activeFeatureLevel.ordinal]
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = nativeEngine.setAutomaticInstancingEnabled(enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = nativeEngine.isAutomaticInstancingEnabled
+    actual fun isValid(): Boolean = !nativeHandle.isNullPtr()
+    actual fun destroy() {
+        nativeHandle?.let { FilamentC.FilaEngine_destroy(it) }
+        nativeHandle = null
+    }
+
+    actual fun getBackend(): Backend = Backend.fromNative(FilamentC.FilaEngine_getBackend(nativeHandle))
+    actual fun getSupportedFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_getSupportedFeatureLevel(nativeHandle))
+    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
+    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_getActiveFeatureLevel(nativeHandle))
+    actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
+    actual fun isAutomaticInstancingEnabled(): Boolean = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
     actual fun getConfig(): Config {
-        val config = Config()
-        // We can't easily sync back from JNI Config to our Config if it's not exposed
-        return config 
+        // C-wrapper doesn't expose getConfig; return defaults (matches nativeMain).
+        return Config()
     }
-    actual fun getMaxStereoscopicEyes(): Long = nativeEngine.maxStereoscopicEyes
+    actual fun getMaxStereoscopicEyes(): Long = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
 
-    actual fun isValidRenderer(renderer: Renderer): Boolean = nativeEngine.isValidRenderer(renderer.nativeRenderer)
-    actual fun isValidView(view: View): Boolean = nativeEngine.isValidView(view.nativeView)
-    actual fun isValidScene(scene: Scene): Boolean = nativeEngine.isValidScene(scene.nativeScene)
-    actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
-    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(renderTarget.nativeRenderTarget)
-    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
-    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = nativeEngine.isValidSkinningBuffer(skinningBuffer.nativeSkinningBuffer)
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = nativeEngine.isValidMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
-    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
-    actual fun isValidMaterial(material: Material): Boolean = nativeEngine.isValidMaterial(material.nativeMaterial)
-    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = nativeEngine.isValidMaterialInstance(material.nativeMaterial, materialInstance.nativeMaterialInstance)
-    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = nativeEngine.isValidExpensiveMaterialInstance(materialInstance.nativeMaterialInstance)
-    actual fun isValidSkybox(skybox: Skybox): Boolean = nativeEngine.isValidSkybox(skybox.nativeSkybox)
-    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = nativeEngine.isValidColorGrading(colorGrading.nativeColorGrading)
-    actual fun isValidTexture(texture: Texture): Boolean = nativeEngine.isValidTexture(texture.nativeTexture)
-    actual fun isValidStream(stream: Stream): Boolean = nativeEngine.isValidStream(stream.nativeStream)
-    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
+    actual fun isValidRenderer(renderer: Renderer): Boolean = FilamentC.FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
+    actual fun isValidView(view: View): Boolean = FilamentC.FilaEngine_isValidView(nativeHandle, view.nativeHandle)
+    actual fun isValidScene(scene: Scene): Boolean = FilamentC.FilaEngine_isValidScene(nativeHandle, scene.nativeHandle)
+    actual fun isValidFence(fence: Fence): Boolean = FilamentC.FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilamentC.FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilamentC.FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilamentC.FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilamentC.FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
+    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilamentC.FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
+    actual fun isValidMaterial(material: Material): Boolean = FilamentC.FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    actual fun isValidSkybox(skybox: Skybox): Boolean = FilamentC.FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle)
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilamentC.FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
+    actual fun isValidTexture(texture: Texture): Boolean = FilamentC.FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilamentC.FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle)
+    actual fun isValidStream(stream: Stream): Boolean = FilamentC.FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilamentC.FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
 
-    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.surface))
-    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.surface, flags))
-    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(width, height, flags))
-    actual fun destroySwapChain(swapChain: SwapChain) = nativeEngine.destroySwapChain(swapChain.nativeSwapChain)
+    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, 0L))
+    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, flags))
+    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChainHeadless(nativeHandle, width, height, flags))
+    actual fun destroySwapChain(swapChain: SwapChain) {
+        FilamentC.FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
+        swapChain.nativeHandle = null
+    }
 
-    actual fun createView(): View = View(nativeEngine.createView())
-    actual fun destroyView(view: View) = nativeEngine.destroyView(view.nativeView)
+    actual fun createView(): View = View(FilamentC.FilaEngine_createView(nativeHandle))
+    actual fun destroyView(view: View) {
+        FilamentC.FilaEngine_destroyView(nativeHandle, view.nativeHandle)
+        view.nativeHandle = null
+    }
 
-    actual fun createRenderer(): Renderer = Renderer(this, nativeEngine.createRenderer())
-    actual fun destroyRenderer(renderer: Renderer) = nativeEngine.destroyRenderer(renderer.nativeRenderer)
+    actual fun createRenderer(): Renderer = Renderer(this, FilamentC.FilaEngine_createRenderer(nativeHandle))
+    actual fun destroyRenderer(renderer: Renderer) {
+        FilamentC.FilaEngine_destroyRenderer(nativeHandle, renderer.nativeHandle)
+        renderer.nativeHandle = null
+    }
 
-    actual fun createCamera(): Camera = Camera(nativeEngine.createCamera(EntityManager.get().create()))
-    actual fun createCamera(entity: Entity): Camera = Camera(nativeEngine.createCamera(entity))
+    actual fun createCamera(): Camera {
+        val handle = FilamentC.FilaEngine_createCameraAuto(nativeHandle)
+        val entity = FilamentC.FilaCamera_getEntity(handle)
+        return Camera(handle, entity)
+    }
+    actual fun createCamera(entity: Entity): Camera = Camera(FilamentC.FilaEngine_createCamera(nativeHandle, entity), entity)
     actual fun getCameraComponent(entity: Entity): Camera? {
-        val jni = nativeEngine.getCameraComponent(entity) ?: return null
-        return Camera(jni)
+        val handle = FilamentC.FilaEngine_getCameraComponent(nativeHandle, entity)
+        return if (!handle.isNullPtr()) Camera(handle, entity) else null
     }
-    actual fun destroyCamera(camera: Camera) = nativeEngine.destroyCameraComponent(camera.nativeCamera.entity)
-    actual fun destroyCameraComponent(entity: Entity) = nativeEngine.destroyCameraComponent(entity)
+    actual fun destroyCamera(camera: Camera) {
+        FilamentC.FilaEngine_destroyCamera(nativeHandle, camera.nativeHandle)
+        camera.nativeHandle = null
+    }
+    actual fun destroyCameraComponent(entity: Entity) = FilamentC.FilaEngine_destroyCameraComponent(nativeHandle, entity)
 
-    actual fun createScene(): Scene = Scene(nativeEngine.createScene())
-    actual fun destroyScene(scene: Scene) = nativeEngine.destroyScene(scene.nativeScene)
+    actual fun createScene(): Scene = Scene(FilamentC.FilaEngine_createScene(nativeHandle))
+    actual fun destroyScene(scene: Scene) {
+        FilamentC.FilaEngine_destroyScene(nativeHandle, scene.nativeHandle)
+        scene.nativeHandle = null
+    }
 
-    actual fun createFence(): Fence = Fence(nativeEngine.createFence())
-    actual fun destroyFence(fence: Fence) = nativeEngine.destroyFence(fence.nativeFence)
+    actual fun createFence(): Fence = Fence(FilamentC.FilaEngine_createFence(nativeHandle))
+    actual fun destroyFence(fence: Fence) {
+        FilamentC.FilaEngine_destroyFence(nativeHandle, fence.nativeHandle)
+        fence.nativeHandle = null
+    }
 
-    actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) = nativeEngine.destroyIndexBuffer(indexBuffer.nativeIndexBuffer)
-    actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) = nativeEngine.destroyVertexBuffer(vertexBuffer.nativeVertexBuffer)
-    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) = nativeEngine.destroySkinningBuffer(skinningBuffer.nativeSkinningBuffer)
-    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) = nativeEngine.destroyMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
-    actual fun destroyIndirectLight(ibl: IndirectLight) = nativeEngine.destroyIndirectLight(ibl.nativeIndirectLight)
-    actual fun destroyMaterial(material: Material) = nativeEngine.destroyMaterial(material.nativeMaterial)
-    actual fun destroyMaterialInstance(materialInstance: MaterialInstance) = nativeEngine.destroyMaterialInstance(materialInstance.nativeMaterialInstance)
-    actual fun destroySkybox(skybox: Skybox) = nativeEngine.destroySkybox(skybox.nativeSkybox)
-    actual fun destroyColorGrading(colorGrading: ColorGrading) = nativeEngine.destroyColorGrading(colorGrading.nativeColorGrading)
-    actual fun destroyTexture(texture: Texture) = nativeEngine.destroyTexture(texture.nativeTexture)
-    actual fun destroyRenderTarget(target: RenderTarget) = nativeEngine.destroyRenderTarget(target.nativeRenderTarget)
-    actual fun destroyStream(stream: Stream) = nativeEngine.destroyStream(stream.nativeStream)
-    actual fun destroyEntity(entity: Entity) = nativeEngine.destroyEntity(entity)
+    actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
+        FilamentC.FilaEngine_destroyIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
+        indexBuffer.nativeHandle = null
+    }
+    actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
+        FilamentC.FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+        vertexBuffer.nativeHandle = null
+    }
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        FilamentC.FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+        skinningBuffer.nativeHandle = null
+    }
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        FilamentC.FilaEngine_destroyMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
+        morphTargetBuffer.nativeHandle = null
+    }
+    actual fun destroyIndirectLight(ibl: IndirectLight) {
+        FilamentC.FilaEngine_destroyIndirectLight(nativeHandle, ibl.nativeHandle)
+        ibl.nativeHandle = null
+    }
+    actual fun destroyMaterial(material: Material) {
+        FilamentC.FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
+    }
+    actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
+        FilamentC.FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    }
+    actual fun destroySkybox(skybox: Skybox) {
+        FilamentC.FilaEngine_destroySkybox(nativeHandle, skybox.nativeHandle)
+        skybox.nativeHandle = null
+    }
+    actual fun destroyColorGrading(colorGrading: ColorGrading) {
+        FilamentC.FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle)
+        colorGrading.nativeHandle = null
+    }
+    actual fun destroyTexture(texture: Texture) {
+        FilamentC.FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
+    }
+    actual fun destroyRenderTarget(target: RenderTarget) {
+        FilamentC.FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle)
+    }
+    actual fun destroyStream(stream: Stream) {
+        FilamentC.FilaEngine_destroyStream(nativeHandle, stream.nativeHandle)
+        stream.nativeHandle = null
+    }
+    actual fun destroyEntity(entity: Entity) = FilamentC.FilaEntityManager_destroy(FilamentC.FilaEngine_getEntityManager(nativeHandle), entity)
 
-    actual fun getTransformManager(): TransformManager = TransformManager(nativeEngine.transformManager)
-    actual fun getLightManager(): LightManager = LightManager(nativeEngine.lightManager)
-    actual fun getRenderableManager(): RenderableManager = RenderableManager(nativeEngine.renderableManager)
-    actual fun getEntityManager(): EntityManager = EntityManager(nativeEngine.entityManager)
+    actual fun getTransformManager(): TransformManager = mTransformManager
+    actual fun getLightManager(): LightManager = mLightManager
+    actual fun getRenderableManager(): RenderableManager = mRenderableManager
+    actual fun getEntityManager(): EntityManager = mEntityManager
 
-    actual fun flushAndWait() = nativeEngine.flushAndWait()
-    actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
-    actual fun flush() = nativeEngine.flush()
-    actual fun isPaused(): Boolean = nativeEngine.isPaused
-    actual fun setPaused(paused: Boolean) = nativeEngine.setPaused(paused)
-    actual fun unprotected() = nativeEngine.unprotected()
-    actual fun hasFeatureFlag(name: String): Boolean = nativeEngine.hasFeatureFlag(name)
-    actual fun setFeatureFlag(name: String, value: Boolean): Boolean = nativeEngine.setFeatureFlag(name, value)
-    actual fun getFeatureFlag(name: String): Boolean = nativeEngine.getFeatureFlag(name)
+    actual fun flushAndWait() { FilamentC.FilaEngine_flushAndWait(nativeHandle, 1_000_000_000L) }
+    actual fun flushAndWait(timeout: Long): Boolean = FilamentC.FilaEngine_flushAndWait(nativeHandle, timeout)
+    actual fun flush() = FilamentC.FilaEngine_flush(nativeHandle)
+    actual fun isPaused(): Boolean = FilamentC.FilaEngine_isPaused(nativeHandle)
+    actual fun setPaused(paused: Boolean) = FilamentC.FilaEngine_setPaused(nativeHandle, paused)
+    actual fun unprotected() = FilamentC.FilaEngine_unprotected(nativeHandle)
+    actual fun hasFeatureFlag(name: String): Boolean = confined { arena -> FilamentC.FilaEngine_hasFeatureFlag(nativeHandle, arena.cstr(name)) }
+    actual fun setFeatureFlag(name: String, value: Boolean): Boolean = confined { arena ->
+        FilamentC.FilaEngine_setFeatureFlag(nativeHandle, arena.cstr(name), value)
+        true
+    }
+    actual fun getFeatureFlag(name: String): Boolean = confined { arena -> FilamentC.FilaEngine_getFeatureFlag(nativeHandle, arena.cstr(name)) }
 
-    actual fun enableAccurateTranslations() = nativeEngine.enableAccurateTranslations()
+    actual fun enableAccurateTranslations() = FilamentC.FilaEngine_enableAccurateTranslations(nativeHandle)
 
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
 
     actual fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)?) {
-        val jniPriority = io.github.erkko68.filament.jni.Material.CompilerPriorityQueue.values()[priority.ordinal]
-        val jniShadow = JniEngine.FeatureState.values()[shadowReceiver.ordinal]
-        val jniSkinning = JniEngine.FeatureState.values()[skinning.ordinal]
-        nativeEngine.compile(jniPriority, material.nativeMaterial, view.nativeView, jniShadow, jniSkinning, null, callback?.let { Runnable { it() } })
+        val cb: MemorySegment
+        val userData: MemorySegment
+        if (callback != null) {
+            cb = Completions.compileStub
+            userData = Completions.register(callback)
+        } else {
+            cb = NULL
+            userData = NULL
+        }
+        FilamentC.FilaEngine_compile(
+            nativeHandle,
+            priority.ordinal.toByte(),
+            material.nativeHandle,
+            view.nativeHandle,
+            shadowReceiver.ordinal.toByte(),
+            skinning.ordinal.toByte(),
+            cb,
+            userData,
+        )
     }
 }

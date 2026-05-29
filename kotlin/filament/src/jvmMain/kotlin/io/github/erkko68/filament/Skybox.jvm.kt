@@ -1,43 +1,49 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.Skybox as JniSkybox
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class Skybox(val nativeSkybox: JniSkybox) {
+actual class Skybox(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
-        private val jni = JniSkybox.Builder()
+        private val nativeBuilder = FilamentC.FilaSkyboxBuilder_create()
 
         actual fun environment(cubemap: Texture): Builder {
-            jni.environment(cubemap.nativeTexture)
+            FilamentC.FilaSkyboxBuilder_environment(nativeBuilder, cubemap.nativeHandle)
             return this
         }
 
         actual fun showSun(show: Boolean): Builder {
-            jni.showSun(show)
+            FilamentC.FilaSkyboxBuilder_showSun(nativeBuilder, show)
             return this
         }
 
         actual fun intensity(envIntensity: Float): Builder {
-            jni.intensity(envIntensity)
+            FilamentC.FilaSkyboxBuilder_intensity(nativeBuilder, envIntensity)
             return this
         }
 
         actual fun color(r: Float, g: Float, b: Float, a: Float): Builder {
-            jni.color(r, g, b, a)
+            FilamentC.FilaSkyboxBuilder_color(nativeBuilder, r, g, b, a)
             return this
         }
 
         actual fun priority(priority: Int): Builder {
-            jni.priority(priority)
+            FilamentC.FilaSkyboxBuilder_priority(nativeBuilder, priority.toByte())
             return this
         }
 
-        actual fun build(engine: Engine): Skybox =
-            Skybox(jni.build(engine.nativeEngine))
+        actual fun build(engine: Engine): Skybox {
+            val handle = FilamentC.FilaSkyboxBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilamentC.FilaSkyboxBuilder_destroy(nativeBuilder)
+            return Skybox(handle)
+        }
     }
 
-    actual fun setColor(r: Float, g: Float, b: Float, a: Float) { nativeSkybox.setColor(r, g, b, a) }
-    actual val intensity: Float get() = nativeSkybox.intensity
-    actual val layerMask: Int get() = nativeSkybox.getLayerMask()
-    actual val texture: Texture? get() = nativeSkybox.getTexture()?.let { Texture(it) }
-    actual fun setLayerMask(select: Int, value: Int) = nativeSkybox.setLayerMask(select, value)
+    actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
+        FilamentC.FilaSkybox_setColor(nativeHandle, r, g, b, a)
+    }
+    actual val intensity: Float get() = FilamentC.FilaSkybox_getIntensity(nativeHandle)
+    actual val layerMask: Int get() = FilamentC.FilaSkybox_getLayerMask(nativeHandle).toInt()
+    actual val texture: Texture? get() = FilamentC.FilaSkybox_getTexture(nativeHandle).let { if (it.isNullPtr()) null else Texture(it) }
+    actual fun setLayerMask(select: Int, value: Int) = FilamentC.FilaSkybox_setLayerMask(nativeHandle, select.toByte(), value.toByte())
 }

@@ -1,25 +1,24 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.Fence as JniFence
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class Fence(val nativeFence: JniFence) {
-    actual enum class Mode { 
-        FLUSH, DONT_FLUSH;
-        internal fun toJni() = JniFence.Mode.values()[ordinal]
-    }
-    
-    actual enum class FenceStatus { 
-        ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED;
-        internal fun toJni() = JniFence.FenceStatus.values()[ordinal]
+actual class Fence internal constructor(internal var nativeHandle: MemorySegment?) {
+    actual enum class Mode { FLUSH, DONT_FLUSH }
+    actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
+
+    actual fun wait(mode: Mode, timeout: Long): FenceStatus {
+        val result = FilamentC.FilaFence_wait(nativeHandle, mode.ordinal, timeout)
+        return FenceStatus.values()[result + 1] // ERROR is -1, ordinal 0
     }
 
-    actual fun wait(mode: Mode, timeout: Long): FenceStatus =
-        FenceStatus.values()[nativeFence.wait(mode.toJni(), timeout).ordinal]
-    
-    actual val nativeObject: Long get() = nativeFence.nativeObject
+    actual val nativeObject: Long get() = nativeHandle?.address() ?: 0L
 
     actual companion object {
-        actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus =
-            FenceStatus.values()[JniFence.waitAndDestroy(fence.nativeFence, mode.toJni()).ordinal]
+        actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
+            val result = FilamentC.FilaFence_waitAndDestroy(fence.nativeHandle, mode.ordinal)
+            fence.nativeHandle = null
+            return FenceStatus.values()[result + 1]
+        }
     }
 }

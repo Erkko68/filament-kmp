@@ -1,40 +1,49 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.SkinningBuffer as JniSkinningBuffer
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class SkinningBuffer(val nativeSkinningBuffer: JniSkinningBuffer) {
+actual class SkinningBuffer internal constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
-        private val jni = JniSkinningBuffer.Builder()
+        private val nativeBuilder = FilamentC.FilaSkinningBufferBuilder_create()
 
         actual fun boneCount(boneCount: Int): Builder {
-            jni.boneCount(boneCount)
+            FilamentC.FilaSkinningBufferBuilder_boneCount(nativeBuilder, boneCount)
             return this
         }
 
         actual fun initialize(initialize: Boolean): Builder {
-            jni.initialize(initialize)
+            FilamentC.FilaSkinningBufferBuilder_initialize(nativeBuilder, initialize)
             return this
         }
 
-        actual fun build(engine: Engine): SkinningBuffer =
-            SkinningBuffer(jni.build(engine.nativeEngine))
+        actual fun build(engine: Engine): SkinningBuffer {
+            val handle = FilamentC.FilaSkinningBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilamentC.FilaSkinningBufferBuilder_destroy(nativeBuilder)
+            return SkinningBuffer(handle)
+        }
     }
 
-    actual val boneCount: Int get() = nativeSkinningBuffer.boneCount
+    actual val boneCount: Int get() = FilamentC.FilaSkinningBuffer_getBoneCount(nativeHandle).toInt()
 
     actual fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
-        val buffer = ByteBuffer.allocateDirect(matrices.size * 4).order(ByteOrder.nativeOrder()).asFloatBuffer()
-        buffer.put(matrices)
-        buffer.rewind()
-        nativeSkinningBuffer.setBonesAsMatrices(engine.nativeEngine, buffer, boneCount, offset)
+        confined { arena ->
+            FilamentC.FilaSkinningBuffer_setBonesMat4f(
+                nativeHandle, engine.nativeHandle,
+                arena.floats(matrices),
+                boneCount.toLong(), offset.toLong()
+            )
+        }
     }
 
     actual fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int) {
-        val buffer = ByteBuffer.allocateDirect(bones.size * 4).order(ByteOrder.nativeOrder()).asFloatBuffer()
-        buffer.put(bones)
-        buffer.rewind()
-        nativeSkinningBuffer.setBonesAsQuaternions(engine.nativeEngine, buffer, boneCount, offset)
+        // Each bone is 8 floats: [qx,qy,qz,qw, tx,ty,tz,1] — matches FilaBone memory layout.
+        confined { arena ->
+            FilamentC.FilaSkinningBuffer_setBonesQuaternions(
+                nativeHandle, engine.nativeHandle,
+                arena.floats(bones),
+                boneCount.toLong(), offset.toLong()
+            )
+        }
     }
 }

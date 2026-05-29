@@ -1,36 +1,42 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.EntityManager as JniEntityManager
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class EntityManager(val nativeEntityManager: JniEntityManager) {
+actual class EntityManager internal constructor(internal var nativeHandle: MemorySegment?) {
     actual companion object {
-        actual fun get(): EntityManager = EntityManager(JniEntityManager.get())
+        private val instance: EntityManager by lazy {
+            ensureFilamentLoaded()
+            EntityManager(FilamentC.FilaEntityManager_get())
+        }
+        actual fun get(): EntityManager = instance
     }
 
-    actual fun create(): Entity = nativeEntityManager.create()
-    
+    actual fun create(): Entity = FilamentC.FilaEntityManager_create(nativeHandle)
+
     actual fun create(n: Int): IntArray {
-        val entities = IntArray(n)
-        for (i in 0 until n) {
-            entities[i] = nativeEntityManager.create()
+        return confined { arena ->
+            val seg = arena.intArr(n)
+            FilamentC.FilaEntityManager_createArray(nativeHandle, n.toLong(), seg)
+            seg.toInts()
         }
-        return entities
     }
 
     actual fun create(entities: IntArray): IntArray {
-        for (i in entities.indices) {
-            entities[i] = nativeEntityManager.create()
+        confined { arena ->
+            val seg = arena.ints(entities)
+            FilamentC.FilaEntityManager_createArray(nativeHandle, entities.size.toLong(), seg)
+            val data = seg.toInts()
+            System.arraycopy(data, 0, entities, 0, entities.size)
         }
         return entities
     }
 
-    actual fun destroy(entity: Entity) = nativeEntityManager.destroy(entity)
-    
+    actual fun destroy(entity: Entity) = FilamentC.FilaEntityManager_destroy(nativeHandle, entity)
+
     actual fun destroy(entities: IntArray) {
-        for (entity in entities) {
-            nativeEntityManager.destroy(entity)
-        }
+        confined { arena -> FilamentC.FilaEntityManager_destroyArray(nativeHandle, entities.size.toLong(), arena.ints(entities)) }
     }
 
-    actual fun isAlive(entity: Entity): Boolean = nativeEntityManager.isAlive(entity)
+    actual fun isAlive(entity: Entity): Boolean = FilamentC.FilaEntityManager_isAlive(nativeHandle, entity)
 }

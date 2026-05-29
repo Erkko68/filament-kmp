@@ -1,94 +1,105 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.ColorGrading as JniColorGrading
+import io.github.erkko68.filament.ffm.FilamentC
+import java.lang.foreign.MemorySegment
 
-actual class ColorGrading(val nativeColorGrading: JniColorGrading) {
-    actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
-    actual enum class LutFormat { INTEGER, FLOAT }
-
+actual class ColorGrading internal constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
-        private val jni = JniColorGrading.Builder()
+        private val nativeHandle: MemorySegment = FilamentC.FilaColorGradingBuilder_create()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
-            jni.quality(JniColorGrading.QualityLevel.values()[qualityLevel.ordinal])
+            FilamentC.FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal)
             return this
         }
 
         actual fun format(format: LutFormat): Builder {
-            jni.format(JniColorGrading.LutFormat.values()[format.ordinal])
+            FilamentC.FilaColorGradingBuilder_format(nativeHandle, format.ordinal)
             return this
         }
 
         actual fun dimensions(dim: Int): Builder {
-            jni.dimensions(dim)
+            FilamentC.FilaColorGradingBuilder_dimensions(nativeHandle, dim.toByte())
             return this
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            jni.toneMapper(toneMapper.nativeToneMapper)
+            FilamentC.FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
             return this
         }
 
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
-            jni.luminanceScaling(luminanceScaling)
+            FilamentC.FilaColorGradingBuilder_luminanceScaling(nativeHandle, luminanceScaling)
             return this
         }
 
         actual fun gamutMapping(gamutMapping: Boolean): Builder {
-            jni.gamutMapping(gamutMapping)
+            FilamentC.FilaColorGradingBuilder_gamutMapping(nativeHandle, gamutMapping)
             return this
         }
 
         actual fun exposure(exposure: Float): Builder {
-            jni.exposure(exposure)
+            FilamentC.FilaColorGradingBuilder_exposure(nativeHandle, exposure)
             return this
         }
 
         actual fun nightAdaptation(adaptation: Float): Builder {
-            jni.nightAdaptation(adaptation)
+            FilamentC.FilaColorGradingBuilder_nightAdaptation(nativeHandle, adaptation)
             return this
         }
 
         actual fun whiteBalance(temperature: Float, tint: Float): Builder {
-            jni.whiteBalance(temperature, tint)
+            FilamentC.FilaColorGradingBuilder_whiteBalance(nativeHandle, temperature, tint)
             return this
         }
 
         actual fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder {
-            jni.channelMixer(outRed, outGreen, outBlue)
+            confined { arena ->
+                FilamentC.FilaColorGradingBuilder_channelMixer(nativeHandle, arena.floats(outRed), arena.floats(outGreen), arena.floats(outBlue))
+            }
             return this
         }
 
         actual fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder {
-            jni.shadowsMidtonesHighlights(shadows, midtones, highlights, ranges)
+            confined { arena ->
+                FilamentC.FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, arena.floats(shadows), arena.floats(midtones), arena.floats(highlights), arena.floats(ranges))
+            }
             return this
         }
 
         actual fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder {
-            jni.slopeOffsetPower(slope, offset, power)
+            confined { arena ->
+                FilamentC.FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, arena.floats(slope), arena.floats(offset), arena.floats(power))
+            }
             return this
         }
 
         actual fun contrast(contrast: Float): Builder {
-            jni.contrast(contrast)
+            FilamentC.FilaColorGradingBuilder_contrast(nativeHandle, contrast)
             return this
         }
 
         actual fun vibrance(vibrance: Float): Builder {
-            jni.vibrance(vibrance)
+            FilamentC.FilaColorGradingBuilder_vibrance(nativeHandle, vibrance)
             return this
         }
 
         actual fun saturation(saturation: Float): Builder {
-            jni.saturation(saturation)
+            FilamentC.FilaColorGradingBuilder_saturation(nativeHandle, saturation)
             return this
         }
 
         actual fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
-            jni.curves(shadowGamma, midPoint, highlightScale)
+            confined { arena ->
+                FilamentC.FilaColorGradingBuilder_curves(nativeHandle, arena.floats(shadowGamma), arena.floats(midPoint), arena.floats(highlightScale))
+            }
             return this
         }
 
-        actual fun build(engine: Engine): ColorGrading = ColorGrading(jni.build(engine.nativeEngine))
+        actual fun build(engine: Engine): ColorGrading {
+            return ColorGrading(FilamentC.FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
+        }
     }
+
+    actual enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    actual enum class LutFormat { INTEGER, FLOAT }
 }

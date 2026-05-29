@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 actual object Filament {
     actual fun init() {
-        io.github.erkko68.filament.jni.Filament.init()
+        // Extract and System.load the combined libfilament-c so jextract's loaderLookup resolves.
+        ensureFilamentLoaded()
     }
 }

@@ -1,132 +1,204 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.LightManager as JniLightManager
+import io.github.erkko68.filament.ffm.FilamentC
+import io.github.erkko68.filament.ffm.FilaLightManagerShadowOptions
+import io.github.erkko68.filament.ffm.FilaLightManagerVsmShadowOptions
+import java.lang.foreign.Arena
+import java.lang.foreign.MemorySegment
 
-actual class LightManager(val nativeLightManager: JniLightManager) {
-    actual enum class Type { 
-        SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT;
-        internal fun toJni() = JniLightManager.Type.values()[ordinal]
-    }
+actual class LightManager internal constructor(internal val nativeLightManager: MemorySegment) {
+    actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
 
     actual class ShadowOptions actual constructor() {
-        private val jni = JniLightManager.ShadowOptions()
+        // Held for the lifetime of this object; an auto arena frees it when unreachable.
+        internal val nativeOptions: MemorySegment = FilaLightManagerShadowOptions.allocate(Arena.ofAuto())
+        private val vsm: MemorySegment get() = FilaLightManagerShadowOptions.vsm(nativeOptions)
+
+        init {
+            FilaLightManagerShadowOptions.mapSize(nativeOptions, 1024)
+            FilaLightManagerShadowOptions.shadowCascades(nativeOptions, 1)
+            FilaLightManagerShadowOptions.constantBias(nativeOptions, 0.001f)
+            FilaLightManagerShadowOptions.normalBias(nativeOptions, 0.4f)
+            FilaLightManagerShadowOptions.shadowFar(nativeOptions, 0.0f)
+            FilaLightManagerShadowOptions.shadowNearHint(nativeOptions, 0.0f)
+            FilaLightManagerShadowOptions.shadowFarHint(nativeOptions, 100.0f)
+            FilaLightManagerShadowOptions.stable(nativeOptions, false)
+            FilaLightManagerShadowOptions.lispsm(nativeOptions, true)
+            FilaLightManagerShadowOptions.screenSpaceContactShadows(nativeOptions, false)
+            FilaLightManagerShadowOptions.stepCount(nativeOptions, 8)
+            FilaLightManagerShadowOptions.maxShadowDistance(nativeOptions, 0.0f)
+            FilaLightManagerVsmShadowOptions.elvsm(vsm, false)
+            FilaLightManagerVsmShadowOptions.blurWidth(vsm, 0.0f)
+            FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, 0.0f)
+        }
 
         actual var mapSize: Int
-            get() = jni.mapSize
-            set(value) { jni.mapSize = value }
-        actual var shadowCascades: Int
-            get() = jni.shadowCascades
-            set(value) { jni.shadowCascades = value }
-        actual var cascadeSplitPositions: FloatArray
-            get() = jni.cascadeSplitPositions
-            set(value) { jni.cascadeSplitPositions = value }
-        actual var constantBias: Float
-            get() = jni.constantBias
-            set(value) { jni.constantBias = value }
-        actual var normalBias: Float
-            get() = jni.normalBias
-            set(value) { jni.normalBias = value }
-        actual var shadowFar: Float
-            get() = jni.shadowFar
-            set(value) { jni.shadowFar = value }
-        actual var shadowNearHint: Float
-            get() = jni.shadowNearHint
-            set(value) { jni.shadowNearHint = value }
-        actual var shadowFarHint: Float
-            get() = jni.shadowFarHint
-            set(value) { jni.shadowFarHint = value }
-        actual var stable: Boolean
-            get() = jni.stable
-            set(value) { jni.stable = value }
-        actual var lispsm: Boolean
-            get() = jni.lispsm
-            set(value) { jni.lispsm = value }
-        actual var screenSpaceContactShadows: Boolean
-            get() = jni.screenSpaceContactShadows
-            set(value) { jni.screenSpaceContactShadows = value }
-        actual var stepCount: Int
-            get() = jni.stepCount
-            set(value) { jni.stepCount = value }
-        actual var maxShadowDistance: Float
-            get() = jni.maxShadowDistance
-            set(value) { jni.maxShadowDistance = value }
-        actual var elvsm: Boolean
-            get() = jni.elvsm
-            set(value) { jni.elvsm = value }
-        actual var blurWidth: Float
-            get() = jni.blurWidth
-            set(value) { jni.blurWidth = value }
-        actual var shadowBulbRadius: Float
-            get() = jni.shadowBulbRadius
-            set(value) { jni.shadowBulbRadius = value }
-        actual var transform: FloatArray
-            get() = jni.transform
-            set(value) { jni.transform = value }
+            get() = FilaLightManagerShadowOptions.mapSize(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.mapSize(nativeOptions, value) }
 
-        internal fun toJni() = jni
+        actual var shadowCascades: Int
+            get() = FilaLightManagerShadowOptions.shadowCascades(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.shadowCascades(nativeOptions, value) }
+
+        actual var cascadeSplitPositions: FloatArray
+            get() = FilaLightManagerShadowOptions.cascadeSplitPositions(nativeOptions).let { s -> FloatArray(3) { s.getFloatAt(it) } }
+            set(value) { val s = FilaLightManagerShadowOptions.cascadeSplitPositions(nativeOptions); for (i in 0 until 3.coerceAtMost(value.size)) s.setFloatAt(i, value[i]) }
+
+        actual var constantBias: Float
+            get() = FilaLightManagerShadowOptions.constantBias(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.constantBias(nativeOptions, value) }
+
+        actual var normalBias: Float
+            get() = FilaLightManagerShadowOptions.normalBias(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.normalBias(nativeOptions, value) }
+
+        actual var shadowFar: Float
+            get() = FilaLightManagerShadowOptions.shadowFar(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.shadowFar(nativeOptions, value) }
+
+        actual var shadowNearHint: Float
+            get() = FilaLightManagerShadowOptions.shadowNearHint(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.shadowNearHint(nativeOptions, value) }
+
+        actual var shadowFarHint: Float
+            get() = FilaLightManagerShadowOptions.shadowFarHint(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.shadowFarHint(nativeOptions, value) }
+
+        actual var stable: Boolean
+            get() = FilaLightManagerShadowOptions.stable(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.stable(nativeOptions, value) }
+
+        actual var lispsm: Boolean
+            get() = FilaLightManagerShadowOptions.lispsm(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.lispsm(nativeOptions, value) }
+
+        actual var screenSpaceContactShadows: Boolean
+            get() = FilaLightManagerShadowOptions.screenSpaceContactShadows(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.screenSpaceContactShadows(nativeOptions, value) }
+
+        actual var stepCount: Int
+            get() = FilaLightManagerShadowOptions.stepCount(nativeOptions).toInt()
+            set(value) { FilaLightManagerShadowOptions.stepCount(nativeOptions, value.toByte()) }
+
+        actual var maxShadowDistance: Float
+            get() = FilaLightManagerShadowOptions.maxShadowDistance(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.maxShadowDistance(nativeOptions, value) }
+
+        actual var elvsm: Boolean
+            get() = FilaLightManagerVsmShadowOptions.elvsm(vsm)
+            set(value) { FilaLightManagerVsmShadowOptions.elvsm(vsm, value) }
+
+        actual var blurWidth: Float
+            get() = FilaLightManagerVsmShadowOptions.blurWidth(vsm)
+            set(value) { FilaLightManagerVsmShadowOptions.blurWidth(vsm, value) }
+
+        actual var shadowBulbRadius: Float
+            get() = FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, value) }
+
+        actual var transform: FloatArray
+            get() = FilaLightManagerShadowOptions.transform(nativeOptions).let { s -> FloatArray(4) { s.getFloatAt(it) } }
+            set(value) { val s = FilaLightManagerShadowOptions.transform(nativeOptions); for (i in 0 until 4.coerceAtMost(value.size)) s.setFloatAt(i, value[i]) }
     }
 
     actual object ShadowCascades {
-        actual fun computeUniformSplits(splitPositions: FloatArray, cascades: Int) =
-            JniLightManager.ShadowCascades.computeUniformSplits(splitPositions, cascades)
-        actual fun computeLogSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float) =
-            JniLightManager.ShadowCascades.computeLogSplits(splitPositions, cascades, near, far)
-        actual fun computePracticalSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float, lambda: Float) =
-            JniLightManager.ShadowCascades.computePracticalSplits(splitPositions, cascades, near, far, lambda)
+        actual fun computeUniformSplits(splitPositions: FloatArray, cascades: Int) {
+            confined { arena ->
+                val seg = arena.floatArr(splitPositions.size)
+                FilamentC.FilaLightManager_computeUniformSplits(seg, cascades.toByte())
+                System.arraycopy(seg.toFloats(), 0, splitPositions, 0, splitPositions.size)
+            }
+        }
+        actual fun computeLogSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float) {
+            confined { arena ->
+                val seg = arena.floatArr(splitPositions.size)
+                FilamentC.FilaLightManager_computeLogSplits(seg, cascades.toByte(), near, far)
+                System.arraycopy(seg.toFloats(), 0, splitPositions, 0, splitPositions.size)
+            }
+        }
+        actual fun computePracticalSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float, lambda: Float) {
+            confined { arena ->
+                val seg = arena.floatArr(splitPositions.size)
+                FilamentC.FilaLightManager_computePracticalSplits(seg, cascades.toByte(), near, far, lambda)
+                System.arraycopy(seg.toFloats(), 0, splitPositions, 0, splitPositions.size)
+            }
+        }
     }
 
     actual class Builder actual constructor(type: Type) {
-        private val jni = JniLightManager.Builder(type.toJni())
+        private val nativeBuilder = FilamentC.FilaLightManagerBuilder_create(type.ordinal)
 
-        actual fun lightChannel(channel: Int, enable: Boolean): Builder { jni.lightChannel(channel, enable); return this }
-        actual fun castShadows(enable: Boolean): Builder { jni.castShadows(enable); return this }
-        actual fun shadowOptions(options: ShadowOptions): Builder { jni.shadowOptions(options.toJni()); return this }
-        actual fun castLight(enabled: Boolean): Builder { jni.castLight(enabled); return this }
-        actual fun position(x: Float, y: Float, z: Float): Builder { jni.position(x, y, z); return this }
-        actual fun direction(x: Float, y: Float, z: Float): Builder { jni.direction(x, y, z); return this }
-        actual fun color(linearR: Float, linearG: Float, linearB: Float): Builder { jni.color(linearR, linearG, linearB); return this }
-        actual fun intensity(intensity: Float): Builder { jni.intensity(intensity); return this }
-        actual fun intensity(watts: Float, efficiency: Float): Builder { jni.intensity(watts, efficiency); return this }
-        actual fun intensityCandela(intensity: Float): Builder { jni.intensityCandela(intensity); return this }
-        actual fun falloff(radius: Float): Builder { jni.falloff(radius); return this }
-        actual fun spotLightCone(inner: Float, outer: Float): Builder { jni.spotLightCone(inner, outer); return this }
-        actual fun sunAngularRadius(angularRadius: Float): Builder { jni.sunAngularRadius(angularRadius); return this }
-        actual fun sunHaloSize(haloSize: Float): Builder { jni.sunHaloSize(haloSize); return this }
-        actual fun sunHaloFalloff(haloFalloff: Float): Builder { jni.sunHaloFalloff(haloFalloff); return this }
-        actual fun build(engine: Engine, entity: Entity) { jni.build(engine.nativeEngine, entity) }
+        actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
+        actual fun castShadows(enable: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_castShadows(nativeBuilder, enable) }
+        actual fun shadowOptions(options: ShadowOptions): Builder = apply { FilamentC.FilaLightManagerBuilder_shadowOptions(nativeBuilder, options.nativeOptions) }
+        actual fun castLight(enabled: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_castLight(nativeBuilder, enabled) }
+        actual fun position(x: Float, y: Float, z: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_position(nativeBuilder, x, y, z) }
+        actual fun direction(x: Float, y: Float, z: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_direction(nativeBuilder, x, y, z) }
+        actual fun color(linearR: Float, linearG: Float, linearB: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_color(nativeBuilder, linearR, linearG, linearB) }
+        actual fun intensity(intensity: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_intensity(nativeBuilder, intensity) }
+        actual fun intensity(watts: Float, efficiency: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_intensityEfficiency(nativeBuilder, watts, efficiency) }
+        actual fun intensityCandela(intensity: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_intensityCandela(nativeBuilder, intensity) }
+        actual fun falloff(radius: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_falloff(nativeBuilder, radius) }
+        actual fun spotLightCone(inner: Float, outer: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_spotLightCone(nativeBuilder, inner, outer) }
+        actual fun sunAngularRadius(angularRadius: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_sunAngularRadius(nativeBuilder, angularRadius) }
+        actual fun sunHaloSize(haloSize: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_sunHaloSize(nativeBuilder, haloSize) }
+        actual fun sunHaloFalloff(haloFalloff: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_sunHaloFalloff(nativeBuilder, haloFalloff) }
+        actual fun build(engine: Engine, entity: Entity) {
+            FilamentC.FilaLightManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
+            FilamentC.FilaLightManagerBuilder_destroy(nativeBuilder)
+        }
     }
 
-    actual fun getComponentCount(): Int = nativeLightManager.componentCount
-    actual fun hasComponent(entity: Entity): Boolean = nativeLightManager.hasComponent(entity)
-    actual fun getInstance(entity: Entity): EntityInstance = nativeLightManager.getInstance(entity)
-    actual fun destroy(entity: Entity) = nativeLightManager.destroy(entity)
+    actual fun getComponentCount(): Int = FilamentC.FilaLightManager_getComponentCount(nativeLightManager).toInt()
+    actual fun hasComponent(entity: Entity): Boolean = FilamentC.FilaLightManager_hasComponent(nativeLightManager, entity)
+    actual fun getInstance(entity: Entity): EntityInstance = FilamentC.FilaLightManager_getInstance(nativeLightManager, entity)
+    actual fun destroy(entity: Entity) { FilamentC.FilaLightManager_destroy(nativeLightManager, entity) }
 
-    actual fun getType(instance: EntityInstance): Type = Type.values()[nativeLightManager.getType(instance).ordinal]
-    actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) = nativeLightManager.setDirection(instance, x, y, z)
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getDirection(instance, out); return out }
-    actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) = nativeLightManager.setPosition(instance, x, y, z)
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getPosition(instance, out); return out }
-    actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) = nativeLightManager.setColor(instance, r, g, b)
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray { nativeLightManager.getColor(instance, out); return out }
-    actual fun setIntensity(instance: EntityInstance, intensity: Float) = nativeLightManager.setIntensity(instance, intensity)
-    actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) {
-        nativeLightManager.setIntensity(instance, watts * efficiency * 683.0f)
+    actual fun getType(instance: EntityInstance): Type = Type.values()[FilamentC.FilaLightManager_getType(nativeLightManager, instance)]
+    actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { FilamentC.FilaLightManager_setDirection(nativeLightManager, instance, x, y, z) }
+    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaLightManager_getDirection(nativeLightManager, instance, seg)
+            System.arraycopy(seg.toFloats(), 0, out, 0, 3)
+        }
+        return out
     }
-    actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) = nativeLightManager.setIntensityCandela(instance, intensity)
-    actual fun getIntensity(instance: EntityInstance): Float = nativeLightManager.getIntensity(instance)
-    actual fun setFalloff(instance: EntityInstance, radius: Float) = nativeLightManager.setFalloff(instance, radius)
-    actual fun getFalloff(instance: EntityInstance): Float = nativeLightManager.getFalloff(instance)
-    actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) = nativeLightManager.setSpotLightCone(instance, inner, outer)
-    actual fun getInnerConeAngle(instance: EntityInstance): Float = nativeLightManager.getInnerConeAngle(instance)
-    actual fun getOuterConeAngle(instance: EntityInstance): Float = nativeLightManager.getOuterConeAngle(instance)
-    actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) = nativeLightManager.setSunAngularRadius(instance, angularRadius)
-    actual fun getSunAngularRadius(instance: EntityInstance): Float = nativeLightManager.getSunAngularRadius(instance)
-    actual fun setSunHaloSize(instance: EntityInstance, haloSize: Float) = nativeLightManager.setSunHaloSize(instance, haloSize)
-    actual fun getSunHaloSize(instance: EntityInstance): Float = nativeLightManager.getSunHaloSize(instance)
-    actual fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float) = nativeLightManager.setSunHaloFalloff(instance, haloFalloff)
-    actual fun getSunHaloFalloff(instance: EntityInstance): Float = nativeLightManager.getSunHaloFalloff(instance)
-    actual fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean) = nativeLightManager.setShadowCaster(instance, shadowCaster)
-    actual fun isShadowCaster(instance: EntityInstance): Boolean = nativeLightManager.isShadowCaster(instance)
-    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) = nativeLightManager.setLightChannel(instance, channel, enable)
-    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = nativeLightManager.getLightChannel(instance, channel)
+    actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { FilamentC.FilaLightManager_setPosition(nativeLightManager, instance, x, y, z) }
+    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaLightManager_getPosition(nativeLightManager, instance, seg)
+            System.arraycopy(seg.toFloats(), 0, out, 0, 3)
+        }
+        return out
+    }
+    actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { FilamentC.FilaLightManager_setColor(nativeLightManager, instance, r, g, b) }
+    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
+        confined { arena ->
+            val seg = arena.floatArr(3)
+            FilamentC.FilaLightManager_getColor(nativeLightManager, instance, seg)
+            System.arraycopy(seg.toFloats(), 0, out, 0, 3)
+        }
+        return out
+    }
+    actual fun setIntensity(instance: EntityInstance, intensity: Float) { FilamentC.FilaLightManager_setIntensity(nativeLightManager, instance, intensity) }
+    actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) { FilamentC.FilaLightManager_setIntensityEfficiency(nativeLightManager, instance, watts, efficiency) }
+    actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) { FilamentC.FilaLightManager_setIntensityCandela(nativeLightManager, instance, intensity) }
+    actual fun getIntensity(instance: EntityInstance): Float = FilamentC.FilaLightManager_getIntensity(nativeLightManager, instance)
+    actual fun setFalloff(instance: EntityInstance, radius: Float) { FilamentC.FilaLightManager_setFalloff(nativeLightManager, instance, radius) }
+    actual fun getFalloff(instance: EntityInstance): Float = FilamentC.FilaLightManager_getFalloff(nativeLightManager, instance)
+    actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) { FilamentC.FilaLightManager_setSpotLightCone(nativeLightManager, instance, inner, outer) }
+    actual fun getInnerConeAngle(instance: EntityInstance): Float = FilamentC.FilaLightManager_getSpotLightInnerCone(nativeLightManager, instance)
+    actual fun getOuterConeAngle(instance: EntityInstance): Float = FilamentC.FilaLightManager_getSpotLightOuterCone(nativeLightManager, instance)
+    actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) { FilamentC.FilaLightManager_setSunAngularRadius(nativeLightManager, instance, angularRadius) }
+    actual fun getSunAngularRadius(instance: EntityInstance): Float = FilamentC.FilaLightManager_getSunAngularRadius(nativeLightManager, instance)
+    actual fun setSunHaloSize(instance: EntityInstance, haloSize: Float) { FilamentC.FilaLightManager_setSunHaloSize(nativeLightManager, instance, haloSize) }
+    actual fun getSunHaloSize(instance: EntityInstance): Float = FilamentC.FilaLightManager_getSunHaloSize(nativeLightManager, instance)
+    actual fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float) { FilamentC.FilaLightManager_setSunHaloFalloff(nativeLightManager, instance, haloFalloff) }
+    actual fun getSunHaloFalloff(instance: EntityInstance): Float = FilamentC.FilaLightManager_getSunHaloFalloff(nativeLightManager, instance)
+    actual fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean) { FilamentC.FilaLightManager_setShadowCaster(nativeLightManager, instance, shadowCaster) }
+    actual fun isShadowCaster(instance: EntityInstance): Boolean = FilamentC.FilaLightManager_isShadowCaster(nativeLightManager, instance)
+    actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) { FilamentC.FilaLightManager_setLightChannel(nativeLightManager, instance, channel, enable) }
+    actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean = FilamentC.FilaLightManager_getLightChannel(nativeLightManager, instance, channel)
 }
