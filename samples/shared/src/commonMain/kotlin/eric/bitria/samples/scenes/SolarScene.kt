@@ -12,13 +12,14 @@ import eric.bitria.samples.rememberEmissiveInstance
 import eric.bitria.samples.rememberEmissiveTemplate
 import eric.bitria.samples.rememberLitColorTemplate
 import io.github.erkko68.filament.LightManager
-import io.github.erkko68.filament.compose.FilamentView
+import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
 import io.github.erkko68.filament.compose.rememberSceneClock
 import io.github.erkko68.filament.compose.scene.AntiAliasing
 import io.github.erkko68.filament.compose.scene.Bloom
 import io.github.erkko68.filament.compose.scene.Dithering
+import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.RenderQuality
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Group
@@ -67,24 +68,27 @@ fun SolarScene(onBack: () -> Unit) {
 
     val time by rememberSceneClock()
 
+    // RenderQuality(HIGH) forces an FP16 HDR color buffer so emissive values above 1.0 survive
+    // without clipping; Dithering masks any residual 8-bit step at the output. A larger bloom
+    // resolution + 7 mip levels keeps the halo smooth on hi-DPI retina displays where the
+    // default ~360 px chain would otherwise look pixelated.
+    val postProcessing = PostProcessing(
+        renderQuality = RenderQuality(),
+        dithering     = Dithering(),
+        bloom         = Bloom(strength = 0.6f, resolution = 480, levels = 7),
+        antiAliasing  = AntiAliasing(fxaaEnabled = true),
+    )
+
     Box(Modifier.fillMaxSize()) {
-        FilamentView(
+        FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             cameraState = cameraState,
             skyboxState = skybox,
+            postProcessing = postProcessing,
         ) {
-            // RenderQuality(HIGH) forces an FP16 HDR color buffer so emissive values above 1.0
-            // survive without clipping; Dithering masks any residual 8-bit step at the output.
-            // A larger bloom resolution + 7 mip levels keeps the halo smooth on hi-DPI retina
-            // displays where the default ~360 px chain would otherwise look pixelated.
-            RenderQuality()
-            Dithering()
-            Bloom(strength = 0.6f, resolution = 480, levels = 7)
-            AntiAliasing(fxaaEnabled = true)
-
             val litTmpl      = rememberLitColorTemplate()
             val emissiveTmpl = rememberEmissiveTemplate()
             if (litTmpl != null && emissiveTmpl != null) {

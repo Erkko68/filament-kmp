@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.LightManager
-import io.github.erkko68.filament.compose.FilamentView
+import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
 import io.github.erkko68.filament.compose.rememberSceneClock
@@ -45,7 +45,7 @@ fun AnimationScene(onBack: () -> Unit) {
     val time by rememberSceneClock()
 
     Box(Modifier.fillMaxSize()) {
-        FilamentView(
+        FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { orbit.setViewport(it.width, it.height) }

@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.LightManager
-import io.github.erkko68.filament.compose.FilamentView
+import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
 import io.github.erkko68.filament.compose.scene.Color as FilColor
@@ -36,7 +36,8 @@ fun DuckScene(onBack: () -> Unit) {
     val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     Box(Modifier.fillMaxSize()) {
-        FilamentView(
+        // Single-view convenience: scene declaration + one viewport in one call.
+        FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
                 .onSizeChanged { orbit.setViewport(it.width, it.height) }

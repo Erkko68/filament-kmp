@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.utils.Quaternion
@@ -29,7 +30,7 @@ import kotlin.math.sin
  * @param onCreate  Receives the renderable entity ID once the cylinder is added to the scene.
  */
 @Composable
-fun Cylinder(
+fun FilamentSceneScope.Cylinder(
     material: MaterialInstance,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),

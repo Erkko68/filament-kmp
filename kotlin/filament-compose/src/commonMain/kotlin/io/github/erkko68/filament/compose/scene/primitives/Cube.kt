@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.utils.Quaternion
@@ -26,7 +27,7 @@ import io.github.erkko68.filament.utils.Quaternion
  *   Use it to register the cube with `view.pick` callbacks or other entity-keyed maps.
  */
 @Composable
-fun Cube(
+fun FilamentSceneScope.Cube(
     material: MaterialInstance,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),

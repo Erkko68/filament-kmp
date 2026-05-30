@@ -151,11 +151,12 @@ class OrbitCameraState internal constructor(
  * val cameraState = rememberCameraState(eye = Position(0f, 2f, 5f))
  * val orbit = rememberOrbitCameraState(cameraState)
  * FilamentView(
+ *     scene = scene,
  *     cameraState = cameraState,
  *     modifier = Modifier
  *         .onSizeChanged { orbit.setViewport(it.width, it.height) }
  *         .orbitGestures(orbit),
- * ) { ... }
+ * )
  * ```
  *
  * @param zoomSpeed     Scroll / pinch zoom sensitivity.
@@ -268,7 +269,7 @@ fun Modifier.mapGestures(state: MapCameraState): Modifier =
 /**
  * Drives a [CameraState] using a Filament [Manipulator] in FLIGHT mode (first-person).
  *
- * **Requires a per-frame update loop.** Place [FlightCameraLoop] inside `FilamentView`
+ * **Requires a per-frame update loop.** Place [FlightCameraLoop] in your composable
  * (or run a `LaunchedEffect` that calls [update] each frame).
  */
 class FlightCameraState internal constructor(
@@ -326,7 +327,7 @@ fun rememberFlightCameraState(
 /**
  * Drives the per-frame [FlightCameraState.update] loop.
  *
- * Place this inside `FilamentView` content alongside your other scene composables.
+ * Place this in your composable alongside the `FilamentView` it drives.
  */
 @Composable
 fun FlightCameraLoop(state: FlightCameraState) {
@@ -426,21 +427,25 @@ fun Modifier.flightGestures(state: FlightCameraState): Modifier {
  * if no renderable exists at the tapped position.
  *
  * ```kotlin
+ * val viewState = rememberFilamentViewState()
  * var selected by remember { mutableStateOf(NULL_ENTITY) }
  * FilamentView(
- *     modifier = Modifier.pickOnTap { result -> selected = result.renderable }
- * ) { ... }
+ *     scene = scene,
+ *     viewState = viewState,
+ *     modifier = Modifier.pickOnTap(viewState) { result -> selected = result.renderable },
+ * )
  * ```
  */
 @Composable
-fun Modifier.pickOnTap(onPick: (View.PickingQueryResult) -> Unit): Modifier {
-    val view = LocalFilamentView.current
-    return pointerInput(view, onPick) {
-        detectTapGestures { offset ->
-            // Filament uses OpenGL viewport conventions: origin at the bottom-left.
-            // Compose offsets are top-left, so flip Y against the current viewport height.
-            val y = view.viewport.height - offset.y.toInt()
-            view.pick(offset.x.toInt(), y, onPick)
-        }
+fun Modifier.pickOnTap(
+    viewState: FilamentViewState,
+    onPick: (View.PickingQueryResult) -> Unit,
+): Modifier = pointerInput(viewState, onPick) {
+    detectTapGestures { offset ->
+        val view = viewState.view ?: return@detectTapGestures
+        // Filament uses OpenGL viewport conventions: origin at the bottom-left.
+        // Compose offsets are top-left, so flip Y against the current viewport height.
+        val y = view.viewport.height - offset.y.toInt()
+        view.pick(offset.x.toInt(), y, onPick)
     }
 }

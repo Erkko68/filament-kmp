@@ -11,6 +11,18 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.2-beta02] — 2026-05-30
+
+- **`filament-compose` reshaped around a value-based scene/view split (breaking).** The scene is now a value and `FilamentView` a leaf that renders it — mirroring Filament's own `Scene`/`View` model.
+  - **Breaking:** world content is declared in `rememberFilamentScene { … }` (returns a `FilamentScene`); `FilamentView(scene = …)` no longer takes a content lambda. `skyboxState` / `indirectLightState` moved from `FilamentView` to `rememberFilamentScene`.
+  - **Added:** `FilamentSceneView` — all-in-one single-view convenience (`rememberFilamentScene` feeding one `FilamentView`).
+  - **Added:** multiple `FilamentView`s can share one `FilamentScene` (multi-view) — see the new split-view sample.
+  - **Breaking:** post-processing is now value-based — pass `PostProcessing(bloom = Bloom(…), …)` to `FilamentView`, replacing the per-effect composables (`Bloom()`, `Shadows()`, …). `ToneMapping` folded into `ColorGrade`; the old `postProcessingEnabled` flag is now `PostProcessing.enabled`.
+  - **Breaking:** scene composables (`Light`, `GltfInstance`, `Group`, primitives) are now `FilamentSceneScope` extensions — they only compile inside a scene declaration.
+  - **Breaking:** `FilamentEffect` moved to `FilamentSceneScope`; its scope is reduced to `engine` / `scene` + `onFrame` / `onDispose`.
+  - **Breaking:** removed `LocalFilamentView`, `LocalFilamentCamera`, `LocalFilamentRenderer`. Per-view raw access (`View` / `Renderer`, picking) is now via the hoisted `rememberFilamentViewState()`; `Modifier.pickOnTap` takes a `FilamentViewState`.
+- **Async loaders no longer crash composition on failure.** `rememberGltfAsset`, `rememberMaterial`, and `rememberTexture` return `null` (instead of throwing) when the `load` lambda throws or the bytes don't parse, and gained an optional `onError: (Throwable) -> Unit`. Coroutine cancellation is preserved.
+
 ## [0.1.2-beta01] — 2026-05-30
 
 - **JVM/Desktop bindings migrated from JNI to Project Panama (FFM).** The per-module JNI stack is replaced by a single `:java` module that binds the combined `libfilament-c` shared library via the Foreign Function & Memory API (jextract-generated); see [`java/README.md`](java/README.md).
@@ -113,7 +125,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta01...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta02...HEAD
+[0.1.2-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta01...0.1.2-beta02
 [0.1.2-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc02...0.1.2-beta01
 [0.1.1-rc02]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc01...0.1.1-rc02
 [0.1.1-rc01]: https://github.com/Erkko68/filament-kmp/compare/0.1.0-beta01...0.1.1-rc01

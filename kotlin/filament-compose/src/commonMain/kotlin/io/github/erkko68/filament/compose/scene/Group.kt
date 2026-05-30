@@ -5,6 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.utils.Quaternion
@@ -42,13 +43,13 @@ internal val LocalParentEntity = compositionLocalOf<Int?> { null }
  * @param onCreate  Receives the group's transform entity ID once it's created.
  */
 @Composable
-fun Group(
+fun FilamentSceneScope.Group(
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     onCreate: (entity: Int) -> Unit = {},
-    content: @Composable () -> Unit,
+    content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
     val outerParent = LocalParentEntity.current

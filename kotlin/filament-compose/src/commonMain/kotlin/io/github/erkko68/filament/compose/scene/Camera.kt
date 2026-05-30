@@ -69,7 +69,7 @@ data class Exposure(
  *
  * ```kotlin
  * val cameraState = rememberCameraState(eye = Position(0f, 2f, 5f))
- * FilamentView(cameraState = cameraState) { ... }
+ * FilamentView(scene = scene, cameraState = cameraState)
  *
  * // Read the view matrix from anywhere
  * LaunchedEffect(cameraState.eye) {

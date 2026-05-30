@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta02")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.1.2-beta01")
+            implementation("io.github.erkko68.filament:gltfio:0.1.2-beta02")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.1.2-beta01")
+            implementation("io.github.erkko68.filament:filament-utils:0.1.2-beta02")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.1.2-beta01")
+            implementation("io.github.erkko68.filament:filamat:0.1.2-beta02")
         }
     }
 }
@@ -217,7 +217,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.erkko68.filament.LightManager
-import io.github.erkko68.filament.compose.FilamentView
+import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.scene.*
 
 @Composable
@@ -230,10 +230,15 @@ fun App() {
     val skybox = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f)))
 
     MaterialTheme {
-        FilamentView(
-            modifier    = Modifier.fillMaxSize(),
-            cameraState = cameraState,
-            skyboxState = skybox,
+        // The content lambda declares the world; the viewport is configured by value.
+        FilamentSceneView(
+            modifier       = Modifier.fillMaxSize(),
+            cameraState    = cameraState,
+            skyboxState    = skybox,
+            postProcessing = PostProcessing(
+                bloom        = Bloom(strength = 0.2f),
+                antiAliasing = AntiAliasing(fxaaEnabled = true),
+            ),
         ) {
             Light(
                 type      = LightManager.Type.DIRECTIONAL,
@@ -246,9 +251,6 @@ fun App() {
                 position = Position(0f, 0f, 0f),
                 scale    = Scale(1f),
             )
-
-            Bloom(strength = 0.2f)
-            AntiAliasing(fxaaEnabled = true)
         }
     }
 }

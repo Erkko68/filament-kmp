@@ -32,7 +32,7 @@ data class SphericalHarmonics(
 
 /**
  * Hoisted, observable Image-Based Lighting (IBL) state. Pass to
- * [io.github.erkko68.filament.compose.FilamentView] via `indirectLightState = ...`.
+ * [io.github.erkko68.filament.compose.rememberFilamentScene] via `indirectLightState = ...`.
  *
  * Provide at most one of [irradianceCubemap] or [irradianceSh]. If both are set,
  * [irradianceCubemap] takes precedence. [reflections] is independent and controls
@@ -44,7 +44,7 @@ data class SphericalHarmonics(
  *     irradianceSh = SphericalHarmonics(bands = 3, coefficients = shCoeffs),
  *     intensity    = 50_000f,
  * )
- * FilamentView(indirectLightState = ibl) { ... }
+ * val scene = rememberFilamentScene(indirectLightState = ibl) { ... }
  * ```
  */
 class IndirectLightState internal constructor(

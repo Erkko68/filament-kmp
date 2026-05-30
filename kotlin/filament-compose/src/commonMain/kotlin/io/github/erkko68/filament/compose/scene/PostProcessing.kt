@@ -1,378 +1,292 @@
 package io.github.erkko68.filament.compose.scene
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import io.github.erkko68.filament.ColorGrading
+import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.ToneMapper
 import io.github.erkko68.filament.View
-import io.github.erkko68.filament.compose.LocalFilamentEngine
-import io.github.erkko68.filament.compose.LocalFilamentView
 
 /**
- * Configures bloom post-processing for the view.
+ * Per-view visual configuration: post-processing effects plus render-quality options. Pass to
+ * [io.github.erkko68.filament.compose.FilamentView] via `postProcessing = ...`.
  *
- * Bloom produces "glow" around bright areas of the scene.
+ * Each effect is a singleton value class — there is exactly one of each per Filament view, so
+ * a `null` field means "leave Filament's native default / effect off", and a non-null field
+ * enables and configures that effect. Animate an effect by passing a new value each frame:
+ * `PostProcessing(bloom = Bloom(strength = animated))`.
  *
- * @param enabled    Whether bloom is enabled.
- * @param strength   Overall bloom intensity (0.0 to 1.0).
- * @param threshold  If true, only colors brighter than 1.0 will bloom.
- * @param quality    Bloom filter quality.
- * @param resolution Width in pixels of the largest mip in the bloom downsample chain. `0`
- *   lets Filament pick a default (~360 px), which often looks pixelated on high-DPI displays.
- *   Bump this to roughly half your render width for a smoother halo on retina/iOS screens.
- * @param levels     Number of mip levels in the bloom chain. Higher values give a wider, softer
- *   halo at slightly more GPU cost. Range 3..12.
- */
-@Composable
-fun Bloom(
-    enabled: Boolean = true,
-    strength: Float = 0.10f,
-    threshold: Boolean = true,
-    quality: View.Quality = View.Quality.LOW,
-    resolution: Int = 0,
-    levels: Int = 6,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, strength, threshold, quality, resolution, levels) {
-        view.bloomOptions = view.bloomOptions.apply {
-            this.enabled = enabled
-            this.strength = strength
-            this.threshold = threshold
-            this.quality = quality
-            this.resolution = resolution
-            this.levels = levels
-        }
-        onDispose {
-            view.bloomOptions = view.bloomOptions.apply { this.enabled = false }
-        }
-    }
-}
-
-/**
- * Configures vignette post-processing for the view.
+ * ```kotlin
+ * FilamentView(
+ *     scene = scene,
+ *     cameraState = cam,
+ *     postProcessing = PostProcessing(
+ *         bloom        = Bloom(strength = 0.2f),
+ *         antiAliasing = AntiAliasing(fxaaEnabled = true),
+ *         shadows      = Shadows(type = View.ShadowType.PCF),
+ *     ),
+ * )
+ * ```
  *
- * Vignetting darkens the corners of the viewport.
+ * @param enabled Master switch for all post-processing (maps to `View.isPostProcessingEnabled`).
  */
-@Composable
-fun Vignette(
-    enabled: Boolean = true,
-    midPoint: Float = 0.5f,
-    roundness: Float = 0.5f,
-    feather: Float = 0.5f,
-    color: Color = Color(0f, 0f, 0f),
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, midPoint, roundness, feather, color) {
-        view.vignetteOptions = view.vignetteOptions.apply {
-            this.enabled = enabled
-            this.midPoint = midPoint
-            this.roundness = roundness
-            this.feather = feather
-            this.color = floatArrayOf(color.r, color.g, color.b, 1.0f)
-        }
-        onDispose {
-            view.vignetteOptions = view.vignetteOptions.apply { this.enabled = false }
-        }
-    }
-}
+data class PostProcessing(
+    val enabled: Boolean = true,
+    val bloom: Bloom? = null,
+    val vignette: Vignette? = null,
+    val fog: Fog? = null,
+    val ambientOcclusion: AmbientOcclusion? = null,
+    val antiAliasing: AntiAliasing? = null,
+    val screenSpaceReflections: ScreenSpaceReflections? = null,
+    val colorGrade: ColorGrade? = null,
+    val depthOfField: DepthOfField? = null,
+    val shadows: Shadows? = null,
+    val dynamicResolution: DynamicResolution? = null,
+    val dithering: Dithering? = null,
+    val renderQuality: RenderQuality? = null,
+)
 
 /**
- * Configures height-based and volumetric fog for the view.
- */
-@Composable
-fun Fog(
-    enabled: Boolean = true,
-    distance: Float = 0.0f,
-    density: Float = 0.1f,
-    height: Float = 0.0f,
-    heightFalloff: Float = 1.0f,
-    color: Color = Color(0f, 0f, 0f),
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, distance, density, height, heightFalloff, color) {
-        view.fogOptions = view.fogOptions.apply {
-            this.enabled = enabled
-            this.distance = distance
-            this.density = density
-            this.height = height
-            this.heightFalloff = heightFalloff
-            this.color = floatArrayOf(color.r, color.g, color.b)
-        }
-        onDispose {
-            view.fogOptions = view.fogOptions.apply { this.enabled = false }
-        }
-    }
-}
-
-/**
- * Configures screen-space ambient occlusion (SSAO) for the view.
- */
-@Composable
-fun AmbientOcclusion(
-    enabled: Boolean = true,
-    radius: Float = 0.3f,
-    bias: Float = 0.01f,
-    intensity: Float = 1.0f,
-    quality: View.Quality = View.Quality.LOW,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, radius, bias, intensity, quality) {
-        view.ambientOcclusionOptions = view.ambientOcclusionOptions.apply {
-            this.enabled = enabled
-            this.radius = radius
-            this.bias = bias
-            this.intensity = intensity
-            this.quality = quality
-        }
-        onDispose {
-            view.ambientOcclusionOptions = view.ambientOcclusionOptions.apply { this.enabled = false }
-        }
-    }
-}
-
-/**
- * Configures anti-aliasing techniques for the view.
+ * Bloom — "glow" around bright areas.
  *
- * This includes MSAA (hardware), FXAA (post-process), and TAA (temporal).
+ * @param resolution Width in px of the largest mip in the downsample chain. `0` lets Filament
+ *   pick a default (~360 px), which can look pixelated on high-DPI displays. Bump to roughly
+ *   half the render width for a smoother halo on retina/iOS screens.
+ * @param levels Mip levels in the bloom chain (3..12). Higher = wider, softer halo.
  */
-@Composable
-fun AntiAliasing(
-    msaaEnabled: Boolean = false,
-    msaaSampleCount: Int = 4,
-    fxaaEnabled: Boolean = true,
-    taaEnabled: Boolean = false,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(msaaEnabled, msaaSampleCount, fxaaEnabled, taaEnabled) {
-        view.multiSampleAntiAliasingOptions = view.multiSampleAntiAliasingOptions.apply {
-            this.enabled = msaaEnabled
-            this.sampleCount = msaaSampleCount
-        }
-        view.antiAliasing = if (fxaaEnabled) View.AntiAliasing.FXAA else View.AntiAliasing.NONE
-        view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply {
-            this.enabled = taaEnabled
-        }
-        onDispose {
-            view.multiSampleAntiAliasingOptions = view.multiSampleAntiAliasingOptions.apply { this.enabled = false }
-            view.antiAliasing = View.AntiAliasing.NONE
-            view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply { this.enabled = false }
-        }
-    }
-}
+data class Bloom(
+    val strength: Float = 0.10f,
+    val threshold: Boolean = true,
+    val quality: View.Quality = View.Quality.LOW,
+    val resolution: Int = 0,
+    val levels: Int = 6,
+)
+
+/** Vignette — darkens the corners of the viewport. */
+data class Vignette(
+    val midPoint: Float = 0.5f,
+    val roundness: Float = 0.5f,
+    val feather: Float = 0.5f,
+    val color: Color = Color(0f, 0f, 0f),
+)
+
+/** Height-based and volumetric fog. */
+data class Fog(
+    val distance: Float = 0.0f,
+    val density: Float = 0.1f,
+    val height: Float = 0.0f,
+    val heightFalloff: Float = 1.0f,
+    val color: Color = Color(0f, 0f, 0f),
+)
+
+/** Screen-space ambient occlusion (SSAO). */
+data class AmbientOcclusion(
+    val radius: Float = 0.3f,
+    val bias: Float = 0.01f,
+    val intensity: Float = 1.0f,
+    val quality: View.Quality = View.Quality.LOW,
+)
+
+/** Anti-aliasing: MSAA (hardware), FXAA (post-process), and TAA (temporal). */
+data class AntiAliasing(
+    val msaaEnabled: Boolean = false,
+    val msaaSampleCount: Int = 4,
+    val fxaaEnabled: Boolean = true,
+    val taaEnabled: Boolean = false,
+)
+
+/** Screen-space reflections (SSR). */
+data class ScreenSpaceReflections(
+    val thickness: Float = 0.1f,
+    val bias: Float = 0.01f,
+    val maxDistance: Float = 3.0f,
+)
+
+/** Color grading — exposure, white balance, contrast, tone mapping, etc. */
+data class ColorGrade(
+    val exposure: Float = 0.0f,
+    val contrast: Float = 1.0f,
+    val vibrance: Float = 1.0f,
+    val saturation: Float = 1.0f,
+    val whiteBalanceTemperature: Float = 0.0f,
+    val whiteBalanceTint: Float = 0.0f,
+    val toneMapper: ToneMapper = ToneMapper.ACES(),
+)
 
 /**
- * Configures screen-space reflections (SSR) for the view.
- */
-@Composable
-fun ScreenSpaceReflections(
-    enabled: Boolean = true,
-    thickness: Float = 0.1f,
-    bias: Float = 0.01f,
-    maxDistance: Float = 3.0f,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, thickness, bias, maxDistance) {
-        view.screenSpaceReflectionsOptions = view.screenSpaceReflectionsOptions.apply {
-            this.enabled = enabled
-            this.thickness = thickness
-            this.bias = bias
-            this.maxDistance = maxDistance
-        }
-        onDispose {
-            view.screenSpaceReflectionsOptions = view.screenSpaceReflectionsOptions.apply { this.enabled = false }
-        }
-    }
-}
-
-/**
- * Configures color grading for the view.
+ * Depth-of-field (bokeh). The camera's focus distance and aperture control the focal plane.
  *
- * Color grading allows for adjustments to exposure, white balance, contrast, etc.
- */
-@Composable
-fun ColorGrade(
-    exposure: Float = 0.0f,
-    contrast: Float = 1.0f,
-    vibrance: Float = 1.0f,
-    saturation: Float = 1.0f,
-    whiteBalanceTemperature: Float = 0.0f,
-    whiteBalanceTint: Float = 0.0f,
-    toneMapper: ToneMapper = ToneMapper.ACES(),
-) {
-    val engine = LocalFilamentEngine.current
-    val view = LocalFilamentView.current
-    DisposableEffect(exposure, contrast, vibrance, saturation, whiteBalanceTemperature, whiteBalanceTint, toneMapper) {
-        val colorGrading = ColorGrading.Builder()
-            .exposure(exposure)
-            .contrast(contrast)
-            .vibrance(vibrance)
-            .saturation(saturation)
-            .whiteBalance(whiteBalanceTemperature, whiteBalanceTint)
-            .toneMapper(toneMapper)
-            .build(engine)
-        view.colorGrading = colorGrading
-        onDispose {
-            view.colorGrading = null
-            engine.destroyColorGrading(colorGrading)
-        }
-    }
-}
-
-/**
- * A shortcut to set the tone mapper for the view.
- *
- * This internally uses [ColorGrade].
- */
-@Composable
-fun ToneMapping(
-    toneMapper: ToneMapper = ToneMapper.ACES(),
-) {
-    ColorGrade(toneMapper = toneMapper)
-}
-
-/**
- * Configures depth-of-field (bokeh) post-processing for the view.
- *
- * The camera's focus distance and aperture control the plane of focus and blur amount.
- *
- * @param enabled Whether depth-of-field is active.
  * @param cocScale Scales the circle-of-confusion radius. Larger = more blur.
- * @param maxApertureDiameter Maximum physical aperture diameter in metres.
- * @param filter Bokeh filter shape.
  * @param nativeResolution Run DoF at native resolution (higher quality, more expensive).
  */
-@Composable
-fun DepthOfField(
-    enabled: Boolean = true,
-    cocScale: Float = 1.0f,
-    maxApertureDiameter: Float = 0.01f,
-    filter: View.DepthOfFieldOptions.Filter = View.DepthOfFieldOptions.Filter.MEDIAN,
-    nativeResolution: Boolean = false,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, cocScale, maxApertureDiameter, filter, nativeResolution) {
-        view.depthOfFieldOptions = view.depthOfFieldOptions.apply {
-            this.enabled = enabled
-            this.cocScale = cocScale
-            this.maxApertureDiameter = maxApertureDiameter
-            this.filter = filter
-            this.nativeResolution = nativeResolution
-        }
-        onDispose {
-            view.depthOfFieldOptions = view.depthOfFieldOptions.apply { this.enabled = false }
-        }
-    }
-}
+data class DepthOfField(
+    val cocScale: Float = 1.0f,
+    val maxApertureDiameter: Float = 0.01f,
+    val filter: View.DepthOfFieldOptions.Filter = View.DepthOfFieldOptions.Filter.MEDIAN,
+    val nativeResolution: Boolean = false,
+)
 
 /**
- * Configures shadow rendering for the view.
- *
- * [type] selects the shadow algorithm. VSM and soft-shadow params are only meaningful for
- * their respective types — Filament ignores irrelevant options.
- *
- * @param type          Shadow algorithm: PCF, VSM, DPCF, PCSS, or PCFd.
- * @param vsmAnisotropy VSM: anisotropy level (power of 2, e.g. 1, 2, 4).
- * @param vsmMipmapping VSM: enable mip-map filtering.
- * @param vsmMsaaSamples VSM: MSAA sample count for variance computation.
- * @param vsmHighPrecision VSM: use 32-bit float instead of 16-bit.
- * @param vsmLightBleedReduction VSM: light-bleed reduction factor (0–1).
- * @param penumbraScale DPCF/PCSS: scales penumbra size.
- * @param penumbraRatioScale DPCF/PCSS: penumbra ratio scale.
+ * Shadow rendering. [type] selects the algorithm; VSM/soft-shadow params apply only to their
+ * respective types (Filament ignores irrelevant options).
  */
-@Composable
-fun Shadows(
-    type: View.ShadowType = View.ShadowType.PCF,
-    vsmAnisotropy: Int = 1,
-    vsmMipmapping: Boolean = false,
-    vsmMsaaSamples: Int = 1,
-    vsmHighPrecision: Boolean = false,
-    vsmLightBleedReduction: Float = 0.0f,
-    penumbraScale: Float = 1.0f,
-    penumbraRatioScale: Float = 1.0f,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(type, vsmAnisotropy, vsmMipmapping, vsmMsaaSamples, vsmHighPrecision, vsmLightBleedReduction, penumbraScale, penumbraRatioScale) {
-        view.shadowType = type
-        view.vsmShadowOptions = view.vsmShadowOptions.apply {
-            this.anisotropy = vsmAnisotropy
-            this.mipmapping = vsmMipmapping
-            this.msaaSamples = vsmMsaaSamples
-            this.highPrecision = vsmHighPrecision
-            this.lightBleedReduction = vsmLightBleedReduction
-        }
-        view.softShadowOptions = view.softShadowOptions.apply {
-            this.penumbraScale = penumbraScale
-            this.penumbraRatioScale = penumbraRatioScale
-        }
-        onDispose {
-            view.shadowType = View.ShadowType.PCF
-        }
-    }
-}
+data class Shadows(
+    val type: View.ShadowType = View.ShadowType.PCF,
+    val vsmAnisotropy: Int = 1,
+    val vsmMipmapping: Boolean = false,
+    val vsmMsaaSamples: Int = 1,
+    val vsmHighPrecision: Boolean = false,
+    val vsmLightBleedReduction: Float = 0.0f,
+    val penumbraScale: Float = 1.0f,
+    val penumbraRatioScale: Float = 1.0f,
+)
 
 /**
- * Enables dynamic resolution scaling, allowing the renderer to lower internal resolution
- * under GPU load and upscale to the target size.
+ * Dynamic resolution scaling — lowers internal resolution under GPU load and upscales.
  *
- * @param enabled Whether dynamic resolution is active.
  * @param minScale Minimum scale factor (e.g. 0.5 = half resolution).
  * @param maxScale Maximum scale factor (1.0 = native).
- * @param sharpness Upscale sharpness (0–1).
- * @param quality Quality of the upscaling filter.
- * @param homogeneousScaling Lock X and Y scaling together.
  */
-@Composable
-fun DynamicResolution(
-    enabled: Boolean = true,
-    minScale: Float = 0.5f,
-    maxScale: Float = 1.0f,
-    sharpness: Float = 0.9f,
-    quality: View.Quality = View.Quality.LOW,
-    homogeneousScaling: Boolean = false,
-) {
-    val view = LocalFilamentView.current
-    DisposableEffect(enabled, minScale, maxScale, sharpness, quality, homogeneousScaling) {
-        view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply {
-            this.enabled = enabled
-            this.minScale = minScale
-            this.maxScale = maxScale
-            this.sharpness = sharpness
-            this.quality = quality
-            this.homogeneousScaling = homogeneousScaling
-        }
-        onDispose {
-            view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply { this.enabled = false }
-        }
-    }
-}
+data class DynamicResolution(
+    val minScale: Float = 0.5f,
+    val maxScale: Float = 1.0f,
+    val sharpness: Float = 0.9f,
+    val quality: View.Quality = View.Quality.LOW,
+    val homogeneousScaling: Boolean = false,
+)
 
 /**
- * Selects the dithering applied at tonemap time. [View.Dithering.TEMPORAL] (Filament's
- * native default) hides 8-bit banding in dark gradients and bloom halos by jittering the
- * quantised output between frames. Disable only if you measure a banding pattern that
- * outweighs the noise.
+ * Dithering applied at tonemap time. [View.Dithering.TEMPORAL] (Filament's native default)
+ * hides 8-bit banding in dark gradients and bloom halos.
  */
-@Composable
-fun Dithering(mode: View.Dithering = View.Dithering.TEMPORAL) {
-    val view = LocalFilamentView.current
-    DisposableEffect(mode) {
-        val previous = view.dithering
-        view.dithering = mode
-        onDispose { view.dithering = previous }
-    }
-}
+data class Dithering(val mode: View.Dithering = View.Dithering.TEMPORAL)
 
 /**
- * Selects the precision of the View's HDR color buffer. [View.Quality.HIGH] (the native
- * default) is RGBA16F where the backend supports it — necessary for emissive values
- * above 1.0 to survive without clipping into bloom. Drop to [View.Quality.MEDIUM] for
- * a smaller intermediate buffer when memory pressure outweighs banding.
+ * Precision of the view's HDR color buffer. [View.Quality.HIGH] (the native default) is
+ * RGBA16F where supported — needed for emissive values above 1.0 to survive into bloom.
  */
-@Composable
-fun RenderQuality(hdrColorBuffer: View.Quality = View.Quality.HIGH) {
-    val view = LocalFilamentView.current
-    DisposableEffect(hdrColorBuffer) {
-        view.renderQuality = view.renderQuality.apply { this.hdrColorBuffer = hdrColorBuffer }
-        onDispose { }
+data class RenderQuality(val hdrColorBuffer: View.Quality = View.Quality.HIGH)
+
+/**
+ * Applies this configuration to [view], allocating a [ColorGrading] if [colorGrade] is set.
+ * Returns the allocated grading (or null) so the caller can destroy it. Sets every option so
+ * that re-applying a changed config also clears effects that became null.
+ */
+internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
+    view.isPostProcessingEnabled = enabled
+
+    view.bloomOptions = view.bloomOptions.apply {
+        this.enabled = bloom != null
+        bloom?.let {
+            this.strength = it.strength
+            this.threshold = it.threshold
+            this.quality = it.quality
+            this.resolution = it.resolution
+            this.levels = it.levels
+        }
+    }
+
+    view.vignetteOptions = view.vignetteOptions.apply {
+        this.enabled = vignette != null
+        vignette?.let {
+            this.midPoint = it.midPoint
+            this.roundness = it.roundness
+            this.feather = it.feather
+            this.color = floatArrayOf(it.color.r, it.color.g, it.color.b, 1.0f)
+        }
+    }
+
+    view.fogOptions = view.fogOptions.apply {
+        this.enabled = fog != null
+        fog?.let {
+            this.distance = it.distance
+            this.density = it.density
+            this.height = it.height
+            this.heightFalloff = it.heightFalloff
+            this.color = floatArrayOf(it.color.r, it.color.g, it.color.b)
+        }
+    }
+
+    view.ambientOcclusionOptions = view.ambientOcclusionOptions.apply {
+        this.enabled = ambientOcclusion != null
+        ambientOcclusion?.let {
+            this.radius = it.radius
+            this.bias = it.bias
+            this.intensity = it.intensity
+            this.quality = it.quality
+        }
+    }
+
+    view.multiSampleAntiAliasingOptions = view.multiSampleAntiAliasingOptions.apply {
+        this.enabled = antiAliasing?.msaaEnabled == true
+        antiAliasing?.let { this.sampleCount = it.msaaSampleCount }
+    }
+    view.antiAliasing = if (antiAliasing?.fxaaEnabled == true) View.AntiAliasing.FXAA else View.AntiAliasing.NONE
+    view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply {
+        this.enabled = antiAliasing?.taaEnabled == true
+    }
+
+    view.screenSpaceReflectionsOptions = view.screenSpaceReflectionsOptions.apply {
+        this.enabled = screenSpaceReflections != null
+        screenSpaceReflections?.let {
+            this.thickness = it.thickness
+            this.bias = it.bias
+            this.maxDistance = it.maxDistance
+        }
+    }
+
+    view.depthOfFieldOptions = view.depthOfFieldOptions.apply {
+        this.enabled = depthOfField != null
+        depthOfField?.let {
+            this.cocScale = it.cocScale
+            this.maxApertureDiameter = it.maxApertureDiameter
+            this.filter = it.filter
+            this.nativeResolution = it.nativeResolution
+        }
+    }
+
+    // Shadows: null restores the PCF native default.
+    view.shadowType = shadows?.type ?: View.ShadowType.PCF
+    shadows?.let {
+        view.vsmShadowOptions = view.vsmShadowOptions.apply {
+            this.anisotropy = it.vsmAnisotropy
+            this.mipmapping = it.vsmMipmapping
+            this.msaaSamples = it.vsmMsaaSamples
+            this.highPrecision = it.vsmHighPrecision
+            this.lightBleedReduction = it.vsmLightBleedReduction
+        }
+        view.softShadowOptions = view.softShadowOptions.apply {
+            this.penumbraScale = it.penumbraScale
+            this.penumbraRatioScale = it.penumbraRatioScale
+        }
+    }
+
+    view.dynamicResolutionOptions = view.dynamicResolutionOptions.apply {
+        this.enabled = dynamicResolution != null
+        dynamicResolution?.let {
+            this.minScale = it.minScale
+            this.maxScale = it.maxScale
+            this.sharpness = it.sharpness
+            this.quality = it.quality
+            this.homogeneousScaling = it.homogeneousScaling
+        }
+    }
+
+    view.dithering = dithering?.mode ?: View.Dithering.TEMPORAL
+    renderQuality?.let {
+        view.renderQuality = view.renderQuality.apply { this.hdrColorBuffer = it.hdrColorBuffer }
+    }
+
+    return colorGrade?.let { c ->
+        ColorGrading.Builder()
+            .exposure(c.exposure)
+            .contrast(c.contrast)
+            .vibrance(c.vibrance)
+            .saturation(c.saturation)
+            .whiteBalance(c.whiteBalanceTemperature, c.whiteBalanceTint)
+            .toneMapper(c.toneMapper)
+            .build(engine)
+            .also { view.colorGrading = it }
+    } ?: run {
+        view.colorGrading = null
+        null
     }
 }

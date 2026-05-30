@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.*
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
@@ -70,7 +71,7 @@ private class GltfInstanceScopeImpl(
  *   shader parameters, morph targets, or reading animation state.
  */
 @Composable
-fun GltfInstance(
+fun FilamentSceneScope.GltfInstance(
     asset: GltfAsset?,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),

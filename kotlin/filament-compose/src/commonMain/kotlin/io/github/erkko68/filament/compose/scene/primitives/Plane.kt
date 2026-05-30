@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.utils.Quaternion
@@ -26,7 +27,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param onCreate  Receives the renderable entity ID once the plane is added to the scene.
  */
 @Composable
-fun Plane(
+fun FilamentSceneScope.Plane(
     material: MaterialInstance,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),

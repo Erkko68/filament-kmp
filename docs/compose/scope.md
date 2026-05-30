@@ -15,8 +15,8 @@ If the provided Composables are not sufficient for a specific use case, the raw 
 ## Key Goals
 - **Declarative Scene Graph**: The 3D scene is defined using standard Compose patterns.
 - **Resource Management**: The lifecycle of Filament objects (Engine, Scene, Renderer) is automatically handled in sync with the Composable lifecycle.
-- **Multiplatform by Default**: The same Compose code works across Android, iOS, Desktop, and Web.
-- **Performance**: Optimized integration paths (like Zero-Copy on macOS) are provided while maintaining a consistent API.
+- **Multiplatform by Default**: The same Compose code works across Android, iOS, Desktop, and Web. Web support is **experimental** — `gltfio`'s default ubershader pipeline is not available on WebGL, so glTF models require precompiled custom materials. See [Platform Notes — Web](../platform-notes.md#web--wasm) for details.
+- **Performance**: Platform-specific integration paths are optimized per target (native swap-chain on Android/iOS, GPU readback on Desktop) while maintaining a consistent API. See [Platform Notes](../platform-notes.md) for per-platform details.
 
 ## What it is NOT
 - **A Full Game Engine**: This project does not aim to replace engines like Unity or Unreal. The focus is on high-quality 3D rendering within UI applications.

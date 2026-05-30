@@ -6,6 +6,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.LightManager
+import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 
@@ -88,7 +89,7 @@ internal data class LightSnapshot(
  * ```
  */
 @Composable
-fun Light(
+fun FilamentSceneScope.Light(
     type: LightManager.Type,
     color: Color = Color(1f, 1f, 1f),
     intensity: Float = 100_000f,

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -25,9 +24,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.LightManager
-import io.github.erkko68.filament.View
-import io.github.erkko68.filament.compose.FilamentView
-import io.github.erkko68.filament.compose.LocalFilamentView
+import io.github.erkko68.filament.compose.FilamentSceneView
+import io.github.erkko68.filament.compose.rememberFilamentViewState
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
@@ -57,10 +55,10 @@ fun PickingScene(onBack: () -> Unit) {
         projection = Projection.Perspective(fovDegrees = 40.0),
     )
     val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val viewState = rememberFilamentViewState()
 
     val entityToIndex = remember { mutableStateMapOf<Int, Int>() }
     var lastTapped by remember { mutableIntStateOf(-1) }
-    val capturedView = remember { mutableStateOf<View?>(null) }
     var boxSize by remember { mutableStateOf(IntSize.Zero) }
 
     Box(
@@ -69,24 +67,23 @@ fun PickingScene(onBack: () -> Unit) {
             .onSizeChanged { boxSize = it }
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    val v = capturedView.value ?: return@detectTapGestures
+                    val v = viewState.view ?: return@detectTapGestures
                     val vw = v.viewport.width; val vh = v.viewport.height
                     val lw = boxSize.width.coerceAtLeast(1); val lh = boxSize.height.coerceAtLeast(1)
                     val px = (offset.x * vw / lw).toInt()
                     val py = vh - (offset.y * vh / lh).toInt()
-                    v.pick(px, py) { result ->
+                    viewState.pick(px, py) { result ->
                         lastTapped = entityToIndex[result.renderable] ?: -1
                     }
                 }
             },
     ) {
-        FilamentView(
+        FilamentSceneView(
             modifier = Modifier.fillMaxSize(),
             cameraState = cameraState,
+            viewState = viewState,
             skyboxState = skybox,
         ) {
-            val filamentView = LocalFilamentView.current
-            SideEffect { capturedView.value = filamentView }
             Light(
                 type      = LightManager.Type.DIRECTIONAL,
                 direction = Direction(0.3f, -1f, -0.5f),

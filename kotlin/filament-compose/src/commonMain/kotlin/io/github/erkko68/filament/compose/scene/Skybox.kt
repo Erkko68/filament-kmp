@@ -31,12 +31,12 @@ sealed class SkyboxSource {
 
 /**
  * Hoisted, observable skybox state. Pass to
- * [io.github.erkko68.filament.compose.FilamentView] via `skyboxState = ...`. A null
+ * [io.github.erkko68.filament.compose.rememberFilamentScene] via `skyboxState = ...`. A null
  * [source] removes the skybox entirely.
  *
  * ```kotlin
  * val sky = rememberSkyboxState(source = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
- * FilamentView(skyboxState = sky) { ... }
+ * val scene = rememberFilamentScene(skyboxState = sky) { ... }
  *
  * // Toggle at runtime
  * sky.source = SkyboxSource.Cubemap(envTexture)

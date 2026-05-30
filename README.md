@@ -17,16 +17,18 @@
 <img src="docs/images/platforms-hero.png" alt="The same scene rendering on Android, iOS, Desktop and Web" width="800"/>
 
 ```kotlin
-FilamentView(
-    modifier    = Modifier.fillMaxSize(),
-    cameraState = rememberCameraState(eye = Position(0f, 1f, 4f)),
-    skyboxState = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f))),
+FilamentSceneView(
+    modifier       = Modifier.fillMaxSize(),
+    cameraState    = rememberCameraState(eye = Position(0f, 1f, 4f)),
+    skyboxState    = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f))),
+    postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
     Light(type = LightManager.Type.DIRECTIONAL, intensity = 100_000f)
     GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/Duck.glb") })
-    Bloom(strength = 0.2f)
 }
 ```
+
+The world is declared in the content lambda; the viewport's look is configured by value. Need several cameras over one world? Hoist the scene with `rememberFilamentScene { … }` and feed it to multiple `FilamentView`s.
 
 ## Platform support
 
@@ -54,7 +56,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta01")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta02")
         }
     }
 }
@@ -67,7 +69,7 @@ For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop
 | Artifact | Description |
 | :--- | :--- |
 | `filament` | Core renderer — `Engine`, `Scene`, `View`, `Renderer`, `Camera`, `Texture`, `Material`. |
-| `filament-compose` | Compose Multiplatform integration — `FilamentView`, scene DSL, camera state, post-processing. |
+| `filament-compose` | Compose Multiplatform integration — `rememberFilamentScene` / `FilamentView` (and the `FilamentSceneView` shortcut), scene DSL, camera state, value-based post-processing. |
 | `gltfio` | glTF / GLB asset loading — `AssetLoader`, `FilamentAsset`, `Animator`. |
 | `filamat` | Runtime material compilation — `MaterialBuilder`. |
 | `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
@@ -88,7 +90,7 @@ The public API stays as close as possible to the **Android Filament API**, so ex
 - **[Getting Started](docs/getting-started.md)** — per-platform Gradle setup, first scene.
 - **[Modules](docs/modules.md)** — published artifacts, dependency graph, when you need what.
 - **[Platform Notes](docs/platform-notes.md)** — backends, gotchas (Windows JVM shutdown, web limits, iOS embedding).
-- **[Compose Integration](docs/compose/README.md)** — `FilamentView`, scene DSL, post-processing.
+- **[Compose Integration](docs/compose/README.md)** — scene-vs-view model, `FilamentSceneView` / `rememberFilamentScene` / `FilamentView`, scene DSL, post-processing.
 - **[Repository Structure](docs/repo-structure.md)** — for contributors.
 
 ### Upstream Filament (authoritative for engine concepts)

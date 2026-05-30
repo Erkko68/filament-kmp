@@ -22,6 +22,7 @@ private val ENTRIES = listOf(
     "Picking"    to Screen.Picking,
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
+    "Split View" to Screen.SplitView,
 )
 
 @Composable
