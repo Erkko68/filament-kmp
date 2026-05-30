@@ -7,18 +7,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 // Returns true if the konan target can be built on the current host machine.
 // We avoid Kotlin's HostManager here because older embedded versions don't
 // recognise some hosts (e.g. linux aarch64) and throw at instantiation time.
-private fun isTargetBuildableOnHost(target: KonanTarget): Boolean {
-    val osName = System.getProperty("os.name").lowercase()
-    val isMac     = osName.startsWith("mac") || osName.contains("darwin")
-    val isWindows = osName.startsWith("windows")
-    val isLinux   = osName.startsWith("linux")
-    return when (target.family) {
-        Family.OSX, Family.IOS, Family.TVOS, Family.WATCHOS -> isMac
-        Family.MINGW                                        -> isWindows
-        Family.LINUX                                        -> isLinux
+private fun isTargetBuildableOnHost(target: KonanTarget): Boolean =
+    when (target.family) {
+        Family.OSX, Family.IOS, Family.TVOS, Family.WATCHOS -> hostPlatform() == "macos"
+        Family.MINGW                                        -> hostPlatform() == "windows"
+        Family.LINUX                                        -> hostPlatform() == "linux"
         else                                                -> true
     }
-}
 
 private data class FilamentPlatform(
     val cmakePlatform: String,
@@ -137,8 +132,3 @@ fun KotlinNativeTarget.applyFilamentNative(
         }
     }
 }
-
-private fun resolveCmake(): String =
-    listOf("/opt/homebrew/bin/cmake", "/usr/local/bin/cmake")
-        .firstOrNull { java.io.File(it).exists() }
-        ?: "cmake"

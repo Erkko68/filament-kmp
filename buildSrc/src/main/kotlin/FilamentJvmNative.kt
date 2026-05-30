@@ -49,19 +49,9 @@ fun Project.applyFilamentJvmNative(
     ffmPackage: String,
     headerClassName: String,
 ): FilamentJvmNative {
-    // ── Host platform / arch (matches java/filament/build.gradle.kts) ─────────
-    val hostOs = System.getProperty("os.name")
-    val platform = when {
-        hostOs.startsWith("Mac", ignoreCase = true) -> "macos"
-        hostOs.startsWith("Windows", ignoreCase = true) -> "windows"
-        else -> "linux"
-    }
-    val archRaw = System.getProperty("os.arch").lowercase()
-    val arch = when {
-        archRaw.contains("aarch64") || archRaw.contains("arm64") -> "Arm64"
-        archRaw == "x64" || archRaw.contains("amd64") || archRaw.contains("x86_64") -> "X64"
-        else -> error("Unsupported filament.arch '$archRaw'. Use arm64 or x64.")
-    }
+    // ── Host platform / arch (shared with FilamentNative.kt via NativeSupport.kt) ──
+    val platform = hostPlatform()
+    val arch = hostArch()
     val resArch = if (arch == "Arm64") "arm64" else "x64"
     val platformArch = "$platform-$resArch"
     val prebuiltsTarget = when (platform) {
@@ -71,8 +61,7 @@ fun Project.applyFilamentJvmNative(
         else -> error("Unsupported platform '$platform'")
     }
 
-    val cmakePath = listOf("/opt/homebrew/bin/cmake", "/usr/local/bin/cmake")
-        .firstOrNull { File(it).exists() } ?: "cmake"
+    val cmakePath = resolveCmake()
 
     val cmakeSourceDir = rootProject.file("c")
     val cmakeBuildDir = layout.buildDirectory.dir("cmake").get().asFile
