@@ -86,36 +86,27 @@ message(STATUS "Using Filament distribution at: ${FILAMENT_DIST_DIR}")
 message(STATUS "Using Filament headers at: ${FILAMENT_INCLUDE_DIR}")
 message(STATUS "Using Filament libraries at: ${FILAMENT_LIB_DIR}")
 
-# Imported libraries Helper
+# Imported libraries helper. add_filament_library(NAME) maps target NAME to
+# lib<NAME>.a; add_filament_library_as(TARGET FILE) handles the cases where the
+# CMake target name differs from the archive filename (e.g. iblprefilter).
+macro(add_filament_library_as TARGET FILE)
+    add_library(${TARGET} STATIC IMPORTED)
+    set_target_properties(${TARGET} PROPERTIES IMPORTED_LOCATION
+            ${FILAMENT_LIB_DIR}/${LIB_PREFIX}${FILE}${LIB_SUFFIX})
+endmacro()
+
 macro(add_filament_library NAME)
-    add_library(${NAME} STATIC IMPORTED)
-    set_target_properties(${NAME} PROPERTIES IMPORTED_LOCATION
-            ${FILAMENT_LIB_DIR}/${LIB_PREFIX}${NAME}${LIB_SUFFIX})
+    add_filament_library_as(${NAME} ${NAME})
 endmacro()
 
 add_filament_library(filament)
 add_filament_library(backend)
 add_filament_library(utils)
-
-add_library(geometry STATIC IMPORTED)
-set_target_properties(geometry PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}geometry${LIB_SUFFIX})
-
-add_library(ibl-lite STATIC IMPORTED)
-set_target_properties(ibl-lite PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}ibl-lite${LIB_SUFFIX})
-
-add_library(filamat STATIC IMPORTED)
-set_target_properties(filamat PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}filamat${LIB_SUFFIX})
-
-add_library(shaders STATIC IMPORTED)
-set_target_properties(shaders PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}shaders${LIB_SUFFIX})
-
-add_library(iblprefilter STATIC IMPORTED)
-set_target_properties(iblprefilter PROPERTIES IMPORTED_LOCATION
-        ${FILAMENT_LIB_DIR}/${LIB_PREFIX}filament-iblprefilter${LIB_SUFFIX})
+add_filament_library(geometry)
+add_filament_library(ibl-lite)
+add_filament_library(filamat)
+add_filament_library(shaders)
+add_filament_library_as(iblprefilter filament-iblprefilter)
 
 add_filament_library(camutils)
 add_filament_library(image)
@@ -134,62 +125,34 @@ add_filament_library(stb)
 
 # The C-wrapper library
 set(FILAMENT_C_SOURCES
-    # Engine
     filament/cpp/Engine.cpp
-    # Camera
     filament/cpp/Camera.cpp
-    # Material
     filament/cpp/Material.cpp
-    # RenderableManager
     filament/cpp/RenderableManager.cpp
-    # TransformManager
     filament/cpp/TransformManager.cpp
-    # LightManager
     filament/cpp/LightManager.cpp
-    # Renderer
     filament/cpp/Renderer.cpp
-    # View
     filament/cpp/View.cpp
-    # Scene
     filament/cpp/Scene.cpp
-    # SwapChain
     filament/cpp/SwapChain.cpp
-    # VertexBuffer
     filament/cpp/VertexBuffer.cpp
-    # IndexBuffer
     filament/cpp/IndexBuffer.cpp
-    # BufferObject
     filament/cpp/BufferObject.cpp
-    # Texture
     filament/cpp/Texture.cpp
-    # RenderTarget
     filament/cpp/RenderTarget.cpp
-    # MorphTargetBuffer
     filament/cpp/MorphTargetBuffer.cpp
-    # SkinningBuffer
     filament/cpp/SkinningBuffer.cpp
-    # IndirectLight
     filament/cpp/IndirectLight.cpp
-    # Skybox
     filament/cpp/Skybox.cpp
-    # Stream
     filament/cpp/Stream.cpp
-    # Fence
     filament/cpp/Fence.cpp
-    # ToneMapper
     filament/cpp/ToneMapper.cpp
-    # ColorGrading
     filament/cpp/ColorGrading.cpp
-    # MaterialInstance
     filament/cpp/MaterialInstance.cpp
-    # EntityManager
     filament/cpp/MathUtils.cpp
     filament/cpp/EntityManager.cpp
-    # TextureSampler
     filament/cpp/TextureSampler.cpp
-    # Colors
     filament/cpp/Colors.cpp
-    # SurfaceOrientation
     filament/cpp/SurfaceOrientation.cpp
 )
 

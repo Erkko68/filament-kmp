@@ -4,9 +4,9 @@ The `filament-kmp` project is organized into several modules to handle the cross
 
 ## Core Modules
 
-- **`c/`**: C++ wrapper that exposes a C-compatible ABI around the official Filament C++ API. Used exclusively by **Kotlin Native** targets (iOS, macOS) via `cinterop`. Contains one CMake library per sub-module (`libfilament-c.a`, `libfilamat-c.a`, `libfilament-utils-c.a`, `libgltfio-c.a`).
+- **`c/`**: C++ wrapper that exposes a C-compatible ABI around the official Filament C++ API. Consumed by two code generators: **Kotlin Native** targets (iOS, macOS) via `cinterop` (one CMake library per sub-module — `libfilament-c.a`, `libfilamat-c.a`, `libfilament-utils-c.a`, `libgltfio-c.a`), and the **JVM/Desktop** target via `jextract` (the `FILAMENT_BUILD_SHARED` path links all four into one `libfilament-c` shared image). Each module's C-ABI types live in its own `*Types.h` header (core types in `filament/c/FilaTypes.h`).
 
-- **`java/`**: Java/JNI modules used by the **JVM/Desktop** target only. Each sub-module (`filament`, `filamat`, `gltfio`, `filament-utils`) compiles a C++ JNI layer via CMake, bundles the resulting native library as a JAR resource, and loads it at runtime. **Android does not use this folder** — it depends on the official `com.google.android.filament` Maven packages instead.
+- **`java/`**: The single Project Panama (FFM) JVM binding module used by the **JVM/Desktop** target only. It drives the combined `libfilament-c` shared build via CMake, runs `jextract` over the C headers to generate the low-level bindings, bundles the native image as a JAR resource, and loads it at runtime. **Android does not use this folder** — it depends on the official `com.google.android.filament` Maven packages instead.
 
 - **`js/`**: Kotlin/JS external declarations (a single `.kt` file with `external` annotations) that wrap the official Filament.js library compiled to WebAssembly. Used by the **Web** target.
 

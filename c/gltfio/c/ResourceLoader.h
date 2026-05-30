@@ -1,7 +1,7 @@
 #ifndef GLTFIO_C_RESOURCE_LOADER_H
 #define GLTFIO_C_RESOURCE_LOADER_H
 
-#include "../../filament/c/FilaTypes.h"
+#include "GltfioTypes.h"
 
 #ifdef __cplusplus
 extern "C" {

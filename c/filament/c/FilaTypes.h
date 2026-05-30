@@ -9,13 +9,14 @@
 extern "C" {
 #endif
 
-// Opaque handles to Filament classes
+// Core filament opaque handles. Per-module handles live in that module's own
+// types header (filamat/c/FilamatTypes.h, filament-utils/c/FilamentUtilsTypes.h,
+// gltfio/c/GltfioTypes.h), each of which includes this one for the shared core.
 typedef struct FilaEngine FilaEngine;
 typedef struct FilaCamera FilaCamera;
 typedef struct FilaRenderer FilaRenderer;
 typedef struct FilaScene FilaScene;
 typedef struct FilaView FilaView;
-typedef struct FilaViewport FilaViewport;
 typedef struct FilaSwapChain FilaSwapChain;
 typedef struct FilaIndirectLight FilaIndirectLight;
 typedef struct FilaSkybox FilaSkybox;
@@ -40,76 +41,6 @@ typedef struct FilaFence FilaFence;
 typedef struct FilaSkinningBuffer FilaSkinningBuffer;
 typedef struct FilaMorphTargetBuffer FilaMorphTargetBuffer;
 typedef struct FilaToneMapper FilaToneMapper;
-
-// Filamat types
-typedef struct FilaMaterialBuilder FilaMaterialBuilder;
-typedef struct FilaPackage FilaPackage;
-
-// Filament Utils types
-typedef struct FilaIBLPrefilterContext FilaIBLPrefilterContext;
-typedef struct FilaIBLPrefilterEquirectangularToCubemap FilaIBLPrefilterEquirectangularToCubemap;
-typedef struct FilaIBLPrefilterSpecularFilter FilaIBLPrefilterSpecularFilter;
-
-// Manipulator types
-typedef struct FilaManipulator FilaManipulator;
-typedef struct FilaManipulatorBuilder FilaManipulatorBuilder;
-typedef struct FilaBookmark FilaBookmark;
-
-// gltfio types
-typedef struct FilaAssetLoader FilaAssetLoader;
-typedef struct FilaFilamentAsset FilaFilamentAsset;
-typedef struct FilaFilamentInstance FilaFilamentInstance;
-typedef struct FilaAnimator FilaAnimator;
-typedef struct FilaMaterialProvider FilaMaterialProvider;
-typedef struct FilaResourceLoader FilaResourceLoader;
-typedef struct FilaTextureProvider FilaTextureProvider;
-
-typedef struct FilaMaterialKey {
-    uint32_t words[5];
-} FilaMaterialKey;
-
-typedef struct FilaMaterialKeyFields {
-    bool doubleSided;
-    bool unlit;
-    bool hasVertexColors;
-    bool hasBaseColorTexture;
-    bool hasNormalTexture;
-    bool hasOcclusionTexture;
-    bool hasEmissiveTexture;
-    bool useSpecularGlossiness;
-    uint8_t alphaMode;
-    uint8_t enableDiagnostics;
-    bool hasMetallicRoughnessTexture;
-    uint8_t metallicRoughnessUV;
-    uint8_t baseColorUV;
-    bool hasClearCoatTexture;
-    uint8_t clearCoatUV;
-    bool hasClearCoatRoughnessTexture;
-    uint8_t clearCoatRoughnessUV;
-    bool hasClearCoatNormalTexture;
-    uint8_t clearCoatNormalUV;
-    bool hasClearCoat;
-    bool hasTransmission;
-    uint8_t hasTextureTransforms;
-    uint8_t emissiveUV;
-    uint8_t aoUV;
-    uint8_t normalUV;
-    bool hasTransmissionTexture;
-    uint8_t transmissionUV;
-    bool hasSheenColorTexture;
-    uint8_t sheenColorUV;
-    bool hasSheenRoughnessTexture;
-    uint8_t sheenRoughnessUV;
-    bool hasVolumeThicknessTexture;
-    uint8_t volumeThicknessUV;
-    bool hasSheen;
-    bool hasIOR;
-} FilaMaterialKeyFields;
-
-void FilaMaterialKey_unpack(const FilaMaterialKey* key, FilaMaterialKeyFields* fields);
-void FilaMaterialKey_pack(const FilaMaterialKeyFields* fields, FilaMaterialKey* key);
-
-typedef uint8_t FilaUvMap[8];
 
 // Packed texture sampler parameters (matches JNI long)
 typedef uint64_t FilaTextureSampler;
@@ -166,7 +97,7 @@ typedef enum FilaPixelDataType {
     FILA_PIXEL_DATA_TYPE_USHORT_565 = 10,
     FILA_PIXEL_DATA_TYPE_UINT_2_10_10_10_REV = 11,
 } FilaPixelDataType;
- 
+
 typedef enum FilaEngineFeatureLevel {
     FILA_ENGINE_FEATURE_LEVEL_0 = 0,
     FILA_ENGINE_FEATURE_LEVEL_1 = 1,

@@ -39,6 +39,8 @@
 #define UTILS_CONST_CAST(type, ptr) reinterpret_cast<const utils::type*>(ptr)
 
 namespace filament_c {
+    // One-shot wrapper for FilaBufferCallback (buffer/pixel uploads, readPixels):
+    // bridges the (buffer, size, userData) C callback and frees itself after firing.
     struct BufferCallbackWrapper {
         FilaBufferCallback callback;
         void* userData;
@@ -46,19 +48,6 @@ namespace filament_c {
 
     inline void bufferCallback(void* buffer, size_t size, void* user) {
         auto wrapper = reinterpret_cast<BufferCallbackWrapper*>(user);
-        if (wrapper->callback) {
-            wrapper->callback(buffer, size, wrapper->userData);
-        }
-        delete wrapper;
-    }
-
-    struct PixelBufferCallbackWrapper {
-        FilaBufferCallback callback;
-        void* userData;
-    };
-
-    inline void pixelBufferCallback(void* buffer, size_t size, void* user) {
-        auto wrapper = reinterpret_cast<PixelBufferCallbackWrapper*>(user);
         if (wrapper->callback) {
             wrapper->callback(buffer, size, wrapper->userData);
         }

@@ -1,7 +1,7 @@
 #ifndef FILAMAT_C_MATERIAL_BUILDER_H
 #define FILAMAT_C_MATERIAL_BUILDER_H
 
-#include "../../filament/c/FilaTypes.h"
+#include "FilamatTypes.h"
 
 #ifdef __cplusplus
 extern "C" {

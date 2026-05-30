@@ -1,7 +1,7 @@
 #ifndef FILAMENT_UTILS_C_IBL_PREFILTER_H
 #define FILAMENT_UTILS_C_IBL_PREFILTER_H
 
-#include "../../filament/c/FilaTypes.h"
+#include "FilamentUtilsTypes.h"
 
 #ifdef __cplusplus
 extern "C" {

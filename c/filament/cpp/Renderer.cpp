@@ -55,10 +55,10 @@ void FilaRenderer_readPixels(FilaRenderer* renderer,
         uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     
-    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
+    auto wrapper = new BufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, (PixelDataFormat)format, (PixelDataType)type, alignment, left, top, stride,
             reinterpret_cast<CallbackHandler*>(handler),
-            pixelBufferCallback, wrapper);
+            bufferCallback, wrapper);
     FILA_CAST(Renderer, renderer)->readPixels(xoffset, yoffset, width, height, std::move(desc));
 }
 
@@ -69,10 +69,10 @@ void FilaRenderer_readPixelsRenderTarget(FilaRenderer* renderer, FilaRenderTarge
         uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     
-    auto wrapper = new PixelBufferCallbackWrapper{callback, userData};
+    auto wrapper = new BufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, (PixelDataFormat)format, (PixelDataType)type, alignment, left, top, stride,
             reinterpret_cast<CallbackHandler*>(handler),
-            pixelBufferCallback, wrapper);
+            bufferCallback, wrapper);
     FILA_CAST(Renderer, renderer)->readPixels(FILA_CAST(RenderTarget, renderTarget), xoffset, yoffset, width, height, std::move(desc));
 }
 
