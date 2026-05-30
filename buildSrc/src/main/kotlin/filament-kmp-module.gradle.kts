@@ -85,7 +85,7 @@ kotlin {
 
 // ── JVM/Panama floor ──────────────────────────────────────────────────────────
 // The jvmMain actuals call java.lang.foreign (finalized in JDK 22) and depend on
-// :java:filament-ffm. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties), so
+// :java. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties), so
 // the toolchain and the requested org.gradle.jvm.version are already 22+ — no per-module toolchain
 // or attribute forcing is needed. We only pin the jvm bytecode to a JVM 22 floor so the artifact
 // stays usable on any JDK 22+ (Android/native/JS targets are untouched — different task types).

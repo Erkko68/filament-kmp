@@ -40,7 +40,7 @@ kotlin {
         jvmMain.dependencies {
             // Project Panama (FFM): the combined libfilament-c image + jextract-generated
             // FilamentC already cover the gltfio surface. Replaces the JNI :java:gltfio dep.
-            api(project(":java:filament-ffm"))
+            api(project(":java"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

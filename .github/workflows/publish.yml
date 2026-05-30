@@ -13,13 +13,13 @@ on:
 jobs:
   # ── Build the combined FFM native per platform (cmake only) ──────────────────
   # filament + filamat + filament-utils + gltfio are all linked into ONE shared lib
-  # (libfilament-c) by :java:filament-ffm via c/CMakeLists.txt -DFILAMENT_BUILD_SHARED=ON.
+  # (libfilament-c) by :java via c/CMakeLists.txt -DFILAMENT_BUILD_SHARED=ON.
   # That single module owns the natives for the whole JVM/Panama (FFM) stack; the
   # :kotlin:* jvm artifacts pick it up transitively as a published dependency.
   #
   # Layout uploaded: <platform-arch>/libfilament-c.{dylib,so,dll}.
   # download-artifact + merge-multiple later collapses every platform into one
-  # c-artifacts/ dir that's consumed via -PcArtifactsDir in :java:filament-ffm.
+  # c-artifacts/ dir that's consumed via -PcArtifactsDir in :java.
   build-natives:
     strategy:
       fail-fast: false
@@ -62,13 +62,13 @@ jobs:
       # (the generated Java is produced by the publish job, where it's compiled).
       - name: Build combined FFM native
         shell: bash
-        run: ./gradlew :java:filament-ffm:cmakeBuildFilamentCJvm --no-configuration-cache
+        run: ./gradlew :java:cmakeBuildFilamentCJvm --no-configuration-cache
       - name: Stage native
         shell: bash
         run: |
           dest="c-artifacts/${{ matrix.arch }}"
           mkdir -p "$dest"
-          find "java/filament-ffm/build/cmake" \
+          find "java/build/cmake" \
             \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
             -exec cp {} "$dest/" \;
       - uses: actions/upload-artifact@v4
@@ -135,7 +135,7 @@ jobs:
           ./gradlew \
             -PlibVersion=${{ steps.version.outputs.version }} \
             -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
-            :java:filament-ffm:publishAllPublicationsToMavenCentralRepository \
+            :java:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \

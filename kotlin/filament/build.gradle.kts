@@ -37,8 +37,8 @@ kotlin {
         }
         jvmMain.dependencies {
             // Project Panama (FFM) bindings: combined libfilament-c + jextract-generated
-            // FilamentC class + loader. Replaces the JNI :java:filament dependency.
-            api(project(":java:filament-ffm"))
+            // FilamentC class + loader + the FFM helpers (Ffm.kt). Replaces the JNI :java:filament dep.
+            api(project(":java"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

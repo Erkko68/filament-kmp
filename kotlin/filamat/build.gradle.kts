@@ -34,7 +34,7 @@ kotlin {
         jvmMain.dependencies {
             // Project Panama (FFM): the combined libfilament-c image + jextract-generated
             // FilamentC already cover the filamat surface. Replaces the JNI :java:filamat dep.
-            api(project(":java:filament-ffm"))
+            api(project(":java"))
         }
         jsMain.dependencies {
             implementation(project(":js"))

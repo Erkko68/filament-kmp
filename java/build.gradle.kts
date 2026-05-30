@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     `java-library`
+    kotlin("jvm")
     id("filament-publish")
 }
 
@@ -7,15 +10,25 @@ plugins {
 // (-DFILAMENT_BUILD_SHARED=ON → one libfilament-c shared lib with the Filament static
 // archives linked exactly once), runs jextract over the C headers to generate the
 // low-level binding classes, packages the dylib into this module's resources, and ships
-// a loader that System.loads it so jextract's loaderLookup resolves the symbols.
+// a loader that System.loads it so jextract's loaderLookup resolves the symbols. It also
+// hosts the shared FFM helpers (src/main/kotlin Ffm.kt) the kotlin:* jvm actuals build on.
 //
 // kotlin:filament's jvmMain depends on this module and writes the idiomatic Kotlin
 // actuals on top of the generated FilamentC class.
+
+// Directory is java/ but the published artifact keeps its id `filament-ffm`
+// (filament-publish derives the id from project.name = "java", so pin it back here).
+mavenPublishing {
+    coordinates(group.toString(), "filament-ffm", version.toString())
+}
 
 // FFM was finalized in JDK 22. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties),
 // so we just pin a JVM 22 release floor here to keep the published artifact usable on any JDK 22+.
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(22)
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_22)
 }
 
 // ── Native build + jextract generation (see buildSrc/FilamentJvmNative.kt) ────
@@ -46,7 +59,12 @@ sourceSets.named("main") {
     java.srcDir(ffm.generatedJavaDir)
 }
 
+// compileJava and compileKotlin both reference the generated jextract types
+// (Ffm.kt calls FilamentLoader / Fila*Callback), so both must run after jextract.
 tasks.named<JavaCompile>("compileJava") {
+    dependsOn(ffm.jextract)
+}
+tasks.named("compileKotlin") {
     dependsOn(ffm.jextract)
 }
 
