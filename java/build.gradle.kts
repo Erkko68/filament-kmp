@@ -54,18 +54,12 @@ val ffm = applyFilamentJvmNative(
     headerClassName = "FilamentC",
 )
 
-// Generated jextract sources compile alongside the hand-written loader.
+// Generated jextract sources compile alongside the hand-written loader. Adding the
+// jextract task (not just its output dir) as the source dir makes Gradle infer the
+// dependency for every consumer — compileJava, compileKotlin, sourcesJar — so none
+// of them can run before the bindings are generated.
 sourceSets.named("main") {
-    java.srcDir(ffm.generatedJavaDir)
-}
-
-// compileJava and compileKotlin both reference the generated jextract types
-// (Ffm.kt calls FilamentLoader / Fila*Callback), so both must run after jextract.
-tasks.named<JavaCompile>("compileJava") {
-    dependsOn(ffm.jextract)
-}
-tasks.named("compileKotlin") {
-    dependsOn(ffm.jextract)
+    java.srcDir(ffm.jextract)
 }
 
 // ── Package the combined dylib into resources (mirrors java/filament) ─────────
