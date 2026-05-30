@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-// SkinningBuffer is not bound in upstream jsbindings.cpp (v1.71.4); skinning
+// TODO(js): SkinningBuffer is not bound in upstream jsbindings.cpp (v1.71.5); skinning
 // runs through RenderableManager.Builder. The actual stores Builder inputs so
 // common-tests reading `boneCount` pass.
 actual class SkinningBuffer internal constructor(
@@ -22,7 +22,7 @@ actual class SkinningBuffer internal constructor(
         boneCount: Int,
         offset: Int
     ) {
-        // Not exposed in JS bindings
+        // TODO(js): SkinningBuffer not bound in jsbindings.cpp — no-op on web
     }
 
     actual class Builder {

@@ -1,0 +1,41 @@
+{
+  "__doc__": [
+    "Non-additive patches to Filament's upstream filament.d.ts — the things TypeScript",
+    "declaration merging (used by filament.patch.d.ts) cannot express. Applied by",
+    "js/build.gradle.kts to the assembled d.ts before the $->_ normalisation, so names",
+    "here use the upstream '$' separator. All entries are faithful to jsbindings.cpp.",
+    "",
+    "  replacements   - literal find/replace on the d.ts text. Used to correct fields the",
+    "                   d.ts types wrongly (merging can't retype an existing member).",
+    "  staticMembers  - static (class_function) members injected into a class body. Karakum",
+    "                   renders a merged TS `namespace` as a separate object, so statics",
+    "                   can't be added by merging; they're spliced into the class instead."
+  ],
+  "replacements": [
+    {
+      "__doc__": "PickingQueryResult.renderable is an Emval-wrapped Entity, not a number; the actuals call entity.getId() on it. 'renderable:' is unique to this interface.",
+      "find": "renderable: number;",
+      "replace": "renderable: Entity;"
+    },
+    {
+      "__doc__": "Upstream typo: gltfio$FilamentAsset.getAssetInstances() is misspelled 'geAssetInstances' in the d.ts (the embind binding is spelled correctly).",
+      "find": "geAssetInstances",
+      "replace": "getAssetInstances"
+    }
+  ],
+  "staticMembers": {
+    "Engine": [
+      "static getSteadyClockTimeNano(): number;"
+    ],
+    "SwapChain": [
+      "static isSRGBSwapChainSupported(engine: Engine): boolean;"
+    ],
+    "Skybox": [
+      "static Builder(): Skybox$Builder;"
+    ],
+    "Texture": [
+      "static isTextureFormatMipmappable(engine: Engine, format: Texture$InternalFormat): boolean;",
+      "static validatePixelFormatAndType(internalFormat: Texture$InternalFormat, format: PixelDataFormat, type: PixelDataType): boolean;"
+    ]
+  }
+}

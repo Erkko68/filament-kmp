@@ -82,7 +82,7 @@ actual class View(internal val jsView: JSView) {
     actual fun getVisibleLayers(): Int = _visibleLayersValues
 
     actual var isPostProcessingEnabled: Boolean
-        get() = true // Not exposed in JS bindings
+        get() = true // TODO(js): getter not exposed in jsbindings.cpp; assume enabled
         set(value) { jsView.setPostProcessingEnabled(value) }
 
     actual var antiAliasing: AntiAliasing

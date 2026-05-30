@@ -53,7 +53,9 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         }
 
         actual fun build(engine: Engine): BufferObject {
-            val obj = jsBuilder.build(engine.jsEngine)
+            // filament.js installs no `.build` wrapper on BufferObject$Builder, so call
+            // the raw embind `_build` and delete the builder ourselves.
+            val obj = jsBuilder._build(engine.jsEngine)
             jsBuilder.delete()
             return BufferObject(obj)
         }

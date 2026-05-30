@@ -8,7 +8,7 @@ The `filament-kmp` project is organized into several modules to handle the cross
 
 - **`java/`**: The single Project Panama (FFM) JVM binding module used by the **JVM/Desktop** target only. It drives the combined `libfilament-c` shared build via CMake, runs `jextract` over the C headers to generate the low-level bindings, bundles the native image as a JAR resource, and loads it at runtime. **Android does not use this folder** — it depends on the official `com.google.android.filament` Maven packages instead.
 
-- **`js/`**: Kotlin/JS external declarations (a single `.kt` file with `external` annotations) that wrap the official Filament.js library compiled to WebAssembly. Used by the **Web** target.
+- **`js/`**: Kotlin/JS external declarations wrapping the official Filament.js (WASM) library, used by the **Web** target. The declarations are **generated at build time** by [Karakum](https://github.com/karakum-team/karakum) from Filament's `filament.d.ts` plus a curated overlay under `js/patches/` (the d.ts under-reports the real `jsbindings.cpp` surface). Nothing generated is committed; see [`js/README.md`](../js/README.md).
 
 - **`kotlin/`**: The core Kotlin Multiplatform wrapper. Contains five modules:
     - `filament` — Core engine components (Engine, Scene, View, Renderer, …).

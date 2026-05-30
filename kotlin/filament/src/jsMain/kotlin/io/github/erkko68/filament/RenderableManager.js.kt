@@ -109,7 +109,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         offset: Int
     ) {
         @Suppress("UNCHECKED_CAST")
-        val boneMatrices = matrices.toTypedArray() as Array<Any>
+        val boneMatrices = matrices.toTypedArray() as Array<Any?>
         jsRenderableManager.setBonesFromMatrices(
             instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset)
     }
@@ -191,8 +191,8 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         jsRenderableManager.setGeometryAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, count)
     }
 
-    // Non-indexed setGeometryAt is not exposed in jsbindings.cpp as of Filament 1.71.5
-    // (only the indexed overload is bound). Web/WASM cannot reach this path.
+    // TODO(js): non-indexed setGeometryAt is not exposed in jsbindings.cpp as of
+    // Filament 1.71.5 (only the indexed overload is bound). Web/WASM can't reach this.
     actual fun setGeometryAt(
         instance: EntityInstance,
         primitiveIndex: Int,
@@ -342,8 +342,8 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
-        // Non-indexed (attribute-less / procedural) geometry overloads are not bound in
-        // jsbindings.cpp as of Filament 1.71.5 — only the indexed overloads are exposed.
+        // TODO(js): non-indexed (attribute-less / procedural) geometry overloads are not
+        // bound in jsbindings.cpp as of Filament 1.71.5 — only the indexed overloads exist.
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
             throw UnsupportedOperationException(
                 "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
@@ -478,8 +478,8 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun enableSkinningBuffers(enabled: Boolean): Builder {
-            // Not exposed in the JS Builder; SkinningBuffer itself isn't bound,
-            // so the underlying API is unreachable on web.
+            // TODO(js): not exposed in the JS Builder; SkinningBuffer itself isn't
+            // bound, so the underlying API is unreachable on web.
             return this
         }
 

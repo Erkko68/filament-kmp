@@ -18,8 +18,8 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
 
     actual val isFrameScheduledCallbackSet: Boolean get() = frameScheduledCallback != null
 
-    // Not bound upstream; return a non-zero sentinel so callers checking
-    // `nativeObject != 0` treat the swap chain as live.
+    // TODO(js): nativeObject not bound upstream; return a non-zero sentinel so
+    // callers checking `nativeObject != 0` treat the swap chain as live.
     actual val nativeObject: Long get() = 1L
 
     actual companion object {

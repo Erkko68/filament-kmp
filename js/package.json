@@ -1,0 +1,13 @@
+{
+  "name": "filament-kmp-js-externals",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Karakum tooling that regenerates the Kotlin/JS external declarations for Filament.js from its (patched) filament.d.ts. Not published; consumed only by the :js Gradle module.",
+  "dependencies": {
+    "filament": "file:./filament-types"
+  },
+  "devDependencies": {
+    "karakum": "1.0.0-alpha.107",
+    "typescript": "^6.0.2"
+  }
+}

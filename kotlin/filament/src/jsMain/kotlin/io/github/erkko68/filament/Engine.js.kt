@@ -57,12 +57,12 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
     actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
     actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
-    actual fun isValidFence(fence: Fence): Boolean = true // Fence isn't exposed in JS — see UPSTREAM_INCONSISTENCIES.md
+    actual fun isValidFence(fence: Fence): Boolean = true // TODO(js): Fence not bound in jsbindings.cpp — see UPSTREAM_INCONSISTENCIES.md
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true // SkinningBuffer isn't exposed in JS
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true // MorphTargetBuffer isn't exposed in JS
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true // TODO(js): SkinningBuffer not bound in jsbindings.cpp
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true // TODO(js): MorphTargetBuffer not bound in jsbindings.cpp
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = jsEngine.isValidIndirectLight(ibl.jsIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = jsEngine.isValidMaterial(material.jsMaterial)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean =
@@ -72,7 +72,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidSkybox(skybox: Skybox): Boolean = jsEngine.isValidSkybox(skybox.jsSkybox)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = jsEngine.isValidColorGrading(colorGrading.jsColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = jsEngine.isValidTexture(texture.jsTexture)
-    actual fun isValidStream(stream: Stream): Boolean = true // Stream isn't exposed in JS
+    actual fun isValidStream(stream: Stream): Boolean = true // TODO(js): Stream not bound in jsbindings.cpp
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
     actual fun createSwapChain(surface: NativeSurface): SwapChain {
@@ -228,8 +228,8 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.execute()
     }
 
-    // Not bound in upstream jsbindings.cpp (v1.71.4) — track locally so the
-    // common getter/setter round-trip works.
+    // TODO(js): paused state not bound in upstream jsbindings.cpp — track locally
+    // so the common getter/setter round-trip works.
     private var paused: Boolean = false
 
     actual fun isPaused(): Boolean = paused

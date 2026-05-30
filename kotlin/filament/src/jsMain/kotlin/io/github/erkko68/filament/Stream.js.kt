@@ -4,7 +4,7 @@ actual class Stream(internal val jsStream: Any?) {
     actual val streamType: StreamType get() = StreamType.NATIVE
 
     actual fun setDimensions(width: Int, height: Int) {
-        // Not exposed in JS bindings
+        // TODO(js): Stream not bound in jsbindings.cpp — no-op on web
     }
 
     actual val timestamp: Long get() = 0L

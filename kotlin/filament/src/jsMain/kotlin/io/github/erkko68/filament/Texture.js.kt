@@ -266,7 +266,7 @@ actual class Texture(val jsTexture: JSTexture) {
         }
 
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean {
-            // Not bound in jsbindings.cpp — see patches/UPSTREAM_INCONSISTENCIES.md.
+            // TODO(js): isTextureSwizzleSupported not bound in jsbindings.cpp — see docs/patches/UPSTREAM_INCONSISTENCIES.md.
             return false
         }
 

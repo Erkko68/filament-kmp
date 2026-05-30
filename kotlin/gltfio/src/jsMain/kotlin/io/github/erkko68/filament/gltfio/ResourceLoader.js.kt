@@ -19,7 +19,8 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
 
     actual fun addResourceData(url: String, data: ByteArray) {
         resourceData[url] = data
-        assets[url] = data.toUint8Array()
+        // `assets` is generated as a read-only Record; write through dynamically.
+        assets.asDynamic()[url] = data.toUint8Array()
     }
 
     actual fun hasResourceData(url: String): Boolean {

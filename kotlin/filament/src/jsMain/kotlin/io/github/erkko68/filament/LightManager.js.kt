@@ -9,7 +9,7 @@ import io.github.erkko68.filament.js.LightManager_Instance as JSLightManagerInst
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
     actual fun getComponentCount(): Int {
-        // Not exposed in JS bindings
+        // TODO(js): getComponentCount not exposed in jsbindings.cpp
         return 0
     }
 

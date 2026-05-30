@@ -8,7 +8,7 @@ survive ./gradlew clean and are shared across all targets that use the same
 asset. Each target's .a / .lib files are extracted into:
     <repo>/prebuilts/<target>/lib/
 
-The special 'web' target extracts filament.js + filament.wasm into:
+The special 'web' target extracts filament.js + filament.wasm + filament.d.ts into:
     <repo>/prebuilts/web/
 
 Since Filament 1.71.4 the iOS tarball ships xcframeworks: each library lives at
@@ -142,7 +142,10 @@ def extract(tarball: Path, lib_prefix: str, out_dir: Path) -> int:
     # Empty prefix means files are at the tarball root (no subdirectory).
     prefix = (lib_prefix.rstrip("/") + "/") if lib_prefix else ""
     _NATIVE_EXTS = (".a", ".lib")
-    _WEB_EXTS    = (".js", ".wasm")
+    # filament.d.ts drives Karakum's Kotlin/JS external generation (see :js
+    # module). It lags jsbindings.cpp, so the :js build patches it with an
+    # overlay before generating — but we still need the upstream copy here.
+    _WEB_EXTS    = (".js", ".wasm", ".d.ts")
     n = 0
     with tarfile.open(tarball, "r:gz") as tar:
         for m in tar:

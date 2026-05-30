@@ -33,6 +33,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         label: String?,
         extras: String?
     ): MaterialInstance? {
+        // TODO(js): default ubershader path not exposed by Filament.js.
         throw UnsupportedOperationException(
             "MaterialProvider.createMaterialInstance is not supported on the JS/Web target. The " +
             "default ubershader path is not exposed by Filament.js. Supply your own precompiled " +
@@ -45,6 +46,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         uvmap: IntArray,
         label: String?
     ): Material? {
+        // TODO(js): default ubershader path not exposed by Filament.js.
         throw UnsupportedOperationException(
             "MaterialProvider.getMaterial is not supported on the JS/Web target. The default " +
             "ubershader path is not exposed by Filament.js. Supply your own precompiled materials " +

@@ -1,0 +1,11 @@
+{
+  "libraryName": "filament",
+  "input": "filament.d.ts",
+  "output": "build/generated/karakum",
+  "moduleNameMapper": {
+    "^.*$": ""
+  },
+  "packageNameMapper": {
+    "^filament/(.*)$": "io/github/erkko68/filament/js/$1"
+  }
+}

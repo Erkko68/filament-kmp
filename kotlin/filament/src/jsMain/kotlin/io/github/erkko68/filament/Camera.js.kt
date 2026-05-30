@@ -225,7 +225,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     }
 
     actual val entity: Entity
-        // Upstream Camera::getEntity() exists in C++ but is not bound in
+        // TODO(js): Camera::getEntity() exists in C++ but is not bound in
         // jsbindings.cpp. We instead remember the entity at construction time
         // (Engine.createCamera passes it in). For Cameras obtained via
         // Engine.getCameraComponent() the value will be the entity argument
