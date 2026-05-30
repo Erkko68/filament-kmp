@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.ffm.FilamentC
 import io.github.erkko68.filament.ffm.FilaMaterialParameterInfo
+import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
 actual class Material constructor(internal var nativeHandle: MemorySegment?) {
@@ -51,11 +52,22 @@ actual class Material constructor(internal var nativeHandle: MemorySegment?) {
 
     actual class Builder actual constructor() {
         private val nativeBuilder = FilamentC.FilaMaterial_Builder_create()
+        // Filament's C++ Material::Builder::package() only stores a pointer — the
+        // payload data must stay valid until build() is called.  A confined arena
+        // would free the memory immediately, causing a use-after-free crash.  We
+        // keep the arena alive here and close it once build() has consumed the data.
+        private var payloadArena: Arena? = null
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(data: ByteArray): Builder = apply {
+            // Close any previously set payload arena (in case payload() is called twice).
+            payloadArena?.close()
             if (data.isNotEmpty()) {
-                confined { arena -> FilamentC.FilaMaterial_Builder_package(nativeBuilder, arena.bytes(data), data.size.toLong()) }
+                val arena = Arena.ofConfined()
+                payloadArena = arena
+                FilamentC.FilaMaterial_Builder_package(nativeBuilder, arena.bytes(data), data.size.toLong())
+            } else {
+                payloadArena = null
             }
         }
         actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
@@ -68,9 +80,14 @@ actual class Material constructor(internal var nativeHandle: MemorySegment?) {
             FilamentC.FilaMaterial_Builder_uboBatching(nativeBuilder, mode.ordinal)
         }
         actual fun build(engine: Engine): Material {
-            val handle = FilamentC.FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
-            FilamentC.FilaMaterial_Builder_destroy(nativeBuilder)
-            return Material(handle)
+            try {
+                val handle = FilamentC.FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
+                return Material(handle)
+            } finally {
+                payloadArena?.close()
+                payloadArena = null
+                FilamentC.FilaMaterial_Builder_destroy(nativeBuilder)
+            }
         }
     }
 
