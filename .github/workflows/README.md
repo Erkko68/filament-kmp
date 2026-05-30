@@ -6,22 +6,21 @@ repeat runs skip the download.
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
-| [`build.yml`](build.yml) | push / PR to `main` | Compiles every KMP target on the relevant host (Android + JVM + JS on Linux, iOS on macOS) and runs unit tests. Gate for merging — must be green. |
-| [`samples.yml`](samples.yml) | push / PR to `main` | Builds the `samples/` apps for each platform to verify the umbrella library is consumable end-to-end. Catches breakage that pure unit tests miss (Compose configuration, resource loading, native linking). |
+| [`ci.yml`](ci.yml) | push / PR to `main` | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). Gate for merging — must be green. |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central. See [Releasing](#releasing) below. |
 
 ## Releasing
 
 The publish workflow is a two-phase pipeline:
 
-1. **`build-jni`** — matrix job (macOS arm64, Linux x64, Linux arm64, Windows x64) that
-   runs `:java:filament:cmakeBuild` to produce `libfilament-jni.{dylib,so,dll}` for each
-   host. Outputs are uploaded as `jni-<arch>` artifacts.
+1. **`build-natives`** — matrix job (macOS arm64, Linux x64, Linux arm64, Windows x64) that
+   runs `:java:cmakeBuildFilamentCJvm` to produce the combined `libfilament-c.{dylib,so,dll}`
+   for each host. Outputs are uploaded as `c-<arch>` artifacts.
 2. **`publish`** — runs on `macos-latest` (needed for iOS framework signing / lipo).
-   Downloads all `jni-*` artifacts via `merge-multiple: true` into one flat
-   `jni-artifacts/` directory, then invokes `publishAllPublicationsToMavenCentralRepository`
-   for every module with `-PjniArtifactsDir=...` so each `:java:*` module bundles the
-   right native into its resources.
+   Downloads all `c-*` artifacts via `merge-multiple: true` into one flat `c-artifacts/`
+   directory, then invokes `publishAllPublicationsToMavenCentralRepository` for every module
+   with `-PcArtifactsDir=...` so the `:java` module bundles every platform's native into its
+   resources (the `:kotlin:*` jvm artifacts pick it up transitively).
 
 ### How to cut a release
 
@@ -53,5 +52,5 @@ activates automatically because the convention plugin gates on `signingInMemoryK
 ### Manual / re-run
 
 `workflow_dispatch` accepts a `version` input — useful for re-publishing a botched release
-under a new version without retagging. The dispatched run still requires the `build-jni`
+under a new version without retagging. The dispatched run still requires the `build-natives`
 matrix to succeed.
