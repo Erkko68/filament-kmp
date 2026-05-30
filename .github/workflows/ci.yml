@@ -9,8 +9,11 @@ name: CI
 on:
   push:
     branches: [main]
+    # Docs-only changes don't affect the build — skip the (expensive) matrix.
+    paths-ignore: ['**.md']
   pull_request:
     branches: [main]
+    paths-ignore: ['**.md']
 
 jobs:
   jvm:

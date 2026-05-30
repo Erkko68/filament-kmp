@@ -6,7 +6,8 @@ repeat runs skip the download.
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
-| [`ci.yml`](ci.yml) | push / PR to `main` | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). Gate for merging — must be green. |
+| [`ci.yml`](ci.yml) | push / PR to `main` (docs-only changes skipped via `paths-ignore: ['**.md']`) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). Gate for merging — must be green. |
+| [`pages.yml`](pages.yml) | push to `main` touching the web target (`js/**`, `kotlin/**/src/jsMain/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and deploys it to GitHub Pages. Already scoped to web-relevant paths, so docs changes never trigger it. |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central. See [Releasing](#releasing) below. |
 
 ## Releasing

@@ -57,7 +57,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
     actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
     actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
-    actual fun isValidFence(fence: Fence): Boolean = true // TODO(js): Fence not bound in jsbindings.cpp — see UPSTREAM_INCONSISTENCIES.md
+    actual fun isValidFence(fence: Fence): Boolean = true // TODO(js): Fence not bound in jsbindings.cpp
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
@@ -353,7 +353,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 // Note: common Engine.FeatureLevel includes FEATURE_LEVEL_0 (ES2-class
 // hardware) which the JS binding does not expose — Filament's WebGL build
 // targets GLES3/WebGL2 only. Mapping for FEATURE_LEVEL_0 falls back to
-// FEATURE_LEVEL_1 on the JS side. See patches/UPSTREAM_INCONSISTENCIES.md.
+// FEATURE_LEVEL_1 on the JS side.
 // ──────────────────────────────────────────────────────────────────────────────
 
 private fun fromJsBackend(b: io.github.erkko68.filament.js.Backend): Engine.Backend = when (b) {

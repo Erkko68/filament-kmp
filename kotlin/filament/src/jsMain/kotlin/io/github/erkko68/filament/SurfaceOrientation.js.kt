@@ -47,7 +47,7 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
             // wraps only `_normals`, `_uvs`, `_positions` into user-facing builder
             // calls — there's no JS-side `tangents(buffer, stride)` wrapper doing the
             // malloc/HEAPU8 dance, so the function is unreachable without
-            // re-implementing that here. Stubbed no-op; see UPSTREAM_INCONSISTENCIES.md.
+            // re-implementing that here. Stubbed no-op.
             return this
         }
 

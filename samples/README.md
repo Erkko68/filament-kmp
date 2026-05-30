@@ -8,7 +8,7 @@ This directory contains multiplatform example applications demonstrating `filame
 | :--- | :--- | :--- |
 | `androidApp/` | Android | Standard Android Compose app using the official Filament Android library |
 | `iosApp/` | iOS | Xcode project with a SwiftUI entry point embedding the Kotlin Multiplatform framework |
-| `desktopApp/` | JVM / Desktop | Compose Desktop app using the custom JNI-based Filament bindings |
+| `desktopApp/` | JVM / Desktop | Compose Desktop app using the Project Panama (FFM) Filament bindings |
 | `webApp/` | Browser / WASM | Compose for Web app using the Filament.js/WASM bindings |
 
 All apps share a common scene implementation in `shared/`:

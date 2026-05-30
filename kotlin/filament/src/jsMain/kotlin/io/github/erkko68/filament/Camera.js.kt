@@ -219,8 +219,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     actual fun getFieldOfViewInDegrees(direction: Fov): Double {
         // Upstream jsbindings.cpp does not bind `Camera::getFieldOfViewInDegrees`,
         // so we can't recover the FOV from the projection matrix on the JS side
-        // without re-implementing the math. Stubbed to 0; see
-        // patches/UPSTREAM_INCONSISTENCIES.md.
+        // without re-implementing the math. Stubbed to 0.
         return 0.0
     }
 

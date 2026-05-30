@@ -8,7 +8,9 @@
 allprojects {
     val baseGroup = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
     group = if (path.startsWith(":java")) {
-        "$baseGroup-jni"
+        // The :java module carries the JVM native runtime (Project Panama/FFM),
+        // published as the `filament-ffm` artifact under a matching `-ffm` group.
+        "$baseGroup-ffm"
     } else {
         baseGroup
     }
@@ -30,9 +32,9 @@ allprojects {
 //
 // Targets correspond to:
 //   • iosArm64 / iosSimulatorArm64 / iosX64 — Kotlin/Native iOS targets.
-//   • macosArm64 / macosX64                 — JVM/JNI host (:java:*); macOS uses
+//   • macosArm64 / macosX64                 — JVM/Panama host (:java:*); macOS uses
 //                                              the JVM build, not Kotlin/Native.
-//   • linuxX64 / linuxArm64 / mingwX64      — JVM/JNI host on Linux/Windows.
+//   • linuxX64 / linuxArm64 / mingwX64      — JVM/Panama host on Linux/Windows.
 //   • web                                   — Filament.js + WASM for the :js module;
 //                                              output goes to prebuilts/web/ (no lib/ subdir).
 

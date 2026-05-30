@@ -45,7 +45,7 @@ This is standard practice for graphics, video, and game apps on Android. The `Su
 
 - Renders via `CAMetalLayer` embedded in a `UIKitView`.
 - Use static frameworks (`isStatic = true`) — keeps the Filament symbols inside your app binary and avoids dynamic-library loader issues.
-- macOS via JVM (Compose Desktop) and macOS via Kotlin/Native are **different code paths**. The Kotlin/Native path uses the C wrapper; the JVM path uses the JNI bindings.
+- macOS via JVM (Compose Desktop) and macOS via Kotlin/Native are **different code paths**. The Kotlin/Native path binds the C wrapper via `cinterop`; the JVM path binds the same C wrapper via Project Panama (FFM).
 
 ## JVM / Desktop
 
@@ -61,7 +61,7 @@ This is unavoidable with Compose Desktop today: there is no public API to embed 
 
 ### Native library loading
 
-The JNI runtime JAR (`io.github.erkko68.filament-jni:filament:...`) bundles platform-specific shared libraries (`.dll`, `.dylib`, `.so`) as JAR resources and extracts them to a temp directory on first use. No system installation of Filament is needed.
+The FFM native runtime JAR (`io.github.erkko68.filament-ffm:filament-ffm:...`) bundles the combined `libfilament-c` shared library per platform (`.dll`, `.dylib`, `.so`) as JAR resources and extracts it to a temp directory on first use. No system installation of Filament is needed. Requires a **JDK 22+** runtime.
 
 ## Web / WASM
 
@@ -76,10 +76,12 @@ Download the files matching your `filaVersion` using the helper script in the re
 
 ```bash
 python3 scripts/gradle/download_filament_prebuilts.py <version> web
-# outputs prebuilts/web/filament.js and prebuilts/web/filament.wasm
+# outputs prebuilts/web/filament.js, filament.wasm and filament.d.ts
 ```
 
-Then copy them into your `src/jsMain/resources/`.
+Then copy `filament.js` and `filament.wasm` into your `src/jsMain/resources/`. (The
+`filament.d.ts` is build-time only — the `:js` module's Kotlin externals are generated
+from it by [Karakum](https://github.com/karakum-team/karakum); see [`js/README.md`](../js/README.md).)
 
 ### Current limitations
 

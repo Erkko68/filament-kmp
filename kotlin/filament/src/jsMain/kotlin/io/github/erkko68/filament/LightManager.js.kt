@@ -205,8 +205,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun shadowOptions(options: ShadowOptions): Builder {
-            // No-op on JS — see UPSTREAM_INCONSISTENCIES.md "LightManager
-            // shadowOptions". jsbindings.cpp registers the ShadowOptions
+            // TODO(js): no-op on JS. jsbindings.cpp registers the ShadowOptions
             // value_object with a `transform` field typed as mat4f, but the
             // only mat4 type in the embind registry is `flatmat4` — a wrapper
             // struct registered under a different RTTI. embind looks up mat4f,

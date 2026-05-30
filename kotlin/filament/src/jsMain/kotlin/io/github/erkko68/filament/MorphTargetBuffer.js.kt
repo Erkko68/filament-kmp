@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-// TODO(js): MorphTargetBuffer is not bound in upstream jsbindings.cpp (v1.71.5) — see
-// UPSTREAM_INCONSISTENCIES.md. The actual is a transparent record of the
+// TODO(js): MorphTargetBuffer is not bound in upstream jsbindings.cpp (v1.71.5).
+// The actual is a transparent record of the
 // Builder inputs so common-tests reading `vertexCount`/`count`/flags pass.
 actual class MorphTargetBuffer internal constructor(
     internal val jsMorphTargetBuffer: Any? = null,
