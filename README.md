@@ -10,7 +10,7 @@
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
 > [!WARNING]
-> **Release candidate (`0.1.1-rc`).** Public APIs are essentially frozen at this point — only critical fixes before the `0.1.1` stable tag. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
+> **Pre-release (`0.1.2-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings were just rebuilt on Project Panama (FFM, **requires JDK 22+**) and the Web bindings on Karakum. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
 
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/WASM**, with first-class **Compose Multiplatform** integration.
 
@@ -32,8 +32,8 @@ FilamentView(
 
 - **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
-- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via custom JNI bindings
-- **Web / WASM** — WebGL 2.0 via Filament.js *(experimental)*
+- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
+- **Web / WASM** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts` *(experimental)*
 
 ## Quick start
 
@@ -54,13 +54,13 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.1-rc02")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta01")
         }
     }
 }
 ```
 
-For the full setup (Compose Multiplatform plugin, JNI runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**.
+For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**.
 
 ## Modules
 
@@ -72,7 +72,7 @@ For the full setup (Compose Multiplatform plugin, JNI runtime for Desktop, iOS f
 | `filamat` | Runtime material compilation — `MaterialBuilder`. |
 | `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
 
-All published under `io.github.erkko68.filament`. JNI-only runtime JARs are published separately under `io.github.erkko68.filament-jni` and pulled in automatically. See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
+All published under `io.github.erkko68.filament`. The Desktop/JVM native runtime (Project Panama / FFM) ships as `io.github.erkko68.filament-ffm:filament-ffm` and is pulled in automatically. See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
 
 ## API strategy
 

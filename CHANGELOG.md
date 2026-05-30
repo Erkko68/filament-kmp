@@ -11,6 +11,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.2-beta01] — 2026-05-30
+
+- **JVM/Desktop bindings migrated from JNI to Project Panama (FFM).** The per-module JNI stack is replaced by a single `:java` module that binds the combined `libfilament-c` shared library via the Foreign Function & Memory API (jextract-generated); see [`java/README.md`](java/README.md).
+  - **Breaking:** the Desktop/JVM native runtime now requires a **JDK 22+** runtime (the FFM API floor).
+  - **Breaking:** the JVM native runtime artifact moved to `io.github.erkko68.filament-ffm:filament-ffm` (pulled in transitively — consumers only need JDK 22+).
 - The Kotlin/JS externals (`:js`) are now **generated at build time** by [Karakum](https://github.com/karakum-team/karakum) from Filament's `filament.d.ts`, replacing the hand-maintained `filament.js.kt`. Because the d.ts under-reports the real `jsbindings.cpp` surface, the build first patches it with a curated overlay (`js/patches/filament.patch.d.ts`) and non-additive corrections (`js/patches/filament.dts-overrides.json`). Nothing generated is committed; see [`js/README.md`](js/README.md). The JS externals now target the kotlin-wrappers types.
   - `scripts/gradle/download_filament_prebuilts.py` now also extracts `filament.d.ts` for the `web` target.
   - `scripts/dev/check-js-bindings.sh` audits the overlay/overrides (not a committed externals file) against `jsbindings.cpp`, and a stale `REPO_ROOT` path (broken when the script moved to `scripts/dev/`) is fixed.
@@ -108,7 +113,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc02...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta01...HEAD
+[0.1.2-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc02...0.1.2-beta01
 [0.1.1-rc02]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc01...0.1.1-rc02
 [0.1.1-rc01]: https://github.com/Erkko68/filament-kmp/compare/0.1.0-beta01...0.1.1-rc01
 [0.1.0-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.0-alpha04...0.1.0-beta01

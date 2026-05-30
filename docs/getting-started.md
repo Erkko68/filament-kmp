@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.1-rc02")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta01")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.1.1-rc02")
+            implementation("io.github.erkko68.filament:gltfio:0.1.2-beta01")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.1.1-rc02")
+            implementation("io.github.erkko68.filament:filament-utils:0.1.2-beta01")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.1.1-rc02")
+            implementation("io.github.erkko68.filament:filamat:0.1.2-beta01")
         }
     }
 }
@@ -108,7 +108,7 @@ struct ContentView: View {
 
 ### JVM / Desktop
 
-The Compose Desktop plugin handles the rest. The JNI runtime (`io.github.erkko68.filament-jni:filament:...`) is pulled in automatically as a Gradle metadata dependency — no manual classifier setup needed.
+The Compose Desktop plugin handles the rest. The native runtime — a Project Panama (FFM) module, `io.github.erkko68.filament-ffm:filament-ffm:...` — is pulled in automatically as a Gradle metadata dependency, so there's no manual classifier setup. It requires a **JDK 22+** runtime (the FFM API floor).
 
 ```kotlin
 // desktopApp/build.gradle.kts
