@@ -18,7 +18,6 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **JVM Hardware Picking**: Corrected `View.pick` memory access for `fragCoords` inside `PickingQueryResult`.
 - **JVM Memory Integrity**: Ensured proper memory slicing for inline arrays inside C structs using standard Java `MemorySegment` access instead of generated setters.
 - **Web Rendering**: Implemented Web-based Filament rendering via shared `WebViewCompositor` and per-view canvas blitting, fixing the `FilamentSurface.js.kt` rendering.
-- **Tone Mapping**: Fixed `ToneMapper.DisplayRange` incorrectly mapping to the `Linear` tone mapper natively.
 - **Texture Format**: Removed `STENCIL_INDEX` from `Texture.Format` enum to correctly align with Filament's internal `PixelDataFormat` indexing.
 
 ### Changed

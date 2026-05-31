@@ -161,7 +161,6 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
                 UNUSED -> FILA_PIXEL_DATA_FORMAT_UNUSED
                 DEPTH_COMPONENT -> FILA_PIXEL_DATA_FORMAT_DEPTH_COMPONENT
                 DEPTH_STENCIL -> FILA_PIXEL_DATA_FORMAT_DEPTH_STENCIL
-                STENCIL_INDEX -> FILA_PIXEL_DATA_FORMAT_STENCIL_INDEX
                 ALPHA -> FILA_PIXEL_DATA_FORMAT_ALPHA
             }
         }

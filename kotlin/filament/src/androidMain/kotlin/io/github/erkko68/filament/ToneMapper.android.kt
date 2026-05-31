@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.ToneMapper as FilamentToneMapper
 
 actual open class ToneMapper(internal val nativeToneMapper: FilamentToneMapper) {
-    actual class Linear actual constructor() : ToneMapper(FilamentToneMapper.DisplayRange())
+    actual class Linear actual constructor() : ToneMapper(FilamentToneMapper.Linear())
     actual class ACES actual constructor() : ToneMapper(FilamentToneMapper.ACES())
     actual class ACESLegacy actual constructor() : ToneMapper(FilamentToneMapper.ACESLegacy())
     actual class Filmic actual constructor() : ToneMapper(FilamentToneMapper.Filmic())
@@ -29,5 +29,5 @@ actual open class ToneMapper(internal val nativeToneMapper: FilamentToneMapper) 
         actual var hdrMax: Float get() = genericNative.hdrMax; set(v) { genericNative.hdrMax = v }
     }
     
-    actual class DisplayRange actual constructor() : ToneMapper(FilamentToneMapper.DisplayRange())
+    actual class DisplayRange actual constructor() : ToneMapper(FilamentToneMapper.Linear())
 }
