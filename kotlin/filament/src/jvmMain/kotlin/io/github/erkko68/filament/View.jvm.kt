@@ -33,13 +33,14 @@ private object Picking {
             val cb = actions.remove(userData.address())
             if (cb != null && !result.isNullPtr()) {
                 val r = result.reinterpret(FilaViewPickingQueryResult.layout().byteSize())
+                val fragCoordsSeg = FilaViewPickingQueryResult.fragCoords(r)
                 cb(View.PickingQueryResult(
                     FilaViewPickingQueryResult.renderable(r),
                     FilaViewPickingQueryResult.depth(r),
                     floatArrayOf(
-                        FilaViewPickingQueryResult.fragCoords(r, 0L),
-                        FilaViewPickingQueryResult.fragCoords(r, 1L),
-                        FilaViewPickingQueryResult.fragCoords(r, 2L),
+                        fragCoordsSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 0L),
+                        fragCoordsSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 1L),
+                        fragCoordsSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 2L),
                     )
                 ))
             }
@@ -284,8 +285,10 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             DynamicResolutionOptions().apply {
                 enabled = FilaViewDynamicResolutionOptions.enabled(out)
                 homogeneousScaling = FilaViewDynamicResolutionOptions.homogeneousScaling(out)
-                minScale = FilaViewDynamicResolutionOptions.minScale(out, 0L)
-                maxScale = FilaViewDynamicResolutionOptions.maxScale(out, 0L)
+                val minScaleSeg = FilaViewDynamicResolutionOptions.minScale(out)
+                minScale = minScaleSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 0L)
+                val maxScaleSeg = FilaViewDynamicResolutionOptions.maxScale(out)
+                maxScale = maxScaleSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 0L)
                 sharpness = FilaViewDynamicResolutionOptions.sharpness(out)
                 quality = Quality.entries[FilaViewDynamicResolutionOptions.quality(out)]
             }
@@ -295,10 +298,12 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 val c = FilaViewDynamicResolutionOptions.allocate(arena)
                 FilaViewDynamicResolutionOptions.enabled(c, value.enabled)
                 FilaViewDynamicResolutionOptions.homogeneousScaling(c, value.homogeneousScaling)
-                FilaViewDynamicResolutionOptions.minScale(c, 0L, value.minScale)
-                FilaViewDynamicResolutionOptions.minScale(c, 1L, value.minScale)
-                FilaViewDynamicResolutionOptions.maxScale(c, 0L, value.maxScale)
-                FilaViewDynamicResolutionOptions.maxScale(c, 1L, value.maxScale)
+                val minScaleSeg = FilaViewDynamicResolutionOptions.minScale(c)
+                minScaleSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 0L, value.minScale)
+                minScaleSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 1L, value.minScale)
+                val maxScaleSeg = FilaViewDynamicResolutionOptions.maxScale(c)
+                maxScaleSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 0L, value.maxScale)
+                maxScaleSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 1L, value.maxScale)
                 FilaViewDynamicResolutionOptions.sharpness(c, value.sharpness)
                 FilaViewDynamicResolutionOptions.quality(c, value.quality.ordinal)
                 FilamentC.FilaView_setDynamicResolutionOptions(nativeHandle, c)
@@ -378,7 +383,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 density = FilaViewFogOptions.density(out)
                 height = FilaViewFogOptions.height(out)
                 heightFalloff = FilaViewFogOptions.heightFalloff(out)
-                color = floatArrayOf(FilaViewFogOptions.color(out, 0L), FilaViewFogOptions.color(out, 1L), FilaViewFogOptions.color(out, 2L))
+                val fogColorSeg = FilaViewFogOptions.color(out)
+                color = floatArrayOf(fogColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 0L), fogColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 1L), fogColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 2L))
                 cutOffDistance = FilaViewFogOptions.cutOffDistance(out)
                 maximumOpacity = FilaViewFogOptions.maximumOpacity(out)
                 inScatteringStart = FilaViewFogOptions.inScatteringStart(out)
@@ -394,7 +400,10 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 FilaViewFogOptions.density(c, value.density)
                 FilaViewFogOptions.height(c, value.height)
                 FilaViewFogOptions.heightFalloff(c, value.heightFalloff)
-                FilaViewFogOptions.color(c, 0L, value.color[0]); FilaViewFogOptions.color(c, 1L, value.color[1]); FilaViewFogOptions.color(c, 2L, value.color[2])
+                val fogColorSeg = FilaViewFogOptions.color(c)
+                fogColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 0L, value.color[0])
+                fogColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 1L, value.color[1])
+                fogColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 2L, value.color[2])
                 FilaViewFogOptions.cutOffDistance(c, value.cutOffDistance)
                 FilaViewFogOptions.maximumOpacity(c, value.maximumOpacity)
                 FilaViewFogOptions.inScatteringStart(c, value.inScatteringStart)
@@ -448,7 +457,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 midPoint = FilaViewVignetteOptions.midPoint(out)
                 roundness = FilaViewVignetteOptions.roundness(out)
                 feather = FilaViewVignetteOptions.feather(out)
-                color = floatArrayOf(FilaViewVignetteOptions.color(out, 0L), FilaViewVignetteOptions.color(out, 1L), FilaViewVignetteOptions.color(out, 2L), FilaViewVignetteOptions.color(out, 3L))
+                val vigColorSeg = FilaViewVignetteOptions.color(out)
+                color = floatArrayOf(vigColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 0L), vigColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 1L), vigColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 2L), vigColorSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 3L))
             }
         }
         set(value) {
@@ -458,7 +468,11 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 FilaViewVignetteOptions.midPoint(c, value.midPoint)
                 FilaViewVignetteOptions.roundness(c, value.roundness)
                 FilaViewVignetteOptions.feather(c, value.feather)
-                FilaViewVignetteOptions.color(c, 0L, value.color[0]); FilaViewVignetteOptions.color(c, 1L, value.color[1]); FilaViewVignetteOptions.color(c, 2L, value.color[2]); FilaViewVignetteOptions.color(c, 3L, value.color[3])
+                val vigColorSeg = FilaViewVignetteOptions.color(c)
+                vigColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 0L, value.color[0])
+                vigColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 1L, value.color[1])
+                vigColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 2L, value.color[2])
+                vigColorSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 3L, value.color[3])
                 FilamentC.FilaView_setVignetteOptions(nativeHandle, c)
             }
         }
@@ -487,10 +501,11 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                     shadowDistance = FilaViewAmbientOcclusionOptions.ssct.shadowDistance(ssctSeg)
                     contactDistanceMax = FilaViewAmbientOcclusionOptions.ssct.contactDistanceMax(ssctSeg)
                     intensity = FilaViewAmbientOcclusionOptions.ssct.intensity(ssctSeg)
+                    val lightDirSeg = FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg)
                     lightDirection = floatArrayOf(
-                        FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg, 0L),
-                        FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg, 1L),
-                        FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg, 2L)
+                        lightDirSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 0L),
+                        lightDirSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 1L),
+                        lightDirSeg.getAtIndex(ValueLayout.JAVA_FLOAT, 2L)
                     )
                     depthBias = FilaViewAmbientOcclusionOptions.ssct.depthBias(ssctSeg)
                     depthSlopeBias = FilaViewAmbientOcclusionOptions.ssct.depthSlopeBias(ssctSeg)
@@ -520,9 +535,10 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 FilaViewAmbientOcclusionOptions.ssct.shadowDistance(ssctSeg, value.ssct.shadowDistance)
                 FilaViewAmbientOcclusionOptions.ssct.contactDistanceMax(ssctSeg, value.ssct.contactDistanceMax)
                 FilaViewAmbientOcclusionOptions.ssct.intensity(ssctSeg, value.ssct.intensity)
-                FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg, 0L, value.ssct.lightDirection[0])
-                FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg, 1L, value.ssct.lightDirection[1])
-                FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg, 2L, value.ssct.lightDirection[2])
+                val lightDirSeg = FilaViewAmbientOcclusionOptions.ssct.lightDirection(ssctSeg)
+                lightDirSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 0L, value.ssct.lightDirection[0])
+                lightDirSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 1L, value.ssct.lightDirection[1])
+                lightDirSeg.setAtIndex(ValueLayout.JAVA_FLOAT, 2L, value.ssct.lightDirection[2])
                 FilaViewAmbientOcclusionOptions.ssct.depthBias(ssctSeg, value.ssct.depthBias)
                 FilaViewAmbientOcclusionOptions.ssct.depthSlopeBias(ssctSeg, value.ssct.depthSlopeBias)
                 FilaViewAmbientOcclusionOptions.ssct.sampleCount(ssctSeg, value.ssct.sampleCount.toByte())
