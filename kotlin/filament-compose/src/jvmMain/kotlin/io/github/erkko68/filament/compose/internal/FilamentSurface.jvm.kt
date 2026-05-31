@@ -18,7 +18,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
-import io.github.erkko68.filament.RenderTarget
 import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
@@ -32,19 +31,15 @@ import org.jetbrains.skia.Rect
 
 private const val RESIZE_DEBOUNCE_MS = 150L
 
+private const val SWAP_CHAIN_CONFIG_READABLE = 0x2L
+
 private class OffscreenSurface(
-    val colorTexture: Texture,
-    val depthTexture: Texture,
-    val renderTarget: RenderTarget,
     val swapChain: SwapChain,
     val width: Int,
     val height: Int,
 ) {
     fun destroy(engine: Engine) {
         engine.destroySwapChain(swapChain)
-        engine.destroyRenderTarget(renderTarget)
-        engine.destroyTexture(depthTexture)
-        engine.destroyTexture(colorTexture)
     }
 }
 
@@ -134,30 +129,14 @@ internal actual fun FilamentSurface(
         val h = textureSize.height
 
         if (w > 0 && h > 0) {
-            val colorTexture = Texture.Builder()
-                .width(w).height(h).levels(1)
-                .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.BLIT_SRC or Texture.Usage.SAMPLEABLE)
-                .format(Texture.InternalFormat.RGBA8)
-                .build(engine)
-            val depthTexture = Texture.Builder()
-                .width(w).height(h)
-                .usage(Texture.Usage.DEPTH_ATTACHMENT)
-                .format(Texture.InternalFormat.DEPTH32F)
-                .build(engine)
-            val renderTarget = RenderTarget.Builder()
-                .texture(RenderTarget.AttachmentPoint.COLOR, colorTexture)
-                .texture(RenderTarget.AttachmentPoint.DEPTH, depthTexture)
-                .build(engine)
-            val swapChain = engine.createSwapChain(w, h, 0)
-            view.renderTarget = renderTarget
+            val swapChain = engine.createSwapChain(w, h, SWAP_CHAIN_CONFIG_READABLE)
             view.viewport = Viewport(0, 0, w, h)
             onResizeRef.value?.invoke(w.toDouble() / h.toDouble())
-            surface = OffscreenSurface(colorTexture, depthTexture, renderTarget, swapChain, w, h)
+            surface = OffscreenSurface(swapChain, w, h)
         }
 
         onDispose {
             val s = surface ?: return@onDispose
-            view.renderTarget = null
             surface = null
             engine.flushAndWait()
             s.destroy(engine)
@@ -168,21 +147,17 @@ internal actual fun FilamentSurface(
         val s = surface ?: return@FilamentRenderLoop
         if (renderer.beginFrame(s.swapChain, frameTime)) {
             renderer.render(view)
+            // Swapchain readback must happen inside the frame (after render, before endFrame).
+            val descs = pixelBufferDescriptors
+            if (descs != null) {
+                val i = nextBufIndex[0]
+                if (!pendingFlags[i]) {
+                    pendingFlags[i] = true
+                    renderer.readPixels(0, 0, s.width, s.height, descs[i])
+                    nextBufIndex[0] = (i + 1) % 2
+                }
+            }
             renderer.endFrame()
-        }
-        val descs = pixelBufferDescriptors ?: return@FilamentRenderLoop
-        val i = nextBufIndex[0]
-        if (!pendingFlags[i]) {
-            pendingFlags[i] = true
-            renderer.readPixels(
-                renderTarget = s.renderTarget,
-                xoffset = 0,
-                yoffset = 0,
-                width = s.width,
-                height = s.height,
-                buffer = descs[i],
-            )
-            nextBufIndex[0] = (i + 1) % 2
         }
     }
 

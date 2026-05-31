@@ -5,7 +5,7 @@ The `filament-compose` module provides the integration between the [Filament](ht
 ## Overview
 
 - **[Scope & Philosophy](scope.md)**: Understand the goals and design principles behind `filament-compose`.
-- **[Integration Strategies](integration-strategies.md)**: Details on the mechanism used to bridge Filament's GPU output with the Compose canvas (Pixel Readback vs. Zero-Copy).
+- **[Integration Strategies](integration-strategies.md)**: How Filament's GPU output reaches the Compose canvas on each platform (native surface, web offscreen+blit, or pixel readback), plus the per-platform layering & stacking limitations.
 - **[Materials](materials.md)**: Authoring `.mat` source, compiling with `matc`, loading at runtime, parameterising per-instance, and when to use runtime `filamat` instead.
 
 ## Scene vs. View

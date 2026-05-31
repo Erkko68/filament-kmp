@@ -1,0 +1,127 @@
+package io.github.erkko68.filament.compose.internal
+
+import androidx.compose.ui.unit.IntRect
+import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.NativeSurface
+import io.github.erkko68.filament.Renderer
+import io.github.erkko68.filament.SwapChain
+import io.github.erkko68.filament.View
+import io.github.erkko68.filament.Viewport
+import kotlinx.browser.window
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
+import kotlin.math.max
+
+/**
+ * On web a Filament [Engine] is bound to a single WebGL context/canvas — `createSwapChain` takes no
+ * canvas and `readPixels` isn't bound — so each `FilamentView` cannot own its own GL surface.
+ *
+ * So every view of one engine shares this compositor. It renders each registered view into its own
+ * region of the engine's (offscreen) canvas in a single frame, then `drawImage`-blits each region
+ * onto that view's own 2D canvas. Blitting straight from the WebGL canvas needs no readback API and
+ * stays on the GPU. Each view's 2D canvas is displayed through the normal Compose HTML-interop path
+ * (see `FilamentSurface`), which is what actually makes the hole-punch reveal it.
+ */
+internal class WebViewCompositor private constructor(private val engine: Engine) {
+
+    /** A view, its destination 2D canvas, and its current window-space bounds (Compose px). */
+    class Entry(val view: View, val target: HTMLCanvasElement) {
+        var rect: IntRect = IntRect(0, 0, 0, 0)
+        val ctx: CanvasRenderingContext2D? = target.getContext("2d") as? CanvasRenderingContext2D
+    }
+
+    private val canvas: HTMLCanvasElement = engine.jsCanvas
+        ?: error("WebViewCompositor requires an Engine created with a canvas")
+    private val renderer: Renderer = engine.createRenderer()
+    private val entries = ArrayList<Entry>()
+    private var swapChain: SwapChain? = null
+    private var rafId: Int = 0
+    private var running = false
+
+    private val frameCallback: (Double) -> Unit = {
+        if (running) {
+            renderFrame()
+            rafId = window.requestAnimationFrame(frameCallback)
+        }
+    }
+
+    fun register(view: View, target: HTMLCanvasElement): Entry {
+        val entry = Entry(view, target)
+        entries.add(entry)
+        if (!running) start()
+        return entry
+    }
+
+    fun unregister(entry: Entry) {
+        entries.remove(entry)
+        if (entries.isEmpty()) stop()
+    }
+
+    private fun start() {
+        running = true
+        rafId = window.requestAnimationFrame(frameCallback)
+    }
+
+    private fun stop() {
+        running = false
+        if (rafId != 0) {
+            window.cancelAnimationFrame(rafId)
+            rafId = 0
+        }
+    }
+
+    private fun renderFrame() {
+        if (entries.isEmpty()) return
+
+        // The offscreen canvas must span every view's window rect so each can be rendered into its
+        // own slice in one frame; views sit at distinct screen positions so they don't overlap.
+        var unionW = 0
+        var unionH = 0
+        for (e in entries) {
+            unionW = max(unionW, e.rect.right)
+            unionH = max(unionH, e.rect.bottom)
+        }
+        if (unionW <= 0 || unionH <= 0) return
+        if (canvas.width != unionW || canvas.height != unionH) {
+            canvas.width = unionW
+            canvas.height = unionH
+        }
+
+        val sc = swapChain ?: engine.createSwapChain(NativeSurface(canvas)).also { swapChain = it }
+        if (renderer.beginFrame(sc, Engine.getSteadyClockTimeNano())) {
+            for (e in entries) {
+                val r = e.rect
+                if (r.width <= 0 || r.height <= 0) continue
+                // Compose rect is top-left origin; Filament viewport origin is bottom-left.
+                e.view.viewport = Viewport(r.left, unionH - (r.top + r.height), r.width, r.height)
+                renderer.render(e.view)
+            }
+            renderer.endFrame()
+        }
+
+        // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
+        // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == rect.top.
+        for (e in entries) {
+            val r = e.rect
+            val ctx = e.ctx ?: continue
+            if (r.width <= 0 || r.height <= 0) continue
+            if (e.target.width != r.width || e.target.height != r.height) {
+                e.target.width = r.width
+                e.target.height = r.height
+            }
+            ctx.asDynamic().drawImage(
+                canvas,
+                r.left.toDouble(), r.top.toDouble(), r.width.toDouble(), r.height.toDouble(),
+                0.0, 0.0, r.width.toDouble(), r.height.toDouble(),
+            )
+        }
+    }
+
+    companion object {
+        private val instances = HashMap<Engine, WebViewCompositor>()
+
+        /** The compositor for [engine], created on first use. One per engine (one canvas). */
+        fun of(engine: Engine): WebViewCompositor =
+            instances.getOrPut(engine) { WebViewCompositor(engine) }
+    }
+}
