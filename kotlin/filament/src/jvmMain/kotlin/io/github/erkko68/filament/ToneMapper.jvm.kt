@@ -37,5 +37,5 @@ actual open class ToneMapper(internal val nativeHandle: MemorySegment?) {
             set(value) { FilamentC.FilaToneMapper_Generic_setHdrMax(nativeHandle, value) }
     }
 
-    actual class DisplayRange actual constructor() : ToneMapper(FilamentC.FilaToneMapper_Linear())
+    actual class DisplayRange actual constructor() : ToneMapper(FilamentC.FilaToneMapper_DisplayRange())
 }

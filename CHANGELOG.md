@@ -11,6 +11,19 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.2-beta03] — 2026-05-31
+
+### Fixed
+- **JVM Post-Processing Rendering**: Fixed a memory alignment bug in the JVM FFM bindings where `jextract` array setters for options like `Vignette`, `Bloom`, `Fog`, and `AmbientOcclusion` were corrupting memory, causing a red tint on the camera due to `NaN`s in the tone mapper.
+- **JVM Hardware Picking**: Corrected `View.pick` memory access for `fragCoords` inside `PickingQueryResult`.
+- **JVM Memory Integrity**: Ensured proper memory slicing for inline arrays inside C structs using standard Java `MemorySegment` access instead of generated setters.
+- **Web Rendering**: Implemented Web-based Filament rendering via shared `WebViewCompositor` and per-view canvas blitting, fixing the `FilamentSurface.js.kt` rendering.
+- **Tone Mapping**: Fixed `ToneMapper.DisplayRange` incorrectly mapping to the `Linear` tone mapper natively.
+- **Texture Format**: Removed `STENCIL_INDEX` from `Texture.Format` enum to correctly align with Filament's internal `PixelDataFormat` indexing.
+
+### Changed
+- **Testing**: Planned to close binding-coverage gaps with a real-backend fixture.
+
 ## [0.1.2-beta02] — 2026-05-30
 
 - **`filament-compose` reshaped around a value-based scene/view split (breaking).** The scene is now a value and `FilamentView` a leaf that renders it — mirroring Filament's own `Scene`/`View` model.
@@ -125,7 +138,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta02...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta03...HEAD
+[0.1.2-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta02...0.1.2-beta03
 [0.1.2-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta01...0.1.2-beta02
 [0.1.2-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc02...0.1.2-beta01
 [0.1.1-rc02]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc01...0.1.1-rc02

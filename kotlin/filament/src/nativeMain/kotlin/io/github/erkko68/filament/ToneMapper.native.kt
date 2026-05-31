@@ -39,5 +39,5 @@ actual open class ToneMapper(internal val nativeHandle: CPointer<FilaToneMapper>
             set(value) { FilaToneMapper_Generic_setHdrMax(nativeHandle, value) }
     }
     
-    actual class DisplayRange actual constructor() : ToneMapper(FilaToneMapper_Linear()) // Placeholder to match parity with Android if we kept it
+    actual class DisplayRange actual constructor() : ToneMapper(FilaToneMapper_DisplayRange())
 }

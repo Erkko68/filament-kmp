@@ -125,7 +125,7 @@ actual class Texture public constructor(public var nativeHandle: MemorySegment?)
     }
 
     actual enum class Format {
-        R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, STENCIL_INDEX, ALPHA;
+        R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, ALPHA;
         internal fun toNative(): Int = ordinal
     }
 
