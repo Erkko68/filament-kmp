@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in the Filament KMP wrapper is broken
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: please check whether this is a **wrapper** bug or a **Filament engine**
+        bug. If the same symptom would happen using Filament directly from C++/JS (rendering
+        artifacts, backend errors, shader/material issues, native crashes), report it at
+        [google/filament](https://github.com/google/filament/issues) and link it here — see
+        CONTRIBUTING.md.
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Affected platform(s)
+      multiple: true
+      options: [Android, iOS, JVM/Desktop, Web/JS, Common/all]
+    validations: { required: true }
+  - type: input
+    id: lib-version
+    attributes:
+      label: Filament KMP version
+      placeholder: "e.g. 0.1.2-beta03"
+    validations: { required: true }
+  - type: input
+    id: fila-version
+    attributes:
+      label: Filament version (filaVersion)
+      placeholder: "e.g. 1.71.5"
+    validations: { required: false }
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you expected vs. what actually happened. Include logs/stack traces.
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Ideally a minimal sample or a diff against one of the apps in `samples/`.
+    validations: { required: true }
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: OS, device/browser, GPU/driver (for web, the `GL_RENDERER` string helps a lot).
+      placeholder: "e.g. Windows 11, Chrome 124, ANGLE (NVIDIA ... Direct3D11)"
+    validations: { required: false }
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-flight
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: I considered whether this is an upstream Filament (engine) bug.
+          required: true

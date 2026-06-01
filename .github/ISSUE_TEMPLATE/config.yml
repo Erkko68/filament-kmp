@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Filament engine bug (rendering, backends, shaders, native crashes)
+    url: https://github.com/google/filament/issues
+    about: >-
+      If the problem reproduces using Filament directly (not specific to the Kotlin wrapper),
+      please report it upstream to Google Filament. Feel free to link it back here with the
+      `upstream-filament` label.
+  - name: Question / usage help
+    url: https://github.com/Erkko68/filament-kmp/discussions
+    about: For how-to questions and general discussion (if Discussions is enabled).

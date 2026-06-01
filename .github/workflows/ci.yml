@@ -5,6 +5,15 @@ name: CI
 # is a composite includeBuild of this repo, so its tasks reuse the incremental outputs
 # already produced earlier in the same job). Replaces the old build.yml/test.yml/samples.yml,
 # which each rebuilt the library from scratch per concern, per platform.
+#
+# The platform matrix is EXPENSIVE (native prebuilts, emulators, XCFrameworks), so it does
+# not run automatically on pull requests. To run it on a PR, add the `ci:run` label (it
+# re-runs on every push while the label is present); or trigger it manually from the Actions
+# tab (workflow_dispatch) and pick which platform(s) to run. It always runs on push to main.
+#
+# `ci-gate` is the single required status check: it fails unless every platform job
+# SUCCEEDED, so a PR can't be merged until the matrix has run green. Without the `ci:run`
+# label the platform jobs are skipped, the gate fails, and merge stays blocked.
 
 on:
   push:
@@ -12,11 +21,25 @@ on:
     # Docs-only changes don't affect the build — skip the (expensive) matrix.
     paths-ignore: ['**.md']
   pull_request:
+    # Heavy jobs are gated on the `ci:run` label (see each job's `if:`); they re-run on
+    # new commits while the label is present, and are skipped otherwise.
+    types: [labeled, synchronize, reopened]
     branches: [main]
-    paths-ignore: ['**.md']
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: 'Which platform job(s) to run'
+        type: choice
+        default: all
+        options: [all, jvm, js, ios, android]
 
 jobs:
   jvm:
+    # Run on: push to main; PRs carrying the `ci:run` label; manual dispatch (all|jvm).
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'jvm'))
     strategy:
       fail-fast: false
       matrix:
@@ -78,6 +101,10 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   js:
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'js'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -105,6 +132,10 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   ios:
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'ios'))
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -169,6 +200,10 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   android:
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'android'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -201,3 +236,28 @@ jobs:
         with:
           name: android-test-reports
           path: kotlin/*/build/reports/androidTests/
+
+  # Single required status check for branch protection. Runs always (even if the platform
+  # jobs were skipped) and fails unless EVERY platform job succeeded — so a PR with no
+  # `ci:run` label (all jobs skipped) cannot merge. Manual dispatches that intentionally run
+  # a subset don't fail the gate (they're not gating a merge).
+  ci-gate:
+    if: always()
+    needs: [jvm, js, ios, android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all platform jobs to have succeeded
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          results="${{ join(needs.*.result, ' ') }}"
+          echo "Platform job results: $results"
+          for r in $results; do
+            if [ "$r" != "success" ]; then
+              echo "::error::CI gate failed (a platform job result was '$r'). On a PR, add the 'ci:run' label and ensure jvm/js/ios/android all pass before merging."
+              exit 1
+            fi
+          done
+          echo "All platform jobs succeeded — gate green."
+      - name: Manual dispatch summary
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "Manual dispatch (jobs=${{ inputs.jobs }}); gate not enforced for dispatch runs."

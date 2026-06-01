@@ -1,0 +1,29 @@
+name: Feature request
+description: Propose new API coverage, platform support, or an improvement
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This wrapper mirrors Filament's public API. If you're requesting a binding that already
+        exists in Filament but isn't exposed here, mention the upstream class/method so we can
+        map it (see the API parity section in CONTRIBUTING.md).
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Relevant platform(s)
+      multiple: true
+      options: [Android, iOS, JVM/Desktop, Web/JS, Common/all]
+    validations: { required: true }
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to do that you can't today?
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: API shape, upstream Filament reference, or alternatives considered.
+    validations: { required: false }

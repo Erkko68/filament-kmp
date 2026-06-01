@@ -6,9 +6,34 @@ repeat runs skip the download.
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
-| [`ci.yml`](ci.yml) | push / PR to `main` (docs-only changes skipped via `paths-ignore: ['**.md']`) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). Gate for merging — must be green. |
+| [`ci.yml`](ci.yml) | **push to `main`** (docs-only skipped); **PRs only with the `ci:run` label**; **manual dispatch** (job picker) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [On-demand CI](#on-demand-ci). |
 | [`pages.yml`](pages.yml) | push to `main` touching the web target (`js/**`, `kotlin/**/src/jsMain/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and deploys it to GitHub Pages. Already scoped to web-relevant paths, so docs changes never trigger it. |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central. See [Releasing](#releasing) below. |
+
+## On-demand CI
+
+The platform matrix is expensive (native prebuilts, Android emulator, iOS XCFrameworks), so
+it **does not run automatically on pull requests.** Instead:
+
+- **On a PR** — a maintainer adds the **`ci:run`** label. The full matrix runs and re-runs on
+  every push while the label is present (removing the label stops it). This is the path that
+  produces the status checks a PR is gated on.
+- **Manually** — *Actions → CI → Run workflow* (`workflow_dispatch`) with a `jobs` input to
+  pick `all` / `jvm` / `js` / `ios` / `android`. Handy for re-checking one platform without
+  the whole matrix. Dispatch runs don't enforce the merge gate.
+- **On push to `main`** — the full matrix always runs.
+
+### The merge gate
+
+`ci-gate` is a tiny aggregator job (`needs: [jvm, js, ios, android]`, `if: always()`) that
+**fails unless every platform job succeeded** — skipped counts as not-succeeded. `main` is
+branch-protected to require `ci-gate` (strict / up-to-date), so:
+
+- A PR with no `ci:run` label has all platform jobs skipped → `ci-gate` red → **can't merge.**
+- Add `ci:run`, let the matrix go green → `ci-gate` green → mergeable.
+
+To change which jobs are required, edit the `ci-gate` `needs:` list and the branch-protection
+`required_status_checks.contexts` together.
 
 ## Releasing
 
