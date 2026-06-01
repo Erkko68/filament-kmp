@@ -18,9 +18,7 @@ The single most useful thing you can do before filing an issue or PR is to figur
 
 A good rule of thumb: if the same symptom would happen from C++/JS using Filament directly,
 it's an engine issue — report it upstream and link it here with the **`upstream-filament`**
-label so we can track it (and patch our prebuilts if needed). See the WebGL "uniform buffer
-too small" case ([google/filament#10077](https://github.com/google/filament/pull/10077)) for
-a worked example of diagnosing, patching, and upstreaming an engine bug from this repo.
+label so we can track it (and patch our prebuilts if needed).
 
 ## Project layout
 
