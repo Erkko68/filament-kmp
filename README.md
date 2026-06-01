@@ -96,7 +96,6 @@ The public API stays as close as possible to the **Android Filament API**, so ex
 ### Upstream Filament (authoritative for engine concepts)
 - **[Filament Engine](https://google.github.io/filament/Filament.md.html)** — PBR theory, scene graph, lighting model, render pipeline.
 - **[Materials](https://google.github.io/filament/Materials.md.html)** — material system, surface shading model, `matc` reference.
-- **[Filament samples](https://github.com/google/filament/tree/main/samples)** — reference scenes ported one-to-one in this project's `samples/`.
 
 ## Samples
 
