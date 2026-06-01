@@ -1,0 +1,104 @@
+diff --git a/filament/backend/src/opengl/OpenGLContext.cpp b/filament/backend/src/opengl/OpenGLContext.cpp
+index 2bb763ebd..e96440475 100644
+--- a/filament/backend/src/opengl/OpenGLContext.cpp
++++ b/filament/backend/src/opengl/OpenGLContext.cpp
+@@ -359,6 +359,16 @@ void OpenGLContext::initBugs(Bugs* bugs, Extensions const& exts,
+     (void)shader;
+ 
+     const bool isAngle = strstr(renderer, "ANGLE");
++
++    // ANGLE's D3D11 path doesn't fold a spec-constant-initialized `const int` into a
++    // uniform-block array length, so instanced draws bind a range smaller than the block the
++    // shader declares ("uniform buffer too small" -> dropped draw -> black materials). Renderer
++    // string looks like "ANGLE (NVIDIA, NVIDIA GeForce ... Direct3D11 vs_5_0 ps_5_0)". This is
++    // observed on Chromium/Firefox-on-Windows, including through WebGL. (b/...)
++    if (isAngle && strstr(renderer, "Direct3D11")) {
++        bugs->spec_constant_array_size_not_folded = true;
++    }
++
+     if (!isAngle) {
+         if (strstr(renderer, "Adreno")) {
+             // Qualcomm GPU
+diff --git a/filament/backend/src/opengl/OpenGLContext.h b/filament/backend/src/opengl/OpenGLContext.h
+index 87da1cf92..00d8eee24 100644
+--- a/filament/backend/src/opengl/OpenGLContext.h
++++ b/filament/backend/src/opengl/OpenGLContext.h
+@@ -296,6 +296,15 @@ public:
+         // Some Mali drivers also have problems with this (b/445721121)
+         bool disable_framebuffer_fetch_extension;
+ 
++        // ANGLE-on-D3D11 (and some other GLES drivers) don't fold a spec-constant-initialized
++        // `const int` into a uniform-block array length, e.g.
++        // `const int CONFIG_MAX_INSTANCES = SPIRV_CROSS_CONSTANT_ID_1;` used as the size of
++        // `PerRenderableData data[CONFIG_MAX_INSTANCES]`. They lay the block out with the
++        // matc-baked default while the engine binds the runtime size, so every instanced draw
++        // trips "uniform buffer too small" and is dropped (lit materials render black). When set,
++        // ShaderCompilerService rewrites such array lengths to the bound literal.
++        bool spec_constant_array_size_not_folded;
++
+     } bugs = {};
+ 
+     struct Procs {
+@@ -389,6 +398,9 @@ private:
+             {   bugs.disable_framebuffer_fetch_extension,
+                     "disable_framebuffer_fetch_extension",
+                     ""},
++            {   bugs.spec_constant_array_size_not_folded,
++                    "spec_constant_array_size_not_folded",
++                    ""},
+     }};
+ 
+     // this is chosen to minimize code size
+diff --git a/filament/backend/src/opengl/ShaderCompilerService.cpp b/filament/backend/src/opengl/ShaderCompilerService.cpp
+index a733934be..8ab62ccf6 100644
+--- a/filament/backend/src/opengl/ShaderCompilerService.cpp
++++ b/filament/backend/src/opengl/ShaderCompilerService.cpp
+@@ -46,6 +46,8 @@
+ #include <atomic>
+ #include <atomic>
+ #include <cctype>
++#include <cstdio>
++#include <cstring>
+ #include <iterator>
+ #include <iterator>
+ #include <memory>
+@@ -801,6 +803,39 @@ void ShaderCompilerService::cancelPendingSynchronousProgram(program_token_t cons
+                 process_OVR_multiview2(context, numViews, shader_src, shader_len);
+             }
+ 
++            // Workaround for drivers (e.g. ANGLE-on-D3D11) that don't fold a spec-constant-
++            // initialized `const int CONFIG_MAX_INSTANCES = SPIRV_CROSS_CONSTANT_ID_1` into the
++            // uniform-block array size `PerRenderableData data[CONFIG_MAX_INSTANCES]`. They lay
++            // the block out with the matc-baked default (CONFIG_MAX_INSTANCES is 64 in matc),
++            // while the engine binds the runtime size (8 on web), so every instanced draw trips
++            // "uniform buffer too small" and the draw is dropped, leaving lit materials black.
++            // Rewrite the symbolic array length to the literal the engine actually binds
++            // (preserving byte count with trailing spaces) so the GLSL compiler can't get it
++            // wrong. Spec-constant-aware revival of the 2022 hack at commit fe3790cb9 (#5859),
++            // removed when spec constants were assumed portable.
++            if (context.bugs.spec_constant_array_size_not_folded) {
++                // Matches ReservedSpecializationConstants::CONFIG_MAX_INSTANCES; we can't include
++                // EngineEnums.h here (layering), same precedent as CONFIG_STEREO_EYE_COUNT above.
++                constexpr size_t CONFIG_MAX_INSTANCES_ID = 1;
++                if (specializationConstants.size() > CONFIG_MAX_INSTANCES_ID) {
++                    int32_t const maxInstances = std::get<int32_t>(
++                            specializationConstants[CONFIG_MAX_INSTANCES_ID]);
++                    constexpr std::string_view symbolic = "[CONFIG_MAX_INSTANCES]";
++                    char replacement[symbolic.size() + 1];
++                    int const n = std::snprintf(
++                            replacement, sizeof(replacement), "[%d", maxInstances);
++                    if (n > 0 && size_t(n) < symbolic.size()) {
++                        std::memset(replacement + n, ' ', symbolic.size() - n - 1);
++                        replacement[symbolic.size() - 1] = ']';
++                        std::string_view const view{ shader_src, shader_len };
++                        for (size_t p = view.find(symbolic); p != std::string_view::npos;
++                                p = view.find(symbolic, p + symbolic.size())) {
++                            std::memcpy(shader_src + p, replacement, symbolic.size());
++                        }
++                    }
++                }
++            }
++
+             // add support for ARB_shading_language_packing if needed
+             auto const packingFunctions = process_ARB_shading_language_packing(context);
+             auto const countBitsFunctions = process_countBits(context);
