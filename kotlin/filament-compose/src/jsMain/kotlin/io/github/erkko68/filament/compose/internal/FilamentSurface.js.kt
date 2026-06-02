@@ -54,7 +54,10 @@ internal actual fun FilamentSurface(
     SideEffect { onResizeRef.value = onResize }
 
     DisposableEffect(compositor, entry) {
-        onDispose { compositor.unregister(entry) }
+        onDispose {
+            entry.disposed = true
+            compositor.unregister(entry)
+        }
     }
 
     var lastSize by remember { mutableStateOf(IntSize.Zero) }

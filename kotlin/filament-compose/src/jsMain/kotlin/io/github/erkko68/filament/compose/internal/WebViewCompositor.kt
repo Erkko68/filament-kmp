@@ -28,6 +28,8 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     class Entry(val view: View, val target: HTMLCanvasElement) {
         var rect: IntRect = IntRect(0, 0, 0, 0)
         val ctx: CanvasRenderingContext2D? = target.getContext("2d") as? CanvasRenderingContext2D
+        /** Set to true before unregister so the RAF loop never touches a destroyed view. */
+        var disposed: Boolean = false
     }
 
     private val canvas: HTMLCanvasElement = engine.jsCanvas
@@ -53,8 +55,9 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     }
 
     fun unregister(entry: Entry) {
+        entry.disposed = true
         entries.remove(entry)
-        if (entries.isEmpty()) stop()
+        if (entries.isEmpty()) destroy()
     }
 
     private fun start() {
@@ -68,6 +71,19 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
             window.cancelAnimationFrame(rafId)
             rafId = 0
         }
+    }
+
+    /**
+     * Full teardown: stop the RAF loop, destroy engine-owned resources (swap-chain, renderer),
+     * and remove this compositor from the static [instances] map so a fresh one is created if
+     * the engine is reused later.
+     */
+    private fun destroy() {
+        stop()
+        swapChain?.let { engine.destroySwapChain(it) }
+        swapChain = null
+        engine.destroyRenderer(renderer)
+        instances.remove(engine)
     }
 
     private fun renderFrame() {
@@ -90,6 +106,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         val sc = swapChain ?: engine.createSwapChain(NativeSurface(canvas)).also { swapChain = it }
         if (renderer.beginFrame(sc, Engine.getSteadyClockTimeNano())) {
             for (e in entries) {
+                if (e.disposed) continue
                 val r = e.rect
                 if (r.width <= 0 || r.height <= 0) continue
                 // Compose rect is top-left origin; Filament viewport origin is bottom-left.
@@ -102,6 +119,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
         // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == rect.top.
         for (e in entries) {
+            if (e.disposed) continue
             val r = e.rect
             val ctx = e.ctx ?: continue
             if (r.width <= 0 || r.height <= 0) continue
