@@ -28,7 +28,12 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     class Entry(val view: View, val target: HTMLCanvasElement) {
         var rect: IntRect = IntRect(0, 0, 0, 0)
         val ctx: CanvasRenderingContext2D? = target.getContext("2d") as? CanvasRenderingContext2D
-        /** Set to true before unregister so the RAF loop never touches a destroyed view. */
+        /**
+         * Defensive guard skipped over in [renderFrame]. Teardown is synchronous — [unregister]
+         * removes the entry (and [stop]s the RAF loop) before the owning FilamentView destroys the
+         * view — so in practice the loop never iterates a disposed entry. Kept so a future change to
+         * the disposal-effect ordering can't render or blit a view that's already been destroyed.
+         */
         var disposed: Boolean = false
     }
 
