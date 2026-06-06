@@ -35,7 +35,7 @@ The world is declared in the content lambda; the viewport's look is configured b
 - **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
-- **Web / WASM** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts` *(experimental)*
+- **Web / JS** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts`
 
 ## Quick start
 
