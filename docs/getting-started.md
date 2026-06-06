@@ -3,7 +3,7 @@
 This guide walks you through adding Filament KMP to a Kotlin Multiplatform project and rendering your first scene on each supported target.
 
 > [!NOTE]
-> Filament KMP requires **Kotlin 2.0+**, **Compose Multiplatform 1.7+**, and a JDK capable of running Compose Desktop (JDK 17+).
+> Filament KMP requires **Kotlin 2.0+**, **Compose Multiplatform 1.7+**, and **JDK 22+** (required by the Project Panama / FFM bindings used for Desktop/JVM).
 
 ## 1. Add the Maven Central repository
 
@@ -112,19 +112,48 @@ The Compose Desktop plugin handles the rest. The native runtime — a Project Pa
 
 ```kotlin
 // desktopApp/build.gradle.kts
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    kotlin("multiplatform")
+    alias(libs.plugins.kotlinJvm) // or kotlin("jvm") if not using a version catalog
     id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 kotlin {
+    // Pin the JDK toolchain — Gradle will download JDK 22 automatically if needed.
+    jvmToolchain(22)
+}
+```
+
+For a shared KMP module that also targets JVM, set the JVM compiler target explicitly:
+
+```kotlin
+// shared/build.gradle.kts
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+kotlin {
+    jvmToolchain(22)
+
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "17"
+        // Ensure the bytecode target is compatible with FFM (Java 22+)
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_22
+        }
+    }
+
+    // Android uses a separate jvmTarget
+    androidTarget {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
         }
     }
 }
 ```
+
+> [!IMPORTANT]
+> Make sure your Gradle daemon also runs on JDK 22+
+> And verify with `./gradlew --version`. IntelliJ IDEA / Android Studio will prompt you to configure the Gradle JDK under **Settings → Build → Gradle → Gradle JDK**.
 
 Entry point:
 
