@@ -195,7 +195,7 @@ python3 scripts/gradle/download_filament_prebuilts.py <version> web
 # outputs to prebuilts/web/ — copy filament.js and filament.wasm to src/jsMain/resources/
 ```
 
-**`index.html`.** Load `filament.js` before your app script, and give the root element a stacking context so any Compose overlay elements (HUDs, buttons) can be layered on top via `z-index`:
+**`index.html`.** Load `filament.js` before your app script. The `FilamentApp` helper (used in the entry point below) automatically injects the root element, configures the stacking context (so Compose overlays like buttons layer correctly), and mounts the Canvas:
 
 ```html
 <!DOCTYPE html>
@@ -204,11 +204,9 @@ python3 scripts/gradle/download_filament_prebuilts.py <version> web
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        #root { width: 100%; height: 100%; position: relative; z-index: 0; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
     <script src="filament.js"></script>
     <script src="webApp.js"></script>
 </body>
@@ -219,23 +217,9 @@ Entry point:
 
 ```kotlin
 // webApp/src/jsMain/kotlin/Main.kt
-fun main() {
-    window.asDynamic()._filamentReady = ::startApp
-    js("""
-        Filament.init([], function() {
-            var nativeFetch = window.fetch;
-            Object.assign(window, Filament);
-            window.fetch = nativeFetch;
-            window._filamentReady();
-        });
-    """)
-}
+import io.github.erkko68.filament.compose.FilamentApp
 
-@JsExport
-fun startApp() {
-    val container = document.getElementById("root") ?: error("No #root element")
-    ComposeViewport(container) { App() }
-}
+fun main() = FilamentApp { App() }
 ```
 
 ## 4. Your first scene

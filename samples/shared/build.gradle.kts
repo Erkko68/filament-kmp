@@ -34,15 +34,15 @@ kotlin {
     
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
-            implementation(libs.compose.ui)
-            implementation(libs.compose.components.resources)
-            implementation(libs.filament)
-            implementation(libs.filament.compose)
-            implementation(libs.utils)
-            implementation(libs.gltfio)
+            api(libs.compose.runtime)
+            api(libs.compose.foundation)
+            api(libs.compose.material3)
+            api(libs.compose.ui)
+            api(libs.compose.components.resources)
+            api(libs.filament)
+            api(libs.filament.compose)
+            api(libs.utils)
+            api(libs.gltfio)
             implementation(libs.navigation.compose)
         }
         commonTest.dependencies {
