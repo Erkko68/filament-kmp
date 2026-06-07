@@ -11,6 +11,15 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.2-beta04] — 2026-06-07
+
+### Added
+- **Web entry point**: `FilamentApp { … }` helper (`filament-compose`) that handles the full web lifecycle — WASM module init, full-viewport root element creation, and `ComposeViewport` mount. The hosting `index.html` no longer needs a `<div id="root">`; `fun main() = FilamentApp { App() }` is the whole entry point.
+
+### Fixed
+- **Web Rendering**: Added a driver workaround for ANGLE-on-D3D11 instancing shader compilation errors that produced black materials.
+- **Web**: Prevented a use-after-destroy crash during web `FilamentView` disposal.
+
 ## [0.1.2-beta03] — 2026-05-31
 
 ### Fixed
@@ -137,7 +146,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta03...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta04...HEAD
+[0.1.2-beta04]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta03...0.1.2-beta04
 [0.1.2-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta02...0.1.2-beta03
 [0.1.2-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta01...0.1.2-beta02
 [0.1.2-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.1-rc02...0.1.2-beta01
