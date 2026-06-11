@@ -377,6 +377,14 @@ if (FILAMENT_BUILD_SHARED)
             "-framework OpenGL"
         )
     elseif (WIN32)
+        # FIX: workaround for missing <cstring> in upstream utils/algorithm.h.
+        # MSVC two-phase name lookup requires memcpy to be declared at the template-
+        # definition point of utils::bit_cast (algorithm.h:280), not just at the
+        # instantiation site. /FI force-includes <cstring> as the first line of every
+        # TU so memcpy is always in scope when algorithm.h is first parsed.
+        # TODO: remove once upstream filament adds #include <cstring> to algorithm.h.
+        target_compile_options(filament-c-jvm PRIVATE /FI<cstring>)
+
         # PlatformWGL / BlueGLWindows need the Win32 OpenGL + GDI libs;
         # shlwapi is used by utils::Path.
         target_link_libraries(filament-c-jvm PRIVATE opengl32 gdi32 user32 shlwapi)

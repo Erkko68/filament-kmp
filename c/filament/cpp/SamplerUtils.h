@@ -2,7 +2,6 @@
 #define FILAMENT_CPP_SAMPLER_UTILS_H
 
 #include <filament/TextureSampler.h>
-#include <cstring>          // ensure memcpy is declared before utils/algorithm.h's bit_cast (MSVC two-phase lookup)
 #include <utils/algorithm.h>
 #include "../c/FilaTypes.h"
 
