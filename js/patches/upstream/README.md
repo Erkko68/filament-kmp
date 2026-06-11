@@ -1,77 +1,67 @@
 # Upstream Filament source patches (web prebuilt)
 
 Patches applied to the **upstream Filament** source tree before building the web
-prebuilt (`prebuilts/web/filament.js` + `.wasm` + `.d.ts`). These are *engine*
-patches — they ship **inside the wasm**, not in this repo's Kotlin/JS code. They
-are distinct from the `../filament.patch.d.ts` / `../filament.dts-overrides.json`
+prebuilt (`prebuilts/web/filament.js` + `.wasm`). These are *engine* patches —
+they ship **inside the wasm**, not in this repo's Kotlin/JS code. They are
+distinct from the `../filament.patch.d.ts` / `../filament.dts-overrides.json`
 files, which only patch the *TypeScript externals* Karakum reads.
 
 ## How to apply / rebuild
 
 ```sh
 git clone --filter=blob:none https://github.com/google/filament.git
-cd filament && git checkout <base SHA below>
+cd filament && git checkout v1.71.6
 git apply /path/to/js/patches/upstream/*.patch
 export EMSDK=<emsdk 5.0.4>            # BUILDING.md pins 5.0.4
 ./build.sh -p wasm release           # builds host tools, then the wasm
-# outputs: out/cmake-wasm-release/web/filament-js/{filament.js,filament.wasm,filament.d.ts}
+# outputs: out/cmake-wasm-release/web/filament-js/{filament.js,filament.wasm}
 cp out/cmake-wasm-release/web/filament-js/filament.{js,wasm} \
    /path/to/filament-kmp/prebuilts/web/
+# and into samples/webApp/src/jsMain/resources/ (the web app loads that copy directly)
 ```
 
-> **d.ts note:** copy only `filament.js` + `filament.wasm`. We intentionally keep
-> the **`filaVersion` (1.71.5) `filament.d.ts`**, not the HEAD one. The fix is a
-> runtime C++ change that ships in the wasm and doesn't touch the binding surface.
-> The HEAD d.ts is a pure *superset* (new `camutils`/`viewer`/automation helpers
-> the project doesn't bind) and its appended `viewer` block has a dangling
-> `BlendMode` reference (should be `View$BlendMode`) that breaks Karakum codegen.
-> The 1.71.5 d.ts still accurately describes the subset the engine exposes, so the
-> generated externals match the committed `jsMain` actuals. Drop this note once
-> `filaVersion` is bumped to a release that contains this fix and a clean d.ts.
+Copy only `filament.js` + `filament.wasm`. The `filament.d.ts` from a stock
+1.71.6 build is fine to keep — Karakum generates clean externals from it (the old
+dangling-`BlendMode` issue that forced keeping the 1.71.5 d.ts is resolved in
+1.71.6). See [[project_karakum_js_externals]].
 
 ## Patches
 
-### `0001-webgl-rewrite-CONFIG_MAX_INSTANCES-array-size.patch`
+### `0001-shaders-clamp-colored-penumbra-divisor.patch`
 
-- **Base:** Filament `main` @ `34e9ee43efb7e2555d2a0561d353ea01899bb6e3`
-  (post-1.71.5; includes the froxel fix #10000, so only the instancing array
-  remains).
-- **Symptom:** On ANGLE-D3D11 (Chromium/Windows) and some Android/Linux GLES
-  drivers, every `glDrawElementsInstanced` trips
-  `GL_INVALID_OPERATION: ...uniform buffer that is too small`; the draw is
-  dropped and lit materials render black. Chromium/macOS (ANGLE-Metal)
-  tolerates it.
-- **Cause:** Those drivers don't fold
-  `const int CONFIG_MAX_INSTANCES = SPIRV_CROSS_CONSTANT_ID_1` into the
-  uniform-block array length `PerRenderableData data[CONFIG_MAX_INSTANCES]`.
-  They size the block from the matc-baked default (`CONFIG_MAX_INSTANCES` is
-  **64** in matc, which isn't built with `__EMSCRIPTEN__`), while the web engine
-  binds only `sizeof(PerRenderableUib)` (`CONFIG_MAX_INSTANCES` is **8** here).
-  Bound 8 < declared 64 → "too small".
-- **Why engine-side, not matc:** matc emits one shared GLES shader for *both*
-  WebGL and native Android (both are `TargetApi::OPENGL` / `ShaderModel::MOBILE`
-  — there is no WebGL target in the enum). Baking a literal would break Android,
-  where the runtime legitimately binds 64. The divergence is per-driver, so the
-  fix is gated on a driver-workaround flag in the GL backend.
-- **Fix (3 files):**
-  - `OpenGLContext.h` — adds a `bugs.spec_constant_array_size_not_folded` flag
-    (+ its `mBugDatabase` entry).
-  - `OpenGLContext.cpp` — sets the flag in `initBugs` when the renderer is
-    ANGLE-on-D3D11 (`GL_RENDERER` contains `"ANGLE"` and `"Direct3D11"` —
-    Chromium/Firefox on Windows, including through WebGL).
-  - `ShaderCompilerService.cpp` — when the flag is set, rewrites the symbolic
-    array length `[CONFIG_MAX_INSTANCES]` to the literal the engine actually
-    binds (read from the spec-constant array, so FL0=1 is handled, and the value
-    is correct on every platform — 8 on web, 64 on native), padded with spaces
-    to preserve byte count. Spec-constant-aware revival of the 2022 hack at
-    `fe3790cb9` (#5859), removed when spec constants were assumed portable.
-- **Why the flag, not `#ifdef __EMSCRIPTEN__`:** the flag only rewrites on
-  drivers that actually miscompile (compliant drivers — incl. ANGLE-Metal on
-  macOS Chrome — keep the real spec constant and its small-array perf win), it
-  also covers affected *native* GLES drivers, and it matches Filament's existing
-  `bugs` precedent (more likely to merge). Add more offending renderer strings
-  to the `initBugs` match as they're confirmed.
-- **Upstream status:** prior PR #10053 (broader, hardcoded, `__EMSCRIPTEN__`-only)
-  was closed as presumed-redundant after #10000; but #10000 only covered the
-  froxel buffers, not `CONFIG_MAX_INSTANCES`. This patch is the basis for a new,
-  narrower PR.
+- **Base:** Filament `v1.71.6`.
+- **Symptom:** On ANGLE-D3D11 (Chromium/Firefox on Windows) some faces render
+  black in shadow-penumbra regions; macOS (ANGLE-Metal) and Android are fine.
+  No GL warning or error — the geometry still draws and is still pickable, the
+  shaded result is just black.
+- **Cause:** 1.71.6 added the `coloredPenumbra` material feature. The standard
+  and cloth shading models compute, under `#if defined(HAS_COLORED_PENUMBRA)`:
+  ```glsl
+  vec3 penumbraColor = min(vec3(1.0 / PI), Fd / (2.0 * (1.0 - pixel.diffuseColor)));
+  Fd = mix(penumbraColor, Fd, pow4(occlusion));   // occlusion < 1 in penumbra
+  ```
+  `Fd / (2.0 * (1.0 - diffuseColor))` divides by zero for any white/near-white
+  diffuse channel → Inf/NaN. `min(finite, NaN)` is undefined in GLSL: desktop GL
+  and ANGLE-Metal return the finite operand, but **ANGLE-D3D11 propagates the
+  NaN** → black fragment. Only live where the shaded fragment is in penumbra
+  (`occlusion < 1`) and only for materials with `coloredPenumbra` enabled or the
+  `SUBSURFACE` shading model (which always enables it). The subsurface model is
+  unaffected — it uses the bounded scattered `color` as its penumbra term.
+- **Fix:** clamp the divisor away from zero
+  (`max(2.0 * (1.0 - diffuseColor), vec3(1e-4))`). The division was only ever a
+  way to reach the `min(1.0 / PI, …)` energy-conserving cap, so the clamp yields
+  the intended capped value without ever producing Inf/NaN. Two files:
+  `shaders/src/surface_shading_model_standard.fs`,
+  `shaders/src/surface_shading_model_cloth.fs`.
+- **Upstream status:** candidate for an upstream PR (same shape as the
+  `CONFIG_MAX_INSTANCES` fix below).
+
+## Upstreamed (no longer carried here)
+
+### `CONFIG_MAX_INSTANCES` array-size rewrite — merged into `v1.71.6`
+
+The earlier `0001-webgl-rewrite-CONFIG_MAX_INSTANCES-array-size.patch` (ANGLE-D3D11
+binding a uniform block smaller than the shader's `data[CONFIG_MAX_INSTANCES]`
+array → `GL_INVALID_OPERATION: uniform buffer too small` → dropped instanced draws
+→ black materials) **landed upstream in Filament 1.71.6**, so it is no longer
+needed and has been removed. Stock 1.71.6 binaries already contain it.
