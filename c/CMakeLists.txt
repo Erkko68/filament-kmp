@@ -383,7 +383,7 @@ if (FILAMENT_BUILD_SHARED)
         # instantiation site. /FI force-includes <cstring> as the first line of every
         # TU so memcpy is always in scope when algorithm.h is first parsed.
         # TODO: remove once upstream filament adds #include <cstring> to algorithm.h.
-        target_compile_options(filament-c-jvm PRIVATE /FI<cstring>)
+        target_compile_options(filament-c-jvm PRIVATE /FIcstring)
 
         # PlatformWGL / BlueGLWindows need the Win32 OpenGL + GDI libs;
         # shlwapi is used by utils::Path.
