@@ -31,7 +31,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CACHE_DIR="${SCRIPT_DIR}/.filament-src-cache"
 
 # Module map: KMP path  ↔  Android subpath inside the Filament source tree.

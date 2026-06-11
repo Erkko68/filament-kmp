@@ -26,6 +26,7 @@ class ColorGradingTest : FilamentTestFixture() {
             .vibrance(0.5f)
             .saturation(1.0f)
             .curves(floatArrayOf(0f, 0f, 1f), floatArrayOf(0f, 0f, 1f), floatArrayOf(0f, 0f, 1f))
+            .fastMath(false)
             .build(engine)
         
         assertNotNull(grading)

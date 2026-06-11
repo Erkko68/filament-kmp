@@ -128,6 +128,10 @@ void FilaMaterialBuilder_transparentShadow(FilaMaterialBuilder* builder, bool en
     reinterpret_cast<MaterialBuilder*>(builder)->transparentShadow(enable);
 }
 
+void FilaMaterialBuilder_coloredPenumbra(FilaMaterialBuilder* builder, bool enable) {
+    reinterpret_cast<MaterialBuilder*>(builder)->coloredPenumbra(enable);
+}
+
 void FilaMaterialBuilder_specularAntiAliasing(FilaMaterialBuilder* builder, bool enable) {
     reinterpret_cast<MaterialBuilder*>(builder)->specularAntiAliasing(enable);
 }

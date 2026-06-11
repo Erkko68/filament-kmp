@@ -101,4 +101,19 @@ class EngineTest {
         // Cleanup
         engine.destroy()
     }
+
+    @Test
+    fun testEngineBuilderWithColorGrading() {
+        Filament.init()
+        val engine = Engine.Builder()
+            .backend(Engine.Backend.NOOP)
+            .colorGrading(
+                ColorGrading.Builder()
+                    .quality(ColorGrading.QualityLevel.HIGH)
+                    .toneMapper(ToneMapper.Linear())
+            )
+            .build()
+        assertTrue(engine.isValid())
+        engine.destroy()
+    }
 }

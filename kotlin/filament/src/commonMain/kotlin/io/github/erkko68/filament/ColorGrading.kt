@@ -18,6 +18,7 @@ expect class ColorGrading {
         fun vibrance(vibrance: Float): Builder
         fun saturation(saturation: Float): Builder
         fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder
+        fun fastMath(fastMath: Boolean): Builder
         fun build(engine: Engine): ColorGrading
     }
 

@@ -10,7 +10,7 @@
  * The :js Gradle build concatenates this overlay onto the upstream
  * `filament.d.ts` before running Karakum, so the generated Kotlin externals
  * cover the *real* surface. Everything declared here is registered in
- * jsbindings.cpp for Filament 1.71.5.
+ * jsbindings.cpp for Filament 1.71.6.
  *
  * HOW TO EDIT
  * - Instance methods: reopen the class as an `interface` of the same name
@@ -248,6 +248,10 @@ export interface LightManager$Builder {
 
 export interface Skybox$Builder {
     priority(priority: number): Skybox$Builder;
+}
+
+export interface ColorGrading$Builder {
+    fastMath(fastMath: boolean): ColorGrading$Builder;
 }
 
 export interface BufferObject$Builder {

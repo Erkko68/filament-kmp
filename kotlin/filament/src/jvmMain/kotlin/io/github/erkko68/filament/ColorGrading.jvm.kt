@@ -5,7 +5,7 @@ import java.lang.foreign.MemorySegment
 
 actual class ColorGrading internal constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
-        private val nativeHandle: MemorySegment = FilamentC.FilaColorGradingBuilder_create()
+        internal val nativeHandle: MemorySegment = FilamentC.FilaColorGradingBuilder_create()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
             FilamentC.FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal)
@@ -92,6 +92,11 @@ actual class ColorGrading internal constructor(internal var nativeHandle: Memory
             confined { arena ->
                 FilamentC.FilaColorGradingBuilder_curves(nativeHandle, arena.floats(shadowGamma), arena.floats(midPoint), arena.floats(highlightScale))
             }
+            return this
+        }
+
+        actual fun fastMath(fastMath: Boolean): Builder {
+            FilamentC.FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
             return this
         }
 

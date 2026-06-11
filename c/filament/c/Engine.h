@@ -2,6 +2,7 @@
 #define FILAMENT_C_ENGINE_H
 
 #include "FilaTypes.h"
+#include "ColorGrading.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,6 +50,7 @@ void FilaEngineBuilder_featureLevel(FilaEngineBuilder* builder, FilaEngineFeatur
 void FilaEngineBuilder_sharedContext(FilaEngineBuilder* builder, void* sharedContext);
 void FilaEngineBuilder_paused(FilaEngineBuilder* builder, bool paused);
 void FilaEngineBuilder_feature(FilaEngineBuilder* builder, const char* name, bool value);
+void FilaEngineBuilder_colorGrading(FilaEngineBuilder* builder, const FilaColorGradingBuilder* colorGrading);
 FilaEngine* FilaEngineBuilder_build(FilaEngineBuilder* builder);
 
 // Engine

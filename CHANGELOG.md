@@ -11,6 +11,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **Filament 1.71.6**: Upgraded the bundled Filament engine to 1.71.6, adding the new public API: `ColorGrading.Builder.fastMath`, `MaterialBuilder.coloredPenumbra`, and `Engine.Builder.colorGrading`.
+
 ## [0.1.2-beta04] — 2026-06-07
 
 ### Added

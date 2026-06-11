@@ -85,6 +85,7 @@ expect class Engine {
         fun featureLevel(featureLevel: FeatureLevel): Builder
         fun paused(paused: Boolean): Builder
         fun feature(name: String, value: Boolean): Builder
+        fun colorGrading(colorGrading: ColorGrading.Builder): Builder
         fun build(): Engine
     }
 

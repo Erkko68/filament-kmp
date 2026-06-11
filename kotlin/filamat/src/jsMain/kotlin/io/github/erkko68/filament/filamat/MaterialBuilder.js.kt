@@ -208,6 +208,7 @@ actual class MaterialBuilder {
     actual fun alphaToCoverage(enable: Boolean): MaterialBuilder = this
     actual fun shadowMultiplier(shadowMultiplier: Boolean): MaterialBuilder = this
     actual fun transparentShadow(transparentShadow: Boolean): MaterialBuilder = this
+    actual fun coloredPenumbra(coloredPenumbra: Boolean): MaterialBuilder = this
     actual fun specularAntiAliasing(specularAntiAliasing: Boolean): MaterialBuilder = this
     actual fun specularAntiAliasingVariance(variance: Float): MaterialBuilder = this
     actual fun specularAntiAliasingThreshold(threshold: Float): MaterialBuilder = this

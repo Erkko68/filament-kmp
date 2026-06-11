@@ -305,6 +305,8 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         actual fun featureLevel(featureLevel: FeatureLevel): Builder = this
         actual fun paused(paused: Boolean): Builder = this
         actual fun feature(name: String, value: Boolean): Builder = this
+        // TODO(js): Engine.Builder.colorGrading is not registered in jsbindings.cpp (filament.js has no Engine.Builder).
+        actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder = this
         actual fun build(): Engine = create()
     }
 

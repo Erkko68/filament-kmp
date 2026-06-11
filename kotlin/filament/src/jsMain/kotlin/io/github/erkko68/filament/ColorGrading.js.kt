@@ -134,6 +134,11 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             return this
         }
 
+        actual fun fastMath(fastMath: Boolean): Builder {
+            jsBuilder.fastMath(fastMath)
+            return this
+        }
+
         actual fun build(engine: Engine): ColorGrading {
             return ColorGrading(jsBuilder.build(engine.jsEngine))
         }

@@ -93,6 +93,12 @@ void FilaEngineBuilder_feature(FilaEngineBuilder *builder, const char *name,
   FILA_CAST(Engine::Builder, builder)->feature(name, value);
 }
 
+void FilaEngineBuilder_colorGrading(FilaEngineBuilder *builder,
+                                    const FilaColorGradingBuilder *colorGrading) {
+  FILA_CAST(Engine::Builder, builder)->colorGrading(
+      *reinterpret_cast<const ColorGrading::Builder *>(colorGrading));
+}
+
 FilaEngine *FilaEngineBuilder_build(FilaEngineBuilder *builder) {
   return reinterpret_cast<FilaEngine *>(
       FILA_CAST(Engine::Builder, builder)->build());

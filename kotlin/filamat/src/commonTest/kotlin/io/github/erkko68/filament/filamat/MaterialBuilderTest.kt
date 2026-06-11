@@ -99,6 +99,7 @@ class MaterialBuilderTest : FilamatTestFixture() {
                 .alphaToCoverage(false)
                 .shadowMultiplier(true)
                 .transparentShadow(true)
+                .coloredPenumbra(true)
                 .specularAntiAliasing(true)
                 .specularAntiAliasingVariance(0.15f)
                 .specularAntiAliasingThreshold(0.2f)

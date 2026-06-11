@@ -178,6 +178,7 @@ expect class MaterialBuilder() {
     fun alphaToCoverage(enable: Boolean): MaterialBuilder
     fun shadowMultiplier(shadowMultiplier: Boolean): MaterialBuilder
     fun transparentShadow(transparentShadow: Boolean): MaterialBuilder
+    fun coloredPenumbra(coloredPenumbra: Boolean): MaterialBuilder
     fun specularAntiAliasing(specularAntiAliasing: Boolean): MaterialBuilder
     fun specularAntiAliasingVariance(variance: Float): MaterialBuilder
     fun specularAntiAliasingThreshold(threshold: Float): MaterialBuilder

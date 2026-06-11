@@ -8,7 +8,7 @@ import cnames.structs.FilaColorGradingBuilder
 
 actual class ColorGrading internal constructor(internal var nativeHandle: CPointer<FilaColorGrading>?) {
     actual class Builder actual constructor() {
-        private val nativeHandle: CPointer<FilaColorGradingBuilder>? = FilaColorGradingBuilder_create()
+        internal val nativeHandle: CPointer<FilaColorGradingBuilder>? = FilaColorGradingBuilder_create()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
             FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal.toUInt())
@@ -95,6 +95,11 @@ actual class ColorGrading internal constructor(internal var nativeHandle: CPoint
             memScoped {
                 FilaColorGradingBuilder_curves(nativeHandle, shadowGamma.toCValues().ptr, midPoint.toCValues().ptr, highlightScale.toCValues().ptr)
             }
+            return this
+        }
+
+        actual fun fastMath(fastMath: Boolean): Builder {
+            FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
             return this
         }
 

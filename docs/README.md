@@ -18,6 +18,7 @@ Welcome. These docs cover everything you need to build with `filament-kmp` — f
 ## For contributors
 
 - **[Repository Structure](repo-structure.md)** — How the C++ wrapper, JVM (Panama/FFM), Kotlin, JS (Karakum) and prebuilt layers fit together.
+- **[Upgrading the Filament Version](upgrading-filament.md)** — End-to-end workflow for bumping `filaVersion`: scoping the diff, refreshing prebuilts, adding/removing binding surface across all platforms, and verifying.
 - **[Automation & Scripts](../scripts/README.md)** — Internal tooling for prebuilts and Filament-version upgrade diffs.
 
 ## Upstream Filament documentation

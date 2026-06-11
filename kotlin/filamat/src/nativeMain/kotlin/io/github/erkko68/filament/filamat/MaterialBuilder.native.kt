@@ -253,6 +253,11 @@ actual class MaterialBuilder actual constructor() {
         return this
     }
 
+    actual fun coloredPenumbra(coloredPenumbra: Boolean): MaterialBuilder {
+        FilaMaterialBuilder_coloredPenumbra(nativeHandle, coloredPenumbra)
+        return this
+    }
+
     actual fun specularAntiAliasing(specularAntiAliasing: Boolean): MaterialBuilder {
         FilaMaterialBuilder_specularAntiAliasing(nativeHandle, specularAntiAliasing)
         return this

@@ -4,7 +4,7 @@ import com.google.android.filament.ColorGrading as FilamentColorGrading
 
 actual class ColorGrading internal constructor(internal val nativeColorGrading: FilamentColorGrading) {
     actual class Builder actual constructor() {
-        private val nativeBuilder = FilamentColorGrading.Builder()
+        internal val nativeBuilder = FilamentColorGrading.Builder()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
             nativeBuilder.quality(FilamentColorGrading.QualityLevel.entries[qualityLevel.ordinal])
@@ -83,6 +83,11 @@ actual class ColorGrading internal constructor(internal val nativeColorGrading: 
 
         actual fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
             nativeBuilder.curves(shadowGamma, midPoint, highlightScale)
+            return this
+        }
+
+        actual fun fastMath(fastMath: Boolean): Builder {
+            nativeBuilder.fastMath(fastMath)
             return this
         }
 

@@ -130,6 +130,11 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
             return this
         }
 
+        actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
+            android.colorGrading(colorGrading.nativeBuilder)
+            return this
+        }
+
         actual fun build(): Engine = Engine(android.build())
     }
 

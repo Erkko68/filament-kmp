@@ -105,4 +105,8 @@ void FilaColorGradingBuilder_curves(FilaColorGradingBuilder* builder, const floa
     );
 }
 
+void FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* builder, bool fastMath) {
+    FILA_CAST(ColorGrading::Builder, builder)->fastMath(fastMath);
+}
+
 } // extern "C"

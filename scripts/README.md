@@ -39,32 +39,23 @@ python3 scripts/gradle/download_jextract.py   # install jextract (needed to buil
 
 ## Updating the Filament version
 
-1. Run `scripts/dev/upgrade-diff.sh v<old> v<new> --summary` to scope the change. Use the
-   output as a checklist; re-run without `--summary` (or pipe to `--output`) on the
-   sections that look interesting. Pay particular attention to:
-   - **Web JS bindings** — new `.function(...)` entries in `jsbindings.cpp` mean
-     methods reachable from Kotlin via `asDynamic()` even when `filament.d.ts` /
-     the generated externals don't see them. (See e.g. `Animator.applyAnimation`,
-     `View.getFogEntity`, `TransformManager.getParent` — all bound but absent from
-     the d.ts.)
-   - **`MATERIAL_VERSION`** — any change means every shipped `.filamat` must be
-     recompiled with the new matc.
-   - **`CONFIG_MAX_INSTANCES`** and other WebGL workaround constants — relevant to
-     the "uniform buffer too small" class of bugs.
-   - **`FeatureFlagManager.h`** defaults — silent behavior flips (UBO batching has
-     toggled multiple times).
-2. Bump `filaVersion` in [gradle.properties](../gradle.properties).
-3. Delete the matching `prebuilts/*/` and `include/` so they re-download.
-4. Run `./gradlew downloadPrebuilts` to refresh natives and headers.
-5. Run `scripts/dev/check-js-bindings.sh` to surface any newly added (or removed)
-   JS bindings. Add the missing declarations to `js/patches/filament.patch.d.ts`
-   (instance methods/enums) or `js/patches/filament.dts-overrides.json` (statics,
-   field/typo corrections) with the correct signature from `web/filament-js/jsbindings.cpp`;
-   Karakum regenerates the externals on the next `:js` build. See [`js/README.md`](../js/README.md).
-6. Run `scripts/dev/check-common-api.sh` to surface any new Filament Android Java
-   methods that don't have a matching `expect` in this repo's `commonMain`.
-   Either add the expect+actuals or document the omission in the script's
-   skip regex.
-7. Walk every sample on every target platform — silent renderer behavior changes
-   (default values in `BloomOptions`, `FogOptions`, etc.) don't show up in any
-   header diff.
+The full end-to-end workflow lives in **[docs/upgrading-filament.md](../docs/upgrading-filament.md)** —
+scoping the diff, refreshing prebuilts, the per-layer recipe for adding/removing binding
+surface, and verification. The short version:
+
+```sh
+scripts/dev/upgrade-diff.sh v<old> v<new> --summary   # 1. scope (re-run without --summary on hot areas)
+#                                                       2. bump filaVersion in gradle.properties
+find prebuilts -mindepth 2 -maxdepth 2 -type d -name lib -exec rm -rf {} +
+rm -rf prebuilts/web && ./gradlew downloadPrebuilts   # 3. refresh prebuilts (libs are NOT version-aware!)
+scripts/dev/check-common-api.sh                       # 4. Android API methods missing from commonMain
+scripts/dev/check-js-bindings.sh                       #    jsbindings.cpp methods missing from the JS overlay
+#                                                       5. apply changes + update tests (see the doc)
+scripts/dev/run-tests.sh                               # 6. verify jvm + js + ios (+ android if attached)
+```
+
+> [!WARNING]
+> `downloadPrebuilts_<target>` is `upToDateWhen { the output dir exists }` — **not**
+> version-aware. Bumping `filaVersion` refreshes headers (`downloadIncludes` is stamped) but
+> leaves libraries stale, causing header/lib mismatch link errors. Always delete
+> `prebuilts/*/lib` + `prebuilts/web` first (step 3 above).

@@ -215,6 +215,10 @@ actual class MaterialBuilder actual constructor() {
         FilamentC.FilaMaterialBuilder_transparentShadow(nativeHandle, transparentShadow)
     }
 
+    actual fun coloredPenumbra(coloredPenumbra: Boolean): MaterialBuilder = apply {
+        FilamentC.FilaMaterialBuilder_coloredPenumbra(nativeHandle, coloredPenumbra)
+    }
+
     actual fun specularAntiAliasing(specularAntiAliasing: Boolean): MaterialBuilder = apply {
         FilamentC.FilaMaterialBuilder_specularAntiAliasing(nativeHandle, specularAntiAliasing)
     }

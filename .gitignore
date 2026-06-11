@@ -21,6 +21,6 @@ filament-source/
 *.log
 .DS_Store
 **/.DS_Store
-# Upstream Filament clone kept by scripts/upgrade-diff.sh
-scripts/.filament-src-cache/
+# Upstream Filament clone kept by scripts/dev/upgrade-diff.sh
+scripts/dev/.filament-src-cache/
 kotlin-js-store/

@@ -120,6 +120,11 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
             return this
         }
 
+        actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
+            FilamentC.FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle)
+            return this
+        }
+
         actual fun build(): Engine {
             val handle = FilamentC.FilaEngineBuilder_build(nativeBuilder)
             FilamentC.FilaEngineBuilder_destroy(nativeBuilder)

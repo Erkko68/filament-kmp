@@ -121,6 +121,11 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
             return this
         }
 
+        actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
+            FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle)
+            return this
+        }
+
         actual fun build(): Engine {
             val handle = FilaEngineBuilder_build(nativeBuilder)
             FilaEngineBuilder_destroy(nativeBuilder)

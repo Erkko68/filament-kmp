@@ -210,6 +210,7 @@ void FilaMaterialBuilder_maskThreshold(FilaMaterialBuilder* builder, float thres
 void FilaMaterialBuilder_alphaToCoverage(FilaMaterialBuilder* builder, bool enable);
 void FilaMaterialBuilder_shadowMultiplier(FilaMaterialBuilder* builder, bool enable);
 void FilaMaterialBuilder_transparentShadow(FilaMaterialBuilder* builder, bool enable);
+void FilaMaterialBuilder_coloredPenumbra(FilaMaterialBuilder* builder, bool enable);
 void FilaMaterialBuilder_specularAntiAliasing(FilaMaterialBuilder* builder, bool enable);
 void FilaMaterialBuilder_specularAntiAliasingVariance(FilaMaterialBuilder* builder, float variance);
 void FilaMaterialBuilder_specularAntiAliasingThreshold(FilaMaterialBuilder* builder, float threshold);
