@@ -9,6 +9,7 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("filament-publish")
+    id("org.jetbrains.dokka")
 }
 
 // ── Project coordinates (previously in root allprojects {}) ───────────────────

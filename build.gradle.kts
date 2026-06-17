@@ -1,3 +1,7 @@
+plugins {
+    id("org.jetbrains.dokka")
+}
+
 // Plugin coordinates (kotlin, android, compose, vanniktech-publish) are pulled
 // onto the classpath through buildSrc/build.gradle.kts and applied by the
 // `filament-kmp-module` convention plugin in each :kotlin:* module.
