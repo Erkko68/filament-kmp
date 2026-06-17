@@ -78,7 +78,7 @@ Rendering tests run where a backend is already available and skip elsewhere:
 | Runner | Backend | Cost |
 |---|---|---|
 | macOS desktop (JVM) | Metal | free (Apple-silicon runners have a usable GPU) |
-| iOS simulator | Metal | free; swapchain `readPixels` is skipped — the sim driver can't read back reliably on constrained CI runners (begin/render/end bindings still run) |
+| iOS simulator | Metal | free; the full render-to-readable-swapchain test (`RendererRenderingTest`) is skipped on Kotlin/Native — the CI macOS runner is a headless VM with no real GPU, so its sim Metal aborts on that path (passes on a local sim backed by the host GPU). Other binding tests run. |
 | Android emulator | GLES (SwiftShader) | free |
 | Linux desktop | software Vulkan (lavapipe via `mesa-vulkan-drivers`) | one `apt-get` line — optional |
 | Windows desktop | software (flaky) | rendering tests skip; `NOOP` coverage stays |
