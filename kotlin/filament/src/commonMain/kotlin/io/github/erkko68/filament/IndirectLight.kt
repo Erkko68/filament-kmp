@@ -131,28 +131,44 @@ expect class IndirectLight {
 
     companion object {
         /**
-         * Estimates the dominant direction of light from spherical harmonics coefficients.
+         * Helper to estimate the direction of the dominant light in the environment represented by
+         * spherical harmonics.
          *
-         * Useful for determining the main light direction for analysis or debugging.
+         * This assumes that there is only a single dominant light (such as the sun in outdoors
+         * environments), if it's not the case the direction returned will be an average of the
+         * various lights based on their intensity.
          *
-         * @param sh Spherical harmonics coefficients array
+         * If there are no clear dominant light, as is often the case with low dynamic range (LDR)
+         * environments, this method may return a wrong or unexpected direction.
+         *
+         * The dominant light direction can be used to set a directional light's direction,
+         * for instance to produce shadows that match the environment.
+         *
+         * @param sh 3-band spherical harmonics coefficients (must be 9 float3 values, or 27 floats if flattened)
          * @param out Optional FloatArray for result; created if null
-         * @return The dominant light direction as [x, y, z] (normalized)
+         * @return A unit vector representing the direction of the dominant light
+         *
+         * @see LightManager.Builder.direction
          */
         fun getDirectionEstimate(sh: FloatArray, out: FloatArray? = null): FloatArray
 
         /**
-         * Estimates the color at a specific direction from spherical harmonics coefficients.
+         * Helper to estimate the color and relative intensity of the environment represented by
+         * spherical harmonics in a given direction.
          *
-         * Evaluates the SH basis at the given direction to estimate the environment
-         * color from that direction.
+         * This can be used to set the color and intensity of a directional light. In this case
+         * make sure to multiply the returned intensity by the intensity of this indirect light.
          *
-         * @param sh Spherical harmonics coefficients array
-         * @param x Direction X component
-         * @param y Direction Y component
-         * @param z Direction Z component
-         * @param out Optional FloatArray for result [r, g, b]; created if null
-         * @return The estimated color at the given direction
+         * @param sh 3-band spherical harmonics coefficients (must be 9 float3 values, or 27 floats if flattened)
+         * @param x Direction X component (should form a unit vector with y and z)
+         * @param y Direction Y component (should form a unit vector with x and z)
+         * @param z Direction Z component (should form a unit vector with x and y)
+         * @param out Optional FloatArray for result; created if null
+         * @return A vector of 4 floats: first 3 components are the linear color, 4th is the intensity
+         *
+         * @see getDirectionEstimate
+         * @see LightManager.Builder.color
+         * @see LightManager.Builder.intensity
          */
         fun getColorEstimate(sh: FloatArray, x: Double, y: Double, z: Double, out: FloatArray? = null): FloatArray
     }
