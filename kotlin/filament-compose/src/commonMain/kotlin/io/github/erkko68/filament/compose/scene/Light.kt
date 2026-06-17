@@ -2,7 +2,6 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.LightManager
@@ -137,8 +136,9 @@ fun FilamentSceneScope.Light(
         }
     }
 
-    // Per-recomposition updates — cheap setters, no entity churn.
-    SideEffect {
+    // Push setters only when a parameter actually changes. LightSnapshot is a data class, so
+    // its value equality gates the effect — no entity churn, no wasted setters per recompose.
+    DisposableEffect(entity, LightSnapshot(type, direction, position, color, intensity, castShadows, falloff, cone, sun)) {
         val lm = engine.getLightManager()
         val li = lm.getInstance(entity)
         lm.setColor(li, color.r, color.g, color.b)
@@ -163,6 +163,7 @@ fun FilamentSceneScope.Light(
                 position.x, position.y, position.z, 1f,
             ),
         )
+        onDispose { }
     }
 
     DisposableEffect(entity, parent) {
