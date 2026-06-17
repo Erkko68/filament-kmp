@@ -62,7 +62,11 @@ jobs:
       - uses: ./.github/actions/setup-gradle-cached
 
       # Docs are generated from the JVM source set (it resolves every commonMain
-      # type), so :java's FFM bindings must be jextract-generated like a jvm build.
+      # type), so :java's FFM bindings are built like a jvm build: cmake compiles
+      # the filament-c wrapper (needs libc++ headers) and jextract generates the
+      # bindings.
+      - name: Install C++ deps
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
       - name: Install jextract
         run: python3 scripts/gradle/download_jextract.py
 
