@@ -166,18 +166,6 @@ afterEvaluate {
     }
 }
 
-// ── API docs ──────────────────────────────────────────────────────────────────
-// Document the JVM view: it resolves every commonMain type (the JVM compilation
-// sees all deps), unlike a commonMain-only build which renders types as
-// "<Error class: unknown class>". Suppress the other platforms so the docs build
-// stays on a plain Linux runner (no iOS native, web prebuilts or android) — jvm
-// only needs jextract + :java.
-extensions.configure<org.jetbrains.dokka.gradle.DokkaExtension>("dokka") {
-    dokkaSourceSets.configureEach {
-        if (name != "commonMain" && name != "jvmMain") suppress.set(true)
-    }
-}
-
 // ── Android defaults ──────────────────────────────────────────────────────────
 android {
     val groupStr = project.group.toString()
