@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio.testutils
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.gltfio.Gltfio
+import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -18,6 +19,7 @@ open class GltfioRenderingTestFixture {
     fun setUp() {
         Filament.init()
         Gltfio.init()
+        if (!TestEnv.gpuBackendAvailable) return
         engine = try {
             Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid() }
         } catch (t: Throwable) {

@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.utils.testutils.UtilsRenderingTestFixture
 import kotlin.test.Test
 import kotlin.test.assertNotNull

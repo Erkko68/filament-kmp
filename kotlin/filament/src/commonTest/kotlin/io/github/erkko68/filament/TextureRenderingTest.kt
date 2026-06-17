@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import kotlin.test.Test
 import kotlin.test.assertNotNull

@@ -2,6 +2,7 @@ package io.github.erkko68.filament.testutils
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Filament
+import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -20,10 +21,13 @@ open class RenderingTestFixture {
     @BeforeTest
     fun setUp() {
         Filament.init()
+        // Don't even attempt Engine.create on hosts with no GPU/display — Filament
+        // aborts on its driver thread there, which the try/catch below can't catch.
+        if (!TestEnv.gpuBackendAvailable) return
         engine = try {
             Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid() }
         } catch (t: Throwable) {
-            null // ponytail: no GPU backend here -> tests guard on null and skip
+            null
         }
     }
 

@@ -29,6 +29,7 @@ include(":kotlin:filamat")
 include(":kotlin:filament-utils")
 include(":kotlin:gltfio")
 include(":kotlin:filament-compose")
+include(":kotlin:test-support") // test-only shared helpers (TestEnv + skip annotations)
 
 // JVM/Panama (FFM) bindings: one combined libfilament-c image (filament + filamat +
 // filament-utils + gltfio) plus jextract-generated bindings. All four kotlin JVM modules
