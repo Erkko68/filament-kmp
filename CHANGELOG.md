@@ -11,8 +11,22 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.2-beta05] — 2026-06-17
+
 ### Added
-- **Filament 1.71.6**: Upgraded the bundled Filament engine to 1.71.6, adding the new public API: `ColorGrading.Builder.fastMath`, `MaterialBuilder.coloredPenumbra`, and `Engine.Builder.colorGrading`.
+- **Filament 1.71.6**: Upgraded the bundled Filament engine to 1.71.6; new public API: `ColorGrading.Builder.fastMath`, `MaterialBuilder.coloredPenumbra`, `Engine.Builder.colorGrading`.
+- **KDoc**: Comprehensive documentation on all `commonMain` `expect` declarations across `filament`, `filament-utils`, `gltfio`, and `filamat` modules, adapted from C++ headers.
+- **Test infrastructure**: `:kotlin:test-support` module with `@IgnoreJs`, `gpuBackendAvailable`, and per-target GPU gating decided at Gradle level; `RenderingTestFixture` (DEFAULT backend) covers what NOOP cannot; CI gating for iOS simulator, JVM/Windows, and web.
+- **wasmJs roadmap**: Feasibility study and migration notes for a future `wasmJs` target.
+
+### Fixed
+- **Web**: Colored-penumbra divisor clamped to prevent black faces on ANGLE-D3D11; rebuilt WASM shipped.
+- **Windows CMake**: Corrected flag syntax in the JVM native build (`fix(windows): correct CMake flag syntax`).
+- **JVM/Windows**: `/FI<cstring>` compiler workaround for MSVC `memcpy` error in upstream `algorithm.h` `bit_cast`.
+
+### Changed
+- **`Box`**: Moved from platform actuals to a plain `commonMain` class.
+- **`Light`**: Setters now gate on value equality to avoid redundant recompositions.
 
 ## [0.1.2-beta04] — 2026-06-07
 
@@ -149,7 +163,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta04...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...HEAD
+[0.1.2-beta05]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta04...0.1.2-beta05
 [0.1.2-beta04]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta03...0.1.2-beta04
 [0.1.2-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta02...0.1.2-beta03
 [0.1.2-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta01...0.1.2-beta02
