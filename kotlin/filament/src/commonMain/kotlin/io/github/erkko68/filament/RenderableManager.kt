@@ -1,34 +1,40 @@
 package io.github.erkko68.filament
 
 /**
- * Factory and manager for renderables, which are entities that can be drawn.
+ * Factory and manager for Renderables, which are entities that can be drawn.
  *
- * Renderables are bundles of primitives, each of which has its own geometry and material. All
- * primitives in a particular renderable share a set of rendering attributes, such as whether they
- * cast shadows or use vertex skinning.
+ * Renderables are bundles of primitives, each with its own geometry and material. All
+ * primitives in a renderable share rendering attributes such as shadow casting, skinning,
+ * morphing, layer masks, and priority.
  *
- * Usage example:
+ * **Creating renderables:**
  *
  * ```
- * val renderable = entityManager.create()
- * RenderableManager.Builder(1)
+ * val entity = entityManager.create()
+ * RenderableManager.Builder(1)          // 1 primitive
  *     .boundingBox(Box(-1f, -1f, -1f, 1f, 1f, 1f))
- *     .material(0, matInstance)
- *     .geometry(0, PrimitiveType.TRIANGLES, vertBuffer, indBuffer, 0, 3)
- *     .receiveShadows(false)
- *     .build(engine, renderable)
+ *     .material(0, materialInstance)
+ *     .geometry(0, PrimitiveType.TRIANGLES, vertexBuffer, indexBuffer, 0, 6)
+ *     .receiveShadows(true)
+ *     .castShadows(true)
+ *     .build(engine, entity)
  *
- * scene.addEntity(renderable)
+ * scene.addEntity(entity)
  * ```
  *
- * To modify the state of an existing renderable, clients should first use RenderableManager
- * to get a temporary handle called an instance. The instance can then be used to get or set
- * the renderable's state. Please note that instances are ephemeral; clients should store entities,
- * not instances.
+ * **Modifying renderables:**
+ * To modify an existing renderable, use RenderableManager to get a temporary handle called an
+ * Instance. The instance is used to get/set rendering state. Instances are ephemeral; store
+ * Entity IDs, not instances.
  *
- * - For details about constructing renderables, see RenderableManager.Builder.
- * - To associate a 4x4 transform with an entity, see TransformManager.
- * - To associate a human-readable label with an entity, see utils.NameComponentManager.
+ * **Related components:**
+ * - Use TransformManager to associate a 4x4 transform with an entity
+ * - Use LightManager to add lights
+ * - Use RenderableManager to add geometry and materials
+ *
+ * @see RenderableManager.Builder
+ * @see TransformManager
+ * @see LightManager
  */
 expect class RenderableManager {
     /**
