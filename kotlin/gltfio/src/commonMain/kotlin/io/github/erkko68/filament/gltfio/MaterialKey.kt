@@ -1,6 +1,19 @@
 package io.github.erkko68.filament.gltfio
 
+/**
+ * MaterialKey encodes glTF material properties for material selection and creation.
+ *
+ * MaterialKey holds a set of boolean flags and texture coordinates that describe the
+ * properties of a glTF material. MaterialProvider uses this to determine which material
+ * to create or select. Key properties include texture presence, shading model, alpha mode,
+ * and advanced features like clearcoat and transmission.
+ *
+ * @see MaterialProvider
+ */
 expect class MaterialKey {
+    /**
+     * Create a new MaterialKey with default values.
+     */
     constructor()
 
     var doubleSided: Boolean
