@@ -2,80 +2,147 @@ package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 
+/**
+ * MaterialBuilder compiles Filament material source code into binary packages.
+ *
+ * MaterialBuilder takes high-level material definitions and generates optimized shaders
+ * for multiple backends (OpenGL, Vulkan, Metal, WebGPU). The resulting MaterialPackage
+ * can be loaded by Filament's Material system.
+ *
+ * **Initialization:**
+ * Call Filamat.init() before using MaterialBuilder. Call shutdown() when finished.
+ *
+ * **Compilation:**
+ * Configure material properties using methods like name(), shading(), blendingMode(), etc.,
+ * then call build() to generate the package.
+ *
+ * @see Filamat
+ * @see MaterialPackage
+ */
 expect class MaterialBuilder() {
+    /**
+     * Shading model determines how light interacts with the material surface.
+     */
     enum class Shading {
+        /** No lighting; emissive only. Useful for UI, billboards, light sources. */
         UNLIT,
+        /** Standard physically-based lighting model (default). */
         LIT,
+        /** Subsurface scattering for thin/translucent materials (skin, leaves, paper). */
         SUBSURFACE,
+        /** Cloth-specific lighting model for fabric appearance. */
         CLOTH,
+        /** Legacy specular/glossiness model (not recommended for new materials). */
         SPECULAR_GLOSSINESS
     }
 
+    /**
+     * Vertex attribute interpolation in the fragment shader.
+     */
     enum class Interpolation {
+        /** Smooth Gouraud interpolation across the primitive (default). */
         SMOOTH,
+        /** Flat interpolation; values are constant per primitive. */
         FLAT
     }
 
+    /**
+     * Uniform variable types in material parameters.
+     */
     enum class UniformType {
-        BOOL,
-        BOOL2,
-        BOOL3,
-        BOOL4,
-        FLOAT,
-        FLOAT2,
-        FLOAT3,
-        FLOAT4,
-        INT,
-        INT2,
-        INT3,
-        INT4,
-        UINT,
-        UINT2,
-        UINT3,
-        UINT4,
-        MAT3,
-        MAT4
+        /** Boolean scalar and vector types. */
+        BOOL, BOOL2, BOOL3, BOOL4,
+        /** Floating-point scalar and vector types. */
+        FLOAT, FLOAT2, FLOAT3, FLOAT4,
+        /** Signed integer scalar and vector types. */
+        INT, INT2, INT3, INT4,
+        /** Unsigned integer scalar and vector types. */
+        UINT, UINT2, UINT3, UINT4,
+        /** Floating-point 3x3 and 4x4 matrices. */
+        MAT3, MAT4
     }
 
+    /**
+     * Sampler types for texture parameters.
+     */
     enum class SamplerType {
+        /** 2D texture sampler. */
         SAMPLER_2D,
+        /** 2D array texture sampler (multiple 2D textures). */
         SAMPLER_2D_ARRAY,
+        /** Cubemap sampler (6 faces). */
         SAMPLER_CUBEMAP,
+        /** External texture sampler (platform-specific, e.g., camera stream). */
         SAMPLER_EXTERNAL,
+        /** 3D volume texture sampler. */
         SAMPLER_3D,
+        /** Cubemap array sampler (multiple cubemaps). */
         SAMPLER_CUBEMAP_ARRAY
     }
 
+    /**
+     * Data format for sampler parameters.
+     */
     enum class SamplerFormat {
+        /** Signed integer data format. */
         INT,
+        /** Unsigned integer data format. */
         UINT,
+        /** Floating-point data format. */
         FLOAT,
+        /** Depth comparison format (for shadow mapping). */
         SHADOW
     }
 
+    /**
+     * Precision level for numeric parameters.
+     */
     enum class ParameterPrecision {
+        /** Low precision; may reduce quality but improve performance. */
         LOW,
+        /** Medium precision. */
         MEDIUM,
+        /** High precision. */
         HIGH,
+        /** Use engine default precision. */
         DEFAULT
     }
 
+    /**
+     * Custom vertex attribute variable slots.
+     */
     enum class Variable {
+        /** Custom variable slot 0. */
         CUSTOM0,
+        /** Custom variable slot 1. */
         CUSTOM1,
+        /** Custom variable slot 2. */
         CUSTOM2,
+        /** Custom variable slot 3. */
         CUSTOM3,
+        /** Custom variable slot 4. */
         CUSTOM4
     }
 
+    /**
+     * Blending modes determine how material color combines with background color.
+     */
     enum class BlendingMode {
+        /** Opaque material; no blending (default). */
         OPAQUE,
+        /** Transparent with alpha pre-multiplication; affects diffuse only. */
         TRANSPARENT,
+        /** Additive blending; brightens background. Used for glows, holograms. */
         ADD,
+        /** Alpha-tested; either fully opaque or fully transparent per pixel. */
         MASKED,
+        /** Transparent with alpha pre-multiplication; affects specular. */
         FADE,
+        /** Multiplicative blending; darkens background. */
         MULTIPLY,
+        /** Screen blending; brightens with color. */
         SCREEN,
+        /** Custom blending using backend-specific blend function. */
         CUSTOM
     }
 
