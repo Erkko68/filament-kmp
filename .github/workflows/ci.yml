@@ -160,7 +160,6 @@ jobs:
           ./gradlew \
             compileKotlinIosArm64 \
             compileKotlinIosSimulatorArm64 \
-            compileKotlinIosX64 \
             --no-configuration-cache
       - name: Boot iOS simulator
         id: sim
