@@ -16,6 +16,19 @@
 
 package io.github.erkko68.filament.utils
 
+/**
+ * A ray defined by an origin point and a direction vector.
+ *
+ * @property origin the starting point of the ray in world space
+ * @property direction the direction of the ray; need not be normalized
+ */
 data class Ray(var origin: Float3 = Float3(), var direction: Float3)
 
+/**
+ * Returns the point along ray [r] at parameter [t]: `origin + direction * t`.
+ *
+ * @param r the ray
+ * @param t the parameter along the ray
+ * @return the world-space point at `r.origin + r.direction * t`
+ */
 fun pointAt(r: Ray, t: Float) = r.origin + r.direction * t

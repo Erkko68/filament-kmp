@@ -25,12 +25,22 @@ import kotlin.math.sqrt
 import kotlin.math.acos
 import kotlin.math.absoluteValue
 
+/**
+ * Selects a component of a vector by semantic alias.
+ *
+ * Aliases: X=R=S, Y=G=T, Z=B=P, W=A=Q.
+ */
 enum class VectorComponent {
     X, Y, Z, W,
     R, G, B, A,
     S, T, P, Q
 }
 
+/**
+ * A two-component vector of [Float] values with GLSL-style swizzle accessors.
+ *
+ * Components are accessible as [x]/[y], [r]/[g] (color), or [s]/[t] (texture coordinates).
+ */
 data class Float2(var x: Float = 0.0f, var y: Float = 0.0f) {
     constructor(v: Float) : this(v, v)
     constructor(v: Float2) : this(v.x, v.y)
@@ -153,6 +163,11 @@ data class Float2(var x: Float = 0.0f, var y: Float = 0.0f) {
     fun toFloatArray() = floatArrayOf(x, y)
 }
 
+/**
+ * A three-component vector of [Float] values with GLSL-style swizzle accessors.
+ *
+ * Components are accessible as [x]/[y]/[z], [r]/[g]/[b] (color), or [s]/[t]/[p] (texture coordinates).
+ */
 data class Float3(var x: Float = 0.0f, var y: Float = 0.0f, var z: Float = 0.0f) {
     constructor(v: Float) : this(v, v, v)
     constructor(v: Float2, z: Float = 0.0f) : this(v.x, v.y, z)
@@ -342,6 +357,12 @@ data class Float3(var x: Float = 0.0f, var y: Float = 0.0f, var z: Float = 0.0f)
     fun toFloatArray() = floatArrayOf(x, y, z)
 }
 
+/**
+ * A four-component vector of [Float] values with GLSL-style swizzle accessors.
+ *
+ * Components are accessible as [x]/[y]/[z]/[w], [r]/[g]/[b]/[a] (color),
+ * or [s]/[t]/[p]/[q] (texture coordinates).
+ */
 data class Float4(
         var x: Float = 0.0f,
         var y: Float = 0.0f,
@@ -635,18 +656,47 @@ inline fun length(v: Float2) = sqrt(v.x * v.x + v.y * v.y)
 inline fun length2(v: Float2) = v.x * v.x + v.y * v.y
 inline fun distance(a: Float2, b: Float2) = length(a - b)
 inline fun dot(a: Float2, b: Float2) = a.x * b.x + a.y * b.y
+/**
+ * Returns a unit-length copy of [v].
+ *
+ * @param v the vector to normalize
+ * @return v / length(v)
+ */
 fun normalize(v: Float2): Float2 {
     val l = 1.0f / length(v)
     return Float2(v.x * l, v.y * l)
 }
 
+/**
+ * Returns the reflection of incident vector [i] off a surface with normal [n].
+ *
+ * [n] is assumed to be normalized. Result = i - 2 * dot(n, i) * n.
+ */
 inline fun reflect(i: Float2, n: Float2) = i - 2.0f * dot(n, i) * n
+
+/**
+ * Returns the refraction of incident vector [i] through a surface with normal [n] and ratio [eta].
+ *
+ * Returns zero if total internal reflection occurs.
+ *
+ * @param i the incident direction (need not be normalized)
+ * @param n the surface normal (assumed normalized)
+ * @param eta the ratio of refraction indices (n1 / n2)
+ * @return the refracted vector, or zero on total internal reflection
+ */
 fun refract(i: Float2, n: Float2, eta: Float): Float2 {
     val d = dot(n, i)
     val k = 1.0f - eta * eta * (1.0f - sqr(d))
     return if (k < 0.0f) Float2(0.0f) else eta * i - (eta * d + sqrt(k)) * n
 }
 
+/**
+ * Returns the angle in radians between vectors [a] and [b].
+ *
+ * @param a the first vector
+ * @param b the second vector
+ * @return the angle between a and b in radians, clamped to [0, π]
+ */
 inline fun angle(a: Float2, b: Float2): Float {
     val l = length(a) * length(b)
     return if (l == 0.0f) 0.0f else acos(clamp(dot(a, b) / l, -1.0f, 1.0f))
@@ -741,24 +791,63 @@ inline fun length(v: Float3) = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
 inline fun length2(v: Float3) = v.x * v.x + v.y * v.y + v.z * v.z
 inline fun distance(a: Float3, b: Float3) = length(a - b)
 inline fun dot(a: Float3, b: Float3) = a.x * b.x + a.y * b.y + a.z * b.z
+/**
+ * Returns the cross product of [a] and [b].
+ *
+ * @param a the first vector
+ * @param b the second vector
+ * @return a vector perpendicular to both a and b
+ */
 inline fun cross(a: Float3, b: Float3): Float3 {
     return Float3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x)
 }
+
+/** Infix alias for [cross]: `a x b`. */
 inline infix fun Float3.x(v: Float3): Float3 {
     return Float3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x)
 }
+
+/**
+ * Returns a unit-length copy of [v].
+ *
+ * @param v the vector to normalize
+ * @return v / length(v)
+ */
 fun normalize(v: Float3): Float3 {
     val l = 1.0f / length(v)
     return Float3(v.x * l, v.y * l, v.z * l)
 }
 
+/**
+ * Returns the reflection of incident vector [i] off a surface with normal [n].
+ *
+ * [n] is assumed to be normalized. Result = i - 2 * dot(n, i) * n.
+ */
 inline fun reflect(i: Float3, n: Float3) = i - 2.0f * dot(n, i) * n
+
+/**
+ * Returns the refraction of incident vector [i] through a surface with normal [n] and ratio [eta].
+ *
+ * Returns zero if total internal reflection occurs.
+ *
+ * @param i the incident direction
+ * @param n the surface normal (assumed normalized)
+ * @param eta the ratio of refraction indices (n1 / n2)
+ * @return the refracted vector, or zero on total internal reflection
+ */
 fun refract(i: Float3, n: Float3, eta: Float): Float3 {
     val d = dot(n, i)
     val k = 1.0f - eta * eta * (1.0f - sqr(d))
     return if (k < 0.0f) Float3(0.0f) else eta * i - (eta * d + sqrt(k)) * n
 }
 
+/**
+ * Returns the angle in radians between vectors [a] and [b].
+ *
+ * @param a the first vector
+ * @param b the second vector
+ * @return the angle between a and b in radians, clamped to [0, π]
+ */
 inline fun angle(a: Float3, b: Float3): Float {
     val l = length(a) * length(b)
     return if (l == 0.0f) 0.0f else acos(clamp(dot(a, b) / l, -1.0f, 1.0f))
@@ -861,6 +950,12 @@ inline fun length(v: Float4) = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.
 inline fun length2(v: Float4) = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
 inline fun distance(a: Float4, b: Float4) = length(a - b)
 inline fun dot(a: Float4, b: Float4) = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
+/**
+ * Returns a unit-length copy of [v].
+ *
+ * @param v the vector to normalize
+ * @return v / length(v)
+ */
 fun normalize(v: Float4): Float4 {
     val l = 1.0f / length(v)
     return Float4(v.x * l, v.y * l, v.z * l, v.w * l)
@@ -968,6 +1063,7 @@ inline infix fun Float4.neq(b: Float4) = Bool4(x != b.x, y != b.y, z != b.z, w !
 inline fun any(v: Bool4) = v.x || v.y || v.z || v.w
 inline fun all(v: Bool4) = v.x && v.y && v.z && v.w
 
+/** A two-component boolean vector, typically the result of per-component comparisons on [Float2]. */
 data class Bool2(var x: Boolean = false, var y: Boolean = false) {
     constructor(v: Bool2) : this(v.x, v.y)
 
@@ -1055,6 +1151,7 @@ data class Bool2(var x: Boolean = false, var y: Boolean = false) {
     }
 }
 
+/** A three-component boolean vector, typically the result of per-component comparisons on [Float3]. */
 data class Bool3(var x: Boolean = false, var y: Boolean = false, var z: Boolean = false) {
     constructor(v: Bool2, z: Boolean = false) : this(v.x, v.y, z)
     constructor(v: Bool3) : this(v.x, v.y, v.z)
@@ -1199,6 +1296,7 @@ data class Bool3(var x: Boolean = false, var y: Boolean = false, var z: Boolean 
     }
 }
 
+/** A four-component boolean vector, typically the result of per-component comparisons on [Float4]. */
 data class Bool4(
         var x: Boolean = false,
         var y: Boolean = false,
@@ -1413,6 +1511,11 @@ data class Bool4(
     }
 }
 
+/**
+ * A two-component vector of [Half]-precision float values with GLSL-style swizzle accessors.
+ *
+ * Components are accessible as [x]/[y], [r]/[g], or [s]/[t].
+ */
 data class Half2(var x: Half = Half.POSITIVE_ZERO, var y: Half = Half.POSITIVE_ZERO) {
     constructor(v: Half) : this(v, v)
     constructor(v: Half2) : this(v.x, v.y)
@@ -1523,6 +1626,11 @@ data class Half2(var x: Half = Half.POSITIVE_ZERO, var y: Half = Half.POSITIVE_Z
     fun toFloatArray() = floatArrayOf(x.toFloat(), y.toFloat())
 }
 
+/**
+ * A three-component vector of [Half]-precision float values with GLSL-style swizzle accessors.
+ *
+ * Components are accessible as [x]/[y]/[z], [r]/[g]/[b], or [s]/[t]/[p].
+ */
 data class Half3(
     var x: Half = Half.POSITIVE_ZERO,
     var y: Half = Half.POSITIVE_ZERO,
@@ -1700,6 +1808,11 @@ data class Half3(
     fun toFloatArray() = floatArrayOf(x.toFloat(), y.toFloat(), z.toFloat())
 }
 
+/**
+ * A four-component vector of [Half]-precision float values with GLSL-style swizzle accessors.
+ *
+ * Components are accessible as [x]/[y]/[z]/[w], [r]/[g]/[b]/[a], or [s]/[t]/[p]/[q].
+ */
 data class Half4(
     var x: Half = Half.POSITIVE_ZERO,
     var y: Half = Half.POSITIVE_ZERO,
@@ -1993,18 +2106,48 @@ inline fun length(v: Half3) = sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
 inline fun length2(v: Half3) = v.x * v.x + v.y * v.y + v.z * v.z
 inline fun distance(a: Half3, b: Half3) = length(a - b)
 inline fun dot(a: Half3, b: Half3) = a.x * b.x + a.y * b.y + a.z * b.z
+/**
+ * Returns the cross product of [a] and [b] as a [Half3].
+ *
+ * @param a the first vector
+ * @param b the second vector
+ * @return a vector perpendicular to both a and b
+ */
 inline fun cross(a: Half3, b: Half3): Half3 {
     return Half3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x)
 }
+
+/** Infix alias for [cross] on [Half3]: `a x b`. */
 inline infix fun Half3.x(v: Half3): Half3 {
     return Half3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x)
 }
+
+/**
+ * Returns a unit-length copy of [v] as a [Half3].
+ *
+ * @param v the vector to normalize
+ * @return v / length(v)
+ */
 fun normalize(v: Half3): Half3 {
     val l = HALF_ONE / length(v)
     return Half3(v.x * l, v.y * l, v.z * l)
 }
 
+/**
+ * Returns the reflection of incident vector [i] off a surface with normal [n] (assumed normalized).
+ */
 inline fun reflect(i: Half3, n: Half3) = i - HALF_TWO * dot(n, i) * n
+
+/**
+ * Returns the refraction of incident vector [i] through a surface with normal [n] and ratio [eta].
+ *
+ * Returns zero if total internal reflection occurs.
+ *
+ * @param i the incident direction
+ * @param n the surface normal (assumed normalized)
+ * @param eta the ratio of refraction indices (n1 / n2)
+ * @return the refracted vector, or zero on total internal reflection
+ */
 fun refract(i: Half3, n: Half3, eta: Half): Half3 {
     val d = dot(n, i)
     val k = HALF_ONE - eta * eta * (HALF_ONE - sqr(d))
@@ -2086,6 +2229,12 @@ inline fun length(v: Half4) = sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
 inline fun length2(v: Half4) = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w
 inline fun distance(a: Half4, b: Half4) = length(a - b)
 inline fun dot(a: Half4, b: Half4) = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
+/**
+ * Returns a unit-length copy of [v] as a [Half4].
+ *
+ * @param v the vector to normalize
+ * @return v / length(v)
+ */
 fun normalize(v: Half4): Half4 {
     val l = HALF_ONE / length(v)
     return Half4(v.x * l, v.y * l, v.z * l, v.w * l)

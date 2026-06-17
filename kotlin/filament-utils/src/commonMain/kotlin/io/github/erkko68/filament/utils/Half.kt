@@ -23,44 +23,92 @@ import io.github.erkko68.filament.utils.Half.Companion.POSITIVE_ZERO
 
 import kotlin.jvm.JvmInline
 
+/** Constructs a [Half] from a [Double] by first converting to [Float]. */
 fun Half(value: Double) = Half(floatToHalf(value.toFloat()))
 
+/** Converts this [Double] to a [Half]-precision float. */
 fun Double.toHalf() = Half(floatToHalf(toFloat()))
 
+/** Converts this [Double] to a [Half]-precision float using the `.h` shorthand. */
 val Double.h: Half
     get() = Half(floatToHalf(toFloat()))
 
+/** Constructs a [Half] from a [Float]. */
 fun Half(value: Float) = Half(floatToHalf(value))
 
+/** Converts this [Float] to a [Half]-precision float. */
 fun Float.toHalf() = Half(floatToHalf(this))
 
+/** Converts this [Float] to a [Half]-precision float using the `.h` shorthand. */
 val Float.h: Half
     get() = Half(floatToHalf(this))
 
+/** Constructs a [Half] by parsing a decimal string and converting to half-precision. */
 fun Half(value: String) = Half(floatToHalf(value.toFloat()))
 
+/** Converts this decimal [String] to a [Half]-precision float. */
 fun String.toHalf() = Half(floatToHalf(toFloat()))
 
+/**
+ * A 16-bit half-precision floating-point number conforming to IEEE 754-2008.
+ *
+ * Layout: 1 sign bit, 5 exponent bits, 10 mantissa bits.
+ *
+ * ```
+ * +-+------+------------+
+ * |s|eeeee |mmmmmmmmmm  |
+ * +-+------+------------+
+ * ```
+ *
+ * - Minimum (denormal) value: 2⁻²⁴ ≈ 5.96e-8
+ * - Minimum (normal) value:   2⁻¹⁴ ≈ 6.10e-5
+ * - Maximum value:            (2 − 2⁻¹⁰) × 2¹⁵ = 65504
+ * - Integers in [0, 2048] are represented exactly.
+ *
+ * @property v the raw 16-bit representation
+ */
 @JvmInline
 value class Half(val v: UShort) : Comparable<Half> {
     companion object {
+        /** The number of bits used to represent a [Half] value. */
         const val SIZE = 16
+        /** The difference between 1.0 and the next representable value (2⁻¹⁰). */
         val EPSILON = Half(0x1400.toUShort())
+        /** The maximum exponent value (15). */
         const val MAX_EXPONENT = 15
+        /** The minimum exponent value (−14). */
         const val MIN_EXPONENT = -14
+        /** The most negative finite value (−65504). */
         val LOWEST_VALUE = Half(0xfbff.toUShort())
+        /** The largest finite value (65504). */
         val MAX_VALUE = Half(0x7bff.toUShort())
+        /** The smallest positive normal value (2⁻¹⁴). */
         val MIN_NORMAL = Half(0x0400.toUShort())
+        /** The smallest positive non-zero value (2⁻²⁴). */
         val MIN_VALUE = Half(0x0001.toUShort())
+        /** Not a Number. */
         val NaN = Half(0x7e00.toUShort())
+        /** Negative infinity. */
         val NEGATIVE_INFINITY = Half(0xfc00.toUShort())
+        /** Negative zero (−0). */
         val NEGATIVE_ZERO = Half(0x8000.toUShort())
+        /** Positive infinity. */
         val POSITIVE_INFINITY = Half(0x7c00.toUShort())
+        /** Positive zero (+0). */
         val POSITIVE_ZERO = Half(0x0000.toUShort())
 
+        /**
+         * Returns a [Half] with the raw bit pattern [bits] (low 16 bits used).
+         *
+         * @param bits the raw 16-bit representation as an Int
+         * @return a [Half] with the given bit pattern
+         */
         fun fromBits(bits: Int) = Half((bits and 0xffff).toUShort())
     }
 
+    /**
+     * Returns the sign of this value: NaN if this is NaN, +0 if zero, +1.0 or −1.0 otherwise.
+     */
     val sign: Half
         get() {
             val bits = v.toInt()
@@ -72,15 +120,19 @@ value class Half(val v: UShort) : Comparable<Half> {
             }
         }
 
+    /** The unbiased exponent in the range [MIN_EXPONENT, MAX_EXPONENT]. */
     val exponent: Int
         get() = ((v.toInt() ushr FP16_EXPONENT_SHIFT) and FP16_EXPONENT_MASK) - FP16_EXPONENT_BIAS
 
+    /** The mantissa (significand) bits, in the range [0, 1023]. */
     val significand: Int
         get() = v.toInt() and FP16_SIGNIFICAND_MASK
 
+    /** The absolute value of this [Half]. */
     val absoluteValue: Half
         get() = Half((v.toInt() and FP16_ABS).toUShort())
 
+    /** The unit in the last place (ULP) of this value. */
     val ulp: Half
         get() = when {
             isNaN() -> NaN
@@ -92,36 +144,72 @@ value class Half(val v: UShort) : Comparable<Half> {
             }
         }
 
+    /** Returns the raw 16-bit representation as an Int. */
     fun toBits() = v.toInt()
+    /** Converts this [Half] to a [Byte] by truncation via Float. */
     fun toByte() = halfToShort(v).toInt().toByte()
+    /** Converts this [Half] to a [Short] by truncation via Float. */
     fun toShort() = halfToShort(v).toInt().toShort()
+    /** Converts this [Half] to an [Int] by truncation via Float. */
     fun toInt() = halfToShort(v).toInt()
+    /** Converts this [Half] to a [Long] by truncation via Float. */
     fun toLong() = halfToShort(v).toLong()
+    /** Converts this [Half] to a [Float]. */
     fun toFloat() = halfToShort(v)
+    /** Converts this [Half] to a [Double]. */
     fun toDouble() = halfToShort(v).toDouble()
 
+    /** Returns true if this value is NaN. */
     fun isNaN() = (v.toInt() and FP16_ABS) > FP16_EXPONENT_MAX
+    /** Returns true if this value is positive or negative infinity. */
     fun isInfinite() = (v.toInt() and FP16_ABS) == FP16_EXPONENT_MAX
+    /** Returns true if this value is finite (not NaN, not infinite). */
     fun isFinite() = (v.toInt() and FP16_EXPONENT_MAX) != FP16_EXPONENT_MAX
+    /** Returns true if this value is positive or negative zero. */
     fun isZero() = (v.toInt() and FP16_ABS) == 0
+    /** Returns true if this value is a normalized (non-denormal, non-zero, finite) number. */
     fun isNormalized() = (v.toInt() and FP16_EXPONENT_MAX) != 0
         && (v.toInt() and FP16_EXPONENT_MAX) != FP16_EXPONENT_MAX
 
+    /**
+     * Returns this value with the sign of [sign].
+     *
+     * @param sign the value whose sign to copy
+     * @return this value with the same sign bit as [sign]
+     */
     fun withSign(sign: Half) =
         Half(((sign.v.toInt() and FP16_SIGN_MASK) or (v.toInt() and FP16_ABS)).toUShort())
 
+    /**
+     * Returns the smallest [Half] value that is greater than this value.
+     *
+     * Returns this value if it is NaN or [POSITIVE_INFINITY].
+     */
     fun nextUp(): Half = when {
         isNaN() || v == POSITIVE_INFINITY.v -> this
         isZero() -> MIN_VALUE
         else -> Half((toBits() + if (v.toInt() and FP16_SIGN_MASK == 0) 1 else -1).toUShort())
     }
 
+    /**
+     * Returns the largest [Half] value that is less than this value.
+     *
+     * Returns this value if it is NaN or [NEGATIVE_INFINITY].
+     */
     fun nextDown(): Half = when {
         isNaN() || v == NEGATIVE_INFINITY.v -> this
         isZero() -> -MIN_VALUE
         else -> Half((toBits() + if (v.toInt() and FP16_SIGN_MASK == 0) -1 else 1).toUShort())
     }
 
+    /**
+     * Returns the adjacent [Half] value in the direction of [to].
+     *
+     * Returns NaN if either this or [to] is NaN. Returns this value if this == to.
+     *
+     * @param to the target value indicating direction
+     * @return the next representable value toward [to]
+     */
     fun nextTowards(to: Half) = when {
         isNaN() || to.isNaN() -> NaN
         to == this -> this
@@ -318,6 +406,14 @@ value class Half(val v: UShort) : Comparable<Half> {
     }
 }
 
+/**
+ * Returns the square root of [x].
+ *
+ * Returns NaN if [x] is NaN or negative. Returns [x] if [x] is zero or positive infinity.
+ *
+ * @param x the input value
+ * @return √x as a [Half]
+ */
 fun sqrt(x: Half): Half {
     val bits = x.toBits()
     var a = bits and FP16_ABS
@@ -355,8 +451,16 @@ fun sqrt(x: Half): Half {
     return Half((v + (G and (S or v))).toUShort())
 }
 
+/** Returns the absolute value of [x]. */
 fun abs(x: Half) = x.absoluteValue
 
+/**
+ * Returns the smaller of [x] and [y]; returns NaN if either is NaN.
+ *
+ * @param x the first value
+ * @param y the second value
+ * @return the lesser of x and y, or NaN if either is NaN
+ */
 fun min(x: Half, y: Half): Half {
     val a = x.toBits()
     if (a and FP16_ABS > FP16_EXPONENT_MAX) return Half.NaN
@@ -369,6 +473,13 @@ fun min(x: Half, y: Half): Half {
                (if (b and FP16_SIGN_MASK != 0) 0x8000 - (b and 0xffff) else b and 0xffff)) x else y
 }
 
+/**
+ * Returns the larger of [x] and [y]; returns NaN if either is NaN.
+ *
+ * @param x the first value
+ * @param y the second value
+ * @return the greater of x and y, or NaN if either is NaN
+ */
 fun max(x: Half, y: Half): Half {
     val a = x.toBits()
     if (a and FP16_ABS > FP16_EXPONENT_MAX) return Half.NaN
@@ -381,6 +492,14 @@ fun max(x: Half, y: Half): Half {
                (if (b and FP16_SIGN_MASK != 0) 0x8000 - (b and 0xffff) else b and 0xffff)) x else y
 }
 
+/**
+ * Returns [x] rounded to the nearest integer value as a [Half].
+ *
+ * Ties round away from zero.
+ *
+ * @param x the value to round
+ * @return the nearest integer [Half], or NaN/Infinity unchanged
+ */
 fun round(x: Half): Half {
     val bits = x.toBits()
     var a = bits and FP16_ABS
@@ -398,6 +517,12 @@ fun round(x: Half): Half {
     return Half(result.toUShort())
 }
 
+/**
+ * Returns the largest integer [Half] not greater than [x].
+ *
+ * @param x the value to floor
+ * @return ⌊x⌋ as a [Half]
+ */
 fun floor(x: Half): Half {
     val bits = x.toBits()
     var a = bits and FP16_ABS
@@ -415,6 +540,12 @@ fun floor(x: Half): Half {
     return Half(result.toUShort())
 }
 
+/**
+ * Returns the smallest integer [Half] not less than [x].
+ *
+ * @param x the value to ceil
+ * @return ⌈x⌉ as a [Half]
+ */
 fun ceil(x: Half): Half {
     val bits = x.toBits()
     var a = bits and FP16_ABS
@@ -433,6 +564,12 @@ fun ceil(x: Half): Half {
     return Half(result.toUShort())
 }
 
+/**
+ * Returns [x] rounded toward zero (truncation).
+ *
+ * @param x the value to truncate
+ * @return x with the fractional part discarded
+ */
 fun truncate(x: Half): Half {
     val bits = x.toBits()
     var a = bits and FP16_ABS

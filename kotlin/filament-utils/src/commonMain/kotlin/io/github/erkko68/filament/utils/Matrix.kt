@@ -20,10 +20,22 @@ package io.github.erkko68.filament.utils
 
 import kotlin.math.*
 
+/** Selects a column of a matrix by semantic name. */
 enum class MatrixColumn {
     X, Y, Z, W
 }
 
+/**
+ * Euler-angle rotation order (intrinsic Tait-Bryan angles).
+ *
+ * Each constant specifies the order in which rotations are applied, where [yaw], [pitch], and
+ * [roll] map to the first, second, and third axes respectively. For [ZYX], the object is first
+ * rotated around its Z axis, then Y, then X.
+ *
+ * @property yaw the axis of the first rotation
+ * @property pitch the axis of the second rotation
+ * @property roll the axis of the third rotation
+ */
 enum class RotationsOrder(
         val yaw: VectorComponent,
         val pitch: VectorComponent,
@@ -36,6 +48,11 @@ enum class RotationsOrder(
     ZYX(VectorComponent.Z, VectorComponent.Y, VectorComponent.X);
 }
 
+/**
+ * A 2×2 column-major matrix of [Float] values.
+ *
+ * Stored as two column vectors [x] and [y]. Default-constructed as the identity matrix.
+ */
 data class Mat2(
         var x: Float2 = Float2(x = 1.0f),
         var y: Float2 = Float2(y = 1.0f)) {
@@ -128,6 +145,11 @@ data class Mat2(
     }
 }
 
+/**
+ * A 3×3 column-major matrix of [Float] values.
+ *
+ * Stored as three column vectors [x], [y], and [z]. Default-constructed as the identity matrix.
+ */
 data class Mat3(
         var x: Float3 = Float3(x = 1.0f),
         var y: Float3 = Float3(y = 1.0f),
@@ -238,6 +260,23 @@ data class Mat3(
     }
 }
 
+/**
+ * A 4×4 column-major matrix of [Float] values.
+ *
+ * Stored as four column vectors [x], [y], [z], and [w]. Default-constructed as the identity matrix.
+ *
+ * ```
+ * Mat4 m:
+ *   m[0]=x  m[1]=y  m[2]=z  m[3]=w
+ * ```
+ *
+ * Convenience accessors:
+ * - [right] / [up] / [forward]: the upper-left 3×3 basis vectors
+ * - [position]: the translation component (column [w].xyz)
+ * - [scale]: per-axis scale factors (lengths of the basis vectors)
+ * - [rotation]: Euler angles extracted from the matrix
+ * - [upperLeft]: the upper-left [Mat3] submatrix
+ */
 data class Mat4(
         var x: Float4 = Float4(x = 1.0f),
         var y: Float4 = Float4(y = 1.0f),
@@ -519,17 +558,25 @@ inline fun notEqual(a: Mat4, b: Mat4, delta: Float = 0.0f) = Bool4(
     !a.w.equals(b.w, delta)
 )
 
+/** Returns the transpose of [m]. */
 fun transpose(m: Mat2) = Mat2(
         Float2(m.x.x, m.y.x),
         Float2(m.x.y, m.y.y)
 )
 
+/** Returns the transpose of [m]. */
 fun transpose(m: Mat3) = Mat3(
         Float3(m.x.x, m.y.x, m.z.x),
         Float3(m.x.y, m.y.y, m.z.y),
         Float3(m.x.z, m.y.z, m.z.z)
 )
 
+/**
+ * Returns the inverse of [m].
+ *
+ * @param m the matrix to invert
+ * @return the inverse matrix; undefined if [m] is singular
+ */
 fun inverse(m: Mat3): Mat3 {
     val a = m.x.x
     val b = m.x.y
@@ -554,6 +601,7 @@ fun inverse(m: Mat3): Mat3 {
     )
 }
 
+/** Returns the transpose of [m]. */
 fun transpose(m: Mat4) = Mat4(
         Float4(m.x.x, m.y.x, m.z.x, m.w.x),
         Float4(m.x.y, m.y.y, m.z.y, m.w.y),
@@ -561,6 +609,12 @@ fun transpose(m: Mat4) = Mat4(
         Float4(m.x.w, m.y.w, m.z.w, m.w.w)
 )
 
+/**
+ * Returns the inverse of [m].
+ *
+ * @param m the matrix to invert
+ * @return the inverse matrix; undefined if [m] is singular
+ */
 fun inverse(m: Mat4): Mat4 {
     val result = Mat4()
 
@@ -629,19 +683,40 @@ fun inverse(m: Mat4): Mat4 {
     return result / determinant
 }
 
+/** Returns a scale [Mat4] from the given per-axis scale factors [s]. */
 fun scale(s: Float3) = Mat4(x = Float4(x = s.x), y = Float4(y = s.y), z = Float4(z = s.z))
+/** Extracts and returns a scale [Mat4] from [m]. */
 fun scale(m: Mat4) = scale(m.scale)
 
+/** Returns a translation [Mat4] for the vector [t]. */
 fun translation(t: Float3) = Mat4(w = Float4(t, 1.0f))
+/** Extracts and returns a translation [Mat4] from [m]. */
 fun translation(m: Mat4) = translation(m.translation)
 
+/** Extracts and returns the rotation-only [Mat4] from [m] by normalizing its basis vectors. */
 fun rotation(m: Mat4) = Mat4(normalize(m.right), normalize(m.up), normalize(m.forward))
 
+/**
+ * Returns a rotation [Mat4] from Euler angles (in degrees) in the specified [order].
+ *
+ * @param d per-axis Euler angles in degrees
+ * @param order the rotation order; defaults to [RotationsOrder.ZYX]
+ * @return the rotation matrix
+ */
 fun rotation(d: Float3, order: RotationsOrder = RotationsOrder.ZYX): Mat4 {
     val r = transform(d, ::radians)
     return rotation(r[order.yaw], r[order.pitch], r[order.roll], order)
 }
 
+/**
+ * Returns a rotation [Mat4] from individual Euler angles in radians in the specified [order].
+ *
+ * @param yaw rotation around the first axis in radians
+ * @param pitch rotation around the second axis in radians
+ * @param roll rotation around the third axis in radians
+ * @param order the rotation order; defaults to [RotationsOrder.ZYX]
+ * @return the rotation matrix
+ */
 fun rotation(yaw: Float = 0.0f, pitch: Float = 0.0f, roll: Float = 0.0f, order: RotationsOrder = RotationsOrder.ZYX): Mat4 {
     val c1 = cos(yaw)
     val s1 = sin(yaw)
@@ -684,6 +759,13 @@ fun rotation(yaw: Float = 0.0f, pitch: Float = 0.0f, roll: Float = 0.0f, order: 
     }
 }
 
+/**
+ * Returns a rotation [Mat4] around [axis] by [angle] degrees.
+ *
+ * @param axis the rotation axis (need not be normalized)
+ * @param angle the rotation angle in degrees
+ * @return the rotation matrix
+ */
 fun rotation(axis: Float3, angle: Float): Mat4 {
     val x = axis.x
     val y = axis.y
@@ -702,6 +784,12 @@ fun rotation(axis: Float3, angle: Float): Mat4 {
     )
 }
 
+/**
+ * Returns a rotation [Mat4] from the given [quaternion] (normalized internally).
+ *
+ * @param quaternion the source rotation; need not be normalized
+ * @return the rotation matrix
+ */
 fun rotation(quaternion: Quaternion): Mat4 {
     val n = normalize(quaternion)
     return Mat4(
@@ -723,6 +811,13 @@ fun rotation(quaternion: Quaternion): Mat4 {
     )
 }
 
+/**
+ * Extracts Euler angles in degrees from a rotation [Mat4] in the specified [order].
+ *
+ * @param m the rotation matrix to decompose
+ * @param order the rotation order; defaults to [RotationsOrder.ZYX]
+ * @return Euler angles in degrees as a [Float3]
+ */
 fun eulerAngles(m: Mat4, order: RotationsOrder = RotationsOrder.ZYX): Float3 {
     return transform(Float3().apply {
         val x = m.x
@@ -793,6 +888,12 @@ fun eulerAngles(m: Mat4, order: RotationsOrder = RotationsOrder.ZYX): Float3 {
     }, ::degrees)
 }
 
+/**
+ * Extracts a unit [Quaternion] from a rotation [Mat4].
+ *
+ * @param m the rotation matrix to convert; must be a pure rotation (no scale or shear)
+ * @return a normalized [Quaternion] representing the same rotation
+ */
 fun quaternion(m: Mat4): Quaternion {
     val trace = m.x.x + m.y.y + m.z.z
     return normalize(
@@ -837,12 +938,37 @@ fun quaternion(m: Mat4): Quaternion {
     )
 }
 
+/**
+ * Returns the normal matrix for [m].
+ *
+ * The normal matrix is the transpose-inverse of the upper-left 3×3 of the model matrix,
+ * used to correctly transform normals when non-uniform scaling is present.
+ *
+ * @param m the model matrix
+ * @return the normal transform matrix
+ */
 fun normal(m: Mat4) = scale(1.0f / Float3(length2(m.right), length2(m.up), length2(m.forward))) * m
 
+/**
+ * Returns a view matrix that positions the camera at [eye] looking toward [target].
+ *
+ * @param eye the camera position in world space
+ * @param target the point to look at in world space
+ * @param up the world up vector; defaults to +Z
+ * @return the view matrix
+ */
 fun lookAt(eye: Float3, target: Float3, up: Float3 = Float3(z = 1.0f)): Mat4 {
     return lookTowards(eye, target - eye, up)
 }
 
+/**
+ * Returns a view matrix for a camera at [eye] pointing in [forward] direction.
+ *
+ * @param eye the camera position in world space
+ * @param forward the direction the camera faces (need not be normalized)
+ * @param up the world up vector; defaults to +Z
+ * @return the view matrix
+ */
 fun lookTowards(eye: Float3, forward: Float3, up: Float3 = Float3(z = 1.0f)): Mat4 {
     val f = normalize(forward)
     val r = normalize(f x up)
@@ -850,6 +976,15 @@ fun lookTowards(eye: Float3, forward: Float3, up: Float3 = Float3(z = 1.0f)): Ma
     return Mat4(Float4(r, 0.0f), Float4(u, 0.0f), Float4(-f, 0.0f), Float4(eye, 1.0f))
 }
 
+/**
+ * Returns a perspective projection matrix.
+ *
+ * @param fov the vertical field of view in degrees
+ * @param ratio the aspect ratio (width / height)
+ * @param near the near clip plane distance
+ * @param far the far clip plane distance
+ * @return the perspective projection matrix
+ */
 fun perspective(fov: Float, ratio: Float, near: Float, far: Float): Mat4 {
     val t = 1.0f / tan(radians(fov) * 0.5f)
     val a = (far + near) / (far - near)
@@ -858,6 +993,17 @@ fun perspective(fov: Float, ratio: Float, near: Float, far: Float): Mat4 {
     return Mat4(Float4(x = c), Float4(y = t), Float4(z = a, w = 1.0f), Float4(z = -b))
 }
 
+/**
+ * Returns an orthographic projection matrix.
+ *
+ * @param l left clip plane
+ * @param r right clip plane
+ * @param b bottom clip plane
+ * @param t top clip plane
+ * @param n near clip plane
+ * @param f far clip plane
+ * @return the orthographic projection matrix
+ */
 fun ortho(l: Float, r: Float, b: Float, t: Float, n: Float, f: Float) = Mat4(
     Float4(x = 2.0f / (r - l)),
     Float4(y = 2.0f / (t - b)),
