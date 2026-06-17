@@ -1,23 +1,34 @@
 package io.github.erkko68.filament
 
 /**
- * MaterialInstance allows you to customize the parameters of a Material per-object.
+ * MaterialInstance customizes the parameters of a Material for per-object rendering.
  *
  * Each Material can spawn multiple MaterialInstances with different parameter values
- * (colors, textures, numeric uniforms). Changes to a MaterialInstance only affect
+ * (colors, textures, numeric uniforms, etc.). Changes to a MaterialInstance only affect
  * renderables using that specific instance, not the Material or other instances.
  *
- * **Creating and destroying instances:**
- * Create instances via [Material.createInstance] and destroy them with [Engine.destroy].
- * You can also duplicate an existing instance with [duplicate].
+ * **Creating and destroying:**
+ * Create instances via Material.createInstance() and destroy with Engine.destroy(instance).
+ * You can duplicate an existing instance using the companion object's duplicate() method.
  *
  * **Setting parameters:**
- * Use [setParameter] overloads to set uniforms (floats, vectors, matrices, textures, colors).
- * Parameter names and types must match those defined in the material. Arrays are also supported.
+ * Use setParameter() overloads to set uniforms (booleans, floats, vectors, matrices, textures).
+ * Parameter names and types must match those defined in the material. Array parameters are
+ * also supported via setParameter(name, type, array, offset, count) variants.
  *
- * **Rendering state:**
- * Customize per-instance rendering behavior: scissor test, polygon offset, culling mode,
- * depth test, stencil test, color/depth write masks. These override material defaults.
+ * **Rendering state customization:**
+ * Each MaterialInstance can override per-instance rendering behavior:
+ * - Scissor rectangle for pixel-perfect clipping
+ * - Polygon offset for depth artifacts
+ * - Culling mode (override material's cull setting)
+ * - Depth test configuration
+ * - Stencil test and operations
+ * - Color and depth write masks
+ *
+ * These settings override the Material's defaults.
+ *
+ * @see Material
+ * @see Material.createInstance
  */
 expect class MaterialInstance {
     /**
@@ -70,26 +81,29 @@ expect class MaterialInstance {
 
     companion object {
         /**
-         * Creates a new MaterialInstance using another as a template.
+         * Create a new MaterialInstance by duplicating an existing one.
          *
-         * Useful for creating instances with the same initial parameters as an existing one.
+         * This is useful for creating instances with the same initial parameters as an
+         * existing instance without having to re-set all parameters individually.
          *
-         * @param other A MaterialInstance to copy parameter values from
-         * @param name Optional name for the new instance (null to use template's name)
-         * @return A new MaterialInstance with copied parameters
+         * @param other A MaterialInstance to copy parameter values from.
+         * @param name Optional debug name for the new instance (null to use other's name).
+         * @return A new MaterialInstance with all parameters copied from other.
          */
         fun duplicate(other: MaterialInstance, name: String? = null): MaterialInstance
     }
 
     /**
-     * Gets the Material this instance is created from.
-     * @return The parent Material
+     * Get the Material this instance is created from.
+     *
+     * @return The parent Material. The Material owns all instances created from it.
      */
     val material: Material
 
     /**
-     * Gets the name of this MaterialInstance.
-     * @return Instance name (useful for debugging)
+     * Get the name of this MaterialInstance.
+     *
+     * @return Instance name string (useful for debugging and profiling).
      */
     val name: String
 
