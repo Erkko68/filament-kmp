@@ -1,139 +1,186 @@
 package io.github.erkko68.filament
 
 /**
- * A GPU texture supporting 2D, 3D, cubemap, and mipmap data.
+ * Texture represents a GPU texture resource.
  *
- * Textures are created using [Builder] and destroyed via [Engine.destroy].
  * The Texture class supports:
  * - 2D textures
  * - 3D textures
  * - Cube maps
  * - Mip mapping
+ *
+ * Creation and destruction
+ * ========================
+ *
+ * A Texture object is created using the Texture.Builder and destroyed by calling
+ * Engine.destroy(texture).
+ *
+ * ```
+ * val engine = Engine.create()
+ *
+ * val texture = Texture.Builder()
+ *     .width(64)
+ *     .height(64)
+ *     .build(engine)
+ *
+ * engine.destroy(texture)
+ * ```
  */
 expect class Texture {
     /**
      * Builder for creating Texture instances.
      *
-     * All builder methods return this Builder for method chaining. Sensible defaults
-     * are applied: width=1, height=1, depth=1, levels=1, format=RGBA8.
+     * Use the Builder to construct a Texture object instance.
      */
     class Builder() {
         /**
-         * Specifies the width in texels. Does not need to be a power of two.
-         * @param width Width in texels (default: 1)
-         * @return This Builder
+         * Specifies the width in texels of the texture. Doesn't need to be a power-of-two.
+         *
+         * @param width Width of the texture in texels (default: 1).
+         * @return This Builder, for chaining calls.
          */
         fun width(width: Int): Builder
 
         /**
-         * Specifies the height in texels. Does not need to be a power of two.
-         * @param height Height in texels (default: 1)
-         * @return This Builder
+         * Specifies the height in texels of the texture. Doesn't need to be a power-of-two.
+         *
+         * @param height Height of the texture in texels (default: 1).
+         * @return This Builder, for chaining calls.
          */
         fun height(height: Int): Builder
 
         /**
-         * Specifies the depth in texels for 3D textures or layer count for 2D arrays.
-         * Does not need to be a power of two. Values greater than 1 effectively create
-         * a 3D texture when used with [Sampler.SAMPLER_3D] or a 2D array with
-         * [Sampler.SAMPLER_2D_ARRAY].
-         * @param depth Depth in texels (default: 1)
-         * @return This Builder
+         * Specifies the depth in texels of the texture. Doesn't need to be a power-of-two.
+         *
+         * The depth controls the number of layers in a 2D array texture. Values greater than 1
+         * effectively create a 3D texture.
+         *
+         * @param depth Depth of the texture in texels (default: 1).
+         * @return This Builder, for chaining calls.
+         * @note This texture must use Sampler.SAMPLER_3D or Sampler.SAMPLER_2D_ARRAY or it has no effect.
          */
         fun depth(depth: Int): Builder
 
         /**
-         * Specifies the number of mip map levels. Creates a mip-map pyramid where the
-         * maximum number of levels is: max(width, height, depth) / 2^MAX_LEVELS = 1
-         * @param levels Number of mipmap levels
-         * @return This Builder
+         * Specifies the number of mip map levels.
+         *
+         * This creates a mip-map pyramid. The maximum number of levels a texture can have is
+         * such that max(width, height, depth) / 2^MAX_LEVELS = 1.
+         *
+         * @param levels Number of mipmap levels for this texture.
+         * @return This Builder, for chaining calls.
          */
         fun levels(levels: Int): Builder
 
         /**
-         * Specifies the number of samples for MSAA (Multisample Anti-Aliasing).
+         * Specifies the number of samples used for MSAA (Multisample Anti-Aliasing).
          *
-         * Calling this implicitly indicates the texture is used as a render target.
-         * Should not be used with methods like [setImage] that are semantically conflicting.
+         * Calling this method implicitly indicates the texture is used as a render target. Hence,
+         * this method should not be used in conjunction with other methods that are semantically
+         * conflicting like setImage().
          *
-         * For array textures, indicates the texture is used for multiview.
-         * @param samples Number of samples (default: 1)
-         * @return This Builder
+         * If this is invoked for array textures, it means this texture is used for multiview.
+         *
+         * @param samples Number of samples for this texture.
+         * @return This Builder, for chaining calls.
          */
         fun samples(samples: Int): Builder
 
         /**
          * Specifies the type of sampler to use.
+         *
          * @param target Sampler type
-         * @return This Builder
+         * @return This Builder, for chaining calls.
+         * @see Sampler
          */
         fun sampler(target: Sampler): Builder
 
         /**
-         * Specifies the internal format (how texels are stored in memory).
+         * Specifies the *internal* format of this texture.
          *
-         * The internal format specifies the color components and data type, which may
-         * differ from the format specified in [setImage].
-         * @param format Format of the texture's texels
-         * @return This Builder
+         * The internal format specifies how texels are stored (which may be different from how
+         * they're specified in setImage()). InternalFormat specifies both the color components
+         * and the data type used.
+         *
+         * @param format Format of the texture's texel.
+         * @return This Builder, for chaining calls.
+         * @see InternalFormat
+         * @see setImage
          */
         fun format(format: InternalFormat): Builder
 
         /**
          * Specifies if the texture will be used as a render target attachment.
          *
-         * If the texture is potentially rendered into, it may require a different
-         * memory layout, which must be known during construction.
-         * @param usage Defaults to [Usage.DEFAULT]; use [Usage.COLOR_ATTACHMENT], etc.
-         * @return This Builder
+         * If the texture is potentially rendered into, it may require a different memory layout,
+         * which needs to be known during construction.
+         *
+         * @param usage Defaults to Usage.DEFAULT; see Usage.COLOR_ATTACHMENT.
+         * @return This Builder, for chaining calls.
          */
         fun usage(usage: Int): Builder
 
         /**
-         * Specifies how a texture's channels map to color components (only if
-         * [isTextureSwizzleSupported] returns true).
+         * Specifies how a texture's channels map to color components.
+         *
+         * Texture Swizzle is only supported if isTextureSwizzleSupported() returns true.
+         *
          * @param r texture channel for red component
          * @param g texture channel for green component
          * @param b texture channel for blue component
          * @param a texture channel for alpha component
-         * @return This Builder
+         * @return This Builder, for chaining calls.
+         * @see isTextureSwizzleSupported()
          */
         fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder
 
         /**
-         * Import a native platform texture as a Filament texture.
+         * Specify a native texture to import as a Filament texture.
          *
-         * Backend-specific texture ID:
+         * The texture id is backend-specific:
          * - OpenGL: GLuint texture ID
-         * - Metal: id<MTLTexture> (cast to Long via CFBridgingRetain for ownership transfer)
+         * - Metal: id<MTLTexture>
          *
-         * Filament takes ownership of Metal textures and releases them when the
-         * Filament texture is destroyed.
-         * @param id Backend-specific texture identifier
-         * @return This Builder
+         * With Metal, the id<MTLTexture> object should be cast to a Long using
+         * platform-specific methods to transfer ownership to Filament. Filament will release
+         * ownership of the texture object when the Filament texture is destroyed.
+         *
+         * @param id a backend specific texture identifier
+         * @return This Builder, for chaining calls.
+         * @warning This method should be used as a last resort. This API is subject to change or removal.
          */
         fun importTexture(id: Long): Builder
 
         /**
-         * Creates an external texture. Content must be set using [setExternalImage] or [setExternalStream].
-         * The sampler can be [Sampler.SAMPLER_EXTERNAL] or [Sampler.SAMPLER_2D] depending
-         * on the format. Generally YUV formats require [Sampler.SAMPLER_EXTERNAL].
-         * @return This Builder
+         * Creates an external texture. The content must be set using setExternalImage() or setExternalStream().
+         *
+         * The sampler can be SAMPLER_EXTERNAL or SAMPLER_2D depending on the format. Generally
+         * YUV formats must use SAMPLER_EXTERNAL. This depends on the backend features and is not
+         * validated.
+         *
+         * If the Sampler is set to SAMPLER_EXTERNAL, external() is implied.
+         *
+         * @return This Builder, for chaining calls.
          */
         fun external(): Builder
 
         /**
-         * Builds and returns the Texture instance.
-         * @param engine Engine to associate this texture with
-         * @return The newly created Texture
+         * Creates the Texture object and returns a pointer to it.
+         *
+         * @param engine Reference to the filament Engine to associate this Texture with.
+         * @return pointer to the newly created object.
          */
         fun build(engine: Engine): Texture
     }
 
-    /** Sampler type for texture addressing. */
+    /**
+     * Sampler type for texture sampling.
+     */
     enum class Sampler { SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY }
 
-    /** Internal format specifying how texels are stored in memory. */
+    /**
+     * Internal texel format (how texels are stored in memory).
+     */
     enum class InternalFormat {
         R8, R8_SNORM, R8UI, R8I, STENCIL8,
         R16F, R16UI, R16I,
@@ -174,19 +221,29 @@ expect class Texture {
         RGB_BPTC_SIGNED_FLOAT, RGB_BPTC_UNSIGNED_FLOAT, RGBA_BPTC_UNORM, SRGB_ALPHA_BPTC_UNORM
     }
 
-    /** Cubemap faces: +X, -X, +Y, -Y, +Z, -Z. */
+    /**
+     * Cubemap face identifiers.
+     */
     enum class CubemapFace { POSITIVE_X, NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z }
 
-    /** Pixel color format (layout of input data in [setImage]). */
+    /**
+     * Pixel color format (how data is laid out in the client buffer for setImage()).
+     */
     enum class Format { R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, ALPHA }
 
-    /** Pixel data type (component size/signedness in [setImage]). */
+    /**
+     * Pixel data type (size and signedness of color components in the client buffer for setImage()).
+     */
     enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565 }
 
-    /** Texture channel swizzle (how channels map to RGBA components). */
+    /**
+     * Texture channel swizzle (maps channels to output RGBA).
+     */
     enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
 
-    /** Texture usage flags affecting memory layout and rendering attachment compatibility. */
+    /**
+     * Texture usage flags affecting memory layout and capabilities.
+     */
     class Usage {
         companion object {
             /** Texture is usable as a color attachment. */
@@ -195,7 +252,7 @@ expect class Texture {
             val DEPTH_ATTACHMENT: Int
             /** Texture is usable as a stencil attachment. */
             val STENCIL_ATTACHMENT: Int
-            /** Texture can have data uploaded via [setImage]. */
+            /** Texture can have data uploaded via setImage(). */
             val UPLOADABLE: Int
             /** Texture can be sampled in shaders. */
             val SAMPLEABLE: Int
@@ -207,23 +264,23 @@ expect class Texture {
             val BLIT_DST: Int
             /** Texture is protected (secure content). */
             val PROTECTED: Int
-            /** Texture can have mipmaps generated via [generateMipmaps]. */
+            /** Texture can have mipmaps generated via generateMipmaps(). */
             val GEN_MIPMAPPABLE: Int
-            /** Default usage (rendering and sampling). */
+            /** Default usage. */
             val DEFAULT: Int
         }
     }
 
     /**
-     * Describes pixel buffer data for uploading to a texture via [setImage].
+     * Describes pixel buffer data for uploading to a texture via setImage().
      *
      * The callback is invoked after the driver has consumed the data, allowing
      * safe deallocation or reuse of the storage.
      *
      * @param storage Client-side byte buffer containing pixel data
      * @param sizeInBytes Total size of buffer in bytes
-     * @param format Pixel color format (data layout)
-     * @param type Pixel data type (component size/signedness)
+     * @param format Pixel color format (layout)
+     * @param type Pixel data type (component size and signedness)
      * @param alignment Alignment in bytes (default: 1)
      * @param left Left offset in pixels (default: 0)
      * @param top Top offset in pixels (default: 0)
@@ -253,53 +310,55 @@ expect class Texture {
     }
 
     /**
-     * Returns the width of a texture level in texels, clamped to 1.
+     * Returns the width of a 2D or 3D texture level.
      *
-     * For external textures ([Sampler.SAMPLER_EXTERNAL]), the dimension is unknown
-     * and returns whatever was set in [Builder.width].
-     * @param level Texture level (default: 0)
-     * @return Width in texels
+     * @param level texture level.
+     * @return Width in texels of the specified level, clamped to 1.
+     * @note If this texture is using Sampler.SAMPLER_EXTERNAL, the dimensions
+     * of the texture are unknown and this method always returns whatever was set on the Builder.
      */
     fun getWidth(level: Int = 0): Int
 
     /**
-     * Returns the height of a texture level in texels, clamped to 1.
+     * Returns the height of a 2D or 3D texture level.
      *
-     * For external textures ([Sampler.SAMPLER_EXTERNAL]), the dimension is unknown
-     * and returns whatever was set in [Builder.height].
-     * @param level Texture level (default: 0)
-     * @return Height in texels
+     * @param level texture level.
+     * @return Height in texels of the specified level, clamped to 1.
+     * @note If this texture is using Sampler.SAMPLER_EXTERNAL, the dimensions
+     * of the texture are unknown and this method always returns whatever was set on the Builder.
      */
     fun getHeight(level: Int = 0): Int
 
     /**
-     * Returns the depth of a texture level in texels, clamped to 1.
+     * Returns the depth of a 3D texture level.
      *
-     * For external textures ([Sampler.SAMPLER_EXTERNAL]), the dimension is unknown
-     * and returns whatever was set in [Builder.depth].
-     * @param level Texture level (default: 0)
-     * @return Depth in texels
+     * @param level texture level.
+     * @return Depth in texels of the specified level, clamped to 1.
+     * @note If this texture is using Sampler.SAMPLER_EXTERNAL, the dimensions
+     * of the texture are unknown and this method always returns whatever was set on the Builder.
      */
     fun getDepth(level: Int = 0): Int
 
     /**
      * Returns the maximum number of levels this texture can have.
      *
-     * For external textures ([Sampler.SAMPLER_EXTERNAL]), the dimension is unknown
-     * and returns whatever was set in [Builder.levels].
-     * @return Number of mipmap levels
+     * @return maximum number of levels this texture can have.
+     * @note If this texture is using Sampler.SAMPLER_EXTERNAL, the dimensions
+     * of the texture are unknown and this method always returns whatever was set on the Builder.
      */
     fun getLevels(): Int
 
     /**
-     * Returns this texture's sampler as set by [Builder.sampler].
-     * @return Sampler type
+     * Return this texture Sampler as set by Builder.sampler().
+     *
+     * @return this texture Sampler as set by Builder.sampler()
      */
     fun getTarget(): Sampler
 
     /**
-     * Returns this texture's internal format as set by [Builder.format].
-     * @return Internal format
+     * Return this texture InternalFormat as set by Builder.format().
+     *
+     * @return this texture InternalFormat as set by Builder.format().
      */
     fun getFormat(): InternalFormat
 
