@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import java.awt.GraphicsEnvironment
 
 plugins {
     kotlin("multiplatform")
@@ -93,13 +94,36 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.jvmTarget.set(JvmTarget.JVM_22)
 }
 
+// ── Real-backend (GPU) test gating, decided once here on the host ─────────────
+// Whether a real Filament backend can be created is a property of the host, which
+// only Gradle sees reliably — the forked JVM and the iOS simulator don't inherit
+// the host env. So decide it here and inject FILAMENT_TEST_GPU; TestEnv just reads
+// it, no per-platform GPU guessing at runtime. Override anything with the
+// -PfilamentTestGpu property or the FILAMENT_TEST_GPU env var.
+// The default differs by target because the same runner behaves differently:
+val forcedGpu: String? = providers.gradleProperty("filamentTestGpu").orNull
+    ?: System.getenv("FILAMENT_TEST_GPU")
+val osName = System.getProperty("os.name").orEmpty().lowercase()
+
+// JVM host backend — CI-independent: macOS Actions runners are Apple-silicon with a
+// real GPU, so Metal runs on CI too. Windows DEFAULT=Vulkan aborts uncatchably with
+// no usable driver; headless Linux has no display (CI Linux opts in via lavapipe).
+val jvmGpu: String = forcedGpu ?: when {
+    osName.contains("mac") -> "true"
+    osName.contains("win") -> "false"
+    else -> (!GraphicsEnvironment.isHeadless()).toString()
+}
+
+// iOS simulator only reaches the GPU from a locally-booted sim; on a CI runner the
+// sim's Metal driver aborts on real draw. Conservative default off under CI — flip
+// with -PfilamentTestGpu=true to test whether a given runner's sim can render.
+val simGpu: String = forcedGpu ?: (System.getenv("CI") == null).toString()
+
 // jvmTest runs FFM downcalls into libfilament-c; silence the JDK 22+ restricted-native-access
 // warning. Downstream app launchers need the same flag.
 tasks.withType<Test>().configureEach {
     jvmArgs("--enable-native-access=ALL-UNNAMED")
-    // The forked test JVM doesn't inherit the parent shell env; forward the
-    // FILAMENT_TEST_GPU override (read by TestEnv) when it's set.
-    System.getenv("FILAMENT_TEST_GPU")?.let { environment("FILAMENT_TEST_GPU", it) }
+    environment("FILAMENT_TEST_GPU", jvmGpu)
     // Full exception output for failed tests — the default summary truncates the message,
     // hiding causes like a native "undefined symbol".
     testLogging {
@@ -164,4 +188,7 @@ android {
 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {
     standalone.set(false)
     device.set(providers.gradleProperty("iosSimulatorDevice").orElse("iPhone 17"))
+    // The simulated test process does NOT inherit the host environment, so forward
+    // the already-decided flag (SIMCTL_CHILD_ is the prefix simctl spawn unwraps).
+    environment("SIMCTL_CHILD_FILAMENT_TEST_GPU", simGpu)
 }

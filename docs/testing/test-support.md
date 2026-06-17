@@ -41,14 +41,22 @@ fun something() {
 }
 ```
 
+The value is **decided once by Gradle** (`filament-kmp-module.gradle.kts`), not
+re-derived per platform at runtime — only Gradle reliably sees the host env (the
+forked JVM and the iOS simulator don't inherit it). Gradle injects the result as
+the `FILAMENT_TEST_GPU` env var (the simulator gets the `SIMCTL_CHILD_`-prefixed
+form), and each `TestEnv` actual just reads it. The default differs by target
+because the same runner reaches the GPU differently; force either way with
+`-PfilamentTestGpu=true|false` or `FILAMENT_TEST_GPU=true|false`.
+
 Per-platform values:
 
-| Target | `gpuBackendAvailable` | Reasoning |
+| Target | `gpuBackendAvailable` default | Reasoning |
 |---|---|---|
 | Android | always `true` | emulator/device provides GLES |
-| Native (iOS sim) | `true` locally, `false` under CI | a local booted sim is backed by the host GPU; a headless CI runner (`CI` env set) has no GPU and aborts on real draw/compute. Override with `FILAMENT_TEST_GPU` |
 | JS | always `true` | WebGL engine creation works; per-feature gaps use `@IgnoreJs` instead |
-| JVM | host-dependent | Apple silicon (Metal, even headless) → `true`; Windows → `false` (DEFAULT backend is Vulkan, which aborts uncatchably without a usable driver); Linux → requires a non-headless display. Override with the `FILAMENT_TEST_GPU` env var (`true`/`1` or `false`/`0`) |
+| JVM | `mac` → true, `win` → false, `linux` → has-display | **CI-independent**: macOS Actions runners are Apple-silicon with a real GPU, so Metal runs on CI too. Windows DEFAULT=Vulkan aborts uncatchably without a driver; headless Linux opts in via lavapipe |
+| Native (iOS sim) | `true` locally, `false` under CI | a locally-booted sim reaches the host GPU; on a CI runner the sim's Metal driver aborts on real draw. Flip with `-PfilamentTestGpu=true` to test a runner |
 
 ## `@IgnoreJs` — skip a test on the web target only
 
