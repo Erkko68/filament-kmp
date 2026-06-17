@@ -1,80 +1,118 @@
 package io.github.erkko68.filament
 
 /**
- * Stream represents an external video or camera stream that can be bound to a texture.
+ * Stream is used to attach a video stream to a Filament Texture.
  *
- * Streams allow rendering of video or camera feeds by binding them to textures with
- * [Sampler.SAMPLER_EXTERNAL]. The stream provides timing and dimension information.
+ * The Stream class is fairly platform-centric. It supports two different configurations:
  *
- * **Usage:**
- * Create a Stream with the Builder, use it with a Texture set to SAMPLER_EXTERNAL,
- * and destroy with [Engine.destroy]. The stream dimensions must match the texture dimensions.
+ * - **NATIVE**: Connects to a native OS stream (e.g., Android SurfaceTexture)
+ * - **ACQUIRED**: Connects to an external source (e.g., Android AHardwareBuffer)
+ *
+ * Before explaining these different configurations, let's review the high-level structure of an AR
+ * or video application that uses Filament:
+ *
+ * ```
+ * while (true) {
+ *     // Application work: write frame data, move camera, etc.
+ *
+ *     if (renderer.beginFrame(swapChain)) {
+ *         renderer.render(view)
+ *         renderer.endFrame()
+ *     }
+ * }
+ * ```
+ *
+ * Let's say that the video image data at the time of a particular invocation of `beginFrame()`
+ * becomes visible to users at time A. The 3D scene state (including camera) at that same
+ * invocation becomes apparent to users at time B.
+ *
+ * - If time A matches time B, the stream is **synchronized**.
+ * - Filament invokes low-level graphics commands on the **driver thread**.
+ * - The thread that calls `beginFrame()` is called the **main thread**.
+ *
+ * For ACQUIRED streams, Filament explicitly acquires the stream, then releases it later via a
+ * callback function. This configuration is especially useful when the Vulkan backend is enabled.
+ *
+ * NATIVE streams are deprecated because they are backend-specific and do not make any
+ * synchronization guarantee.
  *
  * @see Texture
  * @see TextureSampler
  */
 expect class Stream {
     /**
-     * Type of stream source.
-     *
-     * - NATIVE: Native OS stream (camera, video device)
-     * - ACQUIRED: Stream acquired from external source
+     * Indicates the type of stream source.
      */
     enum class StreamType {
+        /** Native OS stream (e.g., Android SurfaceTexture) */
         NATIVE,
+        /** Stream acquired from external source (e.g., AHardwareBuffer) */
         ACQUIRED
     }
 
     /**
      * Builder for creating Stream instances.
      *
-     * Configure the stream dimensions (width and height) before building.
+     * By default, Stream objects are ACQUIRED and must have external images pushed to them.
+     * To create a NATIVE stream, call the deprecated stream() method on the builder.
      */
     class Builder() {
         /**
-         * Sets the width of the stream in pixels.
+         * Sets the initial width of the incoming stream in pixels.
          *
-         * @param width Stream width (must match associated texture width)
-         * @return This Builder, for chaining calls
+         * Whether this value is used is stream-dependent. On Android, it must be set when using
+         * a native stream.
+         *
+         * @param width Stream width in pixels.
+         * @return This Builder, for chaining calls.
          */
         fun width(width: Int): Builder
 
         /**
-         * Sets the height of the stream in pixels.
+         * Sets the initial height of the incoming stream in pixels.
          *
-         * @param height Stream height (must match associated texture height)
-         * @return This Builder, for chaining calls
+         * Whether this value is used is stream-dependent. On Android, it must be set when using
+         * a native stream.
+         *
+         * @param height Stream height in pixels.
+         * @return This Builder, for chaining calls.
          */
         fun height(height: Int): Builder
 
         /**
-         * Creates the Stream object.
+         * Creates the Stream object and associates it with the given Engine.
          *
-         * @param engine Engine to associate this Stream with
-         * @return The newly created Stream
+         * @param engine Engine to associate this Stream with.
+         * @return The newly created Stream.
          */
         fun build(engine: Engine): Stream
     }
 
     /**
-     * Gets the type of this stream (NATIVE or ACQUIRED).
-     * @return The StreamType
+     * Indicates whether this stream is a NATIVE stream or ACQUIRED stream.
+     *
+     * @return The StreamType of this stream.
      */
     val streamType: StreamType
 
     /**
-     * Gets the timestamp of the most recent frame in nanoseconds.
-     * @return Frame timestamp (monotonically increasing)
+     * Returns the presentation timestamp of the currently displayed frame in nanoseconds.
+     *
+     * This value can change at any time and represents the time when the current frame
+     * was acquired or presented.
+     *
+     * @return Timestamp in nanoseconds (monotonically increasing).
      */
     val timestamp: Long
 
     /**
-     * Updates the stream dimensions.
+     * Updates the size of the incoming stream.
      *
-     * Must match the texture dimensions of any texture using this stream.
+     * Whether this value is used is stream-dependent. On Android, it must be set when using
+     * a native stream. The dimensions should match the associated Texture's dimensions.
      *
-     * @param width New width in pixels
-     * @param height New height in pixels
+     * @param width New width in pixels.
+     * @param height New height in pixels.
      */
     fun setDimensions(width: Int, height: Int)
 }
