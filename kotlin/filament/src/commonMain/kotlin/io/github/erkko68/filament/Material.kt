@@ -222,46 +222,44 @@ expect class Material {
         enum class ShadowSamplingQuality { HARD, LOW }
 
         /**
-         * Specifies the material package data (compiled binary from matc compiler).
+         * Specifies the material data (compiled binary blob).
          *
-         * @param data Material package bytecode; must stay valid until build() is called
+         * The material data is a binary blob produced by libfilamat or by matc (the material compiler).
+         *
+         * @param data Pointer to the material data; must stay valid until build() is called
          * @return This Builder, for chaining calls
          */
         fun payload(data: ByteArray): Builder
 
         /**
-         * Sets the quality of indirect light computations via spherical harmonics.
+         * Sets the quality of the indirect light computations.
          *
-         * This is only applied if the material is lit and in the surface domain.
-         * More bands = higher quality but more computation. The spherical harmonics
-         * are used to compute irradiance from an [IndirectLight].
+         * This is only taken into account if the material is lit and in the surface domain.
+         * This setting affects the IndirectLight computation if one is specified on the Scene
+         * and Spherical Harmonics are used for the irradiance.
          *
-         * @param shBandCount Number of spherical harmonic bands (1, 2, or 3; default: 3)
-         * @return This Builder, for chaining calls
+         * @param shBandCount Number of spherical harmonic bands. Must be 1, 2 or 3 (default).
+         * @return This Builder, for chaining calls.
          *
          * @see IndirectLight
          */
         fun sphericalHarmonicsBandCount(shBandCount: Int): Builder
 
         /**
-         * Sets the quality of shadow sampling for this material.
+         * Set the quality of shadow sampling.
          *
-         * This is only applied if the material is lit and in the surface domain.
+         * This is only taken into account if the material is lit and in the surface domain.
          *
-         * @param quality Shadow sampling quality (HARD for PCF, LOW for Gaussian filter)
-         * @return This Builder, for chaining calls
+         * @param quality Shadow sampling quality
+         * @return This Builder, for chaining calls.
          */
         fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder
 
         /**
-         * Sets the batching mode for instances created from this material.
+         * Set the batching mode of the instances created from this material.
          *
-         * UBO batching allows multiple material instances to share a single uniform buffer,
-         * reducing memory and state changes. When enabled, instances are automatically
-         * batched together during rendering.
-         *
-         * @param mode DEFAULT to use engine settings, or DISABLED to disable per-material
-         * @return This Builder, for chaining calls
+         * @param mode Batching mode to use
+         * @return This Builder, for chaining calls.
          */
         fun uboBatching(mode: UboBatchingMode): Builder
 
@@ -275,21 +273,29 @@ expect class Material {
     }
 
     /**
-     * Asynchronously compiles specified variants of this material.
+     * Asynchronously ensures that a subset of this Material's variants are compiled.
      *
-     * After issuing multiple compile() calls, call [Engine.flush] so the backend can start
-     * work as soon as possible. The callback is guaranteed to be called on the main thread
-     * after compilation completes.
+     * After issuing several compile() calls in a row, it is recommended to call
+     * [Engine.flush] so the backend can start the compilation work as soon as possible.
+     * The provided callback is guaranteed to be called on the main thread after all specified
+     * variants of the material are compiled. This can take hundreds of milliseconds.
      *
-     * If the same variant is scheduled multiple times, the first scheduling takes precedence.
+     * If all the material's variants are already compiled, the callback will be scheduled as
+     * soon as possible, but this might take a few dozen milliseconds, corresponding to how
+     * many previous frames are enqueued in the backend. This also varies by backend. Therefore,
+     * it is recommended to only call this method once per material shortly after creation.
      *
-     * **Note:** Only compile variants you'll actually use. For example, if your app doesn't
-     * use stereoscopic rendering, don't compile the STE variant. Use [UserVariantFilterBit]
-     * to specify which variants to compile.
+     * If the same variant is scheduled for compilation multiple times, the first scheduling
+     * takes precedence; later scheduling are ignored.
      *
-     * @param priority Queue to use (CRITICAL, HIGH, or LOW)
-     * @param variants Variants to compile (bitmask of UserVariantFilterBit values)
-     * @param callback Optional callback invoked on main thread when compilation completes
+     * Note that it is possible to override specialization constants on a per-MaterialInstance basis
+     * via [MaterialInstance]. In that case, the programs compiled by a call to compile() may not
+     * be reusable by that MaterialInstance. It's better to call MaterialInstance.compile() in
+     * cases where you intend to override specialization constants.
+     *
+     * @param priority Which priority queue to use (CRITICAL, HIGH, or LOW).
+     * @param variants Variants to include in the compile command (bitmask of UserVariantFilterBit values).
+     * @param callback Callback called on the main thread when the compilation is done.
      */
     fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)? = null)
 
