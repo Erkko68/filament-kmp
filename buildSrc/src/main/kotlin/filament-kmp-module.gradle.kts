@@ -9,6 +9,7 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("filament-publish")
+    id("org.jetbrains.dokka")
 }
 
 // ── Project coordinates (previously in root allprojects {}) ───────────────────
@@ -32,7 +33,7 @@ kotlin {
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
     androidTarget {
-        publishLibraryVariants("release", "debug")
+        publishLibraryVariants("release")
         // Make `androidInstrumentedTest` inherit from `commonTest` so the
         // shared `expect`s (e.g. createTestSurface, TestMaterials) line up
         // with the per-Android `actual`s. The default hierarchy template
@@ -43,7 +44,6 @@ kotlin {
     // Declare all targets
     iosArm64()
     iosSimulatorArm64()
-    iosX64()
     jvm()
 
     js {
@@ -154,9 +154,8 @@ afterEvaluate {
     kotlin {
         val xcf = XCFramework(xcfName)
         listOf(
-            targets.getByName("iosArm64")           as KotlinNativeTarget,
-            targets.getByName("iosSimulatorArm64")   as KotlinNativeTarget,
-            targets.getByName("iosX64")              as KotlinNativeTarget,
+            targets.getByName("iosArm64")          as KotlinNativeTarget,
+            targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
         ).forEach {
             it.binaries.framework {
                 baseName = xcfName

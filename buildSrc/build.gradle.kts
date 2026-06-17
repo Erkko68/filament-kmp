@@ -14,4 +14,5 @@ dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.vanniktech.publish.gradlePlugin)
     implementation(libs.compose.gradlePlugin)
+    implementation(libs.dokka.gradlePlugin)
 }

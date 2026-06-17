@@ -17,7 +17,7 @@ See [`docs/modules.md`](../docs/modules.md) for the full coordinates list, depen
 Each module publishes the following Kotlin Multiplatform targets:
 
 - `androidTarget`
-- `iosArm64`, `iosSimulatorArm64`, `iosX64`
+- `iosArm64`, `iosSimulatorArm64`
 - `macosArm64`
 - `jvm` (Desktop — Windows, Linux, macOS)
 - `js(IR)` (Web — experimental)

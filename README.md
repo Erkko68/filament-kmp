@@ -87,6 +87,7 @@ The public API stays as close as possible to the **Android Filament API**, so ex
 ## Documentation
 
 ### This project
+- **[API Reference](https://erkko68.github.io/filament-kmp/api/)** — generated KDoc for all published modules.
 - **[Getting Started](docs/getting-started.md)** — per-platform Gradle setup, first scene.
 - **[Modules](docs/modules.md)** — published artifacts, dependency graph, when you need what.
 - **[Platform Notes](docs/platform-notes.md)** — backends, gotchas (Windows JVM shutdown, web limits, iOS embedding).
