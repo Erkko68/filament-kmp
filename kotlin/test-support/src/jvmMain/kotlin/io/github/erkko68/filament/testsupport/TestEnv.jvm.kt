@@ -8,8 +8,11 @@ actual object TestEnv {
             "false", "0" -> false
             else -> {
                 val os = System.getProperty("os.name").orEmpty().lowercase()
-                // Apple silicon always has Metal (even headless); elsewhere require a display.
-                os.contains("mac") || !java.awt.GraphicsEnvironment.isHeadless()
+                when {
+                    os.contains("mac") -> true // Metal, even headless
+                    os.contains("win") -> false
+                    else -> !java.awt.GraphicsEnvironment.isHeadless() // Linux: require a display
+                }
             }
         }
     }

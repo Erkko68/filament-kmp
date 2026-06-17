@@ -97,6 +97,9 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 // warning. Downstream app launchers need the same flag.
 tasks.withType<Test>().configureEach {
     jvmArgs("--enable-native-access=ALL-UNNAMED")
+    // The forked test JVM doesn't inherit the parent shell env; forward the
+    // FILAMENT_TEST_GPU override (read by TestEnv) when it's set.
+    System.getenv("FILAMENT_TEST_GPU")?.let { environment("FILAMENT_TEST_GPU", it) }
     // Full exception output for failed tests — the default summary truncates the message,
     // hiding causes like a native "undefined symbol".
     testLogging {

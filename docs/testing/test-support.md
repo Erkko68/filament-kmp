@@ -48,7 +48,7 @@ Per-platform values:
 | Android | always `true` | emulator/device provides GLES |
 | Native (iOS sim) | always `true` | sim tests run inside a **booted** device; gradle fails earlier if none is booted, so a backend is guaranteed |
 | JS | always `true` | WebGL engine creation works; per-feature gaps use `@IgnoreJs` instead |
-| JVM | host-dependent | Apple silicon (Metal, even headless) → `true`; elsewhere requires a non-headless display. Override with the `FILAMENT_TEST_GPU` env var (`true`/`1` or `false`/`0`) |
+| JVM | host-dependent | Apple silicon (Metal, even headless) → `true`; Windows → `false` (DEFAULT backend is Vulkan, which aborts uncatchably without a usable driver); Linux → requires a non-headless display. Override with the `FILAMENT_TEST_GPU` env var (`true`/`1` or `false`/`0`) |
 
 ## `@IgnoreJs` — skip a test on the web target only
 
