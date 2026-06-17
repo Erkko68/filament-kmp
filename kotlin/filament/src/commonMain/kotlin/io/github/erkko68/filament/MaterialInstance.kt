@@ -268,14 +268,22 @@ expect class MaterialInstance {
     fun setParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float)
 
     /**
-     * Specifies a scissor box to restrict rendering to a rectangular region.
+     * Set-up a custom scissor rectangle; by default it is disabled.
      *
-     * Pixels outside the scissor box are discarded. Useful for HUD elements, minimaps, etc.
+     * The scissor rectangle gets clipped by the View's viewport, in other words, the scissor
+     * cannot affect fragments outside of the View's Viewport.
      *
-     * @param left Left edge of scissor box in pixels
-     * @param bottom Bottom edge of scissor box in pixels
-     * @param width Width of scissor box in pixels
-     * @param height Height of scissor box in pixels
+     * Currently the scissor is not compatible with dynamic resolution and should always be
+     * disabled when dynamic resolution is used.
+     *
+     * @param left left coordinate of the scissor box relative to the viewport
+     * @param bottom bottom coordinate of the scissor box relative to the viewport
+     * @param width width of the scissor box
+     * @param height height of the scissor box
+     *
+     * @see unsetScissor
+     * @see View.setViewport
+     * @see View.setDynamicResolutionOptions
      */
     fun setScissor(left: Int, bottom: Int, width: Int, height: Int)
 
@@ -285,64 +293,73 @@ expect class MaterialInstance {
     fun unsetScissor()
 
     /**
-     * Applies a constant and scale offset to the depth value (polygon offset / depth bias).
+     * Sets a polygon offset that will be applied to all renderables drawn with this material instance.
      *
-     * Useful for preventing z-fighting between nearby surfaces. Negative values move
-     * geometry closer to the camera.
+     * The value of the offset is scale * dz + r * constant, where dz is the change in depth
+     * relative to the screen area of the triangle, and r is the smallest value that is guaranteed
+     * to produce a resolvable offset for a given implementation. This offset is added before the
+     * depth test.
      *
-     * @param scale Scale factor applied to the fragment's slope
-     * @param constant Constant offset in depth units
+     * @warning Using a polygon offset other than zero has a significant negative performance
+     * impact, as most implementations have to disable early depth culling. DO NOT USE unless
+     * absolutely necessary.
+     *
+     * @param scale Scale factor used to create a variable depth offset for each triangle
+     * @param constant Scale factor used to create a constant depth offset for each triangle
      */
     fun setPolygonOffset(scale: Float, constant: Float)
 
     /**
      * Gets/sets the alpha mask threshold for masked blending mode.
      *
-     * Pixels with alpha < threshold are discarded; >= threshold are opaque.
-     * Default: material's mask threshold.
+     * Overrides the minimum alpha value a fragment must have to not be discarded when the blend
+     * mode is MASKED. Defaults to 0.4 if it has not been set in the parent Material. The specified
+     * value should be between 0 and 1 and will be clamped if necessary.
      *
      * @see Material.BlendingMode.MASKED
      */
     var maskThreshold: Float
 
     /**
-     * Gets/sets the specular anti-aliasing variance for this instance.
+     * Gets/sets the screen space variance of the filter kernel used when applying specular
+     * anti-aliasing.
      *
-     * Higher values reduce specular aliasing but may blur highlights. Range: [0, 1].
-     * Default: material's variance.
+     * The default value is set to 0.15. The specified value should be between 0 and 1
+     * and will be clamped if necessary.
      */
     var specularAntiAliasingVariance: Float
 
     /**
-     * Gets/sets the specular anti-aliasing threshold for this instance.
+     * Gets/sets the clamping threshold used to suppress estimation errors when applying specular
+     * anti-aliasing.
      *
-     * Clamps the amount of anti-aliasing applied to specular highlights. Range: [0, 1].
-     * Default: material's threshold.
+     * The default value is set to 0.2. The specified value should be between 0 and 1
+     * and will be clamped if necessary.
      */
     var specularAntiAliasingThreshold: Float
 
     /**
-     * Gets/sets whether this instance is double-sided.
+     * Gets/sets whether double-sided lighting is enabled.
      *
-     * If true, both front and back faces are rendered. If false, back faces are culled.
-     * Default: material's double-sided setting.
+     * Enables or disables double-sided lighting if the parent Material has double-sided capability,
+     * otherwise prints a warning. If double-sided lighting is enabled, backface culling is
+     * automatically disabled.
      */
     var isDoubleSided: Boolean
 
     /**
-     * Gets/sets the transparency rendering mode for this instance.
+     * Gets/sets the transparency rendering mode.
      *
-     * Controls how transparent pixels are rendered (immediate, multi-pass, etc).
-     * Default: material's transparency mode.
+     * Specifies how transparent objects should be rendered (default is DEFAULT).
      *
      * @see Material.TransparencyMode
      */
     var transparencyMode: Material.TransparencyMode
 
     /**
-     * Gets/sets the culling mode for color pass rendering.
+     * Gets/sets the face culling mode.
      *
-     * Default: material's culling mode.
+     * Overrides the default triangle culling state that was set on the material.
      *
      * @see Material.CullingMode
      */
@@ -351,116 +368,147 @@ expect class MaterialInstance {
     /**
      * Sets different culling modes for color and shadow passes.
      *
-     * Allows fine-grained control over what's rendered in each pass. For example,
-     * you might cull backfaces in the color pass but render everything in shadows.
+     * Overrides the default triangle culling state that was set on the material separately for the
+     * color and shadow passes.
      *
      * @param colorPassCullingMode Culling mode for color rendering
-     * @param shadowPassCullingMode Culling mode for shadow map rendering
+     * @param shadowPassCullingMode Culling mode for shadow pass rendering
      */
     fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode)
 
     /**
-     * Gets the culling mode for shadow pass rendering.
+     * Returns the face culling mode for the shadow passes.
+     *
      * @return Culling mode used when rendering shadow maps
      */
     val shadowCullingMode: Material.CullingMode
 
     /**
-     * Gets/sets whether this instance writes to the color buffer (enabled by default).
-     * @return true if color writes are enabled
+     * Gets/sets whether color write is enabled.
+     *
+     * Overrides the default color-buffer write state that was set on the material.
      */
     var isColorWriteEnabled: Boolean
 
     /**
-     * Gets/sets whether this instance writes to the depth buffer (enabled by default).
-     * @return true if depth writes are enabled
+     * Gets/sets whether depth write is enabled.
+     *
+     * Overrides the default depth-buffer write state that was set on the material.
      */
     var isDepthWriteEnabled: Boolean
 
     /**
-     * Gets/sets whether this instance writes to the stencil buffer.
-     * Default: false.
+     * Gets/sets whether stencil write is enabled.
+     *
+     * Overrides the default stencil-buffer write state that was set on the material.
      */
     var isStencilWriteEnabled: Boolean
 
     /**
-     * Gets/sets whether this instance performs depth testing (enabled by default).
-     * @return true if depth testing is enabled
+     * Gets/sets whether depth culling (depth testing) is enabled.
+     *
+     * Overrides the default depth testing state that was set on the material.
      */
     var isDepthCullingEnabled: Boolean
 
     /**
-     * Gets/sets the depth comparison function for this instance.
+     * Gets/sets the depth function.
      *
-     * Controls how pixels are tested against the depth buffer (less, greater, equal, etc).
-     * Default: material's depth function.
+     * Overrides the default depth function state that was set on the material.
      */
     var depthFunc: TextureSampler.CompareFunction
 
     /**
-     * Sets the stencil comparison function for both front and back faces.
+     * Sets the stencil comparison function (default is ALWAYS).
      *
-     * The comparison function determines when pixels pass the stencil test.
+     * It's possible to set separate stencil comparison functions; one for front-facing polygons,
+     * and one for back-facing polygons. The face parameter determines the comparison function(s)
+     * updated by this call.
      *
-     * @param func Comparison function (e.g., LESS, EQUAL, GREATER)
+     * @param func Comparison function
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
      */
     fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace)
 
     /**
-     * Sets the stencil comparison function for both front and back faces.
+     * Sets the stencil comparison function for both front and back faces (default is ALWAYS).
      *
-     * @param func Comparison function (e.g., LESS, EQUAL, GREATER)
+     * @param func Comparison function
      */
     fun setStencilCompareFunction(func: TextureSampler.CompareFunction)
 
     /**
-     * Sets the stencil operation when the stencil test fails.
+     * Sets the stencil fail operation (default is KEEP).
      *
-     * @param op Operation to apply when stencil test fails (KEEP, ZERO, REPLACE, etc)
+     * The stencil fail operation is performed to update values in the stencil buffer when the
+     * stencil test fails.
+     *
+     * It's possible to set separate stencil fail operations; one for front-facing polygons, and one
+     * for back-facing polygons. The face parameter determines the stencil fail operation(s) updated
+     * by this call.
+     *
+     * @param op Operation to apply
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
      */
     fun setStencilOpStencilFail(op: StencilOperation, face: StencilFace)
 
     /**
-     * Sets the stencil operation when the stencil test fails for both faces.
+     * Sets the stencil fail operation for both front and back faces (default is KEEP).
      *
-     * @param op Operation to apply (KEEP, ZERO, REPLACE, etc)
+     * @param op Operation to apply
      */
     fun setStencilOpStencilFail(op: StencilOperation)
 
     /**
-     * Sets the stencil operation when the stencil test passes but depth test fails.
+     * Sets the depth fail operation (default is KEEP).
      *
-     * @param op Operation to apply when depth test fails (KEEP, ZERO, REPLACE, etc)
+     * The depth fail operation is performed to update values in the stencil buffer when the depth
+     * test fails.
+     *
+     * It's possible to set separate depth fail operations; one for front-facing polygons, and one
+     * for back-facing polygons. The face parameter determines the depth fail operation(s) updated
+     * by this call.
+     *
+     * @param op Operation to apply
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
      */
     fun setStencilOpDepthFail(op: StencilOperation, face: StencilFace)
 
     /**
-     * Sets the stencil operation when the stencil test passes but depth test fails for both faces.
+     * Sets the depth fail operation for both front and back faces (default is KEEP).
      *
-     * @param op Operation to apply (KEEP, ZERO, REPLACE, etc)
+     * @param op Operation to apply
      */
     fun setStencilOpDepthFail(op: StencilOperation)
 
     /**
-     * Sets the stencil operation when both stencil and depth tests pass.
+     * Sets the depth-stencil pass operation (default is KEEP).
      *
-     * @param op Operation to apply when both tests pass (KEEP, ZERO, REPLACE, etc)
+     * The depth-stencil pass operation is performed to update values in the stencil buffer when
+     * both the stencil test and depth test pass.
+     *
+     * It's possible to set separate depth-stencil pass operations; one for front-facing polygons,
+     * and one for back-facing polygons. The face parameter determines the depth-stencil pass
+     * operation(s) updated by this call.
+     *
+     * @param op Operation to apply
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
      */
     fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace)
 
     /**
-     * Sets the stencil operation when both stencil and depth tests pass for both faces.
+     * Sets the depth-stencil pass operation for both front and back faces (default is KEEP).
      *
-     * @param op Operation to apply (KEEP, ZERO, REPLACE, etc)
+     * @param op Operation to apply
      */
     fun setStencilOpDepthStencilPass(op: StencilOperation)
 
     /**
-     * Sets the stencil reference value used in comparisons.
+     * Sets the stencil reference value (default is 0).
+     *
+     * It's possible to set separate stencil reference values; one for front-facing polygons, and one
+     * for back-facing polygons. The face parameter determines the reference value(s) updated
+     * by this call.
      *
      * @param value Reference value [0, 255]
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
@@ -468,14 +516,17 @@ expect class MaterialInstance {
     fun setStencilReferenceValue(value: Int, face: StencilFace)
 
     /**
-     * Sets the stencil reference value for both front and back faces.
+     * Sets the stencil reference value for both front and back faces (default is 0).
      *
      * @param value Reference value [0, 255]
      */
     fun setStencilReferenceValue(value: Int)
 
     /**
-     * Sets the stencil read mask (which bits are compared).
+     * Sets the stencil read mask (default is 0xFF / 255 / all bits).
+     *
+     * It's possible to set separate stencil read masks; one for front-facing polygons, and one
+     * for back-facing polygons. The face parameter determines the read mask(s) updated by this call.
      *
      * @param readMask Bitmask [0, 255]; only masked bits participate in comparison
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
@@ -483,14 +534,17 @@ expect class MaterialInstance {
     fun setStencilReadMask(readMask: Int, face: StencilFace)
 
     /**
-     * Sets the stencil read mask for both front and back faces.
+     * Sets the stencil read mask for both front and back faces (default is 0xFF / 255 / all bits).
      *
      * @param readMask Bitmask [0, 255]; only masked bits participate in comparison
      */
     fun setStencilReadMask(readMask: Int)
 
     /**
-     * Sets the stencil write mask (which bits can be written).
+     * Sets the stencil write mask (default is 0xFF / 255 / all bits).
+     *
+     * It's possible to set separate stencil write masks; one for front-facing polygons, and one
+     * for back-facing polygons. The face parameter determines the write mask(s) updated by this call.
      *
      * @param writeMask Bitmask [0, 255]; only masked bits can be modified
      * @param face Which face(s) this applies to (FRONT, BACK, or FRONT_AND_BACK)
@@ -498,7 +552,7 @@ expect class MaterialInstance {
     fun setStencilWriteMask(writeMask: Int, face: StencilFace)
 
     /**
-     * Sets the stencil write mask for both front and back faces.
+     * Sets the stencil write mask for both front and back faces (default is 0xFF / 255 / all bits).
      *
      * @param writeMask Bitmask [0, 255]; only masked bits can be modified
      */
