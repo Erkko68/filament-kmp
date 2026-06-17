@@ -166,6 +166,16 @@ afterEvaluate {
     }
 }
 
+// ── API docs: document only the common (expect) API ───────────────────────────
+// Dokka analyses every platform source set; the JVM actuals pull in :java (FFM +
+// jextract + native prebuilts), turning a docs build into a full native build.
+// The public surface is the commonMain expect API, so suppress the rest.
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTaskPartial>().configureEach {
+    dokkaSourceSets.configureEach {
+        if (name != "commonMain") suppress.set(true)
+    }
+}
+
 // ── Android defaults ──────────────────────────────────────────────────────────
 android {
     val groupStr = project.group.toString()
