@@ -103,7 +103,6 @@ jobs:
           path: |
             prebuilts/iosArm64
             prebuilts/iosSimulatorArm64
-            prebuilts/iosX64
             prebuilts/macosArm64
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-ios-macos
       - name: Download iOS + macOS prebuilts
@@ -111,7 +110,6 @@ jobs:
           ./gradlew \
             downloadPrebuilts_iosArm64 \
             downloadPrebuilts_iosSimulatorArm64 \
-            downloadPrebuilts_iosX64 \
             downloadPrebuilts_macosArm64
       - name: Download FFM natives
         uses: actions/download-artifact@v4

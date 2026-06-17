@@ -152,10 +152,9 @@ jobs:
           path: |
             prebuilts/iosArm64
             prebuilts/iosSimulatorArm64
-            prebuilts/iosX64
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-ios
       - name: Download prebuilts
-        run: ./gradlew downloadPrebuilts_iosArm64 downloadPrebuilts_iosSimulatorArm64 downloadPrebuilts_iosX64
+        run: ./gradlew downloadPrebuilts_iosArm64 downloadPrebuilts_iosSimulatorArm64
       - name: Build library
         run: |
           ./gradlew \

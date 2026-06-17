@@ -31,7 +31,7 @@ allprojects {
 // Tasks live at the root project so they are shared across :kotlin:* and :java:*.
 //
 // Targets correspond to:
-//   • iosArm64 / iosSimulatorArm64 / iosX64 — Kotlin/Native iOS targets.
+//   • iosArm64 / iosSimulatorArm64 — Kotlin/Native iOS targets.
 //   • macosArm64 / macosX64                 — JVM/Panama host (:java:*); macOS uses
 //                                              the JVM build, not Kotlin/Native.
 //   • linuxX64 / linuxArm64 / mingwX64      — JVM/Panama host on Linux/Windows.
@@ -43,7 +43,6 @@ val filaVersion: String by project
 val PREBUILT_TARGETS = listOf(
     "iosArm64",
     "iosSimulatorArm64",
-    "iosX64",
     "macosArm64",
     "macosX64",
     "linuxX64",
