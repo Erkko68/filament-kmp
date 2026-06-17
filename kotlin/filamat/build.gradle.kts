@@ -27,6 +27,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(project(":kotlin:test-support"))
         }
         androidMain.dependencies {
             implementation("com.google.android.filament:filamat-android:$filaVersion")

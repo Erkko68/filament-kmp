@@ -2,6 +2,7 @@ package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.filamat.testutils.FilamatTestFixture
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -71,9 +72,9 @@ class MaterialBuilderTest : FilamatTestFixture() {
     }
 
     @Test
+    @IgnoreJs // filamat compilation is not supported in the web wrapper.
     fun testMaterialBuilderChainingAndBuild() {
-        try {
-            val pkg = MaterialBuilder()
+        val pkg = MaterialBuilder()
                 .name("TestMaterial")
                 .materialDomain(MaterialBuilder.MaterialDomain.SURFACE)
                 .shading(MaterialBuilder.Shading.UNLIT)
@@ -119,9 +120,6 @@ class MaterialBuilderTest : FilamatTestFixture() {
                 .useLegacyMorphing()
                 .build()
 
-            assertNotNull(pkg)
-        } catch (e: UnsupportedOperationException) {
-            // Expected on platforms where filamat compilation is not supported (e.g. JS).
-        }
+        assertNotNull(pkg)
     }
 }
