@@ -6,6 +6,18 @@ plugins {
 // onto the classpath through buildSrc/build.gradle.kts and applied by the
 // `filament-kmp-module` convention plugin in each :kotlin:* module.
 
+// ── API docs aggregation ──────────────────────────────────────────────────────
+// Dokka V2 no longer auto-collects subprojects; the root gathers the documented
+// modules explicitly. `dokkaGenerate` renders the multi-module site to
+// build/dokka/html. :java and :js are excluded (FFM internals / generated externals).
+dependencies {
+    dokka(project(":kotlin:filament"))
+    dokka(project(":kotlin:filamat"))
+    dokka(project(":kotlin:filament-utils"))
+    dokka(project(":kotlin:gltfio"))
+    dokka(project(":kotlin:filament-compose"))
+}
+
 // Ensure every project — including the implicit :kotlin and :java parent
 // projects created by `include(":kotlin:filament")` — carries valid coordinates,
 // so nothing accidentally publishes with group = rootProject.name.
