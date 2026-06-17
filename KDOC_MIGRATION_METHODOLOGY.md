@@ -193,9 +193,9 @@ Update Kotlin doc to: "Set-up a custom scissor rectangle; by default it is disab
 
 ## Unmodified Kotlin files (queue for migration)
 
-✅ Done: Texture.kt, LightManager.kt, Camera.kt, Fence.kt, SurfaceOrientation.kt, Box.kt, NativeSurface.kt, EntityManager.kt, ToneMapper.kt, BufferExtensions.kt, TextureSampler.kt, Stream.kt, Skybox.kt, Renderer.kt
+✅ Done: Texture.kt, LightManager.kt, Camera.kt, Fence.kt, SurfaceOrientation.kt, Box.kt, NativeSurface.kt, EntityManager.kt, ToneMapper.kt, BufferExtensions.kt, TextureSampler.kt, Stream.kt, Skybox.kt, Renderer.kt, MorphTargetBuffer.kt, Engine.kt, Material.kt
 
-📋 Remaining (10 files, after batch 3):
+📋 Remaining (6 files, after batch 4):
 - **Easiest (small, few methods):**
   - [ ] Entity.kt (type aliases, constants — Kotlin-only, no C++ header)
 - **Small-medium:**
