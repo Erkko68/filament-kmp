@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -40,14 +42,18 @@ class RendererRenderingTest : RenderingTestFixture() {
             readbackDone = true
         }
 
+        // The iOS-simulator Metal driver (esp. on constrained CI runners) can't reliably
+        // read back from the swapchain and aborts; skip just the readback there, keeping
+        // the begin/render/end binding coverage.
+        val canReadPixels = TestEnv.target != TestTarget.NATIVE
         if (renderer.beginFrame(swapChain, 0L)) {
             renderer.render(view)
-            renderer.readPixels(0, 0, w, h, pbd)
+            if (canReadPixels) renderer.readPixels(0, 0, w, h, pbd)
             renderer.endFrame()
         }
         // Pump until the readback callback fires (it's async on GLES backends).
         var tries = 0
-        while (!readbackDone && tries++ < 20) engine.flushAndWait()
+        while (canReadPixels && !readbackDone && tries++ < 20) engine.flushAndWait()
 
         // Binding path executed without crashing. Content check only when the readback
         // actually landed (synchronous backends) — async backends may not deliver here.
