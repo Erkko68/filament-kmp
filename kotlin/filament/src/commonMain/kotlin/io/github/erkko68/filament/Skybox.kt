@@ -53,13 +53,14 @@ expect class Skybox {
         fun showSun(show: Boolean): Builder
 
         /**
-         * Sets the skybox intensity when no [IndirectLight] is set on the Scene.
+         * Skybox intensity when no [IndirectLight] is set on the Scene.
          *
-         * Ignored when an IndirectLight is active (the IndirectLight's intensity is used instead).
-         * This scales the cubemap texel values to be in lux (lumen/m²).
+         * This call is ignored when an IndirectLight is set on the Scene, and the intensity
+         * of the IndirectLight is used instead.
          *
-         * @param envIntensity Intensity multiplier (default: 30000)
-         * @return This Builder, for chaining calls
+         * @param envIntensity Scale factor applied to the skybox texel values such that
+         *                     the result is in lux, or lumen/m² (default = 30000)
+         * @return This Builder, for chaining calls.
          *
          * @see IndirectLight.Builder.intensity
          */
@@ -79,13 +80,13 @@ expect class Skybox {
         fun color(r: Float, g: Float, b: Float, a: Float): Builder
 
         /**
-         * Sets the rendering priority of the Skybox.
+         * Set the rendering priority of the Skybox.
          *
-         * Lower values render first; higher values render last. Default: 7 (lowest priority,
-         * rendered after opaque objects) to minimize overdraw when depth culling is enabled.
+         * By default, it is set to the lowest priority (7) such that the Skybox is always rendered
+         * after the opaque objects, to reduce overdraw when depth culling is enabled.
          *
-         * @param priority Clamped to [0, 7]; 7 is lowest priority (rendered last)
-         * @return This Builder, for chaining calls
+         * @param priority Clamped to the range [0..7], defaults to 7; 7 is lowest priority (rendered last).
+         * @return This Builder, for chaining calls.
          *
          * @see RenderableManager.Builder.priority
          */
