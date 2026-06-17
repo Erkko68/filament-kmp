@@ -2,8 +2,20 @@ package io.github.erkko68.filament
 
 /**
  * Extension functions to convert primitive arrays to ByteArray for Filament buffer uploads.
+ *
+ * These utilities facilitate conversion of Kotlin primitive arrays to raw byte arrays
+ * in native byte order (little-endian), which is required for uploading vertex data,
+ * index data, and other buffer content to Filament buffers.
  */
 
+/**
+ * Convert a FloatArray to a ByteArray in native byte order.
+ *
+ * Each float is converted to 4 bytes using IEEE 754 representation in little-endian
+ * format. The resulting byte array has size = floats.size * 4.
+ *
+ * @return A ByteArray containing the binary representation of this float array.
+ */
 fun FloatArray.toBytes(): ByteArray {
     val result = ByteArray(this.size * 4)
     for (i in this.indices) {
@@ -16,6 +28,14 @@ fun FloatArray.toBytes(): ByteArray {
     return result
 }
 
+/**
+ * Convert a ShortArray to a ByteArray in native byte order.
+ *
+ * Each short is converted to 2 bytes in little-endian format. The resulting byte
+ * array has size = shorts.size * 2. Commonly used for 16-bit index buffers.
+ *
+ * @return A ByteArray containing the binary representation of this short array.
+ */
 fun ShortArray.toBytes(): ByteArray {
     val result = ByteArray(this.size * 2)
     for (i in this.indices) {
@@ -26,6 +46,14 @@ fun ShortArray.toBytes(): ByteArray {
     return result
 }
 
+/**
+ * Convert an IntArray to a ByteArray in native byte order.
+ *
+ * Each int is converted to 4 bytes in little-endian format. The resulting byte
+ * array has size = ints.size * 4. Commonly used for 32-bit index buffers.
+ *
+ * @return A ByteArray containing the binary representation of this int array.
+ */
 fun IntArray.toBytes(): ByteArray {
     val result = ByteArray(this.size * 4)
     for (i in this.indices) {
