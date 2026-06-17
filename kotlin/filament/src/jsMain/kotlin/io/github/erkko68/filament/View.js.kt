@@ -512,9 +512,8 @@ actual class View(internal val jsView: JSView) {
         actual var radius: Float = 0.3f
         actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
-        actual var scale: Float = 0.5f
         actual var power: Float = 1.0f
-        actual var minConeAngle: Float = 0.0f
+        actual var minHorizonAngleRad: Float = 0.0f
         actual var quality: Quality = Quality.LOW
         actual var lowPassFilter: Quality = Quality.MEDIUM
         actual var upsampling: Quality = Quality.LOW

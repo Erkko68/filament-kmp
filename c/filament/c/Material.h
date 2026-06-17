@@ -73,11 +73,16 @@ typedef enum FilaMaterialCompilerPriorityQueue {
     FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_LOW = 2,
 } FilaMaterialCompilerPriorityQueue;
 
+// ABI struct read by the FFM/cinterop bindings. The bridge copies it field-by-field
+// from filament::Material::ParameterInfo, so this layout is independent of upstream.
+// type/precision mirror the uint8_t enums (ParameterType / backend::Precision).
 typedef struct FilaMaterialParameterInfo {
     const char* name;
-    int type; // Use int for simplicity if enum FilaMaterialParameterType is not included
-    FilaMaterialPrecision precision;
+    uint8_t isSampler;
+    uint8_t isSubpass;
+    uint8_t type;
     uint32_t count;
+    uint8_t precision;
 } FilaMaterialParameterInfo;
 
 typedef void (*FilaMaterialCompileCallback)(FilaMaterial* material, void* userData);

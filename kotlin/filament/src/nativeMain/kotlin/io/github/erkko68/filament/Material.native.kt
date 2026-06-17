@@ -130,7 +130,7 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
             val info = infoArray[i]
             Parameter(
                 info.name?.toKString() ?: "",
-                Parameter.Type.values()[info.type],
+                Parameter.Type.values()[info.type.toInt()],
                 Parameter.Precision.values()[info.precision.toInt()],
                 info.count.toInt()
             )

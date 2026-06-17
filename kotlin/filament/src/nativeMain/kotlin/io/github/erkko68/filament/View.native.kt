@@ -102,9 +102,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var radius: Float = 0.3f
         actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
-        actual var scale: Float = 0.5f
         actual var power: Float = 1.0f
-        actual var minConeAngle: Float = 0.0f
+        actual var minHorizonAngleRad: Float = 0.0f
         actual var quality: Quality = Quality.LOW
         actual var lowPassFilter: Quality = Quality.MEDIUM
         actual var upsampling: Quality = Quality.LOW
@@ -426,7 +425,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 intensity = out.intensity
                 resolution = out.resolution
                 power = out.power
-                minConeAngle = out.minHorizonAngleRad
+                minHorizonAngleRad = out.minHorizonAngleRad
                 quality = Quality.entries[out.quality.toInt()]
                 lowPassFilter = Quality.entries[out.lowPassFilter.toInt()]
                 upsampling = Quality.entries[out.upsampling.toInt()]
@@ -455,7 +454,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 cOptions.intensity = value.intensity
                 cOptions.resolution = value.resolution
                 cOptions.power = value.power
-                cOptions.minHorizonAngleRad = value.minConeAngle
+                cOptions.minHorizonAngleRad = value.minHorizonAngleRad
                 cOptions.quality = value.quality.ordinal.toUInt()
                 cOptions.lowPassFilter = value.lowPassFilter.ordinal.toUInt()
                 cOptions.upsampling = value.upsampling.ordinal.toUInt()

@@ -45,3 +45,8 @@ void FilaSkinningBuffer_setBonesQuaternions(FilaSkinningBuffer* buffer, FilaEngi
 }
 
 } // extern "C"
+
+// Layout guard: FilaBone is reinterpret_cast onto filament::RenderableManager::Bone
+// here and in RenderableManager.cpp. Keep layouts identical.
+#include <filament/RenderableManager.h>
+static_assert(sizeof(FilaBone) == sizeof(filament::RenderableManager::Bone), "Bone size mismatch");

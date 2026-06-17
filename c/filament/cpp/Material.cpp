@@ -7,6 +7,7 @@
 #include <math/vec4.h>
 
 #include <assert.h>
+#include <vector>
 
 #include "FilaCommon.h"
 #include "../c/Material.h"
@@ -141,10 +142,21 @@ uint32_t FilaMaterial_getParameterCount(const FilaMaterial* material) {
     return static_cast<uint32_t>(FILA_CONST_CAST(Material, material)->getParameterCount());
 }
 
-uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* parameters, uint32_t count) {
+uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* out, uint32_t count) {
     auto m = FILA_CONST_CAST(Material, material);
-    auto p = reinterpret_cast<Material::ParameterInfo*>(parameters);
-    return static_cast<uint32_t>(m->getParameters(p, count));
+    // Field-by-field copy (not a reinterpret_cast) so FilaMaterialParameterInfo's
+    // layout is independent of filament::Material::ParameterInfo.
+    std::vector<Material::ParameterInfo> tmp(count);
+    uint32_t n = static_cast<uint32_t>(m->getParameters(tmp.data(), count));
+    for (uint32_t i = 0; i < n; i++) {
+        out[i].name      = tmp[i].name;
+        out[i].isSampler = tmp[i].isSampler;
+        out[i].isSubpass = tmp[i].isSubpass;
+        out[i].type      = static_cast<uint8_t>(tmp[i].type);
+        out[i].count     = tmp[i].count;
+        out[i].precision = static_cast<uint8_t>(tmp[i].precision);
+    }
+    return n;
 }
 
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material) {

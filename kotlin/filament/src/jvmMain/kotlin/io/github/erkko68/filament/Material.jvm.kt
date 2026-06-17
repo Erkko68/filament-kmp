@@ -139,8 +139,8 @@ actual class Material constructor(internal var nativeHandle: MemorySegment?) {
                 val namePtr = FilaMaterialParameterInfo.name(info)
                 Parameter(
                     if (namePtr.isNullPtr()) "" else namePtr.cString(),
-                    Parameter.Type.values()[FilaMaterialParameterInfo.type(info)],
-                    Parameter.Precision.values()[FilaMaterialParameterInfo.precision(info)],
+                    Parameter.Type.values()[FilaMaterialParameterInfo.type(info).toInt() and 0xFF],
+                    Parameter.Precision.values()[FilaMaterialParameterInfo.precision(info).toInt() and 0xFF],
                     FilaMaterialParameterInfo.count(info)
                 )
             }

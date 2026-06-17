@@ -95,9 +95,8 @@ expect class View {
         var radius: Float
         var bias: Float
         var intensity: Float
-        var scale: Float
         var power: Float
-        var minConeAngle: Float
+        var minHorizonAngleRad: Float
         var quality: Quality
         var lowPassFilter: Quality
         var upsampling: Quality

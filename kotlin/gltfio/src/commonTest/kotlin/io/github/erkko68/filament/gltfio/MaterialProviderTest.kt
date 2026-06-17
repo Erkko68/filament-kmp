@@ -1,7 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class MaterialProviderTest : GltfioTestFixture() {
@@ -25,24 +24,6 @@ class MaterialProviderTest : GltfioTestFixture() {
         provider.destroy()
     }
 
-    @Test
-    @Ignore // Crashes the JVM/Android test runner; needs further investigation.
-    fun testGetMaterialAndCreateInstance() {
-        val provider = UbershaderProvider(engine)
-        val key = MaterialKey().apply {
-            unlit = true
-            doubleSided = false
-        }
-        val uvmap = IntArray(8)
-
-        // These may return null if the ubershader archive has no match for the
-        // requested key — we exercise the bindings either way.
-        provider.getMaterial(key, uvmap)
-        provider.getMaterial(key, uvmap, "label")
-        provider.createMaterialInstance(key, uvmap)
-        provider.createMaterialInstance(key, uvmap, "label")
-        provider.createMaterialInstance(key, uvmap, "label", "extras")
-
-        provider.destroy()
-    }
+    // getMaterial / createMaterialInstance need a real backend to compile
+    // ubershaders — covered in MaterialProviderRenderingTest.
 }

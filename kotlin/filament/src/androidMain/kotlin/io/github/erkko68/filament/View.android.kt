@@ -125,9 +125,8 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var radius: Float get() = native.radius; set(v) { native.radius = v }
         actual var bias: Float get() = native.bias; set(v) { native.bias = v }
         actual var intensity: Float get() = native.intensity; set(v) { native.intensity = v }
-        actual var scale: Float = 0.5f 
         actual var power: Float get() = native.power; set(v) { native.power = v }
-        actual var minConeAngle: Float get() = native.minHorizonAngleRad; set(v) { native.minHorizonAngleRad = v }
+        actual var minHorizonAngleRad: Float get() = native.minHorizonAngleRad; set(v) { native.minHorizonAngleRad = v }
         actual var quality: Quality 
             get() = Quality.values()[native.quality.ordinal]
             set(v) { native.quality = FilamentView.QualityLevel.values()[v.ordinal] }
@@ -382,7 +381,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             kmp.bias = o.bias
             kmp.intensity = o.intensity
             kmp.power = o.power
-            kmp.minConeAngle = o.minHorizonAngleRad
+            kmp.minHorizonAngleRad = o.minHorizonAngleRad
             kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
             kmp.lowPassFilter = io.github.erkko68.filament.View.Quality.values()[o.lowPassFilter.ordinal]
             kmp.upsampling = io.github.erkko68.filament.View.Quality.values()[o.upsampling.ordinal]
@@ -411,7 +410,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             n.bias = value.bias
             n.intensity = value.intensity
             n.power = value.power
-            n.minHorizonAngleRad = value.minConeAngle
+            n.minHorizonAngleRad = value.minHorizonAngleRad
             n.quality = FilamentView.QualityLevel.values()[value.quality.ordinal]
             n.lowPassFilter = FilamentView.QualityLevel.values()[value.lowPassFilter.ordinal]
             n.upsampling = FilamentView.QualityLevel.values()[value.upsampling.ordinal]

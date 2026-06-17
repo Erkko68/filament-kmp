@@ -128,9 +128,8 @@ class ViewTest : FilamentTestFixture() {
             radius = 0.5f
             bias = 0.01f
             intensity = 1f
-            scale = 1f
             power = 1f
-            minConeAngle = 0.1f
+            minHorizonAngleRad = 0.1f
             quality = View.Quality.HIGH
             lowPassFilter = View.Quality.HIGH
             upsampling = View.Quality.HIGH

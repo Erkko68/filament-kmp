@@ -151,9 +151,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         actual var radius: Float = 0.3f
         actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
-        actual var scale: Float = 0.5f
         actual var power: Float = 1.0f
-        actual var minConeAngle: Float = 0.0f
+        actual var minHorizonAngleRad: Float = 0.0f
         actual var quality: Quality = Quality.LOW
         actual var lowPassFilter: Quality = Quality.MEDIUM
         actual var upsampling: Quality = Quality.LOW
@@ -489,7 +488,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 intensity = FilaViewAmbientOcclusionOptions.intensity(out)
                 resolution = FilaViewAmbientOcclusionOptions.resolution(out)
                 power = FilaViewAmbientOcclusionOptions.power(out)
-                minConeAngle = FilaViewAmbientOcclusionOptions.minHorizonAngleRad(out)
+                minHorizonAngleRad = FilaViewAmbientOcclusionOptions.minHorizonAngleRad(out)
                 quality = Quality.entries[FilaViewAmbientOcclusionOptions.quality(out)]
                 lowPassFilter = Quality.entries[FilaViewAmbientOcclusionOptions.lowPassFilter(out)]
                 upsampling = Quality.entries[FilaViewAmbientOcclusionOptions.upsampling(out)]
@@ -523,7 +522,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 FilaViewAmbientOcclusionOptions.intensity(c, value.intensity)
                 FilaViewAmbientOcclusionOptions.resolution(c, value.resolution)
                 FilaViewAmbientOcclusionOptions.power(c, value.power)
-                FilaViewAmbientOcclusionOptions.minHorizonAngleRad(c, value.minConeAngle)
+                FilaViewAmbientOcclusionOptions.minHorizonAngleRad(c, value.minHorizonAngleRad)
                 FilaViewAmbientOcclusionOptions.quality(c, value.quality.ordinal)
                 FilaViewAmbientOcclusionOptions.lowPassFilter(c, value.lowPassFilter.ordinal)
                 FilaViewAmbientOcclusionOptions.upsampling(c, value.upsampling.ordinal)

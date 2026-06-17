@@ -1,7 +1,39 @@
 # Plan: Close binding-coverage gaps with a real-backend test fixture
 
-Status: **proposal / not yet implemented**
+Status: **implemented** (macOS/Metal; skips gracefully where no backend)
 Scope owner: tests for the `filament` / `gltfio` / `filament-utils` wrappers
+
+## Outcome
+
+`RenderingTestFixture` (+ `UtilsRenderingTestFixture`, `GltfioRenderingTestFixture`)
+create `Engine.Backend.DEFAULT` and set `engine = null` when no backend is available,
+so tests early-return instead of failing. New real-backend clusters, all green on Metal:
+
+- `MaterialRenderingTest`, `MaterialInstanceRenderingTest`, `TextureRenderingTest`,
+  `RenderableManagerRenderingTest`, `RendererRenderingTest` (full frame + `readPixels`
+  round-trip), `IBLPrefilterRenderingTest` (`run()` via a synthetic in-memory texture).
+
+Bugs / findings surfaced by the new tests:
+
+- **Fixed (real wrapper bug):** `Material.getParameters()` read garbage / crashed —
+  the C struct `FilaMaterialParameterInfo` didn't match upstream `Material::ParameterInfo`
+  (missing `isSampler`/`isSubpass`, wrong field types), yet the bridge `reinterpret_cast`s
+  between them. Struct corrected + jvm/native readers updated.
+- **Test-side (not bugs):** several disabled calls panic by design — `setImage` needs
+  `UPLOADABLE` usage; `setAxisAlignedBoundingBox` requires non-STATIC geometry;
+  `maskThreshold`/`doubleSided`/specular-AA setters need the matching material capability.
+  Tests adjusted accordingly.
+- **Fixed (dead/mismatched API), found by `ViewOptionsRoundTripTest`:** that test round-trips
+  *every* field of each View option struct (set → get) to catch a dropped/swapped field in the
+  bridge's copy loops. It flagged `AmbientOcclusionOptions.scale` — exposed in Kotlin but never
+  marshalled (upstream has no such field) → removed across all targets. `minConeAngle` renamed to
+  `minHorizonAngleRad` to match upstream (it was already wired to that native field).
+- **Open (not a wrapper bug):** `UbershaderProvider.createMaterialInstance` /
+  `Material.createInstance` aborts on the `base_unlit_opaque` ubershader (works for
+  ordinary materials; `getMaterial`/`getDefaultInstance` work). Abort is inside prebuilt
+  filament's `noexcept` `createInstance`; release build strips the message and SIP blocks
+  lldb here. Documented in `MaterialProviderRenderingTest`; needs a debug filament build.
+  HDR/KTX loader paths still need real bundled assets (unchanged).
 
 ## TL;DR
 

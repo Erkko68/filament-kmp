@@ -142,3 +142,8 @@ void FilaMaterialKey_pack(const FilaMaterialKeyFields* fields, FilaMaterialKey* 
 }
 
 }
+
+// Layout guard: FilaMaterialKey (opaque uint32_t words[5]) is reinterpret_cast onto
+// filament::gltfio::MaterialKey and the pack/unpack above writes its bitfields.
+// If MaterialKey grows past 5 words this silently truncates — fail the build instead.
+static_assert(sizeof(FilaMaterialKey) == sizeof(filament::gltfio::MaterialKey), "MaterialKey size mismatch");
