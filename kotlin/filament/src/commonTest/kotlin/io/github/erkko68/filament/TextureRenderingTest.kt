@@ -6,6 +6,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /** Real-backend coverage for [Texture] upload/mipmap bindings. See [RenderingTestFixture]. */
+@IgnoreJs // WebGL wrapper: half-float / sub-region setImage not supported here.
 class TextureRenderingTest : RenderingTestFixture() {
     @Test
     fun testTextureSetImageAndMipmaps() {
@@ -27,10 +28,12 @@ class TextureRenderingTest : RenderingTestFixture() {
         val full = Texture.PixelBufferDescriptor(ByteArray(64 * 64 * 4), 64 * 64 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
         tex.setImage(engine, 0, full)
 
-        val region = Texture.PixelBufferDescriptor(ByteArray(32 * 32 * 4), 32 * 32 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
+        // Sub-region uploads need an explicit row stride (= region width); Android's
+        // SDK reads per-row and overflows a stride-0 buffer.
+        val region = Texture.PixelBufferDescriptor(ByteArray(32 * 32 * 4), 32 * 32 * 4, Texture.Format.RGBA, Texture.Type.UBYTE, 1, 0, 0, 32)
         tex.setImage(engine, 0, 0, 0, 32, 32, region)
 
-        val region3d = Texture.PixelBufferDescriptor(ByteArray(32 * 32 * 4), 32 * 32 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
+        val region3d = Texture.PixelBufferDescriptor(ByteArray(32 * 32 * 4), 32 * 32 * 4, Texture.Format.RGBA, Texture.Type.UBYTE, 1, 0, 0, 32)
         tex.setImage(engine, 0, 0, 0, 0, 32, 32, 1, region3d)
 
         tex.generateMipmaps(engine)

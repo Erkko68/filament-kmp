@@ -101,13 +101,39 @@ if [[ $RUN_JS -eq 1 ]]; then
 fi
 
 # ── iOS (macOS only) ──────────────────────────────────────────────────────────
+# Real-backend (Metal) tests need a booted simulator with a graphics context;
+# Kotlin/Native's default --standalone mode has none. Boot a device and run the
+# tests inside it (see filament-kmp-module.gradle.kts standalone=false).
+SIM_DEVICE="${IOS_SIM_DEVICE:-iPhone 17}"
+maybe_boot_simulator() {
+  # Reuse an already-booted iPhone if present.
+  local booted
+  booted="$(xcrun simctl list devices booted 2>/dev/null | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
+  if [[ -n "$booted" ]]; then SIM_DEVICE="$booted"; echo "Using booted simulator: $SIM_DEVICE"; return 0; fi
+  # Fall back to the first available iPhone if the preferred one doesn't exist.
+  if ! xcrun simctl list devices available 2>/dev/null | grep -q "$SIM_DEVICE ("; then
+    SIM_DEVICE="$(xcrun simctl list devices available 2>/dev/null | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
+  fi
+  [[ -n "$SIM_DEVICE" ]] || { echo "Skipping ios: no iPhone simulator available" >&2; return 1; }
+  echo "Booting simulator: $SIM_DEVICE"
+  xcrun simctl boot "$SIM_DEVICE" 2>/dev/null || true
+  for _ in $(seq 1 30); do
+    xcrun simctl list devices booted 2>/dev/null | grep -q "$SIM_DEVICE (" && return 0
+    sleep 2
+  done
+  echo "Skipping ios: simulator '$SIM_DEVICE' failed to boot" >&2
+  return 1
+}
+
 if [[ $RUN_IOS -eq 1 ]]; then
   if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "Skipping ios: not on macOS" >&2
-  else
+  elif maybe_boot_simulator; then
     tasks=()
     for m in "${MODULES[@]}"; do tasks+=("$m:iosSimulatorArm64Test"); done
-    run_gradle "iosSimulatorArm64Test" "${tasks[@]}"
+    run_gradle "iosSimulatorArm64Test" "${tasks[@]}" "-PiosSimulatorDevice=$SIM_DEVICE"
+  else
+    EXIT=1
   fi
 fi
 

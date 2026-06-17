@@ -10,6 +10,7 @@ import kotlin.test.assertTrue
  * Real-backend coverage for IBLPrefilter run() bindings, driven by a synthetic
  * in-memory equirectangular texture (no external HDR asset needed).
  */
+@IgnoreJs // IBLPrefilter run() is not wired in the web wrapper.
 class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
     @Test
     fun testEquirectangularToCubemapAndSpecularFilterRun() {

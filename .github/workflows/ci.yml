@@ -163,6 +163,16 @@ jobs:
             compileKotlinIosSimulatorArm64 \
             compileKotlinIosX64 \
             --no-configuration-cache
+      - name: Boot iOS simulator
+        id: sim
+        run: |
+          # Real-backend (Metal) tests need a booted simulator with a graphics
+          # context; Kotlin/Native's default --standalone mode has none.
+          DEV="$(xcrun simctl list devices available | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
+          echo "Booting simulator: $DEV"
+          xcrun simctl boot "$DEV" || true
+          xcrun simctl bootstatus "$DEV" -b || true
+          echo "device=$DEV" >> "$GITHUB_OUTPUT"
       - name: Run iOS simulator tests
         run: |
           ./gradlew \
@@ -170,6 +180,7 @@ jobs:
             :kotlin:filamat:iosSimulatorArm64Test \
             :kotlin:filament-utils:iosSimulatorArm64Test \
             :kotlin:gltfio:iosSimulatorArm64Test \
+            "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}" \
             --no-configuration-cache
       - name: Assemble XCFrameworks
         run: |

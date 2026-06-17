@@ -9,6 +9,7 @@ import kotlin.test.assertNotNull
  * ubershaders and so can't run on NOOP. (Was @Ignore'd before — it crashed the
  * runner only because NOOP can't compile shaders.)
  */
+@IgnoreJs // gltfio UbershaderProvider bindings are not implemented in the web wrapper.
 class MaterialProviderRenderingTest : GltfioRenderingTestFixture() {
     @Test
     fun testGetMaterialAndCreateInstance() {
