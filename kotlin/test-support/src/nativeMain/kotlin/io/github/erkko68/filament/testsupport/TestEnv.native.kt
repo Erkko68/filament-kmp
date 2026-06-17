@@ -1,10 +1,23 @@
 package io.github.erkko68.filament.testsupport
 
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.toKString
+import platform.posix.getenv
+
+@OptIn(ExperimentalForeignApi::class)
 actual object TestEnv {
     actual val target: TestTarget = TestTarget.NATIVE
-    // iOS sim tests run inside a booted device (gradle standalone=false); if no device
-    // is booted, gradle fails before tests run, so a real backend is always available here.
-    actual val gpuBackendAvailable: Boolean = true
+
+    // Local iOS-sim tests run in a booted device backed by the host GPU, so a real
+    // backend works. On a headless CI runner (no GPU) the sim's Metal driver aborts
+    // on real draw/compute, so default off under CI. Override with FILAMENT_TEST_GPU.
+    actual val gpuBackendAvailable: Boolean by lazy {
+        when (getenv("FILAMENT_TEST_GPU")?.toKString()?.lowercase()) {
+            "true", "1" -> true
+            "false", "0" -> false
+            else -> getenv("CI") == null
+        }
+    }
 }
 
 actual annotation class IgnoreJs

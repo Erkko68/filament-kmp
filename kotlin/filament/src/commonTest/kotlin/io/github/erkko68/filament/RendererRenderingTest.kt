@@ -1,7 +1,5 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testsupport.TestEnv
-import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -15,10 +13,6 @@ class RendererRenderingTest : RenderingTestFixture() {
     @Test
     fun testBeginEndFrameAndReadPixels() {
         val engine = engine ?: return
-        // The iOS simulator on a headless CI VM has no real GPU; its Metal driver aborts
-        // on the render-to-readable-swapchain + readback path (other binding tests still run).
-        // Passes on a local simulator backed by the host GPU.
-        if (TestEnv.target == TestTarget.NATIVE) return
         val w = 16
         val h = 16
 
