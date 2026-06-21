@@ -24,7 +24,8 @@ private val ENTRIES = listOf(
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
     "Split View" to Screen.SplitView,
-    "Environment" to Screen.Environment,
+    "Environment (KTX)" to Screen.KTXEnvironment,
+    "Environment (HDR)" to Screen.HDREnvironment,
 )
 
 @Composable

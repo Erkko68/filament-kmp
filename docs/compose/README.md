@@ -123,15 +123,16 @@ Pure-Kotlin mesh primitives that build a `VertexBuffer`/`IndexBuffer` and a sing
 
 | Composable | Description |
 | :--- | :--- |
-| `rememberIBLEnvironment(engine, …, skybox?, ibl)` | Loads an image-based-lighting environment (and optional skybox) from KTX1 data and returns an `IBLEnvironment` whose `indirectLightState`/`skyboxState` feed straight into `rememberFilamentScene`. The convenience path over wiring `KTX1Loader`, texture lifetimes, and spherical harmonics by hand. States populate asynchronously and stay mutable (intensity, rotation) afterward. Call it *outside* the scene and share the hoisted `engine`. |
+| `rememberKTXEnvironment(engine, …, skybox?, ibl)` | Loads an image-based-lighting environment (and optional skybox) from KTX1 data and returns an `Environment` whose `indirectLightState`/`skyboxState` feed straight into `rememberFilamentScene`. The convenience path over wiring `KTX1Loader`, texture lifetimes, and spherical harmonics by hand. States populate asynchronously and stay mutable (intensity, rotation) afterward. Call it *outside* the scene and share the hoisted `engine`. |
+| `rememberHDREnvironment(engine, …, hdr)` | Same as `rememberKTXEnvironment` but from a raw equirectangular `.hdr` (no offline `cmgen` bake) — prefilters the skybox + reflections on the GPU at load via `IBLPrefilter`. Tradeoff: no baked diffuse spherical harmonics, so diffuse is approximated from the reflection's lowest mip (lower quality than the KTX path). |
 | `rememberSkyboxState` | Creates hoisted skybox state (KTX environment or solid color). Pass to `rememberFilamentScene`'s `skyboxState` parameter. |
 | `rememberIndirectLightState` | Creates hoisted IBL state (KTX radiance, irradiance bands, intensity). Pass to `rememberFilamentScene`'s `indirectLightState` parameter. |
 
-`rememberIBLEnvironment` is the one-call path when you have a KTX IBL/skybox pair (e.g. from Filament's `cmgen`):
+`rememberKTXEnvironment` is the one-call path when you have a KTX IBL/skybox pair (e.g. from Filament's `cmgen`):
 
 ```kotlin
 val engine = rememberFilamentEngine()          // shared, so the IBL and scene agree
-val env = rememberIBLEnvironment(
+val env = rememberKTXEnvironment(
     engine,
     ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
     skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional

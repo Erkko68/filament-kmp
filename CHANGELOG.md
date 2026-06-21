@@ -12,15 +12,17 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ## [Unreleased]
 
 ### Added
-- **`rememberIBLEnvironment`** (`filament-compose`): one composable that loads an IBL (and optional skybox) from KTX1 data and returns populated `IndirectLightState`/`SkyboxState` to feed into `rememberFilamentScene` — replacing hand-wiring of `KTX1Loader`, texture lifetimes, and spherical harmonics.
+- **`rememberKTXEnvironment`** (`filament-compose`): one composable that loads an IBL (and optional skybox) from KTX1 data and returns populated `IndirectLightState`/`SkyboxState` to feed into `rememberFilamentScene` — replacing hand-wiring of `KTX1Loader`, texture lifetimes, and spherical harmonics.
+- **`rememberHDREnvironment`** (`filament-compose`): sibling of `rememberKTXEnvironment` that loads from a raw equirectangular `.hdr` instead of pre-baked KTX, prefiltering the skybox + reflections on the GPU at load via `IBLPrefilter` (no `cmgen` step; diffuse is approximated, not baked SH).
 - **`Mesh`** (`filament-compose`): public scene composable for custom triangle geometry (`positions`/`normals`/`uvs`/`indices` + material), the escape hatch beyond the built-in primitives. Auto-computes the bounding box when omitted.
-- **Sample**: `EnvironmentScene` demonstrating `rememberIBLEnvironment` (a model lit entirely by IBL, cubemap skybox, live intensity slider).
+- **Samples**: `Environment (KTX)` and `Environment (HDR)` scenes — the same environment loaded both ways (a model lit entirely by IBL, cubemap skybox, live intensity slider).
 
 ### Changed
 - **Samples**: Home menu is now a scrollable list.
 
 ### Fixed
-- **`KTX1Loader.createTexture` double-free** (native/JVM): the C wrapper deleted the `Ktx1Bundle` after handing it to the ownership-taking `Ktx1Reader::createTexture` overload, which already deletes it asynchronously once the GPU consumes the upload — aborting on the render thread during `purge()`. Surfaced via `rememberIBLEnvironment` (the first real consumer of this path).
+- **`KTX1Loader.createTexture` double-free** (native/JVM): the C wrapper deleted the `Ktx1Bundle` after handing it to the ownership-taking `Ktx1Reader::createTexture` overload, which already deletes it asynchronously once the GPU consumes the upload — aborting on the render thread during `purge()`. Surfaced via `rememberKTXEnvironment` (the first real consumer of this path).
+- **`HDRLoader.createTexture`** (native/JVM): rewrote the C wrapper over `stb_image`'s `stbi_loadf_from_memory`, handling both 3- and 4-channel `.hdr` data and returning a null `Texture` on decode failure. The previous `ImageDecoder` path produced a malformed equirect that aborted (`PreconditionPanic`) inside the `IBLPrefilter` chain. Surfaced via `rememberHDREnvironment`.
 - **`Group` KDoc**: Corrected the stale note that lights are not parentable — a `Light` in a `Group` follows the group's translation; only its `direction` is independent of the transform.
 
 ## [0.1.2-beta05] — 2026-06-17
