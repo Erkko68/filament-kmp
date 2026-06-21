@@ -6,14 +6,14 @@ name: CI
 # already produced earlier in the same job). Replaces the old build.yml/test.yml/samples.yml,
 # which each rebuilt the library from scratch per concern, per platform.
 #
-# The platform matrix is EXPENSIVE (native prebuilts, emulators, XCFrameworks), so it does
-# not run automatically on pull requests. To run it on a PR, add the `ci:run` label (it
-# re-runs on every push while the label is present); or trigger it manually from the Actions
-# tab (workflow_dispatch) and pick which platform(s) to run. It always runs on push to main.
+# The full platform matrix runs automatically on every PR and on push to main. The matrix is
+# EXPENSIVE (native prebuilts, emulators, XCFrameworks), so external (fork) PRs are held until a
+# maintainer clicks "Approve and run" — GitHub's native fork-PR approval setting (Settings →
+# Actions → General), not anything in this file. Collaborators' PRs run with no approval step.
+# `workflow_dispatch` still lets you run a single platform manually from the Actions tab.
 #
-# `ci-gate` is the single required status check: it fails unless every platform job
-# SUCCEEDED, so a PR can't be merged until the matrix has run green. Without the `ci:run`
-# label the platform jobs are skipped, the gate fails, and merge stays blocked.
+# `ci-gate` is the single required status check: it fails unless every platform job SUCCEEDED,
+# so a PR can't be merged until the matrix is green.
 
 on:
   push:
@@ -21,10 +21,9 @@ on:
     # Docs-only changes don't affect the build — skip the (expensive) matrix.
     paths-ignore: ['**.md']
   pull_request:
-    # Heavy jobs are gated on the `ci:run` label (see each job's `if:`); they re-run on
-    # new commits while the label is present, and are skipped otherwise.
-    types: [labeled, synchronize, reopened]
+    types: [opened, synchronize, reopened]
     branches: [main]
+    paths-ignore: ['**.md']
   workflow_dispatch:
     inputs:
       jobs:
@@ -33,13 +32,17 @@ on:
         default: all
         options: [all, jvm, js, ios, android]
 
+# Cancel superseded runs for the same ref (a new push to a PR supersedes the old one).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   jvm:
-    # Run on: push to main; PRs carrying the `ci:run` label; manual dispatch (all|jvm).
+    # Run on: push to main; any PR; manual dispatch (all|jvm).
     if: >-
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
-      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'jvm'))
+      github.event_name != 'workflow_dispatch' ||
+      inputs.jobs == 'all' || inputs.jobs == 'jvm'
     strategy:
       fail-fast: false
       matrix:
@@ -102,9 +105,8 @@ jobs:
 
   js:
     if: >-
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
-      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'js'))
+      github.event_name != 'workflow_dispatch' ||
+      inputs.jobs == 'all' || inputs.jobs == 'js'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -133,9 +135,8 @@ jobs:
 
   ios:
     if: >-
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
-      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'ios'))
+      github.event_name != 'workflow_dispatch' ||
+      inputs.jobs == 'all' || inputs.jobs == 'ios'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -210,9 +211,8 @@ jobs:
 
   android:
     if: >-
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci:run')) ||
-      (github.event_name == 'workflow_dispatch' && (inputs.jobs == 'all' || inputs.jobs == 'android'))
+      github.event_name != 'workflow_dispatch' ||
+      inputs.jobs == 'all' || inputs.jobs == 'android'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -246,10 +246,9 @@ jobs:
           name: android-test-reports
           path: kotlin/*/build/reports/androidTests/
 
-  # Single required status check for branch protection. Runs always (even if the platform
-  # jobs were skipped) and fails unless EVERY platform job succeeded — so a PR with no
-  # `ci:run` label (all jobs skipped) cannot merge. Manual dispatches that intentionally run
-  # a subset don't fail the gate (they're not gating a merge).
+  # Single required status check for branch protection. Runs always and fails unless EVERY
+  # platform job succeeded, so a PR can't merge until the matrix is green. Manual dispatches
+  # that intentionally run a subset don't fail the gate (they're not gating a merge).
   ci-gate:
     if: always()
     needs: [jvm, js, ios, android]
@@ -262,7 +261,7 @@ jobs:
           echo "Platform job results: $results"
           for r in $results; do
             if [ "$r" != "success" ]; then
-              echo "::error::CI gate failed (a platform job result was '$r'). On a PR, add the 'ci:run' label and ensure jvm/js/ios/android all pass before merging."
+              echo "::error::CI gate failed (a platform job result was '$r'). Ensure jvm/js/ios/android all pass before merging."
               exit 1
             fi
           done
