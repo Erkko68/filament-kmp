@@ -68,17 +68,17 @@ report gaps — run them when adding bindings or bumping `filaVersion`.
 
 ## Running CI (important)
 
-The full platform matrix is **expensive and does not run automatically on PRs.** Branch
-protection requires the `ci-gate` check to be green before merge, so:
+The full platform matrix (jvm / js / ios / android) runs **automatically on every PR** and
+on push to `main`. It's **expensive** (native prebuilts, emulators, XCFrameworks), so:
 
-1. Open your PR.
-2. A maintainer adds the **`ci:run`** label — this runs the full matrix (jvm / js / ios /
-   android) and re-runs it on every push while the label is present.
-3. Merge once `ci-gate` is green.
+1. Open your PR — the matrix starts on its own and re-runs on every push.
+2. **Fork PRs** are held until a maintainer clicks **"Approve and run"** (GitHub's native
+   fork-PR approval); collaborators' PRs run with no approval step.
+3. Merge once `ci-gate` (the single required check, green only when every platform job
+   succeeds) passes. Docs-only changes (`**.md`) skip the matrix.
 
-Maintainers can also trigger a subset manually from the **Actions → CI → Run workflow**
-button (pick `jvm` / `js` / `ios` / `android` / `all`) for quick checks. The matrix always
-runs on push to `main`.
+Maintainers can also trigger a single platform manually from the **Actions → CI → Run
+workflow** button (pick `jvm` / `js` / `ios` / `android` / `all`).
 
 ## Labels
 
@@ -86,7 +86,6 @@ runs on push to `main`.
 - **area:** `bindings` · `build` · `compose` · `samples` · `ci` · `docs`
 - **type/triage:** `bug` · `enhancement` · `question` · `upstream-filament` ·
   `blocked-upstream` · `needs-repro` · `needs-triage` · `good first issue` · `help wanted`
-- **control:** `ci:run` (run the platform matrix on a PR)
 
 ## License
 
