@@ -17,12 +17,13 @@ extern "C" {
 FilaTexture* FilaKTX1Loader_createTexture(FilaEngine* engine, const void* buffer, size_t size, bool srgb) {
     Engine* nativeEngine = reinterpret_cast<Engine*>(engine);
     Ktx1Bundle* bundle = new Ktx1Bundle(reinterpret_cast<const uint8_t*>(buffer), size);
-    
-    // Note: Ktx1Reader::createTexture returns a Texture* that the user is responsible for.
-    // The bundle can be deleted after the texture is created.
+
+    // This Ktx1Reader::createTexture overload takes ownership of `bundle`: it deletes it via a
+    // PixelBufferDescriptor callback once the GPU has consumed the upload (async, on the engine
+    // thread during purge). Deleting it here too double-frees and aborts on the render thread.
+    // Ktx1Bundle copies the bytes internally, so `buffer` need only stay valid for this call.
     Texture* texture = Ktx1Reader::createTexture(nativeEngine, bundle, srgb);
-    delete bundle;
-    
+
     return reinterpret_cast<FilaTexture*>(texture);
 }
 

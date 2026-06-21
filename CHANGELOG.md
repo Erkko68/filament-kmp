@@ -20,6 +20,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Samples**: Home menu is now a scrollable list.
 
 ### Fixed
+- **`KTX1Loader.createTexture` double-free** (native/JVM): the C wrapper deleted the `Ktx1Bundle` after handing it to the ownership-taking `Ktx1Reader::createTexture` overload, which already deletes it asynchronously once the GPU consumes the upload — aborting on the render thread during `purge()`. Surfaced via `rememberIBLEnvironment` (the first real consumer of this path).
 - **`Group` KDoc**: Corrected the stale note that lights are not parentable — a `Light` in a `Group` follows the group's translation; only its `direction` is independent of the transform.
 
 ## [0.1.2-beta05] — 2026-06-17
