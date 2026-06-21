@@ -6,31 +6,34 @@ repeat runs skip the download.
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
-| [`ci.yml`](ci.yml) | **push to `main`** (docs-only skipped); **PRs only with the `ci:run` label**; **manual dispatch** (job picker) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [On-demand CI](#on-demand-ci). |
+| [`ci.yml`](ci.yml) | **push to `main`** and **every PR** (docs-only skipped); **manual dispatch** (job picker) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
 | [`pages.yml`](pages.yml) | push to `main` touching the web target (`js/**`, `kotlin/**/src/jsMain/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and deploys it to GitHub Pages. Already scoped to web-relevant paths, so docs changes never trigger it. |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central. See [Releasing](#releasing) below. |
 
-## On-demand CI
+## Running CI
 
-The platform matrix is expensive (native prebuilts, Android emulator, iOS XCFrameworks), so
-it **does not run automatically on pull requests.** Instead:
+The full platform matrix runs automatically on **push to `main`** and on **every PR**
+(docs-only changes are skipped via `paths-ignore`). The matrix is expensive (native prebuilts,
+Android emulator, iOS XCFrameworks), so:
 
-- **On a PR** — a maintainer adds the **`ci:run`** label. The full matrix runs and re-runs on
-  every push while the label is present (removing the label stops it). This is the path that
-  produces the status checks a PR is gated on.
+- **Concurrency** — a new push to a PR cancels the in-flight run for that ref
+  (`cancel-in-progress`), so only the latest commit is built.
+- **External (fork) PRs** wait for a maintainer to click **"Approve and run"** — this is
+  GitHub's native fork-PR approval (*Settings → Actions → General → Fork pull request workflows
+  from outside collaborators → "Require approval for all outside collaborators"*), **not**
+  anything in the workflow. Collaborators' PRs run with no approval step.
 - **Manually** — *Actions → CI → Run workflow* (`workflow_dispatch`) with a `jobs` input to
-  pick `all` / `jvm` / `js` / `ios` / `android`. Handy for re-checking one platform without
-  the whole matrix. Dispatch runs don't enforce the merge gate.
-- **On push to `main`** — the full matrix always runs.
+  pick `all` / `jvm` / `js` / `ios` / `android`. Handy for re-checking one platform. Dispatch
+  runs don't enforce the merge gate.
+- **iOS XCFramework assembly** (release-mode K/N linking, ~18 min) is skipped on PRs and runs
+  only on push to `main` / dispatch — it verifies the distribution artifacts, which `publish.yml`
+  needs. PRs still link & run iOS via the simulator tests and the sample `xcodebuild` step.
 
 ### The merge gate
 
 `ci-gate` is a tiny aggregator job (`needs: [jvm, js, ios, android]`, `if: always()`) that
-**fails unless every platform job succeeded** — skipped counts as not-succeeded. `main` is
-branch-protected to require `ci-gate` (strict / up-to-date), so:
-
-- A PR with no `ci:run` label has all platform jobs skipped → `ci-gate` red → **can't merge.**
-- Add `ci:run`, let the matrix go green → `ci-gate` green → mergeable.
+**fails unless every platform job succeeded**. `main` is branch-protected to require `ci-gate`
+(strict / up-to-date), so a PR can't merge until the matrix is green.
 
 To change which jobs are required, edit the `ci-gate` `needs:` list and the branch-protection
 `required_status_checks.contexts` together.

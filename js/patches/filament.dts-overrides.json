@@ -21,6 +21,11 @@
       "__doc__": "Upstream typo: gltfio$FilamentAsset.getAssetInstances() is misspelled 'geAssetInstances' in the d.ts (the embind binding is spelled correctly).",
       "find": "geAssetInstances",
       "replace": "getAssetInstances"
+    },
+    {
+      "__doc__": "Upstream typo (1.72.0): viewer ViewSettings.blendMode is typed as the unqualified 'BlendMode', which doesn't exist — the enum is View$BlendMode. Find string is unique ('blendMode:' without '?').",
+      "find": "blendMode: BlendMode;",
+      "replace": "blendMode: View$BlendMode;"
     }
   ],
   "staticMembers": {
