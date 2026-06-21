@@ -117,13 +117,33 @@ Pure-Kotlin mesh primitives that build a `VertexBuffer`/`IndexBuffer` and a sing
 | `Sphere` | UV sphere with configurable `rings` × `segments` subdivision. |
 | `Cylinder` | Y-axis cylinder with side wall + top/bottom caps. |
 | `Plane` | Flat quad in the XZ plane. Two-sided by default — lit correctly from above *and* below without needing a `doubleSided` material. |
+| `Mesh` | Custom triangle geometry from raw arrays (`positions`/`normals`/`uvs` + 32-bit `indices`) and a material — the escape hatch for geometry the built-in primitives don't cover. Tangents are derived automatically; the bounding box defaults to one computed from `positions`. |
 
 ### Environment
 
 | Composable | Description |
 | :--- | :--- |
+| `rememberIBLEnvironment(engine, …, skybox?, ibl)` | Loads an image-based-lighting environment (and optional skybox) from KTX1 data and returns an `IBLEnvironment` whose `indirectLightState`/`skyboxState` feed straight into `rememberFilamentScene`. The convenience path over wiring `KTX1Loader`, texture lifetimes, and spherical harmonics by hand. States populate asynchronously and stay mutable (intensity, rotation) afterward. Call it *outside* the scene and share the hoisted `engine`. |
 | `rememberSkyboxState` | Creates hoisted skybox state (KTX environment or solid color). Pass to `rememberFilamentScene`'s `skyboxState` parameter. |
 | `rememberIndirectLightState` | Creates hoisted IBL state (KTX radiance, irradiance bands, intensity). Pass to `rememberFilamentScene`'s `indirectLightState` parameter. |
+
+`rememberIBLEnvironment` is the one-call path when you have a KTX IBL/skybox pair (e.g. from Filament's `cmgen`):
+
+```kotlin
+val engine = rememberFilamentEngine()          // shared, so the IBL and scene agree
+val env = rememberIBLEnvironment(
+    engine,
+    ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
+    skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
+)
+val scene = rememberFilamentScene(
+    engine = engine,
+    skyboxState = env.skyboxState,
+    indirectLightState = env.indirectLightState,
+) {
+    GltfInstance(asset = duck)                  // lit by the environment — no Light needed
+}
+```
 
 ### Materials & Textures
 

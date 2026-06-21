@@ -32,8 +32,9 @@ internal val LocalParentEntity = compositionLocalOf<Int?> { null }
  * }
  * ```
  *
- * Note: `Light` is not yet parentable — Filament's lights use a position baked into the
- * LightManager component rather than a transform, so they ignore the group's transform.
+ * Note: a `Light` inside a Group is parented like any other child, so the group's translation
+ * moves it. But a light's *direction* comes from its `direction` parameter, not the transform,
+ * so rotating a Group does not rotate the light it contains.
  *
  * @param position  World-space position of the group's [pivot] (or local-space if this Group
  *   is itself nested inside another Group).

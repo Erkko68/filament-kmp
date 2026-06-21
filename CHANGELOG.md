@@ -11,6 +11,17 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`rememberIBLEnvironment`** (`filament-compose`): one composable that loads an IBL (and optional skybox) from KTX1 data and returns populated `IndirectLightState`/`SkyboxState` to feed into `rememberFilamentScene` — replacing hand-wiring of `KTX1Loader`, texture lifetimes, and spherical harmonics.
+- **`Mesh`** (`filament-compose`): public scene composable for custom triangle geometry (`positions`/`normals`/`uvs`/`indices` + material), the escape hatch beyond the built-in primitives. Auto-computes the bounding box when omitted.
+- **Sample**: `EnvironmentScene` demonstrating `rememberIBLEnvironment` (a model lit entirely by IBL, cubemap skybox, live intensity slider).
+
+### Changed
+- **Samples**: Home menu is now a scrollable list.
+
+### Fixed
+- **`Group` KDoc**: Corrected the stale note that lights are not parentable — a `Light` in a `Group` follows the group's translation; only its `direction` is independent of the transform.
+
 ## [0.1.2-beta05] — 2026-06-17
 
 ### Added
