@@ -156,13 +156,15 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     @Test
     fun dynamicResolutionOptionsRoundTrip() {
         setUpView()
+        // minScale == maxScale so the engine keeps `enabled` set even on backends without
+        // frame-time support (Noop/sim report isFrameTimeSupported()=false since 1.72.0).
         view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply {
-            enabled = true; homogeneousScaling = true; minScale = 0.5f; maxScale = 1f
+            enabled = true; homogeneousScaling = true; minScale = 0.5f; maxScale = 0.5f
             sharpness = 0.6f; quality = View.Quality.HIGH
         }
         view.dynamicResolutionOptions.run {
             assertTrue(enabled); assertTrue(homogeneousScaling); assertEquals(0.5f, minScale)
-            assertEquals(1f, maxScale); assertEquals(0.6f, sharpness); assertEquals(View.Quality.HIGH, quality)
+            assertEquals(0.5f, maxScale); assertEquals(0.6f, sharpness); assertEquals(View.Quality.HIGH, quality)
         }
     }
 

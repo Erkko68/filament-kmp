@@ -248,8 +248,9 @@ class ViewTest : FilamentTestFixture() {
         view.dithering = View.Dithering.TEMPORAL
         assertEquals(View.Dithering.TEMPORAL, view.dithering)
 
-        // Assign sub-options to View
-        view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply { enabled = true }
+        // Assign sub-options to View. minScale == maxScale so `enabled` survives on backends
+        // without frame-time support (Noop/sim report isFrameTimeSupported()=false since 1.72.0).
+        view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply { enabled = true; minScale = 1f; maxScale = 1f }
         assertTrue(view.dynamicResolutionOptions.enabled)
         assertNotNull(view.getLastDynamicResolutionScale())
 

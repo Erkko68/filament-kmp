@@ -838,6 +838,15 @@ expect class View {
     }
 
     var name: String?
+
+    /**
+     * The [Scene] associated with this View. A Scene can be associated to several Views.
+     *
+     * Set to `null` to dissociate the current Scene. The View does not take ownership of the Scene.
+     *
+     * There is no reference-counting: if a Scene is destroyed while still associated with a View, it
+     * is automatically dissociated (the View's scene becomes `null`).
+     */
     var scene: Scene?
     var camera: Camera?
     val hasCamera: Boolean

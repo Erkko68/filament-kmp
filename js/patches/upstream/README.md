@@ -10,7 +10,7 @@ files, which only patch the *TypeScript externals* Karakum reads.
 
 ```sh
 git clone --filter=blob:none https://github.com/google/filament.git
-cd filament && git checkout v1.71.6
+cd filament && git checkout v1.72.0
 git apply /path/to/js/patches/upstream/*.patch
 export EMSDK=<emsdk 5.0.4>            # BUILDING.md pins 5.0.4
 ./build.sh -p wasm release           # builds host tools, then the wasm
@@ -29,7 +29,7 @@ dangling-`BlendMode` issue that forced keeping the 1.71.5 d.ts is resolved in
 
 ### `0001-shaders-clamp-colored-penumbra-divisor.patch`
 
-- **Base:** Filament `v1.71.6`.
+- **Base:** Filament `v1.72.0`.
 - **Symptom:** On ANGLE-D3D11 (Chromium/Firefox on Windows) some faces render
   black in shadow-penumbra regions; macOS (ANGLE-Metal) and Android are fine.
   No GL warning or error — the geometry still draws and is still pickable, the
@@ -53,8 +53,9 @@ dangling-`BlendMode` issue that forced keeping the 1.71.5 d.ts is resolved in
   the intended capped value without ever producing Inf/NaN. Two files:
   `shaders/src/surface_shading_model_standard.fs`,
   `shaders/src/surface_shading_model_cloth.fs`.
-- **Upstream status:** candidate for an upstream PR (same shape as the
-  `CONFIG_MAX_INSTANCES` fix below).
+- **Upstream status:** merged into Filament `main` after the `v1.72.0` cut, so
+  `v1.72.0` binaries still need this patch. Drop it once a release containing
+  the fix (> 1.72.0) is adopted as `filaVersion`.
 
 ## Upstreamed (no longer carried here)
 

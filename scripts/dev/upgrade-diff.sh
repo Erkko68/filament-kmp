@@ -49,7 +49,7 @@ AREAS=(
   "Android Java sources (drives JVM/Android actuals)|android/filament-android/src/main/java android/filamat-android/src/main/java android/gltfio-android/src/main/java android/filament-utils-android/src/main/java"
   "Web JS bindings (jsbindings.cpp — the *real* JS surface)|web/filament-js/jsbindings.cpp web/filament-js/jsbindings_generated.cpp web/filament-js/jsbindings_gltfio.cpp web/filament-js/jsenums.cpp web/filament-js/jsenums_generated.cpp"
   "Web JS typed surface (filament.d.ts — lags the bindings)|web/filament-js/filament.d.ts"
-  "Material version & engine enums (CONFIG_MAX_*, MATERIAL_VERSION)|libs/filabridge/include/private/filament/MaterialEnums.h libs/filabridge/include/private/filament/EngineEnums.h libs/filabridge/include/private/filament/UibStructs.h"
+  "Material version & engine enums (CONFIG_MAX_*, MATERIAL_VERSION)|libs/filabridge/include/filament/MaterialEnums.h libs/filabridge/include/private/filament/EngineEnums.h libs/filabridge/include/private/filament/UibStructs.h"
   "Feature flag defaults (silent behavior toggles)|libs/utils/include/private/utils/FeatureFlagManager.h"
   "gltfio public headers|libs/gltfio/include"
   "filamat public headers|libs/filamat/include"
