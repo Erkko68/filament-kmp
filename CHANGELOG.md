@@ -11,7 +11,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.2-beta06] — 2026-06-22
+
 ### Added
+- **Filament 1.72.0**: Upgraded the bundled Filament engine to 1.72.0; recompiled `.filamat` materials, refreshed the `View` API surface, JS externals overrides, and the web prebuilt (the carried colored-penumbra divisor patch is reapplied, as the upstream fix landed after the 1.72.0 cut).
 - **`rememberKTXEnvironment`** (`filament-compose`): one composable that loads an IBL (and optional skybox) from KTX1 data and returns populated `IndirectLightState`/`SkyboxState` to feed into `rememberFilamentScene` — replacing hand-wiring of `KTX1Loader`, texture lifetimes, and spherical harmonics.
 - **`rememberHDREnvironment`** (`filament-compose`): sibling of `rememberKTXEnvironment` that loads from a raw equirectangular `.hdr` instead of pre-baked KTX, prefiltering the skybox + reflections on the GPU at load via `IBLPrefilter` (no `cmgen` step; diffuse is approximated, not baked SH).
 - **`Mesh`** (`filament-compose`): public scene composable for custom triangle geometry (`positions`/`normals`/`uvs`/`indices` + material), the escape hatch beyond the built-in primitives. Auto-computes the bounding box when omitted.
@@ -25,6 +28,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`KTX1Loader.createTexture` double-free** (native/JVM): the C wrapper deleted the `Ktx1Bundle` after handing it to the ownership-taking `Ktx1Reader::createTexture` overload, which already deletes it asynchronously once the GPU consumes the upload — aborting on the render thread during `purge()`. Surfaced via `rememberKTXEnvironment` (the first real consumer of this path).
 - **`HDRLoader.createTexture`** (native/JVM): rewrote the C wrapper over `stb_image`'s `stbi_loadf_from_memory`, handling both 3- and 4-channel `.hdr` data and returning a null `Texture` on decode failure. The previous `ImageDecoder` path produced a malformed equirect that aborted (`PreconditionPanic`) inside the `IBLPrefilter` chain. Surfaced via `rememberHDREnvironment`.
 - **`Group` KDoc**: Corrected the stale note that lights are not parentable — a `Light` in a `Group` follows the group's translation; only its `direction` is independent of the transform.
+- **`TextureLoader.createTexture`** (native): decode PNG/JPEG via `stb_image` instead of the previous path, fixing texture loads on native targets.
+- **`TextureLoader.createTexture`** (web): create PNG/JPEG textures with `GEN_MIPMAPPABLE` usage so mipmaps generate correctly (carried upstream patch).
+- **`Mesh` material build** (`filament-compose`): catch native errors thrown while building a material instead of aborting the render thread.
+- **HDR on web**: `rememberHDREnvironment` now shows a notice instead of crashing when HDR/`IBLPrefilter` is unsupported on the web backend.
 
 ## [0.1.2-beta05] — 2026-06-17
 
@@ -178,7 +185,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...HEAD
+[0.1.2-beta06]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...0.1.2-beta06
 [0.1.2-beta05]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta04...0.1.2-beta05
 [0.1.2-beta04]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta03...0.1.2-beta04
 [0.1.2-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta02...0.1.2-beta03
