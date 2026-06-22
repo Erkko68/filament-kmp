@@ -76,7 +76,9 @@ internal fun rememberMaterial(
     val material = remember(engine, bytes) {
         try {
             Material.Builder().payload(bytes).build(engine)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // The JS/embind backend throws native (non-Kotlin-Exception) errors on a bad or
+            // unsupported payload; catch broadly so a failed build never crashes the app.
             null
         }
     }
