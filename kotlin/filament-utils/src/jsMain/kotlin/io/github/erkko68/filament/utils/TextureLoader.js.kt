@@ -5,6 +5,12 @@ import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.js.Texture as JSTexture
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
+import org.khronos.webgl.Uint8Array
+
+// Texture::Usage bits (filament/backend/DriverEnums.h). DEFAULT = UPLOADABLE | SAMPLEABLE.
+private const val UPLOADABLE = 0x0008
+private const val SAMPLEABLE = 0x0010
+private const val GEN_MIPMAPPABLE = 0x0200
 
 actual object TextureLoader {
     actual fun loadTexture(
@@ -15,20 +21,33 @@ actual object TextureLoader {
         if (buffer.isEmpty()) return null
 
         val jsEngine = engine.jsEngine
+        // Filament's embind decoders expect a Uint8Array view (a raw Int8Array is rejected with a
+        // native BindingError); match the Uint8Array idiom used across the JS bindings.
         val int8 = Int8Array(buffer.size)
         buffer.forEachIndexed { i, b -> int8.asDynamic()[i] = b }
-        val arrayBuffer = int8.unsafeCast<ArrayBufferView>()
+        val arrayBuffer = Uint8Array(int8.buffer).unsafeCast<ArrayBufferView>()
+
+        // The JS helper builds the texture then calls generateMipmaps(), but unlike the native loader
+        // it doesn't set GEN_MIPMAPPABLE usage, so generateMipmaps() aborts with a native exception.
+        // Pass the same usage mask the native path uses (DEFAULT | GEN_MIPMAPPABLE).
+        // Workaround for an upstream Filament JS bug; see js/patches/upstream/0002-*.patch.
+        // Decode COLOR textures as sRGB so albedo maps match the other platforms' srgb path.
+        val options: dynamic = js("({})")
+        options.srgb = type == TextureType.COLOR
+        options.usage = UPLOADABLE or SAMPLEABLE or GEN_MIPMAPPABLE
 
         return try {
             val jsTexture: JSTexture? = when {
                 isKtx1(buffer) -> jsEngine.createTextureFromKtx1(arrayBuffer)
                 isKtx2(buffer) -> jsEngine.asDynamic().createTextureFromKtx2(arrayBuffer)
-                isPng(buffer) -> jsEngine.createTextureFromPng(arrayBuffer)
-                isJpeg(buffer) -> jsEngine.createTextureFromJpeg(arrayBuffer)
+                isPng(buffer) -> jsEngine.createTextureFromPng(arrayBuffer, options)
+                isJpeg(buffer) -> jsEngine.createTextureFromJpeg(arrayBuffer, options)
                 else -> null
             }
             jsTexture?.let { Texture(it) }
-        } catch (e: Exception) {
+        } catch (e: dynamic) {
+            // Embind throws raw native values (e.g. a number) on bad data. Kotlin/JS `catch (Throwable)`
+            // rethrows non-Throwable throws, so catch `dynamic` to actually swallow them; never crash the app.
             null
         }
     }

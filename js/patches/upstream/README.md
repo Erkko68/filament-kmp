@@ -57,6 +57,36 @@ dangling-`BlendMode` issue that forced keeping the 1.71.5 d.ts is resolved in
   `v1.72.0` binaries still need this patch. Drop it once a release containing
   the fix (> 1.72.0) is adopted as `filaVersion`.
 
+### `0002-web-set-gen-mipmappable-usage-in-createtexturefromimagefile.patch`
+
+- **Base:** Filament `v1.72.0`.
+- **Symptom:** Loading a PNG/JPEG texture on web (`TextureLoader.loadTexture`)
+  throws a raw native value (`Uncaught <number>`) that escapes Kotlin/JS
+  `catch (Throwable)` and crashes the app. JVM/Android/native are fine.
+- **Cause:** The JS helper `Filament._createTextureFromImageFile`
+  (`web/filament-js/utilities.js`, reached via `Engine.createTextureFromPng` /
+  `createTextureFromJpeg` in `extensions.js`) builds the texture with no
+  `usage` unless the caller passes one — so it defaults to
+  `DEFAULT = UPLOADABLE | SAMPLEABLE` — then unconditionally calls
+  `tex.generateMipmaps(engine)`. `generateMipmaps()` aborts unless the texture
+  was created with `GEN_MIPMAPPABLE` (`0x0200`) usage, so the native call throws.
+  The native loader (`c/filament-utils/cpp/TextureLoader.cpp`) sets
+  `Usage::DEFAULT | Usage::GEN_MIPMAPPABLE` explicitly, which is why only web hits
+  it. This is **not** a bindings/d.ts issue — the embind surface is correct; the
+  bug is in upstream's hand-written JS helper.
+- **Fix:** when no explicit `usage` is given and mipmaps will be generated, build
+  with `TextureUsage.DEFAULT | TextureUsage.GEN_MIPMAPPABLE`. One file:
+  `web/filament-js/utilities.js`.
+- **Carried vs. applied:** the shipped prebuilt is **not** yet rebuilt with this
+  patch. Instead the repo works around it Kotlin-side by passing
+  `options.usage = UPLOADABLE | SAMPLEABLE | GEN_MIPMAPPABLE` from
+  `TextureLoader.js.kt` (the helper honours an explicit `usage`). This patch
+  records the engine-level fix for the next prebuilt rebuild and for upstreaming.
+- **Upstream status:** not yet submitted. Candidate PR target is
+  `web/filament-js/utilities.js` (the `_createTextureFromImageFile` helper) — not
+  `jsbindings.cpp`. Once it lands upstream and a release with it is adopted,
+  drop both this patch and the `TextureLoader.js.kt` workaround.
+
 ## Upstreamed (no longer carried here)
 
 ### `CONFIG_MAX_INSTANCES` array-size rewrite — merged into `v1.71.6`
