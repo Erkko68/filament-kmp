@@ -2,40 +2,31 @@
 
 #include <filament/Engine.h>
 #include <filament/Texture.h>
-#include <image/LinearImage.h>
-#include <imageio-lite/ImageDecoder.h>
-#include <sstream>
-#include <string>
+
+#include <cstddef>
 
 using namespace filament;
-using namespace image;
+
+extern "C" {
+unsigned char *stbi_load_from_memory(const unsigned char *buffer, int len, int *x,
+                                     int *y, int *channels_in_file, int desired_channels);
+void stbi_image_free(void *retval_from_stbi_load);
+}
 
 extern "C" {
 
 FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffer, size_t size, bool srgb) {
-    Engine* nativeEngine = reinterpret_cast<Engine*>(engine);
-    
-    std::string data(reinterpret_cast<const char*>(buffer), size);
-    std::istringstream in(data);
+    Engine* e = reinterpret_cast<Engine*>(engine);
 
-    // imageio_lite returns a LinearImage.
-    LinearImage image = imageio_lite::ImageDecoder::decode(in, "memory.img");
-    
-    if (!image.isValid()) return nullptr;
+    // Decode to 8-bit RGBA (forced 4 channels covers grayscale/palette/RGB/RGBA uniformly).
+    int width = 0, height = 0, channels = 0;
+    unsigned char* data = stbi_load_from_memory(
+            static_cast<const unsigned char*>(buffer), static_cast<int>(size),
+            &width, &height, &channels, 4);
+    if (!data) return nullptr;
 
-    uint32_t width = image.getWidth();
-    uint32_t height = image.getHeight();
-    uint32_t channels = image.getChannels();
-    
-    Texture::InternalFormat internalFormat;
-    Texture::Format format;
-    if (channels == 3) {
-        internalFormat = srgb ? Texture::InternalFormat::SRGB8 : Texture::InternalFormat::RGB8;
-        format = Texture::Format::RGB;
-    } else {
-        internalFormat = srgb ? Texture::InternalFormat::SRGB8_A8 : Texture::InternalFormat::RGBA8;
-        format = Texture::Format::RGBA;
-    }
+    Texture::InternalFormat internalFormat =
+            srgb ? Texture::InternalFormat::SRGB8_A8 : Texture::InternalFormat::RGBA8;
 
     Texture* texture = Texture::Builder()
             .width(width)
@@ -44,20 +35,21 @@ FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffe
             .sampler(Texture::Sampler::SAMPLER_2D)
             .format(internalFormat)
             .usage(Texture::Usage::DEFAULT | Texture::Usage::GEN_MIPMAPPABLE)
-            .build(*nativeEngine);
+            .build(*e);
 
-    size_t sizeInBytes = (size_t) width * height * channels * sizeof(float);
-    auto image_ptr = new LinearImage(std::move(image));
-    
-    Texture::PixelBufferDescriptor desc(
-            image_ptr->getPixelRef(), sizeInBytes,
-            format, Texture::Type::FLOAT,
-            [](void*, size_t, void* user) {
-                delete reinterpret_cast<LinearImage*>(user);
-            }, image_ptr);
+    if (texture == nullptr) {
+        stbi_image_free(data);
+        return nullptr;
+    }
 
-    texture->setImage(*nativeEngine, 0, std::move(desc));
-    texture->generateMipmaps(*nativeEngine);
+    size_t sizeInBytes = (size_t) width * height * 4;
+    Texture::PixelBufferDescriptor pbd(
+            data, sizeInBytes,
+            Texture::Format::RGBA, Texture::Type::UBYTE,
+            [](void* buf, size_t, void*) { stbi_image_free(buf); }, nullptr);
+
+    texture->setImage(*e, 0, std::move(pbd));
+    texture->generateMipmaps(*e);
 
     return reinterpret_cast<FilaTexture*>(texture);
 }

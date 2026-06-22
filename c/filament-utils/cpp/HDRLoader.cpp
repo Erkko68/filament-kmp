@@ -1,19 +1,19 @@
 #include <filament/Engine.h>
 #include <filament/Texture.h>
-#include <image/LinearImage.h>
-#include <imageio-lite/ImageDecoder.h>
 #include <utils/Log.h>
-
-#include <sstream>
-#include <string>
 
 #include "../../filament/cpp/FilaCommon.h"
 #include "../c/HDRLoader.h"
 
 using namespace filament;
-using namespace image;
-using namespace imageio_lite;
 using namespace utils;
+
+extern "C" {
+float *stbi_loadf_from_memory(const unsigned char *buffer, int len, int *x,
+                              int *y, int *channels_in_file,
+                              int desired_channels);
+void stbi_image_free(void *retval_from_stbi_load);
+}
 
 extern "C" {
 
@@ -21,45 +21,39 @@ FilaTexture *FilaHDRLoader_createTexture(FilaEngine *engine, const void *buffer,
                                          size_t size, int32_t internalFormat) {
   Engine *e = FILA_CAST(Engine, engine);
 
-  // Direct from JNI pattern
-  std::string ins((char const *)buffer, size);
-  std::istringstream in(ins);
+  int width = 0, height = 0, channels = 0;
+  float *data =
+      stbi_loadf_from_memory(static_cast<const unsigned char *>(buffer), size,
+                             &width, &height, &channels, 0);
 
-  // ImageDecoder::decode returns a LinearImage by value
-  LinearImage *image = new LinearImage(ImageDecoder::decode(in, "memory.hdr"));
-
-  if (image->getChannels() != 3) {
-    delete image;
+  if (!data) {
     return nullptr;
   }
+
+  Texture::Format format =
+      (channels == 3) ? Texture::Format::RGB : Texture::Format::RGBA;
 
   Texture *texture =
       Texture::Builder()
-          .width(image->getWidth())
-          .height(image->getHeight())
+          .width(width)
+          .height(height)
           .levels(0xff)
           .sampler(Texture::Sampler::SAMPLER_2D)
           .usage(Texture::Usage::DEFAULT | Texture::Usage::GEN_MIPMAPPABLE)
-          .format(static_cast<Texture::InternalFormat>(internalFormat))
+          .format((Texture::InternalFormat)internalFormat)
           .build(*e);
 
   if (texture == nullptr) {
-    delete image;
+    stbi_image_free(data);
     return nullptr;
   }
 
-  // Free callback for LinearImage
-  Texture::PixelBufferDescriptor::Callback freeCallback = [](void *buf, size_t,
-                                                             void *userdata) {
-    delete reinterpret_cast<LinearImage *>(userdata);
-  };
+  size_t sizeInBytes = (size_t)width * height * channels * sizeof(float);
 
   Texture::PixelBufferDescriptor pbd(
-      image->getPixelRef(),
-      image->getWidth() * image->getHeight() * 3 * sizeof(float),
-      Texture::PixelBufferDescriptor::PixelDataFormat::RGB,
-      Texture::PixelBufferDescriptor::PixelDataType::FLOAT, freeCallback,
-      image);
+      data, sizeInBytes, format,
+      Texture::PixelBufferDescriptor::PixelDataType::FLOAT,
+      [](void *buf, size_t, void *) { stbi_image_free(buf); }, nullptr);
 
   texture->setImage(*e, 0, std::move(pbd));
   texture->generateMipmaps(*e);

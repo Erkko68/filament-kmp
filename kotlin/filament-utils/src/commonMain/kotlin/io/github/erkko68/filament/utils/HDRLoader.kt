@@ -14,6 +14,7 @@ expect object HDRLoader {
      * @param buffer the raw HDR image data
      * @param internalFormat the internal format to use for the resulting texture
      * @return the created [Texture], or null on failure
+     * @throws UnsupportedOperationException on Web — `filament.js` exposes no Radiance/RGBE decoder.
      */
     fun createTexture(engine: Engine, buffer: ByteArray, internalFormat: Texture.InternalFormat): Texture?
 }

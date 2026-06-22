@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -23,6 +24,9 @@ private val ENTRIES = listOf(
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
     "Split View" to Screen.SplitView,
+    "Texture (PNG)" to Screen.Texture,
+    "Environment (KTX)" to Screen.KTXEnvironment,
+    "Environment (HDR)" to Screen.HDREnvironment,
 )
 
 @Composable
@@ -31,8 +35,9 @@ fun HomeScreen(onNavigate: (Screen) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.safeDrawing)
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Filament KMP", style = MaterialTheme.typography.headlineMedium)
         ENTRIES.forEach { (label, screen) ->

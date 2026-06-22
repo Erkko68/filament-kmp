@@ -8,10 +8,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import eric.bitria.samples.scenes.AnimationScene
 import eric.bitria.samples.scenes.DuckScene
+import eric.bitria.samples.scenes.HDREnvironmentScene
+import eric.bitria.samples.scenes.KTXEnvironmentScene
 import eric.bitria.samples.scenes.PickingScene
 import eric.bitria.samples.scenes.PrimitivesScene
 import eric.bitria.samples.scenes.SolarScene
 import eric.bitria.samples.scenes.SplitViewScene
+import eric.bitria.samples.scenes.TextureScene
 
 @Composable
 fun App() {
@@ -25,6 +28,9 @@ fun App() {
             Screen.Solar      -> SolarScene(onBack = { screen = Screen.Home })
             Screen.Animation  -> AnimationScene(onBack = { screen = Screen.Home })
             Screen.SplitView  -> SplitViewScene(onBack = { screen = Screen.Home })
+            Screen.Texture    -> TextureScene(onBack = { screen = Screen.Home })
+            Screen.KTXEnvironment -> KTXEnvironmentScene(onBack = { screen = Screen.Home })
+            Screen.HDREnvironment -> HDREnvironmentScene(onBack = { screen = Screen.Home })
         }
     }
 }

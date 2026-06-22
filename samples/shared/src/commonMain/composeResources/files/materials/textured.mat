@@ -1,0 +1,24 @@
+// LIT material that samples a 2D texture as its base color. Bind the texture per-instance via
+// `materialInstance.setParameter("albedo", texture, sampler)` — the texture comes from
+// `TextureLoader.loadTexture(engine, pngBytes, COLOR)`. Needs uv0 on the geometry.
+//
+// Compile (all backends, all features):
+//   matc -p all -a all -o textured.filamat textured.mat
+
+material {
+    name : Textured,
+    shadingModel : lit,
+    requires : [ uv0 ],
+    parameters : [
+        { type : sampler2d, name : albedo }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = texture(materialParams_albedo, getUV0());
+        material.roughness = 0.5;
+        material.metallic  = 0.0;
+    }
+}

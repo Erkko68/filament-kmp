@@ -1,0 +1,16 @@
+diff --git a/web/filament-js/utilities.js b/web/filament-js/utilities.js
+--- a/web/filament-js/utilities.js
++++ b/web/filament-js/utilities.js
+@@ -255,7 +255,11 @@ Filament._createTextureFromImageFile = function(fileContents, engine, options) {
+
+     if (options['usage'] !== undefined) {
+         tex.usage(options['usage']);
+-    }
++    } else if (!nomips) {
++        // generateMipmaps() below aborts unless the texture was created with
++        // GEN_MIPMAPPABLE usage. DEFAULT is UPLOADABLE | SAMPLEABLE.
++        tex.usage(Filament.TextureUsage.DEFAULT | Filament.TextureUsage.GEN_MIPMAPPABLE);
++    }
+
+     tex = tex.build(engine);
+

@@ -9,4 +9,7 @@ sealed class Screen {
     data object Solar : Screen()
     data object Animation : Screen()
     data object SplitView : Screen()
+    data object Texture : Screen()
+    data object KTXEnvironment : Screen()
+    data object HDREnvironment : Screen()
 }
