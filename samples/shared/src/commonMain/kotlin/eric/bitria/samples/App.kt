@@ -14,6 +14,7 @@ import eric.bitria.samples.scenes.PickingScene
 import eric.bitria.samples.scenes.PrimitivesScene
 import eric.bitria.samples.scenes.SolarScene
 import eric.bitria.samples.scenes.SplitViewScene
+import eric.bitria.samples.scenes.TextureScene
 
 @Composable
 fun App() {
@@ -27,6 +28,7 @@ fun App() {
             Screen.Solar      -> SolarScene(onBack = { screen = Screen.Home })
             Screen.Animation  -> AnimationScene(onBack = { screen = Screen.Home })
             Screen.SplitView  -> SplitViewScene(onBack = { screen = Screen.Home })
+            Screen.Texture    -> TextureScene(onBack = { screen = Screen.Home })
             Screen.KTXEnvironment -> KTXEnvironmentScene(onBack = { screen = Screen.Home })
             Screen.HDREnvironment -> HDREnvironmentScene(onBack = { screen = Screen.Home })
         }

@@ -24,6 +24,7 @@ private val ENTRIES = listOf(
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
     "Split View" to Screen.SplitView,
+    "Texture (PNG)" to Screen.Texture,
     "Environment (KTX)" to Screen.KTXEnvironment,
     "Environment (HDR)" to Screen.HDREnvironment,
 )

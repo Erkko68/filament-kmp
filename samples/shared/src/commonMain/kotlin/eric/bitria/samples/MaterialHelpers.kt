@@ -6,6 +6,8 @@ import androidx.compose.runtime.remember
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.scene.Color
 import io.github.erkko68.filament.compose.scene.rememberMaterial
@@ -34,6 +36,38 @@ fun rememberColorInstance(template: Material, color: Color): MaterialInstance {
     val instance = remember(template, color) {
         template.createInstance().also {
             it.setParameter("baseColor", color.x, color.y, color.z)
+        }
+    }
+    DisposableEffect(instance) {
+        onDispose { engine.destroyMaterialInstance(instance) }
+    }
+    return instance
+}
+
+/**
+ * Loads `textured.filamat` — a LIT material with a single `albedo` sampler2d parameter. Bind a
+ * texture per-instance via [rememberTexturedInstance].
+ */
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun rememberTexturedTemplate(): Material? =
+    rememberMaterial { Res.readBytes("files/materials/textured.filamat") }
+
+/**
+ * Creates a [MaterialInstance] from the textured template with [texture] bound to its `albedo`
+ * sampler (trilinear filtering, repeat wrap). Keyed on both so a new texture rebinds.
+ */
+@Composable
+fun rememberTexturedInstance(template: Material, texture: Texture): MaterialInstance {
+    val engine = LocalFilamentEngine.current
+    val instance = remember(template, texture) {
+        template.createInstance().also {
+            val sampler = TextureSampler(
+                TextureSampler.MinFilter.LINEAR_MIPMAP_LINEAR,
+                TextureSampler.MagFilter.LINEAR,
+                TextureSampler.WrapMode.REPEAT,
+            )
+            it.setParameter("albedo", texture, sampler)
         }
     }
     DisposableEffect(instance) {

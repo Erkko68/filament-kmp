@@ -16,6 +16,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`rememberHDREnvironment`** (`filament-compose`): sibling of `rememberKTXEnvironment` that loads from a raw equirectangular `.hdr` instead of pre-baked KTX, prefiltering the skybox + reflections on the GPU at load via `IBLPrefilter` (no `cmgen` step; diffuse is approximated, not baked SH).
 - **`Mesh`** (`filament-compose`): public scene composable for custom triangle geometry (`positions`/`normals`/`uvs`/`indices` + material), the escape hatch beyond the built-in primitives. Auto-computes the bounding box when omitted.
 - **Samples**: `Environment (KTX)` and `Environment (HDR)` scenes — the same environment loaded both ways (a model lit entirely by IBL, cubemap skybox, live intensity slider).
+- **Sample**: `Texture (PNG)` scene — loads a PNG via `TextureLoader` and binds it as a lit material's `albedo` on a UV sphere.
 
 ### Changed
 - **Samples**: Home menu is now a scrollable list.
