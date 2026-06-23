@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
@@ -56,7 +57,7 @@ fun FilamentSceneScope.Mesh(
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     boundingBox: Box? = null,
-    onCreate: (entity: Int) -> Unit = {},
+    onCreate: (entity: Entity) -> Unit = {},
 ) {
     require(positions.isNotEmpty() && positions.size % 3 == 0) {
         "positions must be a non-empty multiple of 3 (xyz triples), was ${positions.size}"

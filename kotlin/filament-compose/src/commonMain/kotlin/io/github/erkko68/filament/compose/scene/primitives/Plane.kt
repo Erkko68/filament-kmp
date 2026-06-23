@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
@@ -36,7 +37,7 @@ fun FilamentSceneScope.Plane(
     width: Float = 1f,
     depth: Float = 1f,
     doubleSided: Boolean = true,
-    onCreate: (entity: Int) -> Unit = {},
+    onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
     Mesh(mesh, material, position, rotation, scale, pivot, onCreate)

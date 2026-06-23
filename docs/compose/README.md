@@ -65,68 +65,197 @@ rememberFilamentScene {
 
 Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itself is destroyed.
 
+## Vector types
+
+`Position`, `Direction`, `Scale`, and `Color` are distinct immutable data classes (not
+`typealias`es for `Float3`). Being distinct, the compiler stops you passing a `Color` where a
+`Position` is expected; being **immutable**, they're stable Compose inputs — passing them to scene
+composables doesn't trigger the needless recompositions a mutable `Float3` would.
+
+Construct them directly (`Position(x, y, z)`, `Color(r, g, b)`, `Position(0f)` for uniform), read
+components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operators (`+`, `-`,
+`* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot, swizzles),
+hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
+`toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
+
+## Driving updates
+
+Continuous updates fall into **two different clocks** — confusing them is the most common source
+of "why does this run too often / not often enough":
+
+- **Per frame** — once per display refresh. Independent of Compose state; keeps running at the
+  display's refresh rate. This is what you want for animation and continuous motion.
+- **Per recomposition** — whenever the Compose state a block reads changes. Could be many times a
+  frame, or not for seconds. This is for *syncing* values, not for time-based animation.
+
+### `OnFrame` — the per-frame primitive
+
+```kotlin
+OnFrame { frame ->
+    angle += frame.deltaSeconds * speed   // runs once per refresh, no recomposition
+}
+```
+
+`OnFrame` runs its callback once per display refresh and hands you a `FrameInfo`
+(`frameTimeNanos`, `deltaSeconds` — clamped against stalls — and `elapsedSeconds`). It does **not**
+recompose. **Everything else per-frame is built on it:**
+
+| Helper | Built on `OnFrame`; reach for it when… |
+| :-- | :-- |
+| `rememberAnimationState` | Playing/blending glTF skeletal animation — the high-level path. Don't hand-roll the timing. |
+| `rememberSceneClock()` | You want elapsed **seconds as a `State<Float>`** to read in composition (orbit a `Group`, pulse a value). Reading it recomposes every frame — that's its whole point, and the one case you *want* a frame to recompose. |
+| `FilamentEffect { onFrame { … } }` | Per-frame work from inside a `rememberFilamentScene` escape hatch, with the `engine`/`scene` in scope. The callback gets the same `FrameInfo`. |
+| `rememberFlightCameraState` | Free-flight camera; it advances itself every frame (no separate loop composable needed). |
+
+And the per-**recomposition** siblings, for completeness:
+
+| Helper | Clock | When |
+| :-- | :-- | :-- |
+| `GltfInstance.onUpdate { … }` | Per recomposition | Syncing imperative glTF state (materials, bones) to Compose state. **Not** a frame loop. |
+| `GltfInstance.onCreate { … }` | Once | One-time setup when the instance enters the scene. |
+
+**Picking one:** animating a glTF → `rememberAnimationState`; elapsed time as a value in
+composition → `rememberSceneClock`; any other per-frame side effect → `OnFrame` (or
+`FilamentEffect`'s `onFrame` inside a scene); reacting to *state* changes rather than the clock →
+`onUpdate`.
+
+## Animating glTF models
+
+`GltfInstance` offers three layers of animation control, from declarative to fully manual.
+
+### 1. Hoisted playback with `rememberAnimationState` (recommended)
+
+`rememberAnimationState` returns an observable, **auto-advancing** clock for one glTF `Animator`.
+Pass it as `animationState` and it plays every frame and loops at the clip length — no scene clock
+or `animationTime` plumbing:
+
+```kotlin
+val animation = rememberAnimationState(animationIndex = 0)
+GltfInstance(asset = character, animationState = animation)
+```
+
+You can read it back during composition — `animation.time` and `animation.isTransitioning` are
+snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration` live.
+
+### 2. Cross-fading between clips
+
+Assigning a new `animationIndex` **cross-fades** from the outgoing clip to the new one over
+`crossFadeDuration` seconds. This is the idiomatic "idle → walk → run" transition: just drive the
+target index from your own state and the blend happens automatically.
+
+```kotlin
+val animation = rememberAnimationState(animationIndex = idle, crossFadeDuration = 0.25f)
+GltfInstance(asset = character, animationState = animation)
+
+Button(onClick = { animation.animationIndex = if (animation.animationIndex == idle) walk else idle }) {
+    Text(if (animation.isTransitioning) "Blending…" else "Toggle")
+}
+```
+
+Under the hood this uses Filament's `Animator.applyCrossFade`, which blends exactly **two** clips at
+a time (the incoming clip plus the one it is fading from). That covers the common case; an arbitrary
+N-track weighted mixer is out of scope for the hoisted state — drop to layer 3 for that.
+
+### 3. Manual control and morph targets
+
+For full control, drive the clip yourself with `animationIndex` + `animationTime` (e.g. fed from
+`rememberSceneClock`), or reach the raw `Animator` through `GltfInstance`'s `onUpdate` escape hatch
+and call `applyAnimation`/`applyCrossFade`/`updateBoneMatrices` directly — useful for custom
+N-clip blending, event-driven scrubbing, or syncing playback to gameplay.
+
+Vertex **morph targets** (blend shapes — facial expressions, etc.) are driven declaratively via
+the `morphWeights` parameter, which is applied to every renderable in the instance that has morph
+targets:
+
+```kotlin
+GltfInstance(asset = face, morphWeights = floatArrayOf(smile, blink, /* … */))
+```
+
+## Cameras that follow the scene graph
+
+`CameraState` is normally hoisted state you set imperatively. To make a camera **follow an
+entity** — a chase cam behind a car, a first-person view from a character's head, a camera bolted
+to a moving rig — place a `CameraNode` *inside* the `Group` you want to track. Each frame it reads
+that group's world transform and writes the driven `CameraState`'s `eye`/`target`/`up`, so the
+camera inherits every translation and rotation of the group declaratively:
+
+```kotlin
+val cam = rememberCameraState()
+val scene = rememberFilamentScene {
+    Group(position = carPosition, rotation = carRotation) {
+        GltfInstance(car)
+        // Eye 6 units behind and 2 up, looking at the car's centre — all in the group's local space.
+        CameraNode(cam, eyeOffset = Position(0f, 2f, -6f), targetOffset = Position(0f, 1f, 0f))
+    }
+}
+FilamentView(scene, cameraState = cam)
+```
+
+The camera object still belongs to the `FilamentView` you pass `cam` to; `CameraNode` only drives
+the state. The offsets are expressed in the group's local space.
+
+## Rendering to a texture
+
+`rememberRenderTarget` renders a scene **off-screen** through its own camera into a sampleable
+`Texture` — the building block for mini-maps, in-world monitors/CCTV screens, portals, and live
+thumbnails. It owns a private `View`/`Camera`/`Renderer` and redraws every frame via Filament's
+`Renderer.renderStandaloneView`, independent of any on-screen `FilamentView`. Feed the result back
+into a material like any other texture:
+
+```kotlin
+val scene  = rememberFilamentScene { /* world */ }
+val mapCam = rememberCameraState(eye = Position(0f, 40f, 0f), target = Position(0f))
+val mapTex = rememberRenderTarget(scene, mapCam, width = 256, height = 256)
+
+val screen = rememberMaterialInstance(screenMaterial)
+mapTex?.let { screen.setParameter("screen", it, TextureSampler()) }
+Plane(material = screen)   // a surface displaying the off-screen render
+```
+
+Post-processing is **off by default**: the target carries a depth attachment, and Filament ignores
+depth attachments when post-processing runs. Enable it only when you don't rely on the depth buffer.
+The texture is `null` for a non-positive size.
+
+## Light channels and intensity units
+
+`Light` exposes two parts of Filament's light model beyond the basics:
+
+- **`lightChannels`** — the set of channels (0–7) a light affects. A renderable is only lit by a
+  light if they share an enabled channel (channel 0 is the default for both). Use this to make a
+  light illuminate only some objects — e.g. a UI/preview light that ignores the rest of the scene.
+- **`intensityUnit` + `efficiency`** — interpret `intensity` as luminous power/illuminance
+  (`LightUnit.LUMINOUS_POWER`, the default), luminous intensity (`LightUnit.CANDELA`), or electrical
+  wattage (`LightUnit.WATTS`, scaled by `efficiency` — e.g. `0.087` for an LED). Lets you dial lights
+  in physical units instead of guessing lumen values.
+
+```kotlin
+Light(
+    type          = LightManager.Type.FOCUSED_SPOT,
+    intensity     = 12f,                 // a 12 W bulb…
+    intensityUnit = LightUnit.WATTS,
+    efficiency    = 0.087f,              // …at LED efficiency
+    lightChannels = setOf(0, 2),        // only objects on channel 0 or 2
+)
+```
+
 ## Component Reference
 
-### Core
-
-| Composable | Description |
-| :--- | :--- |
-| `FilamentSceneView` | All-in-one entry point for the single-view case: declares a scene and renders it through one viewport in a single call. Equivalent to `rememberFilamentScene { … }` feeding one `FilamentView`. |
-| `rememberFilamentScene` | Declares the world and returns a `FilamentScene` value. Owns the `Scene`; accepts hoisted skybox and IBL state. Defaults to a dedicated engine, or pass a shared `rememberFilamentEngine`. Use with `FilamentView` for multiple views over one scene. |
-| `FilamentView` | Renders a `FilamentScene` through one viewport. Owns a `View`, `Camera`, and `Renderer`; configured by value (`cameraState`, `postProcessing`, render flags) into a platform surface. |
-| `rememberFilamentViewState` | Hoisted handle exposing a view's live `View`/`Renderer` and `pick()` for imperative access. |
-| `FilamentEffect` | Escape hatch for raw Filament access inside `rememberFilamentScene`. Scope provides the `engine`, `scene`, and a per-frame callback. |
-| `rememberFilamentEngine` | Creates and remembers a shared `Engine` instance tied to the composition lifecycle. Pass to `rememberFilamentScene` to share a single GPU context. |
-| `rememberSceneClock` | Returns a `State<Float>` ticking every frame (seconds since first composition). Drives ambient animation loops without boilerplate. |
-
-### Camera
-
-| Composable | Description |
-| :--- | :--- |
-| `rememberCameraState` | Generic hoisted camera state (position, target, projection). Pass to `FilamentView`'s `cameraState` parameter. Drives — and reads back — the per-view camera. |
-| `rememberOrbitCameraState` | Orbit/turntable camera controller. Pair with `Modifier.orbitGestures`. |
-| `rememberMapCameraState` | Top-down map camera controller. Pair with `Modifier.mapGestures`. |
-| `rememberFlightCameraState` | Free-flight camera controller. Pair with `Modifier.flightGestures` and `FlightCameraLoop`. |
-| `FlightCameraLoop` | Drives the flight camera animation each frame. |
-| `Modifier.orbitGestures` | Attaches touch/mouse gestures for orbit camera control. |
-| `Modifier.mapGestures` | Attaches touch/mouse gestures for map camera control. |
-| `Modifier.flightGestures` | Attaches touch/mouse gestures for flight camera control. |
-| `Modifier.pickOnTap` | Issues a Filament picking query on tap and delivers the result. Takes a `rememberFilamentViewState`. |
-
-### Scene Objects
-
-| Composable | Description |
-| :--- | :--- |
-| `Light` | Adds a light entity to the scene. Supports all Filament light types (directional, sun, point, spot, focused spot). |
-| `GltfInstance` | Declarative glTF model instance. Requires a `GltfAsset` loaded with `rememberGltfAsset`. Accepts `position` / `rotation` / `scale` / `pivot` (mesh-space point that rotation/scale revolve around — defaults to the glTF's root origin). |
-| `rememberGltfAsset(engine?, key?, onError?, load)` | Loads a glTF asset asynchronously via a suspending lambda. Returns `null` while loading **and** on failure — never throws inside composition. Pass `onError` to react to a thrown `load` lambda or unparseable bytes. `engine` defaults to the engine in scope from `rememberFilamentScene`; pass it explicitly to load the asset *outside* a scene. |
-
-### Grouping
-
-| Composable | Description |
-| :--- | :--- |
-| `Group` | Parents nested scene composables under a single transform entity. `position`/`rotation`/`scale`/`pivot` apply to the whole assembly; children's own transforms become local to the group. Groups nest cleanly and accept `Light`, `GltfInstance`, and primitive children. |
+The full, always-current list of composables, parameters, and types lives in the generated
+**[API reference](https://erkko68.github.io/filament-kmp/api/)** (Dokka/KDoc). This section
+covers only the conceptual notes that don't fit on a single declaration — the *why* and the
+cross-cutting patterns. For *what each composable is*, follow the API reference.
 
 ### Primitives
 
-Pure-Kotlin mesh primitives that build a `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place inside `rememberFilamentScene { }`. Every primitive accepts the same transform set — `position`, `rotation`, `scale`, `pivot` — plus an `onCreate: (entity: Int) -> Unit` callback that fires once the renderable is added to the scene (use it to register the entity with `view.pick` callbacks). When wrapped in a `Group { }` the primitive's transform becomes local to the group.
-
-| Composable | Description |
-| :--- | :--- |
-| `Cube` | Axis-aligned cube centered on the origin. Per-face vertices so each face has its own normal. |
-| `Sphere` | UV sphere with configurable `rings` × `segments` subdivision. |
-| `Cylinder` | Y-axis cylinder with side wall + top/bottom caps. |
-| `Plane` | Flat quad in the XZ plane. Two-sided by default — lit correctly from above *and* below without needing a `doubleSided` material. |
-| `Mesh` | Custom triangle geometry from raw arrays (`positions`/`normals`/`uvs` + 32-bit `indices`) and a material — the escape hatch for geometry the built-in primitives don't cover. Tangents are derived automatically; the bounding box defaults to one computed from `positions`. |
+Pure-Kotlin mesh primitives (`Cube`, `Sphere`, `Cylinder`, `Plane`, `Mesh`) build a
+`VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place them inside
+`rememberFilamentScene { }`. Every primitive accepts the same transform set — `position`,
+`rotation`, `scale`, `pivot` — plus an `onCreate: (entity: Int) -> Unit` callback that fires once
+the renderable is added to the scene (use it to register the entity with `view.pick` callbacks).
+When wrapped in a `Group { }` the primitive's transform becomes local to the group. `Mesh` is the
+escape hatch for custom triangle geometry the built-in primitives don't cover.
 
 ### Environment
-
-| Composable | Description |
-| :--- | :--- |
-| `rememberKTXEnvironment(engine, …, skybox?, ibl)` | Loads an image-based-lighting environment (and optional skybox) from KTX1 data and returns an `Environment` whose `indirectLightState`/`skyboxState` feed straight into `rememberFilamentScene`. The convenience path over wiring `KTX1Loader`, texture lifetimes, and spherical harmonics by hand. States populate asynchronously and stay mutable (intensity, rotation) afterward. Call it *outside* the scene and share the hoisted `engine`. |
-| `rememberHDREnvironment(engine, …, hdr)` | Same as `rememberKTXEnvironment` but from a raw equirectangular `.hdr` (no offline `cmgen` bake) — prefilters the skybox + reflections on the GPU at load via `IBLPrefilter`. Tradeoff: no baked diffuse spherical harmonics, so diffuse is approximated from the reflection's lowest mip (lower quality than the KTX path). |
-| `rememberSkyboxState` | Creates hoisted skybox state (KTX environment or solid color). Pass to `rememberFilamentScene`'s `skyboxState` parameter. |
-| `rememberIndirectLightState` | Creates hoisted IBL state (KTX radiance, irradiance bands, intensity). Pass to `rememberFilamentScene`'s `indirectLightState` parameter. |
 
 `rememberKTXEnvironment` is the one-call path when you have a KTX IBL/skybox pair (e.g. from Filament's `cmgen`):
 
@@ -148,13 +277,11 @@ val scene = rememberFilamentScene(
 
 ### Materials & Textures
 
-| Composable | Description |
-| :--- | :--- |
-| `rememberMaterial(engine?, key?, onError?, load)` | Loads a compiled `.filamat` payload asynchronously and remembers the resulting `Material`. Returns `null` while loading and on failure; pass `onError` to react to a thrown `load` lambda. |
-| `rememberMaterialInstance(material, engine?)` | Creates and remembers a `MaterialInstance` from a `Material`. Destroys it when leaving composition. |
-| `rememberTexture(engine?, type?, key?, onError?, load)` | Asynchronously loads image bytes (PNG/JPEG/KTX1 depending on platform) and uploads the texture. Returns `null` while loading and on failure; pass `onError` to react to a thrown `load` lambda or undecodable bytes. |
-
-`engine` defaults to the engine in scope from `rememberFilamentScene`; pass it explicitly to allocate the resource *outside* a scene (e.g. when sharing assets across multiple scenes, or loading before rendering starts):
+The loaders (`rememberMaterial`, `rememberMaterialInstance`, `rememberTexture`) all return `null`
+while loading and on failure rather than throwing inside composition — pass `onError` to react.
+Their `engine` defaults to the engine in scope from `rememberFilamentScene`; pass it explicitly to
+allocate the resource *outside* a scene (e.g. when sharing assets across multiple scenes, or
+loading before rendering starts):
 
 ```kotlin
 val engine = rememberFilamentEngine()
@@ -182,17 +309,7 @@ FilamentView(
 )
 ```
 
-| Value class | Description |
-| :--- | :--- |
-| `Bloom` | Bloom / glow effect. |
-| `Vignette` | Edge darkening vignette. |
-| `Fog` | Volumetric fog. |
-| `AmbientOcclusion` | Screen-space ambient occlusion (SSAO). |
-| `AntiAliasing` | Anti-aliasing (FXAA / MSAA / TAA). |
-| `ScreenSpaceReflections` | Screen-space reflections (SSR). |
-| `ColorGrade` | Color grading (exposure, white balance, curves, tone mapping, …). |
-| `DepthOfField` | Depth-of-field blur. |
-| `Shadows` | Shadow rendering options (algorithm, VSM, soft-shadow params). |
-| `DynamicResolution` | Dynamic resolution scaling. |
-| `Dithering` | Tonemap-time dithering. `TEMPORAL` (default) hides 8-bit banding in dark gradients and bloom halos. |
-| `RenderQuality` | Precision of the View's HDR color buffer (`HIGH` = RGBA16F where available). Lower precision causes emissive values above 1.0 to clip into bloom and produce banding. |
+The available effect value classes — `Bloom`, `Vignette`, `Fog`, `AmbientOcclusion`,
+`AntiAliasing`, `ScreenSpaceReflections`, `ColorGrade`, `DepthOfField`, `Shadows`,
+`DynamicResolution`, `Dithering`, `RenderQuality` — and their fields are documented in the
+**[API reference](https://erkko68.github.io/filament-kmp/api/)**.

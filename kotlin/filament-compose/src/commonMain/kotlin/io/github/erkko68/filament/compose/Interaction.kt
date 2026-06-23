@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -269,8 +268,8 @@ fun Modifier.mapGestures(state: MapCameraState): Modifier =
 /**
  * Drives a [CameraState] using a Filament [Manipulator] in FLIGHT mode (first-person).
  *
- * **Requires a per-frame update loop.** Place [FlightCameraLoop] in your composable
- * (or run a `LaunchedEffect` that calls [update] each frame).
+ * The per-frame simulation is driven automatically by [rememberFlightCameraState] (via [OnFrame]) —
+ * you don't need a separate loop composable.
  */
 class FlightCameraState internal constructor(
     internal val manipulator: Manipulator,
@@ -278,10 +277,7 @@ class FlightCameraState internal constructor(
 ) {
     fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
 
-    /**
-     * Advance the camera simulation by [deltaTime] seconds.
-     * Must be called every frame — use [FlightCameraLoop] or a `LaunchedEffect`.
-     */
+    /** Advance the camera simulation by [deltaTime] seconds. Driven automatically per frame. */
     fun update(deltaTime: Float) { manipulator.update(deltaTime); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
@@ -321,27 +317,9 @@ fun rememberFlightCameraState(
         FlightCameraState(manipulator, cameraState).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
+    // Self-driving: advance the flight simulation every frame so callers never need a separate loop.
+    OnFrame { state.update(it.deltaSeconds) }
     return state
-}
-
-/**
- * Drives the per-frame [FlightCameraState.update] loop.
- *
- * Place this in your composable alongside the `FilamentView` it drives.
- */
-@Composable
-fun FlightCameraLoop(state: FlightCameraState) {
-    LaunchedEffect(state) {
-        var lastNanos = -1L
-        while (true) {
-            withFrameNanos { nanos ->
-                if (lastNanos >= 0L) {
-                    state.update((nanos - lastNanos) / 1_000_000_000f)
-                }
-                lastNanos = nanos
-            }
-        }
-    }
 }
 
 /**

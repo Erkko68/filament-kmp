@@ -2,15 +2,12 @@ package io.github.erkko68.filament.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
-import kotlinx.coroutines.isActive
 
 /**
  * Escape hatch for direct Filament API access inside [rememberFilamentScene]. Use it to add
@@ -27,7 +24,7 @@ import kotlinx.coroutines.isActive
  *     FilamentEffect {
  *         val entity = engine.getEntityManager().create()
  *         scene.addEntity(entity)
- *         onFrame { nanos -> /* drive a material parameter, transform, etc. */ }
+ *         onFrame { frame -> /* drive a material parameter, transform, etc. */ }
  *         onDispose {
  *             scene.removeEntity(entity)
  *             engine.getEntityManager().destroy(entity)
@@ -55,11 +52,7 @@ fun FilamentSceneScope.FilamentEffect(
 
     val frameAction = scope.frameAction
     if (frameAction != null) {
-        LaunchedEffect(frameAction) {
-            while (isActive) {
-                withFrameNanos { nanos -> frameAction(nanos) }
-            }
-        }
+        OnFrame(frameAction)
     }
 }
 
@@ -71,10 +64,11 @@ interface FilamentEffectScope {
     fun onDispose(block: () -> Unit)
 
     /**
-     * Register a per-frame callback driven by [withFrameNanos]. Replaces any previously
-     * registered frame callback for this effect.
+     * Register a per-frame callback driven by [OnFrame] (once per display refresh). Replaces any
+     * previously registered frame callback for this effect. The [FrameInfo] carries delta and
+     * elapsed time.
      */
-    fun onFrame(block: (frameTimeNanos: Long) -> Unit)
+    fun onFrame(block: (FrameInfo) -> Unit)
 }
 
 private class FilamentEffectScopeImpl(
@@ -82,8 +76,8 @@ private class FilamentEffectScopeImpl(
     override val scene: Scene,
 ) : FilamentEffectScope {
     var disposeAction: (() -> Unit)? = null
-    var frameAction: ((Long) -> Unit)? by mutableStateOf(null)
+    var frameAction: ((FrameInfo) -> Unit)? by mutableStateOf(null)
 
     override fun onDispose(block: () -> Unit) { disposeAction = block }
-    override fun onFrame(block: (Long) -> Unit) { frameAction = block }
+    override fun onFrame(block: (FrameInfo) -> Unit) { frameAction = block }
 }
