@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.withFrameNanos
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
@@ -9,6 +10,7 @@ import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.gltfio.FilamentInstance
 import io.github.erkko68.filament.utils.Quaternion
+import kotlinx.coroutines.isActive
 
 /**
  * Scope for interacting with a specific glTF instance via low-level Filament APIs.
@@ -63,8 +65,15 @@ private class GltfInstanceScopeImpl(
  *   ends up at [position] in world space. Defaults to `(0,0,0)` — the glTF's own root origin.
  *   Use this to e.g. rotate a model around its centre when the glTF was authored with the
  *   origin at one corner.
- * @param animationIndex Index of the skeletal animation to play. Null to disable.
- * @param animationTime Current time in seconds for the animation.
+ * @param animationIndex Index of the skeletal animation to play. Null to disable. Ignored when
+ *   [animationState] is supplied.
+ * @param animationTime Current time in seconds for the animation. Ignored when [animationState]
+ *   is supplied.
+ * @param animationState Optional hoisted, auto-advancing playback state from
+ *   [rememberAnimationState]. When non-null it drives the animator every frame (with cross-fade
+ *   blending) and takes precedence over [animationIndex]/[animationTime].
+ * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
+ *   instance that has morph targets. Pass null to leave morph weights untouched.
  * @param onCreate Called once when the instance is added to the scene. Use for one-time setup
  *   such as swapping materials or finding entities by name.
  * @param onUpdate Called on every recomposition. Use for per-frame updates such as driving
@@ -79,6 +88,8 @@ fun FilamentSceneScope.GltfInstance(
     pivot: Position = Position(0f),
     animationIndex: Int? = null,
     animationTime: Float = 0f,
+    animationState: AnimationState? = null,
+    morphWeights: FloatArray? = null,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
 ) {
@@ -128,12 +139,41 @@ fun FilamentSceneScope.GltfInstance(
         onDispose { }
     }
 
-    DisposableEffect(instance, animationIndex, animationTime) {
-        if (animationIndex != null) {
+    // Manual single-shot animation. Skipped when a hoisted AnimationState is driving playback.
+    DisposableEffect(instance, animationIndex, animationTime, animationState) {
+        if (animationState == null && animationIndex != null) {
             val animator = instance.getAnimator()
             if (animationIndex >= 0 && animationIndex < animator.getAnimationCount()) {
                 animator.applyAnimation(animationIndex, animationTime)
                 animator.updateBoneMatrices()
+            }
+        }
+        onDispose { }
+    }
+
+    // Auto-advancing, cross-fading playback driven by the hoisted AnimationState.
+    LaunchedEffect(instance, animationState) {
+        if (animationState == null) return@LaunchedEffect
+        var last = withFrameNanos { it }
+        while (isActive) {
+            withFrameNanos { now ->
+                // Clamp dt so a paused/backgrounded frame doesn't jump the animation.
+                val dt = ((now - last) / 1e9f).coerceIn(0f, 0.1f)
+                last = now
+                animationState.apply(instance.getAnimator(), dt)
+            }
+        }
+    }
+
+    // Vertex morph-target weights, applied to every renderable that has morph targets. Keyed on
+    // the weights' contents (toList) so a new array with equal values doesn't re-push.
+    DisposableEffect(instance, morphWeights?.toList()) {
+        if (morphWeights != null) {
+            val rm = engine.getRenderableManager()
+            for (entity in instance.getEntities()) {
+                if (!rm.hasComponent(entity)) continue
+                val ri = rm.getInstance(entity)
+                if (rm.getMorphTargetCount(ri) > 0) rm.setMorphWeights(ri, morphWeights, 0)
             }
         }
         onDispose { }
