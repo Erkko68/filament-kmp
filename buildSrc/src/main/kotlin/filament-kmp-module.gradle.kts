@@ -12,13 +12,6 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-// Prevent Dokka from injecting 80MB+ of duplicated HTML docs into Maven Central publications.
-// We configure its generated javadoc JAR tasks to exclude all files, yielding empty JARs
-// which still satisfy Maven Central's requirement for a -javadoc.jar artifact.
-tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name.endsWith("DokkaJavadocJar") }.configureEach {
-    exclude("**/*")
-}
-
 // ── Project coordinates (previously in root allprojects {}) ───────────────────
 group   = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
 version = project.findProperty("libVersion")   as? String ?: "0.1.0-SNAPSHOT"
