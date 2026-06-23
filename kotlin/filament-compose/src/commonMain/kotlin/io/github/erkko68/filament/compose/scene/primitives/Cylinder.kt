@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
@@ -39,7 +40,7 @@ fun FilamentSceneScope.Cylinder(
     radius: Float = 0.5f,
     height: Float = 1f,
     segments: Int = 32,
-    onCreate: (entity: Int) -> Unit = {},
+    onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(radius, height, segments) { cylinderMesh(radius, height, segments) }
     Mesh(mesh, material, position, rotation, scale, pivot, onCreate)

@@ -21,6 +21,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Changed
 - **Sample**: the `Animation` scene now uses `rememberAnimationState` instead of feeding a manual `rememberSceneClock` into `animationTime`.
+- **`Entity` typealias in `filament-compose`**: scene composables now use the `Entity` type instead of raw `Int` for entity parameters (`onCreate: (entity: Entity) -> Unit` on `Group`/`Cube`/`Sphere`/`Plane`/`Cylinder`/`Mesh`, plus internal `LocalParentEntity`). Self-documenting; `Entity` is a typealias for `Int`, so this is source- and binary-compatible.
 - **`FilamentEffect`'s `onFrame`** (`filament-compose`, breaking): the callback now receives a `FrameInfo` (delta/elapsed time) instead of a raw `frameTimeNanos: Long`.
 
 ### Removed

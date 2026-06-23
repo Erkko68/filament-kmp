@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
@@ -58,7 +59,7 @@ internal data class LightSnapshot(
     val sun: SunParams,
     val lightChannels: Set<Int>,
 ) {
-    fun buildInto(engine: Engine, entity: Int) {
+    fun buildInto(engine: Engine, entity: Entity) {
         val builder = LightManager.Builder(type)
             .direction(direction.x, direction.y, direction.z)
             .position(position.x, position.y, position.z)
