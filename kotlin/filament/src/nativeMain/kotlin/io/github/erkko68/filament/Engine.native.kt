@@ -146,13 +146,13 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         nativeHandle = null
     }
 
-    actual fun getBackend(): Backend = Backend.fromNative(FilaEngine_getBackend(nativeHandle))
-    actual fun getSupportedFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilaEngine_getSupportedFeatureLevel(nativeHandle))
+    actual val backend: Backend get() = Backend.fromNative(FilaEngine_getBackend(nativeHandle))
+    actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilaEngine_getSupportedFeatureLevel(nativeHandle))
     actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
     actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilaEngine_getActiveFeatureLevel(nativeHandle))
     actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
     actual fun isAutomaticInstancingEnabled(): Boolean = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
-    actual fun getConfig(): Config {
+    actual val config: Config get() {
         // C-wrapper doesn't expose getConfig, we'd need to track it or return default
         return Config()
     }
@@ -279,8 +279,9 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
     actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000u) }
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())
     actual fun flush() = FilaEngine_flush(nativeHandle)
-    actual fun isPaused(): Boolean = FilaEngine_isPaused(nativeHandle)
-    actual fun setPaused(paused: Boolean) = FilaEngine_setPaused(nativeHandle, paused)
+    actual var paused: Boolean
+        get() = FilaEngine_isPaused(nativeHandle)
+        set(value) { FilaEngine_setPaused(nativeHandle, value) }
     actual fun unprotected() = FilaEngine_unprotected(nativeHandle)
     actual fun hasFeatureFlag(name: String): Boolean = FilaEngine_hasFeatureFlag(nativeHandle, name)
     actual fun setFeatureFlag(name: String, value: Boolean): Boolean {

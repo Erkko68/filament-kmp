@@ -5,6 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.internal.transformMatrix
@@ -16,7 +17,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * GltfInstance) read this and reparent their own entity via `TransformManager.setParent`
  * when it's non-null, so their `position`/`rotation`/`scale` become local to the parent.
  */
-internal val LocalParentEntity = compositionLocalOf<Int?> { null }
+internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
 
 /**
  * Groups child scene composables under a single transform. Everything declared inside
@@ -49,7 +50,7 @@ fun FilamentSceneScope.Group(
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    onCreate: (entity: Int) -> Unit = {},
+    onCreate: (entity: Entity) -> Unit = {},
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val engine = LocalFilamentEngine.current

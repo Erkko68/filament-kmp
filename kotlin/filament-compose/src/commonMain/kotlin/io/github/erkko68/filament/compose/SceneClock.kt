@@ -1,12 +1,9 @@
 package io.github.erkko68.filament.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.withFrameNanos
-import kotlinx.coroutines.isActive
 
 /**
  * A monotonic per-frame clock as a `State<Float>` — seconds elapsed since the composable
@@ -20,18 +17,14 @@ import kotlinx.coroutines.isActive
  * }
  * ```
  *
- * Use this for ambient animation loops (orbits, breathing, pulsing). For property
- * animations with easing prefer `animateFloatAsState` / `Animatable`; for one-off
- * per-frame work without a state read, use `FilamentEffect { onFrame { ... } }`.
+ * This is the **observable-value** layer over [OnFrame]: use it when you want elapsed time as a
+ * state read in composition. For a per-frame side effect that should *not* recompose, use
+ * [OnFrame] directly; for property animations with easing prefer `animateFloatAsState` /
+ * `Animatable`.
  */
 @Composable
 fun rememberSceneClock(): State<Float> {
     val state = remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(state) {
-        val start = withFrameNanos { it }
-        while (isActive) {
-            withFrameNanos { nanos -> state.floatValue = (nanos - start) / 1e9f }
-        }
-    }
+    OnFrame { state.floatValue = it.elapsedSeconds }
     return state
 }

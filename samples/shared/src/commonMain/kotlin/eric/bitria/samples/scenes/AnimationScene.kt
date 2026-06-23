@@ -12,7 +12,6 @@ import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
-import io.github.erkko68.filament.compose.rememberSceneClock
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
@@ -21,15 +20,16 @@ import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.compose.scene.SkyboxSource
+import io.github.erkko68.filament.compose.scene.rememberAnimationState
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
- * Drives the first skeletal animation of `BoxAnimated.glb` from the scene clock. The wall-clock
- * seconds from [rememberSceneClock] are fed straight into `animationTime`; Filament's animator
- * reads modulo the clip length, so the box loops automatically.
+ * Plays the first skeletal animation of `BoxAnimated.glb` with [rememberAnimationState], which
+ * auto-advances every frame and loops at the clip length — no manual scene clock needed. Assigning
+ * a different `animationIndex` would cross-fade smoothly between clips.
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -42,7 +42,7 @@ fun AnimationScene(onBack: () -> Unit) {
     val orbit  = rememberOrbitCameraState(cameraState)
     val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
-    val time by rememberSceneClock()
+    val animation = rememberAnimationState(animationIndex = 0)
 
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
@@ -62,8 +62,7 @@ fun AnimationScene(onBack: () -> Unit) {
                 asset          = rememberGltfAsset { Res.readBytes("files/models/BoxAnimated.glb") },
                 position       = Position(0f, 0f, 0f),
                 scale          = Scale(1f),
-                animationIndex = 0,
-                animationTime  = time,
+                animationState = animation,
             )
         }
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))

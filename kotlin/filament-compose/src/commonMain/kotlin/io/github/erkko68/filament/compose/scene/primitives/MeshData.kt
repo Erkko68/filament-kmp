@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.IndexBuffer
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.RenderableManager
@@ -93,7 +94,7 @@ internal fun Mesh(
     rotation: Quaternion,
     scale: Scale,
     pivot: Position,
-    onCreate: (entity: Int) -> Unit,
+    onCreate: (entity: Entity) -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
     val scene  = LocalFilamentScene.current
