@@ -14,9 +14,9 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         // JS engine is typically managed by the GC
     }
 
-    actual fun getBackend(): Backend = fromJsBackend(jsEngine.getBackend())
+    actual val backend: Backend get() = fromJsBackend(jsEngine.getBackend())
 
-    actual fun getSupportedFeatureLevel(): FeatureLevel = fromJsFeatureLevel(jsEngine.getSupportedFeatureLevel())
+    actual val supportedFeatureLevel: FeatureLevel get() = fromJsFeatureLevel(jsEngine.getSupportedFeatureLevel())
 
     actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel =
         fromJsFeatureLevel(jsEngine.setActiveFeatureLevel(toJsFeatureLevel(featureLevel)))
@@ -29,7 +29,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
     actual fun isAutomaticInstancingEnabled(): Boolean = jsEngine.isAutomaticInstancingEnabled()
 
-    actual fun getConfig(): Config {
+    actual val config: Config get() {
         // The JS binding's getConfig() returns a JS object with the same shape
         // as Engine.Config. Map it back into our actual class. Fields the JS
         // binding doesn't expose (stereoscopicType, gpuContextPriority,
@@ -230,13 +230,11 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
     // TODO(js): paused state not bound in upstream jsbindings.cpp — track locally
     // so the common getter/setter round-trip works.
-    private var paused: Boolean = false
+    private var _paused: Boolean = false
 
-    actual fun isPaused(): Boolean = paused
-
-    actual fun setPaused(paused: Boolean) {
-        this.paused = paused
-    }
+    actual var paused: Boolean
+        get() = _paused
+        set(value) { _paused = value }
 
     actual fun unprotected() {
         // jsEngine.unprotected() returns Boolean upstream; common API returns Unit.
