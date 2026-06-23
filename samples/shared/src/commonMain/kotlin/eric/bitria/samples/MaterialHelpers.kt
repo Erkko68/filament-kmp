@@ -35,7 +35,7 @@ fun rememberColorInstance(template: Material, color: Color): MaterialInstance {
     val engine = LocalFilamentEngine.current
     val instance = remember(template, color) {
         template.createInstance().also {
-            it.setParameter("baseColor", color.x, color.y, color.z)
+            it.setParameter("baseColor", color.r, color.g, color.b)
         }
     }
     DisposableEffect(instance) {
@@ -94,7 +94,7 @@ fun rememberEmissiveInstance(template: Material, color: Color, intensity: Float)
     val engine = LocalFilamentEngine.current
     val instance = remember(template, color, intensity) {
         template.createInstance().also {
-            it.setParameter("color", color.x, color.y, color.z)
+            it.setParameter("color", color.r, color.g, color.b)
             it.setParameter("intensity", intensity)
         }
     }

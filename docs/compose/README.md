@@ -65,6 +65,19 @@ rememberFilamentScene {
 
 Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itself is destroyed.
 
+## Vector types
+
+`Position`, `Direction`, `Scale`, and `Color` are distinct immutable data classes (not
+`typealias`es for `Float3`). Being distinct, the compiler stops you passing a `Color` where a
+`Position` is expected; being **immutable**, they're stable Compose inputs — passing them to scene
+composables doesn't trigger the needless recompositions a mutable `Float3` would.
+
+Construct them directly (`Position(x, y, z)`, `Color(r, g, b)`, `Position(0f)` for uniform), read
+components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operators (`+`, `-`,
+`* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot, swizzles),
+hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
+`toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
+
 ## Driving updates
 
 Continuous updates fall into **two different clocks** — confusing them is the most common source

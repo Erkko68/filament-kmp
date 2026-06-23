@@ -70,8 +70,3 @@ private fun FloatArray.transformDirection(d: Direction): Direction = Direction(
     this[1] * d.x + this[5] * d.y + this[9] * d.z,
     this[2] * d.x + this[6] * d.y + this[10] * d.z,
 )
-
-private fun Direction.normalized(): Direction {
-    val len = kotlin.math.sqrt(x * x + y * y + z * z)
-    return if (len > 0f) Direction(x / len, y / len, z / len) else this
-}
