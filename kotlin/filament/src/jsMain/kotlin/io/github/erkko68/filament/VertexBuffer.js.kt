@@ -4,13 +4,14 @@ import io.github.erkko68.filament.js.VertexBuffer as JSVertexBuffer
 import io.github.erkko68.filament.js.`VertexBuffer_Builder` as JSVertexBufferBuilder
 import io.github.erkko68.filament.js.VertexAttribute as JSVertexAttribute
 import io.github.erkko68.filament.js.VertexBuffer_AttributeType as JSVertexBufferAttributeType
+import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual val vertexCount: Int = 0) {
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
         val int8 = org.khronos.webgl.Int8Array(size)
-        forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+        forEachIndexed { i, b -> int8[i] = b }
         return org.khronos.webgl.Uint8Array(int8.buffer)
     }
 

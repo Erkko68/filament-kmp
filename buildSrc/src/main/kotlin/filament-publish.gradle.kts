@@ -4,11 +4,6 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-// Empty javadoc jar required by Maven Central.
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
-
 mavenPublishing {
     coordinates(project.group.toString(), project.name, project.version.toString())
 

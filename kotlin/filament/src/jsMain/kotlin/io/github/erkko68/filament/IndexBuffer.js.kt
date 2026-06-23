@@ -3,13 +3,14 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.js.IndexBuffer as JSIndexBuffer
 import io.github.erkko68.filament.js.`IndexBuffer_Builder` as JSIndexBufferBuilder
 import io.github.erkko68.filament.js.IndexBuffer_IndexType
+import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val indexCount: Int = 0) {
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
         val int8 = org.khronos.webgl.Int8Array(size)
-        forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+        forEachIndexed { i, b -> int8[i] = b }
         return org.khronos.webgl.Uint8Array(int8.buffer)
     }
 

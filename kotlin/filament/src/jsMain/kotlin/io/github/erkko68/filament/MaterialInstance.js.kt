@@ -8,8 +8,21 @@ import io.github.erkko68.filament.js.StencilOperation
 import io.github.erkko68.filament.js.CompareFunc
 import io.github.erkko68.filament.js.CullingMode
 
+// Members the generated MaterialInstance external doesn't cover: the vector/array overloads
+// of setBoolParameter/setFloatParameter (the scalar forms are generated), and the optional
+// setScissor/unsetScissor (present only in newer filament.js, so feature-detected).
+private external interface JsMaterialInstanceExt {
+    fun setBoolParameter(name: String, value: Array<Boolean>)
+    fun setFloatParameter(name: String, value: Array<Number>)
+    // Declared as methods (not function-typed properties) so they keep their `this` binding when
+    // invoked — a detached embind method aborts with a native BindingError. Probed before calling.
+    fun setScissor(left: Int, bottom: Int, width: Int, height: Int)
+    fun unsetScissor()
+}
+
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstance) {
+    private val ext: JsMaterialInstanceExt get() = jsMaterialInstance.unsafeCast<JsMaterialInstanceExt>()
     actual val material: Material
         get() = js("{}").unsafeCast<Material>()
 
@@ -29,7 +42,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
-        jsMaterialInstance.asDynamic().setBoolParameter(name, arrayOf(x, y))
+        ext.setBoolParameter(name, arrayOf(x, y))
     }
 
     actual fun setParameter(name: String, x: Float, y: Float) {
@@ -41,7 +54,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) {
-        jsMaterialInstance.asDynamic().setBoolParameter(name, arrayOf(x, y, z))
+        ext.setBoolParameter(name, arrayOf(x, y, z))
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float) {
@@ -59,7 +72,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         z: Boolean,
         w: Boolean
     ) {
-        jsMaterialInstance.asDynamic().setBoolParameter(name, arrayOf(x, y, z, w))
+        ext.setBoolParameter(name, arrayOf(x, y, z, w))
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
@@ -86,7 +99,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         count: Int
     ) {
         val sub = v.slice(offset until (offset + count)).toTypedArray()
-        jsMaterialInstance.asDynamic().setBoolParameter(name, sub)
+        ext.setBoolParameter(name, sub)
     }
 
     actual fun setParameter(
@@ -97,7 +110,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         count: Int
     ) {
         val sub = v.slice(offset until (offset + count)).toTypedArray()
-        jsMaterialInstance.asDynamic().setFloatParameter(name, sub)
+        ext.setFloatParameter(name, sub as Array<Number>)
     }
 
     actual fun setParameter(
@@ -109,7 +122,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     ) {
         val sub = v.slice(offset until (offset + count)).toTypedArray()
         when (type) {
-            FloatElement.FLOAT -> jsMaterialInstance.asDynamic().setFloatParameter(name, sub)
+            FloatElement.FLOAT -> ext.setFloatParameter(name, sub as Array<Number>)
             FloatElement.FLOAT2 -> jsMaterialInstance.setFloat2Parameter(name, sub as Array<Number>)
             FloatElement.FLOAT3 -> jsMaterialInstance.setFloat3Parameter(name, sub as Array<Number>)
             FloatElement.FLOAT4 -> jsMaterialInstance.setFloat4Parameter(name, sub as Array<Number>)
@@ -150,17 +163,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setScissor(left: Int, bottom: Int, width: Int, height: Int) {
-        val jsInst = jsMaterialInstance.asDynamic()
-        if (jsInst.setScissor != null) {
-            jsInst.setScissor(left, bottom, width, height)
-        }
+        if (jsHasMember(jsMaterialInstance, "setScissor")) ext.setScissor(left, bottom, width, height)
     }
 
     actual fun unsetScissor() {
-        val jsInst = jsMaterialInstance.asDynamic()
-        if (jsInst.unsetScissor != null) {
-            jsInst.unsetScissor()
-        }
+        if (jsHasMember(jsMaterialInstance, "unsetScissor")) ext.unsetScissor()
     }
 
     actual fun setPolygonOffset(scale: Float, constant: Float) {

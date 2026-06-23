@@ -349,6 +349,7 @@ expect class LightManager {
      * Returns the number of light components (may include inactive/destroyed lights).
      * Check with EntityManager.isAlive() before use if needed.
      * @return Number of light components
+     * @throws UnsupportedOperationException on JS — getComponentCount is unbound in the web wrapper.
      */
     fun getComponentCount(): Int
 

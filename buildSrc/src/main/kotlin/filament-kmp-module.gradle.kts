@@ -12,6 +12,13 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+// Prevent Dokka from injecting 80MB+ of duplicated HTML docs into Maven Central publications.
+// We configure its generated javadoc JAR tasks to exclude all files, yielding empty JARs
+// which still satisfy Maven Central's requirement for a -javadoc.jar artifact.
+tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name.endsWith("DokkaJavadocJar") }.configureEach {
+    exclude("**/*")
+}
+
 // ── Project coordinates (previously in root allprojects {}) ───────────────────
 group   = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
 version = project.findProperty("libVersion")   as? String ?: "0.1.0-SNAPSHOT"
@@ -167,13 +174,15 @@ afterEvaluate {
 }
 
 // ── Android defaults ──────────────────────────────────────────────────────────
+// SDK levels are single-sourced from gradle/libs.versions.toml so the catalog,
+// convention plugin, and docs can't silently drift apart.
 android {
     val groupStr = project.group.toString()
     val modulePart = project.name.replace("-", ".")
     namespace  = "$groupStr.$modulePart"
-    compileSdk = 36
+    compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }

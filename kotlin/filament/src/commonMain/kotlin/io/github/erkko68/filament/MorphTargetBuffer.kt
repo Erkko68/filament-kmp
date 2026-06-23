@@ -84,6 +84,7 @@ expect class MorphTargetBuffer {
          *
          * @param engine Engine to associate this MorphTargetBuffer with.
          * @return The newly created MorphTargetBuffer.
+         * @throws UnsupportedOperationException on JS — MorphTargetBuffer is unbound in the web wrapper.
          */
         fun build(engine: Engine): MorphTargetBuffer
     }

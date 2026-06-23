@@ -19,8 +19,7 @@ actual class Stream(internal val jsStream: Any?) {
             return this
         }
 
-        actual fun build(engine: Engine): Stream {
-            return Stream(null)
-        }
+        actual fun build(engine: Engine): Stream =
+            jsUnsupported("Stream", "External/native video streams have no web equivalent.")
     }
 }

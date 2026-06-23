@@ -6,6 +6,18 @@ import io.github.erkko68.filament.js.`driver_PixelBufferDescriptor` as JSPixelBu
 import io.github.erkko68.filament.js.PixelDataFormat
 import io.github.erkko68.filament.js.PixelDataType
 import io.github.erkko68.filament.js.Texture_Builder as JSTextureBuilder
+import org.khronos.webgl.set
+
+// The generated Texture external only binds setImage(engine, level, pbd); the deep/sub-region
+// overload exists in filament.js but isn't emitted, so re-type it here instead of `asDynamic()`.
+private external interface JsTextureExt {
+    fun setImage(
+        engine: io.github.erkko68.filament.js.Engine,
+        level: Int, xoffset: Int, yoffset: Int, zoffset: Int,
+        width: Int, height: Int, depth: Int,
+        pbd: JSPixelBufferDescriptor,
+    )
+}
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class Texture(val jsTexture: JSTexture) {
@@ -165,7 +177,7 @@ actual class Texture(val jsTexture: JSTexture) {
             // heap and returns a driver$PixelBufferDescriptor. The class itself is
             // `Filament.driver$PixelBufferDescriptor`; there's no `Filament.PixelBufferDescriptor`.
             val u8 = org.khronos.webgl.Int8Array(storage.size).also { arr ->
-                storage.forEachIndexed { i, b -> arr.asDynamic()[i] = b }
+                storage.forEachIndexed { i, b -> arr[i] = b }
             }
             val typed = org.khronos.webgl.Uint8Array(u8.buffer)
             (js("Filament").PixelBuffer)(typed, mapFormat(format), mapType(type)).unsafeCast<JSPixelBufferDescriptor>()
@@ -237,7 +249,9 @@ actual class Texture(val jsTexture: JSTexture) {
         descriptor: PixelBufferDescriptor
     ) {
         // Deep setImage is for 3D textures or arrays
-        jsTexture.asDynamic().setImage(engine.jsEngine, level, xoffset, yoffset, zoffset, width, height, depth, descriptor.jsPbd)
+        jsTexture.unsafeCast<JsTextureExt>().setImage(
+            engine.jsEngine, level, xoffset, yoffset, zoffset, width, height, depth, descriptor.jsPbd
+        )
     }
 
     actual fun setExternalStream(
