@@ -11,6 +11,16 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`rememberAnimationState`** (`filament-compose`): hoisted, auto-advancing glTF playback state for `GltfInstance` (`animationState`). It drives the animator every frame and cross-fades smoothly when `animationIndex` changes, exposing `time`/`isTransitioning` — covering the "play idle, blend into walk" case without the `onUpdate` escape hatch.
+- **`GltfInstance` morph weights** (`filament-compose`): new `morphWeights` parameter applies vertex morph-target weights to every renderable in the instance that has morph targets.
+- **`CameraNode`** (`filament-compose`): a scene composable that drives a `CameraState` from the surrounding `Group`'s world transform every frame, for declarative chase / mounted / first-person cameras (`eyeOffset`/`targetOffset`/`up` in the group's local space).
+- **`rememberRenderTarget`** (`filament-compose`): renders a scene off-screen through its own camera into a sampleable `Texture` (mini-maps, monitors, portals, thumbnails) via `Renderer.renderStandaloneView`, ready to bind as a material parameter.
+- **`Light` model exposure** (`filament-compose`): `Light` gains `lightChannels` (which of channels 0–7 it affects) and a richer intensity model via `intensityUnit` (`LightUnit.LUMINOUS_POWER`/`CANDELA`/`WATTS`) plus `efficiency`, mapping onto the core `LightManager` candela/watt setters. New parameters default to the previous behaviour.
+
+### Changed
+- **Sample**: the `Animation` scene now uses `rememberAnimationState` instead of feeding a manual `rememberSceneClock` into `animationTime`.
+
 ## [0.1.2-beta06] — 2026-06-22
 
 ### Added
