@@ -48,10 +48,10 @@ class EngineTest {
         assertTrue(engine.isValid())
         
         // Assert backend is NOOP (or fallback, but since we requested NOOP and JVM supports it, it should be NOOP)
-        assertNotNull(engine.getBackend())
-        
+        assertNotNull(engine.backend)
+
         val activeFl = engine.getActiveFeatureLevel()
-        val supportedFl = engine.getSupportedFeatureLevel()
+        val supportedFl = engine.supportedFeatureLevel
         assertNotNull(activeFl)
         assertNotNull(supportedFl)
         
@@ -62,7 +62,7 @@ class EngineTest {
         engine.setAutomaticInstancingEnabled(false)
         assertFalse(engine.isAutomaticInstancingEnabled())
         
-        val cfg = engine.getConfig()
+        val cfg = engine.config
         assertNotNull(cfg)
         
         assertTrue(engine.getMaxStereoscopicEyes() >= 1)
@@ -79,10 +79,10 @@ class EngineTest {
         engine.flushAndWait(100L)
         
         // Paused state
-        assertFalse(engine.isPaused())
-        engine.setPaused(true)
-        assertTrue(engine.isPaused())
-        engine.setPaused(false)
+        assertFalse(engine.paused)
+        engine.paused = true
+        assertTrue(engine.paused)
+        engine.paused = false
         
         // Feature flags / other methods
         engine.unprotected()

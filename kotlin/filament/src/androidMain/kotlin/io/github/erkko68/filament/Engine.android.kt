@@ -158,13 +158,13 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
 
     actual fun isValid(): Boolean = nativeEngine.isValid
     actual fun destroy() = nativeEngine.destroy()
-    actual fun getBackend(): Backend = Backend.fromAndroid(nativeEngine.backend)
-    actual fun getSupportedFeatureLevel(): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.supportedFeatureLevel)
+    actual val backend: Backend get() = Backend.fromAndroid(nativeEngine.backend)
+    actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromAndroid(nativeEngine.supportedFeatureLevel)
     actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.setActiveFeatureLevel(featureLevel.toAndroid()))
     actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.activeFeatureLevel)
     actual fun setAutomaticInstancingEnabled(enable: Boolean) = nativeEngine.setAutomaticInstancingEnabled(enable)
     actual fun isAutomaticInstancingEnabled(): Boolean = nativeEngine.isAutomaticInstancingEnabled
-    actual fun getConfig(): Config {
+    actual val config: Config get() {
         val config = Config()
         val androidConfig = nativeEngine.config
         config.commandBufferSizeMB = androidConfig.commandBufferSizeMB
@@ -252,8 +252,9 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun flushAndWait() = nativeEngine.flushAndWait()
     actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
     actual fun flush() = nativeEngine.flush()
-    actual fun isPaused(): Boolean = nativeEngine.isPaused
-    actual fun setPaused(paused: Boolean) { nativeEngine.isPaused = paused }
+    actual var paused: Boolean
+        get() = nativeEngine.isPaused
+        set(value) { nativeEngine.isPaused = value }
     actual fun unprotected() = nativeEngine.unprotected()
     actual fun hasFeatureFlag(name: String): Boolean = nativeEngine.hasFeatureFlag(name)
     actual fun setFeatureFlag(name: String, value: Boolean): Boolean = nativeEngine.setFeatureFlag(name, value)

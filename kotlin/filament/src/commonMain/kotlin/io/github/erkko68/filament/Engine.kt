@@ -200,7 +200,7 @@ expect class Engine {
         /**
          * Pause rendering immediately after Engine creation.
          *
-         * Call Engine.setPaused(false) to resume.
+         * Set `engine.paused = false` to resume.
          *
          * @param paused true to start paused, false to start active.
          * @return This Builder, for chaining calls.
@@ -284,18 +284,14 @@ expect class Engine {
     fun destroy()
 
     /**
-     * Get the rendering backend being used by this Engine.
-     *
-     * @return The active Backend.
+     * The rendering backend being used by this Engine.
      */
-    fun getBackend(): Backend
+    val backend: Backend
 
     /**
-     * Get the highest feature level supported by this backend.
-     *
-     * @return The maximum supported FeatureLevel.
+     * The highest feature level supported by this backend.
      */
-    fun getSupportedFeatureLevel(): FeatureLevel
+    val supportedFeatureLevel: FeatureLevel
 
     /**
      * Set the active feature level.
@@ -331,11 +327,9 @@ expect class Engine {
     fun isAutomaticInstancingEnabled(): Boolean
 
     /**
-     * Get the Engine's advanced configuration.
-     *
-     * @return The Config object used when creating this Engine.
+     * The Engine's advanced configuration — the Config object used when creating this Engine.
      */
-    fun getConfig(): Config
+    val config: Config
 
     /**
      * Get the maximum number of stereoscopic eyes configured for this Engine.
@@ -468,10 +462,8 @@ expect class Engine {
     fun flushAndWait(timeout: Long): Boolean
     /** Flush pending GPU commands to the driver (non-blocking). */
     fun flush()
-    /** Check if rendering is currently paused. @return true if paused. */
-    fun isPaused(): Boolean
-    /** Pause or resume rendering. */
-    fun setPaused(paused: Boolean)
+    /** Whether rendering is currently paused. Set to pause or resume rendering. */
+    var paused: Boolean
     /** Deprecated no-op method. */
     fun unprotected()
     /** Check if a feature flag exists. */

@@ -149,13 +149,13 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         nativeHandle = null
     }
 
-    actual fun getBackend(): Backend = Backend.fromNative(FilamentC.FilaEngine_getBackend(nativeHandle))
-    actual fun getSupportedFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_getSupportedFeatureLevel(nativeHandle))
+    actual val backend: Backend get() = Backend.fromNative(FilamentC.FilaEngine_getBackend(nativeHandle))
+    actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilamentC.FilaEngine_getSupportedFeatureLevel(nativeHandle))
     actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
     actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_getActiveFeatureLevel(nativeHandle))
     actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
     actual fun isAutomaticInstancingEnabled(): Boolean = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
-    actual fun getConfig(): Config {
+    actual val config: Config get() {
         // C-wrapper doesn't expose getConfig; return defaults (matches nativeMain).
         return Config()
     }
@@ -282,8 +282,9 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     actual fun flushAndWait() { FilamentC.FilaEngine_flushAndWait(nativeHandle, 1_000_000_000L) }
     actual fun flushAndWait(timeout: Long): Boolean = FilamentC.FilaEngine_flushAndWait(nativeHandle, timeout)
     actual fun flush() = FilamentC.FilaEngine_flush(nativeHandle)
-    actual fun isPaused(): Boolean = FilamentC.FilaEngine_isPaused(nativeHandle)
-    actual fun setPaused(paused: Boolean) = FilamentC.FilaEngine_setPaused(nativeHandle, paused)
+    actual var paused: Boolean
+        get() = FilamentC.FilaEngine_isPaused(nativeHandle)
+        set(value) { FilamentC.FilaEngine_setPaused(nativeHandle, value) }
     actual fun unprotected() = FilamentC.FilaEngine_unprotected(nativeHandle)
     actual fun hasFeatureFlag(name: String): Boolean = confined { arena -> FilamentC.FilaEngine_hasFeatureFlag(nativeHandle, arena.cstr(name)) }
     actual fun setFeatureFlag(name: String, value: Boolean): Boolean = confined { arena ->
