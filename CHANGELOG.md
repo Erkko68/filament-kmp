@@ -17,9 +17,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`CameraNode`** (`filament-compose`): a scene composable that drives a `CameraState` from the surrounding `Group`'s world transform every frame, for declarative chase / mounted / first-person cameras (`eyeOffset`/`targetOffset`/`up` in the group's local space).
 - **`rememberRenderTarget`** (`filament-compose`): renders a scene off-screen through its own camera into a sampleable `Texture` (mini-maps, monitors, portals, thumbnails) via `Renderer.renderStandaloneView`, ready to bind as a material parameter.
 - **`Light` model exposure** (`filament-compose`): `Light` gains `lightChannels` (which of channels 0–7 it affects) and a richer intensity model via `intensityUnit` (`LightUnit.LUMINOUS_POWER`/`CANDELA`/`WATTS`) plus `efficiency`, mapping onto the core `LightManager` candela/watt setters. New parameters default to the previous behaviour.
+- **`OnFrame` / `FrameInfo`** (`filament-compose`): the single per-frame primitive (one `withFrameNanos` loop delivering `deltaSeconds`/`elapsedSeconds`, no recomposition). `rememberSceneClock`, `FilamentEffect.onFrame`, `rememberAnimationState`, `CameraNode`, and the flight camera are now all built on it instead of each hand-rolling their own loop.
 
 ### Changed
 - **Sample**: the `Animation` scene now uses `rememberAnimationState` instead of feeding a manual `rememberSceneClock` into `animationTime`.
+- **`FilamentEffect`'s `onFrame`** (`filament-compose`, breaking): the callback now receives a `FrameInfo` (delta/elapsed time) instead of a raw `frameTimeNanos: Long`.
+
+### Removed
+- **`FlightCameraLoop`** (`filament-compose`, breaking): removed. `rememberFlightCameraState` now drives the flight simulation itself every frame via `OnFrame`, so the separate loop composable is no longer needed — delete the `FlightCameraLoop(state)` call.
 
 ## [0.1.2-beta06] — 2026-06-22
 

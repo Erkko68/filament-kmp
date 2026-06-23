@@ -1,16 +1,15 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.*
-import androidx.compose.runtime.withFrameNanos
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
+import io.github.erkko68.filament.compose.OnFrame
 import io.github.erkko68.filament.gltfio.FilamentInstance
 import io.github.erkko68.filament.utils.Quaternion
-import kotlinx.coroutines.isActive
 
 /**
  * Scope for interacting with a specific glTF instance via low-level Filament APIs.
@@ -152,17 +151,8 @@ fun FilamentSceneScope.GltfInstance(
     }
 
     // Auto-advancing, cross-fading playback driven by the hoisted AnimationState.
-    LaunchedEffect(instance, animationState) {
-        if (animationState == null) return@LaunchedEffect
-        var last = withFrameNanos { it }
-        while (isActive) {
-            withFrameNanos { now ->
-                // Clamp dt so a paused/backgrounded frame doesn't jump the animation.
-                val dt = ((now - last) / 1e9f).coerceIn(0f, 0.1f)
-                last = now
-                animationState.apply(instance.getAnimator(), dt)
-            }
-        }
+    OnFrame { frame ->
+        animationState?.apply(instance.getAnimator(), frame.deltaSeconds)
     }
 
     // Vertex morph-target weights, applied to every renderable that has morph targets. Keyed on

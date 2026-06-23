@@ -65,6 +65,47 @@ rememberFilamentScene {
 
 Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itself is destroyed.
 
+## Driving updates
+
+Continuous updates fall into **two different clocks** — confusing them is the most common source
+of "why does this run too often / not often enough":
+
+- **Per frame** — once per display refresh. Independent of Compose state; keeps running at the
+  display's refresh rate. This is what you want for animation and continuous motion.
+- **Per recomposition** — whenever the Compose state a block reads changes. Could be many times a
+  frame, or not for seconds. This is for *syncing* values, not for time-based animation.
+
+### `OnFrame` — the per-frame primitive
+
+```kotlin
+OnFrame { frame ->
+    angle += frame.deltaSeconds * speed   // runs once per refresh, no recomposition
+}
+```
+
+`OnFrame` runs its callback once per display refresh and hands you a `FrameInfo`
+(`frameTimeNanos`, `deltaSeconds` — clamped against stalls — and `elapsedSeconds`). It does **not**
+recompose. **Everything else per-frame is built on it:**
+
+| Helper | Built on `OnFrame`; reach for it when… |
+| :-- | :-- |
+| `rememberAnimationState` | Playing/blending glTF skeletal animation — the high-level path. Don't hand-roll the timing. |
+| `rememberSceneClock()` | You want elapsed **seconds as a `State<Float>`** to read in composition (orbit a `Group`, pulse a value). Reading it recomposes every frame — that's its whole point, and the one case you *want* a frame to recompose. |
+| `FilamentEffect { onFrame { … } }` | Per-frame work from inside a `rememberFilamentScene` escape hatch, with the `engine`/`scene` in scope. The callback gets the same `FrameInfo`. |
+| `rememberFlightCameraState` | Free-flight camera; it advances itself every frame (no separate loop composable needed). |
+
+And the per-**recomposition** siblings, for completeness:
+
+| Helper | Clock | When |
+| :-- | :-- | :-- |
+| `GltfInstance.onUpdate { … }` | Per recomposition | Syncing imperative glTF state (materials, bones) to Compose state. **Not** a frame loop. |
+| `GltfInstance.onCreate { … }` | Once | One-time setup when the instance enters the scene. |
+
+**Picking one:** animating a glTF → `rememberAnimationState`; elapsed time as a value in
+composition → `rememberSceneClock`; any other per-frame side effect → `OnFrame` (or
+`FilamentEffect`'s `onFrame` inside a scene); reacting to *state* changes rather than the clock →
+`onUpdate`.
+
 ## Animating glTF models
 
 `GltfInstance` offers three layers of animation control, from declarative to fully manual.

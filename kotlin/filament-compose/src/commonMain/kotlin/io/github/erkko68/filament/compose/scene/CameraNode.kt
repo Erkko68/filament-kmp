@@ -1,11 +1,10 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.withFrameNanos
+import androidx.compose.runtime.remember
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
-import kotlinx.coroutines.isActive
+import io.github.erkko68.filament.compose.OnFrame
 
 /**
  * Attaches a [CameraState] to the surrounding [Group] so the camera follows that group's
@@ -44,20 +43,16 @@ fun FilamentSceneScope.CameraNode(
 ) {
     val engine = LocalFilamentEngine.current
     val parent = LocalParentEntity.current
+    val world = remember { FloatArray(16) }
 
-    LaunchedEffect(cameraState, parent, eyeOffset, targetOffset, up) {
-        if (parent == null) return@LaunchedEffect
+    OnFrame {
+        if (parent == null) return@OnFrame
         val tm = engine.getTransformManager()
-        val world = FloatArray(16)
-        while (isActive) {
-            withFrameNanos {
-                if (tm.hasComponent(parent)) {
-                    tm.getWorldTransform(tm.getInstance(parent), world)
-                    cameraState.eye = world.transformPoint(eyeOffset)
-                    cameraState.target = world.transformPoint(targetOffset)
-                    cameraState.up = world.transformDirection(up).normalized()
-                }
-            }
+        if (tm.hasComponent(parent)) {
+            tm.getWorldTransform(tm.getInstance(parent), world)
+            cameraState.eye = world.transformPoint(eyeOffset)
+            cameraState.target = world.transformPoint(targetOffset)
+            cameraState.up = world.transformDirection(up).normalized()
         }
     }
 }
