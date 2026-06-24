@@ -39,10 +39,10 @@ jobs:
             arch: windows-x64
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
@@ -52,7 +52,7 @@ jobs:
         id: ver
         shell: bash
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: prebuilts/${{ matrix.target }}
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
@@ -71,7 +71,7 @@ jobs:
           find "java/build/cmake" \
             \( -name "*.dylib" -o -name "*.so" -o -name "*.dll" \) \
             -exec cp {} "$dest/" \;
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: c-${{ matrix.arch }}
           path: c-artifacts/
@@ -81,10 +81,10 @@ jobs:
     needs: build-natives
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Determine version
@@ -98,7 +98,7 @@ jobs:
       - name: Read Filament version
         id: ver
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             prebuilts/iosArm64
@@ -112,7 +112,7 @@ jobs:
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_macosArm64
       - name: Download FFM natives
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: c-*
           path: c-artifacts/
