@@ -137,7 +137,7 @@ jobs:
     if: >-
       github.event_name != 'workflow_dispatch' ||
       inputs.jobs == 'all' || inputs.jobs == 'ios'
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
