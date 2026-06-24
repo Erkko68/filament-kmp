@@ -8,8 +8,8 @@ import java.io.File
 // jextract major version. Pinned to 22 (not the toolchain's 25) so the generated bindings
 // target the JDK 22 FFM API — i.e. they use find().orElseThrow() rather than the
 // JDK 23+ SymbolLookup.findOrThrow(), keeping the consumer floor at JDK 22 (release 22).
-// jextract is a manual dev prerequisite — run scripts/gradle/download_jextract.py once to install it
-// (the build does not auto-download it). That script pins the exact early-access build coordinates.
+// The build auto-downloads jextract via the downloadJextract task (scripts/gradle/download_jextract.py),
+// which pins the exact early-access build coordinates and caches the tarball.
 private const val JEXTRACT_MAJOR = "22"
 
 /**
@@ -98,13 +98,30 @@ fun Project.applyFilamentJvmNative(
         commandLine(cmakePath, "--build", ".", "--target", "filament-c-jvm", "--config", "Release")
     }
 
-    // ── jextract: generate the bindings from the headers ─────────────────────
-    // jextract is a manual dev prerequisite (not auto-downloaded). Install it once with
-    // scripts/gradle/download_jextract.py; the task below fails with that hint if it's missing.
+    // ── jextract: download the tool, then generate the bindings ──────────────
     val jextractBin = rootProject.file(
         ".gradle/jextract/jextract-$JEXTRACT_MAJOR/bin/" +
             if (platform == "windows") "jextract.bat" else "jextract",
     )
+
+    // Self-bootstrap jextract via the cached download script. Registered once on the root
+    // project (find-or-register, so reusing this helper from other modules won't double-register
+    // or race on the .gradle/jextract dir). Output-tracked + onlyIf: downloads on first build,
+    // skipped/up-to-date after.
+    val downloadJextract = rootProject.run {
+        tasks.findByName("downloadJextract")?.let { tasks.named("downloadJextract", Exec::class.java) }
+            ?: tasks.register("downloadJextract", Exec::class.java) {
+                group = "build setup"
+                description = "Downloads the pinned jextract $JEXTRACT_MAJOR tool (one-time, cached)."
+                commandLine(
+                    resolvePython(),
+                    rootProject.file("scripts/gradle/download_jextract.py").absolutePath,
+                    JEXTRACT_MAJOR,
+                )
+                outputs.file(jextractBin)
+                onlyIf { !jextractBin.exists() }
+            }
+    }
 
     val absHeaderDirs = headerDirs.map { it.absolutePath }
     val absIncludeDirs = includeDirs.map { it.absolutePath }
@@ -113,16 +130,13 @@ fun Project.applyFilamentJvmNative(
     }.sortedBy { it.name }
 
     val jextract = tasks.register("jextractFilamentC", Exec::class.java) {
-        dependsOn(downloadIncludes)
+        dependsOn(downloadIncludes, downloadJextract)
         inputs.files(headerFiles)
         outputs.dir(generatedDir)
         doFirst {
-            if (!jextractBin.exists()) {
-                throw org.gradle.api.GradleException(
-                    "jextract $JEXTRACT_MAJOR not found at $jextractBin.\n" +
-                        "It is a one-time dev prerequisite — install it with:\n" +
-                        "    python3 scripts/gradle/download_jextract.py $JEXTRACT_MAJOR",
-                )
+            check(jextractBin.exists()) {
+                "jextract $JEXTRACT_MAJOR missing at $jextractBin after downloadJextract — " +
+                    "run: python3 scripts/gradle/download_jextract.py $JEXTRACT_MAJOR"
             }
             generatedDir.deleteRecursively()
             generatedDir.mkdirs()

@@ -119,9 +119,7 @@ jobs:
           merge-multiple: true
       # The publish host (macOS) rebuilds its own macos-arm64 native via
       # processResources, and bundles the other platforms from -PcArtifactsDir.
-      # Compiling the FFM bindings needs jextract.
-      - name: Install jextract
-        run: python3 scripts/gradle/download_jextract.py
+      # Compiling the FFM bindings needs jextract, which auto-downloads as a task dependency.
       - name: Publish to Maven Central
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVENCENTRAL_USERNAME }}

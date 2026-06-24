@@ -15,7 +15,7 @@ Two categories:
 | :--- | :--- |
 | [`gradle/download_filament_prebuilts.py`](gradle/download_filament_prebuilts.py) | Downloads the official Filament prebuilt static libraries (or Filament.js + WASM + `filament.d.ts` for `web`) for one or more targets into `prebuilts/<target>/`. Invoked by every `downloadPrebuilts_<target>` Gradle task in [build.gradle.kts](../build.gradle.kts). Python because it does xcframework-slice extraction, SSL with Windows cert store, and multi-target dispatch — would be markedly uglier in bash. The web `filament.d.ts` drives the `:js` module's Karakum-generated externals. |
 | [`gradle/download_filament_includes.py`](gradle/download_filament_includes.py) | Downloads Filament's public C/C++ headers from the GitHub source tarball into `include/`. Required by both the native (cinterop) and the combined FFM builds — see [c/CMakeLists.txt](../c/CMakeLists.txt). Headers must match the prebuilt ABI exactly — version drift causes runtime crashes. Invoked by the `downloadIncludes` Gradle task. |
-| [`gradle/download_jextract.py`](gradle/download_jextract.py) | **One-time setup.** Installs the jextract tool used to generate the JVM/Panama (FFM) bindings into `.gradle/jextract/jextract-<major>/`. The Gradle build does **not** auto-download it — it expects the binary to already be present and fails with this hint otherwise. Run once after cloning (and again only when the pinned version in [buildSrc/FilamentJvmNative.kt](../buildSrc/src/main/kotlin/FilamentJvmNative.kt) changes). CI invokes it before building any JVM target. |
+| [`gradle/download_jextract.py`](gradle/download_jextract.py) | Installs the jextract tool used to generate the JVM/Panama (FFM) bindings into `.gradle/jextract/jextract-<major>/`. The Gradle build invokes this automatically via the `downloadJextract` task (output-tracked + cached, so it runs once and is skipped thereafter); you don't normally call it by hand. The pinned version lives in [buildSrc/FilamentJvmNative.kt](../buildSrc/src/main/kotlin/FilamentJvmNative.kt). |
 
 These use only the Python stdlib — no `pip install`. They expect `python3` on PATH; override via the
 `PYTHON` env var (the Gradle tasks honor it).
@@ -33,8 +33,15 @@ These use only the Python stdlib — no `pip install`. They expect `python3` on 
 ## First-time setup
 
 ```sh
-python3 scripts/gradle/download_jextract.py   # install jextract (needed to build the JVM/FFM bindings)
 ./gradlew downloadPrebuilts                    # fetch Filament natives + headers
+```
+
+jextract (for the JVM/FFM bindings) and the web prebuilts download automatically as Gradle
+task dependencies — no manual step needed. If that auto-download fails (e.g. no network during
+the build, or a proxy blocks it), install jextract by hand and re-run the build:
+
+```sh
+python3 scripts/gradle/download_jextract.py   # add a major arg, e.g. `25`, to override the default
 ```
 
 ## Updating the Filament version

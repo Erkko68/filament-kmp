@@ -7,11 +7,12 @@ jextract is an OpenJDK early-access tool published per JDK feature release at
 https://jdk.java.net/jextract/ . The code it generates targets the finalized
 java.lang.foreign API, so any jextract >= 22 works on JDK 22+.
 
-This is a one-time prerequisite — the Gradle build does NOT download jextract;
-it expects the binary to already exist at:
-    <repo>/.gradle/jextract/jextract-<major>/bin/jextract[.bat]
-Run this once after cloning (and again only when the pinned version changes).
-The tarball is cached under <repo>/.gradle/jextract-cache/ so re-runs are free.
+The Gradle build runs this automatically via the `downloadJextract` task (it
+installs the binary to <repo>/.gradle/jextract/jextract-<major>/bin/jextract[.bat]),
+so a fresh `./gradlew` on the JVM path self-bootstraps. The tarball is cached
+under <repo>/.gradle/jextract-cache/ and the task is output-tracked, so it runs
+once and is skipped thereafter. You can still invoke this directly if you want to
+pre-fetch a specific major.
 
 Pure stdlib (no pip), cross-platform (macOS / Linux / Windows) so any developer
 — including Windows devs without a bash shell — can run it directly:
