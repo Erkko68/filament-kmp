@@ -97,7 +97,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: docs, path: site/api }
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v3
         with: { path: site }
       - id: deploy
