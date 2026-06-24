@@ -2,6 +2,43 @@
 
 The `filament-kmp` project is organized into several modules to handle the cross-platform nature of the Filament engine.
 
+## Architecture at a glance
+
+One shared `expect` surface in `commonMain` fans out into four platform `actual`
+implementations, each bound to the native engine by a different mechanism. Everything above
+the dashed line is Kotlin we maintain; everything below is the upstream Google Filament engine.
+
+```mermaid
+flowchart TB
+    subgraph common["kotlin/ · commonMain — one expect surface"]
+        API["filament · filamat · gltfio · filament-utils<br/>filament-compose (Compose MP UI)"]
+    end
+
+    API --> AND["androidMain<br/>(actual)"]
+    API --> JVM["jvmMain<br/>(actual)"]
+    API --> NAT["iosMain / macosMain<br/>(actual)"]
+    API --> WEB["jsMain<br/>(actual)"]
+
+    AND -->|official AAR| MAVEN["com.google.android.filament<br/>Maven artifact"]
+    JVM -->|jextract → FFM| FFM["java/ · libfilament-c<br/>(shared, built from c/)"]
+    NAT -->|cinterop| CIN["c/ wrapper<br/>(per-module static libs)"]
+    WEB -->|Karakum externals<br/>from filament.d.ts| JS["js/ · Filament.js (WASM)"]
+
+    FFM --> CWRAP["c/ — C-ABI over Filament C++"]
+    CIN --> CWRAP
+
+    CWRAP -.-> ENGINE
+    MAVEN -.-> ENGINE
+    JS -.-> ENGINE
+
+    subgraph upstream["Google Filament (upstream)"]
+        ENGINE["Native engine + prebuilt binaries<br/>(prebuilts/ · include/ · downloaded per filaVersion)"]
+    end
+```
+
+See [Binding Strategy by Platform](#binding-strategy-by-platform) below for the same mapping
+in table form.
+
 ## Core Modules
 
 - **`c/`**: C++ wrapper that exposes a C-compatible ABI around the official Filament C++ API. Consumed by two code generators: **Kotlin Native** targets (iOS, macOS) via `cinterop` (one CMake library per sub-module — `libfilament-c.a`, `libfilamat-c.a`, `libfilament-utils-c.a`, `libgltfio-c.a`), and the **JVM/Desktop** target via `jextract` (the `FILAMENT_BUILD_SHARED` path links all four into one `libfilament-c` shared image). Each module's C-ABI types live in its own `*Types.h` header (core types in `filament/c/FilaTypes.h`).
