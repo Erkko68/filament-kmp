@@ -92,9 +92,9 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       # Web sample at the site root, API docs under /api — one combined artifact.
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: web, path: site }
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: docs, path: site/api }
 
       - uses: actions/configure-pages@v5
