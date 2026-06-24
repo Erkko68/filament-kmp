@@ -35,8 +35,8 @@ jobs:
   web:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
 
@@ -46,7 +46,7 @@ jobs:
         # samples/webApp/build/dist/js/productionExecutable/.
         run: ./gradlew :webApp:jsBrowserDistribution --no-configuration-cache
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: web
           path: samples/webApp/build/dist/js/productionExecutable
@@ -57,10 +57,10 @@ jobs:
     # JS externals and Android. iOS native is only buildable on macOS.
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
 
@@ -77,7 +77,7 @@ jobs:
         # :java and :js modules are excluded (FFM internals / generated externals).
         run: ./gradlew dokkaGenerate --no-configuration-cache
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: docs
           path: build/dokka/html
@@ -90,13 +90,13 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       # Web sample at the site root, API docs under /api — one combined artifact.
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: web, path: site }
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with: { name: docs, path: site/api }
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with: { path: site }
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
