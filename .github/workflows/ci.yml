@@ -98,7 +98,7 @@ jobs:
         run: ./gradlew :desktopApp:compileKotlinJvm --no-configuration-cache
       - name: Upload test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jvm-test-reports-${{ matrix.target }}
           path: kotlin/*/build/reports/tests/
@@ -128,7 +128,7 @@ jobs:
         run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
       - name: Upload test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: js-test-reports
           path: kotlin/*/build/reports/tests/
@@ -209,7 +209,7 @@ jobs:
             build
       - name: Upload test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-test-reports
           path: kotlin/*/build/reports/tests/
@@ -246,7 +246,7 @@ jobs:
         working-directory: samples
       - name: Upload test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-test-reports
           path: kotlin/*/build/reports/androidTests/
