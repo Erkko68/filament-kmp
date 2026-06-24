@@ -9,6 +9,10 @@ internal fun resolveCmake(): String =
         .firstOrNull { File(it).exists() }
         ?: "cmake"
 
+/** Python 3 launcher for stdlib scripts under scripts/gradle/. "python" on Windows, else "python3". */
+internal fun resolvePython(): String =
+    if (hostPlatform() == "windows") "python" else "python3"
+
 /** The host OS as the CMake `-DFILAMENT_PLATFORM` value: "macos" | "windows" | "linux". */
 internal fun hostPlatform(): String {
     val os = System.getProperty("os.name")

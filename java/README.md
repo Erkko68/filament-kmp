@@ -29,7 +29,7 @@ so consumers never add it by hand.
    helpers (arenas, struct/array marshalling, upcall stubs) that the `:kotlin:*` `jvmMain`
    actuals build their idiomatic Kotlin API on top of `FilamentC`.
 
-`jextract` is a one-time setup install — see [`scripts/gradle/download_jextract.py`](../scripts/gradle/download_jextract.py).
+`jextract` is fetched automatically by the build (the `downloadJextract` task, cached under `.gradle/jextract/`) — no manual setup. The download script it wraps is [`scripts/gradle/download_jextract.py`](../scripts/gradle/download_jextract.py).
 
 ## Requirements
 
