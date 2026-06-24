@@ -52,7 +52,7 @@ jobs:
         id: ver
         shell: bash
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: prebuilts/${{ matrix.target }}
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
@@ -98,7 +98,7 @@ jobs:
       - name: Read Filament version
         id: ver
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             prebuilts/iosArm64
