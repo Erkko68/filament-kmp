@@ -18,6 +18,12 @@ updates:
         patterns:
           - "com.android*"
           - "androidx.*"
+      # Catch-all (incl. the Gradle wrapper). A dependency joins the first matching
+      # group, so the named groups above claim theirs and this sweeps the rest into
+      # one PR instead of one-per-dependency.
+      gradle:
+        patterns:
+          - "*"
 
   # Samples is a separate Gradle build with its own settings.gradle.kts.
   - package-ecosystem: "gradle"
@@ -25,9 +31,17 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      samples:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      actions:
+        patterns:
+          - "*"
