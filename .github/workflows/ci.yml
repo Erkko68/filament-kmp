@@ -77,9 +77,6 @@ jobs:
       - name: Download prebuilts
         shell: bash
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
-      - name: Install jextract
-        shell: bash
-        run: python3 scripts/gradle/download_jextract.py
       - name: Build library
         shell: bash
         run: ./gradlew compileKotlinJvm --no-configuration-cache

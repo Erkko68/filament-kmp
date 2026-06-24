@@ -66,10 +66,8 @@ jobs:
 
       # :java's FFM bindings (jvm source set) are jextract-generated; the C++
       # toolchain (libc++) ships with Xcode on the runner. Android source sets
-      # need the SDK licenses accepted. Native/web prebuilts auto-download as
-      # task dependencies.
-      - name: Install jextract
-        run: python3 scripts/gradle/download_jextract.py
+      # need the SDK licenses accepted. jextract, native and web prebuilts all
+      # auto-download as task dependencies.
       - name: Accept Android SDK licenses
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
