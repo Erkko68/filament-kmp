@@ -8,8 +8,8 @@ filamentModule {
     xcframeworkName.set("Filamat")
 }
 
-val filaVersion: String by project
-val libVersion: String by project
+val filaVersion = project.property("filaVersion") as String
+val libVersion = project.property("libVersion") as String
 
 // Additional prebuilts needed by filamat-c beyond what :kotlin:filament already embeds.
 // (filament, backend, utils, filabridge, smol-v are covered by the filament module.)

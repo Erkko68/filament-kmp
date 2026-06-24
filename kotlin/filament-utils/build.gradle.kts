@@ -8,8 +8,8 @@ filamentModule {
     xcframeworkName.set("FilamentUtils")
 }
 
-val filaVersion: String by project
-val libVersion: String by project
+val filaVersion = project.property("filaVersion") as String
+val libVersion = project.property("libVersion") as String
 
 // Additional prebuilts needed by filament-utils-c beyond what :kotlin:filament already embeds.
 // (zstd, utils, filaflat, filabridge are covered by the filament module.)

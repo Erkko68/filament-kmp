@@ -224,7 +224,7 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
       - name: Build library
-        run: ./gradlew compileReleaseKotlinAndroid --no-configuration-cache
+        run: ./gradlew compileAndroidMain --no-configuration-cache
       - name: Enable KVM (for android emulator)
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \

@@ -5,7 +5,7 @@ plugins {
 
 version = findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
 
-val filaVersion: String by project
+val filaVersion = project.property("filaVersion") as String
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Karakum-generated Kotlin/JS externals
@@ -170,7 +170,7 @@ kotlin {
     }
 
     sourceSets {
-        val jsMain by getting {
+        jsMain {
             kotlin.srcDir(generateJsExternals)
             dependencies {
                 implementation(kotlin("stdlib-js"))
