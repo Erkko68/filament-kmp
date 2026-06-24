@@ -1,0 +1,33 @@
+version: 2
+updates:
+  # Root Gradle build (shares gradle/libs.versions.toml; covers buildSrc).
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "org.jetbrains.kotlinx*"
+      compose:
+        patterns:
+          - "org.jetbrains.compose*"
+      android:
+        patterns:
+          - "com.android*"
+          - "androidx.*"
+
+  # Samples is a separate Gradle build with its own settings.gradle.kts.
+  - package-ecosystem: "gradle"
+    directory: "/samples"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
