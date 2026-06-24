@@ -121,7 +121,7 @@ composition → `rememberSceneClock`; any other per-frame side effect → `OnFra
 
 ## Animating glTF models
 
-`GltfInstance` offers three layers of animation control, from declarative to fully manual.
+`GltfInstance` offers four layers of animation control, from declarative to fully manual.
 
 ### 1. Hoisted playback with `rememberAnimationState` (recommended)
 
@@ -134,8 +134,9 @@ val animation = rememberAnimationState(animationIndex = 0)
 GltfInstance(asset = character, animationState = animation)
 ```
 
-You can read it back during composition — `animation.time` and `animation.isTransitioning` are
-snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration` live.
+You can read it back during composition — `animation.time`, `animation.progress` and
+`animation.isTransitioning` are snapshot state — and tweak `speed`, `loop`, and `crossFadeDuration`
+live. Set `animation.isPaused = true` to freeze playback, or `animation.seek(seconds)` to scrub.
 
 ### 2. Cross-fading between clips
 
@@ -153,10 +154,61 @@ Button(onClick = { animation.animationIndex = if (animation.animationIndex == id
 ```
 
 Under the hood this uses Filament's `Animator.applyCrossFade`, which blends exactly **two** clips at
-a time (the incoming clip plus the one it is fading from). That covers the common case; an arbitrary
-N-track weighted mixer is out of scope for the hoisted state — drop to layer 3 for that.
+a time. For a held, multi-clip blend (rather than a one-shot transition), use the mixer below.
 
-### 3. Manual control and morph targets
+### 3. Multi-track mixer (blend trees)
+
+Add tracks with `rememberAnimationTrack` to hold and blend several clips at once by `weight` — a
+blend tree. While any tracks are present they drive playback and `animationIndex` is ignored. Each
+track keeps its own `time`/`speed`/`loop` and exposes read-only `progress` and `isFinished`:
+
+```kotlin
+val animation = rememberAnimationState(animationIndex = null)
+
+// Declare one track per clip; drive the weight from a parameter — e.g. movement speed 0..1:
+rememberAnimationTrack(animation, walkIndex, weight = 1f - moveSpeed)
+rememberAnimationTrack(animation, runIndex,  weight = moveSpeed)
+```
+
+Each call registers a track for as long as it stays in composition and removes it on the way out —
+no manual cleanup. It returns the `AnimationTrack` if you need to read `progress`/`isFinished` or
+call `seek`. Weights are normalized internally, so they need not sum to 1; a track at weight 0 keeps
+its clock running so it's already in phase when you blend it back in.
+
+Prefer names over magic indices with `rememberAnimationNames(asset)`, which returns the clip names
+by index once the asset is ready — `names.indexOf("Walk")`.
+
+**Driving the mixer from a game loop.** The blend engine is `AnimationMixer`, a plain
+(non-`@Composable`) object — `AnimationState` just wraps one as `animation.mixer`, and
+`rememberAnimationTrack` is declarative sugar over `mixer.addTrack`. For a game that runs its own
+animation state machine *outside* composition, hold a mixer with `rememberAnimationMixer()`, add
+tracks imperatively, and drive it from `OnFrame` with the instance's `Animator` — no per-clip
+composables, no coupling of your animation graph to the composition tree:
+
+```kotlin
+val mixer = rememberAnimationMixer()
+val walk = remember { mixer.addTrack(walkIndex) }
+val run  = remember { mixer.addTrack(runIndex, weight = 0f) }
+var animator by remember { mutableStateOf<Animator?>(null) }
+
+GltfInstance(asset = character, onCreate = { animator = instance.getAnimator() })
+
+OnFrame { frame ->
+    walk.weight = 1f - moveSpeed; run.weight = moveSpeed   // computed by your game logic
+    animator?.let { mixer.apply(it, frame.deltaSeconds) }
+}
+```
+
+`mixer.apply(animator, dt)` advances every track and pushes the blended pose. Set `mixer.isPaused =
+true` to freeze, `mixer.removeTrack`/`clearTracks` to tear down. This is the path for a "serious"
+game: clips are just indices (hundreds cost nothing until sampled), and only the 2–4 tracks you
+actually blend at any instant cost anything.
+
+Filament blends the **whole skeleton**, so per-bone masks and additive layers (e.g. wave with the
+upper body while the legs keep walking) are *not* expressible through either mixer surface — reach
+for the raw `Animator` in layer 4 if you need them.
+
+### 4. Manual control and morph targets
 
 For full control, drive the clip yourself with `animationIndex` + `animationTime` (e.g. fed from
 `rememberSceneClock`), or reach the raw `Animator` through `GltfInstance`'s `onUpdate` escape hatch
