@@ -237,7 +237,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: ./gradlew :kotlin:filament:connectedDebugAndroidTest :kotlin:filamat:connectedDebugAndroidTest :kotlin:filament-utils:connectedDebugAndroidTest :kotlin:gltfio:connectedDebugAndroidTest --no-configuration-cache
+          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples

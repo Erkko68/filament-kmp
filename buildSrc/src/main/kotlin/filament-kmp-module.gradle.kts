@@ -7,7 +7,7 @@ import java.awt.GraphicsEnvironment
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("filament-publish")
     id("org.jetbrains.dokka")
 }
@@ -25,20 +25,36 @@ val filamentModuleExt = extensions.create("filamentModule", FilamentModuleExtens
     xcframeworkName.convention("")
 }
 
+val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
+
 // ── Kotlin multiplatform target declarations ──────────────────────────────────
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
+    // AGP 9 KMP android library (com.android.kotlin.multiplatform.library): the
+    // android config lives on the `androidLibrary` target, not a top-level `android {}`.
+    // SDK levels single-sourced from gradle/libs.versions.toml.
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
-    androidTarget {
-        publishLibraryVariants("release")
-        // Make `androidInstrumentedTest` inherit from `commonTest` so the
-        // shared `expect`s (e.g. createTestSurface, TestMaterials) line up
-        // with the per-Android `actual`s. The default hierarchy template
-        // only wires `androidUnitTest` to commonTest.
-        instrumentedTestVariant.sourceSetTree.set(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree.test)
+    androidLibrary {
+        val groupStr = project.group.toString()
+        val modulePart = project.name.replace("-", ".")
+        namespace  = "$groupStr.$modulePart"
+        compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
+        minSdk     = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
+
+        // Android bytecode level (JVM_22) is set globally via the
+        // `tasks.withType<KotlinJvmCompile>` block below.
+
+        // Instrumented (on-device) tests inherit from `commonTest` (sourceSetTree
+        // "test") so the shared `expect`s (createTestSurface, TestMaterials) line up
+        // with the per-Android `actual`s in `androidDeviceTest`.
+        withDeviceTestBuilder {
+            sourceSetTreeName = "test"
+        }.configure {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
     }
 
     // Declare all targets
@@ -134,12 +150,11 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-// ── androidx.test runner deps for connectedDebugAndroidTest ───────────────────
-// `connectedDebugAndroidTest` needs an instrumentation runner on the device;
-// commonTest sources flow into androidInstrumentedTest via the default
-// hierarchy template, so every module that applies this plugin gets the deps.
-val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
-kotlin.sourceSets.named("androidInstrumentedTest").configure {
+// ── androidx.test runner deps for on-device instrumented tests ────────────────
+// The device-test source set (wired to the `test` tree above) needs an
+// instrumentation runner on the device; commonTest sources flow into it, so every
+// module that applies this plugin gets the deps.
+kotlin.sourceSets.named("androidDeviceTest").configure {
     dependencies {
         implementation(libs.findLibrary("androidx-test-runner").get())
         implementation(libs.findLibrary("androidx-test-ext-junit").get())
@@ -163,20 +178,6 @@ afterEvaluate {
                 xcf.add(this)
             }
         }
-    }
-}
-
-// ── Android defaults ──────────────────────────────────────────────────────────
-// SDK levels are single-sourced from gradle/libs.versions.toml so the catalog,
-// convention plugin, and docs can't silently drift apart.
-android {
-    val groupStr = project.group.toString()
-    val modulePart = project.name.replace("-", ".")
-    namespace  = "$groupStr.$modulePart"
-    compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
-    defaultConfig {
-        minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }
 

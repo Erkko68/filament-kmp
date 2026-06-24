@@ -4,11 +4,15 @@
 // publishing — just plain Kotlin across the same targets the consumers use.
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
 }
 
 kotlin {
-    androidTarget()
+    androidLibrary {
+        namespace = "io.github.erkko68.filament.testsupport"
+        compileSdk = 36
+        minSdk = 24
+    }
     iosArm64()
     iosSimulatorArm64()
     jvm()
@@ -18,13 +22,5 @@ kotlin {
         commonMain.dependencies {
             implementation(kotlin("test"))
         }
-    }
-}
-
-android {
-    namespace = "io.github.erkko68.filament.testsupport"
-    compileSdk = 36
-    defaultConfig {
-        minSdk = 24
     }
 }
