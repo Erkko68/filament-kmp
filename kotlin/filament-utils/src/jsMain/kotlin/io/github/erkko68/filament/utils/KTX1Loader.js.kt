@@ -9,10 +9,11 @@ import io.github.erkko68.filament.js.IndirectLight as JSIndirectLight
 import io.github.erkko68.filament.js.Skybox as JSSkybox
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
+import org.khronos.webgl.set
 
 private fun ByteArray.toArrayBufferView(): ArrayBufferView {
     val int8 = Int8Array(size)
-    forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+    forEachIndexed { i, b -> int8[i] = b }
     return int8.unsafeCast<ArrayBufferView>()
 }
 

@@ -3,6 +3,22 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.js.Renderer as JSRenderer
 import io.github.erkko68.filament.js.`Renderer_ClearOptions` as JSRendererClearOptions
 
+// Renderer methods present only in some filament.js builds. Declared as methods (not function-typed
+// properties) so they're invoked as `obj.method(...)` and keep their `this` binding — embind throws
+// BindingError if the bound function is detached from its receiver. Presence is probed before calling.
+// readPixels has two arities (with/without a RenderTarget), so it gets one interface each.
+private external interface JsRendererExt {
+    fun copyFrame(dstSwapChain: io.github.erkko68.filament.js.SwapChain, dst: Viewport, src: Viewport, flags: Int)
+    fun skipNextFrames(frameCount: Int)
+}
+private external interface JsReadPixels {
+    fun readPixels(x: Int, y: Int, w: Int, h: Int, buffer: Texture.PixelBufferDescriptor)
+}
+private external interface JsReadPixelsRt {
+    fun readPixels(rt: io.github.erkko68.filament.js.RenderTarget, x: Int, y: Int, w: Int, h: Int, buffer: Texture.PixelBufferDescriptor)
+}
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
     actual var displayInfo: DisplayInfo = DisplayInfo()
         set(value) {
@@ -80,10 +96,8 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         srcViewport: Viewport,
         flags: Int
     ) {
-        val jsRend = jsRenderer.asDynamic()
-        if (jsRend.copyFrame != null) {
-            jsRend.copyFrame(dstSwapChain.jsSwapChain, dstViewport, srcViewport, flags)
-        }
+        if (jsHasMember(jsRenderer, "copyFrame"))
+            jsRenderer.unsafeCast<JsRendererExt>().copyFrame(dstSwapChain.jsSwapChain, dstViewport, srcViewport, flags)
     }
 
     actual fun readPixels(
@@ -93,10 +107,8 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         height: Int,
         buffer: Texture.PixelBufferDescriptor
     ) {
-        val jsRend = jsRenderer.asDynamic()
-        if (jsRend.readPixels != null) {
-            jsRend.readPixels(xoffset, yoffset, width, height, buffer)
-        }
+        if (jsHasMember(jsRenderer, "readPixels"))
+            jsRenderer.unsafeCast<JsReadPixels>().readPixels(xoffset, yoffset, width, height, buffer)
     }
 
     actual fun readPixels(
@@ -107,17 +119,13 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         height: Int,
         buffer: Texture.PixelBufferDescriptor
     ) {
-        val jsRend = jsRenderer.asDynamic()
-        if (jsRend.readPixels != null) {
-            jsRend.readPixels(renderTarget.jsRenderTarget, xoffset, yoffset, width, height, buffer)
-        }
+        if (jsHasMember(jsRenderer, "readPixels"))
+            jsRenderer.unsafeCast<JsReadPixelsRt>().readPixels(renderTarget.jsRenderTarget, xoffset, yoffset, width, height, buffer)
     }
 
     actual fun skipNextFrames(frameCount: Int) {
-        val jsRend = jsRenderer.asDynamic()
-        if (jsRend.skipNextFrames != null) {
-            jsRend.skipNextFrames(frameCount)
-        }
+        if (jsHasMember(jsRenderer, "skipNextFrames"))
+            jsRenderer.unsafeCast<JsRendererExt>().skipNextFrames(frameCount)
     }
 
     actual class DisplayInfo {

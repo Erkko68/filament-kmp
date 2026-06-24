@@ -1,6 +1,7 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.js.Material as JSMaterial
+import org.khronos.webgl.set
 
 actual class Material(internal val jsMaterial: JSMaterial) {
     actual fun compile(
@@ -205,7 +206,7 @@ actual class Material(internal val jsMaterial: JSMaterial) {
             val payload = _payload ?: throw IllegalStateException("Material payload must be set")
             // Convert ByteArray to Uint8Array for JS
             val int8 = org.khronos.webgl.Int8Array(payload.size)
-            payload.forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+            payload.forEachIndexed { i, b -> int8[i] = b }
             val uint8 = org.khronos.webgl.Uint8Array(int8.buffer)
             return Material(engine.jsEngine.createMaterial(uint8))
         }

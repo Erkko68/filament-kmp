@@ -59,14 +59,10 @@ actual class MorphTargetBuffer internal constructor(
             return this
         }
 
-        actual fun build(engine: Engine): MorphTargetBuffer {
-            return MorphTargetBuffer(
-                vertexCount = vertexCount,
-                count = count,
-                hasPositions = hasPositions,
-                hasTangents = hasTangents,
-                isCustomMorphingEnabled = isCustomMorphingEnabled,
+        actual fun build(engine: Engine): MorphTargetBuffer =
+            jsUnsupported(
+                "MorphTargetBuffer",
+                "Morph targets are handled internally by gltfio on web; the standalone API is unbound."
             )
-        }
     }
 }

@@ -1,11 +1,13 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+@IgnoreJs // SkinningBuffer is not bound in the web wrapper; Builder.build throws there.
 class SkinningBufferTest : FilamentTestFixture() {
     @Test
     fun testSkinningBufferLifecycle() {

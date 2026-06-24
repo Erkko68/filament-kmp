@@ -132,7 +132,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
                 e.target.width = r.width
                 e.target.height = r.height
             }
-            ctx.asDynamic().drawImage(
+            ctx.drawImage(
                 canvas,
                 r.left.toDouble(), r.top.toDouble(), r.width.toDouble(), r.height.toDouble(),
                 0.0, 0.0, r.width.toDouble(), r.height.toDouble(),

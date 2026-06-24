@@ -84,6 +84,7 @@ expect class Stream {
          *
          * @param engine Engine to associate this Stream with.
          * @return The newly created Stream.
+         * @throws UnsupportedOperationException on JS — Stream is unbound in the web wrapper.
          */
         fun build(engine: Engine): Stream
     }

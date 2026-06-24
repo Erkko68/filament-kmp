@@ -16,7 +16,7 @@ private fun FloatArray.toFloat32Array(): Float32Array {
 
 private fun ShortArray.toUint16Array(): Uint16Array {
     val ua = Uint16Array(size)
-    forEachIndexed { i, v -> ua.asDynamic()[i] = v.toInt() }
+    forEachIndexed { i, v -> ua[i] = v }
     return ua
 }
 

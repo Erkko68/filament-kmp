@@ -167,13 +167,15 @@ afterEvaluate {
 }
 
 // ── Android defaults ──────────────────────────────────────────────────────────
+// SDK levels are single-sourced from gradle/libs.versions.toml so the catalog,
+// convention plugin, and docs can't silently drift apart.
 android {
     val groupStr = project.group.toString()
     val modulePart = project.name.replace("-", ".")
     namespace  = "$groupStr.$modulePart"
-    compileSdk = 36
+    compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }

@@ -349,7 +349,7 @@ expect class Engine {
     fun isValidView(view: View): Boolean
     /** Validate a Scene. @return true if valid. */
     fun isValidScene(scene: Scene): Boolean
-    /** Validate a Fence. @return true if valid. */
+    /** Validate a Fence. @return true if valid. @throws UnsupportedOperationException on JS — Fence is unbound on web. */
     fun isValidFence(fence: Fence): Boolean
     /** Validate a RenderTarget. @return true if valid. */
     fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
@@ -357,9 +357,9 @@ expect class Engine {
     fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
     /** Validate a VertexBuffer. @return true if valid. */
     fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
-    /** Validate a SkinningBuffer. @return true if valid. */
+    /** Validate a SkinningBuffer. @return true if valid. @throws UnsupportedOperationException on JS — SkinningBuffer is unbound on web. */
     fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
-    /** Validate a MorphTargetBuffer. @return true if valid. */
+    /** Validate a MorphTargetBuffer. @return true if valid. @throws UnsupportedOperationException on JS — MorphTargetBuffer is unbound on web. */
     fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
     /** Validate an IndirectLight. @return true if valid. */
     fun isValidIndirectLight(ibl: IndirectLight): Boolean
@@ -375,7 +375,7 @@ expect class Engine {
     fun isValidColorGrading(colorGrading: ColorGrading): Boolean
     /** Validate a Texture. @return true if valid. */
     fun isValidTexture(texture: Texture): Boolean
-    /** Validate a Stream. @return true if valid. */
+    /** Validate a Stream. @return true if valid. @throws UnsupportedOperationException on JS — Stream is unbound on web. */
     fun isValidStream(stream: Stream): Boolean
     /** Validate a SwapChain. @return true if valid. */
     fun isValidSwapChain(swapChain: SwapChain): Boolean
@@ -415,7 +415,7 @@ expect class Engine {
     /** Destroy a Scene. */
     fun destroyScene(scene: Scene)
 
-    /** Create a Fence for GPU synchronization. */
+    /** Create a Fence for GPU synchronization. @throws UnsupportedOperationException on JS — fences are unbound on web. */
     fun createFence(): Fence
     /** Destroy a Fence. */
     fun destroyFence(fence: Fence)

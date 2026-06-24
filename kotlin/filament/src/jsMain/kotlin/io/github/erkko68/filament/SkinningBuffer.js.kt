@@ -37,8 +37,10 @@ actual class SkinningBuffer internal constructor(
             return this
         }
 
-        actual fun build(engine: Engine): SkinningBuffer {
-            return SkinningBuffer(boneCount = boneCount)
-        }
+        actual fun build(engine: Engine): SkinningBuffer =
+            jsUnsupported(
+                "SkinningBuffer",
+                "Bind skinning through RenderableManager.Builder, which gltfio drives internally on web."
+            )
     }
 }

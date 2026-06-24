@@ -6,6 +6,7 @@ import io.github.erkko68.filament.js.Texture as JSTexture
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.Uint8Array
+import org.khronos.webgl.set
 
 // Texture::Usage bits (filament/backend/DriverEnums.h). DEFAULT = UPLOADABLE | SAMPLEABLE.
 private const val UPLOADABLE = 0x0008
@@ -24,7 +25,7 @@ actual object TextureLoader {
         // Filament's embind decoders expect a Uint8Array view (a raw Int8Array is rejected with a
         // native BindingError); match the Uint8Array idiom used across the JS bindings.
         val int8 = Int8Array(buffer.size)
-        buffer.forEachIndexed { i, b -> int8.asDynamic()[i] = b }
+        buffer.forEachIndexed { i, b -> int8[i] = b }
         val arrayBuffer = Uint8Array(int8.buffer).unsafeCast<ArrayBufferView>()
 
         // The JS helper builds the texture then calls generateMipmaps(), but unlike the native loader
@@ -39,7 +40,7 @@ actual object TextureLoader {
         return try {
             val jsTexture: JSTexture? = when {
                 isKtx1(buffer) -> jsEngine.createTextureFromKtx1(arrayBuffer)
-                isKtx2(buffer) -> jsEngine.asDynamic().createTextureFromKtx2(arrayBuffer)
+                isKtx2(buffer) -> jsEngine.createTextureFromKtx2(arrayBuffer)
                 isPng(buffer) -> jsEngine.createTextureFromPng(arrayBuffer, options)
                 isJpeg(buffer) -> jsEngine.createTextureFromJpeg(arrayBuffer, options)
                 else -> null

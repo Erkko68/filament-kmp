@@ -57,12 +57,12 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
     actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
     actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
-    actual fun isValidFence(fence: Fence): Boolean = true // TODO(js): Fence not bound in jsbindings.cpp
+    actual fun isValidFence(fence: Fence): Boolean = jsUnsupported("Engine.isValidFence")
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = true // TODO(js): SkinningBuffer not bound in jsbindings.cpp
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = true // TODO(js): MorphTargetBuffer not bound in jsbindings.cpp
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = jsUnsupported("Engine.isValidSkinningBuffer")
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = jsUnsupported("Engine.isValidMorphTargetBuffer")
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = jsEngine.isValidIndirectLight(ibl.jsIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = jsEngine.isValidMaterial(material.jsMaterial)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean =
@@ -72,7 +72,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidSkybox(skybox: Skybox): Boolean = jsEngine.isValidSkybox(skybox.jsSkybox)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = jsEngine.isValidColorGrading(colorGrading.jsColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = jsEngine.isValidTexture(texture.jsTexture)
-    actual fun isValidStream(stream: Stream): Boolean = true // TODO(js): Stream not bound in jsbindings.cpp
+    actual fun isValidStream(stream: Stream): Boolean = jsUnsupported("Engine.isValidStream")
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
     actual fun createSwapChain(surface: NativeSurface): SwapChain {
@@ -143,9 +143,8 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.destroyScene(scene.jsScene)
     }
 
-    actual fun createFence(): Fence {
-        return Fence()
-    }
+    actual fun createFence(): Fence =
+        jsUnsupported("Engine.createFence", "Fences gate GPU/CPU sync, which filament.js does not expose.")
 
     actual fun destroyFence(fence: Fence) {
     }
@@ -338,8 +337,8 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         }
 
         actual fun getSteadyClockTimeNano(): Long {
-            val jsVal = JSEngine.getSteadyClockTimeNano().asDynamic()
-            val num = js("Number")(jsVal) as Double
+            // js("Number")(...) coerces a possible BigInt result down to a JS number.
+            val num = js("Number")(JSEngine.getSteadyClockTimeNano()) as Double
             return num.toLong()
         }
     }
