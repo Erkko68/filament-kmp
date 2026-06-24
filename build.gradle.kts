@@ -54,7 +54,7 @@ allprojects {
 //   • web                                   — Filament.js + WASM for the :js module;
 //                                              output goes to prebuilts/web/ (no lib/ subdir).
 
-val filaVersion: String by project
+val filaVersion = project.property("filaVersion") as String
 
 val PREBUILT_TARGETS = listOf(
     "iosArm64",

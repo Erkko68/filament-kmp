@@ -224,7 +224,7 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
       - name: Build library
-        run: ./gradlew compileReleaseKotlinAndroid --no-configuration-cache
+        run: ./gradlew compileAndroidMain --no-configuration-cache
       - name: Enable KVM (for android emulator)
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
@@ -237,7 +237,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: ./gradlew :kotlin:filament:connectedDebugAndroidTest :kotlin:filamat:connectedDebugAndroidTest :kotlin:filament-utils:connectedDebugAndroidTest :kotlin:gltfio:connectedDebugAndroidTest --no-configuration-cache
+          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples

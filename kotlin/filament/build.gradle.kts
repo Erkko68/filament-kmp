@@ -8,8 +8,8 @@ filamentModule {
     xcframeworkName.set("Filament")
 }
 
-val filaVersion: String by project
-val libVersion: String by project
+val filaVersion = project.property("filaVersion") as String
+val libVersion = project.property("libVersion") as String
 
 // Libraries that filament-c links against from the prebuilts directory.
 // These are the direct dependencies of the C wrapper plus known transitive

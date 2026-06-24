@@ -8,7 +8,7 @@
 #     host — whichever prebuilt happens to be cached under prebuilts/.
 #   * Android tests need a running emulator (or physical device); we try to
 #     boot the first AVD that `emulator -list-avds` knows about if `adb
-#     devices` shows none, then run `connectedDebugAndroidTest` against it.
+#     devices` shows none, then run `connectedAndroidDeviceTest` against it.
 #
 # Targets (each can be skipped via flag — see below):
 #   * jvm     — :kotlin:filament/{filamat,filament-utils,gltfio}:jvmTest
@@ -16,7 +16,7 @@
 #                (needs Chrome on PATH for Karma)
 #   * ios     — :kotlin:filament/{filamat,filament-utils,gltfio}:iosSimulatorArm64Test
 #                (macOS host only; arm64 simulator)
-#   * android — connectedDebugAndroidTest on every module
+#   * android — connectedAndroidDeviceTest on every module
 #                (needs ANDROID_HOME, an AVD, adb on PATH)
 #
 # Usage:
@@ -171,8 +171,8 @@ if [[ $RUN_ANDROID -eq 1 ]]; then
     echo "Skipping android: adb not on PATH" >&2
   elif maybe_boot_emulator; then
     tasks=()
-    for m in "${MODULES[@]}"; do tasks+=("$m:connectedDebugAndroidTest"); done
-    run_gradle "connectedDebugAndroidTest" "${tasks[@]}"
+    for m in "${MODULES[@]}"; do tasks+=("$m:connectedAndroidDeviceTest"); done
+    run_gradle "connectedAndroidDeviceTest" "${tasks[@]}"
     if [[ -n "$EMULATOR_PID" ]]; then
       # Only kill the emulator we started; leave a pre-existing one alone.
       adb emu kill >/dev/null 2>&1 || true
