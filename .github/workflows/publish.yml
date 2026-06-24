@@ -39,7 +39,7 @@ jobs:
             arch: windows-x64
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v4
         with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5
@@ -81,7 +81,7 @@ jobs:
     needs: build-natives
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v4
         with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5

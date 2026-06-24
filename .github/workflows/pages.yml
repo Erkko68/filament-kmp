@@ -35,7 +35,7 @@ jobs:
   web:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v4
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
@@ -57,7 +57,7 @@ jobs:
     # JS externals and Android. iOS native is only buildable on macOS.
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v4
         with: { java-version: '25', distribution: 'temurin' }
       - uses: actions/setup-python@v5
