@@ -109,6 +109,10 @@ The [`samples/`](samples/) directory contains a shared Compose scene running on 
 
 The web build is also deployed live to **[erkko68.github.io/filament-kmp](https://erkko68.github.io/filament-kmp/)** — open it on any WebGL 2.0–capable browser to try every scene without a local toolchain.
 
+## Showcase
+
+- **[HexonKMP](https://github.com/Erkko68/HexonKMP)** — a Catan-like strategy board game built with Filament KMP, running across platforms from a single codebase. Try the live web demo at **[hexon.biri.es](https://hexon.biri.es)**.
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE). Filament itself is also Apache-2.0 licensed by Google.
