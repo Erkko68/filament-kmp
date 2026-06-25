@@ -9,7 +9,7 @@ the current stability promise.
 
 Each entry is one line; click the version link at the bottom for the full diff.
 
-## [Unreleased]
+## [0.1.3-beta01] — 2026-06-25
 
 ### Added
 - **`rememberAnimationState`** (`filament-compose`): hoisted, auto-advancing glTF playback state for `GltfInstance` (`animationState`). It drives the animator every frame and cross-fades smoothly when `animationIndex` changes, exposing `time`/`progress`/`isTransitioning` plus `isPaused`/`seek` — covering the "play idle, blend into walk" case without the `onUpdate` escape hatch.
@@ -213,7 +213,7 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...HEAD
+[0.1.3-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...0.1.3-beta01
 [0.1.2-beta06]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...0.1.2-beta06
 [0.1.2-beta05]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta04...0.1.2-beta05
 [0.1.2-beta04]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta03...0.1.2-beta04

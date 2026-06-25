@@ -15,7 +15,7 @@
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
 > [!WARNING]
-> **Pre-release (`0.1.2-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings were just rebuilt on Project Panama (FFM, **requires JDK 22+**) and the Web bindings on Karakum. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
+> **Pre-release (`0.1.3-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings were just rebuilt on Project Panama (FFM, **requires JDK 22+**) and the Web bindings on Karakum. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
 
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/JS**, with first-class **Compose Multiplatform** integration.
 
@@ -28,7 +28,7 @@ FilamentSceneView(
     skyboxState    = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f))),
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
-    Light(type = LightManager.Type.DIRECTIONAL, intensity = 100_000f)
+    DirectionalLight(direction = Direction(0.3f, -1f, -0.5f), intensity = 100_000f)
     GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/Duck.glb") })
 }
 ```
@@ -61,7 +61,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta06")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta01")
         }
     }
 }

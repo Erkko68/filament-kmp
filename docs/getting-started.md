@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.2-beta06")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta01")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.1.2-beta06")
+            implementation("io.github.erkko68.filament:gltfio:0.1.3-beta01")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.1.2-beta06")
+            implementation("io.github.erkko68.filament:filament-utils:0.1.3-beta01")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.1.2-beta06")
+            implementation("io.github.erkko68.filament:filamat:0.1.3-beta01")
         }
     }
 }
@@ -229,7 +229,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.scene.*
 
@@ -253,10 +252,9 @@ fun App() {
                 antiAliasing = AntiAliasing(fxaaEnabled = true),
             ),
         ) {
-            Light(
-                type      = LightManager.Type.DIRECTIONAL,
+            DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
-                intensity = 100_000f,
+                intensity = 100_000f,         // lux
             )
 
             GltfInstance(
