@@ -151,24 +151,26 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
+    
     actual class ShadowOptions {
-        actual var mapSize: Int = 512
+        actual var mapSize: Int = 1024
         actual var shadowCascades: Int = 1
-        actual var cascadeSplitPositions: FloatArray = floatArrayOf(0.1f, 0.5f, 0.9f)
+        actual var cascadeSplitPositions: FloatArray = floatArrayOf(0.125f, 0.25f, 0.50f)
         actual var constantBias: Float = 0.001f
-        actual var normalBias: Float = 0.4f
+        actual var normalBias: Float = 1.0f
         actual var shadowFar: Float = 0.0f
-        actual var shadowNearHint: Float = 0.0f
+        actual var shadowNearHint: Float = 1.0f
         actual var shadowFarHint: Float = 100.0f
         actual var stable: Boolean = false
-        actual var lispsm: Boolean = false
+        actual var lispsm: Boolean = false  // match Android binding + cleaner PCSS (Filament C++ defaults true)
         actual var screenSpaceContactShadows: Boolean = false
-        actual var stepCount: Int = 1
-        actual var maxShadowDistance: Float = 0.0f
+        actual var stepCount: Int = 8
+        actual var maxShadowDistance: Float = 0.3f
         actual var elvsm: Boolean = false
         actual var blurWidth: Float = 0.0f
-        actual var shadowBulbRadius: Float = 0.0f
-        actual var transform: FloatArray = FloatArray(16)
+        actual var shadowBulbRadius: Float = 0.02f
+        // Identity quaternion (x,y,z,w); 4 floats like jvm/native, not a 16-float mat4.
+        actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
     }
 
     actual object ShadowCascades {

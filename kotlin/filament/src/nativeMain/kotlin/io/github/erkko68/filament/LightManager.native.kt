@@ -24,7 +24,7 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
             nativeOptions.shadowNearHint = 1.0f
             nativeOptions.shadowFarHint = 100.0f
             nativeOptions.stable = false
-            nativeOptions.lispsm = true
+            nativeOptions.lispsm = false  // match Android binding + cleaner PCSS (Filament C++ defaults true)
             nativeOptions.polygonOffsetConstant = 0.5f
             nativeOptions.polygonOffsetSlope = 2.0f
             nativeOptions.screenSpaceContactShadows = false

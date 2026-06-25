@@ -26,7 +26,7 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
             FilaLightManagerShadowOptions.shadowNearHint(nativeOptions, 1.0f)
             FilaLightManagerShadowOptions.shadowFarHint(nativeOptions, 100.0f)
             FilaLightManagerShadowOptions.stable(nativeOptions, false)
-            FilaLightManagerShadowOptions.lispsm(nativeOptions, true)
+            FilaLightManagerShadowOptions.lispsm(nativeOptions, false)  // match Android binding + cleaner PCSS (Filament C++ defaults true)
             FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions, 0.5f)
             FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions, 2.0f)
             FilaLightManagerShadowOptions.screenSpaceContactShadows(nativeOptions, false)

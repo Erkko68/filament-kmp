@@ -23,32 +23,51 @@ import io.github.erkko68.filament.View
  * `shadow` to a [DirectionalLight]/[SunLight]/[SpotLight]/[FocusedSpotLight] to make it cast shadows;
  * `null` disables them. (Point lights cannot cast shadows.)
  *
+ * Many fields apply only under a specific view [Shadows] technique (noted per property). Defaults
+ * mirror Filament's, except [lispsm] (defaults `false` here for cleaner soft shadows). Filament's
+ * `polygonOffset*` depth-bias fields are deliberately **not** exposed — they're package-private in
+ * the Android binding and so can't be surfaced cross-platform; use [constantBias]/[normalBias] for
+ * acne instead.
+ *
  * @property mapSize Shadow-map resolution in texels; power-of-two ≥ 8. Higher = sharper but costlier.
- * @property constantBias World-space bias to push shadows off surfaces (reduces acne). Ignored for VSM.
+ * @property constantBias World-space depth bias pushing shadows off surfaces (reduces acne). Ignored for VSM.
  * @property normalBias Normal-scaled bias; typically 1.0. Ignored for VSM.
  * @property shadowFar Directional-only: distance after which shadows are clipped. 0 = camera far.
- * @property stable Trade resolution for temporal stability (disables LiSPSM). Good for slow pans.
+ * @property shadowNearHint Concentrate shadow resolution from this camera distance onward (world units).
+ * @property shadowFarHint Concentrate shadow resolution up to this camera distance (world units).
+ * @property stable Trade resolution for temporal stability (also forces [lispsm] off). Good for slow pans.
+ * @property lispsm Light-space perspective shadow maps — boosts effective resolution near the camera, but
+ *   can worsen DPCF/PCSS/VSM penumbra artifacts. Default `false`; ignored when [stable] is true.
  * @property cascades Directional-only: number of CSM cascades (1–4). >1 sharpens large scenes.
  * @property cascadeSplits Optional explicit cascade split positions (size `cascades - 1`, camera-Z
  *   0..1). Null auto-computes uniform splits.
- * @property contactShadows Enable screen-space contact shadows for fine, close-up contact detail.
- * @property contactShadowDistance Max occluder distance for contact shadows, world units.
- * @property bulbRadius Soft-shadow penumbra size, world units. Only takes effect when the view's
- *   technique is [Shadows.Dpcf] or [Shadows.Pcss]; ignored otherwise.
- * @property blurWidth Blur width; only takes effect under the [Shadows.Vsm] technique. 0 disables.
+ * @property contactShadows Enable screen-space contact shadows (SSCS) for fine, close-up contact detail.
+ * @property contactShadowDistance SSCS max occluder distance, world units.
+ * @property contactShadowSteps SSCS ray-march step count (directional lights only); higher = better, costlier.
+ * @property bulbRadius Soft-shadow penumbra size, world units. Only under [Shadows.Dpcf]/[Shadows.Pcss].
+ * @property blurWidth Blur width; only under the [Shadows.Vsm] technique. 0 disables.
+ * @property elvsm Exponential Layered VSM — better light-leak reduction at 2× shadow memory. Only under [Shadows.Vsm].
+ * @property transform Optional unit quaternion `(x, y, z, w)` rotating the shadow's direction
+ *   (directional-only, artistic). Null = identity (no rotation).
  */
 data class ShadowConfig(
     val mapSize: Int = 1024,
     val constantBias: Float = 0.001f,
     val normalBias: Float = 1.0f,
     val shadowFar: Float = 0f,
+    val shadowNearHint: Float = 1f,
+    val shadowFarHint: Float = 100f,
     val stable: Boolean = false,
+    val lispsm: Boolean = false,
     val cascades: Int = 1,
     val cascadeSplits: List<Float>? = null,
     val contactShadows: Boolean = false,
     val contactShadowDistance: Float = 0.3f,
+    val contactShadowSteps: Int = 8,
     val bulbRadius: Float = 0.02f,
     val blurWidth: Float = 0f,
+    val elvsm: Boolean = false,
+    val transform: List<Float>? = null,
 )
 
 internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
@@ -57,7 +76,10 @@ internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
     o.constantBias = constantBias
     o.normalBias = normalBias
     o.shadowFar = shadowFar
+    o.shadowNearHint = shadowNearHint
+    o.shadowFarHint = shadowFarHint
     o.stable = stable
+    o.lispsm = lispsm
     o.shadowCascades = cascades.coerceIn(1, 4)
     if (o.shadowCascades > 1) {
         o.cascadeSplitPositions = cascadeSplits?.toFloatArray()
@@ -67,8 +89,11 @@ internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
     }
     o.screenSpaceContactShadows = contactShadows
     o.maxShadowDistance = contactShadowDistance
+    o.stepCount = contactShadowSteps
     o.shadowBulbRadius = bulbRadius
     o.blurWidth = blurWidth
+    o.elvsm = elvsm
+    transform?.let { o.transform = it.toFloatArray() }
     return o
 }
 
