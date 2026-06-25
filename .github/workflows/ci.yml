@@ -100,7 +100,10 @@ jobs:
       - uses: actions/cache@v6
         with:
           path: prebuilts/${{ matrix.target }}
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
+          # The mingw CRT variant (mt/md) is part of the key: switching it must
+          # invalidate the cache, else the gradle task skips re-extraction (it only
+          # checks the dir is non-empty) and links a mismatched CRT.
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
       - name: Download prebuilts
         shell: bash
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
