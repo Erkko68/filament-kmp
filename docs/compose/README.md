@@ -268,9 +268,31 @@ Post-processing is **off by default**: the target carries a depth attachment, an
 depth attachments when post-processing runs. Enable it only when you don't rely on the depth buffer.
 The texture is `null` for a non-positive size.
 
+## Lights
+
+Lights are declared with **typed composables** inside `rememberFilamentScene { }` —
+`DirectionalLight`, `SunLight`, `PointLight`, `SpotLight`, and `FocusedSpotLight` — each exposing only
+the parameters that light type actually uses. `Light(type = …)` remains as a low-level escape hatch
+over the raw `LightManager.Builder`.
+
+Shadow casting is opt-in per light via `shadow = ShadowConfig(...)` (`null` disables it):
+
+```kotlin
+DirectionalLight(
+    direction = Direction(0.3f, -1f, -0.5f),
+    intensity = 100_000f,                  // lux
+    shadow    = ShadowConfig(mapSize = 4096),
+)
+```
+
+Only **directional, spot, and focused-spot** lights can cast shadows — **point lights cannot** (a
+shadow map is rendered from a single projection, which a point light's 360° emission has no
+equivalent for). For a shadow-casting omnidirectional-style light, use a wide-cone `FocusedSpotLight`.
+See [Shadows](#shadows) for the per-light `ShadowConfig` vs. view-wide technique split.
+
 ## Light channels and intensity units
 
-`Light` exposes two parts of Filament's light model beyond the basics:
+Every light composable exposes two parts of Filament's light model beyond the basics:
 
 - **`lightChannels`** — the set of channels (0–7) a light affects. A renderable is only lit by a
   light if they share an enabled channel (channel 0 is the default for both). Use this to make a
@@ -281,8 +303,7 @@ The texture is `null` for a non-positive size.
   in physical units instead of guessing lumen values.
 
 ```kotlin
-Light(
-    type          = LightManager.Type.FOCUSED_SPOT,
+FocusedSpotLight(
     intensity     = 12f,                 // a 12 W bulb…
     intensityUnit = LightUnit.WATTS,
     efficiency    = 0.087f,              // …at LED efficiency
@@ -304,8 +325,10 @@ Pure-Kotlin mesh primitives (`Cube`, `Sphere`, `Cylinder`, `Plane`, `Mesh`) buil
 `rememberFilamentScene { }`. Every primitive accepts the same transform set — `position`,
 `rotation`, `scale`, `pivot` — plus an `onCreate: (entity: Int) -> Unit` callback that fires once
 the renderable is added to the scene (use it to register the entity with `view.pick` callbacks).
-When wrapped in a `Group { }` the primitive's transform becomes local to the group. `Mesh` is the
-escape hatch for custom triangle geometry the built-in primitives don't cover.
+They also take `castShadows`/`receiveShadows` (both default `true`) — set `castShadows = false` on a
+pure ground/receiver `Plane` to avoid it shadowing itself. When wrapped in a `Group { }` the
+primitive's transform becomes local to the group. `Mesh` is the escape hatch for custom triangle
+geometry the built-in primitives don't cover.
 
 ### Environment
 
