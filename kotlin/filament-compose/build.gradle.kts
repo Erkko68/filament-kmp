@@ -22,5 +22,11 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(project(":kotlin:test-support"))
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+        }
     }
 }

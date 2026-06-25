@@ -16,11 +16,9 @@ plugins {
 // kotlin:filament's jvmMain depends on this module and writes the idiomatic Kotlin
 // actuals on top of the generated FilamentC class.
 
-// Directory is java/ but the published artifact keeps its id `filament-ffm`
-// (filament-publish derives the id from project.name = "java", so pin it back here).
-mavenPublishing {
-    coordinates(group.toString(), "filament-ffm", version.toString())
-}
+// Directory is java/ but the published artifact keeps its id `filament-ffm`,
+// set via `maven.artifactId` in java/gradle.properties (read by filament-publish
+// before it finalizes coordinates).
 
 // FFM was finalized in JDK 22. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties),
 // so we just pin a JVM 22 release floor here to keep the published artifact usable on any JDK 22+.

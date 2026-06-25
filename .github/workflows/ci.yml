@@ -118,6 +118,7 @@ jobs:
             :kotlin:filamat:jvmTest \
             :kotlin:filament-utils:jvmTest \
             :kotlin:gltfio:jvmTest \
+            :kotlin:filament-compose:jvmTest \
             --no-configuration-cache
       - name: Build desktop sample
         working-directory: samples
@@ -150,6 +151,7 @@ jobs:
             :kotlin:filamat:jsTest \
             :kotlin:filament-utils:jsTest \
             :kotlin:gltfio:jsTest \
+            :kotlin:filament-compose:jsTest \
             --no-configuration-cache
       - name: Build web sample
         working-directory: samples
@@ -208,6 +210,7 @@ jobs:
             :kotlin:filamat:iosSimulatorArm64Test \
             :kotlin:filament-utils:iosSimulatorArm64Test \
             :kotlin:gltfio:iosSimulatorArm64Test \
+            :kotlin:filament-compose:iosSimulatorArm64Test \
             "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}" \
             --no-configuration-cache
       - name: Assemble XCFrameworks
