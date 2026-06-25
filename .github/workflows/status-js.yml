@@ -1,0 +1,25 @@
+name: status-js
+
+# Per-platform badge for the README — reflects the JS job's conclusion from the latest CI run on
+# main. Skipped (verified-merge) counts as passing; only a real failure turns the badge red.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  actions: read
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reflect JS job result
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ok=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs" --paginate \
+                 -q '[.jobs[] | select(.name | startswith("js"))] | (length > 0) and all(.conclusion == "success" or .conclusion == "skipped")')
+          echo "js ok=$ok"
+          [ "$ok" = "true" ]
