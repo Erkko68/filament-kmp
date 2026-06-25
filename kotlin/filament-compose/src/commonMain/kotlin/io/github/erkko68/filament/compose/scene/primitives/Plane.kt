@@ -25,6 +25,9 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param depth     Size along the Z axis in mesh space.
  * @param doubleSided  When true (default) the mesh has both faces. Set false to omit the back
  *   side when you know nothing will ever look at it from below.
+ * @param castShadows     Whether the plane casts shadows onto other renderables. On by default;
+ *   set false for a pure ground/receiver plane to avoid it shadowing itself.
+ * @param receiveShadows  Whether the plane receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the plane is added to the scene.
  */
 @Composable
@@ -37,10 +40,12 @@ fun FilamentSceneScope.Plane(
     width: Float = 1f,
     depth: Float = 1f,
     doubleSided: Boolean = true,
+    castShadows: Boolean = true,
+    receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
-    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
 }
 
 private fun planeMesh(width: Float, depth: Float, doubleSided: Boolean): MeshData {

@@ -21,7 +21,6 @@ import io.github.erkko68.filament.View
  *     postProcessing = PostProcessing(
  *         bloom        = Bloom(strength = 0.2f),
  *         antiAliasing = AntiAliasing(fxaaEnabled = true),
- *         shadows      = Shadows(type = View.ShadowType.PCF),
  *     ),
  * )
  * ```
@@ -38,7 +37,6 @@ data class PostProcessing(
     val screenSpaceReflections: ScreenSpaceReflections? = null,
     val colorGrade: ColorGrade? = null,
     val depthOfField: DepthOfField? = null,
-    val shadows: Shadows? = null,
     val dynamicResolution: DynamicResolution? = null,
     val dithering: Dithering? = null,
     val renderQuality: RenderQuality? = null,
@@ -124,20 +122,8 @@ data class DepthOfField(
     val nativeResolution: Boolean = false,
 )
 
-/**
- * Shadow rendering. [type] selects the algorithm; VSM/soft-shadow params apply only to their
- * respective types (Filament ignores irrelevant options).
- */
-data class Shadows(
-    val type: View.ShadowType = View.ShadowType.PCF,
-    val vsmAnisotropy: Int = 1,
-    val vsmMipmapping: Boolean = false,
-    val vsmMsaaSamples: Int = 1,
-    val vsmHighPrecision: Boolean = false,
-    val vsmLightBleedReduction: Float = 0.0f,
-    val penumbraScale: Float = 1.0f,
-    val penumbraRatioScale: Float = 1.0f,
-)
+// Shadows are not post-processing — the per-view `Shadows` technique is a `FilamentView` parameter,
+// and per-light `ShadowConfig` lives on each light. Both are defined in Shadows.kt.
 
 /**
  * Dynamic resolution scaling — lowers internal resolution under GPU load and upscales.
@@ -240,22 +226,6 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
             this.maxApertureDiameter = it.maxApertureDiameter
             this.filter = it.filter
             this.nativeResolution = it.nativeResolution
-        }
-    }
-
-    // Shadows: null restores the PCF native default.
-    view.shadowType = shadows?.type ?: View.ShadowType.PCF
-    shadows?.let {
-        view.vsmShadowOptions = view.vsmShadowOptions.apply {
-            this.anisotropy = it.vsmAnisotropy
-            this.mipmapping = it.vsmMipmapping
-            this.msaaSamples = it.vsmMsaaSamples
-            this.highPrecision = it.vsmHighPrecision
-            this.lightBleedReduction = it.vsmLightBleedReduction
-        }
-        view.softShadowOptions = view.softShadowOptions.apply {
-            this.penumbraScale = it.penumbraScale
-            this.penumbraRatioScale = it.penumbraRatioScale
         }
     }
 

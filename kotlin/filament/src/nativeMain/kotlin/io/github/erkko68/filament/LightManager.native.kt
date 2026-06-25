@@ -15,19 +15,30 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
         init {
             nativeOptions.mapSize = 1024u
             nativeOptions.shadowCascades = 1u
+            nativeOptions.cascadeSplitPositions[0] = 0.125f
+            nativeOptions.cascadeSplitPositions[1] = 0.25f
+            nativeOptions.cascadeSplitPositions[2] = 0.50f
             nativeOptions.constantBias = 0.001f
-            nativeOptions.normalBias = 0.4f
+            nativeOptions.normalBias = 1.0f
             nativeOptions.shadowFar = 0.0f
-            nativeOptions.shadowNearHint = 0.0f
+            nativeOptions.shadowNearHint = 1.0f
             nativeOptions.shadowFarHint = 100.0f
             nativeOptions.stable = false
             nativeOptions.lispsm = true
+            nativeOptions.polygonOffsetConstant = 0.5f
+            nativeOptions.polygonOffsetSlope = 2.0f
             nativeOptions.screenSpaceContactShadows = false
             nativeOptions.stepCount = 8u.toUByte()
-            nativeOptions.maxShadowDistance = 0.0f
+            nativeOptions.maxShadowDistance = 0.3f
             nativeOptions.vsm.elvsm = false
             nativeOptions.vsm.blurWidth = 0.0f
-            nativeOptions.shadowBulbRadius = 0.0f
+            nativeOptions.shadowBulbRadius = 0.02f
+            // Identity quaternion (x,y,z,w) = (0,0,0,1). A zero/garbage transform collapses the
+            // directional shadow frustum, so shadows silently fail to render.
+            nativeOptions.transform[0] = 0.0f
+            nativeOptions.transform[1] = 0.0f
+            nativeOptions.transform[2] = 0.0f
+            nativeOptions.transform[3] = 1.0f
         }
 
         actual var mapSize: Int

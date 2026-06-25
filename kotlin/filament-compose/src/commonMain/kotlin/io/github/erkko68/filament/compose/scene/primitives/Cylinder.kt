@@ -28,6 +28,8 @@ import kotlin.math.sin
  * @param radius    Cylinder radius in mesh space.
  * @param height    Full height along Y in mesh space.
  * @param segments  Number of radial subdivisions. Minimum 3.
+ * @param castShadows     Whether the cylinder casts shadows onto other renderables. On by default.
+ * @param receiveShadows  Whether the cylinder receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the cylinder is added to the scene.
  */
 @Composable
@@ -40,10 +42,12 @@ fun FilamentSceneScope.Cylinder(
     radius: Float = 0.5f,
     height: Float = 1f,
     segments: Int = 32,
+    castShadows: Boolean = true,
+    receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(radius, height, segments) { cylinderMesh(radius, height, segments) }
-    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
 }
 
 private fun cylinderMesh(radius: Float, height: Float, segments: Int): MeshData {

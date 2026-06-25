@@ -54,6 +54,33 @@ class LightManagerTest : FilamentTestFixture() {
     }
 
     @Test
+    fun testShadowOptionsDefaults() {
+        // A default-constructed ShadowOptions must match Filament's own defaults
+        // (include/filament/LightManager.h). The native/JVM structs are hand-allocated, so any
+        // field left uninitialized would be garbage (native) or zero (JVM) and silently break
+        // shadows — this guards that regression. `transform` is the identity quaternion (0,0,0,1):
+        // a zero/garbage value collapses the directional shadow frustum.
+        val o = LightManager.ShadowOptions()
+        assertEquals(1024, o.mapSize)
+        assertEquals(1, o.shadowCascades)
+        assertEquals(0.125f, o.cascadeSplitPositions[0], 1e-6f)
+        assertEquals(0.25f, o.cascadeSplitPositions[1], 1e-6f)
+        assertEquals(0.50f, o.cascadeSplitPositions[2], 1e-6f)
+        assertEquals(0.001f, o.constantBias, 1e-6f)
+        assertEquals(1.0f, o.normalBias, 1e-6f)
+        assertEquals(1.0f, o.shadowNearHint, 1e-6f)
+        assertEquals(100.0f, o.shadowFarHint, 1e-6f)
+        assertEquals(0.3f, o.maxShadowDistance, 1e-6f)
+        assertEquals(0.02f, o.shadowBulbRadius, 1e-6f)
+        assertTrue(o.lispsm)
+        assertFalse(o.stable)
+        assertEquals(0f, o.transform[0], 1e-6f)
+        assertEquals(0f, o.transform[1], 1e-6f)
+        assertEquals(0f, o.transform[2], 1e-6f)
+        assertEquals(1f, o.transform[3], 1e-6f)
+    }
+
+    @Test
     fun testSunLightLifecycle() {
         val lm = engine.getLightManager()
         assertNotNull(lm)

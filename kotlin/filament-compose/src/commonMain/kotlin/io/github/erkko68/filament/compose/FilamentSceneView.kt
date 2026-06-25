@@ -6,6 +6,7 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.IndirectLightState
 import io.github.erkko68.filament.compose.scene.PostProcessing
+import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.SkyboxState
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 
@@ -38,10 +39,12 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @param indirectLightState Optional hoisted IBL state. Null = no IBL (the default).
  * @param postProcessing Per-view post-processing and render-quality configuration.
  * @param frustumCullingEnabled Skip rendering of objects outside the camera frustum.
- * @param shadowingEnabled Allow lights to cast and receive shadows.
+ * @param shadows Shadow technique for the whole view ([Shadows.Pcf]/[Shadows.Vsm]/[Shadows.Dpcf]/
+ *   [Shadows.Pcss]), or `null` to disable shadowing entirely. Per-light shadow-map quality is set via
+ *   each light's `shadow` ([io.github.erkko68.filament.compose.scene.ShadowConfig]).
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
- * @param content Scene composables ([io.github.erkko68.filament.compose.scene.Light],
+ * @param content Scene composables ([io.github.erkko68.filament.compose.scene.DirectionalLight],
  *   `GltfInstance`, `Group`, primitives, …).
  */
 @Composable
@@ -54,7 +57,7 @@ fun FilamentSceneView(
     indirectLightState: IndirectLightState? = null,
     postProcessing: PostProcessing = PostProcessing(),
     frustumCullingEnabled: Boolean = true,
-    shadowingEnabled: Boolean = true,
+    shadows: Shadows? = Shadows.Pcf,
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
     content: @Composable FilamentSceneScope.() -> Unit,
@@ -72,7 +75,7 @@ fun FilamentSceneView(
         viewState = viewState,
         postProcessing = postProcessing,
         frustumCullingEnabled = frustumCullingEnabled,
-        shadowingEnabled = shadowingEnabled,
+        shadows = shadows,
         screenSpaceRefractionEnabled = screenSpaceRefractionEnabled,
         stencilBufferEnabled = stencilBufferEnabled,
     )

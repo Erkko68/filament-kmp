@@ -17,7 +17,7 @@ The API separates *what* you render from *where* you render it, mirroring Filame
 
 ```kotlin
 val scene = rememberFilamentScene(skyboxState = sky) {
-    Light(type = LightManager.Type.SUN, ...)
+    SunLight(direction = Direction(0.3f, -1f, -0.5f))
     GltfInstance(asset = duck)
 }
 
@@ -37,7 +37,7 @@ FilamentSceneView(
     skyboxState = sky,
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
-    Light(type = LightManager.Type.SUN, ...)
+    SunLight(direction = Direction(0.3f, -1f, -0.5f))
     GltfInstance(asset = duck)
 }
 ```
@@ -304,12 +304,28 @@ FilamentView(
     postProcessing = PostProcessing(
         bloom        = Bloom(strength = 0.2f),
         antiAliasing = AntiAliasing(fxaaEnabled = true),
-        shadows      = Shadows(type = View.ShadowType.PCF),
     ),
 )
 ```
 
 The available effect value classes — `Bloom`, `Vignette`, `Fog`, `AmbientOcclusion`,
-`AntiAliasing`, `ScreenSpaceReflections`, `ColorGrade`, `DepthOfField`, `Shadows`,
+`AntiAliasing`, `ScreenSpaceReflections`, `ColorGrade`, `DepthOfField`,
 `DynamicResolution`, `Dithering`, `RenderQuality` — and their fields are documented in the
 **[API reference](https://erkko68.github.io/filament-kmp/api/)**.
+
+### Shadows
+
+Shadows are a render setting, not post-processing, so they're a `FilamentView` parameter of their
+own. The `shadows` parameter selects the *view-wide technique* (`null` disables shadowing entirely):
+
+```kotlin
+FilamentView(
+    scene = scene,
+    cameraState = cam,
+    shadows = Shadows.Pcss(),   // soft shadows; or Shadows.Pcf (default), Vsm, Dpcf, or null to disable
+)
+```
+
+Per-light shadow-map quality (resolution, bias, cascades, penumbra size) is set separately via each
+light's `shadow = ShadowConfig(...)`. Soft shadows need both halves: a `Shadows.Pcss`/`Shadows.Dpcf`
+technique on the view *and* a `ShadowConfig.bulbRadius` on the casting light.

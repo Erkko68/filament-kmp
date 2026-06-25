@@ -18,6 +18,18 @@ kotlin {
 // The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties), so the compose `run`
 // task and dependency resolution already use 25 — no toolchain or javaHome override needed for the
 // filament FFM bindings (JVM 22 bytecode, java.lang.foreign).
+
+// Compose Hot Reload (`hotRunJvm`, used by the IDE run gutter) defaults its launcher to a bundled
+// JetBrains Runtime 21 — but this app can't run on 21: `:filament`'s FFM bindings are JVM 22
+// bytecode, and desktopApp itself compiles to the daemon's JDK 25. Pin the hot-run launcher to 25
+// so it matches the rest of the build. (For enhanced class-redefinition, install a JBR 25 and add
+// `vendor.set(JvmVendorSpec.JETBRAINS)` below; plain 25 still hot-reloads, just less aggressively.)
+tasks.withType<org.jetbrains.compose.reload.gradle.AbstractComposeHotRun>().configureEach {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    })
+}
+
 compose.desktop {
     application {
         mainClass = "eric.bitria.samples.MainKt"

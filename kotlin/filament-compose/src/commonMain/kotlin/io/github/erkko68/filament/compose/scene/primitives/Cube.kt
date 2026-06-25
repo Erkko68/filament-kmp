@@ -24,6 +24,8 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param pivot     Point in mesh space that rotation/scale revolve around and that ends up at
  *   [position]. Defaults to the cube centre.
  * @param size      Edge length in mesh space. The mesh is rebuilt when this changes.
+ * @param castShadows     Whether the cube casts shadows onto other renderables. On by default.
+ * @param receiveShadows  Whether the cube receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the cube is added to the scene.
  *   Use it to register the cube with `view.pick` callbacks or other entity-keyed maps.
  */
@@ -35,10 +37,12 @@ fun FilamentSceneScope.Cube(
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     size: Float = 1f,
+    castShadows: Boolean = true,
+    receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(size) { cubeMesh(size) }
-    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
 }
 
 private fun cubeMesh(size: Float): MeshData {

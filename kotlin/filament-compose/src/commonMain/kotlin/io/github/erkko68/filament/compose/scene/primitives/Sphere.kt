@@ -26,6 +26,8 @@ import kotlin.math.sin
  * @param radius    Sphere radius in mesh space.
  * @param rings     Latitude subdivisions. Minimum 2.
  * @param segments  Longitude subdivisions. Minimum 3.
+ * @param castShadows     Whether the sphere casts shadows onto other renderables. On by default.
+ * @param receiveShadows  Whether the sphere receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the sphere is added to the scene.
  */
 @Composable
@@ -38,10 +40,12 @@ fun FilamentSceneScope.Sphere(
     radius: Float = 0.5f,
     rings: Int = 16,
     segments: Int = 32,
+    castShadows: Boolean = true,
+    receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(radius, rings, segments) { sphereMesh(radius, rings, segments) }
-    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
 }
 
 private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {

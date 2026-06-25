@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import io.github.erkko68.filament.compose.internal.FilamentSurface
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
+import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 
@@ -35,7 +36,9 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @param viewState Hoisted handle exposing the live `View`/`Renderer` and `pick()`.
  * @param postProcessing Per-view post-processing and render-quality configuration.
  * @param frustumCullingEnabled Skip rendering of objects outside the camera frustum.
- * @param shadowingEnabled Allow lights to cast and receive shadows.
+ * @param shadows Shadow technique for the whole view ([Shadows.Pcf]/[Shadows.Vsm]/[Shadows.Dpcf]/
+ *   [Shadows.Pcss]), or `null` to disable shadowing entirely. Per-light shadow-map quality is set via
+ *   each light's `shadow` ([io.github.erkko68.filament.compose.scene.ShadowConfig]).
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
  */
@@ -47,7 +50,7 @@ fun FilamentView(
     viewState: FilamentViewState = rememberFilamentViewState(),
     postProcessing: PostProcessing = PostProcessing(),
     frustumCullingEnabled: Boolean = true,
-    shadowingEnabled: Boolean = true,
+    shadows: Shadows? = Shadows.Pcf,
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
 ) {
@@ -61,11 +64,11 @@ fun FilamentView(
     // Wire the scene/camera onto the view and apply the render flags. Re-runs only when the
     // underlying objects or flags change.
     remember(view, filamentScene, camera, frustumCullingEnabled,
-             shadowingEnabled, screenSpaceRefractionEnabled, stencilBufferEnabled) {
+             shadows, screenSpaceRefractionEnabled, stencilBufferEnabled) {
         view.scene = filamentScene
         view.camera = camera
         view.isFrustumCullingEnabled = frustumCullingEnabled
-        view.isShadowingEnabled = shadowingEnabled
+        shadows.applyTo(view)
         view.isScreenSpaceRefractionEnabled = screenSpaceRefractionEnabled
         view.isStencilBufferEnabled = stencilBufferEnabled
     }

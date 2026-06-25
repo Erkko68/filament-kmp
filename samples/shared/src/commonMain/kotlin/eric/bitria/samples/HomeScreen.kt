@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 private val ENTRIES = listOf(
     "Duck"       to Screen.Duck,
     "Primitives" to Screen.Primitives,
+    "Lighting"   to Screen.Lighting,
     "Picking"    to Screen.Picking,
     "Solar"      to Screen.Solar,
     "Animation"  to Screen.Animation,
