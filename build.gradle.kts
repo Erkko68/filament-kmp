@@ -81,8 +81,12 @@ PREBUILT_TARGETS.forEach { target ->
         } else {
             layout.projectDirectory.dir("prebuilts/$target/lib").asFile
         }
+        // Re-run when the version bumps or the script changes (the CRT variant /
+        // tarball prefix per target lives in the script's TARGETS map). The script
+        // itself stamps each extraction and re-extracts on any mismatch.
+        inputs.property("filaVersion", filaVersion)
+        inputs.file(downloadScript)
         outputs.dir(outDir)
-        outputs.upToDateWhen { outDir.exists() && outDir.listFiles()?.isNotEmpty() == true }
         commandLine(pythonExe.get(), downloadScript.asFile.absolutePath, filaVersion, target)
     }
 }

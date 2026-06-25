@@ -27,6 +27,7 @@ Usage:
 import argparse
 import os
 import platform
+import shutil
 import ssl
 import sys
 import tarfile
@@ -201,9 +202,20 @@ def fetch(version: str, target: str, force: bool) -> None:
     # Native prebuilts go into prebuilts/<target>/lib/.
     out_dir = PREBUILTS_DIR / target if target == "web" else PREBUILTS_DIR / target / "lib"
 
-    if out_dir.exists() and any(out_dir.iterdir()) and not force:
+    # Stamp records what was extracted: a version bump OR a prefix change (e.g.
+    # the Windows CRT variant mt<->md) must force re-extraction. A plain
+    # "dir non-empty" check silently reuses a stale/mismatched extraction.
+    stamp_file = out_dir / ".prebuilt-source"
+    stamp = f"{version}|{lib_prefix}"
+    if (not force and out_dir.exists() and any(out_dir.iterdir())
+            and stamp_file.is_file() and stamp_file.read_text().strip() == stamp):
         print(f"[{target}] up-to-date ({out_dir.relative_to(REPO_ROOT)})")
         return
+
+    # Wipe any previous extraction so different variants/versions never mix.
+    if out_dir.exists():
+        for p in out_dir.iterdir():
+            shutil.rmtree(p) if p.is_dir() and not p.is_symlink() else p.unlink()
 
     print(f"[{target}]")
     tarball = download_tarball(version, suffix)
@@ -211,6 +223,7 @@ def fetch(version: str, target: str, force: bool) -> None:
         count = extract_xcframework(tarball, lib_prefix[4:], out_dir)
     else:
         count = extract(tarball, lib_prefix, out_dir)
+    stamp_file.write_text(stamp + "\n")
     print(f"  extracted {count} libs -> {out_dir.relative_to(REPO_ROOT)}")
 
 
