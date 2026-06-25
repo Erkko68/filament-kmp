@@ -6,16 +6,23 @@ repeat runs skip the download.
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
-| [`ci.yml`](ci.yml) | **push to `main`** and **every PR** (docs-only skipped); **manual dispatch** (job picker) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
+| [`ci.yml`](ci.yml) | **push to `main`** and **every PR** (no path filters — docs included); **manual dispatch** (job picker) | One job per platform (jvm matrix / js / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
+| [`status-{jvm,js,ios,android}.yml`](status-jvm.yml) | `workflow_run` after **CI** completes on `main` | Reflect each platform job's conclusion from the latest `main` CI run into their own conclusion, powering the per-platform README badges. A *skipped* job (verified-merge, see below) counts as passing — only a real failure turns a badge red. |
 | [`pages.yml`](pages.yml) | push to `main` touching the web target (`js/**`, `kotlin/**/src/jsMain/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and deploys it to GitHub Pages. Already scoped to web-relevant paths, so docs changes never trigger it. |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central. See [Releasing](#releasing) below. |
 
 ## Running CI
 
-The full platform matrix runs automatically on **push to `main`** and on **every PR**
-(docs-only changes are skipped via `paths-ignore`). The matrix is expensive (native prebuilts,
-Android emulator, iOS XCFrameworks), so:
+The full platform matrix runs on **push to `main`** and on **every PR** — **no path filters**, so
+even a docs-only PR runs it and the required `ci-gate` check always reports (this mirrors
+google/filament's always-run presubmit and avoids PRs stuck with no status). The matrix is expensive
+(native prebuilts, Android emulator, iOS XCFrameworks), so:
 
+- **Verified-merge skip** — the `check-verification` job skips the platform jobs on a push to `main`
+  whose commit is GitHub-**verified** (the signed merge commit a UI merge of a PR produces — that PR
+  already ran the matrix). Direct/unverified pushes to `main` still run the full matrix. This is the
+  one place CI is *not* re-run; if your merge flow yields unverified `main` commits, CI simply runs
+  (wasteful, never wrong).
 - **Concurrency** — a new push to a PR cancels the in-flight run for that ref
   (`cancel-in-progress`), so only the latest commit is built.
 - **External (fork) PRs** wait for a maintainer to click **"Approve and run"** — this is
@@ -31,9 +38,10 @@ Android emulator, iOS XCFrameworks), so:
 
 ### The merge gate
 
-`ci-gate` is a tiny aggregator job (`needs: [jvm, js, ios, android]`, `if: always()`) that
-**fails unless every platform job succeeded**. `main` is branch-protected to require `ci-gate`
-(strict / up-to-date), so a PR can't merge until the matrix is green.
+`ci-gate` is a tiny aggregator job (`needs: [jvm, js, ios, android]`, `if: always()`) that, **on
+PRs**, fails unless every platform job succeeded. `main` is branch-protected to require `ci-gate`
+(strict / up-to-date), so a PR can't merge until the matrix is green. On push to `main` and on manual
+dispatch it only summarizes — so the intentionally-skipped jobs from a verified merge don't fail it.
 
 To change which jobs are required, edit the `ci-gate` `needs:` list and the branch-protection
 `required_status_checks.contexts` together.

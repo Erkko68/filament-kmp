@@ -11,7 +11,6 @@ import eric.bitria.samples.rememberColorInstance
 import eric.bitria.samples.rememberEmissiveInstance
 import eric.bitria.samples.rememberEmissiveTemplate
 import eric.bitria.samples.rememberLitColorTemplate
-import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
@@ -23,7 +22,7 @@ import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.RenderQuality
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Group
-import io.github.erkko68.filament.compose.scene.Light
+import io.github.erkko68.filament.compose.scene.PointLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -106,8 +105,7 @@ fun SolarScene(onBack: () -> Unit) {
                         ),
                         radius = 0.7f,
                     )
-                    Light(
-                        type      = LightManager.Type.POINT,
+                    PointLight(
                         color     = FilColor(1f, 0.85f, 0.5f),
                         intensity = 400_000f,
                         falloff   = 15f,

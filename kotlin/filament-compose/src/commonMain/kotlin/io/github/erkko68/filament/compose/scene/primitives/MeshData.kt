@@ -94,6 +94,8 @@ internal fun Mesh(
     rotation: Quaternion,
     scale: Scale,
     pivot: Position,
+    castShadows: Boolean,
+    receiveShadows: Boolean,
     onCreate: (entity: Entity) -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
@@ -108,12 +110,14 @@ internal fun Mesh(
         }
     }
 
-    val entity = remember(handles, material) {
+    val entity = remember(handles, material, castShadows, receiveShadows) {
         engine.getEntityManager().create().also { e ->
             RenderableManager.Builder(1)
                 .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, handles.vertexBuffer, handles.indexBuffer)
                 .material(0, material)
                 .boundingBox(mesh.boundingBox)
+                .castShadows(castShadows)
+                .receiveShadows(receiveShadows)
                 .build(engine, e)
         }
     }

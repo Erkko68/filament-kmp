@@ -10,6 +10,7 @@ import eric.bitria.samples.scenes.AnimationScene
 import eric.bitria.samples.scenes.DuckScene
 import eric.bitria.samples.scenes.HDREnvironmentScene
 import eric.bitria.samples.scenes.KTXEnvironmentScene
+import eric.bitria.samples.scenes.LightingScene
 import eric.bitria.samples.scenes.PickingScene
 import eric.bitria.samples.scenes.PrimitivesScene
 import eric.bitria.samples.scenes.SolarScene
@@ -24,6 +25,7 @@ fun App() {
             Screen.Home       -> HomeScreen(onNavigate = { screen = it })
             Screen.Duck       -> DuckScene(onBack = { screen = Screen.Home })
             Screen.Primitives -> PrimitivesScene(onBack = { screen = Screen.Home })
+            Screen.Lighting   -> LightingScene(onBack = { screen = Screen.Home })
             Screen.Picking    -> PickingScene(onBack = { screen = Screen.Home })
             Screen.Solar      -> SolarScene(onBack = { screen = Screen.Home })
             Screen.Animation  -> AnimationScene(onBack = { screen = Screen.Home })

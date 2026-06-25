@@ -6,6 +6,11 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform/)
 
+[![JVM](https://github.com/Erkko68/filament-kmp/actions/workflows/status-jvm.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-jvm.yml)
+[![JS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-js.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-js.yml)
+[![iOS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml)
+[![Android](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml)
+
 > [!NOTE]
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 

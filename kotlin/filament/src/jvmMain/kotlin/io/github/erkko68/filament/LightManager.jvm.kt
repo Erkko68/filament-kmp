@@ -17,19 +17,26 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
         init {
             FilaLightManagerShadowOptions.mapSize(nativeOptions, 1024)
             FilaLightManagerShadowOptions.shadowCascades(nativeOptions, 1)
+            FilaLightManagerShadowOptions.cascadeSplitPositions(nativeOptions).let { s ->
+                s.setFloatAt(0, 0.125f); s.setFloatAt(1, 0.25f); s.setFloatAt(2, 0.50f)
+            }
             FilaLightManagerShadowOptions.constantBias(nativeOptions, 0.001f)
-            FilaLightManagerShadowOptions.normalBias(nativeOptions, 0.4f)
+            FilaLightManagerShadowOptions.normalBias(nativeOptions, 1.0f)
             FilaLightManagerShadowOptions.shadowFar(nativeOptions, 0.0f)
-            FilaLightManagerShadowOptions.shadowNearHint(nativeOptions, 0.0f)
+            FilaLightManagerShadowOptions.shadowNearHint(nativeOptions, 1.0f)
             FilaLightManagerShadowOptions.shadowFarHint(nativeOptions, 100.0f)
             FilaLightManagerShadowOptions.stable(nativeOptions, false)
-            FilaLightManagerShadowOptions.lispsm(nativeOptions, true)
+            FilaLightManagerShadowOptions.lispsm(nativeOptions, false)  // match Android binding + cleaner PCSS (Filament C++ defaults true)
+            FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions, 0.5f)
+            FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions, 2.0f)
             FilaLightManagerShadowOptions.screenSpaceContactShadows(nativeOptions, false)
             FilaLightManagerShadowOptions.stepCount(nativeOptions, 8)
-            FilaLightManagerShadowOptions.maxShadowDistance(nativeOptions, 0.0f)
+            FilaLightManagerShadowOptions.maxShadowDistance(nativeOptions, 0.3f)
             FilaLightManagerVsmShadowOptions.elvsm(vsm, false)
             FilaLightManagerVsmShadowOptions.blurWidth(vsm, 0.0f)
-            FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, 0.0f)
+            FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, 0.02f)
+            // Identity quaternion (x,y,z,w) = (0,0,0,1); only w needs setting (arena zeroed the rest).
+            FilaLightManagerShadowOptions.transform(nativeOptions).setFloatAt(3, 1.0f)
         }
 
         actual var mapSize: Int

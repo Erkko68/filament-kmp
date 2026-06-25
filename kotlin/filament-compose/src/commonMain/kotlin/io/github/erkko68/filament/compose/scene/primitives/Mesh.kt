@@ -42,6 +42,8 @@ import io.github.erkko68.filament.utils.Quaternion
  *   [position]. Defaults to the mesh origin.
  * @param boundingBox AABB used for frustum culling. Defaults to one computed from [positions].
  *   Provide an explicit box if you skip culling or animate vertices beyond the static bounds.
+ * @param castShadows    Whether the mesh casts shadows onto other renderables. On by default.
+ * @param receiveShadows Whether the mesh receives shadows cast by others. On by default.
  * @param onCreate    Receives the renderable entity ID once the mesh is added to the scene —
  *   use it to register the mesh with `view.pick` callbacks or other entity-keyed maps.
  */
@@ -57,6 +59,8 @@ fun FilamentSceneScope.Mesh(
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     boundingBox: Box? = null,
+    castShadows: Boolean = true,
+    receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     require(positions.isNotEmpty() && positions.size % 3 == 0) {
@@ -76,7 +80,7 @@ fun FilamentSceneScope.Mesh(
     val mesh = remember(positions, normals, uvs, indices, boundingBox) {
         MeshData(positions, normals, uvs, indices, boundingBox ?: positions.toBoundingBox())
     }
-    Mesh(mesh, material, position, rotation, scale, pivot, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
 }
 
 /** Axis-aligned bounding box (center + half-extent) enclosing every xyz triple in this array. */

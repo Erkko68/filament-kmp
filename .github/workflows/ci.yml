@@ -6,24 +6,26 @@ name: CI
 # already produced earlier in the same job). Replaces the old build.yml/test.yml/samples.yml,
 # which each rebuilt the library from scratch per concern, per platform.
 #
-# The full platform matrix runs automatically on every PR and on push to main. The matrix is
-# EXPENSIVE (native prebuilts, emulators, XCFrameworks), so external (fork) PRs are held until a
-# maintainer clicks "Approve and run" — GitHub's native fork-PR approval setting (Settings →
-# Actions → General), not anything in this file. Collaborators' PRs run with no approval step.
-# `workflow_dispatch` still lets you run a single platform manually from the Actions tab.
+# The full platform matrix runs on EVERY PR and on push to main — no path filters (mirrors
+# google/filament's always-run presubmit). This means even a docs-only PR runs the matrix, so the
+# required `ci-gate` check always reports and a PR can never be stuck with no status. External
+# (fork) PRs are held until a maintainer clicks "Approve and run" — GitHub's native fork-PR approval
+# setting (Settings → Actions → General), not anything in this file. `workflow_dispatch` runs a
+# single platform manually from the Actions tab.
 #
-# `ci-gate` is the single required status check: it fails unless every platform job SUCCEEDED,
-# so a PR can't be merged until the matrix is green.
+# To avoid re-running the matrix on `main` for a commit that already passed as a PR, `check-verification`
+# skips the platform jobs on pushes to `main` whose commit is GitHub-verified (the signed merge commit
+# a UI merge produces). Direct/unverified pushes to `main` still run.
+#
+# `ci-gate` is the single required status check (enforced on PRs): it fails unless every platform job
+# SUCCEEDED, so a PR can't be merged until the matrix is green.
 
 on:
   push:
     branches: [main]
-    # Docs-only changes don't affect the build — skip the (expensive) matrix.
-    paths-ignore: ['**.md']
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
-    paths-ignore: ['**.md']
   workflow_dispatch:
     inputs:
       jobs:
@@ -38,11 +40,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Decides whether the platform matrix should run. Always runs for PRs and manual dispatch; on a
+  # push to main it skips the matrix when the commit is GitHub-verified (a UI merge of a PR that
+  # already passed CI). Direct/unverified pushes to main still run.
+  check-verification:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          verified=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}" -q '.commit.verification.verified')
+          if [ "$verified" = "true" ]; then
+            echo "Commit is GitHub-verified (already passed as a PR) — skipping the matrix on main."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Commit is not verified — running the matrix."
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
   jvm:
-    # Run on: push to main; any PR; manual dispatch (all|jvm).
+    needs: check-verification
+    # Run when verification says so, AND (any non-dispatch event, or a dispatch selecting all|jvm).
     if: >-
-      github.event_name != 'workflow_dispatch' ||
-      inputs.jobs == 'all' || inputs.jobs == 'jvm'
+      needs.check-verification.outputs.run == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'jvm')
     strategy:
       fail-fast: false
       matrix:
@@ -101,9 +128,10 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   js:
+    needs: check-verification
     if: >-
-      github.event_name != 'workflow_dispatch' ||
-      inputs.jobs == 'all' || inputs.jobs == 'js'
+      needs.check-verification.outputs.run == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'js')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -131,9 +159,10 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   ios:
+    needs: check-verification
     if: >-
-      github.event_name != 'workflow_dispatch' ||
-      inputs.jobs == 'all' || inputs.jobs == 'ios'
+      needs.check-verification.outputs.run == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'ios')
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
@@ -212,9 +241,10 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   android:
+    needs: check-verification
     if: >-
-      github.event_name != 'workflow_dispatch' ||
-      inputs.jobs == 'all' || inputs.jobs == 'android'
+      needs.check-verification.outputs.run == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'android')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -248,16 +278,17 @@ jobs:
           name: android-test-reports
           path: kotlin/*/build/reports/androidTests/
 
-  # Single required status check for branch protection. Runs always and fails unless EVERY
-  # platform job succeeded, so a PR can't merge until the matrix is green. Manual dispatches
-  # that intentionally run a subset don't fail the gate (they're not gating a merge).
+  # Single required status check for branch protection. Enforced on PRs only — it fails unless
+  # every platform job succeeded, so a PR can't merge until the matrix is green. On push to main
+  # (where jobs may be intentionally skipped by check-verification) and on manual dispatch it only
+  # summarizes, so skipped jobs never fail the gate.
   ci-gate:
     if: always()
     needs: [jvm, js, ios, android]
     runs-on: ubuntu-latest
     steps:
       - name: Require all platform jobs to have succeeded
-        if: github.event_name != 'workflow_dispatch'
+        if: github.event_name == 'pull_request'
         run: |
           results="${{ join(needs.*.result, ' ') }}"
           echo "Platform job results: $results"
@@ -268,6 +299,7 @@ jobs:
             fi
           done
           echo "All platform jobs succeeded — gate green."
-      - name: Manual dispatch summary
-        if: github.event_name == 'workflow_dispatch'
-        run: echo "Manual dispatch (jobs=${{ inputs.jobs }}); gate not enforced for dispatch runs."
+      - name: Summary (push / dispatch)
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Event '${{ github.event_name }}' — gate not enforced. Platform results = ${{ join(needs.*.result, ' ') }}"

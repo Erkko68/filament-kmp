@@ -13,14 +13,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import eric.bitria.samples.rememberTexturedInstance
 import eric.bitria.samples.rememberTexturedTemplate
 import eric.bitria.samples.shared.resources.Res
-import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentEngine
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
-import io.github.erkko68.filament.compose.scene.Light
+import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -66,8 +65,7 @@ fun TextureScene(onBack: () -> Unit) {
             cameraState = cameraState,
             skyboxState = skybox,
         ) {
-            Light(
-                type      = LightManager.Type.DIRECTIONAL,
+            DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = 100_000f,
             )

@@ -47,6 +47,10 @@ This is standard practice for graphics, video, and game apps on Android. The `Su
 - Use static frameworks (`isStatic = true`) — keeps the Filament symbols inside your app binary and avoids dynamic-library loader issues.
 - macOS via JVM (Compose Desktop) and macOS via Kotlin/Native are **different code paths**. The Kotlin/Native path binds the C wrapper via `cinterop`; the JVM path binds the same C wrapper via Project Panama (FFM).
 
+### iOS Simulator: shadows render black
+
+On the **iOS Simulator**, enabling shadows (directional/spot) produces a fully black scene — the simulator's Metal implementation lacks the depth-texture features Filament's shadow pass needs, so the pass fails to black rather than erroring (basic unshadowed rendering still works). This is a simulator limitation, not a bindings bug: the identical code path renders shadows correctly on macOS (JVM, Metal) where the marshalling was validated. **Test shadows on a real iOS device**, where the full Metal feature set is available.
+
 ## JVM / Desktop
 
 ### Pixel readback overhead
@@ -91,6 +95,7 @@ APIs without a Filament.js equivalent throw `UnsupportedOperationException` with
 - **`gltfio.MaterialProvider.createMaterialInstance()` / `getMaterial()`** — the default ubershader path is not exposed. Supply your own precompiled materials.
 - **`filament-utils.HDRLoader.createTexture`** — Radiance/RGBE decoding is unavailable. Convert HDRs to KTX1 offline with `cmgen`.
 - **`filament-utils.KTX1Loader.getSphericalHarmonics`** — SH extraction is unavailable. Precompute SH offline and bake the coefficients into your app data.
+- **`View.shadowType` (shadow technique selection)** — Filament's web build does not bind `View::setShadowType` (absent from both `filament.js` and `filament.wasm`), so the technique is locked to the default **PCF**. In `filament-compose` this means `Shadows.Vsm`, `Shadows.Dpcf`, and `Shadows.Pcss` are silently ignored on web — only `Shadows.Pcf` and `null` (disabled, via the bound `setShadowingEnabled`) take effect. Hard PCF shadows render correctly; soft/VSM shadows are unavailable until upstream binds the setter. (Other platforms support all techniques.)
 
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraState` from `filament-compose` is the recommended ergonomic wrapper.
 
