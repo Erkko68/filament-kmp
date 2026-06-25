@@ -9,6 +9,13 @@ the current stability promise.
 
 Each entry is one line; click the version link at the bottom for the full diff.
 
+## [0.1.3-beta02] — 2026-06-25
+
+### Fixed
+- **Windows desktop crash on engine creation** (`filament`, JVM): the JVM native library now statically links the MSVC C++ runtime (`/MT`), avoiding an `msvcp140.dll` conflict with the JVM's own runtime that crashed the desktop app at startup on Windows.
+- **Dangling `Engine.Config` on JVM/native** (`filament`): the C engine builder passed the address of a stack-local `Engine::Config` that Filament's `Builder` retains until `build()`, leaving a dangling pointer. The config now lives for the builder's full lifetime, so custom `EngineConfig` values are applied reliably.
+- **Backend / stereoscopic enum mismatch on JVM/native** (`filament`): the C FFI `Backend` and `StereoscopicType` enum values were misaligned with Filament 1.72 (`OPENGL`/`VULKAN` swapped, missing `WEBGPU`/`NONE`), so requesting a backend could silently select the wrong one. Values now match upstream.
+
 ## [0.1.3-beta01] — 2026-06-25
 
 ### Added
@@ -213,6 +220,7 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
+[0.1.3-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta01...0.1.3-beta02
 [0.1.3-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...0.1.3-beta01
 [0.1.2-beta06]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...0.1.2-beta06
 [0.1.2-beta05]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta04...0.1.2-beta05
