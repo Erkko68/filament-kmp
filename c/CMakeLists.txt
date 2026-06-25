@@ -377,6 +377,10 @@ if (FILAMENT_BUILD_SHARED)
             "-framework OpenGL"
         )
     elseif (WIN32)
+        # Statically link the MSVC C++ runtime (/MT) to avoid msvcp140.dll conflicts
+        # with the JVM. The prebuilts downloaded by Gradle must also be the /MT versions.
+        set_property(TARGET filament-c-jvm PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
         # FIX: workaround for missing <cstring> in upstream utils/algorithm.h.
         # MSVC two-phase name lookup requires memcpy to be declared at the template-
         # definition point of utils::bit_cast (algorithm.h:280), not just at the
