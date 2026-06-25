@@ -78,7 +78,7 @@ TARGETS = {
     "macosX64":          ("mac",       "filament/lib/x86_64"),
     "linuxX64":          ("linux",     "filament/lib/x86_64"),
     "linuxArm64":        ("arm-linux", "filament/lib/aarch64"),
-    "mingwX64":          ("windows",   "lib/x86_64/md"),
+    "mingwX64":          ("windows",   "lib/x86_64/mt"),
     "web":               ("web",       ""),
 }
 

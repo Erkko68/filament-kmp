@@ -32,76 +32,79 @@ using namespace utils;
 
 extern "C" {
 
+struct FilaEngineBuilderWrapper {
+    Engine::Builder builder;
+    Engine::Config config;
+};
+
 FilaEngineBuilder *FilaEngineBuilder_create() {
-  return reinterpret_cast<FilaEngineBuilder *>(new Engine::Builder());
+  return reinterpret_cast<FilaEngineBuilder *>(new FilaEngineBuilderWrapper());
 }
 
 void FilaEngineBuilder_destroy(FilaEngineBuilder *builder) {
-  delete reinterpret_cast<Engine::Builder *>(builder);
+  delete reinterpret_cast<FilaEngineBuilderWrapper *>(builder);
 }
 
 void FilaEngineBuilder_backend(FilaEngineBuilder *builder,
                                FilaEngineBackend backend) {
-  FILA_CAST(Engine::Builder, builder)
-      ->backend(static_cast<Engine::Backend>(backend));
+  reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.backend(static_cast<Engine::Backend>(backend));
 }
 
 void FilaEngineBuilder_config(FilaEngineBuilder *builder,
-                              const FilaEngineConfig *config) {
+                               const FilaEngineConfig *config) {
   if (!config)
     return;
-  Engine::Config cppConfig = {};
-  cppConfig.commandBufferSizeMB = config->commandBufferSizeMB;
-  cppConfig.perRenderPassArenaSizeMB = config->perRenderPassArenaSizeMB;
-  cppConfig.driverHandleArenaSizeMB = config->driverHandleArenaSizeMB;
-  cppConfig.minCommandBufferSizeMB = config->minCommandBufferSizeMB;
-  cppConfig.perFrameCommandsSizeMB = config->perFrameCommandsSizeMB;
-  cppConfig.jobSystemThreadCount = config->jobSystemThreadCount;
-  cppConfig.stereoscopicType =
+  auto* wrapper = reinterpret_cast<FilaEngineBuilderWrapper *>(builder);
+  wrapper->config.commandBufferSizeMB = config->commandBufferSizeMB;
+  wrapper->config.perRenderPassArenaSizeMB = config->perRenderPassArenaSizeMB;
+  wrapper->config.driverHandleArenaSizeMB = config->driverHandleArenaSizeMB;
+  wrapper->config.minCommandBufferSizeMB = config->minCommandBufferSizeMB;
+  wrapper->config.perFrameCommandsSizeMB = config->perFrameCommandsSizeMB;
+  wrapper->config.jobSystemThreadCount = config->jobSystemThreadCount;
+  wrapper->config.stereoscopicType =
       static_cast<Engine::StereoscopicType>(config->stereoscopicType);
-  cppConfig.stereoscopicEyeCount = config->stereoscopicEyeCount;
-  cppConfig.resourceAllocatorCacheSizeMB = config->resourceAllocatorCacheSizeMB;
-  cppConfig.resourceAllocatorCacheMaxAge = config->resourceAllocatorCacheMaxAge;
-  cppConfig.preferredShaderLanguage =
+  wrapper->config.stereoscopicEyeCount = config->stereoscopicEyeCount;
+  wrapper->config.resourceAllocatorCacheSizeMB = config->resourceAllocatorCacheSizeMB;
+  wrapper->config.resourceAllocatorCacheMaxAge = config->resourceAllocatorCacheMaxAge;
+  wrapper->config.preferredShaderLanguage =
       static_cast<Engine::Config::ShaderLanguage>(
           config->preferredShaderLanguage);
-  cppConfig.forceGLES2Context = config->forceGLES2Context;
-  cppConfig.gpuContextPriority =
+  wrapper->config.forceGLES2Context = config->forceGLES2Context;
+  wrapper->config.gpuContextPriority =
       static_cast<Engine::GpuContextPriority>(config->gpuContextPriority);
-  cppConfig.sharedUboInitialSizeInBytes = config->sharedUboInitialSizeInBytes;
+  wrapper->config.sharedUboInitialSizeInBytes = config->sharedUboInitialSizeInBytes;
 
-  FILA_CAST(Engine::Builder, builder)->config(&cppConfig);
+  wrapper->builder.config(&wrapper->config);
 }
 
 void FilaEngineBuilder_featureLevel(FilaEngineBuilder *builder,
                                     FilaEngineFeatureLevel featureLevel) {
-  FILA_CAST(Engine::Builder, builder)
-      ->featureLevel(static_cast<Engine::FeatureLevel>(featureLevel));
+  reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.featureLevel(static_cast<Engine::FeatureLevel>(featureLevel));
 }
 
 void FilaEngineBuilder_sharedContext(FilaEngineBuilder *builder,
                                      void *sharedContext) {
-  FILA_CAST(Engine::Builder, builder)->sharedContext(sharedContext);
+  reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.sharedContext(sharedContext);
 }
 
 void FilaEngineBuilder_paused(FilaEngineBuilder *builder, bool paused) {
-  FILA_CAST(Engine::Builder, builder)->paused(paused);
+  reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.paused(paused);
 }
 
 void FilaEngineBuilder_feature(FilaEngineBuilder *builder, const char *name,
                                bool value) {
-  FILA_CAST(Engine::Builder, builder)->feature(name, value);
+  reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.feature(name, value);
 }
 
 void FilaEngineBuilder_colorGrading(FilaEngineBuilder *builder,
                                     const FilaColorGradingBuilder *colorGrading) {
-  FILA_CAST(Engine::Builder, builder)->colorGrading(
+  reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.colorGrading(
       *reinterpret_cast<const ColorGrading::Builder *>(colorGrading));
 }
 
 FilaEngine *FilaEngineBuilder_build(FilaEngineBuilder *builder) {
   return reinterpret_cast<FilaEngine *>(
-      FILA_CAST(Engine::Builder, builder)->build());
+      reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.build());
 }
 
 // Engine
