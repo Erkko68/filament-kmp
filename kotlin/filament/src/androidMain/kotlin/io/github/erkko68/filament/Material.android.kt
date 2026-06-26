@@ -53,10 +53,14 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
 
     actual class Builder actual constructor() {
         private val androidBuilder = AndroidMaterial.Builder()
+        // Set in payload(): a non-empty blob that isn't a compiled .filamat. build() rejects it before
+        // calling Filament's parser, which would otherwise panic uncatchably (see isValidFilamatPayload).
+        private var payloadInvalid = false
 
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(data: ByteArray): Builder {
+            payloadInvalid = data.isNotEmpty() && !isValidFilamatPayload(data)
             val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
                 order(java.nio.ByteOrder.nativeOrder())
                 put(data)
@@ -82,6 +86,9 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
         }
 
         actual fun build(engine: Engine): Material {
+            if (payloadInvalid) {
+                throw IllegalArgumentException("Failed to build material — the payload is not a valid compiled .filamat")
+            }
             return Material(androidBuilder.build(engine.nativeEngine))
         }
     }

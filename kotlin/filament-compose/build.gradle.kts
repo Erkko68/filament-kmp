@@ -28,5 +28,16 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
         }
+        // Android instrumented tests: runComposeUiTest needs a host Activity, supplied by the
+        // ui-test-manifest artifact (it merges a debug AndroidManifest with a test ComponentActivity).
+        // Lives only here — filament-compose is the only module that drives runComposeUiTest.
+        named("androidDeviceTest") {
+            dependencies {
+                implementation(libs.androidx.compose.ui.test.manifest)
+                // Override the stale Espresso (3.5.0) that compose ui-test drags in; the old one calls
+                // an InputManager method removed in Android 14+, breaking waitForIdle() on-device.
+                implementation(libs.androidx.test.espresso.core)
+            }
+        }
     }
 }

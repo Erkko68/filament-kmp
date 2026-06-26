@@ -57,17 +57,22 @@ actual class Material constructor(internal var nativeHandle: MemorySegment?) {
         // would free the memory immediately, causing a use-after-free crash.  We
         // keep the arena alive here and close it once build() has consumed the data.
         private var payloadArena: Arena? = null
+        // Set in payload(): a non-empty blob that isn't a compiled .filamat. build() rejects it before
+        // calling Filament's parser, which would otherwise panic uncatchably (see isValidFilamatPayload).
+        private var payloadInvalid = false
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(data: ByteArray): Builder = apply {
             // Close any previously set payload arena (in case payload() is called twice).
             payloadArena?.close()
             if (data.isNotEmpty()) {
+                payloadInvalid = !isValidFilamatPayload(data)
                 val arena = Arena.ofConfined()
                 payloadArena = arena
                 FilamentC.FilaMaterial_Builder_package(nativeBuilder, arena.bytes(data), data.size.toLong())
             } else {
                 payloadArena = null
+                payloadInvalid = false
             }
         }
         actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
@@ -81,7 +86,17 @@ actual class Material constructor(internal var nativeHandle: MemorySegment?) {
         }
         actual fun build(engine: Engine): Material {
             try {
+                if (payloadInvalid) {
+                    throw IllegalArgumentException(
+                        "Failed to build material — the payload is not a valid compiled .filamat",
+                    )
+                }
                 val handle = FilamentC.FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
+                if (handle.isNullPtr()) {
+                    throw IllegalArgumentException(
+                        "Failed to build material — the payload is not a valid compiled .filamat",
+                    )
+                }
                 return Material(handle)
             } finally {
                 payloadArena?.close()

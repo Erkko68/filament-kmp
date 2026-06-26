@@ -1,5 +1,17 @@
 package io.github.erkko68.filament
 
+// Every compiled .filamat begins with the MaterialVersion chunk, whose 8-byte type token is
+// "MAT_VERSION" stored little-endian — i.e. the bytes "SREV_TAM" on disk. The FFM/native actuals
+// check this before handing the payload to Filament's parser, which panics on a non-.filamat blob;
+// that panic unwinds across the prebuilt's -fno-exceptions frames and terminates the process, so it
+// can't be trapped after the fact. Bailing here turns the common bad-asset case (a PNG, a truncated
+// download, the wrong file) into a catchable IllegalArgumentException, matching the JS backend.
+private val FILAMAT_MAGIC = "SREV_TAM".encodeToByteArray()
+
+/** True if [data] starts with the compiled-`.filamat` magic. Cheap structural sniff, not a full parse. */
+internal fun isValidFilamatPayload(data: ByteArray): Boolean =
+    data.size >= FILAMAT_MAGIC.size && FILAMAT_MAGIC.indices.all { data[it] == FILAMAT_MAGIC[it] }
+
 /**
  * Material defines the visual appearance of a surface.
  *
@@ -272,7 +284,11 @@ expect class Material {
          * Creates the Material and returns it.
          *
          * @param engine Engine to associate this Material with
-         * @return The newly created Material, or null if build failed (when exceptions disabled)
+         * @return The newly created Material
+         * @throws IllegalArgumentException if the [payload] is not a valid compiled `.filamat`. Every
+         *   backend signals a bad payload the same way: the FFM/native wrapper traps Filament's native
+         *   parser panic and the JS embind backend's own throw, so callers can recover (e.g. return
+         *   null + report an error) rather than crash the process.
          */
         fun build(engine: Engine): Material
     }

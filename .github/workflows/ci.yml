@@ -120,6 +120,19 @@ jobs:
             :kotlin:gltfio:jvmTest \
             :kotlin:filament-compose:jvmTest \
             --no-configuration-cache
+      # Aggregate JVM test coverage once, on the macOS runner where the real-backend (Metal)
+      # tests also run, for the highest-coverage snapshot. Report-only (non-blocking) — no
+      # threshold is enforced. js/native actuals run on runtimes Kover can't instrument.
+      - name: Coverage report
+        if: matrix.target == 'macosArm64'
+        shell: bash
+        run: ./gradlew koverXmlReport koverHtmlReport --no-configuration-cache
+      - name: Upload coverage report
+        if: matrix.target == 'macosArm64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: kover-coverage
+          path: build/reports/kover/
       - name: Build desktop sample
         working-directory: samples
         shell: bash
@@ -273,7 +286,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest --no-configuration-cache
+          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples

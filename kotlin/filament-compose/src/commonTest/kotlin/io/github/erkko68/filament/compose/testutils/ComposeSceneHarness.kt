@@ -2,6 +2,9 @@ package io.github.erkko68.filament.compose.testutils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
@@ -40,15 +43,28 @@ fun withFilamentScene(
     // composition is never idle and `waitForIdle()` hangs forever. Disabling auto-advance lets idle
     // work settle without time passing; tests call `advanceTimeByFrame()` to step `OnFrame` on demand.
     mainClock.autoAdvance = false
-    val setSceneContent: SetSceneContent = { content ->
-        setContent {
-            CompositionLocalProvider(
-                LocalFilamentEngine provides engine,
-                LocalFilamentScene provides scene,
-            ) {
-                FilamentSceneScopeInstance.content()
-            }
+
+    // A single real `setContent` hosts a swappable content slot driven by state. Android's
+    // `AndroidComposeUiTest.setContent` is one-shot — a second call throws "already set content" —
+    // whereas tests mount, mutate, and unmount repeatedly. Routing every (re)mount through this
+    // `mutableState` keeps us to one `setContent` call, so the same harness runs on jvm/js/ios/android.
+    var slot by mutableStateOf<@Composable FilamentSceneScope.() -> Unit>({})
+    setContent {
+        CompositionLocalProvider(
+            LocalFilamentEngine provides engine,
+            LocalFilamentScene provides scene,
+        ) {
+            FilamentSceneScopeInstance.slot()
         }
+    }
+    val setSceneContent: SetSceneContent = { content ->
+        slot = content
+        // With autoAdvance off, a state-driven recomposition only runs when the frame clock ticks
+        // (unlike the old harness, where the real one-shot setContent composed synchronously). Pump a
+        // single frame so the new content is mounted and its DisposableEffects committed before the
+        // caller's waitForIdle()/assertions. One frame is enough to mount + run effects; the caller
+        // advances more frames explicitly when a test needs to drive OnFrame.
+        mainClock.advanceTimeByFrame()
     }
     body(setSceneContent)
 }

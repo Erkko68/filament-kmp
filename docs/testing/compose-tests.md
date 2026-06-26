@@ -1,9 +1,11 @@
 # `filament-compose` tests
 
-Status: **Tier A implemented** (backlog item #1) — 17 tests, green on JVM, compiling on JS/iOS, wired
-into the jvm/js/ios CI jobs. Tier B (real-backend GPU resources) and the Android instrumented job
-remain follow-ups (see end). Scope: bring the most lifecycle-intensive, least-verified module under
-automated test without a GPU CI runner.
+Status: **Tier A + most of Tier B implemented** (backlog item #1). Tier A: 17 NOOP tests, green on JVM,
+compiling on JS/iOS, wired into the jvm/js/ios CI jobs. Tier B (gated real backend): `PrimitiveLifecycleTest`,
+`MaterialLifecycleTest`, `EnvironmentLifecycleTest` implemented (22 compose tests total, all green on
+macOS/Metal and on an Android emulator). The glTF suite and the texture-backed environment paths are
+deferred (see Tier B inventory). The Android instrumented job is wired into CI (all 22 pass on-device).
+Scope: bring the most lifecycle-intensive, least-verified module under automated test without a GPU CI runner.
 
 > Reuses the gating in [`:kotlin:test-support`](test-support.md) (`TestEnv.gpuBackendAvailable`,
 > `@IgnoreJs`) and the philosophy in [rendering-backend-tests.md](rendering-backend-tests.md)
@@ -68,19 +70,31 @@ fun withFilamentScene(engine: Engine, scene: Scene, body: ComposeUiTest.(SetScen
     // followGroupRotation). With the default auto-advancing clock the composition is never idle and
     // waitForIdle() hangs forever — so drive the clock manually.
     mainClock.autoAdvance = false
-    val setContent: SetSceneContent = { content -> setContent {
+    // One real setContent hosts a swappable, state-driven slot. Android's setContent is one-shot
+    // (a second call throws "already set content"); routing every (re)mount through this state keeps
+    // us to a single call so the same harness runs on jvm/js/ios/android.
+    var slot by mutableStateOf<@Composable FilamentSceneScope.() -> Unit>({})
+    setContent {
         CompositionLocalProvider(LocalFilamentEngine provides engine, LocalFilamentScene provides scene) {
-            FilamentSceneScopeInstance.content()
+            FilamentSceneScopeInstance.slot()
         }
-    } }
+    }
+    val setContent: SetSceneContent = { content ->
+        slot = content
+        mainClock.advanceTimeByFrame() // state-driven recompose needs a tick (autoAdvance is off)
+    }
     body(setContent)
   }
 ```
 
-**Two gotchas the implementation pins down (both cost real debugging):**
+**Three gotchas the implementation pins down (all cost real debugging):**
 - `mainClock.autoAdvance = false` is mandatory. With it `true`, `OnFrame`'s perpetual
   `withFrameNanos` loop keeps the composition non-idle and `waitForIdle()` never returns (manifested
   as a ~13-minute "hang"). Frames are stepped explicitly via `mainClock.advanceTimeByFrame()`.
+- **Single `setContent`, state-driven slot.** Android's `AndroidComposeUiTest.setContent` is one-shot,
+  but tests mount/mutate/unmount repeatedly. We call the real `setContent` once and swap a
+  `mutableStateOf` content slot; because `autoAdvance` is off, each swap needs an explicit
+  `advanceTimeByFrame()` to recompose + commit the new `DisposableEffect`s before assertions.
 - Assert live state **inside `whileComposed`** (and leak state inside `afterDispose`), not after
   `composeScene` returns. Two reasons: by return the composition is disposed and every component is
   correctly gone (asserting `hasComponent` post-return reads `false` — looks like a leak/bug, is just
@@ -148,16 +162,45 @@ known-good core configs when asserting option values under NOOP.
 - **`ShadowsApplyTest`** (2) — the `null`-disables / non-null-enables toggle (everywhere), and each
   technique's `View.ShadowType` selection (`@IgnoreJs` — `setShadowType` is unbound on web).
 
-### Tier B — `DEFAULT`, gated (`engine ?: return`)
+### Tier B — `DEFAULT`, gated (`engine ?: return`) ✅ partially implemented
 
-- **`PrimitiveLifecycleTest`** — `Cube`/`Sphere`/`Plane`/`Cylinder`/`Mesh`: composes →
-  `scene.renderableCount == 1` & vertex/index buffers live; disposes → renderable gone, buffers
-  destroyed (the dispose-order comments in `MeshData.kt`).
-- **`MaterialTextureLifecycleTest`** — `rememberMaterial`/`rememberTexture` create then free; the
-  `null` + `onError` path on a bad asset (does not throw in composition).
-- **`GltfLifecycleTest`** — `rememberGltfAsset` + `GltfInstance` load/share/dispose (needs a small
-  bundled `.glb`); `@IgnoreJs` where the web binding gaps already documented apply.
-- **`EnvironmentLifecycleTest`** — `SkyboxState`/`IndirectLightState` apply + dispose.
+Tier-B tests extend `TierBSceneFixture` (a real `Engine.Backend.DEFAULT` engine + `Scene`, gated on
+`TestEnv.gpuBackendAvailable`, `engine`/`scene` null when unavailable) and reuse the `composeScene`
+harness. A real material is needed to build any renderable; the fixture's `materialInstance()` builds one
+from the bundled `emissive.filamat` (the compose-local `TestMaterials` expect/actual — JVM reads the
+resource, other targets return empty, so the suite skips off-JVM exactly like the core fixtures).
+
+- **`PrimitiveLifecycleTest`** ✅ — `Cube`/`Sphere`/`Plane`/`Cylinder`/`Mesh`: composes →
+  `scene.renderableCount == 1` & a live `RenderableManager` component; disposes → renderable gone, scene
+  empty, entity destroyed (the dispose-order comments in `MeshData.kt`). (The vertex/index buffers are
+  freed in the same `onDispose`; they aren't separately asserted because the composable owns the handles
+  internally — the renderable+entity teardown is the leak guard.)
+- **`MaterialLifecycleTest`** ✅ — `rememberMaterial` builds → `isValidMaterial` while composed → freed on
+  disposal; a bad payload returns `null` + fires `onError` without crashing. **That last path drove a core
+  fix**: a malformed `.filamat` made Filament's C++ parser panic (`utils::PostconditionPanic`), which
+  *terminates the process* — the throw unwinds across the prebuilt's `-fno-exceptions` frames before any
+  wrapper `try/catch` can run, so it can't be trapped after the fact. `Material.Builder` now sniffs the
+  `.filamat` magic (`isValidFilamatPayload`) in the FFM/native `payload()` and `build()` raises a catchable
+  `IllegalArgumentException` for a non-`.filamat` blob, matching the JS embind backend (which already
+  threw). `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
+  bytes (an uncatchable upstream crash, *not* a null-return) and the repo bundles no decodable test image
+  for the happy path — that waits on an image asset.
+- **`EnvironmentLifecycleTest`** ✅ — `ApplySkybox` (a **color** skybox → `scene.skybox` set/cleared) and
+  `ApplyIndirectLight` (an IBL built from **spherical-harmonics** coefficients → `scene.indirectLight`
+  set/cleared). Both apply synchronously on the composition thread, and neither needs a bundled asset.
+  The texture-backed paths (cubemap skybox, cubemap IBL, `rememberKTXEnvironment`/`rememberHDREnvironment`)
+  are left for when a small KTX/HDR asset is bundled — `samples/shared/.../environment/` has candidates.
+- **`GltfLifecycleTest`** ⬜ **deferred — same reason `FilamentView` is out of headless scope.**
+  `rememberGltfAsset` loads via gltfio's **async** `ResourceLoader` (`asyncBeginLoad` → `asyncUpdateLoad`
+  polling inside a `withFrameNanos` loop on the JobSystem's worker threads). Driven from the Compose test's
+  manual clock/dispatcher rather than a real `FilamentView` render loop, the load aborts natively
+  (`utils::PreconditionPanic`) — the same coupling to the live frame/thread model that keeps `FilamentView`
+  itself out of the headless harness (the sample [`DuckScene`](../../samples/shared/src/commonMain/kotlin/eric/bitria/samples/scenes/DuckScene.kt)
+  drives exactly this path successfully *through* `FilamentSceneView`). The synchronous Primitive/Material/
+  Environment composables don't hit this. Revisiting needs either a way to create+drive the engine on the
+  composition thread or a synchronous glTF-load path. Note: an aborting test in `commonTest` SIGABRTs the
+  whole module run, so this can't simply be left in place skipping — it stays out until the load path is
+  headless-safe.
 
 `@IgnoreJs` on any test whose path hits an unbound web API (per the standing policy); everything else
 runs on jvm/js/ios-sim/android like the core suites.
@@ -177,13 +220,29 @@ commonTest.dependencies {
 `:kotlin:filament-compose:<target>Test` is wired into the **jvm**, **js**, and **iosSimulatorArm64**
 jobs in `ci.yml` (alongside `filament`/`gltfio`/…). Tier A is GPU-free so it runs on every one.
 
+The **Android instrumented** path (`:kotlin:filament-compose:connectedAndroidDeviceTest`) is wired
+into the android job and runs all 22 tests on an emulator (Tier B's real backend is available there).
+Two Android-only test deps make `runComposeUiTest` work on-device, declared in the `androidDeviceTest`
+source set:
+
+```kotlin
+named("androidDeviceTest") {
+    dependencies {
+        // ui-test-manifest registers the host ComponentActivity runComposeUiTest mounts into;
+        // JetBrains Compose doesn't republish it, so use the androidx artifact at the version
+        // composeMultiplatform resolves to (libs.androidx.composeUi).
+        implementation(libs.androidx.compose.ui.test.manifest)
+        // Force a current espresso-core: compose ui-test drags in 3.5.0, which calls
+        // InputManager.getInstance — removed in Android 14+ — so waitForIdle()/onIdle throws
+        // NoSuchMethodException on-device. 3.7.0 doesn't.
+        implementation(libs.androidx.test.espresso.core)
+    }
+}
+```
+
 ## Follow-ups
 
-- **Android instrumented job.** `commonTest` flows into the on-device test source set
-  (`connectedAndroidDeviceTest`), and `runComposeUiTest` on Android needs a test activity registered
-  via `compose.uiTestManifest` (a `debugImplementation`). That wiring + an emulator run must be
-  validated before adding `:kotlin:filament-compose:connectedAndroidDeviceTest` to CI — deferred so a
-  red Android job isn't shipped unverified. jvm/js/ios already cover the three distinct actuals the
-  Tier-A logic exercises.
-- **Tier B** — the gated real-backend suite for primitives, materials/textures, glTF, environments
-  (the inventory below), riding the same free GPU runners as the core rendering tests.
+- **glTF + texture-backed paths.** `GltfLifecycleTest` and `rememberTexture`/cubemap-skybox/cubemap-IBL
+  remain deferred (see the Tier B inventory): the async glTF load is coupled to a live frame/thread
+  model the headless harness doesn't provide, and the texture paths need a bundled decodable asset.
+  Revisiting needs either a synchronous load path or a way to drive the engine on the composition thread.
