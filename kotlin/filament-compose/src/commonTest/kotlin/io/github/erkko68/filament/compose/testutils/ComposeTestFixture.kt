@@ -18,6 +18,15 @@ open class ComposeTestFixture {
     protected lateinit var engine: Engine
     protected lateinit var scene: Scene
 
+    /**
+     * Awaits the platform graphics runtime before any test runs. On JS this returns skiko's
+     * readiness promise so the async WASM load finishes before `runComposeUiTest` builds its
+     * (synchronous) Skia surface; elsewhere it's a no-op. kotlin.test awaits a promise returned
+     * from a `@BeforeTest`; [GraphicsReady] is JUnit-`void` on JVM.
+     */
+    @BeforeTest
+    fun awaitGraphics(): GraphicsReady = awaitGraphicsReady()
+
     @BeforeTest
     fun setUp() {
         Filament.init()

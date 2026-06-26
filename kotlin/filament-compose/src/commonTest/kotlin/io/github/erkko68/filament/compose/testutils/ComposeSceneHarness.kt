@@ -57,7 +57,14 @@ fun withFilamentScene(
  * Convenience host for the mount→assert→dispose shape. Mounts [content], lets the caller assert live
  * state via [whileComposed] (run after effects are applied — scene membership, components built —
  * but before disposal), optionally advances [frames] display refreshes to drive `OnFrame`/animation,
- * then **leaves** the composition so every `onDispose` fires — the point of the leak assertions.
+ * then **leaves** the composition so every `onDispose` fires and runs [afterDispose] for the leak
+ * assertions.
+ *
+ * Both [whileComposed] and [afterDispose] run **inside** the test body. This matters on JS: there
+ * `runComposeUiTest` is asynchronous (it returns a promise rather than blocking like JVM does), so
+ * assertions placed *after* a `composeScene(...)` call would execute before the composition has run.
+ * Keep all assertions in these two callbacks, and `return composeScene(...)` from the test so
+ * kotlin.test awaits the promise.
  */
 @OptIn(ExperimentalTestApi::class)
 fun composeScene(
@@ -65,6 +72,7 @@ fun composeScene(
     scene: Scene,
     frames: Int = 0,
     whileComposed: () -> Unit = {},
+    afterDispose: () -> Unit = {},
     content: @Composable FilamentSceneScope.() -> Unit,
 ) = withFilamentScene(engine, scene) { setContent ->
     setContent(content)
@@ -75,4 +83,5 @@ fun composeScene(
     // DisposableEffect.onDispose in reverse registration order — the lifecycle under test.
     setContent {}
     waitForIdle()
+    afterDispose()
 }

@@ -16,41 +16,48 @@ import kotlin.test.assertTrue
  */
 class GroupLifecycleTest : ComposeTestFixture() {
 
+    // Assertions live in `whileComposed`/`afterDispose` and the test returns the harness result so
+    // the JS (asynchronous) `runComposeUiTest` is awaited — see composeScene's KDoc.
     @Test
-    fun childLightIsParentedToTheGroup() {
+    fun childLightIsParentedToTheGroup() = run {
         var groupEntity = -1
         var lightEntity = -1
-        var lightParent = -1
         composeScene(
             engine, scene,
             whileComposed = {
                 lightEntity = scene.getEntities().single()
                 val tm = engine.getTransformManager()
-                lightParent = tm.getParent(tm.getInstance(lightEntity))
+                val lightParent = tm.getParent(tm.getInstance(lightEntity))
+                assertTrue(groupEntity >= 0, "Group should have created a transform entity")
+                assertEquals(groupEntity, lightParent, "child light should be parented to the group")
+            },
+            afterDispose = {
+                assertSceneEmpty(scene)
+                assertEntitiesDestroyed(engine, intArrayOf(groupEntity, lightEntity))
             },
         ) {
             Group(onCreate = { groupEntity = it }) {
                 DirectionalLight()
             }
         }
-        assertTrue(groupEntity >= 0, "Group should have created a transform entity")
-        assertEquals(groupEntity, lightParent, "child light should be parented to the group")
-        assertSceneEmpty(scene)
-        assertEntitiesDestroyed(engine, intArrayOf(groupEntity, lightEntity))
     }
 
     @Test
-    fun parentingAndNestingHoldWhileComposed() {
+    fun parentingAndNestingHoldWhileComposed() = run {
         var outerGroup = -1
         var innerGroup = -1
-        var childCountUnderInner = -1
-        var innerParent = -1
         composeScene(
             engine, scene,
             whileComposed = {
                 val tm = engine.getTransformManager()
-                innerParent = tm.getParent(tm.getInstance(innerGroup))
-                childCountUnderInner = tm.getChildCount(tm.getInstance(innerGroup))
+                val innerParent = tm.getParent(tm.getInstance(innerGroup))
+                val childCountUnderInner = tm.getChildCount(tm.getInstance(innerGroup))
+                assertEquals(outerGroup, innerParent, "inner group should be parented to the outer group")
+                assertEquals(1, childCountUnderInner, "inner group should hold its one child light")
+            },
+            afterDispose = {
+                assertSceneEmpty(scene)
+                assertEntitiesDestroyed(engine, intArrayOf(outerGroup, innerGroup))
             },
         ) {
             Group(onCreate = { outerGroup = it }) {
@@ -59,9 +66,5 @@ class GroupLifecycleTest : ComposeTestFixture() {
                 }
             }
         }
-        assertEquals(outerGroup, innerParent, "inner group should be parented to the outer group")
-        assertEquals(1, childCountUnderInner, "inner group should hold its one child light")
-        assertSceneEmpty(scene)
-        assertEntitiesDestroyed(engine, intArrayOf(outerGroup, innerGroup))
     }
 }

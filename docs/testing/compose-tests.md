@@ -81,9 +81,21 @@ fun withFilamentScene(engine: Engine, scene: Scene, body: ComposeUiTest.(SetScen
 - `mainClock.autoAdvance = false` is mandatory. With it `true`, `OnFrame`'s perpetual
   `withFrameNanos` loop keeps the composition non-idle and `waitForIdle()` never returns (manifested
   as a ~13-minute "hang"). Frames are stepped explicitly via `mainClock.advanceTimeByFrame()`.
-- Assert live state **inside `whileComposed`**, not after `composeScene` returns — by then the
-  composition is disposed and every component is correctly gone (asserting `hasComponent` post-return
-  reads `false`, which looks like a leak/bug but is just the dispose working).
+- Assert live state **inside `whileComposed`** (and leak state inside `afterDispose`), not after
+  `composeScene` returns. Two reasons: by return the composition is disposed and every component is
+  correctly gone (asserting `hasComponent` post-return reads `false` — looks like a leak/bug, is just
+  the dispose working); and on **JS** `runComposeUiTest` is *asynchronous* (returns a promise rather
+  than blocking as on JVM), so a post-return assertion runs before the body has executed at all.
+  Always `return composeScene(...)` / `withFilamentScene(...)` from the test so kotlin.test awaits the
+  promise on JS.
+
+**JS needs skiko loaded first.** `runComposeUiTest` builds its Skia raster surface synchronously in
+its constructor, but on Kotlin/JS skiko's WASM loads asynchronously under Karma — calling it too early
+throws `org_jetbrains_skia_Surface__1nMakeRasterN32Premul is not defined`. `ComposeTestFixture` has a
+`@BeforeTest` returning `awaitGraphicsReady()` (skiko's `onWasmReady` promise on JS, `Unit` elsewhere);
+kotlin.test awaits a promise returned from `@BeforeTest`, so the WASM is ready before the first test.
+Karma also needs `kotlin/filament-compose/karma.config.d/filament-setup.js` (loads `filament.js` +
+the WASM bootstrap, same as the core modules).
 
 `runComposeUiTest` is headless on JVM (skiko offscreen) and resolves on JVM/JS/iOS at Compose MP
 1.11.1. Requires the `org.jetbrains.compose.ui:ui-test` test dependency (`compose.uiTest`).

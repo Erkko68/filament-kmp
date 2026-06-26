@@ -25,8 +25,10 @@ class CameraNodeLifecycleTest : ComposeTestFixture() {
         initialScaling = Float2(1f, 1f),
     )
 
+    // Assertions live in the harness callbacks and the test returns the harness result so JS's
+    // asynchronous `runComposeUiTest` is awaited — see composeScene's KDoc.
     @Test
-    fun cameraFollowsGroupTransform() {
+    fun cameraFollowsGroupTransform() = run {
         val cam = newCameraState()
         var groupEntity = -1
         composeScene(
@@ -38,12 +40,14 @@ class CameraNodeLifecycleTest : ComposeTestFixture() {
                 assertEquals(2f, cam.eye.y, 1e-4f)
                 assertEquals(-3f, cam.eye.z, 1e-4f)
             },
+            afterDispose = {
+                assertSceneEmpty(scene)
+                assertEntitiesDestroyed(engine, intArrayOf(groupEntity))
+            },
         ) {
             Group(position = Position(5f, 2f, -3f), onCreate = { groupEntity = it }) {
                 CameraNode(cam)
             }
         }
-        assertSceneEmpty(scene)
-        assertEntitiesDestroyed(engine, intArrayOf(groupEntity))
     }
 }

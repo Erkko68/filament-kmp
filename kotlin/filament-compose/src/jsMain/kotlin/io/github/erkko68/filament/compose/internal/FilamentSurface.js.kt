@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.viewinterop.WebElementView
+import androidx.compose.ui.viewinterop.HtmlElementView
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.View
@@ -78,29 +78,25 @@ internal actual fun FilamentSurface(
             }
         }
     ) {
-        WebElementView(
-            factory = {
-                val container = document.createElement("div") as HTMLElement
-                container.style.width = "100%"
-                container.style.height = "100%"
-                // Push the interop layer behind the Compose canvas so the hole-punch reveals it.
-                window.requestAnimationFrame {
-                    (container.parentElement as? HTMLElement)?.style?.zIndex = "-1"
-                }
-                if (target.parentNode !== container) {
-                    target.style.position = "absolute"
-                    target.style.left = "0"
-                    target.style.top = "0"
-                    target.style.width = "100%"
-                    target.style.height = "100%"
-                    container.appendChild(target)
-                }
-                container
-            },
-            modifier = Modifier.fillMaxSize().drawBehind {
-                drawRect(color = Color.Transparent, blendMode = BlendMode.Clear)
-            },
-            update = {},
-        )
+        HtmlElementView(factory = {
+            val container = document.createElement("div") as HTMLElement
+            container.style.width = "100%"
+            container.style.height = "100%"
+            // Push the interop layer behind the Compose canvas so the hole-punch reveals it.
+            window.requestAnimationFrame {
+                (container.parentElement as? HTMLElement)?.style?.zIndex = "-1"
+            }
+            if (target.parentNode !== container) {
+                target.style.position = "absolute"
+                target.style.left = "0"
+                target.style.top = "0"
+                target.style.width = "100%"
+                target.style.height = "100%"
+                container.appendChild(target)
+            }
+            container
+        }, modifier = Modifier.fillMaxSize().drawBehind {
+            drawRect(color = Color.Transparent, blendMode = BlendMode.Clear)
+        }, update = {})
     }
 }
