@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -77,6 +78,7 @@ class FilamentInstanceTest : GltfioTestFixture() {
     }
 
     @Test
+    @IgnoreJs // getMaterialInstances hits an unregistered vector return type (embind "unbound types") in the web prebuilt.
     fun testInstanceMaterials() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
@@ -95,6 +97,67 @@ class FilamentInstanceTest : GltfioTestFixture() {
         }
 
         assertNotNull(instance.getMaterialInstances())
+
+        loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
+    @IgnoreJs // getJointsAt/getJointCountAt are unpopulated stubs in the web wrapper (no joint API in filament.js).
+    fun testSkinnedInstanceJointsAndSkins() {
+        val bytes = TestGlb.getFoxGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = UbershaderProvider(engine)
+        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val asset = loader.createAsset(bytes)
+        assertNotNull(asset)
+
+        val resourceLoader = ResourceLoader(engine)
+        resourceLoader.loadResources(asset)
+
+        val instance = asset.getInstance()
+        val skinCount = instance.getSkinCount()
+        // Fox is a rigged model with at least one skin.
+        assertTrue(skinCount > 0)
+
+        val skinNames = instance.getSkinNames()
+        assertEquals(skinCount, skinNames.size)
+
+        val jointCount = instance.getJointCountAt(0)
+        assertTrue(jointCount > 0)
+        val joints = instance.getJointsAt(0)
+        assertEquals(jointCount, joints.size)
+
+        // Re-attach the first joint to its skin to exercise attach/detach bindings.
+        val target = joints[0]
+        instance.detachSkin(0, target)
+        instance.attachSkin(0, target)
+
+        resourceLoader.destroy()
+        loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
+    fun testInstanceMaterialVariants() {
+        val bytes = TestGlb.getMaterialVariantsGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = UbershaderProvider(engine)
+        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val asset = loader.createAsset(bytes)
+        assertNotNull(asset)
+
+        val instance = asset.getInstance()
+        val variantNames = instance.getMaterialVariantNames()
+        // The synthetic asset declares two KHR_materials_variants.
+        assertEquals(2, variantNames.size)
+
+        instance.applyMaterialVariant(0)
+        instance.applyMaterialVariant(1)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)

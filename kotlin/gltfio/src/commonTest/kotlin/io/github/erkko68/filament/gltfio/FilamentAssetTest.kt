@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -79,6 +80,35 @@ class FilamentAssetTest : GltfioTestFixture() {
     }
 
     @Test
+    @IgnoreJs // FilamentAsset.getMorphTargetNames is a hardcoded empty stub in the web wrapper (not exposed by filament.js).
+    fun testMorphTargetNames() {
+        val bytes = TestGlb.getAnimatedMorphCubeGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = UbershaderProvider(engine)
+        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val asset = loader.createAsset(bytes)
+        assertNotNull(asset)
+
+        val resourceLoader = ResourceLoader(engine)
+        resourceLoader.loadResources(asset)
+
+        // The morph target entity carries the named targets; scan all entities for them.
+        var foundNames = false
+        for (entity in asset.getEntities()) {
+            if (asset.getMorphTargetNames(entity).isNotEmpty()) {
+                foundNames = true
+            }
+        }
+        assertTrue(foundNames)
+
+        resourceLoader.destroy()
+        loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
     fun testAssetResourceUris() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
@@ -115,6 +145,7 @@ class FilamentAssetTest : GltfioTestFixture() {
     }
 
     @Test
+    @IgnoreJs // getAssetInstances/getAssetInstanceCount hit an unregistered vector return type (embind "unbound types") in the web prebuilt.
     fun testAssetInstanceAndEngine() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
