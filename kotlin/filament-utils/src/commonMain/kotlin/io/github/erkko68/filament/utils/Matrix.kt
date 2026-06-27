@@ -399,38 +399,6 @@ data class Mat4(
                     x.x * m.y.x + y.x * m.y.y + z.x * m.y.z + w.x * m.y.w,
                     x.y * m.y.x + y.y * m.y.y + z.y * m.y.z + w.y * m.y.w,
                     x.z * m.y.x + y.z * m.y.y + z.z * m.y.z + w.z * m.y.w,
-                    x.w * m.y.x + y.w * m.y.y + z.w * m.y.w + w.w * m.y.w, // User logic error in original? 
-                    // Re-checking lines 363: result.y.w -= pair5 * m.x.x + pair8 * m.y.x + pair11 * m.z.x.
-                    // Wait, this is times(m: Mat4).
-                    // x.w * m.y.x + y.w * m.y.y + z.w * m.y.z + w.w * m.y.w
-            ),
-            Float4(
-                    x.x * m.z.x + y.x * m.z.y + z.x * m.z.z + w.x * m.z.w,
-                    x.y * m.z.x + y.y * m.z.y + z.y * m.z.z + w.y * m.z.w,
-                    x.z * m.z.x + y.z * m.z.y + z.z * m.z.z + w.z * m.z.w,
-                    x.w * m.z.x + y.w * m.z.y + z.w * m.z.z + w.w * m.z.w,
-            ),
-            Float4(
-                    x.x * m.w.x + y.x * m.w.y + z.x * m.w.z + w.x * m.w.w,
-                    x.y * m.w.x + y.y * m.w.y + z.y * m.w.z + w.y * m.w.w,
-                    x.z * m.w.x + y.z * m.w.y + z.z * m.w.z + w.z * m.w.w,
-                    x.w * m.w.x + y.w * m.w.y + z.w * m.w.z + w.w * m.w.w,
-            )
-    )
-    // Actually, line 363 was from inverse.
-    // Fixed Mat4.times:
-    /*
-    operator fun times(m: Mat4) = Mat4(
-            Float4(
-                    x.x * m.x.x + y.x * m.x.y + z.x * m.x.z + w.x * m.x.w,
-                    x.y * m.x.x + y.y * m.x.y + z.y * m.x.z + w.y * m.x.w,
-                    x.z * m.x.x + y.z * m.x.y + z.z * m.x.z + w.z * m.x.w,
-                    x.w * m.x.x + y.w * m.x.y + z.w * m.x.z + w.w * m.x.w,
-            ),
-            Float4(
-                    x.x * m.y.x + y.x * m.y.y + z.x * m.y.z + w.x * m.y.w,
-                    x.y * m.y.x + y.y * m.y.y + z.y * m.y.z + w.y * m.y.w,
-                    x.z * m.y.x + y.z * m.y.y + z.z * m.y.z + w.z * m.y.w,
                     x.w * m.y.x + y.w * m.y.y + z.w * m.y.z + w.w * m.y.w,
             ),
             Float4(
@@ -446,7 +414,6 @@ data class Mat4(
                     x.w * m.w.x + y.w * m.w.y + z.w * m.w.z + w.w * m.w.w,
             )
     )
-    */
 
     inline fun compareTo(m: Mat4, delta: Float = 0.0f) = Mat4(
         x.compareTo(m.x, delta),

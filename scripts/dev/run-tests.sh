@@ -11,11 +11,12 @@
 #     devices` shows none, then run `connectedAndroidDeviceTest` against it.
 #
 # Targets (each can be skipped via flag — see below):
-#   * jvm     — :kotlin:filament/{filamat,filament-utils,gltfio}:jvmTest
-#   * js      — :kotlin:filament/{filamat,filament-utils,gltfio}:jsTest
+#   * jvm     — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:jvmTest
+#   * js      — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:jsTest
 #                (needs Chrome on PATH for Karma)
-#   * ios     — :kotlin:filament/{filamat,filament-utils,gltfio}:iosSimulatorArm64Test
+#   * ios     — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:iosSimulatorArm64Test
 #                (macOS host only; arm64 simulator)
+#                (filament-compose runs on jvm/js/ios only, mirroring CI)
 #   * android — connectedAndroidDeviceTest on every module
 #                (needs ANDROID_HOME, an AVD, adb on PATH)
 #
@@ -40,6 +41,10 @@ MODULES=(
   ":kotlin:filament-utils"
   ":kotlin:gltfio"
 )
+
+# filament-compose runs on jvm/js/ios only (mirrors ci.yml); its Android
+# instrumented job is a pending follow-up, so it stays out of the Android loop.
+COMPOSE_MODULE=":kotlin:filament-compose"
 
 # Defaults: run every target. Disable on non-macOS for iOS.
 RUN_JVM=1
@@ -90,6 +95,7 @@ run_gradle() {
 if [[ $RUN_JVM -eq 1 ]]; then
   tasks=()
   for m in "${MODULES[@]}"; do tasks+=("$m:jvmTest"); done
+  tasks+=("$COMPOSE_MODULE:jvmTest")
   run_gradle "jvmTest" "${tasks[@]}"
 fi
 
@@ -97,6 +103,7 @@ fi
 if [[ $RUN_JS -eq 1 ]]; then
   tasks=()
   for m in "${MODULES[@]}"; do tasks+=("$m:jsTest"); done
+  tasks+=("$COMPOSE_MODULE:jsTest")
   run_gradle "jsTest" "${tasks[@]}"
 fi
 
@@ -131,6 +138,7 @@ if [[ $RUN_IOS -eq 1 ]]; then
   elif maybe_boot_simulator; then
     tasks=()
     for m in "${MODULES[@]}"; do tasks+=("$m:iosSimulatorArm64Test"); done
+    tasks+=("$COMPOSE_MODULE:iosSimulatorArm64Test")
     run_gradle "iosSimulatorArm64Test" "${tasks[@]}" "-PiosSimulatorDevice=$SIM_DEVICE"
   else
     EXIT=1

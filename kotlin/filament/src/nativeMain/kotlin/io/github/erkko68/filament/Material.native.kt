@@ -53,13 +53,19 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
 
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaMaterial_Builder_create()
+        // Set in payload(): a non-empty blob that isn't a compiled .filamat. build() rejects it before
+        // calling Filament's parser, which would otherwise panic uncatchably (see isValidFilamatPayload).
+        private var payloadInvalid = false
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
         actual fun payload(data: ByteArray): Builder = apply {
             if (data.isNotEmpty()) {
+                payloadInvalid = !isValidFilamatPayload(data)
                 data.usePinned { pinned ->
                     FilaMaterial_Builder_package(nativeBuilder, pinned.addressOf(0).reinterpret<ByteVar>(), data.size.toULong())
                 }
+            } else {
+                payloadInvalid = false
             }
         }
         actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
@@ -72,8 +78,19 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
             FilaMaterial_Builder_uboBatching(nativeBuilder, mode.ordinal.toUInt())
         }
         actual fun build(engine: Engine): Material {
+            if (payloadInvalid) {
+                FilaMaterial_Builder_destroy(nativeBuilder)
+                throw IllegalArgumentException(
+                    "Failed to build material — the payload is not a valid compiled .filamat",
+                )
+            }
             val handle = FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
             FilaMaterial_Builder_destroy(nativeBuilder)
+            if (handle == null) {
+                throw IllegalArgumentException(
+                    "Failed to build material — the payload is not a valid compiled .filamat",
+                )
+            }
             return Material(handle)
         }
     }

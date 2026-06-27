@@ -6,14 +6,24 @@ android-targetSdk = "36"
 androidx-activity = "1.13.0"
 annotations = "26.1.0"
 composeMultiplatform = "1.11.1"
+# androidx Compose UI version that composeMultiplatform resolves to on Android — keep in sync with
+# composeMultiplatform (used only for the Android-only ui-test-manifest, which JetBrains Compose
+# doesn't republish). Verify after a Compose MP bump: ./gradlew :kotlin:filament-compose:dependencies
+# --configuration androidDeviceTestRuntimeClasspath | grep androidx.compose.ui:ui-android
+androidx-composeUi = "1.11.2"
 androidx-test-runner = "1.7.0"
 androidx-test-ext-junit = "1.3.0"
+# Compose's runComposeUiTest drives Espresso.onIdle on Android; the version transitively pulled by
+# compose ui-test (3.5.0) calls a hidden InputManager method removed in Android 14+, so we force a
+# current Espresso that doesn't. Keep on the same release train as androidx-test-runner.
+androidx-test-espresso = "3.7.0"
 junit = "4.13.2"
 kotlin = "2.4.0"
 kotlinx-coroutines = "1.11.0"
 material3 = "1.9.0"
 vanniktech-publish = "0.37.0"
 dokka = "2.2.0"
+kover = "0.9.8"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
@@ -27,7 +37,10 @@ android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref 
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "composeMultiplatform" }
 vanniktech-publish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 junit = { module = "junit:junit", version.ref = "junit" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-composeUi" }
+androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }

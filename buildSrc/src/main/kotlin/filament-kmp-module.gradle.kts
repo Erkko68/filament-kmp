@@ -10,6 +10,7 @@ plugins {
     id("com.android.kotlin.multiplatform.library")
     id("filament-publish")
     id("org.jetbrains.dokka")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 // ── Project coordinates (previously in root allprojects {}) ───────────────────

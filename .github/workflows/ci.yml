@@ -92,7 +92,7 @@ jobs:
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev
+        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev libegl1
       - name: Read Filament version
         id: ver
         shell: bash
@@ -118,7 +118,21 @@ jobs:
             :kotlin:filamat:jvmTest \
             :kotlin:filament-utils:jvmTest \
             :kotlin:gltfio:jvmTest \
+            :kotlin:filament-compose:jvmTest \
             --no-configuration-cache
+      # Aggregate JVM test coverage once, on the macOS runner where the real-backend (Metal)
+      # tests also run, for the highest-coverage snapshot. Report-only (non-blocking) — no
+      # threshold is enforced. js/native actuals run on runtimes Kover can't instrument.
+      - name: Coverage report
+        if: matrix.target == 'macosArm64'
+        shell: bash
+        run: ./gradlew koverXmlReport koverHtmlReport --no-configuration-cache
+      - name: Upload coverage report
+        if: matrix.target == 'macosArm64'
+        uses: actions/upload-artifact@v7
+        with:
+          name: kover-coverage
+          path: build/reports/kover/
       - name: Build desktop sample
         working-directory: samples
         shell: bash
@@ -150,6 +164,7 @@ jobs:
             :kotlin:filamat:jsTest \
             :kotlin:filament-utils:jsTest \
             :kotlin:gltfio:jsTest \
+            :kotlin:filament-compose:jsTest \
             --no-configuration-cache
       - name: Build web sample
         working-directory: samples
@@ -208,6 +223,7 @@ jobs:
             :kotlin:filamat:iosSimulatorArm64Test \
             :kotlin:filament-utils:iosSimulatorArm64Test \
             :kotlin:gltfio:iosSimulatorArm64Test \
+            :kotlin:filament-compose:iosSimulatorArm64Test \
             "-PiosSimulatorDevice=${{ steps.sim.outputs.device }}" \
             --no-configuration-cache
       - name: Assemble XCFrameworks
@@ -270,7 +286,7 @@ jobs:
           api-level: 34
           arch: x86_64
           target: google_apis
-          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest --no-configuration-cache
+          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples

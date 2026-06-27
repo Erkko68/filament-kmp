@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.dokka")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 // Plugin coordinates (kotlin, android, compose, vanniktech-publish) are pulled
@@ -16,6 +17,21 @@ dependencies {
     dokka(project(":kotlin:filament-utils"))
     dokka(project(":kotlin:gltfio"))
     dokka(project(":kotlin:filament-compose"))
+}
+
+// ── Test-coverage aggregation (Kover) ─────────────────────────────────────────
+// Each :kotlin:* module applies the Kover plugin (via the filament-kmp-module convention
+// plugin) so its test runs are instrumented; the root merges them into one report.
+// Kover measures the JVM-executed tests (the `jvm` target + Android unit tests) — that's the
+// common `expect` surface plus the JVM/FFM actuals. The js/native actuals run on their own
+// runtimes Kover can't instrument, so they're out of these numbers by construction.
+// Generate with `./gradlew koverHtmlReport` (build/reports/kover/html) or `koverXmlReport`.
+dependencies {
+    kover(project(":kotlin:filament"))
+    kover(project(":kotlin:filamat"))
+    kover(project(":kotlin:filament-utils"))
+    kover(project(":kotlin:gltfio"))
+    kover(project(":kotlin:filament-compose"))
 }
 
 // Ensure every project — including the implicit :kotlin and :java parent
