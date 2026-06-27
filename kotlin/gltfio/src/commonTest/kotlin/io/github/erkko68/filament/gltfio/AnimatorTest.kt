@@ -8,6 +8,72 @@ import kotlin.test.assertTrue
 
 class AnimatorTest : GltfioTestFixture() {
     @Test
+    fun testCrossFadeBetweenAnimations() {
+        val bytes = TestGlb.getFoxGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = UbershaderProvider(engine)
+        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val asset = loader.createAsset(bytes)
+        assertNotNull(asset)
+
+        val resourceLoader = ResourceLoader(engine)
+        resourceLoader.loadResources(asset)
+
+        val animator = asset.getInstance().getAnimator()
+        // Fox ships with multiple animation tracks (Survey / Walk / Run).
+        assertTrue(animator.getAnimationCount() > 1)
+
+        animator.applyAnimation(0, 0.1f)
+        animator.applyCrossFade(1, 0.1f, 0.5f)
+        animator.updateBoneMatrices()
+
+        resourceLoader.destroy()
+        loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+    @Test
+    fun testAnimatedAssetAnimations() {
+        val bytes = TestGlb.getBoxAnimatedGlbBytes()
+        if (bytes.isEmpty()) return
+
+        val provider = UbershaderProvider(engine)
+        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val asset = loader.createAsset(bytes)
+        assertNotNull(asset)
+
+        val resourceLoader = ResourceLoader(engine)
+        resourceLoader.loadResources(asset)
+
+        val animator = asset.getInstance().getAnimator()
+        val animCount = animator.getAnimationCount()
+        // BoxAnimated ships with at least one animation track.
+        assertTrue(animCount > 0)
+
+        for (i in 0 until animCount) {
+            // getAnimationName is nullable: the JS/web wrapper doesn't expose names.
+            animator.getAnimationName(i)
+            val duration = animator.getAnimationDuration(i)
+            assertTrue(duration >= 0f)
+            animator.applyAnimation(i, 0f)
+            animator.applyAnimation(i, duration / 2f)
+        }
+        animator.updateBoneMatrices()
+        if (animCount > 1) {
+            animator.applyCrossFade(0, 0f, 0.5f)
+        }
+        animator.resetBoneMatrices()
+
+        resourceLoader.destroy()
+        loader.destroyAsset(asset)
+        AssetLoader.destroy(loader)
+        provider.destroy()
+    }
+
+
+    @Test
     fun testAnimatorMetadata() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return

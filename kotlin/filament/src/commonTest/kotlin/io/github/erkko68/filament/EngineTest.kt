@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -99,6 +100,38 @@ class EngineTest {
         }
         
         // Cleanup
+        engine.destroy()
+    }
+
+    @Test
+    fun testEntityAndCameraComponent() {
+        Filament.init()
+        val engine = Engine.create(Engine.Backend.NOOP)
+
+        // Camera component lookup
+        val entity = EntityManager.get().create()
+        val camera = engine.createCamera(entity)
+        assertNotNull(camera)
+        assertNotNull(engine.getCameraComponent(entity))
+        engine.destroyCameraComponent(entity)
+
+        // Entity destruction
+        engine.destroyEntity(entity)
+        EntityManager.get().destroy(entity)
+
+        engine.destroy()
+    }
+
+    @Test
+    @IgnoreJs // Engine.createFence is unsupported on the web wrapper (filament.js doesn't expose fences).
+    fun testFenceLifecycle() {
+        Filament.init()
+        val engine = Engine.create(Engine.Backend.NOOP)
+
+        val fence = engine.createFence()
+        assertNotNull(fence)
+        engine.destroyFence(fence)
+
         engine.destroy()
     }
 

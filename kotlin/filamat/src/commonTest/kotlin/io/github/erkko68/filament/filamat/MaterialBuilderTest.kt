@@ -72,6 +72,16 @@ class MaterialBuilderTest : FilamatTestFixture() {
     }
 
     @Test
+    @IgnoreJs // filamat is not supported in the web wrapper.
+    fun testTargetApiBranches() {
+        // Exercise every TargetApi -> native bitmask branch.
+        for (api in MaterialBuilder.TargetApi.entries) {
+            val builder = MaterialBuilder().targetApi(api)
+            assertNotNull(builder)
+        }
+    }
+
+    @Test
     @IgnoreJs // filamat compilation is not supported in the web wrapper.
     fun testMaterialBuilderChainingAndBuild() {
         val pkg = MaterialBuilder()

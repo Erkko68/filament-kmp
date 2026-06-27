@@ -1,15 +1,31 @@
 package eric.bitria.samples.scenes
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
+import io.github.erkko68.filament.compose.rememberFilamentEngine
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
@@ -19,6 +35,7 @@ import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.compose.scene.SkyboxSource
+import io.github.erkko68.filament.compose.scene.rememberAnimationNames
 import io.github.erkko68.filament.compose.scene.rememberAnimationState
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
@@ -26,22 +43,31 @@ import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 /**
- * Plays the first skeletal animation of `BoxAnimated.glb` with [rememberAnimationState], which
- * auto-advances every frame and loops at the clip length — no manual scene clock needed. Assigning
- * a different `animationIndex` would cross-fade smoothly between clips.
+ * Switches between the three skeletal clips of `Fox.glb` (Survey / Walk / Run) with
+ * [rememberAnimationState]. The state auto-advances every frame and, when [AnimationState.animationIndex]
+ * changes, cross-fades from the outgoing clip over [AnimationState.crossFadeDuration] — drive that with
+ * the slider to see hard cuts vs. smooth blends. Clip names come from [rememberAnimationNames].
  */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AnimationScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 2f, 5f),
-        target     = Position(0f, 0.5f, 0f),
+        eye        = Position(0f, 1.2f, 3.2f),
+        target     = Position(0f, 0.8f, 0f),
         projection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraState(cameraState)
     val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
-    val animation = rememberAnimationState(animationIndex = 0)
+    // Hoist the engine so the asset (and its clip names) can be loaded outside the scene content.
+    val engine = rememberFilamentEngine()
+    val fox = rememberGltfAsset(engine) { Res.readBytes("files/models/Fox.glb") }
+    val clipNames = rememberAnimationNames(fox)
+
+    var crossFade by remember { mutableFloatStateOf(0.3f) }
+    val animation = rememberAnimationState(animationIndex = 0, crossFadeDuration = crossFade)
+    // Keep the live state in sync with the slider.
+    animation.crossFadeDuration = crossFade
 
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
@@ -49,6 +75,7 @@ fun AnimationScene(onBack: () -> Unit) {
                 .fillMaxSize()
                 .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
+            engine = engine,
             cameraState = cameraState,
             skyboxState = skybox,
         ) {
@@ -57,12 +84,46 @@ fun AnimationScene(onBack: () -> Unit) {
                 intensity = 100_000f,
             )
             GltfInstance(
-                asset          = rememberGltfAsset { Res.readBytes("files/models/BoxAnimated.glb") },
+                asset          = fox,
                 position       = Position(0f, 0f, 0f),
-                scale          = Scale(1f),
+                // Fox is authored very large (~140 units tall); scale it down to frame.
+                scale          = Scale(0.018f),
                 animationState = animation,
             )
         }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(Color.Black.copy(alpha = 0.45f))
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                clipNames.forEachIndexed { index, name ->
+                    val selected = index == animation.animationIndex
+                    Button(
+                        onClick = { animation.animationIndex = index },
+                        colors = if (selected) ButtonDefaults.buttonColors()
+                                 else ButtonDefaults.outlinedButtonColors(),
+                    ) { Text(name ?: "Clip $index") }
+                }
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    "Cross-fade ${(crossFade * 1000).toInt()} ms",
+                    color = Color.White,
+                    modifier = Modifier.padding(end = 12.dp),
+                )
+                Slider(
+                    value = crossFade,
+                    onValueChange = { crossFade = it },
+                    valueRange = 0f..1.5f,
+                )
+            }
+        }
+
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))
     }
 }
