@@ -103,6 +103,30 @@ class EngineTest {
     }
 
     @Test
+    fun testEntityCameraAndFence() {
+        Filament.init()
+        val engine = Engine.create(Engine.Backend.NOOP)
+
+        // Camera component lookup
+        val entity = EntityManager.get().create()
+        val camera = engine.createCamera(entity)
+        assertNotNull(camera)
+        assertNotNull(engine.getCameraComponent(entity))
+        engine.destroyCameraComponent(entity)
+
+        // Fence lifecycle
+        val fence = engine.createFence()
+        assertNotNull(fence)
+        engine.destroyFence(fence)
+
+        // Entity destruction
+        engine.destroyEntity(entity)
+        EntityManager.get().destroy(entity)
+
+        engine.destroy()
+    }
+
+    @Test
     fun testEngineBuilderWithColorGrading() {
         Filament.init()
         val engine = Engine.Builder()

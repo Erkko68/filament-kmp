@@ -27,6 +27,20 @@ class TextureSamplerTest : FilamentTestFixture() {
     }
 
     @Test
+    fun minMagWrapConstructor() {
+        val s = TextureSampler(
+            TextureSampler.MinFilter.LINEAR_MIPMAP_LINEAR,
+            TextureSampler.MagFilter.LINEAR,
+            TextureSampler.WrapMode.MIRRORED_REPEAT
+        )
+        assertEquals(TextureSampler.MinFilter.LINEAR_MIPMAP_LINEAR, s.minFilter)
+        assertEquals(TextureSampler.MagFilter.LINEAR, s.magFilter)
+        assertEquals(TextureSampler.WrapMode.MIRRORED_REPEAT, s.wrapModeS)
+        assertEquals(TextureSampler.WrapMode.MIRRORED_REPEAT, s.wrapModeT)
+        assertEquals(TextureSampler.WrapMode.MIRRORED_REPEAT, s.wrapModeR)
+    }
+
+    @Test
     fun fullConstructor() {
         val s = TextureSampler(
             TextureSampler.MinFilter.LINEAR,
