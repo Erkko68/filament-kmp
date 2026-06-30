@@ -34,3 +34,20 @@ fun assertEntitiesDestroyed(engine: Engine, entities: IntArray) {
         assertFalse(em.isAlive(e), "entity $e should be destroyed after disposal")
     }
 }
+
+/**
+ * Asserts a freed Filament object is no longer valid, via its `Engine.isValid…` query in [isValid].
+ *
+ * After `destroy…`, the query returns `false` on JVM / native / Web — but on **Android** the SDK
+ * clears the wrapper's native handle, so the query *throws* `IllegalStateException("Calling method on
+ * destroyed …")` instead of returning `false`. Both outcomes mean "destroyed", so a throw is treated
+ * as success here; only a `true` return (object still live) fails.
+ */
+fun assertDestroyed(message: String, isValid: () -> Boolean) {
+    val stillValid = try {
+        isValid()
+    } catch (e: Throwable) {
+        false // Android: querying a destroyed handle throws — that *is* the proof of destruction.
+    }
+    assertFalse(stillValid, message)
+}

@@ -1,0 +1,32 @@
+// filament-compose built-in: LIT material that samples a 2D texture as its base colour.
+// Drives `rememberTexturedMaterialInstance`. Needs uv0 on the geometry (every built-in
+// primitive supplies it). Parameters:
+//   albedo    — sampler2d base-colour texture.
+//   metallic  — 0 = dielectric, 1 = metal.
+//   roughness — 0 = mirror, 1 = fully rough.
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o standard_textured.filamat standard_textured.mat
+
+material {
+    name : StandardTextured,
+    shadingModel : lit,
+    requires : [ uv0 ],
+    // Trim variants the built-in primitives never use, halving the compiled blob. Standard
+    // materials therefore don't skin, and use PCF shadows (not VSM) / no SSR.
+    variantFilter : [ skinning, vsm, ssr, stereo ],
+    parameters : [
+        { type : sampler2d, name : albedo },
+        { type : float,     name : metallic },
+        { type : float,     name : roughness }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor = texture(materialParams_albedo, getUV0());
+        material.metallic  = materialParams.metallic;
+        material.roughness = materialParams.roughness;
+    }
+}

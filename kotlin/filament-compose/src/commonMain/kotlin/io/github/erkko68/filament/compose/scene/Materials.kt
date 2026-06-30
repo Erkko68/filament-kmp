@@ -190,3 +190,57 @@ fun rememberMaterialInstance(
 
     return instance
 }
+
+/**
+ * Creates a [MaterialInstance] and (re-)applies [configure] declaratively — the imperative
+ * `createInstance()` + `setParameter(...)` + dispose dance done for you. The instance is built
+ * once per [material]; [configure] runs once on creation and again whenever any value in [keys]
+ * changes, so parameters track Compose state without an `onUpdate`/`SideEffect`. The instance is
+ * destroyed when this leaves the composition.
+ *
+ * ```kotlin
+ * val mat = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") } ?: return
+ * val mi  = rememberMaterialInstance(mat, color) { setParameter("baseColor", color) }
+ * Cube(material = mi)
+ * ```
+ *
+ * Because the same instance is updated in place (never swapped), it is safe to keep referenced
+ * by a renderable while [keys] change — unlike allocating a fresh instance per colour, which can
+ * crash the render thread mid-frame (see docs/compose/materials.md).
+ *
+ * @param material The base material to instantiate.
+ * @param keys Inputs that, when changed, re-run [configure]. Pass every value [configure] reads.
+ * @param engine The Filament engine that owns the material. Defaults to the engine in the current
+ *   composition scope; pass an explicit engine when calling outside `rememberFilamentScene { }`.
+ * @param configure Applies parameters to the instance. Re-invoked on creation and on [keys] change.
+ */
+@Composable
+fun rememberMaterialInstance(
+    material: Material,
+    vararg keys: Any?,
+    engine: Engine = LocalFilamentEngine.current,
+    configure: MaterialInstance.() -> Unit,
+): MaterialInstance {
+    val instance = remember(material) {
+        material.createInstance()
+    }
+
+    // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op onDispose
+    // keeps this a pure setter — the instance's own teardown is the effect below.
+    DisposableEffect(instance, *keys) {
+        instance.configure()
+        onDispose { }
+    }
+
+    DisposableEffect(instance) {
+        onDispose {
+            engine.destroyMaterialInstance(instance)
+        }
+    }
+
+    return instance
+}
+
+/** Sets a `float3` parameter from a [Color], keeping call sites typed against the colour value class. */
+fun MaterialInstance.setParameter(name: String, color: Color) =
+    setParameter(name, color.r, color.g, color.b)

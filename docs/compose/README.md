@@ -352,11 +352,20 @@ val scene = rememberFilamentScene(
 
 ### Materials & Textures
 
-The loaders (`rememberMaterial`, `rememberMaterialInstance`, `rememberTexture`) all return `null`
-while loading and on failure rather than throwing inside composition — pass `onError` to react.
-Their `engine` defaults to the engine in scope from `rememberFilamentScene`; pass it explicitly to
-allocate the resource *outside* a scene (e.g. when sharing assets across multiple scenes, or
-loading before rendering starts):
+For the common cases, the **built-in standard materials** need no `.mat` authoring, no `matc`, and no
+asset shipping (they work on Web too): `rememberColorMaterialInstance`,
+`rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`, and
+`rememberEmissiveMaterialInstance` each return a ready `MaterialInstance` for a primitive.
+
+```kotlin
+Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))
+```
+
+For custom materials, the loaders (`rememberMaterial`, `rememberMaterialInstance`, `rememberTexture`)
+all return `null` while loading and on failure rather than throwing inside composition — pass
+`onError` to react. Their `engine` defaults to the engine in scope from `rememberFilamentScene`; pass
+it explicitly to allocate the resource *outside* a scene (e.g. when sharing assets across multiple
+scenes, or loading before rendering starts):
 
 ```kotlin
 val engine = rememberFilamentEngine()
@@ -367,6 +376,9 @@ val scene = rememberFilamentScene(engine = engine) {
     GltfInstance(asset = duck, ...)
 }
 ```
+
+The keyed `rememberMaterialInstance(material, key) { … }` overload re-applies parameters declaratively
+on change — see [Materials](materials.md#updating-parameters-live).
 
 ### Post-Processing
 

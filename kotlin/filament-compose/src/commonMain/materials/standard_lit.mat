@@ -1,0 +1,33 @@
+// filament-compose built-in: LIT PBR material with a solid base colour.
+// Drives `rememberColorMaterialInstance`. Parameters:
+//   baseColor   — linear-sRGB RGB of the surface.
+//   metallic    — 0 = dielectric, 1 = metal.
+//   roughness   — 0 = mirror, 1 = fully rough.
+//   reflectance — dielectric Fresnel reflectance (0.5 ≈ 4% F0, the common default).
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o standard_lit.filamat standard_lit.mat
+
+material {
+    name : StandardLit,
+    shadingModel : lit,
+    // Trim variants the built-in primitives never use, halving the compiled blob. Standard
+    // materials therefore don't skin, and use PCF shadows (not VSM) / no SSR.
+    variantFilter : [ skinning, vsm, ssr, stereo ],
+    parameters : [
+        { type : float3, name : baseColor },
+        { type : float,  name : metallic },
+        { type : float,  name : roughness },
+        { type : float,  name : reflectance }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+        material.metallic      = materialParams.metallic;
+        material.roughness     = materialParams.roughness;
+        material.reflectance   = materialParams.reflectance;
+    }
+}

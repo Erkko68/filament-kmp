@@ -1,0 +1,21 @@
+// filament-compose built-in: UNLIT solid-colour material — ignores scene lighting and
+// outputs a flat colour. Drives `rememberUnlitColorMaterialInstance`. Parameter:
+//   baseColor — linear-sRGB RGB of the surface.
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o standard_unlit.filamat standard_unlit.mat
+
+material {
+    name : StandardUnlit,
+    shadingModel : unlit,
+    parameters : [
+        { type : float3, name : baseColor }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+    }
+}

@@ -7,10 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import eric.bitria.samples.rememberColorInstance
-import eric.bitria.samples.rememberEmissiveInstance
-import eric.bitria.samples.rememberEmissiveTemplate
-import eric.bitria.samples.rememberLitColorTemplate
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
@@ -28,6 +24,8 @@ import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
+import io.github.erkko68.filament.compose.scene.rememberEmissiveMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.utils.Float3
 import io.github.erkko68.filament.utils.Quaternion
@@ -88,45 +86,40 @@ fun SolarScene(onBack: () -> Unit) {
             skyboxState = skybox,
             postProcessing = postProcessing,
         ) {
-            val litTmpl      = rememberLitColorTemplate()
-            val emissiveTmpl = rememberEmissiveTemplate()
-            if (litTmpl != null && emissiveTmpl != null) {
-                // Sun assembly — the Group's transform moves the emissive sphere *and* the
-                // point light together. The sphere uses an UNLIT + emissive material so it
-                // appears self-illuminated regardless of scene lighting; bloom turns the
-                // emissive output into the halo around the sun.
-                val sunY = sin(time * 0.6f) * 0.6f
-                Group(position = Position(0f, sunY, 0f)) {
-                    Sphere(
-                        material = rememberEmissiveInstance(
-                            template  = emissiveTmpl,
-                            color     = FilColor(1.0f, 0.85f, 0.40f),
-                            intensity = 4.0f,
-                        ),
-                        radius = 0.7f,
-                    )
-                    PointLight(
-                        color     = FilColor(1f, 0.85f, 0.5f),
-                        intensity = 400_000f,
-                        falloff   = 15f,
-                        position  = Position(0f, 0f, 0f),
-                    )
-                }
+            // Sun assembly — the Group's transform moves the emissive sphere *and* the point
+            // light together. The built-in UNLIT emissive material makes the sphere appear
+            // self-illuminated regardless of scene lighting; bloom turns the emissive output
+            // into the halo around the sun.
+            val sunY = sin(time * 0.6f) * 0.6f
+            Group(position = Position(0f, sunY, 0f)) {
+                Sphere(
+                    material = rememberEmissiveMaterialInstance(
+                        color     = FilColor(1.0f, 0.85f, 0.40f),
+                        intensity = 4.0f,
+                    ),
+                    radius = 0.7f,
+                )
+                PointLight(
+                    color     = FilColor(1f, 0.85f, 0.5f),
+                    intensity = 400_000f,
+                    falloff   = 15f,
+                    position  = Position(0f, 0f, 0f),
+                )
+            }
 
-                // Planets — each one is a Group at the orbit angle, containing a Sphere that
-                // spins in its own local frame. Two nested transforms doing two animations.
-                PLANETS.forEachIndexed { i, p ->
-                    val orbitAngle = time * p.orbitSpeed + (i * PI.toFloat() / 2f)
-                    val spinDegrees = (time * p.spinSpeed) * (180f / PI.toFloat())
-                    val px = cos(orbitAngle) * p.orbitRadius
-                    val pz = sin(orbitAngle) * p.orbitRadius
-                    Group(position = Position(px, 0f, pz)) {
-                        Sphere(
-                            material = rememberColorInstance(litTmpl, p.color),
-                            radius   = p.radius,
-                            rotation = Quaternion.fromAxisAngle(Float3(0f, 1f, 0f), spinDegrees),
-                        )
-                    }
+            // Planets — each one is a Group at the orbit angle, containing a Sphere that
+            // spins in its own local frame. Two nested transforms doing two animations.
+            PLANETS.forEachIndexed { i, p ->
+                val orbitAngle = time * p.orbitSpeed + (i * PI.toFloat() / 2f)
+                val spinDegrees = (time * p.spinSpeed) * (180f / PI.toFloat())
+                val px = cos(orbitAngle) * p.orbitRadius
+                val pz = sin(orbitAngle) * p.orbitRadius
+                Group(position = Position(px, 0f, pz)) {
+                    Sphere(
+                        material = rememberColorMaterialInstance(p.color),
+                        radius   = p.radius,
+                        rotation = Quaternion.fromAxisAngle(Float3(0f, 1f, 0f), spinDegrees),
+                    )
                 }
             }
         }
