@@ -10,9 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import eric.bitria.samples.rememberTexturedInstance
-import eric.bitria.samples.rememberTexturedTemplate
 import eric.bitria.samples.shared.resources.Res
+import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentEngine
@@ -25,6 +24,8 @@ import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.compose.scene.rememberMaterial
+import io.github.erkko68.filament.compose.scene.rememberMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.utils.TextureLoader
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -69,9 +70,22 @@ fun TextureScene(onBack: () -> Unit) {
                 direction = Direction(0.3f, -1f, -0.5f),
                 intensity = 100_000f,
             )
-            val template = rememberTexturedTemplate()
-            if (template != null && texture != null) {
-                Sphere(material = rememberTexturedInstance(template, texture), radius = 1f)
+            // Escape hatch: load a hand-authored .filamat and bind its `albedo` sampler
+            // reactively with rememberMaterialInstance. (For the common case the built-in
+            // rememberTexturedMaterialInstance does this with no .mat to author or ship.)
+            val material = rememberMaterial { Res.readBytes("files/materials/textured.filamat") }
+            val sampler = remember {
+                TextureSampler(
+                    TextureSampler.MinFilter.LINEAR_MIPMAP_LINEAR,
+                    TextureSampler.MagFilter.LINEAR,
+                    TextureSampler.WrapMode.REPEAT,
+                )
+            }
+            if (material != null && texture != null) {
+                val instance = rememberMaterialInstance(material, texture) {
+                    setParameter("albedo", texture, sampler)
+                }
+                Sphere(material = instance, radius = 1f)
             }
         }
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))

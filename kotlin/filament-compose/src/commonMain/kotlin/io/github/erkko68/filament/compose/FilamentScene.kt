@@ -9,7 +9,9 @@ import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.compose.scene.ApplyIndirectLight
 import io.github.erkko68.filament.compose.scene.ApplySkybox
 import io.github.erkko68.filament.compose.scene.IndirectLightState
+import io.github.erkko68.filament.compose.scene.LocalStandardMaterials
 import io.github.erkko68.filament.compose.scene.SkyboxState
+import io.github.erkko68.filament.compose.scene.StandardMaterialCache
 
 /**
  * A handle to a Filament [Scene] and its [Engine], produced by [rememberFilamentScene] and
@@ -62,9 +64,17 @@ fun rememberFilamentScene(
 
     val handle = remember(engine, scene) { FilamentScene(engine, scene) }
 
+    // Shared, lazily-built cache of the built-in materials, scoped to this scene so repeated
+    // convenience-helper calls reuse one base Material per type. Disposed with the scene.
+    val standardMaterials = remember(engine) { StandardMaterialCache(engine) }
+    DisposableEffect(standardMaterials) {
+        onDispose { standardMaterials.dispose() }
+    }
+
     CompositionLocalProvider(
-        LocalFilamentEngine provides engine,
-        LocalFilamentScene  provides scene,
+        LocalFilamentEngine    provides engine,
+        LocalFilamentScene     provides scene,
+        LocalStandardMaterials provides standardMaterials,
     ) {
         if (skyboxState != null)         ApplySkybox(skyboxState, engine, scene)
         if (indirectLightState != null) ApplyIndirectLight(indirectLightState, engine, scene)

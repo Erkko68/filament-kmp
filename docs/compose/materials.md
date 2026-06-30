@@ -12,7 +12,38 @@ For the full picture of the Filament material system — surface shading model, 
 
 This page covers what's specific to `filament-compose`: where to put files, which helper to call, and which workflow to pick.
 
-## Workflow: precompiled `.filamat` (recommended)
+## Built-in standard materials (no `matc`, no asset shipping)
+
+For the common cases — a solid colour, a texture, a glow — `filament-compose` ships precompiled
+materials so you don't author a `.mat`, run `matc`, or ship a `.filamat` at all. They work on every
+target, **including Web** (where runtime material compilation isn't available). Each helper returns a
+ready `MaterialInstance` you drop straight into a primitive:
+
+```kotlin
+// LIT solid colour (baseColor / metallic / roughness / reflectance)
+Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))
+
+// UNLIT flat colour — ignores scene lighting
+Plane(material = rememberUnlitColorMaterialInstance(Color(0.1f, 0.1f, 0.12f)))
+
+// LIT textured base colour (geometry needs uv0 — all built-in primitives supply it)
+val tex = rememberTexture { Res.readBytes("files/textures/wood.png") }
+tex?.let { Sphere(material = rememberTexturedMaterialInstance(it)) }
+
+// UNLIT emissive — glows through bloom when intensity > 1
+Sphere(material = rememberEmissiveMaterialInstance(Color(1f, 0.85f, 0.4f), intensity = 4f))
+```
+
+Parameters track Compose state automatically — pass a new `color`/`intensity` and the instance is
+updated in place, no `SideEffect` needed. The base [`Material`](../../kotlin/filament/src/commonMain/kotlin/io/github/erkko68/filament/Material.kt)
+behind each type is built once and shared across every helper call within a `rememberFilamentScene`,
+then freed with the scene. To instantiate one yourself, use `rememberStandardMaterial(StandardMaterial.Lit)`.
+
+The built-ins cover the 90% case. For anything they don't (cloth, subsurface, refraction, custom
+shading, extra parameters) author your own `.mat` and use the precompiled workflow below — these
+built-ins are exactly that workflow, done for you.
+
+## Workflow: precompiled `.filamat` (recommended for custom materials)
 
 Compile your `.mat` ahead of time with `matc` and load the resulting binary at runtime. This is the **default recommended path** for every target and the only path that works on Web.
 
@@ -124,7 +155,28 @@ val template = Material.Builder().payload(package.getBuffer()).build(engine)
 
 ## Updating parameters live
 
-A `MaterialInstance`'s parameters are mutable — you can update them every frame without rebuilding anything:
+### Declaratively (recommended)
+
+The keyed `rememberMaterialInstance` overload re-applies a `configure` block whenever any key changes,
+so parameters follow Compose state with no `SideEffect`. The same instance is updated in place — never
+swapped — so it's safe to keep referenced by a renderable:
+
+```kotlin
+val template = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") } ?: return
+val instance = rememberMaterialInstance(template, color) {
+    setParameter("baseColor", color)   // re-runs whenever `color` changes
+}
+Cube(material = instance)
+```
+
+`configure` runs once on creation and again on every key change. `setParameter` also accepts a
+[`Color`](../../kotlin/filament-compose/src/commonMain/kotlin/io/github/erkko68/filament/compose/scene/Types.kt)
+directly (a `float3`). The built-in helpers (`rememberColorMaterialInstance`, …) are thin wrappers
+over this overload.
+
+### Imperatively
+
+A `MaterialInstance`'s parameters are mutable — you can also update them every frame:
 
 ```kotlin
 val instance = rememberMaterialInstance(template)
@@ -138,7 +190,7 @@ SideEffect {
 For per-frame updates that aren't state-driven, use `FilamentEffect { onFrame { ... } }` and call `setParameter` from the frame callback.
 
 > [!WARNING]
-> **Don't destroy a `MaterialInstance` that's still referenced by a renderable.** If you want to recolour a primitive that's already in the scene, update its parameters in place — don't allocate a new instance and swap it. Filament's render thread can crash when it reads from a dangling instance pointer between the swap and the next frame. The `rememberColorInstance` pattern used in the samples is fine for the case where the renderable is *also* recreated whenever the colour changes (i.e. the colour is a `remember(...)` key on both).
+> **Don't destroy a `MaterialInstance` that's still referenced by a renderable.** If you want to recolour a primitive that's already in the scene, update its parameters in place — the keyed `rememberMaterialInstance` overload (or the built-in helpers) does exactly this. Don't allocate a new instance and swap it: Filament's render thread can crash when it reads from a dangling instance pointer between the swap and the next frame.
 
 ## Texturing
 

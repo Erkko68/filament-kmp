@@ -1,0 +1,25 @@
+// filament-compose built-in: UNLIT emissive material — outputs a flat colour plus an
+// emissive contribution that bloom + tonemapping turn into a glow. Drives
+// `rememberEmissiveMaterialInstance`. Parameters:
+//   color     — base RGB, also the emissive tint.
+//   intensity — emissive multiplier; values > 1 push past the bloom threshold and halo.
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o standard_emissive.filamat standard_emissive.mat
+
+material {
+    name : StandardEmissive,
+    shadingModel : unlit,
+    parameters : [
+        { type : float3, name : color },
+        { type : float,  name : intensity }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.color;
+        material.emissive = vec4(materialParams.color * materialParams.intensity, 0.0);
+    }
+}

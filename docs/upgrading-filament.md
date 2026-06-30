@@ -219,6 +219,29 @@ Add the new methods to the existing builder-chain tests in `commonTest`
 A builder method just needs to appear in the chain; a method with observable behavior deserves an
 assertion.
 
+### 6b. Regenerate the embedded standard materials
+
+`filament-compose` ships four precompiled built-in materials (`StandardMaterial.Lit`/`Unlit`/
+`Textured`/`Emissive`) as embedded `.filamat` blobs — their `.mat` sources and compiled outputs live
+in [`kotlin/filament-compose/src/commonMain/materials/`](../kotlin/filament-compose/src/commonMain/materials/),
+and the `generateEmbeddedMaterials` Gradle task base64-encodes them into a generated Kotlin object.
+
+A compiled `.filamat` is tied to the Filament ABI, so **whenever `MATERIAL_VERSION` changes** (watch
+the step-1 diff), recompile all four with the `matc` from the matching release. `matc` ships in the
+release tarball under `bin/` — the same archive the prebuilts come from, cached at
+`.gradle/filament-prebuilts-cache/filament-v<new>-<os>.tgz` after step 3:
+
+```sh
+tar -xzf .gradle/filament-prebuilts-cache/filament-v<new>-mac.tgz -C /tmp --strip-components=1 filament/bin/matc
+cd kotlin/filament-compose/src/commonMain/materials
+for m in standard_lit standard_unlit standard_textured standard_emissive; do
+    /tmp/bin/matc -p all -a all -o "$m.filamat" "$m.mat"   # variant filter is in the .mat source
+done
+```
+
+Commit the refreshed `.filamat`; the embed task picks them up on the next build. `StandardMaterialLifecycleTest`
+(Tier-B) fails to build a material if a blob is stale or corrupt.
+
 ### 7. Verify
 
 ```sh

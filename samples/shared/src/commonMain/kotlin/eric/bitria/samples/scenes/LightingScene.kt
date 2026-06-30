@@ -24,8 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
-import eric.bitria.samples.rememberColorInstance
-import eric.bitria.samples.rememberLitColorTemplate
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
@@ -44,6 +42,7 @@ import io.github.erkko68.filament.compose.scene.SpotCone
 import io.github.erkko68.filament.compose.scene.SpotLight
 import io.github.erkko68.filament.compose.scene.primitives.Plane
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberGltfAsset
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -115,14 +114,12 @@ fun LightingScene(onBack: () -> Unit) {
             }
 
             // Ground plane (receives shadows) + a glTF caster.
-            rememberLitColorTemplate()?.let { tmpl ->
-                Plane(
-                    material    = rememberColorInstance(tmpl, FilColor(0.35f, 0.35f, 0.4f)),
-                    width       = 14f,
-                    depth       = 14f,
-                    castShadows = false,  // pure ground receiver
-                )
-            }
+            Plane(
+                material    = rememberColorMaterialInstance(FilColor(0.35f, 0.35f, 0.4f)),
+                width       = 14f,
+                depth       = 14f,
+                castShadows = false,  // pure ground receiver
+            )
             GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") })
         }
 
