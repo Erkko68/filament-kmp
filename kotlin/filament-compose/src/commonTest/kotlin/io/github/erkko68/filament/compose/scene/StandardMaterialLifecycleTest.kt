@@ -7,6 +7,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
+import io.github.erkko68.filament.compose.testutils.assertDestroyed
 import io.github.erkko68.filament.compose.testutils.composeScene
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
@@ -45,7 +46,7 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
                 },
                 afterDispose = {
                     val m = assertNotNull(captured, "$type handle should have been captured")
-                    assertTrue(!engine.isValidMaterial(m), "$type should be destroyed after disposal")
+                    assertDestroyed("$type should be destroyed after disposal") { engine.isValidMaterial(m) }
                 },
             ) {
                 captured = rememberStandardMaterial(type)
@@ -73,21 +74,24 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
             assertEquals(1, applyCount, "configure runs once on creation")
             assertTrue(engine.isValidMaterialInstance(material, first), "instance live while composed")
 
+            // The harness runs with mainClock.autoAdvance = false, so a state-change recomposition
+            // only happens when the frame clock is ticked — waitForIdle() alone won't drive it.
             key = 1
+            mainClock.advanceTimeByFrame()
             waitForIdle()
             assertEquals(2, applyCount, "configure re-applies when the key changes")
             assertSame(first, instance, "the same instance is updated in place, never swapped")
 
-            key = 1 // unchanged
+            key = 1 // unchanged — no recomposition, no re-apply
+            mainClock.advanceTimeByFrame()
             waitForIdle()
             assertEquals(2, applyCount, "configure does not re-apply when the key is unchanged")
 
             setContent {}
             waitForIdle()
-            assertTrue(
-                !engine.isValidMaterialInstance(material, first),
-                "instance should be destroyed after disposal",
-            )
+            assertDestroyed("instance should be destroyed after disposal") {
+                engine.isValidMaterialInstance(material, first)
+            }
         }
 
         engine.destroyMaterial(material)
@@ -107,7 +111,7 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
         assertTrue(lit1 != unlit, "different types get different materials")
 
         cache.dispose()
-        assertTrue(!engine.isValidMaterial(lit1), "cache.dispose frees the Lit material")
-        assertTrue(!engine.isValidMaterial(unlit), "cache.dispose frees the Unlit material")
+        assertDestroyed("cache.dispose frees the Lit material") { engine.isValidMaterial(lit1) }
+        assertDestroyed("cache.dispose frees the Unlit material") { engine.isValidMaterial(unlit) }
     }
 }
