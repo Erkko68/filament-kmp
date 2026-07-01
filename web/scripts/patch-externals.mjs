@@ -96,7 +96,18 @@ function patch(src) {
     .replace(/\b(ReadonlyArray|Vector)<String>/g, "$1<JsString>")
     .replace(/\bReadonlyRecord<String,/g, "ReadonlyRecord<JsString,")
     // (7) void callback returns
-    .replace(/->\s*js\.core\.Void\?/g, "-> Unit");
+    .replace(/->\s*js\.core\.Void\?/g, "-> Unit")
+    // (8) Non-null returns that Filament.js actually leaves `undefined`. On Kotlin/JS a
+    //     non-null external returning undefined is silently tolerated; wasmJs's interop
+    //     adapter NPEs marshaling it. Make these nullable:
+    //       - resource getters that return undefined when nothing is set;
+    //       - SurfaceOrientation.Builder chaining setters that don't return `this`
+    //         (the actuals ignore the return — `build()` still returns the object).
+    .replace(/\bfun (getReflectionsTexture|getIrradianceTexture|getTexture)\(\): Texture\b/g, "fun $1(): Texture?")
+    .replace(
+      /\bfun (normals|uvs|positions|tangents|triangles16|triangles32|vertexCount|triangleCount)\(([^)]*)\): SurfaceOrientation_Builder\b/g,
+      "fun $1($2): SurfaceOrientation_Builder?",
+    );
 }
 
 let changed = 0;

@@ -7,7 +7,9 @@ package io.github.erkko68.filament.web.interop
  */
 
 /** A fresh empty JS object, e.g. to populate a Filament option struct (a TS interface). */
-fun emptyJsObject(): JsAny = js("{}")
+// `({})` — the parens make it an object-literal expression; a bare `{}` is parsed as an
+// empty block (returns undefined -> NPE) by the Kotlin/Wasm js() compiler.
+fun emptyJsObject(): JsAny = js("({})")
 
 /** `BigInt(s)` — Filament.js's steady-clock frame APIs take a JS BigInt. */
 fun jsBigInt(s: String): JsAny = js("BigInt(s)")
