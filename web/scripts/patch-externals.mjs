@@ -83,11 +83,13 @@ function patch(src) {
     //     Declaration positions only: `fun <T>` and `(class|interface) Name<T>`.
     .replace(/\bfun <([A-Z]\w*)>/g, "fun <$1 : JsAny?>")
     .replace(/\b((?:class|interface) \w+)<([A-Z]\w*)>/g, "$1<$2 : JsAny?>")
-    // (5) default TypedArray backing-buffer type argument
-    .replace(
-      new RegExp(`js\\.typedarrays\\.(${TYPED_ARRAYS})\\b(?!\\s*<)`, "g"),
-      "js.typedarrays.$1<js.buffer.ArrayBuffer>",
-    )
+    // (5) TypedArrays + canvas: remap the kotlin-wrappers types to the stdlib-shaped
+    //     packages (org.khronos.webgl / org.w3c.dom). These are provided for wasmJs by
+    //     the kotlinx-browser dependency and by kotlin-stdlib-js for js, so the DOM /
+    //     typed-array actuals compile unchanged on both targets. (kotlin-wrappers made
+    //     TypedArrays generic over the backing buffer, which the actuals don't carry.)
+    .replace(new RegExp(`js\\.typedarrays\\.(${TYPED_ARRAYS})\\b`, "g"), "org.khronos.webgl.$1")
+    .replace(/web\.html\.HTMLCanvasElement/g, "org.w3c.dom.HTMLCanvasElement")
     // (6) box primitive type arguments of Js generic containers (a JsArray/Vector/Record
     //     element or key must be a JsAny subtype, so Double/String can't appear there).
     .replace(/\b(ReadonlyArray|Vector)<Double>/g, "$1<JsNumber>")

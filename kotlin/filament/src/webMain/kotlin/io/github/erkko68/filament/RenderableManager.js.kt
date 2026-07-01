@@ -52,18 +52,18 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         select: Int,
         value: Int
     ) {
-        jsRenderableManager.setLayerMask(instance.unsafeCast<JSRenderableManagerInstance>(), select, value)
+        jsRenderableManager.setLayerMask(instance.unsafeCast<JSRenderableManagerInstance>(), select.toDouble(), value.toDouble())
     }
 
     actual fun setPriority(instance: EntityInstance, priority: Int) {
-        jsRenderableManager.setPriority(instance.unsafeCast<JSRenderableManagerInstance>(), priority)
+        jsRenderableManager.setPriority(instance.unsafeCast<JSRenderableManagerInstance>(), priority.toDouble())
     }
 
     actual fun getPriority(instance: EntityInstance): Int =
         jsRenderableManager.getPriority(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
 
     actual fun setChannel(instance: EntityInstance, channel: Int) {
-        jsRenderableManager.setChannel(instance.unsafeCast<JSRenderableManagerInstance>(), channel)
+        jsRenderableManager.setChannel(instance.unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
     }
 
     actual fun getChannel(instance: EntityInstance): Int =
@@ -111,7 +111,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         @Suppress("UNCHECKED_CAST")
         val boneMatrices = matrices.toTypedArray() as Array<Any?>
         jsRenderableManager.setBonesFromMatrices(
-            instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset)
+            instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset.toDouble())
     }
 
     actual fun setBonesAsQuaternions(
@@ -134,12 +134,12 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             bone.translation = arrayOf(0f, 0f, 0f)
             bone
         }
-        jsRenderableManager.setBones(instance.unsafeCast<JSRenderableManagerInstance>(), bones, offset)
+        jsRenderableManager.setBones(instance.unsafeCast<JSRenderableManagerInstance>(), bones, offset.toDouble())
     }
 
     actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
         jsRenderableManager.clearMaterialInstanceAt(
-            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
+            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble())
     }
 
     actual fun isShadowReceiver(instance: EntityInstance): Boolean {
@@ -161,14 +161,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         primitiveIndex: Int,
         materialInstance: MaterialInstance
     ) {
-        jsRenderableManager.setMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, materialInstance.jsMaterialInstance)
+        jsRenderableManager.setMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), materialInstance.jsMaterialInstance)
     }
 
     actual fun getMaterialInstanceAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): MaterialInstance? {
-        val jsMat = jsRenderableManager.getMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
+        val jsMat = jsRenderableManager.getMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble())
         return if (jsMat != null) MaterialInstance(jsMat) else null
     }
 
@@ -188,7 +188,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
             PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
         }
-        jsRenderableManager.setGeometryAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, count)
+        jsRenderableManager.setGeometryAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset.toDouble(), count.toDouble())
     }
 
     // TODO(js): non-indexed setGeometryAt is not exposed in jsbindings.cpp as of
@@ -211,14 +211,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         primitiveIndex: Int,
         blendOrder: Int
     ) {
-        jsRenderableManager.setBlendOrderAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, blendOrder)
+        jsRenderableManager.setBlendOrderAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), blendOrder.toDouble())
     }
 
     actual fun getBlendOrderAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): Int = jsRenderableManager.getBlendOrderAt(
-        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex).toInt()
+        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble()).toInt()
 
     actual fun setGlobalBlendOrderEnabledAt(
         instance: EntityInstance,
@@ -226,14 +226,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         enabled: Boolean
     ) {
         jsRenderableManager.setGlobalBlendOrderEnabledAt(
-            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex, enabled)
+            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), enabled)
     }
 
     actual fun isGlobalBlendOrderEnabledAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): Boolean = jsRenderableManager.isGlobalBlendOrderEnabledAt(
-        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex)
+        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble())
 
     actual fun setLightChannel(
         instance: EntityInstance,
@@ -241,14 +241,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         enable: Boolean
     ) {
         jsRenderableManager.setLightChannel(
-            instance.unsafeCast<JSRenderableManagerInstance>(), channel, enable)
+            instance.unsafeCast<JSRenderableManagerInstance>(), channel.toDouble(), enable)
     }
 
     actual fun getLightChannel(
         instance: EntityInstance,
         channel: Int
     ): Boolean = jsRenderableManager.getLightChannel(
-        instance.unsafeCast<JSRenderableManagerInstance>(), channel)
+        instance.unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
 
     actual fun getMorphTargetCount(instance: EntityInstance): Int {
         return 0
@@ -268,7 +268,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         offset: Int
     ) {
         if (weights.size >= 4) {
-            jsRenderableManager.setMorphWeights(instance.unsafeCast<JSRenderableManagerInstance>(), weights[0], weights[1], weights[2], weights[3])
+            jsRenderableManager.setMorphWeights(instance.unsafeCast<JSRenderableManagerInstance>(), weights[0].toDouble(), weights[1].toDouble(), weights[2].toDouble(), weights[3].toDouble())
         }
     }
 
@@ -283,7 +283,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
     actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
     actual class Builder actual constructor(count: Int) {
-        private val jsBuilder: JSRenderableManagerBuilder = JSRenderableManager.Builder(count)
+        private val jsBuilder: JSRenderableManagerBuilder = JSRenderableManager.Builder(count.toDouble())
 
         actual fun geometry(
             index: Int,
@@ -298,7 +298,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
                 PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
                 PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
             }
-            jsBuilder.geometry(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer)
+            jsBuilder.geometry(index.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer)
             return this
         }
 
@@ -317,7 +317,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
                 PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
                 PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
             }
-            jsBuilder.geometryOffset(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, count)
+            jsBuilder.geometryOffset(index.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset.toDouble(), count.toDouble())
             return this
         }
 
@@ -338,7 +338,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
                 PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
                 PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
             }
-            jsBuilder.geometryMinMax(index, jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset, minIndex, maxIndex, count)
+            jsBuilder.geometryMinMax(index.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset.toDouble(), minIndex.toDouble(), maxIndex.toDouble(), count.toDouble())
             return this
         }
 
@@ -359,7 +359,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         actual fun geometryType(type: GeometryType): Builder {
             // GeometryType isn't bound as a JS enum upstream — pass the ordinal.
             // Filament's C++ enum order: DYNAMIC=0, STATIC_BOUNDS=1, STATIC=2.
-            jsBuilder.geometryType(type.ordinal)
+            jsBuilder.geometryType(type.ordinal.toDouble())
             return this
         }
 
@@ -367,7 +367,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             index: Int,
             materialInstance: MaterialInstance
         ): Builder {
-            jsBuilder.material(index, materialInstance.jsMaterialInstance)
+            jsBuilder.material(index.toDouble(), materialInstance.jsMaterialInstance)
             return this
         }
 
@@ -375,7 +375,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             index: Int,
             blendOrder: Int
         ): Builder {
-            jsBuilder.blendOrder(index, blendOrder)
+            jsBuilder.blendOrder(index.toDouble(), blendOrder.toDouble())
             return this
         }
 
@@ -383,7 +383,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             index: Int,
             enabled: Boolean
         ): Builder {
-            jsBuilder.globalBlendOrderEnabled(index, enabled)
+            jsBuilder.globalBlendOrderEnabled(index.toDouble(), enabled)
             return this
         }
 
@@ -399,17 +399,17 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             select: Int,
             value: Int
         ): Builder {
-            jsBuilder.layerMask(select, value)
+            jsBuilder.layerMask(select.toDouble(), value.toDouble())
             return this
         }
 
         actual fun priority(priority: Int): Builder {
-            jsBuilder.priority(priority)
+            jsBuilder.priority(priority.toDouble())
             return this
         }
 
         actual fun channel(channel: Int): Builder {
-            jsBuilder.channel(channel)
+            jsBuilder.channel(channel.toDouble())
             return this
         }
 
@@ -434,7 +434,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun skinning(boneCount: Int): Builder {
-            jsBuilder.skinning(boneCount)
+            jsBuilder.skinning(boneCount.toDouble())
             return this
         }
 
@@ -473,7 +473,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             channel: Int,
             enable: Boolean
         ): Builder {
-            jsBuilder.lightChannel(channel, enable)
+            jsBuilder.lightChannel(channel.toDouble(), enable)
             return this
         }
 
@@ -484,7 +484,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun instances(instanceCount: Int): Builder {
-            jsBuilder.instances(instanceCount)
+            jsBuilder.instances(instanceCount.toDouble())
             return this
         }
 

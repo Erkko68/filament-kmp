@@ -25,7 +25,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val i
         count: Int
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes)
+        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
     }
 
     actual fun setBuffer(
@@ -36,7 +36,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val i
         callback: (() -> Unit)?
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes)
+        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
         callback?.invoke()
     }
 
@@ -46,7 +46,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val i
 
         actual fun indexCount(indexCount: Int): Builder {
             this.indexCount = indexCount
-            jsBuilder.indexCount(indexCount)
+            jsBuilder.indexCount(indexCount.toDouble())
             return this
         }
 

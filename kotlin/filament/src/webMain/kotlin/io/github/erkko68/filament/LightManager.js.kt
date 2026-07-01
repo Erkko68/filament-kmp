@@ -36,6 +36,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
             LightManager_Type.POINT -> Type.POINT
             LightManager_Type.FOCUSED_SPOT -> Type.FOCUSED_SPOT
             LightManager_Type.SPOT -> Type.SPOT
+            else -> error("unreachable")
         }
     }
 
@@ -73,15 +74,15 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setIntensity(instance: EntityInstance, intensity: Float) {
-        jsLightManager.setIntensity(instance.unsafeCast<JSLightManagerInstance>(), intensity)
+        jsLightManager.setIntensity(instance.unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
     }
 
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) {
-        jsLightManager.setIntensityEnergy(instance.unsafeCast<JSLightManagerInstance>(), watts, efficiency)
+        jsLightManager.setIntensityEnergy(instance.unsafeCast<JSLightManagerInstance>(), watts.toDouble(), efficiency.toDouble())
     }
 
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) {
-        jsLightManager.setIntensity(instance.unsafeCast<JSLightManagerInstance>(), intensity)
+        jsLightManager.setIntensity(instance.unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
     }
 
     actual fun getIntensity(instance: EntityInstance): Float {
@@ -89,7 +90,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setFalloff(instance: EntityInstance, radius: Float) {
-        jsLightManager.setFalloff(instance.unsafeCast<JSLightManagerInstance>(), radius)
+        jsLightManager.setFalloff(instance.unsafeCast<JSLightManagerInstance>(), radius.toDouble())
     }
 
     actual fun getFalloff(instance: EntityInstance): Float {
@@ -103,7 +104,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
 
     actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) {
         coneAngles[instance] = inner to outer
-        jsLightManager.setSpotLightCone(instance.unsafeCast<JSLightManagerInstance>(), inner, outer)
+        jsLightManager.setSpotLightCone(instance.unsafeCast<JSLightManagerInstance>(), inner.toDouble(), outer.toDouble())
     }
 
     actual fun getInnerConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.first ?: 0f
@@ -111,7 +112,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     actual fun getOuterConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.second ?: 0f
 
     actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) {
-        jsLightManager.setSunAngularRadius(instance.unsafeCast<JSLightManagerInstance>(), angularRadius)
+        jsLightManager.setSunAngularRadius(instance.unsafeCast<JSLightManagerInstance>(), angularRadius.toDouble())
     }
 
     actual fun getSunAngularRadius(instance: EntityInstance): Float {
@@ -119,7 +120,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setSunHaloSize(instance: EntityInstance, haloSize: Float) {
-        jsLightManager.setSunHaloSize(instance.unsafeCast<JSLightManagerInstance>(), haloSize)
+        jsLightManager.setSunHaloSize(instance.unsafeCast<JSLightManagerInstance>(), haloSize.toDouble())
     }
 
     actual fun getSunHaloSize(instance: EntityInstance): Float {
@@ -127,7 +128,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float) {
-        jsLightManager.setSunHaloFalloff(instance.unsafeCast<JSLightManagerInstance>(), haloFalloff)
+        jsLightManager.setSunHaloFalloff(instance.unsafeCast<JSLightManagerInstance>(), haloFalloff.toDouble())
     }
 
     actual fun getSunHaloFalloff(instance: EntityInstance): Float {
@@ -143,11 +144,11 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) {
-        jsLightManager.setLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel, enable)
+        jsLightManager.setLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel.toDouble(), enable)
     }
 
     actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean {
-        return jsLightManager.getLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel)
+        return jsLightManager.getLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel.toDouble())
     }
 
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
@@ -194,7 +195,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         )
 
         actual fun lightChannel(channel: Int, enable: Boolean): Builder {
-            jsBuilder.lightChannel(channel, enable)
+            jsBuilder.lightChannel(channel.toDouble(), enable)
             return this
         }
 
@@ -237,43 +238,43 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun intensity(intensity: Float): Builder {
-            jsBuilder.intensity(intensity)
+            jsBuilder.intensity(intensity.toDouble())
             return this
         }
 
         actual fun intensity(watts: Float, efficiency: Float): Builder {
             // intensityEnergy not in JS builder bindings; use intensity instead
-            jsBuilder.intensity(watts)
+            jsBuilder.intensity(watts.toDouble())
             return this
         }
 
         actual fun intensityCandela(intensity: Float): Builder {
-            jsBuilder.intensity(intensity)
+            jsBuilder.intensity(intensity.toDouble())
             return this
         }
 
         actual fun falloff(radius: Float): Builder {
-            jsBuilder.falloff(radius)
+            jsBuilder.falloff(radius.toDouble())
             return this
         }
 
         actual fun spotLightCone(inner: Float, outer: Float): Builder {
-            jsBuilder.spotLightCone(inner, outer)
+            jsBuilder.spotLightCone(inner.toDouble(), outer.toDouble())
             return this
         }
 
         actual fun sunAngularRadius(angularRadius: Float): Builder {
-            jsBuilder.sunAngularRadius(angularRadius)
+            jsBuilder.sunAngularRadius(angularRadius.toDouble())
             return this
         }
 
         actual fun sunHaloSize(haloSize: Float): Builder {
-            jsBuilder.sunHaloSize(haloSize)
+            jsBuilder.sunHaloSize(haloSize.toDouble())
             return this
         }
 
         actual fun sunHaloFalloff(haloFalloff: Float): Builder {
-            jsBuilder.sunHaloFalloff(haloFalloff)
+            jsBuilder.sunHaloFalloff(haloFalloff.toDouble())
             return this
         }
 

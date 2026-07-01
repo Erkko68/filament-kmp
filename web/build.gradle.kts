@@ -165,7 +165,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
-        val webMain by getting {
+        webMain {
             kotlin.srcDir(patchJsExternals)
             dependencies {
                 // `api` so consuming modules (kotlin/*/webMain) can resolve the wrapper
@@ -177,6 +177,11 @@ kotlin {
                 api("org.jetbrains.kotlin-wrappers:kotlin-js")
                 api("org.jetbrains.kotlin-wrappers:kotlin-web")
                 api("org.jetbrains.kotlin-wrappers:kotlin-browser")
+                // Supplies the stdlib-shaped org.w3c.dom / org.khronos.webgl / kotlinx.browser
+                // packages for BOTH js and wasmJs, so the DOM / typed-array externals (and the
+                // actuals that use them) resolve on wasmJs. patch-externals.mjs remaps those
+                // types back from kotlin-wrappers to these packages.
+                api("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
             }
         }
         jsMain {

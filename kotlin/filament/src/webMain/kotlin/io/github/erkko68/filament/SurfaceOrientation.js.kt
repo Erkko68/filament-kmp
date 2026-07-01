@@ -33,12 +33,12 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
 
         actual fun vertexCount(vertexCount: Int): Builder {
             this.vertexCount = vertexCount
-            jsBuilder.vertexCount(vertexCount)
+            jsBuilder.vertexCount(vertexCount.toDouble())
             return this
         }
 
         actual fun normals(buffer: FloatArray, stride: Int): Builder {
-            jsBuilder.normals(buffer.toFloat32Array(), stride)
+            jsBuilder.normals(buffer.toFloat32Array(), stride.toDouble())
             return this
         }
 
@@ -52,17 +52,17 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
         }
 
         actual fun uvs(buffer: FloatArray, stride: Int): Builder {
-            jsBuilder.uvs(buffer.toFloat32Array(), stride)
+            jsBuilder.uvs(buffer.toFloat32Array(), stride.toDouble())
             return this
         }
 
         actual fun positions(buffer: FloatArray, stride: Int): Builder {
-            jsBuilder.positions(buffer.toFloat32Array(), stride)
+            jsBuilder.positions(buffer.toFloat32Array(), stride.toDouble())
             return this
         }
 
         actual fun triangleCount(triangleCount: Int): Builder {
-            jsBuilder.triangleCount(triangleCount)
+            jsBuilder.triangleCount(triangleCount.toDouble())
             return this
         }
 
@@ -83,19 +83,19 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
 
 
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
-        val quats = jsSurfaceOrientation.getQuatsFloat4(count)
+        val quats = jsSurfaceOrientation.getQuatsFloat4(count.toDouble())
         val n = minOf(count * 4, buffer.size)
         for (i in 0 until n) buffer[i] = quats[i]
     }
 
     actual fun getQuatsAsHalf(buffer: ShortArray, count: Int) {
-        val quats = jsSurfaceOrientation.getQuatsHalf4(count)
+        val quats = jsSurfaceOrientation.getQuatsHalf4(count.toDouble())
         val n = minOf(count * 4, buffer.size)
         for (i in 0 until n) buffer[i] = quats[i].toShort()
     }
 
     actual fun getQuatsAsShort(buffer: ShortArray, count: Int) {
-        val quats = jsSurfaceOrientation.getQuats(count)
+        val quats = jsSurfaceOrientation.getQuats(count.toDouble())
         val n = minOf(count * 4, buffer.size)
         for (i in 0 until n) buffer[i] = quats[i]
     }

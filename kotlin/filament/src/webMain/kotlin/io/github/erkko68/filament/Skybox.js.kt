@@ -20,7 +20,7 @@ actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float?
 
     actual fun setLayerMask(select: Int, value: Int) {
         _layerMask = value
-        jsSkybox.setLayerMask(select, value)
+        jsSkybox.setLayerMask(select.toDouble(), value.toDouble())
     }
 
     actual class Builder {
@@ -43,7 +43,7 @@ actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float?
         }
 
         actual fun priority(priority: Int): Builder {
-            jsBuilder.priority(priority)
+            jsBuilder.priority(priority.toDouble())
             return this
         }
 

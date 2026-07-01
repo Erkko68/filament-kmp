@@ -93,7 +93,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         val count = vec.size().unsafeCast<Int>()
         val result = outEntities ?: IntArray(count)
         for (i in 0 until minOf(count, result.size)) {
-            val jsEntity = vec.get(i)
+            val jsEntity = vec.get(i.toDouble())
             val id = jsEntity.getId().unsafeCast<Int>()
             if (id != 0) EntityManager.register(id, jsEntity)
             result[i] = id

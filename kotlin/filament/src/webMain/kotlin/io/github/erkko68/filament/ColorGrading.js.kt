@@ -28,7 +28,7 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
         }
 
         actual fun dimensions(dim: Int): Builder {
-            jsBuilder.dimensions(dim)
+            jsBuilder.dimensions(dim.toDouble())
             return this
         }
 
@@ -48,7 +48,7 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
         }
 
         actual fun exposure(exposure: Float): Builder {
-            jsBuilder.exposure(exposure)
+            jsBuilder.exposure(exposure.toDouble())
             return this
         }
 
@@ -61,7 +61,7 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             temperature: Float,
             tint: Float
         ): Builder {
-            jsBuilder.whiteBalance(temperature, tint)
+            jsBuilder.whiteBalance(temperature.toDouble(), tint.toDouble())
             return this
         }
 
@@ -107,17 +107,17 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
         }
 
         actual fun contrast(contrast: Float): Builder {
-            jsBuilder.contrast(contrast)
+            jsBuilder.contrast(contrast.toDouble())
             return this
         }
 
         actual fun vibrance(vibrance: Float): Builder {
-            jsBuilder.vibrance(vibrance)
+            jsBuilder.vibrance(vibrance.toDouble())
             return this
         }
 
         actual fun saturation(saturation: Float): Builder {
-            jsBuilder.saturation(saturation)
+            jsBuilder.saturation(saturation.toDouble())
             return this
         }
 

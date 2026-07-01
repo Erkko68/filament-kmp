@@ -75,7 +75,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
 
     actual fun setVsyncTime(steadyClockTimeNano: Long) {
         val jsVal = js("BigInt")(steadyClockTimeNano.toString())
-        jsRenderer.setVsyncTime(jsVal.unsafeCast<Number>())
+        jsRenderer.setVsyncTime((jsVal.unsafeCast<Number>()).toDouble())
     }
 
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {

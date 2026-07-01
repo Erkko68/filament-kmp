@@ -362,12 +362,14 @@ private fun fromJsBackend(b: io.github.erkko68.filament.web.Backend): Engine.Bac
     io.github.erkko68.filament.web.Backend.METAL   -> Engine.Backend.METAL
     io.github.erkko68.filament.web.Backend.WEBGPU  -> Engine.Backend.WEBGPU
     io.github.erkko68.filament.web.Backend.NOOP    -> Engine.Backend.NOOP
+    else -> error("unreachable")
 }
 
 private fun fromJsFeatureLevel(fl: io.github.erkko68.filament.web.FeatureLevel): Engine.FeatureLevel = when (fl) {
     io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_1 -> Engine.FeatureLevel.FEATURE_LEVEL_1
     io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
     io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
+    else -> error("unreachable")
 }
 
 private fun toJsFeatureLevel(fl: Engine.FeatureLevel): io.github.erkko68.filament.web.FeatureLevel = when (fl) {

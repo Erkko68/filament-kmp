@@ -53,25 +53,25 @@ actual class Texture(val jsTexture: JSTexture) {
 
         actual fun width(width: Int): Builder {
             _width = width
-            jsBuilder.width(width)
+            jsBuilder.width(width.toDouble())
             return this
         }
 
         actual fun height(height: Int): Builder {
             _height = height
-            jsBuilder.height(height)
+            jsBuilder.height(height.toDouble())
             return this
         }
 
         actual fun depth(depth: Int): Builder {
             _depth = depth
-            jsBuilder.depth(depth)
+            jsBuilder.depth(depth.toDouble())
             return this
         }
 
         actual fun levels(levels: Int): Builder {
             _levels = levels
-            jsBuilder.levels(levels)
+            jsBuilder.levels(levels.toDouble())
             return this
         }
 
@@ -104,7 +104,7 @@ actual class Texture(val jsTexture: JSTexture) {
         }
 
         actual fun usage(usage: Int): Builder {
-            jsBuilder.usage(usage)
+            jsBuilder.usage(usage.toDouble())
             return this
         }
 
@@ -185,17 +185,17 @@ actual class Texture(val jsTexture: JSTexture) {
     }
 
     actual fun getWidth(level: Int): Int {
-        engine?.let { return jsTexture.getWidth(it.jsEngine, level).toInt() }
+        engine?.let { return jsTexture.getWidth(it.jsEngine, level.toDouble()).toInt() }
         return if (level == 0) _width else (_width shr level).coerceAtLeast(1)
     }
 
     actual fun getHeight(level: Int): Int {
-        engine?.let { return jsTexture.getHeight(it.jsEngine, level).toInt() }
+        engine?.let { return jsTexture.getHeight(it.jsEngine, level.toDouble()).toInt() }
         return if (level == 0) _height else (_height shr level).coerceAtLeast(1)
     }
 
     actual fun getDepth(level: Int): Int {
-        engine?.let { return jsTexture.getDepth(it.jsEngine, level).toInt() }
+        engine?.let { return jsTexture.getDepth(it.jsEngine, level.toDouble()).toInt() }
         return if (level == 0) _depth else (_depth shr level).coerceAtLeast(1)
     }
 
@@ -218,9 +218,9 @@ actual class Texture(val jsTexture: JSTexture) {
         descriptor: PixelBufferDescriptor
     ) {
         if (_target == Sampler.SAMPLER_CUBEMAP) {
-            jsTexture.setImageCube(engine.jsEngine, level, descriptor.jsPbd)
+            jsTexture.setImageCube(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
         } else {
-            jsTexture.setImage(engine.jsEngine, level, descriptor.jsPbd)
+            jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
         }
     }
 
@@ -234,7 +234,7 @@ actual class Texture(val jsTexture: JSTexture) {
         descriptor: PixelBufferDescriptor
     ) {
         // JS bindings only support setImage(engine, level, pbd); sub-region upload not available
-        jsTexture.setImage(engine.jsEngine, level, descriptor.jsPbd)
+        jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
     }
 
     actual fun setImage(

@@ -16,7 +16,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
     }
 
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) {
-        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, data.toUint8Array())
+        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex.toDouble(), data.toUint8Array())
     }
 
     actual fun setBufferAt(
@@ -27,7 +27,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
         count: Int
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, clippedData.toUint8Array(), destOffsetInBytes)
+        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex.toDouble(), clippedData.toUint8Array(), destOffsetInBytes.toDouble())
     }
 
     actual fun setBufferAt(
@@ -39,7 +39,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
         callback: (() -> Unit)?
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex, clippedData.toUint8Array(), destOffsetInBytes)
+        jsVertexBuffer.setBufferAt(engine.jsEngine, bufferIndex.toDouble(), clippedData.toUint8Array(), destOffsetInBytes.toDouble())
         callback?.invoke()
     }
 
@@ -48,7 +48,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
         bufferIndex: Int,
         bufferObject: BufferObject
     ) {
-        jsVertexBuffer.setBufferObjectAt(engine.jsEngine, bufferIndex, bufferObject.jsBufferObject)
+        jsVertexBuffer.setBufferObjectAt(engine.jsEngine, bufferIndex.toDouble(), bufferObject.jsBufferObject)
     }
 
     actual enum class VertexAttribute { POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED, CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7 }
@@ -60,7 +60,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
 
         actual fun vertexCount(vertexCount: Int): Builder {
             this.vertexCount = vertexCount
-            jsBuilder.vertexCount(vertexCount)
+            jsBuilder.vertexCount(vertexCount.toDouble())
             return this
         }
 
@@ -70,7 +70,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
         }
 
         actual fun bufferCount(bufferCount: Int): Builder {
-            jsBuilder.bufferCount(bufferCount)
+            jsBuilder.bufferCount(bufferCount.toDouble())
             return this
         }
 
@@ -81,7 +81,7 @@ actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer, actual va
             byteOffset: Int,
             byteStride: Int
         ): Builder {
-            jsBuilder.attribute(mapAttribute(attribute), bufferIndex, mapAttributeType(attributeType), byteOffset, byteStride)
+            jsBuilder.attribute(mapAttribute(attribute), bufferIndex.toDouble(), mapAttributeType(attributeType), byteOffset.toDouble(), byteStride.toDouble())
             return this
         }
 

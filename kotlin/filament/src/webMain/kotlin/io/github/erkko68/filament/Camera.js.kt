@@ -193,11 +193,11 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
         get() = jsCamera.getCullingFar().toFloat()
 
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
-        jsCamera.setExposure(aperture, shutterSpeed, sensitivity)
+        jsCamera.setExposure(aperture.toDouble(), shutterSpeed.toDouble(), sensitivity.toDouble())
     }
 
     actual fun setExposure(exposure: Float) {
-        jsCamera.setExposureDirect(exposure)
+        jsCamera.setExposureDirect(exposure.toDouble())
     }
 
     actual val aperture: Float

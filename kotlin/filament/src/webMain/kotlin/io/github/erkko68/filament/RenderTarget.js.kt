@@ -26,6 +26,7 @@ actual class RenderTarget internal constructor(
             Texture_CubemapFace.NEGATIVE_Y -> Texture.CubemapFace.NEGATIVE_Y
             Texture_CubemapFace.POSITIVE_Z -> Texture.CubemapFace.POSITIVE_Z
             Texture_CubemapFace.NEGATIVE_Z -> Texture.CubemapFace.NEGATIVE_Z
+            else -> error("unreachable")
         }
     }
 
@@ -59,7 +60,7 @@ actual class RenderTarget internal constructor(
             attachment: AttachmentPoint,
             level: Int
         ): Builder {
-            jsBuilder.mipLevel(mapAttachment(attachment), level)
+            jsBuilder.mipLevel(mapAttachment(attachment), level.toDouble())
             return this
         }
 
@@ -83,7 +84,7 @@ actual class RenderTarget internal constructor(
             attachment: AttachmentPoint,
             layer: Int
         ): Builder {
-            jsBuilder.layer(mapAttachment(attachment), layer)
+            jsBuilder.layer(mapAttachment(attachment), layer.toDouble())
             return this
         }
 

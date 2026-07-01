@@ -7,7 +7,7 @@ import io.github.erkko68.filament.web.`IndirectLight_Builder` as JSIndirectLight
 actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
     actual var intensity: Float
         get() = jsIndirectLight.getIntensity().toFloat()
-        set(value) { jsIndirectLight.setIntensity(value) }
+        set(value) { jsIndirectLight.setIntensity(value.toDouble()) }
 
     actual var rotation: FloatArray
         get() {
@@ -36,7 +36,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             bands: Int,
             sh: FloatArray
         ): Builder {
-            jsBuilder.irradianceSh(bands, sh.toTypedArray() as Array<Number>)
+            jsBuilder.irradianceSh(bands.toDouble(), sh.toTypedArray() as Array<Number>)
             return this
         }
 
@@ -50,12 +50,12 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             sh: FloatArray
         ): Builder {
             // JS bindings don't seem to have radiance, mapping to irradiance
-            jsBuilder.irradianceSh(bands, sh.toTypedArray() as Array<Number>)
+            jsBuilder.irradianceSh(bands.toDouble(), sh.toTypedArray() as Array<Number>)
             return this
         }
 
         actual fun intensity(envIntensity: Float): Builder {
-            jsBuilder.intensity(envIntensity)
+            jsBuilder.intensity(envIntensity.toDouble())
             return this
         }
 

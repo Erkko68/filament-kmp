@@ -34,11 +34,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Float) {
-        jsMaterialInstance.setFloatParameter(name, x)
+        jsMaterialInstance.setFloatParameter(name, x.toDouble())
     }
 
     actual fun setParameter(name: String, x: Int) {
-        jsMaterialInstance.setFloatParameter(name, x)
+        jsMaterialInstance.setFloatParameter(name, x.toDouble())
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
@@ -171,20 +171,20 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setPolygonOffset(scale: Float, constant: Float) {
-        jsMaterialInstance.setPolygonOffset(scale, constant)
+        jsMaterialInstance.setPolygonOffset(scale.toDouble(), constant.toDouble())
     }
 
     actual var maskThreshold: Float
         get() = jsMaterialInstance.getMaskThreshold().toFloat()
-        set(value) { jsMaterialInstance.setMaskThreshold(value) }
+        set(value) { jsMaterialInstance.setMaskThreshold(value.toDouble()) }
 
     actual var specularAntiAliasingVariance: Float
         get() = jsMaterialInstance.getSpecularAntiAliasingVariance().toFloat()
-        set(value) { jsMaterialInstance.setSpecularAntiAliasingVariance(value) }
+        set(value) { jsMaterialInstance.setSpecularAntiAliasingVariance(value.toDouble()) }
 
     actual var specularAntiAliasingThreshold: Float
         get() = jsMaterialInstance.getSpecularAntiAliasingThreshold().toFloat()
-        set(value) { jsMaterialInstance.setSpecularAntiAliasingThreshold(value) }
+        set(value) { jsMaterialInstance.setSpecularAntiAliasingThreshold(value.toDouble()) }
 
     actual var isDoubleSided: Boolean
         get() = jsMaterialInstance.isDoubleSided()
@@ -195,6 +195,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
             io.github.erkko68.filament.web.TransparencyMode.DEFAULT -> Material.TransparencyMode.DEFAULT
             io.github.erkko68.filament.web.TransparencyMode.TWO_PASSES_ONE_SIDE -> Material.TransparencyMode.TWO_PASSES_ONE_SIDE
             io.github.erkko68.filament.web.TransparencyMode.TWO_PASSES_TWO_SIDES -> Material.TransparencyMode.TWO_PASSES_TWO_SIDES
+            else -> error("unreachable")
         }
         set(value) {
             jsMaterialInstance.setTransparencyMode(when (value) {
@@ -255,6 +256,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
             CompareFunc.NOT_EQUAL -> TextureSampler.CompareFunction.NOT_EQUAL
             CompareFunc.ALWAYS -> TextureSampler.CompareFunction.ALWAYS
             CompareFunc.NEVER -> TextureSampler.CompareFunction.NEVER
+            else -> error("unreachable")
         }
         set(value) {
             jsMaterialInstance.setDepthFunc(when(value) {
@@ -338,7 +340,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         value: Int,
         face: StencilFace
     ) {
-        jsMaterialInstance.setStencilReferenceValue(value, mapStencilFace(face))
+        jsMaterialInstance.setStencilReferenceValue(value.toDouble(), mapStencilFace(face))
     }
 
     actual fun setStencilReferenceValue(value: Int) {
@@ -346,7 +348,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setStencilReadMask(readMask: Int, face: StencilFace) {
-        jsMaterialInstance.setStencilReadMask(readMask, mapStencilFace(face))
+        jsMaterialInstance.setStencilReadMask(readMask.toDouble(), mapStencilFace(face))
     }
 
     actual fun setStencilReadMask(readMask: Int) {
@@ -357,7 +359,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         writeMask: Int,
         face: StencilFace
     ) {
-        jsMaterialInstance.setStencilWriteMask(writeMask, mapStencilFace(face))
+        jsMaterialInstance.setStencilWriteMask(writeMask.toDouble(), mapStencilFace(face))
     }
 
     actual fun setStencilWriteMask(writeMask: Int) {
@@ -408,4 +410,5 @@ private fun fromJsCullingMode(mode: CullingMode): Material.CullingMode = when (m
     CullingMode.FRONT -> Material.CullingMode.FRONT
     CullingMode.BACK -> Material.CullingMode.BACK
     CullingMode.FRONT_AND_BACK -> Material.CullingMode.FRONT_AND_BACK
+    else -> error("unreachable")
 }

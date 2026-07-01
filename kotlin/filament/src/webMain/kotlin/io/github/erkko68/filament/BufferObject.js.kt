@@ -24,7 +24,7 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         count: Int
     ) {
         val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsBufferObject.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes)
+        jsBufferObject.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
     }
 
     actual fun setBuffer(
@@ -43,7 +43,7 @@ actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
         private val jsBuilder = JSBufferObject.Builder()
 
         actual fun size(byteCount: Int): Builder {
-            jsBuilder.size(byteCount)
+            jsBuilder.size(byteCount.toDouble())
             return this
         }
 
