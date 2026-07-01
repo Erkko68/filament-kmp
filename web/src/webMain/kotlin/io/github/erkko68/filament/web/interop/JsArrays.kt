@@ -47,6 +47,20 @@ fun JsAny.toFloatArray(size: Int): FloatArray {
     return FloatArray(size) { i -> arr[i]?.toDouble()?.toFloat() ?: 0f }
 }
 
+/** Reads a JS `number[]` value into an existing [out] FloatArray (up to its size). */
+fun JsAny.readNumbersInto(out: FloatArray): FloatArray {
+    val arr = unsafeCast<JsArray<JsNumber>>()
+    for (i in 0 until minOf(out.size, arr.length)) out[i] = arr[i]?.toDouble()?.toFloat() ?: 0f
+    return out
+}
+
+/** Reads a JS `number[]` value into an existing [out] DoubleArray (up to its size). */
+fun JsAny.readNumbersInto(out: DoubleArray): DoubleArray {
+    val arr = unsafeCast<JsArray<JsNumber>>()
+    for (i in 0 until minOf(out.size, arr.length)) out[i] = arr[i]?.toDouble() ?: 0.0
+    return out
+}
+
 /** Wraps a Kotlin list of JS values into a real JS array (`JsArray<T>`). */
 fun <T : JsAny?> List<T>.toJsArray(): JsArray<T> {
     val arr = JsArray<T>()

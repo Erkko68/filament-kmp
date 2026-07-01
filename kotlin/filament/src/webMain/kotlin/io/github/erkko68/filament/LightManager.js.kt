@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.readNumbersInto
+
 import io.github.erkko68.filament.web.LightManager_Instance as JSLightManagerInstance
 
 import io.github.erkko68.filament.web.interop.jsNumbers
@@ -50,8 +52,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
 
     actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
         val result = out
-        val jsVec = jsLightManager.getDirection(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()) as Array<Double>
-        for (i in 0 until 3.coerceAtMost(jsVec.size)) result[i] = jsVec[i].toFloat()
+        (jsLightManager.getDirection(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
@@ -61,8 +62,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
 
     actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
         val result = out
-        val jsVec = jsLightManager.getPosition(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()) as Array<Double>
-        for (i in 0 until 3.coerceAtMost(jsVec.size)) result[i] = jsVec[i].toFloat()
+        (jsLightManager.getPosition(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
@@ -72,8 +72,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
 
     actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
         val result = out
-        val jsVec = jsLightManager.getColor(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()) as Array<Double>
-        for (i in 0 until 3.coerceAtMost(jsVec.size)) result[i] = jsVec[i].toFloat()
+        (jsLightManager.getColor(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 

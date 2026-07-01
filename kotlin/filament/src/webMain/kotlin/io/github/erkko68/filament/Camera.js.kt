@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.readNumbersInto
+
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
@@ -77,8 +79,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
 
     actual fun getScaling(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(4)
-        val jsVec = jsCamera.getScaling() as Array<Double>
-        for (i in 0 until jsVec.size.coerceAtMost(result.size)) result[i] = jsVec[i]
+        (jsCamera.getScaling())?.readNumbersInto(result)
         return result
     }
 
@@ -88,8 +89,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
 
     actual fun getShift(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(2)
-        val jsVec = jsCamera.getShift() as Array<Double>
-        for (i in 0 until jsVec.size.coerceAtMost(result.size)) result[i] = jsVec[i]
+        (jsCamera.getShift())?.readNumbersInto(result)
         return result
     }
 
@@ -121,71 +121,61 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
 
     actual fun getProjectionMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        val jsMatrix = jsCamera.getProjectionMatrix() as Array<Double>
-        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        (jsCamera.getProjectionMatrix())?.readNumbersInto(result)
         return result
     }
 
     actual fun getCullingProjectionMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        val jsMatrix = jsCamera.getCullingProjectionMatrix() as Array<Double>
-        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        (jsCamera.getCullingProjectionMatrix())?.readNumbersInto(result)
         return result
     }
 
     actual fun getModelMatrix(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(16)
-        val jsMatrix = jsCamera.getModelMatrix() as Array<Double>
-        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i].toFloat()
+        (jsCamera.getModelMatrix())?.readNumbersInto(result)
         return result
     }
 
     actual fun getModelMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        val jsMatrix = jsCamera.getModelMatrix() as Array<Double>
-        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        (jsCamera.getModelMatrix())?.readNumbersInto(result)
         return result
     }
 
     actual fun getViewMatrix(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(16)
-        val jsMatrix = jsCamera.getViewMatrix() as Array<Double>
-        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i].toFloat()
+        (jsCamera.getViewMatrix())?.readNumbersInto(result)
         return result
     }
 
     actual fun getViewMatrix(out: DoubleArray?): DoubleArray {
         val result = out ?: DoubleArray(16)
-        val jsMatrix = jsCamera.getViewMatrix() as Array<Double>
-        for (i in 0 until 16.coerceAtMost(jsMatrix.size)) result[i] = jsMatrix[i]
+        (jsCamera.getViewMatrix())?.readNumbersInto(result)
         return result
     }
 
     actual fun getPosition(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        val pos = jsCamera.getPosition() as Array<Double>
-        for (i in 0 until 3.coerceAtMost(pos.size)) result[i] = pos[i].toFloat()
+        (jsCamera.getPosition())?.readNumbersInto(result)
         return result
     }
 
     actual fun getLeftVector(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        val vec = jsCamera.getLeftVector() as Array<Double>
-        for (i in 0 until 3.coerceAtMost(vec.size)) result[i] = vec[i].toFloat()
+        (jsCamera.getLeftVector())?.readNumbersInto(result)
         return result
     }
 
     actual fun getUpVector(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        val vec = jsCamera.getUpVector() as Array<Double>
-        for (i in 0 until 3.coerceAtMost(vec.size)) result[i] = vec[i].toFloat()
+        (jsCamera.getUpVector())?.readNumbersInto(result)
         return result
     }
 
     actual fun getForwardVector(out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)
-        val vec = jsCamera.getForwardVector() as Array<Double>
-        for (i in 0 until 3.coerceAtMost(vec.size)) result[i] = vec[i].toFloat()
+        (jsCamera.getForwardVector())?.readNumbersInto(result)
         return result
     }
 

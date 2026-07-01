@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.readNumbersInto
+
 import io.github.erkko68.filament.web.TransformManager_Instance as JSTransformManagerInstance
 
 import io.github.erkko68.filament.web.interop.jsNumbers
@@ -114,8 +116,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outLocalTransform: FloatArray?
     ): FloatArray {
         val result = outLocalTransform ?: FloatArray(16)
-        val jsMatrix = jsTransformManager.getTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()) as Array<Double>
-        for (i in 0 until 16) result[i] = jsMatrix[i].toFloat()
+        (jsTransformManager.getTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
@@ -124,8 +125,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outLocalTransform: DoubleArray?
     ): DoubleArray {
         val result = outLocalTransform ?: DoubleArray(16)
-        val jsMatrix = jsTransformManager.getTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()) as Array<Double>
-        for (i in 0 until 16) result[i] = jsMatrix[i]
+        (jsTransformManager.getTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
@@ -134,8 +134,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outWorldTransform: FloatArray?
     ): FloatArray {
         val result = outWorldTransform ?: FloatArray(16)
-        val jsMatrix = jsTransformManager.getWorldTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()) as Array<Double>
-        for (i in 0 until 16) result[i] = jsMatrix[i].toFloat()
+        (jsTransformManager.getWorldTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
@@ -144,8 +143,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outWorldTransform: DoubleArray?
     ): DoubleArray {
         val result = outWorldTransform ?: DoubleArray(16)
-        val jsMatrix = jsTransformManager.getWorldTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()) as Array<Double>
-        for (i in 0 until 16) result[i] = jsMatrix[i]
+        (jsTransformManager.getWorldTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
