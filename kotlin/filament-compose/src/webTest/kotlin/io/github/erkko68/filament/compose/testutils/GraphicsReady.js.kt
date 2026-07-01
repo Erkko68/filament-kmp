@@ -11,4 +11,6 @@ actual typealias GraphicsReady = Any
  * bundled instance `runComposeUiTest` uses), so the test body runs only after Skia is callable.
  */
 actual fun awaitGraphicsReady(): GraphicsReady =
-    Promise<Unit> { resolve, _ -> onWasmReady { resolve(Unit) } }
+    // Promise<JsAny?>, not Promise<Unit>: wasmJs bounds the Promise type argument to
+    // JsAny? (Unit isn't a subtype); resolve with null. js accepts this too.
+    Promise<JsAny?> { resolve, _ -> onWasmReady { resolve(null) } }
