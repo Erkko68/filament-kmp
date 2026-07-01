@@ -338,12 +338,17 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         }
 
         actual fun getSteadyClockTimeNano(): Long {
-            // js("Number")(...) coerces a possible BigInt result down to a JS number.
-            val num = JSEngine.getSteadyClockTimeNano()
-            return num.toLong()
+            // Filament.js returns a BigInt here. Coerce it to a JS number *before* it
+            // crosses the interop boundary: wasmJs's adapter throws marshaling a BigInt
+            // into the externally-typed Double (js tolerates it, wasm doesn't).
+            return steadyClockTimeNanoJs().toLong()
         }
     }
 }
+
+// Reads the global `Engine.getSteadyClockTimeNano()` and coerces its BigInt result to a
+// number in JS, so neither target marshals a BigInt as a Double.
+private fun steadyClockTimeNanoJs(): Double = js("Number(Engine.getSteadyClockTimeNano())")
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Enum bridges. The common Engine.Backend / Engine.FeatureLevel mirror the

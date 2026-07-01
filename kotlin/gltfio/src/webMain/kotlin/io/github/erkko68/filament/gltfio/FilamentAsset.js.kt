@@ -62,12 +62,12 @@ actual class FilamentAsset(
         val minArr = aabb.min!!.toFloatArray(3)
         val maxArr = aabb.max!!.toFloatArray(3)
         return Box(
-            (minArr[0].toFloat() + maxArr[0].toFloat()) / 2f,
-            (minArr[1].toFloat() + maxArr[1].toFloat()) / 2f,
-            (minArr[2].toFloat() + maxArr[2].toFloat()) / 2f,
-            (maxArr[0].toFloat() - minArr[0].toFloat()) / 2f,
-            (maxArr[1].toFloat() - minArr[1].toFloat()) / 2f,
-            (maxArr[2].toFloat() - minArr[2].toFloat()) / 2f
+            (minArr[0] + maxArr[0]) / 2f,
+            (minArr[1] + maxArr[1]) / 2f,
+            (minArr[2] + maxArr[2]) / 2f,
+            (maxArr[0] - minArr[0]) / 2f,
+            (maxArr[1] - minArr[1]) / 2f,
+            (maxArr[2] - minArr[2]) / 2f
         )
     }
 

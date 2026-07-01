@@ -1,12 +1,10 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.web.interop.toJsArray
-
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.web.`gltfio_AssetLoader` as JSAssetLoader
-import io.github.erkko68.filament.web.Engine as JSEngine
+import io.github.erkko68.filament.web.interop.toJsArray
 import org.khronos.webgl.set
+import io.github.erkko68.filament.web.gltfio_AssetLoader as JSAssetLoader
 
 private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
     val int8 = org.khronos.webgl.Int8Array(size)
