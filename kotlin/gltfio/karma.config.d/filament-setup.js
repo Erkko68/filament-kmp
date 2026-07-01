@@ -35,3 +35,10 @@ config.customLaunchers = Object.assign(config.customLaunchers || {}, {
         ],
     },
 });
+
+// Filament's WebGL init + first frame under software rendering (SwiftShader on CI)
+// is far slower than on a real GPU, so scene tests that await graphics readiness can
+// exceed Mocha's 2s default. Raise the in-browser async timeout (js finishes well under
+// it on a real runtime; this only rescues the slow CI path). Applies to js + wasm alike.
+config.client = config.client || {};
+config.client.mocha = Object.assign({}, config.client.mocha, { timeout: 30000 });
