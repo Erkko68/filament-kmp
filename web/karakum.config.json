@@ -6,6 +6,6 @@
     "^.*$": ""
   },
   "packageNameMapper": {
-    "^filament/(.*)$": "io/github/erkko68/filament/js/$1"
+    "^filament/(.*)$": "io/github/erkko68/filament/web/$1"
   }
 }

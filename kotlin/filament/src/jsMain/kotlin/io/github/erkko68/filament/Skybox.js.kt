@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Skybox as JSSkybox
-import io.github.erkko68.filament.js.`Skybox_Builder` as JSSkyboxBuilder
+import io.github.erkko68.filament.web.Skybox as JSSkybox
+import io.github.erkko68.filament.web.`Skybox_Builder` as JSSkyboxBuilder
 
 actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float? = null) {
     private var _layerMask = 0xFF

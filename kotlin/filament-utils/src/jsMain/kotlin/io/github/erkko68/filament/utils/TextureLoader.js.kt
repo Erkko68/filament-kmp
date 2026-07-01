@@ -2,7 +2,7 @@ package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.js.Texture as JSTexture
+import io.github.erkko68.filament.web.Texture as JSTexture
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.Uint8Array

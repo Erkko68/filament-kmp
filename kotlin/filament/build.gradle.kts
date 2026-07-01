@@ -41,8 +41,8 @@ kotlin {
             // FilamentC class + loader + the FFM helpers (Ffm.kt). Replaces the JNI :java:filament dep.
             api(project(":java"))
         }
-        jsMain.dependencies {
-            implementation(project(":js"))
+        webMain.dependencies {
+            implementation(project(":web"))
         }
     }
 

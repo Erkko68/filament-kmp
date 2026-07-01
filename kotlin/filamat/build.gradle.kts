@@ -37,8 +37,8 @@ kotlin {
             // FilamentC already cover the filamat surface. Replaces the JNI :java:filamat dep.
             api(project(":java"))
         }
-        jsMain.dependencies {
-            implementation(project(":js"))
+        webMain.dependencies {
+            implementation(project(":web"))
         }
     }
 

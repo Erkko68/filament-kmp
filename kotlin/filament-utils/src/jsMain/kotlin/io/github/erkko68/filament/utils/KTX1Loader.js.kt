@@ -4,9 +4,9 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.Skybox
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.js.Texture as JSTexture
-import io.github.erkko68.filament.js.IndirectLight as JSIndirectLight
-import io.github.erkko68.filament.js.Skybox as JSSkybox
+import io.github.erkko68.filament.web.Texture as JSTexture
+import io.github.erkko68.filament.web.IndirectLight as JSIndirectLight
+import io.github.erkko68.filament.web.Skybox as JSSkybox
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.set

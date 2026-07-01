@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.SurfaceOrientation as JSSurfaceOrientation
-import io.github.erkko68.filament.js.`SurfaceOrientation_Builder` as JSSurfaceOrientationBuilder
+import io.github.erkko68.filament.web.SurfaceOrientation as JSSurfaceOrientation
+import io.github.erkko68.filament.web.`SurfaceOrientation_Builder` as JSSurfaceOrientationBuilder
 import org.khronos.webgl.Float32Array
 import org.khronos.webgl.Uint16Array
 import org.khronos.webgl.Uint32Array

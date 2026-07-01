@@ -1,21 +1,21 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Renderer as JSRenderer
-import io.github.erkko68.filament.js.`Renderer_ClearOptions` as JSRendererClearOptions
+import io.github.erkko68.filament.web.Renderer as JSRenderer
+import io.github.erkko68.filament.web.`Renderer_ClearOptions` as JSRendererClearOptions
 
 // Renderer methods present only in some filament.js builds. Declared as methods (not function-typed
 // properties) so they're invoked as `obj.method(...)` and keep their `this` binding — embind throws
 // BindingError if the bound function is detached from its receiver. Presence is probed before calling.
 // readPixels has two arities (with/without a RenderTarget), so it gets one interface each.
 private external interface JsRendererExt {
-    fun copyFrame(dstSwapChain: io.github.erkko68.filament.js.SwapChain, dst: Viewport, src: Viewport, flags: Int)
+    fun copyFrame(dstSwapChain: io.github.erkko68.filament.web.SwapChain, dst: Viewport, src: Viewport, flags: Int)
     fun skipNextFrames(frameCount: Int)
 }
 private external interface JsReadPixels {
     fun readPixels(x: Int, y: Int, w: Int, h: Int, buffer: Texture.PixelBufferDescriptor)
 }
 private external interface JsReadPixelsRt {
-    fun readPixels(rt: io.github.erkko68.filament.js.RenderTarget, x: Int, y: Int, w: Int, h: Int, buffer: Texture.PixelBufferDescriptor)
+    fun readPixels(rt: io.github.erkko68.filament.web.RenderTarget, x: Int, y: Int, w: Int, h: Int, buffer: Texture.PixelBufferDescriptor)
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")

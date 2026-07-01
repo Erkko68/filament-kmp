@@ -1,10 +1,10 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.LightManager as JSLightManager
-import io.github.erkko68.filament.js.`LightManager_Builder` as JSLightManagerBuilder
-import io.github.erkko68.filament.js.LightManager_Type
-import io.github.erkko68.filament.js.Entity as JSEntity
-import io.github.erkko68.filament.js.LightManager_Instance as JSLightManagerInstance
+import io.github.erkko68.filament.web.LightManager as JSLightManager
+import io.github.erkko68.filament.web.`LightManager_Builder` as JSLightManagerBuilder
+import io.github.erkko68.filament.web.LightManager_Type
+import io.github.erkko68.filament.web.Entity as JSEntity
+import io.github.erkko68.filament.web.LightManager_Instance as JSLightManagerInstance
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {

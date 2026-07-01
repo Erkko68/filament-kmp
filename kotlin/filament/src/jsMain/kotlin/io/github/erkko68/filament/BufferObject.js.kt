@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.BufferObject_BindingType
-import io.github.erkko68.filament.js.BufferObject as JSBufferObject
+import io.github.erkko68.filament.web.BufferObject_BindingType
+import io.github.erkko68.filament.web.BufferObject as JSBufferObject
 import org.khronos.webgl.set
 
 actual class BufferObject(internal val jsBufferObject: JSBufferObject) {

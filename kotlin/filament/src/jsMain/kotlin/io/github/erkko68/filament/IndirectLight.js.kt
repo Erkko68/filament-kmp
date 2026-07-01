@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.IndirectLight as JSIndirectLight
-import io.github.erkko68.filament.js.`IndirectLight_Builder` as JSIndirectLightBuilder
+import io.github.erkko68.filament.web.IndirectLight as JSIndirectLight
+import io.github.erkko68.filament.web.`IndirectLight_Builder` as JSIndirectLightBuilder
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {

@@ -38,8 +38,8 @@ kotlin {
             // FilamentC already cover the filament-utils surface. Replaces :java:filament-utils.
             api(project(":java"))
         }
-        jsMain.dependencies {
-            implementation(project(":js"))
+        webMain.dependencies {
+            implementation(project(":web"))
         }
     }
 

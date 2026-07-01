@@ -1,9 +1,9 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.VertexBuffer as JSVertexBuffer
-import io.github.erkko68.filament.js.`VertexBuffer_Builder` as JSVertexBufferBuilder
-import io.github.erkko68.filament.js.VertexAttribute as JSVertexAttribute
-import io.github.erkko68.filament.js.VertexBuffer_AttributeType as JSVertexBufferAttributeType
+import io.github.erkko68.filament.web.VertexBuffer as JSVertexBuffer
+import io.github.erkko68.filament.web.`VertexBuffer_Builder` as JSVertexBufferBuilder
+import io.github.erkko68.filament.web.VertexAttribute as JSVertexAttribute
+import io.github.erkko68.filament.web.VertexBuffer_AttributeType as JSVertexBufferAttributeType
 import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")

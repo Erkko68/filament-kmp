@@ -1,7 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.js.assets
+import io.github.erkko68.filament.web.assets
 import org.khronos.webgl.set
 
 private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {

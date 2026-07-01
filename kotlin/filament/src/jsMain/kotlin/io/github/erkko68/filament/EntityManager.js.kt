@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Entity as JSEntity
-import io.github.erkko68.filament.js.EntityManager as JSEntityManager
+import io.github.erkko68.filament.web.Entity as JSEntity
+import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 
 actual class EntityManager(internal val jsEntityManager: JSEntityManager) {
     actual fun create(): Entity {

@@ -1,8 +1,8 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.ColorGrading as JSColorGrading
-import io.github.erkko68.filament.js.`ColorGrading_Builder` as JSColorGradingBuilder
-import io.github.erkko68.filament.js.ColorGrading_QualityLevel
+import io.github.erkko68.filament.web.ColorGrading as JSColorGrading
+import io.github.erkko68.filament.web.`ColorGrading_Builder` as JSColorGradingBuilder
+import io.github.erkko68.filament.web.ColorGrading_QualityLevel
 
 actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
     actual class Builder {
@@ -20,8 +20,8 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
 
         actual fun format(format: LutFormat): Builder {
             val jsFormat = when (format) {
-                LutFormat.INTEGER -> io.github.erkko68.filament.js.ColorGrading_LutFormat.INTEGER
-                LutFormat.FLOAT -> io.github.erkko68.filament.js.ColorGrading_LutFormat.FLOAT
+                LutFormat.INTEGER -> io.github.erkko68.filament.web.ColorGrading_LutFormat.INTEGER
+                LutFormat.FLOAT -> io.github.erkko68.filament.web.ColorGrading_LutFormat.FLOAT
             }
             jsBuilder.format(jsFormat)
             return this

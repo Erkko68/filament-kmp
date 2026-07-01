@@ -1,10 +1,10 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.RenderableManager as JSRenderableManager
-import io.github.erkko68.filament.js.`RenderableManager_Builder` as JSRenderableManagerBuilder
-import io.github.erkko68.filament.js.RenderableManager_PrimitiveType
-import io.github.erkko68.filament.js.Entity as JSEntity
-import io.github.erkko68.filament.js.RenderableManager_Instance as JSRenderableManagerInstance
+import io.github.erkko68.filament.web.RenderableManager as JSRenderableManager
+import io.github.erkko68.filament.web.`RenderableManager_Builder` as JSRenderableManagerBuilder
+import io.github.erkko68.filament.web.RenderableManager_PrimitiveType
+import io.github.erkko68.filament.web.Entity as JSEntity
+import io.github.erkko68.filament.web.RenderableManager_Instance as JSRenderableManagerInstance
 
 actual class RenderableManager(internal val jsRenderableManager: JSRenderableManager) {
     actual fun hasComponent(entity: Entity): Boolean {
@@ -23,7 +23,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         instance: EntityInstance,
         box: Box
     ) {
-        val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.js.Box>()
+        val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.web.Box>()
         jsBox.center = box.center.toTypedArray() as Array<Number>
         jsBox.halfExtent = box.halfExtent.toTypedArray() as Array<Number>
         jsRenderableManager.setAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>(), jsBox)
@@ -124,9 +124,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         // Pack each 4-float slice of the flat input into one Bone object with an
         // identity translation (this overload only carries rotations).
         @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-        val bones = Array<io.github.erkko68.filament.js.`RenderableManager_Bone`>(boneCount) { i ->
+        val bones = Array<io.github.erkko68.filament.web.`RenderableManager_Bone`>(boneCount) { i ->
             val b = i * 4
-            val bone = js("{}").unsafeCast<io.github.erkko68.filament.js.`RenderableManager_Bone`>()
+            val bone = js("{}").unsafeCast<io.github.erkko68.filament.web.`RenderableManager_Bone`>()
             bone.unitQuaternion = arrayOf(
                 quaternions[b + 0], quaternions[b + 1],
                 quaternions[b + 2], quaternions[b + 3]
@@ -388,7 +388,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun boundingBox(box: Box): Builder {
-            val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.js.Box>()
+            val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.web.Box>()
             jsBox.center = box.center.toTypedArray() as Array<Number>
             jsBox.halfExtent = box.halfExtent.toTypedArray() as Array<Number>
             jsBuilder.boundingBox(jsBox)

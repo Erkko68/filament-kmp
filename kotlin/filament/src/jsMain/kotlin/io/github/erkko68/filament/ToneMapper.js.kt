@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.ColorGrading_ToneMapping
+import io.github.erkko68.filament.web.ColorGrading_ToneMapping
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual open class ToneMapper(internal val jsToneMapping: ColorGrading_ToneMapping) {

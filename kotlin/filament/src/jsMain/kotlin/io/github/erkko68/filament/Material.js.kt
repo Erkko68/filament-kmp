@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Material as JSMaterial
+import io.github.erkko68.filament.web.Material as JSMaterial
 import org.khronos.webgl.set
 
 actual class Material(internal val jsMaterial: JSMaterial) {

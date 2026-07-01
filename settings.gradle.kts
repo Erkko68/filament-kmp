@@ -37,4 +37,4 @@ include(":kotlin:test-support") // test-only shared helpers (TestEnv + skip anno
 // Published as the `filament-ffm` artifact (id pinned in java/build.gradle.kts).
 include(":java")
 
-include(":js")
+include(":web")

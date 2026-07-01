@@ -1,9 +1,9 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.RenderTarget as JSRenderTarget
-import io.github.erkko68.filament.js.`RenderTarget_Builder` as JSRenderTargetBuilder
-import io.github.erkko68.filament.js.RenderTarget_AttachmentPoint
-import io.github.erkko68.filament.js.Texture_CubemapFace
+import io.github.erkko68.filament.web.RenderTarget as JSRenderTarget
+import io.github.erkko68.filament.web.`RenderTarget_Builder` as JSRenderTargetBuilder
+import io.github.erkko68.filament.web.RenderTarget_AttachmentPoint
+import io.github.erkko68.filament.web.Texture_CubemapFace
 
 actual class RenderTarget internal constructor(
     internal val jsRenderTarget: JSRenderTarget,

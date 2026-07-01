@@ -1,18 +1,18 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Texture as JSTexture
-import io.github.erkko68.filament.js.Texture_InternalFormat as JSTextureInternalFormat
-import io.github.erkko68.filament.js.`driver_PixelBufferDescriptor` as JSPixelBufferDescriptor
-import io.github.erkko68.filament.js.PixelDataFormat
-import io.github.erkko68.filament.js.PixelDataType
-import io.github.erkko68.filament.js.Texture_Builder as JSTextureBuilder
+import io.github.erkko68.filament.web.Texture as JSTexture
+import io.github.erkko68.filament.web.Texture_InternalFormat as JSTextureInternalFormat
+import io.github.erkko68.filament.web.`driver_PixelBufferDescriptor` as JSPixelBufferDescriptor
+import io.github.erkko68.filament.web.PixelDataFormat
+import io.github.erkko68.filament.web.PixelDataType
+import io.github.erkko68.filament.web.Texture_Builder as JSTextureBuilder
 import org.khronos.webgl.set
 
 // The generated Texture external only binds setImage(engine, level, pbd); the deep/sub-region
 // overload exists in filament.js but isn't emitted, so re-type it here instead of `asDynamic()`.
 private external interface JsTextureExt {
     fun setImage(
-        engine: io.github.erkko68.filament.js.Engine,
+        engine: io.github.erkko68.filament.web.Engine,
         level: Int, xoffset: Int, yoffset: Int, zoffset: Int,
         width: Int, height: Int, depth: Int,
         pbd: JSPixelBufferDescriptor,
@@ -88,10 +88,10 @@ actual class Texture(val jsTexture: JSTexture) {
             // Skybox/IndirectLight which assert isCubemap()).
             val jsSampler = when (target) {
                 Sampler.SAMPLER_CUBEMAP, Sampler.SAMPLER_CUBEMAP_ARRAY ->
-                    io.github.erkko68.filament.js.Texture_Sampler.SAMPLER_CUBEMAP
+                    io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP
                 Sampler.SAMPLER_EXTERNAL ->
-                    io.github.erkko68.filament.js.Texture_Sampler.SAMPLER_EXTERNAL
-                else -> io.github.erkko68.filament.js.Texture_Sampler.SAMPLER_2D
+                    io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL
+                else -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D
             }
             jsBuilder.sampler(jsSampler)
             return this

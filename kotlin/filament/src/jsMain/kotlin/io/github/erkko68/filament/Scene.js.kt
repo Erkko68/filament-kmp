@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Scene as JSScene
+import io.github.erkko68.filament.web.Scene as JSScene
 
 actual class Scene(internal val jsScene: JSScene) {
     private var _skybox: Skybox? = null

@@ -27,11 +27,13 @@ val filaVersion = project.property("filaVersion") as String
 // used by the root prebuilt-download tasks).
 val npmExe = providers.environmentVariable("NPM").orElse("npm")
 val npxExe = providers.environmentVariable("NPX").orElse("npx")
+val nodeExe = providers.environmentVariable("NODE").orElse("node")
 
 val upstreamDts = rootProject.layout.projectDirectory.file("prebuilts/web/filament.d.ts")
 val overlayDts = layout.projectDirectory.file("patches/filament.patch.d.ts")
 val overridesJson = layout.projectDirectory.file("patches/filament.dts-overrides.json")
 val karakumConfig = layout.projectDirectory.file("karakum.config.json")
+val patchScript = layout.projectDirectory.file("scripts/patch-externals.mjs")
 
 // Local npm package that Karakum resolves `libraryName: "filament"` to. Karakum's
 // `input` glob is relative to this package's directory.
@@ -114,7 +116,7 @@ val installKarakum = tasks.register<Exec>("installKarakum") {
     outputs.file(nodeModulesMarker)
 }
 
-// 3. Generate the Kotlin externals.
+// 3. Generate the raw Kotlin externals from the patched d.ts.
 val generateJsExternals = tasks.register<Exec>("generateJsExternals") {
     description = "Runs Karakum to (re)generate the Kotlin/JS external declarations for Filament."
     group = "karakum"
@@ -127,63 +129,59 @@ val generateJsExternals = tasks.register<Exec>("generateJsExternals") {
     inputs.dir(dtsPackageDir)
     inputs.file(nodeModulesMarker)
     outputs.dir(generatedDir)
+}
 
-    // Post-generation normalisations applied to Karakum's output:
-    //
-    //  • Typed arrays: Karakum (alpha.107) emits `js.typedarrays.*`, but every current
-    //    kotlin-wrappers release makes those generic over the backing buffer
-    //    (`Float32Array<B : ArrayBufferLike>`) without Karakum parameterising them.
-    //    Remap to the non-generic stdlib `org.khronos.webgl.*` equivalents (also what
-    //    the jsMain actuals already use).
-    //
-    //  • Numbers: Karakum maps JS `number` to the concrete `Double`. JS numbers are
-    //    untyped, and the jsMain actuals pass `Int`/`Float` freely, so map to the
-    //    abstract `kotlin.Number` (the type the hand-written externals used). Every
-    //    `Double` in the externals originates from a `number`, so the replace is total.
-    //  • Canvas: Karakum types the one DOM touchpoint (Engine.create's canvas) as the
-    //    kotlin-wrappers `web.html.HTMLCanvasElement`, but the rest of this binding and
-    //    its Compose HTML interop (WebElementView) speak stdlib `org.w3c.dom`. Remap so
-    //    the surfaces line up without per-call conversions.
-    val outRoot = generatedDir
-    val doubleWord = Regex("\\bDouble\\b")
-    doLast {
-        outRoot.get().asFile.walkTopDown()
-            .filter { it.isFile && it.extension == "kt" }
-            .forEach { f ->
-                val patched = f.readText()
-                    .replace("js.typedarrays.", "org.khronos.webgl.")
-                    .replace("web.html.HTMLCanvasElement", "org.w3c.dom.HTMLCanvasElement")
-                    // Karakum maps TS `T[]` to the covariant `js.array.ReadonlyArray<T>`
-                    // (= `Array<out T>`); the actuals are written against the invariant
-                    // stdlib `Array<T>` (what the old externals used). Remap so call sites
-                    // and the IntArray/registerAndGetIds helpers line up.
-                    .replace("js.array.ReadonlyArray", "Array")
-                    .replace(doubleWord, "Number")
-                if (patched != f.readText()) f.writeText(patched)
-            }
-    }
+// 4. Make Karakum's output compile for BOTH `js` and `wasmJs` (a shared `webMain`).
+// Karakum's raw output already uses multiplatform kotlin-wrappers types (js.*, web.*,
+// Double), which wasmJs accepts as-is; the only wasmJs-illegal patterns are its enum
+// value-holders (nested object in an external interface) and bare `Any` at the interop
+// boundary. `patch-externals.mjs` rewrites exactly those, in place. See that script for
+// the rationale of each transform.
+val patchJsExternals = tasks.register<Exec>("patchJsExternals") {
+    description = "Rewrites the generated externals to compile on both js and wasmJs."
+    group = "karakum"
+    dependsOn(generateJsExternals)
+
+    workingDir = layout.projectDirectory.asFile
+    commandLine(nodeExe.get(), patchScript.asFile.absolutePath, generatedDir.get().asFile.absolutePath)
+
+    inputs.file(patchScript)
+    inputs.dir(generatedDir)
+    outputs.dir(generatedDir)
 }
 
 kotlin {
     js {
         browser()
     }
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
+
+    // `js` + `wasmJs` + applyDefaultHierarchyTemplate() produces a shared `webMain`.
+    // The Karakum externals (patched to compile on both targets by patch-externals.mjs)
+    // and the kotlin-wrappers types live there so a single set feeds both targets.
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
-        jsMain {
-            kotlin.srcDir(generateJsExternals)
+        val webMain by getting {
+            kotlin.srcDir(patchJsExternals)
             dependencies {
-                implementation(kotlin("stdlib-js"))
-                // `api` so consuming modules (kotlin/*/jsMain) can resolve the wrapper
+                // `api` so consuming modules (kotlin/*/webMain) can resolve the wrapper
                 // types that appear in the generated external signatures (web.html.*,
-                // js.array.*, …). Pinned to the version Karakum 1.0.0-alpha.107
-                // generates against (see karakum-team/karakum gradle.properties); newer
-                // wrappers made the TypedArrays generic (Float32Array<B>), which
-                // Karakum's output doesn't parameterise.
+                // js.array.*, js.core.*, …). kotlin-wrappers publishes these as
+                // multiplatform (js + wasmJs) artifacts. Karakum emits raw wrapper types;
+                // patch-externals.mjs leaves them intact (only enum/`Any` are rewritten).
                 api(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:2026.6.7"))
                 api("org.jetbrains.kotlin-wrappers:kotlin-js")
                 api("org.jetbrains.kotlin-wrappers:kotlin-web")
                 api("org.jetbrains.kotlin-wrappers:kotlin-browser")
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
             }
         }
     }

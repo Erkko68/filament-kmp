@@ -44,8 +44,8 @@ kotlin {
             // FilamentC already cover the gltfio surface. Replaces the JNI :java:gltfio dep.
             api(project(":java"))
         }
-        jsMain.dependencies {
-            implementation(project(":js"))
+        webMain.dependencies {
+            implementation(project(":web"))
         }
     }
 

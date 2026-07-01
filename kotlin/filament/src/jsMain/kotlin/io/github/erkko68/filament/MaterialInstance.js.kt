@@ -1,12 +1,12 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.MaterialInstance as JSMaterialInstance
-import io.github.erkko68.filament.js.RgbType
-import io.github.erkko68.filament.js.RgbaType
-import io.github.erkko68.filament.js.StencilFace
-import io.github.erkko68.filament.js.StencilOperation
-import io.github.erkko68.filament.js.CompareFunc
-import io.github.erkko68.filament.js.CullingMode
+import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
+import io.github.erkko68.filament.web.RgbType
+import io.github.erkko68.filament.web.RgbaType
+import io.github.erkko68.filament.web.StencilFace
+import io.github.erkko68.filament.web.StencilOperation
+import io.github.erkko68.filament.web.CompareFunc
+import io.github.erkko68.filament.web.CullingMode
 
 // Members the generated MaterialInstance external doesn't cover: the vector/array overloads
 // of setBoolParameter/setFloatParameter (the scalar forms are generated), and the optional
@@ -139,8 +139,8 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         b: Float
     ) {
         val jsType = when(type) {
-            Colors.RgbType.SRGB -> io.github.erkko68.filament.js.RgbType.sRGB
-            Colors.RgbType.LINEAR -> io.github.erkko68.filament.js.RgbType.LINEAR
+            Colors.RgbType.SRGB -> io.github.erkko68.filament.web.RgbType.sRGB
+            Colors.RgbType.LINEAR -> io.github.erkko68.filament.web.RgbType.LINEAR
         }
         jsMaterialInstance.setColor3Parameter(name, jsType, arrayOf(r, g, b) as Array<Number>)
     }
@@ -154,10 +154,10 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         a: Float
     ) {
         val jsType = when(type) {
-            Colors.RgbaType.SRGB -> io.github.erkko68.filament.js.RgbaType.sRGB
-            Colors.RgbaType.LINEAR -> io.github.erkko68.filament.js.RgbaType.LINEAR
-            Colors.RgbaType.PREMULTIPLIED_SRGB -> io.github.erkko68.filament.js.RgbaType.PREMULTIPLIED_sRGB
-            Colors.RgbaType.PREMULTIPLIED_LINEAR -> io.github.erkko68.filament.js.RgbaType.PREMULTIPLIED_LINEAR
+            Colors.RgbaType.SRGB -> io.github.erkko68.filament.web.RgbaType.sRGB
+            Colors.RgbaType.LINEAR -> io.github.erkko68.filament.web.RgbaType.LINEAR
+            Colors.RgbaType.PREMULTIPLIED_SRGB -> io.github.erkko68.filament.web.RgbaType.PREMULTIPLIED_sRGB
+            Colors.RgbaType.PREMULTIPLIED_LINEAR -> io.github.erkko68.filament.web.RgbaType.PREMULTIPLIED_LINEAR
         }
         jsMaterialInstance.setColor4Parameter(name, jsType, arrayOf(r, g, b, a) as Array<Number>)
     }
@@ -192,15 +192,15 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
 
     actual var transparencyMode: Material.TransparencyMode
         get() = when (jsMaterialInstance.getTransparencyMode()) {
-            io.github.erkko68.filament.js.TransparencyMode.DEFAULT -> Material.TransparencyMode.DEFAULT
-            io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_ONE_SIDE -> Material.TransparencyMode.TWO_PASSES_ONE_SIDE
-            io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_TWO_SIDES -> Material.TransparencyMode.TWO_PASSES_TWO_SIDES
+            io.github.erkko68.filament.web.TransparencyMode.DEFAULT -> Material.TransparencyMode.DEFAULT
+            io.github.erkko68.filament.web.TransparencyMode.TWO_PASSES_ONE_SIDE -> Material.TransparencyMode.TWO_PASSES_ONE_SIDE
+            io.github.erkko68.filament.web.TransparencyMode.TWO_PASSES_TWO_SIDES -> Material.TransparencyMode.TWO_PASSES_TWO_SIDES
         }
         set(value) {
             jsMaterialInstance.setTransparencyMode(when (value) {
-                Material.TransparencyMode.DEFAULT -> io.github.erkko68.filament.js.TransparencyMode.DEFAULT
-                Material.TransparencyMode.TWO_PASSES_ONE_SIDE -> io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_ONE_SIDE
-                Material.TransparencyMode.TWO_PASSES_TWO_SIDES -> io.github.erkko68.filament.js.TransparencyMode.TWO_PASSES_TWO_SIDES
+                Material.TransparencyMode.DEFAULT -> io.github.erkko68.filament.web.TransparencyMode.DEFAULT
+                Material.TransparencyMode.TWO_PASSES_ONE_SIDE -> io.github.erkko68.filament.web.TransparencyMode.TWO_PASSES_ONE_SIDE
+                Material.TransparencyMode.TWO_PASSES_TWO_SIDES -> io.github.erkko68.filament.web.TransparencyMode.TWO_PASSES_TWO_SIDES
             })
         }
 
@@ -284,9 +284,9 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
             TextureSampler.CompareFunction.NEVER -> CompareFunc.NEVER
         }
         val jsFace = when(face) {
-            MaterialInstance.StencilFace.FRONT -> io.github.erkko68.filament.js.StencilFace.FRONT
-            MaterialInstance.StencilFace.BACK -> io.github.erkko68.filament.js.StencilFace.BACK
-            MaterialInstance.StencilFace.FRONT_AND_BACK -> io.github.erkko68.filament.js.StencilFace.FRONT_AND_BACK
+            MaterialInstance.StencilFace.FRONT -> io.github.erkko68.filament.web.StencilFace.FRONT
+            MaterialInstance.StencilFace.BACK -> io.github.erkko68.filament.web.StencilFace.BACK
+            MaterialInstance.StencilFace.FRONT_AND_BACK -> io.github.erkko68.filament.web.StencilFace.FRONT_AND_BACK
         }
         jsMaterialInstance.setStencilCompareFunction(jsFunc, jsFace)
     }
@@ -365,20 +365,20 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
     
     private fun mapStencilOp(op: StencilOperation) = when(op) {
-        MaterialInstance.StencilOperation.KEEP -> io.github.erkko68.filament.js.StencilOperation.KEEP
-        MaterialInstance.StencilOperation.ZERO -> io.github.erkko68.filament.js.StencilOperation.ZERO
-        MaterialInstance.StencilOperation.REPLACE -> io.github.erkko68.filament.js.StencilOperation.REPLACE
-        MaterialInstance.StencilOperation.INCR_CLAMP -> io.github.erkko68.filament.js.StencilOperation.INCR_CLAMP
-        MaterialInstance.StencilOperation.INCR_WRAP -> io.github.erkko68.filament.js.StencilOperation.INCR_WRAP
-        MaterialInstance.StencilOperation.DECR_CLAMP -> io.github.erkko68.filament.js.StencilOperation.DECR_CLAMP
-        MaterialInstance.StencilOperation.DECR_WRAP -> io.github.erkko68.filament.js.StencilOperation.DECR_WRAP
-        MaterialInstance.StencilOperation.INVERT -> io.github.erkko68.filament.js.StencilOperation.INVERT
+        MaterialInstance.StencilOperation.KEEP -> io.github.erkko68.filament.web.StencilOperation.KEEP
+        MaterialInstance.StencilOperation.ZERO -> io.github.erkko68.filament.web.StencilOperation.ZERO
+        MaterialInstance.StencilOperation.REPLACE -> io.github.erkko68.filament.web.StencilOperation.REPLACE
+        MaterialInstance.StencilOperation.INCR_CLAMP -> io.github.erkko68.filament.web.StencilOperation.INCR_CLAMP
+        MaterialInstance.StencilOperation.INCR_WRAP -> io.github.erkko68.filament.web.StencilOperation.INCR_WRAP
+        MaterialInstance.StencilOperation.DECR_CLAMP -> io.github.erkko68.filament.web.StencilOperation.DECR_CLAMP
+        MaterialInstance.StencilOperation.DECR_WRAP -> io.github.erkko68.filament.web.StencilOperation.DECR_WRAP
+        MaterialInstance.StencilOperation.INVERT -> io.github.erkko68.filament.web.StencilOperation.INVERT
     }
     
     private fun mapStencilFace(face: StencilFace) = when(face) {
-        MaterialInstance.StencilFace.FRONT -> io.github.erkko68.filament.js.StencilFace.FRONT
-        MaterialInstance.StencilFace.BACK -> io.github.erkko68.filament.js.StencilFace.BACK
-        MaterialInstance.StencilFace.FRONT_AND_BACK -> io.github.erkko68.filament.js.StencilFace.FRONT_AND_BACK
+        MaterialInstance.StencilFace.FRONT -> io.github.erkko68.filament.web.StencilFace.FRONT
+        MaterialInstance.StencilFace.BACK -> io.github.erkko68.filament.web.StencilFace.BACK
+        MaterialInstance.StencilFace.FRONT_AND_BACK -> io.github.erkko68.filament.web.StencilFace.FRONT_AND_BACK
     }
 
     actual enum class BooleanElement { BOOL, BOOL2, BOOL3, BOOL4 }

@@ -1,13 +1,11 @@
 # Adding `wasmJs` Target to filament-kmp
 
-> [!WARNING]
-> **STALLED (2026-06-07) — blocked on Karakum.** Step 1 proved the generated externals can't compile on wasmJs with the current generator. Two Karakum (alpha.107 *and* alpha.111 — identical output) codegen patterns are wasmJs-illegal:
-> 1. **Enum externals (62 files):** `sealed external interface Backend { companion object { val DEFAULT: Backend; … } }` → wasmJs: *"Interface cannot contain nested classes and objects."*
-> 2. **Union typealiases → `Any` (15 files):** `typealias float3 = Any? /* glm.vec3 | number[] */`, `BufferReference = Any` → wasmJs interop forbids `Any` (needs `JsAny`).
+> [!NOTE]
+> **UNBLOCKED (2026-07-01) — post-processing the externals instead of waiting for Karakum.** Branch `feat/wasm-support`. Rather than wait for a wasmJs-capable Karakum, [scripts/patch-externals.mjs](file:///Users/eric/IdeaProjects/filament-kmp/web/scripts/patch-externals.mjs) rewrites Karakum's raw output into externals that compile on BOTH `js` and `wasmJs` (shared `webMain`). Karakum's raw output already uses multiplatform kotlin-wrappers types; the script fixes the wasmJs-illegal patterns: enum value-holders (`sealed external interface`→`external class`), `: JsAny` supertype on every external class/interface, `Any`→`JsAny`, unbounded `<T>`→`<T : JsAny?>`, unparameterized TypedArrays→`<js.buffer.ArrayBuffer>`, primitive array/record elements→`JsNumber`/`JsString`, `()->Void?`→`()->Unit`. It replaces the old js-only remap (which is exactly what made the externals js-only). **`:web:compileKotlinJs` + `:web:compileKotlinWasmJs` both green.**
 >
-> A Karakum version bump (107→111) does **not** change this output. Resuming requires Karakum to emit wasmJs-compatible externals (enum form without companion-in-external-interface; `JsAny` for unions) — i.e. a multiplatform/wasm emission mode — OR a heavy post-processing rewrite of those 77 files (deferred; the enum rewrite must keep `Backend.DEFAULT` call sites + `: Backend` types working on both targets, non-trivial). **Decision: wait for upstream Karakum support.**
+> Also done: the `:js` module is renamed to `:web` (dir `web/`, package `io.github.erkko68.filament.web`); the convention plugin declares the `wasmJs` target + `wasmJsTest` assets; the 4 kotlin modules moved their `:web` dep to `webMain`.
 >
-> Step 0 (asDynamic elimination, commit `90018586`) is landed and independently valuable. Everything below is the plan to resume once Karakum is ready.
+> **Remaining = the actuals port (Step 3).** Dropping the `Double→Number` remap means every `Int`/`Float` handed to an external now needs `.toDouble()`, and stdlib types (`org.khronos.webgl`, `org.w3c.dom`, `Array`) must become their kotlin-wrappers equivalents, as the ~37 `jsMain` actuals move to `webMain`. Downstream `compileKotlinJs`/`compileKotlinWasmJs` are transitionally red until each module is ported (start with `:kotlin:filament` — everything depends on it). Step 0 (asDynamic elimination) is landed (commit `90018586`).
 
 > [!NOTE]
 > **Branch:** `wasm-support`. Strategy decided: **keep both `js` + `wasmJs`, share a `webMain` source set (Strategy A), long-term.**

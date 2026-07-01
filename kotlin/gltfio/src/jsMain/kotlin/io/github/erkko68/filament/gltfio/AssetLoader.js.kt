@@ -2,8 +2,8 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.js.`gltfio_AssetLoader` as JSAssetLoader
-import io.github.erkko68.filament.js.Engine as JSEngine
+import io.github.erkko68.filament.web.`gltfio_AssetLoader` as JSAssetLoader
+import io.github.erkko68.filament.web.Engine as JSEngine
 import org.khronos.webgl.set
 
 private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
@@ -22,7 +22,7 @@ actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine
         buffer: ByteArray,
         instances: Array<FilamentInstance>
     ): FilamentAsset? {
-        val jsInstances: Array<io.github.erkko68.filament.js.`gltfio_FilamentInstance`?> = instances.map { it.jsInstance }.toTypedArray()
+        val jsInstances: Array<io.github.erkko68.filament.web.`gltfio_FilamentInstance`?> = instances.map { it.jsInstance }.toTypedArray()
         val jsAsset = jsLoader.createInstancedAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>(), jsInstances)
         return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
     }

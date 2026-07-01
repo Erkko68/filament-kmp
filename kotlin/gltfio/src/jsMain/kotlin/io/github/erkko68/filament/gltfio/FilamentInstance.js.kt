@@ -3,10 +3,10 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.MaterialInstance
-import io.github.erkko68.filament.js.`gltfio_FilamentInstance` as JSFilamentInstance
-import io.github.erkko68.filament.js.Vector
-import io.github.erkko68.filament.js.Entity
-import io.github.erkko68.filament.js.MaterialInstance as JSMaterialInstance
+import io.github.erkko68.filament.web.`gltfio_FilamentInstance` as JSFilamentInstance
+import io.github.erkko68.filament.web.Vector
+import io.github.erkko68.filament.web.Entity
+import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
 
 actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
     private val skinJointCounts = mutableMapOf<Int, Int>()

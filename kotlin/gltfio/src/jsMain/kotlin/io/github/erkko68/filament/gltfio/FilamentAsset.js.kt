@@ -4,9 +4,9 @@ import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.js.`gltfio_FilamentAsset` as JSFilamentAsset
-import io.github.erkko68.filament.js.Entity as JSEntity
-import io.github.erkko68.filament.js.Aabb
+import io.github.erkko68.filament.web.`gltfio_FilamentAsset` as JSFilamentAsset
+import io.github.erkko68.filament.web.Entity as JSEntity
+import io.github.erkko68.filament.web.Aabb
 
 actual class FilamentAsset(
     internal val jsAsset: JSFilamentAsset,

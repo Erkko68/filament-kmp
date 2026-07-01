@@ -1,11 +1,11 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.TextureSampler as JSTextureSampler
-import io.github.erkko68.filament.js.MinFilter as JSMinFilter
-import io.github.erkko68.filament.js.MagFilter as JSMagFilter
-import io.github.erkko68.filament.js.WrapMode as JSWrapMode
-import io.github.erkko68.filament.js.CompareMode as JSCompareMode
-import io.github.erkko68.filament.js.CompareFunc as JSCompareFunc
+import io.github.erkko68.filament.web.TextureSampler as JSTextureSampler
+import io.github.erkko68.filament.web.MinFilter as JSMinFilter
+import io.github.erkko68.filament.web.MagFilter as JSMagFilter
+import io.github.erkko68.filament.web.WrapMode as JSWrapMode
+import io.github.erkko68.filament.web.CompareMode as JSCompareMode
+import io.github.erkko68.filament.web.CompareFunc as JSCompareFunc
 
 actual class TextureSampler {
     actual var minFilter: MinFilter = MinFilter.LINEAR

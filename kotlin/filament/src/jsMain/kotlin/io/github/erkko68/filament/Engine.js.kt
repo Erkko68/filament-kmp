@@ -1,8 +1,8 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.Engine as JSEngine
-import io.github.erkko68.filament.js.EntityManager as JSEntityManager
-import io.github.erkko68.filament.js.Entity as JSEntity
+import io.github.erkko68.filament.web.Engine as JSEngine
+import io.github.erkko68.filament.web.EntityManager as JSEntityManager
+import io.github.erkko68.filament.web.Entity as JSEntity
 import org.w3c.dom.HTMLCanvasElement
 
 actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HTMLCanvasElement? = null) {
@@ -355,24 +355,24 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 // FEATURE_LEVEL_1 on the JS side.
 // ──────────────────────────────────────────────────────────────────────────────
 
-private fun fromJsBackend(b: io.github.erkko68.filament.js.Backend): Engine.Backend = when (b) {
-    io.github.erkko68.filament.js.Backend.DEFAULT -> Engine.Backend.DEFAULT
-    io.github.erkko68.filament.js.Backend.OPENGL  -> Engine.Backend.OPENGL
-    io.github.erkko68.filament.js.Backend.VULKAN  -> Engine.Backend.VULKAN
-    io.github.erkko68.filament.js.Backend.METAL   -> Engine.Backend.METAL
-    io.github.erkko68.filament.js.Backend.WEBGPU  -> Engine.Backend.WEBGPU
-    io.github.erkko68.filament.js.Backend.NOOP    -> Engine.Backend.NOOP
+private fun fromJsBackend(b: io.github.erkko68.filament.web.Backend): Engine.Backend = when (b) {
+    io.github.erkko68.filament.web.Backend.DEFAULT -> Engine.Backend.DEFAULT
+    io.github.erkko68.filament.web.Backend.OPENGL  -> Engine.Backend.OPENGL
+    io.github.erkko68.filament.web.Backend.VULKAN  -> Engine.Backend.VULKAN
+    io.github.erkko68.filament.web.Backend.METAL   -> Engine.Backend.METAL
+    io.github.erkko68.filament.web.Backend.WEBGPU  -> Engine.Backend.WEBGPU
+    io.github.erkko68.filament.web.Backend.NOOP    -> Engine.Backend.NOOP
 }
 
-private fun fromJsFeatureLevel(fl: io.github.erkko68.filament.js.FeatureLevel): Engine.FeatureLevel = when (fl) {
-    io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_1 -> Engine.FeatureLevel.FEATURE_LEVEL_1
-    io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
-    io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
+private fun fromJsFeatureLevel(fl: io.github.erkko68.filament.web.FeatureLevel): Engine.FeatureLevel = when (fl) {
+    io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_1 -> Engine.FeatureLevel.FEATURE_LEVEL_1
+    io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
+    io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
 }
 
-private fun toJsFeatureLevel(fl: Engine.FeatureLevel): io.github.erkko68.filament.js.FeatureLevel = when (fl) {
+private fun toJsFeatureLevel(fl: Engine.FeatureLevel): io.github.erkko68.filament.web.FeatureLevel = when (fl) {
     Engine.FeatureLevel.FEATURE_LEVEL_0,
-    Engine.FeatureLevel.FEATURE_LEVEL_1 -> io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_1
-    Engine.FeatureLevel.FEATURE_LEVEL_2 -> io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_2
-    Engine.FeatureLevel.FEATURE_LEVEL_3 -> io.github.erkko68.filament.js.FeatureLevel.FEATURE_LEVEL_3
+    Engine.FeatureLevel.FEATURE_LEVEL_1 -> io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_1
+    Engine.FeatureLevel.FEATURE_LEVEL_2 -> io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_2
+    Engine.FeatureLevel.FEATURE_LEVEL_3 -> io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_3
 }

@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.SwapChain as JSSwapChain
+import io.github.erkko68.filament.web.SwapChain as JSSwapChain
 
 actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
     actual val nativeWindow: Any? get() = null

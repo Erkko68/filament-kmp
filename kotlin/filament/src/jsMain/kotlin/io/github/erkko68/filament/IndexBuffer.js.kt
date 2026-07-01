@@ -1,8 +1,8 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.js.IndexBuffer as JSIndexBuffer
-import io.github.erkko68.filament.js.`IndexBuffer_Builder` as JSIndexBufferBuilder
-import io.github.erkko68.filament.js.IndexBuffer_IndexType
+import io.github.erkko68.filament.web.IndexBuffer as JSIndexBuffer
+import io.github.erkko68.filament.web.`IndexBuffer_Builder` as JSIndexBufferBuilder
+import io.github.erkko68.filament.web.IndexBuffer_IndexType
 import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")

@@ -43,8 +43,8 @@ KOTLIN_GLOB="$REPO_ROOT/kotlin/*/src/jsMain"
 # but absent from all of them is a stub to add to filament.patch.d.ts.
 DECLARED_SOURCES=(
   "$REPO_ROOT/prebuilts/web/filament.d.ts"
-  "$REPO_ROOT/js/patches/filament.patch.d.ts"
-  "$REPO_ROOT/js/patches/filament.dts-overrides.json"
+  "$REPO_ROOT/web/patches/filament.patch.d.ts"
+  "$REPO_ROOT/web/patches/filament.dts-overrides.json"
 )
 
 FILAMENT_SRC=""
