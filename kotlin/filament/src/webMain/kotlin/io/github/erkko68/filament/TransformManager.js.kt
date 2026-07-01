@@ -4,7 +4,6 @@ import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.TransformManager as JSTransformManager
-import io.github.erkko68.filament.web.TransformManager_Instance as JSTransformManagerInstance
 
 actual class TransformManager(internal val jsTransformManager: JSTransformManager) {
     // `EntityInstance` is a typealias for `Int` in common code, but on JS the
@@ -14,7 +13,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
     // actually expect) but breaks equality across two getInstance calls, since
     // upstream returns a fresh wrapper each time. Cache the wrapper per entity
     // so referential equality stands.
-    private val instances = mutableMapOf<Entity, JSTransformManagerInstance>()
+    private val instances = mutableMapOf<Entity, Double>()
 
     actual fun hasComponent(entity: Entity): Boolean {
         return jsTransformManager.hasComponent(EntityManager.jsEntityOf(entity))
@@ -68,14 +67,14 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         instance: EntityInstance,
         newParent: EntityInstance
     ) {
-        jsTransformManager.setParent(instance.unsafeCast<JSTransformManagerInstance>(), newParent.unsafeCast<JSTransformManagerInstance>())
+        jsTransformManager.setParent(instance.toDouble(), newParent.toDouble())
     }
 
     actual fun getParent(instance: EntityInstance): Entity {
         // Register the returned JS Entity wrapper so subsequent JS calls
         // (setParent, getInstance, …) can resolve it back through
         // EntityManager.jsEntityOf().
-        val jsEntity = jsTransformManager.getParent(instance.unsafeCast<JSTransformManagerInstance>())
+        val jsEntity = jsTransformManager.getParent(instance.toDouble())
         val id = jsEntity.getId().toInt()
         if (id != 0) EntityManager.register(id, jsEntity)
         return id
@@ -84,20 +83,20 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
     // Upstream binds getChildren as a single embind LAMBDA returning an
     // EntityVector — there's no separately exposed getChildCount, so derive it.
     actual fun getChildCount(instance: EntityInstance): Int {
-        val vec = jsTransformManager.getChildren(instance.unsafeCast<JSTransformManagerInstance>())
-        return vec.size().unsafeCast<Int>()
+        val vec = jsTransformManager.getChildren(instance.toDouble())
+        return vec.size().toInt()
     }
 
     actual fun getChildren(
         instance: EntityInstance,
         outEntities: IntArray?
     ): IntArray {
-        val vec = jsTransformManager.getChildren(instance.unsafeCast<JSTransformManagerInstance>())
-        val count = vec.size().unsafeCast<Int>()
+        val vec = jsTransformManager.getChildren(instance.toDouble())
+        val count = vec.size().toInt()
         val result = outEntities ?: IntArray(count)
         for (i in 0 until minOf(count, result.size)) {
             val jsEntity = vec.get(i.toDouble())
-            val id = jsEntity.getId().unsafeCast<Int>()
+            val id = jsEntity.getId().toInt()
             if (id != 0) EntityManager.register(id, jsEntity)
             result[i] = id
         }
@@ -105,11 +104,11 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
     }
 
     actual fun setTransform(instance: EntityInstance, localTransform: FloatArray) {
-        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toJsNumbers())
+        jsTransformManager.setTransform(instance.toDouble(), localTransform.toJsNumbers())
     }
 
     actual fun setTransform(instance: EntityInstance, localTransform: DoubleArray) {
-        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toJsNumbers())
+        jsTransformManager.setTransform(instance.toDouble(), localTransform.toJsNumbers())
     }
 
     actual fun getTransform(
@@ -117,7 +116,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outLocalTransform: FloatArray?
     ): FloatArray {
         val result = outLocalTransform ?: FloatArray(16)
-        val jsMatrix = jsTransformManager.getTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        val jsMatrix = jsTransformManager.getTransform(instance.toDouble()) as Array<Double>
         for (i in 0 until 16) result[i] = jsMatrix[i].toFloat()
         return result
     }
@@ -127,7 +126,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outLocalTransform: DoubleArray?
     ): DoubleArray {
         val result = outLocalTransform ?: DoubleArray(16)
-        val jsMatrix = jsTransformManager.getTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        val jsMatrix = jsTransformManager.getTransform(instance.toDouble()) as Array<Double>
         for (i in 0 until 16) result[i] = jsMatrix[i]
         return result
     }
@@ -137,7 +136,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outWorldTransform: FloatArray?
     ): FloatArray {
         val result = outWorldTransform ?: FloatArray(16)
-        val jsMatrix = jsTransformManager.getWorldTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        val jsMatrix = jsTransformManager.getWorldTransform(instance.toDouble()) as Array<Double>
         for (i in 0 until 16) result[i] = jsMatrix[i].toFloat()
         return result
     }
@@ -147,7 +146,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         outWorldTransform: DoubleArray?
     ): DoubleArray {
         val result = outWorldTransform ?: DoubleArray(16)
-        val jsMatrix = jsTransformManager.getWorldTransform(instance.unsafeCast<JSTransformManagerInstance>()) as Array<Double>
+        val jsMatrix = jsTransformManager.getWorldTransform(instance.toDouble()) as Array<Double>
         for (i in 0 until 16) result[i] = jsMatrix[i]
         return result
     }

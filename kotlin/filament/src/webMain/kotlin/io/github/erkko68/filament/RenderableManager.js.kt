@@ -9,7 +9,6 @@ import io.github.erkko68.filament.web.RenderableManager as JSRenderableManager
 import io.github.erkko68.filament.web.`RenderableManager_Builder` as JSRenderableManagerBuilder
 import io.github.erkko68.filament.web.RenderableManager_PrimitiveType
 import io.github.erkko68.filament.web.Entity as JSEntity
-import io.github.erkko68.filament.web.RenderableManager_Instance as JSRenderableManagerInstance
 
 actual class RenderableManager(internal val jsRenderableManager: JSRenderableManager) {
     actual fun hasComponent(entity: Entity): Boolean {
@@ -31,14 +30,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         val jsBox = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.Box>()
         jsBox.center = box.center.toJsNumbers()
         jsBox.halfExtent = box.halfExtent.toJsNumbers()
-        jsRenderableManager.setAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>(), jsBox)
+        jsRenderableManager.setAxisAlignedBoundingBox(instance.toDouble(), jsBox)
     }
 
     actual fun getAxisAlignedBoundingBox(
         instance: EntityInstance,
         outBox: Box?
     ): Box {
-        val jsBox = jsRenderableManager.getAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>())
+        val jsBox = jsRenderableManager.getAxisAlignedBoundingBox(instance.toDouble())
         val center = jsBox.center.unsafeCast<Array<Number>>()
         val halfExtent = jsBox.halfExtent.unsafeCast<Array<Number>>()
         
@@ -57,54 +56,54 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         select: Int,
         value: Int
     ) {
-        jsRenderableManager.setLayerMask(instance.unsafeCast<JSRenderableManagerInstance>(), select.toDouble(), value.toDouble())
+        jsRenderableManager.setLayerMask(instance.toDouble(), select.toDouble(), value.toDouble())
     }
 
     actual fun setPriority(instance: EntityInstance, priority: Int) {
-        jsRenderableManager.setPriority(instance.unsafeCast<JSRenderableManagerInstance>(), priority.toDouble())
+        jsRenderableManager.setPriority(instance.toDouble(), priority.toDouble())
     }
 
     actual fun getPriority(instance: EntityInstance): Int =
-        jsRenderableManager.getPriority(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
+        jsRenderableManager.getPriority(instance.toDouble()).toInt()
 
     actual fun setChannel(instance: EntityInstance, channel: Int) {
-        jsRenderableManager.setChannel(instance.unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
+        jsRenderableManager.setChannel(instance.toDouble(), channel.toDouble())
     }
 
     actual fun getChannel(instance: EntityInstance): Int =
-        jsRenderableManager.getChannel(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
+        jsRenderableManager.getChannel(instance.toDouble()).toInt()
 
     actual fun setCulling(instance: EntityInstance, enabled: Boolean) {
-        jsRenderableManager.setCulling(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
+        jsRenderableManager.setCulling(instance.toDouble(), enabled)
     }
 
     actual fun isCullingEnabled(instance: EntityInstance): Boolean =
-        jsRenderableManager.isCullingEnabled(instance.unsafeCast<JSRenderableManagerInstance>())
+        jsRenderableManager.isCullingEnabled(instance.toDouble())
 
     actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) {
-        jsRenderableManager.setFogEnabled(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
+        jsRenderableManager.setFogEnabled(instance.toDouble(), enabled)
     }
 
     actual fun getFogEnabled(instance: EntityInstance): Boolean =
-        jsRenderableManager.getFogEnabled(instance.unsafeCast<JSRenderableManagerInstance>())
+        jsRenderableManager.getFogEnabled(instance.toDouble())
 
     actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) {
-        jsRenderableManager.setCastShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
+        jsRenderableManager.setCastShadows(instance.toDouble(), enabled)
     }
 
     actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) {
-        jsRenderableManager.setReceiveShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
+        jsRenderableManager.setReceiveShadows(instance.toDouble(), enabled)
     }
 
     actual fun setScreenSpaceContactShadows(
         instance: EntityInstance,
         enabled: Boolean
     ) {
-        jsRenderableManager.setScreenSpaceContactShadows(instance.unsafeCast<JSRenderableManagerInstance>(), enabled)
+        jsRenderableManager.setScreenSpaceContactShadows(instance.toDouble(), enabled)
     }
 
     actual fun isShadowCaster(instance: EntityInstance): Boolean {
-        return jsRenderableManager.isShadowCaster(instance.unsafeCast<JSRenderableManagerInstance>())
+        return jsRenderableManager.isShadowCaster(instance.toDouble())
     }
 
     actual fun setBonesAsMatrices(
@@ -116,7 +115,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         @Suppress("UNCHECKED_CAST")
         val boneMatrices = matrices.toTypedArray() as Array<Any?>
         jsRenderableManager.setBonesFromMatrices(
-            instance.unsafeCast<JSRenderableManagerInstance>(), boneMatrices, offset.toDouble())
+            instance.toDouble(), boneMatrices, offset.toDouble())
     }
 
     actual fun setBonesAsQuaternions(
@@ -139,41 +138,41 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             bone.translation = arrayOf(0f, 0f, 0f)
             bone
         }
-        jsRenderableManager.setBones(instance.unsafeCast<JSRenderableManagerInstance>(), bones, offset.toDouble())
+        jsRenderableManager.setBones(instance.toDouble(), bones, offset.toDouble())
     }
 
     actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {
         jsRenderableManager.clearMaterialInstanceAt(
-            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble())
+            instance.toDouble(), primitiveIndex.toDouble())
     }
 
     actual fun isShadowReceiver(instance: EntityInstance): Boolean {
-        return jsRenderableManager.isShadowReceiver(instance.unsafeCast<JSRenderableManagerInstance>())
+        return jsRenderableManager.isShadowReceiver(instance.toDouble())
     }
 
     actual fun isScreenSpaceContactShadowsEnabled(instance: EntityInstance): Boolean =
-        jsRenderableManager.isScreenSpaceContactShadowsEnabled(instance.unsafeCast<JSRenderableManagerInstance>())
+        jsRenderableManager.isScreenSpaceContactShadowsEnabled(instance.toDouble())
 
     actual fun getPrimitiveCount(instance: EntityInstance): Int {
-        return jsRenderableManager.getPrimitiveCount(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
+        return jsRenderableManager.getPrimitiveCount(instance.toDouble()).toInt()
     }
 
     actual fun getInstanceCount(instance: EntityInstance): Int =
-        jsRenderableManager.getInstanceCount(instance.unsafeCast<JSRenderableManagerInstance>()).toInt()
+        jsRenderableManager.getInstanceCount(instance.toDouble()).toInt()
 
     actual fun setMaterialInstanceAt(
         instance: EntityInstance,
         primitiveIndex: Int,
         materialInstance: MaterialInstance
     ) {
-        jsRenderableManager.setMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), materialInstance.jsMaterialInstance)
+        jsRenderableManager.setMaterialInstanceAt(instance.toDouble(), primitiveIndex.toDouble(), materialInstance.jsMaterialInstance)
     }
 
     actual fun getMaterialInstanceAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): MaterialInstance? {
-        val jsMat = jsRenderableManager.getMaterialInstanceAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble())
+        val jsMat = jsRenderableManager.getMaterialInstanceAt(instance.toDouble(), primitiveIndex.toDouble())
         return if (jsMat != null) MaterialInstance(jsMat) else null
     }
 
@@ -193,7 +192,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
             PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
         }
-        jsRenderableManager.setGeometryAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset.toDouble(), count.toDouble())
+        jsRenderableManager.setGeometryAt(instance.toDouble(), primitiveIndex.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset.toDouble(), count.toDouble())
     }
 
     // TODO(js): non-indexed setGeometryAt is not exposed in jsbindings.cpp as of
@@ -216,14 +215,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         primitiveIndex: Int,
         blendOrder: Int
     ) {
-        jsRenderableManager.setBlendOrderAt(instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), blendOrder.toDouble())
+        jsRenderableManager.setBlendOrderAt(instance.toDouble(), primitiveIndex.toDouble(), blendOrder.toDouble())
     }
 
     actual fun getBlendOrderAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): Int = jsRenderableManager.getBlendOrderAt(
-        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble()).toInt()
+        instance.toDouble(), primitiveIndex.toDouble()).toInt()
 
     actual fun setGlobalBlendOrderEnabledAt(
         instance: EntityInstance,
@@ -231,14 +230,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         enabled: Boolean
     ) {
         jsRenderableManager.setGlobalBlendOrderEnabledAt(
-            instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), enabled)
+            instance.toDouble(), primitiveIndex.toDouble(), enabled)
     }
 
     actual fun isGlobalBlendOrderEnabledAt(
         instance: EntityInstance,
         primitiveIndex: Int
     ): Boolean = jsRenderableManager.isGlobalBlendOrderEnabledAt(
-        instance.unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble())
+        instance.toDouble(), primitiveIndex.toDouble())
 
     actual fun setLightChannel(
         instance: EntityInstance,
@@ -246,14 +245,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         enable: Boolean
     ) {
         jsRenderableManager.setLightChannel(
-            instance.unsafeCast<JSRenderableManagerInstance>(), channel.toDouble(), enable)
+            instance.toDouble(), channel.toDouble(), enable)
     }
 
     actual fun getLightChannel(
         instance: EntityInstance,
         channel: Int
     ): Boolean = jsRenderableManager.getLightChannel(
-        instance.unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
+        instance.toDouble(), channel.toDouble())
 
     actual fun getMorphTargetCount(instance: EntityInstance): Int {
         return 0
@@ -273,7 +272,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         offset: Int
     ) {
         if (weights.size >= 4) {
-            jsRenderableManager.setMorphWeights(instance.unsafeCast<JSRenderableManagerInstance>(), weights[0].toDouble(), weights[1].toDouble(), weights[2].toDouble(), weights[3].toDouble())
+            jsRenderableManager.setMorphWeights(instance.toDouble(), weights[0].toDouble(), weights[1].toDouble(), weights[2].toDouble(), weights[3].toDouble())
         }
     }
 

@@ -1,6 +1,5 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.interop.jsBigInt
 
 import io.github.erkko68.filament.web.interop.emptyJsObject
 
@@ -81,12 +80,11 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         get() = _engine ?: throw UnsupportedOperationException("Engine reference not available - Renderer was not created with Engine context")
 
     actual fun setVsyncTime(steadyClockTimeNano: Long) {
-        val jsVal = jsBigInt(steadyClockTimeNano.toString())
-        jsRenderer.setVsyncTime((jsVal.unsafeCast<Number>()).toDouble())
+        jsRenderer.setVsyncTime(steadyClockTimeNano.toDouble())
     }
 
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
-        jsRenderer.skipFrame(jsBigInt(vsyncSteadyClockTimeNano.toString()))
+        jsRenderer.skipFrame(vsyncSteadyClockTimeNano.toDouble())
     }
 
     actual fun render(view: View) {

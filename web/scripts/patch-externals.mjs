@@ -38,7 +38,7 @@
 //
 // Usage: node patch-externals.mjs <generated-root-dir>
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, statSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 const root = process.argv[2];
@@ -96,11 +96,30 @@ function patch(src) {
     .replace(/\b(ReadonlyArray|Vector)<String>/g, "$1<JsString>")
     .replace(/\bReadonlyRecord<String,/g, "ReadonlyRecord<JsString,")
     // (7) void callback returns
-    .replace(/->\s*js\.core\.Void\?/g, "-> Unit");
+    .replace(/->\s*js\.core\.Void\?/g, "-> Unit")
+    // (8) Component-manager instance handles are integer handles in embind (the actuals
+    //     already treat them as Int). Typing them as opaque external classes forced an
+    //     Int<->handle `unsafeCast`, illegal on wasmJs. Retype as Double (a number) so
+    //     the Int flows straight through. The 3 handle declarations are dropped below.
+    .replace(/\b(?:LightManager|RenderableManager|TransformManager)_Instance\b/g, "Double");
 }
 
+// The instance handle classes are retyped to Double above; drop their now-bogus
+// `external class Double` declaration files.
+const INSTANCE_DECLS = new Set([
+  "LightManager_Instance.kt",
+  "RenderableManager_Instance.kt",
+  "TransformManager_Instance.kt",
+]);
+
 let changed = 0;
+let dropped = 0;
 for (const file of walk(root)) {
+  if (INSTANCE_DECLS.has(file.split("/").pop())) {
+    rmSync(file);
+    dropped++;
+    continue;
+  }
   const before = readFileSync(file, "utf8");
   const after = patch(before);
   if (after !== before) {
@@ -108,4 +127,4 @@ for (const file of walk(root)) {
     changed++;
   }
 }
-console.log(`patch-externals: patched ${changed} file(s) under ${root}`);
+console.log(`patch-externals: patched ${changed} file(s), dropped ${dropped} under ${root}`);

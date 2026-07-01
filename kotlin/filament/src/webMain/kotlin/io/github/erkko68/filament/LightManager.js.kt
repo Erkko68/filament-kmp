@@ -7,7 +7,6 @@ import io.github.erkko68.filament.web.LightManager as JSLightManager
 import io.github.erkko68.filament.web.`LightManager_Builder` as JSLightManagerBuilder
 import io.github.erkko68.filament.web.LightManager_Type
 import io.github.erkko68.filament.web.Entity as JSEntity
-import io.github.erkko68.filament.web.LightManager_Instance as JSLightManagerInstance
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
@@ -25,7 +24,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun getInstance(entity: Entity): EntityInstance {
-        return jsLightManager.getInstance(EntityManager.jsEntityOf(entity)).unsafeCast<Int>()
+        return jsLightManager.getInstance(EntityManager.jsEntityOf(entity)).toInt()
     }
 
     actual fun destroy(entity: Entity) {
@@ -33,7 +32,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun getType(instance: EntityInstance): Type {
-        return when (jsLightManager.getType(instance.unsafeCast<JSLightManagerInstance>())) {
+        return when (jsLightManager.getType(instance.toDouble())) {
             LightManager_Type.SUN -> Type.SUN
             LightManager_Type.DIRECTIONAL -> Type.DIRECTIONAL
             LightManager_Type.POINT -> Type.POINT
@@ -44,60 +43,60 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) {
-        jsLightManager.setDirection(instance.unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
+        jsLightManager.setDirection(instance.toDouble(), jsNumbers(x, y, z))
     }
 
     actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
         val result = out
-        val jsVec = jsLightManager.getDirection(instance.unsafeCast<JSLightManagerInstance>()) as Array<Double>
+        val jsVec = jsLightManager.getDirection(instance.toDouble()) as Array<Double>
         for (i in 0 until 3.coerceAtMost(jsVec.size)) result[i] = jsVec[i].toFloat()
         return result
     }
 
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) {
-        jsLightManager.setPosition(instance.unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
+        jsLightManager.setPosition(instance.toDouble(), jsNumbers(x, y, z))
     }
 
     actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
         val result = out
-        val jsVec = jsLightManager.getPosition(instance.unsafeCast<JSLightManagerInstance>()) as Array<Double>
+        val jsVec = jsLightManager.getPosition(instance.toDouble()) as Array<Double>
         for (i in 0 until 3.coerceAtMost(jsVec.size)) result[i] = jsVec[i].toFloat()
         return result
     }
 
     actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) {
-        jsLightManager.setColor(instance.unsafeCast<JSLightManagerInstance>(), jsNumbers(r, g, b))
+        jsLightManager.setColor(instance.toDouble(), jsNumbers(r, g, b))
     }
 
     actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
         val result = out
-        val jsVec = jsLightManager.getColor(instance.unsafeCast<JSLightManagerInstance>()) as Array<Double>
+        val jsVec = jsLightManager.getColor(instance.toDouble()) as Array<Double>
         for (i in 0 until 3.coerceAtMost(jsVec.size)) result[i] = jsVec[i].toFloat()
         return result
     }
 
     actual fun setIntensity(instance: EntityInstance, intensity: Float) {
-        jsLightManager.setIntensity(instance.unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
+        jsLightManager.setIntensity(instance.toDouble(), intensity.toDouble())
     }
 
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) {
-        jsLightManager.setIntensityEnergy(instance.unsafeCast<JSLightManagerInstance>(), watts.toDouble(), efficiency.toDouble())
+        jsLightManager.setIntensityEnergy(instance.toDouble(), watts.toDouble(), efficiency.toDouble())
     }
 
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) {
-        jsLightManager.setIntensity(instance.unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
+        jsLightManager.setIntensity(instance.toDouble(), intensity.toDouble())
     }
 
     actual fun getIntensity(instance: EntityInstance): Float {
-        return jsLightManager.getIntensity(instance.unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getIntensity(instance.toDouble()).toFloat()
     }
 
     actual fun setFalloff(instance: EntityInstance, radius: Float) {
-        jsLightManager.setFalloff(instance.unsafeCast<JSLightManagerInstance>(), radius.toDouble())
+        jsLightManager.setFalloff(instance.toDouble(), radius.toDouble())
     }
 
     actual fun getFalloff(instance: EntityInstance): Float {
-        return jsLightManager.getFalloff(instance.unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getFalloff(instance.toDouble()).toFloat()
     }
 
     // get{Inner,Outer}ConeAngle aren't bound in upstream jsbindings.cpp (v1.71.4) —
@@ -107,7 +106,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
 
     actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) {
         coneAngles[instance] = inner to outer
-        jsLightManager.setSpotLightCone(instance.unsafeCast<JSLightManagerInstance>(), inner.toDouble(), outer.toDouble())
+        jsLightManager.setSpotLightCone(instance.toDouble(), inner.toDouble(), outer.toDouble())
     }
 
     actual fun getInnerConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.first ?: 0f
@@ -115,43 +114,43 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     actual fun getOuterConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.second ?: 0f
 
     actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) {
-        jsLightManager.setSunAngularRadius(instance.unsafeCast<JSLightManagerInstance>(), angularRadius.toDouble())
+        jsLightManager.setSunAngularRadius(instance.toDouble(), angularRadius.toDouble())
     }
 
     actual fun getSunAngularRadius(instance: EntityInstance): Float {
-        return jsLightManager.getSunAngularRadius(instance.unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getSunAngularRadius(instance.toDouble()).toFloat()
     }
 
     actual fun setSunHaloSize(instance: EntityInstance, haloSize: Float) {
-        jsLightManager.setSunHaloSize(instance.unsafeCast<JSLightManagerInstance>(), haloSize.toDouble())
+        jsLightManager.setSunHaloSize(instance.toDouble(), haloSize.toDouble())
     }
 
     actual fun getSunHaloSize(instance: EntityInstance): Float {
-        return jsLightManager.getSunHaloSize(instance.unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getSunHaloSize(instance.toDouble()).toFloat()
     }
 
     actual fun setSunHaloFalloff(instance: EntityInstance, haloFalloff: Float) {
-        jsLightManager.setSunHaloFalloff(instance.unsafeCast<JSLightManagerInstance>(), haloFalloff.toDouble())
+        jsLightManager.setSunHaloFalloff(instance.toDouble(), haloFalloff.toDouble())
     }
 
     actual fun getSunHaloFalloff(instance: EntityInstance): Float {
-        return jsLightManager.getSunHaloFalloff(instance.unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getSunHaloFalloff(instance.toDouble()).toFloat()
     }
 
     actual fun setShadowCaster(instance: EntityInstance, shadowCaster: Boolean) {
-        jsLightManager.setShadowCaster(instance.unsafeCast<JSLightManagerInstance>(), shadowCaster)
+        jsLightManager.setShadowCaster(instance.toDouble(), shadowCaster)
     }
 
     actual fun isShadowCaster(instance: EntityInstance): Boolean {
-        return jsLightManager.isShadowCaster(instance.unsafeCast<JSLightManagerInstance>())
+        return jsLightManager.isShadowCaster(instance.toDouble())
     }
 
     actual fun setLightChannel(instance: EntityInstance, channel: Int, enable: Boolean) {
-        jsLightManager.setLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel.toDouble(), enable)
+        jsLightManager.setLightChannel(instance.toDouble(), channel.toDouble(), enable)
     }
 
     actual fun getLightChannel(instance: EntityInstance, channel: Int): Boolean {
-        return jsLightManager.getLightChannel(instance.unsafeCast<JSLightManagerInstance>(), channel.toDouble())
+        return jsLightManager.getLightChannel(instance.toDouble(), channel.toDouble())
     }
 
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
