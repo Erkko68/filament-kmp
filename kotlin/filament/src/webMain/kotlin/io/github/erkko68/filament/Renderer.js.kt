@@ -1,5 +1,9 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsBigInt
+
+import io.github.erkko68.filament.web.interop.emptyJsObject
+
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
@@ -38,7 +42,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     actual var clearOptions: ClearOptions = ClearOptions()
         set(value) {
             field = value
-            val jsOptions = js("{}").unsafeCast<JSRendererClearOptions>()
+            val jsOptions = emptyJsObject().unsafeCast<JSRendererClearOptions>()
             jsOptions.clearColor = value.clearColor.toJsNumbers()
             jsOptions.clear = value.clear
             jsRenderer.setClearOptions(jsOptions)
@@ -77,12 +81,12 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         get() = _engine ?: throw UnsupportedOperationException("Engine reference not available - Renderer was not created with Engine context")
 
     actual fun setVsyncTime(steadyClockTimeNano: Long) {
-        val jsVal = js("BigInt")(steadyClockTimeNano.toString())
+        val jsVal = jsBigInt(steadyClockTimeNano.toString())
         jsRenderer.setVsyncTime((jsVal.unsafeCast<Number>()).toDouble())
     }
 
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) {
-        jsRenderer.skipFrame(js("BigInt")(vsyncSteadyClockTimeNano.toString()))
+        jsRenderer.skipFrame(jsBigInt(vsyncSteadyClockTimeNano.toString()))
     }
 
     actual fun render(view: View) {

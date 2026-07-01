@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumberOf
+
 import io.github.erkko68.filament.web.Engine as JSEngine
 import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
@@ -338,7 +340,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
         actual fun getSteadyClockTimeNano(): Long {
             // js("Number")(...) coerces a possible BigInt result down to a JS number.
-            val num = js("Number")(JSEngine.getSteadyClockTimeNano()) as Double
+            val num = jsNumberOf(JSEngine.getSteadyClockTimeNano())
             return num.toLong()
         }
     }

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
+
 import js.array.JsArray
 
 import io.github.erkko68.filament.web.interop.jsNumbers
@@ -29,7 +31,7 @@ private external interface JsMaterialInstanceExt {
 actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstance) {
     private val ext: JsMaterialInstanceExt get() = jsMaterialInstance.unsafeCast<JsMaterialInstanceExt>()
     actual val material: Material
-        get() = js("{}").unsafeCast<Material>()
+        get() = emptyJsObject().unsafeCast<Material>()
 
     actual val name: String
         get() = jsMaterialInstance.getName()

@@ -19,8 +19,8 @@ package io.github.erkko68.filament
  * detached embind method (e.g. `val f = view.setX; f(...)`) loses `this` and aborts with a native
  * BindingError, so probe with this and then invoke as a normal method call.
  */
-internal fun jsHasMember(obj: Any?, name: String): Boolean =
-    js("obj != null && typeof obj[name] === 'function'").unsafeCast<Boolean>()
+internal fun jsHasMember(obj: JsAny?, name: String): Boolean =
+    js("obj != null && typeof obj[name] === 'function'")
 
 internal fun jsUnsupported(api: String, workaround: String? = null): Nothing {
     val base = "$api is not available on the JS/Web target — it is not bound in upstream " +

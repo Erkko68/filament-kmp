@@ -180,7 +180,7 @@ actual class Texture(val jsTexture: JSTexture) {
                 storage.forEachIndexed { i, b -> arr[i] = b }
             }
             val typed = org.khronos.webgl.Uint8Array(u8.buffer)
-            (js("Filament").PixelBuffer)(typed, mapFormat(format), mapType(type)).unsafeCast<JSPixelBufferDescriptor>()
+            newPixelBuffer(typed, mapFormat(format), mapType(type))
         }
     }
 
@@ -369,3 +369,7 @@ private fun mapType(type: Texture.Type): PixelDataType {
         else -> PixelDataType.UBYTE
     }
 }
+// Filament.PixelBuffer(typedarray, format, datatype) copies the typed array into the WASM
+// heap and returns a driver_PixelBufferDescriptor. Top-level so js() is legal on wasmJs.
+private fun newPixelBuffer(data: JsAny?, format: JsAny?, datatype: JsAny?): JSPixelBufferDescriptor =
+    js("Filament.PixelBuffer(data, format, datatype)")

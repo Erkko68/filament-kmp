@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
+
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
@@ -26,7 +28,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         instance: EntityInstance,
         box: Box
     ) {
-        val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.web.Box>()
+        val jsBox = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.Box>()
         jsBox.center = box.center.toJsNumbers()
         jsBox.halfExtent = box.halfExtent.toJsNumbers()
         jsRenderableManager.setAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>(), jsBox)
@@ -129,7 +131,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
         val bones = Array<io.github.erkko68.filament.web.`RenderableManager_Bone`>(boneCount) { i ->
             val b = i * 4
-            val bone = js("{}").unsafeCast<io.github.erkko68.filament.web.`RenderableManager_Bone`>()
+            val bone = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`RenderableManager_Bone`>()
             bone.unitQuaternion = arrayOf(
                 quaternions[b + 0], quaternions[b + 1],
                 quaternions[b + 2], quaternions[b + 3]
@@ -391,7 +393,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         }
 
         actual fun boundingBox(box: Box): Builder {
-            val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.web.Box>()
+            val jsBox = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.Box>()
             jsBox.center = box.center.toJsNumbers()
             jsBox.halfExtent = box.halfExtent.toJsNumbers()
             jsBuilder.boundingBox(jsBox)
