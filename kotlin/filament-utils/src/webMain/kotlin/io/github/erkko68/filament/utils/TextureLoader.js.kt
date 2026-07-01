@@ -3,6 +3,7 @@ package io.github.erkko68.filament.utils
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.web.Texture as JSTexture
+import io.github.erkko68.filament.web.interop.emptyJsObject
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.Uint8Array
@@ -12,6 +13,12 @@ import org.khronos.webgl.set
 private const val UPLOADABLE = 0x0008
 private const val SAMPLEABLE = 0x0010
 private const val GEN_MIPMAPPABLE = 0x0200
+
+// Options bag passed to Filament.js createTextureFrom* (a JS object literal).
+private external interface TextureCreateOptions : JsAny {
+    var srgb: Boolean
+    var usage: Int
+}
 
 actual object TextureLoader {
     actual fun loadTexture(
@@ -33,7 +40,7 @@ actual object TextureLoader {
         // Pass the same usage mask the native path uses (DEFAULT | GEN_MIPMAPPABLE).
         // Workaround for an upstream Filament JS bug; see js/patches/upstream/0002-*.patch.
         // Decode COLOR textures as sRGB so albedo maps match the other platforms' srgb path.
-        val options: dynamic = js("({})")
+        val options = emptyJsObject().unsafeCast<TextureCreateOptions>()
         options.srgb = type == TextureType.COLOR
         options.usage = UPLOADABLE or SAMPLEABLE or GEN_MIPMAPPABLE
 
@@ -46,9 +53,9 @@ actual object TextureLoader {
                 else -> null
             }
             jsTexture?.let { Texture(it) }
-        } catch (e: dynamic) {
-            // Embind throws raw native values (e.g. a number) on bad data. Kotlin/JS `catch (Throwable)`
-            // rethrows non-Throwable throws, so catch `dynamic` to actually swallow them; never crash the app.
+        } catch (e: Throwable) {
+            // Embind throws raw native values (e.g. a number) on bad data; swallow them so a
+            // corrupt image never crashes the app.
             null
         }
     }

@@ -13,12 +13,12 @@ private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
 // The generated external types loadResources with all callbacks required; the real
 // filament.js signature has them optional. Re-type it permissively so callers can omit
 // args without dropping to `asDynamic()`.
-private external interface JsLoadResources {
+private external interface JsLoadResources : JsAny {
     fun loadResources(
         onDone: (() -> Unit)? = definedExternally,
         onFetched: ((url: String) -> Unit)? = definedExternally,
         basePath: String? = definedExternally,
-        asyncInterval: Number? = definedExternally,
+        asyncInterval: Double? = definedExternally,
     )
 }
 
@@ -33,7 +33,7 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
     actual fun addResourceData(url: String, data: ByteArray) {
         resourceData[url] = data
         // `assets` is generated as a read-only Record; write through dynamically.
-        assets.asDynamic()[url] = data.toUint8Array()
+        putAsset(assets, url, data.toUint8Array())
     }
 
     actual fun hasResourceData(url: String): Boolean {
@@ -83,8 +83,13 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
 
     actual fun evictResourceData() {
         for (url in resourceData.keys) {
-            assets.asDynamic()[url] = null
+            putAsset(assets, url, null)
         }
         resourceData.clear()
     }
+}
+// The generated `assets` record is read-only; write through with a top-level js() so it
+// compiles on wasmJs (Filament.js reads uploaded resource bytes from this map).
+private fun putAsset(assets: JsAny, key: String, value: org.khronos.webgl.Uint8Array?) {
+    js("assets[key] = value")
 }

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
+
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.MaterialInstance
@@ -23,7 +25,7 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         val vector = jsInstance.getEntities()
         val result = IntArray(vector.size().toInt())
         for (i in 0 until vector.size().toInt()) {
-            val jsEntity = vector.get(i)
+            val jsEntity = vector.get(i.toDouble())
             val id = jsEntity.getId().toInt()
             EntityManager.register(id, jsEntity)
             result[i] = id
@@ -55,19 +57,19 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         val vector = jsInstance.getSkinNames()
         val result = Array(vector.size().toInt()) { "" }
         for (i in 0 until vector.size().toInt()) {
-            result[i] = vector.get(i)
+            result[i] = vector.get(i.toDouble()).toString()
         }
         return result
     }
 
     actual fun attachSkin(skinIndex: Int, target: Int) {
         // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
-        jsInstance.attachSkin(skinIndex, target.unsafeCast<Entity>())
+        jsInstance.attachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 
     actual fun detachSkin(skinIndex: Int, target: Int) {
         // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
-        jsInstance.detachSkin(skinIndex, target.unsafeCast<Entity>())
+        jsInstance.detachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 
     actual fun getJointCountAt(skinIndex: Int): Int {
@@ -79,21 +81,22 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
     }
 
     actual fun applyMaterialVariant(variantIndex: Int) {
-        jsInstance.applyMaterialVariant(variantIndex)
+        jsInstance.applyMaterialVariant(variantIndex.toDouble())
     }
 
     actual fun getMaterialInstances(): Array<MaterialInstance> {
         val vector = jsInstance.getMaterialInstances()
         return Array(vector.size().toInt()) { i ->
-            MaterialInstance(vector.get(i))
+            MaterialInstance(vector.get(i.toDouble()))
         }
     }
 
     actual fun getMaterialVariantNames(): Array<String> {
-        return jsInstance.getMaterialVariantNames()
+        val names = jsInstance.getMaterialVariantNames()
+        return Array(names.length) { names[it].toString() }
     }
 
-    actual constructor() : this(js("{}").unsafeCast<JSFilamentInstance>()) {
+    actual constructor() : this(emptyJsObject().unsafeCast<JSFilamentInstance>()) {
         // Warning: Default constructor creates empty FilamentInstance with no valid JS binding backing
         // This is only safe if the instance is never actually used; normally instances should be created via AssetLoader
     }

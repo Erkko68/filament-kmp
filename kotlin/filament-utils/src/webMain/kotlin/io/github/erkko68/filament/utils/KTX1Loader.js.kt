@@ -17,6 +17,18 @@ private fun ByteArray.toArrayBufferView(): ArrayBufferView {
     return int8.unsafeCast<ArrayBufferView>()
 }
 
+// SH extraction reads KTX1 metadata via Filament's Buffer + Ktx1Bundle globals. Declared as
+// external interfaces + top-level js() constructors so the same code compiles on wasmJs.
+private external interface FilamentBuffer : JsAny {
+    fun delete()
+}
+private external interface Ktx1Bundle : JsAny {
+    fun getMetadata(key: String): String
+    fun delete()
+}
+private fun filamentBuffer(view: ArrayBufferView): FilamentBuffer = js("Filament.Buffer(view)")
+private fun newKtx1Bundle(buf: FilamentBuffer): Ktx1Bundle = js("new Filament.Ktx1Bundle(buf)")
+
 actual object KTX1Loader {
     actual class Options actual constructor() {
         actual var srgb: Boolean = false
@@ -70,10 +82,9 @@ actual object KTX1Loader {
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? {
         return try {
-            val arrayBufferView = buffer.toArrayBufferView()
-            val kbd = js("Filament.Buffer(arrayBufferView)")
-            val ktx = js("new Filament.Ktx1Bundle(kbd)")
-            val shString = ktx.getMetadata("sh").unsafeCast<String>()
+            val kbd = filamentBuffer(buffer.toArrayBufferView())
+            val ktx = newKtx1Bundle(kbd)
+            val shString = ktx.getMetadata("sh")
             ktx.delete()
             kbd.delete()
             if (shString.isEmpty()) return null

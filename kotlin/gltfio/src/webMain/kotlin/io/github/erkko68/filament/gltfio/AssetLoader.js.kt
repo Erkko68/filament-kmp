@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.web.interop.toJsArray
+
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.web.`gltfio_AssetLoader` as JSAssetLoader
@@ -22,7 +24,7 @@ actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine
         buffer: ByteArray,
         instances: Array<FilamentInstance>
     ): FilamentAsset? {
-        val jsInstances: Array<io.github.erkko68.filament.web.`gltfio_FilamentInstance`?> = instances.map { it.jsInstance }.toTypedArray()
+        val jsInstances = instances.map { it.jsInstance }.toJsArray()
         val jsAsset = jsLoader.createInstancedAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>(), jsInstances)
         return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
     }

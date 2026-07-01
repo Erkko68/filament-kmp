@@ -1,5 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.web.interop.toFloatArray
+
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
@@ -18,8 +20,8 @@ actual class FilamentAsset(
         return id
     }
 
-    private fun Array<JSEntity>.registerAndGetIds(): IntArray {
-        return IntArray(size) { i -> this[i].registerAndGetId() }
+    private fun js.array.ReadonlyArray<JSEntity>.registerAndGetIds(): IntArray {
+        return IntArray(length) { i -> this[i]!!.registerAndGetId() }
     }
 
     actual fun getRoot(): Entity = jsAsset.getRoot().registerAndGetId()
@@ -57,8 +59,8 @@ actual class FilamentAsset(
 
     actual fun getBoundingBox(): Box {
         val aabb = jsAsset.getBoundingBox()
-        val minArr = aabb.min.unsafeCast<Array<Number>>()
-        val maxArr = aabb.max.unsafeCast<Array<Number>>()
+        val minArr = aabb.min!!.toFloatArray(3)
+        val maxArr = aabb.max!!.toFloatArray(3)
         return Box(
             (minArr[0].toFloat() + maxArr[0].toFloat()) / 2f,
             (minArr[1].toFloat() + maxArr[1].toFloat()) / 2f,
@@ -85,7 +87,8 @@ actual class FilamentAsset(
     }
 
     actual fun getResourceUris(): Array<String> {
-        return jsAsset.getResourceUris()
+        val uris = jsAsset.getResourceUris()
+        return Array(uris.length) { uris[it].toString() }
     }
 
     actual fun releaseSourceData() {

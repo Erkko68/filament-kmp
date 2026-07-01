@@ -4,11 +4,11 @@ import io.github.erkko68.filament.web.`gltfio_Animator` as JSAnimator
 
 actual class Animator(internal val jsAnimator: JSAnimator) {
     actual fun applyAnimation(index: Int, time: Float) {
-        jsAnimator.applyAnimation(index, time)
+        jsAnimator.applyAnimation(index.toDouble(), time.toDouble())
     }
 
     actual fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float) {
-        jsAnimator.applyCrossFade(previousIndex, previousTime, alpha)
+        jsAnimator.applyCrossFade(previousIndex.toDouble(), previousTime.toDouble(), alpha.toDouble())
     }
 
     actual fun updateBoneMatrices() {
@@ -24,10 +24,10 @@ actual class Animator(internal val jsAnimator: JSAnimator) {
     }
 
     actual fun getAnimationDuration(index: Int): Float {
-        return jsAnimator.getAnimationDuration(index).toFloat()
+        return jsAnimator.getAnimationDuration(index.toDouble()).toFloat()
     }
 
     actual fun getAnimationName(index: Int): String? {
-        return jsAnimator.getAnimationName(index).let { if (it.isEmpty()) null else it }
+        return jsAnimator.getAnimationName(index.toDouble()).let { if (it.isEmpty()) null else it }
     }
 }
