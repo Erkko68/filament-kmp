@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.Camera as JSCamera
 import io.github.erkko68.filament.web.Camera_Projection
 import io.github.erkko68.filament.web.Camera_Fov
@@ -41,7 +44,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     }
 
     actual fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
-        jsCamera.setCustomProjection(matrix.toTypedArray() as Array<Number>, near, far)
+        jsCamera.setCustomProjection(matrix.toJsNumbers(), near, far)
     }
 
     actual fun setCustomProjection(
@@ -52,7 +55,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     ) {
         // JS bindings don't expose a separate culling matrix setter easily,
         // we use the main projection matrix.
-        jsCamera.setCustomProjection(matrix.toTypedArray() as Array<Number>, near, far)
+        jsCamera.setCustomProjection(matrix.toJsNumbers(), near, far)
     }
 
     actual fun setCustomEyeProjection(
@@ -69,7 +72,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     }
 
     actual fun setScaling(x: Double, y: Double) {
-        jsCamera.setScaling(arrayOf(x, y) as Array<Number>)
+        jsCamera.setScaling(jsNumbers(x, y))
     }
 
     actual fun getScaling(out: DoubleArray?): DoubleArray {
@@ -80,7 +83,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     }
 
     actual fun setShift(x: Double, y: Double) {
-        jsCamera.setShift(arrayOf(x, y) as Array<Number>)
+        jsCamera.setShift(jsNumbers(x, y))
     }
 
     actual fun getShift(out: DoubleArray?): DoubleArray {
@@ -102,18 +105,18 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
         upZ: Double
     ) {
         jsCamera.lookAt(
-            arrayOf(eyeX, eyeY, eyeZ) as Array<Number>,
-            arrayOf(centerX, centerY, centerZ) as Array<Number>,
-            arrayOf(upX, upY, upZ) as Array<Number>
+            jsNumbers(eyeX, eyeY, eyeZ),
+            jsNumbers(centerX, centerY, centerZ),
+            jsNumbers(upX, upY, upZ)
         )
     }
 
     actual fun setModelMatrix(modelMatrix: FloatArray) {
-        jsCamera.setModelMatrix(modelMatrix.toTypedArray() as Array<Number>)
+        jsCamera.setModelMatrix(modelMatrix.toJsNumbers())
     }
 
     actual fun setModelMatrix(modelMatrix: DoubleArray) {
-        jsCamera.setModelMatrix(modelMatrix.toTypedArray() as Array<Number>)
+        jsCamera.setModelMatrix(modelMatrix.toJsNumbers())
     }
 
     actual fun getProjectionMatrix(out: DoubleArray?): DoubleArray {

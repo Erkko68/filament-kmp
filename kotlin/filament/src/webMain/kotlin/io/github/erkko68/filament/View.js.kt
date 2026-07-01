@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.View as JSView
 
 // Optional View setters/getter present only in newer filament.js builds. Declared as methods
@@ -83,7 +86,7 @@ actual class View(internal val jsView: JSView) {
         get() = _viewport
         set(value) {
             _viewport = value
-            jsView.setViewport(arrayOf(value.left, value.bottom, value.width, value.height) as Array<Number>)
+            jsView.setViewport(jsNumbers(value.left, value.bottom, value.width, value.height))
         }
 
     actual var blendMode: BlendMode
@@ -149,8 +152,8 @@ actual class View(internal val jsView: JSView) {
             val jsOptions = js("{}").unsafeCast<io.github.erkko68.filament.web.`View_DynamicResolutionOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.homogeneousScaling = value.homogeneousScaling
-            jsOptions.minScale = arrayOf(value.minScale, value.minScale) as Array<Number>
-            jsOptions.maxScale = arrayOf(value.maxScale, value.maxScale) as Array<Number>
+            jsOptions.minScale = jsNumbers(value.minScale, value.minScale)
+            jsOptions.maxScale = jsNumbers(value.maxScale, value.maxScale)
             jsOptions.sharpness = value.sharpness.toDouble()
             jsOptions.quality = when(value.quality) {
                 View.Quality.LOW -> io.github.erkko68.filament.web.View_QualityLevel.LOW
@@ -407,7 +410,7 @@ actual class View(internal val jsView: JSView) {
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
         require(value.size == 4) { "setMaterialGlobal expects a float4; got size ${value.size}" }
         @Suppress("UNCHECKED_CAST")
-        jsView.setMaterialGlobal(index.toDouble(), value.toTypedArray() as Array<Number>)
+        jsView.setMaterialGlobal(index.toDouble(), value.toJsNumbers())
     }
 
     actual fun getMaterialGlobal(index: Int): FloatArray {

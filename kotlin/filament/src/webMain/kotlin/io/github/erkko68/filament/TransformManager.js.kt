@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.TransformManager as JSTransformManager
 import io.github.erkko68.filament.web.TransformManager_Instance as JSTransformManagerInstance
 
@@ -102,11 +105,11 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
     }
 
     actual fun setTransform(instance: EntityInstance, localTransform: FloatArray) {
-        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toTypedArray() as Array<Number>)
+        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toJsNumbers())
     }
 
     actual fun setTransform(instance: EntityInstance, localTransform: DoubleArray) {
-        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toTypedArray() as Array<Number>)
+        jsTransformManager.setTransform(instance.unsafeCast<JSTransformManagerInstance>(), localTransform.toJsNumbers())
     }
 
     actual fun getTransform(

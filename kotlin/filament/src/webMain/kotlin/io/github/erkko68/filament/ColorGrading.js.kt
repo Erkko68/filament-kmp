@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.ColorGrading as JSColorGrading
 import io.github.erkko68.filament.web.`ColorGrading_Builder` as JSColorGradingBuilder
 import io.github.erkko68.filament.web.ColorGrading_QualityLevel
@@ -71,9 +74,9 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             outBlue: FloatArray
         ): Builder {
             jsBuilder.channelMixer(
-                outRed.toTypedArray() as Array<Number>,
-                outGreen.toTypedArray() as Array<Number>,
-                outBlue.toTypedArray() as Array<Number>
+                outRed.toJsNumbers(),
+                outGreen.toJsNumbers(),
+                outBlue.toJsNumbers()
             )
             return this
         }
@@ -85,10 +88,10 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             ranges: FloatArray
         ): Builder {
             jsBuilder.shadowsMidtonesHighlights(
-                shadows.toTypedArray() as Array<Number>,
-                midtones.toTypedArray() as Array<Number>,
-                highlights.toTypedArray() as Array<Number>,
-                ranges.toTypedArray() as Array<Number>
+                shadows.toJsNumbers(),
+                midtones.toJsNumbers(),
+                highlights.toJsNumbers(),
+                ranges.toJsNumbers()
             )
             return this
         }
@@ -99,9 +102,9 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             power: FloatArray
         ): Builder {
             jsBuilder.slopeOffsetPower(
-                slope.toTypedArray() as Array<Number>,
-                offset.toTypedArray() as Array<Number>,
-                power.toTypedArray() as Array<Number>
+                slope.toJsNumbers(),
+                offset.toJsNumbers(),
+                power.toJsNumbers()
             )
             return this
         }
@@ -127,9 +130,9 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             highlightScale: FloatArray
         ): Builder {
             jsBuilder.curves(
-                shadowGamma.toTypedArray() as Array<Number>,
-                midPoint.toTypedArray() as Array<Number>,
-                highlightScale.toTypedArray() as Array<Number>
+                shadowGamma.toJsNumbers(),
+                midPoint.toJsNumbers(),
+                highlightScale.toJsNumbers()
             )
             return this
         }

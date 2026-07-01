@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.Skybox as JSSkybox
 import io.github.erkko68.filament.web.`Skybox_Builder` as JSSkyboxBuilder
 
@@ -7,7 +10,7 @@ actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float?
     private var _layerMask = 0xFF
 
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
-        jsSkybox.setColor(arrayOf(r, g, b, a) as Array<Number>)
+        jsSkybox.setColor(jsNumbers(r, g, b, a))
     }
 
     // Skybox$Builder doesn't bind `intensity` (only priority/color/environment/
@@ -53,7 +56,7 @@ actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float?
             b: Float,
             a: Float
         ): Builder {
-            jsBuilder.color(arrayOf(r, g, b, a) as Array<Number>)
+            jsBuilder.color(jsNumbers(r, g, b, a))
             return this
         }
 

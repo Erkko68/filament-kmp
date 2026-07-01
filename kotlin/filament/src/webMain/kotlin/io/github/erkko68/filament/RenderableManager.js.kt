@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.RenderableManager as JSRenderableManager
 import io.github.erkko68.filament.web.`RenderableManager_Builder` as JSRenderableManagerBuilder
 import io.github.erkko68.filament.web.RenderableManager_PrimitiveType
@@ -24,8 +27,8 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         box: Box
     ) {
         val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.web.Box>()
-        jsBox.center = box.center.toTypedArray() as Array<Number>
-        jsBox.halfExtent = box.halfExtent.toTypedArray() as Array<Number>
+        jsBox.center = box.center.toJsNumbers()
+        jsBox.halfExtent = box.halfExtent.toJsNumbers()
         jsRenderableManager.setAxisAlignedBoundingBox(instance.unsafeCast<JSRenderableManagerInstance>(), jsBox)
     }
 
@@ -389,8 +392,8 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
 
         actual fun boundingBox(box: Box): Builder {
             val jsBox = js("{}").unsafeCast<io.github.erkko68.filament.web.Box>()
-            jsBox.center = box.center.toTypedArray() as Array<Number>
-            jsBox.halfExtent = box.halfExtent.toTypedArray() as Array<Number>
+            jsBox.center = box.center.toJsNumbers()
+            jsBox.halfExtent = box.halfExtent.toJsNumbers()
             jsBuilder.boundingBox(jsBox)
             return this
         }

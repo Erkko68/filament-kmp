@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.Renderer as JSRenderer
 import io.github.erkko68.filament.web.`Renderer_ClearOptions` as JSRendererClearOptions
 
@@ -36,7 +39,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         set(value) {
             field = value
             val jsOptions = js("{}").unsafeCast<JSRendererClearOptions>()
-            jsOptions.clearColor = value.clearColor.toTypedArray() as Array<Number>
+            jsOptions.clearColor = value.clearColor.toJsNumbers()
             jsOptions.clear = value.clear
             jsRenderer.setClearOptions(jsOptions)
         }

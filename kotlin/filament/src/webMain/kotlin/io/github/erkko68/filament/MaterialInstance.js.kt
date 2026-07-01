@@ -1,5 +1,10 @@
 package io.github.erkko68.filament
 
+import js.array.JsArray
+
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
 import io.github.erkko68.filament.web.RgbType
 import io.github.erkko68.filament.web.RgbaType
@@ -13,7 +18,7 @@ import io.github.erkko68.filament.web.CullingMode
 // setScissor/unsetScissor (present only in newer filament.js, so feature-detected).
 private external interface JsMaterialInstanceExt {
     fun setBoolParameter(name: String, value: Array<Boolean>)
-    fun setFloatParameter(name: String, value: Array<Number>)
+    fun setFloatParameter(name: String, value: JsArray<JsNumber>)
     // Declared as methods (not function-typed properties) so they keep their `this` binding when
     // invoked — a detached embind method aborts with a native BindingError. Probed before calling.
     fun setScissor(left: Int, bottom: Int, width: Int, height: Int)
@@ -46,11 +51,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Float, y: Float) {
-        jsMaterialInstance.setFloat2Parameter(name, arrayOf(x, y) as Array<Number>)
+        jsMaterialInstance.setFloat2Parameter(name, jsNumbers(x, y))
     }
 
     actual fun setParameter(name: String, x: Int, y: Int) {
-        jsMaterialInstance.setFloat2Parameter(name, arrayOf(x.toFloat(), y.toFloat()) as Array<Number>)
+        jsMaterialInstance.setFloat2Parameter(name, jsNumbers(x.toFloat(), y.toFloat()))
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) {
@@ -58,11 +63,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float) {
-        jsMaterialInstance.setFloat3Parameter(name, arrayOf(x, y, z) as Array<Number>)
+        jsMaterialInstance.setFloat3Parameter(name, jsNumbers(x, y, z))
     }
 
     actual fun setParameter(name: String, x: Int, y: Int, z: Int) {
-        jsMaterialInstance.setFloat3Parameter(name, arrayOf(x.toFloat(), y.toFloat(), z.toFloat()) as Array<Number>)
+        jsMaterialInstance.setFloat3Parameter(name, jsNumbers(x.toFloat(), y.toFloat(), z.toFloat()))
     }
 
     actual fun setParameter(
@@ -76,11 +81,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
-        jsMaterialInstance.setFloat4Parameter(name, arrayOf(x, y, z, w) as Array<Number>)
+        jsMaterialInstance.setFloat4Parameter(name, jsNumbers(x, y, z, w))
     }
 
     actual fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) {
-        jsMaterialInstance.setFloat4Parameter(name, arrayOf(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat()) as Array<Number>)
+        jsMaterialInstance.setFloat4Parameter(name, jsNumbers(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat()))
     }
 
     actual fun setParameter(
@@ -109,8 +114,8 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         offset: Int,
         count: Int
     ) {
-        val sub = v.slice(offset until (offset + count)).toTypedArray()
-        ext.setFloatParameter(name, sub as Array<Number>)
+        val sub = v.slice(offset until (offset + count))
+        ext.setFloatParameter(name, sub.toJsNumbers())
     }
 
     actual fun setParameter(
@@ -120,14 +125,14 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         offset: Int,
         count: Int
     ) {
-        val sub = v.slice(offset until (offset + count)).toTypedArray()
+        val sub = v.slice(offset until (offset + count))
         when (type) {
-            FloatElement.FLOAT -> ext.setFloatParameter(name, sub as Array<Number>)
-            FloatElement.FLOAT2 -> jsMaterialInstance.setFloat2Parameter(name, sub as Array<Number>)
-            FloatElement.FLOAT3 -> jsMaterialInstance.setFloat3Parameter(name, sub as Array<Number>)
-            FloatElement.FLOAT4 -> jsMaterialInstance.setFloat4Parameter(name, sub as Array<Number>)
-            FloatElement.MAT3 -> jsMaterialInstance.setMat3Parameter(name, sub as Array<Number>)
-            FloatElement.MAT4 -> jsMaterialInstance.setMat4Parameter(name, sub as Array<Number>)
+            FloatElement.FLOAT -> ext.setFloatParameter(name, sub.toJsNumbers())
+            FloatElement.FLOAT2 -> jsMaterialInstance.setFloat2Parameter(name, sub.toJsNumbers())
+            FloatElement.FLOAT3 -> jsMaterialInstance.setFloat3Parameter(name, sub.toJsNumbers())
+            FloatElement.FLOAT4 -> jsMaterialInstance.setFloat4Parameter(name, sub.toJsNumbers())
+            FloatElement.MAT3 -> jsMaterialInstance.setMat3Parameter(name, sub.toJsNumbers())
+            FloatElement.MAT4 -> jsMaterialInstance.setMat4Parameter(name, sub.toJsNumbers())
         }
     }
 
@@ -142,7 +147,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
             Colors.RgbType.SRGB -> io.github.erkko68.filament.web.RgbType.sRGB
             Colors.RgbType.LINEAR -> io.github.erkko68.filament.web.RgbType.LINEAR
         }
-        jsMaterialInstance.setColor3Parameter(name, jsType, arrayOf(r, g, b) as Array<Number>)
+        jsMaterialInstance.setColor3Parameter(name, jsType, jsNumbers(r, g, b))
     }
 
     actual fun setParameter(
@@ -159,7 +164,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
             Colors.RgbaType.PREMULTIPLIED_SRGB -> io.github.erkko68.filament.web.RgbaType.PREMULTIPLIED_sRGB
             Colors.RgbaType.PREMULTIPLIED_LINEAR -> io.github.erkko68.filament.web.RgbaType.PREMULTIPLIED_LINEAR
         }
-        jsMaterialInstance.setColor4Parameter(name, jsType, arrayOf(r, g, b, a) as Array<Number>)
+        jsMaterialInstance.setColor4Parameter(name, jsType, jsNumbers(r, g, b, a))
     }
 
     actual fun setScissor(left: Int, bottom: Int, width: Int, height: Int) {

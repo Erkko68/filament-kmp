@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.LightManager as JSLightManager
 import io.github.erkko68.filament.web.`LightManager_Builder` as JSLightManagerBuilder
 import io.github.erkko68.filament.web.LightManager_Type
@@ -41,7 +44,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) {
-        jsLightManager.setDirection(instance.unsafeCast<JSLightManagerInstance>(), arrayOf(x, y, z) as Array<Number>)
+        jsLightManager.setDirection(instance.unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
     }
 
     actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
@@ -52,7 +55,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) {
-        jsLightManager.setPosition(instance.unsafeCast<JSLightManagerInstance>(), arrayOf(x, y, z) as Array<Number>)
+        jsLightManager.setPosition(instance.unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
     }
 
     actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
@@ -63,7 +66,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) {
-        jsLightManager.setColor(instance.unsafeCast<JSLightManagerInstance>(), arrayOf(r, g, b) as Array<Number>)
+        jsLightManager.setColor(instance.unsafeCast<JSLightManagerInstance>(), jsNumbers(r, g, b))
     }
 
     actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
@@ -223,17 +226,17 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun position(x: Float, y: Float, z: Float): Builder {
-            jsBuilder.position(arrayOf(x, y, z) as Array<Number>)
+            jsBuilder.position(jsNumbers(x, y, z))
             return this
         }
 
         actual fun direction(x: Float, y: Float, z: Float): Builder {
-            jsBuilder.direction(arrayOf(x, y, z) as Array<Number>)
+            jsBuilder.direction(jsNumbers(x, y, z))
             return this
         }
 
         actual fun color(linearR: Float, linearG: Float, linearB: Float): Builder {
-            jsBuilder.color(arrayOf(linearR, linearG, linearB) as Array<Number>)
+            jsBuilder.color(jsNumbers(linearR, linearG, linearB))
             return this
         }
 

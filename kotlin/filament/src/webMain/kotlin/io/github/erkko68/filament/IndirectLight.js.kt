@@ -1,5 +1,8 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsNumbers
+
 import io.github.erkko68.filament.web.IndirectLight as JSIndirectLight
 import io.github.erkko68.filament.web.`IndirectLight_Builder` as JSIndirectLightBuilder
 
@@ -19,7 +22,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             }
             return result
         }
-        set(value) { jsIndirectLight.setRotation(value.toTypedArray() as Array<Number>) }
+        set(value) { jsIndirectLight.setRotation(value.toJsNumbers()) }
 
     actual val reflectionsTexture: Texture? get() = jsIndirectLight.getReflectionsTexture()?.let { Texture(it) }
     actual val irradianceTexture: Texture? get() = jsIndirectLight.getIrradianceTexture()?.let { Texture(it) }
@@ -36,7 +39,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             bands: Int,
             sh: FloatArray
         ): Builder {
-            jsBuilder.irradianceSh(bands.toDouble(), sh.toTypedArray() as Array<Number>)
+            jsBuilder.irradianceSh(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 
@@ -50,7 +53,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             sh: FloatArray
         ): Builder {
             // JS bindings don't seem to have radiance, mapping to irradiance
-            jsBuilder.irradianceSh(bands.toDouble(), sh.toTypedArray() as Array<Number>)
+            jsBuilder.irradianceSh(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 
@@ -60,7 +63,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
         }
 
         actual fun rotation(rotation: FloatArray): Builder {
-            jsBuilder.rotation(rotation.toTypedArray() as Array<Number>)
+            jsBuilder.rotation(rotation.toJsNumbers())
             return this
         }
 
@@ -72,7 +75,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
     actual companion object {
         actual fun getDirectionEstimate(sh: FloatArray, out: FloatArray?): FloatArray {
             val result = out ?: FloatArray(3)
-            val res = JSIndirectLight.getDirectionEstimate(sh.toTypedArray() as Array<Number>)
+            val res = JSIndirectLight.getDirectionEstimate(sh.toJsNumbers())
             if (res != null) {
                 val arr = res.unsafeCast<Array<Double>>()
                 for (i in 0 until 3.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
@@ -88,7 +91,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             out: FloatArray?
         ): FloatArray {
             val result = out ?: FloatArray(4)
-            val res = JSIndirectLight.getColorEstimate(sh.toTypedArray() as Array<Number>, arrayOf(x, y, z) as Array<Number>)
+            val res = JSIndirectLight.getColorEstimate(sh.toJsNumbers(), jsNumbers(x, y, z))
             if (res != null) {
                 val arr = res.unsafeCast<Array<Double>>()
                 for (i in 0 until 4.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
