@@ -1,5 +1,9 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.toFloatArray
+
+import io.github.erkko68.filament.web.interop.toJsArray
+
 import io.github.erkko68.filament.web.interop.emptyJsObject
 
 import io.github.erkko68.filament.web.interop.jsNumbers
@@ -16,7 +20,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     }
 
     actual fun getInstance(entity: Entity): EntityInstance {
-        return jsRenderableManager.getInstance(EntityManager.jsEntityOf(entity)).unsafeCast<EntityInstance>()
+        return jsRenderableManager.getInstance(EntityManager.jsEntityOf(entity)).toInt()
     }
 
     actual fun destroy(entity: Entity) {
@@ -38,16 +42,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         outBox: Box?
     ): Box {
         val jsBox = jsRenderableManager.getAxisAlignedBoundingBox(instance.toDouble())
-        val center = jsBox.center.unsafeCast<Array<Number>>()
-        val halfExtent = jsBox.halfExtent.unsafeCast<Array<Number>>()
+        val center = jsBox.center!!.toFloatArray(3)
+        val halfExtent = jsBox.halfExtent!!.toFloatArray(3)
         
         val result = outBox ?: Box()
-        result.center[0] = center[0].toFloat()
-        result.center[1] = center[1].toFloat()
-        result.center[2] = center[2].toFloat()
-        result.halfExtent[0] = halfExtent[0].toFloat()
-        result.halfExtent[1] = halfExtent[1].toFloat()
-        result.halfExtent[2] = halfExtent[2].toFloat()
+        for (i in 0 until 3) {
+            result.center[i] = center[i]
+            result.halfExtent[i] = halfExtent[i]
+        }
         return result
     }
 
@@ -112,10 +114,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         boneCount: Int,
         offset: Int
     ) {
-        @Suppress("UNCHECKED_CAST")
-        val boneMatrices = matrices.toTypedArray() as Array<Any?>
-        jsRenderableManager.setBonesFromMatrices(
-            instance.toDouble(), boneMatrices, offset.toDouble())
+        jsRenderableManager.setBonesFromMatrices(instance.toDouble(), matrices.toJsNumbers(), offset.toDouble())
     }
 
     actual fun setBonesAsQuaternions(
@@ -128,17 +127,15 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         // Pack each 4-float slice of the flat input into one Bone object with an
         // identity translation (this overload only carries rotations).
         @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-        val bones = Array<io.github.erkko68.filament.web.`RenderableManager_Bone`>(boneCount) { i ->
+        val bones = List(boneCount) { i ->
             val b = i * 4
             val bone = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`RenderableManager_Bone`>()
-            bone.unitQuaternion = arrayOf(
-                quaternions[b + 0], quaternions[b + 1],
-                quaternions[b + 2], quaternions[b + 3]
-            )
-            bone.translation = arrayOf(0f, 0f, 0f)
+            bone.unitQuaternion = jsNumbers(quaternions[b + 0], quaternions[b + 1],
+                quaternions[b + 2], quaternions[b + 3])
+            bone.translation = jsNumbers(0f, 0f, 0f)
             bone
         }
-        jsRenderableManager.setBones(instance.toDouble(), bones, offset.toDouble())
+        jsRenderableManager.setBones(instance.toDouble(), bones.toJsArray(), offset.toDouble())
     }
 
     actual fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int) {

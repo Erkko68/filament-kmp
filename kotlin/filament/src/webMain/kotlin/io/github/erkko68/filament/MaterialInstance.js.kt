@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.toJsBooleans
+
 import io.github.erkko68.filament.web.interop.emptyJsObject
 
 import js.array.JsArray
@@ -18,8 +20,8 @@ import io.github.erkko68.filament.web.CullingMode
 // Members the generated MaterialInstance external doesn't cover: the vector/array overloads
 // of setBoolParameter/setFloatParameter (the scalar forms are generated), and the optional
 // setScissor/unsetScissor (present only in newer filament.js, so feature-detected).
-private external interface JsMaterialInstanceExt {
-    fun setBoolParameter(name: String, value: Array<Boolean>)
+private external interface JsMaterialInstanceExt : JsAny  {
+    fun setBoolParameter(name: String, value: JsArray<JsBoolean>)
     fun setFloatParameter(name: String, value: JsArray<JsNumber>)
     // Declared as methods (not function-typed properties) so they keep their `this` binding when
     // invoked — a detached embind method aborts with a native BindingError. Probed before calling.
@@ -31,7 +33,7 @@ private external interface JsMaterialInstanceExt {
 actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstance) {
     private val ext: JsMaterialInstanceExt get() = jsMaterialInstance.unsafeCast<JsMaterialInstanceExt>()
     actual val material: Material
-        get() = emptyJsObject().unsafeCast<Material>()
+        get() = jsUnsupported("MaterialInstance.getMaterial", "filament.js does not expose MaterialInstance.getMaterial.")
 
     actual val name: String
         get() = jsMaterialInstance.getName()
@@ -49,7 +51,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
-        ext.setBoolParameter(name, arrayOf(x, y))
+        ext.setBoolParameter(name, listOf(x, y).toJsBooleans())
     }
 
     actual fun setParameter(name: String, x: Float, y: Float) {
@@ -61,7 +63,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) {
-        ext.setBoolParameter(name, arrayOf(x, y, z))
+        ext.setBoolParameter(name, listOf(x, y, z).toJsBooleans())
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float) {
@@ -79,7 +81,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         z: Boolean,
         w: Boolean
     ) {
-        ext.setBoolParameter(name, arrayOf(x, y, z, w))
+        ext.setBoolParameter(name, listOf(x, y, z, w).toJsBooleans())
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
@@ -105,8 +107,8 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         offset: Int,
         count: Int
     ) {
-        val sub = v.slice(offset until (offset + count)).toTypedArray()
-        ext.setBoolParameter(name, sub)
+        val sub = v.slice(offset until (offset + count))
+        ext.setBoolParameter(name, sub.toJsBooleans())
     }
 
     actual fun setParameter(

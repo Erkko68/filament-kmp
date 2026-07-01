@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.toFloatArray
+
 import io.github.erkko68.filament.web.interop.emptyJsObject
 
 import io.github.erkko68.filament.web.interop.jsNumbers
@@ -11,7 +13,7 @@ import io.github.erkko68.filament.web.View as JSView
 // (not function-typed properties) so they're invoked as `obj.method(...)` and keep their `this`
 // binding — embind throws BindingError if the bound function is detached from its receiver.
 // Presence is probed with `jsHasMember` before calling.
-private external interface JsViewExt {
+private external interface JsViewExt : JsAny  {
     fun setDithering(dithering: io.github.erkko68.filament.web.View_Dithering)
     fun setDynamicResolutionOptions(options: io.github.erkko68.filament.web.View_DynamicResolutionOptions)
     fun setRenderQuality(quality: io.github.erkko68.filament.web.View_RenderQuality)
@@ -22,15 +24,15 @@ private external interface JsViewExt {
 }
 
 // Value-object fields not emitted into the generated option externals.
-private external interface BloomOptionsExt {
-    var highlight: Number
+private external interface BloomOptionsExt : JsAny  {
+    var highlight: Double
     var dirt: io.github.erkko68.filament.web.Texture?
-    var dirtStrength: Number
+    var dirtStrength: Double
 }
-private external interface FogOptionsExt {
+private external interface FogOptionsExt : JsAny  {
     var densityMap: io.github.erkko68.filament.web.Texture?
 }
-private external interface AoOptionsExt {
+private external interface AoOptionsExt : JsAny  {
     var ssct: io.github.erkko68.filament.web.View_AmbientOcclusionOptions_Ssct
 }
 
@@ -197,9 +199,9 @@ actual class View(internal val jsView: JSView) {
                 View.BloomOptions.BlendMode.INTERPOLATE -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE
             }
             jsOptions.unsafeCast<BloomOptionsExt>().let {
-                it.highlight = value.highlight
+                it.highlight = value.highlight.toDouble()
                 it.dirt = value.dirt?.jsTexture
-                it.dirtStrength = value.dirtStrength
+                it.dirtStrength = value.dirtStrength.toDouble()
             }
             jsView.setBloomOptions(jsOptions)
         }
@@ -214,7 +216,7 @@ actual class View(internal val jsView: JSView) {
             jsOptions.density = value.density.toDouble()
             jsOptions.height = value.height.toDouble()
             jsOptions.heightFalloff = value.heightFalloff.toDouble()
-            jsOptions.color = arrayOf(value.color[0], value.color[1], value.color[2])
+            jsOptions.color = jsNumbers(value.color[0], value.color[1], value.color[2])
             jsOptions.cutOffDistance = value.cutOffDistance.toDouble()
             jsOptions.maximumOpacity = value.maximumOpacity.toDouble()
             jsOptions.inScatteringStart = value.inScatteringStart.toDouble()
@@ -250,7 +252,7 @@ actual class View(internal val jsView: JSView) {
             jsOptions.midPoint = value.midPoint.toDouble()
             jsOptions.roundness = value.roundness.toDouble()
             jsOptions.feather = value.feather.toDouble()
-            jsOptions.color = arrayOf(value.color[0], value.color[1], value.color[2], value.color[3])
+            jsOptions.color = jsNumbers(value.color[0], value.color[1], value.color[2], value.color[3])
             jsView.setVignetteOptions(jsOptions)
         }
 
@@ -416,8 +418,7 @@ actual class View(internal val jsView: JSView) {
     }
 
     actual fun getMaterialGlobal(index: Int): FloatArray {
-        val arr = jsView.getMaterialGlobal(index.toDouble())
-        return FloatArray(4) { i -> arr[i].toFloat() }
+        return jsView.getMaterialGlobal(index.toDouble())?.toFloatArray(4) ?: FloatArray(4)
     }
 
     actual val fogEntity: Int
@@ -449,7 +450,7 @@ actual class View(internal val jsView: JSView) {
             callback(PickingQueryResult(
                 result.renderable.getId().toInt(),
                 result.depth.toFloat(),
-                floatArrayOf(result.fragCoords[0].toFloat(), result.fragCoords[1].toFloat(), result.fragCoords[2].toFloat())
+                (result.fragCoords?.toFloatArray(3) ?: FloatArray(3))
             ))
         }
     }

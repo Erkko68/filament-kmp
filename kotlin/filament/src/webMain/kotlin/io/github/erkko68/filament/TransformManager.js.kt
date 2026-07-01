@@ -23,7 +23,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         val cached = instances.getOrPut(entity) {
             jsTransformManager.getInstance(EntityManager.jsEntityOf(entity))
         }
-        return cached.unsafeCast<EntityInstance>()
+        return cached.toInt()
     }
 
     actual fun create(entity: Entity): EntityInstance {

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.toFloatArray
+
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
@@ -17,8 +19,8 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             val result = FloatArray(9)
             val jsVec = jsIndirectLight.getRotation()
             if (jsVec != null) {
-                val arr = jsVec.unsafeCast<Array<Double>>()
-                for (i in 0 until 9.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
+                val arr = jsVec.toFloatArray(9)
+                for (i in 0 until 9) result[i] = arr[i]
             }
             return result
         }
@@ -77,8 +79,8 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             val result = out ?: FloatArray(3)
             val res = JSIndirectLight.getDirectionEstimate(sh.toJsNumbers())
             if (res != null) {
-                val arr = res.unsafeCast<Array<Double>>()
-                for (i in 0 until 3.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
+                val arr = res.toFloatArray(3)
+                for (i in 0 until 3) result[i] = arr[i]
             }
             return result
         }
@@ -93,8 +95,8 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             val result = out ?: FloatArray(4)
             val res = JSIndirectLight.getColorEstimate(sh.toJsNumbers(), jsNumbers(x, y, z))
             if (res != null) {
-                val arr = res.unsafeCast<Array<Double>>()
-                for (i in 0 until 4.coerceAtMost(arr.size)) result[i] = arr[i].toFloat()
+                val arr = res.toFloatArray(4)
+                for (i in 0 until 4) result[i] = arr[i]
             }
             return result
         }

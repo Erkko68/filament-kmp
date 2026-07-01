@@ -10,7 +10,7 @@ import org.khronos.webgl.set
 
 // The generated Texture external only binds setImage(engine, level, pbd); the deep/sub-region
 // overload exists in filament.js but isn't emitted, so re-type it here instead of `asDynamic()`.
-private external interface JsTextureExt {
+private external interface JsTextureExt : JsAny  {
     fun setImage(
         engine: io.github.erkko68.filament.web.Engine,
         level: Int, xoffset: Int, yoffset: Int, zoffset: Int,

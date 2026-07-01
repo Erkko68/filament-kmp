@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.interop.toJsArray
+
 import io.github.erkko68.filament.web.Scene as JSScene
 
 actual class Scene(internal val jsScene: JSScene) {
@@ -30,8 +32,7 @@ actual class Scene(internal val jsScene: JSScene) {
     actual fun addEntities(entities: IntArray) {
         val toAdd = entities.filter { _entities.add(it) }
             .map { EntityManager.jsEntityOf(it) }
-            .toTypedArray()
-        if (toAdd.isNotEmpty()) jsScene.addEntities(toAdd)
+        if (toAdd.isNotEmpty()) jsScene.addEntities(toAdd.toJsArray())
     }
 
     actual fun removeEntity(entity: Entity) {
@@ -47,8 +48,7 @@ actual class Scene(internal val jsScene: JSScene) {
     actual fun removeEntities(entities: IntArray) {
         val toRemove = entities.filter { _entities.remove(it) }
             .map { EntityManager.jsEntityOf(it) }
-            .toTypedArray()
-        if (toRemove.isNotEmpty()) jsScene.removeEntities(toRemove)
+        if (toRemove.isNotEmpty()) jsScene.removeEntities(toRemove.toJsArray())
     }
 
     actual val entityCount: Int
