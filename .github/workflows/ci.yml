@@ -32,7 +32,7 @@ on:
         description: 'Which platform job(s) to run'
         type: choice
         default: all
-        options: [all, jvm, js, ios, android]
+        options: [all, jvm, js, wasm, ios, android]
 
 # Cancel superseded runs for the same ref (a new push to a PR supersedes the old one).
 concurrency:
@@ -176,6 +176,40 @@ jobs:
           name: js-test-reports
           path: kotlin/*/build/reports/tests/
 
+  # wasmJs shares the webMain actuals with js but runs a different compiler backend and
+  # browser runtime, so it gets its own job (distinct signal, runs in parallel with js).
+  wasm:
+    needs: check-verification
+    if: >-
+      needs.check-verification.outputs.run == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'wasm')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with: { java-version: '25', distribution: 'temurin' }
+      - uses: ./.github/actions/setup-gradle-cached
+      - name: Build library
+        run: ./gradlew compileKotlinWasmJs --no-configuration-cache
+      - name: Run Wasm tests
+        run: |
+          ./gradlew \
+            :kotlin:filament:wasmJsTest \
+            :kotlin:filamat:wasmJsTest \
+            :kotlin:filament-utils:wasmJsTest \
+            :kotlin:gltfio:wasmJsTest \
+            :kotlin:filament-compose:wasmJsTest \
+            --no-configuration-cache
+      - name: Build web sample
+        working-directory: samples
+        run: ./gradlew :webApp:compileKotlinWasmJs --no-configuration-cache
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: wasm-test-reports
+          path: kotlin/*/build/reports/tests/
+
   ios:
     needs: check-verification
     if: >-
@@ -303,7 +337,7 @@ jobs:
   # summarizes, so skipped jobs never fail the gate.
   ci-gate:
     if: always()
-    needs: [jvm, js, ios, android]
+    needs: [jvm, js, wasm, ios, android]
     runs-on: ubuntu-latest
     steps:
       - name: Require all platform jobs to have succeeded
@@ -313,7 +347,7 @@ jobs:
           echo "Platform job results: $results"
           for r in $results; do
             if [ "$r" != "success" ]; then
-              echo "::error::CI gate failed (a platform job result was '$r'). Ensure jvm/js/ios/android all pass before merging."
+              echo "::error::CI gate failed (a platform job result was '$r'). Ensure jvm/js/wasm/ios/android all pass before merging."
               exit 1
             fi
           done

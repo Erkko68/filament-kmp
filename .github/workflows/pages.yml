@@ -7,7 +7,7 @@ on:
       - 'samples/webApp/**'
       - 'samples/shared/**'
       - 'kotlin/**/src/**'
-      - 'js/**'
+      - 'web/**'
       - 'prebuilts/web/**'
       - 'gradle/**'
       - 'samples/gradle/**'
@@ -74,7 +74,7 @@ jobs:
       - name: Generate API docs
         # Aggregates :kotlin:filament, :kotlin:filamat, :kotlin:filament-utils,
         # :kotlin:gltfio, :kotlin:filament-compose into build/dokka/html (Dokka v2).
-        # :java and :js modules are excluded (FFM internals / generated externals).
+        # :java and :web modules are excluded (FFM internals / generated externals).
         run: ./gradlew dokkaGenerate --no-configuration-cache
 
       - uses: actions/upload-artifact@v7

@@ -10,7 +10,7 @@ plugins {
 // ── API docs aggregation ──────────────────────────────────────────────────────
 // Dokka V2 no longer auto-collects subprojects; the root gathers the documented
 // modules explicitly. `dokkaGenerate` renders the multi-module site to
-// build/dokka/html. :java and :js are excluded (FFM internals / generated externals).
+// build/dokka/html. :java and :web are excluded (FFM internals / generated externals).
 dependencies {
     dokka(project(":kotlin:filament"))
     dokka(project(":kotlin:filamat"))
@@ -67,7 +67,7 @@ allprojects {
 //   • macosArm64 / macosX64                 — JVM/Panama host (:java:*); macOS uses
 //                                              the JVM build, not Kotlin/Native.
 //   • linuxX64 / linuxArm64 / mingwX64      — JVM/Panama host on Linux/Windows.
-//   • web                                   — Filament.js + WASM for the :js module;
+//   • web                                   — Filament.js + WASM for the :web module;
 //                                              output goes to prebuilts/web/ (no lib/ subdir).
 
 val filaVersion = project.property("filaVersion") as String
