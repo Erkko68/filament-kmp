@@ -23,11 +23,38 @@ val filaVersion = project.property("filaVersion") as String
 // See scripts/dev/check-js-bindings.sh to audit the overlay against jsbindings.cpp.
 // ──────────────────────────────────────────────────────────────────────────────
 
-// `npm`/`npx` are taken from PATH; override via env (mirrors the PYTHON pattern
-// used by the root prebuilt-download tasks).
-val npmExe = providers.environmentVariable("NPM").orElse("npm")
-val npxExe = providers.environmentVariable("NPX").orElse("npx")
-val nodeExe = providers.environmentVariable("NODE").orElse("node")
+// Resolve the Node.js toolchain (node/npm/npx). An explicit NODE/NPM/NPX env var wins
+// (mirrors the PYTHON pattern used by the root prebuilt-download tasks); otherwise we
+// search PATH plus the usual install locations. IDE-launched Gradle daemons (IntelliJ
+// on macOS) inherit a stripped-down PATH that typically omits Homebrew/nvm, so a bare
+// `npm` fails to even start — the fallback search makes `./gradlew` and the IDE both
+// work with no env setup.
+fun findNodeTool(name: String, override: String?): String {
+    if (override != null) return override
+    val pathDirs = (System.getenv("PATH") ?: "").split(File.pathSeparator)
+    val commonDirs = listOf("/opt/homebrew/bin", "/usr/local/bin", "/usr/bin")
+    val nvmDirs = System.getenv("HOME")?.let { home ->
+        File("$home/.nvm/versions/node").listFiles()?.sortedDescending()?.map { "${it.path}/bin" }
+    }.orEmpty()
+    return (pathDirs + commonDirs + nvmDirs)
+        .map { File(it, name) }
+        .firstOrNull { it.canExecute() }
+        ?.absolutePath
+        ?: name
+}
+
+val npmExe = findNodeTool("npm", providers.environmentVariable("NPM").orNull)
+val npxExe = findNodeTool("npx", providers.environmentVariable("NPX").orNull)
+val nodeExe = findNodeTool("node", providers.environmentVariable("NODE").orNull)
+
+// npm/npx are node scripts that re-exec `node` off PATH; prepend node's own directory so
+// they resolve it even when the daemon's PATH doesn't include the Node install (the IDE case).
+val nodeBinDir = File(nodeExe).parentFile?.absolutePath
+fun Exec.withNodeOnPath() {
+    if (nodeBinDir != null) {
+        environment("PATH", nodeBinDir + File.pathSeparator + (System.getenv("PATH") ?: ""))
+    }
+}
 
 val upstreamDts = rootProject.layout.projectDirectory.file("prebuilts/web/filament.d.ts")
 val overlayDts = layout.projectDirectory.file("patches/filament.patch.d.ts")
@@ -109,7 +136,8 @@ val installKarakum = tasks.register<Exec>("installKarakum") {
     dependsOn(assembleFilamentDts)
 
     workingDir = layout.projectDirectory.asFile
-    commandLine(npmExe.get(), "install", "--no-audit", "--no-fund", "--loglevel=error")
+    withNodeOnPath()
+    commandLine(npmExe, "install", "--no-audit", "--no-fund", "--loglevel=error")
 
     inputs.file(layout.projectDirectory.file("package.json"))
     inputs.dir(dtsPackageDir)
@@ -123,7 +151,8 @@ val generateJsExternals = tasks.register<Exec>("generateJsExternals") {
     dependsOn(installKarakum)
 
     workingDir = layout.projectDirectory.asFile
-    commandLine(npxExe.get(), "karakum", "--config", karakumConfig.asFile.absolutePath)
+    withNodeOnPath()
+    commandLine(npxExe, "karakum", "--config", karakumConfig.asFile.absolutePath)
 
     inputs.file(karakumConfig)
     inputs.dir(dtsPackageDir)
@@ -143,7 +172,8 @@ val patchJsExternals = tasks.register<Exec>("patchJsExternals") {
     dependsOn(generateJsExternals)
 
     workingDir = layout.projectDirectory.asFile
-    commandLine(nodeExe.get(), patchScript.asFile.absolutePath, generatedDir.get().asFile.absolutePath)
+    withNodeOnPath()
+    commandLine(nodeExe, patchScript.asFile.absolutePath, generatedDir.get().asFile.absolutePath)
 
     inputs.file(patchScript)
     inputs.dir(generatedDir)
