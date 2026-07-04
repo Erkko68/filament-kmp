@@ -180,7 +180,7 @@ kotlin {
                 // generates against (see karakum-team/karakum gradle.properties); newer
                 // wrappers made the TypedArrays generic (Float32Array<B>), which
                 // Karakum's output doesn't parameterise.
-                api(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:2026.6.7"))
+                api(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:2026.6.11"))
                 api("org.jetbrains.kotlin-wrappers:kotlin-js")
                 api("org.jetbrains.kotlin-wrappers:kotlin-web")
                 api("org.jetbrains.kotlin-wrappers:kotlin-browser")
