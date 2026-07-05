@@ -208,7 +208,11 @@ actual class Material(internal val jsMaterial: JSMaterial) {
             val int8 = org.khronos.webgl.Int8Array(payload.size)
             payload.forEachIndexed { i, b -> int8[i] = b }
             val uint8 = org.khronos.webgl.Uint8Array(int8.buffer)
-            return Material(engine.jsEngine.createMaterial(uint8))
+            // A bad payload C++-throws out of embind; map it to a catchable Kotlin exception
+            // (matches jvm/native, and keeps the raw JS value out of coroutine machinery).
+            val jsMaterial = catchingJsThrows { engine.jsEngine.createMaterial(uint8) }
+                ?: throw IllegalArgumentException("Material build failed — not a valid compiled .filamat payload")
+            return Material(jsMaterial)
         }
 
         actual enum class ShadowSamplingQuality { HARD, LOW }

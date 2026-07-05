@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.test.v2.runComposeUiTest
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.compose.FilamentSceneScope
@@ -67,7 +67,31 @@ fun withFilamentScene(
         mainClock.advanceTimeByFrame()
     }
     body(setSceneContent)
+
+    // Clear the content and restore auto-advance before the block returns. On wasmJs,
+    // runComposeUiTest's teardown awaits the frame clock; with auto-advance still off and
+    // a light's unbounded OnFrame (`withFrameNanos`) loop from a not-yet-disposed tree, that
+    // await never settles and the returned Promise never resolves — the test then trips
+    // Mocha's 30s timeout (flaky under load: prior tests' leaked frame loops starve later
+    // ones, so *which* tests hang varies run to run). Disposing here cancels every OnFrame
+    // loop; re-enabling auto-advance lets teardown drain and resolve. (js/jvm tear down
+    // without leaning on the clock, so this was wasm-only.)
+    slot = {}
+    waitForIdle()
+    mainClock.autoAdvance = true
 }
+
+/**
+ * Skip branch for gated (Tier-B) tests: a no-op harness run. On web `runComposeUiTest` is
+ * asynchronous, so gated tests must *return* their harness result for kotlin.test to await it —
+ * dropping it instead lets the composition run concurrently with later tests (wedging their frame
+ * clock; the wasmJs 30s-timeout hangs) and silently swallows the dropped test's own assertion
+ * failures. This gives the skip branch a value of the exact same platform type as
+ * [composeScene]/[withFilamentScene] (both branches must share one type: JUnit needs the JVM method
+ * to stay `void`, and a common-code LUB of unrelated expect types would compile to `Object`).
+ */
+@OptIn(ExperimentalTestApi::class)
+fun skippedComposeTest() = runComposeUiTest { }
 
 /**
  * Convenience host for the mount→assert→dispose shape. Mounts [content], lets the caller assert live

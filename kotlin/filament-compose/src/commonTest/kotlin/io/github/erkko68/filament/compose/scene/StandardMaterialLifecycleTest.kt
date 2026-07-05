@@ -8,7 +8,7 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.assertDestroyed
-import io.github.erkko68.filament.compose.testutils.composeScene
+import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,36 +29,35 @@ import kotlin.test.assertTrue
  */
 class StandardMaterialLifecycleTest : TierBSceneFixture() {
 
+    // One withFilamentScene hosts the whole loop, and the tests *return* the harness result
+    // (skippedComposeTest() on the skip branch) so the async web `runComposeUiTest` is awaited —
+    // see skippedComposeTest's KDoc.
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun eachStandardMaterialBuildsAndIsFreed() {
-        val engine = engine ?: return
-        val scene = scene ?: return
+    fun eachStandardMaterialBuildsAndIsFreed() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
 
-        for (type in StandardMaterial.entries) {
-            var captured: Material? = null
-            composeScene(
-                engine = engine,
-                scene = scene,
-                whileComposed = {
-                    val m = assertNotNull(captured, "$type should build from embedded bytes")
-                    assertTrue(engine.isValidMaterial(m), "$type should be live while composed")
-                },
-                afterDispose = {
-                    val m = assertNotNull(captured, "$type handle should have been captured")
-                    assertDestroyed("$type should be destroyed after disposal") { engine.isValidMaterial(m) }
-                },
-            ) {
-                captured = rememberStandardMaterial(type)
+        withFilamentScene(engine, scene) { setContent ->
+            for (type in StandardMaterial.entries) {
+                var captured: Material? = null
+                setContent { captured = rememberStandardMaterial(type) }
+                waitForIdle()
+                val m = assertNotNull(captured, "$type should build from embedded bytes")
+                assertTrue(engine.isValidMaterial(m), "$type should be live while composed")
+
+                setContent {}
+                waitForIdle()
+                assertDestroyed("$type should be destroyed after disposal") { engine.isValidMaterial(m) }
             }
         }
     }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun reactiveInstanceReappliesOnKeyChangeAndIsFreed() {
-        val engine = engine ?: return
-        val scene = scene ?: return
+    fun reactiveInstanceReappliesOnKeyChangeAndIsFreed() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
         val material = Material.Builder().payload(StandardMaterial.Lit.payload()).build(engine)
 
         withFilamentScene(engine, scene) { setContent ->
@@ -92,9 +91,11 @@ class StandardMaterialLifecycleTest : TierBSceneFixture() {
             assertDestroyed("instance should be destroyed after disposal") {
                 engine.isValidMaterialInstance(material, first)
             }
-        }
 
-        engine.destroyMaterial(material)
+            // Inside the body: on web the harness runs asynchronously, so code placed after the
+            // withFilamentScene call would destroy the material before the composition uses it.
+            engine.destroyMaterial(material)
+        }
     }
 
     @Test
