@@ -14,9 +14,11 @@
 #   * jvm     — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:jvmTest
 #   * js      — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:jsTest
 #                (needs Chrome on PATH for Karma)
+#   * wasm    — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:wasmJsTest
+#                (needs Chrome on PATH for Karma)
 #   * ios     — :kotlin:filament/{filamat,filament-utils,gltfio,filament-compose}:iosSimulatorArm64Test
 #                (macOS host only; arm64 simulator)
-#                (filament-compose runs on jvm/js/ios only, mirroring CI)
+#                (filament-compose runs on jvm/js/wasm/ios only, mirroring CI)
 #   * android — connectedAndroidDeviceTest on every module
 #                (needs ANDROID_HOME, an AVD, adb on PATH)
 #
@@ -49,6 +51,7 @@ COMPOSE_MODULE=":kotlin:filament-compose"
 # Defaults: run every target. Disable on non-macOS for iOS.
 RUN_JVM=1
 RUN_JS=1
+RUN_WASM=1
 RUN_IOS=1
 RUN_ANDROID=1
 [[ "$(uname -s)" != "Darwin" ]] && RUN_IOS=0
@@ -59,16 +62,18 @@ for arg in "$@"; do
   case "$arg" in
     --no-jvm)     RUN_JVM=0 ;;
     --no-js)      RUN_JS=0 ;;
+    --no-wasm)    RUN_WASM=0 ;;
     --no-ios)     RUN_IOS=0 ;;
     --no-android) RUN_ANDROID=0 ;;
-    jvm|js|ios|android)
+    jvm|js|wasm|ios|android)
       if [[ $explicit_selection -eq 0 ]]; then
-        RUN_JVM=0; RUN_JS=0; RUN_IOS=0; RUN_ANDROID=0
+        RUN_JVM=0; RUN_JS=0; RUN_WASM=0; RUN_IOS=0; RUN_ANDROID=0
         explicit_selection=1
       fi
       case "$arg" in
         jvm)     RUN_JVM=1 ;;
         js)      RUN_JS=1 ;;
+        wasm)    RUN_WASM=1 ;;
         ios)     RUN_IOS=1 ;;
         android) RUN_ANDROID=1 ;;
       esac
@@ -105,6 +110,14 @@ if [[ $RUN_JS -eq 1 ]]; then
   for m in "${MODULES[@]}"; do tasks+=("$m:jsTest"); done
   tasks+=("$COMPOSE_MODULE:jsTest")
   run_gradle "jsTest" "${tasks[@]}"
+fi
+
+# ── Wasm ──────────────────────────────────────────────────────────────────────
+if [[ $RUN_WASM -eq 1 ]]; then
+  tasks=()
+  for m in "${MODULES[@]}"; do tasks+=("$m:wasmJsTest"); done
+  tasks+=("$COMPOSE_MODULE:wasmJsTest")
+  run_gradle "wasmJsTest" "${tasks[@]}"
 fi
 
 # ── iOS (macOS only) ──────────────────────────────────────────────────────────
