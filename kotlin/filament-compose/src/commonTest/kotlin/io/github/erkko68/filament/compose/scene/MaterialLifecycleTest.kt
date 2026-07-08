@@ -5,6 +5,7 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.compose.testutils.TestMaterials
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.composeScene
+import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -25,13 +26,15 @@ import kotlin.test.assertTrue
  */
 class MaterialLifecycleTest : TierBSceneFixture() {
 
+    // Gated tests must *return* the harness result (skippedComposeTest() on the skip branch) so the
+    // async web `runComposeUiTest` is awaited — see skippedComposeTest's KDoc.
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun materialBuildsWhileComposedAndIsFreedOnDisposal() {
-        val engine = engine ?: return
-        val scene = scene ?: return
+    fun materialBuildsWhileComposedAndIsFreedOnDisposal() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
         val bytes = TestMaterials.getEmissiveMaterialBytes()
-        if (bytes.isEmpty()) return
+        if (bytes.isEmpty()) return@run skippedComposeTest()
 
         var captured: Material? = null
         composeScene(
@@ -52,9 +55,9 @@ class MaterialLifecycleTest : TierBSceneFixture() {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun badMaterialBytesReturnNullAndReportErrorWithoutThrowing() {
-        val engine = engine ?: return
-        val scene = scene ?: return
+    fun badMaterialBytesReturnNullAndReportErrorWithoutThrowing() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
 
         var result: Material? = null
         var errors = 0

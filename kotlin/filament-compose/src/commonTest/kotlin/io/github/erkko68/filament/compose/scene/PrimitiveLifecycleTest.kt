@@ -12,7 +12,8 @@ import io.github.erkko68.filament.compose.scene.primitives.Sphere
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.assertEntitiesDestroyed
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
-import io.github.erkko68.filament.compose.testutils.composeScene
+import io.github.erkko68.filament.compose.testutils.skippedComposeTest
+import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -47,37 +48,37 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
         },
     )
 
+    // One withFilamentScene hosts the whole loop (mirroring LightLifecycleTest): each primitive is
+    // mounted then disposed inside the single harness body, and the test *returns* the harness
+    // result so the async web `runComposeUiTest` is awaited — see skippedComposeTest's KDoc.
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun eachPrimitiveEntersAndLeavesCleanly() {
-        val engine = engine ?: return
-        val scene = scene ?: return
-        val material = materialInstance() ?: return
+    fun eachPrimitiveEntersAndLeavesCleanly() = run {
+        val engine = engine ?: return@run skippedComposeTest()
+        val scene = scene ?: return@run skippedComposeTest()
+        val material = materialInstance() ?: return@run skippedComposeTest()
 
-        for ((name, primitive) in primitives(material)) {
-            var captured = 0
-            composeScene(
-                engine = engine,
-                scene = scene,
-                whileComposed = {
-                    assertEquals(1, scene.renderableCount, "$name should add exactly one renderable while composed")
-                    assertEquals(1, scene.entityCount, "$name should add exactly one entity while composed")
-                    assertTrue(captured != 0, "$name should report its renderable entity via onCreate")
-                    assertTrue(
-                        engine.getRenderableManager().hasComponent(captured),
-                        "$name should have a live renderable component while composed",
-                    )
-                },
-                afterDispose = {
-                    assertSceneEmpty(scene, "$name leaked after disposal")
-                    assertEntitiesDestroyed(engine, intArrayOf(captured))
-                    assertTrue(
-                        !engine.getRenderableManager().hasComponent(captured),
-                        "$name renderable component should be gone after disposal",
-                    )
-                },
-            ) {
-                primitive { captured = it }
+        withFilamentScene(engine, scene) { setContent ->
+            for ((name, primitive) in primitives(material)) {
+                var captured = 0
+                setContent { primitive { captured = it } }
+                waitForIdle()
+                assertEquals(1, scene.renderableCount, "$name should add exactly one renderable while composed")
+                assertEquals(1, scene.entityCount, "$name should add exactly one entity while composed")
+                assertTrue(captured != 0, "$name should report its renderable entity via onCreate")
+                assertTrue(
+                    engine.getRenderableManager().hasComponent(captured),
+                    "$name should have a live renderable component while composed",
+                )
+
+                setContent {}
+                waitForIdle()
+                assertSceneEmpty(scene, "$name leaked after disposal")
+                assertEntitiesDestroyed(engine, intArrayOf(captured))
+                assertTrue(
+                    !engine.getRenderableManager().hasComponent(captured),
+                    "$name renderable component should be gone after disposal",
+                )
             }
         }
     }

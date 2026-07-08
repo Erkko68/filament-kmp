@@ -67,6 +67,11 @@ kotlin {
         browser { binaries.executable() }
     }
 
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser { binaries.executable() }
+    }
+
     // ── JS test bootstrapping ────────────────────────────────────────────────
     // Karma needs filament.js + filament.wasm loaded before any Kotlin test
     // code references globals like `Engine` / `Renderer`. Stage the WASM
@@ -86,6 +91,9 @@ kotlin {
         into(stagedWebAssets)
     }
     sourceSets.named("jsTest") {
+        resources.srcDir(stageFilamentWebAssets)
+    }
+    sourceSets.named("wasmJsTest") {
         resources.srcDir(stageFilamentWebAssets)
     }
 

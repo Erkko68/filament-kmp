@@ -19,7 +19,7 @@ dependencyResolutionManagement {
 // All bindings live in a single Gradle build as flat subprojects.
 // kotlin/* — KMP orchestrator modules (cinterop + JVM/Android/JS shims).
 // :java   — the single Project Panama (FFM) JVM binding module.
-// :js     — Kotlin/JS external declarations.
+// :web    — Kotlin/JS + Wasm external declarations.
 //
 // js/ must remain a subproject (not a composite build) so the Kotlin/JS plugin
 // can coordinate its single `rootPackageJson` across every `js()` target.
@@ -37,4 +37,4 @@ include(":kotlin:test-support") // test-only shared helpers (TestEnv + skip anno
 // Published as the `filament-ffm` artifact (id pinned in java/build.gradle.kts).
 include(":java")
 
-include(":js")
+include(":web")

@@ -35,3 +35,25 @@ config.customLaunchers = Object.assign(config.customLaunchers || {}, {
         ],
     },
 });
+
+// Filament's WebGL init + first frame under software rendering (SwiftShader on CI)
+// is far slower than on a real GPU, so scene tests that await graphics readiness can
+// exceed Mocha's 2s default. Raise the in-browser async timeout (js finishes well under
+// it on a real runtime; this only rescues the slow CI path). Applies to js + wasm alike.
+config.client = config.client || {};
+config.client.mocha = Object.assign({}, config.client.mocha, { timeout: 30000 });
+
+// The Mocha timeout above only bounds an individual test's async wait — it does
+// nothing during the pre-test bootstrap window, where the browser has loaded but
+// hasn't sent Karma a single message yet. On wasmJs that window is heavy:
+// instantiating the (large) Kotlin/Wasm test binary + skiko's wasm + Filament.init,
+// all before __karma__.loaded() releases the suite. Under CI's software renderer
+// that can exceed Karma's 30s browserNoActivityTimeout, which then kills the browser
+// with "Disconnected, because no message in 30000 ms" and 0 tests run. (js is far
+// lighter and stays under the default, so it never tripped this.) Raise the Karma
+// transport-level timeouts so slow wasm init on CI isn't mistaken for a hung browser.
+config.browserNoActivityTimeout = 5 * 60 * 1000; // 5 min: covers wasm+skiko+Filament init
+config.browserDisconnectTimeout = 60 * 1000;
+config.browserDisconnectTolerance = 2;
+config.captureTimeout = 5 * 60 * 1000;
+config.pingTimeout = 60 * 1000;

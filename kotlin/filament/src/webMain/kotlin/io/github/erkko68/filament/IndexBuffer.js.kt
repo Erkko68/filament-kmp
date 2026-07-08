@@ -1,0 +1,68 @@
+package io.github.erkko68.filament
+
+import io.github.erkko68.filament.web.IndexBuffer as JSIndexBuffer
+import io.github.erkko68.filament.web.`IndexBuffer_Builder` as JSIndexBufferBuilder
+import io.github.erkko68.filament.web.IndexBuffer_IndexType
+import org.khronos.webgl.set
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val indexCount: Int = 0) {
+
+    private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
+        val int8 = org.khronos.webgl.Int8Array(size)
+        forEachIndexed { i, b -> int8[i] = b }
+        return org.khronos.webgl.Uint8Array(int8.buffer)
+    }
+
+    actual fun setBuffer(engine: Engine, data: ByteArray) {
+        jsIndexBuffer.setBuffer(engine.jsEngine, data.toUint8Array())
+    }
+
+    actual fun setBuffer(
+        engine: Engine,
+        data: ByteArray,
+        destOffsetInBytes: Int,
+        count: Int
+    ) {
+        val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
+        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
+    }
+
+    actual fun setBuffer(
+        engine: Engine,
+        data: ByteArray,
+        destOffsetInBytes: Int,
+        count: Int,
+        callback: (() -> Unit)?
+    ) {
+        val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
+        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
+        callback?.invoke()
+    }
+
+    actual class Builder {
+        private val jsBuilder: JSIndexBufferBuilder = JSIndexBuffer.Builder()
+        private var indexCount: Int = 0
+
+        actual fun indexCount(indexCount: Int): Builder {
+            this.indexCount = indexCount
+            jsBuilder.indexCount(indexCount.toDouble())
+            return this
+        }
+
+        actual fun bufferType(indexType: IndexType): Builder {
+            val jsType = when (indexType) {
+                IndexType.USHORT -> IndexBuffer_IndexType.USHORT
+                IndexType.UINT -> IndexBuffer_IndexType.UINT
+            }
+            jsBuilder.bufferType(jsType)
+            return this
+        }
+
+        actual fun build(engine: Engine): IndexBuffer {
+            return IndexBuffer(jsBuilder.build(engine.jsEngine), indexCount)
+        }
+
+        actual enum class IndexType { USHORT, UINT }
+    }
+}

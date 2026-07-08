@@ -17,6 +17,10 @@ kotlin {
     iosSimulatorArm64()
     jvm()
     js { browser() }
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs { browser() }
+
+    applyDefaultHierarchyTemplate()
 
     sourceSets {
         commonMain.dependencies {
