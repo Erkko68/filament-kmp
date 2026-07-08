@@ -4,7 +4,7 @@ import io.github.erkko68.filament.web.interop.toJsBooleans
 
 import io.github.erkko68.filament.web.interop.emptyJsObject
 
-import js.array.JsArray
+import js.array.ReadonlyArray
 
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
@@ -21,8 +21,8 @@ import io.github.erkko68.filament.web.CullingMode
 // of setBoolParameter/setFloatParameter (the scalar forms are generated), and the optional
 // setScissor/unsetScissor (present only in newer filament.js, so feature-detected).
 private external interface JsMaterialInstanceExt : JsAny  {
-    fun setBoolParameter(name: String, value: JsArray<JsBoolean>)
-    fun setFloatParameter(name: String, value: JsArray<JsNumber>)
+    fun setBoolParameter(name: String, value: ReadonlyArray<JsBoolean>)
+    fun setFloatParameter(name: String, value: ReadonlyArray<JsNumber>)
     // Declared as methods (not function-typed properties) so they keep their `this` binding when
     // invoked — a detached embind method aborts with a native BindingError. Probed before calling.
     fun setScissor(left: Int, bottom: Int, width: Int, height: Int)

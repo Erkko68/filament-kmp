@@ -1,76 +1,61 @@
 package io.github.erkko68.filament.web.interop
 
 import js.array.JsArray
+import js.array.ReadonlyArray
+import js.array.jsArrayOf
+import js.array.toJsArray as toJsReadonlyArray
 
 /**
- * Marshaling helpers between Kotlin number collections and the JS `number[]` arrays
- * that Filament.js expects for vector/matrix parameters (typed `float3`/`mat4`/… =
- * `JsAny?` in the externals). Written against kotlin-wrappers `JsArray<JsNumber>`,
- * which is multiplatform (js + wasmJs) and is a `ReadonlyArray<JsNumber>` supertype,
- * so a single helper feeds both the `JsAny?` and `ReadonlyArray<JsNumber>` externals.
+ * Marshaling helpers between Kotlin number collections and the JS `number[]` arrays that
+ * Filament.js expects for vector/matrix parameters. The generated externals type these as
+ * `JsAny?` (`float3`/`mat4`/…) or `ReadonlyArray<JsNumber>`, so the builders return the
+ * common `js.array.ReadonlyArray`, constructed via `jsArrayOf` — the mutable `js.array.JsArray`
+ * has no constructor in the shared `webMain` metadata compile, and its bare `JsArray()` /
+ * `unsafeCast<JsArray<…>>` forms would bind to stdlib `kotlin.js.JsArray` under Kotlin 2.4.0.
  */
 
 // `Number` vararg/elements are fine here — they're only converted, never crossing the
-// JS interop boundary (that's `JsArray<JsNumber>`), so wasmJs's ban on `Number` interop
-// doesn't apply.
-fun jsNumbers(vararg values: Number): JsArray<JsNumber> {
-    val arr = JsArray<JsNumber>()
-    values.forEachIndexed { i, v -> arr[i] = v.toDouble().toJsNumber() }
-    return arr
-}
+// JS interop boundary (that's `JsNumber`), so wasmJs's ban on `Number` interop doesn't apply.
+fun jsNumbers(vararg values: Number): ReadonlyArray<JsNumber> =
+    jsArrayOf(*Array(values.size) { values[it].toDouble().toJsNumber() })
 
-fun FloatArray.toJsNumbers(): JsArray<JsNumber> {
-    val arr = JsArray<JsNumber>()
-    forEachIndexed { i, v -> arr[i] = v.toDouble().toJsNumber() }
-    return arr
-}
+fun FloatArray.toJsNumbers(): ReadonlyArray<JsNumber> =
+    jsArrayOf(*Array(size) { this[it].toDouble().toJsNumber() })
 
-fun DoubleArray.toJsNumbers(): JsArray<JsNumber> {
-    val arr = JsArray<JsNumber>()
-    forEachIndexed { i, v -> arr[i] = v.toJsNumber() }
-    return arr
-}
+fun DoubleArray.toJsNumbers(): ReadonlyArray<JsNumber> =
+    jsArrayOf(*Array(size) { this[it].toJsNumber() })
 
-fun List<Number>.toJsNumbers(): JsArray<JsNumber> {
-    val arr = JsArray<JsNumber>()
-    forEachIndexed { i, v -> arr[i] = v.toDouble().toJsNumber() }
-    return arr
-}
+fun List<Number>.toJsNumbers(): ReadonlyArray<JsNumber> =
+    jsArrayOf(*Array(size) { this[it].toDouble().toJsNumber() })
 
 /** Reads a JS `number[]` (as returned by Filament.js) into a DoubleArray of [size]. */
 fun JsArray<JsNumber>.toDoubleArray(size: Int): DoubleArray =
-    DoubleArray(size) { i -> this[i]?.toDouble() ?: 0.0 }
+    DoubleArray(size) { i -> this[i].toDouble() }
 
 /** Reads a JS `number[]` value (typed `JsAny?` in the externals) into a FloatArray of [size]. */
 fun JsAny.toFloatArray(size: Int): FloatArray {
-    val arr = unsafeCast<JsArray<JsNumber>>()
-    return FloatArray(size) { i -> arr[i]?.toDouble()?.toFloat() ?: 0f }
+    val arr = unsafeCast<js.array.JsArray<JsNumber>>()
+    return FloatArray(size) { i -> arr[i].toDouble().toFloat() }
 }
 
 /** Reads a JS `number[]` value into an existing [out] FloatArray (up to its size). */
 fun JsAny.readNumbersInto(out: FloatArray): FloatArray {
-    val arr = unsafeCast<JsArray<JsNumber>>()
-    for (i in 0 until minOf(out.size, arr.length)) out[i] = arr[i]?.toDouble()?.toFloat() ?: 0f
+    val arr = unsafeCast<js.array.JsArray<JsNumber>>()
+    for (i in 0 until minOf(out.size, arr.size)) out[i] = arr[i].toDouble().toFloat()
     return out
 }
 
 /** Reads a JS `number[]` value into an existing [out] DoubleArray (up to its size). */
 fun JsAny.readNumbersInto(out: DoubleArray): DoubleArray {
-    val arr = unsafeCast<JsArray<JsNumber>>()
-    for (i in 0 until minOf(out.size, arr.length)) out[i] = arr[i]?.toDouble() ?: 0.0
+    val arr = unsafeCast<js.array.JsArray<JsNumber>>()
+    for (i in 0 until minOf(out.size, arr.size)) out[i] = arr[i].toDouble()
     return out
 }
 
-/** Wraps a Kotlin list of JS values into a real JS array (`JsArray<T>`). */
-fun <T : JsAny?> List<T>.toJsArray(): JsArray<T> {
-    val arr = JsArray<T>()
-    forEachIndexed { i, v -> arr[i] = v }
-    return arr
-}
+/** Wraps a Kotlin list of JS values into a real JS array. */
+fun <T : JsAny?> List<T>.toJsArray(): ReadonlyArray<T> =
+    toJsReadonlyArray()
 
 /** A JS boolean array (Filament.js material bool-array params). */
-fun List<Boolean>.toJsBooleans(): JsArray<JsBoolean> {
-    val arr = JsArray<JsBoolean>()
-    forEachIndexed { i, v -> arr[i] = v.toJsBoolean() }
-    return arr
-}
+fun List<Boolean>.toJsBooleans(): ReadonlyArray<JsBoolean> =
+    jsArrayOf(*Array(size) { this[it].toJsBoolean() })
