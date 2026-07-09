@@ -21,7 +21,7 @@ actual class FilamentAsset(
     }
 
     private fun js.array.ReadonlyArray<JSEntity>.registerAndGetIds(): IntArray {
-        return IntArray(length) { i -> this[i]!!.registerAndGetId() }
+        return IntArray(size) { i -> this[i]!!.registerAndGetId() }
     }
 
     actual fun getRoot(): Entity = jsAsset.getRoot().registerAndGetId()
@@ -88,7 +88,7 @@ actual class FilamentAsset(
 
     actual fun getResourceUris(): Array<String> {
         val uris = jsAsset.getResourceUris()
-        return Array(uris.length) { uris[it].toString() }
+        return Array(uris.size) { uris[it].toString() }
     }
 
     actual fun releaseSourceData() {
