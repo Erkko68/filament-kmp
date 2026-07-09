@@ -93,7 +93,7 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
 
     actual fun getMaterialVariantNames(): Array<String> {
         val names = jsInstance.getMaterialVariantNames()
-        return Array(names.length) { names[it].toString() }
+        return Array(names.size) { names[it].toString() }
     }
 
     actual constructor() : this(emptyJsObject().unsafeCast<JSFilamentInstance>()) {
