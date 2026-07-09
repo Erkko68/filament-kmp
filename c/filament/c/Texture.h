@@ -101,15 +101,6 @@ typedef enum FilaTextureSwizzle {
     FILA_TEXTURE_SWIZZLE_CHANNEL_3 = 5,
 } FilaTextureSwizzle;
 
-typedef struct FilaTextureFaceOffsets {
-    size_t px;
-    size_t nx;
-    size_t py;
-    size_t ny;
-    size_t pz;
-    size_t nz;
-} FilaTextureFaceOffsets;
-
 // Builder
 typedef struct FilaTextureBuilder FilaTextureBuilder;
 

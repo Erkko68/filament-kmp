@@ -55,6 +55,13 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     actual fun setPresentationTime(monotonicClockNanos: Long) {
     }
 
+    // TODO(js): bound upstream as embind int64 (BigInt); stubbed like setPresentationTime.
+    actual fun setDesiredPresentationTime(monotonicClockNanos: Long) {
+    }
+
+    actual fun setRenderingDeadline(monotonicClockNanos: Long) {
+    }
+
     actual fun endFrame() {
         jsRenderer.endFrame()
     }

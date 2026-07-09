@@ -321,6 +321,9 @@ class ViewTest : FilamentTestFixture() {
         view.setDynamicLightingOptions(0.5f, 50f)
         assertTrue(view.fogEntity >= 0)
 
+        // Never rendered — the visible-renderable cache is invalid, so -1.
+        assertEquals(-1, view.getVisibleRenderableCount())
+
         view.antiAliasing = View.AntiAliasing.FXAA
         assertEquals(View.AntiAliasing.FXAA, view.antiAliasing)
 

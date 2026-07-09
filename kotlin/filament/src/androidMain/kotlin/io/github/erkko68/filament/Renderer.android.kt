@@ -85,6 +85,8 @@ actual class Renderer internal constructor(
         }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = nativeRenderer.setPresentationTime(monotonicClockNanos)
+    actual fun setDesiredPresentationTime(monotonicClockNanos: Long) = nativeRenderer.setDesiredPresentationTime(monotonicClockNanos)
+    actual fun setRenderingDeadline(monotonicClockNanos: Long) = nativeRenderer.setRenderingDeadline(monotonicClockNanos)
     actual fun setVsyncTime(steadyClockTimeNano: Long) = nativeRenderer.setVsyncTime(steadyClockTimeNano)
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = nativeRenderer.skipFrame(vsyncSteadyClockTimeNano)
     actual fun shouldRenderFrame(): Boolean = nativeRenderer.shouldRenderFrame()

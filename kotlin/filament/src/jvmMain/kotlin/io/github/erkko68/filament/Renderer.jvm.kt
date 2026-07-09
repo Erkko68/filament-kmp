@@ -85,6 +85,8 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
         }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = FilamentC.FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos)
+    actual fun setDesiredPresentationTime(monotonicClockNanos: Long) = FilamentC.FilaRenderer_setDesiredPresentationTime(nativeHandle, monotonicClockNanos)
+    actual fun setRenderingDeadline(monotonicClockNanos: Long) = FilamentC.FilaRenderer_setRenderingDeadline(nativeHandle, monotonicClockNanos)
     actual fun setVsyncTime(steadyClockTimeNano: Long) = FilamentC.FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano)
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilamentC.FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano)
     actual fun shouldRenderFrame(): Boolean = FilamentC.FilaRenderer_shouldRenderFrame(nativeHandle)

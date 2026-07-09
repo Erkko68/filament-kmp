@@ -239,6 +239,19 @@ for m in standard_lit standard_unlit standard_textured standard_emissive; do
 done
 ```
 
+Two more `.filamat` blobs live outside that directory and need the same treatment:
+
+```sh
+# test material (copy the output to filament-compose's commonTest resources too)
+cd kotlin/filament/src/commonTest/resources
+/tmp/bin/matc -p all -a all -o emissive.filamat emissive.mat
+cp emissive.filamat ../../../../filament-compose/src/commonTest/resources/
+
+# sample material
+cd samples/shared/src/commonMain/composeResources/files/materials
+/tmp/bin/matc -p all -a all -o textured.filamat textured.mat
+```
+
 Commit the refreshed `.filamat`; the embed task picks them up on the next build. `StandardMaterialLifecycleTest`
 (Tier-B) fails to build a material if a blob is stale or corrupt.
 

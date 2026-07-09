@@ -680,6 +680,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         return result
     }
     actual val fogEntity: Int get() = FilaView_getFogEntity(nativeHandle).toInt()
+    actual fun getVisibleRenderableCount(): Int = FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {

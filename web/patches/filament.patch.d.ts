@@ -110,6 +110,7 @@ export interface View {
     setMaterialGlobal(index: number, value: float4): void;
     getMaterialGlobal(index: number): number[];
     getFogEntity(): Entity;
+    getVisibleRenderableCount(): number;
     clearFrameHistory(engine: Engine): void;
     setDynamicLightingOptions(zLightNear: number, zLightFar: number): void;
 }

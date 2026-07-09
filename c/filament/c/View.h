@@ -280,6 +280,7 @@ void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, float x, float y
 void FilaView_getMaterialGlobal(const FilaView* view, uint32_t index, float out[4]);
 
 FilaEntity FilaView_getFogEntity(const FilaView* view);
+int32_t FilaView_getVisibleRenderableCount(const FilaView* view);
 void FilaView_clearFrameHistory(FilaView* view, FilaEngine* engine);
 
 void FilaView_setChannelDepthClearEnabled(FilaView* view, uint8_t channel, bool enabled);

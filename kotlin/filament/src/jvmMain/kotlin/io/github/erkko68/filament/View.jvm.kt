@@ -746,6 +746,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         out.toFloats()
     }
     actual val fogEntity: Int get() = FilamentC.FilaView_getFogEntity(nativeHandle)
+    actual fun getVisibleRenderableCount(): Int = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilamentC.FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {

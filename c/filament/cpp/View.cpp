@@ -533,6 +533,10 @@ FilaEntity FilaView_getFogEntity(const FilaView* view) {
     return FILA_CONST_CAST(View, view)->getFogEntity().getId();
 }
 
+int32_t FilaView_getVisibleRenderableCount(const FilaView* view) {
+    return FILA_CONST_CAST(View, view)->getVisibleRenderableCount();
+}
+
 void FilaView_clearFrameHistory(FilaView* view, FilaEngine* engine) {
     FILA_CAST(View, view)->clearFrameHistory(*FILA_CAST(Engine, engine));
 }

@@ -114,6 +114,26 @@ expect class Renderer {
     fun setPresentationTime(monotonicClockNanos: Long)
 
     /**
+     * Set the real desired presentation time targeted for this frame.
+     *
+     * Unlike setPresentationTime(), which configures hardware headroom, this is the exact target
+     * presentation time and is used for frame history reporting.
+     * Must be called before endFrame().
+     *
+     * @param monotonicClockNanos Desired presentation timestamp in steady_clock nanoseconds.
+     */
+    fun setDesiredPresentationTime(monotonicClockNanos: Long)
+
+    /**
+     * Set the deadline by which CPU and GPU rendering must complete for the buffer to meet its
+     * target display latching window.
+     * Must be called before endFrame().
+     *
+     * @param monotonicClockNanos Deadline timestamp in steady_clock nanoseconds.
+     */
+    fun setRenderingDeadline(monotonicClockNanos: Long)
+
+    /**
      * Set the VSYNC time expressed as the duration in nanoseconds since epoch of std::chrono::steady_clock.
      *
      * If called, passing 0 to frameTimeNanos in beginFrame() will use this time instead.

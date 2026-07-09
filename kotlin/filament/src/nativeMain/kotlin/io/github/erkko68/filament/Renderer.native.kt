@@ -84,6 +84,8 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos.toULong())
+    actual fun setDesiredPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setDesiredPresentationTime(nativeHandle, monotonicClockNanos)
+    actual fun setRenderingDeadline(monotonicClockNanos: Long) = FilaRenderer_setRenderingDeadline(nativeHandle, monotonicClockNanos)
     actual fun setVsyncTime(steadyClockTimeNano: Long) = FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano.toULong())
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano.toULong())
     actual fun shouldRenderFrame(): Boolean = FilaRenderer_shouldRenderFrame(nativeHandle)

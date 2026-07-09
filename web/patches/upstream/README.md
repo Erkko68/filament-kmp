@@ -10,7 +10,7 @@ files, which only patch the *TypeScript externals* Karakum reads.
 
 ```sh
 git clone --filter=blob:none https://github.com/google/filament.git
-cd filament && git checkout v1.72.0
+cd filament && git checkout v1.73.0
 git apply /path/to/js/patches/upstream/*.patch
 export EMSDK=<emsdk 5.0.4>            # BUILDING.md pins 5.0.4
 ./build.sh -p wasm release           # builds host tools, then the wasm
@@ -27,39 +27,9 @@ dangling-`BlendMode` issue that forced keeping the 1.71.5 d.ts is resolved in
 
 ## Patches
 
-### `0001-shaders-clamp-colored-penumbra-divisor.patch`
-
-- **Base:** Filament `v1.72.0`.
-- **Symptom:** On ANGLE-D3D11 (Chromium/Firefox on Windows) some faces render
-  black in shadow-penumbra regions; macOS (ANGLE-Metal) and Android are fine.
-  No GL warning or error — the geometry still draws and is still pickable, the
-  shaded result is just black.
-- **Cause:** 1.71.6 added the `coloredPenumbra` material feature. The standard
-  and cloth shading models compute, under `#if defined(HAS_COLORED_PENUMBRA)`:
-  ```glsl
-  vec3 penumbraColor = min(vec3(1.0 / PI), Fd / (2.0 * (1.0 - pixel.diffuseColor)));
-  Fd = mix(penumbraColor, Fd, pow4(occlusion));   // occlusion < 1 in penumbra
-  ```
-  `Fd / (2.0 * (1.0 - diffuseColor))` divides by zero for any white/near-white
-  diffuse channel → Inf/NaN. `min(finite, NaN)` is undefined in GLSL: desktop GL
-  and ANGLE-Metal return the finite operand, but **ANGLE-D3D11 propagates the
-  NaN** → black fragment. Only live where the shaded fragment is in penumbra
-  (`occlusion < 1`) and only for materials with `coloredPenumbra` enabled or the
-  `SUBSURFACE` shading model (which always enables it). The subsurface model is
-  unaffected — it uses the bounded scattered `color` as its penumbra term.
-- **Fix:** clamp the divisor away from zero
-  (`max(2.0 * (1.0 - diffuseColor), vec3(1e-4))`). The division was only ever a
-  way to reach the `min(1.0 / PI, …)` energy-conserving cap, so the clamp yields
-  the intended capped value without ever producing Inf/NaN. Two files:
-  `shaders/src/surface_shading_model_standard.fs`,
-  `shaders/src/surface_shading_model_cloth.fs`.
-- **Upstream status:** merged into Filament `main` after the `v1.72.0` cut, so
-  `v1.72.0` binaries still need this patch. Drop it once a release containing
-  the fix (> 1.72.0) is adopted as `filaVersion`.
-
 ### `0002-web-set-gen-mipmappable-usage-in-createtexturefromimagefile.patch`
 
-- **Base:** Filament `v1.72.0`.
+- **Base:** Filament `v1.72.0` (still applies cleanly on `v1.73.0`).
 - **Symptom:** Loading a PNG/JPEG texture on web (`TextureLoader.loadTexture`)
   throws a raw native value (`Uncaught <number>`) that escapes Kotlin/JS
   `catch (Throwable)` and crashes the app. JVM/Android/native are fine.
@@ -88,6 +58,16 @@ dangling-`BlendMode` issue that forced keeping the 1.71.5 d.ts is resolved in
   drop both this patch and the `TextureLoader.js.kt` workaround.
 
 ## Upstreamed (no longer carried here)
+
+### Colored-penumbra divisor clamp — merged into `v1.73.0`
+
+The earlier `0001-shaders-clamp-colored-penumbra-divisor.patch` (ANGLE-D3D11
+black faces in shadow-penumbra regions: `Fd / (2.0 * (1.0 - diffuseColor))`
+divides by zero for white diffuse → NaN that ANGLE-D3D11 propagates through
+`min()`) **landed upstream in Filament 1.73.0** as
+`max(2.0 * (1.0 - pixel.diffuseColor), vec3(FLT_EPS))` in
+`surface_shading_model_standard.fs` / `surface_shading_model_cloth.fs`.
+Stock 1.73.0 binaries contain it, so the patch has been removed.
 
 ### `CONFIG_MAX_INSTANCES` array-size rewrite — merged into `v1.71.6`
 

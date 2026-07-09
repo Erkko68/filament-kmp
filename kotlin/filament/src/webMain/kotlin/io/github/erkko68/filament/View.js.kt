@@ -424,6 +424,8 @@ actual class View(internal val jsView: JSView) {
     actual val fogEntity: Int
         get() = jsView.getFogEntity().getId().toInt()
 
+    actual fun getVisibleRenderableCount(): Int = jsView.getVisibleRenderableCount().toInt()
+
     actual fun clearFrameHistory(engine: Engine) {
         jsView.clearFrameHistory(engine.jsEngine)
     }

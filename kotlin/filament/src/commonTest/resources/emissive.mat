@@ -1,0 +1,20 @@
+// Source for emissive.filamat (also copied to filament-compose commonTest resources).
+// Recompile on every filaVersion bump — see docs/upgrading-filament.md:
+//   matc -p all -a all -o emissive.filamat emissive.mat
+
+material {
+    name : Emissive,
+    shadingModel : unlit,
+    parameters : [
+        { type : float3, name : color },
+        { type : float,  name : intensity }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.color;
+        material.emissive = vec4(materialParams.color * materialParams.intensity, 0.0);
+    }
+}

@@ -7,6 +7,9 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
 actual class SwapChain internal constructor(internal var nativeHandle: MemorySegment?) {
+    actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
+    actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
+
     actual companion object {
         actual fun isProtectedContentSupported(engine: Engine): Boolean = FilamentC.FilaSwapChain_isProtectedContentSupported(engine.nativeHandle)
         actual fun isSRGBSwapChainSupported(engine: Engine): Boolean = FilamentC.FilaSwapChain_isSRGBSwapChainSupported(engine.nativeHandle)
@@ -37,6 +40,15 @@ actual class SwapChain internal constructor(internal var nativeHandle: MemorySeg
     }
 
     actual val isFrameScheduledCallbackSet: Boolean get() = FilamentC.FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
+
+    actual fun isFrameRateChangeSupported(): Boolean = FilamentC.FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
+
+    actual fun setFrameRate(frameRate: Float) =
+        setFrameRate(frameRate, FrameRateCompatibility.DEFAULT, ChangeFrameRateStrategy.ONLY_IF_SEAMLESS)
+
+    actual fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy) {
+        FilamentC.FilaSwapChain_setFrameRate(nativeHandle, frameRate, compatibility.ordinal.toByte(), strategy.ordinal.toByte())
+    }
 
     actual val nativeObject: Long get() = nativeHandle?.address() ?: 0L
 }
