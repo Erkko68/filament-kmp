@@ -11,6 +11,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.3-beta03] — 2026-07-11
+
+### Fixed
+- **Android builds failed to inline math utils** (all modules): the Android target was compiled at JVM 22 alongside the desktop JVM target, so published AARs shipped inline functions (`Float3.times`, `dot`, `cross`, …) as JVM 22 bytecode — Android consumers building at the conventional JVM 11 hit "Cannot inline bytecode built with JVM target 22". Android bytecode is now JVM 11; the JVM 22 floor (Project Panama / FFM) applies only to the Desktop/JVM artifacts. ([#1](https://github.com/Erkko68/filament-kmp/issues/1))
+
 ### Added
 - **Built-in standard materials** (`filament-compose`): `rememberColorMaterialInstance` (LIT PBR), `rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`, and `rememberEmissiveMaterialInstance` return a ready `MaterialInstance` for the common cases with **no `.mat` authoring, no `matc`, and no asset shipping** — they ship as precompiled `.filamat` blobs embedded in the library, so they work on every target including Web (where runtime material compilation isn't available). The shared base `Material` per type is built once and reused across a `rememberFilamentScene`; `rememberStandardMaterial(StandardMaterial.…)` exposes it directly. Replaces the per-app material boilerplate the samples used to carry.
 - **Reactive material parameters** (`filament-compose`): new `rememberMaterialInstance(material, vararg keys) { configure }` overload creates a `MaterialInstance` and re-applies `configure` whenever a key changes — declarative parameter binding that updates in place (safe to keep referenced by a renderable), no `SideEffect`/`onUpdate` needed. A `MaterialInstance.setParameter(name, Color)` extension keeps colour call sites typed against the `Color` value class.
@@ -226,6 +231,7 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
+[0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03
 [0.1.3-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta01...0.1.3-beta02
 [0.1.3-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...0.1.3-beta01
 [0.1.2-beta06]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...0.1.2-beta06
