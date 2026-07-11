@@ -21,12 +21,14 @@ plugins {
 // before it finalizes coordinates).
 
 // FFM was finalized in JDK 22. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties),
-// so we just pin a JVM 22 release floor here to keep the published artifact usable on any JDK 22+.
+// so we just pin the JVM release floor (libs.versions.toml `jvm-target`) to keep the
+// published artifact usable on any JDK 22+.
+val jvmRelease = libs.versions.jvm.target.get()
 tasks.withType<JavaCompile>().configureEach {
-    options.release.set(22)
+    options.release.set(jvmRelease.toInt())
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_22)
+    compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmRelease))
 }
 
 // ── Native build + jextract generation (see buildSrc/FilamentJvmNative.kt) ────
