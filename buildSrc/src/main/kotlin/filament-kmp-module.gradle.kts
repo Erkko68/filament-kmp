@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import java.awt.GraphicsEnvironment
 
@@ -28,6 +27,9 @@ val filamentModuleExt = extensions.create("filamentModule", FilamentModuleExtens
 
 val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
 
+fun catalogJvmTarget(alias: String): JvmTarget =
+    JvmTarget.fromTarget(libs.findVersion(alias).get().requiredVersion)
+
 // ── Kotlin multiplatform target declarations ──────────────────────────────────
 kotlin {
     compilerOptions {
@@ -45,8 +47,12 @@ kotlin {
         compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
         minSdk     = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
 
-        // Android bytecode level (JVM_22) is set globally via the
-        // `tasks.withType<KotlinJvmCompile>` block below.
+        // Android must NOT inherit the desktop JVM 22 floor: inline functions
+        // (math utils etc.) compiled at 22 can't inline into consumers building
+        // at the conventional Android target (issue #1).
+        compilerOptions {
+            jvmTarget.set(catalogJvmTarget("android-jvmTarget"))
+        }
 
         // Instrumented (on-device) tests inherit from `commonTest` (sourceSetTree
         // "test") so the shared `expect`s (createTestSurface, TestMaterials) line up
@@ -61,7 +67,17 @@ kotlin {
     // Declare all targets
     iosArm64()
     iosSimulatorArm64()
-    jvm()
+
+    // JVM/Panama floor: jvmMain actuals call java.lang.foreign (finalized in JDK 22)
+    // and depend on :java. The Gradle daemon runs on JDK 25
+    // (gradle/gradle-daemon-jvm.properties), so no per-module toolchain is needed —
+    // just pin the bytecode floor so the artifact stays usable on any JDK 22+.
+    // Scoped to this target only; Android above stays at its own lower target.
+    jvm {
+        compilerOptions {
+            jvmTarget.set(catalogJvmTarget("jvm-target"))
+        }
+    }
 
     js {
         browser { binaries.executable() }
@@ -107,16 +123,6 @@ kotlin {
             }
         }
     }
-}
-
-// ── JVM/Panama floor ──────────────────────────────────────────────────────────
-// The jvmMain actuals call java.lang.foreign (finalized in JDK 22) and depend on
-// :java. The Gradle daemon runs on JDK 25 (gradle/gradle-daemon-jvm.properties), so
-// the toolchain and the requested org.gradle.jvm.version are already 22+ — no per-module toolchain
-// or attribute forcing is needed. We only pin the jvm bytecode to a JVM 22 floor so the artifact
-// stays usable on any JDK 22+ (Android/native/JS targets are untouched — different task types).
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_22)
 }
 
 // ── Real-backend (GPU) test gating, decided once here on the host ─────────────

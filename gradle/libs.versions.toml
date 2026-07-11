@@ -3,6 +3,11 @@ agp = "9.0.1"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
+# Android bytecode level — the conventional Android target; higher values break inlining
+# for consumers compiling at 11 (issue #1).
+android-jvmTarget = "11"
+# Desktop jvm() bytecode floor — jvmMain actuals need java.lang.foreign (finalized JDK 22).
+jvm-target = "22"
 androidx-activity = "1.13.0"
 annotations = "26.1.0"
 composeMultiplatform = "1.11.1"
