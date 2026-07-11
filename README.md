@@ -42,6 +42,8 @@ The world is declared in the content lambda; the viewport's look is configured b
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
 - **Web / JS** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts`
 
+**JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts require **JDK 22+** at build and run time — the FFM bindings call `java.lang.foreign`, finalized in JDK 22.
+
 ## Quick start
 
 Add the Maven Central repository and depend on the modules you need:
@@ -61,7 +63,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta02")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta03")
         }
     }
 }
