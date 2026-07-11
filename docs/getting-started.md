@@ -169,30 +169,41 @@ fun main() {
 ### Web / WASM
 
 > [!WARNING]
-> The web target is **experimental**. Several `gltfio` and `filament-utils` APIs are unimplemented on JS (see [Platform Notes](platform-notes.md#web--wasm)). It's good enough for simple scenes.
+> The web targets are **experimental**. Several `gltfio` and `filament-utils` APIs are unimplemented on web (see [Platform Notes](platform-notes.md#web--wasm)). It's good enough for simple scenes.
 
-Enable the experimental Compose JS canvas flag:
+Enable the experimental Compose JS canvas flag (needed for the `js` target):
 
 ```properties
 # gradle.properties
 org.jetbrains.compose.experimental.jscanvas.enabled=true
 ```
 
+The library publishes **both** web flavors — **Kotlin/JS** (`js`) and **Kotlin/Wasm** (`wasmJs`) — from a single shared implementation. Declare one or both in your app; with both, put shared code in the `webMain` source set:
+
 ```kotlin
 // webApp/build.gradle.kts
 kotlin {
-    js(IR) {
+    js {
         browser()
         binaries.executable()
     }
+
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+    // js + wasmJs share code via the webMain source set
+    applyDefaultHierarchyTemplate()
 }
 ```
 
-**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the helper script included in the repo:
+**Filament bundle.** `filament.js` and `filament.wasm` must be in the target's resources — `src/jsMain/resources/` for JS, `src/wasmJsMain/resources/` for Wasm — and served alongside your compiled app. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the helper script included in the repo:
 
 ```bash
 python3 scripts/gradle/download_filament_prebuilts.py <version> web
-# outputs to prebuilts/web/ — copy filament.js and filament.wasm to src/jsMain/resources/
+# outputs to prebuilts/web/ — copy filament.js and filament.wasm into the target's resources
 ```
 
 **`index.html`.** Load `filament.js` before your app script. The `FilamentApp` helper (used in the entry point below) automatically injects the root element, configures the stacking context (so Compose overlays like buttons layer correctly), and mounts the Canvas:

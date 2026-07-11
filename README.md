@@ -17,7 +17,7 @@
 > [!WARNING]
 > **Pre-release (`0.1.3-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings were just rebuilt on Project Panama (FFM, **requires JDK 22+**) and the Web bindings on Karakum. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
 
-**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/JS**, with first-class **Compose Multiplatform** integration.
+**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web** (Kotlin/JS & Kotlin/Wasm), with first-class **Compose Multiplatform** integration.
 
 <img src="docs/images/platforms-hero.png" alt="The same scene rendering on Android, iOS, Desktop and Web" width="800"/>
 
@@ -40,7 +40,7 @@ The world is declared in the content lambda; the viewport's look is configured b
 - **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
-- **Web / JS** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts`
+- **Web** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts`; published for both **Kotlin/JS** (`js`) and **Kotlin/Wasm** (`wasmJs`) targets
 
 **JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts require **JDK 22+** at build and run time — the FFM bindings call `java.lang.foreign`, finalized in JDK 22.
 

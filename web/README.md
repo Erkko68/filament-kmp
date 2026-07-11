@@ -1,7 +1,7 @@
-# `:js` — Kotlin/JS externals for Filament.js
+# `:web` — Kotlin externals for Filament.js
 
-This module provides the `external` Kotlin declarations that the Web/WASM target
-binds against. They are **generated at build time** by
+This module provides the `external` Kotlin declarations that the web targets
+(Kotlin/JS `js` and Kotlin/Wasm `wasmJs`) bind against. They are **generated at build time** by
 [Karakum](https://github.com/karakum-team/karakum) — there is no hand-written
 `filament.js.kt`, and nothing generated is committed.
 

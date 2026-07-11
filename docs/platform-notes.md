@@ -70,11 +70,13 @@ The FFM native runtime JAR (`io.github.erkko68.filament-ffm:filament-ffm:...`) b
 ## Web / WASM
 
 > [!WARNING]
-> The web target is **experimental** and not feature-complete.
+> The web targets are **experimental** and not feature-complete.
+
+The library ships two web flavors from one shared implementation (`webMain`): **Kotlin/JS** (`js`) and **Kotlin/Wasm** (`wasmJs`). Both bind the same Filament.js runtime, so the API surface and the limitations below are identical on either target.
 
 ### Filament.js and WASM bundle
 
-`filament.js` and `filament.wasm` must be placed in your app's `src/jsMain/resources/` directory so webpack serves them alongside your compiled JS. They are not propagated automatically from the library because Kotlin/JS klib resources are not picked up by webpack in downstream Maven consumers.
+`filament.js` and `filament.wasm` must be placed in the target's resources directory — `src/jsMain/resources/` for JS, `src/wasmJsMain/resources/` for Wasm — so webpack serves them alongside your compiled app. They are not propagated automatically from the library because Kotlin klib resources are not picked up by webpack in downstream Maven consumers.
 
 Download the files matching your `filaVersion` using the helper script in the repo:
 
@@ -83,9 +85,9 @@ python3 scripts/gradle/download_filament_prebuilts.py <version> web
 # outputs prebuilts/web/filament.js, filament.wasm and filament.d.ts
 ```
 
-Then copy `filament.js` and `filament.wasm` into your `src/jsMain/resources/`. (The
-`filament.d.ts` is build-time only — the `:js` module's Kotlin externals are generated
-from it by [Karakum](https://github.com/karakum-team/karakum); see [`js/README.md`](../js/README.md).)
+Then copy `filament.js` and `filament.wasm` into the target's resources directory. (The
+`filament.d.ts` is build-time only — the `:web` module's Kotlin externals are generated
+from it by [Karakum](https://github.com/karakum-team/karakum); see [`web/README.md`](../web/README.md).)
 
 ### Current limitations
 
