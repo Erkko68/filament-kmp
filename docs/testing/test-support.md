@@ -60,7 +60,7 @@ Per-platform values:
 
 ## `@IgnoreJs` — skip a test on the web target only
 
-For wrapper calls that simply aren't wired in the web (Karakum) binding yet —
+For wrapper calls that simply aren't wired in the web binding yet —
 the test is valid everywhere else, so skipping the whole class or excluding the
 target would lose coverage.
 
