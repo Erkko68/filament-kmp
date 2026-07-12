@@ -132,6 +132,10 @@ jobs:
             -PlibVersion=${{ steps.version.outputs.version }} \
             -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
             :java:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-macos-arm64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-linux-x64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-linux-arm64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-windows-x64:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \

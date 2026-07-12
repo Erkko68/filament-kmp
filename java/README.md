@@ -55,10 +55,35 @@ Build knobs:
 - **JDK 22+** at runtime (the FFM API floor). Compilation targets `--release 22`; the
   Gradle daemon itself runs on a newer JDK.
 
-## Publishing
+## Publishing — artifact set (skiko-awt-runtime style)
 
-CI's [`publish.yml`](../.github/workflows/publish.yml) builds `libfilament-c` on each
-platform runner, then publishes this module with `-PcArtifactsDir=<dir>` (one
-`<platform>-<arch>/` subdir per platform) so the released JAR bundles natives for every
-supported platform. The artifact id is pinned to `filament-ffm` in `build.gradle.kts`
-(the project directory is `java/`, but the published id is not).
+The bindings and the natives are published separately (artifact ids pinned via
+`maven.artifactId` in each module's `gradle.properties`):
+
+| Artifact | Contents |
+|---|---|
+| `filament-ffm` | jextract bindings + loader + FFM helpers — **no natives**. By default its runtime metadata depends on **all** platform modules below; its Gradle-metadata variants (`OperatingSystemFamily` × `MachineArchitecture`) narrow that to exactly one |
+| `filament-ffm-runtime-{macos-arm64, linux-x64, linux-arm64, windows-x64}` | one platform's `libfilament-c` (+ `.sha256`) |
+
+The `:kotlin:*` JVM targets depend on `filament-ffm` alone, so plain consumers keep
+working with zero configuration — they pull every platform's natives, as before the
+split. Gradle consumers who only want their platform's ~18 MB add two attributes and the
+per-platform variant is selected automatically:
+
+```kotlin
+configurations.matching { it.isCanBeResolved }.configureEach {
+    attributes {
+        attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, objects.named(OperatingSystemFamily.MACOS))
+        attribute(MachineArchitecture.ARCHITECTURE_ATTRIBUTE, objects.named(MachineArchitecture.ARM64))
+    }
+}
+```
+
+Maven (non-Gradle) consumers get the per-platform modules through `filament-ffm`'s POM.
+
+The platform set mirrors upstream Filament's prebuilt releases (no windows-arm64: Google
+doesn't publish one; Windows-on-ARM works via the x64 JVM emulation path). CI's
+[`publish.yml`](../.github/workflows/publish.yml) builds `libfilament-c` on each platform
+runner and publishes with `-PcArtifactsDir=<dir>` (one `<platform>-<arch>/` subdir per
+platform); `:java` stages the natives per platform and the `:java:runtime*` modules jar
+them. Publishing fails fast if a runtime jar would ship without its natives.

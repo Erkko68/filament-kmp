@@ -8,6 +8,7 @@
 
 [![JVM](https://github.com/Erkko68/filament-kmp/actions/workflows/status-jvm.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-jvm.yml)
 [![JS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-js.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-js.yml)
+[![Wasm](https://github.com/Erkko68/filament-kmp/actions/workflows/status-wasm.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-wasm.yml)
 [![iOS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml)
 [![Android](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml)
 
@@ -15,9 +16,9 @@
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
 > [!WARNING]
-> **Pre-release (`0.1.3-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings were just rebuilt on Project Panama (FFM, **requires JDK 22+**) and the Web bindings on Karakum. Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
+> **Pre-release (`0.1.3-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings run on Project Panama (FFM, **requires JDK 22+**). Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
 
-**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web/JS**, with first-class **Compose Multiplatform** integration.
+**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web (JS & Wasm)**, with first-class **Compose Multiplatform** integration.
 
 <img src="docs/images/platforms-hero.png" alt="The same scene rendering on Android, iOS, Desktop and Web" width="800"/>
 
@@ -40,7 +41,7 @@ The world is declared in the content lambda; the viewport's look is configured b
 - **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
-- **Web / JS** — WebGL 2.0 via Filament.js, with Kotlin externals generated from `filament.d.ts`
+- **Web (JS & Wasm)** — WebGL 2.0 via Filament.js (embind), through hand-maintained Kotlin externals shared by the `js` and `wasmJs` targets
 
 **JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts require **JDK 22+** at build and run time — the FFM bindings call `java.lang.foreign`, finalized in JDK 22.
 
@@ -81,7 +82,7 @@ For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop
 | `filamat` | Runtime material compilation — `MaterialBuilder`. |
 | `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
 
-All published under `io.github.erkko68.filament`. The Desktop/JVM native runtime (Project Panama / FFM) ships as `io.github.erkko68.filament-ffm:filament-ffm` and is pulled in automatically. See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
+All published under `io.github.erkko68.filament`. The Desktop/JVM bindings (Project Panama / FFM) ship as `io.github.erkko68.filament-ffm:filament-ffm` and are pulled in automatically, with the natives in per-platform `filament-ffm-runtime-<os>-<arch>` jars — all of them by default, or only your platform's if your build declares os/arch attributes (see [java/README.md](java/README.md)). See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
 
 ## API strategy
 
