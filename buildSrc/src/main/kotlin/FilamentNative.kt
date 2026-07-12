@@ -72,7 +72,15 @@ fun KotlinNativeTarget.applyFilamentNative(
     // same konan target, sharing one dir causes them to clobber each other's libfilament-c.a.
     val cmakeSourceDir = project.file("../../c")
     val buildDir       = project.file("../../c/build/$name/$cmakeTarget")
-    val prebuiltDir    = project.file("../../prebuilts/${platform.prebuiltDir}/lib")
+    // Debug wrapper build via -Pfilament.debug=true; FILAMENT_PREBUILTS_DIR swaps in a locally
+    // built Filament (layout mirrors prebuilts/: <target>/lib) and skips the download task.
+    val buildType      = if (project.findProperty("filament.debug") == "true") "Debug" else "Release"
+    val localPrebuilts = project.providers.environmentVariable("FILAMENT_PREBUILTS_DIR").orNull
+    val prebuiltDir    = if (localPrebuilts != null) {
+        java.io.File(localPrebuilts, "${platform.prebuiltDir}/lib")
+    } else {
+        project.file("../../prebuilts/${platform.prebuiltDir}/lib")
+    }
 
     // Prebuilt static libs are downloaded by a root-level task (see kotlin/build.gradle.kts).
     val downloadTask = project.rootProject.tasks.named("downloadPrebuilts_$name")
@@ -82,14 +90,15 @@ fun KotlinNativeTarget.applyFilamentNative(
     // CMake: configure + build the C wrapper in one step
     val cmake = resolveCmake()
     val cmakeTask = project.tasks.register("buildCWrapper_${cmakeTarget}_$name", Exec::class.java) {
-        dependsOn(downloadTask)
+        if (localPrebuilts == null) dependsOn(downloadTask)
         dependsOn(downloadIncludesTask)
         workingDir(buildDir)
         commandLine(
             "sh", "-c",
             "$cmake ${cmakeSourceDir.absolutePath} -DFILAMENT_PLATFORM=${platform.cmakePlatform}" +
             " -DFILAMENT_ARCH=${platform.cmakeArch}" +
-            " -DCMAKE_BUILD_TYPE=Release" +
+            " -DCMAKE_BUILD_TYPE=$buildType" +
+            " -DFILAMENT_LIB_DIR=${prebuiltDir.absolutePath}" +
             " && $cmake --build . --target $cmakeTarget",
         )
         val targetName = name

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.security.MessageDigest
 
 plugins {
     `java-library`
@@ -72,8 +73,8 @@ tasks.named<ProcessResources>("processResources") {
         include("*.dylib", "*.so", "*.dll")
         into("natives/$platformArch")
     }
-    // Multi-config generators (Visual Studio) put DLLs in build/cmake/Release/.
-    from(ffm.dylibDir.map { it.dir("Release") }) {
+    // Multi-config generators (Visual Studio) put DLLs in build/cmake/<config>/.
+    from(ffm.dylibDir.map { it.dir(ffm.buildType) }) {
         include("*.dll")
         into("natives/$platformArch")
     }
@@ -89,8 +90,34 @@ tasks.named<ProcessResources>("processResources") {
             }
         }
     }
+    // Stamp each native with its sha256 — FilamentLoader keys its extraction cache dir by it.
+    doLast {
+        val md = MessageDigest.getInstance("SHA-256")
+        destinationDir.resolve("natives").walkTopDown()
+            .filter { it.isFile && it.extension in setOf("dylib", "so", "dll") }
+            .forEach { lib ->
+                md.reset()
+                lib.inputStream().use { ins ->
+                    val buf = ByteArray(64 * 1024)
+                    while (true) {
+                        val n = ins.read(buf)
+                        if (n < 0) break
+                        md.update(buf, 0, n)
+                    }
+                }
+                File(lib.path + ".sha256").writeText(md.digest().joinToString("") { "%02x".format(it) })
+            }
+    }
 }
 
 tasks.named("assemble") {
     dependsOn(ffm.cmakeBuild)
+}
+
+// ── Loader unit tests (extraction cache + stale-dir cleanup) ──────────────────
+dependencies {
+    testImplementation(libs.junit)
+}
+tasks.named<Test>("test") {
+    useJUnit()
 }

@@ -114,6 +114,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew \
+            :java:test \
             :kotlin:filament:jvmTest \
             :kotlin:filamat:jvmTest \
             :kotlin:filament-utils:jvmTest \
