@@ -85,7 +85,7 @@ python3 scripts/gradle/download_filament_prebuilts.py <version> web
 
 Then copy `filament.js` and `filament.wasm` into your `src/jsMain/resources/`. (The
 `filament.d.ts` is build-time only — the `:js` module's Kotlin externals are generated
-from it by [Karakum](https://github.com/karakum-team/karakum); see [`js/README.md`](../js/README.md).)
+against it by hand; see [`web/README.md`](../web/README.md).)
 
 ### Current limitations
 

@@ -37,4 +37,4 @@ The first build downloads Filament prebuilts via `scripts/gradle/download_filame
 
 ## Contributing
 
-See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`), the Project Panama (FFM) JVM bindings (`java/`), and the Karakum-generated JS externals (`js/`).
+See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`), the Project Panama (FFM) JVM bindings (`java/`), and the committed JS externals (`web/`).
