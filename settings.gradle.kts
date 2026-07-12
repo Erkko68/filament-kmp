@@ -34,7 +34,16 @@ include(":kotlin:test-support") // test-only shared helpers (TestEnv + skip anno
 // JVM/Panama (FFM) bindings: one combined libfilament-c image (filament + filamat +
 // filament-utils + gltfio) plus jextract-generated bindings. All four kotlin JVM modules
 // depend on it; it replaced the per-module hand-written JNI stack (java/filament*, java/gltfio).
-// Published as the `filament-ffm` artifact (id pinned in java/build.gradle.kts).
+// Published as the `filament-ffm` artifact (bindings only — natives live in the runtime
+// modules below; artifact ids pinned via maven.artifactId in each module's gradle.properties).
 include(":java")
+
+// FFM native runtime jars (skiko-awt-runtime style): one slim natives jar per platform.
+// filament-ffm's own metadata depends on all of them by default; its per-platform
+// Gradle-metadata variants (os/arch attributes) narrow that to exactly one.
+include(":java:runtime-macos-arm64")
+include(":java:runtime-linux-x64")
+include(":java:runtime-linux-arm64")
+include(":java:runtime-windows-x64")
 
 include(":web")
