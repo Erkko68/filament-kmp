@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("RenderableManager\$Builder")
 external class RenderableManager_Builder : JsAny {
 fun geometry(slot: Double, ptype: RenderableManager_PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): RenderableManager_Builder
 fun geometryOffset(slot: Double, ptype: RenderableManager_PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Double, count: Double): RenderableManager_Builder

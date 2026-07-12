@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("Camutils\$Bookmark")
 external class Camutils_Bookmark : JsAny {
 
 companion object {

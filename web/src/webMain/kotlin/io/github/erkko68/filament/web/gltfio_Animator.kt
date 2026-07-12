@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("gltfio\$Animator")
 external class gltfio_Animator : JsAny {
 fun applyAnimation(index: Double): Unit
 fun applyAnimation(index: Double, time: Double): Unit

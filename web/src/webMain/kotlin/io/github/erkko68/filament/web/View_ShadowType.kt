@@ -8,6 +8,7 @@ package io.github.erkko68.filament.web
  * List of available shadow mapping techniques.
  * @see #setShadowType
  */
+@JsName("View\$ShadowType")
 external class View_ShadowType : JsAny {
 companion object {
 val PCF: View_ShadowType

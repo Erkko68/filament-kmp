@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("RenderableManager\$PrimitiveType")
 external class RenderableManager_PrimitiveType : JsAny {
 companion object {
 val POINTS: RenderableManager_PrimitiveType

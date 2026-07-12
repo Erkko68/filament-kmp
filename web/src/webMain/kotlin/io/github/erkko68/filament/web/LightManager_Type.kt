@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("LightManager\$Type")
 external class LightManager_Type : JsAny {
 companion object {
 val SUN: LightManager_Type

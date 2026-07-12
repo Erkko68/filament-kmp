@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("BufferObject\$Builder")
 external class BufferObject_Builder : JsAny {
 fun size(byteCount: Double): BufferObject_Builder
 fun bindingType(type: BufferObject_BindingType): BufferObject_Builder

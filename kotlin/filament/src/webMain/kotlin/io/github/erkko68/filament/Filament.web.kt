@@ -4,18 +4,17 @@ actual object Filament {
     private var initialized = false
 
     actual fun init() {
-        // On JS the WASM module loads asynchronously.
+        // On the web the WASM module loads asynchronously.
         // Use initJs(onReady) to wait for readiness.
     }
 
     /**
-     * Initializes the Filament WASM module and spreads the `Filament`
-     * namespace onto the global scope so the Karakum-generated externals
-     * (which expect top-level globals) can resolve correctly.
+     * Initializes the Filament WASM module and exposes the `Filament`
+     * namespace members as globals so the external Kotlin declarations
+     * (which resolve against the global scope) can find them.
      *
-     * [onReady] fires once the WASM module is fully loaded and the
-     * global aliases are in place. All Filament API usage must happen
-     * inside (or after) this callback.
+     * [onReady] fires once the WASM module is fully loaded. All Filament
+     * API usage must happen inside (or after) this callback.
      *
      * Calling this more than once is safe — subsequent calls invoke
      * [onReady] immediately.
@@ -33,18 +32,17 @@ actual object Filament {
 }
 
 /**
- * Calls the JS-side `Filament.init()`, waits for WASM readiness,
- * then spreads the `Filament` namespace onto `window` and creates
- * `_`-separated aliases for every `$`-separated property name.
+ * Calls the JS-side `Filament.init()`, waits for WASM readiness, then exposes
+ * the `Filament` namespace members as globals. Only missing names are added
+ * (never overwrites, so e.g. `window.fetch` is untouched); `$`-separated names
+ * (`Texture$Builder`) are declared as-is via `@JsName` on the externals, so no
+ * `_`-alias copies are needed.
  */
 private fun initWasm(onReady: () -> Unit) {
     js("""
         Filament.init([], function() {
-            var nativeFetch = window.fetch;
-            Object.assign(window, Filament);
-            window.fetch = nativeFetch;
             Object.getOwnPropertyNames(Filament).forEach(function(k) {
-                if (k.indexOf('${'$'}') !== -1) window[k.replace(/\${'$'}/g, '_')] = Filament[k];
+                if (!(k in globalThis)) globalThis[k] = Filament[k];
             });
             onReady();
         });

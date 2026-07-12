@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("gltfio\$FilamentAsset")
 external class gltfio_FilamentAsset : JsAny {
 fun loadResources(onDone: () -> Unit, onFetched: (s: String) -> Unit, basePath: String?, asyncInterval: Double?, options: JsAny = definedExternally): Unit
 fun getEntities(): js.array.ReadonlyArray<Entity>

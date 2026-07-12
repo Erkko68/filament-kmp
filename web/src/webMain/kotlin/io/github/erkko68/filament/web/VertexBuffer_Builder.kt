@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("VertexBuffer\$Builder")
 external class VertexBuffer_Builder : JsAny {
 fun vertexCount(count: Double): VertexBuffer_Builder
 fun bufferCount(count: Double): VertexBuffer_Builder

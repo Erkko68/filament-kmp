@@ -8,6 +8,7 @@ package io.github.erkko68.filament.web
 /**
  * Generic quality level.
  */
+@JsName("View\$QualityLevel")
 external class View_QualityLevel : JsAny {
 companion object {
 val LOW: View_QualityLevel

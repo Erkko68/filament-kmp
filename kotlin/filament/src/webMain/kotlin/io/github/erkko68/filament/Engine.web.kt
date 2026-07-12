@@ -346,9 +346,9 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 }
 
-// Reads the global `Engine.getSteadyClockTimeNano()` and coerces its BigInt result to a
+// Reads `Filament.Engine.getSteadyClockTimeNano()` and coerces its BigInt result to a
 // number in JS, so neither target marshals a BigInt as a Double.
-private fun steadyClockTimeNanoJs(): Double = js("Number(Engine.getSteadyClockTimeNano())")
+private fun steadyClockTimeNanoJs(): Double = js("Number(Filament.Engine.getSteadyClockTimeNano())")
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Enum bridges. The common Engine.Backend / Engine.FeatureLevel mirror the

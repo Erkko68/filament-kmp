@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("Ktx2Reader\$Result")
 external class Ktx2Reader_Result : JsAny {
 companion object {
 val SUCCESS: Ktx2Reader_Result

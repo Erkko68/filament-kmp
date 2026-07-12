@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("Camutils\$Manipulator")
 external class Camutils_Manipulator : JsAny {
 fun setViewport(width: Double, height: Double): Unit
 fun getLookAt(eye: float3, target: float3, up: float3): Unit

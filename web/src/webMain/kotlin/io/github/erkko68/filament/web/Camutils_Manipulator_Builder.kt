@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("Camutils\$Manipulator\$Builder")
 external class Camutils_Manipulator_Builder : JsAny {
 constructor ()
 fun viewport(width: Double, height: Double): Camutils_Manipulator_Builder

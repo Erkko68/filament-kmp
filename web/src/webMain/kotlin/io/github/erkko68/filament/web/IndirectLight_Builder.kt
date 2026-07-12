@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("IndirectLight\$Builder")
 external class IndirectLight_Builder : JsAny {
 fun reflections(cubemap: Texture): IndirectLight_Builder
 fun irradianceTex(cubemap: Texture): IndirectLight_Builder

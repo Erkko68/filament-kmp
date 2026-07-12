@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("gltfio\$FilamentInstance")
 external class gltfio_FilamentInstance : JsAny {
 fun getAsset(): gltfio_FilamentAsset
 fun getEntities(): Vector<Entity>

@@ -7,6 +7,7 @@ package io.github.erkko68.filament.web
 /**
  * List of available post-processing dithering techniques.
  */
+@JsName("View\$Dithering")
 external class View_Dithering : JsAny {
 companion object {
 val NONE: View_Dithering

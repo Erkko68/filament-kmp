@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("SurfaceOrientation\$Builder")
 external class SurfaceOrientation_Builder : JsAny {
 constructor ()
 fun vertexCount(count: Double): SurfaceOrientation_Builder?

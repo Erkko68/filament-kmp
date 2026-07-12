@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("Texture\$InternalFormat")
 external class Texture_InternalFormat : JsAny {
 companion object {
 val R8: Texture_InternalFormat

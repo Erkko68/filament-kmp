@@ -5,6 +5,7 @@ package io.github.erkko68.filament.web
 // unhandled import: * as glm from "gl-matrix"
 
 // Clients should use createTextureFromKtx1/ImageFile helper functions if low level control is not needed
+@JsName("Texture\$Builder")
 external class Texture_Builder : JsAny {
 fun width(width: Double): Texture_Builder
 fun height(height: Double): Texture_Builder

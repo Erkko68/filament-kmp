@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("viewer\$CustomLut")
 external class viewer_CustomLut : JsAny {
 companion object {
 val NONE: viewer_CustomLut

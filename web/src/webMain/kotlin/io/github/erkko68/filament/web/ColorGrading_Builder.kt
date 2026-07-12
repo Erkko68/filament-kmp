@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("ColorGrading\$Builder")
 external class ColorGrading_Builder : JsAny {
 fun quality(qualityLevel: ColorGrading_QualityLevel): ColorGrading_Builder
 fun format(format: ColorGrading_LutFormat): ColorGrading_Builder

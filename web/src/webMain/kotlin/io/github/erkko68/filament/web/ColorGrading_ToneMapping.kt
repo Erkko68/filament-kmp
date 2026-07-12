@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
+@JsName("ColorGrading\$ToneMapping")
 external class ColorGrading_ToneMapping : JsAny {
 companion object {
 val LINEAR: ColorGrading_ToneMapping
