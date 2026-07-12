@@ -336,7 +336,8 @@ if (FILAMENT_BUILD_SHARED)
     )
 
     # A Windows DLL exports nothing unless told to, so loaderLookup() would find no symbols
-    # (macOS/Linux export by default).
+    # (macOS/Linux export by default). Left unsealed: DLL imports bind by (module, name),
+    # so surplus exports can't be interposed the way flat-namespace ELF/Mach-O ones can.
     set_target_properties(filament-c-jvm PROPERTIES
         OUTPUT_NAME "filament-c"
         WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -376,6 +377,9 @@ if (FILAMENT_BUILD_SHARED)
             "-framework CoreVideo"
             "-framework OpenGL"
         )
+        # Seal: export only the Fila* C API; keep filament's C++ internals local
+        # (smaller symbol table, no clashes with other libs in the host process).
+        target_link_options(filament-c-jvm PRIVATE "LINKER:-exported_symbol,_Fila*")
     elseif (WIN32)
         # Statically link the MSVC C++ runtime (/MT) to avoid msvcp140.dll conflicts
         # with the JVM. The prebuilts downloaded by Gradle must also be the /MT versions.
@@ -408,5 +412,10 @@ if (FILAMENT_BUILD_SHARED)
             "LINKER:--start-group"
         )
         target_link_libraries(filament-c-jvm PRIVATE "-Wl,--end-group")
+        # Seal: same as the macOS -exported_symbol above, via a version script.
+        target_link_options(filament-c-jvm PRIVATE
+            "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/filament-c.map")
+        set_target_properties(filament-c-jvm PROPERTIES
+            LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/filament-c.map")
     endif()
 endif()

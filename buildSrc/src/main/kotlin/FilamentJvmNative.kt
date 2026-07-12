@@ -18,6 +18,7 @@ private const val JEXTRACT_MAJOR = "22"
  * @property dylibDir         build/cmake dir that holds the freshly built libfilament-c.{dylib,so,dll}
  * @property generatedJavaDir build/generated/jextract — jextract output, added to the jvm Java source set
  * @property platformArch     "{platform}-{arch}", e.g. "macos-arm64", used as the natives/ resource subdir
+ * @property buildType        CMake config, "Release" or "Debug" (-Pfilament.debug=true)
  * @property cmakeBuild       the task producing the dylib (depend on it from processResources)
  * @property jextract         the task producing the generated Java (depend on it from the jvm compile tasks)
  */
@@ -25,6 +26,7 @@ data class FilamentJvmNative(
     val dylibDir: Provider<Directory>,
     val generatedJavaDir: Provider<Directory>,
     val platformArch: String,
+    val buildType: String,
     val cmakeBuild: TaskProvider<Exec>,
     val jextract: TaskProvider<Exec>,
 )
@@ -67,12 +69,20 @@ fun Project.applyFilamentJvmNative(
     val cmakeBuildDir = layout.buildDirectory.dir("cmake").get().asFile
     val generatedDir = layout.buildDirectory.dir("generated/jextract").get().asFile
 
+    // Debug wrapper build via -Pfilament.debug=true. Prebuilts stay Release; on Windows the
+    // /MTd↔/MT CRT mismatch makes a Debug link against them fail — use macOS/Linux for this.
+    val buildType = if (findProperty("filament.debug") == "true") "Debug" else "Release"
+    // FILAMENT_PREBUILTS_DIR points the link at a locally built Filament (layout mirrors
+    // prebuilts/: <target>/lib) and skips the download task for that target.
+    val localPrebuilts = providers.environmentVariable("FILAMENT_PREBUILTS_DIR").orNull
+
     val downloadPrebuilts = rootProject.tasks.named("downloadPrebuilts_$prebuiltsTarget")
     val downloadIncludes = rootProject.tasks.named("downloadIncludes")
 
     // ── CMake: configure + build the combined SHARED library ──────────────────
     val cmakeConfigure = tasks.register("cmakeConfigureFilamentCJvm", Exec::class.java) {
-        dependsOn(downloadPrebuilts, downloadIncludes)
+        if (localPrebuilts == null) dependsOn(downloadPrebuilts)
+        dependsOn(downloadIncludes)
         doFirst { cmakeBuildDir.mkdirs() }
         workingDir(cmakeBuildDir)
         val args = mutableListOf(
@@ -80,8 +90,11 @@ fun Project.applyFilamentJvmNative(
             "-DFILAMENT_BUILD_SHARED=ON",
             "-DFILAMENT_PLATFORM=$platform",
             "-DFILAMENT_ARCH=$arch",
-            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_BUILD_TYPE=$buildType",
         )
+        if (localPrebuilts != null) {
+            args += "-DFILAMENT_LIB_DIR=${File(localPrebuilts, "$prebuiltsTarget/lib").absolutePath.replace('\\', '/')}"
+        }
         if (platform == "macos") {
             args += "-DCMAKE_OSX_SYSROOT=macosx"
             args += "-DCMAKE_OSX_ARCHITECTURES=${if (arch == "Arm64") "arm64" else "x86_64"}"
@@ -95,7 +108,7 @@ fun Project.applyFilamentJvmNative(
         // No output declarations: cmakeConfigure writes CMakeCache.txt into this same dir, so
         // declaring it as an output here would let Gradle wipe the cache before the build runs.
         // CMake's own incremental build keeps rebuilds cheap. (Matches java/filament.)
-        commandLine(cmakePath, "--build", ".", "--target", "filament-c-jvm", "--config", "Release")
+        commandLine(cmakePath, "--build", ".", "--target", "filament-c-jvm", "--config", buildType)
     }
 
     // ── jextract: download the tool, then generate the bindings ──────────────
@@ -162,6 +175,7 @@ fun Project.applyFilamentJvmNative(
         dylibDir = layout.buildDirectory.dir("cmake"),
         generatedJavaDir = layout.buildDirectory.dir("generated/jextract"),
         platformArch = platformArch,
+        buildType = buildType,
         cmakeBuild = cmakeBuild,
         jextract = jextract,
     )

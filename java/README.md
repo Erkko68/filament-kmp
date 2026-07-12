@@ -21,15 +21,34 @@ so consumers never add it by hand.
    `io.github.erkko68.filament.ffm.FilamentC` class of low-level `MethodHandle` bindings.
    The jextract task is wired as a source dir, so every consumer (`compileJava`,
    `compileKotlin`, `sourcesJar`) depends on it.
-3. The dylib is packaged into the JAR under `natives/<platform>-<arch>/`. At runtime
+3. The dylib is packaged into the JAR under `natives/<platform>-<arch>/` together with a
+   `.sha256` stamp. At runtime
    [`FilamentLoader`](src/main/java/io/github/erkko68/filament/ffm/FilamentLoader.java)
-   extracts it to a temp file and `System.load`s it so jextract's `loaderLookup` resolves
-   the symbols. No system install of Filament is needed.
+   extracts it **once** into a content-hash-keyed cache dir (`~/.filament-kmp/filament-c-<hash>/`)
+   and `System.load`s it from there, so jextract's `loaderLookup` resolves the symbols.
+   Subsequent JVM starts reuse the cached copy; concurrent processes are serialized by a
+   lock file; unused cache dirs are purged after 30 days. No system install of Filament
+   is needed. Runtime knobs (system properties):
+   - `filament.library.path` — load the lib from this directory instead of extracting.
+   - `filament.data.path` — cache root (default `~/.filament-kmp`).
+   - `filament.data.cleanup.days` — stale-cache purge age; `<= 0` disables (default 30).
 4. [`Ffm.kt`](src/main/kotlin/io/github/erkko68/filament/Ffm.kt) hosts the shared FFM
    helpers (arenas, struct/array marshalling, upcall stubs) that the `:kotlin:*` `jvmMain`
    actuals build their idiomatic Kotlin API on top of `FilamentC`.
 
 `jextract` is fetched automatically by the build (the `downloadJextract` task, cached under `.gradle/jextract/`) — no manual setup. The download script it wraps is [`scripts/gradle/download_jextract.py`](../scripts/gradle/download_jextract.py).
+
+Build knobs:
+- `-Pfilament.debug=true` — build the C wrapper with `CMAKE_BUILD_TYPE=Debug` (prebuilts
+  stay Release; on Windows the `/MTd`↔`/MT` CRT mismatch makes the Debug link fail, so
+  use macOS/Linux for this).
+- `FILAMENT_PREBUILTS_DIR=<dir>` (env) — link against a locally built Filament instead of
+  the downloaded prebuilts and skip the download task. Layout mirrors `prebuilts/`:
+  `<dir>/<target>/lib` (e.g. `<dir>/macosArm64/lib`). Also honoured by the Kotlin/Native
+  cinterop builds.
+- On macOS/Linux the shared lib is **sealed**: only the `Fila*` C API is exported
+  (see [`c/filament-c.map`](../c/filament-c.map)), keeping Filament's C++ internals out of
+  the process-wide symbol namespace.
 
 ## Requirements
 
