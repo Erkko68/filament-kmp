@@ -67,7 +67,7 @@ The bindings and the natives are published separately (artifact ids pinned via
 
 The `:kotlin:*` JVM targets depend on `filament-ffm` alone, so plain consumers keep
 working with zero configuration — they pull every platform's natives, as before the
-split. Gradle consumers who only want their platform's ~18 MB add two attributes and the
+split. Gradle consumers who only want their platform's ~13 MB add two attributes and the
 per-platform variant is selected automatically:
 
 ```kotlin
@@ -80,6 +80,26 @@ configurations.matching { it.isCanBeResolved }.configureEach {
 ```
 
 Maven (non-Gradle) consumers get the per-platform modules through `filament-ffm`'s POM.
+
+### Release packaging — don't ship four platforms
+
+The zero-config default matters for *packaging* too: `jpackage` / Compose Desktop
+distributions bundle the whole runtime classpath, so without the attributes above a
+packaged desktop app carries **all four** platforms' natives instead of one. When
+building per-platform installers, either set the two attributes for the target platform
+(as in the snippet), or depend on the platform runtime module directly — each
+`filament-ffm-runtime-<platform>-<arch>` is standalone: it pulls the bindings via an
+`api` dependency that excludes the sibling platforms, so nothing else's natives come
+along:
+
+```kotlin
+dependencies {
+    implementation("io.github.erkko68.filament-ffm:filament-ffm-runtime-macos-arm64:<version>")
+}
+```
+
+(This is the skiko model: Compose's plugin injects `skiko-awt-runtime-<os>-<arch>` for
+the host; we default to all-platforms for zero-config and let packagers narrow.)
 
 The platform set mirrors upstream Filament's prebuilt releases (no windows-arm64: Google
 doesn't publish one; Windows-on-ARM works via the x64 JVM emulation path). CI's

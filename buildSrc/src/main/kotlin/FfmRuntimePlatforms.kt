@@ -21,4 +21,19 @@ object FfmRuntimePlatforms {
 
     /** Name of :java's consumable configuration carrying the staged natives dir. */
     fun nativesConfigName(platformArch: String) = "ffmNatives-$platformArch"
+
+    /** Gradle OperatingSystemFamily name for "{platform}-{arch}". */
+    fun osFamily(platformArch: String): String = when (platformArch.substringBeforeLast('-')) {
+        "macos" -> org.gradle.nativeplatform.OperatingSystemFamily.MACOS
+        "linux" -> org.gradle.nativeplatform.OperatingSystemFamily.LINUX
+        "windows" -> org.gradle.nativeplatform.OperatingSystemFamily.WINDOWS
+        else -> error("Unknown platform in '$platformArch'")
+    }
+
+    /** Gradle MachineArchitecture name for "{platform}-{arch}". */
+    fun machineArch(platformArch: String): String = when (platformArch.substringAfterLast('-')) {
+        "arm64" -> org.gradle.nativeplatform.MachineArchitecture.ARM64
+        "x64" -> org.gradle.nativeplatform.MachineArchitecture.X86_64
+        else -> error("Unknown arch in '$platformArch'")
+    }
 }
