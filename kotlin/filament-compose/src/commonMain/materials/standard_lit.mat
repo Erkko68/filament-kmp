@@ -11,9 +11,9 @@
 material {
     name : StandardLit,
     shadingModel : lit,
-    // Trim variants the built-in primitives never use, halving the compiled blob. Standard
-    // materials therefore don't skin, and use PCF shadows (not VSM) / no SSR.
-    variantFilter : [ skinning, vsm, ssr, stereo ],
+    // Trim variants the built-in primitives never use. `vsm` must stay: VSM/DPCF/PCSS
+    // shadows all select the VSM shader variant — filtering it panics on soft shadows.
+    variantFilter : [ skinning, ssr, stereo ],
     parameters : [
         { type : float3, name : baseColor },
         { type : float,  name : metallic },
