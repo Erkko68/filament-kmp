@@ -138,7 +138,7 @@ tasks.named("assemble") {
 // Default (plain Gradle or Maven, no attributes): the runtime variant depends on every
 // :java:runtime-<platform>-<arch> jar — zero-config, all platforms, as before the split.
 // Gradle consumers that declare OperatingSystemFamily + MachineArchitecture attributes
-// match one of the extra variants below instead and download a single platform's ~18 MB.
+// match one of the extra variants below instead and download a single platform's ~13 MB.
 
 // Bucket for the all-platforms default. Kept out of implementation/runtimeOnly so the
 // attributed variants (which extend those) don't inherit every platform.
@@ -176,17 +176,8 @@ if (hostPa !in FfmRuntimePlatforms.published) {
 // extendsFrom of the declaring buckets, plus the one platform dep that replaces ffmRuntimeAll.
 val javaComponent = components["java"] as AdhocComponentWithVariants
 FfmRuntimePlatforms.published.forEach { pa ->
-    val osFamily = when (pa.substringBeforeLast('-')) {
-        "macos" -> OperatingSystemFamily.MACOS
-        "linux" -> OperatingSystemFamily.LINUX
-        "windows" -> OperatingSystemFamily.WINDOWS
-        else -> error("Unknown platform in '$pa'")
-    }
-    val machineArch = when (pa.substringAfterLast('-')) {
-        "arm64" -> MachineArchitecture.ARM64
-        "x64" -> MachineArchitecture.X86_64
-        else -> error("Unknown arch in '$pa'")
-    }
+    val osFamily = FfmRuntimePlatforms.osFamily(pa)
+    val machineArch = FfmRuntimePlatforms.machineArch(pa)
     val variant = configurations.create("ffmRuntime-$pa") {
         isCanBeConsumed = true
         isCanBeResolved = false

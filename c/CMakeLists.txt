@@ -335,12 +335,7 @@ if (FILAMENT_BUILD_SHARED)
         ${GLTFIO_C_SOURCES}
     )
 
-    # A Windows DLL exports nothing unless told to, so loaderLookup() would find no symbols
-    # (macOS/Linux export by default). Left unsealed: DLL imports bind by (module, name),
-    # so surplus exports can't be interposed the way flat-namespace ELF/Mach-O ones can.
-    set_target_properties(filament-c-jvm PROPERTIES
-        OUTPUT_NAME "filament-c"
-        WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set_target_properties(filament-c-jvm PROPERTIES OUTPUT_NAME "filament-c")
 
     target_include_directories(filament-c-jvm PRIVATE
         filament/c
@@ -379,8 +374,42 @@ if (FILAMENT_BUILD_SHARED)
         )
         # Seal: export only the Fila* C API; keep filament's C++ internals local
         # (smaller symbol table, no clashes with other libs in the host process).
-        target_link_options(filament-c-jvm PRIVATE "LINKER:-exported_symbol,_Fila*")
+        # With the seal in place, dead-strip drops code unreachable from the exports.
+        target_link_options(filament-c-jvm PRIVATE
+            "LINKER:-exported_symbol,_Fila*"
+            "LINKER:-dead_strip")
     elseif (WIN32)
+        # Seal: a DLL exports nothing by default; generate a .def of the Fila* C API from
+        # the wrapper headers (the exact surface jextract binds — matches the macOS/Linux
+        # seal) instead of WINDOWS_EXPORT_ALL_SYMBOLS' full C++ export table.
+        file(GLOB _fila_api_headers CONFIGURE_DEPENDS
+            "${CMAKE_CURRENT_SOURCE_DIR}/filament/c/*.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/filamat/c/*.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/filament-utils/c/*.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/gltfio/c/*.h")
+        set(_fila_exports "")
+        foreach(_hdr IN LISTS _fila_api_headers)
+            file(READ "${_hdr}" _hdr_text)
+            # Function declarations only: Fila<Type>_<method>( not preceded by an
+            # identifier char (skips typedefs/params — no '(' right after their name).
+            string(REGEX MATCHALL "[^A-Za-z0-9_]Fila[A-Za-z0-9]+_[A-Za-z0-9_]+[ \t\r\n]*\\(" _matches "${_hdr_text}")
+            foreach(_m IN LISTS _matches)
+                string(REGEX REPLACE "^[^A-Za-z0-9_]" "" _m "${_m}")
+                string(REGEX REPLACE "[ \t\r\n]*\\($" "" _m "${_m}")
+                list(APPEND _fila_exports "${_m}")
+            endforeach()
+        endforeach()
+        list(REMOVE_DUPLICATES _fila_exports)
+        list(SORT _fila_exports)
+        list(LENGTH _fila_exports _fila_export_count)
+        if (_fila_export_count LESS 500)
+            message(FATAL_ERROR "filament-c.def generation found only ${_fila_export_count} Fila* symbols — header scan is broken")
+        endif()
+        message(STATUS "filament-c.def: exporting ${_fila_export_count} Fila* symbols")
+        list(JOIN _fila_exports "\n    " _fila_exports_text)
+        file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/filament-c.def" "EXPORTS\n    ${_fila_exports_text}\n")
+        target_sources(filament-c-jvm PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/filament-c.def")
+
         # Statically link the MSVC C++ runtime (/MT) to avoid msvcp140.dll conflicts
         # with the JVM. The prebuilts downloaded by Gradle must also be the /MT versions.
         set_property(TARGET filament-c-jvm PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -400,9 +429,12 @@ if (FILAMENT_BUILD_SHARED)
         # Prebuilts are built against libc++, so the wrapper must compile + link against it too,
         # or the .so won't dlopen (undefined std::__1 symbols). Must be target_* options:
         # add_compile_options/add_link_options are directory-scoped and only affect later targets.
-        target_compile_options(filament-c-jvm PRIVATE -stdlib=libc++)
+        target_compile_options(filament-c-jvm PRIVATE -stdlib=libc++ -ffunction-sections -fdata-sections)
         target_link_options(filament-c-jvm PRIVATE -stdlib=libc++)
         target_link_libraries(filament-c-jvm PRIVATE GL)
+        # With the version-script seal below, gc-sections drops code unreachable from
+        # the Fila* exports (ELF analogue of the macOS -dead_strip above).
+        target_link_options(filament-c-jvm PRIVATE "LINKER:--gc-sections")
         # GNU ld scans static archives left-to-right in a single pass, so cross-refs
         # between Filament archives can drop members if ordering is wrong. Wrap them
         # in a group so ld rescans until all references resolve. Also force a
@@ -417,5 +449,17 @@ if (FILAMENT_BUILD_SHARED)
             "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/filament-c.map")
         set_target_properties(filament-c-jvm PROPERTIES
             LINK_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/filament-c.map")
+    endif()
+
+    # Release ships stripped (smaller runtime jars + extraction cache); the dynamic
+    # Fila* exports are untouched. Debug builds (-Pfilament.debug=true) keep symbols.
+    if (CMAKE_BUILD_TYPE STREQUAL "Release")
+        if (APPLE)
+            add_custom_command(TARGET filament-c-jvm POST_BUILD
+                COMMAND strip -x "$<TARGET_FILE:filament-c-jvm>")
+        elseif (UNIX)
+            add_custom_command(TARGET filament-c-jvm POST_BUILD
+                COMMAND strip --strip-unneeded "$<TARGET_FILE:filament-c-jvm>")
+        endif()
     endif()
 endif()

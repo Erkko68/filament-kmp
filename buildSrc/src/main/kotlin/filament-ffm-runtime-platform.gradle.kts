@@ -27,7 +27,17 @@ val ffmNativesInput = configurations.create("ffmNativesInput") {
 
 dependencies {
     // Standalone usability: adding just this runtime module pulls the matching bindings.
-    api(project(":java"))
+    // Exclude the sibling platforms that :java's all-platforms default would otherwise
+    // drag back in. Excludes (not dependency attributes: those force a different :java
+    // variant per platform and conflict when several runtime modules share a graph) —
+    // listed under both local project names and published artifact ids, exclusion is
+    // exact-match and the two graphs name the module differently.
+    api(project(":java")) {
+        FfmRuntimePlatforms.published.filter { it != platformArch }.forEach { other ->
+            exclude(group = project.group.toString(), module = "runtime-$other")
+            exclude(group = project.group.toString(), module = "filament-ffm-runtime-$other")
+        }
+    }
     ffmNativesInput(project(mapOf("path" to ":java", "configuration" to FfmRuntimePlatforms.nativesConfigName(platformArch))))
 }
 
