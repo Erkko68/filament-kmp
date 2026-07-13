@@ -11,6 +11,15 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.1.3-beta04] — 2026-07-13
+
+### Added
+- **Per-platform `filament-ffm` native runtime jars** (`filament`, JVM): `filament-ffm` no longer bundles all four platforms' natives (~18 MB each) — natives now publish as standalone `filament-ffm-runtime-{macos-arm64,linux-x64,linux-arm64,windows-x64}` jars, following the skiko `-awt-runtime` model. Plain Gradle/Maven consumers are unaffected (still resolve every platform, zero-config); consumers declaring `OperatingSystemFamily`/`MachineArchitecture` attributes — or depending on a single runtime jar directly — now download and package only their target platform's ~13 MB. See `java/README.md` for the attribute snippet and packaging guidance (`jpackage`/Compose Desktop distributions should narrow to one platform).
+
+### Changed
+- **Sealed Windows native exports** (`filament`, JVM): the Windows `filament-c.dll` now exports only the `Fila*` C API via a generated `.def` file, matching the macOS/Linux symbol seal instead of `WINDOWS_EXPORT_ALL_SYMBOLS`. Combined with dead-code stripping (`-dead_strip`/`--gc-sections`) and release-build symbol stripping, the shipped native binary is smaller on every platform; the public `Fila*` surface is unchanged.
+- **Web bindings now hand-maintained externals** (`filament` web/wasmJs): the Karakum-generated externals pipeline is retired — `.d.ts`-derived Kotlin/JS externals are vendored and committed directly under `web/src/webMain`, referencing embind's `$`-named classes via `@JsName` instead of a runtime aliasing shim. Internal change; no public API impact.
+
 ## [0.1.3-beta03] — 2026-07-11
 
 ### Fixed
@@ -231,6 +240,7 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
+[0.1.3-beta04]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta03...0.1.3-beta04
 [0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03
 [0.1.3-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta01...0.1.3-beta02
 [0.1.3-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...0.1.3-beta01
