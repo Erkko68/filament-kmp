@@ -55,9 +55,14 @@ kotlin {
         }
     }
 
-    // Declare all targets
-    iosArm64()
-    iosSimulatorArm64()
+    // Declare all targets.
+    // iOS/Apple targets can only be compiled on macOS and declaring them on an
+    // unsupported K/N host (e.g. linux-arm64) triggers HostManager.host which
+    // throws "Unknown host target".  Guard with the safe hostPlatform() helper.
+    if (hostPlatform() == "macos") {
+        iosArm64()
+        iosSimulatorArm64()
+    }
 
     // JVM/Panama floor: jvmMain actuals call java.lang.foreign (finalized in JDK 22)
     // and depend on :java. The Gradle daemon runs on JDK 25
@@ -105,15 +110,6 @@ kotlin {
     }
 
     applyDefaultHierarchyTemplate()
-
-    // iOS minimum deployment target for native binaries
-    targets.withType<KotlinNativeTarget>().configureEach {
-        if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
-            binaries.all {
-                freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
-            }
-        }
-    }
 }
 
 // ── Real-backend (GPU) test gating, decided once here on the host ─────────────
@@ -167,23 +163,35 @@ kotlin.sourceSets.named("androidDeviceTest").configure {
     }
 }
 
-// ── XCFramework ───────────────────────────────────────────────────────────────
-// Name derived from the project name (filament-utils → FilamentUtils) — matches
-// every module's previous explicit name, and being deterministic it needs no
-// extension/afterEvaluate.
-val xcfName = project.name.split("-").joinToString("") { part ->
-    part.replaceFirstChar { it.uppercaseChar() }
-}
-kotlin {
-    val xcf = XCFramework(xcfName)
-    listOf(
-        targets.getByName("iosArm64")          as KotlinNativeTarget,
-        targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
-    ).forEach {
-        it.binaries.framework {
-            baseName = xcfName
-            isStatic = true
-            xcf.add(this)
+// ── XCFramework + iOS native config (macOS only) ─────────────────────────────
+// iOS targets, XCFrameworks, and related native config are macOS-only: the K/N
+// compiler can't run on non-macOS hosts, and the HostManager throws on unsupported
+// hosts like linux-arm64.  Use the safe hostPlatform() helper (NativeSupport.kt)
+// which reads os.name and never touches HostManager.
+if (hostPlatform() == "macos") {
+    val xcfName = project.name.split("-").joinToString("") { part ->
+        part.replaceFirstChar { it.uppercaseChar() }
+    }
+    kotlin {
+        val xcf = XCFramework(xcfName)
+        listOf(
+            targets.getByName("iosArm64")          as KotlinNativeTarget,
+            targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
+        ).forEach {
+            it.binaries.framework {
+                baseName = xcfName
+                isStatic = true
+                xcf.add(this)
+            }
+        }
+
+        // iOS minimum deployment target for native binaries
+        targets.withType<KotlinNativeTarget>().configureEach {
+            if (konanTarget.family == org.jetbrains.kotlin.konan.target.Family.IOS) {
+                binaries.all {
+                    freeCompilerArgs += "-Xoverride-konan-properties=apple.sdk.min.version=15.0"
+                }
+            }
         }
     }
 }

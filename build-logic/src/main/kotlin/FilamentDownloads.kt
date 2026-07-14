@@ -76,7 +76,7 @@ object FilamentDownloads {
         logger.lifecycle("  download: $url")
         // Unique temp + atomic move: parallel tasks wanting the same tarball never
         // observe a partial file (worst case both download, one wins).
-        val tmp = File(cacheDir, "$name.${ProcessHandle.current().pid()}.${Thread.currentThread().id}.part")
+        val tmp = File(cacheDir, "$name.${ProcessHandle.current().pid()}.${Thread.currentThread().threadId()}.part")
         try {
             val conn = URI(url).toURL().openConnection() as HttpURLConnection
             conn.connectTimeout = 30_000
