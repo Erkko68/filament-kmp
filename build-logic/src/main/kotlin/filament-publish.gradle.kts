@@ -2,6 +2,7 @@ import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import com.vanniktech.maven.publish.SourcesJar
 
 plugins {
     id("com.vanniktech.maven.publish")
@@ -24,10 +25,10 @@ mavenPublishing {
         pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
             configure(KotlinMultiplatform(javadocJar = JavadocJar.Empty()))
         pluginManager.hasPlugin("org.jetbrains.kotlin.jvm") ->
-            configure(KotlinJvm(javadocJar = JavadocJar.Empty(), sourcesJar = true))
+            configure(KotlinJvm(javadocJar = JavadocJar.Empty(), sourcesJar = SourcesJar.Sources()))
         // Plain resource jars (the :java:runtime* native-runtime modules).
         pluginManager.hasPlugin("java-library") ->
-            configure(JavaLibrary(javadocJar = JavadocJar.Empty(), sourcesJar = true))
+            configure(JavaLibrary(javadocJar = JavadocJar.Empty(), sourcesJar = SourcesJar.Sources()))
     }
 
     pom {

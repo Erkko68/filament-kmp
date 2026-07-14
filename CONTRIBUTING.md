@@ -26,21 +26,25 @@ label so we can track it (and patch our prebuilts if needed).
 |---|---|
 | `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`) — `commonMain` + per-target actuals. |
 | `js/` | Kotlin/JS externals, **generated at build time** by Karakum from `filament.d.ts` (+ patches in `js/patches/`). |
-| `c/`, `java/`, `buildSrc/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
+| `c/`, `java/`, `build-logic/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |
-| `scripts/` | Prebuilt/header download + dev cross-check scripts (`scripts/README.md`). |
+| `scripts/` | Dev cross-check + maintenance scripts (`scripts/README.md`). |
 
 ## Building
 
-You need JDK 22+ (the daemon runs on 25) and Python 3. Native targets download prebuilt
+You need JDK 22+ (the daemon runs on 25). Native targets download prebuilt
 Filament binaries automatically:
 
 ```sh
 ./gradlew downloadPrebuilts            # all targets + headers (or downloadPrebuilts_<target>)
 ./gradlew compileKotlinJvm             # build a target (compileKotlinJs, compileReleaseKotlinAndroid, …)
 ./gradlew :kotlin:filament:jvmTest     # tests
+./gradlew apiCheck                     # public-API surface check (CI-enforced; regen dumps with apiDump)
 ```
+
+If you intentionally change the public API of a `:kotlin:*` module, run `./gradlew apiDump`
+and commit the updated `<module>/api/` files with your change — `apiCheck` fails otherwise.
 
 - **Web** externals are generated from `prebuilts/web/filament.d.ts`; regenerate with
   `./gradlew :js:generateJsExternals`.

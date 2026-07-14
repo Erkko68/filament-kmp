@@ -87,8 +87,6 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v6
-        with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
@@ -110,6 +108,11 @@ jobs:
       - name: Build library
         shell: bash
         run: ./gradlew compileKotlinJvm --no-configuration-cache
+      # Public-API surface guard: fails if the JVM ABI of any published :kotlin:*
+      # module drifts from the committed api/ dumps (regenerate with `apiDump`).
+      - name: API compatibility check
+        shell: bash
+        run: ./gradlew apiCheck --no-configuration-cache
       - name: Run JVM tests
         shell: bash
         run: |
@@ -221,8 +224,6 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v6
-        with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Read Filament version
         id: ver

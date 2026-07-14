@@ -54,7 +54,7 @@ in table form.
     - `filament-utils` — Math utilities, camera manipulators, HDR/KTX loaders.
     - `filament-compose` — Compose Multiplatform UI integration layer (see [Compose docs](compose/README.md)).
 
-- **`prebuilts/`**: Prebuilt Filament static libraries for platforms that do not have an official Maven package: `iosArm64`, `iosSimulatorArm64`, `iosX64`, `macosArm64`, and WASM/JS. Downloaded via `scripts/gradle/download_filament_prebuilts.py` (invoked by the `downloadPrebuilts` Gradle task). The matching public headers land in `include/` via `scripts/gradle/download_filament_includes.py`.
+- **`prebuilts/`**: Prebuilt Filament static libraries for platforms that do not have an official Maven package: `iosArm64`, `iosSimulatorArm64`, `iosX64`, `macosArm64`, and WASM/JS. Downloaded by the `downloadPrebuilts` Gradle task (pure-JVM, see `build-logic/src/main/kotlin/FilamentDownloads.kt`). The matching public headers land in `include/` via the `downloadIncludes` task.
 
 - **`samples/`**: Multiplatform example applications for Android, iOS, Desktop (JVM), and Web.
 

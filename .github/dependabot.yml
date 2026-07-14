@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Root Gradle build (shares gradle/libs.versions.toml; covers buildSrc).
+  # Root Gradle build (shares gradle/libs.versions.toml; covers build-logic).
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:

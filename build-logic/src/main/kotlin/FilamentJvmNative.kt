@@ -8,7 +8,7 @@ import java.io.File
 // jextract major version. Pinned to 22 (not the toolchain's 25) so the generated bindings
 // target the JDK 22 FFM API — i.e. they use find().orElseThrow() rather than the
 // JDK 23+ SymbolLookup.findOrThrow(), keeping the consumer floor at JDK 22 (release 22).
-// The build auto-downloads jextract via the downloadJextract task (scripts/gradle/download_jextract.py),
+// The build auto-downloads jextract via the downloadJextract task (DownloadJextractTask),
 // which pins the exact early-access build coordinates and caches the tarball.
 private const val JEXTRACT_MAJOR = "22"
 
@@ -117,21 +117,19 @@ fun Project.applyFilamentJvmNative(
             if (platform == "windows") "jextract.bat" else "jextract",
     )
 
-    // Self-bootstrap jextract via the cached download script. Registered once on the root
+    // Self-bootstrap jextract via the pure-JVM download task. Registered once on the root
     // project (find-or-register, so reusing this helper from other modules won't double-register
     // or race on the .gradle/jextract dir). Output-tracked + onlyIf: downloads on first build,
     // skipped/up-to-date after.
     val downloadJextract = rootProject.run {
-        tasks.findByName("downloadJextract")?.let { tasks.named("downloadJextract", Exec::class.java) }
-            ?: tasks.register("downloadJextract", Exec::class.java) {
+        tasks.findByName("downloadJextract")?.let { tasks.named("downloadJextract", DownloadJextractTask::class.java) }
+            ?: tasks.register("downloadJextract", DownloadJextractTask::class.java) {
                 group = "build setup"
                 description = "Downloads the pinned jextract $JEXTRACT_MAJOR tool (one-time, cached)."
-                commandLine(
-                    resolvePython(),
-                    rootProject.file("scripts/gradle/download_jextract.py").absolutePath,
-                    JEXTRACT_MAJOR,
-                )
-                outputs.file(jextractBin)
+                major.set(JEXTRACT_MAJOR)
+                cacheDir.set(rootProject.layout.projectDirectory.dir(".gradle/jextract-cache"))
+                extractDir.set(rootProject.layout.projectDirectory.dir(".gradle/jextract"))
+                binary.set(jextractBin)
                 onlyIf { !jextractBin.exists() }
             }
     }
@@ -149,7 +147,7 @@ fun Project.applyFilamentJvmNative(
         doFirst {
             check(jextractBin.exists()) {
                 "jextract $JEXTRACT_MAJOR missing at $jextractBin after downloadJextract — " +
-                    "run: python3 scripts/gradle/download_jextract.py $JEXTRACT_MAJOR"
+                    "run: ./gradlew downloadJextract"
             }
             generatedDir.deleteRecursively()
             generatedDir.mkdirs()

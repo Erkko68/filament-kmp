@@ -188,10 +188,10 @@ kotlin {
 }
 ```
 
-**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the helper script included in the repo:
+**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the download task included in the repo:
 
 ```bash
-python3 scripts/gradle/download_filament_prebuilts.py <version> web
+./gradlew downloadPrebuilts_web
 # outputs to prebuilts/web/ — copy filament.js and filament.wasm to src/jsMain/resources/
 ```
 

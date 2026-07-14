@@ -11,6 +11,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **Python is no longer a build dependency** (build): the prebuilt/header/jextract download scripts were ported to pure-JVM Gradle tasks in `build-logic` (commons-compress for tar.gz), keeping the same task names, cache dirs, and version stamping — and making the prebuilt downloads fully version-aware, so bumping `filaVersion` re-extracts automatically. `setup-python` dropped from all CI workflows.
+- **`buildSrc` became the `build-logic` included build** (build): convention-plugin edits no longer invalidate the whole main build's task graph.
+- **Public-API surface is now CI-enforced** (build): binary-compatibility-validator's `apiCheck` guards the JVM ABI of the five published `:kotlin:*` modules against committed `api/` dumps; intentional API changes must ship a regenerated `apiDump`.
+
 ### Fixed
 - **Soft shadows crashed with built-in materials** (`filament-compose`, all platforms): the precompiled `StandardLit`/`StandardTextured` materials filtered out the `vsm` shader variants to shrink the blobs, but Filament selects those variants for *all* soft shadow types (`Vsm`/`Dpcf`/`Pcss`, not just VSM), so enabling any of them panicked the engine with "Requested variant … does not exist for material". The built-in lit materials now ship with the VSM variants included.
 
