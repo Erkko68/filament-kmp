@@ -458,6 +458,16 @@ public final class io/github/erkko68/filament/Filament {
 	public final fun init ()V
 }
 
+public final class io/github/erkko68/filament/FilamentPlatform : java/lang/Enum {
+	public static final field ANDROID Lio/github/erkko68/filament/FilamentPlatform;
+	public static final field IOS Lio/github/erkko68/filament/FilamentPlatform;
+	public static final field JVM Lio/github/erkko68/filament/FilamentPlatform;
+	public static final field WEB Lio/github/erkko68/filament/FilamentPlatform;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/FilamentPlatform;
+	public static fun values ()[Lio/github/erkko68/filament/FilamentPlatform;
+}
+
 public final class io/github/erkko68/filament/IndexBuffer {
 	public final fun getIndexCount ()I
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[B)V
@@ -995,6 +1005,11 @@ public final class io/github/erkko68/filament/MorphTargetBuffer$Builder {
 public final class io/github/erkko68/filament/NativeSurface {
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun getNativeWindow ()Ljava/lang/Object;
+}
+
+public abstract interface annotation class io/github/erkko68/filament/PlatformGap : java/lang/annotation/Annotation {
+	public abstract fun behavior ()Ljava/lang/String;
+	public abstract fun platforms ()[Lio/github/erkko68/filament/FilamentPlatform;
 }
 
 public final class io/github/erkko68/filament/RenderTarget {

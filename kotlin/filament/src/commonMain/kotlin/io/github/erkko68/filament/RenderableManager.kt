@@ -131,6 +131,7 @@ expect class RenderableManager {
          * @param count number of vertices to read (for triangles, this should be a multiple of 3)
          * @return Builder reference for chaining calls.
          */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder
 
         /**
@@ -141,6 +142,7 @@ expect class RenderableManager {
          * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
          * @return Builder reference for chaining calls.
          */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder
 
         /**
@@ -680,6 +682,7 @@ expect class RenderableManager {
      * @param offset vertex offset in the vertex buffer
      * @param count number of vertices to render
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed setGeometryAt overload.")
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int)
 
     /**

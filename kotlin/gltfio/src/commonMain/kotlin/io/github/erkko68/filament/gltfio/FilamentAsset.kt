@@ -3,6 +3,8 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 /**
  * FilamentAsset owns a loaded glTF 2.0 asset and all its Filament objects.
@@ -83,9 +85,11 @@ expect class FilamentAsset {
     fun getEntityCount(): Int
 
     /** Returns the number of instances created from this asset (>= 1 unless detached). */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     fun getAssetInstanceCount(): Int
 
     /** Returns every [FilamentInstance] created from this asset. */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     fun getAssetInstances(): Array<FilamentInstance>
 
     /**
@@ -103,6 +107,7 @@ expect class FilamentAsset {
     fun getExtras(entity: Entity): String?
 
     /** Gets the morph target names declared on the given entity, in target order. */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     fun getMorphTargetNames(entity: Entity): Array<String>
 
     /** Gets the URIs of all externally-referenced buffers/textures (to feed [ResourceLoader]). */

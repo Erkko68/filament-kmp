@@ -364,6 +364,7 @@ expect class Camera {
      * @param direction Axis (VERTICAL or HORIZONTAL) for which to return FOV
      * @return Full field-of-view in degrees
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns 0.0 — Camera::getFieldOfViewInDegrees is not bound in filament.js.")
     fun getFieldOfViewInDegrees(direction: Fov): Double
 
     /**

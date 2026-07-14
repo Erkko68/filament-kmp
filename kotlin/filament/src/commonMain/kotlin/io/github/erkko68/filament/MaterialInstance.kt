@@ -98,6 +98,7 @@ expect class MaterialInstance {
      *
      * @return The parent Material. The Material owns all instances created from it.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "getter throws UnsupportedOperationException — filament.js does not expose MaterialInstance.getMaterial.")
     val material: Material
 
     /**

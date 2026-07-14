@@ -39,6 +39,7 @@ package io.github.erkko68.filament
  * @see Texture
  * @see TextureSampler
  */
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
 expect class Stream {
     /**
      * Indicates the type of stream source.

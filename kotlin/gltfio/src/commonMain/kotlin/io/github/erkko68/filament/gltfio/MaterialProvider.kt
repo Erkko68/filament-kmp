@@ -1,6 +1,8 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 /**
  * MaterialProvider supplies materials to glTF assets during loading.
@@ -54,6 +56,7 @@ expect interface MaterialProvider {
  *
  * @see MaterialProvider
  */
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 expect class UbershaderProvider : MaterialProvider {
     /**
      * Create an UbershaderProvider.

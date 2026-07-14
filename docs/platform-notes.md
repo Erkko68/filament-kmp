@@ -87,17 +87,40 @@ Then copy `filament.js` and `filament.wasm` into your `src/jsMain/resources/`. (
 `filament.d.ts` is build-time only — the `:js` module's Kotlin externals are generated
 against it by hand; see [`web/README.md`](../web/README.md).)
 
-### Current limitations
+### Binding coverage
 
-APIs without a Filament.js equivalent throw `UnsupportedOperationException` with a workaround pointer:
+**Android, iOS, and Desktop/JVM expose the full common API.** Web is the only platform with
+gaps — almost all because upstream `filament.js` (embind, `jsbindings.cpp`) does not register
+the corresponding function. Every gap below is also marked in source with **`@PlatformGap`**
+(from the core `filament` module), so it shows up in the IDE and in the generated
+[API reference](https://erkko68.github.io/filament-kmp/api/) on the affected declaration itself.
 
-- **`filamat.MaterialBuilder`** — runtime material compilation is unavailable. Compile materials offline with `matc` and load the resulting `.filamat` via `Material.Builder().payload(...)`.
-- **`gltfio.MaterialProvider.createMaterialInstance()` / `getMaterial()`** — the default ubershader path is not exposed. Supply your own precompiled materials.
-- **`filament-utils.HDRLoader.createTexture`** — Radiance/RGBE decoding is unavailable. Convert HDRs to KTX1 offline with `cmgen`.
-- **`filament-utils.KTX1Loader.getSphericalHarmonics`** — SH extraction is unavailable. Precompute SH offline and bake the coefficients into your app data.
-- **`View.shadowType` (shadow technique selection)** — Filament's web build does not bind `View::setShadowType` (absent from both `filament.js` and `filament.wasm`), so the technique is locked to the default **PCF**. In `filament-compose` this means `Shadows.Vsm`, `Shadows.Dpcf`, and `Shadows.Pcss` are silently ignored on web — only `Shadows.Pcf` and `null` (disabled, via the bound `setShadowingEnabled`) take effect. Hard PCF shadows render correctly; soft/VSM shadows are unavailable until upstream binds the setter. (Other platforms support all techniques.)
+| API | Behavior on web | Workaround |
+| :--- | :--- | :--- |
+| `filamat.MaterialBuilder` | Throws on construction | Compile materials offline with `matc`, load the `.filamat` via `Material.Builder().payload(...)` |
+| `gltfio.UbershaderProvider` (`createMaterialInstance`/`getMaterial`) | Throws | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
+| `gltfio.FilamentAsset.getAssetInstances` / `getAssetInstanceCount` | Throws (embind "unbound types") | Track instances returned by `AssetLoader.createInstance` yourself |
+| `gltfio.FilamentAsset.getMorphTargetNames` | Returns an empty array | Read target names from the glTF JSON directly |
+| `gltfio.FilamentInstance.getMaterialInstances` | Throws (embind "unbound types") | — |
+| `gltfio.FilamentInstance.getJointCountAt` / `getJointsAt` | Returns 0 / empty array | — (skinned *playback* via `Animator` works) |
+| `filament-utils.HDRLoader.createTexture` | Throws | Convert HDRs to KTX1 offline with `cmgen` |
+| `View.shadowType` | Silent no-op — technique locked to **PCF** (stock prebuilts don't bind `setShadowType`) | In `filament-compose`, `Shadows.Vsm`/`Dpcf`/`Pcss` are ignored on web; `Shadows.Pcf` and `null` work |
+| `View.isFrustumCullingEnabled` | Setter is a silent no-op (getter tracked locally) | — |
+| `LightManager.Builder.shadowOptions` | Silent no-op (embind can't marshal the `mat4f` field) | Per-light shadow options stay at Filament defaults |
+| `LightManager.getComponentCount` | Throws | — |
+| `Renderer.copyFrame` / `readPixels` (both overloads) | Silent no-op | — |
+| `RenderableManager` non-indexed `geometry`/`setGeometryAt` overloads | Throws | Use the indexed overloads (with an `IndexBuffer`) |
+| `Stream` | Throws on construction | External/native video streams have no web equivalent |
+| `SkinningBuffer` | `Builder.build` throws; `setBonesAt` is a no-op | glTF skinning works through `gltfio` |
+| `MorphTargetBuffer` | `Builder.build` throws | glTF morph targets work through `gltfio` (`GltfInstance.morphWeights`) |
+| `Fence` / `Engine.createFence` | Throws | — |
+| `Engine.isValid{Fence,SkinningBuffer,MorphTargetBuffer,Stream}` | Throws | — |
+| `Engine.paused` | Tracked locally only; does not pause rendering | Stop your own frame loop instead |
+| `Texture.Companion.isTextureSwizzleSupported` | Always `false` | — |
+| `Camera.getFieldOfViewInDegrees` | Always `0.0` | Track the FOV you set yourself |
+| `SurfaceOrientation.Builder.tangents` | Silent no-op | Provide normals/uvs and let the builder derive the orientation |
 
-`TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraState` from `filament-compose` is the recommended ergonomic wrapper.
+`TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraState` from `filament-compose` is the recommended ergonomic wrapper.
 
 Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
 

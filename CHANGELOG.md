@@ -11,6 +11,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **`@PlatformGap` annotation + binding-coverage table** (`filament`, all modules): every common API whose platform binding is missing or degraded (all current gaps are on web, where `filament.js` doesn't bind the function) is now annotated with `@PlatformGap(platforms, behavior)` — visible in the IDE and the generated API reference — and listed in a per-API coverage table in [Platform Notes](docs/platform-notes.md#binding-coverage). Android/iOS/JVM expose the full common API.
+
 ### Changed
 - **Python is no longer a build dependency** (build): the prebuilt/header/jextract download scripts were ported to pure-JVM Gradle tasks in `build-logic` (commons-compress for tar.gz), keeping the same task names, cache dirs, and version stamping — and making the prebuilt downloads fully version-aware, so bumping `filaVersion` re-extracts automatically. `setup-python` dropped from all CI workflows.
 - **`buildSrc` became the `build-logic` included build** (build): convention-plugin edits no longer invalidate the whole main build's task graph.
