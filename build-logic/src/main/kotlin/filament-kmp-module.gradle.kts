@@ -16,15 +16,6 @@ plugins {
 group   = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
 version = project.findProperty("libVersion")   as? String ?: "0.1.0-SNAPSHOT"
 
-// ── Extension to configure per-module XCFramework name ────────────────────────
-abstract class FilamentModuleExtension {
-    abstract val xcframeworkName: Property<String>
-}
-
-val filamentModuleExt = extensions.create("filamentModule", FilamentModuleExtension::class.java).apply {
-    xcframeworkName.convention("")
-}
-
 val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
 
 fun catalogJvmTarget(alias: String): JvmTarget =
@@ -176,22 +167,23 @@ kotlin.sourceSets.named("androidDeviceTest").configure {
     }
 }
 
-// ── XCFramework (configured via afterEvaluate so the extension value is available) ──
-afterEvaluate {
-    val xcfName = filamentModuleExt.xcframeworkName.get().ifEmpty {
-        project.name.replaceFirstChar { it.uppercaseChar() }
-    }
-    kotlin {
-        val xcf = XCFramework(xcfName)
-        listOf(
-            targets.getByName("iosArm64")          as KotlinNativeTarget,
-            targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
-        ).forEach {
-            it.binaries.framework {
-                baseName = xcfName
-                isStatic = true
-                xcf.add(this)
-            }
+// ── XCFramework ───────────────────────────────────────────────────────────────
+// Name derived from the project name (filament-utils → FilamentUtils) — matches
+// every module's previous explicit name, and being deterministic it needs no
+// extension/afterEvaluate.
+val xcfName = project.name.split("-").joinToString("") { part ->
+    part.replaceFirstChar { it.uppercaseChar() }
+}
+kotlin {
+    val xcf = XCFramework(xcfName)
+    listOf(
+        targets.getByName("iosArm64")          as KotlinNativeTarget,
+        targets.getByName("iosSimulatorArm64") as KotlinNativeTarget,
+    ).forEach {
+        it.binaries.framework {
+            baseName = xcfName
+            isStatic = true
+            xcf.add(this)
         }
     }
 }

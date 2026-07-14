@@ -6,10 +6,6 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-filamentModule {
-    xcframeworkName.set("FilamentCompose")
-}
-
 // ── Embed the built-in .filamat materials as base64 into a generated commonMain source ──
 // Resource access differs per platform (JVM classpath / iOS bundle / browser HTTP / Android
 // assets) and runtime material compilation (filamat) isn't available on Web, so the standard

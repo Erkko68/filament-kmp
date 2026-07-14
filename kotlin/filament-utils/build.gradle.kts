@@ -4,10 +4,6 @@ plugins {
     id("filament-kmp-module")
 }
 
-filamentModule {
-    xcframeworkName.set("FilamentUtils")
-}
-
 val filaVersion = project.property("filaVersion") as String
 val libVersion = project.property("libVersion") as String
 
