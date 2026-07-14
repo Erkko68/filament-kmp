@@ -1,0 +1,1965 @@
+public final class io/github/erkko68/filament/utils/Bool2 {
+	public fun <init> ()V
+	public fun <init> (Lio/github/erkko68/filament/utils/Bool2;)V
+	public fun <init> (ZZ)V
+	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun copy (ZZ)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Bool2;ZZILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)Z
+	public final fun get (II)Lio/github/erkko68/filament/utils/Bool2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)Z
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getG ()Z
+	public final fun getR ()Z
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getS ()Z
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getT ()Z
+	public final fun getX ()Z
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getY ()Z
+	public fun hashCode ()I
+	public final fun invoke (I)Z
+	public final fun set (IIZ)V
+	public final fun set (IZ)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun setG (Z)V
+	public final fun setR (Z)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setS (Z)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setT (Z)V
+	public final fun setX (Z)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setY (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/utils/Bool3 {
+	public fun <init> ()V
+	public fun <init> (Lio/github/erkko68/filament/utils/Bool2;Z)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Bool2;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Bool3;)V
+	public fun <init> (ZZZ)V
+	public synthetic fun <init> (ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun copy (ZZZ)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Bool3;ZZZILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)Z
+	public final fun get (II)Lio/github/erkko68/filament/utils/Bool2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Bool3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)Z
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Bool2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getB ()Z
+	public final fun getG ()Z
+	public final fun getP ()Z
+	public final fun getR ()Z
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getS ()Z
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getT ()Z
+	public final fun getX ()Z
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getY ()Z
+	public final fun getZ ()Z
+	public fun hashCode ()I
+	public final fun invoke (I)Z
+	public final fun set (IIIZ)V
+	public final fun set (IIZ)V
+	public final fun set (IZ)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun setB (Z)V
+	public final fun setG (Z)V
+	public final fun setP (Z)V
+	public final fun setR (Z)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Bool3;)V
+	public final fun setS (Z)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Bool3;)V
+	public final fun setT (Z)V
+	public final fun setX (Z)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Bool3;)V
+	public final fun setY (Z)V
+	public final fun setZ (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/utils/Bool4 {
+	public fun <init> ()V
+	public fun <init> (Lio/github/erkko68/filament/utils/Bool2;ZZ)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Bool2;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Bool3;Z)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Bool3;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Bool4;)V
+	public fun <init> (ZZZZ)V
+	public synthetic fun <init> (ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun copy (ZZZZ)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Bool4;ZZZZILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)Z
+	public final fun get (II)Lio/github/erkko68/filament/utils/Bool2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Bool3;
+	public final fun get (IIII)Lio/github/erkko68/filament/utils/Bool4;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)Z
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Bool2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Bool3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Bool4;
+	public final fun getA ()Z
+	public final fun getB ()Z
+	public final fun getG ()Z
+	public final fun getP ()Z
+	public final fun getQ ()Z
+	public final fun getR ()Z
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getRgba ()Lio/github/erkko68/filament/utils/Bool4;
+	public final fun getS ()Z
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getStpq ()Lio/github/erkko68/filament/utils/Bool4;
+	public final fun getT ()Z
+	public final fun getW ()Z
+	public final fun getX ()Z
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Bool2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Bool3;
+	public final fun getXyzw ()Lio/github/erkko68/filament/utils/Bool4;
+	public final fun getY ()Z
+	public final fun getZ ()Z
+	public fun hashCode ()I
+	public final fun invoke (I)Z
+	public final fun set (IIIIZ)V
+	public final fun set (IIIZ)V
+	public final fun set (IIZ)V
+	public final fun set (IZ)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Z)V
+	public final fun setA (Z)V
+	public final fun setB (Z)V
+	public final fun setG (Z)V
+	public final fun setP (Z)V
+	public final fun setQ (Z)V
+	public final fun setR (Z)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Bool3;)V
+	public final fun setRgba (Lio/github/erkko68/filament/utils/Bool4;)V
+	public final fun setS (Z)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Bool3;)V
+	public final fun setStpq (Lio/github/erkko68/filament/utils/Bool4;)V
+	public final fun setT (Z)V
+	public final fun setW (Z)V
+	public final fun setX (Z)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Bool2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Bool3;)V
+	public final fun setXyzw (Lio/github/erkko68/filament/utils/Bool4;)V
+	public final fun setY (Z)V
+	public final fun setZ (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/utils/EquirectangularToCubemap {
+	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+	public final fun destroy ()V
+	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/Float2 {
+	public fun <init> ()V
+	public fun <init> (F)V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Float2;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Float2;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Float2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float2;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lio/github/erkko68/filament/utils/Float2;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Float2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Float2;
+	public final fun div (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun equals (FF)Z
+	public final fun equals (Lio/github/erkko68/filament/utils/Float2;F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Float2;FFILjava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;FILjava/lang/Object;)Z
+	public final fun get (I)F
+	public final fun get (II)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)F
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun getG ()F
+	public final fun getR ()F
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getS ()F
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getT ()F
+	public final fun getX ()F
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getY ()F
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun invoke (I)F
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Float2;
+	public final fun minus (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Float2;
+	public final fun plus (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun set (IF)V
+	public final fun set (IIF)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun setG (F)V
+	public final fun setR (F)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setS (F)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setT (F)V
+	public final fun setX (F)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setY (F)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Float2;
+	public final fun times (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Float2;
+}
+
+public final class io/github/erkko68/filament/utils/Float3 {
+	public fun <init> ()V
+	public fun <init> (F)V
+	public fun <init> (FFF)V
+	public synthetic fun <init> (FFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float2;F)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float2;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Float3;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Float3;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Float3;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun copy (FFF)Lio/github/erkko68/filament/utils/Float3;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Float3;FFFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Float3;
+	public final fun div (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun div (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun equals (FF)Z
+	public final fun equals (Lio/github/erkko68/filament/utils/Float3;F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Float3;FFILjava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;FILjava/lang/Object;)Z
+	public final fun get (I)F
+	public final fun get (II)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)F
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun getB ()F
+	public final fun getG ()F
+	public final fun getP ()F
+	public final fun getR ()F
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getS ()F
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getT ()F
+	public final fun getX ()F
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getY ()F
+	public final fun getZ ()F
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun invoke (I)F
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Float3;
+	public final fun minus (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun minus (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Float3;
+	public final fun plus (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun plus (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun set (IF)V
+	public final fun set (IIF)V
+	public final fun set (IIIF)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun setB (F)V
+	public final fun setG (F)V
+	public final fun setP (F)V
+	public final fun setR (F)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setS (F)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setT (F)V
+	public final fun setX (F)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setY (F)V
+	public final fun setZ (F)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Float3;
+	public final fun times (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun times (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Float3;
+}
+
+public final class io/github/erkko68/filament/utils/Float4 {
+	public fun <init> ()V
+	public fun <init> (F)V
+	public fun <init> (FFFF)V
+	public synthetic fun <init> (FFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float2;FF)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float2;FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;F)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float3;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Float4;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Float4;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Float4;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float4;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lio/github/erkko68/filament/utils/Float4;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Float4;FFFFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Float4;
+	public final fun div (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun div (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun equals (FF)Z
+	public final fun equals (Lio/github/erkko68/filament/utils/Float4;F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Float4;FFILjava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;FILjava/lang/Object;)Z
+	public final fun get (I)F
+	public final fun get (II)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (IIII)Lio/github/erkko68/filament/utils/Float4;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)F
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun getA ()F
+	public final fun getB ()F
+	public final fun getG ()F
+	public final fun getP ()F
+	public final fun getQ ()F
+	public final fun getR ()F
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getRgba ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getS ()F
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getStpq ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getT ()F
+	public final fun getW ()F
+	public final fun getX ()F
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getXyzw ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getY ()F
+	public final fun getZ ()F
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun invoke (I)F
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Float4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Float4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun set (IF)V
+	public final fun set (IIF)V
+	public final fun set (IIIF)V
+	public final fun set (IIIIF)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;F)V
+	public final fun setA (F)V
+	public final fun setB (F)V
+	public final fun setG (F)V
+	public final fun setP (F)V
+	public final fun setQ (F)V
+	public final fun setR (F)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setRgba (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setS (F)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setStpq (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setT (F)V
+	public final fun setW (F)V
+	public final fun setX (F)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setXyzw (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setY (F)V
+	public final fun setZ (F)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Float4;
+	public final fun times (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun times (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun times (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Float4;
+}
+
+public final class io/github/erkko68/filament/utils/HDRLoader {
+	public static final field INSTANCE Lio/github/erkko68/filament/utils/HDRLoader;
+	public final fun createTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/Texture$InternalFormat;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/Half : java/lang/Comparable {
+	public static final field Companion Lio/github/erkko68/filament/utils/Half$Companion;
+	public static final field MAX_EXPONENT I
+	public static final field MIN_EXPONENT I
+	public static final field SIZE I
+	public static final synthetic fun box-impl (S)Lio/github/erkko68/filament/utils/Half;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo-lGUE2Mw (S)I
+	public static fun compareTo-lGUE2Mw (SS)I
+	public static fun constructor-impl (S)S
+	public static final fun dec-qB97qhY (S)S
+	public static final fun div-KKwVJcQ (SS)S
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (SLjava/lang/Object;)Z
+	public static final fun equals-impl0 (SS)Z
+	public static final fun getAbsoluteValue-qB97qhY (S)S
+	public static final fun getExponent-impl (S)I
+	public static final fun getSign-qB97qhY (S)S
+	public static final fun getSignificand-impl (S)I
+	public static final fun getUlp-qB97qhY (S)S
+	public final fun getV-Mh2AYeg ()S
+	public fun hashCode ()I
+	public static fun hashCode-impl (S)I
+	public static final fun inc-qB97qhY (S)S
+	public static final fun isFinite-impl (S)Z
+	public static final fun isInfinite-impl (S)Z
+	public static final fun isNaN-impl (S)Z
+	public static final fun isNormalized-impl (S)Z
+	public static final fun isZero-impl (S)Z
+	public static final fun minus-KKwVJcQ (SS)S
+	public static final fun nextDown-qB97qhY (S)S
+	public static final fun nextTowards-KKwVJcQ (SS)S
+	public static final fun nextUp-qB97qhY (S)S
+	public static final fun plus-KKwVJcQ (SS)S
+	public static final fun roundToInt-impl (S)I
+	public static final fun roundToLong-impl (S)J
+	public static final fun times-KKwVJcQ (SS)S
+	public static final fun toBits-impl (S)I
+	public static final fun toByte-impl (S)B
+	public static final fun toDouble-impl (S)D
+	public static final fun toFloat-impl (S)F
+	public static final fun toHexString-impl (S)Ljava/lang/String;
+	public static final fun toInt-impl (S)I
+	public static final fun toLong-impl (S)J
+	public static final fun toShort-impl (S)S
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (S)Ljava/lang/String;
+	public static final fun unaryMinus-qB97qhY (S)S
+	public static final fun unaryPlus-qB97qhY (S)S
+	public final synthetic fun unbox-impl ()S
+	public static final fun withSign-KKwVJcQ (SS)S
+}
+
+public final class io/github/erkko68/filament/utils/Half$Companion {
+	public final fun fromBits-DIesh2s (I)S
+	public final fun getEPSILON-qB97qhY ()S
+	public final fun getLOWEST_VALUE-qB97qhY ()S
+	public final fun getMAX_VALUE-qB97qhY ()S
+	public final fun getMIN_NORMAL-qB97qhY ()S
+	public final fun getMIN_VALUE-qB97qhY ()S
+	public final fun getNEGATIVE_INFINITY-qB97qhY ()S
+	public final fun getNEGATIVE_ZERO-qB97qhY ()S
+	public final fun getNaN-qB97qhY ()S
+	public final fun getPOSITIVE_INFINITY-qB97qhY ()S
+	public final fun getPOSITIVE_ZERO-qB97qhY ()S
+}
+
+public final class io/github/erkko68/filament/utils/Half2 {
+	public fun <init> (Lio/github/erkko68/filament/utils/Half2;)V
+	public synthetic fun <init> (SLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (SSILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (SSLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-qB97qhY ()S
+	public final fun component2-qB97qhY ()S
+	public final fun copy-3Nq-bt8 (SS)Lio/github/erkko68/filament/utils/Half2;
+	public static synthetic fun copy-3Nq-bt8$default (Lio/github/erkko68/filament/utils/Half2;SSILjava/lang/Object;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun div (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun div-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half2;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (II)Lio/github/erkko68/filament/utils/Half2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun get-DIesh2s (I)S
+	public final fun get-DIesh2s (Lio/github/erkko68/filament/utils/VectorComponent;)S
+	public final fun getG-qB97qhY ()S
+	public final fun getR-qB97qhY ()S
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getS-qB97qhY ()S
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getT-qB97qhY ()S
+	public final fun getX-qB97qhY ()S
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getY-qB97qhY ()S
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun invoke-DIesh2s (I)S
+	public final fun minus (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun minus-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half2;
+	public final fun plus (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun plus-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half2;
+	public final fun set-QThREis (IIS)V
+	public final fun set-QThREis (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun set-VyIIkMo (IS)V
+	public final fun set-VyIIkMo (Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun setG-lGUE2Mw (S)V
+	public final fun setR-lGUE2Mw (S)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setS-lGUE2Mw (S)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setT-lGUE2Mw (S)V
+	public final fun setX-lGUE2Mw (S)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setY-lGUE2Mw (S)V
+	public final fun times (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun times-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half2;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Half2;
+}
+
+public final class io/github/erkko68/filament/utils/Half3 {
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Half3;)V
+	public synthetic fun <init> (SLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (SSSILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (SSSLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-qB97qhY ()S
+	public final fun component2-qB97qhY ()S
+	public final fun component3-qB97qhY ()S
+	public final fun copy-q3bA4u0 (SSS)Lio/github/erkko68/filament/utils/Half3;
+	public static synthetic fun copy-q3bA4u0$default (Lio/github/erkko68/filament/utils/Half3;SSSILjava/lang/Object;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun div (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun div (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun div-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half3;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (II)Lio/github/erkko68/filament/utils/Half2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Half3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun get-DIesh2s (I)S
+	public final fun get-DIesh2s (Lio/github/erkko68/filament/utils/VectorComponent;)S
+	public final fun getB-qB97qhY ()S
+	public final fun getG-qB97qhY ()S
+	public final fun getP-qB97qhY ()S
+	public final fun getR-qB97qhY ()S
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun getS-qB97qhY ()S
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun getT-qB97qhY ()S
+	public final fun getX-qB97qhY ()S
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun getY-qB97qhY ()S
+	public final fun getZ-qB97qhY ()S
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun invoke-DIesh2s (I)S
+	public final fun minus (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun minus (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun minus-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half3;
+	public final fun plus (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun plus (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun plus-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half3;
+	public final fun set-JMVN60Y (IIIS)V
+	public final fun set-JMVN60Y (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun set-QThREis (IIS)V
+	public final fun set-QThREis (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun set-VyIIkMo (IS)V
+	public final fun set-VyIIkMo (Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun setB-lGUE2Mw (S)V
+	public final fun setG-lGUE2Mw (S)V
+	public final fun setP-lGUE2Mw (S)V
+	public final fun setR-lGUE2Mw (S)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Half3;)V
+	public final fun setS-lGUE2Mw (S)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Half3;)V
+	public final fun setT-lGUE2Mw (S)V
+	public final fun setX-lGUE2Mw (S)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Half3;)V
+	public final fun setY-lGUE2Mw (S)V
+	public final fun setZ-lGUE2Mw (S)V
+	public final fun times (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun times (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun times-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half3;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Half3;
+}
+
+public final class io/github/erkko68/filament/utils/Half4 {
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SSILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half2;SSLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half3;SILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Half3;SLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Half4;)V
+	public synthetic fun <init> (SLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (SSSSILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (SSSSLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-qB97qhY ()S
+	public final fun component2-qB97qhY ()S
+	public final fun component3-qB97qhY ()S
+	public final fun component4-qB97qhY ()S
+	public final fun copy-X2LyqT0 (SSSS)Lio/github/erkko68/filament/utils/Half4;
+	public static synthetic fun copy-X2LyqT0$default (Lio/github/erkko68/filament/utils/Half4;SSSSILjava/lang/Object;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Half4;
+	public final fun div (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun div (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun div (Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun div-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half4;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (II)Lio/github/erkko68/filament/utils/Half2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Half3;
+	public final fun get (IIII)Lio/github/erkko68/filament/utils/Half4;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Half2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Half3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun get-DIesh2s (I)S
+	public final fun get-DIesh2s (Lio/github/erkko68/filament/utils/VectorComponent;)S
+	public final fun getA-qB97qhY ()S
+	public final fun getB-qB97qhY ()S
+	public final fun getG-qB97qhY ()S
+	public final fun getP-qB97qhY ()S
+	public final fun getQ-qB97qhY ()S
+	public final fun getR-qB97qhY ()S
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun getRgba ()Lio/github/erkko68/filament/utils/Half4;
+	public final fun getS-qB97qhY ()S
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun getStpq ()Lio/github/erkko68/filament/utils/Half4;
+	public final fun getT-qB97qhY ()S
+	public final fun getW-qB97qhY ()S
+	public final fun getX-qB97qhY ()S
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Half2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Half3;
+	public final fun getXyzw ()Lio/github/erkko68/filament/utils/Half4;
+	public final fun getY-qB97qhY ()S
+	public final fun getZ-qB97qhY ()S
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Half4;
+	public final fun invoke-DIesh2s (I)S
+	public final fun minus (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun minus-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun plus-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half4;
+	public final fun set-JMVN60Y (IIIS)V
+	public final fun set-JMVN60Y (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun set-QThREis (IIS)V
+	public final fun set-QThREis (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun set-VyIIkMo (IS)V
+	public final fun set-VyIIkMo (Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun set-srKcPWc (IIIIS)V
+	public final fun set-srKcPWc (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;S)V
+	public final fun setA-lGUE2Mw (S)V
+	public final fun setB-lGUE2Mw (S)V
+	public final fun setG-lGUE2Mw (S)V
+	public final fun setP-lGUE2Mw (S)V
+	public final fun setQ-lGUE2Mw (S)V
+	public final fun setR-lGUE2Mw (S)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Half3;)V
+	public final fun setRgba (Lio/github/erkko68/filament/utils/Half4;)V
+	public final fun setS-lGUE2Mw (S)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Half3;)V
+	public final fun setStpq (Lio/github/erkko68/filament/utils/Half4;)V
+	public final fun setT-lGUE2Mw (S)V
+	public final fun setW-lGUE2Mw (S)V
+	public final fun setX-lGUE2Mw (S)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Half2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Half3;)V
+	public final fun setXyzw (Lio/github/erkko68/filament/utils/Half4;)V
+	public final fun setY-lGUE2Mw (S)V
+	public final fun setZ-lGUE2Mw (S)V
+	public final fun times (Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun times (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun times (Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun times-lGUE2Mw (S)Lio/github/erkko68/filament/utils/Half4;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Half4;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Half4;
+}
+
+public final class io/github/erkko68/filament/utils/HalfKt {
+	public static final fun Half (D)S
+	public static final fun Half (F)S
+	public static final fun Half (Ljava/lang/String;)S
+	public static final fun abs-lGUE2Mw (S)S
+	public static final fun ceil-lGUE2Mw (S)S
+	public static final fun floor-lGUE2Mw (S)S
+	public static final fun getH (D)S
+	public static final fun getH (F)S
+	public static final fun max-3Nq-bt8 (SS)S
+	public static final fun min-3Nq-bt8 (SS)S
+	public static final fun round-lGUE2Mw (S)S
+	public static final fun sqrt-lGUE2Mw (S)S
+	public static final fun toHalf (D)S
+	public static final fun toHalf (F)S
+	public static final fun toHalf (Ljava/lang/String;)S
+	public static final fun truncate-lGUE2Mw (S)S
+}
+
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext {
+	public fun <init> (Lio/github/erkko68/filament/Engine;)V
+	public final fun destroy ()V
+}
+
+public final class io/github/erkko68/filament/utils/Int2 {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun <init> (II)V
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lio/github/erkko68/filament/utils/Int2;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Int2;IIILjava/lang/Object;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun div (I)Lio/github/erkko68/filament/utils/Int2;
+	public final fun div (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int2;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)I
+	public final fun get (II)Lio/github/erkko68/filament/utils/Int2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)I
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun getG ()I
+	public final fun getR ()I
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getS ()I
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getT ()I
+	public final fun getX ()I
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getY ()I
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun invoke (I)I
+	public final fun minus (I)Lio/github/erkko68/filament/utils/Int2;
+	public final fun minus (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun plus (I)Lio/github/erkko68/filament/utils/Int2;
+	public final fun plus (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun set (II)V
+	public final fun set (III)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun setG (I)V
+	public final fun setR (I)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setS (I)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setT (I)V
+	public final fun setX (I)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setY (I)V
+	public final fun times (I)Lio/github/erkko68/filament/utils/Int2;
+	public final fun times (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun toIntArray ()[I
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Int2;
+}
+
+public final class io/github/erkko68/filament/utils/Int3 {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun <init> (III)V
+	public synthetic fun <init> (IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Int2;I)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Int2;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (III)Lio/github/erkko68/filament/utils/Int3;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Int3;IIIILjava/lang/Object;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun div (I)Lio/github/erkko68/filament/utils/Int3;
+	public final fun div (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun div (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)I
+	public final fun get (II)Lio/github/erkko68/filament/utils/Int2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Int3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)I
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun getB ()I
+	public final fun getG ()I
+	public final fun getP ()I
+	public final fun getR ()I
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun getS ()I
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun getT ()I
+	public final fun getX ()I
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun getY ()I
+	public final fun getZ ()I
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun invoke (I)I
+	public final fun minus (I)Lio/github/erkko68/filament/utils/Int3;
+	public final fun minus (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun minus (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun plus (I)Lio/github/erkko68/filament/utils/Int3;
+	public final fun plus (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun plus (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun set (II)V
+	public final fun set (III)V
+	public final fun set (IIII)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun setB (I)V
+	public final fun setG (I)V
+	public final fun setP (I)V
+	public final fun setR (I)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun setS (I)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun setT (I)V
+	public final fun setX (I)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun setY (I)V
+	public final fun setZ (I)V
+	public final fun times (I)Lio/github/erkko68/filament/utils/Int3;
+	public final fun times (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun times (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun toIntArray ()[I
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Int3;
+}
+
+public final class io/github/erkko68/filament/utils/Int4 {
+	public fun <init> ()V
+	public fun <init> (I)V
+	public fun <init> (IIII)V
+	public synthetic fun <init> (IIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Int2;II)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Int2;IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Int3;I)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Int3;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Int4;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun copy (IIII)Lio/github/erkko68/filament/utils/Int4;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Int4;IIIIILjava/lang/Object;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Int4;
+	public final fun div (I)Lio/github/erkko68/filament/utils/Int4;
+	public final fun div (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun div (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun div (Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun get (I)I
+	public final fun get (II)Lio/github/erkko68/filament/utils/Int2;
+	public final fun get (III)Lio/github/erkko68/filament/utils/Int3;
+	public final fun get (IIII)Lio/github/erkko68/filament/utils/Int4;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;)I
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Int2;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Int3;
+	public final fun get (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun getA ()I
+	public final fun getB ()I
+	public final fun getG ()I
+	public final fun getP ()I
+	public final fun getQ ()I
+	public final fun getR ()I
+	public final fun getRg ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getRgb ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun getRgba ()Lio/github/erkko68/filament/utils/Int4;
+	public final fun getS ()I
+	public final fun getSt ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getStp ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun getStpq ()Lio/github/erkko68/filament/utils/Int4;
+	public final fun getT ()I
+	public final fun getW ()I
+	public final fun getX ()I
+	public final fun getXy ()Lio/github/erkko68/filament/utils/Int2;
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Int3;
+	public final fun getXyzw ()Lio/github/erkko68/filament/utils/Int4;
+	public final fun getY ()I
+	public final fun getZ ()I
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Int4;
+	public final fun invoke (I)I
+	public final fun minus (I)Lio/github/erkko68/filament/utils/Int4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun minus (Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun plus (I)Lio/github/erkko68/filament/utils/Int4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun plus (Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun set (II)V
+	public final fun set (III)V
+	public final fun set (IIII)V
+	public final fun set (IIIII)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun set (Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;Lio/github/erkko68/filament/utils/VectorComponent;I)V
+	public final fun setA (I)V
+	public final fun setB (I)V
+	public final fun setG (I)V
+	public final fun setP (I)V
+	public final fun setQ (I)V
+	public final fun setR (I)V
+	public final fun setRg (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setRgb (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun setRgba (Lio/github/erkko68/filament/utils/Int4;)V
+	public final fun setS (I)V
+	public final fun setSt (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setStp (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun setStpq (Lio/github/erkko68/filament/utils/Int4;)V
+	public final fun setT (I)V
+	public final fun setW (I)V
+	public final fun setX (I)V
+	public final fun setXy (Lio/github/erkko68/filament/utils/Int2;)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Int3;)V
+	public final fun setXyzw (Lio/github/erkko68/filament/utils/Int4;)V
+	public final fun setY (I)V
+	public final fun setZ (I)V
+	public final fun times (I)Lio/github/erkko68/filament/utils/Int4;
+	public final fun times (Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun times (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun times (Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun toIntArray ()[I
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Int4;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Int4;
+}
+
+public final class io/github/erkko68/filament/utils/KTX1Loader {
+	public static final field INSTANCE Lio/github/erkko68/filament/utils/KTX1Loader;
+	public final fun createIndirectLight (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
+	public final fun createSkybox (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
+	public final fun createTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/Texture;
+	public final fun getSphericalHarmonics ([B)[F
+}
+
+public final class io/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle {
+	public fun <init> (Lio/github/erkko68/filament/IndirectLight;Lio/github/erkko68/filament/Texture;)V
+	public final fun getCubemap ()Lio/github/erkko68/filament/Texture;
+	public final fun getIndirectLight ()Lio/github/erkko68/filament/IndirectLight;
+}
+
+public final class io/github/erkko68/filament/utils/KTX1Loader$Options {
+	public fun <init> ()V
+	public final fun getSrgb ()Z
+	public final fun setSrgb (Z)V
+}
+
+public final class io/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle {
+	public fun <init> (Lio/github/erkko68/filament/Skybox;Lio/github/erkko68/filament/Texture;)V
+	public final fun getCubemap ()Lio/github/erkko68/filament/Texture;
+	public final fun getSkybox ()Lio/github/erkko68/filament/Skybox;
+}
+
+public final class io/github/erkko68/filament/utils/Manipulator {
+	public final fun destroy ()V
+	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public final fun getLookAt ([F[F[F)V
+	public final fun getMode ()Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public final fun grabBegin (IIZ)V
+	public final fun grabEnd ()V
+	public final fun grabUpdate (II)V
+	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public final fun keyDown (Lio/github/erkko68/filament/utils/Manipulator$Key;)V
+	public final fun keyUp (Lio/github/erkko68/filament/utils/Manipulator$Key;)V
+	public final fun raycast (II[F)V
+	public final fun scroll (IIF)V
+	public final fun setViewport (II)V
+	public final fun update (F)V
+}
+
+public final class io/github/erkko68/filament/utils/Manipulator$Bookmark {
+}
+
+public final class io/github/erkko68/filament/utils/Manipulator$Builder {
+	public fun <init> ()V
+	public final fun build (Lio/github/erkko68/filament/utils/Manipulator$Mode;)Lio/github/erkko68/filament/utils/Manipulator;
+	public final fun farPlane (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun flightMaxMoveSpeed (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun flightMoveDamping (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun flightPanSpeed (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun flightSpeedSteps (I)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun flightStartOrientation (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun flightStartPosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun fovDegrees (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun fovDirection (Lio/github/erkko68/filament/utils/Manipulator$Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun groundPlane (FFFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun mapExtent (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun mapMinDistance (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun orbitHomePosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun orbitSpeed (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun panning (Z)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun targetPosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun upVector (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun viewport (II)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun zoomSpeed (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+}
+
+public final class io/github/erkko68/filament/utils/Manipulator$Fov : java/lang/Enum {
+	public static final field HORIZONTAL Lio/github/erkko68/filament/utils/Manipulator$Fov;
+	public static final field VERTICAL Lio/github/erkko68/filament/utils/Manipulator$Fov;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Fov;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Fov;
+}
+
+public final class io/github/erkko68/filament/utils/Manipulator$Key : java/lang/Enum {
+	public static final field BACKWARD Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static final field DOWN Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static final field FORWARD Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static final field LEFT Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static final field RIGHT Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static final field UP Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Key;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Key;
+}
+
+public final class io/github/erkko68/filament/utils/Manipulator$Mode : java/lang/Enum {
+	public static final field FLIGHT Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public static final field MAP Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public static final field ORBIT Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Mode;
+}
+
+public final class io/github/erkko68/filament/utils/Mat2 {
+	public static final field Companion Lio/github/erkko68/filament/utils/Mat2$Companion;
+	public fun <init> ()V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Mat2;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Mat2;F)Lio/github/erkko68/filament/utils/Mat2;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Mat2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat2;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Mat2;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun component1 ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun component2 ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun copy (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Mat2;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Mat2;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun equals (FF)Z
+	public final fun equals (Lio/github/erkko68/filament/utils/Mat2;F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Mat2;FFILjava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Mat2;FILjava/lang/Object;)Z
+	public final fun get (I)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (II)F
+	public final fun get (Lio/github/erkko68/filament/utils/MatrixColumn;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun get (Lio/github/erkko68/filament/utils/MatrixColumn;I)F
+	public final fun getX ()Lio/github/erkko68/filament/utils/Float2;
+	public final fun getY ()Lio/github/erkko68/filament/utils/Float2;
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Mat2;
+	public final fun invoke (II)F
+	public final fun invoke (IIF)V
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun set (IIF)V
+	public final fun set (ILio/github/erkko68/filament/utils/Float2;)V
+	public final fun setX (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun setY (Lio/github/erkko68/filament/utils/Float2;)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun times (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public final fun times (Lio/github/erkko68/filament/utils/Mat2;)Lio/github/erkko68/filament/utils/Mat2;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Mat2;
+}
+
+public final class io/github/erkko68/filament/utils/Mat2$Companion {
+	public final fun identity ()Lio/github/erkko68/filament/utils/Mat2;
+	public final fun of ([F)Lio/github/erkko68/filament/utils/Mat2;
+}
+
+public final class io/github/erkko68/filament/utils/Mat3 {
+	public static final field Companion Lio/github/erkko68/filament/utils/Mat3$Companion;
+	public fun <init> ()V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Mat3;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Mat3;F)Lio/github/erkko68/filament/utils/Mat3;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Mat3;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat3;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Mat3;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun component1 ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun component2 ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun component3 ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun copy (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Mat3;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Mat3;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun equals (FF)Z
+	public final fun equals (Lio/github/erkko68/filament/utils/Mat3;F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Mat3;FFILjava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Mat3;FILjava/lang/Object;)Z
+	public final fun get (I)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (II)F
+	public final fun get (Lio/github/erkko68/filament/utils/MatrixColumn;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (Lio/github/erkko68/filament/utils/MatrixColumn;I)F
+	public final fun getX ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getY ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getZ ()Lio/github/erkko68/filament/utils/Float3;
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Mat3;
+	public final fun invoke (II)F
+	public final fun invoke (IIF)V
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun set (IIF)V
+	public final fun set (ILio/github/erkko68/filament/utils/Float3;)V
+	public final fun setX (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setY (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setZ (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun times (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun times (Lio/github/erkko68/filament/utils/Mat3;)Lio/github/erkko68/filament/utils/Mat3;
+	public final fun toFloatArray ()[F
+	public fun toString ()Ljava/lang/String;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Mat3;
+}
+
+public final class io/github/erkko68/filament/utils/Mat3$Companion {
+	public final fun identity ()Lio/github/erkko68/filament/utils/Mat3;
+	public final fun of ([F)Lio/github/erkko68/filament/utils/Mat3;
+}
+
+public final class io/github/erkko68/filament/utils/Mat4 {
+	public static final field Companion Lio/github/erkko68/filament/utils/Mat4$Companion;
+	public fun <init> ()V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Mat4;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Mat4;F)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Mat4;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Mat4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun component1 ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun component2 ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun component3 ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun component4 ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun copy (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun dec ()Lio/github/erkko68/filament/utils/Mat4;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun equals (FF)Z
+	public final fun equals (Lio/github/erkko68/filament/utils/Mat4;F)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Mat4;FFILjava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Mat4;FILjava/lang/Object;)Z
+	public final fun get (I)Lio/github/erkko68/filament/utils/Float4;
+	public final fun get (II)F
+	public final fun get (Lio/github/erkko68/filament/utils/MatrixColumn;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun get (Lio/github/erkko68/filament/utils/MatrixColumn;I)F
+	public final fun getForward ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getPosition ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getRight ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getRotation ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getScale ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getTranslation ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getUp ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getUpperLeft ()Lio/github/erkko68/filament/utils/Mat3;
+	public final fun getW ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getX ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getY ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getZ ()Lio/github/erkko68/filament/utils/Float4;
+	public fun hashCode ()I
+	public final fun inc ()Lio/github/erkko68/filament/utils/Mat4;
+	public final fun invoke (II)F
+	public final fun invoke (IIF)V
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun set (IIF)V
+	public final fun set (ILio/github/erkko68/filament/utils/Float4;)V
+	public final fun setForward (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setPosition (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setRight (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setUp (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setW (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setX (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setY (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setZ (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun times (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun times (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+	public final fun toEulerAngles (Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Float3;
+	public static synthetic fun toEulerAngles$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun toFloatArray ()[F
+	public final fun toQuaternion ()Lio/github/erkko68/filament/utils/Quaternion;
+	public fun toString ()Ljava/lang/String;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Mat4;
+}
+
+public final class io/github/erkko68/filament/utils/Mat4$Companion {
+	public final fun identity ()Lio/github/erkko68/filament/utils/Mat4;
+	public final fun of ([F)Lio/github/erkko68/filament/utils/Mat4;
+}
+
+public final class io/github/erkko68/filament/utils/MatrixColumn : java/lang/Enum {
+	public static final field W Lio/github/erkko68/filament/utils/MatrixColumn;
+	public static final field X Lio/github/erkko68/filament/utils/MatrixColumn;
+	public static final field Y Lio/github/erkko68/filament/utils/MatrixColumn;
+	public static final field Z Lio/github/erkko68/filament/utils/MatrixColumn;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/MatrixColumn;
+	public static fun values ()[Lio/github/erkko68/filament/utils/MatrixColumn;
+}
+
+public final class io/github/erkko68/filament/utils/MatrixKt {
+	public static final fun equal (Lio/github/erkko68/filament/utils/Mat2;FF)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Mat2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Mat3;FF)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Mat3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Mat4;FF)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Mat4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Mat2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Mat2;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Mat3;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Mat3;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Mat4;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Mat4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eulerAngles (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Float3;
+	public static synthetic fun eulerAngles$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun inverse (Lio/github/erkko68/filament/utils/Mat3;)Lio/github/erkko68/filament/utils/Mat3;
+	public static final fun inverse (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun lookAt (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun lookAt$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun lookTowards (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun lookTowards$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun normal (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Mat2;FF)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Mat2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Mat3;FF)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Mat3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Mat4;FF)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Mat4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Mat2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Mat2;Lio/github/erkko68/filament/utils/Mat2;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Mat3;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Mat3;Lio/github/erkko68/filament/utils/Mat3;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Mat4;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/Mat4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun ortho (FFFFFF)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun perspective (FFFF)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun quaternion (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun rotation (FFFLio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun rotation (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun rotation (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun rotation (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun rotation (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun rotation$default (FFFLio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public static synthetic fun rotation$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun scale (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun scale (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun translation (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun translation (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat2;)Lio/github/erkko68/filament/utils/Mat2;
+	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat3;)Lio/github/erkko68/filament/utils/Mat3;
+	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+}
+
+public final class io/github/erkko68/filament/utils/Quaternion {
+	public static final field Companion Lio/github/erkko68/filament/utils/Quaternion$Companion;
+	public fun <init> ()V
+	public fun <init> (FFFF)V
+	public synthetic fun <init> (FFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;F)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float3;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float4;)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Quaternion;)V
+	public final fun compareTo (FF)Lio/github/erkko68/filament/utils/Float4;
+	public final fun compareTo (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Float4;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Quaternion;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float4;
+	public static synthetic fun compareTo$default (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float4;
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lio/github/erkko68/filament/utils/Quaternion;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Quaternion;FFFFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun div (F)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun equals (FF)Lio/github/erkko68/filament/utils/Bool4;
+	public final fun equals (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public fun equals (Ljava/lang/Object;)Z
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Quaternion;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equals$default (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public final fun get (I)F
+	public final fun get (III)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (IIII)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun get (Lio/github/erkko68/filament/utils/QuaternionComponent;)F
+	public final fun get (Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun get (Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun getImaginary ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getReal ()F
+	public final fun getW ()F
+	public final fun getX ()F
+	public final fun getXyz ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getXyzw ()Lio/github/erkko68/filament/utils/Float4;
+	public final fun getY ()F
+	public final fun getZ ()F
+	public fun hashCode ()I
+	public final fun invoke (I)F
+	public final fun minus (F)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun minus (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun plus (F)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun plus (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun set (IF)V
+	public final fun set (IIF)V
+	public final fun set (IIIF)V
+	public final fun set (IIIIF)V
+	public final fun set (Lio/github/erkko68/filament/utils/QuaternionComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;F)V
+	public final fun set (Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;Lio/github/erkko68/filament/utils/QuaternionComponent;F)V
+	public final fun setImaginary (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setReal (F)V
+	public final fun setW (F)V
+	public final fun setX (F)V
+	public final fun setXyz (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setXyzw (Lio/github/erkko68/filament/utils/Float4;)V
+	public final fun setY (F)V
+	public final fun setZ (F)V
+	public final fun times (F)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun times (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public final fun times (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun toEulerAngles ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun toFloatArray ()[F
+	public final fun toMatrix ()Lio/github/erkko68/filament/utils/Mat4;
+	public fun toString ()Ljava/lang/String;
+	public final fun transform (Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Quaternion;
+}
+
+public final class io/github/erkko68/filament/utils/Quaternion$Companion {
+	public final fun fromAxisAngle (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun fromEuler (FFFLio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun fromEuler (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static synthetic fun fromEuler$default (Lio/github/erkko68/filament/utils/Quaternion$Companion;FFFLio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static synthetic fun fromEuler$default (Lio/github/erkko68/filament/utils/Quaternion$Companion;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Quaternion;
+}
+
+public final class io/github/erkko68/filament/utils/QuaternionComponent : java/lang/Enum {
+	public static final field W Lio/github/erkko68/filament/utils/QuaternionComponent;
+	public static final field X Lio/github/erkko68/filament/utils/QuaternionComponent;
+	public static final field Y Lio/github/erkko68/filament/utils/QuaternionComponent;
+	public static final field Z Lio/github/erkko68/filament/utils/QuaternionComponent;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/QuaternionComponent;
+	public static fun values ()[Lio/github/erkko68/filament/utils/QuaternionComponent;
+}
+
+public final class io/github/erkko68/filament/utils/QuaternionKt {
+	public static final fun abs (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun angle (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)F
+	public static final fun conjugate (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun cross (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun div (FLio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun dot (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)F
+	public static final fun eq (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Quaternion;FF)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Quaternion;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eulerAngles (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Float3;
+	public static synthetic fun eulerAngles$default (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun inverse (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun length (Lio/github/erkko68/filament/utils/Quaternion;)F
+	public static final fun length2 (Lio/github/erkko68/filament/utils/Quaternion;)F
+	public static final fun lerp (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun minus (FLio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun nlerp (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun normalize (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Quaternion;FF)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Quaternion;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun plus (FLio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun slerp (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;FF)Lio/github/erkko68/filament/utils/Quaternion;
+	public static synthetic fun slerp$default (Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/utils/Quaternion;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Quaternion;
+	public static final fun times (FLio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/utils/Quaternion;
+}
+
+public final class io/github/erkko68/filament/utils/Ray {
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun component2 ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun copy (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Ray;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/utils/Ray;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Ray;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDirection ()Lio/github/erkko68/filament/utils/Float3;
+	public final fun getOrigin ()Lio/github/erkko68/filament/utils/Float3;
+	public fun hashCode ()I
+	public final fun setDirection (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun setOrigin (Lio/github/erkko68/filament/utils/Float3;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/utils/RayKt {
+	public static final fun pointAt (Lio/github/erkko68/filament/utils/Ray;F)Lio/github/erkko68/filament/utils/Float3;
+}
+
+public final class io/github/erkko68/filament/utils/RotationsOrder : java/lang/Enum {
+	public static final field XYZ Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static final field XZY Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static final field YXZ Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static final field YZX Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static final field ZXY Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static final field ZYX Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getPitch ()Lio/github/erkko68/filament/utils/VectorComponent;
+	public final fun getRoll ()Lio/github/erkko68/filament/utils/VectorComponent;
+	public final fun getYaw ()Lio/github/erkko68/filament/utils/VectorComponent;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/RotationsOrder;
+	public static fun values ()[Lio/github/erkko68/filament/utils/RotationsOrder;
+}
+
+public final class io/github/erkko68/filament/utils/ScalarKt {
+	public static final field FOUR_PI F
+	public static final field FPI F
+	public static final field HALF_PI F
+	public static final field INV_FOUR_PI F
+	public static final field INV_PI F
+	public static final field INV_TWO_PI F
+	public static final field TWO_PI F
+	public static final fun clamp (FFF)F
+	public static final fun clamp (III)I
+	public static final fun clamp-q3bA4u0 (SSS)S
+	public static final fun degrees (F)F
+	public static final fun fract (F)F
+	public static final fun getHALF_ONE ()S
+	public static final fun getHALF_TWO ()S
+	public static final fun mix (FFF)F
+	public static final fun mix-q3bA4u0 (SSS)S
+	public static final fun pow (FF)F
+	public static final fun radians (F)F
+	public static final fun saturate (F)F
+	public static final fun saturate-lGUE2Mw (S)S
+	public static final fun sqr (F)F
+	public static final fun sqr-lGUE2Mw (S)S
+}
+
+public final class io/github/erkko68/filament/utils/SpecularFilter {
+	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+	public final fun destroy ()V
+	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/TextureLoader {
+	public static final field INSTANCE Lio/github/erkko68/filament/utils/TextureLoader;
+	public final fun loadTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/TextureLoader$TextureType;)Lio/github/erkko68/filament/Texture;
+}
+
+public final class io/github/erkko68/filament/utils/TextureLoader$TextureType : java/lang/Enum {
+	public static final field COLOR Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
+	public static final field DATA Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
+	public static final field NORMAL Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
+	public static fun values ()[Lio/github/erkko68/filament/utils/TextureLoader$TextureType;
+}
+
+public final class io/github/erkko68/filament/utils/VectorComponent : java/lang/Enum {
+	public static final field A Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field B Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field G Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field P Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field Q Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field R Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field S Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field T Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field W Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field X Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field Y Lio/github/erkko68/filament/utils/VectorComponent;
+	public static final field Z Lio/github/erkko68/filament/utils/VectorComponent;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/VectorComponent;
+	public static fun values ()[Lio/github/erkko68/filament/utils/VectorComponent;
+}
+
+public final class io/github/erkko68/filament/utils/VectorKt {
+	public static final fun abs (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun abs (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun abs (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun abs (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun abs (Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun abs (Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun abs (Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun all (Lio/github/erkko68/filament/utils/Bool2;)Z
+	public static final fun all (Lio/github/erkko68/filament/utils/Bool3;)Z
+	public static final fun all (Lio/github/erkko68/filament/utils/Bool4;)Z
+	public static final fun angle (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun angle (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun any (Lio/github/erkko68/filament/utils/Bool2;)Z
+	public static final fun any (Lio/github/erkko68/filament/utils/Bool3;)Z
+	public static final fun any (Lio/github/erkko68/filament/utils/Bool4;)Z
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Float2;FF)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Float3;FF)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Float4;FF)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Int3;II)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Int4;II)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun clamp (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun clamp-rcGuIBg (Lio/github/erkko68/filament/utils/Half3;SS)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun clamp-rcGuIBg (Lio/github/erkko68/filament/utils/Half4;SS)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun compareTo (FFF)F
+	public static final fun cross (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun cross (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun cross (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun distance (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun distance (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun distance (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)F
+	public static final fun distance (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)S
+	public static final fun distance (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)S
+	public static final fun div (FLio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun div (FLio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun div (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun div (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun div (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun div-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun div-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun dot (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun dot (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun dot (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)F
+	public static final fun dot (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)S
+	public static final fun dot (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)S
+	public static final fun dot (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)I
+	public static final fun dot (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)I
+	public static final fun eq (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eq (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun eq-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun eq-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun eq-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Float2;FF)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Float3;FF)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Float4;FF)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Float2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Float3;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Float4;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun equal$default (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equal-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun equal-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun equal-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun equals (FFF)Z
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThan (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThan-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThan-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThan-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun greaterThanEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun greaterThanEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun greaterThanEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gt-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gt-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gt-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun gte-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun gte-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun gte-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun length (Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun length (Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun length (Lio/github/erkko68/filament/utils/Float4;)F
+	public static final fun length (Lio/github/erkko68/filament/utils/Half3;)S
+	public static final fun length (Lio/github/erkko68/filament/utils/Half4;)S
+	public static final fun length2 (Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun length2 (Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun length2 (Lio/github/erkko68/filament/utils/Float4;)F
+	public static final fun length2 (Lio/github/erkko68/filament/utils/Half3;)S
+	public static final fun length2 (Lio/github/erkko68/filament/utils/Half4;)S
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThan (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThan-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThan-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThan-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lessThanEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lessThanEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lessThanEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lt-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lt-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lt-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun lte-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun lte-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun lte-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun max (Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun max (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun max (Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun max (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun max (Lio/github/erkko68/filament/utils/Float4;)F
+	public static final fun max (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun max (Lio/github/erkko68/filament/utils/Half2;)S
+	public static final fun max (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
+	public static final fun max (Lio/github/erkko68/filament/utils/Half3;)S
+	public static final fun max (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun max (Lio/github/erkko68/filament/utils/Half4;)S
+	public static final fun max (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun max (Lio/github/erkko68/filament/utils/Int2;)I
+	public static final fun max (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int2;
+	public static final fun max (Lio/github/erkko68/filament/utils/Int3;)I
+	public static final fun max (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun max (Lio/github/erkko68/filament/utils/Int4;)I
+	public static final fun max (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun min (Lio/github/erkko68/filament/utils/Float2;)F
+	public static final fun min (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun min (Lio/github/erkko68/filament/utils/Float3;)F
+	public static final fun min (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun min (Lio/github/erkko68/filament/utils/Float4;)F
+	public static final fun min (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun min (Lio/github/erkko68/filament/utils/Half2;)S
+	public static final fun min (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Half2;
+	public static final fun min (Lio/github/erkko68/filament/utils/Half3;)S
+	public static final fun min (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun min (Lio/github/erkko68/filament/utils/Half4;)S
+	public static final fun min (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun min (Lio/github/erkko68/filament/utils/Int2;)I
+	public static final fun min (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Int2;
+	public static final fun min (Lio/github/erkko68/filament/utils/Int3;)I
+	public static final fun min (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun min (Lio/github/erkko68/filament/utils/Int4;)I
+	public static final fun min (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun minus (FLio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun minus (FLio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun minus (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun minus (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun minus (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun minus-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun minus-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun mix (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun mix-QThREis (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun mix-QThREis (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun neq (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun neq-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun neq-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun neq-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun normalize (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun normalize (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun normalize (Lio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun normalize (Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun normalize (Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Float2;FF)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Float3;FF)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Float4;FF)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;F)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Half2;Lio/github/erkko68/filament/utils/Half2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Half4;Lio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Int2;I)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Int2;Lio/github/erkko68/filament/utils/Int2;)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Int3;I)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Int4;I)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual (Lio/github/erkko68/filament/utils/Int4;Lio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Float2;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool2;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Float3;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool3;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Float4;FFILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static synthetic fun notEqual$default (Lio/github/erkko68/filament/utils/Float4;Lio/github/erkko68/filament/utils/Float4;FILjava/lang/Object;)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun notEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half2;S)Lio/github/erkko68/filament/utils/Bool2;
+	public static final fun notEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Bool3;
+	public static final fun notEqual-VyIIkMo (Lio/github/erkko68/filament/utils/Half4;S)Lio/github/erkko68/filament/utils/Bool4;
+	public static final fun plus (FLio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun plus (FLio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun plus (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun plus (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun plus (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun plus-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun plus-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun reflect (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun reflect (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun reflect (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun refract (Lio/github/erkko68/filament/utils/Float2;Lio/github/erkko68/filament/utils/Float2;F)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun refract (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;F)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun refract-QThREis (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;S)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun times (FLio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun times (FLio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun times (FLio/github/erkko68/filament/utils/Float4;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun times (ILio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun times (ILio/github/erkko68/filament/utils/Int4;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun times-TAu3aJA (SLio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun times-TAu3aJA (SLio/github/erkko68/filament/utils/Half4;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Float2;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float2;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Float3;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Float4;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Float4;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Half2;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Half2;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Half3;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Half4;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Half4;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Int2;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Int2;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Int3;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Int3;
+	public static final fun transform (Lio/github/erkko68/filament/utils/Int4;Lkotlin/jvm/functions/Function1;)Lio/github/erkko68/filament/utils/Int4;
+	public static final fun x (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
+	public static final fun x (Lio/github/erkko68/filament/utils/Half3;Lio/github/erkko68/filament/utils/Half3;)Lio/github/erkko68/filament/utils/Half3;
+	public static final fun x (Lio/github/erkko68/filament/utils/Int3;Lio/github/erkko68/filament/utils/Int3;)Lio/github/erkko68/filament/utils/Int3;
+}
+

@@ -108,6 +108,11 @@ jobs:
       - name: Build library
         shell: bash
         run: ./gradlew compileKotlinJvm --no-configuration-cache
+      # Public-API surface guard: fails if the JVM ABI of any published :kotlin:*
+      # module drifts from the committed api/ dumps (regenerate with `apiDump`).
+      - name: API compatibility check
+        shell: bash
+        run: ./gradlew apiCheck --no-configuration-cache
       - name: Run JVM tests
         shell: bash
         run: |

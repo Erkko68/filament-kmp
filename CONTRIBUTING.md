@@ -40,7 +40,11 @@ Filament binaries automatically:
 ./gradlew downloadPrebuilts            # all targets + headers (or downloadPrebuilts_<target>)
 ./gradlew compileKotlinJvm             # build a target (compileKotlinJs, compileReleaseKotlinAndroid, …)
 ./gradlew :kotlin:filament:jvmTest     # tests
+./gradlew apiCheck                     # public-API surface check (CI-enforced; regen dumps with apiDump)
 ```
+
+If you intentionally change the public API of a `:kotlin:*` module, run `./gradlew apiDump`
+and commit the updated `<module>/api/` files with your change — `apiCheck` fails otherwise.
 
 - **Web** externals are generated from `prebuilts/web/filament.d.ts`; regenerate with
   `./gradlew :js:generateJsExternals`.
