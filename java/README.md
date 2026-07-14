@@ -9,7 +9,7 @@ Published as **`io.github.erkko68.filament-ffm:filament-ffm`** and pulled in tra
 by every `:kotlin:*` JVM target (each declares `api(project(":java"))` in its `jvmMain`),
 so consumers never add it by hand.
 
-## What it does (`build.gradle.kts` + [`buildSrc/FilamentJvmNative.kt`](../buildSrc/src/main/kotlin/FilamentJvmNative.kt))
+## What it does (`build.gradle.kts` + [`build-logic/FilamentJvmNative.kt`](../build-logic/src/main/kotlin/FilamentJvmNative.kt))
 
 1. **CMake** builds the combined `libfilament-c.{dylib,so,dll}` from
    [`c/CMakeLists.txt`](../c/CMakeLists.txt) (`-DFILAMENT_BUILD_SHARED=ON`). All four C
@@ -36,7 +36,7 @@ so consumers never add it by hand.
    helpers (arenas, struct/array marshalling, upcall stubs) that the `:kotlin:*` `jvmMain`
    actuals build their idiomatic Kotlin API on top of `FilamentC`.
 
-`jextract` is fetched automatically by the build (the `downloadJextract` task, cached under `.gradle/jextract/`) — no manual setup. The download script it wraps is [`scripts/gradle/download_jextract.py`](../scripts/gradle/download_jextract.py).
+`jextract` is fetched automatically by the build (the `downloadJextract` task, cached under `.gradle/jextract/`) — no manual setup. The pinned build coordinates live in [`build-logic/FilamentDownloads.kt`](../build-logic/src/main/kotlin/FilamentDownloads.kt).
 
 Build knobs:
 - `-Pfilament.debug=true` — build the C wrapper with `CMAKE_BUILD_TYPE=Debug` (prebuilts

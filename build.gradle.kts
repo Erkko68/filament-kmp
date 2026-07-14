@@ -1,10 +1,13 @@
 plugins {
-    id("org.jetbrains.dokka")
-    id("org.jetbrains.kotlinx.kover")
+    // Versioned via the catalog: the root applies no convention plugin, so unlike the
+    // subprojects it can't resolve these version-less from the build-logic classpath.
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
+    id("filament-prebuilts")
 }
 
 // Plugin coordinates (kotlin, android, compose, vanniktech-publish) are pulled
-// onto the classpath through buildSrc/build.gradle.kts and applied by the
+// onto the classpath through build-logic/build.gradle.kts and applied by the
 // `filament-kmp-module` convention plugin in each :kotlin:* module.
 
 // ── API docs aggregation ──────────────────────────────────────────────────────
@@ -57,69 +60,6 @@ allprojects {
     }
 }
 
-// ── Filament prebuilts download ───────────────────────────────────────────────
-//
-// One Exec task per prebuilt target — invokes scripts/gradle/download_filament_prebuilts.py.
-// Tasks live at the root project so they are shared across :kotlin:* and :java:*.
-//
-// Targets correspond to:
-//   • iosArm64 / iosSimulatorArm64 — Kotlin/Native iOS targets.
-//   • macosArm64 / macosX64                 — JVM/Panama host (:java:*); macOS uses
-//                                              the JVM build, not Kotlin/Native.
-//   • linuxX64 / linuxArm64 / mingwX64      — JVM/Panama host on Linux/Windows.
-//   • web                                   — Filament.js + WASM for the :web module;
-//                                              output goes to prebuilts/web/ (no lib/ subdir).
-
-val filaVersion = project.property("filaVersion") as String
-
-val PREBUILT_TARGETS = listOf(
-    "iosArm64",
-    "iosSimulatorArm64",
-    "macosArm64",
-    "macosX64",
-    "linuxX64",
-    "linuxArm64",
-    "mingwX64",
-    "web",
-)
-
-val pythonExe = providers.environmentVariable("PYTHON").orElse("python3")
-val downloadScript = layout.projectDirectory.file("scripts/gradle/download_filament_prebuilts.py")
-val downloadIncludesScript = layout.projectDirectory.file("scripts/gradle/download_filament_includes.py")
-
-PREBUILT_TARGETS.forEach { target ->
-    tasks.register<Exec>("downloadPrebuilts_$target") {
-        group = "filament"
-        description = "Downloads Filament $filaVersion prebuilt libraries for $target."
-        // Web prebuilts land directly in prebuilts/web/; all others in prebuilts/<target>/lib/.
-        val outDir = if (target == "web") {
-            layout.projectDirectory.dir("prebuilts/web").asFile
-        } else {
-            layout.projectDirectory.dir("prebuilts/$target/lib").asFile
-        }
-        // Re-run when the version bumps or the script changes (the CRT variant /
-        // tarball prefix per target lives in the script's TARGETS map). The script
-        // itself stamps each extraction and re-extracts on any mismatch.
-        inputs.property("filaVersion", filaVersion)
-        inputs.file(downloadScript)
-        outputs.dir(outDir)
-        commandLine(pythonExe.get(), downloadScript.asFile.absolutePath, filaVersion, target)
-    }
-}
-
-tasks.register<Exec>("downloadIncludes") {
-    group = "filament"
-    description = "Downloads Filament $filaVersion public headers into include/."
-    val stamp = layout.projectDirectory.file("include/.filament-version").asFile
-    val expectedVersion = filaVersion  // capture as local so the closure isn't tied to script scope
-    outputs.file(stamp)
-    outputs.upToDateWhen { stamp.exists() && stamp.readText().trim() == expectedVersion }
-    commandLine(pythonExe.get(), downloadIncludesScript.asFile.absolutePath, filaVersion)
-}
-
-tasks.register("downloadPrebuilts") {
-    group = "filament"
-    description = "Downloads Filament $filaVersion prebuilt libraries + headers for all targets."
-    dependsOn(PREBUILT_TARGETS.map { "downloadPrebuilts_$it" })
-    dependsOn("downloadIncludes")
-}
+// The Filament prebuilt/header download tasks (downloadPrebuilts, downloadPrebuilts_<target>,
+// downloadIncludes) are registered by the `filament-prebuilts` convention plugin applied above
+// (build-logic/src/main/kotlin/filament-prebuilts.gradle.kts).

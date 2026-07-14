@@ -76,10 +76,10 @@ The FFM native runtime JAR (`io.github.erkko68.filament-ffm:filament-ffm:...`) b
 
 `filament.js` and `filament.wasm` must be placed in your app's `src/jsMain/resources/` directory so webpack serves them alongside your compiled JS. They are not propagated automatically from the library because Kotlin/JS klib resources are not picked up by webpack in downstream Maven consumers.
 
-Download the files matching your `filaVersion` using the helper script in the repo:
+Download the files matching your `filaVersion` using the download task in the repo:
 
 ```bash
-python3 scripts/gradle/download_filament_prebuilts.py <version> web
+./gradlew downloadPrebuilts_web
 # outputs prebuilts/web/filament.js, filament.wasm and filament.d.ts
 ```
 

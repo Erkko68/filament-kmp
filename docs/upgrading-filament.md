@@ -52,9 +52,7 @@ scripts/dev/upgrade-diff.sh v<old> v<new> --summary      # then re-run without -
 # 2. Bump the version
 #    edit gradle.properties -> filaVersion=<new>
 
-# 3. Refresh prebuilts — REQUIRED, libs are NOT version-aware (see warning below)
-find prebuilts -mindepth 2 -maxdepth 2 -type d -name lib -exec rm -rf {} +
-rm -rf prebuilts/web
+# 3. Refresh prebuilts (version-stamped: re-extracts automatically on a version bump)
 ./gradlew downloadPrebuilts                              # re-fetches libs + headers at <new>
 
 # 4. Audit the surface
@@ -111,20 +109,13 @@ filaVersion=1.71.6
 
 ### 3. Refresh the prebuilts
 
-> [!WARNING]
-> **The prebuilt download is not version-aware for libraries.** The
-> `downloadPrebuilts_<target>` Gradle tasks are `upToDateWhen { the output dir exists and is
-> non-empty }` — they do **not** re-fetch when `filaVersion` changes. `downloadIncludes` *is*
-> version-stamped, so bumping the version refreshes the **headers** but leaves the **libraries
-> stale**. The C shim then compiles against new headers and links against old binaries, producing
-> linker errors like `symbol(s) not found` (e.g. when a method's signature changes — 1.71.6 made
-> `VertexBuffer::Builder::build` `const`).
-
-Always force the libraries to re-download:
+Both libraries and headers are version-stamped: each `downloadPrebuilts_<target>` task takes
+`filaVersion` as a Gradle input and additionally records a `version|prefix` stamp inside the
+output directory, wiping and re-extracting on any mismatch. Bumping `filaVersion` and running
+the task is enough — stale header/library mixes (the old `symbol(s) not found` linker-error
+class) can no longer happen silently.
 
 ```sh
-find prebuilts -mindepth 2 -maxdepth 2 -type d -name lib -exec rm -rf {} +
-rm -rf prebuilts/web
 ./gradlew downloadPrebuilts
 ```
 

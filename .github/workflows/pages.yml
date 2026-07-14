@@ -13,7 +13,7 @@ on:
       - 'samples/gradle/**'
       - 'samples/settings.gradle.kts'
       - 'gradle.properties'
-      - 'buildSrc/**'
+      - 'build-logic/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -60,8 +60,6 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v6
-        with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
 
       # :java's FFM bindings (jvm source set) are jextract-generated; the C++

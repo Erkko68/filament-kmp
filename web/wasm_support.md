@@ -25,7 +25,7 @@ All 42 `asDynamic()` calls in `jsMain` removed (wasmJs has no `dynamic`). Typed-
 Attempted: added `wasmJs { browser() }` + `applyDefaultHierarchyTemplate()`, moved externals srcDir to `webMain`, dropped only the `Double→Number` and `ReadonlyArray→Array` remaps (kept typed-array/canvas remaps, with `kotlinx-browser:0.3` on `wasmJsMain` to supply `org.w3c.dom`/`org.khronos.webgl`). Result: `:js:compileKotlinJs` green, **`:js:compileKotlinWasmJs` FAILS** on the 62 enum + 15 `Any` files (see warning). Reverted; branch stays js-only and green. Resume here once Karakum emits wasmJs-compatible externals.
 
 ### Step 2 — Convention plugin: `wasmJs` target
-- In [buildSrc/src/main/kotlin/filament-kmp-module.gradle.kts] add `wasmJs { browser { binaries.executable() } }` and wire `wasmJsTest` web assets (mirror the `jsTest` filament.js/.wasm staging, lines ~59–72).
+- In [build-logic/src/main/kotlin/filament-kmp-module.gradle.kts] add `wasmJs { browser { binaries.executable() } }` and wire `wasmJsTest` web assets (mirror the `jsTest` filament.js/.wasm staging, lines ~59–72).
 - `applyDefaultHierarchyTemplate()` already present → `webMain` appears once both targets are declared.
 
 ### Step 3 — Port the actuals to `webMain` (the bulk)
@@ -134,7 +134,7 @@ However, this creates a **compatibility concern**: `JsAny` exists in `wasmJs` st
 
 ### Layer 2 — Convention Plugin
 
-#### [MODIFY] [filament-kmp-module.gradle.kts](file:///Users/eric/IdeaProjects/filament-kmp/buildSrc/src/main/kotlin/filament-kmp-module.gradle.kts)
+#### [MODIFY] [filament-kmp-module.gradle.kts](file:///Users/eric/IdeaProjects/filament-kmp/build-logic/src/main/kotlin/filament-kmp-module.gradle.kts)
 
 Changes needed:
 1. **Add `wasmJs` target declaration** (line ~48):

@@ -84,7 +84,7 @@ Configured at the repo level under Settings → Secrets and variables → Action
 
 The vanniktech publish plugin reads them as `ORG_GRADLE_PROJECT_*` env vars; signing
 activates automatically because the convention plugin gates on `signingInMemoryKeyId`
-([buildSrc/src/main/kotlin/filament-publish.gradle.kts](../../buildSrc/src/main/kotlin/filament-publish.gradle.kts)).
+([build-logic/src/main/kotlin/filament-publish.gradle.kts](../../build-logic/src/main/kotlin/filament-publish.gradle.kts)).
 
 ### Manual / re-run
 

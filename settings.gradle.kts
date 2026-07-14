@@ -1,6 +1,9 @@
 rootProject.name = "filament-umbrella"
 
 pluginManagement {
+    // Convention plugins live in the build-logic included build (not buildSrc), so
+    // editing them doesn't invalidate the whole main build's task graph.
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()

@@ -26,14 +26,14 @@ label so we can track it (and patch our prebuilts if needed).
 |---|---|
 | `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`) — `commonMain` + per-target actuals. |
 | `js/` | Kotlin/JS externals, **generated at build time** by Karakum from `filament.d.ts` (+ patches in `js/patches/`). |
-| `c/`, `java/`, `buildSrc/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
+| `c/`, `java/`, `build-logic/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |
-| `scripts/` | Prebuilt/header download + dev cross-check scripts (`scripts/README.md`). |
+| `scripts/` | Dev cross-check + maintenance scripts (`scripts/README.md`). |
 
 ## Building
 
-You need JDK 22+ (the daemon runs on 25) and Python 3. Native targets download prebuilt
+You need JDK 22+ (the daemon runs on 25). Native targets download prebuilt
 Filament binaries automatically:
 
 ```sh

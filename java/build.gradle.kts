@@ -36,7 +36,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEa
     compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmRelease))
 }
 
-// ── Native build + jextract generation (see buildSrc/FilamentJvmNative.kt) ────
+// ── Native build + jextract generation (see build-logic/FilamentJvmNative.kt) ─
 // Extract the full C surface — filament + filamat + filament-utils + gltfio — into one
 // FilamentC class. The combined libfilament-c shared library already links all four wrappers
 // (one Filament image → one EntityManager), so a single jextract run over every header keeps
