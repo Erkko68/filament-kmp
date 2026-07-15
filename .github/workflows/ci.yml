@@ -316,12 +316,37 @@ jobs:
             | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      # Cache the AVD + a warmed boot snapshot so the test run boots from a
+      # snapshot instead of cold-booting every time — faster and far less flaky
+      # for Filament's GPU driver, which is sensitive to first-boot timing.
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-34-google_apis-x86_64
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-load
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           arch: x86_64
           target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
