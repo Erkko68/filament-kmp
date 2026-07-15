@@ -196,6 +196,7 @@ expect class Renderer {
      * @param srcViewport Source viewport rectangle.
      * @param flags Behavior flags (COMMIT, SET_PRESENTATION_TIME, CLEAR).
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.copyFrame is not bound in filament.js.")
     fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int)
 
     /**
@@ -214,6 +215,7 @@ expect class Renderer {
      * @param height Height in pixels.
      * @param buffer Pixel buffer descriptor for the result.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
 
     /**
@@ -228,6 +230,7 @@ expect class Renderer {
      * @param height Height in pixels.
      * @param buffer Pixel buffer descriptor for the result.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
 
     /**

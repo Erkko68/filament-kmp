@@ -215,6 +215,7 @@ expect class LightManager {
          * @param options ShadowOptions configuration
          * @return This Builder
          */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         fun shadowOptions(options: ShadowOptions): Builder
 
         /**
@@ -351,6 +352,7 @@ expect class LightManager {
      * @return Number of light components
      * @throws UnsupportedOperationException on JS — getComponentCount is unbound in the web wrapper.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     fun getComponentCount(): Int
 
     /**

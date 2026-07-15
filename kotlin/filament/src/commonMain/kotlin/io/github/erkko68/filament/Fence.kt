@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 /**
  * Fence is used to synchronize the application main thread with filament's rendering thread.
  */
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unusable — Engine.createFence throws; filament.js exposes no GPU/CPU fence API.")
 expect class Fence {
     /**
      * Mode controls the behavior of the command stream when calling wait().
