@@ -1156,10 +1156,12 @@ public final class io/github/erkko68/filament/Renderer {
 	public final fun renderStandaloneView (Lio/github/erkko68/filament/View;)V
 	public final fun resetUserTime ()V
 	public final fun setClearOptions (Lio/github/erkko68/filament/Renderer$ClearOptions;)V
+	public final fun setDesiredPresentationTime (J)V
 	public final fun setDisplayInfo (Lio/github/erkko68/filament/Renderer$DisplayInfo;)V
 	public final fun setFrameRateOptions (Lio/github/erkko68/filament/Renderer$FrameRateOptions;)V
 	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 	public final fun setPresentationTime (J)V
+	public final fun setRenderingDeadline (J)V
 	public final fun setVsyncTime (J)V
 	public final fun shouldRenderFrame ()Z
 	public final fun skipFrame (J)V
@@ -1301,15 +1303,34 @@ public final class io/github/erkko68/filament/SwapChain {
 	public static final field Companion Lio/github/erkko68/filament/SwapChain$Companion;
 	public final fun getNativeObject ()J
 	public final fun getNativeWindow ()Ljava/lang/Object;
+	public final fun isFrameRateChangeSupported ()Z
 	public final fun isFrameScheduledCallbackSet ()Z
 	public final fun setFrameCompletedCallback (Lkotlin/jvm/functions/Function0;)V
+	public final fun setFrameRate (F)V
+	public final fun setFrameRate (FLio/github/erkko68/filament/SwapChain$FrameRateCompatibility;Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;)V
 	public final fun setFrameScheduledCallback (Lkotlin/jvm/functions/Function0;)V
+}
+
+public final class io/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy : java/lang/Enum {
+	public static final field ALWAYS Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;
+	public static final field ONLY_IF_SEAMLESS Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;
+	public static fun values ()[Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;
 }
 
 public final class io/github/erkko68/filament/SwapChain$Companion {
 	public final fun isMSAASwapChainSupported (Lio/github/erkko68/filament/Engine;I)Z
 	public final fun isProtectedContentSupported (Lio/github/erkko68/filament/Engine;)Z
 	public final fun isSRGBSwapChainSupported (Lio/github/erkko68/filament/Engine;)Z
+}
+
+public final class io/github/erkko68/filament/SwapChain$FrameRateCompatibility : java/lang/Enum {
+	public static final field DEFAULT Lio/github/erkko68/filament/SwapChain$FrameRateCompatibility;
+	public static final field FIXED_SOURCE Lio/github/erkko68/filament/SwapChain$FrameRateCompatibility;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/SwapChain$FrameRateCompatibility;
+	public static fun values ()[Lio/github/erkko68/filament/SwapChain$FrameRateCompatibility;
 }
 
 public final class io/github/erkko68/filament/Texture {
@@ -1852,6 +1873,7 @@ public final class io/github/erkko68/filament/View {
 	public final fun getViewport ()Lio/github/erkko68/filament/Viewport;
 	public final fun getVignetteOptions ()Lio/github/erkko68/filament/View$VignetteOptions;
 	public final fun getVisibleLayers ()I
+	public final fun getVisibleRenderableCount ()I
 	public final fun getVsmShadowOptions ()Lio/github/erkko68/filament/View$VsmShadowOptions;
 	public final fun isFrontFaceWindingInverted ()Z
 	public final fun isFrustumCullingEnabled ()Z
