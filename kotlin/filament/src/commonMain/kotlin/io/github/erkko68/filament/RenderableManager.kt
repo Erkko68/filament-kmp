@@ -156,6 +156,7 @@ expect class RenderableManager {
          * @param type type of geometry.
          * @return Builder reference for chaining calls.
          */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         fun geometryType(type: GeometryType): Builder
 
         /**

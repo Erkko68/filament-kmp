@@ -108,8 +108,11 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `View.isFrustumCullingEnabled` | Setter is a silent no-op (getter tracked locally) | — |
 | `LightManager.Builder.shadowOptions` | Silent no-op (embind can't marshal the `mat4f` field) | Per-light shadow options stay at Filament defaults |
 | `LightManager.getComponentCount` | Throws | — |
+| `MaterialInstance.material` (getter) | Throws | Keep a reference to the `Material` you instanced |
+| `MaterialInstance.duplicate` | Silent no-op — returns the source instance unchanged | Create a fresh instance from the `Material` and re-set parameters |
 | `Renderer.copyFrame` / `readPixels` (both overloads) | Silent no-op | — |
 | `RenderableManager` non-indexed `geometry`/`setGeometryAt` overloads | Throws | Use the indexed overloads (with an `IndexBuffer`) |
+| `RenderableManager.Builder.geometryType` | Throws (embind "unbound types") | Omit it — geometry defaults to `DYNAMIC` |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
 | `SkinningBuffer` | `Builder.build` throws; `setBonesAt` is a no-op | glTF skinning works through `gltfio` |
 | `MorphTargetBuffer` | `Builder.build` throws | glTF morph targets work through `gltfio` (`GltfInstance.morphWeights`) |
