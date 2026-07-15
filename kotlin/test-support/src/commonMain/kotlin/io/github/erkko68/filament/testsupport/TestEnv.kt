@@ -15,6 +15,13 @@ enum class TestTarget { JVM, JS, NATIVE, ANDROID }
 expect object TestEnv {
     val target: TestTarget
     val gpuBackendAvailable: Boolean
+
+    /**
+     * True when the GPU is an emulated/software Android stack (goldfish/ranchu).
+     * Those advertise GLES 3.1 but render lit content black and can crash the
+     * whole emulator on shadow workloads — semantic frame tests must skip.
+     */
+    val emulatedGpu: Boolean
 }
 
 /** Skips the annotated test on JS only (web-wrapper feature gaps); runs elsewhere. */

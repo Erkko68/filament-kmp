@@ -6,6 +6,7 @@ import io.github.erkko68.filament.testutils.TestMaterials
 import io.github.erkko68.filament.testutils.meanAbsoluteDifference
 import io.github.erkko68.filament.testutils.regionStats
 import io.github.erkko68.filament.testsupport.IgnoreJs
+import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -58,8 +59,9 @@ class FrameSemanticsTest : RenderingTestFixture() {
 
     private fun withProbe(block: (Engine, FrameProbe) -> Unit) {
         val engine = engine ?: return
-        // Lit materials need FL1+; FL0 (ES 3.0-only drivers, e.g. the pre-API-35
-        // Android emulator GL translator) renders them black — skip, don't fail.
+        // Emulated Android GPUs advertise FL1 but render lit content black and can
+        // crash the emulator on shadow passes; FL0 can't do lit materials at all.
+        if (TestEnv.emulatedGpu) return
         if (engine.supportedFeatureLevel == Engine.FeatureLevel.FEATURE_LEVEL_0) return
         val probe = FrameProbe(engine)
         try {
