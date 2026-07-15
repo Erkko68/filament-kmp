@@ -13,6 +13,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Added
 - **Tier C semantic frame tests** (tests): a new `FrameProbe` harness renders a tiny lit scene into the readable headless swapchain and asserts *relations between image regions* (shadow darker than open floor, lit centre shows its base colour, removing the sun changes the frame, PCF→VSM still renders) — rasterizer-invariant property checks, not goldens, targeting the historical "wrong pixels, no exception" wrapper-bug classes. Backed by an embedded `test_lit.filamat` (compiled with the release `matc`, vsm variants kept).
+- **Vendored kotlin-math test suite** (tests): upstream romainguy/kotlin-math's `HalfTest`/`MatrixTest`/`QuaternionTest` (Apache-2.0) now run in `filament-utils` commonTest on every target, guarding the ~5,300-line vendored math library against local drift — previously the worst coverage gap in the repo (utils 2.9% → 28.5% line).
 - **Test materials now load on every target** (tests): `.filamat` test blobs are base64-embedded into commonTest at build time (`generateEmbeddedMaterials`, sharing the `registerEmbeddedTestResources` build-logic helper with gltfio's `generateEmbeddedGlb`), replacing the JVM-only classpath resource — material/renderable rendering tests now also run on web, iOS, and Android instead of silently skipping.
 
 ### Changed
@@ -21,6 +22,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Public-API surface is now CI-enforced** (build): binary-compatibility-validator's `apiCheck` guards the JVM ABI of the five published `:kotlin:*` modules against committed `api/` dumps; intentional API changes must ship a regenerated `apiDump`.
 
 ### Fixed
+- **Half-precision arithmetic was wrong in the subnormal range** (`filament-utils`, all platforms): the vendored `Half.kt` had drifted from upstream kotlin-math — multiplication/division and float↔half conversion produced values off by 2× for subnormals, and `Quaternion.fromEuler` (YZX order) was slightly off. Both files are re-vendored verbatim from upstream (found immediately by the newly vendored test suite below). Side effect: `Mat2/3/4.toFloatArrayColumn()` and `Quaternion.fromRotation(Float3, Float3)` are now available, matching upstream.
 - **Readback smoke test could pass without verifying anything** (tests): `RendererRenderingTest` only checked pixel content *if* the async `readPixels` callback happened to land; the callback delivery is now asserted on every target where the binding exists (web excluded — `readPixels` is unbound in `jsbindings.cpp`).
 - **Soft shadows crashed with built-in materials** (`filament-compose`, all platforms): the precompiled `StandardLit`/`StandardTextured` materials filtered out the `vsm` shader variants to shrink the blobs, but Filament selects those variants for *all* soft shadow types (`Vsm`/`Dpcf`/`Pcss`, not just VSM), so enabling any of them panicked the engine with "Requested variant … does not exist for material". The built-in lit materials now ship with the VSM variants included.
 
