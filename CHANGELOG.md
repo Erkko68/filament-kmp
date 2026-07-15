@@ -11,12 +11,17 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **Tier C semantic frame tests** (tests): a new `FrameProbe` harness renders a tiny lit scene into the readable headless swapchain and asserts *relations between image regions* (shadow darker than open floor, lit centre shows its base colour, removing the sun changes the frame, PCF→VSM still renders) — rasterizer-invariant property checks, not goldens, targeting the historical "wrong pixels, no exception" wrapper-bug classes. Backed by an embedded `test_lit.filamat` (compiled with the release `matc`, vsm variants kept).
+- **Test materials now load on every target** (tests): `.filamat` test blobs are base64-embedded into commonTest at build time (`generateEmbeddedMaterials`, sharing the `registerEmbeddedTestResources` build-logic helper with gltfio's `generateEmbeddedGlb`), replacing the JVM-only classpath resource — material/renderable rendering tests now also run on web, iOS, and Android instead of silently skipping.
+
 ### Changed
 - **Python is no longer a build dependency** (build): the prebuilt/header/jextract download scripts were ported to pure-JVM Gradle tasks in `build-logic` (commons-compress for tar.gz), keeping the same task names, cache dirs, and version stamping — and making the prebuilt downloads fully version-aware, so bumping `filaVersion` re-extracts automatically. `setup-python` dropped from all CI workflows.
 - **`buildSrc` became the `build-logic` included build** (build): convention-plugin edits no longer invalidate the whole main build's task graph.
 - **Public-API surface is now CI-enforced** (build): binary-compatibility-validator's `apiCheck` guards the JVM ABI of the five published `:kotlin:*` modules against committed `api/` dumps; intentional API changes must ship a regenerated `apiDump`.
 
 ### Fixed
+- **Readback smoke test could pass without verifying anything** (tests): `RendererRenderingTest` only checked pixel content *if* the async `readPixels` callback happened to land; the callback delivery is now asserted on every target where the binding exists (web excluded — `readPixels` is unbound in `jsbindings.cpp`).
 - **Soft shadows crashed with built-in materials** (`filament-compose`, all platforms): the precompiled `StandardLit`/`StandardTextured` materials filtered out the `vsm` shader variants to shrink the blobs, but Filament selects those variants for *all* soft shadow types (`Vsm`/`Dpcf`/`Pcss`, not just VSM), so enabling any of them panicked the engine with "Requested variant … does not exist for material". The built-in lit materials now ship with the VSM variants included.
 
 ## [0.1.3-beta03] — 2026-07-11
