@@ -28,10 +28,10 @@ kotlin {
     }
 
     // AGP 9 KMP android library (com.android.kotlin.multiplatform.library): the
-    // android config lives on the `androidLibrary` target, not a top-level `android {}`.
+    // android config lives on the `android` target block inside `kotlin {}`.
     // SDK levels single-sourced from gradle/libs.versions.toml.
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
-    androidLibrary {
+    android {
         val groupStr = project.group.toString()
         val modulePart = project.name.replace("-", ".")
         namespace  = "$groupStr.$modulePart"

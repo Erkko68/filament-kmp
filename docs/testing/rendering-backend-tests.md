@@ -22,9 +22,26 @@ Real-backend clusters added, all green on Metal:
   round-trip), `IBLPrefilterRenderingTest` (`run()` via a synthetic in-memory texture).
 
 Assertions stay **binding-level**: handles are non-null, getters round-trip the
-values they were built with, `readPixels` fills a buffer of the correct size. The
-strongest output check is a smoke test ("readback is not 100% the clear colour") —
+values they were built with, `readPixels` fills a buffer of the correct size —
 never a golden image.
+
+## Tier C: semantic frame assertions
+
+One class of wrapper bug is invisible to binding-level assertions: **pixel-level
+symptoms with no thrown error** (historically: uninitialized `ShadowOptions` C
+struct → shadows silently absent; primitives built without `castShadows`;
+`vsm` variants filtered out → soft-shadow panic; web UBO mismatch → black
+materials). `FrameSemanticsTest` + `FrameProbe` close that hole with
+**property-based pixel checks, not goldens**: a tiny lit scene (floor quad,
+hovering caster quad, tilted sun, embedded `test_lit.filamat`) is rendered into
+the readable swapchain and read back, and the tests assert *relations between
+image regions* — the shadowed patch is darker than the open floor, the lit
+centre is not black and shows its base colour, removing the sun changes the
+frame, switching PCF→VSM still renders. Region relations hold on every
+rasterizer (Metal, lavapipe, SwiftShader), so there are no golden files, no
+per-platform baselines, and nothing to regenerate on Filament upgrades. They
+run wherever the rendering fixtures already run, and are `@IgnoreJs` because
+`readPixels` is a web no-op (below).
 
 ## Bugs found and fixed
 
@@ -70,6 +87,17 @@ rejected it**:
   cover the rest.
 
 So: no screenshots, no goldens, no cross-platform pixel comparison, no GPU CI runners.
+The Tier C frame assertions above are the deliberate middle path: they catch the
+"wrong pixels, no exception" wrapper-bug class while keeping every one of these
+objections intact (no baselines, rasterizer-invariant, wrapper-focused).
+
+### Web caveat
+
+`Renderer.readPixels` is not registered in upstream `jsbindings.cpp`, so Tier C
+cannot run on web at all — even though two historical pixel-symptom bugs were
+web-only. When the engine-side prebuilt is next rebuilt (the UBO/instancing
+patch), adding the `readPixels` embind registration to the same build un-parks
+frame assertions on web too.
 
 ## CI reality
 

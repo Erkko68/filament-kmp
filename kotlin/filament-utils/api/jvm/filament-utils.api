@@ -1143,6 +1143,7 @@ public final class io/github/erkko68/filament/utils/Mat2 {
 	public final fun times (Lio/github/erkko68/filament/utils/Float2;)Lio/github/erkko68/filament/utils/Float2;
 	public final fun times (Lio/github/erkko68/filament/utils/Mat2;)Lio/github/erkko68/filament/utils/Mat2;
 	public final fun toFloatArray ()[F
+	public final fun toFloatArrayColumn ()[F
 	public fun toString ()Ljava/lang/String;
 	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Mat2;
 }
@@ -1196,6 +1197,7 @@ public final class io/github/erkko68/filament/utils/Mat3 {
 	public final fun times (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Float3;
 	public final fun times (Lio/github/erkko68/filament/utils/Mat3;)Lio/github/erkko68/filament/utils/Mat3;
 	public final fun toFloatArray ()[F
+	public final fun toFloatArrayColumn ()[F
 	public fun toString ()Ljava/lang/String;
 	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Mat3;
 }
@@ -1268,6 +1270,7 @@ public final class io/github/erkko68/filament/utils/Mat4 {
 	public final fun toEulerAngles (Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Float3;
 	public static synthetic fun toEulerAngles$default (Lio/github/erkko68/filament/utils/Mat4;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Float3;
 	public final fun toFloatArray ()[F
+	public final fun toFloatArrayColumn ()[F
 	public final fun toQuaternion ()Lio/github/erkko68/filament/utils/Quaternion;
 	public fun toString ()Ljava/lang/String;
 	public final fun unaryMinus ()Lio/github/erkko68/filament/utils/Mat4;
@@ -1419,6 +1422,7 @@ public final class io/github/erkko68/filament/utils/Quaternion$Companion {
 	public final fun fromEuler (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/RotationsOrder;)Lio/github/erkko68/filament/utils/Quaternion;
 	public static synthetic fun fromEuler$default (Lio/github/erkko68/filament/utils/Quaternion$Companion;FFFLio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Quaternion;
 	public static synthetic fun fromEuler$default (Lio/github/erkko68/filament/utils/Quaternion$Companion;Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/RotationsOrder;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun fromRotation (Lio/github/erkko68/filament/utils/Float3;Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/utils/Quaternion;
 }
 
 public final class io/github/erkko68/filament/utils/QuaternionComponent : java/lang/Enum {
