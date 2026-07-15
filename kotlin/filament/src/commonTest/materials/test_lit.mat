@@ -1,0 +1,27 @@
+// Test-only LIT material for Tier C semantic frame assertions.
+// Solid base colour, receives + casts shadows. Variants trimmed hard, but
+// shadowReceiver/directionalLighting/vsm must stay: the tests assert shadow
+// presence and the PCF→VSM technique switch (the #64 soft-shadow panic class).
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o test_lit.filamat test_lit.mat
+
+material {
+    name : TestLit,
+    shadingModel : lit,
+    variantFilter : [ skinning, ssr, stereo, fog, dynamicLighting ],
+    parameters : [
+        { type : float3, name : baseColor },
+        { type : float,  name : metallic },
+        { type : float,  name : roughness }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor;
+        material.metallic      = materialParams.metallic;
+        material.roughness     = materialParams.roughness;
+    }
+}

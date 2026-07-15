@@ -22,7 +22,7 @@ flowchart TB
     AND -->|official AAR| MAVEN["com.google.android.filament<br/>Maven artifact"]
     JVM -->|jextract → FFM| FFM["java/ · libfilament-c<br/>(shared, built from c/)"]
     NAT -->|cinterop| CIN["c/ wrapper<br/>(per-module static libs)"]
-    WEB -->|Karakum externals<br/>from filament.d.ts| JS["js/ · Filament.js (WASM)"]
+    WEB -->|committed externals<br/>vs jsbindings.cpp| JS["web/ · Filament.js (WASM)"]
 
     FFM --> CWRAP["c/ — C-ABI over Filament C++"]
     CIN --> CWRAP
@@ -45,7 +45,7 @@ in table form.
 
 - **`java/`**: The single Project Panama (FFM) JVM binding module used by the **JVM/Desktop** target only. It drives the combined `libfilament-c` shared build via CMake, runs `jextract` over the C headers to generate the low-level bindings, bundles the native image as a JAR resource, and loads it at runtime. **Android does not use this folder** — it depends on the official `com.google.android.filament` Maven packages instead. See [`java/README.md`](../java/README.md).
 
-- **`js/`**: Kotlin/JS external declarations wrapping the official Filament.js (WASM) library, used by the **Web** target. The declarations are **generated at build time** by [Karakum](https://github.com/karakum-team/karakum) from Filament's `filament.d.ts` plus a curated overlay under `js/patches/` (the d.ts under-reports the real `jsbindings.cpp` surface). Nothing generated is committed; see [`js/README.md`](../js/README.md).
+- **`web/`**: Kotlin external declarations wrapping the official Filament.js (WASM) library, used by the **Web** targets (`js` + `wasmJs`). The declarations are **committed, hand-maintained sources** audited against upstream `jsbindings.cpp` (the real embind surface — the shipped `filament.d.ts` under-reports it). See [`web/README.md`](../web/README.md).
 
 - **`kotlin/`**: The core Kotlin Multiplatform wrapper. Contains five modules:
     - `filament` — Core engine components (Engine, Scene, View, Renderer, …).
@@ -54,7 +54,7 @@ in table form.
     - `filament-utils` — Math utilities, camera manipulators, HDR/KTX loaders.
     - `filament-compose` — Compose Multiplatform UI integration layer (see [Compose docs](compose/README.md)).
 
-- **`prebuilts/`**: Prebuilt Filament static libraries for platforms that do not have an official Maven package: `iosArm64`, `iosSimulatorArm64`, `iosX64`, `macosArm64`, and WASM/JS. Downloaded via `scripts/gradle/download_filament_prebuilts.py` (invoked by the `downloadPrebuilts` Gradle task). The matching public headers land in `include/` via `scripts/gradle/download_filament_includes.py`.
+- **`prebuilts/`**: Prebuilt Filament static libraries for platforms that do not have an official Maven package: `iosArm64`, `iosSimulatorArm64`, `iosX64`, `macosArm64`, and WASM/JS. Downloaded by the `downloadPrebuilts` Gradle task (pure-JVM, see `build-logic/src/main/kotlin/FilamentDownloads.kt`). The matching public headers land in `include/` via the `downloadIncludes` task.
 
 - **`samples/`**: Multiplatform example applications for Android, iOS, Desktop (JVM), and Web.
 
@@ -65,7 +65,7 @@ in table form.
 | **Android** | Official Maven library | `com.google.android.filament:filament-android` |
 | **JVM / Desktop** | Project Panama (FFM) over the C wrapper | `java/` module + `c/` wrapper |
 | **iOS / macOS** | C-interop (Kotlin Native) | `c/` wrapper + `prebuilts/` |
-| **Web / WASM** | Karakum-generated JS externals | `js/` module + prebuilt Filament.js |
+| **Web / WASM** | committed Kotlin externals | `web/` module + prebuilt Filament.js |
 
 ## Build System
 
@@ -74,4 +74,4 @@ The project uses **Gradle (Kotlin DSL)** for dependency management and build orc
 - **Android** delegates entirely to the official Filament Gradle plugin / Maven artifact.
 - **JVM** builds invoke **CMake** from the `:java` module build script to compile the combined `libfilament-c` shared image, then run **`jextract`** over the C headers to generate the FFM bindings.
 - **Native (iOS / macOS)** builds invoke **CMake** from the `:kotlin:*` module build scripts to compile the C wrapper, then run `cinterop` to generate Kotlin bindings.
-- **Web** links against the prebuilt Filament.js artifact; the Kotlin externals are generated from `filament.d.ts` by **Karakum** at build time (see [`js/README.md`](../js/README.md)).
+- **Web** links against the prebuilt Filament.js artifact; the Kotlin externals are committed sources maintained against upstream `jsbindings.cpp` (see [`web/README.md`](../web/README.md)).

@@ -1,5 +1,5 @@
 // Delays Karma's test start until the Filament WASM module is fully initialised
-// and all its classes have been spread into the global (window) scope.
+// and its namespace members are exposed as globals.
 //
 // Without this the compiled Kotlin code references bare globals like `Engine`,
 // `Renderer`, `View`, etc. that don't exist until after Filament.init() fires.
@@ -12,18 +12,13 @@
 
     __karma__.loaded = function () {
         Filament.init([], function () {
-            // Spread all Filament properties onto window so external Kotlin
-            // declarations (which expect top-level globals) can resolve them.
-            var nativeFetch = window.fetch;
-            Object.assign(window, Filament);
-            window.fetch = nativeFetch;
-
-            // Filament uses '$' as a separator (e.g. Camera$Fov) but the
-            // Kotlin externals use '_' (Camera_Fov); create aliases for both.
+            // Expose Filament namespace members as globals so the external
+            // Kotlin declarations can resolve them. Only add missing names —
+            // never overwrite (keeps e.g. window.fetch intact). `$`-separated
+            // names (Texture$Builder) are referenced as-is via @JsName on the
+            // Kotlin externals, so no `_`-alias copies are needed.
             Object.getOwnPropertyNames(Filament).forEach(function (k) {
-                if (k.indexOf('$') !== -1) {
-                    window[k.replace(/\$/g, '_')] = Filament[k];
-                }
+                if (!(k in globalThis)) globalThis[k] = Filament[k];
             });
 
             originalLoaded();

@@ -142,12 +142,20 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
                 put(storage)
                 flip()
             }
-            val runnable = if (callback != null) Runnable { callback.invoke() } else null
+            // filament-android drops the callback unless a handler/executor is given;
+            // copy the buffer back first so readPixels results land in [storage].
+            val callback = callback
+            val runnable = if (callback != null) Runnable {
+                byteBuffer.rewind()
+                byteBuffer.get(storage)
+                callback.invoke()
+            } else null
+            val executor = if (runnable != null) java.util.concurrent.Executor { it.run() } else null
             return AndroidTexture.PixelBufferDescriptor(
                 byteBuffer,
                 AndroidTexture.Format.values()[format.ordinal],
                 AndroidTexture.Type.values()[type.ordinal],
-                alignment, left, top, stride, null, runnable
+                alignment, left, top, stride, executor, runnable
             )
         }
     }

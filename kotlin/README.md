@@ -33,8 +33,8 @@ From the repository root:
 ./gradlew build
 ```
 
-The first build downloads Filament prebuilts via `scripts/gradle/download_filament_prebuilts.py` — expect a few minutes.
+The first build downloads Filament prebuilts via the `downloadPrebuilts_<target>` Gradle tasks — expect a few minutes.
 
 ## Contributing
 
-See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`), the Project Panama (FFM) JVM bindings (`java/`), and the Karakum-generated JS externals (`js/`).
+See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`), the Project Panama (FFM) JVM bindings (`java/`), and the committed JS externals (`web/`).

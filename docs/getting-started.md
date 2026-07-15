@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta02")
+            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta03")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.1.3-beta02")
+            implementation("io.github.erkko68.filament:gltfio:0.1.3-beta03")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.1.3-beta02")
+            implementation("io.github.erkko68.filament:filament-utils:0.1.3-beta03")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.1.3-beta02")
+            implementation("io.github.erkko68.filament:filamat:0.1.3-beta03")
         }
     }
 }
@@ -188,10 +188,10 @@ kotlin {
 }
 ```
 
-**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the helper script included in the repo:
+**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the download task included in the repo:
 
 ```bash
-python3 scripts/gradle/download_filament_prebuilts.py <version> web
+./gradlew downloadPrebuilts_web
 # outputs to prebuilts/web/ — copy filament.js and filament.wasm to src/jsMain/resources/
 ```
 

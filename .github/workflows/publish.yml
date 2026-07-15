@@ -42,8 +42,6 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v6
-        with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
@@ -84,8 +82,6 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with: { java-version: '25', distribution: 'temurin' }
-      - uses: actions/setup-python@v6
-        with: { python-version: '3.x' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Determine version
         id: version
@@ -132,6 +128,10 @@ jobs:
             -PlibVersion=${{ steps.version.outputs.version }} \
             -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
             :java:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-macos-arm64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-linux-x64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-linux-arm64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-windows-x64:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \

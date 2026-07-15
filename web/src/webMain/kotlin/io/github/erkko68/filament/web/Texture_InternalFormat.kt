@@ -1,0 +1,112 @@
+// Automatically generated - do not modify!
+
+package io.github.erkko68.filament.web
+
+// unhandled import: * as glm from "gl-matrix"
+
+@JsName("Texture\$InternalFormat")
+external class Texture_InternalFormat : JsAny {
+companion object {
+val R8: Texture_InternalFormat
+val R8_SNORM: Texture_InternalFormat
+val R8UI: Texture_InternalFormat
+val R8I: Texture_InternalFormat
+val STENCIL8: Texture_InternalFormat
+val R16F: Texture_InternalFormat
+val R16UI: Texture_InternalFormat
+val R16I: Texture_InternalFormat
+val RG8: Texture_InternalFormat
+val RG8_SNORM: Texture_InternalFormat
+val RG8UI: Texture_InternalFormat
+val RG8I: Texture_InternalFormat
+val RGB565: Texture_InternalFormat
+val RGB9_E5: Texture_InternalFormat
+val RGB5_A1: Texture_InternalFormat
+val RGBA4: Texture_InternalFormat
+val DEPTH16: Texture_InternalFormat
+val RGB8: Texture_InternalFormat
+val SRGB8: Texture_InternalFormat
+val RGB8_SNORM: Texture_InternalFormat
+val RGB8UI: Texture_InternalFormat
+val RGB8I: Texture_InternalFormat
+val DEPTH24: Texture_InternalFormat
+val R32F: Texture_InternalFormat
+val R32UI: Texture_InternalFormat
+val R32I: Texture_InternalFormat
+val RG16F: Texture_InternalFormat
+val RG16UI: Texture_InternalFormat
+val RG16I: Texture_InternalFormat
+val R11F_G11F_B10F: Texture_InternalFormat
+val RGBA8: Texture_InternalFormat
+val SRGB8_A8: Texture_InternalFormat
+val RGBA8_SNORM: Texture_InternalFormat
+val UNUSED: Texture_InternalFormat
+val RGB10_A2: Texture_InternalFormat
+val RGBA8UI: Texture_InternalFormat
+val RGBA8I: Texture_InternalFormat
+val DEPTH32F: Texture_InternalFormat
+val DEPTH24_STENCIL8: Texture_InternalFormat
+val DEPTH32F_STENCIL8: Texture_InternalFormat
+val RGB16F: Texture_InternalFormat
+val RGB16UI: Texture_InternalFormat
+val RGB16I: Texture_InternalFormat
+val RG32F: Texture_InternalFormat
+val RG32UI: Texture_InternalFormat
+val RG32I: Texture_InternalFormat
+val RGBA16F: Texture_InternalFormat
+val RGBA16UI: Texture_InternalFormat
+val RGBA16I: Texture_InternalFormat
+val RGB32F: Texture_InternalFormat
+val RGB32UI: Texture_InternalFormat
+val RGB32I: Texture_InternalFormat
+val RGBA32F: Texture_InternalFormat
+val RGBA32UI: Texture_InternalFormat
+val RGBA32I: Texture_InternalFormat
+val EAC_R11: Texture_InternalFormat
+val EAC_R11_SIGNED: Texture_InternalFormat
+val EAC_RG11: Texture_InternalFormat
+val EAC_RG11_SIGNED: Texture_InternalFormat
+val ETC2_RGB8: Texture_InternalFormat
+val ETC2_SRGB8: Texture_InternalFormat
+val ETC2_RGB8_A1: Texture_InternalFormat
+val ETC2_SRGB8_A1: Texture_InternalFormat
+val ETC2_EAC_RGBA8: Texture_InternalFormat
+val ETC2_EAC_SRGBA8: Texture_InternalFormat
+val DXT1_RGB: Texture_InternalFormat
+val DXT1_RGBA: Texture_InternalFormat
+val DXT3_RGBA: Texture_InternalFormat
+val DXT5_RGBA: Texture_InternalFormat
+val DXT1_SRGB: Texture_InternalFormat
+val DXT1_SRGBA: Texture_InternalFormat
+val DXT3_SRGBA: Texture_InternalFormat
+val DXT5_SRGBA: Texture_InternalFormat
+val RGBA_ASTC_4x4: Texture_InternalFormat
+val RGBA_ASTC_5x4: Texture_InternalFormat
+val RGBA_ASTC_5x5: Texture_InternalFormat
+val RGBA_ASTC_6x5: Texture_InternalFormat
+val RGBA_ASTC_6x6: Texture_InternalFormat
+val RGBA_ASTC_8x5: Texture_InternalFormat
+val RGBA_ASTC_8x6: Texture_InternalFormat
+val RGBA_ASTC_8x8: Texture_InternalFormat
+val RGBA_ASTC_10x5: Texture_InternalFormat
+val RGBA_ASTC_10x6: Texture_InternalFormat
+val RGBA_ASTC_10x8: Texture_InternalFormat
+val RGBA_ASTC_10x10: Texture_InternalFormat
+val RGBA_ASTC_12x10: Texture_InternalFormat
+val RGBA_ASTC_12x12: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_4x4: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_5x4: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_5x5: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_6x5: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_6x6: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_8x5: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_8x6: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_8x8: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_10x5: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_10x6: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_10x8: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_10x10: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_12x10: Texture_InternalFormat
+val SRGB8_ALPHA8_ASTC_12x12: Texture_InternalFormat
+}
+}

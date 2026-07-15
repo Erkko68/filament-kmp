@@ -2,6 +2,8 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -18,7 +20,10 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         val mat = Material.Builder().payload(bytes).build(engine)
         val inst = mat.createInstance()
         assertNotNull(inst)
-        assertEquals(mat.getName(), inst.material.getName())
+        // MaterialInstance.getMaterial is not bound in upstream jsbindings.cpp.
+        if (TestEnv.target != TestTarget.JS) {
+            assertEquals(mat.getName(), inst.material.getName())
+        }
         assertNotNull(inst.name)
 
         if (mat.hasParameter("emissiveFactor")) {
@@ -67,12 +72,16 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         inst.setStencilWriteMask(128, MaterialInstance.StencilFace.FRONT)
         inst.setStencilWriteMask(128)
 
-        val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
-        assertNotNull(dup)
-        assertEquals("duplicated_instance", dup.name)
+        // MaterialInstance.duplicate is a stub on web (filament.js has no duplicate);
+        // it returns the receiver unchanged, so the name assertion only holds elsewhere.
+        if (TestEnv.target != TestTarget.JS) {
+            val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
+            assertNotNull(dup)
+            assertEquals("duplicated_instance", dup.name)
+            engine.destroyMaterialInstance(dup)
+        }
 
         engine.destroyMaterialInstance(inst)
-        engine.destroyMaterialInstance(dup)
         engine.destroyMaterial(mat)
     }
 }

@@ -13,6 +13,27 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Added
 - **Filament 1.73.0**: Upgraded the bundled Filament engine to 1.73.0; recompiled all `.filamat` materials (MATERIAL_VERSION 72→73, DYN variant became a specialization constant). New APIs: `Renderer.setDesiredPresentationTime` / `Renderer.setRenderingDeadline` (frame-history reporting and render-deadline hints), `SwapChain.isFrameRateChangeSupported` / `SwapChain.setFrameRate` (intended frame rate, Android/JVM/native), and `View.getVisibleRenderableCount`. The web prebuilt is now a stock upstream build — the carried colored-penumbra divisor patch landed upstream in 1.73.0. Removed the web-only `setImageCube` internal path (upstream dropped the binding; plain `setImage` uploads full cubemap levels).
+- **Tier C semantic frame tests** (tests): a new `FrameProbe` harness renders a tiny lit scene into the readable headless swapchain and asserts *relations between image regions* (shadow darker than open floor, lit centre shows its base colour, removing the sun changes the frame, PCF→VSM still renders) — rasterizer-invariant property checks, not goldens, targeting the historical "wrong pixels, no exception" wrapper-bug classes. Backed by an embedded `test_lit.filamat` (compiled with the release `matc`, vsm variants kept).
+- **Vendored kotlin-math test suite** (tests): upstream romainguy/kotlin-math's `HalfTest`/`MatrixTest`/`QuaternionTest` (Apache-2.0) now run in `filament-utils` commonTest on every target, guarding the ~5,300-line vendored math library against local drift — previously the worst coverage gap in the repo (utils 2.9% → 28.5% line).
+- **Exhaustive enum round-trip tests** (tests): every entry of every gettable enum-typed property (`View` modes, option-struct enums, `TextureSampler`, `MaterialInstance`) is now set→get round-tripped through the bindings on every target — converting the silently-misaligned-enum bug class (the historical `Backend`/`StereoscopicType` swap) into a test failure wherever the mapping is asymmetric.
+- **Test materials now load on every target** (tests): `.filamat` test blobs are base64-embedded into commonTest at build time (`generateEmbeddedMaterials`, sharing the `registerEmbeddedTestResources` build-logic helper with gltfio's `generateEmbeddedGlb`), replacing the JVM-only classpath resource — material/renderable rendering tests now also run on web, iOS, and Android instead of silently skipping.
+
+### Changed
+- **Python is no longer a build dependency** (build): the prebuilt/header/jextract download scripts were ported to pure-JVM Gradle tasks in `build-logic` (commons-compress for tar.gz), keeping the same task names, cache dirs, and version stamping — and making the prebuilt downloads fully version-aware, so bumping `filaVersion` re-extracts automatically. `setup-python` dropped from all CI workflows.
+- **`buildSrc` became the `build-logic` included build** (build): convention-plugin edits no longer invalidate the whole main build's task graph.
+- **Public-API surface is now CI-enforced** (build): binary-compatibility-validator's `apiCheck` guards the JVM ABI of the five published `:kotlin:*` modules against committed `api/` dumps; intentional API changes must ship a regenerated `apiDump`.
+
+### Fixed
+- **Half-precision arithmetic was wrong in the subnormal range** (`filament-utils`, all platforms): the vendored `Half.kt` had drifted from upstream kotlin-math — multiplication/division and float↔half conversion produced values off by 2× for subnormals, and `Quaternion.fromEuler` (YZX order) was slightly off. Both files are re-vendored verbatim from upstream (found immediately by the newly vendored test suite below). Side effect: `Mat2/3/4.toFloatArrayColumn()` and `Quaternion.fromRotation(Float3, Float3)` are now available, matching upstream.
+- **Readback smoke test could pass without verifying anything** (tests): `RendererRenderingTest` only checked pixel content *if* the async `readPixels` callback happened to land; the callback delivery is now asserted on every target where the binding exists (web excluded — `readPixels` is unbound in `jsbindings.cpp`).
+- **Soft shadows crashed with built-in materials** (`filament-compose`, all platforms): the precompiled `StandardLit`/`StandardTextured` materials filtered out the `vsm` shader variants to shrink the blobs, but Filament selects those variants for *all* soft shadow types (`Vsm`/`Dpcf`/`Pcss`, not just VSM), so enabling any of them panicked the engine with "Requested variant … does not exist for material". The built-in lit materials now ship with the VSM variants included.
+
+## [0.1.3-beta03] — 2026-07-11
+
+### Fixed
+- **Android builds failed to inline math utils** (all modules): the Android target was compiled at JVM 22 alongside the desktop JVM target, so published AARs shipped inline functions (`Float3.times`, `dot`, `cross`, …) as JVM 22 bytecode — Android consumers building at the conventional JVM 11 hit "Cannot inline bytecode built with JVM target 22". Android bytecode is now JVM 11; the JVM 22 floor (Project Panama / FFM) applies only to the Desktop/JVM artifacts. ([#1](https://github.com/Erkko68/filament-kmp/issues/1))
+
+### Added
 - **Built-in standard materials** (`filament-compose`): `rememberColorMaterialInstance` (LIT PBR), `rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`, and `rememberEmissiveMaterialInstance` return a ready `MaterialInstance` for the common cases with **no `.mat` authoring, no `matc`, and no asset shipping** — they ship as precompiled `.filamat` blobs embedded in the library, so they work on every target including Web (where runtime material compilation isn't available). The shared base `Material` per type is built once and reused across a `rememberFilamentScene`; `rememberStandardMaterial(StandardMaterial.…)` exposes it directly. Replaces the per-app material boilerplate the samples used to carry.
 - **Reactive material parameters** (`filament-compose`): new `rememberMaterialInstance(material, vararg keys) { configure }` overload creates a `MaterialInstance` and re-applies `configure` whenever a key changes — declarative parameter binding that updates in place (safe to keep referenced by a renderable), no `SideEffect`/`onUpdate` needed. A `MaterialInstance.setParameter(name, Color)` extension keeps colour call sites typed against the `Color` value class.
 
@@ -227,6 +248,7 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
+[0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03
 [0.1.3-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta01...0.1.3-beta02
 [0.1.3-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...0.1.3-beta01
 [0.1.2-beta06]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta05...0.1.2-beta06
