@@ -334,12 +334,12 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-34-google_apis-x86_64
+          key: avd-36-google_apis-x86_64
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 36
           arch: x86_64
           target: google_apis
           force-avd-creation: false
@@ -349,7 +349,7 @@ jobs:
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 36
           arch: x86_64
           target: google_apis
           force-avd-creation: false
