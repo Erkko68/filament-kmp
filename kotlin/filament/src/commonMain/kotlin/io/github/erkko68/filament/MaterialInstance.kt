@@ -90,6 +90,7 @@ expect class MaterialInstance {
          * @param name Optional debug name for the new instance (null to use other's name).
          * @return A new MaterialInstance with all parameters copied from other.
          */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the source instance unchanged; filament.js does not expose MaterialInstance duplication.")
         fun duplicate(other: MaterialInstance, name: String? = null): MaterialInstance
     }
 
@@ -98,6 +99,7 @@ expect class MaterialInstance {
      *
      * @return The parent Material. The Material owns all instances created from it.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "getter throws UnsupportedOperationException — filament.js does not expose MaterialInstance.getMaterial.")
     val material: Material
 
     /**

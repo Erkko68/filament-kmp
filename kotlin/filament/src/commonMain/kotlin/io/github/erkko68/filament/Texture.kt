@@ -459,6 +459,7 @@ expect class Texture {
          * @param engine Engine to query
          * @return true if texture swizzling is supported
          */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns false — not bound in filament.js.")
         fun isTextureSwizzleSupported(engine: Engine): Boolean
 
         /**
