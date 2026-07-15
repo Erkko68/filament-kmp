@@ -11,6 +11,7 @@ actual object TestEnv {
     // (see filament-kmp-module.gradle.kts).
     actual val gpuBackendAvailable: Boolean =
         getenv("FILAMENT_TEST_GPU")?.toKString().toBoolean()
+    actual val emulatedGpu: Boolean = false
 }
 
 actual annotation class IgnoreJs

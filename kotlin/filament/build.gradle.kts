@@ -42,6 +42,20 @@ kotlin {
         }
     }
 
+    // ── Embed test .filamat materials into a generated commonTest source ──────────
+    // Blobs compiled with `matc -p all -a all` (see the .mat sources); the committed
+    // files in src/commonTest/materials are the source of truth.
+    val generateEmbeddedMaterials = registerEmbeddedTestResources(
+        taskName = "generateEmbeddedMaterials",
+        inputDir = "src/commonTest/materials",
+        fileExtension = ".filamat",
+        packageName = "io.github.erkko68.filament.testutils",
+        objectName = "EmbeddedMaterials",
+    )
+    sourceSets.named("commonTest") {
+        kotlin.srcDir(generateEmbeddedMaterials)
+    }
+
     targets.withType<KotlinNativeTarget>().configureEach {
         compilations.getByName("main").cinterops {
             create("filament") {
