@@ -90,7 +90,15 @@ jobs:
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev libegl1
+        # ports.ubuntu.com (the ARM runners' only mirror) intermittently drops
+        # connections — refresh the lists and retry before giving up.
+        run: |
+          for i in 1 2 3; do
+            sudo apt-get update
+            sudo apt-get install -y clang libc++-dev libc++abi-dev libgl-dev libegl1 && exit 0
+            echo "apt attempt $i failed; retrying in 20s" && sleep 20
+          done
+          exit 1
       - name: Read Filament version
         id: ver
         shell: bash
