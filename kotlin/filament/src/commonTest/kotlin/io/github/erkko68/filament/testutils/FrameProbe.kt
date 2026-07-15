@@ -76,9 +76,9 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
             engine.flushAndWait()
         }
         val pixels = ByteArray(width * height * 4)
-        var readbackDone = false
+        val readbackDone = ReadbackFlag()
         val pbd = Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) {
-            readbackDone = true
+            readbackDone.done = true
         }
         if (renderer.beginFrame(swapChain, 0L)) {
             renderer.render(view)
@@ -86,8 +86,8 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
             renderer.endFrame()
         }
         var tries = 0
-        while (!readbackDone && tries++ < 20) engine.flushAndWait()
-        return if (readbackDone) pixels else null
+        while (!readbackDone.done && tries++ < 20) engine.flushAndWait()
+        return if (readbackDone.done) pixels else null
     }
 
     /**
@@ -161,6 +161,12 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
     companion object {
         private const val SWAP_CHAIN_CONFIG_READABLE = 0x2L
     }
+}
+
+/** Cross-thread completion flag: readback callbacks may fire on the backend thread. */
+class ReadbackFlag {
+    @kotlin.concurrent.Volatile
+    var done = false
 }
 
 /** Mean channel/luminance statistics over a pixel region of an RGBA8 readback. */

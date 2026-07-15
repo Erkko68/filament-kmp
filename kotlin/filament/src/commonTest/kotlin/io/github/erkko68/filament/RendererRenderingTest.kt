@@ -37,9 +37,9 @@ class RendererRenderingTest : RenderingTestFixture() {
         }
 
         val pixels = ByteArray(w * h * 4)
-        var readbackDone = false
+        val readbackDone = io.github.erkko68.filament.testutils.ReadbackFlag()
         val pbd = Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) {
-            readbackDone = true
+            readbackDone.done = true
         }
 
         if (renderer.beginFrame(swapChain, 0L)) {
@@ -49,12 +49,12 @@ class RendererRenderingTest : RenderingTestFixture() {
         }
         // Pump until the readback callback fires (it's async on GLES backends).
         var tries = 0
-        while (!readbackDone && tries++ < 20) engine.flushAndWait()
+        while (!readbackDone.done && tries++ < 20) engine.flushAndWait()
 
         // readPixels is a no-op on web (not bound in jsbindings.cpp); everywhere else
         // the readback must actually land — a silent skip here verifies nothing.
         if (TestEnv.target != TestTarget.JS) {
-            assertTrue(readbackDone, "readPixels callback never fired")
+            assertTrue(readbackDone.done, "readPixels callback never fired")
             assertTrue(pixels.any { it.toInt() != 0 }, "readPixels delivered an all-zero buffer")
         }
 
