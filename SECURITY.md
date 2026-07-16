@@ -9,14 +9,15 @@ reporting; it usually decides *where* a vulnerability belongs.
 
 ## Supported versions
 
-This project is pre-1.0 and ships frequent beta releases. Only the **latest published
-release** receives security fixes. Older betas are not patched — upgrade to the newest
-version first and confirm the issue still reproduces.
+This project is pre-1.0 and releases frequently, tracking upstream Filament (see
+[README → Versioning & stability](README.md#versioning--stability)). Only the **latest
+published release** receives security fixes. Older versions are not patched — upgrade to
+the newest version first and confirm the issue still reproduces.
 
 | Version | Supported |
 | :-- | :-- |
 | Latest release | ✅ |
-| Older / pre-release | ❌ |
+| Older releases | ❌ |
 
 ## Is it this wrapper, or Filament?
 

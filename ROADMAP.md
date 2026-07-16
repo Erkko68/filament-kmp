@@ -1,4 +1,24 @@
-# Roadmap — Cross-platform GPU sharing & the Dawn convergence
+# Roadmap
+
+## Stability & long-term maintenance
+
+With `0.2.0` the project dropped the `-beta` label: the major development phase and the
+internal repository restructuring (prebuilt pipeline, vendored web externals, CI matrix,
+API-surface enforcement) are done, and the focus shifts to tracking upstream and hardening.
+
+- **Upstream tracking** — each Filament feature release (1.73 → 1.74 → …) is picked up as a
+  `0.X.0` minor release following [docs/upgrading-filament.md](docs/upgrading-filament.md);
+  upstream point releases and wrapper fixes ship as `0.0.X` patches. See
+  [README → Versioning & stability](README.md#versioning--stability) for the full scheme.
+- **Path to `1.0.0`** — tagged when the project reaches maturity: a stabilized public API,
+  the known issue backlog worked down, and at least a year of production use behind it.
+  Until then, minor releases may still adjust public API (always listed in the
+  [changelog](CHANGELOG.md)).
+- **Known gaps** — per-platform binding gaps are tracked via `@PlatformGap` and the coverage
+  table in [Platform Notes](docs/platform-notes.md); web-specific limits come from what
+  `filament.js` binds upstream.
+
+## Cross-platform GPU sharing & the Dawn convergence
 
 > **Scope: `filament-compose` only.** This roadmap is about the display bridge in the
 > `:kotlin:filament-compose` module — how Filament's offscreen output is presented inside Compose
@@ -10,7 +30,7 @@
 > macOS) is what ships today; everything below is the plan for closing the Linux/Windows
 > zero-copy gap.
 
-## The problem
+### The problem
 
 To display Filament's offscreen output inside Compose Multiplatform we hand a Filament-rendered
 texture to skiko/Skia (which owns the Compose canvas). Doing this **without a CPU round-trip**
@@ -25,7 +45,7 @@ GPU API's *resource model*:
   have to create Filament's context inside its own share-group and expose its `GLXContext`/`HGLRC`.
   skiko's legacy desktop GL redrawer does not do this — **this is the wall we hit on Linux.**
 
-### Where each platform stands today
+#### Where each platform stands today
 
 | OS      | skiko backend (today) | Resource model | GPU sharing today |
 |---------|-----------------------|----------------|-------------------|
@@ -37,7 +57,7 @@ Interim fallback on all platforms: **CPU readback** (`SwapChain` READABLE → `r
 `Image.makeRaster` → draw), double-buffered to pipeline the GPU→CPU copy. Correct everywhere,
 but pays `W×H×4` of bandwidth per frame.
 
-## The endgame: both halves migrate to Dawn
+### The endgame: both halves migrate to Dawn
 
 The clean, universal fix is for **both** sides to render on **Dawn** (Google's native WebGPU
 implementation, backed by D3D12 / Metal / Vulkan):
@@ -56,7 +76,7 @@ Vulkan because there is no per-OS VK↔D3D12↔GL import glue — both sides spe
 on every platform, and it dissolves the Linux GL-context wall entirely. It also subsumes the
 existing macOS Metal path and the web path into one model.
 
-### The two waits are the same bet
+#### The two waits are the same bet
 
 | Layer    | Today                       | Target              | Status |
 |----------|-----------------------------|---------------------|--------|
@@ -65,7 +85,7 @@ existing macOS Metal path and the web path into one model.
 
 Both must land **together** for the shared-Dawn-device payoff. Realistic horizon: 2026–2027.
 
-## Interim options (until Dawn convergence lands)
+### Interim options (until Dawn convergence lands)
 
 1. **Keep CPU readback** as the universal fallback (current `main`).
 2. **macOS Metal sharing** — already proven; the device-model wrap pattern.
@@ -77,13 +97,13 @@ Both must land **together** for the shared-Dawn-device payoff. Realistic horizon
    layered into the Compose window (`compose.interop.blending` for z-order). Zero readback, no
    skiko cooperation, no engine patch — but can't blend Compose between 3D layers.
 
-## What we can do now
+### What we can do now
 
 The Filament half is the half we control. Concretely: build Filament with the WebGPU/Dawn backend
 enabled on desktop (`WEBGPU_OPTION` / `-Wj` in `build.sh`) and run the existing samples against it
 to gauge how close that half already is. skiko's half we can only watch.
 
-## Track these
+### Track these
 
 - **skiko: Switch from Ganesh to Graphite** — https://github.com/JetBrains/skiko/issues/982
 - **SKIKO-549 — Vulkan bindings** — https://youtrack.jetbrains.com/issue/SKIKO-549/Vulkan-bindings

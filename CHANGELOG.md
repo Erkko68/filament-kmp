@@ -4,12 +4,15 @@ All notable changes to this project are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-Pre-1.0 releases may break public API on any minor bump; see the [README](README.md) for
-the current stability promise.
+Since `0.2.0`: minor (`0.X.0`) tracks upstream Filament feature releases and may change
+public API pre-1.0; patch (`0.0.X`) is bug fixes only. See
+[README → Versioning & stability](README.md#versioning--stability).
 
 Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
+
+## [0.2.0] — 2026-07-16
 
 ### Added
 - **Filament 1.73.0**: Upgraded the bundled Filament engine to 1.73.0; recompiled all `.filamat` materials (MATERIAL_VERSION 72→73, DYN variant became a specialization constant). New APIs: `Renderer.setDesiredPresentationTime` / `Renderer.setRenderingDeadline` (frame-history reporting and render-deadline hints), `SwapChain.isFrameRateChangeSupported` / `SwapChain.setFrameRate` (intended frame rate, Android/JVM/native), and `View.getVisibleRenderableCount`. The web prebuilt is now a stock upstream build — the carried colored-penumbra divisor patch landed upstream in 1.73.0. Removed the web-only `setImageCube` internal path (upstream dropped the binding; plain `setImage` uploads full cubemap levels).
@@ -20,6 +23,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Test materials now load on every target** (tests): `.filamat` test blobs are base64-embedded into commonTest at build time (`generateEmbeddedMaterials`, sharing the `registerEmbeddedTestResources` build-logic helper with gltfio's `generateEmbeddedGlb`), replacing the JVM-only classpath resource — material/renderable rendering tests now also run on web, iOS, and Android instead of silently skipping.
 
 ### Changed
+- **Dropped the `-beta` suffix** (release): versions are plain `X.Y.Z` from now on — minor bumps track upstream Filament feature releases (this one: 1.72.0 → 1.73.0), patch bumps are fixes only, and `1.0.0` marks API maturity. See [README → Versioning & stability](README.md#versioning--stability).
 - **Python is no longer a build dependency** (build): the prebuilt/header/jextract download scripts were ported to pure-JVM Gradle tasks in `build-logic` (commons-compress for tar.gz), keeping the same task names, cache dirs, and version stamping — and making the prebuilt downloads fully version-aware, so bumping `filaVersion` re-extracts automatically. `setup-python` dropped from all CI workflows.
 - **`buildSrc` became the `build-logic` included build** (build): convention-plugin edits no longer invalidate the whole main build's task graph.
 - **Public-API surface is now CI-enforced** (build): binary-compatibility-validator's `apiCheck` guards the JVM ABI of the five published `:kotlin:*` modules against committed `api/` dumps; intentional API changes must ship a regenerated `apiDump`.
@@ -249,6 +253,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta03...0.2.0
 [0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03
 [0.1.3-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta01...0.1.3-beta02
 [0.1.3-beta01]: https://github.com/Erkko68/filament-kmp/compare/0.1.2-beta06...0.1.3-beta01
