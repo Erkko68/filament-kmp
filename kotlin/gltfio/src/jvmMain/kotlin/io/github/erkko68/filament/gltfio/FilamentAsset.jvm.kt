@@ -12,6 +12,8 @@ import io.github.erkko68.filament.isNullPtr
 import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentAsset(var nativeHandle: MemorySegment?) {
     actual fun getRoot(): Entity = FilamentC.FilaFilamentAsset_getRoot(nativeHandle)
@@ -70,8 +72,10 @@ actual class FilamentAsset(var nativeHandle: MemorySegment?) {
 
     actual fun getEntityCount(): Int = FilamentC.FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getAssetInstanceCount(): Int = FilamentC.FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getAssetInstances(): Array<FilamentInstance> {
         val count = getAssetInstanceCount()
         if (count == 0) return emptyArray()
@@ -94,6 +98,7 @@ actual class FilamentAsset(var nativeHandle: MemorySegment?) {
     actual fun getExtras(entity: Entity): String? =
         FilamentC.FilaFilamentAsset_getExtras(nativeHandle, entity).takeUnless { it.isNullPtr() }?.cString()
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     actual fun getMorphTargetNames(entity: Entity): Array<String> {
         val count = FilamentC.FilaFilamentAsset_getMorphTargetCountAt(nativeHandle, entity).toInt()
         if (count == 0) return emptyArray()

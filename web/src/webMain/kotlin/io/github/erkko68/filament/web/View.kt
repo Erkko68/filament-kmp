@@ -38,6 +38,7 @@ fun isFrontFaceWindingInverted(): Boolean
 fun setMaterialGlobal(index: Double, value: float4): Unit
 fun getMaterialGlobal(index: Double): js.array.ReadonlyArray<JsNumber>
 fun getFogEntity(): Entity
+fun getVisibleRenderableCount(): Double
 fun clearFrameHistory(engine: Engine): Unit
 fun setDynamicLightingOptions(zLightNear: Double, zLightFar: Double): Unit
 }

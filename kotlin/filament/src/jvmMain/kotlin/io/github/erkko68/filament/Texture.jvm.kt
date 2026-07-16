@@ -235,6 +235,7 @@ actual class Texture public constructor(public var nativeHandle: MemorySegment?)
         actual fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
             FilamentC.FilaTexture_isTextureFormatMipmappable(engine.nativeHandle, format.toNative())
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns false — not bound in filament.js.")
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
             FilamentC.FilaTexture_isTextureSwizzleSupported(engine.nativeHandle)
 

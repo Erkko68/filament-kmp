@@ -6,6 +6,8 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaMaterialProvider
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 actual interface MaterialProvider {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
@@ -18,6 +20,7 @@ actual interface MaterialProvider {
     fun getNativeHandle(): CPointer<FilaMaterialProvider>?
 }
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeHandle, null, 0u)
 

@@ -190,5 +190,6 @@ actual class Camera internal constructor(
         get() = FilamentC.FilaCamera_getFocusDistance(nativeHandle)
         set(value) { FilamentC.FilaCamera_setFocusDistance(nativeHandle, value) }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns 0.0 — Camera::getFieldOfViewInDegrees is not bound in filament.js.")
     actual fun getFieldOfViewInDegrees(direction: Fov): Double = FilamentC.FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal)
 }

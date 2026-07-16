@@ -6,6 +6,9 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaSwapChain
 
 actual class SwapChain internal constructor(internal var nativeHandle: CPointer<FilaSwapChain>?) {
+    actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
+    actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
+
     actual companion object {
         actual fun isProtectedContentSupported(engine: Engine): Boolean = FilaSwapChain_isProtectedContentSupported(engine.nativeHandle)
         actual fun isSRGBSwapChainSupported(engine: Engine): Boolean = FilaSwapChain_isSRGBSwapChainSupported(engine.nativeHandle)
@@ -40,6 +43,15 @@ actual class SwapChain internal constructor(internal var nativeHandle: CPointer<
     }
 
     actual val isFrameScheduledCallbackSet: Boolean get() = FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
-    
+
+    actual fun isFrameRateChangeSupported(): Boolean = FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
+
+    actual fun setFrameRate(frameRate: Float) =
+        setFrameRate(frameRate, FrameRateCompatibility.DEFAULT, ChangeFrameRateStrategy.ONLY_IF_SEAMLESS)
+
+    actual fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy) {
+        FilaSwapChain_setFrameRate(nativeHandle, frameRate, compatibility.ordinal.toUByte(), strategy.ordinal.toUByte())
+    }
+
     actual val nativeObject: Long get() = nativeHandle?.rawValue?.toLong() ?: 0L
 }

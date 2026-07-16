@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 // TODO(js): MorphTargetBuffer is not bound in upstream jsbindings.cpp (v1.71.5).
 // The actual is a transparent record of the
 // Builder inputs so common-tests reading `vertexCount`/`count`/flags pass.
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "Builder.build throws UnsupportedOperationException — the standalone API is unbound in filament.js; gltfio handles glTF morph targets internally.")
 actual class MorphTargetBuffer internal constructor(
     internal val jsMorphTargetBuffer: Any? = null,
     actual val vertexCount: Int = 0,

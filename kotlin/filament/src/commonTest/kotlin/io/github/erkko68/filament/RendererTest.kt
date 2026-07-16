@@ -60,6 +60,8 @@ class RendererTest : FilamentTestFixture() {
 
         // Timing
         renderer.setPresentationTime(1000000L)
+        renderer.setDesiredPresentationTime(1000000L)
+        renderer.setRenderingDeadline(1000000L)
         renderer.setVsyncTime(1000000L)
         renderer.skipFrame(1000000L)
         

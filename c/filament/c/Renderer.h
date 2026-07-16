@@ -61,6 +61,8 @@ void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClea
 void FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClearOptions* out);
 
 void FilaRenderer_setPresentationTime(FilaRenderer* renderer, uint64_t monotonicClockNanos);
+void FilaRenderer_setDesiredPresentationTime(FilaRenderer* renderer, int64_t monotonicClockNanos);
+void FilaRenderer_setRenderingDeadline(FilaRenderer* renderer, int64_t monotonicClockNanos);
 void FilaRenderer_setVsyncTime(FilaRenderer* renderer, uint64_t steadyClockTimeNano);
 
 void FilaRenderer_skipNextFrames(FilaRenderer* renderer, uint32_t frameCount);

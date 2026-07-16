@@ -464,7 +464,7 @@ void FilaEngine_compile(FilaEngine* engine, uint8_t priority, FilaMaterial* mate
     auto toTribool = [](uint8_t v) -> utils::tribool {
         if (v == 0) return utils::tribool(false);
         if (v == 1) return utils::tribool(true);
-        return utils::tribool(utils::tribool::Indeterminate);
+        return utils::tribool(utils::tribool::kIndeterminate);
     };
     auto cb = callback
         ? utils::Invocable<void(Material* UTILS_NONNULL)>([callback, userData](Material*) { callback(userData); })

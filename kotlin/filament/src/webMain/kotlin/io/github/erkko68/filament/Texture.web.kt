@@ -217,11 +217,9 @@ actual class Texture(val jsTexture: JSTexture) {
         level: Int,
         descriptor: PixelBufferDescriptor
     ) {
-        if (_target == Sampler.SAMPLER_CUBEMAP) {
-            jsTexture.setImageCube(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
-        } else {
-            jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
-        }
+        // 1.73.0 removed the _setImageCube binding; setImage now uploads a full cubemap level
+        // (all six faces, tightly packed) just like the other targets.
+        jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
     }
 
     actual fun setImage(
@@ -279,6 +277,7 @@ actual class Texture(val jsTexture: JSTexture) {
             return JSTexture.isTextureFormatMipmappable(engine.jsEngine, mapInternalFormat(format))
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns false — not bound in filament.js.")
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean {
             // TODO(js): isTextureSwizzleSupported not bound in jsbindings.cpp.
             return false

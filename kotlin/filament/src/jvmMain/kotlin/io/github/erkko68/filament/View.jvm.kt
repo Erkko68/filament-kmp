@@ -621,6 +621,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             FilamentC.FilaView_setRenderTarget(nativeHandle, value?.nativeHandle ?: NULL)
         }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op unless the filament.js build binds setShadowType (stock upstream prebuilts do not) — web stays on PCF shadows.")
     actual var shadowType: ShadowType
         get() = mShadowType
         set(value) {
@@ -718,6 +719,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             }
         }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setter is a silent no-op — setFrustumCullingEnabled is not bound in filament.js; the getter reflects the locally tracked value.")
     actual var isFrustumCullingEnabled: Boolean
         get() = FilamentC.FilaView_isFrustumCullingEnabled(nativeHandle)
         set(value) { FilamentC.FilaView_setFrustumCullingEnabled(nativeHandle, value) }
@@ -746,6 +748,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         out.toFloats()
     }
     actual val fogEntity: Int get() = FilamentC.FilaView_getFogEntity(nativeHandle)
+    actual fun getVisibleRenderableCount(): Int = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilamentC.FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {

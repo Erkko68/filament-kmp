@@ -990,6 +990,15 @@ expect class View {
     var colorGrading: ColorGrading?
 
     /**
+     * Returns the most recent number of visible renderables for the current Scene, as calculated
+     * the last time Renderer.render() was called with this View and Scene.
+     *
+     * @return the number of visible renderables, or -1 if no value is available (e.g. before the
+     *         first render call, or if the scene was detached).
+     */
+    fun getVisibleRenderableCount(): Int
+
+    /**
      * Asynchronously picks the renderable at viewport coordinates ([x], [y]) — origin bottom-left —
      * and invokes [callback] with the result a few frames later. Requires the picking feature
      * (enabled by default) and a rendered frame.

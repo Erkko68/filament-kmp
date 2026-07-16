@@ -36,13 +36,16 @@ actual class RenderableManager internal constructor(internal val nativeHandle: M
             FilamentC.FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), minIndex.toLong(), maxIndex.toLong(), count.toLong())
         }
         // Filament 1.71.5: non-indexed geometry overloads (no index buffer).
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_geometryNonIndexed(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, offset.toLong(), count.toLong())
         }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle)
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         actual fun geometryType(type: GeometryType): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_geometryType(nativeBuilder, type.toNative())
         }
@@ -68,16 +71,21 @@ actual class RenderableManager internal constructor(internal val nativeHandle: M
         actual fun receiveShadows(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_receiveShadows(nativeBuilder, enabled) }
         actual fun screenSpaceContactShadows(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enabled) }
         actual fun skinning(boneCount: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_skinning(nativeBuilder, boneCount) }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js only binds the bone-count skinning overload; glTF skinning works through gltfio.")
         actual fun skinning(boneCount: Int, bones: FloatArray): Builder = apply {
             confined { arena -> FilamentC.FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount, arena.floats(bones)) }
         }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js; glTF skinning works through gltfio.")
         actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount, offset)
         }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js.")
         actual fun enableSkinningBuffers(enabled: Boolean): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_enableSkinningBuffers(nativeBuilder, enabled)
         }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js only binds a boolean enable, so the target count is reduced to targetCount > 0.")
         actual fun morphing(targetCount: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount) }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — MorphTargetBuffer itself is unbound in filament.js; glTF morphing works through gltfio.")
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
         }
@@ -144,6 +152,7 @@ actual class RenderableManager internal constructor(internal val nativeHandle: M
         FilamentC.FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), count.toLong())
 
     // Filament 1.71.5: non-indexed setGeometryAt (no index buffer).
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed setGeometryAt overload.")
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
         FilamentC.FilaRenderableManager_setGeometryAtNonIndexed(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), vb.nativeHandle, offset.toLong(), count.toLong())
 

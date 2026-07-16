@@ -84,6 +84,8 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setPresentationTime(nativeHandle, monotonicClockNanos.toULong())
+    actual fun setDesiredPresentationTime(monotonicClockNanos: Long) = FilaRenderer_setDesiredPresentationTime(nativeHandle, monotonicClockNanos)
+    actual fun setRenderingDeadline(monotonicClockNanos: Long) = FilaRenderer_setRenderingDeadline(nativeHandle, monotonicClockNanos)
     actual fun setVsyncTime(steadyClockTimeNano: Long) = FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano.toULong())
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano.toULong())
     actual fun shouldRenderFrame(): Boolean = FilaRenderer_shouldRenderFrame(nativeHandle)
@@ -91,6 +93,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
     actual fun endFrame() = FilaRenderer_endFrame(nativeHandle)
     actual fun render(view: View) = FilaRenderer_render(nativeHandle, view.nativeHandle)
     actual fun renderStandaloneView(view: View) = FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.copyFrame is not bound in filament.js.")
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
         FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle, 
             dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
@@ -100,6 +103,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
 
     private class ReadPixelsPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val size = buffer.sizeInBytes.toULong()
         val pinned = buffer.storage.pin()
@@ -124,6 +128,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         )
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val size = buffer.sizeInBytes.toULong()
         val pinned = buffer.storage.pin()

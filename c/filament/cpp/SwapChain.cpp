@@ -48,4 +48,14 @@ bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* swapChain) {
     return FILA_CONST_CAST(SwapChain, swapChain)->isFrameScheduledCallbackSet();
 }
 
+bool FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* swapChain) {
+    return FILA_CONST_CAST(SwapChain, swapChain)->isFrameRateChangeSupported().is_true();
+}
+
+void FilaSwapChain_setFrameRate(FilaSwapChain* swapChain, float frameRate, uint8_t compatibility, uint8_t strategy) {
+    FILA_CAST(SwapChain, swapChain)->setFrameRate(frameRate,
+            static_cast<SwapChain::FrameRateCompatibility>(compatibility),
+            static_cast<SwapChain::ChangeFrameRateStrategy>(strategy));
+}
+
 } // extern "C"

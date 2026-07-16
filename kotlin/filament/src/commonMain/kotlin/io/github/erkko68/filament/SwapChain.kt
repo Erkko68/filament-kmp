@@ -19,6 +19,26 @@ package io.github.erkko68.filament
  * @see Engine.createSwapChain
  */
 expect class SwapChain {
+    /**
+     * Frame rate compatibility strategy for [setFrameRate].
+     */
+    enum class FrameRateCompatibility {
+        /** Default compatibility: the platform decides how to honor the requested rate. */
+        DEFAULT,
+        /** The content has a fixed source frame rate (e.g. video playback). */
+        FIXED_SOURCE
+    }
+
+    /**
+     * Strategy for applying a frame rate change that is not seamless.
+     */
+    enum class ChangeFrameRateStrategy {
+        /** Only change the frame rate if the transition is seamless (no visual interruption). */
+        ONLY_IF_SEAMLESS,
+        /** Change the frame rate even if it requires a non-seamless transition. */
+        ALWAYS
+    }
+
     companion object {
         /**
          * Checks if protected content (DRM) rendering is supported on this platform.
@@ -114,4 +134,33 @@ expect class SwapChain {
      *                 Pass null or a no-op function to unset the callback.
      */
     fun setFrameScheduledCallback(callback: () -> Unit)
+
+    /**
+     * Returns whether this SwapChain supports the [setFrameRate] API.
+     *
+     * When a SwapChain is newly created, the actual surface capability may not yet be determined
+     * by the underlying OS, in which case this returns false. Once the platform completes surface
+     * connection, this method authoritatively returns true or false.
+     *
+     * @return true if [setFrameRate] is definitively supported, false otherwise
+     */
+    fun isFrameRateChangeSupported(): Boolean
+
+    /**
+     * Sets the intended frame rate for this SwapChain.
+     *
+     * Uses [FrameRateCompatibility.DEFAULT] and [ChangeFrameRateStrategy.ONLY_IF_SEAMLESS].
+     *
+     * @param frameRate The intended frame rate in frames per second. 0.0f clears/resets the rate.
+     */
+    fun setFrameRate(frameRate: Float)
+
+    /**
+     * Sets the intended frame rate for this SwapChain.
+     *
+     * @param frameRate     The intended frame rate in frames per second. 0.0f clears/resets the rate.
+     * @param compatibility Frame rate compatibility mode.
+     * @param strategy      Change strategy for non-seamless transitions.
+     */
+    fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy)
 }

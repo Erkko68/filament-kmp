@@ -14,6 +14,7 @@ import io.github.erkko68.filament.web.Entity as JSEntity
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun getComponentCount(): Int = jsUnsupported("LightManager.getComponentCount")
 
     // Upstream LightManager binding doesn't expose `destroy(Entity)` —
@@ -207,6 +208,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder {
             // TODO(js): no-op on JS. jsbindings.cpp registers the ShadowOptions
             // value_object with a `transform` field typed as mat4f, but the

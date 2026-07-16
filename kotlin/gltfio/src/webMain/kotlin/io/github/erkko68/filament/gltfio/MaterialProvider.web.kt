@@ -3,6 +3,8 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 actual interface MaterialProvider {
     actual fun createMaterialInstance(
@@ -24,6 +26,7 @@ actual interface MaterialProvider {
     actual fun destroy()
 }
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     private val materials = mutableListOf<Material>()
 

@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unusable — Engine.createFence throws; filament.js exposes no GPU/CPU fence API.")
 actual class Fence {
     actual fun wait(
         mode: Mode,

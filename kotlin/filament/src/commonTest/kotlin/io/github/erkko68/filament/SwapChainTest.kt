@@ -37,6 +37,12 @@ class SwapChainTest : FilamentTestFixture() {
         }
         assertTrue(swap.isFrameScheduledCallbackSet)
 
+        // 1.73.0 frame rate API — headless/NOOP surfaces don't support rate changes,
+        // but the calls must be safe no-ops.
+        swap.isFrameRateChangeSupported()
+        swap.setFrameRate(60.0f)
+        swap.setFrameRate(0.0f, SwapChain.FrameRateCompatibility.FIXED_SOURCE, SwapChain.ChangeFrameRateStrategy.ALWAYS)
+
         engine.destroySwapChain(swap)
     }
 }

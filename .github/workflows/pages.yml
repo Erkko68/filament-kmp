@@ -15,12 +15,28 @@ on:
       - 'gradle.properties'
       - 'build-logic/**'
       - '.github/workflows/pages.yml'
+  # PRs build (web + docs) but never deploy — catches doc-generation breaks
+  # before they land on main. Keep paths in sync with `push` above.
+  pull_request:
+    branches: [main]
+    paths:
+      - 'samples/webApp/**'
+      - 'samples/shared/**'
+      - 'kotlin/**/src/**'
+      - 'web/**'
+      - 'prebuilts/web/**'
+      - 'gradle/**'
+      - 'samples/gradle/**'
+      - 'samples/settings.gradle.kts'
+      - 'gradle.properties'
+      - 'buildSrc/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
-# Concurrency: only one Pages deploy at a time. In-progress runs are cancelled
-# so the latest main always wins.
+# Concurrency: per-ref so PR runs don't cancel a main deploy; within a ref the
+# latest run wins.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -81,6 +97,8 @@ jobs:
           path: build/dokka/html
 
   deploy:
+    # Build-only on PRs; deploy only from main pushes / manual dispatch.
+    if: github.event_name != 'pull_request'
     needs: [web, docs]
     runs-on: ubuntu-latest
     environment:

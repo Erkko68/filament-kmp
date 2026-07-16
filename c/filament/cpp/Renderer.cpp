@@ -117,6 +117,14 @@ void FilaRenderer_setPresentationTime(FilaRenderer* renderer, uint64_t monotonic
     FILA_CAST(Renderer, renderer)->setPresentationTime(monotonicClockNanos);
 }
 
+void FilaRenderer_setDesiredPresentationTime(FilaRenderer* renderer, int64_t monotonicClockNanos) {
+    FILA_CAST(Renderer, renderer)->setDesiredPresentationTime(monotonicClockNanos);
+}
+
+void FilaRenderer_setRenderingDeadline(FilaRenderer* renderer, int64_t monotonicClockNanos) {
+    FILA_CAST(Renderer, renderer)->setRenderingDeadline(monotonicClockNanos);
+}
+
 void FilaRenderer_setVsyncTime(FilaRenderer* renderer, uint64_t steadyClockTimeNano) {
     FILA_CAST(Renderer, renderer)->setVsyncTime(steadyClockTimeNano);
 }

@@ -58,11 +58,14 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
     actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
     actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidFence(fence: Fence): Boolean = jsUnsupported("Engine.isValidFence")
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = jsUnsupported("Engine.isValidSkinningBuffer")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = jsUnsupported("Engine.isValidMorphTargetBuffer")
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = jsEngine.isValidIndirectLight(ibl.jsIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = jsEngine.isValidMaterial(material.jsMaterial)
@@ -73,6 +76,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidSkybox(skybox: Skybox): Boolean = jsEngine.isValidSkybox(skybox.jsSkybox)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = jsEngine.isValidColorGrading(colorGrading.jsColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = jsEngine.isValidTexture(texture.jsTexture)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidStream(stream: Stream): Boolean = jsUnsupported("Engine.isValidStream")
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
@@ -144,6 +148,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.destroyScene(scene.jsScene)
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — fences are not bound in filament.js.")
     actual fun createFence(): Fence =
         jsUnsupported("Engine.createFence", "Fences gate GPU/CPU sync, which filament.js does not expose.")
 
@@ -232,6 +237,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     // so the common getter/setter round-trip works.
     private var _paused: Boolean = false
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
     actual var paused: Boolean
         get() = _paused
         set(value) { _paused = value }
