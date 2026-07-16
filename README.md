@@ -15,8 +15,8 @@
 > [!NOTE]
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
-> [!WARNING]
-> **Pre-release (`0.1.3-beta`).** This is pre-1.0 software and public APIs may still change between releases — the JVM bindings run on Project Panama (FFM, **requires JDK 22+**). Pin a specific version and read the [release notes](https://github.com/Erkko68/filament-kmp/releases) before upgrading.
+> [!NOTE]
+> **Pre-1.0 (`0.2.0`).** Major development and internal repository restructuring are done and the project is on track to stability, but public APIs may still change between minor releases while we track upstream Filament — read the [changelog](CHANGELOG.md) before upgrading. See [Versioning & stability](#versioning--stability). The JVM bindings run on Project Panama (FFM, **requires JDK 22+**).
 
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web (JS & Wasm)**, with first-class **Compose Multiplatform** integration.
 
@@ -64,7 +64,7 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.1.3-beta03")
+            implementation("io.github.erkko68.filament:filament-compose:0.2.0")
         }
     }
 }
@@ -83,6 +83,16 @@ For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop
 | `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
 
 All published under `io.github.erkko68.filament`. The Desktop/JVM bindings (Project Panama / FFM) ship as `io.github.erkko68.filament-ffm:filament-ffm` and are pulled in automatically, with the natives in per-platform `filament-ffm-runtime-<os>-<arch>` jars — all of them by default, or only your platform's if your build declares os/arch attributes (see [java/README.md](java/README.md)). See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
+
+## Versioning & stability
+
+Releases are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`):
+
+- **`0.X.0` (minor)** — each new upstream **Filament feature release** (1.73 → 1.74 → …) ships as a minor bump, together with any wrapper API additions or changes accumulated since the last one. Pre-1.0, breaking wrapper API changes may land here; they are always listed in the [changelog](CHANGELOG.md).
+- **`0.0.X` (patch)** — bug fixes only: upstream Filament point releases (e.g. 1.73.1) and fixes in the wrapper itself. Safe to pick up without reading anything.
+- **`1.0.0` (major)** — will be tagged when the project reaches maturity: a stabilized public API, the known issue backlog worked down, and at least a year of production use behind it. From then on, breaking changes only land in major releases.
+
+All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term: it tracks upstream Filament releases as they are published (see [docs/upgrading-filament.md](docs/upgrading-filament.md) for the process) and is developed against a real downstream consumer, [HexonKMP](https://github.com/Erkko68/HexonKMP). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
 
 ## API strategy
 

@@ -21,7 +21,7 @@ body:
     id: lib-version
     attributes:
       label: Filament KMP version
-      placeholder: "e.g. 0.1.2-beta03"
+      placeholder: "e.g. 0.2.0"
     validations: { required: true }
   - type: input
     id: fila-version

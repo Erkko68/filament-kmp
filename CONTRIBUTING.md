@@ -2,7 +2,7 @@
 
 Thanks for helping out! Filament KMP is a **Kotlin Multiplatform wrapper** around
 [Google Filament](https://github.com/google/filament), with first-class Compose
-Multiplatform support across Android, iOS, JVM/Desktop and Web. This guide covers how the
+Multiplatform support across Android, iOS, JVM/Desktop and Web (JS & Wasm). This guide covers how the
 project is built, where a given problem belongs, and how to get changes merged.
 
 ## Wrapper philosophy — is this our bug or Filament's?
@@ -25,7 +25,7 @@ label so we can track it (and patch our prebuilts if needed).
 | Path | What it is |
 |---|---|
 | `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`) — `commonMain` + per-target actuals. |
-| `js/` | Kotlin/JS externals, **generated at build time** by Karakum from `filament.d.ts` (+ patches in `js/patches/`). |
+| `web/` | Hand-maintained Kotlin externals over Filament.js (embind), vendored in `web/src/webMain` and shared by the `js` and `wasmJs` targets; carried engine patches live in `web/patches/upstream/` (`web/README.md`). |
 | `c/`, `java/`, `build-logic/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |
@@ -46,11 +46,12 @@ Filament binaries automatically:
 If you intentionally change the public API of a `:kotlin:*` module, run `./gradlew apiDump`
 and commit the updated `<module>/api/` files with your change — `apiCheck` fails otherwise.
 
-- **Web** externals are generated from `prebuilts/web/filament.d.ts`; regenerate with
-  `./gradlew :js:generateJsExternals`.
+- **Web** externals are hand-maintained Kotlin sources in `web/src/webMain`, shared by the
+  `js` and `wasmJs` targets — edit them directly and run `scripts/dev/check-js-bindings.sh`
+  to cross-check against upstream's embind surface (see `web/README.md`).
 - **Rebuilding the Filament prebuilts** (rarely needed — only to patch the engine) requires
   the toolchains in Filament's `BUILDING.md` (emscripten is pinned). When we ship a local
-  engine patch ahead of an upstream release, it's recorded under `js/patches/upstream/`.
+  engine patch ahead of an upstream release, it's recorded under `web/patches/upstream/`.
 - **Bumping `filaVersion`** (in `gradle.properties`): delete `prebuilts/*` and `include/` so
   they re-download, then run the cross-checks in `scripts/README.md`
   (`check-js-bindings.sh`, `check-common-api.sh`) to catch binding drift.
@@ -61,6 +62,22 @@ This wrapper mirrors Filament's public API. New `commonMain` surface should foll
 Android Java API (the canonical Kotlin-facing surface); JS externals must match the embind
 surface in upstream `web/filament-js/jsbindings.cpp`. The `scripts/dev/check-*.sh` scripts
 report gaps — run them when adding bindings or bumping `filaVersion`.
+
+## Versioning & releases
+
+Versions are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`), and all
+`io.github.erkko68.filament:*` artifacts share one version:
+
+- **minor (`0.X.0`)** — a new upstream Filament feature release (1.73 → 1.74) plus any
+  wrapper API changes since the last one; pre-1.0, breaking changes may land here.
+- **patch (`0.0.X`)** — bug fixes only: upstream Filament point releases (e.g. 1.73.1) or
+  wrapper-only fixes.
+- **`1.0.0`** — tagged when the public API stabilizes; breaking changes then require a
+  major bump.
+
+Every user-visible change needs a one-line entry under `[Unreleased]` in
+[CHANGELOG.md](CHANGELOG.md). Cutting a release is a maintainer task — see
+[.github/workflows/README.md](.github/workflows/README.md).
 
 ## Commit & PR conventions
 

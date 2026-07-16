@@ -64,8 +64,8 @@ The publish workflow is a two-phase pipeline:
 ```bash
 # 1. Bump libVersion in gradle.properties + the samples version catalog, commit.
 # 2. Tag (no `v` prefix — the workflow's tag filter is [0-9]*).
-git tag -a 0.1.0-beta02 -m "Release 0.1.0-beta02"
-git push origin 0.1.0-beta02
+git tag -a 0.2.0 -m "Release 0.2.0"
+git push origin 0.2.0
 ```
 
 The tag's name becomes the published version (passed to Gradle as `-PlibVersion=${tag}`),
