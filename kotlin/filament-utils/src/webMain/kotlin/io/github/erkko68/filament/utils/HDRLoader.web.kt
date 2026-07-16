@@ -1,6 +1,9 @@
 package io.github.erkko68.filament.utils
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 actual object HDRLoader {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js exposes no Radiance/RGBE decoder.")
     actual fun createTexture(
         engine: io.github.erkko68.filament.Engine,
         buffer: ByteArray,

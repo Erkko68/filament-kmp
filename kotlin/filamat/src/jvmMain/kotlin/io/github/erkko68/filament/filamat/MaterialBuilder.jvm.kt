@@ -5,7 +5,10 @@ import io.github.erkko68.filament.confined
 import io.github.erkko68.filament.cstr
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — runtime material compilation is not available on web; precompile .filamat assets instead.")
 actual class MaterialBuilder actual constructor() {
     private var nativeHandle: MemorySegment? =
         FilamentC.FilaMaterialBuilder_create() ?: throw IllegalStateException("Failed to create MaterialBuilder")

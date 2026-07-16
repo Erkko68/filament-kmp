@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 // TODO(js): SkinningBuffer is not bound in upstream jsbindings.cpp (v1.71.5); skinning
 // runs through RenderableManager.Builder. The actual stores Builder inputs so
 // common-tests reading `boneCount` pass.
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unbound in filament.js — Builder.build throws and setBonesAt is a silent no-op; glTF skinning still works through gltfio.")
 actual class SkinningBuffer internal constructor(
     internal val jsSkinningBuffer: Any? = null,
     actual val boneCount: Int = 0,

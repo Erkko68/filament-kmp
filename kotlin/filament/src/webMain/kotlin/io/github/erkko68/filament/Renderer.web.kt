@@ -95,6 +95,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         jsRenderer.renderView(view.jsView)
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.copyFrame is not bound in filament.js.")
     actual fun copyFrame(
         dstSwapChain: SwapChain,
         dstViewport: Viewport,
@@ -104,6 +105,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         // TODO(web): Renderer.copyFrame is not registered in jsbindings.cpp — no-op.
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     actual fun readPixels(
         xoffset: Int,
         yoffset: Int,
@@ -114,6 +116,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         // TODO(web): Renderer.readPixels is not registered in jsbindings.cpp — no-op.
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     actual fun readPixels(
         renderTarget: RenderTarget,
         xoffset: Int,

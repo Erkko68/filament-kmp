@@ -5,11 +5,14 @@ import io.github.erkko68.filament.Texture
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import com.google.android.filament.utils.HDRLoader as AndroidHDRLoader
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 actual object HDRLoader {
 
     init { com.google.android.filament.utils.Utils.init() }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js exposes no Radiance/RGBE decoder.")
     actual fun createTexture(engine: Engine, buffer: ByteArray, internalFormat: Texture.InternalFormat): Texture? {
         val byteBuffer = ByteBuffer.allocateDirect(buffer.size).apply {
             order(ByteOrder.nativeOrder())

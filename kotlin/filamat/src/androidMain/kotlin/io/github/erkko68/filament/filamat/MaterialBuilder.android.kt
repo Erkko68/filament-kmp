@@ -2,7 +2,10 @@ package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import com.google.android.filament.filamat.MaterialBuilder as AndroidMaterialBuilder
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — runtime material compilation is not available on web; precompile .filamat assets instead.")
 actual class MaterialBuilder actual constructor() {
     private val builder = AndroidMaterialBuilder()
 

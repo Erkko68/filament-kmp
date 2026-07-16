@@ -5,7 +5,10 @@ import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.filamat.MaterialPackage
 import io.github.erkko68.filament.filamat.cinterop.*
 import kotlinx.cinterop.*
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — runtime material compilation is not available on web; precompile .filamat assets instead.")
 actual class MaterialBuilder actual constructor() {
     private val nativeHandle = FilaMaterialBuilder_create() ?: throw IllegalStateException("Failed to create MaterialBuilder")
 

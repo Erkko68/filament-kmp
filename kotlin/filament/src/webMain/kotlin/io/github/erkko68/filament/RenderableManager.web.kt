@@ -196,6 +196,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
 
     // TODO(js): non-indexed setGeometryAt is not exposed in jsbindings.cpp as of
     // Filament 1.71.5 (only the indexed overload is bound). Web/WASM can't reach this.
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed setGeometryAt overload.")
     actual fun setGeometryAt(
         instance: EntityInstance,
         primitiveIndex: Int,
@@ -347,18 +348,21 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
 
         // TODO(js): non-indexed (attribute-less / procedural) geometry overloads are not
         // bound in jsbindings.cpp as of Filament 1.71.5 — only the indexed overloads exist.
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
             throw UnsupportedOperationException(
                 "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
             )
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder {
             throw UnsupportedOperationException(
                 "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
             )
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         actual fun geometryType(type: GeometryType): Builder {
             // GeometryType isn't bound as a JS enum upstream — pass the ordinal.
             // Filament's C++ enum order: DYNAMIC=0, STATIC_BOUNDS=1, STATIC=2.
@@ -441,6 +445,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js only binds the bone-count skinning overload; glTF skinning works through gltfio.")
         actual fun skinning(
             boneCount: Int,
             bones: FloatArray
@@ -448,6 +453,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js; glTF skinning works through gltfio.")
         actual fun skinning(
             skinningBuffer: SkinningBuffer,
             boneCount: Int,
@@ -456,6 +462,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js only binds a boolean enable, so the target count is reduced to targetCount > 0.")
         actual fun morphing(targetCount: Int): Builder {
             // The JS Builder's morphing() takes only a boolean enable — the per-target
             // count overload isn't bound. Pass `enable = (count > 0)`.
@@ -463,6 +470,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — MorphTargetBuffer itself is unbound in filament.js; glTF morphing works through gltfio.")
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder {
             return this
         }
@@ -480,6 +488,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js.")
         actual fun enableSkinningBuffers(enabled: Boolean): Builder {
             // TODO(js): not exposed in the JS Builder; SkinningBuffer itself isn't
             // bound, so the underlying API is unreachable on web.

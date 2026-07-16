@@ -5,6 +5,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import com.google.android.filament.SkinningBuffer as AndroidSkinningBuffer
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unbound in filament.js — Builder.build throws and setBonesAt is a silent no-op; glTF skinning still works through gltfio.")
 actual class SkinningBuffer internal constructor(val nativeSkinningBuffer: AndroidSkinningBuffer) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidSkinningBuffer.Builder()

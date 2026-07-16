@@ -32,6 +32,7 @@ private external interface JsMaterialInstanceExt : JsAny  {
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstance) {
     private val ext: JsMaterialInstanceExt get() = jsMaterialInstance.unsafeCast<JsMaterialInstanceExt>()
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "getter throws UnsupportedOperationException — filament.js does not expose MaterialInstance.getMaterial.")
     actual val material: Material
         get() = jsUnsupported("MaterialInstance.getMaterial", "filament.js does not expose MaterialInstance.getMaterial.")
 
@@ -398,6 +399,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     actual enum class StencilOperation { KEEP, ZERO, REPLACE, INCR_CLAMP, INCR_WRAP, DECR_CLAMP, DECR_WRAP, INVERT }
     actual enum class StencilFace { FRONT, BACK, FRONT_AND_BACK }
     actual companion object {
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the source instance unchanged; filament.js does not expose MaterialInstance duplication.")
         actual fun duplicate(
             other: MaterialInstance,
             name: String?

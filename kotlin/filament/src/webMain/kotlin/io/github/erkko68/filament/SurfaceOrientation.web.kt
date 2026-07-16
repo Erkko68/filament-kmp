@@ -42,6 +42,7 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js's extension wrapper exposes no tangents(buffer, stride) entry point.")
         actual fun tangents(buffer: FloatArray, stride: Int): Builder {
             // jsbindings.cpp binds `_tangents(intptr_t, int stride)`, but extensions.js
             // wraps only `_normals`, `_uvs`, `_positions` into user-facing builder

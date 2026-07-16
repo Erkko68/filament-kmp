@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
 actual class Stream internal constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class StreamType {
         NATIVE,

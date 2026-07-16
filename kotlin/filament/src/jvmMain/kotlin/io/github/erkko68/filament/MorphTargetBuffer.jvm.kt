@@ -3,6 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "Builder.build throws UnsupportedOperationException — the standalone API is unbound in filament.js; gltfio handles glTF morph targets internally.")
 actual class MorphTargetBuffer internal constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilamentC.FilaMorphTargetBufferBuilder_create()

@@ -313,6 +313,7 @@ actual class View(internal val jsView: JSView) {
             if (value != null) jsView.setRenderTarget(value.jsRenderTarget)
         }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op unless the filament.js build binds setShadowType (stock upstream prebuilts do not) — web stays on PCF shadows.")
     actual var shadowType: ShadowType
         get() = _shadowType
         set(value) {
@@ -381,6 +382,7 @@ actual class View(internal val jsView: JSView) {
 
     // Only setters are bound on JS for these three; the getters stay tracked locally.
     private var _isFrustumCullingEnabled: Boolean = true
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setter is a silent no-op — setFrustumCullingEnabled is not bound in filament.js; the getter reflects the locally tracked value.")
     actual var isFrustumCullingEnabled: Boolean
         get() = _isFrustumCullingEnabled
         set(value) {

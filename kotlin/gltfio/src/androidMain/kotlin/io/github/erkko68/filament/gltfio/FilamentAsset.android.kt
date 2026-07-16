@@ -3,6 +3,8 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentAsset internal constructor(
     internal val nativeObject: com.google.android.filament.gltfio.FilamentAsset
@@ -41,8 +43,10 @@ actual class FilamentAsset internal constructor(
 
     actual fun getEntityCount(): Int = nativeObject.entities.size
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getAssetInstanceCount(): Int = resolveKnownInstances().size
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getAssetInstances(): Array<FilamentInstance> = resolveKnownInstances()
 
     actual fun getBoundingBox(): Box {
@@ -57,6 +61,7 @@ actual class FilamentAsset internal constructor(
 
     actual fun getExtras(entity: Entity): String? = nativeObject.getExtras(entity)
     
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     actual fun getMorphTargetNames(entity: Entity): Array<String> = nativeObject.getMorphTargetNames(entity)
     
     actual fun getResourceUris(): Array<String> = nativeObject.resourceUris

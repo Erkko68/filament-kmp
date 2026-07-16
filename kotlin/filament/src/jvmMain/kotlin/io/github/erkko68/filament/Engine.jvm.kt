@@ -164,10 +164,13 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilamentC.FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilamentC.FilaEngine_isValidView(nativeHandle, view.nativeHandle)
     actual fun isValidScene(scene: Scene): Boolean = FilamentC.FilaEngine_isValidScene(nativeHandle, scene.nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidFence(fence: Fence): Boolean = FilamentC.FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilamentC.FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilamentC.FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilamentC.FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilamentC.FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilamentC.FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
     actual fun isValidMaterial(material: Material): Boolean = FilamentC.FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
@@ -177,6 +180,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilamentC.FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
     actual fun isValidTexture(texture: Texture): Boolean = FilamentC.FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilamentC.FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidStream(stream: Stream): Boolean = FilamentC.FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilamentC.FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
 
@@ -222,6 +226,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         scene.nativeHandle = null
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — fences are not bound in filament.js.")
     actual fun createFence(): Fence = Fence(FilamentC.FilaEngine_createFence(nativeHandle))
     actual fun destroyFence(fence: Fence) {
         FilamentC.FilaEngine_destroyFence(nativeHandle, fence.nativeHandle)
@@ -282,6 +287,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     actual fun flushAndWait() { FilamentC.FilaEngine_flushAndWait(nativeHandle, 1_000_000_000L) }
     actual fun flushAndWait(timeout: Long): Boolean = FilamentC.FilaEngine_flushAndWait(nativeHandle, timeout)
     actual fun flush() = FilamentC.FilaEngine_flush(nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
     actual var paused: Boolean
         get() = FilamentC.FilaEngine_isPaused(nativeHandle)
         set(value) { FilamentC.FilaEngine_setPaused(nativeHandle, value) }

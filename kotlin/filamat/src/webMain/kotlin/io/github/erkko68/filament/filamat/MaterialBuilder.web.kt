@@ -1,10 +1,13 @@
 package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
+import io.github.erkko68.filament.FilamentPlatform
+import io.github.erkko68.filament.PlatformGap
 
 // MaterialBuilder is NOT available in JS runtime bindings. Material compilation (filamat) is an
 // offline process. On the JS/Web target, materials must be pre-compiled with `matc` and loaded as
 // .filamat binary packages via `Material.Builder().payload(bytes).build(engine)`.
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — runtime material compilation is not available on web; precompile .filamat assets instead.")
 actual class MaterialBuilder {
     init {
         throw UnsupportedOperationException(

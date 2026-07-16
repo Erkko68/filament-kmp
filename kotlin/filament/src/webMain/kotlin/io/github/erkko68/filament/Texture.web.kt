@@ -277,6 +277,7 @@ actual class Texture(val jsTexture: JSTexture) {
             return JSTexture.isTextureFormatMipmappable(engine.jsEngine, mapInternalFormat(format))
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns false — not bound in filament.js.")
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean {
             // TODO(js): isTextureSwizzleSupported not bound in jsbindings.cpp.
             return false

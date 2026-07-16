@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.MorphTargetBuffer as AndroidMorphTargetBuffer
 
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "Builder.build throws UnsupportedOperationException — the standalone API is unbound in filament.js; gltfio handles glTF morph targets internally.")
 actual class MorphTargetBuffer internal constructor(val nativeMorphTargetBuffer: AndroidMorphTargetBuffer) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidMorphTargetBuffer.Builder()
