@@ -9,8 +9,6 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.web.`gltfio_FilamentAsset` as JSFilamentAsset
 import io.github.erkko68.filament.web.Entity as JSEntity
 import io.github.erkko68.filament.web.Aabb
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentAsset(
     internal val jsAsset: JSFilamentAsset,
@@ -50,12 +48,10 @@ actual class FilamentAsset(
         return jsAsset.getEntities().size
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getAssetInstanceCount(): Int {
         return jsAsset.getAssetInstances().size
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getAssetInstances(): Array<FilamentInstance> {
         val jsInstances = jsAsset.getAssetInstances()
         return Array(jsInstances.size) { i -> FilamentInstance(jsInstances[i]) }
@@ -85,10 +81,9 @@ actual class FilamentAsset(
         return jsAsset.getExtras(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     actual fun getMorphTargetNames(entity: Entity): Array<String> {
-        // getMorphTargetNames is not available in JS bindings
-        return emptyArray()
+        val names = jsAsset.getMorphTargetNames(EntityManager.jsEntityOf(entity))
+        return Array(names.size) { names[it].toString() }
     }
 
     actual fun getResourceUris(): Array<String> {

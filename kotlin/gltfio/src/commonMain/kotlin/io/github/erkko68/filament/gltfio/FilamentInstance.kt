@@ -1,8 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 /**
  * FilamentInstance provides access to a hierarchy of entities instanced from a glTF asset.
@@ -82,11 +80,9 @@ expect class FilamentInstance {
     fun detachSkin(skinIndex: Int, target: Int)
 
     /** Gets the number of joints in the skin at [skinIndex]. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     fun getJointCountAt(skinIndex: Int): Int
 
     /** Gets the joint entities of the skin at [skinIndex]. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     fun getJointsAt(skinIndex: Int): IntArray
 
     /**
@@ -98,7 +94,6 @@ expect class FilamentInstance {
     fun applyMaterialVariant(variantIndex: Int)
 
     /** Gets all material instances of this instance. These are already bound to renderables. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     fun getMaterialInstances(): Array<io.github.erkko68.filament.MaterialInstance>
 
     /** Gets the names of all material variants declared in the asset, in variant-index order. */

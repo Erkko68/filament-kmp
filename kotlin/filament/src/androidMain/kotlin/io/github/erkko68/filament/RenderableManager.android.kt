@@ -35,19 +35,16 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
             nativeBuilder.geometry(index, type.toNative(), vb.nativeVertexBuffer, offset, count)
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder {
             nativeBuilder.geometry(index, type.toNative(), vb.nativeVertexBuffer)
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         actual fun geometryType(type: GeometryType): Builder {
             nativeBuilder.geometryType(type.toNative())
             return this
@@ -116,7 +113,6 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js only binds the bone-count skinning overload; glTF skinning works through gltfio.")
         actual fun skinning(boneCount: Int, bones: FloatArray): Builder {
             // Bone matrices are read native-side via GetDirectBufferAddress; heap-backed
             // FloatBuffer.wrap silently fails. Copy to a direct, native-order buffer.
@@ -127,25 +123,21 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js; glTF skinning works through gltfio.")
         actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder {
             nativeBuilder.skinning(skinningBuffer.nativeSkinningBuffer, boneCount, offset)
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js.")
         actual fun enableSkinningBuffers(enabled: Boolean): Builder {
             nativeBuilder.enableSkinningBuffers(enabled)
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js only binds a boolean enable, so the target count is reduced to targetCount > 0.")
         actual fun morphing(targetCount: Int): Builder {
             nativeBuilder.morphing(targetCount)
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — MorphTargetBuffer itself is unbound in filament.js; glTF morphing works through gltfio.")
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder {
             nativeBuilder.morphing(morphTargetBuffer.nativeMorphTargetBuffer)
             return this
@@ -229,7 +221,6 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
         nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toNative(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, count)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed setGeometryAt overload.")
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
         nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toNative(), vb.nativeVertexBuffer, offset, count)
     

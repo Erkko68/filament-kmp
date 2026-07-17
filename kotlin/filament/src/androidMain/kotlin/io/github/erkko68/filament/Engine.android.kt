@@ -188,13 +188,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidRenderer(renderer: Renderer): Boolean = nativeEngine.isValidRenderer(renderer.nativeRenderer)
     actual fun isValidView(view: View): Boolean = nativeEngine.isValidView(view.nativeView)
     actual fun isValidScene(scene: Scene): Boolean = nativeEngine.isValidScene(scene.nativeScene)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = nativeEngine.isValidSkinningBuffer(skinningBuffer.nativeSkinningBuffer)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = nativeEngine.isValidMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = nativeEngine.isValidMaterial(material.nativeMaterial)
@@ -231,7 +228,6 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun createScene(): Scene = Scene(nativeEngine.createScene())
     actual fun destroyScene(scene: Scene) { nativeEngine.destroyScene(scene.nativeScene) }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — fences are not bound in filament.js.")
     actual fun createFence(): Fence = Fence(nativeEngine.createFence())
     actual fun destroyFence(fence: Fence) { nativeEngine.destroyFence(fence.nativeFence) }
 
@@ -258,7 +254,7 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
     actual fun flush() = nativeEngine.flush()
     actual fun hasUnrecoverableFailure(): Boolean = nativeEngine.hasUnrecoverableFailure()
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     actual var paused: Boolean
         get() = nativeEngine.isPaused
         set(value) { nativeEngine.isPaused = value }

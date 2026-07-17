@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
  *   open floor        caster        shadow
  *   x ≈ [-1.5,-0.7]   [-0.5,0.5]    [0.6,1.4]      (world units, y=0 plane)
  */
-@IgnoreJs // Renderer.readPixels is a no-op on web (not bound in jsbindings.cpp).
+@IgnoreJs // WebGL readbacks only complete after yielding to the browser event loop, which synchronous karma tests never do — readPixels callbacks never fire here.
 class FrameSemanticsTest : RenderingTestFixture() {
 
     private fun litScene(engine: Engine, probe: FrameProbe, shadows: Boolean = true, casterCz: Float = 0f): Entity {

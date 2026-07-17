@@ -9,13 +9,8 @@ import io.github.erkko68.filament.web.`gltfio_FilamentInstance` as JSFilamentIns
 import io.github.erkko68.filament.web.Vector
 import io.github.erkko68.filament.web.Entity
 import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
-    private val skinJointCounts = mutableMapOf<Int, Int>()
-    private val skinJoints = mutableMapOf<Int, IntArray>()
-
     actual fun getRoot(): Int {
         val jsEntity = jsInstance.getRoot()
         val id = jsEntity.getId().toInt()
@@ -74,21 +69,24 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         jsInstance.detachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     actual fun getJointCountAt(skinIndex: Int): Int {
-        return skinJointCounts[skinIndex] ?: 0
+        return jsInstance.getJointCountAt(skinIndex.toDouble()).toInt()
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     actual fun getJointsAt(skinIndex: Int): IntArray {
-        return skinJoints[skinIndex] ?: IntArray(0)
+        val joints = jsInstance.getJointsAt(skinIndex.toDouble())
+        return IntArray(joints.size) { i ->
+            val jsEntity = joints[i]
+            val id = jsEntity.getId().toInt()
+            EntityManager.register(id, jsEntity)
+            id
+        }
     }
 
     actual fun applyMaterialVariant(variantIndex: Int) {
         jsInstance.applyMaterialVariant(variantIndex.toDouble())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getMaterialInstances(): Array<MaterialInstance> {
         val vector = jsInstance.getMaterialInstances()
         return Array(vector.size().toInt()) { i ->

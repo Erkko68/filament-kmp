@@ -1,11 +1,12 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
 external class MaterialInstance : JsAny {
 fun getName(): String
+fun getMaterial(): Material
+fun duplicate(): MaterialInstance
+fun duplicateNamed(name: String): MaterialInstance
 fun setBoolParameter(name: String, value: Boolean): Unit
 fun setFloatParameter(name: String, value: Double): Unit
 fun setFloat2Parameter(name: String, value: float2): Unit
@@ -18,6 +19,8 @@ fun setColor3Parameter(name: String, ctype: RgbType, value: float3): Unit
 fun setColor4Parameter(name: String, ctype: RgbaType, value: float4): Unit
 fun setPolygonOffset(scale: Double, constant: Double): Unit
 fun setMaskThreshold(threshold: Double): Unit
+fun setScissor(left: Double, bottom: Double, width: Double, height: Double): Unit
+fun unsetScissor(): Unit
 fun setDoubleSided(doubleSided: Boolean): Unit
 fun setCullingMode(mode: CullingMode): Unit
 fun setColorWrite(enable: Boolean): Unit

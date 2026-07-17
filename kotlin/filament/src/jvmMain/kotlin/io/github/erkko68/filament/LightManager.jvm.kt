@@ -137,7 +137,6 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
 
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
         actual fun castShadows(enable: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_castShadows(nativeBuilder, enable) }
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder = apply { FilamentC.FilaLightManagerBuilder_shadowOptions(nativeBuilder, options.nativeOptions) }
         actual fun castLight(enabled: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_castLight(nativeBuilder, enabled) }
         actual fun position(x: Float, y: Float, z: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_position(nativeBuilder, x, y, z) }
@@ -157,7 +156,6 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
         }
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun getComponentCount(): Int = FilamentC.FilaLightManager_getComponentCount(nativeLightManager).toInt()
     actual fun hasComponent(entity: Entity): Boolean = FilamentC.FilaLightManager_hasComponent(nativeLightManager, entity)
     actual fun getInstance(entity: Entity): EntityInstance = FilamentC.FilaLightManager_getInstance(nativeLightManager, entity)

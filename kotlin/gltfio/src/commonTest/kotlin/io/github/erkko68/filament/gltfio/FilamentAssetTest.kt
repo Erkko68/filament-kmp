@@ -2,7 +2,6 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -80,7 +79,6 @@ class FilamentAssetTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // FilamentAsset.getMorphTargetNames is a hardcoded empty stub in the web wrapper (not exposed by filament.js).
     fun testMorphTargetNames() {
         val bytes = TestGlb.getAnimatedMorphCubeGlbBytes()
         if (bytes.isEmpty()) return
@@ -145,7 +143,6 @@ class FilamentAssetTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // getAssetInstances/getAssetInstanceCount hit an unregistered vector return type (embind "unbound types") in the web prebuilt.
     fun testAssetInstanceAndEngine() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return

@@ -4,6 +4,7 @@ import io.github.erkko68.filament.web.interop.readNumbersInto
 
 import io.github.erkko68.filament.web.LightManager_Instance as JSLightManagerInstance
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
@@ -12,10 +13,16 @@ import io.github.erkko68.filament.web.`LightManager_Builder` as JSLightManagerBu
 import io.github.erkko68.filament.web.LightManager_Type
 import io.github.erkko68.filament.web.Entity as JSEntity
 
+// ShadowOptions fields not emitted into the generated option external.
+private external interface ShadowOptionsExt : JsAny {
+    var lispsm: Boolean?
+    var shadowBulbRadius: Double?
+    var transform: JsAny?
+}
+
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun getComponentCount(): Int = jsUnsupported("LightManager.getComponentCount")
+    actual fun getComponentCount(): Int = jsLightManager.getComponentCount().toInt()
 
     // Upstream LightManager binding doesn't expose `destroy(Entity)` —
     // components are usually torn down via `engine.destroyEntity`, but we
@@ -208,17 +215,29 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder {
-            // TODO(js): no-op on JS. jsbindings.cpp registers the ShadowOptions
-            // value_object with a `transform` field typed as mat4f, but the
-            // only mat4 type in the embind registry is `flatmat4` — a wrapper
-            // struct registered under a different RTTI. embind looks up mat4f,
-            // finds nothing, and throws "unbound types" for any input. The
-            // upstream `Filament.shadowOptions(overrides)` wrapper itself
-            // omits `transform`/`lispsm`/`shadowBulbRadius` from its defaults
-            // because no JS caller can populate them. Until upstream registers
-            // mat4f (or changes the field to flatmat4), this is unreachable.
+            val js = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.LightManager_ShadowOptions>()
+            js.mapSize = options.mapSize.toDouble()
+            js.shadowCascades = options.shadowCascades.toDouble()
+            js.cascadeSplitPositions = options.cascadeSplitPositions.toJsNumbers()
+            val vsm = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.LightManager_ShadowOptions_Vsm>()
+            vsm.elvsm = options.elvsm
+            vsm.blurWidth = options.blurWidth.toDouble()
+            js.vsm = vsm
+            js.constantBias = options.constantBias.toDouble()
+            js.normalBias = options.normalBias.toDouble()
+            js.shadowFar = options.shadowFar.toDouble()
+            js.shadowNearHint = options.shadowNearHint.toDouble()
+            js.shadowFarHint = options.shadowFarHint.toDouble()
+            js.stable = options.stable
+            js.screenSpaceContactShadows = options.screenSpaceContactShadows
+            js.stepCount = options.stepCount.toDouble()
+            js.maxShadowDistance = options.maxShadowDistance.toDouble()
+            val ext = js.unsafeCast<ShadowOptionsExt>()
+            ext.lispsm = options.lispsm
+            ext.shadowBulbRadius = options.shadowBulbRadius.toDouble()
+            ext.transform = options.transform.toJsNumbers()
+            jsBuilder.shadowOptions(js)
             return this
         }
 

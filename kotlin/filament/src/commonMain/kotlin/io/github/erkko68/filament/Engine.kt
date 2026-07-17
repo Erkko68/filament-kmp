@@ -349,8 +349,7 @@ expect class Engine {
     fun isValidView(view: View): Boolean
     /** Validate a Scene. @return true if valid. */
     fun isValidScene(scene: Scene): Boolean
-    /** Validate a Fence. @return true if valid. @throws UnsupportedOperationException on JS — Fence is unbound on web. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
+    /** Validate a Fence. @return true if valid. */
     fun isValidFence(fence: Fence): Boolean
     /** Validate a RenderTarget. @return true if valid. */
     fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
@@ -358,11 +357,9 @@ expect class Engine {
     fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean
     /** Validate a VertexBuffer. @return true if valid. */
     fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean
-    /** Validate a SkinningBuffer. @return true if valid. @throws UnsupportedOperationException on JS — SkinningBuffer is unbound on web. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
+    /** Validate a SkinningBuffer. @return true if valid. */
     fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
-    /** Validate a MorphTargetBuffer. @return true if valid. @throws UnsupportedOperationException on JS — MorphTargetBuffer is unbound on web. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
+    /** Validate a MorphTargetBuffer. @return true if valid. */
     fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
     /** Validate an IndirectLight. @return true if valid. */
     fun isValidIndirectLight(ibl: IndirectLight): Boolean
@@ -419,8 +416,7 @@ expect class Engine {
     /** Destroy a Scene. */
     fun destroyScene(scene: Scene)
 
-    /** Create a Fence for GPU synchronization. @throws UnsupportedOperationException on JS — fences are unbound on web. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — fences are not bound in filament.js.")
+    /** Create a Fence for GPU synchronization. */
     fun createFence(): Fence
     /** Destroy a Fence. */
     fun destroyFence(fence: Fence)
@@ -473,7 +469,7 @@ expect class Engine {
      */
     fun hasUnrecoverableFailure(): Boolean
     /** Whether rendering is currently paused. Set to pause or resume rendering. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     var paused: Boolean
     /** Deprecated no-op method. */
     fun unprotected()

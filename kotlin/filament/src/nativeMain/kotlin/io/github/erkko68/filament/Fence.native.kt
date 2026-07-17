@@ -5,11 +5,11 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaFence
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unusable — Engine.createFence throws; filament.js exposes no GPU/CPU fence API.")
 actual class Fence internal constructor(internal var nativeHandle: CPointer<FilaFence>?) {
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     actual fun wait(mode: Mode, timeout: Long): FenceStatus {
         val result = FilaFence_wait(nativeHandle, mode.ordinal.toUInt(), timeout.toULong())
         return FenceStatus.values()[result + 1] // ERROR is -1, ordinal 0

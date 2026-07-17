@@ -490,7 +490,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             this@View.nativeView.setRenderTarget(value?.nativeRenderTarget)
         }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op unless the filament.js build binds setShadowType (stock upstream prebuilts do not) — web stays on PCF shadows.")
     actual var shadowType: ShadowType
         get() = this@View.mShadowType
         set(value) {
@@ -546,7 +545,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         }
         set(value) { this@View.nativeView.setMultiSampleAntiAliasingOptions(value.native) }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setter is a silent no-op — setFrustumCullingEnabled is not bound in filament.js; the getter reflects the locally tracked value.")
     actual var isFrustumCullingEnabled: Boolean
         get() = this@View.nativeView.isFrustumCullingEnabled
         set(value) { this@View.nativeView.setFrustumCullingEnabled(value) }

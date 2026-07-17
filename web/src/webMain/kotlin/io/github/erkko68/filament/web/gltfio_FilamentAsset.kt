@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -22,6 +20,7 @@ fun getResourceUris(): js.array.ReadonlyArray<JsString>
 fun getBoundingBox(): Aabb
 fun getName(entity: Entity): String
 fun getExtras(entity: Entity): String
+fun getMorphTargetNames(entity: Entity): js.array.ReadonlyArray<JsString>
 fun getWireframe(): Entity
 fun getEngine(): Engine
 fun releaseSourceData(): Unit

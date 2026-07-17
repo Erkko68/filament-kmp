@@ -6,8 +6,6 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaFilamentInstance
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentInstance {
     public var nativeHandle: CPointer<FilaFilamentInstance>? = null
@@ -65,10 +63,8 @@ actual class FilamentInstance {
         FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toULong(), target.toUInt())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     actual fun getJointCountAt(skinIndex: Int): Int = FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex.toULong()).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     actual fun getJointsAt(skinIndex: Int): IntArray {
         val count = getJointCountAt(skinIndex)
         if (count == 0) return IntArray(0)
@@ -83,7 +79,6 @@ actual class FilamentInstance {
         FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex.toULong())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getMaterialInstances(): Array<io.github.erkko68.filament.MaterialInstance> {
         val count = FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
         if (count == 0) return emptyArray()

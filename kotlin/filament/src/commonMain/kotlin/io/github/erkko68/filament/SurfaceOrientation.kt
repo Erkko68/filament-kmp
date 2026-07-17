@@ -53,7 +53,6 @@ expect class SurfaceOrientation {
          * @param stride Byte offset between consecutive tangents. 0 means tightly packed.
          * @return This Builder instance for method chaining.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js's extension wrapper exposes no tangents(buffer, stride) entry point.")
         fun tangents(buffer: FloatArray, stride: Int = 0): Builder
 
         /**

@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -23,6 +21,7 @@ fun getPrimitiveCount(instance: RenderableManager_Instance): Double
 fun setMaterialInstanceAt(instance: RenderableManager_Instance, primitiveIndex: Double, materialInstance: MaterialInstance): Unit
 fun getMaterialInstanceAt(instance: RenderableManager_Instance, primitiveIndex: Double): MaterialInstance
 fun setGeometryAt(instance: RenderableManager_Instance, primitiveIndex: Double, type: RenderableManager_PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Double, count: Double): Unit
+fun setGeometryNoIndicesAt(instance: RenderableManager_Instance, primitiveIndex: Double, type: RenderableManager_PrimitiveType, vertices: VertexBuffer, offset: Double, count: Double): Unit
 fun setBlendOrderAt(instance: RenderableManager_Instance, primitiveIndex: Double, order: Double): Unit
 fun getEnabledAttributesAt(instance: RenderableManager_Instance, primitiveIndex: Double): Double
 fun getBlendOrderAt(instance: RenderableManager_Instance, primitiveIndex: Double): Double

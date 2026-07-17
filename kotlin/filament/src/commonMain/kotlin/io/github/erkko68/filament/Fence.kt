@@ -3,7 +3,6 @@ package io.github.erkko68.filament
 /**
  * Fence is used to synchronize the application main thread with filament's rendering thread.
  */
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unusable — Engine.createFence throws; filament.js exposes no GPU/CPU fence API.")
 expect class Fence {
     /**
      * Mode controls the behavior of the command stream when calling wait().
@@ -37,6 +36,7 @@ expect class Fence {
      *         FenceStatus.TIMEOUT_EXPIRED if the time out expired, or
      *         FenceStatus.ERROR in other cases.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     fun wait(mode: Mode, timeout: Long): FenceStatus
 
     val nativeObject: Long

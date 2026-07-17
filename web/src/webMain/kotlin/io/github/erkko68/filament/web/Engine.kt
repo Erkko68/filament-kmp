@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -9,6 +7,8 @@ fun execute(): Unit
 fun createCamera(entity: Entity): Camera
 fun createMaterial(urlOrBuffer: BufferReference, options: EngineCreateMaterialOptions = definedExternally): Material
 fun createRenderer(): Renderer
+fun createFence(): Fence
+fun destroyFence(fence: Fence): Unit
 fun createScene(): Scene
 fun createSwapChain(): SwapChain
 fun createTextureFromJpeg(urlOrBuffer: BufferReference, options: JsAny = definedExternally): Texture
@@ -36,6 +36,8 @@ fun destroyColorGrading(colorGrading: ColorGrading): Unit
 fun getCameraComponent(entity: Entity): Camera
 fun getLightManager(): LightManager
 fun destroyVertexBuffer(vertexBuffer: VertexBuffer): Unit
+fun destroySkinningBuffer(skinningBuffer: SkinningBuffer): Unit
+fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Unit
 fun getRenderableManager(): RenderableManager
 fun getSupportedFormatSuffix(suffix: String): Unit
 fun getTransformManager(): TransformManager
@@ -53,6 +55,9 @@ fun hasUnrecoverableFailure(): Boolean
 fun getConfig(): Engine_Config
 fun getEntityManager(): EntityManager
 fun isValidRenderer(renderer: Renderer): Boolean
+fun isValidFence(fence: Fence): Boolean
+fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
+fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
 fun isValidView(view: View): Boolean
 fun isValidScene(scene: Scene): Boolean
 fun isValidIndexBuffer(buffer: IndexBuffer): Boolean

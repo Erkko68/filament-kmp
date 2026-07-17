@@ -88,7 +88,6 @@ actual class Camera internal constructor(val nativeCamera: AndroidCamera) {
         get() = nativeCamera.focusDistance
         set(value) { nativeCamera.focusDistance = value }
     
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns 0.0 — Camera::getFieldOfViewInDegrees is not bound in filament.js.")
     actual fun getFieldOfViewInDegrees(direction: Fov): Double = nativeCamera.getFieldOfViewInDegrees(direction.toAndroid())
 
     actual val entity: Entity get() = nativeCamera.entity

@@ -58,15 +58,14 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
     actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
     actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun isValidFence(fence: Fence): Boolean = jsUnsupported("Engine.isValidFence")
+    actual fun isValidFence(fence: Fence): Boolean = jsEngine.isValidFence(fence.jsFence)
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = jsUnsupported("Engine.isValidSkinningBuffer")
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = jsUnsupported("Engine.isValidMorphTargetBuffer")
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean =
+        jsEngine.isValidSkinningBuffer(skinningBuffer.jsSkinningBuffer)
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean =
+        jsEngine.isValidMorphTargetBuffer(morphTargetBuffer.jsMorphTargetBuffer)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = jsEngine.isValidIndirectLight(ibl.jsIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = jsEngine.isValidMaterial(material.jsMaterial)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean =
@@ -148,11 +147,10 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.destroyScene(scene.jsScene)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — fences are not bound in filament.js.")
-    actual fun createFence(): Fence =
-        jsUnsupported("Engine.createFence", "Fences gate GPU/CPU sync, which filament.js does not expose.")
+    actual fun createFence(): Fence = Fence(jsEngine.createFence())
 
     actual fun destroyFence(fence: Fence) {
+        jsEngine.destroyFence(fence.jsFence)
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
@@ -164,9 +162,11 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        jsEngine.destroySkinningBuffer(skinningBuffer.jsSkinningBuffer)
     }
 
     actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        jsEngine.destroyMorphTargetBuffer(morphTargetBuffer.jsMorphTargetBuffer)
     }
 
     actual fun destroyIndirectLight(ibl: IndirectLight) {
@@ -235,11 +235,11 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
     actual fun hasUnrecoverableFailure(): Boolean = jsEngine.hasUnrecoverableFailure()
 
-    // TODO(js): paused state not bound in upstream jsbindings.cpp — track locally
-    // so the common getter/setter round-trip works.
+    // Engine::setPaused panics on single-threaded builds ("Pause is meant for multi-threaded
+    // platforms"), so it stays unbound on web — track locally for the getter/setter round-trip.
     private var _paused: Boolean = false
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     actual var paused: Boolean
         get() = _paused
         set(value) { _paused = value }
@@ -391,4 +391,11 @@ private fun toJsFeatureLevel(fl: Engine.FeatureLevel): io.github.erkko68.filamen
     Engine.FeatureLevel.FEATURE_LEVEL_1 -> io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_1
     Engine.FeatureLevel.FEATURE_LEVEL_2 -> io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_2
     Engine.FeatureLevel.FEATURE_LEVEL_3 -> io.github.erkko68.filament.web.FeatureLevel.FEATURE_LEVEL_3
+}
+private external interface GlContextWithExtensions : JsAny {
+    fun getExtension(name: String): JsAny?
+}
+
+private external interface WebGLLoseContextExtension : JsAny {
+    fun loseContext()
 }

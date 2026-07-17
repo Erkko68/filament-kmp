@@ -209,12 +209,12 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
         get() = jsCamera.getFocusDistance().toFloat()
         set(value) { jsCamera.setFocusDistance(value.toDouble()) }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns 0.0 — Camera::getFieldOfViewInDegrees is not bound in filament.js.")
     actual fun getFieldOfViewInDegrees(direction: Fov): Double {
-        // Upstream jsbindings.cpp does not bind `Camera::getFieldOfViewInDegrees`,
-        // so we can't recover the FOV from the projection matrix on the JS side
-        // without re-implementing the math. Stubbed to 0.
-        return 0.0
+        val jsFov = when (direction) {
+            Fov.VERTICAL -> Camera_Fov.VERTICAL
+            Fov.HORIZONTAL -> Camera_Fov.HORIZONTAL
+        }
+        return jsCamera.getFieldOfViewInDegrees(jsFov).toDouble()
     }
 
     actual val entity: Entity

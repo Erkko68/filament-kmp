@@ -14,7 +14,6 @@ package io.github.erkko68.filament
  *
  * @see RenderableManager.setSkinningBuffer
  */
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unbound in filament.js — Builder.build throws and setBonesAt is a silent no-op; glTF skinning still works through gltfio.")
 expect class SkinningBuffer {
     /**
      * Builder for creating SkinningBuffer instances.
@@ -50,7 +49,6 @@ expect class SkinningBuffer {
          *
          * @param engine Engine to associate this SkinningBuffer with
          * @return The newly created SkinningBuffer
-         * @throws UnsupportedOperationException on JS — SkinningBuffer is unbound in the web wrapper.
          */
         fun build(engine: Engine): SkinningBuffer
     }

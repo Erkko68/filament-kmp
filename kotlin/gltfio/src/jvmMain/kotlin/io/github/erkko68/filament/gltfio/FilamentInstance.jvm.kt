@@ -10,8 +10,6 @@ import io.github.erkko68.filament.isNullPtr
 import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentInstance internal constructor(var nativeHandle: MemorySegment?) {
     actual constructor() : this(null)
@@ -55,10 +53,8 @@ actual class FilamentInstance internal constructor(var nativeHandle: MemorySegme
     actual fun attachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toLong(), target)
     actual fun detachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toLong(), target)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     actual fun getJointCountAt(skinIndex: Int): Int = FilamentC.FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex.toLong()).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     actual fun getJointsAt(skinIndex: Int): IntArray {
         val count = getJointCountAt(skinIndex)
         if (count == 0) return IntArray(0)
@@ -71,7 +67,6 @@ actual class FilamentInstance internal constructor(var nativeHandle: MemorySegme
 
     actual fun applyMaterialVariant(variantIndex: Int) = FilamentC.FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex.toLong())
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual fun getMaterialInstances(): Array<MaterialInstance> {
         val count = FilamentC.FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
         if (count == 0) return emptyArray()

@@ -1,6 +1,5 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -126,7 +125,6 @@ class EngineTest {
     }
 
     @Test
-    @IgnoreJs // Engine.createFence is unsupported on the web wrapper (filament.js doesn't expose fences).
     fun testFenceLifecycle() {
         Filament.init()
         val engine = Engine.create(Engine.Backend.NOOP)

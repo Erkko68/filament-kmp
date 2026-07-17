@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -8,6 +6,10 @@ external class View : JsAny {
 fun pick(x: Double, y: Double, cb: PickCallback): Unit
 fun setCamera(camera: Camera): Unit
 fun setColorGrading(colorGrading: ColorGrading): Unit
+fun getColorGrading(): ColorGrading?
+fun setDithering(dithering: View_Dithering): Unit
+fun setDynamicResolutionOptions(options: View_DynamicResolutionOptions): Unit
+fun setRenderQuality(quality: View_RenderQuality): Unit
 fun setScene(scene: Scene): Unit
 fun setViewport(viewport: float4): Unit
 fun setVisibleLayers(select: Double, values: Double): Unit
@@ -36,6 +38,15 @@ fun isStencilBufferEnabled(): Boolean
 fun setTransparentPickingEnabled(enabled: Boolean): Unit
 fun isTransparentPickingEnabled(): Boolean
 fun setShadowingEnabled(enabled: Boolean): Unit
+fun isShadowingEnabled(): Boolean
+fun setShadowType(type: View_ShadowType): Unit
+fun getShadowType(): View_ShadowType
+fun setVsmShadowOptions(options: View_VsmShadowOptions): Unit
+fun getVsmShadowOptions(): View_VsmShadowOptions
+fun setSoftShadowOptions(options: View_SoftShadowOptions): Unit
+fun getSoftShadowOptions(): View_SoftShadowOptions
+fun setFrustumCullingEnabled(enabled: Boolean): Unit
+fun isFrustumCullingEnabled(): Boolean
 fun setFrontFaceWindingInverted(inverted: Boolean): Unit
 fun isFrontFaceWindingInverted(): Boolean
 fun setMaterialGlobal(index: Double, value: float4): Unit

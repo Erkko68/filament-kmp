@@ -2,7 +2,6 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -78,7 +77,6 @@ class FilamentInstanceTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // getMaterialInstances hits an unregistered vector return type (embind "unbound types") in the web prebuilt.
     fun testInstanceMaterials() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
@@ -104,7 +102,6 @@ class FilamentInstanceTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // getJointsAt/getJointCountAt are unpopulated stubs in the web wrapper (no joint API in filament.js).
     fun testSkinnedInstanceJointsAndSkins() {
         val bytes = TestGlb.getFoxGlbBytes()
         if (bytes.isEmpty()) return

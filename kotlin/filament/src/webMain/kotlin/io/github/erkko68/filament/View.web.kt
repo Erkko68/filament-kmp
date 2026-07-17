@@ -9,20 +9,6 @@ import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.View as JSView
 
-// Optional View setters/getter present only in newer filament.js builds. Declared as methods
-// (not function-typed properties) so they're invoked as `obj.method(...)` and keep their `this`
-// binding — embind throws BindingError if the bound function is detached from its receiver.
-// Presence is probed with `jsHasMember` before calling.
-private external interface JsViewExt : JsAny  {
-    fun setDithering(dithering: io.github.erkko68.filament.web.View_Dithering)
-    fun setDynamicResolutionOptions(options: io.github.erkko68.filament.web.View_DynamicResolutionOptions)
-    fun setRenderQuality(quality: io.github.erkko68.filament.web.View_RenderQuality)
-    fun setShadowType(type: io.github.erkko68.filament.web.View_ShadowType)
-    fun setVsmShadowOptions(options: io.github.erkko68.filament.web.View_VsmShadowOptions)
-    fun setSoftShadowOptions(options: io.github.erkko68.filament.web.View_SoftShadowOptions)
-    fun getColorGrading(): io.github.erkko68.filament.web.ColorGrading?
-}
-
 // Value-object fields not emitted into the generated option externals.
 private external interface BloomOptionsExt : JsAny  {
     var highlight: Double
@@ -38,7 +24,6 @@ private external interface AoOptionsExt : JsAny  {
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class View(internal val jsView: JSView) {
-    private val ext: JsViewExt get() = jsView.unsafeCast<JsViewExt>()
     private var _scene: Scene? = null
     private var _camera: Camera? = null
     private var _viewport: Viewport = Viewport(0, 0, 0, 0)
@@ -146,7 +131,7 @@ actual class View(internal val jsView: JSView) {
                 Dithering.NONE -> io.github.erkko68.filament.web.View_Dithering.NONE
                 Dithering.TEMPORAL -> io.github.erkko68.filament.web.View_Dithering.TEMPORAL
             }
-            if (jsHasMember(jsView, "setDithering")) ext.setDithering(jsDith)
+            jsView.setDithering(jsDith)
         }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
@@ -165,7 +150,7 @@ actual class View(internal val jsView: JSView) {
                 View.Quality.HIGH -> io.github.erkko68.filament.web.View_QualityLevel.HIGH
                 View.Quality.ULTRA -> io.github.erkko68.filament.web.View_QualityLevel.ULTRA
             }
-            if (jsHasMember(jsView, "setDynamicResolutionOptions")) ext.setDynamicResolutionOptions(jsOptions)
+            jsView.setDynamicResolutionOptions(jsOptions)
         }
 
     actual var renderQuality: RenderQuality
@@ -181,7 +166,7 @@ actual class View(internal val jsView: JSView) {
             }
             // Push to the JS view — without this the setter was a silent no-op and the
             // hdrColorBuffer quality stayed at whatever Filament.js defaults to.
-            if (jsHasMember(jsView, "setRenderQuality")) ext.setRenderQuality(jsQuality)
+            jsView.setRenderQuality(jsQuality)
         }
 
     actual var bloomOptions: BloomOptions
@@ -346,7 +331,6 @@ actual class View(internal val jsView: JSView) {
             if (value != null) jsView.setRenderTarget(value.jsRenderTarget)
         }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op unless the filament.js build binds setShadowType (stock upstream prebuilts do not) — web stays on PCF shadows.")
     actual var shadowType: ShadowType
         get() = _shadowType
         set(value) {
@@ -358,7 +342,7 @@ actual class View(internal val jsView: JSView) {
                 ShadowType.PCSS -> io.github.erkko68.filament.web.View_ShadowType.PCSS
                 ShadowType.PCFd -> io.github.erkko68.filament.web.View_ShadowType.PCFd
             }
-            if (jsHasMember(jsView, "setShadowType")) ext.setShadowType(jsType)
+            jsView.setShadowType(jsType)
         }
 
     actual var vsmShadowOptions: VsmShadowOptions
@@ -371,7 +355,7 @@ actual class View(internal val jsView: JSView) {
             jsOptions.msaaSamples = value.msaaSamples.toDouble()
             jsOptions.highPrecision = value.highPrecision
             jsOptions.lightBleedReduction = value.lightBleedReduction.toDouble()
-            if (jsHasMember(jsView, "setVsmShadowOptions")) ext.setVsmShadowOptions(jsOptions)
+            jsView.setVsmShadowOptions(jsOptions)
         }
 
     actual var softShadowOptions: SoftShadowOptions
@@ -381,7 +365,7 @@ actual class View(internal val jsView: JSView) {
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_SoftShadowOptions`>()
             jsOptions.penumbraScale = value.penumbraScale.toDouble()
             jsOptions.penumbraRatioScale = value.penumbraRatioScale.toDouble()
-            if (jsHasMember(jsView, "setSoftShadowOptions")) ext.setSoftShadowOptions(jsOptions)
+            jsView.setSoftShadowOptions(jsOptions)
         }
 
     actual var guardBandOptions: GuardBandOptions
@@ -413,23 +397,12 @@ actual class View(internal val jsView: JSView) {
             jsView.setMultiSampleAntiAliasingOptions(jsOptions)
         }
 
-    // Only setters are bound on JS for these three; the getters stay tracked locally.
-    private var _isFrustumCullingEnabled: Boolean = true
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setter is a silent no-op — setFrustumCullingEnabled is not bound in filament.js; the getter reflects the locally tracked value.")
     actual var isFrustumCullingEnabled: Boolean
-        get() = _isFrustumCullingEnabled
-        set(value) {
-            _isFrustumCullingEnabled = value
-            // setFrustumCullingEnabled isn't bound in jsbindings.cpp — leave as a no-op so
-            // the local mirror still reflects the user's intent for the getter.
-        }
-    private var _isShadowingEnabled: Boolean = true
+        get() = jsView.isFrustumCullingEnabled()
+        set(value) { jsView.setFrustumCullingEnabled(value) }
     actual var isShadowingEnabled: Boolean
-        get() = _isShadowingEnabled
-        set(value) {
-            _isShadowingEnabled = value
-            jsView.setShadowingEnabled(value)
-        }
+        get() = jsView.isShadowingEnabled()
+        set(value) { jsView.setShadowingEnabled(value) }
     actual var isScreenSpaceRefractionEnabled: Boolean
         get() = true
         set(value) {} // setScreenSpaceRefractionEnabled isn't bound in jsbindings.cpp
@@ -471,7 +444,7 @@ actual class View(internal val jsView: JSView) {
 
     actual var colorGrading: ColorGrading?
         get() {
-            val jsColorGrading = if (jsHasMember(jsView, "getColorGrading")) ext.getColorGrading() else null
+            val jsColorGrading = jsView.getColorGrading()
             return if (jsColorGrading != null) ColorGrading(jsColorGrading) else null
         }
         set(value) {

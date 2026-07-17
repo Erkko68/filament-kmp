@@ -22,7 +22,6 @@ actual class SurfaceOrientation internal constructor(internal val nativeHandle: 
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js's extension wrapper exposes no tangents(buffer, stride) entry point.")
         actual fun tangents(buffer: FloatArray, stride: Int): Builder {
             buffer.usePinned { pinned ->
                 FilaSurfaceOrientationBuilder_tangents(nativeBuilder, pinned.addressOf(0), stride.toUInt())

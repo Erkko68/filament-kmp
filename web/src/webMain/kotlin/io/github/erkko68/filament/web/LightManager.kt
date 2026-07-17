@@ -1,11 +1,10 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
 external class LightManager : JsAny {
 fun hasComponent(entity: Entity): Boolean
+fun getComponentCount(): Double
 fun getInstance(entity: Entity): LightManager_Instance
 fun getType(instance: LightManager_Instance): LightManager_Type
 fun isDirectional(instance: LightManager_Instance): Boolean

@@ -1,6 +1,5 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -10,7 +9,6 @@ import kotlin.test.assertNotNull
  * its native call immediately (not on build()), so calling them covers the bindings
  * without needing a material payload, which panics under the NOOP backend.
  */
-@IgnoreJs // skinning/morphing builders are not bound in the web wrapper.
 class RenderableManagerBuilderTest : FilamentTestFixture() {
     @Test
     fun testBuilderSetters() {

@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -31,6 +29,7 @@ fun getAperture(): Double
 fun getShutterSpeed(): Double
 fun getSensitivity(): Double
 fun getFocalLength(): Double
+fun getFieldOfViewInDegrees(direction: Camera_Fov): Double
 fun getFocusDistance(): Double
 fun setFocusDistance(distance: Double): Unit
 fun setShift(shift: float2): Unit

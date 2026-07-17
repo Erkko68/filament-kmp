@@ -94,7 +94,6 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
     actual fun endFrame() = FilamentC.FilaRenderer_endFrame(nativeHandle)
     actual fun render(view: View) = FilamentC.FilaRenderer_render(nativeHandle, view.nativeHandle)
     actual fun renderStandaloneView(view: View) = FilamentC.FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.copyFrame is not bound in filament.js.")
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
         FilamentC.FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle,
             dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
@@ -118,7 +117,6 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
         return seg to userData
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (seg, userData) = readPixelsInto(buffer)
         FilamentC.FilaRenderer_readPixels(
@@ -131,7 +129,6 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
         )
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (seg, userData) = readPixelsInto(buffer)
         FilamentC.FilaRenderer_readPixelsRenderTarget(
