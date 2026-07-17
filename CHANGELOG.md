@@ -12,6 +12,15 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+
+- **Filament 1.74.0**: Upgraded the bundled Filament engine to 1.74.0 (no public C++ API changes; MATERIAL_VERSION 73→74, all `.filamat` materials recompiled). The web prebuilt is built from our fork's `feat/webgl-bindings-coverage-1.74` branch (the `v1.74.0` tag + expanded JS bindings) pending the upstream PR.
+- **Web binding parity**: closed most web platform gaps — `Fence`, `SkinningBuffer`/`MorphTargetBuffer`, shadow types (VSM/DPCF/PCSS), full `ShadowOptions` (incl. `cascadeSplitPositions`, `vsm`), frustum culling, non-indexed geometry, `Renderer.copyFrame`/`readPixels` (swap-chain + render-target), `MaterialInstance.material`/`duplicate`/`setScissor`, `Camera.getFieldOfViewInDegrees`, `LightManager.getComponentCount`, `Texture.isTextureSwizzleSupported`, `SurfaceOrientation.Builder.tangents`, and the gltfio instance/joint/morph-name accessors. `@PlatformGap` now marks only genuine platform constraints.
+
+### Known issues
+
+- Upstream regression (present in stock 1.74.0, all backends): a scene lit **only** by punctual lights (e.g. a spot, no directional) panics in `renderView` when the view's shadow type is VSM/DPCF/PCSS — the requested shader variant collides with the reserved SSR variant after the dynamic-lighting variant removal. Use PCF for spot-only scenes until fixed upstream.
+
 ## [0.2.0] — 2026-07-16
 
 ### Added
