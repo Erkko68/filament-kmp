@@ -1,6 +1,8 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -31,7 +33,22 @@ class ColorGradingTest : FilamentTestFixture() {
         
         assertNotNull(grading)
         assertTrue(engine.isValidColorGrading(grading))
-        
+
+        engine.destroyColorGrading(grading)
+    }
+
+    @Test
+    fun testCustomLut() {
+        // ColorGrading.Builder.customLut is not bound in filament.js.
+        if (TestEnv.target == TestTarget.JS) return
+        val dim = 16
+        // Identity-ish LUT data: any values are fine, we only exercise the binding.
+        val lut = FloatArray(dim * dim * dim * 3) { (it % 3) * 0.5f }
+        val grading = ColorGrading.Builder()
+            .customLut(lut, dim)
+            .build(engine)
+        assertNotNull(grading)
+        assertTrue(engine.isValidColorGrading(grading))
         engine.destroyColorGrading(grading)
     }
 }

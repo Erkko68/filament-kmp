@@ -1,0 +1,44 @@
+# Suppressions for check-common-api.sh — one entry per line:
+#   ClassName          suppresses the whole class
+#   ClassName.member   suppresses one method / nested type / constant
+# Add a comment saying why. Remove entries when the API gets bound.
+
+# --- Java-only SAM interfaces replaced by Kotlin lambdas ---
+Scene.EntityProcessor        # Scene.forEach takes (Entity) -> Unit in Kotlin
+View.OnPickCallback          # View.pick takes (PickingQueryResult) -> Unit
+View.run                     # Runnable plumbing inside InternalOnPickCallback
+
+# --- Android-only plumbing ---
+Engine.createSwapChainFromNativeSurface   # android.view.NativeSurface
+Engine.getNativeJobSystem                 # raw JNI pointer accessor
+Texture.setExternalImage                  # takes an EGLImage handle; platform actuals expose their own external-image paths
+Colors.LinearColor                        # Java @interface annotation for doc purposes only
+
+# --- Vestigial upstream (declared in View.java but used by no Java method) ---
+View.TargetBufferFlags
+View.COLOR0
+View.STENCIL
+
+# --- Bound under Kotlin-idiomatic names ---
+SurfaceOrientation.triangles_uint16   # bound as Builder.triangles16(ShortArray)
+SurfaceOrientation.triangles_uint32   # bound as Builder.triangles32(IntArray)
+
+# --- Not applicable / superseded ---
+Texture.STENCIL_INDEX          # Java-only Format entry with no C++ PixelDataFormat counterpart; adding it would break ordinal mapping
+Texture.CompressedFormat       # compressed CPU uploads not bound; compressed textures load via ktxreader (KTX1Loader)
+Texture.generatePrefilterMipmap  # legacy synchronous CPU prefilter; IBLPrefilterContext (filament-utils) is the bound path
+Texture.PrefilterOptions         # options for generatePrefilterMipmap above
+
+# --- Deprecated upstream, intentionally not bound ---
+ColorGrading.ToneMapping     # deprecated enum; ToneMapper.* replaces it
+ColorGrading.toneMapping
+ColorGrading.ACES_LEGACY     # constants of the deprecated ToneMapping enum
+ColorGrading.DISPLAY_RANGE
+ColorGrading.FILMIC
+View.ToneMapping             # deprecated View-level tone mapping
+View.getToneMapping
+View.setToneMapping
+View.AmbientOcclusion        # deprecated enum; AmbientOcclusionOptions.enabled replaces it
+View.getAmbientOcclusion
+View.setAmbientOcclusion
+Renderer.mirrorFrame         # deprecated; copyFrame replaces it

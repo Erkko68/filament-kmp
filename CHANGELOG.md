@@ -13,6 +13,14 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **Android-API parity sweep** (`filament`): bound every remaining public Filament Android API missing from common — GTAO selection (`AmbientOcclusionOptions.aoType` + `AmbientOcclusionType` enum), typed TAA options (`TemporalAntiAliasingOptions.boxType`/`boxClipping`/`jitterPattern` are now `BoxType`/`BoxClipping`/`JitterPattern` enums instead of raw `Int`s — source-breaking if you set them), world-origin grid snapping (`View.gridSize`/`effectiveGridSize`), `Engine.hasUnrecoverableFailure`, `MaterialInstance.getConstantBoolean/Float/Int`, `ColorGrading.Builder.customLut`, and `RenderableManager.getEnabledAttributesAt`. On web, `getConstant*` and `customLut` throw `UnsupportedOperationException` (`@PlatformGap`: not bound in filament.js); everything else works on all targets. Intentional non-mirrors are documented in `scripts/dev/check-common-api-ignores.txt`.
+- **Smarter upgrade tooling** (build): `check-common-api.sh` now audits classes, nested types, and enum constants (not just method names), strips KDoc before matching, flags upstream-deprecated members informationally, reads suppressions from `check-common-api-ignores.txt`, and exits non-zero on unsuppressed gaps; `upgrade-diff.sh` gained a HIGHLIGHTS section (MATERIAL_VERSION bump, `CONFIG_MAX_*`, feature-flag flips, added/removed Java classes and embind bindings) and optional tags (defaults: `filaVersion` → latest upstream release).
+
+### Fixed
+- **Web TAA options no longer drop fields** (`filament`): the web `temporalAntiAliasingOptions` setter now forwards `filterInput`, `useYCoCg`, `hdr`, `boxType`, `boxClipping`, `jitterPattern`, `varianceGamma`, `preventFlickering`, and `historyReprojection` instead of silently resetting them to defaults.
+- **`downloadPrebuilts` works again on 1.73.0** (build): dropped the dead `macosX64` prebuilt target — upstream releases stopped shipping mac x86_64 libs, which made the umbrella task fail.
+
 ## [0.2.0] — 2026-07-16
 
 ### Added

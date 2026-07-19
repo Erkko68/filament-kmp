@@ -221,6 +221,10 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         val nativeInstance = nativeRenderableManager.getMaterialInstanceAt(instance, primitiveIndex) ?: return null
         return MaterialInstance(nativeInstance)
     }
+
+    actual fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute> =
+        nativeRenderableManager.getEnabledAttributesAt(instance, primitiveIndex)
+            .mapTo(mutableSetOf()) { VertexBuffer.VertexAttribute.entries[it.ordinal] }
     
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
         nativeRenderableManager.setGeometryAt(instance, primitiveIndex, type.toNative(), vb.nativeVertexBuffer, ib.nativeIndexBuffer, offset, count)

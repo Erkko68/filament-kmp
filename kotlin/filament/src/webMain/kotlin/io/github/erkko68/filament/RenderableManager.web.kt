@@ -175,6 +175,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         return if (jsMat != null) MaterialInstance(jsMat) else null
     }
 
+    actual fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute> =
+        attributeBitsetToSet(jsRenderableManager.getEnabledAttributesAt(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble()).toInt())
+
     actual fun setGeometryAt(
         instance: EntityInstance,
         primitiveIndex: Int,

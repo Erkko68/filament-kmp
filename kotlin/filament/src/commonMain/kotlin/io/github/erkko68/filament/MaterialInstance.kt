@@ -309,6 +309,27 @@ expect class MaterialInstance {
     fun unsetScissor()
 
     /**
+     * Returns the boolean value of a material specialization constant.
+     * @param name Constant name as defined in the material
+     */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
+    fun getConstantBoolean(name: String): Boolean
+
+    /**
+     * Returns the float value of a material specialization constant.
+     * @param name Constant name as defined in the material
+     */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
+    fun getConstantFloat(name: String): Float
+
+    /**
+     * Returns the integer value of a material specialization constant.
+     * @param name Constant name as defined in the material
+     */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
+    fun getConstantInt(name: String): Int
+
+    /**
      * Sets a polygon offset that will be applied to all renderables drawn with this material instance.
      *
      * The value of the offset is scale * dz + r * constant, where dz is the change in depth

@@ -29,6 +29,9 @@ actual class MaterialInstance constructor(
     actual fun setParameter(name: String, x: Boolean) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterBool(nativeHandle, arena.cstr(name), x) }
     actual fun setParameter(name: String, x: Float) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterFloat(nativeHandle, arena.cstr(name), x) }
     actual fun setParameter(name: String, x: Int) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterInt(nativeHandle, arena.cstr(name), x) }
+    actual fun getConstantBoolean(name: String): Boolean = confined { arena -> FilamentC.FilaMaterialInstance_getConstantBool(nativeHandle, arena.cstr(name)) }
+    actual fun getConstantFloat(name: String): Float = confined { arena -> FilamentC.FilaMaterialInstance_getConstantFloat(nativeHandle, arena.cstr(name)) }
+    actual fun getConstantInt(name: String): Int = confined { arena -> FilamentC.FilaMaterialInstance_getConstantInt(nativeHandle, arena.cstr(name)) }
     actual fun setParameter(name: String, x: Boolean, y: Boolean) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterBool2(nativeHandle, arena.cstr(name), x, y) }
     actual fun setParameter(name: String, x: Float, y: Float) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterFloat2(nativeHandle, arena.cstr(name), x, y) }
     actual fun setParameter(name: String, x: Int, y: Int) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterInt2(nativeHandle, arena.cstr(name), x, y) }

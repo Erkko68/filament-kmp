@@ -148,6 +148,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
     }
 
     actual class AmbientOcclusionOptions actual constructor() {
+        actual enum class AmbientOcclusionType { SAO, GTAO }
+        actual var aoType: AmbientOcclusionType = AmbientOcclusionType.SAO
         actual var radius: Float = 0.3f
         actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
@@ -176,6 +178,9 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
     }
 
     actual class TemporalAntiAliasingOptions actual constructor() {
+        actual enum class BoxType { AABB, AABB_VARIANCE }
+        actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
+        actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
         actual var feedback: Float = 0.12f
         actual var enabled: Boolean = false
         actual var lodBias: Float = -1.0f
@@ -185,9 +190,9 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         actual var filterInput: Boolean = true
         actual var useYCoCg: Boolean = false
         actual var hdr: Boolean = true
-        actual var boxType: Int = 0
-        actual var boxClipping: Int = 0
-        actual var jitterPattern: Int = 3
+        actual var boxType: BoxType = BoxType.AABB
+        actual var boxClipping: BoxClipping = BoxClipping.ACCURATE
+        actual var jitterPattern: JitterPattern = JitterPattern.HALTON_23_X16
         actual var varianceGamma: Float = 1.0f
         actual var preventFlickering: Boolean = false
         actual var historyReprojection: Boolean = true
@@ -483,6 +488,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             val ssctSeg = FilaViewAmbientOcclusionOptions.ssct(out)
             AmbientOcclusionOptions().apply {
                 enabled = FilaViewAmbientOcclusionOptions.enabled(out)
+                aoType = AmbientOcclusionOptions.AmbientOcclusionType.entries[FilaViewAmbientOcclusionOptions.aoType(out)]
                 radius = FilaViewAmbientOcclusionOptions.radius(out)
                 bias = FilaViewAmbientOcclusionOptions.bias(out)
                 intensity = FilaViewAmbientOcclusionOptions.intensity(out)
@@ -517,6 +523,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             confined { arena ->
                 val c = FilaViewAmbientOcclusionOptions.allocate(arena)
                 FilaViewAmbientOcclusionOptions.enabled(c, value.enabled)
+                FilaViewAmbientOcclusionOptions.aoType(c, value.aoType.ordinal)
                 FilaViewAmbientOcclusionOptions.radius(c, value.radius)
                 FilaViewAmbientOcclusionOptions.bias(c, value.bias)
                 FilaViewAmbientOcclusionOptions.intensity(c, value.intensity)
@@ -560,9 +567,9 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 filterInput = FilaViewTemporalAntiAliasingOptions.filterInput(out)
                 useYCoCg = FilaViewTemporalAntiAliasingOptions.useYCoCg(out)
                 hdr = FilaViewTemporalAntiAliasingOptions.hdr(out)
-                boxType = FilaViewTemporalAntiAliasingOptions.boxType(out)
-                boxClipping = FilaViewTemporalAntiAliasingOptions.boxClipping(out)
-                jitterPattern = FilaViewTemporalAntiAliasingOptions.jitterPattern(out)
+                boxType = TemporalAntiAliasingOptions.BoxType.entries[FilaViewTemporalAntiAliasingOptions.boxType(out)]
+                boxClipping = TemporalAntiAliasingOptions.BoxClipping.entries[FilaViewTemporalAntiAliasingOptions.boxClipping(out)]
+                jitterPattern = TemporalAntiAliasingOptions.JitterPattern.entries[FilaViewTemporalAntiAliasingOptions.jitterPattern(out)]
                 varianceGamma = FilaViewTemporalAntiAliasingOptions.varianceGamma(out)
                 preventFlickering = FilaViewTemporalAntiAliasingOptions.preventFlickering(out)
                 historyReprojection = FilaViewTemporalAntiAliasingOptions.historyReprojection(out)
@@ -580,9 +587,9 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 FilaViewTemporalAntiAliasingOptions.filterInput(c, value.filterInput)
                 FilaViewTemporalAntiAliasingOptions.useYCoCg(c, value.useYCoCg)
                 FilaViewTemporalAntiAliasingOptions.hdr(c, value.hdr)
-                FilaViewTemporalAntiAliasingOptions.boxType(c, value.boxType)
-                FilaViewTemporalAntiAliasingOptions.boxClipping(c, value.boxClipping)
-                FilaViewTemporalAntiAliasingOptions.jitterPattern(c, value.jitterPattern)
+                FilaViewTemporalAntiAliasingOptions.boxType(c, value.boxType.ordinal)
+                FilaViewTemporalAntiAliasingOptions.boxClipping(c, value.boxClipping.ordinal)
+                FilaViewTemporalAntiAliasingOptions.jitterPattern(c, value.jitterPattern.ordinal)
                 FilaViewTemporalAntiAliasingOptions.varianceGamma(c, value.varianceGamma)
                 FilaViewTemporalAntiAliasingOptions.preventFlickering(c, value.preventFlickering)
                 FilaViewTemporalAntiAliasingOptions.historyReprojection(c, value.historyReprojection)
@@ -738,6 +745,12 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
     actual var isTransparentPickingEnabled: Boolean
         get() = FilamentC.FilaView_isTransparentPickingEnabled(nativeHandle)
         set(value) { FilamentC.FilaView_setTransparentPickingEnabled(nativeHandle, value) }
+
+    actual var gridSize: Double
+        get() = FilamentC.FilaView_getGridSize(nativeHandle)
+        set(value) { FilamentC.FilaView_setGridSize(nativeHandle, value) }
+    actual val effectiveGridSize: Double
+        get() = FilamentC.FilaView_getEffectiveGridSize(nativeHandle)
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
         FilamentC.FilaView_setMaterialGlobal(nativeHandle, index, value[0], value[1], value[2], value[3])

@@ -121,7 +121,11 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     }
 
     actual class AmbientOcclusionOptions actual constructor() {
+        actual enum class AmbientOcclusionType { SAO, GTAO }
         val native = FilamentView.AmbientOcclusionOptions()
+        actual var aoType: AmbientOcclusionType
+            get() = AmbientOcclusionType.values()[native.aoType.ordinal]
+            set(v) { native.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.values()[v.ordinal] }
         actual var radius: Float get() = native.radius; set(v) { native.radius = v }
         actual var bias: Float get() = native.bias; set(v) { native.bias = v }
         actual var intensity: Float get() = native.intensity; set(v) { native.intensity = v }
@@ -156,6 +160,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
     }
 
     actual class TemporalAntiAliasingOptions actual constructor() {
+        actual enum class BoxType { AABB, AABB_VARIANCE }
+        actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
+        actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
         val native = FilamentView.TemporalAntiAliasingOptions()
         actual var feedback: Float get() = native.feedback; set(v) { native.feedback = v }
         actual var lodBias: Float get() = native.lodBias; set(v) { native.lodBias = v }
@@ -166,9 +173,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var filterInput: Boolean get() = native.filterInput; set(v) { native.filterInput = v }
         actual var useYCoCg: Boolean get() = native.useYCoCg; set(v) { native.useYCoCg = v }
         actual var hdr: Boolean get() = native.hdr; set(v) { native.hdr = v }
-        actual var boxType: Int get() = native.boxType.ordinal; set(v) { native.boxType = FilamentView.TemporalAntiAliasingOptions.BoxType.values()[v] }
-        actual var boxClipping: Int get() = native.boxClipping.ordinal; set(v) { native.boxClipping = FilamentView.TemporalAntiAliasingOptions.BoxClipping.values()[v] }
-        actual var jitterPattern: Int get() = native.jitterPattern.ordinal; set(v) { native.jitterPattern = FilamentView.TemporalAntiAliasingOptions.JitterPattern.values()[v] }
+        actual var boxType: BoxType get() = BoxType.values()[native.boxType.ordinal]; set(v) { native.boxType = FilamentView.TemporalAntiAliasingOptions.BoxType.values()[v.ordinal] }
+        actual var boxClipping: BoxClipping get() = BoxClipping.values()[native.boxClipping.ordinal]; set(v) { native.boxClipping = FilamentView.TemporalAntiAliasingOptions.BoxClipping.values()[v.ordinal] }
+        actual var jitterPattern: JitterPattern get() = JitterPattern.values()[native.jitterPattern.ordinal]; set(v) { native.jitterPattern = FilamentView.TemporalAntiAliasingOptions.JitterPattern.values()[v.ordinal] }
         actual var varianceGamma: Float get() = native.varianceGamma; set(v) { native.varianceGamma = v }
         actual var preventFlickering: Boolean get() = native.preventFlickering; set(v) { native.preventFlickering = v }
         actual var historyReprojection: Boolean get() = native.historyReprojection; set(v) { native.historyReprojection = v }
@@ -386,9 +393,10 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             kmp.lowPassFilter = io.github.erkko68.filament.View.Quality.values()[o.lowPassFilter.ordinal]
             kmp.upsampling = io.github.erkko68.filament.View.Quality.values()[o.upsampling.ordinal]
             kmp.enabled = o.enabled
+            kmp.aoType = AmbientOcclusionOptions.AmbientOcclusionType.values()[o.aoType.ordinal]
             kmp.bentNormals = o.bentNormals
             kmp.resolution = o.resolution
-            
+
             val kmpSsct = io.github.erkko68.filament.View.AmbientOcclusionOptions.Ssct()
             kmpSsct.enabled = o.ssctEnabled
             kmpSsct.lightConeRad = o.ssctLightConeRad
@@ -415,6 +423,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             n.lowPassFilter = FilamentView.QualityLevel.values()[value.lowPassFilter.ordinal]
             n.upsampling = FilamentView.QualityLevel.values()[value.upsampling.ordinal]
             n.enabled = value.enabled
+            n.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.values()[value.aoType.ordinal]
             n.bentNormals = value.bentNormals
             n.resolution = value.resolution
             // Map flattened
@@ -444,9 +453,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             kmp.filterInput = o.filterInput
             kmp.useYCoCg = o.useYCoCg
             kmp.hdr = o.hdr
-            kmp.boxType = o.boxType.ordinal
-            kmp.boxClipping = o.boxClipping.ordinal
-            kmp.jitterPattern = o.jitterPattern.ordinal
+            kmp.boxType = TemporalAntiAliasingOptions.BoxType.values()[o.boxType.ordinal]
+            kmp.boxClipping = TemporalAntiAliasingOptions.BoxClipping.values()[o.boxClipping.ordinal]
+            kmp.jitterPattern = TemporalAntiAliasingOptions.JitterPattern.values()[o.jitterPattern.ordinal]
             kmp.varianceGamma = o.varianceGamma
             kmp.preventFlickering = o.preventFlickering
             kmp.historyReprojection = o.historyReprojection
@@ -466,6 +475,13 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             return kmp
         }
         set(value) { this@View.nativeView.setScreenSpaceReflectionsOptions(value.native) }
+
+    actual var gridSize: Double
+        get() = this@View.nativeView.gridSize
+        set(value) { this@View.nativeView.setGridSize(value) }
+
+    actual val effectiveGridSize: Double
+        get() = this@View.nativeView.effectiveGridSize
 
     actual var renderTarget: RenderTarget?
         get() = mRenderTarget

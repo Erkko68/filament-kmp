@@ -84,4 +84,23 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         engine.destroyMaterialInstance(inst)
         engine.destroyMaterial(mat)
     }
+
+    @Test
+    fun testGetSpecializationConstants() {
+        val engine = engine ?: return
+        // MaterialInstance.getConstant is not bound in filament.js.
+        if (TestEnv.target == TestTarget.JS) return
+        val bytes = TestMaterials.getConstantsMaterialBytes()
+        if (bytes.isEmpty()) return
+
+        val mat = Material.Builder().payload(bytes).build(engine)
+        val inst = mat.createInstance()
+
+        assertEquals(true, inst.getConstantBoolean("testBool"))
+        assertEquals(7, inst.getConstantInt("testInt"))
+        assertEquals(0.5f, inst.getConstantFloat("testFloat"))
+
+        engine.destroyMaterialInstance(inst)
+        engine.destroyMaterial(mat)
+    }
 }

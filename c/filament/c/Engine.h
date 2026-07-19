@@ -119,6 +119,7 @@ bool FilaEngine_isValidSwapChain(FilaEngine* engine, FilaSwapChain* swapChain);
 
 bool FilaEngine_flushAndWait(FilaEngine* engine, uint64_t timeout);
 void FilaEngine_flush(FilaEngine* engine);
+bool FilaEngine_hasUnrecoverableFailure(FilaEngine* engine);
 
 bool FilaEngine_isPaused(FilaEngine* engine);
 void FilaEngine_setPaused(FilaEngine* engine, bool paused);

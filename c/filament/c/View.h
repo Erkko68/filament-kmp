@@ -128,6 +128,7 @@ typedef struct FilaViewAmbientOcclusionOptions {
         uint8_t rayCount;
         bool enabled;
     } ssct;
+    int aoType;
 } FilaViewAmbientOcclusionOptions;
 
 typedef struct FilaViewTemporalAntiAliasingOptions {
@@ -276,6 +277,9 @@ void FilaView_pick(FilaView* view, uint32_t x, uint32_t y, FilaCallbackHandler* 
 void FilaView_setStencilBufferEnabled(FilaView* view, bool enabled);
 bool FilaView_isStencilBufferEnabled(const FilaView* view);
 
+void FilaView_setGridSize(FilaView* view, double size);
+double FilaView_getGridSize(const FilaView* view);
+double FilaView_getEffectiveGridSize(const FilaView* view);
 void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, float x, float y, float z, float w);
 void FilaView_getMaterialGlobal(const FilaView* view, uint32_t index, float out[4]);
 

@@ -467,6 +467,11 @@ expect class Engine {
     fun flushAndWait(timeout: Long): Boolean
     /** Flush pending GPU commands to the driver (non-blocking). */
     fun flush()
+    /**
+     * Whether the Engine is in an unrecoverable failure state (e.g. the GPU device was lost).
+     * Once true, the Engine must be destroyed and recreated. @return true if such a failure occurred.
+     */
+    fun hasUnrecoverableFailure(): Boolean
     /** Whether rendering is currently paused. Set to pause or resume rendering. */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
     var paused: Boolean

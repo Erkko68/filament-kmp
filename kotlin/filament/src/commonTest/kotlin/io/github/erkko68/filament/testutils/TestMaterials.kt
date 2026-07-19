@@ -14,4 +14,7 @@ object TestMaterials {
      * with vsm variants kept — see test_lit.mat. Used by the Tier C frame tests.
      */
     fun getLitMaterialBytes(): ByteArray = EmbeddedMaterials.test_lit
+
+    /** Unlit material declaring bool/int/float specialization constants — see constants.mat. */
+    fun getConstantsMaterialBytes(): ByteArray = EmbeddedMaterials.constants
 }

@@ -71,6 +71,26 @@ class EnumRoundTripTest : FilamentTestFixture() {
             { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { upsampling = it } },
             { view.ambientOcclusionOptions.upsampling },
         )
+        roundTrip<View.AmbientOcclusionOptions.AmbientOcclusionType>(
+            "AmbientOcclusionOptions.aoType",
+            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { aoType = it } },
+            { view.ambientOcclusionOptions.aoType },
+        )
+        roundTrip<View.TemporalAntiAliasingOptions.BoxType>(
+            "TemporalAntiAliasingOptions.boxType",
+            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { boxType = it } },
+            { view.temporalAntiAliasingOptions.boxType },
+        )
+        roundTrip<View.TemporalAntiAliasingOptions.BoxClipping>(
+            "TemporalAntiAliasingOptions.boxClipping",
+            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { boxClipping = it } },
+            { view.temporalAntiAliasingOptions.boxClipping },
+        )
+        roundTrip<View.TemporalAntiAliasingOptions.JitterPattern>(
+            "TemporalAntiAliasingOptions.jitterPattern",
+            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { jitterPattern = it } },
+            { view.temporalAntiAliasingOptions.jitterPattern },
+        )
         engine.destroyView(view)
     }
 
