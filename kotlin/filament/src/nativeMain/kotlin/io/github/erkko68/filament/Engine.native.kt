@@ -284,6 +284,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
     actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000u) }
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())
     actual fun flush() = FilaEngine_flush(nativeHandle)
+    actual fun hasUnrecoverableFailure(): Boolean = FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
     actual var paused: Boolean
         get() = FilaEngine_isPaused(nativeHandle)

@@ -98,14 +98,19 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply {
             feedback = 0.12f; lodBias = -1f; sharpness = 0.3f; enabled = true
             upscaling = 1f; filterHistory = true; filterInput = false; useYCoCg = true
-            hdr = false; boxType = 1; boxClipping = 2; jitterPattern = 1
+            hdr = false
+            boxType = View.TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE
+            boxClipping = View.TemporalAntiAliasingOptions.BoxClipping.NONE
+            jitterPattern = View.TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
             varianceGamma = 1.1f; preventFlickering = true; historyReprojection = false
         }
         view.temporalAntiAliasingOptions.run {
             assertEquals(0.12f, feedback); assertEquals(-1f, lodBias); assertEquals(0.3f, sharpness)
             assertTrue(enabled); assertEquals(1f, upscaling); assertTrue(filterHistory)
             assertEquals(false, filterInput); assertTrue(useYCoCg); assertEquals(false, hdr)
-            assertEquals(1, boxType); assertEquals(2, boxClipping); assertEquals(1, jitterPattern)
+            assertEquals(View.TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE, boxType)
+            assertEquals(View.TemporalAntiAliasingOptions.BoxClipping.NONE, boxClipping)
+            assertEquals(View.TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4, jitterPattern)
             assertEquals(1.1f, varianceGamma); assertTrue(preventFlickering)
             assertEquals(false, historyReprojection)
         }
@@ -131,6 +136,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             minHorizonAngleRad = 0.3f; quality = View.Quality.HIGH; lowPassFilter = View.Quality.MEDIUM
             upsampling = View.Quality.LOW; enabled = true; bentNormals = true
             bilateralThreshold = 0.05f; resolution = 0.5f
+            aoType = View.AmbientOcclusionOptions.AmbientOcclusionType.GTAO
             ssct = View.AmbientOcclusionOptions.Ssct().apply {
                 enabled = true; lightConeRad = 1.0f; shadowDistance = 0.4f
                 contactDistanceMax = 1.2f; intensity = 0.9f
@@ -144,6 +150,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             assertEquals(View.Quality.HIGH, quality); assertEquals(View.Quality.MEDIUM, lowPassFilter)
             assertEquals(View.Quality.LOW, upsampling); assertTrue(enabled); assertTrue(bentNormals)
             assertEquals(0.05f, bilateralThreshold); assertEquals(0.5f, resolution)
+            assertEquals(View.AmbientOcclusionOptions.AmbientOcclusionType.GTAO, aoType)
             ssct.run {
                 assertTrue(enabled); assertEquals(1.0f, lightConeRad); assertEquals(0.4f, shadowDistance)
                 assertEquals(1.2f, contactDistanceMax); assertEquals(0.9f, intensity)

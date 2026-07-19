@@ -1,0 +1,25 @@
+// Source for constants.filamat — material with specialization constants of every
+// supported type, used by MaterialInstanceTest.getConstant* coverage.
+// Recompile on every filaVersion bump — see docs/upgrading-filament.md:
+//   matc -p all -a all -o constants.filamat constants.mat
+
+material {
+    name : Constants,
+    shadingModel : unlit,
+    constants : [
+        { name : testBool,  type : bool,  default : true },
+        { name : testInt,   type : int,   default : 7 },
+        { name : testFloat, type : float, default : 0.5 }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        float f = materialConstants_testFloat;
+        if (materialConstants_testBool) {
+            f += float(materialConstants_testInt);
+        }
+        material.baseColor = vec4(f, 0.0, 0.0, 1.0);
+    }
+}

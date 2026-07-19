@@ -101,6 +101,10 @@ void FilaMaterialInstance_setFloatParameterArray(FilaMaterialInstance* instance,
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* instance, int32_t left, int32_t bottom, uint32_t width, uint32_t height);
 void FilaMaterialInstance_unsetScissor(FilaMaterialInstance* instance);
 void FilaMaterialInstance_setPolygonOffset(FilaMaterialInstance* instance, float scale, float constant);
+
+bool FilaMaterialInstance_getConstantBool(const FilaMaterialInstance* instance, const char* name);
+float FilaMaterialInstance_getConstantFloat(const FilaMaterialInstance* instance, const char* name);
+int32_t FilaMaterialInstance_getConstantInt(const FilaMaterialInstance* instance, const char* name);
 void FilaMaterialInstance_setMaskThreshold(FilaMaterialInstance* instance, float threshold);
 void FilaMaterialInstance_setSpecularAntiAliasingVariance(FilaMaterialInstance* instance, float variance);
 void FilaMaterialInstance_setSpecularAntiAliasingThreshold(FilaMaterialInstance* instance, float threshold);

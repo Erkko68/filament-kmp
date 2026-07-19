@@ -117,6 +117,7 @@ public final class io/github/erkko68/filament/ColorGrading$Builder {
 	public final fun channelMixer ([F[F[F)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun contrast (F)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun curves ([F[F[F)Lio/github/erkko68/filament/ColorGrading$Builder;
+	public final fun customLut ([FI)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun dimensions (I)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun exposure (F)Lio/github/erkko68/filament/ColorGrading$Builder;
 	public final fun fastMath (Z)Lio/github/erkko68/filament/ColorGrading$Builder;
@@ -241,6 +242,7 @@ public final class io/github/erkko68/filament/Engine {
 	public final fun getSupportedFeatureLevel ()Lio/github/erkko68/filament/Engine$FeatureLevel;
 	public final fun getTransformManager ()Lio/github/erkko68/filament/TransformManager;
 	public final fun hasFeatureFlag (Ljava/lang/String;)Z
+	public final fun hasUnrecoverableFailure ()Z
 	public final fun isAutomaticInstancingEnabled ()Z
 	public final fun isValid ()Z
 	public final fun isValidColorGrading (Lio/github/erkko68/filament/ColorGrading;)Z
@@ -856,6 +858,9 @@ public final class io/github/erkko68/filament/Material$VertexDomain : java/lang/
 public final class io/github/erkko68/filament/MaterialInstance {
 	public static final field Companion Lio/github/erkko68/filament/MaterialInstance$Companion;
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public final fun getConstantBoolean (Ljava/lang/String;)Z
+	public final fun getConstantFloat (Ljava/lang/String;)F
+	public final fun getConstantInt (Ljava/lang/String;)I
 	public final fun getCullingMode ()Lio/github/erkko68/filament/Material$CullingMode;
 	public final fun getDepthFunc ()Lio/github/erkko68/filament/TextureSampler$CompareFunction;
 	public final fun getMaskThreshold ()F
@@ -1049,6 +1054,7 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun getAxisAlignedBoundingBox (ILio/github/erkko68/filament/Box;)Lio/github/erkko68/filament/Box;
 	public final fun getBlendOrderAt (II)I
 	public final fun getChannel (I)I
+	public final fun getEnabledAttributesAt (II)Ljava/util/Set;
 	public final fun getFogEnabled (I)Z
 	public final fun getInstance (I)I
 	public final fun getInstanceCount (I)I
@@ -1854,8 +1860,10 @@ public final class io/github/erkko68/filament/View {
 	public final fun getDepthOfFieldOptions ()Lio/github/erkko68/filament/View$DepthOfFieldOptions;
 	public final fun getDithering ()Lio/github/erkko68/filament/View$Dithering;
 	public final fun getDynamicResolutionOptions ()Lio/github/erkko68/filament/View$DynamicResolutionOptions;
+	public final fun getEffectiveGridSize ()D
 	public final fun getFogEntity ()I
 	public final fun getFogOptions ()Lio/github/erkko68/filament/View$FogOptions;
+	public final fun getGridSize ()D
 	public final fun getGuardBandOptions ()Lio/github/erkko68/filament/View$GuardBandOptions;
 	public final fun getHasCamera ()Z
 	public final fun getLastDynamicResolutionScale ()[F
@@ -1896,6 +1904,7 @@ public final class io/github/erkko68/filament/View {
 	public final fun setFogOptions (Lio/github/erkko68/filament/View$FogOptions;)V
 	public final fun setFrontFaceWindingInverted (Z)V
 	public final fun setFrustumCullingEnabled (Z)V
+	public final fun setGridSize (D)V
 	public final fun setGuardBandOptions (Lio/github/erkko68/filament/View$GuardBandOptions;)V
 	public final fun setLayerEnabled (IZ)V
 	public final fun setMaterialGlobal (I[F)V
@@ -1922,6 +1931,7 @@ public final class io/github/erkko68/filament/View {
 
 public final class io/github/erkko68/filament/View$AmbientOcclusionOptions {
 	public fun <init> ()V
+	public final fun getAoType ()Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
 	public final fun getBentNormals ()Z
 	public final fun getBias ()F
 	public final fun getBilateralThreshold ()F
@@ -1935,6 +1945,7 @@ public final class io/github/erkko68/filament/View$AmbientOcclusionOptions {
 	public final fun getResolution ()F
 	public final fun getSsct ()Lio/github/erkko68/filament/View$AmbientOcclusionOptions$Ssct;
 	public final fun getUpsampling ()Lio/github/erkko68/filament/View$Quality;
+	public final fun setAoType (Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;)V
 	public final fun setBentNormals (Z)V
 	public final fun setBias (F)V
 	public final fun setBilateralThreshold (F)V
@@ -1948,6 +1959,14 @@ public final class io/github/erkko68/filament/View$AmbientOcclusionOptions {
 	public final fun setResolution (F)V
 	public final fun setSsct (Lio/github/erkko68/filament/View$AmbientOcclusionOptions$Ssct;)V
 	public final fun setUpsampling (Lio/github/erkko68/filament/View$Quality;)V
+}
+
+public final class io/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType : java/lang/Enum {
+	public static final field GTAO Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
+	public static final field SAO Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
+	public static fun values ()[Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
 }
 
 public final class io/github/erkko68/filament/View$AmbientOcclusionOptions$Ssct {
@@ -2207,36 +2226,64 @@ public final class io/github/erkko68/filament/View$StereoscopicOptions {
 
 public final class io/github/erkko68/filament/View$TemporalAntiAliasingOptions {
 	public fun <init> ()V
-	public final fun getBoxClipping ()I
-	public final fun getBoxType ()I
+	public final fun getBoxClipping ()Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;
+	public final fun getBoxType ()Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType;
 	public final fun getEnabled ()Z
 	public final fun getFeedback ()F
 	public final fun getFilterHistory ()Z
 	public final fun getFilterInput ()Z
 	public final fun getHdr ()Z
 	public final fun getHistoryReprojection ()Z
-	public final fun getJitterPattern ()I
+	public final fun getJitterPattern ()Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
 	public final fun getLodBias ()F
 	public final fun getPreventFlickering ()Z
 	public final fun getSharpness ()F
 	public final fun getUpscaling ()F
 	public final fun getUseYCoCg ()Z
 	public final fun getVarianceGamma ()F
-	public final fun setBoxClipping (I)V
-	public final fun setBoxType (I)V
+	public final fun setBoxClipping (Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;)V
+	public final fun setBoxType (Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType;)V
 	public final fun setEnabled (Z)V
 	public final fun setFeedback (F)V
 	public final fun setFilterHistory (Z)V
 	public final fun setFilterInput (Z)V
 	public final fun setHdr (Z)V
 	public final fun setHistoryReprojection (Z)V
-	public final fun setJitterPattern (I)V
+	public final fun setJitterPattern (Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;)V
 	public final fun setLodBias (F)V
 	public final fun setPreventFlickering (Z)V
 	public final fun setSharpness (F)V
 	public final fun setUpscaling (F)V
 	public final fun setUseYCoCg (Z)V
 	public final fun setVarianceGamma (F)V
+}
+
+public final class io/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping : java/lang/Enum {
+	public static final field ACCURATE Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;
+	public static final field CLAMP Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;
+	public static final field NONE Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;
+	public static fun values ()[Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxClipping;
+}
+
+public final class io/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType : java/lang/Enum {
+	public static final field AABB Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType;
+	public static final field AABB_VARIANCE Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType;
+	public static fun values ()[Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$BoxType;
+}
+
+public final class io/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern : java/lang/Enum {
+	public static final field HALTON_23_X16 Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
+	public static final field HALTON_23_X32 Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
+	public static final field HALTON_23_X8 Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
+	public static final field RGSS_X4 Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
+	public static final field UNIFORM_HELIX_X4 Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
+	public static fun values ()[Lio/github/erkko68/filament/View$TemporalAntiAliasingOptions$JitterPattern;
 }
 
 public final class io/github/erkko68/filament/View$VignetteOptions {

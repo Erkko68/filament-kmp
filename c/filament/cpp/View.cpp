@@ -218,6 +218,7 @@ void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaViewAmbientOc
     cppOptions.ssct.sampleCount = options->ssct.sampleCount;
     cppOptions.ssct.rayCount = options->ssct.rayCount;
     cppOptions.ssct.enabled = options->ssct.enabled;
+    cppOptions.aoType = static_cast<View::AmbientOcclusionOptions::AmbientOcclusionType>(options->aoType);
     FILA_CAST(View, view)->setAmbientOcclusionOptions(cppOptions);
 }
 
@@ -247,6 +248,7 @@ void FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaViewAmbientOc
     out->ssct.sampleCount = cppOptions.ssct.sampleCount;
     out->ssct.rayCount = cppOptions.ssct.rayCount;
     out->ssct.enabled = cppOptions.ssct.enabled;
+    out->aoType = static_cast<int>(cppOptions.aoType);
 }
 
 void FilaView_setBloomOptions(FilaView* view, const FilaViewBloomOptions* options) {
@@ -518,6 +520,18 @@ void FilaView_setStencilBufferEnabled(FilaView* view, bool enabled) {
 
 bool FilaView_isStencilBufferEnabled(const FilaView* view) {
     return FILA_CONST_CAST(View, view)->isStencilBufferEnabled();
+}
+
+void FilaView_setGridSize(FilaView* view, double size) {
+    FILA_CAST(View, view)->setGridSize(size);
+}
+
+double FilaView_getGridSize(const FilaView* view) {
+    return FILA_CONST_CAST(View, view)->getGridSize();
+}
+
+double FilaView_getEffectiveGridSize(const FilaView* view) {
+    return FILA_CONST_CAST(View, view)->getEffectiveGridSize();
 }
 
 void FilaView_setMaterialGlobal(FilaView* view, uint32_t index, float x, float y, float z, float w) {

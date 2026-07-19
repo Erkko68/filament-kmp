@@ -482,9 +482,24 @@ expect class View {
      */
     class AmbientOcclusionOptions() {
         /**
+         * The occlusion algorithm to use.
+         */
+        enum class AmbientOcclusionType {
+            /** Scalable Ambient Occlusion. */
+            SAO,
+            /** Ground Truth-based Ambient Occlusion. */
+            GTAO
+        }
+
+        /**
          * Enable or disable screen-space ambient occlusion. Default: false.
          */
         var enabled: Boolean
+
+        /**
+         * Type of ambient occlusion algorithm. Default: [AmbientOcclusionType.SAO].
+         */
+        var aoType: AmbientOcclusionType
 
         /**
          * Ambient Occlusion radius in meters, between 0 and ~10. Default: 0.3.
@@ -614,6 +629,44 @@ expect class View {
      */
     class TemporalAntiAliasingOptions() {
         /**
+         * Type of color gamut box used for history rejection.
+         */
+        enum class BoxType {
+            /** Use an AABB neighborhood. */
+            AABB,
+            /** Use both AABB and variance. */
+            AABB_VARIANCE
+        }
+
+        /**
+         * Clipping algorithm for history rejection.
+         */
+        enum class BoxClipping {
+            /** Accurate box clipping. */
+            ACCURATE,
+            /** Clamping. */
+            CLAMP,
+            /** No rejections (use for debugging). */
+            NONE
+        }
+
+        /**
+         * Jitter pattern used for sampling.
+         */
+        enum class JitterPattern {
+            /** 4-sample rotated grid sampling. */
+            RGSS_X4,
+            /** 4-sample uniform grid in helix sequence. */
+            UNIFORM_HELIX_X4,
+            /** 8 samples of Halton 2,3. */
+            HALTON_23_X8,
+            /** 16 samples of Halton 2,3. */
+            HALTON_23_X16,
+            /** 32 samples of Halton 2,3. */
+            HALTON_23_X32
+        }
+
+        /**
          * Enable or disable temporal anti-aliasing. Default: false.
          */
         var enabled: Boolean
@@ -659,19 +712,19 @@ expect class View {
         var hdr: Boolean
 
         /**
-         * Type of color gamut box (AABB or AABB_VARIANCE). Default: AABB (0).
+         * Type of color gamut box. Default: [BoxType.AABB].
          */
-        var boxType: Int
+        var boxType: BoxType
 
         /**
-         * Clipping algorithm (ACCURATE, CLAMP, or NONE for debugging). Default: ACCURATE (0).
+         * Clipping algorithm. Default: [BoxClipping.ACCURATE].
          */
-        var boxClipping: Int
+        var boxClipping: BoxClipping
 
         /**
-         * Jitter pattern for sampling. Default: HALTON_23_X16.
+         * Jitter pattern for sampling. Default: [JitterPattern.HALTON_23_X16].
          */
-        var jitterPattern: Int
+        var jitterPattern: JitterPattern
 
         /**
          * High values increase ghosting artifacts, lower values increase jittering, range [0.75, 1.25].
@@ -964,6 +1017,18 @@ expect class View {
 
     /** Includes transparent renderables in [pick] results. Default: true. */
     var isTransparentPickingEnabled: Boolean
+
+    /**
+     * Grid size in world units used for grid-based world-origin snapping. 0 or negative means the
+     * size is calculated automatically from the camera frustum. Default: 0 (automatic).
+     */
+    var gridSize: Double
+
+    /**
+     * The effective grid size used for world-origin snapping: [gridSize] when positive, otherwise
+     * the automatically calculated size.
+     */
+    val effectiveGridSize: Double
 
     /** Sets the float4 material-global value at [index] (0–3), readable from all materials. */
     fun setMaterialGlobal(index: Int, value: FloatArray)

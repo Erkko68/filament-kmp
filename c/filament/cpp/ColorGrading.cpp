@@ -3,6 +3,7 @@
 #include <filament/ToneMapper.h>
 #include <math/vec3.h>
 #include <math/vec4.h>
+#include <utils/FixedCapacityVector.h>
 
 #include "FilaCommon.h"
 #include "../c/ColorGrading.h"
@@ -103,6 +104,15 @@ void FilaColorGradingBuilder_curves(FilaColorGradingBuilder* builder, const floa
         *reinterpret_cast<const math::float3*>(midPoint),
         *reinterpret_cast<const math::float3*>(highlightScale)
     );
+}
+
+void FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* builder, const float* data, uint8_t dimension) {
+    const size_t count = size_t(dimension) * dimension * dimension;
+    utils::FixedCapacityVector<math::float3> lut(count);
+    for (size_t i = 0; i < count; i++) {
+        lut[i] = { data[i * 3 + 0], data[i * 3 + 1], data[i * 3 + 2] };
+    }
+    FILA_CAST(ColorGrading::Builder, builder)->customLut(std::move(lut), dimension);
 }
 
 void FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* builder, bool fastMath) {

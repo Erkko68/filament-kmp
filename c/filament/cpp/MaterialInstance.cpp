@@ -131,6 +131,18 @@ void FilaMaterialInstance_setPolygonOffset(FilaMaterialInstance* instance, float
     FILA_CAST(MaterialInstance, instance)->setPolygonOffset(scale, constant);
 }
 
+bool FilaMaterialInstance_getConstantBool(const FilaMaterialInstance* instance, const char* name) {
+    return FILA_CONST_CAST(MaterialInstance, instance)->getConstant<bool>(name);
+}
+
+float FilaMaterialInstance_getConstantFloat(const FilaMaterialInstance* instance, const char* name) {
+    return FILA_CONST_CAST(MaterialInstance, instance)->getConstant<float>(name);
+}
+
+int32_t FilaMaterialInstance_getConstantInt(const FilaMaterialInstance* instance, const char* name) {
+    return FILA_CONST_CAST(MaterialInstance, instance)->getConstant<int32_t>(name);
+}
+
 void FilaMaterialInstance_setMaskThreshold(FilaMaterialInstance* instance, float threshold) {
     FILA_CAST(MaterialInstance, instance)->setMaskThreshold(threshold);
 }

@@ -4,8 +4,9 @@ All notable changes to this project are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-Since `0.2.0`: minor (`0.X.0`) tracks upstream Filament feature releases and may change
-public API pre-1.0; patch (`0.0.X`) is bug fixes only. See
+Since `0.2.0`: minor (`X.Y.0`) tracks upstream Filament feature releases and may change
+public API; patch (`X.Y.Z`) is bug fixes only; a major bump is reserved for maturity
+milestones and very large changes. See
 [README → Versioning & stability](README.md#versioning--stability).
 
 Each entry is one line; click the version link at the bottom for the full diff.
@@ -13,13 +14,18 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ## [Unreleased]
 
 ### Added
-
 - **Filament 1.74.0**: Upgraded the bundled Filament engine to 1.74.0 (no public C++ API changes; MATERIAL_VERSION 73→74, all `.filamat` materials recompiled). The web prebuilt is built from our fork's `feat/webgl-bindings-coverage-1.74` branch (the `v1.74.0` tag + expanded JS bindings) pending the upstream PR.
 - **Web binding parity**: closed most web platform gaps — `Fence`, `SkinningBuffer`/`MorphTargetBuffer`, shadow types (VSM/DPCF/PCSS), full `ShadowOptions` (incl. `cascadeSplitPositions`, `vsm`), frustum culling, non-indexed geometry, `Renderer.copyFrame`/`readPixels` (swap-chain + render-target), `MaterialInstance.material`/`duplicate`/`setScissor`, `Camera.getFieldOfViewInDegrees`, `LightManager.getComponentCount`, `Texture.isTextureSwizzleSupported`, `SurfaceOrientation.Builder.tangents`, and the gltfio instance/joint/morph-name accessors. `@PlatformGap` now marks only genuine platform constraints.
+- **Android-API parity sweep** (`filament`): bound every remaining public Filament Android API missing from common — GTAO selection (`AmbientOcclusionOptions.aoType` + `AmbientOcclusionType` enum), typed TAA options (`TemporalAntiAliasingOptions.boxType`/`boxClipping`/`jitterPattern` are now `BoxType`/`BoxClipping`/`JitterPattern` enums instead of raw `Int`s — source-breaking if you set them), world-origin grid snapping (`View.gridSize`/`effectiveGridSize`), `Engine.hasUnrecoverableFailure`, `MaterialInstance.getConstantBoolean/Float/Int`, `ColorGrading.Builder.customLut`, and `RenderableManager.getEnabledAttributesAt`. On web, `getConstant*` and `customLut` throw `UnsupportedOperationException` (`@PlatformGap`: not bound in filament.js); everything else works on all targets. Intentional non-mirrors are documented in `scripts/dev/check-common-api-ignores.txt`.
+- **Smarter upgrade tooling** (build): `check-common-api.sh` now audits classes, nested types, and enum constants (not just method names), strips KDoc before matching, flags upstream-deprecated members informationally, reads suppressions from `check-common-api-ignores.txt`, and exits non-zero on unsuppressed gaps; `upgrade-diff.sh` gained a HIGHLIGHTS section (MATERIAL_VERSION bump, `CONFIG_MAX_*`, feature-flag flips, added/removed Java classes and embind bindings) and optional tags (defaults: `filaVersion` → latest upstream release).
 
 ### Known issues
 
 - Upstream regression (present in stock 1.74.0, all backends): a scene lit **only** by punctual lights (e.g. a spot, no directional) panics in `renderView` when the view's shadow type is VSM/DPCF/PCSS — the requested shader variant collides with the reserved SSR variant after the dynamic-lighting variant removal. Use PCF for spot-only scenes until fixed upstream.
+
+### Fixed
+- **Web TAA options no longer drop fields** (`filament`): the web `temporalAntiAliasingOptions` setter now forwards `filterInput`, `useYCoCg`, `hdr`, `boxType`, `boxClipping`, `jitterPattern`, `varianceGamma`, `preventFlickering`, and `historyReprojection` instead of silently resetting them to defaults.
+- **`downloadPrebuilts` works again on 1.73.0** (build): dropped the dead `macosX64` prebuilt target — upstream releases stopped shipping mac x86_64 libs, which made the umbrella task fail.
 
 ## [0.2.0] — 2026-07-16
 
@@ -32,7 +38,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Test materials now load on every target** (tests): `.filamat` test blobs are base64-embedded into commonTest at build time (`generateEmbeddedMaterials`, sharing the `registerEmbeddedTestResources` build-logic helper with gltfio's `generateEmbeddedGlb`), replacing the JVM-only classpath resource — material/renderable rendering tests now also run on web, iOS, and Android instead of silently skipping.
 
 ### Changed
-- **Dropped the `-beta` suffix** (release): versions are plain `X.Y.Z` from now on — minor bumps track upstream Filament feature releases (this one: 1.72.0 → 1.73.0), patch bumps are fixes only, and `1.0.0` marks API maturity. See [README → Versioning & stability](README.md#versioning--stability).
+- **Dropped the `-beta` suffix** (release): versions are plain `X.Y.Z` from now on — minor bumps track upstream Filament feature releases (this one: 1.72.0 → 1.73.0), patch bumps are fixes only, and a major bump is reserved for API maturity and very large changes. See [README → Versioning & stability](README.md#versioning--stability).
 - **Python is no longer a build dependency** (build): the prebuilt/header/jextract download scripts were ported to pure-JVM Gradle tasks in `build-logic` (commons-compress for tar.gz), keeping the same task names, cache dirs, and version stamping — and making the prebuilt downloads fully version-aware, so bumping `filaVersion` re-extracts automatically. `setup-python` dropped from all CI workflows.
 - **`buildSrc` became the `build-logic` included build** (build): convention-plugin edits no longer invalidate the whole main build's task graph.
 - **Public-API surface is now CI-enforced** (build): binary-compatibility-validator's `apiCheck` guards the JVM ABI of the five published `:kotlin:*` modules against committed `api/` dumps; intentional API changes must ship a regenerated `apiDump`.

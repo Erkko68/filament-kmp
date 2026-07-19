@@ -666,6 +666,14 @@ expect class RenderableManager {
     fun getMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int): MaterialInstance?
 
     /**
+     * Retrieves the set of enabled attribute slots in the given primitive's VertexBuffer.
+     *
+     * @param instance Instance of the component obtained from getInstance()
+     * @param primitiveIndex the primitive of interest
+     */
+    fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute>
+
+    /**
      * Changes the geometry for a primitive.
      *
      * @param instance Instance of the component obtained from getInstance()
@@ -824,3 +832,7 @@ expect class RenderableManager {
      */
     fun clearMaterialInstanceAt(instance: EntityInstance, primitiveIndex: Int)
 }
+
+/** Converts a native attribute bitset into the corresponding set of [VertexBuffer.VertexAttribute]. */
+internal fun attributeBitsetToSet(bits: Int): Set<VertexBuffer.VertexAttribute> =
+    VertexBuffer.VertexAttribute.entries.filterTo(mutableSetOf()) { (bits shr it.ordinal) and 1 == 1 }

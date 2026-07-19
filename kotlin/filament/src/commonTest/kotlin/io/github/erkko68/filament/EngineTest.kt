@@ -78,7 +78,10 @@ class EngineTest {
         engine.flush()
         engine.flushAndWait()
         engine.flushAndWait(100L)
-        
+
+        // A healthy engine reports no unrecoverable (device-lost) failure
+        assertFalse(engine.hasUnrecoverableFailure())
+
         // Paused state
         assertFalse(engine.paused)
         engine.paused = true

@@ -57,7 +57,8 @@ fun Project.applyFilamentJvmNative(
     val resArch = if (arch == "Arm64") "arm64" else "x64"
     val platformArch = "$platform-$resArch"
     val prebuiltsTarget = when (platform) {
-        "macos" -> if (arch == "Arm64") "macosArm64" else "macosX64"
+        // Upstream releases no longer ship mac x86_64 libs — Apple Silicon only.
+        "macos" -> if (arch == "Arm64") "macosArm64" else error("macOS x86_64 is not supported: Filament releases stopped shipping mac x86_64 prebuilts")
         "linux" -> if (arch == "Arm64") "linuxArm64" else "linuxX64"
         "windows" -> "mingwX64"
         else -> error("Unsupported platform '$platform'")

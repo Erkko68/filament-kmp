@@ -257,6 +257,7 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun flushAndWait() = nativeEngine.flushAndWait()
     actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
     actual fun flush() = nativeEngine.flush()
+    actual fun hasUnrecoverableFailure(): Boolean = nativeEngine.hasUnrecoverableFailure()
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
     actual var paused: Boolean
         get() = nativeEngine.isPaused

@@ -262,6 +262,10 @@ actual class View(internal val jsView: JSView) {
             _ambientOcclusionOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_AmbientOcclusionOptions`>()
             jsOptions.enabled = value.enabled
+            jsOptions.aoType = when (value.aoType) {
+                AmbientOcclusionOptions.AmbientOcclusionType.SAO -> io.github.erkko68.filament.web.View_AmbientOcclusionOptions_AmbientOcclusionType.SAO
+                AmbientOcclusionOptions.AmbientOcclusionType.GTAO -> io.github.erkko68.filament.web.View_AmbientOcclusionOptions_AmbientOcclusionType.GTAO
+            }
             jsOptions.radius = value.radius.toDouble()
             jsOptions.bias = value.bias.toDouble()
             jsOptions.intensity = value.intensity.toDouble()
@@ -290,6 +294,28 @@ actual class View(internal val jsView: JSView) {
             jsOptions.sharpness = value.sharpness.toDouble()
             jsOptions.upscaling = value.upscaling.toDouble()
             jsOptions.filterHistory = value.filterHistory
+            jsOptions.filterInput = value.filterInput
+            jsOptions.useYCoCg = value.useYCoCg
+            jsOptions.hdr = value.hdr
+            jsOptions.boxType = when (value.boxType) {
+                TemporalAntiAliasingOptions.BoxType.AABB -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxType.AABB
+                TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxType.AABB_VARIANCE
+            }
+            jsOptions.boxClipping = when (value.boxClipping) {
+                TemporalAntiAliasingOptions.BoxClipping.ACCURATE -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.ACCURATE
+                TemporalAntiAliasingOptions.BoxClipping.CLAMP -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.CLAMP
+                TemporalAntiAliasingOptions.BoxClipping.NONE -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.NONE
+            }
+            jsOptions.jitterPattern = when (value.jitterPattern) {
+                TemporalAntiAliasingOptions.JitterPattern.RGSS_X4 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.RGSS_X4
+                TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.UNIFORM_HELIX_X4
+                TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X8 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X8
+                TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X16 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X16
+                TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X32 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X32
+            }
+            jsOptions.varianceGamma = value.varianceGamma.toDouble()
+            jsOptions.preventFlickering = value.preventFlickering
+            jsOptions.historyReprojection = value.historyReprojection
             jsView.setTemporalAntiAliasingOptions(jsOptions)
         }
 
@@ -305,6 +331,13 @@ actual class View(internal val jsView: JSView) {
             jsOptions.stride = value.stride.toDouble()
             jsView.setScreenSpaceReflectionsOptions(jsOptions)
         }
+
+    actual var gridSize: Double
+        get() = jsView.getGridSize()
+        set(value) { jsView.setGridSize(value) }
+
+    actual val effectiveGridSize: Double
+        get() = jsView.getEffectiveGridSize()
 
     actual var renderTarget: RenderTarget?
         get() = _renderTarget
@@ -539,6 +572,8 @@ actual class View(internal val jsView: JSView) {
         actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
     }
     actual class AmbientOcclusionOptions {
+        actual enum class AmbientOcclusionType { SAO, GTAO }
+        actual var aoType: AmbientOcclusionType = AmbientOcclusionType.SAO
         actual var radius: Float = 0.3f
         actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
@@ -566,6 +601,9 @@ actual class View(internal val jsView: JSView) {
         }
     }
     actual class TemporalAntiAliasingOptions {
+        actual enum class BoxType { AABB, AABB_VARIANCE }
+        actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
+        actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
         actual var feedback: Float = 0.12f
         actual var lodBias: Float = -1.0f
         actual var sharpness: Float = 0.0f
@@ -575,9 +613,9 @@ actual class View(internal val jsView: JSView) {
         actual var filterInput: Boolean = true
         actual var useYCoCg: Boolean = false
         actual var hdr: Boolean = true
-        actual var boxType: Int = 0          // BoxType.AABB
-        actual var boxClipping: Int = 0      // BoxClipping.ACCURATE
-        actual var jitterPattern: Int = 3    // JitterPattern.HALTON_23_X16
+        actual var boxType: BoxType = BoxType.AABB
+        actual var boxClipping: BoxClipping = BoxClipping.ACCURATE
+        actual var jitterPattern: JitterPattern = JitterPattern.HALTON_23_X16
         actual var varianceGamma: Float = 1.0f
         actual var preventFlickering: Boolean = false
         actual var historyReprojection: Boolean = true
