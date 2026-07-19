@@ -141,6 +141,9 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
         val handle = FilaRenderableManager_getMaterialInstanceAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong())
         return if (handle != null) MaterialInstance(handle) else null
     }
+
+    actual fun getEnabledAttributesAt(instance: EntityInstance, primitiveIndex: Int): Set<VertexBuffer.VertexAttribute> =
+        attributeBitsetToSet(FilaRenderableManager_getEnabledAttributesAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong()).toInt())
     
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
         FilaRenderableManager_setGeometryAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toULong(), count.toULong())

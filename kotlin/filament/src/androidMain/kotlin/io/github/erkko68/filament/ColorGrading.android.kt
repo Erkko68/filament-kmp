@@ -86,6 +86,14 @@ actual class ColorGrading internal constructor(internal val nativeColorGrading: 
             return this
         }
 
+        actual fun customLut(data: FloatArray, dimension: Int): Builder {
+            val buffer = java.nio.ByteBuffer.allocateDirect(data.size * 4)
+                .order(java.nio.ByteOrder.nativeOrder())
+            buffer.asFloatBuffer().put(data)
+            nativeBuilder.customLut(buffer, dimension)
+            return this
+        }
+
         actual fun fastMath(fastMath: Boolean): Builder {
             nativeBuilder.fastMath(fastMath)
             return this

@@ -137,6 +137,9 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — customLut is not bound in filament.js.")
+        actual fun customLut(data: FloatArray, dimension: Int): Builder = jsUnsupported("ColorGrading.Builder.customLut")
+
         actual fun fastMath(fastMath: Boolean): Builder {
             jsBuilder.fastMath(fastMath)
             return this

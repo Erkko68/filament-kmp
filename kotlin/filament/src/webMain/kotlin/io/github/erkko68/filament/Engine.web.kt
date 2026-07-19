@@ -233,6 +233,8 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.execute()
     }
 
+    actual fun hasUnrecoverableFailure(): Boolean = jsEngine.hasUnrecoverableFailure()
+
     // TODO(js): paused state not bound in upstream jsbindings.cpp — track locally
     // so the common getter/setter round-trip works.
     private var _paused: Boolean = false

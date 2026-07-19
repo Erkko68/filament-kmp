@@ -95,6 +95,11 @@ actual class ColorGrading internal constructor(internal var nativeHandle: Memory
             return this
         }
 
+        actual fun customLut(data: FloatArray, dimension: Int): Builder {
+            confined { arena -> FilamentC.FilaColorGradingBuilder_customLut(nativeHandle, arena.floats(data), dimension.toByte()) }
+            return this
+        }
+
         actual fun fastMath(fastMath: Boolean): Builder {
             FilamentC.FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
             return this

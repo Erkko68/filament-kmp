@@ -29,6 +29,9 @@ actual class MaterialInstance constructor(
     actual fun setParameter(name: String, x: Boolean) { FilaMaterialInstance_setParameterBool(nativeHandle, name, x) }
     actual fun setParameter(name: String, x: Float) { FilaMaterialInstance_setParameterFloat(nativeHandle, name, x) }
     actual fun setParameter(name: String, x: Int) { FilaMaterialInstance_setParameterInt(nativeHandle, name, x) }
+    actual fun getConstantBoolean(name: String): Boolean = FilaMaterialInstance_getConstantBool(nativeHandle, name)
+    actual fun getConstantFloat(name: String): Float = FilaMaterialInstance_getConstantFloat(nativeHandle, name)
+    actual fun getConstantInt(name: String): Int = FilaMaterialInstance_getConstantInt(nativeHandle, name)
     actual fun setParameter(name: String, x: Boolean, y: Boolean) { FilaMaterialInstance_setParameterBool2(nativeHandle, name, x, y) }
     actual fun setParameter(name: String, x: Float, y: Float) { FilaMaterialInstance_setParameterFloat2(nativeHandle, name, x, y) }
     actual fun setParameter(name: String, x: Int, y: Int) { FilaMaterialInstance_setParameterInt2(nativeHandle, name, x, y) }

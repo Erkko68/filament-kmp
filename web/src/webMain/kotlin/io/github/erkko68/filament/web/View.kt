@@ -11,6 +11,9 @@ fun setColorGrading(colorGrading: ColorGrading): Unit
 fun setScene(scene: Scene): Unit
 fun setViewport(viewport: float4): Unit
 fun setVisibleLayers(select: Double, values: Double): Unit
+fun setGridSize(size: Double): Unit
+fun getGridSize(): Double
+fun getEffectiveGridSize(): Double
 fun setRenderTarget(renderTarget: RenderTarget): Unit
 fun setAmbientOcclusionOptions(options: View_AmbientOcclusionOptions): Unit
 fun setDepthOfFieldOptions(options: View_DepthOfFieldOptions): Unit

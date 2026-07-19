@@ -235,6 +235,18 @@ expect class ColorGrading {
         fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder
 
         /**
+         * Specifies a custom 3D color grading LUT to map the final sRGB color, applied after
+         * post-processing in LDR (sRGB space).
+         *
+         * @param data LUT data as a flat array of RGB triplets; size must be
+         *   `dimension * dimension * dimension * 3` floats
+         * @param dimension Dimension of the custom LUT (e.g. 16, 32, 64)
+         * @return This Builder, for chaining calls
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — customLut is not bound in filament.js.")
+        fun customLut(data: FloatArray, dimension: Int): Builder
+
+        /**
          * Enables or disables fast math approximations.
          *
          * Fast math may sacrifice some precision for better performance.

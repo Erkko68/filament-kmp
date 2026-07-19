@@ -34,6 +34,9 @@ actual class MaterialInstance constructor(
     actual fun setParameter(name: String, x: Boolean) { nativeMaterialInstance.setParameter(name, x) }
     actual fun setParameter(name: String, x: Float) { nativeMaterialInstance.setParameter(name, x) }
     actual fun setParameter(name: String, x: Int) { nativeMaterialInstance.setParameter(name, x) }
+    actual fun getConstantBoolean(name: String): Boolean = nativeMaterialInstance.getConstantBoolean(name)
+    actual fun getConstantFloat(name: String): Float = nativeMaterialInstance.getConstantFloat(name)
+    actual fun getConstantInt(name: String): Int = nativeMaterialInstance.getConstantInt(name)
     actual fun setParameter(name: String, x: Boolean, y: Boolean) { nativeMaterialInstance.setParameter(name, x, y) }
     actual fun setParameter(name: String, x: Float, y: Float) { nativeMaterialInstance.setParameter(name, x, y) }
     actual fun setParameter(name: String, x: Int, y: Int) { nativeMaterialInstance.setParameter(name, x, y) }

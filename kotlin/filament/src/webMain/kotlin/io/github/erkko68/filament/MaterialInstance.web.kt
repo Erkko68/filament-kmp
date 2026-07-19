@@ -51,6 +51,13 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         jsMaterialInstance.setFloatParameter(name, x.toDouble())
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
+    actual fun getConstantBoolean(name: String): Boolean = jsUnsupported("MaterialInstance.getConstantBoolean")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
+    actual fun getConstantFloat(name: String): Float = jsUnsupported("MaterialInstance.getConstantFloat")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
+    actual fun getConstantInt(name: String): Int = jsUnsupported("MaterialInstance.getConstantInt")
+
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
         ext.setBoolParameter(name, listOf(x, y).toJsBooleans())
     }

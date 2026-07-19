@@ -4,35 +4,40 @@
 # `commonMain` `expect` declarations. Filament's Android Java API is the
 # canonical public surface that the Kotlin Multiplatform API should mirror
 # (modulo Kotlin-idiomatic property accessors and a few Android-only types).
-# This script flags methods present upstream that are missing from common.
 #
-# Pairs each KMP module to its Android counterpart:
+# What this checks, per module (filament / filamat / gltfio / filament-utils):
 #
-#   kotlin/filament/src/commonMain        ↔  android/filament-android
-#   kotlin/filamat/src/commonMain         ↔  android/filamat-android
-#   kotlin/gltfio/src/commonMain          ↔  android/gltfio-android
-#   kotlin/filament-utils/src/commonMain  ↔  android/filament-utils-android
+#   1. CLASS      — every public Java class file has a matching Kotlin
+#                   class/interface/object declaration in commonMain.
+#   2. NESTED     — every public nested type (class/interface/enum) inside a
+#                   Java class exists as an identifier in commonMain.
+#   3. CONST      — enum constants and ALL_CAPS public constants exist in
+#                   commonMain.
+#   4. METHOD     — every public Java method name is referenced in commonMain
+#                   (property-bridged: getFoo/setFoo/isFoo ↔ foo).
 #
-# For each class file in Android, find public method names and check whether
-# the corresponding identifier is referenced (declaration or property) in any
-# `.kt` file in the matching commonMain tree. Kotlin properties bridge
-# `getFoo()`/`setFoo(...)` automatically, so `foo` matching either is fine.
+# Kotlin sources are tokenized with comments stripped first, so a method that
+# is only *mentioned in KDoc* no longer counts as covered (it used to).
+# Members that are @Deprecated upstream are flagged "(deprecated upstream)" —
+# usually fine to skip rather than bind.
+#
+# Suppressions live in check-common-api-ignores.txt next to this script:
+# one entry per line, `ClassName` (whole class) or `ClassName.member`,
+# `#` comments allowed. Prefer that file over editing the regexes below.
 #
 # Usage:
 #   scripts/dev/check-common-api.sh                 # uses .filament-src-cache @ filaVersion
 #   scripts/dev/check-common-api.sh --tag v1.71.4   # specific tag
 #   scripts/dev/check-common-api.sh /path/to/clone  # explicit Filament tree
 #
-# Output: per-module list of public Java methods absent from common Kotlin
-# code, plus a summary count. Same caveats as check-js-bindings.sh — token-
-# level matching, so a method that exists only inside a comment will be
-# considered "covered" (rare in practice).
+# Exit code: 0 when clean, 1 when anything unsuppressed is missing (CI-able).
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CACHE_DIR="${SCRIPT_DIR}/.filament-src-cache"
+IGNORE_FILE="${SCRIPT_DIR}/check-common-api-ignores.txt"
 
 # Module map: KMP path  ↔  Android subpath inside the Filament source tree.
 declare -a MODULES=(
@@ -46,16 +51,15 @@ declare -a MODULES=(
 #   - JNI plumbing (n*, native objects, nativeObject, getNativeObject, finalize)
 #   - Object overrides (hashCode, equals, toString)
 #   - Internal lifecycle (clearNativeObject)
-#   - Kotlin/Java accessor noise
 SKIP_NAMES_REGEX='^(n[A-Z]|nativeObject$|getNativeObject$|finalize$|hashCode$|equals$|toString$|clearNativeObject$|access\$)'
 
 # Java classes we never want to compare (Android-only / not applicable to KMP):
-#   - NioUtils, AndroidPlatform, NativeSurface, SwapChainFlags: infra plumbing
-#   - Stream: Android SurfaceTexture
+#   - NioUtils, Platform*, NativeSurface, SwapChainFlags: infra plumbing
+#   - Stream, TextureHelper, ChoreographerHelper: Android Surface/Bitmap infra
 #   - AutomationEngine, ImageDiff, RemoteServer: Android testing/CI tooling
-#   - DeviceUtils: Android device introspection
-#   - Filament: Android library loader init
-SKIP_CLASSES_REGEX='^(NioUtils|AndroidPlatform|NativeSurface|SwapChainFlags|Stream|AutomationEngine|ImageDiff|RemoteServer|DeviceUtils|Filament|DisplayHelper|UiHelper)$'
+#   - DeviceUtils, Asserts, MathUtils, UsedBy*: Android device/JNI internals
+#   - Filament, FilamentHelper: Android library loader init
+SKIP_CLASSES_REGEX='^(NioUtils|AndroidPlatform.*|Platform|NativeSurface|SwapChainFlags|Stream|AutomationEngine|ImageDiff|RemoteServer|DeviceUtils|Filament|FilamentHelper|DisplayHelper|UiHelper|TextureHelper|ChoreographerHelper|Asserts|MathUtils|Entity|EntityInstance|UsedByNative|UsedByReflection)$'
 
 FILAMENT_SRC=""
 TAG=""
@@ -72,7 +76,7 @@ done
 if [[ -n "$FILAMENT_SRC" ]]; then
   [[ -d "$FILAMENT_SRC/android" ]] || { echo "Not a Filament tree: $FILAMENT_SRC" >&2; exit 1; }
   show_file() { cat "$FILAMENT_SRC/$1"; }
-  list_files() { find "$FILAMENT_SRC/$1" -name '*.java' 2>/dev/null; }
+  list_files() { find "$FILAMENT_SRC/$1" -name '*.java' 2>/dev/null | sed "s|^$FILAMENT_SRC/||"; }
 else
   [[ -d "$CACHE_DIR/.git" ]] || { echo "No Filament cache. Seed it with scripts/dev/upgrade-diff.sh first." >&2; exit 1; }
   if [[ -z "$TAG" ]]; then
@@ -89,12 +93,20 @@ else
   }
 fi
 
-# Extract every `public` method name from a Java file. We accept some noise —
-# annotated returns, generic wrappers, etc. — by being permissive about what
-# comes before the name, and require an opening paren after.
-extract_java_methods() {
-  # Strip /* ... */ comments and // ... line comments before matching, so
-  # commented-out signatures don't pollute the list.
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+# Load suppressions (Class or Class.member entries).
+IGNORES="$TMP_DIR/ignores"
+if [[ -f "$IGNORE_FILE" ]]; then
+  sed 's/#.*//' "$IGNORE_FILE" | tr -d ' \t' | grep -v '^$' > "$IGNORES" || true
+else
+  : > "$IGNORES"
+fi
+is_ignored() { grep -qxF -- "$1" "$IGNORES" || grep -qxF -- "${1%%.*}" "$IGNORES"; }
+
+# Strip // and /* */ comments from a C-family/Kotlin source stream.
+strip_comments() {
   awk '
     BEGIN { incomment = 0 }
     {
@@ -113,15 +125,45 @@ extract_java_methods() {
       sub(/\/\/.*/, "", line)
       print line
     }
-  ' \
-  | grep -oE 'public\s+(static\s+)?(final\s+)?(synchronized\s+)?(abstract\s+)?(native\s+)?([A-Za-z_][A-Za-z0-9_<>\[\],?@.\s]*\s+)?[A-Za-z_][A-Za-z0-9_]*\s*\(' \
-  | sed -E 's/.*[[:space:]]([A-Za-z_][A-Za-z0-9_]*)\s*\(.*/\1/' \
-  | grep -vE "$SKIP_NAMES_REGEX" \
-  | sort -u
+  '
 }
 
-# Print classification.
+# Emit "KIND<TAB>name<TAB>deprecated-flag" lines for a Java source on stdin.
+# Kinds: NESTED (public nested type), CONST (enum constant / ALL_CAPS public
+# constant), METHOD (public method). Comments are already stripped.
+# A pending @Deprecated annotation marks the next emitted member.
+extract_java_surface() {
+  awk '
+    { line = $0 }
+    /@Deprecated/ { dep = 1 }
+    # Public nested types (top-level class filtered out by caller).
+    match(line, /(public|protected)[ \t]+([a-z]+[ \t]+)*(class|interface|enum|@interface)[ \t]+[A-Za-z_][A-Za-z0-9_]*/) {
+      decl = substr(line, RSTART, RLENGTH)
+      n = split(decl, parts, /[ \t]+/)
+      printf "NESTED\t%s\t%d\n", parts[n], dep; dep = 0; next
+    }
+    # Enum constants / annotation-typedef constants: indented ALL_CAPS
+    # identifier immediately followed by "," ";" "(" or "=".
+    match(line, /^[ \t]+[A-Z][A-Z0-9_]{2,}[ \t]*[,;(=]/) {
+      id = substr(line, RSTART, RLENGTH)
+      gsub(/[^A-Z0-9_]/, "", id)
+      printf "CONST\t%s\t%d\n", id, dep; dep = 0; next
+    }
+    # Public methods: permissive about modifiers/return type, require "(".
+    match(line, /public[ \t]+(static[ \t]+)?(final[ \t]+)?(synchronized[ \t]+)?(abstract[ \t]+)?(native[ \t]+)?([A-Za-z_][A-Za-z0-9_<>\[\],?@. \t]*[ \t]+)?[A-Za-z_][A-Za-z0-9_]*[ \t]*\(/) {
+      sig = substr(line, RSTART, RLENGTH)
+      sub(/[ \t]*\($/, "", sig)
+      n = split(sig, parts, /[ \t]+/)
+      printf "METHOD\t%s\t%d\n", parts[n], dep; dep = 0; next
+    }
+  ' | sort -u
+}
+
+# macOS-safe first-char lowercasing (BSD sed has no \L).
+lower_first() { printf '%s%s' "$(printf '%s' "${1:0:1}" | tr '[:upper:]' '[:lower:]')" "${1:1}"; }
+
 TOTAL_MISSING=0
+TOTAL_DEPRECATED=0
 
 for entry in "${MODULES[@]}"; do
   IFS='|' read -r mod kt_path java_path <<< "$entry"
@@ -132,11 +174,29 @@ for entry in "${MODULES[@]}"; do
     continue
   fi
 
-  # Collect every identifier token from the module's commonMain Kotlin files.
-  kt_tokens="$(grep -rohE '[A-Za-z_][A-Za-z0-9_]*' "$kt_full" --include='*.kt' 2>/dev/null | sort -u)"
+  # Tokenize the module's commonMain Kotlin with comments stripped, so a name
+  # that only appears in KDoc doesn't count as covered. Dependent modules
+  # legitimately reuse core filament types (e.g. filamat's require() takes
+  # VertexBuffer.VertexAttribute), so they also get the core token set.
+  kt_tokens="$TMP_DIR/tokens-$mod"
+  src_dirs=("$kt_full")
+  [[ "$mod" != "filament" ]] && src_dirs+=("$REPO_ROOT/kotlin/filament/src/commonMain/kotlin")
+  find "${src_dirs[@]}" -name '*.kt' -exec cat {} + 2>/dev/null \
+    | strip_comments \
+    | grep -ohE '[A-Za-z_][A-Za-z0-9_]*' | sort -u > "$kt_tokens"
 
-  # Discover every Java file in the matching Android tree.
+  # Kotlin *declared* type names (class/interface/object) — stricter than the
+  # token set, used for the class-level check.
+  kt_types="$TMP_DIR/types-$mod"
+  find "$kt_full" -name '*.kt' -exec cat {} + 2>/dev/null \
+    | strip_comments \
+    | grep -oE '\b(class|interface|object)[ \t]+[A-Z][A-Za-z0-9_]*' \
+    | awk '{print $2}' | sort -u > "$kt_types"
+
+  has_token() { grep -qxF -- "$1" "$kt_tokens"; }
+
   module_missing=0
+  module_deprecated=0
   echo
   echo "================================================================================"
   echo "## $mod   (Android: $java_path)"
@@ -151,69 +211,88 @@ for entry in "${MODULES[@]}"; do
   while IFS= read -r jfile; do
     [[ -z "$jfile" ]] && continue
     classname="$(basename "$jfile" .java)"
-    # Skip Android-only / infra classes.
-    if [[ "$classname" =~ $SKIP_CLASSES_REGEX ]]; then
+    [[ "$classname" =~ $SKIP_CLASSES_REGEX ]] && continue
+    is_ignored "$classname" && continue
+
+    content="$(show_file "$jfile" | strip_comments)"
+    [[ -z "$content" ]] && continue
+
+    surface="$(printf '%s\n' "$content" | extract_java_surface || true)"
+
+    # 1. Class-level: the top-level Java class should exist as a declared
+    #    Kotlin type. If it doesn't, report once and move on — per-member
+    #    output for a wholly missing class is noise.
+    if ! grep -qxF -- "$classname" "$kt_types"; then
+      members=$(printf '%s\n' "$surface" | grep -c . || true)
+      if printf '%s\n' "$content" | grep -qE '@Deprecated' ; then depnote=" (deprecated upstream)"; else depnote=""; fi
+      printf "  %-18s %s — no Kotlin declaration (%s public members)%s\n" "CLASS" "$classname" "$members" "$depnote"
+      module_missing=$((module_missing + 1))
       continue
     fi
-    # Inner classes (e.g. RenderableManager$Bone in compiled form, but Java
-    # source treats them as nested classes — we still want to compare).
 
-    # Extract method names from this Java file. `|| true` keeps `set -e`
-    # happy when a file has no public methods at all (e.g. constants-only).
-    methods="$(show_file "$jfile" 2>/dev/null | extract_java_methods || true)"
-    [[ -z "$methods" ]] && continue
+    file_out=""
+    while IFS=$'\t' read -r kind name dep; do
+      [[ -z "$name" ]] && continue
+      [[ "$name" =~ $SKIP_NAMES_REGEX ]] && continue
+      [[ "$name" == "$classname" ]] && continue
+      is_ignored "$classname.$name" && continue
 
-    # Filter to only methods that aren't represented in the commonMain
-    # token set. Property-bridged matches are accepted: getFoo / setFoo
-    # become foo, so we strip the get/set prefix lowercase and check that
-    # candidate too.
-    file_missing_str=""
-    file_missing_count=0
-    while IFS= read -r m; do
-      [[ -z "$m" ]] && continue
-      # Skip Java constructors — name matches the (outer or inner) class.
-      # `classname` here is the *file* name. To also skip inner-class
-      # constructors (e.g. View.InternalOnPickCallback) we check whether
-      # the method name appears anywhere as a `class NAME` declaration in
-      # the same file.
-      if show_file "$jfile" 2>/dev/null | grep -qE "\bclass\s+$m\b|\binterface\s+$m\b|\benum\s+$m\b"; then
-        continue
-      fi
-      if grep -qx -- "$m" <<< "$kt_tokens"; then
-        continue
-      fi
-      # Property bridge: getFoo/setFoo → foo
-      if [[ "$m" =~ ^(get|set)([A-Z]) ]]; then
-        prop="$(echo "${m:3}" | sed -E 's/^(.)/\L\1/')"
-        if [[ -n "$prop" ]] && grep -qx -- "$prop" <<< "$kt_tokens"; then
-          continue
-        fi
-      fi
-      file_missing_str="${file_missing_str}    ${m}"$'\n'
-      file_missing_count=$((file_missing_count + 1))
-    done <<< "$methods"
+      case "$kind" in
+        NESTED|CONST)
+          has_token "$name" && continue
+          ;;
+        METHOD)
+          # Constructors of nested classes: name matches a declared type in
+          # the same file.
+          if printf '%s\n' "$content" | grep -qE "\b(class|interface|enum)[ \t]+$name\b"; then
+            continue
+          fi
+          has_token "$name" && continue
+          # Property bridge: getFoo/setFoo/isFoo → foo. Boolean setters also
+          # bridge to Kotlin's isFoo / isFooEnabled convention
+          # (setDepthWrite → isDepthWriteEnabled).
+          if [[ "$name" =~ ^(get|set)[A-Z] ]]; then
+            stem="${name:3}"
+            { has_token "$(lower_first "$stem")" \
+              || has_token "is$stem" \
+              || has_token "is${stem}Enabled"; } && continue
+          elif [[ "$name" =~ ^is[A-Z] ]]; then
+            has_token "$(lower_first "${name:2}")" && continue
+          fi
+          ;;
+      esac
 
-    if [[ $file_missing_count -gt 0 ]]; then
-      printf "  %s\n%s" "$classname" "$file_missing_str"
-      module_missing=$((module_missing + file_missing_count))
+      if [[ "$dep" == "1" ]]; then
+        file_out="${file_out}    $(printf '%-8s' "$kind") ${name}  (deprecated upstream)"$'\n'
+        module_deprecated=$((module_deprecated + 1))
+      else
+        file_out="${file_out}    $(printf '%-8s' "$kind") ${name}"$'\n'
+        module_missing=$((module_missing + 1))
+      fi
+    done <<< "$surface"
+
+    if [[ -n "$file_out" ]]; then
+      printf "  %s\n%s" "$classname" "$file_out"
     fi
   done <<< "$java_files_list"
 
   echo
-  echo "  ($mod) $module_missing missing-from-common."
+  echo "  ($mod) $module_missing missing-from-common, $module_deprecated deprecated-upstream."
   TOTAL_MISSING=$((TOTAL_MISSING + module_missing))
+  TOTAL_DEPRECATED=$((TOTAL_DEPRECATED + module_deprecated))
 done
 
 echo
 echo "================================================================================"
-echo "Total missing: $TOTAL_MISSING"
+echo "Total missing: $TOTAL_MISSING   (plus $TOTAL_DEPRECATED deprecated-upstream, informational)"
 echo "================================================================================"
 
 if [[ $TOTAL_MISSING -gt 0 ]]; then
   echo
-  echo "Tip: each entry is a public Filament Android method that has no matching"
+  echo "Tip: each entry is public Filament Android API surface with no matching"
   echo "identifier in the KMP commonMain expects. Either:"
-  echo "  - add an 'expect fun ...' (and the four actuals: jvm/android/native/js), or"
-  echo "  - confirm it's genuinely Android-only and add the class/method to the skip"
-  echo "    regexes at the top of this script."
+  echo "  - add the expect (and the four actuals: jvm/android/native/js), or"
+  echo "  - confirm it doesn't apply to KMP and add 'Class' or 'Class.member' to"
+  echo "    scripts/dev/check-common-api-ignores.txt (with a comment saying why)."
+  exit 1
 fi

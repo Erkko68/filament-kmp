@@ -34,8 +34,8 @@ object FilamentDownloads {
         "iosArm64"          to ("ios"       to "xcf:ios-arm64"),
         "iosSimulatorArm64" to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
         "iosX64"            to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
+        // No macosX64: upstream releases stopped shipping mac x86_64 libs.
         "macosArm64"        to ("mac"       to "filament/lib/arm64"),
-        "macosX64"          to ("mac"       to "filament/lib/x86_64"),
         "linuxX64"          to ("linux"     to "filament/lib/x86_64"),
         "linuxArm64"        to ("arm-linux" to "filament/lib/aarch64"),
         // /MT (static CRT) variant — the JVM's own msvcp140.dll conflicts with /MD.

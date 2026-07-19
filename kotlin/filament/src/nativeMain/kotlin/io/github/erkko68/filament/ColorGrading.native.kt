@@ -98,6 +98,13 @@ actual class ColorGrading internal constructor(internal var nativeHandle: CPoint
             return this
         }
 
+        actual fun customLut(data: FloatArray, dimension: Int): Builder {
+            data.usePinned { pinned ->
+                FilaColorGradingBuilder_customLut(nativeHandle, pinned.addressOf(0), dimension.toUByte())
+            }
+            return this
+        }
+
         actual fun fastMath(fastMath: Boolean): Builder {
             FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
             return this

@@ -99,6 +99,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
 
     actual class AmbientOcclusionOptions actual constructor() {
+        actual enum class AmbientOcclusionType { SAO, GTAO }
+        actual var aoType: AmbientOcclusionType = AmbientOcclusionType.SAO
         actual var radius: Float = 0.3f
         actual var bias: Float = 0.0005f
         actual var intensity: Float = 1.0f
@@ -127,6 +129,9 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
 
     actual class TemporalAntiAliasingOptions actual constructor() {
+        actual enum class BoxType { AABB, AABB_VARIANCE }
+        actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
+        actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
         actual var feedback: Float = 0.12f
         actual var enabled: Boolean = false
         actual var lodBias: Float = -1.0f
@@ -136,9 +141,9 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var filterInput: Boolean = true
         actual var useYCoCg: Boolean = false
         actual var hdr: Boolean = true
-        actual var boxType: Int = 0
-        actual var boxClipping: Int = 0
-        actual var jitterPattern: Int = 3
+        actual var boxType: BoxType = BoxType.AABB
+        actual var boxClipping: BoxClipping = BoxClipping.ACCURATE
+        actual var jitterPattern: JitterPattern = JitterPattern.HALTON_23_X16
         actual var varianceGamma: Float = 1.0f
         actual var preventFlickering: Boolean = false
         actual var historyReprojection: Boolean = true
@@ -420,6 +425,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             FilaView_getAmbientOcclusionOptions(nativeHandle, out.ptr)
             AmbientOcclusionOptions().apply {
                 enabled = out.enabled
+                aoType = AmbientOcclusionOptions.AmbientOcclusionType.entries[out.aoType]
                 radius = out.radius
                 bias = out.bias
                 intensity = out.intensity
@@ -449,6 +455,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             memScoped {
                 val cOptions = alloc<FilaViewAmbientOcclusionOptions>()
                 cOptions.enabled = value.enabled
+                cOptions.aoType = value.aoType.ordinal
                 cOptions.radius = value.radius
                 cOptions.bias = value.bias
                 cOptions.intensity = value.intensity
@@ -490,9 +497,9 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 filterInput = out.filterInput
                 useYCoCg = out.useYCoCg
                 hdr = out.hdr
-                boxType = out.boxType
-                boxClipping = out.boxClipping
-                jitterPattern = out.jitterPattern
+                boxType = TemporalAntiAliasingOptions.BoxType.entries[out.boxType]
+                boxClipping = TemporalAntiAliasingOptions.BoxClipping.entries[out.boxClipping]
+                jitterPattern = TemporalAntiAliasingOptions.JitterPattern.entries[out.jitterPattern]
                 varianceGamma = out.varianceGamma
                 preventFlickering = out.preventFlickering
                 historyReprojection = out.historyReprojection
@@ -510,9 +517,9 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 cOptions.filterInput = value.filterInput
                 cOptions.useYCoCg = value.useYCoCg
                 cOptions.hdr = value.hdr
-                cOptions.boxType = value.boxType
-                cOptions.boxClipping = value.boxClipping
-                cOptions.jitterPattern = value.jitterPattern
+                cOptions.boxType = value.boxType.ordinal
+                cOptions.boxClipping = value.boxClipping.ordinal
+                cOptions.jitterPattern = value.jitterPattern.ordinal
                 cOptions.varianceGamma = value.varianceGamma
                 cOptions.preventFlickering = value.preventFlickering
                 cOptions.historyReprojection = value.historyReprojection
@@ -668,6 +675,12 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual var isTransparentPickingEnabled: Boolean
         get() = FilaView_isTransparentPickingEnabled(nativeHandle)
         set(value) { FilaView_setTransparentPickingEnabled(nativeHandle, value) }
+
+    actual var gridSize: Double
+        get() = FilaView_getGridSize(nativeHandle)
+        set(value) { FilaView_setGridSize(nativeHandle, value) }
+    actual val effectiveGridSize: Double
+        get() = FilaView_getEffectiveGridSize(nativeHandle)
 
     actual fun setMaterialGlobal(index: Int, value: FloatArray) {
         FilaView_setMaterialGlobal(nativeHandle, index.toUInt(), value[0], value[1], value[2], value[3])

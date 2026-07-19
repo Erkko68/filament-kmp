@@ -44,6 +44,7 @@ void FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* builder, float co
 void FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* builder, float vibrance);
 void FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* builder, float saturation);
 void FilaColorGradingBuilder_curves(FilaColorGradingBuilder* builder, const float* shadowGamma, const float* midPoint, const float* highlightScale);
+void FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* builder, const float* data, uint8_t dimension);
 void FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* builder, bool fastMath);
 
 #ifdef __cplusplus

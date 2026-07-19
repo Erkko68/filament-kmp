@@ -46,8 +46,8 @@ Two consequences drive the whole process:
 ## TL;DR checklist
 
 ```sh
-# 1. Scope the change
-scripts/dev/upgrade-diff.sh v<old> v<new> --summary      # then re-run without --summary on hot areas
+# 1. Scope the change (tags optional: defaults to filaVersion → latest upstream release)
+scripts/dev/upgrade-diff.sh --summary                    # then re-run without --summary on hot areas
 
 # 2. Bump the version
 #    edit gradle.properties -> filaVersion=<new>
@@ -72,10 +72,17 @@ scripts/dev/run-tests.sh                                 # jvm + js + ios (+ and
 ### 1. Scope the diff
 
 ```sh
-scripts/dev/upgrade-diff.sh v1.71.5 v1.71.6 --summary
+scripts/dev/upgrade-diff.sh --summary                 # filaVersion → latest upstream release
+scripts/dev/upgrade-diff.sh v1.71.6 --summary         # filaVersion → explicit tag
+scripts/dev/upgrade-diff.sh v1.71.5 v1.71.6 --summary # explicit old and new
 ```
 
-This diffs the upstream tree between two tags across every surface that drives our bindings:
+The report opens with a **HIGHLIGHTS** section that extracts the historically surprising
+bits so they can't be missed in a big diff: the `MATERIAL_VERSION` bump, `CONFIG_MAX_*`
+changes, feature-flag additions/default flips, added/removed Android Java classes, and
+added/removed embind JS bindings.
+
+Below that, it diffs the upstream tree between the two tags across every surface that drives our bindings:
 public C++ headers, backend headers, **Android Java sources**, **`jsbindings.cpp`** (the real
 JS surface), **`filament.d.ts`** (the lagging typed surface), material/engine enums,
 feature-flag defaults, and `RELEASE_NOTES.md`. First run clones upstream into
@@ -129,9 +136,18 @@ scripts/dev/check-js-bindings.sh    # jsbindings.cpp registrations absent from t
 ```
 
 Both are **diagnostic only** — they never edit anything. They print the gaps; you decide what to
-act on, following the two-sources-of-truth rule above. Token-level matching means occasional
-false "covered" results (an identifier that happens to appear elsewhere) — verify a suspicious
-"0 missing" by grepping for the specific method name.
+act on, following the two-sources-of-truth rule above.
+
+`check-common-api.sh` checks four kinds of surface per module — whole classes, nested types,
+enum/`ALL_CAPS` constants, and public methods — with Kotlin comments stripped before matching
+(so a KDoc mention doesn't count as coverage). Members `@Deprecated` upstream are flagged
+informationally and don't fail the run. Intentional gaps (Android-only plumbing, Java SAM
+interfaces replaced by Kotlin lambdas, deprecated API) are suppressed via
+[`scripts/dev/check-common-api-ignores.txt`](../scripts/dev/check-common-api-ignores.txt) —
+add `Class` or `Class.member` entries there with a comment saying why, rather than editing the
+script. The script exits non-zero when anything unsuppressed is missing, so it's CI-able.
+Matching is still token-level within a module, so occasional false "covered" results remain
+possible — verify a suspicious pass by grepping for the specific member name.
 
 ### 5. Apply the changes
 

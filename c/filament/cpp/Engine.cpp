@@ -374,6 +374,10 @@ void FilaEngine_flush(FilaEngine *engine) {
   FILA_CAST(Engine, engine)->flush();
 }
 
+bool FilaEngine_hasUnrecoverableFailure(FilaEngine *engine) {
+  return FILA_CAST(Engine, engine)->hasUnrecoverableFailure();
+}
+
 bool FilaEngine_isPaused(FilaEngine *engine) {
   return FILA_CAST(Engine, engine)->isPaused();
 }

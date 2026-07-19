@@ -19,6 +19,16 @@ class ViewTest : FilamentTestFixture() {
     }
 
     @Test
+    fun testGridSize() {
+        val view = engine.createView()
+        view.gridSize = 2.5
+        assertEquals(2.5, view.gridSize)
+        // effectiveGridSize is only computed during rendering — just exercise the getter.
+        assertTrue(view.effectiveGridSize >= 0.0)
+        engine.destroyView(view)
+    }
+
+    @Test
     fun testOptionsInstantiation() {
         val dro = View.DynamicResolutionOptions().apply {
             enabled = true
@@ -166,9 +176,9 @@ class ViewTest : FilamentTestFixture() {
             filterInput = true
             useYCoCg = true
             hdr = true
-            boxType = 1
-            boxClipping = 1
-            jitterPattern = 1
+            boxType = View.TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE
+            boxClipping = View.TemporalAntiAliasingOptions.BoxClipping.CLAMP
+            jitterPattern = View.TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
             varianceGamma = 0.5f
             preventFlickering = true
             historyReprojection = true

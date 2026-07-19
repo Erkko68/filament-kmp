@@ -4,8 +4,10 @@
 //
 // Targets correspond to:
 //   • iosArm64 / iosSimulatorArm64 — Kotlin/Native iOS targets.
-//   • macosArm64 / macosX64        — JVM/Panama host (:java:*); macOS uses
-//                                     the JVM build, not Kotlin/Native.
+//   • macosArm64                   — JVM/Panama host (:java:*); macOS uses
+//                                     the JVM build, not Kotlin/Native. (No
+//                                     macosX64: upstream releases stopped
+//                                     shipping mac x86_64 libs.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
 //   • web                          — Filament.js + WASM for the :web module;
 //                                     output goes to prebuilts/web/ (no lib/ subdir).
@@ -17,7 +19,6 @@ val prebuiltTargets = listOf(
     "iosArm64",
     "iosSimulatorArm64",
     "macosArm64",
-    "macosX64",
     "linuxX64",
     "linuxArm64",
     "mingwX64",

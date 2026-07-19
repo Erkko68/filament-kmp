@@ -80,6 +80,9 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
 
         rm.setMaterialInstanceAt(inst, 0, matInst)
         assertNotNull(rm.getMaterialInstanceAt(inst, 0))
+        val attrs = rm.getEnabledAttributesAt(inst, 0)
+        assertTrue(VertexBuffer.VertexAttribute.POSITION in attrs)
+        assertTrue(VertexBuffer.VertexAttribute.COLOR !in attrs)
         rm.setBlendOrderAt(inst, 0, 2)
         rm.setGlobalBlendOrderEnabledAt(inst, 0, false)
         rm.setLightChannel(inst, 0, true)
