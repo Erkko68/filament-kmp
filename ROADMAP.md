@@ -7,13 +7,13 @@ internal repository restructuring (prebuilt pipeline, vendored web externals, CI
 API-surface enforcement) are done, and the focus shifts to tracking upstream and hardening.
 
 - **Upstream tracking** — each Filament feature release (1.73 → 1.74 → …) is picked up as a
-  `0.X.0` minor release following [docs/upgrading-filament.md](docs/upgrading-filament.md);
-  upstream point releases and wrapper fixes ship as `0.0.X` patches. See
-  [README → Versioning & stability](README.md#versioning--stability) for the full scheme.
-- **Path to `1.0.0`** — tagged when the project reaches maturity: a stabilized public API,
-  the known issue backlog worked down, and at least a year of production use behind it.
-  Until then, minor releases may still adjust public API (always listed in the
-  [changelog](CHANGELOG.md)).
+  minor release following [docs/upgrading-filament.md](docs/upgrading-filament.md);
+  upstream point releases and wrapper fixes ship as patches. Minor releases are the ongoing
+  channel — see [README → Versioning & stability](README.md#versioning--stability).
+- **Path to `1.0.0`** — a major bump is reserved for maturity and very large changes: a
+  stabilized public API and the known issue backlog worked down. It is not tied to any
+  upstream Filament version. Until then, minor releases may still adjust public API (always
+  listed in the [changelog](CHANGELOG.md)).
 - **Known gaps** — per-platform binding gaps are tracked via `@PlatformGap` and the coverage
   table in [Platform Notes](docs/platform-notes.md); web-specific limits come from what
   `filament.js` binds upstream.

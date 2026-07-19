@@ -16,7 +16,7 @@
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
 
 > [!NOTE]
-> **Pre-1.0 (`0.2.0`).** Major development and internal repository restructuring are done and the project is on track to stability, but public APIs may still change between minor releases while we track upstream Filament — read the [changelog](CHANGELOG.md) before upgrading. See [Versioning & stability](#versioning--stability). The JVM bindings run on Project Panama (FFM, **requires JDK 22+**).
+> **Current release: `0.2.0`.** Major development and internal repository restructuring are done and the project is stabilizing, but public APIs may still change between minor releases while we track upstream Filament — read the [changelog](CHANGELOG.md) before upgrading. See [Versioning & stability](#versioning--stability). The JVM bindings run on Project Panama (FFM, **requires JDK 22+**).
 
 **Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web (JS & Wasm)**, with first-class **Compose Multiplatform** integration.
 
@@ -88,11 +88,11 @@ All published under `io.github.erkko68.filament`. The Desktop/JVM bindings (Proj
 
 Releases are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`):
 
-- **`0.X.0` (minor)** — each new upstream **Filament feature release** (1.73 → 1.74 → …) ships as a minor bump, together with any wrapper API additions or changes accumulated since the last one. Pre-1.0, breaking wrapper API changes may land here; they are always listed in the [changelog](CHANGELOG.md).
-- **`0.0.X` (patch)** — bug fixes only: upstream Filament point releases (e.g. 1.73.1) and fixes in the wrapper itself. Safe to pick up without reading anything.
-- **`1.0.0` (major)** — will be tagged when the project reaches maturity: a stabilized public API, the known issue backlog worked down, and at least a year of production use behind it. From then on, breaking changes only land in major releases.
+- **`X.Y.0` (minor)** — the normal release channel. Each new upstream **Filament feature release** (1.73 → 1.74 → …) ships as a minor bump, together with any wrapper API additions or changes accumulated since the last one. This is where regular work lands; breaking wrapper API changes may appear here and are always listed in the [changelog](CHANGELOG.md).
+- **`X.Y.Z` (patch)** — bug fixes only: upstream Filament point releases (e.g. 1.73.1) and fixes in the wrapper itself. Safe to pick up without reading anything.
+- **`X.0.0` (major)** — reserved for maturity milestones and very large changes (a stabilized public API, a full architectural rework). Routine upstream tracking never triggers a major bump — expect minor releases to keep flowing for as long as Filament keeps releasing.
 
-All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term: it tracks upstream Filament releases as they are published (see [docs/upgrading-filament.md](docs/upgrading-filament.md) for the process) and is developed against a real downstream consumer, [HexonKMP](https://github.com/Erkko68/HexonKMP). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
+All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term and tracks upstream Filament releases as they are published (see [docs/upgrading-filament.md](docs/upgrading-filament.md) for the process). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
 
 ## API strategy
 
@@ -124,7 +124,7 @@ The web build is also deployed live to **[erkko68.github.io/filament-kmp](https:
 
 ## Showcase
 
-- **[HexonKMP](https://github.com/Erkko68/HexonKMP)** — a Catan-like strategy board game built with Filament KMP, running across platforms from a single codebase. Try the live web demo at **[hexon.biri.es](https://hexon.biri.es)**.
+- **[HexonKMP](https://github.com/Erkko68/HexonKMP)** — a larger sample app: a Catan-like strategy board game built with Filament KMP, running across platforms from a single codebase. Try the live web demo at **[hexon.biri.es](https://hexon.biri.es)**.
 
 ## License
 
