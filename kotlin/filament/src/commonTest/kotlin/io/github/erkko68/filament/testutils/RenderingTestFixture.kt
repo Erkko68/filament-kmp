@@ -25,7 +25,18 @@ open class RenderingTestFixture {
         // aborts on its driver thread there, which the try/catch below can't catch.
         if (!TestEnv.gpuBackendAvailable) return
         engine = try {
-            Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid() }
+            Engine.create(Engine.Backend.DEFAULT)
+                .takeIf { it.isValid() }
+                // DEFAULT can silently resolve to NOOP when the real backend fails to
+                // initialize (e.g. an iOS simulator session without Metal). A NOOP engine
+                // is "valid" but rasterizes nothing, so Tier C frame assertions would
+                // fail on garbage readbacks — treat it as no backend and skip.
+                ?.let { e ->
+                    if (e.backend == Engine.Backend.NOOP) {
+                        e.destroy()
+                        null
+                    } else e
+                }
         } catch (t: Throwable) {
             null
         }
