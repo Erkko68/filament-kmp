@@ -41,21 +41,19 @@ Instead, all views of one engine share a `WebViewCompositor`:
 
 ## 3. Pixel Readback (JVM / Desktop)
 
-On JVM/Desktop, there is no way to embed a native Filament surface inside a Skia/Compose canvas. Instead, Filament renders to an offscreen `RenderTarget` and the pixels are read back to the CPU each frame, then handed to Skia.
+On JVM/Desktop, there is no way to embed a native Filament surface inside a Skia/Compose canvas. Instead, Filament renders to an offscreen headless swap chain and the pixels are read back to the CPU each frame, then handed to Skia.
 
 ### How it Works
 
-1. **Offscreen RenderTarget**: Filament renders into a `RenderTarget` backed by a color texture (`RGBA8`) and a depth texture (`DEPTH32F`).
-2. **Double-buffered readback**: Two `ByteArray` pixel buffers alternate each frame. While one buffer's GPU→CPU copy is in flight, the next frame can already issue a new `readPixels` call on the other buffer — keeping the readback pipelined with rendering.
-3. **Skia Image**: When a readback completes, the buffer is wrapped into a Skia `Image` via `Image.makeRaster`.
-4. **Compose drawing**: The image is drawn onto a `Spacer` using a `drawBehind` modifier, which lets Compose widgets be overlaid on top of the 3D content.
-
-A 150 ms debounce is applied to resize events to avoid reallocating textures on every pixel change during window dragging.
+1. **Readable headless SwapChain**: Filament renders into an offscreen swap chain created with the `READABLE` config flag, sized to the composable (with a 150 ms resize debounce so textures aren't reallocated on every pixel of a window drag).
+2. **Zero-copy double-buffered readback**: two slots each own a block of Skia-managed pixel memory (`Data`), and `Renderer.readPixels` writes the GPU→CPU copy *directly into it* — no intermediate `ByteArray`, no per-frame allocation. While one slot backs the image on screen, the other's readback is in flight, keeping the copy pipelined with rendering. Completion may fire on Filament's backend thread; an atomic per-slot state hands the result to the UI thread, which is the only place slots are recycled.
+3. **Skia Image**: the completed slot is wrapped in a Skia `Image` via the `Data` overload of `Image.makeRaster`, which shares the pixels instead of copying them.
+4. **Compose drawing**: the image is drawn onto a `Spacer` in a `drawBehind` modifier with linear sampling, which lets Compose widgets be overlaid on top of the 3D content. `readPixels` row order is backend-dependent — Metal delivers rows top-down, OpenGL bottom-up — so the draw flips vertically on OpenGL (pinned by the `readPixelsRowOrderMatchesBackendConvention` Tier C test).
 
 ### Trade-offs
 
-- **Pros**: Compose widgets can be overlaid freely over the 3D content.
-- **Cons**: CPU overhead from GPU→CPU copies every frame; 1–2 frame latency from the asynchronous readback pipeline.
+- **Pros**: Compose widgets can be overlaid freely over the 3D content; the only per-frame cost beyond rendering is the GPU→CPU transfer itself.
+- **Cons**: GPU→CPU transfer bandwidth scales with window size; 1–2 frame latency from the asynchronous readback pipeline.
 
 ---
 
@@ -79,4 +77,4 @@ The stacking limitation on Android, iOS, and Web is a consequence of today's sur
 | **Android** | Native `SurfaceView` + SwapChain | None | On top only | No |
 | **iOS** | Native `CAMetalLayer` + SwapChain | None | On top only | No |
 | **Web** | Offscreen canvas + per-view `drawImage` blit | GPU canvas→canvas | On top only | No (side-by-side OK) |
-| **JVM / Desktop** | Offscreen RenderTarget + `readPixels` | GPU→CPU every frame | Above or below | Yes |
+| **JVM / Desktop** | Offscreen readable SwapChain + `readPixels` | GPU→CPU every frame | Above or below | Yes |
