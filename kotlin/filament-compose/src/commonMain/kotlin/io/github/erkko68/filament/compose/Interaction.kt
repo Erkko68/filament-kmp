@@ -20,6 +20,7 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
+import androidx.compose.ui.layout.onSizeChanged
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.Direction
@@ -36,12 +37,15 @@ private fun Manipulator.syncTo(cameraState: CameraState) {
     cameraState.up     = Direction(u[0], u[1], u[2])
 }
 
-// Shared drag + pinch-zoom logic. [strafe] controls whether drag pans or orbits.
+// Shared drag + pinch-zoom logic. [strafe] controls whether drag pans or orbits. Also keeps
+// the manipulator's viewport in sync with the element's size, so callers don't have to wire
+// onSizeChanged/setViewport by hand.
 private fun Modifier.manipulatorDragGestures(
     manipulator: Manipulator,
     alwaysStrafe: Boolean,
     onSync: () -> Unit,
 ): Modifier = this
+    .onSizeChanged { manipulator.setViewport(it.width, it.height) }
     .pointerInput(manipulator) {
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false)
@@ -117,14 +121,15 @@ private fun Modifier.manipulatorDragGestures(
  * Drives a [CameraState] using a Filament [Manipulator] in ORBIT mode.
  *
  * Create with [rememberOrbitCameraState], pass the same [CameraState] to
- * [FilamentView], and attach [Modifier.orbitGestures] to the view's surface.
- * Call [setViewport] whenever the surface size changes via `Modifier.onSizeChanged`.
+ * [FilamentView], and attach [Modifier.orbitGestures] to the view's surface. The gesture
+ * modifier keeps the manipulator's viewport in sync with the element's size automatically.
  */
 class OrbitCameraState internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
 ) {
-    /** Update whenever the render surface is resized. */
+    /** Viewport size in px. Kept in sync automatically by [Modifier.orbitGestures]; call
+     *  manually only when driving the manipulator without the gesture modifier. */
     fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
 
     /** Snap back to the initial eye/target position. */
@@ -142,20 +147,18 @@ class OrbitCameraState internal constructor(
 /**
  * Creates and remembers an [OrbitCameraState] that drives [cameraState].
  *
- * The manipulator's home position is taken from [cameraState]'s current `eye`/`target`
- * at creation time. The manipulator pushes its computed eye/target/up back into
- * [cameraState] whenever the user interacts.
+ * The manipulator's home position is taken from [cameraState]'s current `eye`/`target` at
+ * creation time. The manipulator pushes its computed eye/target/up back into [cameraState]
+ * whenever the user interacts.
+ *
+ * The tuning parameters ([zoomSpeed], [orbitSpeedX], [orbitSpeedY], [enablePanning]) are
+ * reactive — changing them at runtime rebuilds the manipulator while keeping the current
+ * camera pose and the original home position, so nothing jumps.
  *
  * ```kotlin
- * val cameraState = rememberCameraState(eye = Position(0f, 2f, 5f))
+ * val cameraState = rememberCameraState(initialEye = Position(0f, 2f, 5f))
  * val orbit = rememberOrbitCameraState(cameraState)
- * FilamentView(
- *     scene = scene,
- *     cameraState = cameraState,
- *     modifier = Modifier
- *         .onSizeChanged { orbit.setViewport(it.width, it.height) }
- *         .orbitGestures(orbit),
- * )
+ * FilamentView(scene = scene, cameraState = cameraState, modifier = Modifier.orbitGestures(orbit))
  * ```
  *
  * @param zoomSpeed     Scroll / pinch zoom sensitivity.
@@ -171,9 +174,12 @@ fun rememberOrbitCameraState(
     orbitSpeedY: Float = 0.01f,
     enablePanning: Boolean = true,
 ): OrbitCameraState {
+    // Home is fixed at the pose the cameraState had when this state was first created, so a
+    // tuning-parameter rebuild doesn't silently redefine what resetToHome() means.
+    val home = remember(cameraState) { cameraState.eye to cameraState.target }
+    val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
     val state = remember(cameraState, zoomSpeed, orbitSpeedX, orbitSpeedY, enablePanning) {
-        val eye = cameraState.eye
-        val target = cameraState.target
+        val (eye, target) = home
         val manipulator = Manipulator.Builder()
             .orbitHomePosition(eye.x, eye.y, eye.z)
             .targetPosition(target.x, target.y, target.z)
@@ -181,6 +187,9 @@ fun rememberOrbitCameraState(
             .orbitSpeed(orbitSpeedX, orbitSpeedY)
             .panning(enablePanning)
             .build(Manipulator.Mode.ORBIT)
+        // Carry the current pose across a tuning rebuild so the camera doesn't move.
+        previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
+        previous[0] = manipulator
         OrbitCameraState(manipulator, cameraState).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
@@ -210,6 +219,7 @@ class MapCameraState internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
 ) {
+    /** Viewport size in px. Kept in sync automatically by [Modifier.mapGestures]. */
     fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
     fun resetToHome() { manipulator.jumpToBookmark(manipulator.getHomeBookmark()); sync() }
     fun saveBookmark(): Manipulator.Bookmark = manipulator.getCurrentBookmark()
@@ -222,6 +232,9 @@ class MapCameraState internal constructor(
  * Creates and remembers a [MapCameraState] driving [cameraState] in MAP mode.
  *
  * Drag pans the view; scroll wheel and pinch zoom in/out. No rotation.
+ *
+ * The tuning parameters are reactive — changing them at runtime rebuilds the manipulator
+ * while keeping the current camera pose, so nothing jumps.
  *
  * @param mapWidth    Pannable world extent along X.
  * @param mapHeight   Pannable world extent along Z.
@@ -236,15 +249,19 @@ fun rememberMapCameraState(
     minDistance: Float = 1f,
     zoomSpeed: Float = 0.01f,
 ): MapCameraState {
+    val home = remember(cameraState) { cameraState.target }
+    val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
     val state = remember(cameraState, mapWidth, mapHeight, minDistance, zoomSpeed) {
-        val target = cameraState.target
         val manipulator = Manipulator.Builder()
-            .targetPosition(target.x, target.y, target.z)
+            .targetPosition(home.x, home.y, home.z)
             .upVector(0f, 1f, 0f)
             .zoomSpeed(zoomSpeed)
             .mapExtent(mapWidth, mapHeight)
             .mapMinDistance(minDistance)
             .build(Manipulator.Mode.MAP)
+        // Carry the current pose across a tuning rebuild so the camera doesn't move.
+        previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
+        previous[0] = manipulator
         MapCameraState(manipulator, cameraState).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
@@ -275,6 +292,7 @@ class FlightCameraState internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
 ) {
+    /** Viewport size in px. Kept in sync automatically by [Modifier.flightGestures]. */
     fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
 
     /** Advance the camera simulation by [deltaTime] seconds. Driven automatically per frame. */
@@ -342,6 +360,7 @@ fun Modifier.flightGestures(state: FlightCameraState): Modifier {
     LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
 
     return this
+        .onSizeChanged { state.setViewport(it.width, it.height) }
         .focusRequester(focusRequester)
         .focusable()
         .onKeyEvent { event ->
@@ -414,16 +433,11 @@ fun Modifier.flightGestures(state: FlightCameraState): Modifier {
  * )
  * ```
  */
-@Composable
 fun Modifier.pickOnTap(
     viewState: FilamentViewState,
     onPick: (View.PickingQueryResult) -> Unit,
 ): Modifier = pointerInput(viewState, onPick) {
     detectTapGestures { offset ->
-        val view = viewState.view ?: return@detectTapGestures
-        // Filament uses OpenGL viewport conventions: origin at the bottom-left.
-        // Compose offsets are top-left, so flip Y against the current viewport height.
-        val y = view.viewport.height - offset.y.toInt()
-        view.pick(offset.x.toInt(), y, onPick)
+        viewState.pick(offset.x.toInt(), offset.y.toInt(), onPick)
     }
 }

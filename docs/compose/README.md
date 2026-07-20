@@ -130,7 +130,7 @@ Pass it as `animationState` and it plays every frame and loops at the clip lengt
 or `animationTime` plumbing:
 
 ```kotlin
-val animation = rememberAnimationState(animationIndex = 0)
+val animation = rememberAnimationState(initialAnimationIndex = 0)
 GltfInstance(asset = character, animationState = animation)
 ```
 
@@ -145,7 +145,7 @@ Assigning a new `animationIndex` **cross-fades** from the outgoing clip to the n
 target index from your own state and the blend happens automatically.
 
 ```kotlin
-val animation = rememberAnimationState(animationIndex = idle, crossFadeDuration = 0.25f)
+val animation = rememberAnimationState(initialAnimationIndex = idle, initialCrossFadeDuration = 0.25f)
 GltfInstance(asset = character, animationState = animation)
 
 Button(onClick = { animation.animationIndex = if (animation.animationIndex == idle) walk else idle }) {
@@ -163,7 +163,7 @@ blend tree. While any tracks are present they drive playback and `animationIndex
 track keeps its own `time`/`speed`/`loop` and exposes read-only `progress` and `isFinished`:
 
 ```kotlin
-val animation = rememberAnimationState(animationIndex = null)
+val animation = rememberAnimationState(initialAnimationIndex = null)
 
 // Declare one track per clip; drive the weight from a parameter — e.g. movement speed 0..1:
 rememberAnimationTrack(animation, walkIndex, weight = 1f - moveSpeed)
@@ -248,7 +248,7 @@ the state. The offsets are expressed in the group's local space.
 
 ## Rendering to a texture
 
-`rememberRenderTarget` renders a scene **off-screen** through its own camera into a sampleable
+`rememberRenderTargetTexture` renders a scene **off-screen** through its own camera into a sampleable
 `Texture` — the building block for mini-maps, in-world monitors/CCTV screens, portals, and live
 thumbnails. It owns a private `View`/`Camera`/`Renderer` and redraws every frame via Filament's
 `Renderer.renderStandaloneView`, independent of any on-screen `FilamentView`. Feed the result back
@@ -256,8 +256,8 @@ into a material like any other texture:
 
 ```kotlin
 val scene  = rememberFilamentScene { /* world */ }
-val mapCam = rememberCameraState(eye = Position(0f, 40f, 0f), target = Position(0f))
-val mapTex = rememberRenderTarget(scene, mapCam, width = 256, height = 256)
+val mapCam = rememberCameraState(initialEye = Position(0f, 40f, 0f), initialTarget = Position(0f))
+val mapTex = rememberRenderTargetTexture(scene, mapCam, width = 256, height = 256)
 
 val screen = rememberMaterialInstance(screenMaterial)
 mapTex?.let { screen.setParameter("screen", it, TextureSampler()) }
@@ -354,8 +354,9 @@ val scene = rememberFilamentScene(
 
 For the common cases, the **built-in standard materials** need no `.mat` authoring, no `matc`, and no
 asset shipping (they work on Web too): `rememberColorMaterialInstance`,
-`rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`, and
-`rememberEmissiveMaterialInstance` each return a ready `MaterialInstance` for a primitive.
+`rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`,
+`rememberEmissiveMaterialInstance`, and `rememberTransparentColorMaterialInstance` each
+return a ready `MaterialInstance` for a primitive.
 
 ```kotlin
 Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))

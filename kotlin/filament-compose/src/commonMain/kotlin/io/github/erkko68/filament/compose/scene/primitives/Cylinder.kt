@@ -20,7 +20,7 @@ import kotlin.math.sin
  * The side wall and the caps use separate vertices (different normals), so this mesh has
  * `4 * (segments + 1)` vertices and `4 * segments` triangles.
  *
- * @param material  Material applied to side and caps.
+ * @param material  Material applied to side and caps, or null while it is still loading.
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation.
  * @param scale     Per-axis scale.
@@ -28,13 +28,15 @@ import kotlin.math.sin
  * @param radius    Cylinder radius in mesh space.
  * @param height    Full height along Y in mesh space.
  * @param segments  Number of radial subdivisions. Minimum 3.
+ * @param visible   Whether this renderable is in the scene. False removes it from the
+ *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the cylinder casts shadows onto other renderables. On by default.
  * @param receiveShadows  Whether the cylinder receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the cylinder is added to the scene.
  */
 @Composable
 fun FilamentSceneScope.Cylinder(
-    material: MaterialInstance,
+    material: MaterialInstance?,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
@@ -42,12 +44,13 @@ fun FilamentSceneScope.Cylinder(
     radius: Float = 0.5f,
     height: Float = 1f,
     segments: Int = 32,
+    visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(radius, height, segments) { cylinderMesh(radius, height, segments) }
-    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
 }
 
 private fun cylinderMesh(radius: Float, height: Float, segments: Int): MeshData {

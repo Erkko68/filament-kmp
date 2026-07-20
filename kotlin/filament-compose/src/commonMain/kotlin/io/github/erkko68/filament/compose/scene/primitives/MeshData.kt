@@ -81,6 +81,9 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
  * [MaterialInstance]. Recreates the entity when [mesh] or [material] changes; updates the
  * transform in place when only [position]/[rotation]/[scale]/[pivot] change.
  *
+ * A null [material] renders nothing — it means the material is still loading (the
+ * [rememberMaterial]/[rememberMaterialInstance] chain returns null until ready).
+ *
  * [onCreate] fires once when the renderable entity is added to the scene — pass the entity
  * to e.g. an `entityToIndex` map so `view.pick` callbacks can identify the primitive.
  *
@@ -89,15 +92,18 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
 @Composable
 internal fun Mesh(
     mesh: MeshData,
-    material: MaterialInstance,
+    material: MaterialInstance?,
     position: Position,
     rotation: Quaternion,
     scale: Scale,
     pivot: Position,
+    visible: Boolean,
     castShadows: Boolean,
     receiveShadows: Boolean,
     onCreate: (entity: Entity) -> Unit,
 ) {
+    if (material == null) return
+
     val engine = LocalFilamentEngine.current
     val scene  = LocalFilamentScene.current
     val parent = LocalParentEntity.current
@@ -122,14 +128,21 @@ internal fun Mesh(
         }
     }
 
+    // Registered before the membership effect so it disposes *after* it — the entity is
+    // removed from the scene before its components are destroyed.
     DisposableEffect(entity) {
-        scene.addEntity(entity)
         onCreate(entity)
         onDispose {
-            scene.removeEntity(entity)
             engine.getRenderableManager().destroy(entity)
             engine.getEntityManager().destroy(entity)
         }
+    }
+
+    // Scene membership tracks `visible` — hiding removes the entity from the scene without
+    // destroying it, so toggling visibility is cheap and keeps entity identity stable.
+    DisposableEffect(entity, visible) {
+        if (visible) scene.addEntity(entity)
+        onDispose { if (visible) scene.removeEntity(entity) }
     }
 
     DisposableEffect(entity, position, rotation, scale, pivot) {

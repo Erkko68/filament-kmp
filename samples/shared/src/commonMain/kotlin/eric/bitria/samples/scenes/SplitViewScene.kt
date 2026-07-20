@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,21 +47,21 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @Composable
 fun SplitViewScene(onBack: () -> Unit) {
     val leftCamera = rememberCameraState(
-        eye        = Position(0f, 2f, 5f),
-        target     = Position(0f, 0.5f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 2f, 5f),
+        initialTarget     = Position(0f, 0.5f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val leftOrbit = rememberOrbitCameraState(leftCamera)
 
     // Top-down: looking straight down the Y axis, so the "up" direction is -Z.
     val topCamera = rememberCameraState(
-        eye        = Position(0f, 7f, 0f),
-        target     = Position(0f, 0.5f, 0f),
-        up         = Direction(0f, 0f, -1f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 7f, 0f),
+        initialTarget     = Position(0f, 0.5f, 0f),
+        initialUp         = Direction(0f, 0f, -1f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
 
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     val time by rememberSceneClock()
 
@@ -88,7 +87,6 @@ fun SplitViewScene(onBack: () -> Unit) {
                     scene = scene,
                     modifier = Modifier
                         .fillMaxSize()
-                        .onSizeChanged { leftOrbit.setViewport(it.width, it.height) }
                         .orbitGestures(leftOrbit),
                     cameraState = leftCamera,
                 )

@@ -68,7 +68,7 @@ data class Exposure(
  * camera and are valid only while the state is attached to a [FilamentView].
  *
  * ```kotlin
- * val cameraState = rememberCameraState(eye = Position(0f, 2f, 5f))
+ * val cameraState = rememberCameraState(initialEye = Position(0f, 2f, 5f))
  * FilamentView(scene = scene, cameraState = cameraState)
  *
  * // Read the view matrix from anywhere
@@ -83,6 +83,7 @@ class CameraState internal constructor(
     initialUp: Direction,
     initialProjection: Projection,
     initialExposure: Exposure,
+    initialFocusDistance: Float,
     initialShift: Float2,
     initialScaling: Float2,
 ) {
@@ -91,11 +92,30 @@ class CameraState internal constructor(
     var up:         Direction  by mutableStateOf(initialUp)
     var projection: Projection by mutableStateOf(initialProjection)
     var exposure:   Exposure   by mutableStateOf(initialExposure)
+
+    /**
+     * Distance from the camera to the plane of focus in world units, used by
+     * `PostProcessing(depthOfField = …)` to place the focal plane. Ignored without DoF.
+     */
+    var focusDistance: Float   by mutableStateOf(initialFocusDistance)
     var shift:      Float2     by mutableStateOf(initialShift)
     var scaling:    Float2     by mutableStateOf(initialScaling)
 
     internal var attachedCamera: FilamentCamera? = null
     internal var aspect: Double = 1.0
+
+    internal fun attach(camera: FilamentCamera) {
+        check(attachedCamera == null || attachedCamera == camera) {
+            "This CameraState is already attached to another FilamentView/rememberRenderTargetTexture. " +
+                "Each view needs its own CameraState — sharing one would leave aspect ratio and " +
+                "matrix reads racing between views."
+        }
+        attachedCamera = camera
+    }
+
+    internal fun detach(camera: FilamentCamera) {
+        if (attachedCamera == camera) attachedCamera = null
+    }
 
     /**
      * 4×4 column-major view matrix (world→view) computed by Filament. Null until this
@@ -112,7 +132,7 @@ class CameraState internal constructor(
         get() = attachedCamera?.getProjectionMatrix(null as DoubleArray?)
 
     internal fun snapshot(): CameraSnapshot =
-        CameraSnapshot(eye, target, up, projection, exposure, shift, scaling)
+        CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
 }
 
 /**
@@ -125,6 +145,7 @@ internal data class CameraSnapshot(
     val up: Direction,
     val projection: Projection,
     val exposure: Exposure,
+    val focusDistance: Float,
     val shift: Float2,
     val scaling: Float2,
 ) {
@@ -140,6 +161,7 @@ internal data class CameraSnapshot(
             is Projection.Lens         -> camera.setLensProjection(p.focalLength, aspect, p.near, p.far)
         }
         camera.setExposure(exposure.aperture, exposure.shutterSpeed, exposure.sensitivity)
+        camera.focusDistance = focusDistance
         camera.setShift(shift.x.toDouble(), shift.y.toDouble())
         camera.setScaling(scaling.x.toDouble(), scaling.y.toDouble())
     }
@@ -148,20 +170,27 @@ internal data class CameraSnapshot(
 /**
  * Creates and remembers a [CameraState].
  *
- * The initial values are used only on first composition; subsequent recompositions return
- * the same instance regardless of changes to the parameters. To programmatically change
- * the camera, mutate the returned state's fields.
+ * The `initial*` values seed the state on first composition only — like every Compose
+ * `remember*State` (`rememberPagerState(initialPage = …)`, …), later changes to these
+ * arguments are ignored. To drive the camera from other state, mutate the returned object:
+ *
+ * ```kotlin
+ * val cameraState = rememberCameraState(initialEye = Position(0f, 2f, 5f))
+ * LaunchedEffect(animatedEye) { cameraState.eye = animatedEye }
+ * ```
  */
 @Composable
 fun rememberCameraState(
-    eye: Position = Position(0f, 1f, 10f),
-    target: Position = Position(0f, 0f, 0f),
-    up: Direction = Direction(0f, 1f, 0f),
-    projection: Projection = Projection.Perspective(),
-    exposure: Exposure = Exposure(),
-    shift: Float2 = Float2(0f, 0f),
-    scaling: Float2 = Float2(1f, 1f),
+    initialEye: Position = Position(0f, 1f, 10f),
+    initialTarget: Position = Position(0f, 0f, 0f),
+    initialUp: Direction = Direction(0f, 1f, 0f),
+    initialProjection: Projection = Projection.Perspective(),
+    initialExposure: Exposure = Exposure(),
+    initialFocusDistance: Float = 10f,
+    initialShift: Float2 = Float2(0f, 0f),
+    initialScaling: Float2 = Float2(1f, 1f),
 ): CameraState = remember {
-    CameraState(eye, target, up, projection, exposure, shift, scaling)
+    CameraState(initialEye, initialTarget, initialUp, initialProjection, initialExposure,
+        initialFocusDistance, initialShift, initialScaling)
 }
 

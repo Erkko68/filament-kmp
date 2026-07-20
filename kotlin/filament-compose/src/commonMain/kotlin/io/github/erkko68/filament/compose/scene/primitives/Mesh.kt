@@ -30,7 +30,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * )
  * ```
  *
- * @param material    Material applied to the whole mesh.
+ * @param material    Material applied to the whole mesh, or null while it is still loading.
  * @param positions   Vertex positions as xyz triples. Length must be a multiple of 3.
  * @param normals     Per-vertex normals as xyz triples. Must match [positions] in length.
  * @param uvs         Per-vertex UVs as uv pairs. Length must be `2 * vertexCount`.
@@ -42,6 +42,8 @@ import io.github.erkko68.filament.utils.Quaternion
  *   [position]. Defaults to the mesh origin.
  * @param boundingBox AABB used for frustum culling. Defaults to one computed from [positions].
  *   Provide an explicit box if you skip culling or animate vertices beyond the static bounds.
+ * @param visible   Whether this renderable is in the scene. False removes it from the
+ *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows    Whether the mesh casts shadows onto other renderables. On by default.
  * @param receiveShadows Whether the mesh receives shadows cast by others. On by default.
  * @param onCreate    Receives the renderable entity ID once the mesh is added to the scene —
@@ -49,7 +51,7 @@ import io.github.erkko68.filament.utils.Quaternion
  */
 @Composable
 fun FilamentSceneScope.Mesh(
-    material: MaterialInstance,
+    material: MaterialInstance?,
     positions: FloatArray,
     normals: FloatArray,
     uvs: FloatArray,
@@ -59,6 +61,7 @@ fun FilamentSceneScope.Mesh(
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     boundingBox: Box? = null,
+    visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
@@ -80,7 +83,7 @@ fun FilamentSceneScope.Mesh(
     val mesh = remember(positions, normals, uvs, indices, boundingBox) {
         MeshData(positions, normals, uvs, indices, boundingBox ?: positions.toBoundingBox())
     }
-    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
 }
 
 /** Axis-aligned bounding box (center + half-extent) enclosing every xyz triple in this array. */

@@ -20,11 +20,10 @@ import io.github.erkko68.filament.View
  * val viewState = rememberFilamentViewState()
  * FilamentView(scene = scene, viewState = viewState, ...)
  *
- * // Pick on tap (Filament's viewport origin is bottom-left, so flip Y):
+ * // Pick on tap — pick() takes Compose coordinates (top-left origin), no flipping needed:
  * Modifier.pointerInput(Unit) {
  *     detectTapGestures { offset ->
- *         val v = viewState.view ?: return@detectTapGestures
- *         viewState.pick(offset.x.toInt(), v.viewport.height - offset.y.toInt()) { result -> ... }
+ *         viewState.pick(offset.x.toInt(), offset.y.toInt()) { result -> ... }
  *     }
  * }
  * ```
@@ -36,12 +35,14 @@ class FilamentViewState internal constructor() {
         internal set
 
     /**
-     * Issues a Filament picking query at viewport pixel ([x], [y]) and delivers the result to
-     * [onResult] on the render thread. No-op while not attached. Note Filament's viewport
-     * origin is bottom-left — flip Compose's top-left Y against `view.viewport.height`.
+     * Issues a Filament picking query at viewport pixel ([x], [y]) **in Compose coordinates**
+     * (origin top-left, like pointer-input offsets) and delivers the result to [onResult] on
+     * the render thread. The conversion to Filament's bottom-left viewport origin happens
+     * internally. No-op while not attached.
      */
     fun pick(x: Int, y: Int, onResult: (View.PickingQueryResult) -> Unit) {
-        view?.pick(x, y, onResult)
+        val v = view ?: return
+        v.pick(x, v.viewport.height - y, onResult)
     }
 
     internal fun attach(view: View, renderer: Renderer) {

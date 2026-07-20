@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.Engine
@@ -101,9 +100,9 @@ private fun EnvironmentSceneContent(
     environment.indirectLightState.intensity = intensity
 
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 1.5f, 4f),
-        target     = Position(0f, 0.5f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 1.5f, 4f),
+        initialTarget     = Position(0f, 0.5f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit = rememberOrbitCameraState(cameraState)
 
@@ -120,7 +119,6 @@ private fun EnvironmentSceneContent(
             scene = scene,
             modifier = Modifier
                 .fillMaxSize()
-                .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             cameraState = cameraState,
         )

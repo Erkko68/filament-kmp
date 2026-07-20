@@ -22,12 +22,13 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  *
  * ```kotlin
  * val scene = rememberFilamentScene { /* world */ }
- * val mapCam = rememberCameraState(eye = Position(0f, 40f, 0f), target = Position(0f))
- * val mapTex = rememberRenderTarget(scene, mapCam, width = 256, height = 256)
+ * val mapCam = rememberCameraState(initialEye = Position(0f, 40f, 0f), initialTarget = Position(0f))
+ * val mapTex = rememberRenderTargetTexture(scene, mapCam, width = 256, height = 256)
  *
- * val instance = rememberMaterialInstance(screenMaterial)
- * if (mapTex != null) MaterialParameters(instance) { parameter("screen", mapTex) }
- * Plane(material = instance)        // a screen showing the mini-map
+ * val screen = rememberMaterialInstance(screenMaterial, mapTex) {
+ *     mapTex?.let { setParameter("screen", it, TextureSampler()) }
+ * }
+ * Plane(material = screen)          // a screen showing the mini-map
  * ```
  *
  * Post-processing is disabled by default: a DEPTH attachment is used, and Filament ignores depth
@@ -41,7 +42,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @return The color texture being rendered into, or null for a non-positive size.
  */
 @Composable
-fun rememberRenderTarget(
+fun rememberRenderTargetTexture(
     scene: FilamentScene,
     cameraState: CameraState = rememberCameraState(),
     width: Int = 512,
@@ -95,8 +96,8 @@ fun rememberRenderTarget(
     }
 
     DisposableEffect(cameraState, camera) {
-        cameraState.attachedCamera = camera
-        onDispose { cameraState.attachedCamera = null }
+        cameraState.attach(camera)
+        onDispose { cameraState.detach(camera) }
     }
 
     DisposableEffect(engine, color, depth, target, view, camera, renderer) {
@@ -114,3 +115,16 @@ fun rememberRenderTarget(
 
     return color
 }
+
+@Deprecated(
+    "Renamed: the function returns the color Texture, not a RenderTarget.",
+    ReplaceWith("rememberRenderTargetTexture(scene, cameraState, width, height, postProcessingEnabled)"),
+)
+@Composable
+fun rememberRenderTarget(
+    scene: FilamentScene,
+    cameraState: CameraState = rememberCameraState(),
+    width: Int = 512,
+    height: Int = 512,
+    postProcessingEnabled: Boolean = false,
+): Texture? = rememberRenderTargetTexture(scene, cameraState, width, height, postProcessingEnabled)

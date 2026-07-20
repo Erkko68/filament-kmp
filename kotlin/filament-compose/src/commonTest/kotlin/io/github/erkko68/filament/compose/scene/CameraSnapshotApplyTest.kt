@@ -23,9 +23,10 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         up: Direction = Direction(0f, 1f, 0f),
         projection: Projection = Projection.Perspective(),
         exposure: Exposure = Exposure(),
+        focusDistance: Float = 10f,
         shift: Float2 = Float2(0f, 0f),
         scaling: Float2 = Float2(1f, 1f),
-    ) = CameraSnapshot(eye, target, up, projection, exposure, shift, scaling)
+    ) = CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
 
     @Test
     fun lookAtPositionsTheCamera() {

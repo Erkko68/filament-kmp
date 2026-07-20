@@ -25,7 +25,7 @@
 ```kotlin
 FilamentSceneView(
     modifier       = Modifier.fillMaxSize(),
-    cameraState    = rememberCameraState(eye = Position(0f, 1f, 4f)),
+    cameraState    = rememberCameraState(initialEye = Position(0f, 1f, 4f)),
     skyboxState    = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f))),
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {

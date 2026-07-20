@@ -169,22 +169,34 @@ internal fun rememberTexture(
  * Creates and manages a [MaterialInstance] from a [Material]. The instance is destroyed when
  * this leaves the composition.
  *
- * @param material The base material to instantiate.
+ * Accepts a nullable [material] so it chains directly off [rememberMaterial], which returns
+ * null while loading; the result is null exactly while [material] is null. Primitives accept a
+ * nullable material and simply don't render until it arrives, so the whole chain needs no
+ * unwrapping:
+ *
+ * ```kotlin
+ * val mat = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") }
+ * Cube(material = rememberMaterialInstance(mat))   // renders once the material loads
+ * ```
+ *
+ * @param material The base material to instantiate, or null while it is still loading.
  * @param engine The Filament engine that owns the material. Defaults to the engine in the
  *   current composition scope; pass an explicit engine when calling outside `rememberFilamentScene { }`.
  */
 @Composable
 fun rememberMaterialInstance(
-    material: Material,
+    material: Material?,
     engine: Engine = LocalFilamentEngine.current,
-): MaterialInstance {
+): MaterialInstance? {
     val instance = remember(material) {
-        material.createInstance()
+        material?.createInstance()
     }
 
-    DisposableEffect(instance) {
-        onDispose {
-            engine.destroyMaterialInstance(instance)
+    if (instance != null) {
+        DisposableEffect(instance) {
+            onDispose {
+                engine.destroyMaterialInstance(instance)
+            }
         }
     }
 
@@ -198,8 +210,12 @@ fun rememberMaterialInstance(
  * changes, so parameters track Compose state without an `onUpdate`/`SideEffect`. The instance is
  * destroyed when this leaves the composition.
  *
+ * Accepts a nullable [material] so it chains directly off [rememberMaterial] (null while
+ * loading); the result is null exactly while [material] is null, and primitives accept a
+ * nullable material:
+ *
  * ```kotlin
- * val mat = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") } ?: return
+ * val mat = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") }
  * val mi  = rememberMaterialInstance(mat, color) { setParameter("baseColor", color) }
  * Cube(material = mi)
  * ```
@@ -208,7 +224,7 @@ fun rememberMaterialInstance(
  * by a renderable while [keys] change — unlike allocating a fresh instance per colour, which can
  * crash the render thread mid-frame (see docs/compose/materials.md).
  *
- * @param material The base material to instantiate.
+ * @param material The base material to instantiate, or null while it is still loading.
  * @param keys Inputs that, when changed, re-run [configure]. Pass every value [configure] reads.
  * @param engine The Filament engine that owns the material. Defaults to the engine in the current
  *   composition scope; pass an explicit engine when calling outside `rememberFilamentScene { }`.
@@ -216,25 +232,27 @@ fun rememberMaterialInstance(
  */
 @Composable
 fun rememberMaterialInstance(
-    material: Material,
+    material: Material?,
     vararg keys: Any?,
     engine: Engine = LocalFilamentEngine.current,
     configure: MaterialInstance.() -> Unit,
-): MaterialInstance {
+): MaterialInstance? {
     val instance = remember(material) {
-        material.createInstance()
+        material?.createInstance()
     }
 
-    // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op onDispose
-    // keeps this a pure setter — the instance's own teardown is the effect below.
-    DisposableEffect(instance, *keys) {
-        instance.configure()
-        onDispose { }
-    }
+    if (instance != null) {
+        // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op
+        // onDispose keeps this a pure setter — the instance's own teardown is the effect below.
+        DisposableEffect(instance, *keys) {
+            instance.configure()
+            onDispose { }
+        }
 
-    DisposableEffect(instance) {
-        onDispose {
-            engine.destroyMaterialInstance(instance)
+        DisposableEffect(instance) {
+            onDispose {
+                engine.destroyMaterialInstance(instance)
+            }
         }
     }
 
