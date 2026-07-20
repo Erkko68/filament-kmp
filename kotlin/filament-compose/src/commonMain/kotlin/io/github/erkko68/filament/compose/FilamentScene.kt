@@ -34,7 +34,7 @@ class FilamentScene internal constructor(
  *
  * ```kotlin
  * val scene = rememberFilamentScene(skyboxState = sky) {
- *     Light(type = LightManager.Type.SUN, ...)
+ *     DirectionalLight(intensity = 100_000f)
  *     GltfInstance(asset = duck)
  * }
  * FilamentView(scene = scene, cameraState = cam) { Bloom(strength = 0.2f) }

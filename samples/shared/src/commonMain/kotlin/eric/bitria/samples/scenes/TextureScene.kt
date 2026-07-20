@@ -9,7 +9,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.FilamentSceneView
@@ -40,12 +39,12 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 fun TextureScene(onBack: () -> Unit) {
     val engine = rememberFilamentEngine()
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 0f, 3f),
-        target     = Position(0f, 0f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 0f, 3f),
+        initialTarget     = Position(0f, 0f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraState(cameraState)
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     // Decode the PNG into a Filament texture once the bytes arrive; tear it down on dispose.
     val pngBytes by produceState<ByteArray?>(null) { value = Res.readBytes("files/textures/uv_grid.png") }
@@ -61,7 +60,6 @@ fun TextureScene(onBack: () -> Unit) {
             engine = engine,
             modifier = Modifier
                 .fillMaxSize()
-                .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             cameraState = cameraState,
             skyboxState = skybox,

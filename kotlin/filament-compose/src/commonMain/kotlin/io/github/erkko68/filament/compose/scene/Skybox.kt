@@ -35,7 +35,7 @@ sealed class SkyboxSource {
  * [source] removes the skybox entirely.
  *
  * ```kotlin
- * val sky = rememberSkyboxState(source = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+ * val sky = rememberSkyboxState(initialSource = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
  * val scene = rememberFilamentScene(skyboxState = sky) { ... }
  *
  * // Toggle at runtime
@@ -56,21 +56,22 @@ class SkyboxState internal constructor(
 }
 
 /**
- * Creates and remembers a [SkyboxState].
+ * Creates and remembers a [SkyboxState]. The `initial*` values seed the state on first
+ * composition only; mutate the returned state's fields to change the skybox afterwards.
  *
- * @param source     Color or cubemap skybox. Null = no skybox.
- * @param showSun    Render a sun disk (only meaningful with a directional SUN light).
- * @param intensity  Environment intensity applied on top of the skybox.
- * @param priority   Render priority; lower values render first.
+ * @param initialSource     Color or cubemap skybox. Null = no skybox.
+ * @param initialShowSun    Render a sun disk (only meaningful with a directional SUN light).
+ * @param initialIntensity  Environment intensity applied on top of the skybox.
+ * @param initialPriority   Render priority; lower values render first.
  */
 @Composable
 fun rememberSkyboxState(
-    source: SkyboxSource? = null,
-    showSun: Boolean = false,
-    intensity: Float = 1.0f,
-    priority: Int = 0,
+    initialSource: SkyboxSource? = null,
+    initialShowSun: Boolean = false,
+    initialIntensity: Float = 1.0f,
+    initialPriority: Int = 0,
 ): SkyboxState = remember {
-    SkyboxState(source, showSun, intensity, priority)
+    SkyboxState(initialSource, initialShowSun, initialIntensity, initialPriority)
 }
 
 /**

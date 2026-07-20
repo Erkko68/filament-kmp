@@ -127,12 +127,13 @@ fun rememberColorMaterialInstance(
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Lit, engine)
+    // The base material is always non-null here, so the instance is too.
     return rememberMaterialInstance(material, color, metallic, roughness, reflectance, engine = engine) {
         setParameter("baseColor", color)
         setParameter("metallic", metallic)
         setParameter("roughness", roughness)
         setParameter("reflectance", reflectance)
-    }
+    }!!
 }
 
 /**
@@ -150,7 +151,7 @@ fun rememberUnlitColorMaterialInstance(
     val material = rememberStandardMaterial(StandardMaterial.Unlit, engine)
     return rememberMaterialInstance(material, color, engine = engine) {
         setParameter("baseColor", color)
-    }
+    }!!
 }
 
 /**
@@ -187,7 +188,7 @@ fun rememberTexturedMaterialInstance(
         setParameter("albedo", texture, sampler)
         setParameter("metallic", metallic)
         setParameter("roughness", roughness)
-    }
+    }!!
 }
 
 /**
@@ -195,18 +196,18 @@ fun rememberTexturedMaterialInstance(
  * above ~1 pushes past the bloom threshold and produces a halo (enable `Bloom` on the view).
  *
  * @param color Linear-sRGB base/emissive colour.
- * @param intensity Emissive multiplier; > 1 to bloom.
+ * @param intensity Emissive multiplier; > 1 to bloom. Defaults to 1 (full colour, no bloom).
  * @param engine Engine that owns the material. Defaults to the current composition scope's engine.
  */
 @Composable
 fun rememberEmissiveMaterialInstance(
     color: Color,
-    intensity: Float,
+    intensity: Float = 1f,
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Emissive, engine)
     return rememberMaterialInstance(material, color, intensity, engine = engine) {
         setParameter("color", color)
         setParameter("intensity", intensity)
-    }
+    }!!
 }

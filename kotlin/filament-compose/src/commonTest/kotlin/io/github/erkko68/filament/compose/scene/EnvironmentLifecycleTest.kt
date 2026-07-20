@@ -45,7 +45,7 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
             whileComposed = { assertNotNull(scene.skybox, "color skybox should be attached while composed") },
             afterDispose = { assertNull(scene.skybox, "skybox should be cleared after disposal") },
         ) {
-            val state = rememberSkyboxState(source = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+            val state = rememberSkyboxState(initialSource = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
             ApplySkybox(state, engine, scene)
         }
     }
@@ -65,8 +65,8 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
         ) {
             // bands = 1 → a single constant-ambient SH term (1²×3 = 3 coefficients); no cubemap needed.
             val state = rememberIndirectLightState(
-                irradianceSh = SphericalHarmonics(bands = 1, coefficients = floatArrayOf(0.5f, 0.5f, 0.5f)),
-                intensity = 30_000f,
+                initialIrradianceSh = SphericalHarmonics(bands = 1, coefficients = floatArrayOf(0.5f, 0.5f, 0.5f)),
+                initialIntensity = 30_000f,
             )
             ApplyIndirectLight(state, engine, scene)
         }

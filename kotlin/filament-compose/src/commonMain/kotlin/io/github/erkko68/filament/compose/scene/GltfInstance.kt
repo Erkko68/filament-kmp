@@ -73,10 +73,13 @@ private class GltfInstanceScopeImpl(
  *   blending) and takes precedence over [animationIndex]/[animationTime].
  * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
  *   instance that has morph targets. Pass null to leave morph weights untouched.
- * @param onCreate Called once when the instance is added to the scene. Use for one-time setup
- *   such as swapping materials or finding entities by name.
- * @param onUpdate Called on every recomposition. Use for per-frame updates such as driving
- *   shader parameters, morph targets, or reading animation state.
+ * @param visible Whether the instance's entities are in the scene. False removes them (cheaply,
+ *   keeping the instance and its state alive) — a show/hide toggle.
+ * @param onCreate Called once when the instance is first added to the scene. Use for one-time
+ *   setup such as swapping materials or finding entities by name.
+ * @param onUpdate Called on every **recomposition** (not every frame — a static scene never
+ *   recomposes). Use it to react to Compose state changes with low-level calls; for genuinely
+ *   per-frame work use [OnFrame] or `rememberFilamentScene`'s `FilamentEffect`.
  */
 @Composable
 fun FilamentSceneScope.GltfInstance(
@@ -89,6 +92,7 @@ fun FilamentSceneScope.GltfInstance(
     animationTime: Float = 0f,
     animationState: AnimationState? = null,
     morphWeights: FloatArray? = null,
+    visible: Boolean = true,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
 ) {
@@ -100,16 +104,37 @@ fun FilamentSceneScope.GltfInstance(
 
     val instance = remember(asset) {
         asset.assetLoader.createInstance(asset.filamentAsset)
-            ?: asset.filamentAsset.getInstance()
-    }
+            ?: if (!asset.primaryInstanceClaimed) {
+                // createInstance failed (platform limitation): fall back to the asset's built-in
+                // primary instance, but only for one GltfInstance — aliasing it under several
+                // composables would leave them fighting over one transform/animator.
+                asset.primaryInstanceClaimed = true
+                asset.filamentAsset.getInstance()
+            } else {
+                println(
+                    "filament-compose: GltfInstance could not create an additional instance for " +
+                        "this asset (createInstance failed and the primary instance is already " +
+                        "in use) — this GltfInstance renders nothing.",
+                )
+                null
+            }
+    } ?: return
 
     if (!asset.isReady) return
 
-    DisposableEffect(instance) {
-        scene.addEntities(instance.getEntities())
-        GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onCreate()
+    // Scene membership tracks `visible`; onCreate fires once, on the first time the instance
+    // actually enters the scene.
+    val createdFired = remember(instance) { booleanArrayOf(false) }
+    DisposableEffect(instance, visible) {
+        if (visible) {
+            scene.addEntities(instance.getEntities())
+            if (!createdFired[0]) {
+                createdFired[0] = true
+                GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onCreate()
+            }
+        }
         onDispose {
-            scene.removeEntities(instance.getEntities())
+            if (visible) scene.removeEntities(instance.getEntities())
         }
     }
 

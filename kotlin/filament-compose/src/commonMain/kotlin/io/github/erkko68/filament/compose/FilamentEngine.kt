@@ -7,10 +7,12 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Filament
 
 /**
- * Creates and remembers a [Engine] for the lifetime of the composition.
+ * Creates and remembers an [Engine] for the lifetime of the composition.
  *
- * Use this when you want to share one engine across multiple [FilamentView] instances.
- * If you only have one view, you can omit this and let [FilamentView] manage its own engine.
+ * Each call creates its own engine — hoist one call and pass the value around to share an
+ * engine across scenes, views, and loaders ([rememberFilamentScene], `rememberGltfAsset`,
+ * `rememberKTXEnvironment`, …). If you don't pass an engine, [rememberFilamentScene] and
+ * [FilamentSceneView] create a dedicated one scoped to that call site.
  */
 @Composable
 fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine {

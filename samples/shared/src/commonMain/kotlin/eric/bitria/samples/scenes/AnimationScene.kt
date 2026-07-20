@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
@@ -52,12 +51,12 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 @Composable
 fun AnimationScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 1.2f, 3.2f),
-        target     = Position(0f, 0.8f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 1.2f, 3.2f),
+        initialTarget     = Position(0f, 0.8f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraState(cameraState)
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     // Hoist the engine so the asset (and its clip names) can be loaded outside the scene content.
     val engine = rememberFilamentEngine()
@@ -65,7 +64,7 @@ fun AnimationScene(onBack: () -> Unit) {
     val clipNames = rememberAnimationNames(fox)
 
     var crossFade by remember { mutableFloatStateOf(0.3f) }
-    val animation = rememberAnimationState(animationIndex = 0, crossFadeDuration = crossFade)
+    val animation = rememberAnimationState(initialAnimationIndex = 0, initialCrossFadeDuration = crossFade)
     // Keep the live state in sync with the slider.
     animation.crossFadeDuration = crossFade
 
@@ -73,7 +72,6 @@ fun AnimationScene(onBack: () -> Unit) {
         FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
-                .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             engine = engine,
             cameraState = cameraState,

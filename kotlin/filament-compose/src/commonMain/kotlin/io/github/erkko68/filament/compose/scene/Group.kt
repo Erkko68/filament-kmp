@@ -33,9 +33,10 @@ internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
  * }
  * ```
  *
- * Note: a `Light` inside a Group is parented like any other child, so the group's translation
- * moves it. But a light's *direction* comes from its `direction` parameter, not the transform,
- * so rotating a Group does not rotate the light it contains.
+ * Note: a light inside a Group is parented like any other child, so the group's translation
+ * moves it, and (by default) the typed lights re-aim their `direction` by the group's rotation
+ * each frame (`followGroupRotation`). Pass `followGroupRotation = false` to keep a light's aim
+ * fixed in world space while it still translates with the group.
  *
  * @param position  World-space position of the group's [pivot] (or local-space if this Group
  *   is itself nested inside another Group).

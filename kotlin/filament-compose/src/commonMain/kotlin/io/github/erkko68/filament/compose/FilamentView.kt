@@ -23,7 +23,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * For imperative access (picking, raw `View`/`Renderer`) pass a [rememberFilamentViewState].
  *
  * ```kotlin
- * val scene = rememberFilamentScene { Light(...); GltfInstance(duck) }
+ * val scene = rememberFilamentScene { DirectionalLight(); GltfInstance(duck) }
  * Row {
  *     FilamentView(scene, Modifier.weight(1f), cameraState = cam1,
  *         postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)))
@@ -36,7 +36,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @param viewState Hoisted handle exposing the live `View`/`Renderer` and `pick()`.
  * @param postProcessing Per-view post-processing and render-quality configuration.
  * @param frustumCullingEnabled Skip rendering of objects outside the camera frustum.
- * @param shadows Shadow technique for the whole view ([Shadows.Pcf]/[Shadows.Vsm]/[Shadows.Dpcf]/
+ * @param shadows Shadow technique for the whole view ([Shadows.Pcf]/[Shadows.Pcfd]/[Shadows.Vsm]/[Shadows.Dpcf]/
  *   [Shadows.Pcss]), or `null` to disable shadowing entirely. Per-light shadow-map quality is set via
  *   each light's `shadow` ([io.github.erkko68.filament.compose.scene.ShadowConfig]).
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.
@@ -87,9 +87,10 @@ fun FilamentView(
     }
 
     // Attach the hoisted camera state so CameraState.viewMatrix / projectionMatrix are readable.
+    // attach() throws if the state is already bound to another view — one CameraState per view.
     DisposableEffect(cameraState, camera) {
-        cameraState.attachedCamera = camera
-        onDispose { cameraState.attachedCamera = null }
+        cameraState.attach(camera)
+        onDispose { cameraState.detach(camera) }
     }
 
     // Snapshot the camera state during composition so the SideEffect re-applies it whenever

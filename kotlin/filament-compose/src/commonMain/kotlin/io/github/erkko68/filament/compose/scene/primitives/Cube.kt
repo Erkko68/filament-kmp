@@ -16,14 +16,16 @@ import io.github.erkko68.filament.utils.Quaternion
  *
  * Each face's UV maps the full 0..1 square. The cube is sized via [size] (full edge length).
  *
- * @param material  The material to apply to every face. Use [rememberMaterial] +
- *   [rememberMaterialInstance] to construct one.
+ * @param material  The material to apply to every face, or null while it is still loading
+ *   (nothing renders until it arrives). Use [rememberMaterial] + [rememberMaterialInstance].
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation as a quaternion.
  * @param scale     Per-axis scale applied after [size].
  * @param pivot     Point in mesh space that rotation/scale revolve around and that ends up at
  *   [position]. Defaults to the cube centre.
  * @param size      Edge length in mesh space. The mesh is rebuilt when this changes.
+ * @param visible   Whether this renderable is in the scene. False removes it from the
+ *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the cube casts shadows onto other renderables. On by default.
  * @param receiveShadows  Whether the cube receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the cube is added to the scene.
@@ -31,18 +33,19 @@ import io.github.erkko68.filament.utils.Quaternion
  */
 @Composable
 fun FilamentSceneScope.Cube(
-    material: MaterialInstance,
+    material: MaterialInstance?,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     size: Float = 1f,
+    visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(size) { cubeMesh(size) }
-    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
 }
 
 private fun cubeMesh(size: Float): MeshData {

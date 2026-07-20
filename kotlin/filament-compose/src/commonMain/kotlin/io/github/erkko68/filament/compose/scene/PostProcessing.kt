@@ -10,9 +10,10 @@ import io.github.erkko68.filament.View
  * [io.github.erkko68.filament.compose.FilamentView] via `postProcessing = ...`.
  *
  * Each effect is a singleton value class — there is exactly one of each per Filament view, so
- * a `null` field means "leave Filament's native default / effect off", and a non-null field
- * enables and configures that effect. Animate an effect by passing a new value each frame:
- * `PostProcessing(bloom = Bloom(strength = animated))`.
+ * a `null` field means "leave Filament's native default" (for effects that are natively off —
+ * bloom, fog, DoF, … — that means off; for FXAA and dithering, which are natively on, null
+ * keeps them on), and a non-null field configures that effect explicitly. Animate an effect by
+ * passing a new value each frame: `PostProcessing(bloom = Bloom(strength = animated))`.
  *
  * ```kotlin
  * FilamentView(
@@ -98,6 +99,53 @@ data class ScreenSpaceReflections(
     val maxDistance: Float = 3.0f,
 )
 
+/**
+ * Tone mapping operator selection for [ColorGrade], as a *value*: every variant compares
+ * structurally, so two [ColorGrade]s built with the same settings are equal and don't force a
+ * ColorGrading rebuild (the native [ToneMapper] instances have identity equality, which would
+ * re-bake the grading LUT on every recomposition). The native operator is constructed only when
+ * the configuration is actually applied.
+ */
+sealed interface ToneMapping {
+    /** ACES RRT + sRGB ODT — Filament's recommended default. */
+    data object ACES : ToneMapping
+    /** ACES with a ~1.6 brightness multiplier, for backward compatibility. */
+    data object ACESLegacy : ToneMapping
+    /** Approximation of ACES aesthetics; exists for backward compatibility. */
+    data object Filmic : ToneMapping
+    /** Khronos PBR Neutral — preserves material appearance across lighting conditions. */
+    data object PBRNeutral : ToneMapping
+    /** Gran Turismo 7 operator (250-nit paper white target). */
+    data object GT7 : ToneMapping
+    /** Clamped linear pass-through; mostly for debugging. */
+    data object Linear : ToneMapping
+    /** Maps exposure stops to debug colors for validating scene lighting. */
+    data object DisplayRange : ToneMapping
+
+    /** AgX operator with an optional creative [look]. */
+    data class Agx(val look: ToneMapper.Agx.AgxLook = ToneMapper.Agx.AgxLook.NONE) : ToneMapping
+
+    /** Configurable curve — see [ToneMapper.Generic] for parameter semantics. */
+    data class Generic(
+        val contrast: Float = 1.55f,
+        val midGrayIn: Float = 0.18f,
+        val midGrayOut: Float = 0.215f,
+        val hdrMax: Float = 10.0f,
+    ) : ToneMapping
+}
+
+internal fun ToneMapping.toToneMapper(): ToneMapper = when (this) {
+    ToneMapping.ACES         -> ToneMapper.ACES()
+    ToneMapping.ACESLegacy   -> ToneMapper.ACESLegacy()
+    ToneMapping.Filmic       -> ToneMapper.Filmic()
+    ToneMapping.PBRNeutral   -> ToneMapper.PBRNeutralToneMapper()
+    ToneMapping.GT7          -> ToneMapper.GT7ToneMapper()
+    ToneMapping.Linear       -> ToneMapper.Linear()
+    ToneMapping.DisplayRange -> ToneMapper.DisplayRange()
+    is ToneMapping.Agx       -> ToneMapper.Agx(look)
+    is ToneMapping.Generic   -> ToneMapper.Generic(contrast, midGrayIn, midGrayOut, hdrMax)
+}
+
 /** Color grading — exposure, white balance, contrast, tone mapping, etc. */
 data class ColorGrade(
     val exposure: Float = 0.0f,
@@ -106,7 +154,7 @@ data class ColorGrade(
     val saturation: Float = 1.0f,
     val whiteBalanceTemperature: Float = 0.0f,
     val whiteBalanceTint: Float = 0.0f,
-    val toneMapper: ToneMapper = ToneMapper.ACES(),
+    val toneMapping: ToneMapping = ToneMapping.ACES,
 )
 
 /**
@@ -205,7 +253,12 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
         this.enabled = antiAliasing?.msaaEnabled == true
         antiAliasing?.let { this.sampleCount = it.msaaSampleCount }
     }
-    view.antiAliasing = if (antiAliasing?.fxaaEnabled == true) View.AntiAliasing.FXAA else View.AntiAliasing.NONE
+    // null keeps Filament's native default (FXAA on) — turning AA off requires an explicit
+    // AntiAliasing(fxaaEnabled = false), consistent with "null = native default" elsewhere.
+    view.antiAliasing = when {
+        antiAliasing == null || antiAliasing.fxaaEnabled -> View.AntiAliasing.FXAA
+        else -> View.AntiAliasing.NONE
+    }
     view.temporalAntiAliasingOptions = view.temporalAntiAliasingOptions.apply {
         this.enabled = antiAliasing?.taaEnabled == true
     }
@@ -252,7 +305,7 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
             .vibrance(c.vibrance)
             .saturation(c.saturation)
             .whiteBalance(c.whiteBalanceTemperature, c.whiteBalanceTint)
-            .toneMapper(c.toneMapper)
+            .toneMapper(c.toneMapping.toToneMapper())
             .build(engine)
             .also { view.colorGrading = it }
     } ?: run {

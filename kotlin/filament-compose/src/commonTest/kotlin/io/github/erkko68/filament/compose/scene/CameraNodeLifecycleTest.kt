@@ -21,6 +21,7 @@ class CameraNodeLifecycleTest : ComposeTestFixture() {
         initialUp = Direction(0f, 1f, 0f),
         initialProjection = Projection.Perspective(),
         initialExposure = Exposure(),
+        initialFocusDistance = 10f,
         initialShift = Float2(0f, 0f),
         initialScaling = Float2(1f, 1f),
     )
