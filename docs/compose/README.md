@@ -354,8 +354,9 @@ val scene = rememberFilamentScene(
 
 For the common cases, the **built-in standard materials** need no `.mat` authoring, no `matc`, and no
 asset shipping (they work on Web too): `rememberColorMaterialInstance`,
-`rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`, and
-`rememberEmissiveMaterialInstance` each return a ready `MaterialInstance` for a primitive.
+`rememberUnlitColorMaterialInstance`, `rememberTexturedMaterialInstance`,
+`rememberEmissiveMaterialInstance`, and `rememberTransparentColorMaterialInstance` each
+return a ready `MaterialInstance` for a primitive.
 
 ```kotlin
 Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))

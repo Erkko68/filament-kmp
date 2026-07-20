@@ -887,6 +887,7 @@ public final class io/github/erkko68/filament/compose/scene/StandardMaterial : j
 	public static final field Emissive Lio/github/erkko68/filament/compose/scene/StandardMaterial;
 	public static final field Lit Lio/github/erkko68/filament/compose/scene/StandardMaterial;
 	public static final field Textured Lio/github/erkko68/filament/compose/scene/StandardMaterial;
+	public static final field Transparent Lio/github/erkko68/filament/compose/scene/StandardMaterial;
 	public static final field Unlit Lio/github/erkko68/filament/compose/scene/StandardMaterial;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/compose/scene/StandardMaterial;
@@ -898,6 +899,7 @@ public final class io/github/erkko68/filament/compose/scene/StandardMaterialsKt 
 	public static final fun rememberEmissiveMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberStandardMaterial (Lio/github/erkko68/filament/compose/scene/StandardMaterial;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Material;
 	public static final fun rememberTexturedMaterialInstance (Lio/github/erkko68/filament/Texture;FFLio/github/erkko68/filament/TextureSampler;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
+	public static final fun rememberTransparentColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;FFFFLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberUnlitColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 }
 

@@ -19,7 +19,8 @@ import io.github.erkko68.filament.compose.LocalFilamentEngine
  *
  * You rarely name these directly — use the convenience instance helpers
  * ([rememberColorMaterialInstance], [rememberUnlitColorMaterialInstance],
- * [rememberTexturedMaterialInstance], [rememberEmissiveMaterialInstance]) instead. Reach for
+ * [rememberTexturedMaterialInstance], [rememberEmissiveMaterialInstance],
+ * [rememberTransparentColorMaterialInstance]) instead. Reach for
  * [rememberStandardMaterial] only when you want the shared base [Material] to instantiate yourself.
  *
  * To go beyond these (cloth, subsurface, refraction, custom shading), author your own `.mat`,
@@ -40,6 +41,9 @@ enum class StandardMaterial {
 
     /** UNLIT emissive (glows through bloom): `color`, `intensity`. */
     Emissive,
+
+    /** LIT PBR with alpha transparency: `baseColor`, `alpha`, `metallic`, `roughness`, `reflectance`. */
+    Transparent,
     ;
 
     internal fun payload(): ByteArray = when (this) {
@@ -47,6 +51,7 @@ enum class StandardMaterial {
         Unlit -> EmbeddedMaterials.standardUnlit
         Textured -> EmbeddedMaterials.standardTextured
         Emissive -> EmbeddedMaterials.standardEmissive
+        Transparent -> EmbeddedMaterials.standardTransparent
     }
 }
 
@@ -209,5 +214,43 @@ fun rememberEmissiveMaterialInstance(
     return rememberMaterialInstance(material, color, intensity, engine = engine) {
         setParameter("color", color)
         setParameter("intensity", intensity)
+    }!!
+}
+
+/**
+ * A LIT PBR [MaterialInstance] tinted [color] with [alpha] transparency — the "make this object
+ * semi-transparent" case with no `.mat` authoring. Alpha is pre-multiplied by the shader and the
+ * material renders in two depth passes so convex primitives composite correctly with themselves.
+ *
+ * Transparent surfaces usually shouldn't cast opaque shadows — pass `castShadows = false` on the
+ * primitive for glass-like looks.
+ *
+ * ```kotlin
+ * Sphere(material = rememberTransparentColorMaterialInstance(Color(0.3f, 0.6f, 0.9f), alpha = 0.35f))
+ * ```
+ *
+ * @param color Linear-sRGB base colour.
+ * @param alpha Opacity: 0 = fully transparent, 1 = opaque.
+ * @param metallic 0 = dielectric, 1 = metal.
+ * @param roughness 0 = mirror, 1 = fully rough.
+ * @param reflectance Dielectric Fresnel reflectance (0.5 ≈ the common 4% default).
+ * @param engine Engine that owns the material. Defaults to the current composition scope's engine.
+ */
+@Composable
+fun rememberTransparentColorMaterialInstance(
+    color: Color,
+    alpha: Float = 0.5f,
+    metallic: Float = 0f,
+    roughness: Float = 0.5f,
+    reflectance: Float = 0.5f,
+    engine: Engine = LocalFilamentEngine.current,
+): MaterialInstance {
+    val material = rememberStandardMaterial(StandardMaterial.Transparent, engine)
+    return rememberMaterialInstance(material, color, alpha, metallic, roughness, reflectance, engine = engine) {
+        setParameter("baseColor", color)
+        setParameter("alpha", alpha)
+        setParameter("metallic", metallic)
+        setParameter("roughness", roughness)
+        setParameter("reflectance", reflectance)
     }!!
 }

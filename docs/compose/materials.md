@@ -32,6 +32,9 @@ tex?.let { Sphere(material = rememberTexturedMaterialInstance(it)) }
 
 // UNLIT emissive — glows through bloom when intensity > 1
 Sphere(material = rememberEmissiveMaterialInstance(Color(1f, 0.85f, 0.4f), intensity = 4f))
+
+// LIT with alpha transparency — pre-multiplied, two-pass so solids self-composite correctly
+Sphere(material = rememberTransparentColorMaterialInstance(Color(0.3f, 0.6f, 0.9f), alpha = 0.35f))
 ```
 
 Parameters track Compose state automatically — pass a new `color`/`intensity` and the instance is

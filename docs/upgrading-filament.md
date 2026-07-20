@@ -228,13 +228,13 @@ assertion.
 
 ### 6b. Regenerate the embedded standard materials
 
-`filament-compose` ships four precompiled built-in materials (`StandardMaterial.Lit`/`Unlit`/
-`Textured`/`Emissive`) as embedded `.filamat` blobs — their `.mat` sources and compiled outputs live
+`filament-compose` ships five precompiled built-in materials (`StandardMaterial.Lit`/`Unlit`/
+`Textured`/`Emissive`/`Transparent`) as embedded `.filamat` blobs — their `.mat` sources and compiled outputs live
 in [`kotlin/filament-compose/src/commonMain/materials/`](../kotlin/filament-compose/src/commonMain/materials/),
 and the `generateEmbeddedMaterials` Gradle task base64-encodes them into a generated Kotlin object.
 
 A compiled `.filamat` is tied to the Filament ABI, so **whenever `MATERIAL_VERSION` changes** (watch
-the step-1 diff), recompile all four with the `matc` from the matching release. `matc` ships in the
+the step-1 diff), recompile all five with the `matc` from the matching release. `matc` ships in the
 release tarball under `bin/` — the same archive the prebuilts come from, cached at
 `.gradle/filament-prebuilts-cache/filament-v<new>-<os>.tgz` after step 3:
 
