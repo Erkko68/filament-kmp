@@ -36,7 +36,7 @@ class GroupLifecycleTest : ComposeTestFixture() {
                 assertEntitiesDestroyed(engine, intArrayOf(groupEntity, lightEntity))
             },
         ) {
-            Group(onCreate = { groupEntity = it }) {
+            Group(onCreate = { groupEntity = entity }) {
                 DirectionalLight()
             }
         }
@@ -60,8 +60,8 @@ class GroupLifecycleTest : ComposeTestFixture() {
                 assertEntitiesDestroyed(engine, intArrayOf(outerGroup, innerGroup))
             },
         ) {
-            Group(onCreate = { outerGroup = it }) {
-                Group(onCreate = { innerGroup = it }) {
+            Group(onCreate = { outerGroup = entity }) {
+                Group(onCreate = { innerGroup = entity }) {
                     PointLight()
                 }
             }

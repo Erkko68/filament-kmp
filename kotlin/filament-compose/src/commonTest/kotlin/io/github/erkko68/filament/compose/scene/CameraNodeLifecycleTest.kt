@@ -46,7 +46,7 @@ class CameraNodeLifecycleTest : ComposeTestFixture() {
                 assertEntitiesDestroyed(engine, intArrayOf(groupEntity))
             },
         ) {
-            Group(position = Position(5f, 2f, -3f), onCreate = { groupEntity = it }) {
+            Group(position = Position(5f, 2f, -3f), onCreate = { groupEntity = entity }) {
                 CameraNode(cam)
             }
         }

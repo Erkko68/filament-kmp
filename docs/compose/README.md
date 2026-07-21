@@ -323,8 +323,9 @@ cross-cutting patterns. For *what each composable is*, follow the API reference.
 Pure-Kotlin mesh primitives (`Cube`, `Sphere`, `Cylinder`, `Plane`, `Mesh`) build a
 `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place them inside
 `rememberFilamentScene { }`. Every primitive accepts the same transform set — `position`,
-`rotation`, `scale`, `pivot` — plus an `onCreate: (entity: Int) -> Unit` callback that fires once
-the renderable is added to the scene (use it to register the entity with `view.pick` callbacks).
+`rotation`, `scale`, `pivot` — plus an `onCreate: EntityScope.() -> Unit` callback that fires once
+the renderable is added to the scene, with the created `entity` and the `engine` in scope (use it
+to register the entity with `view.pick` callbacks).
 They also take `castShadows`/`receiveShadows` (both default `true`) — set `castShadows = false` on a
 pure ground/receiver `Plane` to avoid it shadowing itself. When wrapped in a `Group { }` the
 primitive's transform becomes local to the group. `Mesh` is the escape hatch for custom triangle
@@ -337,7 +338,7 @@ geometry the built-in primitives don't cover.
 ```kotlin
 val engine = rememberFilamentEngine()          // shared, so the IBL and scene agree
 val env = rememberKTXEnvironment(
-    engine,
+    engine = engine,
     ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
     skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
 )

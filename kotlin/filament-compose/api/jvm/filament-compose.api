@@ -10,6 +10,11 @@ public final class io/github/erkko68/filament/compose/CompositionLocalsKt {
 	public static final fun getLocalFilamentScene ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
 
+public abstract interface class io/github/erkko68/filament/compose/EntityScope {
+	public abstract fun getEngine ()Lio/github/erkko68/filament/Engine;
+	public abstract fun getEntity ()I
+}
+
 public abstract interface annotation class io/github/erkko68/filament/compose/FilamentDsl : java/lang/annotation/Annotation {
 }
 
@@ -115,7 +120,7 @@ public final class io/github/erkko68/filament/compose/OrbitCameraState : io/gith
 }
 
 public final class io/github/erkko68/filament/compose/RenderTargetTextureKt {
-	public static final fun rememberRenderTargetTexture (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IIZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
+	public static final fun rememberRenderTargetTexture (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IILio/github/erkko68/filament/compose/scene/PostProcessing;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
 }
 
 public final class io/github/erkko68/filament/compose/SceneClockKt {
@@ -234,7 +239,7 @@ public final class io/github/erkko68/filament/compose/scene/Bloom {
 	public final fun getQuality ()Lio/github/erkko68/filament/View$Quality;
 	public final fun getResolution ()I
 	public final fun getStrength ()F
-	public final fun getThreshold ()Z
+	public final fun getThresholdEnabled ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -407,8 +412,8 @@ public final class io/github/erkko68/filament/compose/scene/Environment {
 }
 
 public final class io/github/erkko68/filament/compose/scene/EnvironmentKt {
-	public static final fun rememberHDREnvironment (Lio/github/erkko68/filament/Engine;FZLio/github/erkko68/filament/Texture$InternalFormat;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
-	public static final fun rememberKTXEnvironment (Lio/github/erkko68/filament/Engine;FLjava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
+	public static final fun rememberHDREnvironment (FZLio/github/erkko68/filament/Texture$InternalFormat;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
+	public static final fun rememberKTXEnvironment (FLjava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
 }
 
 public final class io/github/erkko68/filament/compose/scene/Exposure {
@@ -461,7 +466,7 @@ public final class io/github/erkko68/filament/compose/scene/GltfAssetKt {
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfInstanceKt {
-	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FLjava/lang/Boolean;Ljava/lang/Boolean;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/GltfInstanceScope {
@@ -833,7 +838,7 @@ public final class io/github/erkko68/filament/compose/scene/SkyboxSource$Color :
 	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;Lio/github/erkko68/filament/compose/scene/Color;FILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAlpha ()F
-	public final fun getRgb ()Lio/github/erkko68/filament/compose/scene/Color;
+	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/Color;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

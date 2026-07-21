@@ -6,6 +6,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.compose.EntityScope
+import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.internal.transformMatrix
@@ -52,7 +54,8 @@ internal val LocalGroupVisible = compositionLocalOf { true }
  * @param pivot     Mesh-space pivot point that rotation/scale revolve around.
  * @param visible   Whether the whole subtree is in the scene. False removes every child
  *   renderable (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
- * @param onCreate  Receives the group's transform entity ID once it's created.
+ * @param onCreate  Runs once when the group's transform entity is created, with the entity and
+ *   engine in scope ([EntityScope]).
  */
 @Composable
 fun FilamentSceneScope.Group(
@@ -61,7 +64,7 @@ fun FilamentSceneScope.Group(
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     visible: Boolean = true,
-    onCreate: (entity: Entity) -> Unit = {},
+    onCreate: EntityScope.() -> Unit = {},
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
@@ -72,7 +75,7 @@ fun FilamentSceneScope.Group(
     DisposableEffect(groupEntity) {
         val tm = engine.getTransformManager()
         tm.create(groupEntity)
-        onCreate(groupEntity)
+        EntityScopeImpl(groupEntity, engine).onCreate()
         onDispose {
             tm.destroy(groupEntity)
             engine.getEntityManager().destroy(groupEntity)

@@ -170,7 +170,7 @@ class OrbitCameraState internal constructor(
  * creation time. The manipulator pushes its computed eye/target/up back into [cameraState]
  * whenever the user interacts.
  *
- * The tuning parameters ([zoomSpeed], [orbitSpeedX], [orbitSpeedY], [enablePanning]) are
+ * The tuning parameters ([zoomSpeed], [orbitSpeedX], [orbitSpeedY], [panningEnabled]) are
  * reactive — changing them at runtime rebuilds the manipulator while keeping the current
  * camera pose and the original home position, so nothing jumps.
  *
@@ -180,10 +180,10 @@ class OrbitCameraState internal constructor(
  * FilamentView(scene = scene, cameraState = cameraState, modifier = Modifier.orbitGestures(orbit))
  * ```
  *
- * @param zoomSpeed     Scroll / pinch zoom sensitivity.
- * @param orbitSpeedX   Horizontal orbit drag sensitivity.
- * @param orbitSpeedY   Vertical orbit drag sensitivity.
- * @param enablePanning Allow right-click / secondary-button drag to pan.
+ * @param zoomSpeed      Scroll / pinch zoom sensitivity.
+ * @param orbitSpeedX    Horizontal orbit drag sensitivity.
+ * @param orbitSpeedY    Vertical orbit drag sensitivity.
+ * @param panningEnabled Allow right-click / secondary-button drag to pan.
  */
 @Composable
 fun rememberOrbitCameraState(
@@ -191,20 +191,20 @@ fun rememberOrbitCameraState(
     zoomSpeed: Float = 0.01f,
     orbitSpeedX: Float = 0.01f,
     orbitSpeedY: Float = 0.01f,
-    enablePanning: Boolean = true,
+    panningEnabled: Boolean = true,
 ): OrbitCameraState {
     // Home is fixed at the pose the cameraState had when this state was first created, so a
     // tuning-parameter rebuild doesn't silently redefine what resetToHome() means.
     val home = remember(cameraState) { cameraState.eye to cameraState.target }
     val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
-    val state = remember(cameraState, zoomSpeed, orbitSpeedX, orbitSpeedY, enablePanning) {
+    val state = remember(cameraState, zoomSpeed, orbitSpeedX, orbitSpeedY, panningEnabled) {
         val (eye, target) = home
         val manipulator = Manipulator.Builder()
             .orbitHomePosition(eye.x, eye.y, eye.z)
             .targetPosition(target.x, target.y, target.z)
             .zoomSpeed(zoomSpeed)
             .orbitSpeed(orbitSpeedX, orbitSpeedY)
-            .panning(enablePanning)
+            .panning(panningEnabled)
             .build(Manipulator.Mode.ORBIT)
         // Carry the current pose across a tuning rebuild so the camera doesn't move.
         previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
@@ -334,6 +334,10 @@ class FlightCameraState internal constructor(
  *
  * The manipulator's start position is taken from [cameraState.eye] at creation time.
  *
+ * The tuning parameters are reactive — changing them at runtime rebuilds the manipulator
+ * while keeping the current camera pose, so nothing jumps; [startPitch]/[startYaw] only
+ * define the initial (and [resetToHome][FlightCameraState.resetToHome]) orientation.
+ *
  * @param startPitch     Initial pitch in degrees (positive = look up).
  * @param startYaw       Initial yaw in degrees.
  * @param maxMoveSpeed   Maximum movement speed in world units per second.
@@ -352,6 +356,7 @@ fun rememberFlightCameraState(
     panSpeedY: Float = 0.01f,
 ): FlightCameraState {
     val focusRequester = remember { FocusRequester() }
+    val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
     val state = remember(cameraState, startPitch, startYaw, maxMoveSpeed, moveDamping, panSpeedX, panSpeedY) {
         val eye = cameraState.eye
         val manipulator = Manipulator.Builder()
@@ -361,6 +366,10 @@ fun rememberFlightCameraState(
             .flightMoveDamping(moveDamping)
             .flightPanSpeed(panSpeedX, panSpeedY)
             .build(Manipulator.Mode.FLIGHT)
+        // Carry the current pose across a tuning rebuild so the camera doesn't move (same as
+        // orbit/map); without this, orientation would snap back to startPitch/startYaw.
+        previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
+        previous[0] = manipulator
         FlightCameraState(manipulator, cameraState, focusRequester).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }

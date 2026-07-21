@@ -60,7 +60,7 @@ fun HDREnvironmentScene(onBack: () -> Unit) {
     // load fails there. Surface it via onError and show a notice instead of an empty scene.
     var failed by remember { mutableStateOf(false) }
     val environment = rememberHDREnvironment(
-        engine,
+        engine = engine,
         onError = { failed = true },
     ) { Res.readBytes("files/environment/lightroom.hdr") }
 

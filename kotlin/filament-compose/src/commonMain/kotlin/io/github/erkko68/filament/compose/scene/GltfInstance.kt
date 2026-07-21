@@ -73,6 +73,10 @@ private class GltfInstanceScopeImpl(
  *   blending) and takes precedence over [animationIndex]/[animationTime].
  * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
  *   instance that has morph targets. Pass null to leave morph weights untouched.
+ * @param castShadows Overrides shadow casting for every renderable in the instance; null (the
+ *   default) keeps what the asset authored — matching the primitives' `castShadows` toggle.
+ * @param receiveShadows Overrides shadow receiving for every renderable in the instance; null
+ *   (the default) keeps what the asset authored.
  * @param visible Whether the instance's entities are in the scene. False removes them (cheaply,
  *   keeping the instance and its state alive) — a show/hide toggle.
  * @param onCreate Called once when the instance is first added to the scene. Use for one-time
@@ -92,6 +96,8 @@ fun FilamentSceneScope.GltfInstance(
     animationTime: Float = 0f,
     animationState: AnimationState? = null,
     morphWeights: FloatArray? = null,
+    castShadows: Boolean? = null,
+    receiveShadows: Boolean? = null,
     visible: Boolean = true,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
@@ -191,6 +197,20 @@ fun FilamentSceneScope.GltfInstance(
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
                 if (rm.getMorphTargetCount(ri) > 0) rm.setMorphWeights(ri, morphWeights, 0)
+            }
+        }
+        onDispose { }
+    }
+
+    // Shadow-flag overrides on every renderable. null keeps the asset's authored values.
+    DisposableEffect(instance, castShadows, receiveShadows) {
+        if (castShadows != null || receiveShadows != null) {
+            val rm = engine.getRenderableManager()
+            for (entity in instance.getEntities()) {
+                if (!rm.hasComponent(entity)) continue
+                val ri = rm.getInstance(entity)
+                if (castShadows != null) rm.setCastShadows(ri, castShadows)
+                if (receiveShadows != null) rm.setReceiveShadows(ri, receiveShadows)
             }
         }
         onDispose { }

@@ -13,6 +13,8 @@ import io.github.erkko68.filament.SurfaceOrientation
 import io.github.erkko68.filament.VertexBuffer
 import io.github.erkko68.filament.VertexBuffer.AttributeType
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
+import io.github.erkko68.filament.compose.EntityScope
+import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
@@ -27,15 +29,34 @@ import io.github.erkko68.filament.utils.Quaternion
  * CPU-side geometry buffers. [indices] uses unsigned 32-bit indices. [boundingBox] is used by
  * Filament for frustum culling — provide an accurate AABB or culling will be wrong.
  *
- * Vertices are non-interleaved: positions/normals/uvs each live in their own buffer.
+ * Vertices are non-interleaved: positions/normals/uvs each live in their own buffer. Equality is
+ * by **content** (a data class would compare the arrays by reference), so a caller re-creating
+ * identical arrays each recomposition doesn't re-upload the GPU buffers.
  */
-internal data class MeshData(
+internal class MeshData(
     val positions: FloatArray,
     val normals: FloatArray,
     val uvs: FloatArray,
     val indices: IntArray,
     val boundingBox: Box,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MeshData) return false
+        return positions.contentEquals(other.positions) &&
+            normals.contentEquals(other.normals) &&
+            uvs.contentEquals(other.uvs) &&
+            indices.contentEquals(other.indices) &&
+            boundingBox.center.contentEquals(other.boundingBox.center) &&
+            boundingBox.halfExtent.contentEquals(other.boundingBox.halfExtent)
+    }
+
+    override fun hashCode(): Int {
+        var result = positions.contentHashCode()
+        result = 31 * result + indices.contentHashCode()
+        return result
+    }
+}
 
 internal class MeshHandles(val vertexBuffer: VertexBuffer, val indexBuffer: IndexBuffer)
 
@@ -101,7 +122,7 @@ internal fun Mesh(
     visible: Boolean,
     castShadows: Boolean,
     receiveShadows: Boolean,
-    onCreate: (entity: Entity) -> Unit,
+    onCreate: EntityScope.() -> Unit,
 ) {
     if (material == null) return
 
@@ -134,7 +155,7 @@ internal fun Mesh(
     // Registered before the membership effect so it disposes *after* it — the entity is
     // removed from the scene before its components are destroyed.
     DisposableEffect(entity) {
-        onCreate(entity)
+        EntityScopeImpl(entity, engine).onCreate()
         onDispose {
             engine.getRenderableManager().destroy(entity)
             engine.getEntityManager().destroy(entity)

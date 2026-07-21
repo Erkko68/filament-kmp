@@ -37,7 +37,8 @@ class FilamentScene internal constructor(
  *     DirectionalLight(intensity = 100_000f)
  *     GltfInstance(asset = duck)
  * }
- * FilamentView(scene = scene, cameraState = cam) { Bloom(strength = 0.2f) }
+ * FilamentView(scene = scene, cameraState = cam,
+ *     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)))
  * ```
  *
  * @param engine Engine backing the scene. Defaults to a dedicated engine created and destroyed

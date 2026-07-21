@@ -3,7 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
@@ -19,6 +19,10 @@ import io.github.erkko68.filament.utils.Quaternion
  * (uv pairs) are parallel arrays addressed by [indices] (a flat list of triangle corner indices,
  * 3 per triangle). The tangent frame Filament's LIT shaders need is derived automatically from
  * the normals, UVs, and topology — supply correct normals and UVs.
+ *
+ * Geometry arrays are compared by **content**: re-creating identical arrays on recomposition is
+ * safe (no GPU re-upload); changing any element re-uploads the buffers and rebuilds the
+ * renderable. Still prefer `remember`-ing large arrays to skip the comparison cost.
  *
  * ```kotlin
  * Mesh(
@@ -46,8 +50,9 @@ import io.github.erkko68.filament.utils.Quaternion
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows    Whether the mesh casts shadows onto other renderables. On by default.
  * @param receiveShadows Whether the mesh receives shadows cast by others. On by default.
- * @param onCreate    Receives the renderable entity ID once the mesh is added to the scene —
- *   use it to register the mesh with `view.pick` callbacks or other entity-keyed maps.
+ * @param onCreate    Runs once when the mesh enters the scene, with the renderable entity and
+ *   engine in scope ([EntityScope]) — use it to register the mesh with `view.pick` callbacks or
+ *   other entity-keyed maps.
  */
 @Composable
 fun FilamentSceneScope.Mesh(
@@ -64,7 +69,7 @@ fun FilamentSceneScope.Mesh(
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
-    onCreate: (entity: Entity) -> Unit = {},
+    onCreate: EntityScope.() -> Unit = {},
 ) {
     require(positions.isNotEmpty() && positions.size % 3 == 0) {
         "positions must be a non-empty multiple of 3 (xyz triples), was ${positions.size}"
