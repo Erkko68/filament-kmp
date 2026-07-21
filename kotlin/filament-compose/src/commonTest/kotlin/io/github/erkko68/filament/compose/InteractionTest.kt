@@ -11,6 +11,7 @@ import io.github.erkko68.filament.compose.testutils.withFilamentScene
 import io.github.erkko68.filament.utils.Float2
 import io.github.erkko68.filament.utils.Manipulator
 import kotlin.math.sqrt
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -46,6 +47,11 @@ class InteractionTest : ComposeTestFixture() {
         manipulator.keyUp(Manipulator.Key.FORWARD)
     }
 
+    // TODO: flaky on Linux (x86 + arm), fine on macOS/Windows. Root cause is upstream Filament:
+    //  FreeFlightManipulator::mEyeVelocity is never initialized and is read-before-write in the
+    //  damped update() path, so a garbage/NaN start value corrupts the pose (NaN > 0.1f is false).
+    //  Fix = zero-init mEyeVelocity in FreeFlightManipulator.h; re-enable once the prebuilt is rebuilt.
+    @Ignore
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun flightResetToHomeAndBookmarkRestorePose() = run {
