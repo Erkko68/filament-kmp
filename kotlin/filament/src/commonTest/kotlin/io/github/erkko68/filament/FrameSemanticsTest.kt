@@ -8,6 +8,7 @@ import io.github.erkko68.filament.testutils.regionStats
 import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testsupport.TestEnv
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -28,7 +29,7 @@ import kotlin.test.assertTrue
 @IgnoreJs // Renderer.readPixels is a no-op on web (not bound in jsbindings.cpp).
 class FrameSemanticsTest : RenderingTestFixture() {
 
-    private fun litScene(engine: Engine, probe: FrameProbe, shadows: Boolean = true): Entity {
+    private fun litScene(engine: Engine, probe: FrameProbe, shadows: Boolean = true, casterCz: Float = 0f): Entity {
         val mat = probe.material(TestMaterials.getLitMaterialBytes())
         val floorInst = probe.instance(mat).apply {
             setParameter("baseColor", 0.8f, 0.8f, 0.8f)
@@ -41,7 +42,7 @@ class FrameSemanticsTest : RenderingTestFixture() {
             setParameter("roughness", 0.9f)
         }
         probe.addHorizontalQuad(floorInst, 0f, 0f, 0f, 8f)
-        probe.addHorizontalQuad(casterInst, 0f, 1f, 0f, 0.5f)
+        probe.addHorizontalQuad(casterInst, 0f, 1f, casterCz, 0.5f)
 
         val sun = EntityManager.get().create()
         LightManager.Builder(LightManager.Type.SUN)
@@ -113,6 +114,33 @@ class FrameSemanticsTest : RenderingTestFixture() {
 
         val diff = meanAbsoluteDifference(lit, unlit)
         assertTrue(diff > 10.0, "removing the sun barely changed the frame (mad=$diff)")
+    }
+
+    /**
+     * Pins the readPixels row order, which is backend-dependent: Metal delivers rows
+     * top-down, OpenGL bottom-up (GL convention). The JVM compose surface keys its
+     * vertical flip off this. The caster is shifted to world +Z — screen top, since the
+     * camera looks down -Y with up = +Z — so the convention decides which rows it fills.
+     * Vulkan/WebGPU are unverified; running there makes this test pin them too.
+     */
+    @Test
+    fun readPixelsRowOrderMatchesBackendConvention() = withProbe { engine, probe ->
+        // Caster at y=1, cz=0.8 spans z 0.3..1.3; visible half-extent at that height is
+        // tan(22.5°)·4 ≈ 1.66, so it covers screen-y fractions ≈ 0.59..0.89 of the top half.
+        litScene(engine, probe, shadows = false, casterCz = 0.8f)
+        val pixels = assertNotNull(probe.renderAndRead(), "readback did not complete")
+
+        val highRows = pixels.regionStats(probe.width, probe.height, 0.40, 0.60, 0.65, 0.85)
+        val lowRows = pixels.regionStats(probe.width, probe.height, 0.40, 0.60, 0.15, 0.35)
+        val highIsRed = highRows.meanR > highRows.meanB * 1.5
+        val lowIsRed = lowRows.meanR > lowRows.meanB * 1.5
+        assertTrue(highIsRed != lowIsRed, "ambiguous readback: high=$highRows low=$lowRows")
+
+        val expectTopDown = engine.backend == Engine.Backend.METAL
+        assertEquals(
+            expectTopDown, lowIsRed,
+            "readPixels row order changed for ${engine.backend}: high=$highRows low=$lowRows",
+        )
     }
 
     private fun assertShadowPresent(pixels: ByteArray, probe: FrameProbe, technique: String) {

@@ -55,10 +55,10 @@ On the **iOS Simulator**, enabling shadows (directional/spot) produces a fully b
 
 ### Pixel readback overhead
 
-The Desktop integration renders to an offscreen `RenderTarget` and copies pixels back to the CPU each frame for Skia compositing. Expect:
+The Desktop integration renders to an offscreen readable swap chain and copies pixels back to the CPU each frame for Skia compositing. The readback lands directly in Skia-owned memory (no CPU-side re-copies or per-frame allocation), so the cost is the GPU→CPU transfer itself. Expect:
 
 - **1–2 frames of latency** vs. a native swap-chain.
-- **CPU overhead** scaling with window size (a 4K window copies ~33 MB/frame).
+- **Transfer bandwidth** scaling with window size (a 4K window reads back ~33 MB/frame).
 - A **150 ms resize debounce** before reallocating textures — drag-resizing feels slightly stuttery, but final layout is clean.
 
 This is unavoidable with Compose Desktop today: there is no public API to embed a native rendering surface inside a Skia canvas.
