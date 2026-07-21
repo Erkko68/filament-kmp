@@ -46,6 +46,10 @@ data class PostProcessing(
 /**
  * Bloom — "glow" around bright areas.
  *
+ * @param strength How much bloom is blended into the image, `0..1`.
+ * @param threshold Whether to clip the source at a fixed luminance of `1.0` before blooming.
+ *   On by default; off blooms the whole image, which is usually only wanted with a
+ *   dirt texture.
  * @param resolution Width in px of the largest mip in the downsample chain. `0` lets Filament
  *   pick a default (~360 px), which can look pixelated on high-DPI displays. Bump to roughly
  *   half the render width for a smoother halo on retina/iOS screens.

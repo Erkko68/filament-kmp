@@ -20,6 +20,13 @@ import io.github.erkko68.filament.utils.Quaternion
 internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
 
 /**
+ * Whether the surrounding Group subtree is visible. Leaf composables (primitives, GltfInstance)
+ * AND their own `visible` with this, so hiding a Group hides everything declared inside it. True
+ * at the top level (no enclosing Group). Nested groups multiply through the provided value.
+ */
+internal val LocalGroupVisible = compositionLocalOf { true }
+
+/**
  * Groups child scene composables under a single transform. Everything declared inside
  * [content] is parented to a hidden transform entity, so moving/rotating/scaling the Group
  * moves the whole assembly as a unit. Children's own `position`/`rotation`/`scale` become
@@ -43,6 +50,8 @@ internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
  * @param rotation  Rotation applied to the whole group.
  * @param scale     Scale applied to the whole group.
  * @param pivot     Mesh-space pivot point that rotation/scale revolve around.
+ * @param visible   Whether the whole subtree is in the scene. False removes every child
+ *   renderable (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
  * @param onCreate  Receives the group's transform entity ID once it's created.
  */
 @Composable
@@ -51,6 +60,7 @@ fun FilamentSceneScope.Group(
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
+    visible: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
@@ -84,7 +94,10 @@ fun FilamentSceneScope.Group(
         onDispose {}
     }
 
-    CompositionLocalProvider(LocalParentEntity provides groupEntity) {
+    CompositionLocalProvider(
+        LocalParentEntity provides groupEntity,
+        LocalGroupVisible provides (LocalGroupVisible.current && visible),
+    ) {
         content()
     }
 }

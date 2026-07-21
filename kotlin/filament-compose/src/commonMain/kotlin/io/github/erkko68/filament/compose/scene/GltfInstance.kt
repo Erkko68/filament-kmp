@@ -101,6 +101,8 @@ fun FilamentSceneScope.GltfInstance(
     val engine = LocalFilamentEngine.current
     val scene = LocalFilamentScene.current
     val parent = LocalParentEntity.current
+    // A hidden enclosing Group hides its whole subtree.
+    val effectiveVisible = visible && LocalGroupVisible.current
 
     val instance = remember(asset) {
         asset.assetLoader.createInstance(asset.filamentAsset)
@@ -125,8 +127,8 @@ fun FilamentSceneScope.GltfInstance(
     // Scene membership tracks `visible`; onCreate fires once, on the first time the instance
     // actually enters the scene.
     val createdFired = remember(instance) { booleanArrayOf(false) }
-    DisposableEffect(instance, visible) {
-        if (visible) {
+    DisposableEffect(instance, effectiveVisible) {
+        if (effectiveVisible) {
             scene.addEntities(instance.getEntities())
             if (!createdFired[0]) {
                 createdFired[0] = true
@@ -134,7 +136,7 @@ fun FilamentSceneScope.GltfInstance(
             }
         }
         onDispose {
-            if (visible) scene.removeEntities(instance.getEntities())
+            if (effectiveVisible) scene.removeEntities(instance.getEntities())
         }
     }
 

@@ -29,6 +29,30 @@ import io.github.erkko68.filament.utils.Manipulator
 
 // ── Shared internals ──────────────────────────────────────────────────────────
 
+/**
+ * Common surface shared by [OrbitCameraState], [MapCameraState] and [FlightCameraState] — the
+ * operations that make sense for any manipulator-driven camera, so generic UI (a "reset view"
+ * button, save/restore of viewpoints) can drive whichever controller is active without caring
+ * about the control scheme. Mode-specific extras — flight's per-frame [FlightCameraState.update] —
+ * live on the concrete types, not here.
+ *
+ * All three are created by their `remember*CameraState` factory; you never implement this yourself.
+ */
+interface CameraController {
+    /** Viewport size in px. Kept in sync automatically by the matching gesture modifier; call
+     *  manually only when driving the manipulator without one. */
+    fun setViewport(width: Int, height: Int)
+
+    /** Snap the camera back to the pose it had when this controller was created. */
+    fun resetToHome()
+
+    /** Capture the current camera pose as a bookmark to restore later with [jumpToBookmark]. */
+    fun saveBookmark(): Manipulator.Bookmark
+
+    /** Restore a pose previously captured with [saveBookmark]. */
+    fun jumpToBookmark(bookmark: Manipulator.Bookmark)
+}
+
 private fun Manipulator.syncTo(cameraState: CameraState) {
     val e = FloatArray(3); val t = FloatArray(3); val u = FloatArray(3)
     getLookAt(e, t, u)
@@ -127,19 +151,14 @@ private fun Modifier.manipulatorDragGestures(
 class OrbitCameraState internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
-) {
-    /** Viewport size in px. Kept in sync automatically by [Modifier.orbitGestures]; call
-     *  manually only when driving the manipulator without the gesture modifier. */
-    fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
+) : CameraController {
+    override fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
 
-    /** Snap back to the initial eye/target position. */
-    fun resetToHome() { manipulator.jumpToBookmark(manipulator.getHomeBookmark()); sync() }
+    override fun resetToHome() { manipulator.jumpToBookmark(manipulator.getHomeBookmark()); sync() }
 
-    /** Save the current camera position as a bookmark to restore later. */
-    fun saveBookmark(): Manipulator.Bookmark = manipulator.getCurrentBookmark()
+    override fun saveBookmark(): Manipulator.Bookmark = manipulator.getCurrentBookmark()
 
-    /** Restore a previously saved bookmark. */
-    fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
+    override fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
 }
@@ -218,12 +237,11 @@ fun Modifier.orbitGestures(state: OrbitCameraState): Modifier =
 class MapCameraState internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
-) {
-    /** Viewport size in px. Kept in sync automatically by [Modifier.mapGestures]. */
-    fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
-    fun resetToHome() { manipulator.jumpToBookmark(manipulator.getHomeBookmark()); sync() }
-    fun saveBookmark(): Manipulator.Bookmark = manipulator.getCurrentBookmark()
-    fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
+) : CameraController {
+    override fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
+    override fun resetToHome() { manipulator.jumpToBookmark(manipulator.getHomeBookmark()); sync() }
+    override fun saveBookmark(): Manipulator.Bookmark = manipulator.getCurrentBookmark()
+    override fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
 }
@@ -291,12 +309,22 @@ fun Modifier.mapGestures(state: MapCameraState): Modifier =
 class FlightCameraState internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
-) {
-    /** Viewport size in px. Kept in sync automatically by [Modifier.flightGestures]. */
-    fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
+    // Owned here so [Modifier.flightGestures] can stay a plain (non-composable) modifier like
+    // the orbit/map ones; the keyboard focus is requested once from rememberFlightCameraState.
+    internal val focusRequester: FocusRequester,
+) : CameraController {
+    override fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
 
-    /** Advance the camera simulation by [deltaTime] seconds. Driven automatically per frame. */
+    /** Advance the camera simulation by [deltaTime] seconds. Flight-only; driven automatically
+     *  per frame by [rememberFlightCameraState], so callers rarely call it directly. */
     fun update(deltaTime: Float) { manipulator.update(deltaTime); sync() }
+
+    /** Snap back to the flight start position/orientation set at creation. */
+    override fun resetToHome() { manipulator.jumpToBookmark(manipulator.getHomeBookmark()); sync() }
+
+    override fun saveBookmark(): Manipulator.Bookmark = manipulator.getCurrentBookmark()
+
+    override fun jumpToBookmark(bookmark: Manipulator.Bookmark) { manipulator.jumpToBookmark(bookmark); sync() }
 
     internal fun sync() = manipulator.syncTo(cameraState)
 }
@@ -323,6 +351,7 @@ fun rememberFlightCameraState(
     panSpeedX: Float = 0.01f,
     panSpeedY: Float = 0.01f,
 ): FlightCameraState {
+    val focusRequester = remember { FocusRequester() }
     val state = remember(cameraState, startPitch, startYaw, maxMoveSpeed, moveDamping, panSpeedX, panSpeedY) {
         val eye = cameraState.eye
         val manipulator = Manipulator.Builder()
@@ -332,11 +361,14 @@ fun rememberFlightCameraState(
             .flightMoveDamping(moveDamping)
             .flightPanSpeed(panSpeedX, panSpeedY)
             .build(Manipulator.Mode.FLIGHT)
-        FlightCameraState(manipulator, cameraState).also { it.sync() }
+        FlightCameraState(manipulator, cameraState, focusRequester).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
     // Self-driving: advance the flight simulation every frame so callers never need a separate loop.
     OnFrame { state.update(it.deltaSeconds) }
+    // Grab keyboard focus once so WASD works without a click. runCatching guards the case where
+    // Modifier.flightGestures (which attaches this requester to a node) was never applied.
+    LaunchedEffect(focusRequester) { runCatching { focusRequester.requestFocus() } }
     return state
 }
 
@@ -354,14 +386,10 @@ fun rememberFlightCameraState(
  * | Q / Shift          | Move down        |
  * | Scroll wheel       | Change speed     |
  */
-@Composable
-fun Modifier.flightGestures(state: FlightCameraState): Modifier {
-    val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(focusRequester) { focusRequester.requestFocus() }
-
-    return this
+fun Modifier.flightGestures(state: FlightCameraState): Modifier =
+    this
         .onSizeChanged { state.setViewport(it.width, it.height) }
-        .focusRequester(focusRequester)
+        .focusRequester(state.focusRequester)
         .focusable()
         .onKeyEvent { event ->
             val manipKey = when (event.key) {
@@ -413,7 +441,6 @@ fun Modifier.flightGestures(state: FlightCameraState): Modifier {
                 }
             }
         }
-}
 
 // ── Picking ───────────────────────────────────────────────────────────────────
 

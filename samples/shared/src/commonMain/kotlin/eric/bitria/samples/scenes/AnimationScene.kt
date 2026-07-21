@@ -60,7 +60,7 @@ fun AnimationScene(onBack: () -> Unit) {
 
     // Hoist the engine so the asset (and its clip names) can be loaded outside the scene content.
     val engine = rememberFilamentEngine()
-    val fox = rememberGltfAsset(engine) { Res.readBytes("files/models/Fox.glb") }
+    val fox = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Fox.glb") }
     val clipNames = rememberAnimationNames(fox)
 
     var crossFade by remember { mutableFloatStateOf(0.3f) }

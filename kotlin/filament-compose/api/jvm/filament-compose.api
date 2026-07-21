@@ -1,3 +1,10 @@
+public abstract interface class io/github/erkko68/filament/compose/CameraController {
+	public abstract fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public abstract fun resetToHome ()V
+	public abstract fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public abstract fun setViewport (II)V
+}
+
 public final class io/github/erkko68/filament/compose/CompositionLocalsKt {
 	public static final fun getLocalFilamentEngine ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 	public static final fun getLocalFilamentScene ()Landroidx/compose/runtime/ProvidableCompositionLocal;
@@ -52,9 +59,12 @@ public final class io/github/erkko68/filament/compose/FilamentViewStateKt {
 	public static final fun rememberFilamentViewState (Landroidx/compose/runtime/Composer;I)Lio/github/erkko68/filament/compose/FilamentViewState;
 }
 
-public final class io/github/erkko68/filament/compose/FlightCameraState {
+public final class io/github/erkko68/filament/compose/FlightCameraState : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public final fun setViewport (II)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun resetToHome ()V
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun setViewport (II)V
 	public final fun update (F)V
 }
 
@@ -79,7 +89,7 @@ public final class io/github/erkko68/filament/compose/FrameKt {
 }
 
 public final class io/github/erkko68/filament/compose/InteractionKt {
-	public static final fun flightGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FlightCameraState;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
+	public static final fun flightGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FlightCameraState;)Landroidx/compose/ui/Modifier;
 	public static final fun mapGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/MapCameraState;)Landroidx/compose/ui/Modifier;
 	public static final fun orbitGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/OrbitCameraState;)Landroidx/compose/ui/Modifier;
 	public static final fun pickOnTap (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FilamentViewState;Lkotlin/jvm/functions/Function1;)Landroidx/compose/ui/Modifier;
@@ -88,24 +98,23 @@ public final class io/github/erkko68/filament/compose/InteractionKt {
 	public static final fun rememberOrbitCameraState (Lio/github/erkko68/filament/compose/scene/CameraState;FFFZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/OrbitCameraState;
 }
 
-public final class io/github/erkko68/filament/compose/MapCameraState {
+public final class io/github/erkko68/filament/compose/MapCameraState : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
-	public final fun resetToHome ()V
-	public final fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
-	public final fun setViewport (II)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun resetToHome ()V
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun setViewport (II)V
 }
 
-public final class io/github/erkko68/filament/compose/OrbitCameraState {
+public final class io/github/erkko68/filament/compose/OrbitCameraState : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
-	public final fun resetToHome ()V
-	public final fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
-	public final fun setViewport (II)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun resetToHome ()V
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun setViewport (II)V
 }
 
 public final class io/github/erkko68/filament/compose/RenderTargetTextureKt {
-	public static final fun rememberRenderTarget (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IIZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
 	public static final fun rememberRenderTargetTexture (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IIZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
 }
 
@@ -448,7 +457,7 @@ public final class io/github/erkko68/filament/compose/scene/GltfAsset {
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfAssetKt {
-	public static final fun rememberGltfAsset (Lio/github/erkko68/filament/Engine;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/GltfAsset;
+	public static final fun rememberGltfAsset (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/GltfAsset;
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfInstanceKt {
@@ -462,7 +471,7 @@ public abstract interface class io/github/erkko68/filament/compose/scene/GltfIns
 }
 
 public final class io/github/erkko68/filament/compose/scene/GroupKt {
-	public static final fun Group (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Group (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/IndirectLightKt {
@@ -502,10 +511,10 @@ public final class io/github/erkko68/filament/compose/scene/LightUnit : java/lan
 }
 
 public final class io/github/erkko68/filament/compose/scene/MaterialsKt {
-	public static final fun rememberMaterial (Lio/github/erkko68/filament/Engine;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Material;
+	public static final fun rememberMaterial (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Material;
 	public static final fun rememberMaterialInstance (Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberMaterialInstance (Lio/github/erkko68/filament/Material;[Ljava/lang/Object;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
-	public static final fun rememberTexture (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/utils/TextureLoader$TextureType;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
+	public static final fun rememberTexture (Lio/github/erkko68/filament/utils/TextureLoader$TextureType;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
 	public static final fun setParameter (Lio/github/erkko68/filament/MaterialInstance;Ljava/lang/String;Lio/github/erkko68/filament/compose/scene/Color;)V
 }
 

@@ -16,6 +16,7 @@ import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
+import io.github.erkko68.filament.compose.scene.LocalGroupVisible
 import io.github.erkko68.filament.compose.scene.LocalParentEntity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Scale
@@ -107,6 +108,8 @@ internal fun Mesh(
     val engine = LocalFilamentEngine.current
     val scene  = LocalFilamentScene.current
     val parent = LocalParentEntity.current
+    // A hidden enclosing Group hides its whole subtree.
+    val effectiveVisible = visible && LocalGroupVisible.current
 
     val handles = remember(mesh) { mesh.upload(engine) }
     DisposableEffect(handles) {
@@ -140,9 +143,9 @@ internal fun Mesh(
 
     // Scene membership tracks `visible` — hiding removes the entity from the scene without
     // destroying it, so toggling visibility is cheap and keeps entity identity stable.
-    DisposableEffect(entity, visible) {
-        if (visible) scene.addEntity(entity)
-        onDispose { if (visible) scene.removeEntity(entity) }
+    DisposableEffect(entity, effectiveVisible) {
+        if (effectiveVisible) scene.addEntity(entity)
+        onDispose { if (effectiveVisible) scene.removeEntity(entity) }
     }
 
     DisposableEffect(entity, position, rotation, scale, pivot) {

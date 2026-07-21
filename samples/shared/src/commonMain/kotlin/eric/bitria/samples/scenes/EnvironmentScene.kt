@@ -111,7 +111,7 @@ private fun EnvironmentSceneContent(
         skyboxState = environment.skyboxState,
         indirectLightState = environment.indirectLightState,
     ) {
-        GltfInstance(asset = rememberGltfAsset(engine) { Res.readBytes("files/models/Duck.glb") })
+        GltfInstance(asset = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Duck.glb") })
     }
 
     Box(Modifier.fillMaxSize()) {

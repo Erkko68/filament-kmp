@@ -29,21 +29,21 @@ import kotlin.coroutines.cancellation.CancellationException
  *
  * // Outside a scene — engine hoisted, can be shared across scenes
  * val engine = rememberFilamentEngine()
- * val mat    = rememberMaterial(engine) { Res.readBytes("…") }
+ * val mat    = rememberMaterial(engine = engine) { Res.readBytes("…") }
  * val scene  = rememberFilamentScene(engine = engine) { ... }
  * ```
  *
- * @param engine The Filament engine to allocate the material on. Defaults to the engine in
- *   the current composition scope, which only exists inside `rememberFilamentScene { }`.
  * @param key Reloads the material when this value changes. Defaults to [Unit] for static assets.
  * @param onError Invoked once if [load] throws. The material stays null.
+ * @param engine The Filament engine to allocate the material on. Defaults to the engine in
+ *   the current composition scope, which only exists inside `rememberFilamentScene { }`.
  * @param load Suspend function that produces the raw `.filamat` bytes.
  */
 @Composable
 fun rememberMaterial(
-    engine: Engine = LocalFilamentEngine.current,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
+    engine: Engine = LocalFilamentEngine.current,
     load: suspend () -> ByteArray,
 ): Material? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {
@@ -107,19 +107,19 @@ internal fun rememberMaterial(
  * (missing file, network error) or the bytes can't be decoded on this platform. See
  * [rememberMaterial] for the engine-hoisting pattern when calling outside `rememberFilamentScene { }`.
  *
- * @param engine The Filament engine to allocate the texture on. Defaults to the engine in
- *   the current composition scope.
  * @param type Hints the loader about the texture's content (Color, Normal map, etc.).
  * @param key  Reloads the texture when this value changes. Defaults to [Unit] for static assets.
  * @param onError Invoked once if [load] throws or the image can't be decoded. The texture stays null.
+ * @param engine The Filament engine to allocate the texture on. Defaults to the engine in
+ *   the current composition scope.
  * @param load Suspend function that produces the raw image bytes.
  */
 @Composable
 fun rememberTexture(
-    engine: Engine = LocalFilamentEngine.current,
     type: TextureLoader.TextureType = TextureLoader.TextureType.COLOR,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
+    engine: Engine = LocalFilamentEngine.current,
     load: suspend () -> ByteArray,
 ): Texture? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {

@@ -115,16 +115,3 @@ fun rememberRenderTargetTexture(
 
     return color
 }
-
-@Deprecated(
-    "Renamed: the function returns the color Texture, not a RenderTarget.",
-    ReplaceWith("rememberRenderTargetTexture(scene, cameraState, width, height, postProcessingEnabled)"),
-)
-@Composable
-fun rememberRenderTarget(
-    scene: FilamentScene,
-    cameraState: CameraState = rememberCameraState(),
-    width: Int = 512,
-    height: Int = 512,
-    postProcessingEnabled: Boolean = false,
-): Texture? = rememberRenderTargetTexture(scene, cameraState, width, height, postProcessingEnabled)
