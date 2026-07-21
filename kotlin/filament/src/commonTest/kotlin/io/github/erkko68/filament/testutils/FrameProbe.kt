@@ -64,7 +64,9 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
 
     /**
      * Renders [frames] frames (a few, so program compilation and shadow-map passes
-     * settle) and reads the last one back as RGBA8, origin bottom-left.
+     * settle) and reads the last one back as RGBA8. Row order is backend-dependent:
+     * Metal delivers rows top-down, OpenGL bottom-up (GL convention) — pinned by
+     * FrameSemanticsTest.readPixelsRowOrderMatchesBackendConvention.
      * Returns null only if the backend never delivered the async readback.
      */
     fun renderAndRead(frames: Int = 3): ByteArray? {
@@ -178,8 +180,9 @@ class RegionStats(val meanR: Double, val meanG: Double, val meanB: Double) {
 
 /**
  * Statistics over the axis-aligned region given in *fractions* of the image
- * (e.g. x 0.4..0.6, y 0.4..0.6 is the centre patch). RGBA8, rows bottom-up —
- * y fractions are measured from the bottom, which is symmetric for centred regions.
+ * (e.g. x 0.4..0.6, y 0.4..0.6 is the centre patch). RGBA8; y fractions are measured
+ * from the buffer's first row — whether that is the screen top or bottom depends on
+ * the backend (see renderAndRead), which centred regions are insensitive to.
  */
 fun ByteArray.regionStats(
     imageWidth: Int,

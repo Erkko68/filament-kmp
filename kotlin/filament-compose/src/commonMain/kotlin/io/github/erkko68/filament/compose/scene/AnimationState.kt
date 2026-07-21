@@ -35,12 +35,12 @@ import io.github.erkko68.filament.gltfio.Animator
  *
  * ```kotlin
  * // Single-track with auto cross-fade:
- * val anim = rememberAnimationState(animationIndex = idle, crossFadeDuration = 0.25f)
+ * val anim = rememberAnimationState(initialAnimationIndex = idle, initialCrossFadeDuration = 0.25f)
  * GltfInstance(asset = character, animationState = anim)
  * anim.animationIndex = walk   // cross-fades
  *
  * // Blend tree — hold both clips and drive the weight from a parameter:
- * val anim = rememberAnimationState(animationIndex = null)
+ * val anim = rememberAnimationState(initialAnimationIndex = null)
  * rememberAnimationTrack(anim, walkIndex, weight = 1f - speed)
  * rememberAnimationTrack(anim, runIndex,  weight = speed)
  * ```
@@ -270,21 +270,23 @@ private fun wrap(t: Float, duration: Float, loop: Boolean): Float = when {
 }
 
 /**
- * Creates and remembers an [AnimationState]. Initial values seed the state on first
- * composition; afterwards mutate the returned object's fields to drive playback.
+ * Creates and remembers an [AnimationState]. The `initial*` values seed the state on first
+ * composition only; afterwards mutate the returned object's fields to drive playback.
  *
- * @param animationIndex Animation to start playing in single-track mode. Null to start paused.
- * @param speed Playback rate multiplier.
- * @param crossFadeDuration Seconds to blend over when [AnimationState.animationIndex] changes.
- * @param loop Whether the active animation loops.
+ * @param initialAnimationIndex Animation to start playing in single-track mode. Null to start paused.
+ * @param initialSpeed Playback rate multiplier.
+ * @param initialCrossFadeDuration Seconds to blend over when [AnimationState.animationIndex] changes.
+ * @param initialLoop Whether the active animation loops.
  */
 @Composable
 fun rememberAnimationState(
-    animationIndex: Int? = 0,
-    speed: Float = 1f,
-    crossFadeDuration: Float = 0.3f,
-    loop: Boolean = true,
-): AnimationState = remember { AnimationState(animationIndex, speed, crossFadeDuration, loop) }
+    initialAnimationIndex: Int? = 0,
+    initialSpeed: Float = 1f,
+    initialCrossFadeDuration: Float = 0.3f,
+    initialLoop: Boolean = true,
+): AnimationState = remember {
+    AnimationState(initialAnimationIndex, initialSpeed, initialCrossFadeDuration, initialLoop)
+}
 
 /**
  * Adds a weighted track to [state]'s [AnimationState.mixer] for as long as this call stays in
@@ -296,7 +298,7 @@ fun rememberAnimationState(
  * For an imperative (non-Compose) game loop, add tracks with [AnimationMixer.addTrack] instead.
  *
  * ```kotlin
- * val anim = rememberAnimationState(animationIndex = null)
+ * val anim = rememberAnimationState(initialAnimationIndex = null)
  * rememberAnimationTrack(anim, walkIndex, weight = 1f - moveSpeed)
  * rememberAnimationTrack(anim, runIndex,  weight = moveSpeed)
  * ```
@@ -348,7 +350,7 @@ fun rememberAnimationMixer(): AnimationMixer = remember { AnimationMixer() }
  *
  * ```kotlin
  * val names = rememberAnimationNames(character)
- * val anim = rememberAnimationState(animationIndex = names.indexOf("Idle"))
+ * val anim = rememberAnimationState(initialAnimationIndex = names.indexOf("Idle"))
  * ```
  */
 @Composable

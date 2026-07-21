@@ -16,7 +16,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * oriented normals, so lighting works from above *and* below without disabling face culling or
  * requiring a `doubleSided` material.
  *
- * @param material  Material applied to both faces.
+ * @param material  Material applied to both faces, or null while it is still loading.
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation. Use this to make a wall or a ceiling.
  * @param scale     Per-axis scale.
@@ -25,6 +25,8 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param depth     Size along the Z axis in mesh space.
  * @param doubleSided  When true (default) the mesh has both faces. Set false to omit the back
  *   side when you know nothing will ever look at it from below.
+ * @param visible   Whether this renderable is in the scene. False removes it from the
+ *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the plane casts shadows onto other renderables. On by default;
  *   set false for a pure ground/receiver plane to avoid it shadowing itself.
  * @param receiveShadows  Whether the plane receives shadows cast by others. On by default.
@@ -32,7 +34,7 @@ import io.github.erkko68.filament.utils.Quaternion
  */
 @Composable
 fun FilamentSceneScope.Plane(
-    material: MaterialInstance,
+    material: MaterialInstance?,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
@@ -40,12 +42,13 @@ fun FilamentSceneScope.Plane(
     width: Float = 1f,
     depth: Float = 1f,
     doubleSided: Boolean = true,
+    visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
-    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
 }
 
 private fun planeMesh(width: Float, depth: Float, doubleSided: Boolean): MeshData {

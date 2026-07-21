@@ -62,23 +62,25 @@ class IndirectLightState internal constructor(
 }
 
 /**
- * Creates and remembers an [IndirectLightState].
+ * Creates and remembers an [IndirectLightState]. The `initial*` values seed the state on first
+ * composition only; mutate the returned state's fields to change the IBL afterwards.
  *
- * @param reflections       Specular reflection cubemap texture.
- * @param irradianceCubemap Diffuse irradiance cubemap texture.
- * @param irradianceSh      Diffuse irradiance via spherical harmonics (alternative to cubemap).
- * @param intensity         IBL intensity scale.
- * @param rotation          Optional 3×3 column-major rotation matrix (9 floats). Null = identity.
+ * @param initialReflections       Specular reflection cubemap texture.
+ * @param initialIrradianceCubemap Diffuse irradiance cubemap texture.
+ * @param initialIrradianceSh      Diffuse irradiance via spherical harmonics (alternative to cubemap).
+ * @param initialIntensity         IBL intensity scale.
+ * @param initialRotation          Optional 3×3 column-major rotation matrix (9 floats). Null = identity.
  */
 @Composable
 fun rememberIndirectLightState(
-    reflections: Texture? = null,
-    irradianceCubemap: Texture? = null,
-    irradianceSh: SphericalHarmonics? = null,
-    intensity: Float = 30_000f,
-    rotation: FloatArray? = null,
+    initialReflections: Texture? = null,
+    initialIrradianceCubemap: Texture? = null,
+    initialIrradianceSh: SphericalHarmonics? = null,
+    initialIntensity: Float = 30_000f,
+    initialRotation: FloatArray? = null,
 ): IndirectLightState = remember {
-    IndirectLightState(reflections, irradianceCubemap, irradianceSh, intensity, rotation)
+    IndirectLightState(initialReflections, initialIrradianceCubemap, initialIrradianceSh,
+        initialIntensity, initialRotation)
 }
 
 /**

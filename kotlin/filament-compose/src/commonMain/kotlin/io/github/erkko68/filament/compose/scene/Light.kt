@@ -26,6 +26,11 @@ data class SpotCone(
 
 /**
  * Sun-disk appearance parameters for [SunLight].
+ *
+ * @param angularRadius Angular radius of the sun disk **in degrees** (0.25°–20°; the real sun
+ *   is ~0.545°, Filament's default is 1.9°).
+ * @param haloSize Halo radius as a multiplier of the sun's angular radius.
+ * @param haloFalloff Halo falloff exponent (higher = tighter halo).
  */
 data class SunParams(
     val angularRadius: Float = 1.9f,
@@ -42,6 +47,7 @@ data class SunParams(
  * - [CANDELA] — luminous intensity in candela; for directional lights this equals lux.
  * - [WATTS] — electrical watts; combined with `efficiency` it becomes `683 · efficiency · watts`
  *   lumen. Typical efficiencies: incandescent 0.022, halogen 0.07, LED 0.087, fluorescent 0.107.
+ *   The `efficiency` default of 1.0 is an idealized emitter — pass a realistic value with WATTS.
  */
 enum class LightUnit { LUMINOUS_POWER, CANDELA, WATTS }
 
@@ -221,7 +227,8 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
  * @param lightChannels Which channels (0–7) this light affects; a renderable is lit only if it
  *   shares an enabled channel. Channel 0 is the default.
  * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
- *   frame (e.g. a sun rig that tilts with its parent). Off by default.
+ *   frame, matching how meshes rotate with their group (e.g. a sun rig that tilts with its parent).
+ *   On by default; set false to keep the light's aim fixed in world space.
  */
 @Composable
 fun FilamentSceneScope.DirectionalLight(
@@ -233,7 +240,7 @@ fun FilamentSceneScope.DirectionalLight(
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
-    followGroupRotation: Boolean = false,
+    followGroupRotation: Boolean = true,
 ) = LightNode(
     LightSnapshot(LightManager.Type.DIRECTIONAL, direction, Position(0f), color, intensity,
         intensityUnit, efficiency, shadow, castLight, falloff = 10f, cone = SpotCone(),
@@ -253,7 +260,8 @@ fun FilamentSceneScope.DirectionalLight(
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each frame.
+ * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
+ *   frame, matching how meshes rotate with their group. On by default.
  */
 @Composable
 fun FilamentSceneScope.SunLight(
@@ -266,7 +274,7 @@ fun FilamentSceneScope.SunLight(
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
-    followGroupRotation: Boolean = false,
+    followGroupRotation: Boolean = true,
 ) = LightNode(
     LightSnapshot(LightManager.Type.SUN, direction, Position(0f), color, intensity, intensityUnit,
         efficiency, shadow, castLight, falloff = 10f, cone = SpotCone(), sun = sun,
@@ -322,7 +330,8 @@ fun FilamentSceneScope.PointLight(
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each frame.
+ * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
+ *   frame, matching how meshes rotate with their group. On by default.
  */
 @Composable
 fun FilamentSceneScope.SpotLight(
@@ -337,7 +346,7 @@ fun FilamentSceneScope.SpotLight(
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
-    followGroupRotation: Boolean = false,
+    followGroupRotation: Boolean = true,
 ) = LightNode(
     LightSnapshot(LightManager.Type.SPOT, direction, position, color, intensity, intensityUnit,
         efficiency, shadow, castLight, falloff, cone, sun = SunParams(),
@@ -360,7 +369,8 @@ fun FilamentSceneScope.SpotLight(
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
- * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each frame.
+ * @param followGroupRotation When inside a [Group], re-aim [direction] by the group's rotation each
+ *   frame, matching how meshes rotate with their group. On by default.
  */
 @Composable
 fun FilamentSceneScope.FocusedSpotLight(
@@ -375,7 +385,7 @@ fun FilamentSceneScope.FocusedSpotLight(
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
-    followGroupRotation: Boolean = false,
+    followGroupRotation: Boolean = true,
 ) = LightNode(
     LightSnapshot(LightManager.Type.FOCUSED_SPOT, direction, position, color, intensity,
         intensityUnit, efficiency, shadow, castLight, falloff, cone, sun = SunParams(),
@@ -390,12 +400,13 @@ fun FilamentSceneScope.FocusedSpotLight(
  * builder; this composable only manages the entity, scene membership, and (when inside a [Group])
  * the transform so the light follows the group.
  *
- * The component is built once and rebuilt only when [rebuildKey] changes — pass a value derived from
- * whatever inputs your [configure] reads so updates take effect. When the light is **not** parented,
- * positioning is via `builder.position(...)`; inside a [Group], it follows the group instead.
+ * The component is built once and rebuilt whenever any value in [keys] changes — pass every input
+ * your [configure] reads so updates take effect (same convention as [FilamentEffect][io.github.erkko68.filament.compose.FilamentEffect]
+ * and [rememberMaterialInstance]). When the light is **not** parented, positioning is via
+ * `builder.position(...)`; inside a [Group], it follows the group instead.
  *
  * ```kotlin
- * Light(LightManager.Type.SPOT, rebuildKey = intensity) {
+ * Light(LightManager.Type.SPOT, intensity) {
  *     position(2f, 3f, 0f); direction(0f, -1f, 0f)
  *     intensity(intensity); spotLightCone(0.3f, 0.5f)
  *     castShadows(true)
@@ -405,7 +416,7 @@ fun FilamentSceneScope.FocusedSpotLight(
 @Composable
 fun FilamentSceneScope.Light(
     type: LightManager.Type,
-    rebuildKey: Any? = null,
+    vararg keys: Any?,
     configure: LightManager.Builder.() -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
@@ -427,7 +438,7 @@ fun FilamentSceneScope.Light(
         onDispose { scene.removeEntity(entity) }
     }
 
-    DisposableEffect(entity, type, rebuildKey) {
+    DisposableEffect(entity, type, *keys) {
         LightManager.Builder(type).apply(configure).build(engine, entity)
         onDispose { engine.getLightManager().destroy(entity) }
     }

@@ -32,6 +32,9 @@ tex?.let { Sphere(material = rememberTexturedMaterialInstance(it)) }
 
 // UNLIT emissive — glows through bloom when intensity > 1
 Sphere(material = rememberEmissiveMaterialInstance(Color(1f, 0.85f, 0.4f), intensity = 4f))
+
+// LIT with alpha transparency — pre-multiplied, two-pass so solids self-composite correctly
+Sphere(material = rememberTransparentColorMaterialInstance(Color(0.3f, 0.6f, 0.9f), alpha = 0.35f))
 ```
 
 Parameters track Compose state automatically — pass a new `color`/`intensity` and the instance is
@@ -90,31 +93,31 @@ The version of `matc` should match the Filament version this library bundles. Ch
 ### 3. Load at runtime
 
 ```kotlin
-val mat: Material? = rememberMaterial {
-    Res.readBytes("files/materials/lit_color.filamat")
+val mat = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") }
+val instance = rememberMaterialInstance(mat) {
+    setParameter("baseColor", 0.9f, 0.3f, 0.3f)
 }
-mat?.let { template ->
-    val instance = rememberMaterialInstance(template).apply {
-        setParameter("baseColor", 0.9f, 0.3f, 0.3f)
-    }
-    Cube(material = instance, position = Position(0f))
-}
+Cube(material = instance, position = Position(0f))
 ```
 
-`rememberMaterial { ... }` returns `null` while the bytes are being read — wrap the consumer in `?.let { … }` or guard early. The underlying `Material` is destroyed automatically when the composable leaves the composition.
+`rememberMaterial { ... }` returns `null` while the bytes are being read, and the whole chain
+tolerates it: `rememberMaterialInstance` passes the null through and primitives simply don't
+render until the material arrives — no unwrapping needed. The underlying `Material` is destroyed
+automatically when the composable leaves the composition.
 
 ### 4. Parameterise per instance
 
 A single compiled `Material` can back any number of `MaterialInstance`s, each with different parameter values. Parameter names come from the `parameters: [ ... ]` block of your `.mat` source:
 
 ```kotlin
-val template = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") } ?: return
-val red   = rememberMaterialInstance(template, "red")  .apply { setParameter("baseColor", 0.9f, 0.2f, 0.2f) }
-val blue  = rememberMaterialInstance(template, "blue") .apply { setParameter("baseColor", 0.2f, 0.5f, 0.9f) }
-val gold  = rememberMaterialInstance(template, "gold") .apply { setParameter("baseColor", 1.0f, 0.85f, 0.3f) }
+val template = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") }
+val red  = rememberMaterialInstance(template) { setParameter("baseColor", 0.9f, 0.2f, 0.2f) }
+val blue = rememberMaterialInstance(template) { setParameter("baseColor", 0.2f, 0.5f, 0.9f) }
+val gold = rememberMaterialInstance(template) { setParameter("baseColor", 1.0f, 0.85f, 0.3f) }
 ```
 
-The extra string keys on `rememberMaterialInstance` only matter if you want a fresh instance whenever the key changes; for static colour assignments any unique key works.
+Each call site owns one instance; add keys after `template` when the `configure` block reads
+Compose state that should re-apply on change.
 
 ### Common parameter types
 
@@ -162,7 +165,7 @@ so parameters follow Compose state with no `SideEffect`. The same instance is up
 swapped — so it's safe to keep referenced by a renderable:
 
 ```kotlin
-val template = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") } ?: return
+val template = rememberMaterial { Res.readBytes("files/materials/lit_color.filamat") }
 val instance = rememberMaterialInstance(template, color) {
     setParameter("baseColor", color)   // re-runs whenever `color` changes
 }
@@ -183,7 +186,7 @@ val instance = rememberMaterialInstance(template)
 
 SideEffect {
     // Driven by Compose state — re-runs on recomposition, no GPU work beyond a tiny uniform upload.
-    instance.setParameter("baseColor", state.r, state.g, state.b)
+    instance?.setParameter("baseColor", state.r, state.g, state.b)
 }
 ```
 
@@ -200,9 +203,8 @@ For per-frame updates that aren't state-driven, use `FilamentEffect { onFrame { 
 val tex = rememberTexture(type = TextureLoader.TextureType.COLOR) {
     Res.readBytes("files/textures/wood_albedo.png")
 }
-val instance = rememberMaterialInstance(template)
-SideEffect {
-    tex?.let { instance.setParameter("albedo", it, TextureSampler()) }
+val instance = rememberMaterialInstance(template, tex) {
+    tex?.let { setParameter("albedo", it, TextureSampler()) }
 }
 ```
 

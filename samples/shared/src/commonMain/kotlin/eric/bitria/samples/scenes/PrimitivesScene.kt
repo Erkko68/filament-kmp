@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
@@ -26,18 +25,17 @@ import io.github.erkko68.filament.compose.scene.rememberSkyboxState
 @Composable
 fun PrimitivesScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 2.5f, 6f),
-        target     = Position(0f, 0.5f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 2.5f, 6f),
+        initialTarget     = Position(0f, 0.5f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraState(cameraState)
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
-                .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             cameraState = cameraState,
             skyboxState = skybox,

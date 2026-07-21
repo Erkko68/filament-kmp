@@ -59,7 +59,8 @@ class Environment internal constructor(
  * For raw equirectangular `.hdr` images (no offline `cmgen` bake) use [rememberHDREnvironment].
  *
  * @param engine    The hoisted engine, shared with the scene that consumes the returned states.
- * @param intensity IBL intensity scale.
+ * @param initialIntensity IBL intensity scale, applied to the state on first composition only —
+ *   mutate `environment.indirectLightState.intensity` to change it afterwards.
  * @param key       Reloads when this changes. Defaults to [Unit] for static assets.
  * @param onError   Invoked once per failure (load threw, or the KTX failed to decode).
  * @param skybox    Optional loader for the skybox cubemap KTX. Null = IBL only, no background.
@@ -68,13 +69,13 @@ class Environment internal constructor(
 @Composable
 fun rememberKTXEnvironment(
     engine: Engine,
-    intensity: Float = 30_000f,
+    initialIntensity: Float = 30_000f,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
     skybox: (suspend () -> ByteArray)? = null,
     ibl: suspend () -> ByteArray,
 ): Environment {
-    val indirectLightState = rememberIndirectLightState(intensity = intensity)
+    val indirectLightState = rememberIndirectLightState(initialIntensity = initialIntensity)
     val skyboxState = if (skybox != null) rememberSkyboxState() else null
 
     // IBL: prefiltered reflection cubemap + diffuse irradiance spherical harmonics.
@@ -151,7 +152,8 @@ fun rememberKTXEnvironment(
  * prefilter runs on the GPU at load, so the first frames render before it lands.
  *
  * @param engine     The hoisted engine, shared with the scene that consumes the returned states.
- * @param intensity  IBL intensity scale.
+ * @param initialIntensity IBL intensity scale, applied to the state on first composition only —
+ *   mutate `environment.indirectLightState.intensity` to change it afterwards.
  * @param showSkybox Render the environment cubemap as the skybox. False = IBL only.
  * @param format     Internal format for the decoded HDR equirect texture.
  * @param key        Reloads when this changes. Defaults to [Unit] for static assets.
@@ -161,14 +163,14 @@ fun rememberKTXEnvironment(
 @Composable
 fun rememberHDREnvironment(
     engine: Engine,
-    intensity: Float = 30_000f,
+    initialIntensity: Float = 30_000f,
     showSkybox: Boolean = true,
     format: Texture.InternalFormat = Texture.InternalFormat.R11F_G11F_B10F,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
     hdr: suspend () -> ByteArray,
 ): Environment {
-    val indirectLightState = rememberIndirectLightState(intensity = intensity)
+    val indirectLightState = rememberIndirectLightState(initialIntensity = initialIntensity)
     val skyboxState = if (showSkybox) rememberSkyboxState() else null
 
     val hdrBytes by produceState<ByteArray?>(null, engine, key) {

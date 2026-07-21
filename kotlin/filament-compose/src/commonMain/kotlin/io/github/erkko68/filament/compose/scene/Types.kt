@@ -66,17 +66,28 @@ data class Scale(val x: Float, val y: Float, val z: Float) {
 /**
  * An RGB color (linear or sRGB depending on the consuming API). Distinct from the spatial
  * vectors so a [Color] can't be passed as a [Position]. Components are [r]/[g]/[b].
+ *
+ * Interop with Compose UI colors: construct from an [androidx.compose.ui.graphics.Color]
+ * (`Color(MaterialTheme.colorScheme.primary)`) or convert back with [toComposeColor]. The
+ * alpha channel is dropped — scene colors are RGB.
  */
 data class Color(val r: Float, val g: Float, val b: Float) {
     /** Uniform value on all channels (grey). */
     constructor(v: Float) : this(v, v, v)
     /** From a filament-utils [Float3] (x→r, y→g, z→b). */
     constructor(v: Float3) : this(v.x, v.y, v.z)
+    /** From a Compose UI color (alpha is dropped). */
+    constructor(v: androidx.compose.ui.graphics.Color) : this(v.red, v.green, v.blue)
 
     operator fun times(s: Float) = Color(r * s, g * s, b * s)
     operator fun plus(o: Color) = Color(r + o.r, g + o.g, b + o.b)
 
     fun toFloat3() = Float3(r, g, b)
+
+    /** As a Compose UI color (alpha 1). Channels are clamped to 0..1 by Compose. */
+    fun toComposeColor() = androidx.compose.ui.graphics.Color(
+        r.coerceIn(0f, 1f), g.coerceIn(0f, 1f), b.coerceIn(0f, 1f),
+    )
 }
 
 /** Reinterpret a [Float3] as a [Position]. */

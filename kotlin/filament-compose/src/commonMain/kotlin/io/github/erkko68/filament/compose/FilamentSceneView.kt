@@ -26,7 +26,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  *     skyboxState = sky,
  *     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
  * ) {
- *     Light(type = LightManager.Type.SUN, ...)
+ *     DirectionalLight(intensity = 100_000f)
  *     GltfInstance(asset = duck)
  * }
  * ```
@@ -39,7 +39,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @param indirectLightState Optional hoisted IBL state. Null = no IBL (the default).
  * @param postProcessing Per-view post-processing and render-quality configuration.
  * @param frustumCullingEnabled Skip rendering of objects outside the camera frustum.
- * @param shadows Shadow technique for the whole view ([Shadows.Pcf]/[Shadows.Vsm]/[Shadows.Dpcf]/
+ * @param shadows Shadow technique for the whole view ([Shadows.Pcf]/[Shadows.Pcfd]/[Shadows.Vsm]/[Shadows.Dpcf]/
  *   [Shadows.Pcss]), or `null` to disable shadowing entirely. Per-light shadow-map quality is set via
  *   each light's `shadow` ([io.github.erkko68.filament.compose.scene.ShadowConfig]).
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.

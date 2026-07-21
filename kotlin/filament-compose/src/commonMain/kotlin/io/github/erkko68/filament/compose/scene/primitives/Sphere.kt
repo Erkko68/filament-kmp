@@ -18,7 +18,7 @@ import kotlin.math.sin
  * [segments] is the longitudinal count. Higher counts → smoother sphere, more triangles
  * (`rings * segments * 2` triangles total).
  *
- * @param material  The material applied to the whole sphere.
+ * @param material  The material applied to the whole sphere, or null while it is still loading.
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation.
  * @param scale     Per-axis scale.
@@ -26,13 +26,15 @@ import kotlin.math.sin
  * @param radius    Sphere radius in mesh space.
  * @param rings     Latitude subdivisions. Minimum 2.
  * @param segments  Longitude subdivisions. Minimum 3.
+ * @param visible   Whether this renderable is in the scene. False removes it from the
+ *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the sphere casts shadows onto other renderables. On by default.
  * @param receiveShadows  Whether the sphere receives shadows cast by others. On by default.
  * @param onCreate  Receives the renderable entity ID once the sphere is added to the scene.
  */
 @Composable
 fun FilamentSceneScope.Sphere(
-    material: MaterialInstance,
+    material: MaterialInstance?,
     position: Position = Position(0f),
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
@@ -40,12 +42,13 @@ fun FilamentSceneScope.Sphere(
     radius: Float = 0.5f,
     rings: Int = 16,
     segments: Int = 32,
+    visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
     onCreate: (entity: Entity) -> Unit = {},
 ) {
     val mesh = remember(radius, rings, segments) { sphereMesh(radius, rings, segments) }
-    Mesh(mesh, material, position, rotation, scale, pivot, castShadows, receiveShadows, onCreate)
+    Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)
 }
 
 private fun sphereMesh(radius: Float, rings: Int, segments: Int): MeshData {

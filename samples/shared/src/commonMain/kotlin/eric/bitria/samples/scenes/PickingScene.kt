@@ -49,11 +49,11 @@ private val DUCK_POSITIONS = listOf(
 @Composable
 fun PickingScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 4f, 5f),
-        target     = Position(0f, 0f, 0f),
-        projection = Projection.Perspective(fovDegrees = 40.0),
+        initialEye        = Position(0f, 4f, 5f),
+        initialTarget     = Position(0f, 0f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 40.0),
     )
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
     val viewState = rememberFilamentViewState()
 
     val entityToIndex = remember { mutableStateMapOf<Int, Int>() }
@@ -67,10 +67,12 @@ fun PickingScene(onBack: () -> Unit) {
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
                     val v = viewState.view ?: return@detectTapGestures
+                    // pick() takes Compose (top-left) coordinates; only scale layout px to
+                    // viewport px, no Y flip needed.
                     val vw = v.viewport.width; val vh = v.viewport.height
                     val lw = boxSize.width.coerceAtLeast(1); val lh = boxSize.height.coerceAtLeast(1)
                     val px = (offset.x * vw / lw).toInt()
-                    val py = vh - (offset.y * vh / lh).toInt()
+                    val py = (offset.y * vh / lh).toInt()
                     viewState.pick(px, py) { result ->
                         lastTapped = entityToIndex[result.renderable] ?: -1
                     }

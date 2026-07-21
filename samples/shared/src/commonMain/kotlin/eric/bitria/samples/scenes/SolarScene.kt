@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraState
@@ -56,12 +55,12 @@ private val PLANETS = listOf(
 @Composable
 fun SolarScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 4f, 9f),
-        target     = Position(0f, 0f, 0f),
-        projection = Projection.Perspective(fovDegrees = 50.0),
+        initialEye        = Position(0f, 4f, 9f),
+        initialTarget     = Position(0f, 0f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 50.0),
     )
     val orbit  = rememberOrbitCameraState(cameraState)
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.02f, 0.03f, 0.06f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.02f, 0.03f, 0.06f)))
 
     val time by rememberSceneClock()
 
@@ -80,7 +79,6 @@ fun SolarScene(onBack: () -> Unit) {
         FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
-                .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             cameraState = cameraState,
             skyboxState = skybox,

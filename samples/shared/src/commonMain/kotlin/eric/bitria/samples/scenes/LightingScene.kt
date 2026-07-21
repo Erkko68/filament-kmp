@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
@@ -62,12 +61,12 @@ private enum class LightKind { Directional, Point, Spot }
 @Composable
 fun LightingScene(onBack: () -> Unit) {
     val cameraState = rememberCameraState(
-        eye        = Position(0f, 3f, 7f),
-        target     = Position(0f, 1f, 0f),
-        projection = Projection.Perspective(fovDegrees = 45.0),
+        initialEye        = Position(0f, 3f, 7f),
+        initialTarget     = Position(0f, 1f, 0f),
+        initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraState(cameraState)
-    val skybox = rememberSkyboxState(source = SkyboxSource.Color(FilColor(0.03f, 0.03f, 0.05f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.03f, 0.03f, 0.05f)))
 
     var kind by remember { mutableStateOf(LightKind.Directional) }
     var intensity by remember { mutableFloatStateOf(0.6f) }  // 0..1, mapped per type
@@ -83,7 +82,6 @@ fun LightingScene(onBack: () -> Unit) {
         FilamentSceneView(
             modifier = Modifier
                 .fillMaxSize()
-                .onSizeChanged { orbit.setViewport(it.width, it.height) }
                 .orbitGestures(orbit),
             cameraState = cameraState,
             skyboxState = skybox,

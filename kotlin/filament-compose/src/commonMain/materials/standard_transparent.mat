@@ -1,0 +1,40 @@
+// filament-compose built-in: LIT PBR material with a solid base colour and alpha
+// transparency. Drives `rememberTransparentColorMaterialInstance`. Parameters:
+//   baseColor   — linear-sRGB RGB of the surface.
+//   alpha       — opacity, 0 = fully transparent, 1 = opaque.
+//   metallic    — 0 = dielectric, 1 = metal.
+//   roughness   — 0 = mirror, 1 = fully rough.
+//   reflectance — dielectric Fresnel reflectance (0.5 ≈ 4% F0, the common default).
+//
+// Compile (all platforms, all backends) — must match the bundled Filament version:
+//   matc -p all -a all -o standard_transparent.filamat standard_transparent.mat
+
+material {
+    name : StandardTransparent,
+    shadingModel : lit,
+    // `transparent` blending expects pre-multiplied alpha (done in the fragment below).
+    blending : transparent,
+    // Render depth then colour in two passes so convex solids (spheres, cubes) composite
+    // correctly with themselves instead of showing inner faces through outer ones.
+    transparency : twoPassesTwoSides,
+    // Same trim as standard_lit: keep `vsm` (VSM/DPCF/PCSS soft shadows select it).
+    variantFilter : [ skinning, ssr, stereo ],
+    parameters : [
+        { type : float3, name : baseColor },
+        { type : float,  name : alpha },
+        { type : float,  name : metallic },
+        { type : float,  name : roughness },
+        { type : float,  name : reflectance }
+    ]
+}
+
+fragment {
+    void material(inout MaterialInputs material) {
+        prepareMaterial(material);
+        material.baseColor.rgb = materialParams.baseColor * materialParams.alpha;
+        material.baseColor.a   = materialParams.alpha;
+        material.metallic      = materialParams.metallic;
+        material.roughness     = materialParams.roughness;
+        material.reflectance   = materialParams.reflectance;
+    }
+}
