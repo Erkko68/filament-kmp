@@ -237,22 +237,36 @@ fun rememberMaterialInstance(
     engine: Engine = LocalFilamentEngine.current,
     configure: MaterialInstance.() -> Unit,
 ): MaterialInstance? {
+    if (material == null) return null
+    return rememberConfiguredMaterialInstance(material, *keys, engine = engine, configure = configure)
+}
+
+/**
+ * Non-null core of the configure-style [rememberMaterialInstance]: the standard-material helpers
+ * chain off the always-available embedded materials, so routing them here keeps their non-null
+ * return type structural instead of asserted with `!!` at every call site.
+ */
+@Composable
+internal fun rememberConfiguredMaterialInstance(
+    material: Material,
+    vararg keys: Any?,
+    engine: Engine = LocalFilamentEngine.current,
+    configure: MaterialInstance.() -> Unit,
+): MaterialInstance {
     val instance = remember(material) {
-        material?.createInstance()
+        material.createInstance()
     }
 
-    if (instance != null) {
-        // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op
-        // onDispose keeps this a pure setter — the instance's own teardown is the effect below.
-        DisposableEffect(instance, *keys) {
-            instance.configure()
-            onDispose { }
-        }
+    // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op
+    // onDispose keeps this a pure setter — the instance's own teardown is the effect below.
+    DisposableEffect(instance, *keys) {
+        instance.configure()
+        onDispose { }
+    }
 
-        DisposableEffect(instance) {
-            onDispose {
-                engine.destroyMaterialInstance(instance)
-            }
+    DisposableEffect(instance) {
+        onDispose {
+            engine.destroyMaterialInstance(instance)
         }
     }
 

@@ -74,7 +74,7 @@ Math types, camera manipulators (orbit / map / flight), and HDR / KTX texture lo
 implementation("io.github.erkko68.filament:filament-utils:0.2.0")
 ```
 
-`filament-compose` builds its `rememberOrbitCameraState`, `rememberMapCameraState`, and `rememberFlightCameraState` on top of this module. Use it directly if you want a manipulator outside the Compose lifecycle.
+`filament-compose` builds its `rememberOrbitCameraController`, `rememberMapCameraController`, and `rememberFlightCameraController` on top of this module. Use it directly if you want a manipulator outside the Compose lifecycle.
 
 ---
 

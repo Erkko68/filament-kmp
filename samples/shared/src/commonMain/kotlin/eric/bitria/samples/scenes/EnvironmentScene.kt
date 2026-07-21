@@ -21,7 +21,7 @@ import io.github.erkko68.filament.compose.FilamentView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentEngine
 import io.github.erkko68.filament.compose.rememberFilamentScene
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.Environment
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.Position
@@ -104,7 +104,7 @@ private fun EnvironmentSceneContent(
         initialTarget     = Position(0f, 0.5f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val orbit = rememberOrbitCameraState(cameraState)
+    val orbit = rememberOrbitCameraController(cameraState)
 
     val scene = rememberFilamentScene(
         engine = engine,

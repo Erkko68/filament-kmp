@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Coverage for the shared [CameraController] surface on [FlightCameraState] — flight now exposes
+ * Coverage for the shared [CameraController] surface on [FlightCameraController] — flight now exposes
  * `resetToHome`/`saveBookmark`/`jumpToBookmark` like the orbit/map controllers (Filament's
  * [Manipulator] supports bookmarks in FLIGHT mode). Verifies both restore the camera to a stored
  * pose after it has been flown away. The manipulator is CPU-only, so this runs on the NOOP fixture.
@@ -40,7 +40,7 @@ class InteractionTest : ComposeTestFixture() {
     }
 
     // Fly forward for a while by holding the FORWARD key and integrating the manipulator.
-    private fun FlightCameraState.flyForward(steps: Int = 30) {
+    private fun FlightCameraController.flyForward(steps: Int = 30) {
         manipulator.keyDown(Manipulator.Key.FORWARD)
         repeat(steps) { update(0.1f) }
         manipulator.keyUp(Manipulator.Key.FORWARD)
@@ -51,10 +51,10 @@ class InteractionTest : ComposeTestFixture() {
     fun flightResetToHomeAndBookmarkRestorePose() = run {
         val startEye = Position(0f, 0f, 5f)
         val cam = newCameraState(startEye)
-        lateinit var state: FlightCameraState
+        lateinit var state: FlightCameraController
 
         withFilamentScene(engine, scene) { setContent ->
-            setContent { state = rememberFlightCameraState(cam) }
+            setContent { state = rememberFlightCameraController(cam) }
             waitForIdle()
             mainClock.advanceTimeByFrame() // mount + first (no-key) OnFrame tick; pose stays at start
 

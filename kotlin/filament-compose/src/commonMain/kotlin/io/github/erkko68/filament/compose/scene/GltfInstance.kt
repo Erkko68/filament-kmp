@@ -5,6 +5,7 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import io.github.erkko68.filament.compose.internal.logWarn
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.compose.OnFrame
@@ -119,10 +120,10 @@ fun FilamentSceneScope.GltfInstance(
                 asset.primaryInstanceClaimed = true
                 asset.filamentAsset.getInstance()
             } else {
-                println(
-                    "filament-compose: GltfInstance could not create an additional instance for " +
-                        "this asset (createInstance failed and the primary instance is already " +
-                        "in use) — this GltfInstance renders nothing.",
+                logWarn(
+                    "GltfInstance could not create an additional instance for this asset " +
+                        "(createInstance failed and the primary instance is already in use) — " +
+                        "this GltfInstance renders nothing.",
                 )
                 null
             }

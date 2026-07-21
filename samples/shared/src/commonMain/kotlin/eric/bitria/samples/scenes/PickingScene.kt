@@ -28,6 +28,7 @@ import io.github.erkko68.filament.compose.rememberFilamentViewState
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
+import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
@@ -87,7 +88,7 @@ fun PickingScene(onBack: () -> Unit) {
         ) {
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
-                intensity = 100_000f,
+                intensity = LightIntensity.LuminousPower(100_000f),
             )
             val duckAsset = rememberGltfAsset { Res.readBytes("files/models/Duck.glb") }
             DUCK_POSITIONS.forEachIndexed { idx, pos ->

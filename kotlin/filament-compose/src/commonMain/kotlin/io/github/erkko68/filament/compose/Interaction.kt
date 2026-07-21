@@ -30,13 +30,13 @@ import io.github.erkko68.filament.utils.Manipulator
 // ── Shared internals ──────────────────────────────────────────────────────────
 
 /**
- * Common surface shared by [OrbitCameraState], [MapCameraState] and [FlightCameraState] — the
+ * Common surface shared by [OrbitCameraController], [MapCameraController] and [FlightCameraController] — the
  * operations that make sense for any manipulator-driven camera, so generic UI (a "reset view"
  * button, save/restore of viewpoints) can drive whichever controller is active without caring
- * about the control scheme. Mode-specific extras — flight's per-frame [FlightCameraState.update] —
+ * about the control scheme. Mode-specific extras — flight's per-frame [FlightCameraController.update] —
  * live on the concrete types, not here.
  *
- * All three are created by their `remember*CameraState` factory; you never implement this yourself.
+ * All three are created by their `remember*CameraController` factory; you never implement this yourself.
  */
 interface CameraController {
     /** Viewport size in px. Kept in sync automatically by the matching gesture modifier; call
@@ -144,11 +144,11 @@ private fun Modifier.manipulatorDragGestures(
 /**
  * Drives a [CameraState] using a Filament [Manipulator] in ORBIT mode.
  *
- * Create with [rememberOrbitCameraState], pass the same [CameraState] to
+ * Create with [rememberOrbitCameraController], pass the same [CameraState] to
  * [FilamentView], and attach [Modifier.orbitGestures] to the view's surface. The gesture
  * modifier keeps the manipulator's viewport in sync with the element's size automatically.
  */
-class OrbitCameraState internal constructor(
+class OrbitCameraController internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
 ) : CameraController {
@@ -164,7 +164,7 @@ class OrbitCameraState internal constructor(
 }
 
 /**
- * Creates and remembers an [OrbitCameraState] that drives [cameraState].
+ * Creates and remembers an [OrbitCameraController] that drives [cameraState].
  *
  * The manipulator's home position is taken from [cameraState]'s current `eye`/`target` at
  * creation time. The manipulator pushes its computed eye/target/up back into [cameraState]
@@ -176,7 +176,7 @@ class OrbitCameraState internal constructor(
  *
  * ```kotlin
  * val cameraState = rememberCameraState(initialEye = Position(0f, 2f, 5f))
- * val orbit = rememberOrbitCameraState(cameraState)
+ * val orbit = rememberOrbitCameraController(cameraState)
  * FilamentView(scene = scene, cameraState = cameraState, modifier = Modifier.orbitGestures(orbit))
  * ```
  *
@@ -186,13 +186,13 @@ class OrbitCameraState internal constructor(
  * @param panningEnabled Allow right-click / secondary-button drag to pan.
  */
 @Composable
-fun rememberOrbitCameraState(
+fun rememberOrbitCameraController(
     cameraState: CameraState,
     zoomSpeed: Float = 0.01f,
     orbitSpeedX: Float = 0.01f,
     orbitSpeedY: Float = 0.01f,
     panningEnabled: Boolean = true,
-): OrbitCameraState {
+): OrbitCameraController {
     // Home is fixed at the pose the cameraState had when this state was first created, so a
     // tuning-parameter rebuild doesn't silently redefine what resetToHome() means.
     val home = remember(cameraState) { cameraState.eye to cameraState.target }
@@ -209,7 +209,7 @@ fun rememberOrbitCameraState(
         // Carry the current pose across a tuning rebuild so the camera doesn't move.
         previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
         previous[0] = manipulator
-        OrbitCameraState(manipulator, cameraState).also { it.sync() }
+        OrbitCameraController(manipulator, cameraState).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
     return state
@@ -225,8 +225,8 @@ fun rememberOrbitCameraState(
  * | Right-click drag               | Pan    |
  * | Scroll wheel                   | Zoom   |
  */
-fun Modifier.orbitGestures(state: OrbitCameraState): Modifier =
-    manipulatorDragGestures(state.manipulator, alwaysStrafe = false) { state.sync() }
+fun Modifier.orbitGestures(controller: OrbitCameraController): Modifier =
+    manipulatorDragGestures(controller.manipulator, alwaysStrafe = false) { controller.sync() }
 
 // ── Map camera ────────────────────────────────────────────────────────────────
 
@@ -234,7 +234,7 @@ fun Modifier.orbitGestures(state: OrbitCameraState): Modifier =
  * Drives a [CameraState] using a Filament [Manipulator] in MAP mode (top-down 2-D pan/zoom).
  * Pair with `Projection.Orthographic` on the [CameraState].
  */
-class MapCameraState internal constructor(
+class MapCameraController internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
 ) : CameraController {
@@ -247,7 +247,7 @@ class MapCameraState internal constructor(
 }
 
 /**
- * Creates and remembers a [MapCameraState] driving [cameraState] in MAP mode.
+ * Creates and remembers a [MapCameraController] driving [cameraState] in MAP mode.
  *
  * Drag pans the view; scroll wheel and pinch zoom in/out. No rotation.
  *
@@ -260,13 +260,13 @@ class MapCameraState internal constructor(
  * @param zoomSpeed   Scroll / pinch zoom sensitivity.
  */
 @Composable
-fun rememberMapCameraState(
+fun rememberMapCameraController(
     cameraState: CameraState,
     mapWidth: Float = 512f,
     mapHeight: Float = 512f,
     minDistance: Float = 1f,
     zoomSpeed: Float = 0.01f,
-): MapCameraState {
+): MapCameraController {
     val home = remember(cameraState) { cameraState.target }
     val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
     val state = remember(cameraState, mapWidth, mapHeight, minDistance, zoomSpeed) {
@@ -280,7 +280,7 @@ fun rememberMapCameraState(
         // Carry the current pose across a tuning rebuild so the camera doesn't move.
         previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
         previous[0] = manipulator
-        MapCameraState(manipulator, cameraState).also { it.sync() }
+        MapCameraController(manipulator, cameraState).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
     return state
@@ -295,28 +295,28 @@ fun rememberMapCameraState(
  * | Two-finger pinch    | Zoom   |
  * | Scroll wheel        | Zoom   |
  */
-fun Modifier.mapGestures(state: MapCameraState): Modifier =
-    manipulatorDragGestures(state.manipulator, alwaysStrafe = true) { state.sync() }
+fun Modifier.mapGestures(controller: MapCameraController): Modifier =
+    manipulatorDragGestures(controller.manipulator, alwaysStrafe = true) { controller.sync() }
 
 // ── Flight camera ─────────────────────────────────────────────────────────────
 
 /**
  * Drives a [CameraState] using a Filament [Manipulator] in FLIGHT mode (first-person).
  *
- * The per-frame simulation is driven automatically by [rememberFlightCameraState] (via [OnFrame]) —
+ * The per-frame simulation is driven automatically by [rememberFlightCameraController] (via [OnFrame]) —
  * you don't need a separate loop composable.
  */
-class FlightCameraState internal constructor(
+class FlightCameraController internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,
     // Owned here so [Modifier.flightGestures] can stay a plain (non-composable) modifier like
-    // the orbit/map ones; the keyboard focus is requested once from rememberFlightCameraState.
+    // the orbit/map ones; the keyboard focus is requested once from rememberFlightCameraController.
     internal val focusRequester: FocusRequester,
 ) : CameraController {
     override fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
 
     /** Advance the camera simulation by [deltaTime] seconds. Flight-only; driven automatically
-     *  per frame by [rememberFlightCameraState], so callers rarely call it directly. */
+     *  per frame by [rememberFlightCameraController], so callers rarely call it directly. */
     fun update(deltaTime: Float) { manipulator.update(deltaTime); sync() }
 
     /** Snap back to the flight start position/orientation set at creation. */
@@ -330,13 +330,13 @@ class FlightCameraState internal constructor(
 }
 
 /**
- * Creates and remembers a [FlightCameraState] driving [cameraState] in FLIGHT mode.
+ * Creates and remembers a [FlightCameraController] driving [cameraState] in FLIGHT mode.
  *
  * The manipulator's start position is taken from [cameraState.eye] at creation time.
  *
  * The tuning parameters are reactive — changing them at runtime rebuilds the manipulator
  * while keeping the current camera pose, so nothing jumps; [startPitch]/[startYaw] only
- * define the initial (and [resetToHome][FlightCameraState.resetToHome]) orientation.
+ * define the initial (and [resetToHome][FlightCameraController.resetToHome]) orientation.
  *
  * @param startPitch     Initial pitch in degrees (positive = look up).
  * @param startYaw       Initial yaw in degrees.
@@ -346,7 +346,7 @@ class FlightCameraState internal constructor(
  * @param panSpeedY      Mouse-look vertical sensitivity.
  */
 @Composable
-fun rememberFlightCameraState(
+fun rememberFlightCameraController(
     cameraState: CameraState,
     startPitch: Float = 0f,
     startYaw: Float = 0f,
@@ -354,7 +354,7 @@ fun rememberFlightCameraState(
     moveDamping: Float = 15f,
     panSpeedX: Float = 0.01f,
     panSpeedY: Float = 0.01f,
-): FlightCameraState {
+): FlightCameraController {
     val focusRequester = remember { FocusRequester() }
     val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
     val state = remember(cameraState, startPitch, startYaw, maxMoveSpeed, moveDamping, panSpeedX, panSpeedY) {
@@ -370,7 +370,7 @@ fun rememberFlightCameraState(
         // orbit/map); without this, orientation would snap back to startPitch/startYaw.
         previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
         previous[0] = manipulator
-        FlightCameraState(manipulator, cameraState, focusRequester).also { it.sync() }
+        FlightCameraController(manipulator, cameraState, focusRequester).also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
     // Self-driving: advance the flight simulation every frame so callers never need a separate loop.
@@ -395,10 +395,10 @@ fun rememberFlightCameraState(
  * | Q / Shift          | Move down        |
  * | Scroll wheel       | Change speed     |
  */
-fun Modifier.flightGestures(state: FlightCameraState): Modifier =
+fun Modifier.flightGestures(controller: FlightCameraController): Modifier =
     this
-        .onSizeChanged { state.setViewport(it.width, it.height) }
-        .focusRequester(state.focusRequester)
+        .onSizeChanged { controller.setViewport(it.width, it.height) }
+        .focusRequester(controller.focusRequester)
         .focusable()
         .onKeyEvent { event ->
             val manipKey = when (event.key) {
@@ -411,36 +411,36 @@ fun Modifier.flightGestures(state: FlightCameraState): Modifier =
                 else -> return@onKeyEvent false
             }
             when (event.type) {
-                KeyEventType.KeyDown -> state.manipulator.keyDown(manipKey)
-                KeyEventType.KeyUp   -> state.manipulator.keyUp(manipKey)
+                KeyEventType.KeyDown -> controller.manipulator.keyDown(manipKey)
+                KeyEventType.KeyUp   -> controller.manipulator.keyUp(manipKey)
             }
             true
         }
-        .pointerInput(state) {
+        .pointerInput(controller) {
             // Mouse look
             awaitEachGesture {
                 val down = awaitFirstDown(requireUnconsumed = false)
-                state.manipulator.grabBegin(down.position.x.toInt(), down.position.y.toInt(), false)
+                controller.manipulator.grabBegin(down.position.x.toInt(), down.position.y.toInt(), false)
                 while (true) {
                     val event = awaitPointerEvent()
                     if (event.changes.none { it.pressed }) break
                     val change = event.changes.firstOrNull { it.pressed } ?: break
                     if (change.positionChanged()) {
-                        state.manipulator.grabUpdate(change.position.x.toInt(), change.position.y.toInt())
+                        controller.manipulator.grabUpdate(change.position.x.toInt(), change.position.y.toInt())
                         change.consume()
                     }
                 }
-                state.manipulator.grabEnd()
+                controller.manipulator.grabEnd()
             }
         }
-        .pointerInput(state) {
+        .pointerInput(controller) {
             // Scroll to adjust movement speed
             awaitPointerEventScope {
                 while (true) {
                     val event = awaitPointerEvent()
                     if (event.type == PointerEventType.Scroll) {
                         val change = event.changes.firstOrNull() ?: continue
-                        state.manipulator.scroll(
+                        controller.manipulator.scroll(
                             change.position.x.toInt(),
                             change.position.y.toInt(),
                             change.scrollDelta.y,
