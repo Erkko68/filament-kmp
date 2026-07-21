@@ -26,7 +26,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  *     skyboxState = sky,
  *     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
  * ) {
- *     DirectionalLight(intensity = 100_000f)
+ *     DirectionalLight(intensity = LightIntensity.LuminousPower(100_000f))
  *     GltfInstance(asset = duck)
  * }
  * ```
@@ -80,3 +80,37 @@ fun FilamentSceneView(
         stencilBufferEnabled = stencilBufferEnabled,
     )
 }
+
+/**
+ * Overload wiring a loaded [io.github.erkko68.filament.compose.scene.Environment] (from
+ * `rememberKTXEnvironment` / `rememberHDREnvironment`) into the all-in-one view without threading
+ * its two states by hand. [engine] is required here (no default): it must be the same engine the
+ * environment's textures were loaded on. All other parameters match the primary overload.
+ */
+@Composable
+fun FilamentSceneView(
+    engine: Engine,
+    environment: io.github.erkko68.filament.compose.scene.Environment,
+    modifier: Modifier = Modifier,
+    cameraState: CameraState = rememberCameraState(),
+    viewState: FilamentViewState = rememberFilamentViewState(),
+    postProcessing: PostProcessing = PostProcessing(),
+    frustumCullingEnabled: Boolean = true,
+    shadows: Shadows? = Shadows.Pcf,
+    screenSpaceRefractionEnabled: Boolean = false,
+    stencilBufferEnabled: Boolean = false,
+    content: @Composable FilamentSceneScope.() -> Unit,
+) = FilamentSceneView(
+    modifier = modifier,
+    engine = engine,
+    cameraState = cameraState,
+    viewState = viewState,
+    skyboxState = environment.skyboxState,
+    indirectLightState = environment.indirectLightState,
+    postProcessing = postProcessing,
+    frustumCullingEnabled = frustumCullingEnabled,
+    shadows = shadows,
+    screenSpaceRefractionEnabled = screenSpaceRefractionEnabled,
+    stencilBufferEnabled = stencilBufferEnabled,
+    content = content,
+)

@@ -9,6 +9,8 @@ import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.Viewport
 import io.github.erkko68.filament.compose.internal.FilamentRenderLoop
 import io.github.erkko68.filament.compose.scene.CameraState
+import io.github.erkko68.filament.compose.scene.PostProcessing
+import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
 
 /**
@@ -31,14 +33,17 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * Plane(material = screen)          // a screen showing the mini-map
  * ```
  *
- * Post-processing is disabled by default: a DEPTH attachment is used, and Filament ignores depth
- * attachments when post-processing is on. Enable it only if you don't depend on the depth buffer.
+ * Post-processing is off by default (`postProcessing = null`): a DEPTH attachment is used, and
+ * Filament ignores depth attachments when post-processing is on. Pass a
+ * [PostProcessing][io.github.erkko68.filament.compose.scene.PostProcessing] value — the same
+ * type [FilamentView] takes — only if you don't depend on the depth buffer.
  *
  * @param scene The scene to render off-screen. Supplies the engine.
  * @param cameraState Hoisted camera for the off-screen view. Defaults to a fresh state.
  * @param width Texture width in pixels.
  * @param height Texture height in pixels.
- * @param postProcessingEnabled Whether to run the post-processing pass (see note above).
+ * @param postProcessing Post-processing configuration for the off-screen view, or null to skip
+ *   the post-processing pass entirely (the default — see note above).
  * @return The color texture being rendered into, or null for a non-positive size.
  */
 @Composable
@@ -47,7 +52,7 @@ fun rememberRenderTargetTexture(
     cameraState: CameraState = rememberCameraState(),
     width: Int = 512,
     height: Int = 512,
-    postProcessingEnabled: Boolean = false,
+    postProcessing: PostProcessing? = null,
 ): Texture? {
     val engine = scene.engine
     if (width <= 0 || height <= 0) return null
@@ -79,12 +84,23 @@ fun rememberRenderTargetTexture(
     val renderer = remember(engine) { engine.createRenderer() }
 
     // Wire the off-screen view. Re-runs only when an input actually changes.
-    remember(view, scene.scene, camera, target, width, height, postProcessingEnabled) {
+    remember(view, scene.scene, camera, target, width, height) {
         view.scene = scene.scene
         view.camera = camera
         view.viewport = Viewport(0, 0, width, height)
         view.renderTarget = target
-        view.isPostProcessingEnabled = postProcessingEnabled
+    }
+
+    // Same value semantics as FilamentView: the allocated ColorGrading (if any) is destroyed on
+    // dispose / before re-apply. null skips the post-processing pass entirely.
+    DisposableEffect(view, postProcessing, engine) {
+        val colorGrading = if (postProcessing != null) {
+            postProcessing.applyTo(view, engine)
+        } else {
+            view.isPostProcessingEnabled = false
+            null
+        }
+        onDispose { colorGrading?.let { engine.destroyColorGrading(it) } }
     }
 
     // Push the camera state every time it changes; reads register recomposition subscriptions.
@@ -115,16 +131,3 @@ fun rememberRenderTargetTexture(
 
     return color
 }
-
-@Deprecated(
-    "Renamed: the function returns the color Texture, not a RenderTarget.",
-    ReplaceWith("rememberRenderTargetTexture(scene, cameraState, width, height, postProcessingEnabled)"),
-)
-@Composable
-fun rememberRenderTarget(
-    scene: FilamentScene,
-    cameraState: CameraState = rememberCameraState(),
-    width: Int = 512,
-    height: Int = 512,
-    postProcessingEnabled: Boolean = false,
-): Texture? = rememberRenderTargetTexture(scene, cameraState, width, height, postProcessingEnabled)

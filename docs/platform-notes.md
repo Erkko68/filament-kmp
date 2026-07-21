@@ -125,7 +125,7 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `Camera.getFieldOfViewInDegrees` | Always `0.0` | Track the FOV you set yourself |
 | `SurfaceOrientation.Builder.tangents` | Silent no-op | Provide normals/uvs and let the builder derive the orientation |
 
-`TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraState` from `filament-compose` is the recommended ergonomic wrapper.
+`TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.
 
 Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
 

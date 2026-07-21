@@ -5,6 +5,7 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import io.github.erkko68.filament.compose.internal.logWarn
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.compose.OnFrame
@@ -73,6 +74,10 @@ private class GltfInstanceScopeImpl(
  *   blending) and takes precedence over [animationIndex]/[animationTime].
  * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
  *   instance that has morph targets. Pass null to leave morph weights untouched.
+ * @param castShadows Overrides shadow casting for every renderable in the instance; null (the
+ *   default) keeps what the asset authored — matching the primitives' `castShadows` toggle.
+ * @param receiveShadows Overrides shadow receiving for every renderable in the instance; null
+ *   (the default) keeps what the asset authored.
  * @param visible Whether the instance's entities are in the scene. False removes them (cheaply,
  *   keeping the instance and its state alive) — a show/hide toggle.
  * @param onCreate Called once when the instance is first added to the scene. Use for one-time
@@ -92,6 +97,8 @@ fun FilamentSceneScope.GltfInstance(
     animationTime: Float = 0f,
     animationState: AnimationState? = null,
     morphWeights: FloatArray? = null,
+    castShadows: Boolean? = null,
+    receiveShadows: Boolean? = null,
     visible: Boolean = true,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
@@ -101,6 +108,8 @@ fun FilamentSceneScope.GltfInstance(
     val engine = LocalFilamentEngine.current
     val scene = LocalFilamentScene.current
     val parent = LocalParentEntity.current
+    // A hidden enclosing Group hides its whole subtree.
+    val effectiveVisible = visible && LocalGroupVisible.current
 
     val instance = remember(asset) {
         asset.assetLoader.createInstance(asset.filamentAsset)
@@ -111,10 +120,10 @@ fun FilamentSceneScope.GltfInstance(
                 asset.primaryInstanceClaimed = true
                 asset.filamentAsset.getInstance()
             } else {
-                println(
-                    "filament-compose: GltfInstance could not create an additional instance for " +
-                        "this asset (createInstance failed and the primary instance is already " +
-                        "in use) — this GltfInstance renders nothing.",
+                logWarn(
+                    "GltfInstance could not create an additional instance for this asset " +
+                        "(createInstance failed and the primary instance is already in use) — " +
+                        "this GltfInstance renders nothing.",
                 )
                 null
             }
@@ -125,8 +134,8 @@ fun FilamentSceneScope.GltfInstance(
     // Scene membership tracks `visible`; onCreate fires once, on the first time the instance
     // actually enters the scene.
     val createdFired = remember(instance) { booleanArrayOf(false) }
-    DisposableEffect(instance, visible) {
-        if (visible) {
+    DisposableEffect(instance, effectiveVisible) {
+        if (effectiveVisible) {
             scene.addEntities(instance.getEntities())
             if (!createdFired[0]) {
                 createdFired[0] = true
@@ -134,7 +143,7 @@ fun FilamentSceneScope.GltfInstance(
             }
         }
         onDispose {
-            if (visible) scene.removeEntities(instance.getEntities())
+            if (effectiveVisible) scene.removeEntities(instance.getEntities())
         }
     }
 
@@ -189,6 +198,20 @@ fun FilamentSceneScope.GltfInstance(
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
                 if (rm.getMorphTargetCount(ri) > 0) rm.setMorphWeights(ri, morphWeights, 0)
+            }
+        }
+        onDispose { }
+    }
+
+    // Shadow-flag overrides on every renderable. null keeps the asset's authored values.
+    DisposableEffect(instance, castShadows, receiveShadows) {
+        if (castShadows != null || receiveShadows != null) {
+            val rm = engine.getRenderableManager()
+            for (entity in instance.getEntities()) {
+                if (!rm.hasComponent(entity)) continue
+                val ri = rm.getInstance(entity)
+                if (castShadows != null) rm.setCastShadows(ri, castShadows)
+                if (receiveShadows != null) rm.setReceiveShadows(ri, receiveShadows)
             }
         }
         onDispose { }

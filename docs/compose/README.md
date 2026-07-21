@@ -78,6 +78,23 @@ components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operator
 hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
 `toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
 
+## Value parameters vs. state holders
+
+The API changes things in two deliberate ways, split by **who writes the value**:
+
+- **Value parameters** (recompose to change) — used when *only your app* writes: lights,
+  `PostProcessing`, transforms, shadow config. Declare the value; change it by recomposing with a
+  new one.
+- **Mutable state holders** (`remember*State` / controllers, mutate to change) — used when *the
+  framework also writes back*: `CameraState` (gesture controllers push the pose into it every
+  interaction), `SkyboxState`/`IndirectLightState` (environment loaders populate them
+  asynchronously), `AnimationState`/`AnimationTrack` (the frame loop advances them). These must be
+  objects you and the runtime can both mutate, so their creators seed with `initial*` params and
+  later changes go through the returned object.
+
+If you're wondering which form an API should take: if the framework never writes it, it's a value
+parameter.
+
 ## Driving updates
 
 Continuous updates fall into **two different clocks** — confusing them is the most common source
@@ -105,7 +122,7 @@ recompose. **Everything else per-frame is built on it:**
 | `rememberAnimationState` | Playing/blending glTF skeletal animation — the high-level path. Don't hand-roll the timing. |
 | `rememberSceneClock()` | You want elapsed **seconds as a `State<Float>`** to read in composition (orbit a `Group`, pulse a value). Reading it recomposes every frame — that's its whole point, and the one case you *want* a frame to recompose. |
 | `FilamentEffect { onFrame { … } }` | Per-frame work from inside a `rememberFilamentScene` escape hatch, with the `engine`/`scene` in scope. The callback gets the same `FrameInfo`. |
-| `rememberFlightCameraState` | Free-flight camera; it advances itself every frame (no separate loop composable needed). |
+| `rememberFlightCameraController` | Free-flight camera; it advances itself every frame (no separate loop composable needed). |
 
 And the per-**recomposition** siblings, for completeness:
 
@@ -280,7 +297,7 @@ Shadow casting is opt-in per light via `shadow = ShadowConfig(...)` (`null` disa
 ```kotlin
 DirectionalLight(
     direction = Direction(0.3f, -1f, -0.5f),
-    intensity = 100_000f,                  // lux
+    intensity = LightIntensity.LuminousPower(100_000f), // lux
     shadow    = ShadowConfig(mapSize = 4096),
 )
 ```
@@ -297,16 +314,16 @@ Every light composable exposes two parts of Filament's light model beyond the ba
 - **`lightChannels`** — the set of channels (0–7) a light affects. A renderable is only lit by a
   light if they share an enabled channel (channel 0 is the default for both). Use this to make a
   light illuminate only some objects — e.g. a UI/preview light that ignores the rest of the scene.
-- **`intensityUnit` + `efficiency`** — interpret `intensity` as luminous power/illuminance
-  (`LightUnit.LUMINOUS_POWER`, the default), luminous intensity (`LightUnit.CANDELA`), or electrical
-  wattage (`LightUnit.WATTS`, scaled by `efficiency` — e.g. `0.087` for an LED). Lets you dial lights
-  in physical units instead of guessing lumen values.
+- **`intensity: LightIntensity`** — brightness and its unit as one value: luminous
+  power/illuminance (`LightIntensity.LuminousPower`, the default), luminous intensity
+  (`LightIntensity.Candela`), or electrical wattage (`LightIntensity.Watts(watts, efficiency)` —
+  e.g. efficiency `0.087` for an LED; the Watts-only `efficiency` lives inside the variant, so it
+  can't be passed with the other units). Lets you dial lights in physical units instead of
+  guessing lumen values.
 
 ```kotlin
 FocusedSpotLight(
-    intensity     = 12f,                 // a 12 W bulb…
-    intensityUnit = LightUnit.WATTS,
-    efficiency    = 0.087f,              // …at LED efficiency
+    intensity     = LightIntensity.Watts(12f, efficiency = 0.087f),  // a 12 W LED bulb
     lightChannels = setOf(0, 2),        // only objects on channel 0 or 2
 )
 ```
@@ -323,8 +340,9 @@ cross-cutting patterns. For *what each composable is*, follow the API reference.
 Pure-Kotlin mesh primitives (`Cube`, `Sphere`, `Cylinder`, `Plane`, `Mesh`) build a
 `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place them inside
 `rememberFilamentScene { }`. Every primitive accepts the same transform set — `position`,
-`rotation`, `scale`, `pivot` — plus an `onCreate: (entity: Int) -> Unit` callback that fires once
-the renderable is added to the scene (use it to register the entity with `view.pick` callbacks).
+`rotation`, `scale`, `pivot` — plus an `onCreate: EntityScope.() -> Unit` callback that fires once
+the renderable is added to the scene, with the created `entity` and the `engine` in scope (use it
+to register the entity with `view.pick` callbacks).
 They also take `castShadows`/`receiveShadows` (both default `true`) — set `castShadows = false` on a
 pure ground/receiver `Plane` to avoid it shadowing itself. When wrapped in a `Group { }` the
 primitive's transform becomes local to the group. `Mesh` is the escape hatch for custom triangle
@@ -337,7 +355,7 @@ geometry the built-in primitives don't cover.
 ```kotlin
 val engine = rememberFilamentEngine()          // shared, so the IBL and scene agree
 val env = rememberKTXEnvironment(
-    engine,
+    engine = engine,
     ibl    = { Res.readBytes("files/environment/env_ibl.ktx") },
     skybox = { Res.readBytes("files/environment/env_skybox.ktx") },  // optional
 )

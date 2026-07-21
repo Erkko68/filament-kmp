@@ -62,7 +62,7 @@ class LightLifecycleTest : ComposeTestFixture() {
         // one light, the same entity — never duplicate or leak it.
         var intensity by mutableStateOf(50_000f)
         setContent {
-            DirectionalLight(intensity = intensity)
+            DirectionalLight(intensity = LightIntensity.LuminousPower(intensity))
         }
         waitForIdle()
         val capturedEntity = scene.getEntities().single()

@@ -164,8 +164,9 @@ class AnimationState internal constructor(
  * expressible — drive the [Animator] yourself for that.
  */
 class AnimationMixer {
-    /** Pauses advancement of every track while true; poses hold in place. */
-    var isPaused: Boolean = false
+    /** Pauses advancement of every track while true; poses hold in place. Observable, like
+     *  [AnimationState.isPaused]. */
+    var isPaused: Boolean by mutableStateOf(false)
 
     private val _tracks = mutableStateListOf<AnimationTrack>()
     /** The active tracks, in blend order. */

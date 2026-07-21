@@ -3,7 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
@@ -30,7 +30,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param castShadows     Whether the plane casts shadows onto other renderables. On by default;
  *   set false for a pure ground/receiver plane to avoid it shadowing itself.
  * @param receiveShadows  Whether the plane receives shadows cast by others. On by default.
- * @param onCreate  Receives the renderable entity ID once the plane is added to the scene.
+ * @param onCreate  Runs once when the plane enters the scene, with the renderable entity and engine in scope ([EntityScope]).
  */
 @Composable
 fun FilamentSceneScope.Plane(
@@ -45,7 +45,7 @@ fun FilamentSceneScope.Plane(
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
-    onCreate: (entity: Entity) -> Unit = {},
+    onCreate: EntityScope.() -> Unit = {},
 ) {
     val mesh = remember(width, depth, doubleSided) { planeMesh(width, depth, doubleSided) }
     Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)

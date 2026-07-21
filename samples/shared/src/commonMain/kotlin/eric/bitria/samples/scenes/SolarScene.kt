@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.rememberSceneClock
 import io.github.erkko68.filament.compose.scene.AntiAliasing
 import io.github.erkko68.filament.compose.scene.Bloom
@@ -19,6 +19,7 @@ import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Group
 import io.github.erkko68.filament.compose.scene.PointLight
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
 import io.github.erkko68.filament.compose.scene.primitives.Sphere
@@ -59,7 +60,7 @@ fun SolarScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 50.0),
     )
-    val orbit  = rememberOrbitCameraState(cameraState)
+    val orbit  = rememberOrbitCameraController(cameraState)
     val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.02f, 0.03f, 0.06f)))
 
     val time by rememberSceneClock()
@@ -99,7 +100,7 @@ fun SolarScene(onBack: () -> Unit) {
                 )
                 PointLight(
                     color     = FilColor(1f, 0.85f, 0.5f),
-                    intensity = 400_000f,
+                    intensity = LightIntensity.LuminousPower(400_000f),
                     falloff   = 15f,
                     position  = Position(0f, 0f, 0f),
                 )

@@ -7,10 +7,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.DirectionalLight
+import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -29,7 +30,7 @@ fun PrimitivesScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0.5f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val orbit  = rememberOrbitCameraState(cameraState)
+    val orbit  = rememberOrbitCameraController(cameraState)
     val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     Box(Modifier.fillMaxSize()) {
@@ -42,7 +43,7 @@ fun PrimitivesScene(onBack: () -> Unit) {
         ) {
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
-                intensity = 100_000f,
+                intensity = LightIntensity.LuminousPower(100_000f),
             )
             // Built-in LIT colour material — no .mat to author or ship.
             Cube(    material = rememberColorMaterialInstance(FilColor(0.90f, 0.25f, 0.30f)),

@@ -26,9 +26,10 @@ import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.DirectionalLight
+import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.PointLight
@@ -65,7 +66,7 @@ fun LightingScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 1f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val orbit  = rememberOrbitCameraState(cameraState)
+    val orbit  = rememberOrbitCameraController(cameraState)
     val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.03f, 0.03f, 0.05f)))
 
     var kind by remember { mutableStateOf(LightKind.Directional) }
@@ -92,19 +93,19 @@ fun LightingScene(onBack: () -> Unit) {
             when (kind) {
                 LightKind.Directional -> DirectionalLight(
                     direction = dir,
-                    intensity = intensity * 150_000f,
+                    intensity = LightIntensity.LuminousPower(intensity * 150_000f),
                     shadow    = if (shadows) ShadowConfig(mapSize = 4096, bulbRadius = 0.03f) else null,
                 )
                 LightKind.Point -> PointLight(
                     position  = Position(0f, 4f, 2f),
                     color     = FilColor(1f, 0.9f, 0.7f),
-                    intensity = intensity * 20_000_000f,
+                    intensity = LightIntensity.LuminousPower(intensity * 20_000_000f),
                     falloff   = 25f,
                 )
                 LightKind.Spot -> SpotLight(
                     position  = Position(0f, 6f, 2f),
                     direction = dir,
-                    intensity = intensity * 30_000_000f,
+                    intensity = LightIntensity.LuminousPower(intensity * 30_000_000f),
                     falloff   = 30f,
                     cone      = SpotCone(innerAngle = coneOuter * 0.6f, outerAngle = coneOuter),
                     shadow    = if (shadows) ShadowConfig(mapSize = 4096, bulbRadius = 0.05f) else null,

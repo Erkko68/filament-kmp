@@ -132,13 +132,12 @@ fun rememberColorMaterialInstance(
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Lit, engine)
-    // The base material is always non-null here, so the instance is too.
-    return rememberMaterialInstance(material, color, metallic, roughness, reflectance, engine = engine) {
+    return rememberConfiguredMaterialInstance(material, color, metallic, roughness, reflectance, engine = engine) {
         setParameter("baseColor", color)
         setParameter("metallic", metallic)
         setParameter("roughness", roughness)
         setParameter("reflectance", reflectance)
-    }!!
+    }
 }
 
 /**
@@ -154,9 +153,9 @@ fun rememberUnlitColorMaterialInstance(
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Unlit, engine)
-    return rememberMaterialInstance(material, color, engine = engine) {
+    return rememberConfiguredMaterialInstance(material, color, engine = engine) {
         setParameter("baseColor", color)
-    }!!
+    }
 }
 
 /**
@@ -189,11 +188,11 @@ fun rememberTexturedMaterialInstance(
     val material = rememberStandardMaterial(StandardMaterial.Textured, engine)
     // `sampler` is captured (not keyed): it's almost always the constant default, and a new value
     // typically arrives with a new texture, which is keyed.
-    return rememberMaterialInstance(material, texture, metallic, roughness, engine = engine) {
+    return rememberConfiguredMaterialInstance(material, texture, metallic, roughness, engine = engine) {
         setParameter("albedo", texture, sampler)
         setParameter("metallic", metallic)
         setParameter("roughness", roughness)
-    }!!
+    }
 }
 
 /**
@@ -211,10 +210,10 @@ fun rememberEmissiveMaterialInstance(
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Emissive, engine)
-    return rememberMaterialInstance(material, color, intensity, engine = engine) {
+    return rememberConfiguredMaterialInstance(material, color, intensity, engine = engine) {
         setParameter("color", color)
         setParameter("intensity", intensity)
-    }!!
+    }
 }
 
 /**
@@ -246,11 +245,11 @@ fun rememberTransparentColorMaterialInstance(
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Transparent, engine)
-    return rememberMaterialInstance(material, color, alpha, metallic, roughness, reflectance, engine = engine) {
+    return rememberConfiguredMaterialInstance(material, color, alpha, metallic, roughness, reflectance, engine = engine) {
         setParameter("baseColor", color)
         setParameter("alpha", alpha)
         setParameter("metallic", metallic)
         setParameter("roughness", roughness)
         setParameter("reflectance", reflectance)
-    }!!
+    }
 }
