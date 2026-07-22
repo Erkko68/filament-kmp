@@ -1,6 +1,18 @@
+public abstract interface class io/github/erkko68/filament/compose/CameraController {
+	public abstract fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public abstract fun resetToHome ()V
+	public abstract fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public abstract fun setViewport (II)V
+}
+
 public final class io/github/erkko68/filament/compose/CompositionLocalsKt {
 	public static final fun getLocalFilamentEngine ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 	public static final fun getLocalFilamentScene ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+}
+
+public abstract interface class io/github/erkko68/filament/compose/EntityScope {
+	public abstract fun getEngine ()Lio/github/erkko68/filament/Engine;
+	public abstract fun getEntity ()I
 }
 
 public abstract interface annotation class io/github/erkko68/filament/compose/FilamentDsl : java/lang/annotation/Annotation {
@@ -27,6 +39,7 @@ public final class io/github/erkko68/filament/compose/FilamentScene {
 }
 
 public final class io/github/erkko68/filament/compose/FilamentSceneKt {
+	public static final fun rememberFilamentScene (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/Environment;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)Lio/github/erkko68/filament/compose/FilamentScene;
 	public static final fun rememberFilamentScene (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/SkyboxState;Lio/github/erkko68/filament/compose/scene/IndirectLightState;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/FilamentScene;
 }
 
@@ -35,6 +48,7 @@ public abstract interface class io/github/erkko68/filament/compose/FilamentScene
 
 public final class io/github/erkko68/filament/compose/FilamentSceneViewKt {
 	public static final fun FilamentSceneView (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/FilamentViewState;Lio/github/erkko68/filament/compose/scene/SkyboxState;Lio/github/erkko68/filament/compose/scene/IndirectLightState;Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Shadows;ZZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun FilamentSceneView (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/Environment;Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/FilamentViewState;Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Shadows;ZZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/FilamentViewKt {
@@ -52,9 +66,12 @@ public final class io/github/erkko68/filament/compose/FilamentViewStateKt {
 	public static final fun rememberFilamentViewState (Landroidx/compose/runtime/Composer;I)Lio/github/erkko68/filament/compose/FilamentViewState;
 }
 
-public final class io/github/erkko68/filament/compose/FlightCameraState {
+public final class io/github/erkko68/filament/compose/FlightCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public final fun setViewport (II)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun resetToHome ()V
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun setViewport (II)V
 	public final fun update (F)V
 }
 
@@ -79,34 +96,33 @@ public final class io/github/erkko68/filament/compose/FrameKt {
 }
 
 public final class io/github/erkko68/filament/compose/InteractionKt {
-	public static final fun flightGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FlightCameraState;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
-	public static final fun mapGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/MapCameraState;)Landroidx/compose/ui/Modifier;
-	public static final fun orbitGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/OrbitCameraState;)Landroidx/compose/ui/Modifier;
+	public static final fun flightGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FlightCameraController;)Landroidx/compose/ui/Modifier;
+	public static final fun mapGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/MapCameraController;)Landroidx/compose/ui/Modifier;
+	public static final fun orbitGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/OrbitCameraController;)Landroidx/compose/ui/Modifier;
 	public static final fun pickOnTap (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FilamentViewState;Lkotlin/jvm/functions/Function1;)Landroidx/compose/ui/Modifier;
-	public static final fun rememberFlightCameraState (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/FlightCameraState;
-	public static final fun rememberMapCameraState (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/MapCameraState;
-	public static final fun rememberOrbitCameraState (Lio/github/erkko68/filament/compose/scene/CameraState;FFFZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/OrbitCameraState;
+	public static final fun rememberFlightCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/FlightCameraController;
+	public static final fun rememberMapCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/MapCameraController;
+	public static final fun rememberOrbitCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/OrbitCameraController;
 }
 
-public final class io/github/erkko68/filament/compose/MapCameraState {
+public final class io/github/erkko68/filament/compose/MapCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
-	public final fun resetToHome ()V
-	public final fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
-	public final fun setViewport (II)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun resetToHome ()V
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun setViewport (II)V
 }
 
-public final class io/github/erkko68/filament/compose/OrbitCameraState {
+public final class io/github/erkko68/filament/compose/OrbitCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
-	public final fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
-	public final fun resetToHome ()V
-	public final fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
-	public final fun setViewport (II)V
+	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
+	public fun resetToHome ()V
+	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
+	public fun setViewport (II)V
 }
 
 public final class io/github/erkko68/filament/compose/RenderTargetTextureKt {
-	public static final fun rememberRenderTarget (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IIZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
-	public static final fun rememberRenderTargetTexture (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IIZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
+	public static final fun rememberRenderTargetTexture (Lio/github/erkko68/filament/compose/FilamentScene;Lio/github/erkko68/filament/compose/scene/CameraState;IILio/github/erkko68/filament/compose/scene/PostProcessing;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
 }
 
 public final class io/github/erkko68/filament/compose/SceneClockKt {
@@ -225,7 +241,7 @@ public final class io/github/erkko68/filament/compose/scene/Bloom {
 	public final fun getQuality ()Lio/github/erkko68/filament/View$Quality;
 	public final fun getResolution ()I
 	public final fun getStrength ()F
-	public final fun getThreshold ()Z
+	public final fun getThresholdEnabled ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -398,8 +414,8 @@ public final class io/github/erkko68/filament/compose/scene/Environment {
 }
 
 public final class io/github/erkko68/filament/compose/scene/EnvironmentKt {
-	public static final fun rememberHDREnvironment (Lio/github/erkko68/filament/Engine;FZLio/github/erkko68/filament/Texture$InternalFormat;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
-	public static final fun rememberKTXEnvironment (Lio/github/erkko68/filament/Engine;FLjava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
+	public static final fun rememberHDREnvironment (FZLio/github/erkko68/filament/Texture$InternalFormat;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
+	public static final fun rememberKTXEnvironment (FLjava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/Environment;
 }
 
 public final class io/github/erkko68/filament/compose/scene/Exposure {
@@ -448,11 +464,11 @@ public final class io/github/erkko68/filament/compose/scene/GltfAsset {
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfAssetKt {
-	public static final fun rememberGltfAsset (Lio/github/erkko68/filament/Engine;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/GltfAsset;
+	public static final fun rememberGltfAsset (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/GltfAsset;
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfInstanceKt {
-	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FLjava/lang/Boolean;Ljava/lang/Boolean;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/GltfInstanceScope {
@@ -462,7 +478,7 @@ public abstract interface class io/github/erkko68/filament/compose/scene/GltfIns
 }
 
 public final class io/github/erkko68/filament/compose/scene/GroupKt {
-	public static final fun Group (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Group (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/IndirectLightKt {
@@ -483,29 +499,61 @@ public final class io/github/erkko68/filament/compose/scene/IndirectLightState {
 	public final fun setRotation ([F)V
 }
 
-public final class io/github/erkko68/filament/compose/scene/LightKt {
-	public static final fun DirectionalLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/compose/scene/LightUnit;FLio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
-	public static final fun FocusedSpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/compose/scene/LightUnit;FFLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
-	public static final fun Light (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/LightManager$Type;[Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public static final fun PointLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/compose/scene/LightUnit;FFZLjava/util/Set;Landroidx/compose/runtime/Composer;II)V
-	public static final fun SpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/compose/scene/LightUnit;FFLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
-	public static final fun SunLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/compose/scene/LightUnit;FLio/github/erkko68/filament/compose/scene/SunParams;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
+public abstract interface class io/github/erkko68/filament/compose/scene/LightIntensity {
 }
 
-public final class io/github/erkko68/filament/compose/scene/LightUnit : java/lang/Enum {
-	public static final field CANDELA Lio/github/erkko68/filament/compose/scene/LightUnit;
-	public static final field LUMINOUS_POWER Lio/github/erkko68/filament/compose/scene/LightUnit;
-	public static final field WATTS Lio/github/erkko68/filament/compose/scene/LightUnit;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/compose/scene/LightUnit;
-	public static fun values ()[Lio/github/erkko68/filament/compose/scene/LightUnit;
+public final class io/github/erkko68/filament/compose/scene/LightIntensity$Candela : io/github/erkko68/filament/compose/scene/LightIntensity {
+	public static final field $stable I
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lio/github/erkko68/filament/compose/scene/LightIntensity$Candela;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/LightIntensity$Candela;FILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/LightIntensity$Candela;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/LightIntensity$LuminousPower : io/github/erkko68/filament/compose/scene/LightIntensity {
+	public static final field $stable I
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lio/github/erkko68/filament/compose/scene/LightIntensity$LuminousPower;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/LightIntensity$LuminousPower;FILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/LightIntensity$LuminousPower;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/LightIntensity$Watts : io/github/erkko68/filament/compose/scene/LightIntensity {
+	public static final field $stable I
+	public fun <init> (FF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lio/github/erkko68/filament/compose/scene/LightIntensity$Watts;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/LightIntensity$Watts;FFILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/LightIntensity$Watts;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEfficiency ()F
+	public final fun getWatts ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/LightKt {
+	public static final fun DirectionalLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
+	public static final fun FocusedSpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;FLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
+	public static final fun Light (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/LightManager$Type;[Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PointLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;FZLjava/util/Set;Landroidx/compose/runtime/Composer;II)V
+	public static final fun SpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;FLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
+	public static final fun SunLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;Lio/github/erkko68/filament/compose/scene/SunParams;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/MaterialsKt {
-	public static final fun rememberMaterial (Lio/github/erkko68/filament/Engine;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Material;
+	public static final fun rememberMaterial (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Material;
 	public static final fun rememberMaterialInstance (Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberMaterialInstance (Lio/github/erkko68/filament/Material;[Ljava/lang/Object;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
-	public static final fun rememberTexture (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/utils/TextureLoader$TextureType;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
+	public static final fun rememberTexture (Lio/github/erkko68/filament/utils/TextureLoader$TextureType;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
 	public static final fun setParameter (Lio/github/erkko68/filament/MaterialInstance;Ljava/lang/String;Lio/github/erkko68/filament/compose/scene/Color;)V
 }
 
@@ -824,7 +872,7 @@ public final class io/github/erkko68/filament/compose/scene/SkyboxSource$Color :
 	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;Lio/github/erkko68/filament/compose/scene/Color;FILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAlpha ()F
-	public final fun getRgb ()Lio/github/erkko68/filament/compose/scene/Color;
+	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/Color;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

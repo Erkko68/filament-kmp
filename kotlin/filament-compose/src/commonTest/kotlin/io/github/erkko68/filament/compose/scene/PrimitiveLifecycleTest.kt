@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.MaterialInstance
+import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.primitives.Cube
 import io.github.erkko68.filament.compose.scene.primitives.Cylinder
@@ -30,7 +31,7 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
 
     private fun primitives(
         material: MaterialInstance,
-    ): List<Pair<String, @Composable FilamentSceneScope.((entity: Int) -> Unit) -> Unit>> = listOf(
+    ): List<Pair<String, @Composable FilamentSceneScope.(EntityScope.() -> Unit) -> Unit>> = listOf(
         "Cube" to { onCreate -> Cube(material, onCreate = onCreate) },
         "Sphere" to { onCreate -> Sphere(material, onCreate = onCreate) },
         "Plane" to { onCreate -> Plane(material, onCreate = onCreate) },
@@ -61,7 +62,7 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
         withFilamentScene(engine, scene) { setContent ->
             for ((name, primitive) in primitives(material)) {
                 var captured = 0
-                setContent { primitive { captured = it } }
+                setContent { primitive { captured = entity } }
                 waitForIdle()
                 assertEquals(1, scene.renderableCount, "$name should add exactly one renderable while composed")
                 assertEquals(1, scene.entityCount, "$name should add exactly one entity while composed")

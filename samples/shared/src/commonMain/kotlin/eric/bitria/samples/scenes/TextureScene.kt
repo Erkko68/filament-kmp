@@ -14,10 +14,11 @@ import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentEngine
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.DirectionalLight
+import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -43,7 +44,7 @@ fun TextureScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val orbit  = rememberOrbitCameraState(cameraState)
+    val orbit  = rememberOrbitCameraController(cameraState)
     val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     // Decode the PNG into a Filament texture once the bytes arrive; tear it down on dispose.
@@ -66,7 +67,7 @@ fun TextureScene(onBack: () -> Unit) {
         ) {
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
-                intensity = 100_000f,
+                intensity = LightIntensity.LuminousPower(100_000f),
             )
             // Escape hatch: load a hand-authored .filamat and bind its `albedo` sampler
             // reactively with rememberMaterialInstance. (For the common case the built-in

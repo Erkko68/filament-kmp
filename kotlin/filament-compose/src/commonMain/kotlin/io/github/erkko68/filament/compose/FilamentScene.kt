@@ -8,6 +8,7 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Scene
 import io.github.erkko68.filament.compose.scene.ApplyIndirectLight
 import io.github.erkko68.filament.compose.scene.ApplySkybox
+import io.github.erkko68.filament.compose.scene.Environment
 import io.github.erkko68.filament.compose.scene.IndirectLightState
 import io.github.erkko68.filament.compose.scene.LocalStandardMaterials
 import io.github.erkko68.filament.compose.scene.SkyboxState
@@ -34,10 +35,11 @@ class FilamentScene internal constructor(
  *
  * ```kotlin
  * val scene = rememberFilamentScene(skyboxState = sky) {
- *     DirectionalLight(intensity = 100_000f)
+ *     DirectionalLight(intensity = LightIntensity.LuminousPower(100_000f))
  *     GltfInstance(asset = duck)
  * }
- * FilamentView(scene = scene, cameraState = cam) { Bloom(strength = 0.2f) }
+ * FilamentView(scene = scene, cameraState = cam,
+ *     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)))
  * ```
  *
  * @param engine Engine backing the scene. Defaults to a dedicated engine created and destroyed
@@ -83,3 +85,28 @@ fun rememberFilamentScene(
 
     return handle
 }
+
+/**
+ * Overload wiring a loaded [Environment] (from `rememberKTXEnvironment` / `rememberHDREnvironment`)
+ * into the scene in one argument, instead of threading its two states by hand:
+ *
+ * ```kotlin
+ * val engine = rememberFilamentEngine()
+ * val env    = rememberKTXEnvironment(engine = engine, ibl = { … })
+ * val scene  = rememberFilamentScene(engine, env) { GltfInstance(asset = duck) }
+ * ```
+ *
+ * [engine] is required here (no default): it must be the same engine the environment's textures
+ * were loaded on — a fresh default engine would mix resources across engines.
+ */
+@Composable
+fun rememberFilamentScene(
+    engine: Engine,
+    environment: Environment,
+    content: @Composable FilamentSceneScope.() -> Unit,
+): FilamentScene = rememberFilamentScene(
+    engine = engine,
+    skyboxState = environment.skyboxState,
+    indirectLightState = environment.indirectLightState,
+    content = content,
+)

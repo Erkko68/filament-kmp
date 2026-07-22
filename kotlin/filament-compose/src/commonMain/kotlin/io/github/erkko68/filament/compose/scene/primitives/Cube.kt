@@ -3,7 +3,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
@@ -28,7 +28,7 @@ import io.github.erkko68.filament.utils.Quaternion
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the cube casts shadows onto other renderables. On by default.
  * @param receiveShadows  Whether the cube receives shadows cast by others. On by default.
- * @param onCreate  Receives the renderable entity ID once the cube is added to the scene.
+ * @param onCreate  Runs once when the cube enters the scene, with the renderable entity and engine in scope ([EntityScope]).
  *   Use it to register the cube with `view.pick` callbacks or other entity-keyed maps.
  */
 @Composable
@@ -42,7 +42,7 @@ fun FilamentSceneScope.Cube(
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
-    onCreate: (entity: Entity) -> Unit = {},
+    onCreate: EntityScope.() -> Unit = {},
 ) {
     val mesh = remember(size) { cubeMesh(size) }
     Mesh(mesh, material, position, rotation, scale, pivot, visible, castShadows, receiveShadows, onCreate)

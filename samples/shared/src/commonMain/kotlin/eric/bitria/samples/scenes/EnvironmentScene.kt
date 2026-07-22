@@ -21,7 +21,7 @@ import io.github.erkko68.filament.compose.FilamentView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentEngine
 import io.github.erkko68.filament.compose.rememberFilamentScene
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.Environment
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.Position
@@ -60,7 +60,7 @@ fun HDREnvironmentScene(onBack: () -> Unit) {
     // load fails there. Surface it via onError and show a notice instead of an empty scene.
     var failed by remember { mutableStateOf(false) }
     val environment = rememberHDREnvironment(
-        engine,
+        engine = engine,
         onError = { failed = true },
     ) { Res.readBytes("files/environment/lightroom.hdr") }
 
@@ -104,14 +104,14 @@ private fun EnvironmentSceneContent(
         initialTarget     = Position(0f, 0.5f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val orbit = rememberOrbitCameraState(cameraState)
+    val orbit = rememberOrbitCameraController(cameraState)
 
     val scene = rememberFilamentScene(
         engine = engine,
         skyboxState = environment.skyboxState,
         indirectLightState = environment.indirectLightState,
     ) {
-        GltfInstance(asset = rememberGltfAsset(engine) { Res.readBytes("files/models/Duck.glb") })
+        GltfInstance(asset = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Duck.glb") })
     }
 
     Box(Modifier.fillMaxSize()) {

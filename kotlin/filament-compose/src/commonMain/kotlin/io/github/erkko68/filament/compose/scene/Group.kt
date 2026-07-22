@@ -6,6 +6,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.compose.EntityScope
+import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.internal.transformMatrix
@@ -18,6 +20,13 @@ import io.github.erkko68.filament.utils.Quaternion
  * when it's non-null, so their `position`/`rotation`/`scale` become local to the parent.
  */
 internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
+
+/**
+ * Whether the surrounding Group subtree is visible. Leaf composables (primitives, GltfInstance)
+ * AND their own `visible` with this, so hiding a Group hides everything declared inside it. True
+ * at the top level (no enclosing Group). Nested groups multiply through the provided value.
+ */
+internal val LocalGroupVisible = compositionLocalOf { true }
 
 /**
  * Groups child scene composables under a single transform. Everything declared inside
@@ -43,7 +52,10 @@ internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
  * @param rotation  Rotation applied to the whole group.
  * @param scale     Scale applied to the whole group.
  * @param pivot     Mesh-space pivot point that rotation/scale revolve around.
- * @param onCreate  Receives the group's transform entity ID once it's created.
+ * @param visible   Whether the whole subtree is in the scene. False removes every child
+ *   renderable (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
+ * @param onCreate  Runs once when the group's transform entity is created, with the entity and
+ *   engine in scope ([EntityScope]).
  */
 @Composable
 fun FilamentSceneScope.Group(
@@ -51,7 +63,8 @@ fun FilamentSceneScope.Group(
     rotation: Quaternion = Quaternion(),
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    onCreate: (entity: Entity) -> Unit = {},
+    visible: Boolean = true,
+    onCreate: EntityScope.() -> Unit = {},
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val engine = LocalFilamentEngine.current
@@ -62,7 +75,7 @@ fun FilamentSceneScope.Group(
     DisposableEffect(groupEntity) {
         val tm = engine.getTransformManager()
         tm.create(groupEntity)
-        onCreate(groupEntity)
+        EntityScopeImpl(groupEntity, engine).onCreate()
         onDispose {
             tm.destroy(groupEntity)
             engine.getEntityManager().destroy(groupEntity)
@@ -84,7 +97,10 @@ fun FilamentSceneScope.Group(
         onDispose {}
     }
 
-    CompositionLocalProvider(LocalParentEntity provides groupEntity) {
+    CompositionLocalProvider(
+        LocalParentEntity provides groupEntity,
+        LocalGroupVisible provides (LocalGroupVisible.current && visible),
+    ) {
         content()
     }
 }

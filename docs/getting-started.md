@@ -254,7 +254,7 @@ fun App() {
         ) {
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
-                intensity = 100_000f,         // lux
+                intensity = LightIntensity.LuminousPower(100_000f),   // lux
             )
 
             GltfInstance(

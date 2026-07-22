@@ -46,6 +46,11 @@ data class PostProcessing(
 /**
  * Bloom — "glow" around bright areas.
  *
+ * @param strength How much bloom is blended into the image, `0..1`.
+ * @param thresholdEnabled Whether to clip the source at a fixed luminance of `1.0` before
+ *   blooming. On by default; off blooms the whole image, which is usually only wanted with a
+ *   dirt texture.
+ * @param quality Quality of the bloom's up/downsample chain.
  * @param resolution Width in px of the largest mip in the downsample chain. `0` lets Filament
  *   pick a default (~360 px), which can look pixelated on high-DPI displays. Bump to roughly
  *   half the render width for a smoother halo on retina/iOS screens.
@@ -53,7 +58,7 @@ data class PostProcessing(
  */
 data class Bloom(
     val strength: Float = 0.10f,
-    val threshold: Boolean = true,
+    val thresholdEnabled: Boolean = true,
     val quality: View.Quality = View.Quality.LOW,
     val resolution: Int = 0,
     val levels: Int = 6,
@@ -211,7 +216,7 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
         this.enabled = bloom != null
         bloom?.let {
             this.strength = it.strength
-            this.threshold = it.threshold
+            this.threshold = it.thresholdEnabled
             this.quality = it.quality
             this.resolution = it.resolution
             this.levels = it.levels
@@ -294,8 +299,9 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
     }
 
     view.dithering = dithering?.mode ?: View.Dithering.TEMPORAL
-    renderQuality?.let {
-        view.renderQuality = view.renderQuality.apply { this.hdrColorBuffer = it.hdrColorBuffer }
+    // null restores Filament's native default (HIGH), like every other nullable effect here.
+    view.renderQuality = view.renderQuality.apply {
+        this.hdrColorBuffer = renderQuality?.hdrColorBuffer ?: View.Quality.HIGH
     }
 
     return colorGrade?.let { c ->

@@ -16,10 +16,10 @@ import io.github.erkko68.filament.Skybox as FilamentSkybox
  */
 sealed class SkyboxSource {
     /**
-     * Solid-color skybox. [rgb] is (r, g, b); [alpha] controls blending with the clear color.
+     * Solid-color skybox. [color] is (r, g, b); [alpha] controls blending with the clear color.
      */
     data class Color(
-        val rgb: io.github.erkko68.filament.compose.scene.Color = io.github.erkko68.filament.compose.scene.Color(0.1f, 0.125f, 0.15f),
+        val color: io.github.erkko68.filament.compose.scene.Color = io.github.erkko68.filament.compose.scene.Color(0.1f, 0.125f, 0.15f),
         val alpha: Float = 1.0f,
     ) : SkyboxSource()
 
@@ -95,7 +95,7 @@ internal fun ApplySkybox(state: SkyboxState, engine: Engine, scene: Scene) {
                 .intensity(intensity)
                 .priority(priority)
             when (source) {
-                is SkyboxSource.Color   -> builder.color(source.rgb.r, source.rgb.g, source.rgb.b, source.alpha)
+                is SkyboxSource.Color   -> builder.color(source.color.r, source.color.g, source.color.b, source.alpha)
                 is SkyboxSource.Cubemap -> builder.environment(source.texture)
             }
             builder.build(engine).also { scene.skybox = it }

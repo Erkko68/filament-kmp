@@ -25,10 +25,11 @@ import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentEngine
-import io.github.erkko68.filament.compose.rememberOrbitCameraState
+import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.scene.Color as FilColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
+import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
@@ -55,12 +56,12 @@ fun AnimationScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0.8f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val orbit  = rememberOrbitCameraState(cameraState)
+    val orbit  = rememberOrbitCameraController(cameraState)
     val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
 
     // Hoist the engine so the asset (and its clip names) can be loaded outside the scene content.
     val engine = rememberFilamentEngine()
-    val fox = rememberGltfAsset(engine) { Res.readBytes("files/models/Fox.glb") }
+    val fox = rememberGltfAsset(engine = engine) { Res.readBytes("files/models/Fox.glb") }
     val clipNames = rememberAnimationNames(fox)
 
     var crossFade by remember { mutableFloatStateOf(0.3f) }
@@ -79,7 +80,7 @@ fun AnimationScene(onBack: () -> Unit) {
         ) {
             DirectionalLight(
                 direction = Direction(0.3f, -1f, -0.5f),
-                intensity = 100_000f,
+                intensity = LightIntensity.LuminousPower(100_000f),
             )
             GltfInstance(
                 asset          = fox,

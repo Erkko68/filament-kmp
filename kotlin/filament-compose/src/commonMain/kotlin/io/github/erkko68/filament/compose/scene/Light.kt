@@ -39,17 +39,30 @@ data class SunParams(
 )
 
 /**
- * How a light's `intensity` value is interpreted, mirroring the three intensity setters
- * on the core [LightManager.Builder].
+ * A light's brightness as a value type, bundling the amount with how it's interpreted — one
+ * variant per intensity setter on the core [LightManager.Builder], so unit-specific extras
+ * (Watts' `efficiency`) are unrepresentable with the other units.
  *
- * - [LUMINOUS_POWER] — illuminance in lux for directional lights, luminous power in lumen for
- *   point/spot lights (the default and most common).
- * - [CANDELA] — luminous intensity in candela; for directional lights this equals lux.
- * - [WATTS] — electrical watts; combined with `efficiency` it becomes `683 · efficiency · watts`
- *   lumen. Typical efficiencies: incandescent 0.022, halogen 0.07, LED 0.087, fluorescent 0.107.
- *   The `efficiency` default of 1.0 is an idealized emitter — pass a realistic value with WATTS.
+ * Follows the same "correlated params become a value type" idiom as [Projection]/[SpotCone]/
+ * [SunParams]. The default everywhere is `LuminousPower(100_000f)`.
  */
-enum class LightUnit { LUMINOUS_POWER, CANDELA, WATTS }
+sealed interface LightIntensity {
+    /**
+     * Illuminance in lux for directional lights, luminous power in lumen for point/spot lights —
+     * Filament's plain `intensity()` and the most common choice.
+     */
+    data class LuminousPower(val value: Float) : LightIntensity
+
+    /** Luminous intensity in candela; for directional lights this equals lux. */
+    data class Candela(val value: Float) : LightIntensity
+
+    /**
+     * Electrical watts × luminous [efficiency] → `683 · efficiency · watts` lumen. Typical
+     * efficiencies: incandescent 0.022, halogen 0.07, LED 0.087, fluorescent 0.107 —
+     * [efficiency] is required because an idealized 1.0 emitter is rarely what you mean.
+     */
+    data class Watts(val watts: Float, val efficiency: Float) : LightIntensity
+}
 
 // Per-light shadow config ([ShadowConfig]) and the view-level [Shadows] technique live in Shadows.kt.
 
@@ -60,9 +73,7 @@ internal data class LightSnapshot(
     val direction: Direction,
     val position: Position,
     val color: Color,
-    val intensity: Float,
-    val intensityUnit: LightUnit,
-    val efficiency: Float,
+    val intensity: LightIntensity,
     val shadow: ShadowConfig?,
     val castLight: Boolean,
     val falloff: Float,
@@ -85,10 +96,10 @@ internal data class LightSnapshot(
             .sunAngularRadius(sun.angularRadius)
             .sunHaloSize(sun.haloSize)
             .sunHaloFalloff(sun.haloFalloff)
-        when (intensityUnit) {
-            LightUnit.LUMINOUS_POWER -> builder.intensity(intensity)
-            LightUnit.CANDELA        -> builder.intensityCandela(intensity)
-            LightUnit.WATTS          -> builder.intensity(intensity, efficiency)
+        when (val i = intensity) {
+            is LightIntensity.LuminousPower -> builder.intensity(i.value)
+            is LightIntensity.Candela       -> builder.intensityCandela(i.value)
+            is LightIntensity.Watts         -> builder.intensity(i.watts, i.efficiency)
         }
         builder.castShadows(shadow != null)
         if (shadow != null) builder.shadowOptions(shadow.toShadowOptions())
@@ -101,10 +112,10 @@ internal data class LightSnapshot(
         val lm = engine.getLightManager()
         val li = lm.getInstance(entity)
         lm.setColor(li, color.r, color.g, color.b)
-        when (intensityUnit) {
-            LightUnit.LUMINOUS_POWER -> lm.setIntensity(li, intensity)
-            LightUnit.CANDELA        -> lm.setIntensityCandela(li, intensity)
-            LightUnit.WATTS          -> lm.setIntensity(li, intensity, efficiency)
+        when (val i = intensity) {
+            is LightIntensity.LuminousPower -> lm.setIntensity(li, i.value)
+            is LightIntensity.Candela       -> lm.setIntensityCandela(li, i.value)
+            is LightIntensity.Watts         -> lm.setIntensity(li, i.watts, i.efficiency)
         }
         lm.setDirection(li, direction.x, direction.y, direction.z)
         lm.setFalloff(li, falloff)
@@ -212,16 +223,15 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
  * ```kotlin
  * DirectionalLight(
  *     direction = Direction(0.3f, -1f, -0.5f),
- *     intensity = 100_000f,           // lux
+ *     intensity = LightIntensity.LuminousPower(100_000f),   // lux
  *     shadow    = ShadowConfig(mapSize = 2048, cascades = 3),
  * )
  * ```
  *
  * @param direction Light direction in world space (need not be a unit vector).
  * @param color Linear-sRGB colour; channels may exceed 1 for an over-bright tint.
- * @param intensity Illuminance in lux (or whatever [intensityUnit] selects).
- * @param intensityUnit How [intensity] is interpreted — luminous power, candela, or watts ([LightUnit]).
- * @param efficiency Luminous efficiency fraction; only used when [intensityUnit] is [LightUnit.WATTS].
+ * @param intensity Brightness and its unit as one value ([LightIntensity]) — lux/lumen, candela,
+ *   or watts + efficiency.
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
  * @param lightChannels Which channels (0–7) this light affects; a renderable is lit only if it
@@ -234,16 +244,14 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
 fun FilamentSceneScope.DirectionalLight(
     direction: Direction = Direction(0.3f, -1f, -0.5f),
     color: Color = Color(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    intensityUnit: LightUnit = LightUnit.LUMINOUS_POWER,
-    efficiency: Float = 1f,
+    intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
     followGroupRotation: Boolean = true,
 ) = LightNode(
     LightSnapshot(LightManager.Type.DIRECTIONAL, direction, Position(0f), color, intensity,
-        intensityUnit, efficiency, shadow, castLight, falloff = 10f, cone = SpotCone(),
+        shadow, castLight, falloff = 10f, cone = SpotCone(),
         sun = SunParams(), lightChannels = lightChannels, followGroupRotation = followGroupRotation),
 )
 
@@ -253,9 +261,7 @@ fun FilamentSceneScope.DirectionalLight(
  *
  * @param direction Direction the sunlight travels in world space (need not be a unit vector).
  * @param color Linear-sRGB colour of the light.
- * @param intensity Illuminance in lux (or whatever [intensityUnit] selects).
- * @param intensityUnit How [intensity] is interpreted ([LightUnit]).
- * @param efficiency Luminous efficiency fraction; only used when [intensityUnit] is [LightUnit.WATTS].
+ * @param intensity Brightness and its unit as one value ([LightIntensity]).
  * @param sun Sun-disk appearance — angular radius and halo ([SunParams]).
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
  * @param castLight Whether the light emits illumination (false = shadow-only).
@@ -267,17 +273,15 @@ fun FilamentSceneScope.DirectionalLight(
 fun FilamentSceneScope.SunLight(
     direction: Direction = Direction(0.3f, -1f, -0.5f),
     color: Color = Color(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    intensityUnit: LightUnit = LightUnit.LUMINOUS_POWER,
-    efficiency: Float = 1f,
+    intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     sun: SunParams = SunParams(),
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
     followGroupRotation: Boolean = true,
 ) = LightNode(
-    LightSnapshot(LightManager.Type.SUN, direction, Position(0f), color, intensity, intensityUnit,
-        efficiency, shadow, castLight, falloff = 10f, cone = SpotCone(), sun = sun,
+    LightSnapshot(LightManager.Type.SUN, direction, Position(0f), color, intensity,
+        shadow, castLight, falloff = 10f, cone = SpotCone(), sun = sun,
         lightChannels = lightChannels, followGroupRotation = followGroupRotation),
 )
 
@@ -292,9 +296,7 @@ fun FilamentSceneScope.SunLight(
  *
  * @param position World position; driven via a transform, so the light follows an enclosing [Group].
  * @param color Linear-sRGB colour of the light.
- * @param intensity Luminous power in lumen (or whatever [intensityUnit] selects).
- * @param intensityUnit How [intensity] is interpreted ([LightUnit]).
- * @param efficiency Luminous efficiency fraction; only used when [intensityUnit] is [LightUnit.WATTS].
+ * @param intensity Brightness and its unit as one value ([LightIntensity]).
  * @param falloff Sphere-of-influence radius in world units; minimize overlap for performance.
  * @param castLight Whether the light emits illumination (false = no contribution).
  * @param lightChannels Channels (0–7) this light affects; channel 0 is the default.
@@ -303,15 +305,13 @@ fun FilamentSceneScope.SunLight(
 fun FilamentSceneScope.PointLight(
     position: Position = Position(0f, 2f, 0f),
     color: Color = Color(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    intensityUnit: LightUnit = LightUnit.LUMINOUS_POWER,
-    efficiency: Float = 1f,
+    intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     castLight: Boolean = true,
     lightChannels: Set<Int> = setOf(0),
 ) = LightNode(
     LightSnapshot(LightManager.Type.POINT, Direction(0f, -1f, 0f), position, color, intensity,
-        intensityUnit, efficiency, shadow = null, castLight = castLight, falloff = falloff,
+        shadow = null, castLight = castLight, falloff = falloff,
         cone = SpotCone(), sun = SunParams(), lightChannels = lightChannels),
 )
 
@@ -322,9 +322,7 @@ fun FilamentSceneScope.PointLight(
  * @param position World position; driven via a transform, so the light follows an enclosing [Group].
  * @param direction Aim direction in world space (need not be a unit vector).
  * @param color Linear-sRGB colour of the light.
- * @param intensity Luminous power in lumen (or whatever [intensityUnit] selects).
- * @param intensityUnit How [intensity] is interpreted ([LightUnit]).
- * @param efficiency Luminous efficiency fraction; only used when [intensityUnit] is [LightUnit.WATTS].
+ * @param intensity Brightness and its unit as one value ([LightIntensity]).
  * @param falloff Sphere-of-influence radius in world units.
  * @param cone Inner/outer cone half-angles in radians ([SpotCone]).
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
@@ -338,9 +336,7 @@ fun FilamentSceneScope.SpotLight(
     position: Position = Position(0f, 2f, 0f),
     direction: Direction = Direction(0f, -1f, 0f),
     color: Color = Color(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    intensityUnit: LightUnit = LightUnit.LUMINOUS_POWER,
-    efficiency: Float = 1f,
+    intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     cone: SpotCone = SpotCone(),
     shadow: ShadowConfig? = null,
@@ -348,8 +344,8 @@ fun FilamentSceneScope.SpotLight(
     lightChannels: Set<Int> = setOf(0),
     followGroupRotation: Boolean = true,
 ) = LightNode(
-    LightSnapshot(LightManager.Type.SPOT, direction, position, color, intensity, intensityUnit,
-        efficiency, shadow, castLight, falloff, cone, sun = SunParams(),
+    LightSnapshot(LightManager.Type.SPOT, direction, position, color, intensity,
+        shadow, castLight, falloff, cone, sun = SunParams(),
         lightChannels = lightChannels, followGroupRotation = followGroupRotation),
 )
 
@@ -361,9 +357,7 @@ fun FilamentSceneScope.SpotLight(
  * @param position World position; driven via a transform, so the light follows an enclosing [Group].
  * @param direction Aim direction in world space (need not be a unit vector).
  * @param color Linear-sRGB colour of the light.
- * @param intensity Luminous power in lumen (or whatever [intensityUnit] selects).
- * @param intensityUnit How [intensity] is interpreted ([LightUnit]).
- * @param efficiency Luminous efficiency fraction; only used when [intensityUnit] is [LightUnit.WATTS].
+ * @param intensity Brightness and its unit as one value ([LightIntensity]).
  * @param falloff Sphere-of-influence radius in world units.
  * @param cone Inner/outer cone half-angles in radians ([SpotCone]); the outer angle scales total output.
  * @param shadow Shadow-map config ([ShadowConfig]), or null for no shadows.
@@ -377,9 +371,7 @@ fun FilamentSceneScope.FocusedSpotLight(
     position: Position = Position(0f, 2f, 0f),
     direction: Direction = Direction(0f, -1f, 0f),
     color: Color = Color(1f, 1f, 1f),
-    intensity: Float = 100_000f,
-    intensityUnit: LightUnit = LightUnit.LUMINOUS_POWER,
-    efficiency: Float = 1f,
+    intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     cone: SpotCone = SpotCone(),
     shadow: ShadowConfig? = null,
@@ -388,7 +380,7 @@ fun FilamentSceneScope.FocusedSpotLight(
     followGroupRotation: Boolean = true,
 ) = LightNode(
     LightSnapshot(LightManager.Type.FOCUSED_SPOT, direction, position, color, intensity,
-        intensityUnit, efficiency, shadow, castLight, falloff, cone, sun = SunParams(),
+        shadow, castLight, falloff, cone, sun = SunParams(),
         lightChannels = lightChannels, followGroupRotation = followGroupRotation),
 )
 

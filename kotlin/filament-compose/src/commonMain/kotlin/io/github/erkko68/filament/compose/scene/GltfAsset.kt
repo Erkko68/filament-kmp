@@ -122,7 +122,7 @@ internal fun rememberGltfAsset(
  *
  * // Outside a scene — engine hoisted, asset can outlive any single scene
  * val engine = rememberFilamentEngine()
- * val duck   = rememberGltfAsset(engine) { Res.readBytes("Duck.glb") }
+ * val duck   = rememberGltfAsset(engine = engine) { Res.readBytes("Duck.glb") }
  * val scene  = rememberFilamentScene(engine = engine) { GltfInstance(asset = duck, ...) }
  *
  * // Distinguishing loading from failure: null + a captured error
@@ -138,17 +138,17 @@ internal fun rememberGltfAsset(
  * Each [GltfInstance] created from the returned asset lives until the asset is destroyed
  * (when this call leaves composition) — see [GltfAsset].
  *
- * @param engine The Filament engine that owns the asset's GPU resources. Defaults to the
- *   engine in the current composition scope.
  * @param key Reloads the asset when this value changes. Defaults to [Unit] for static assets.
  * @param onError Invoked once if [load] throws or the bytes don't parse. The asset stays null.
+ * @param engine The Filament engine that owns the asset's GPU resources. Defaults to the
+ *   engine in the current composition scope.
  * @param load Suspend function that produces the raw glb/glTF bytes.
  */
 @Composable
 fun rememberGltfAsset(
-    engine: Engine = LocalFilamentEngine.current,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
+    engine: Engine = LocalFilamentEngine.current,
     load: suspend () -> ByteArray,
 ): GltfAsset? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {

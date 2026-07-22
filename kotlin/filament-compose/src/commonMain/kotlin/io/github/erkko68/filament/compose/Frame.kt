@@ -27,7 +27,7 @@ private const val MAX_DELTA_SECONDS = 0.1f
 /**
  * The single per-frame primitive for `filament-compose`: runs [onFrame] once per display refresh
  * (via `withFrameNanos`) without triggering recomposition. Every other per-frame helper —
- * [rememberSceneClock], [FilamentEffect]'s `onFrame`, `rememberFlightCameraState`,
+ * [rememberSceneClock], [FilamentEffect]'s `onFrame`, `rememberFlightCameraController`,
  * [io.github.erkko68.filament.compose.scene.rememberAnimationState] — is built on this.
  *
  * Use it directly for per-frame side effects (driving a transform, a material parameter, a custom

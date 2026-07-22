@@ -29,7 +29,7 @@ FilamentSceneView(
     skyboxState    = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f))),
     postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)),
 ) {
-    DirectionalLight(direction = Direction(0.3f, -1f, -0.5f), intensity = 100_000f)
+    DirectionalLight(direction = Direction(0.3f, -1f, -0.5f), intensity = LightIntensity.LuminousPower(100_000f))
     GltfInstance(asset = rememberGltfAsset { Res.readBytes("files/Duck.glb") })
 }
 ```
