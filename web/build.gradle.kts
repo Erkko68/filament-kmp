@@ -39,7 +39,7 @@ kotlin {
                 // (js + wasmJs) artifacts. Pinned: still-newer wrappers made the
                 // TypedArrays generic (Float32Array<B>), which the externals don't
                 // parameterise.
-                api(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:2026.7.2"))
+                api(project.dependencies.platform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:2026.7.4"))
                 api("org.jetbrains.kotlin-wrappers:kotlin-js")
                 api("org.jetbrains.kotlin-wrappers:kotlin-web")
                 api("org.jetbrains.kotlin-wrappers:kotlin-browser")
