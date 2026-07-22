@@ -15,9 +15,6 @@ private external interface BloomOptionsExt : JsAny  {
     var dirt: io.github.erkko68.filament.web.Texture?
     var dirtStrength: Double
 }
-private external interface FogOptionsExt : JsAny  {
-    var densityMap: io.github.erkko68.filament.web.Texture?
-}
 private external interface AoOptionsExt : JsAny  {
     var ssct: io.github.erkko68.filament.web.View_AmbientOcclusionOptions_Ssct
 }
@@ -207,7 +204,6 @@ actual class View(internal val jsView: JSView) {
             jsOptions.inScatteringStart = value.inScatteringStart.toDouble()
             jsOptions.inScatteringSize = value.inScatteringSize.toDouble()
             jsOptions.fogColorFromIbl = value.fogColorFromIbl
-            jsOptions.unsafeCast<FogOptionsExt>().densityMap = value.densityMap?.jsTexture
             jsView.setFogOptions(jsOptions)
         }
 
@@ -516,7 +512,6 @@ actual class View(internal val jsView: JSView) {
         actual var height: Float = 0.0f
         actual var heightFalloff: Float = 1.0f
         actual var color: FloatArray = floatArrayOf(1.0f, 1.0f, 1.0f)
-        actual var densityMap: Texture? = null
         actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
         actual var maximumOpacity: Float = 1.0f
         actual var inScatteringStart: Float = 0.0f

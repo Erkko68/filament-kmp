@@ -322,10 +322,6 @@ expect class View {
          */
         var color: FloatArray
 
-        /**
-         * Optional density map texture for varying fog density across the scene. Default: null.
-         */
-        var densityMap: Texture?
 
         /**
          * Distance in world units [m] after which the fog calculation is disabled. This can be

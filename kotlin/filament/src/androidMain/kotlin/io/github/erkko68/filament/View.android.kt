@@ -85,7 +85,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         actual var height: Float get() = native.height; set(v) { native.height = v }
         actual var heightFalloff: Float get() = native.heightFalloff; set(v) { native.heightFalloff = v }
         actual var color: FloatArray get() = native.color; set(v) { native.color = v }
-        actual var densityMap: Texture? = null
         actual var cutOffDistance: Float get() = native.cutOffDistance; set(v) { native.cutOffDistance = v }
         actual var maximumOpacity: Float get() = native.maximumOpacity; set(v) { native.maximumOpacity = v }
         actual var inScatteringStart: Float get() = native.inScatteringStart; set(v) { native.inScatteringStart = v }

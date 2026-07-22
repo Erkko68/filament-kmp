@@ -105,7 +105,7 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `Engine.isValidStream` | Throws | — |
 | `Engine.paused` | Tracked locally only — pausing requires a multi-threaded engine, which the web build is not | Stop your own frame loop instead |
 | `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
-| `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.densityMap` | Silent no-op — `Texture` fields inside embind value objects are unsupported upstream | — |
+| `View.BloomOptions.dirt`/`dirtStrength` | Silent no-op — `Texture` fields inside embind value objects are unsupported upstream | — |
 
 > [!NOTE]
 > Everything else in the table that used to live here — `SkinningBuffer`, `MorphTargetBuffer`,
