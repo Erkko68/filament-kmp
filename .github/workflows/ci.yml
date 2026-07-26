@@ -328,7 +328,7 @@ jobs:
       # snapshot instead of cold-booting every time — faster and far less flaky
       # for Filament's GPU driver, which is sensitive to first-boot timing.
       - name: AVD cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         id: avd-cache
         with:
           path: |
