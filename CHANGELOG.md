@@ -13,17 +13,22 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-07-22
+
 ### Added
+- **Filament 1.74.0**: Upgraded the bundled Filament engine to 1.74.0 (no public C++ API changes; MATERIAL_VERSION 73→74, all `.filamat` materials recompiled). The web prebuilt is built from our fork's `feat/webgl-bindings-coverage-1.74` branch (the `v1.74.0` tag + expanded JS bindings) pending the upstream PR.
+- **Android-API parity sweep** (`filament`): bound every remaining public Filament Android API missing from common — GTAO selection (`AmbientOcclusionOptions.aoType` + `AmbientOcclusionType` enum), typed TAA options (`TemporalAntiAliasingOptions.boxType`/`boxClipping`/`jitterPattern` are now `BoxType`/`BoxClipping`/`JitterPattern` enums instead of raw `Int`s — source-breaking if you set them), world-origin grid snapping (`View.gridSize`/`effectiveGridSize`), `Engine.hasUnrecoverableFailure`, `MaterialInstance.getConstantBoolean/Float/Int`, `ColorGrading.Builder.customLut`, and `RenderableManager.getEnabledAttributesAt`. On web, `getConstant*` and `customLut` throw `UnsupportedOperationException` (`@PlatformGap`: not bound in filament.js); everything else works on all targets. Intentional non-mirrors are documented in `scripts/dev/check-common-api-ignores.txt`.
 - **Transparent built-in material** (`filament-compose`): `StandardMaterial.Transparent` + `rememberTransparentColorMaterialInstance(color, alpha, …)` — LIT PBR with alpha transparency (pre-multiplied, two-pass so convex primitives self-composite correctly), shipped as a precompiled `.filamat` like the other standard materials, so it works on every target with no `.mat` authoring.
-- **`visible` on primitives and `GltfInstance`** (`filament-compose`): a show/hide toggle that removes the renderable from the scene cheaply while keeping the entity and its state alive — previously hiding meant removing the composable and losing state.
-- **`visible` on `Group`** (`filament-compose`): hiding a `Group` now hides its whole subtree — every child renderable is pulled from the scene cheaply while entities and state stay alive (propagated through a composition local, so nested groups compose). Completes the `visible` parity started on the leaf composables.
+- **`visible` on primitives, `GltfInstance`, and `Group`** (`filament-compose`): a show/hide toggle that pulls the renderable(s) from the scene cheaply while keeping entities and state alive — previously hiding meant removing the composable and losing state. On `Group` it hides the whole subtree (propagated through a composition local, so nested groups compose).
 - **`CameraState.focusDistance`** (`filament-compose`): the depth-of-field focal plane is now settable — `PostProcessing(depthOfField = …)` was previously stuck at the native default distance with no way to place focus.
 - **Compose UI colour interop** (`filament-compose`): construct a scene `Color` from an `androidx.compose.ui.graphics.Color` (and back via `toComposeColor()`), instead of hand-converting channels.
 - **Shared `CameraController` interface** (`filament-compose`): `OrbitCameraController`/`MapCameraController`/`FlightCameraController` now implement a common `CameraController` (`setViewport`/`resetToHome`/`saveBookmark`/`jumpToBookmark`), so generic UI can reset or bookmark whichever camera is active. `FlightCameraController` gained `resetToHome`/bookmarks (Filament's `Manipulator` supports FLIGHT bookmarks); its per-frame `update` stays flight-only.
 - **`rememberFilamentScene`/`FilamentSceneView` `environment` overloads** (`filament-compose`): pass a loaded `Environment` (from `rememberKTXEnvironment`/`rememberHDREnvironment`) in one argument instead of threading `environment.skyboxState` + `environment.indirectLightState` by hand — `rememberFilamentScene(engine, env) { … }`.
-- **Android-API parity sweep** (`filament`): bound every remaining public Filament Android API missing from common — GTAO selection (`AmbientOcclusionOptions.aoType` + `AmbientOcclusionType` enum), typed TAA options (`TemporalAntiAliasingOptions.boxType`/`boxClipping`/`jitterPattern` are now `BoxType`/`BoxClipping`/`JitterPattern` enums instead of raw `Int`s — source-breaking if you set them), world-origin grid snapping (`View.gridSize`/`effectiveGridSize`), `Engine.hasUnrecoverableFailure`, `MaterialInstance.getConstantBoolean/Float/Int`, `ColorGrading.Builder.customLut`, and `RenderableManager.getEnabledAttributesAt`. On web, `getConstant*` and `customLut` throw `UnsupportedOperationException` (`@PlatformGap`: not bound in filament.js); everything else works on all targets. Intentional non-mirrors are documented in `scripts/dev/check-common-api-ignores.txt`.
 - **`castShadows`/`receiveShadows` on `GltfInstance`** (`filament-compose`): nullable per-instance overrides applied to every renderable in the instance (`null`, the default, keeps what the asset authored) — closing the parity gap with the primitives' shadow toggles.
 - **Smarter upgrade tooling** (build): `check-common-api.sh` now audits classes, nested types, and enum constants (not just method names), strips KDoc before matching, flags upstream-deprecated members informationally, reads suppressions from `check-common-api-ignores.txt`, and exits non-zero on unsuppressed gaps; `upgrade-diff.sh` gained a HIGHLIGHTS section (MATERIAL_VERSION bump, `CONFIG_MAX_*`, feature-flag flips, added/removed Java classes and embind bindings) and optional tags (defaults: `filaVersion` → latest upstream release).
+
+### Known issues
+- Upstream regression (present in stock 1.74.0, all backends): a scene lit **only** by punctual lights (e.g. a spot, no directional) panics in `renderView` when the view's shadow type is VSM/DPCF/PCSS — the requested shader variant collides with the reserved SSR variant after the dynamic-lighting variant removal. Use PCF for spot-only scenes until fixed upstream.
 
 ### Changed
 - **JVM surface readback is zero-copy** (`filament-compose`): Filament's `readPixels` now writes straight into Skia-owned memory that the on-screen `Image` wraps without copying — previously every frame paid two full-frame CPU copies (native → `ByteArray` → Skia) plus a full-frame off-heap allocation; the blit also uses linear sampling (smoother while a resize debounces) and flips vertically on OpenGL backends, whose `readPixels` row order is bottom-up unlike Metal's top-down (pinned by the new `readPixelsRowOrderMatchesBackendConvention` Tier C test).
@@ -53,6 +58,23 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`GltfInstance` no longer silently aliases the primary instance** (`filament-compose`): when `createInstance` fails, only the first `GltfInstance` falls back to the asset's built-in instance; a second one now renders nothing and warns instead of two composables fighting over one transform/animator.
 - **Web TAA options no longer drop fields** (`filament`): the web `temporalAntiAliasingOptions` setter now forwards `filterInput`, `useYCoCg`, `hdr`, `boxType`, `boxClipping`, `jitterPattern`, `varianceGamma`, `preventFlickering`, and `historyReprojection` instead of silently resetting them to defaults.
 - **`downloadPrebuilts` works again on 1.73.0** (build): dropped the dead `macosX64` prebuilt target — upstream releases stopped shipping mac x86_64 libs, which made the umbrella task fail.
+
+### Migration from `0.2.0`
+`filament-compose` had an API-consistency sweep this release; most changes are mechanical renames. `filament`/`gltfio` gained bindings only — no migration needed there.
+
+| Old | New |
+|---|---|
+| `rememberOrbitCameraState`/`rememberMapCameraState`/`rememberFlightCameraState` and `OrbitCameraState`/`MapCameraState`/`FlightCameraState` | `remember*CameraController` and `*CameraController` |
+| `intensity = 100_000f` (light) | `intensity = LightIntensity.LuminousPower(100_000f)` (or `.Candela`/`.Watts`) |
+| `Bloom.threshold`, `enablePanning` | `Bloom.thresholdEnabled`, `panningEnabled` |
+| `SkyboxSource.Color(rgb = …)` | `SkyboxSource.Color(color = …)` |
+| `rememberRenderTarget` | `rememberRenderTargetTexture` — now takes `postProcessing: PostProcessing? = null` instead of `postProcessingEnabled: Boolean` |
+| `ColorGrade.toneMapper: ToneMapper` | `ColorGrade.toneMapping: ToneMapping` |
+| `onCreate = { entity -> … }` (primitives, `Group`) | `onCreate = { /* entity, engine in scope */ }` (`EntityScope.() -> Unit`) |
+| `rememberMaterial(engine, key, onError) { … }` (positional `engine`) | pass `engine` by name — its position moved next to the trailing lambda |
+| Manual `viewport.height - y` before `FilamentViewState.pick` | remove it — `pick` now converts from Compose's top-left coords itself |
+
+Also check if you rely on: `rememberCameraState`/`rememberSkyboxState`/`rememberIndirectLightState`/`rememberAnimationState`/`rememberKTXEnvironment`/`rememberHDREnvironment` parameters now seed initial composition only (mutate the returned state to change them later); `Modifier.flightGestures` is a plain (non-`@Composable`) `Modifier` extension now; lights inside a rotating `Group` re-aim by default (`followGroupRotation = true`) unless you opt out.
 
 ## [0.2.0] — 2026-07-16
 
@@ -295,7 +317,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/Erkko68/filament-kmp/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta03...0.2.0
 [0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03
 [0.1.3-beta02]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta01...0.1.3-beta02
