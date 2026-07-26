@@ -26,6 +26,8 @@ import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.utils.Manipulator
+import io.github.erkko68.filament.utils.radians
+import kotlin.math.ln
 
 // ── Shared internals ──────────────────────────────────────────────────────────
 
@@ -312,8 +314,19 @@ class FlightCameraController internal constructor(
     // Owned here so [Modifier.flightGestures] can stay a plain (non-composable) modifier like
     // the orbit/map ones; the keyboard focus is requested once from rememberFlightCameraController.
     internal val focusRequester: FocusRequester,
+    // Absolute wheel position, shared across tuning rebuilds so the chosen speed survives one.
+    private val speedWheel: FloatArray,
+    private val speedSteps: Int,
 ) : CameraController {
     override fun setViewport(width: Int, height: Int) = manipulator.setViewport(width, height)
+
+    /** Step the movement speed along the `initialMoveSpeed`…`maxMoveSpeed` curve; one unit of
+     *  [steps] is one of `speedSteps`. Driven by the scroll wheel in [Modifier.flightGestures]. */
+    fun adjustSpeed(steps: Float) {
+        val half = speedSteps / 2f
+        speedWheel[0] = (speedWheel[0] + steps).coerceIn(-half, half)
+        manipulator.scroll(0, 0, steps) // clamps the same way internally
+    }
 
     /** Advance the camera simulation by [deltaTime] seconds. Flight-only; driven automatically
      *  per frame by [rememberFlightCameraController], so callers rarely call it directly. */
@@ -335,15 +348,21 @@ class FlightCameraController internal constructor(
  * The manipulator's start position is taken from [cameraState.eye] at creation time.
  *
  * The tuning parameters are reactive — changing them at runtime rebuilds the manipulator
- * while keeping the current camera pose, so nothing jumps; [startPitch]/[startYaw] only
- * define the initial (and [resetToHome][FlightCameraController.resetToHome]) orientation.
+ * while keeping the current camera pose and the current scroll-wheel speed, so nothing jumps;
+ * [startPitch]/[startYaw] only define the initial (and
+ * [resetToHome][FlightCameraController.resetToHome]) orientation.
  *
- * @param startPitch     Initial pitch in degrees (positive = look up).
- * @param startYaw       Initial yaw in degrees.
- * @param maxMoveSpeed   Maximum movement speed in world units per second.
- * @param moveDamping    Movement damping (higher = snappier stop).
- * @param panSpeedX      Mouse-look horizontal sensitivity.
- * @param panSpeedY      Mouse-look vertical sensitivity.
+ * Speed sits on an exponential curve spanning [speedSteps] scroll notches: the camera starts at
+ * [initialMoveSpeed], full scroll-up reaches [maxMoveSpeed], full scroll-down `1 / maxMoveSpeed`.
+ *
+ * @param startPitch       Initial pitch in degrees (positive = look up).
+ * @param startYaw         Initial yaw in degrees.
+ * @param maxMoveSpeed     Movement speed in world units per second at full scroll-up.
+ * @param initialMoveSpeed Movement speed before any scrolling; must be > 0.
+ * @param speedSteps       Scroll notches spanning the whole speed range (fewer = coarser steps).
+ * @param moveDamping      Movement damping (higher = snappier stop).
+ * @param panSpeedX        Mouse-look horizontal sensitivity.
+ * @param panSpeedY        Mouse-look vertical sensitivity.
  */
 @Composable
 fun rememberFlightCameraController(
@@ -351,26 +370,47 @@ fun rememberFlightCameraController(
     startPitch: Float = 0f,
     startYaw: Float = 0f,
     maxMoveSpeed: Float = 10f,
+    initialMoveSpeed: Float = 1f,
+    speedSteps: Int = 20,
     moveDamping: Float = 15f,
     panSpeedX: Float = 0.01f,
     panSpeedY: Float = 0.01f,
 ): FlightCameraController {
     val focusRequester = remember { FocusRequester() }
     val previous = remember(cameraState) { arrayOfNulls<Manipulator>(1) }
-    val state = remember(cameraState, startPitch, startYaw, maxMoveSpeed, moveDamping, panSpeedX, panSpeedY) {
+    // Absolute wheel position; seeded from initialMoveSpeed, then owned by adjustSpeed().
+    val speedWheel = remember(cameraState) { FloatArray(1) { Float.NaN } }
+    val state = remember(
+        cameraState, startPitch, startYaw,
+        maxMoveSpeed, initialMoveSpeed, speedSteps, moveDamping, panSpeedX, panSpeedY,
+    ) {
         val eye = cameraState.eye
         val manipulator = Manipulator.Builder()
             .flightStartPosition(eye.x, eye.y, eye.z)
-            .flightStartOrientation(startPitch, startYaw)
+            .flightStartOrientation(radians(startPitch), radians(startYaw))
             .flightMaxMoveSpeed(maxMoveSpeed)
+            .flightSpeedSteps(speedSteps)
             .flightMoveDamping(moveDamping)
             .flightPanSpeed(panSpeedX, panSpeedY)
             .build(Manipulator.Mode.FLIGHT)
+        // The manipulator's speed is maxMoveSpeed^(wheel/half), i.e. always 1.0 at wheel 0 —
+        // maxMoveSpeed alone has no effect until you scroll. Seed the wheel so the camera
+        // actually starts at initialMoveSpeed, and re-apply it after a tuning rebuild.
+        val half = speedSteps / 2f
+        if (speedWheel[0].isNaN()) {
+            val ratio = if (maxMoveSpeed > 0f && maxMoveSpeed != 1f) {
+                ln(initialMoveSpeed.coerceAtLeast(1e-6f)) / ln(maxMoveSpeed)
+            } else 0f
+            speedWheel[0] = (half * ratio).coerceIn(-half, half)
+        }
+        speedWheel[0] = speedWheel[0].coerceIn(-half, half) // speedSteps may have changed
+        manipulator.scroll(0, 0, speedWheel[0])
         // Carry the current pose across a tuning rebuild so the camera doesn't move (same as
         // orbit/map); without this, orientation would snap back to startPitch/startYaw.
         previous[0]?.let { manipulator.jumpToBookmark(it.getCurrentBookmark()) }
         previous[0] = manipulator
-        FlightCameraController(manipulator, cameraState, focusRequester).also { it.sync() }
+        FlightCameraController(manipulator, cameraState, focusRequester, speedWheel, speedSteps)
+            .also { it.sync() }
     }
     DisposableEffect(state) { onDispose { state.manipulator.destroy() } }
     // Self-driving: advance the flight simulation every frame so callers never need a separate loop.
@@ -393,7 +433,7 @@ fun rememberFlightCameraController(
  * | D / Arrow Right    | Strafe right     |
  * | E / Space          | Move up          |
  * | Q / Shift          | Move down        |
- * | Scroll wheel       | Change speed     |
+ * | Scroll up / down   | Faster / slower  |
  */
 fun Modifier.flightGestures(controller: FlightCameraController): Modifier =
     this
@@ -434,17 +474,13 @@ fun Modifier.flightGestures(controller: FlightCameraController): Modifier =
             }
         }
         .pointerInput(controller) {
-            // Scroll to adjust movement speed
+            // Scroll to adjust movement speed. Scrolling up (negative delta) speeds up.
             awaitPointerEventScope {
                 while (true) {
                     val event = awaitPointerEvent()
                     if (event.type == PointerEventType.Scroll) {
                         val change = event.changes.firstOrNull() ?: continue
-                        controller.manipulator.scroll(
-                            change.position.x.toInt(),
-                            change.position.y.toInt(),
-                            change.scrollDelta.y,
-                        )
+                        controller.adjustSpeed(-change.scrollDelta.y)
                         event.changes.forEach { it.consume() }
                     }
                 }

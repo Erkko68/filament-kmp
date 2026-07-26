@@ -68,6 +68,7 @@ public final class io/github/erkko68/filament/compose/FilamentViewStateKt {
 
 public final class io/github/erkko68/filament/compose/FlightCameraController : io/github/erkko68/filament/compose/CameraController {
 	public static final field $stable I
+	public final fun adjustSpeed (F)V
 	public fun jumpToBookmark (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)V
 	public fun resetToHome ()V
 	public fun saveBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
@@ -100,7 +101,7 @@ public final class io/github/erkko68/filament/compose/InteractionKt {
 	public static final fun mapGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/MapCameraController;)Landroidx/compose/ui/Modifier;
 	public static final fun orbitGestures (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/OrbitCameraController;)Landroidx/compose/ui/Modifier;
 	public static final fun pickOnTap (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/FilamentViewState;Lkotlin/jvm/functions/Function1;)Landroidx/compose/ui/Modifier;
-	public static final fun rememberFlightCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/FlightCameraController;
+	public static final fun rememberFlightCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFIFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/FlightCameraController;
 	public static final fun rememberMapCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFFLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/MapCameraController;
 	public static final fun rememberOrbitCameraController (Lio/github/erkko68/filament/compose/scene/CameraState;FFFZLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/OrbitCameraController;
 }

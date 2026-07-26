@@ -13,6 +13,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Fixed
+- **Flight camera speed is finally settable** (`filament-compose`, behavior-breaking): `rememberFlightCameraController` gained `initialMoveSpeed` (default `1f`) and `speedSteps` (default `20`, was upstream's `80`). Filament's `FreeFlightManipulator` computes its speed as `maxMoveSpeed^(wheel/halfSteps)`, which is **1.0 world-unit/s at wheel 0** — so `maxMoveSpeed` alone did nothing until you scrolled, and one scroll notch over 80 steps moved the speed by ~6%, making the wheel feel dead too. The controller now seeds the wheel from `initialMoveSpeed`, carries it across a tuning rebuild, and exposes `FlightCameraController.adjustSpeed(steps)`; `maxMoveSpeed` is documented as what full scroll-up reaches. Scrolling **up** now speeds up (it was inverted relative to the orbit/map zoom convention).
+- **Flight start orientation was off by a factor of 57** (`filament-compose`, behavior-breaking): `rememberFlightCameraController`'s `startPitch`/`startYaw` are documented in degrees but were passed straight to `Manipulator.flightStartOrientation`, which takes radians — non-zero values aimed the camera nowhere near where they said. They are now converted; if you compensated by passing radians, drop the conversion.
+
 ## [0.3.0] — 2026-07-22
 
 ### Added

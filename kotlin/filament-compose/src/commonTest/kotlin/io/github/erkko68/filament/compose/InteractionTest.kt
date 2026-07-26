@@ -81,4 +81,56 @@ class InteractionTest : ComposeTestFixture() {
             assertEquals(0f, cam.eyeDistanceTo(0f, 0f, 5f), 1e-2f)
         }
     }
+
+    // Undamped so the upstream mEyeVelocity read-before-write (see above) can't bite: with
+    // moveDamping = 0 the velocity is assigned, not accumulated.
+    @OptIn(ExperimentalTestApi::class)
+    private fun distanceFlown(
+        maxMoveSpeed: Float,
+        initialMoveSpeed: Float,
+        scrollSteps: Float = 0f,
+    ): Float {
+        val cam = newCameraState(Position(0f, 0f, 0f))
+        lateinit var state: FlightCameraController
+        var flown = 0f
+        withFilamentScene(engine, scene) { setContent ->
+            setContent {
+                state = rememberFlightCameraController(
+                    cam,
+                    maxMoveSpeed = maxMoveSpeed,
+                    initialMoveSpeed = initialMoveSpeed,
+                    moveDamping = 0f,
+                )
+            }
+            waitForIdle()
+            mainClock.advanceTimeByFrame()
+            if (scrollSteps != 0f) state.adjustSpeed(scrollSteps)
+            state.manipulator.keyDown(Manipulator.Key.FORWARD)
+            repeat(10) { state.update(0.1f) } // 1 second of flight
+            state.manipulator.keyUp(Manipulator.Key.FORWARD)
+            flown = cam.eyeDistanceTo(0f, 0f, 0f)
+        }
+        return flown
+    }
+
+    /** initialMoveSpeed is the speed the camera actually flies at — before this, the manipulator
+     *  always started at 1 unit/s no matter what maxMoveSpeed said. */
+    @Test
+    fun flightInitialMoveSpeedSetsActualSpeed() {
+        assertEquals(1f, distanceFlown(maxMoveSpeed = 10f, initialMoveSpeed = 1f), 0.05f)
+        assertEquals(4f, distanceFlown(maxMoveSpeed = 10f, initialMoveSpeed = 4f), 0.2f)
+        // maxMoveSpeed is only the ceiling of the scroll curve; it must not change the start speed.
+        assertEquals(4f, distanceFlown(maxMoveSpeed = 100f, initialMoveSpeed = 4f), 0.2f)
+    }
+
+    /** Scrolling up speeds the camera up, and reaches maxMoveSpeed at the top of the curve. */
+    @Test
+    fun flightScrollAdjustsSpeedUpToMax() {
+        val base = distanceFlown(maxMoveSpeed = 10f, initialMoveSpeed = 1f)
+        val faster = distanceFlown(maxMoveSpeed = 10f, initialMoveSpeed = 1f, scrollSteps = 5f)
+        assertTrue(faster > base * 1.5f, "scrolling up should noticeably speed the camera up")
+        // speedSteps defaults to 20, so +10 notches from the 1 u/s midpoint tops out at maxMoveSpeed.
+        assertEquals(10f, distanceFlown(10f, 1f, scrollSteps = 10f), 0.5f)
+        assertEquals(10f, distanceFlown(10f, 1f, scrollSteps = 50f), 0.5f) // clamped
+    }
 }
