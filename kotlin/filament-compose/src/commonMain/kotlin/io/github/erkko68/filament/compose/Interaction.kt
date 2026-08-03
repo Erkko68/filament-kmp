@@ -2,7 +2,6 @@ package io.github.erkko68.filament.compose
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -16,7 +15,11 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
@@ -55,6 +58,22 @@ interface CameraController {
     fun jumpToBookmark(bookmark: Manipulator.Bookmark)
 }
 
+// Like foundation's awaitFirstDown, minus its "mouse down means primary button only" rule
+// (firstDownRefersToPrimaryMouseButtonOnly() is true on skiko: desktop, web, iOS) — that rule
+// swallows right-click presses entirely, so secondary-button panning never started.
+private suspend fun AwaitPointerEventScope.awaitFirstDownAnyButton(): PointerInputChange {
+    var event: PointerEvent
+    do {
+        event = awaitPointerEvent()
+    } while (!event.changes.all { it.changedToDownIgnoreConsumed() })
+    return event.changes[0]
+}
+
+// Filament's manipulator reads viewport coordinates bottom-left-origin (GL convention, same as
+// its own sample apps' `y = height - y`); Compose is top-left-origin. Without this flip vertical
+// drags pan and orbit the wrong way while horizontal ones look right.
+private fun AwaitPointerEventScope.viewportY(y: Float): Int = size.height - y.toInt()
+
 private fun Manipulator.syncTo(cameraState: CameraState) {
     val e = FloatArray(3); val t = FloatArray(3); val u = FloatArray(3)
     getLookAt(e, t, u)
@@ -74,12 +93,12 @@ private fun Modifier.manipulatorDragGestures(
     .onSizeChanged { manipulator.setViewport(it.width, it.height) }
     .pointerInput(manipulator) {
         awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = false)
+            val down = awaitFirstDownAnyButton()
             val strafe = alwaysStrafe || currentEvent.buttons.isSecondaryPressed
             var pinchMode = false
             var prevPinchDistance = 0f
 
-            manipulator.grabBegin(down.position.x.toInt(), down.position.y.toInt(), strafe)
+            manipulator.grabBegin(down.position.x.toInt(), viewportY(down.position.y), strafe)
 
             while (true) {
                 val event = awaitPointerEvent()
@@ -98,7 +117,7 @@ private fun Modifier.manipulatorDragGestures(
                             val center = (pressed[0].position + pressed[1].position) / 2f
                             manipulator.scroll(
                                 center.x.toInt(),
-                                center.y.toInt(),
+                                viewportY(center.y),
                                 (prevPinchDistance - dist) * 0.005f,
                             )
                             prevPinchDistance = dist
@@ -109,7 +128,7 @@ private fun Modifier.manipulatorDragGestures(
                     pressed.size == 1 && !pinchMode -> {
                         val change = pressed.first()
                         if (change.positionChanged()) {
-                            manipulator.grabUpdate(change.position.x.toInt(), change.position.y.toInt())
+                            manipulator.grabUpdate(change.position.x.toInt(), viewportY(change.position.y))
                             onSync()
                             change.consume()
                         }
@@ -131,7 +150,7 @@ private fun Modifier.manipulatorDragGestures(
                     val change = event.changes.firstOrNull() ?: continue
                     manipulator.scroll(
                         change.position.x.toInt(),
-                        change.position.y.toInt(),
+                        viewportY(change.position.y),
                         change.scrollDelta.y * 0.1f,
                     )
                     onSync()
@@ -183,8 +202,8 @@ class OrbitCameraController internal constructor(
  * ```
  *
  * @param zoomSpeed      Scroll / pinch zoom sensitivity.
- * @param orbitSpeedX    Horizontal orbit drag sensitivity.
- * @param orbitSpeedY    Vertical orbit drag sensitivity.
+ * @param orbitSpeedX    Horizontal orbit drag sensitivity; negative inverts that axis.
+ * @param orbitSpeedY    Vertical orbit drag sensitivity; negative inverts that axis.
  * @param panningEnabled Allow right-click / secondary-button drag to pan.
  */
 @Composable
@@ -361,8 +380,9 @@ class FlightCameraController internal constructor(
  * @param initialMoveSpeed Movement speed before any scrolling; must be > 0.
  * @param speedSteps       Scroll notches spanning the whole speed range (fewer = coarser steps).
  * @param moveDamping      Movement damping (higher = snappier stop).
- * @param panSpeedX        Mouse-look horizontal sensitivity.
- * @param panSpeedY        Mouse-look vertical sensitivity.
+ * @param panSpeedX        Mouse-look horizontal sensitivity; negative inverts that axis.
+ * @param panSpeedY        Mouse-look vertical sensitivity; negative inverts that axis
+ *                         (the classic "inverted look" — cursor up looks down).
  */
 @Composable
 fun rememberFlightCameraController(
@@ -459,14 +479,14 @@ fun Modifier.flightGestures(controller: FlightCameraController): Modifier =
         .pointerInput(controller) {
             // Mouse look
             awaitEachGesture {
-                val down = awaitFirstDown(requireUnconsumed = false)
-                controller.manipulator.grabBegin(down.position.x.toInt(), down.position.y.toInt(), false)
+                val down = awaitFirstDownAnyButton()
+                controller.manipulator.grabBegin(down.position.x.toInt(), viewportY(down.position.y), false)
                 while (true) {
                     val event = awaitPointerEvent()
                     if (event.changes.none { it.pressed }) break
                     val change = event.changes.firstOrNull { it.pressed } ?: break
                     if (change.positionChanged()) {
-                        controller.manipulator.grabUpdate(change.position.x.toInt(), change.position.y.toInt())
+                        controller.manipulator.grabUpdate(change.position.x.toInt(), viewportY(change.position.y))
                         change.consume()
                     }
                 }
