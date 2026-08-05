@@ -45,7 +45,7 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
             whileComposed = { assertNotNull(scene.skybox, "color skybox should be attached while composed") },
             afterDispose = { assertNull(scene.skybox, "skybox should be cleared after disposal") },
         ) {
-            val state = rememberSkyboxState(initialSource = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+            val state = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)))
             ApplySkybox(state, engine, scene)
         }
     }

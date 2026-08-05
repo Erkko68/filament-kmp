@@ -21,7 +21,7 @@ import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberFilamentScene
 import io.github.erkko68.filament.compose.rememberOrbitCameraController
 import io.github.erkko68.filament.compose.rememberSceneClock
-import io.github.erkko68.filament.compose.scene.Color as FilColor
+import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.DirectionalLight
@@ -62,7 +62,7 @@ fun SplitViewScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
 
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
 
     val time by rememberSceneClock()
 

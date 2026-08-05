@@ -67,16 +67,33 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 
 ## Vector types
 
-`Position`, `Direction`, `Scale`, and `Color` are distinct immutable data classes (not
-`typealias`es for `Float3`). Being distinct, the compiler stops you passing a `Color` where a
+`Position`, `Direction`, `Scale`, and `LinearColor` are distinct immutable data classes (not
+`typealias`es for `Float3`). Being distinct, the compiler stops you passing a `LinearColor` where a
 `Position` is expected; being **immutable**, they're stable Compose inputs — passing them to scene
 composables doesn't trigger the needless recompositions a mutable `Float3` would.
 
-Construct them directly (`Position(x, y, z)`, `Color(r, g, b)`, `Position(0f)` for uniform), read
-components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operators (`+`, `-`,
-`* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot, swizzles),
-hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
-`toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
+Construct them directly (`Position(x, y, z)`, `LinearColor(r, g, b)`, `Position(0f)` for uniform),
+read components (`.x/.y/.z`, and `.r/.g/.b` for `LinearColor`), and use the common operators (`+`,
+`-`, `* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot,
+swizzles), hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
+`toDirection()` / `toScale()` / `toLinearColor()` — needed only for that advanced math.
+
+### Colour spaces
+
+`LinearColor` is **linear** — the space Filament works in for light colours, `baseColor`
+parameters, skybox and fog colours. `androidx.compose.ui.graphics.Color` is **gamma-encoded**. The
+two are not interchangeable, which is why the scene type is not also called `Color`:
+
+```kotlin
+// Correct — applies the sRGB transfer function
+val tint = LinearColor.fromComposeColor(MaterialTheme.colorScheme.primary)
+
+// Wrong — copying components across raw leaves the colour washed out
+val tint = LinearColor(c.red, c.green, c.blue)
+```
+
+`toComposeColor()` converts back, clamping to 0..1 (over-bright values above 1, which lights
+accept, lose their headroom).
 
 ## Value parameters vs. state holders
 
@@ -377,7 +394,7 @@ asset shipping (they work on Web too): `rememberColorMaterialInstance`,
 return a ready `MaterialInstance` for a primitive.
 
 ```kotlin
-Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))
+Cube(material = rememberColorMaterialInstance(LinearColor(0.9f, 0.25f, 0.3f)))
 ```
 
 For custom materials, the loaders (`rememberMaterial`, `rememberMaterialInstance`, `rememberTexture`)
