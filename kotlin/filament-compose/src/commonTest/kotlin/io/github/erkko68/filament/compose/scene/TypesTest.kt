@@ -180,6 +180,82 @@ class TypesTest {
     }
 
     @Test
+    fun fromToGivesTheShortestArcBetweenTwoDirections() {
+        val r = Rotation.fromTo(Direction(1f, 0f, 0f), Direction(0f, 1f, 0f))
+        assertClose(Direction(0f, 1f, 0f), r * Direction(1f, 0f, 0f))
+        assertClose(90f, r.angleTo(Rotation.Identity), 1e-3f)
+    }
+
+    @Test
+    fun lookTowardsAimsLocalMinusZAlongTheTarget() {
+        // The documented contract: local −Z (the glTF/Filament forward axis) ends up on `forward`.
+        val forward = Direction(1f, 0f, 0f)
+        assertClose(forward, Rotation.lookTowards(forward) * Direction(0f, 0f, -1f))
+    }
+
+    @Test
+    fun lookTowardsKeepsLocalUpNearTheGivenUp() {
+        val r = Rotation.lookTowards(Direction(1f, 0f, 0f))
+        assertClose(Direction(0f, 1f, 0f), r * Direction(0f, 1f, 0f))
+    }
+
+    @Test
+    fun lookTowardsDoesNotProduceNaNWhenForwardIsParallelToUp() {
+        // Straight up would leave the basis degenerate; a NaN transform silently hides the entity.
+        val r = Rotation.lookTowards(Direction(0f, 1f, 0f))
+        assertTrue(!r.x.isNaN() && !r.y.isNaN() && !r.z.isNaN() && !r.w.isNaN(), "produced NaN: $r")
+        assertClose(Direction(0f, 1f, 0f), r * Direction(0f, 0f, -1f))
+    }
+
+    @Test
+    fun slerpHitsBothEndpointsAndTheMidpoint() {
+        val a = Rotation.Identity
+        val b = Rotation.axisAngle(Direction(0f, 1f, 0f), 90f)
+        assertClose(Direction(0f, 0f, 1f), Rotation.slerp(a, b, 0f) * Direction(0f, 0f, 1f))
+        assertClose(Direction(1f, 0f, 0f), Rotation.slerp(a, b, 1f) * Direction(0f, 0f, 1f))
+        // Constant rate: halfway through a 90° turn is the 45° orientation.
+        assertClose(45f, Rotation.slerp(a, b, 0.5f).angleTo(a), 1e-3f)
+    }
+
+    @Test
+    fun nlerpHitsBothEndpoints() {
+        val a = Rotation.Identity
+        val b = Rotation.axisAngle(Direction(0f, 1f, 0f), 90f)
+        assertClose(Direction(0f, 0f, 1f), Rotation.nlerp(a, b, 0f) * Direction(0f, 0f, 1f))
+        assertClose(Direction(1f, 0f, 0f), Rotation.nlerp(a, b, 1f) * Direction(0f, 0f, 1f))
+    }
+
+    @Test
+    fun toEulerRoundTripsThroughEuler() {
+        val e = Rotation.euler(pitch = 20f, yaw = 35f, roll = 10f).toEuler()
+        assertClose(20f, e.x, 1e-3f)
+        assertClose(35f, e.y, 1e-3f)
+        assertClose(10f, e.z, 1e-3f)
+    }
+
+    @Test
+    fun angleToMeasuresTheSmallestAngleInDegrees() {
+        val a = Rotation.axisAngle(Direction(0f, 1f, 0f), 10f)
+        val b = Rotation.axisAngle(Direction(0f, 1f, 0f), 100f)
+        assertClose(90f, a.angleTo(b), 1e-3f)
+        assertClose(0f, a.angleTo(a), 1e-3f)
+    }
+
+    @Test
+    fun normalizedProducesAUnitLengthRotation() {
+        fun length(r: Rotation) = kotlin.math.sqrt(r.x * r.x + r.y * r.y + r.z * r.z + r.w * r.w)
+
+        // An off-unit rotation (what drift from accumulated products looks like) is pulled back.
+        val drifted = Rotation(0.3f, 0.4f, 0.5f, 0.6f)
+        assertTrue(kotlin.math.abs(length(drifted) - 1f) > 1e-3f, "fixture should not already be unit")
+        assertClose(1f, length(drifted.normalized()))
+
+        // An already-unit rotation is left alone.
+        val r = Rotation.axisAngle(Direction(0f, 1f, 0f), 30f)
+        assertClose(Direction(0f, 0f, 1f).let { r * it }, r.normalized() * Direction(0f, 0f, 1f))
+    }
+
+    @Test
     fun rotationCopiesFromAQuaternionRatherThanAliasingIt() {
         val source = Quaternion(0f, 0f, 0f, 1f)
         val r = Rotation(source)

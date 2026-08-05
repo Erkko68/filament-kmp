@@ -78,10 +78,27 @@ components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operator
 hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
 `toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
 
-`Rotation` is a unit quaternion, but you rarely spell one out: build it with
+`Rotation` is a unit quaternion, but you rarely spell one out. Build it with
 `Rotation.axisAngle(Direction(0f, 1f, 0f), degrees = 45f)` or `Rotation.euler(yaw = 45f)`, compose
-two with `*`, and use `Rotation.Identity` for none (the default on every scene composable). It
-converts to and from filament-utils with `Rotation(quat)` / `toQuaternion()` / `Quaternion.toRotation()`.
+two with `*` (right operand applied first), and use `Rotation.Identity` for none — the default on
+every scene composable. The rest of the usual scene work is on the type:
+
+| | |
+|---|---|
+| `Rotation.lookTowards(forward, up)` | aim local −Z (the glTF forward axis) at something — turrets, billboards, chase cams |
+| `Rotation.fromTo(from, to)` | shortest arc between two directions |
+| `Rotation.slerp(a, b, t)` / `nlerp` | blend between two poses |
+| `toEuler()` | read pitch/yaw/roll back in degrees (debug UI, clamping an axis) |
+| `angleTo(other)` | smallest angle between two orientations, in degrees |
+| `normalized()` | shed drift after accumulating many products |
+
+For anything past that — matrix interop, swizzles, your own interpolation — hop to filament-utils'
+`Quaternion` and back. They are the same four floats and the conversion is lossless:
+
+```kotlin
+val blended = Rotation(myOwnInterpolation(a.toQuaternion(), b.toQuaternion()))
+val asRotation = someQuaternion.toRotation()   // or Rotation(someQuaternion)
+```
 
 ## Value parameters vs. state holders
 

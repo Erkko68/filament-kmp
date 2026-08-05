@@ -3,6 +3,16 @@ package io.github.erkko68.filament.compose.scene
 import io.github.erkko68.filament.utils.Float3
 import io.github.erkko68.filament.utils.Quaternion
 import io.github.erkko68.filament.utils.RotationsOrder
+import io.github.erkko68.filament.utils.degrees
+import io.github.erkko68.filament.utils.eulerAngles
+import io.github.erkko68.filament.utils.normalize
+import io.github.erkko68.filament.utils.quaternion
+import kotlin.math.abs
+// Aliased where the name would collide with the Rotation member of the same name.
+import io.github.erkko68.filament.utils.angle as quatAngle
+import io.github.erkko68.filament.utils.lookTowards as lookTowardsMatrix
+import io.github.erkko68.filament.utils.nlerp as quatNlerp
+import io.github.erkko68.filament.utils.slerp as quatSlerp
 
 /**
  * A point in 3-D space.
@@ -70,15 +80,27 @@ data class Scale(val x: Float, val y: Float, val z: Float) {
  * distinct type — the same one applies doubly here, since filament-utils' [Quaternion] has
  * mutable components and so is an unstable Compose input.
  *
- * Build one with [axisAngle] or [euler] rather than the raw component constructor:
+ * Build one with [axisAngle] or [euler] rather than the raw component constructor, and combine
+ * with `*` (right operand applied first):
  *
  * ```kotlin
  * Cube(rotation = Rotation.axisAngle(Direction(0f, 1f, 0f), degrees = spin))
  * Cube(rotation = Rotation.euler(yaw = 45f) * Rotation.euler(pitch = 30f))
+ *
+ * // Aim an entity at a target, and blend towards a new pose over time
+ * Cube(rotation = Rotation.lookTowards(target - turret))
+ * Cube(rotation = Rotation.slerp(from, to, t))
  * ```
  *
- * Interop with filament-utils works like the other types: construct from a [Quaternion]
- * (`Rotation(myQuat)`) or drop out with [toQuaternion]/[Quaternion.toRotation].
+ * [fromTo], [lookTowards], [slerp], [nlerp], [toEuler], [angleTo] and [normalized] cover the
+ * usual scene work. **For anything beyond them** — matrix interop, swizzles, custom
+ * interpolation — hop to filament-utils' [Quaternion] and back; the two are the same four
+ * floats and the conversion is lossless:
+ *
+ * ```kotlin
+ * val blended = Rotation(myOwnInterpolation(a.toQuaternion(), b.toQuaternion()))
+ * val asRotation = someQuaternion.toRotation()   // or Rotation(someQuaternion)
+ * ```
  */
 data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
     /** From a filament-utils [Quaternion]. */
@@ -92,6 +114,18 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
 
     /** The inverse rotation — undoes this one. */
     fun inverse() = Rotation(-x, -y, -z, w)
+
+    /**
+     * Euler angles in degrees, as `Direction(pitch, yaw, roll)` about X/Y/Z. The inverse of
+     * [euler] — useful for debug readouts and for clamping an axis (e.g. pitch to ±89°).
+     */
+    fun toEuler(): Direction = eulerAngles(toQuaternion()).toDirection()
+
+    /** The smallest angle in degrees between this orientation and [other]. */
+    fun angleTo(other: Rotation): Float = degrees(quatAngle(toQuaternion(), other.toQuaternion()))
+
+    /** Unit-length copy. Use it to shed drift after accumulating many products. */
+    fun normalized(): Rotation = Rotation(normalize(toQuaternion()))
 
     fun toQuaternion() = Quaternion(x, y, z, w)
 
@@ -109,6 +143,40 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
          */
         fun euler(pitch: Float = 0f, yaw: Float = 0f, roll: Float = 0f) =
             Rotation(Quaternion.fromEuler(Float3(pitch, yaw, roll)))
+
+        /** The shortest-arc rotation taking [from] onto [to]. */
+        fun fromTo(from: Direction, to: Direction) =
+            Rotation(Quaternion.fromRotation(from.toFloat3(), to.toFloat3()))
+
+        /**
+         * Aims an entity along [forward]: the rotation that takes local **−Z** (the glTF/Filament
+         * "forward" axis) onto [forward], keeping local +Y as close to [up] as it can. This is the
+         * turret / billboard / chase-camera building block.
+         *
+         * A [forward] parallel to [up] has no unique answer; rather than emit a NaN transform that
+         * would silently hide the entity, another up axis is substituted.
+         */
+        fun lookTowards(forward: Direction, up: Direction = Direction(0f, 1f, 0f)): Rotation {
+            val f = forward.normalized()
+            val parallel = abs(f.x * up.x + f.y * up.y + f.z * up.z) > 0.9999f
+            val u = if (!parallel) up
+                else if (abs(f.y) > 0.9999f) Direction(0f, 0f, 1f) else Direction(0f, 1f, 0f)
+            return Rotation(quaternion(lookTowardsMatrix(Float3(), f.toFloat3(), u.toFloat3())))
+        }
+
+        /**
+         * Shortest-path spherical interpolation: `t = 0` gives [a], `t = 1` gives [b], and the
+         * path between them turns at a constant rate. The one to reach for when blending poses.
+         */
+        fun slerp(a: Rotation, b: Rotation, t: Float) =
+            Rotation(quatSlerp(a.toQuaternion(), b.toQuaternion(), t))
+
+        /**
+         * Normalized linear interpolation — cheaper than [slerp] but not constant-rate. Fine for
+         * per-frame blending between nearby orientations.
+         */
+        fun nlerp(a: Rotation, b: Rotation, t: Float) =
+            Rotation(quatNlerp(a.toQuaternion(), b.toQuaternion(), t))
     }
 }
 
