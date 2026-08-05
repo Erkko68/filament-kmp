@@ -56,13 +56,13 @@ class IndirectLightState internal constructor(
     initialIrradianceCubemap: Texture?,
     initialIrradianceSh: SphericalHarmonics?,
     initialIntensity: Float,
-    initialRotation: FloatArray?,
+    initialRotation: Rotation?,
 ) {
     var reflections: Texture?            by mutableStateOf(initialReflections)
     var irradianceCubemap: Texture?      by mutableStateOf(initialIrradianceCubemap)
     var irradianceSh: SphericalHarmonics? by mutableStateOf(initialIrradianceSh)
     var intensity: Float                  by mutableStateOf(initialIntensity)
-    var rotation: FloatArray?             by mutableStateOf(initialRotation)
+    var rotation: Rotation?               by mutableStateOf(initialRotation)
 }
 
 /**
@@ -73,7 +73,7 @@ class IndirectLightState internal constructor(
  * @param initialIrradianceCubemap Diffuse irradiance cubemap texture.
  * @param initialIrradianceSh      Diffuse irradiance via spherical harmonics (alternative to cubemap).
  * @param initialIntensity         IBL intensity scale.
- * @param initialRotation          Optional 3×3 column-major rotation matrix (9 floats). Null = identity.
+ * @param initialRotation          Optional rotation of the environment. Null = identity.
  */
 @Composable
 fun rememberIndirectLightState(
@@ -81,7 +81,7 @@ fun rememberIndirectLightState(
     initialIrradianceCubemap: Texture? = null,
     initialIrradianceSh: SphericalHarmonics? = null,
     initialIntensity: Float = 30_000f,
-    initialRotation: FloatArray? = null,
+    initialRotation: Rotation? = null,
 ): IndirectLightState = remember {
     IndirectLightState(initialReflections, initialIrradianceCubemap, initialIrradianceSh,
         initialIntensity, initialRotation)
@@ -98,16 +98,15 @@ internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene
     val irradianceSh      = state.irradianceSh
     val intensity         = state.intensity
     val rotation          = state.rotation
-    val rotationKey       = rotation?.toList()
 
-    DisposableEffect(scene, reflections, irradianceCubemap, irradianceSh, intensity, rotationKey) {
+    DisposableEffect(scene, reflections, irradianceCubemap, irradianceSh, intensity, rotation) {
         val builder = FilamentIndirectLight.Builder().intensity(intensity)
         reflections?.let { builder.reflections(it) }
         when {
             irradianceCubemap != null -> builder.irradiance(irradianceCubemap)
             irradianceSh      != null -> builder.irradiance(irradianceSh.bands, irradianceSh.coefficients)
         }
-        rotation?.let { builder.rotation(it) }
+        rotation?.let { builder.rotation(it.toRotationMatrix()) }
 
         val ibl = builder.build(engine)
         scene.indirectLight = ibl

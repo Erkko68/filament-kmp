@@ -348,6 +348,7 @@ public final class io/github/erkko68/filament/compose/scene/DepthOfField {
 
 public final class io/github/erkko68/filament/compose/scene/Direction {
 	public static final field $stable I
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/Direction$Companion;
 	public fun <init> (F)V
 	public fun <init> (FFF)V
 	public fun <init> (Lio/github/erkko68/filament/utils/Float3;)V
@@ -370,6 +371,16 @@ public final class io/github/erkko68/filament/compose/scene/Direction {
 	public final fun toFloat3 ()Lio/github/erkko68/filament/utils/Float3;
 	public fun toString ()Ljava/lang/String;
 	public final fun unaryMinus ()Lio/github/erkko68/filament/compose/scene/Direction;
+}
+
+public final class io/github/erkko68/filament/compose/scene/Direction$Companion {
+	public final fun getBack ()Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun getDown ()Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun getForward ()Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun getLeft ()Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun getRight ()Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun getUp ()Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun getZero ()Lio/github/erkko68/filament/compose/scene/Direction;
 }
 
 public final class io/github/erkko68/filament/compose/scene/Dithering {
@@ -483,7 +494,7 @@ public final class io/github/erkko68/filament/compose/scene/GroupKt {
 }
 
 public final class io/github/erkko68/filament/compose/scene/IndirectLightKt {
-	public static final fun rememberIndirectLightState (Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;F[FLandroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/IndirectLightState;
+	public static final fun rememberIndirectLightState (Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/Texture;Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;FLio/github/erkko68/filament/compose/scene/Rotation;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/compose/scene/IndirectLightState;
 }
 
 public final class io/github/erkko68/filament/compose/scene/IndirectLightState {
@@ -492,12 +503,12 @@ public final class io/github/erkko68/filament/compose/scene/IndirectLightState {
 	public final fun getIrradianceCubemap ()Lio/github/erkko68/filament/Texture;
 	public final fun getIrradianceSh ()Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;
 	public final fun getReflections ()Lio/github/erkko68/filament/Texture;
-	public final fun getRotation ()[F
+	public final fun getRotation ()Lio/github/erkko68/filament/compose/scene/Rotation;
 	public final fun setIntensity (F)V
 	public final fun setIrradianceCubemap (Lio/github/erkko68/filament/Texture;)V
 	public final fun setIrradianceSh (Lio/github/erkko68/filament/compose/scene/SphericalHarmonics;)V
 	public final fun setReflections (Lio/github/erkko68/filament/Texture;)V
-	public final fun setRotation ([F)V
+	public final fun setRotation (Lio/github/erkko68/filament/compose/scene/Rotation;)V
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/LightIntensity {
@@ -720,6 +731,7 @@ public final class io/github/erkko68/filament/compose/scene/Rotation {
 	public final fun times (Lio/github/erkko68/filament/compose/scene/Rotation;)Lio/github/erkko68/filament/compose/scene/Rotation;
 	public final fun toEuler ()Lio/github/erkko68/filament/compose/scene/Direction;
 	public final fun toQuaternion ()Lio/github/erkko68/filament/utils/Quaternion;
+	public final fun toRotationMatrix ()[F
 	public fun toString ()Ljava/lang/String;
 }
 

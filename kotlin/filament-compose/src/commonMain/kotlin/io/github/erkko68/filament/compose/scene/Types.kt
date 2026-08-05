@@ -5,13 +5,14 @@ import io.github.erkko68.filament.utils.Quaternion
 import io.github.erkko68.filament.utils.RotationsOrder
 import io.github.erkko68.filament.utils.degrees
 import io.github.erkko68.filament.utils.eulerAngles
-import io.github.erkko68.filament.utils.normalize
 import io.github.erkko68.filament.utils.quaternion
+import io.github.erkko68.filament.utils.radians
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 // Aliased where the name would collide with the Rotation member of the same name.
 import io.github.erkko68.filament.utils.angle as quatAngle
 import io.github.erkko68.filament.utils.lookTowards as lookTowardsMatrix
-import io.github.erkko68.filament.utils.nlerp as quatNlerp
 import io.github.erkko68.filament.utils.slerp as quatSlerp
 
 /**
@@ -60,6 +61,18 @@ data class Direction(val x: Float, val y: Float, val z: Float) {
     fun normalized(): Direction = length.let { if (it > 0f) this / it else this }
 
     fun toFloat3() = Float3(x, y, z)
+
+    /** The axis directions, in Filament's right-handed Y-up convention. */
+    companion object {
+        val Zero = Direction(0f, 0f, 0f)
+        val Up = Direction(0f, 1f, 0f)
+        val Down = Direction(0f, -1f, 0f)
+        val Right = Direction(1f, 0f, 0f)
+        val Left = Direction(-1f, 0f, 0f)
+        /** Local −Z — the axis glTF and Filament treat as "forward". See [Rotation.lookTowards]. */
+        val Forward = Direction(0f, 0f, -1f)
+        val Back = Direction(0f, 0f, 1f)
+    }
 }
 
 /**
@@ -84,7 +97,7 @@ data class Scale(val x: Float, val y: Float, val z: Float) {
  * with `*` (right operand applied first):
  *
  * ```kotlin
- * Cube(rotation = Rotation.axisAngle(Direction(0f, 1f, 0f), degrees = spin))
+ * Cube(rotation = Rotation.axisAngle(Direction.Up, degrees = spin))
  * Cube(rotation = Rotation.euler(yaw = 45f) * Rotation.euler(pitch = 30f))
  *
  * // Aim an entity at a target, and blend towards a new pose over time
@@ -101,19 +114,49 @@ data class Scale(val x: Float, val y: Float, val z: Float) {
  * val blended = Rotation(myOwnInterpolation(a.toQuaternion(), b.toQuaternion()))
  * val asRotation = someQuaternion.toRotation()   // or Rotation(someQuaternion)
  * ```
+ *
+ * Equality is component-wise, as for any data class — which is *not* the same as "same
+ * orientation": `r` and its all-components-negated twin turn an entity to the identical pose but
+ * compare unequal, and accumulated products drift. That is what you want for Compose (equal
+ * values let a composable skip), but to ask whether two orientations agree use
+ * [angleTo] against a tolerance rather than `==`.
  */
 data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
     /** From a filament-utils [Quaternion]. */
     constructor(q: Quaternion) : this(q.x, q.y, q.z, q.w)
 
     /** Applies [other] and then this rotation (quaternion product, not commutative). */
-    operator fun times(other: Rotation) = Rotation(toQuaternion() * other.toQuaternion())
+    operator fun times(other: Rotation) = Rotation(
+        w * other.x + x * other.w + y * other.z - z * other.y,
+        w * other.y - x * other.z + y * other.w + z * other.x,
+        w * other.z + x * other.y - y * other.x + z * other.w,
+        w * other.w - x * other.x - y * other.y - z * other.z,
+    )
 
     /** This rotation applied to a direction vector. */
-    operator fun times(d: Direction) = (toQuaternion() * d.toFloat3()).toDirection()
+    operator fun times(d: Direction): Direction {
+        // v + s(w(u×v) + u×(u×v)) with u = (x,y,z). s = 2/‖q‖² rather than a bare 2, so a
+        // rotation that has drifted off unit length still rotates instead of also scaling.
+        val s = (x * x + y * y + z * z + w * w).let { if (it > 0f) 2f / it else 0f }
+        val cx = y * d.z - z * d.y
+        val cy = z * d.x - x * d.z
+        val cz = x * d.y - y * d.x
+        return Direction(
+            d.x + s * (w * cx + y * cz - z * cy),
+            d.y + s * (w * cy + z * cx - x * cz),
+            d.z + s * (w * cz + x * cy - y * cx),
+        )
+    }
 
-    /** The inverse rotation — undoes this one. */
-    fun inverse() = Rotation(-x, -y, -z, w)
+    /**
+     * The inverse rotation — undoes this one. Exact for a drifted rotation too, where the bare
+     * conjugate would leave the length error behind.
+     */
+    fun inverse(): Rotation {
+        val n = x * x + y * y + z * z + w * w
+        return if (n == 1f || n == 0f) Rotation(-x, -y, -z, w)
+        else Rotation(-x / n, -y / n, -z / n, w / n)
+    }
 
     /**
      * Euler angles in degrees, as `Direction(pitch, yaw, roll)` about X/Y/Z. The inverse of
@@ -125,17 +168,39 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
     fun angleTo(other: Rotation): Float = degrees(quatAngle(toQuaternion(), other.toQuaternion()))
 
     /** Unit-length copy. Use it to shed drift after accumulating many products. */
-    fun normalized(): Rotation = Rotation(normalize(toQuaternion()))
+    fun normalized(): Rotation {
+        val n = kotlin.math.sqrt(x * x + y * y + z * z + w * w)
+        return if (n > 0f) Rotation(x / n, y / n, z / n, w / n) else Identity
+    }
 
     fun toQuaternion() = Quaternion(x, y, z, w)
+
+    /**
+     * As a **column-major 3×3** rotation matrix (9 floats) — the shape Filament's builders take,
+     * e.g. `IndirectLight.Builder.rotation`.
+     */
+    fun toRotationMatrix() = floatArrayOf(
+        1f - 2f * (y * y + z * z), 2f * (x * y + w * z), 2f * (x * z - w * y),
+        2f * (x * y - w * z), 1f - 2f * (x * x + z * z), 2f * (y * z + w * x),
+        2f * (x * z + w * y), 2f * (y * z - w * x), 1f - 2f * (x * x + y * y),
+    )
 
     companion object {
         /** No rotation. The default for every scene composable's `rotation` argument. */
         val Identity = Rotation(0f, 0f, 0f, 1f)
 
-        /** [degrees] of rotation about [axis] (normalized for you), right-hand rule. */
-        fun axisAngle(axis: Direction, degrees: Float) =
-            Rotation(Quaternion.fromAxisAngle(axis.toFloat3(), degrees))
+        /**
+         * [degrees] of rotation about [axis] (normalized for you), right-hand rule. A zero-length
+         * [axis] names no rotation, so [Identity] comes back rather than a NaN that would
+         * silently hide the entity.
+         */
+        fun axisAngle(axis: Direction, degrees: Float): Rotation {
+            val a = axis.normalized()
+            if (a == Direction.Zero) return Identity
+            val h = radians(degrees) * 0.5f
+            val s = sin(h)
+            return Rotation(a.x * s, a.y * s, a.z * s, cos(h))
+        }
 
         /**
          * From intrinsic Tait-Bryan angles in degrees, applied Z (roll) then Y (yaw) then
@@ -144,9 +209,15 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
         fun euler(pitch: Float = 0f, yaw: Float = 0f, roll: Float = 0f) =
             Rotation(Quaternion.fromEuler(Float3(pitch, yaw, roll)))
 
-        /** The shortest-arc rotation taking [from] onto [to]. */
-        fun fromTo(from: Direction, to: Direction) =
-            Rotation(Quaternion.fromRotation(from.toFloat3(), to.toFloat3()))
+        /**
+         * The shortest-arc rotation taking [from] onto [to]. Length is irrelevant — only the
+         * two directions are — so displacements like `target - muzzle` can be passed straight in.
+         */
+        fun fromTo(from: Direction, to: Direction) = Rotation(
+            // Normalized here because fromRotation's shortest-arc formula assumes unit inputs:
+            // feeding it raw displacements yields a plausible-looking but wrong angle.
+            Quaternion.fromRotation(from.normalized().toFloat3(), to.normalized().toFloat3()),
+        )
 
         /**
          * Aims an entity along [forward]: the rotation that takes local **−Z** (the glTF/Filament
@@ -156,11 +227,14 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
          * A [forward] parallel to [up] has no unique answer; rather than emit a NaN transform that
          * would silently hide the entity, another up axis is substituted.
          */
-        fun lookTowards(forward: Direction, up: Direction = Direction(0f, 1f, 0f)): Rotation {
+        fun lookTowards(forward: Direction, up: Direction = Direction.Up): Rotation {
             val f = forward.normalized()
-            val parallel = abs(f.x * up.x + f.y * up.y + f.z * up.z) > 0.9999f
-            val u = if (!parallel) up
-                else if (abs(f.y) > 0.9999f) Direction(0f, 0f, 1f) else Direction(0f, 1f, 0f)
+            // Both normalized before the dot product — against a longer `up` it would exceed the
+            // threshold for perfectly good non-parallel pairs and swap in the fallback axis.
+            val n = up.normalized()
+            val parallel = abs(f.x * n.x + f.y * n.y + f.z * n.z) > 0.9999f
+            val u = if (!parallel) n
+                else if (abs(f.y) > 0.9999f) Direction.Back else Direction.Up
             return Rotation(quaternion(lookTowardsMatrix(Float3(), f.toFloat3(), u.toFloat3())))
         }
 
@@ -173,10 +247,18 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
 
         /**
          * Normalized linear interpolation — cheaper than [slerp] but not constant-rate. Fine for
-         * per-frame blending between nearby orientations.
+         * per-frame blending between nearby orientations. Takes the short way round, as [slerp]
+         * does.
          */
-        fun nlerp(a: Rotation, b: Rotation, t: Float) =
-            Rotation(quatNlerp(a.toQuaternion(), b.toQuaternion(), t))
+        fun nlerp(a: Rotation, b: Rotation, t: Float): Rotation {
+            // Negating b when the two face opposite hemispheres picks the shorter of the two
+            // equivalent paths; without it the blend can spin most of the way around.
+            val s = if (a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w < 0f) -t else t
+            val k = 1f - t
+            return Rotation(
+                a.x * k + b.x * s, a.y * k + b.y * s, a.z * k + b.z * s, a.w * k + b.w * s,
+            ).normalized()
+        }
     }
 }
 

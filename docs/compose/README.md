@@ -78,10 +78,15 @@ components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operator
 hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
 `toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
 
+The axes have names: `Direction.Up`/`Down`/`Left`/`Right`/`Forward`/`Back` (and `Zero`), where
+`Forward` is **−Z** — the axis glTF and Filament aim along.
+
 `Rotation` is a unit quaternion, but you rarely spell one out. Build it with
-`Rotation.axisAngle(Direction(0f, 1f, 0f), degrees = 45f)` or `Rotation.euler(yaw = 45f)`, compose
+`Rotation.axisAngle(Direction.Up, degrees = 45f)` or `Rotation.euler(yaw = 45f)`, compose
 two with `*` (right operand applied first), and use `Rotation.Identity` for none — the default on
-every scene composable. The rest of the usual scene work is on the type:
+every scene composable. The builders take directions, not unit vectors: length is ignored, so a
+raw displacement like `target - eye` goes straight in. The rest of the usual scene work is on the
+type:
 
 | | |
 |---|---|
@@ -91,6 +96,11 @@ every scene composable. The rest of the usual scene work is on the type:
 | `toEuler()` | read pitch/yaw/roll back in degrees (debug UI, clamping an axis) |
 | `angleTo(other)` | smallest angle between two orientations, in degrees |
 | `normalized()` | shed drift after accumulating many products |
+| `toRotationMatrix()` | column-major 3×3 (9 floats), for Filament builders that take one |
+
+Equality is component-wise, which is not the same as "same orientation" — that is what makes a
+`Rotation` a skippable Compose input, but ask `angleTo` against a tolerance rather than `==` when
+you mean the latter.
 
 For anything past that — matrix interop, swizzles, your own interpolation — hop to filament-utils'
 `Quaternion` and back. They are the same four floats and the conversion is lossless:

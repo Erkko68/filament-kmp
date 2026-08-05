@@ -270,6 +270,86 @@ class TypesTest {
         assertEquals(q, Rotation(q).toQuaternion())
     }
 
+    @Test
+    fun toRotationMatrixIsColumnMajorAndRotatesTheBasis() {
+        // +90° about +Y: +X ends up on −Z (column 0) and +Z on +X (column 2).
+        val m = Rotation.axisAngle(Direction.Up, 90f).toRotationMatrix()
+        assertEquals(9, m.size)
+        assertClose(Direction(0f, 0f, -1f), Direction(m[0], m[1], m[2]))
+        assertClose(Direction(0f, 1f, 0f), Direction(m[3], m[4], m[5]))
+        assertClose(Direction(1f, 0f, 0f), Direction(m[6], m[7], m[8]))
+    }
+
+    // ── Rotation: length-of-input regressions ─────────────────────────────────
+    // These builders take Directions, and a Direction is as often a displacement (`target - eye`)
+    // as a unit vector. Each of them used to quietly assume unit length.
+
+    @Test
+    fun fromToDependsOnlyOnDirectionNotLength() {
+        val unit = Rotation.fromTo(Direction(1f, 0f, 0f), Direction(0f, 1f, 0f))
+        val scaled = Rotation.fromTo(Direction(3f, 0f, 0f), Direction(0f, 5f, 0f))
+        // Un-normalized inputs used to give 172°, not 90°, for this quarter turn.
+        assertClose(90f, scaled.angleTo(Rotation.Identity), 1e-3f)
+        assertClose(unit * Direction.Forward, scaled * Direction.Forward, 1e-4f)
+    }
+
+    @Test
+    fun lookTowardsDependsOnlyOnUpDirectionNotLength() {
+        // A +Z up, so that the old fallback axis (+Y) is visibly the wrong answer.
+        val forward = Direction(0f, 0.8f, 0.6f)
+        val unit = Rotation.lookTowards(forward, Direction(0f, 0f, 1f))
+        // dot(forward, up) is 1.2 here — over the parallel threshold, so this used to be taken
+        // for a degenerate basis and rolled onto the substitute up axis instead.
+        val scaled = Rotation.lookTowards(forward, Direction(0f, 0f, 2f))
+        assertClose(unit * Direction.Up, scaled * Direction.Up, 1e-4f)
+        assertClose(0f, unit.angleTo(scaled), 1e-3f)
+    }
+
+    @Test
+    fun axisAngleWithAZeroAxisIsIdentityRatherThanNaN() {
+        assertEquals(Rotation.Identity, Rotation.axisAngle(Direction.Zero, 45f))
+    }
+
+    // ── Rotation: drifted (off-unit) rotations ────────────────────────────────
+
+    @Test
+    fun inverseUndoesADriftedRotation() {
+        // Twice the length of a 90°-about-Y rotation: same orientation, off-unit components.
+        val drifted = Rotation.axisAngle(Direction.Up, 90f).let { Rotation(it.x * 2f, it.y * 2f, it.z * 2f, it.w * 2f) }
+        assertClose(Direction.Back, drifted.inverse() * (drifted * Direction.Back), 1e-4f)
+    }
+
+    @Test
+    fun rotatingByADriftedRotationDoesNotScaleTheVector() {
+        val drifted = Rotation.axisAngle(Direction.Up, 90f).let { Rotation(it.x * 2f, it.y * 2f, it.z * 2f, it.w * 2f) }
+        // A bare `2` in the rotate formula would return (4, 0, 0) here.
+        assertClose(Direction(1f, 0f, 0f), drifted * Direction.Back, 1e-4f)
+    }
+
+    @Test
+    fun nlerpTakesTheShortWayRound() {
+        // 350° about Y is a 10° turn the other way; its quaternion faces the opposite hemisphere
+        // from identity, so an unflipped lerp would sweep 175° instead of 5°.
+        val a = Rotation.Identity
+        val b = Rotation.axisAngle(Direction.Up, 350f)
+        assertClose(5f, Rotation.nlerp(a, b, 0.5f).angleTo(a), 1e-2f)
+    }
+
+    // ── Direction constants ───────────────────────────────────────────────────
+
+    @Test
+    fun directionConstantsNameTheFilamentAxes() {
+        assertEquals(Direction(0f, 1f, 0f), Direction.Up)
+        assertEquals(Direction(0f, -1f, 0f), Direction.Down)
+        assertEquals(Direction(1f, 0f, 0f), Direction.Right)
+        assertEquals(Direction(-1f, 0f, 0f), Direction.Left)
+        assertEquals(Direction(0f, 0f, 1f), Direction.Back)
+        assertEquals(Direction(0f, 0f, 0f), Direction.Zero)
+        // Forward is −Z, which is exactly the axis lookTowards aims: aiming at it is a no-op.
+        assertEquals(Direction(0f, 0f, -1f), Direction.Forward)
+        assertClose(0f, Rotation.lookTowards(Direction.Forward).angleTo(Rotation.Identity), 1e-3f)
+    }
+
     // ── Color ─────────────────────────────────────────────────────────────────
 
     @Test
