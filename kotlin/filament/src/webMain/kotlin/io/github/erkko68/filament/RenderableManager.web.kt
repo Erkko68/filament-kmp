@@ -257,10 +257,12 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     ): Boolean = jsRenderableManager.getLightChannel(
         InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns 0 — RenderableManager::getMorphTargetCount is not registered with embind (it exists in C++ but google/filament#10216 did not add it); count morph targets from the glTF JSON instead.")
     actual fun getMorphTargetCount(instance: EntityInstance): Int {
         return 0
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op, though unreachable in practice — SkinningBuffer.Builder.build throws on web, so no instance can be obtained to pass here.")
     actual fun setSkinningBuffer(
         instance: EntityInstance,
         skinningBuffer: SkinningBuffer,
@@ -269,16 +271,31 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     ) {
     }
 
+    /**
+     * Weights beyond the first four are dropped and a non-zero [offset] is ignored: filament.js
+     * binds only the legacy `setMorphWeights(instance, a, b, c, d)` form, with no pointer/count/offset
+     * overload. Fewer than four weights are zero-padded, so 1–3 morph targets animate correctly.
+     */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js binds only the legacy 4-scalar form, so weights past the 4th are dropped and a non-zero offset is ignored (1–3 weights are zero-padded and work).")
     actual fun setMorphWeights(
         instance: EntityInstance,
         weights: FloatArray,
         offset: Int
     ) {
-        if (weights.size >= 4) {
-            jsRenderableManager.setMorphWeights(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), weights[0].toDouble(), weights[1].toDouble(), weights[2].toDouble(), weights[3].toDouble())
-        }
+        if (offset != 0) return
+        // Zero-pad to the four scalars the JS binding takes. Bailing out below four (as this used to)
+        // made every 1–3 target model silently unanimated on web.
+        fun w(i: Int): Double = if (i < weights.size) weights[i].toDouble() else 0.0
+        jsRenderableManager.setMorphWeights(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
+            w(0), w(1), w(2), w(3),
+        )
     }
 
+    // Unlike setSkinningBuffer this takes no buffer argument, so it *is* reachable — on any
+    // gltfio-loaded renderable — and silently does nothing there. gltfio is where you hit this gap,
+    // not a way around it.
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op with no workaround — filament.js binds no per-primitive morph-buffer offset; author the glTF so each primitive reads from the offset it needs.")
     actual fun setMorphTargetBufferOffsetAt(
         instance: EntityInstance,
         level: Int,
