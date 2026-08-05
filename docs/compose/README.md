@@ -67,16 +67,21 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 
 ## Vector types
 
-`Position`, `Direction`, `Scale`, and `Color` are distinct immutable data classes (not
-`typealias`es for `Float3`). Being distinct, the compiler stops you passing a `Color` where a
-`Position` is expected; being **immutable**, they're stable Compose inputs — passing them to scene
-composables doesn't trigger the needless recompositions a mutable `Float3` would.
+`Position`, `Direction`, `Scale`, `Rotation`, and `Color` are distinct immutable data classes (not
+`typealias`es for `Float3`/`Quaternion`). Being distinct, the compiler stops you passing a `Color`
+where a `Position` is expected; being **immutable**, they're stable Compose inputs — passing them to
+scene composables doesn't trigger the needless recompositions a mutable `Float3` would.
 
 Construct them directly (`Position(x, y, z)`, `Color(r, g, b)`, `Position(0f)` for uniform), read
 components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operators (`+`, `-`,
 `* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot, swizzles),
 hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
 `toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
+
+`Rotation` is a unit quaternion, but you rarely spell one out: build it with
+`Rotation.axisAngle(Direction(0f, 1f, 0f), degrees = 45f)` or `Rotation.euler(yaw = 45f)`, compose
+two with `*`, and use `Rotation.Identity` for none (the default on every scene composable). It
+converts to and from filament-utils with `Rotation(quat)` / `toQuaternion()` / `Quaternion.toRotation()`.
 
 ## Value parameters vs. state holders
 

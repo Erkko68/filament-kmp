@@ -1,6 +1,8 @@
 package io.github.erkko68.filament.compose.scene
 
 import io.github.erkko68.filament.utils.Float3
+import io.github.erkko68.filament.utils.Quaternion
+import io.github.erkko68.filament.utils.RotationsOrder
 
 /**
  * A point in 3-D space.
@@ -64,6 +66,53 @@ data class Scale(val x: Float, val y: Float, val z: Float) {
 }
 
 /**
+ * A 3-D rotation, stored as a unit quaternion. See [Position] for the rationale behind the
+ * distinct type — the same one applies doubly here, since filament-utils' [Quaternion] has
+ * mutable components and so is an unstable Compose input.
+ *
+ * Build one with [axisAngle] or [euler] rather than the raw component constructor:
+ *
+ * ```kotlin
+ * Cube(rotation = Rotation.axisAngle(Direction(0f, 1f, 0f), degrees = spin))
+ * Cube(rotation = Rotation.euler(yaw = 45f) * Rotation.euler(pitch = 30f))
+ * ```
+ *
+ * Interop with filament-utils works like the other types: construct from a [Quaternion]
+ * (`Rotation(myQuat)`) or drop out with [toQuaternion]/[Quaternion.toRotation].
+ */
+data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
+    /** From a filament-utils [Quaternion]. */
+    constructor(q: Quaternion) : this(q.x, q.y, q.z, q.w)
+
+    /** Applies [other] and then this rotation (quaternion product, not commutative). */
+    operator fun times(other: Rotation) = Rotation(toQuaternion() * other.toQuaternion())
+
+    /** This rotation applied to a direction vector. */
+    operator fun times(d: Direction) = (toQuaternion() * d.toFloat3()).toDirection()
+
+    /** The inverse rotation — undoes this one. */
+    fun inverse() = Rotation(-x, -y, -z, w)
+
+    fun toQuaternion() = Quaternion(x, y, z, w)
+
+    companion object {
+        /** No rotation. The default for every scene composable's `rotation` argument. */
+        val Identity = Rotation(0f, 0f, 0f, 1f)
+
+        /** [degrees] of rotation about [axis] (normalized for you), right-hand rule. */
+        fun axisAngle(axis: Direction, degrees: Float) =
+            Rotation(Quaternion.fromAxisAngle(axis.toFloat3(), degrees))
+
+        /**
+         * From intrinsic Tait-Bryan angles in degrees, applied Z (roll) then Y (yaw) then
+         * X (pitch) — filament-utils' default [RotationsOrder.ZYX].
+         */
+        fun euler(pitch: Float = 0f, yaw: Float = 0f, roll: Float = 0f) =
+            Rotation(Quaternion.fromEuler(Float3(pitch, yaw, roll)))
+    }
+}
+
+/**
  * An RGB color (linear or sRGB depending on the consuming API). Distinct from the spatial
  * vectors so a [Color] can't be passed as a [Position]. Components are [r]/[g]/[b].
  *
@@ -98,3 +147,5 @@ fun Float3.toDirection() = Direction(x, y, z)
 fun Float3.toScale() = Scale(x, y, z)
 /** Reinterpret a [Float3] as a [Color] (x→r, y→g, z→b). */
 fun Float3.toColor() = Color(x, y, z)
+/** Reinterpret a [Quaternion] as a [Rotation]. */
+fun Quaternion.toRotation() = Rotation(x, y, z, w)

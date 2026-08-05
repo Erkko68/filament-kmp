@@ -1,8 +1,8 @@
 package io.github.erkko68.filament.compose.internal
 
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * Builds a column-major 4×4 transform matrix as `FloatArray` for `TransformManager.setTransform`.
@@ -13,7 +13,7 @@ import io.github.erkko68.filament.utils.Quaternion
  */
 internal fun transformMatrix(
     position: Position,
-    rotation: Quaternion,
+    rotation: Rotation,
     scale: Scale,
     pivot: Position = Position(0f),
 ): FloatArray {

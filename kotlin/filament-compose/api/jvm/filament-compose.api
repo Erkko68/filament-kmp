@@ -469,7 +469,7 @@ public final class io/github/erkko68/filament/compose/scene/GltfAssetKt {
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfInstanceKt {
-	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FLjava/lang/Boolean;Ljava/lang/Boolean;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FLjava/lang/Boolean;Ljava/lang/Boolean;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/GltfInstanceScope {
@@ -479,7 +479,7 @@ public abstract interface class io/github/erkko68/filament/compose/scene/GltfIns
 }
 
 public final class io/github/erkko68/filament/compose/scene/GroupKt {
-	public static final fun Group (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Group (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/IndirectLightKt {
@@ -694,6 +694,37 @@ public final class io/github/erkko68/filament/compose/scene/RenderQuality {
 	public final fun getHdrColorBuffer ()Lio/github/erkko68/filament/View$Quality;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/Rotation {
+	public static final field $stable I
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/Rotation$Companion;
+	public fun <init> (FFFF)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Quaternion;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun copy (FFFF)Lio/github/erkko68/filament/compose/scene/Rotation;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Rotation;FFFFILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Rotation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getW ()F
+	public final fun getX ()F
+	public final fun getY ()F
+	public final fun getZ ()F
+	public fun hashCode ()I
+	public final fun inverse ()Lio/github/erkko68/filament/compose/scene/Rotation;
+	public final fun times (Lio/github/erkko68/filament/compose/scene/Direction;)Lio/github/erkko68/filament/compose/scene/Direction;
+	public final fun times (Lio/github/erkko68/filament/compose/scene/Rotation;)Lio/github/erkko68/filament/compose/scene/Rotation;
+	public final fun toQuaternion ()Lio/github/erkko68/filament/utils/Quaternion;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/Rotation$Companion {
+	public final fun axisAngle (Lio/github/erkko68/filament/compose/scene/Direction;F)Lio/github/erkko68/filament/compose/scene/Rotation;
+	public final fun euler (FFF)Lio/github/erkko68/filament/compose/scene/Rotation;
+	public static synthetic fun euler$default (Lio/github/erkko68/filament/compose/scene/Rotation$Companion;FFFILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Rotation;
+	public final fun getIdentity ()Lio/github/erkko68/filament/compose/scene/Rotation;
 }
 
 public final class io/github/erkko68/filament/compose/scene/Scale {
@@ -1067,6 +1098,7 @@ public final class io/github/erkko68/filament/compose/scene/TypesKt {
 	public static final fun toColor (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Color;
 	public static final fun toDirection (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Direction;
 	public static final fun toPosition (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Position;
+	public static final fun toRotation (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/compose/scene/Rotation;
 	public static final fun toScale (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Scale;
 }
 
@@ -1091,22 +1123,22 @@ public final class io/github/erkko68/filament/compose/scene/Vignette {
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/CubeKt {
-	public static final fun Cube (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Cube (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/CylinderKt {
-	public static final fun Cylinder (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FFIZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Cylinder (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FFIZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/MeshKt {
-	public static final fun Mesh (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;[F[F[F[ILio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/Box;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Mesh (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;[F[F[F[ILio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/Box;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/PlaneKt {
-	public static final fun Plane (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FFZZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Plane (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FFZZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/SphereKt {
-	public static final fun Sphere (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/utils/Quaternion;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FIIZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Sphere (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FIIZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
