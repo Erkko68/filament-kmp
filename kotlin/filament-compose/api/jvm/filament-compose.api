@@ -261,12 +261,12 @@ public final class io/github/erkko68/filament/compose/scene/CameraState {
 	public final fun getEye ()Lio/github/erkko68/filament/compose/scene/Position;
 	public final fun getFocusDistance ()F
 	public final fun getProjection ()Lio/github/erkko68/filament/compose/scene/Projection;
-	public final fun getProjectionMatrix ()[D
+	public final fun getProjectionMatrix ()Lio/github/erkko68/filament/utils/Mat4;
 	public final fun getScaling ()Lio/github/erkko68/filament/utils/Float2;
 	public final fun getShift ()Lio/github/erkko68/filament/utils/Float2;
 	public final fun getTarget ()Lio/github/erkko68/filament/compose/scene/Position;
 	public final fun getUp ()Lio/github/erkko68/filament/compose/scene/Direction;
-	public final fun getViewMatrix ()[F
+	public final fun getViewMatrix ()Lio/github/erkko68/filament/utils/Mat4;
 	public final fun setExposure (Lio/github/erkko68/filament/compose/scene/Exposure;)V
 	public final fun setEye (Lio/github/erkko68/filament/compose/scene/Position;)V
 	public final fun setFocusDistance (F)V
@@ -275,29 +275,6 @@ public final class io/github/erkko68/filament/compose/scene/CameraState {
 	public final fun setShift (Lio/github/erkko68/filament/utils/Float2;)V
 	public final fun setTarget (Lio/github/erkko68/filament/compose/scene/Position;)V
 	public final fun setUp (Lio/github/erkko68/filament/compose/scene/Direction;)V
-}
-
-public final class io/github/erkko68/filament/compose/scene/Color {
-	public static final field $stable I
-	public fun <init> (F)V
-	public fun <init> (FFF)V
-	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun <init> (Lio/github/erkko68/filament/utils/Float3;)V
-	public final fun component1 ()F
-	public final fun component2 ()F
-	public final fun component3 ()F
-	public final fun copy (FFF)Lio/github/erkko68/filament/compose/scene/Color;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Color;FFFILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Color;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getB ()F
-	public final fun getG ()F
-	public final fun getR ()F
-	public fun hashCode ()I
-	public final fun plus (Lio/github/erkko68/filament/compose/scene/Color;)Lio/github/erkko68/filament/compose/scene/Color;
-	public final fun times (F)Lio/github/erkko68/filament/compose/scene/Color;
-	public final fun toComposeColor-0d7_KjU ()J
-	public final fun toFloat3 ()Lio/github/erkko68/filament/utils/Float3;
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/github/erkko68/filament/compose/scene/ColorGrade {
@@ -440,17 +417,17 @@ public final class io/github/erkko68/filament/compose/scene/Exposure {
 public final class io/github/erkko68/filament/compose/scene/Fog {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FFFFLio/github/erkko68/filament/compose/scene/Color;)V
-	public synthetic fun <init> (FFFFLio/github/erkko68/filament/compose/scene/Color;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFFFLio/github/erkko68/filament/compose/scene/LinearColor;)V
+	public synthetic fun <init> (FFFFLio/github/erkko68/filament/compose/scene/LinearColor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
 	public final fun component3 ()F
 	public final fun component4 ()F
-	public final fun component5 ()Lio/github/erkko68/filament/compose/scene/Color;
-	public final fun copy (FFFFLio/github/erkko68/filament/compose/scene/Color;)Lio/github/erkko68/filament/compose/scene/Fog;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Fog;FFFFLio/github/erkko68/filament/compose/scene/Color;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Fog;
+	public final fun component5 ()Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public final fun copy (FFFFLio/github/erkko68/filament/compose/scene/LinearColor;)Lio/github/erkko68/filament/compose/scene/Fog;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Fog;FFFFLio/github/erkko68/filament/compose/scene/LinearColor;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Fog;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/Color;
+	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/LinearColor;
 	public final fun getDensity ()F
 	public final fun getDistance ()F
 	public final fun getHeight ()F
@@ -542,12 +519,39 @@ public final class io/github/erkko68/filament/compose/scene/LightIntensity$Watts
 }
 
 public final class io/github/erkko68/filament/compose/scene/LightKt {
-	public static final fun DirectionalLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
-	public static final fun FocusedSpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;FLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
+	public static final fun DirectionalLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/LinearColor;Lio/github/erkko68/filament/compose/scene/LightIntensity;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
+	public static final fun FocusedSpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/LinearColor;Lio/github/erkko68/filament/compose/scene/LightIntensity;FLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
 	public static final fun Light (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/LightManager$Type;[Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public static final fun PointLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;FZLjava/util/Set;Landroidx/compose/runtime/Composer;II)V
-	public static final fun SpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;FLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
-	public static final fun SunLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/compose/scene/LightIntensity;Lio/github/erkko68/filament/compose/scene/SunParams;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
+	public static final fun PointLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/LinearColor;Lio/github/erkko68/filament/compose/scene/LightIntensity;FZLjava/util/Set;Landroidx/compose/runtime/Composer;II)V
+	public static final fun SpotLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/LinearColor;Lio/github/erkko68/filament/compose/scene/LightIntensity;FLio/github/erkko68/filament/compose/scene/SpotCone;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;III)V
+	public static final fun SunLight (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/Direction;Lio/github/erkko68/filament/compose/scene/LinearColor;Lio/github/erkko68/filament/compose/scene/LightIntensity;Lio/github/erkko68/filament/compose/scene/SunParams;Lio/github/erkko68/filament/compose/scene/ShadowConfig;ZLjava/util/Set;ZLandroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/github/erkko68/filament/compose/scene/LinearColor {
+	public static final field $stable I
+	public static final field Companion Lio/github/erkko68/filament/compose/scene/LinearColor$Companion;
+	public fun <init> (F)V
+	public fun <init> (FFF)V
+	public fun <init> (Lio/github/erkko68/filament/utils/Float3;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun copy (FFF)Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/LinearColor;FFFILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getB ()F
+	public final fun getG ()F
+	public final fun getR ()F
+	public fun hashCode ()I
+	public final fun plus (Lio/github/erkko68/filament/compose/scene/LinearColor;)Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public final fun times (F)Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public final fun toComposeColor-0d7_KjU ()J
+	public final fun toFloat3 ()Lio/github/erkko68/filament/utils/Float3;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/compose/scene/LinearColor$Companion {
+	public final fun fromComposeColor-8_81llA (J)Lio/github/erkko68/filament/compose/scene/LinearColor;
 }
 
 public final class io/github/erkko68/filament/compose/scene/MaterialsKt {
@@ -555,7 +559,7 @@ public final class io/github/erkko68/filament/compose/scene/MaterialsKt {
 	public static final fun rememberMaterialInstance (Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberMaterialInstance (Lio/github/erkko68/filament/Material;[Ljava/lang/Object;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberTexture (Lio/github/erkko68/filament/utils/TextureLoader$TextureType;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;Lio/github/erkko68/filament/Engine;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Texture;
-	public static final fun setParameter (Lio/github/erkko68/filament/MaterialInstance;Ljava/lang/String;Lio/github/erkko68/filament/compose/scene/Color;)V
+	public static final fun setParameter (Lio/github/erkko68/filament/MaterialInstance;Ljava/lang/String;Lio/github/erkko68/filament/compose/scene/LinearColor;)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/Position {
@@ -865,15 +869,15 @@ public abstract class io/github/erkko68/filament/compose/scene/SkyboxSource {
 public final class io/github/erkko68/filament/compose/scene/SkyboxSource$Color : io/github/erkko68/filament/compose/scene/SkyboxSource {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/github/erkko68/filament/compose/scene/Color;F)V
-	public synthetic fun <init> (Lio/github/erkko68/filament/compose/scene/Color;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/github/erkko68/filament/compose/scene/Color;
+	public fun <init> (Lio/github/erkko68/filament/compose/scene/LinearColor;F)V
+	public synthetic fun <init> (Lio/github/erkko68/filament/compose/scene/LinearColor;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/erkko68/filament/compose/scene/LinearColor;
 	public final fun component2 ()F
-	public final fun copy (Lio/github/erkko68/filament/compose/scene/Color;F)Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;Lio/github/erkko68/filament/compose/scene/Color;FILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;
+	public final fun copy (Lio/github/erkko68/filament/compose/scene/LinearColor;F)Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;Lio/github/erkko68/filament/compose/scene/LinearColor;FILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/SkyboxSource$Color;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAlpha ()F
-	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/Color;
+	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/LinearColor;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -944,12 +948,12 @@ public final class io/github/erkko68/filament/compose/scene/StandardMaterial : j
 }
 
 public final class io/github/erkko68/filament/compose/scene/StandardMaterialsKt {
-	public static final fun rememberColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;FFFLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
-	public static final fun rememberEmissiveMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;FLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
+	public static final fun rememberColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/LinearColor;FFFLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
+	public static final fun rememberEmissiveMaterialInstance (Lio/github/erkko68/filament/compose/scene/LinearColor;FLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 	public static final fun rememberStandardMaterial (Lio/github/erkko68/filament/compose/scene/StandardMaterial;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/Material;
 	public static final fun rememberTexturedMaterialInstance (Lio/github/erkko68/filament/Texture;FFLio/github/erkko68/filament/TextureSampler;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
-	public static final fun rememberTransparentColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;FFFFLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
-	public static final fun rememberUnlitColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/Color;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
+	public static final fun rememberTransparentColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/LinearColor;FFFFLio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
+	public static final fun rememberUnlitColorMaterialInstance (Lio/github/erkko68/filament/compose/scene/LinearColor;Lio/github/erkko68/filament/Engine;Landroidx/compose/runtime/Composer;II)Lio/github/erkko68/filament/MaterialInstance;
 }
 
 public final class io/github/erkko68/filament/compose/scene/SunParams {
@@ -1064,8 +1068,8 @@ public final class io/github/erkko68/filament/compose/scene/ToneMapping$PBRNeutr
 }
 
 public final class io/github/erkko68/filament/compose/scene/TypesKt {
-	public static final fun toColor (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Color;
 	public static final fun toDirection (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Direction;
+	public static final fun toLinearColor (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/LinearColor;
 	public static final fun toPosition (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Position;
 	public static final fun toScale (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Scale;
 }
@@ -1073,16 +1077,16 @@ public final class io/github/erkko68/filament/compose/scene/TypesKt {
 public final class io/github/erkko68/filament/compose/scene/Vignette {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FFFLio/github/erkko68/filament/compose/scene/Color;)V
-	public synthetic fun <init> (FFFLio/github/erkko68/filament/compose/scene/Color;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFFLio/github/erkko68/filament/compose/scene/LinearColor;)V
+	public synthetic fun <init> (FFFLio/github/erkko68/filament/compose/scene/LinearColor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
 	public final fun component3 ()F
-	public final fun component4 ()Lio/github/erkko68/filament/compose/scene/Color;
-	public final fun copy (FFFLio/github/erkko68/filament/compose/scene/Color;)Lio/github/erkko68/filament/compose/scene/Vignette;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Vignette;FFFLio/github/erkko68/filament/compose/scene/Color;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Vignette;
+	public final fun component4 ()Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public final fun copy (FFFLio/github/erkko68/filament/compose/scene/LinearColor;)Lio/github/erkko68/filament/compose/scene/Vignette;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/Vignette;FFFLio/github/erkko68/filament/compose/scene/LinearColor;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/Vignette;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/Color;
+	public final fun getColor ()Lio/github/erkko68/filament/compose/scene/LinearColor;
 	public final fun getFeather ()F
 	public final fun getMidPoint ()F
 	public final fun getRoundness ()F
