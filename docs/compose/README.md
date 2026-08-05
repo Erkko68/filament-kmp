@@ -112,6 +112,34 @@ The API changes things in two deliberate ways, split by **who writes the value**
 If you're wondering which form an API should take: if the framework never writes it, it's a value
 parameter.
 
+## Dynamic scene contents: use `key()`
+
+Scene composables own real Filament resources — entities, `FilamentInstance`s, animator state. As
+everywhere in Compose, that identity is positional: it follows the *slot*, not the item. Emitting a
+list without keys means inserting or reordering re-associates every slot after the change point,
+and each affected composable tears its entity down and builds a new one:
+
+```kotlin
+// Wrong — removing enemies[0] rebuilds every remaining instance,
+// resetting animation playback and paying createInstance again
+enemies.forEach { enemy ->
+    GltfInstance(asset = enemyAsset, position = enemy.position)
+}
+
+// Right — identity follows the enemy, so untouched entries keep their entity and animator
+enemies.forEach { enemy ->
+    key(enemy.id) {
+        GltfInstance(asset = enemyAsset, position = enemy.position)
+    }
+}
+```
+
+The failure mode is quiet: the scene still looks broadly correct, but animations restart, `onCreate`
+re-runs, and any entity-keyed map you populated there points at stale entities. Wrap in `key()`
+whenever the collection can change — appending to the end is the only safe unkeyed case.
+
+The same applies to `Group`, primitives, and lights emitted from a list.
+
 ## Driving updates
 
 Continuous updates fall into **two different clocks** — confusing them is the most common source
