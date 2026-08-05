@@ -7,6 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import io.github.erkko68.filament.Camera as FilamentCamera
 import io.github.erkko68.filament.utils.Float2
+import io.github.erkko68.filament.utils.Float4
+import io.github.erkko68.filament.utils.Mat4
 
 // ── Public: projection type ───────────────────────────────────────────────────
 
@@ -118,18 +120,25 @@ class CameraState internal constructor(
     }
 
     /**
-     * 4×4 column-major view matrix (world→view) computed by Filament. Null until this
-     * state is attached to a [io.github.erkko68.filament.compose.FilamentView].
+     * View matrix (world→view) computed by Filament. Null until this state is attached to a
+     * [io.github.erkko68.filament.compose.FilamentView].
+     *
+     * Each read queries the live camera and builds a new [Mat4] — hold the result rather than
+     * reading it repeatedly in a hot loop.
      */
-    val viewMatrix: FloatArray?
-        get() = attachedCamera?.getViewMatrix(null as FloatArray?)
+    val viewMatrix: Mat4?
+        get() = attachedCamera?.getViewMatrix(null as FloatArray?)?.toMat4()
 
     /**
-     * 4×4 column-major projection matrix (view→clip) computed by Filament. Null until
-     * this state is attached to a [io.github.erkko68.filament.compose.FilamentView].
+     * Projection matrix (view→clip) computed by Filament. Null until this state is attached to a
+     * [io.github.erkko68.filament.compose.FilamentView].
+     *
+     * Filament computes this in double precision; the components are narrowed to `Float` here to
+     * match [Mat4]. For the full-precision array, go through the camera directly
+     * (`viewState.view?.camera?.getProjectionMatrix()`).
      */
-    val projectionMatrix: DoubleArray?
-        get() = attachedCamera?.getProjectionMatrix(null as DoubleArray?)
+    val projectionMatrix: Mat4?
+        get() = attachedCamera?.getProjectionMatrix(null as DoubleArray?)?.toMat4()
 
     internal fun snapshot(): CameraSnapshot =
         CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
@@ -194,3 +203,19 @@ fun rememberCameraState(
         initialFocusDistance, initialShift, initialScaling)
 }
 
+
+// Filament hands back column-major arrays, and Mat4's primary constructor takes columns — so the
+// groups of four map straight across. (Mat4.of() is *not* the right tool: it reads row-major.)
+private fun FloatArray.toMat4() = Mat4(
+    Float4(this[0], this[1], this[2], this[3]),
+    Float4(this[4], this[5], this[6], this[7]),
+    Float4(this[8], this[9], this[10], this[11]),
+    Float4(this[12], this[13], this[14], this[15]),
+)
+
+private fun DoubleArray.toMat4() = Mat4(
+    Float4(this[0].toFloat(), this[1].toFloat(), this[2].toFloat(), this[3].toFloat()),
+    Float4(this[4].toFloat(), this[5].toFloat(), this[6].toFloat(), this[7].toFloat()),
+    Float4(this[8].toFloat(), this[9].toFloat(), this[10].toFloat(), this[11].toFloat()),
+    Float4(this[12].toFloat(), this[13].toFloat(), this[14].toFloat(), this[15].toFloat()),
+)
