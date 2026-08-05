@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,6 +78,9 @@ data class Exposure(
  * }
  * ```
  */
+// @Stable: every property composition can observe is snapshot-backed; `attachedCamera` and
+// `aspect` are internal bookkeeping written by the view, never read during composition.
+@Stable
 class CameraState internal constructor(
     initialEye: Position,
     initialTarget: Position,

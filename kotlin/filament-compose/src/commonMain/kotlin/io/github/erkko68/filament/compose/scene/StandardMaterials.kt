@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.github.erkko68.filament.Engine
@@ -61,6 +62,9 @@ enum class StandardMaterial {
  * instead of compiling four identical shader packages. Provided by `rememberFilamentScene` via
  * [LocalStandardMaterials] and disposed with the scene. Each type builds lazily on first use.
  */
+// @Stable: a per-engine memo table. Its identity is what composition keys on; the map is a
+// write-once cache never observed as state.
+@Stable
 internal class StandardMaterialCache(val engine: Engine) {
     private val cache = HashMap<StandardMaterial, Material>()
 

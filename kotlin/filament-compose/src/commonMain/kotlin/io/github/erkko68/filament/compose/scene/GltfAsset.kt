@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -28,6 +29,9 @@ import kotlin.coroutines.cancellation.CancellationException
  * call that produced it leaves composition). Reusing one asset across many instances is cheap,
  * but avoid churning hundreds of short-lived instances from a single long-lived asset.
  */
+// @Stable: `isReady` is snapshot-backed and the handles are stable; `primaryInstanceClaimed` is
+// internal bookkeeping read only from an effect.
+@Stable
 class GltfAsset internal constructor(
     internal val filamentAsset: FilamentAsset,
     internal val assetLoader: AssetLoader,

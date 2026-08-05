@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,9 @@ import io.github.erkko68.filament.IndirectLight as FilamentIndirectLight
  * @param bands        Number of SH bands (1, 2, or 3 — determines coefficient count: 1, 4, or 9).
  * @param coefficients Packed RGB SH coefficients; length must be `bands² × 3`.
  */
+// @Immutable: read-only, and equality is by content (below) — the compiler would otherwise infer
+// unstable from the FloatArray and force every holder to recompose.
+@Immutable
 data class SphericalHarmonics(
     val bands: Int,
     val coefficients: FloatArray,
