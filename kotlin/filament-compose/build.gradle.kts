@@ -61,10 +61,25 @@ val generateEmbeddedMaterials = tasks.register("generateEmbeddedMaterials") {
     }
 }
 
+// ── Embed test .glb assets into a generated commonTest source ────────────────
+// Same rationale as the materials above (and mirroring :kotlin:gltfio): the committed .glb in
+// src/commonTest/glb is the source of truth, base64-encoded so every target reads it without
+// per-platform resource IO. Keep this set minimal — the bytes land in generated Kotlin source.
+val generateEmbeddedGlb = registerEmbeddedTestResources(
+    taskName = "generateEmbeddedGlb",
+    inputDir = "src/commonTest/glb",
+    fileExtension = ".glb",
+    packageName = "io.github.erkko68.filament.compose.testutils",
+    objectName = "EmbeddedGlb",
+)
+
 kotlin {
     sourceSets {
         commonMain {
             kotlin.srcDir(generateEmbeddedMaterials)
+        }
+        named("commonTest") {
+            kotlin.srcDir(generateEmbeddedGlb)
         }
         commonMain.dependencies {
             api(project(":kotlin:filament"))
