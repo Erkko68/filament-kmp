@@ -24,6 +24,9 @@ actual class FilamentInstance {
 
     actual fun getEntityCount(): Int = nativeObject!!.entities.size
 
+    // No pre-load guard here (unlike the other targets): the Java binding wraps the native
+    // animator pointer itself, so a call before ResourceLoader has run still hands back a
+    // non-null com.google.android.filament Animator that only crashes once used.
     actual fun getAnimator(): Animator = Animator(nativeObject!!.animator)
 
     actual fun getBoundingBox(): Box = getAsset().getBoundingBox()
