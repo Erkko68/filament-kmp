@@ -3,8 +3,11 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
 import io.github.erkko68.filament.testsupport.IgnoreJs
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -176,8 +179,18 @@ class FilamentInstanceTest : GltfioTestFixture() {
 
         val instance = asset.getInstance()
         assertNotNull(instance.getAsset())
+
+        // gltfio creates the animator during resource load, so it does not exist yet — every
+        // target but Android can see that and says so instead of handing back a broken animator.
+        if (TestEnv.target != TestTarget.ANDROID) {
+            assertFailsWith<IllegalStateException> { instance.getAnimator() }
+        }
+
+        val resourceLoader = ResourceLoader(engine)
+        assertTrue(resourceLoader.loadResources(asset))
         assertNotNull(instance.getAnimator())
 
+        resourceLoader.destroy()
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
         provider.destroy()
