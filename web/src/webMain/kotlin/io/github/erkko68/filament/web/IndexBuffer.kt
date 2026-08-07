@@ -4,6 +4,7 @@ package io.github.erkko68.filament.web
 
 external class IndexBuffer : JsAny {
 fun setBuffer(engine: Engine, u16array: BufferReference, byteOffset: Double = definedExternally): Unit
+fun getIndexCount(): Double
 companion object {
 fun Builder(): IndexBuffer_Builder
 }

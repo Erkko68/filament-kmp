@@ -6,7 +6,8 @@ import io.github.erkko68.filament.web.IndexBuffer_IndexType
 import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val indexCount: Int = 0) {
+actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer) {
+    actual val indexCount: Int get() = jsIndexBuffer.getIndexCount().toInt()
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
         val int8 = org.khronos.webgl.Int8Array(size)
@@ -42,10 +43,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val i
 
     actual class Builder {
         private val jsBuilder: JSIndexBufferBuilder = JSIndexBuffer.Builder()
-        private var indexCount: Int = 0
-
         actual fun indexCount(indexCount: Int): Builder {
-            this.indexCount = indexCount
             jsBuilder.indexCount(indexCount.toDouble())
             return this
         }
@@ -60,7 +58,7 @@ actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer, actual val i
         }
 
         actual fun build(engine: Engine): IndexBuffer {
-            return IndexBuffer(jsBuilder.build(engine.jsEngine), indexCount)
+            return IndexBuffer(jsBuilder.build(engine.jsEngine))
         }
 
         actual enum class IndexType { USHORT, UINT }

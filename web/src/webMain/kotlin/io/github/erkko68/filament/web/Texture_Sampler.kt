@@ -8,5 +8,8 @@ companion object {
 val SAMPLER_2D: Texture_Sampler
 val SAMPLER_CUBEMAP: Texture_Sampler
 val SAMPLER_EXTERNAL: Texture_Sampler
+val SAMPLER_2D_ARRAY: Texture_Sampler
+val SAMPLER_3D: Texture_Sampler
+val SAMPLER_CUBEMAP_ARRAY: Texture_Sampler
 }
 }

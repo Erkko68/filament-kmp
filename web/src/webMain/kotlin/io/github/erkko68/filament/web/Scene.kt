@@ -10,7 +10,9 @@ fun getRenderableCount(): Double
 fun remove(entity: Entity): Unit
 fun removeEntities(entities: js.array.ReadonlyArray<Entity>): Unit
 fun setIndirectLight(ibl: IndirectLight?): Unit
+fun getIndirectLight(): IndirectLight?
 fun setSkybox(sky: Skybox?): Unit
+fun getSkybox(): Skybox?
 fun getEntityCount(): Double
 fun hasEntity(entity: Entity): Boolean
 }

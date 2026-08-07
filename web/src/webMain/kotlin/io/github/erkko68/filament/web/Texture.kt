@@ -8,10 +8,15 @@ fun getWidth(engine: Engine, level: Double = definedExternally): Double
 fun getHeight(engine: Engine, level: Double = definedExternally): Double
 fun getDepth(engine: Engine, level: Double = definedExternally): Double
 fun getLevels(engine: Engine): Double
+fun getTarget(): Texture_Sampler
+fun getFormat(): Texture_InternalFormat
 fun generateMipmaps(engine: Engine): Unit
 companion object {
 fun isTextureFormatMipmappable(engine: Engine, format: Texture_InternalFormat): Boolean
+fun isTextureFormatSupported(engine: Engine, format: Texture_InternalFormat): Boolean
 fun isTextureSwizzleSupported(engine: Engine): Boolean
+fun getMaxTextureSize(engine: Engine, type: Texture_Sampler): Double
+fun getMaxArrayTextureLayers(engine: Engine): Double
 fun validatePixelFormatAndType(internalFormat: Texture_InternalFormat, format: PixelDataFormat, type: PixelDataType): Boolean
 fun Builder(): Texture_Builder
 }
