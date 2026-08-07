@@ -7,7 +7,8 @@ external class gltfio_FilamentInstance : JsAny {
 fun getAsset(): gltfio_FilamentAsset
 fun getEntities(): Vector<Entity>
 fun getRoot(): Entity
-fun getAnimator(): gltfio_Animator
+// Nullable: gltfio creates the animator during resource load, so this is null before then.
+fun getAnimator(): (gltfio_Animator?)
 fun getSkinNames(): Vector<JsString>
 fun getSkinCount(): Double
 fun getJointCountAt(skinIndex: Double): Double

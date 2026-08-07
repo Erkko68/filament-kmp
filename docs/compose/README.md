@@ -122,7 +122,7 @@ recompose. **Everything else per-frame is built on it:**
 | `rememberAnimationState` | Playing/blending glTF skeletal animation — the high-level path. Don't hand-roll the timing. |
 | `rememberSceneClock()` | You want elapsed **seconds as a `State<Float>`** to read in composition (orbit a `Group`, pulse a value). Reading it recomposes every frame — that's its whole point, and the one case you *want* a frame to recompose. |
 | `FilamentEffect { onFrame { … } }` | Per-frame work from inside a `rememberFilamentScene` escape hatch, with the `engine`/`scene` in scope. The callback gets the same `FrameInfo`. |
-| `rememberFlightCameraController` | Free-flight camera; it advances itself every frame (no separate loop composable needed). |
+| `rememberFlightCameraController` | Free-flight camera; it advances itself every frame (no separate loop composable needed). Flies at `initialMoveSpeed`; the scroll wheel steps it up to `maxMoveSpeed`. |
 
 And the per-**recomposition** siblings, for completeness:
 

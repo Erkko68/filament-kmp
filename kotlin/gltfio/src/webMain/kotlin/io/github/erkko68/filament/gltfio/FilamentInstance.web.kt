@@ -35,7 +35,8 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
     }
 
     actual fun getAnimator(): Animator {
-        return Animator(jsInstance.getAnimator())
+        // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
+        return Animator(checkNotNull(jsInstance.getAnimator()) { ANIMATOR_NOT_LOADED })
     }
 
     actual fun getBoundingBox(): Box {

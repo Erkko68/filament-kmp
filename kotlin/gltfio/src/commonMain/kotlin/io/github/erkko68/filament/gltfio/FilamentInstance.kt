@@ -52,6 +52,13 @@ expect class FilamentInstance {
      * An animator can be obtained either from an individual instance (independent per-instance
      * playback) or from the originating [FilamentAsset] (frame shared amongst all instances).
      * The animator is owned by the asset — do not destroy it manually.
+     *
+     * **Load the asset's resources first.** gltfio creates the animator while loading resources
+     * (it needs the animation buffer data), so this is only available after
+     * [ResourceLoader.loadResources] — or after an async load has reported completion. Calling it
+     * earlier throws; on Android it cannot be detected and returns an animator that crashes on use.
+     *
+     * @throws IllegalStateException if the asset's resources have not been loaded yet.
      */
     fun getAnimator(): Animator
 
@@ -99,3 +106,8 @@ expect class FilamentInstance {
     /** Gets the names of all material variants declared in the asset, in variant-index order. */
     fun getMaterialVariantNames(): Array<String>
 }
+
+/** Message for the [FilamentInstance.getAnimator] guard each platform applies. */
+internal const val ANIMATOR_NOT_LOADED: String =
+    "FilamentInstance.getAnimator() is only available once the asset's resources are loaded — " +
+        "call ResourceLoader.loadResources(asset), or wait for an async load to finish, first."
