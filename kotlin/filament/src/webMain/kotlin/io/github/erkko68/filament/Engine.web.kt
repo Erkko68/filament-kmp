@@ -120,15 +120,15 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
     actual fun createCamera(): Camera {
         val entity = EntityManager.get().create()
-        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)), entity)
+        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun createCamera(entity: Entity): Camera {
-        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)), entity)
+        return Camera(jsEngine.createCamera(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun getCameraComponent(entity: Entity): Camera? {
-        return Camera(jsEngine.getCameraComponent(EntityManager.jsEntityOf(entity)), entity)
+        return Camera(jsEngine.getCameraComponent(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun destroyCamera(camera: Camera) {

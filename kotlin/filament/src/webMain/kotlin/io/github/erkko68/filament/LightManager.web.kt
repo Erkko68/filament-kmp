@@ -24,23 +24,15 @@ private external interface ShadowOptionsExt : JsAny {
 actual class LightManager(internal val jsLightManager: JSLightManager) {
     actual fun getComponentCount(): Int = jsLightManager.getComponentCount().toInt()
 
-    // Upstream LightManager binding doesn't expose `destroy(Entity)` —
-    // components are usually torn down via `engine.destroyEntity`, but we
-    // don't have an Engine reference here. Track local removals so the
-    // common API's destroy / hasComponent round-trip behaves as expected.
-    private val destroyed = mutableSetOf<Entity>()
-
-    actual fun hasComponent(entity: Entity): Boolean {
-        if (entity in destroyed) return false
-        return jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))
-    }
+    actual fun hasComponent(entity: Entity): Boolean =
+        jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))
 
     actual fun getInstance(entity: Entity): EntityInstance {
         return InstanceRegistry.register(jsLightManager.getInstance(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun destroy(entity: Entity) {
-        destroyed += entity
+        jsLightManager.destroy(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getType(instance: EntityInstance): Type {

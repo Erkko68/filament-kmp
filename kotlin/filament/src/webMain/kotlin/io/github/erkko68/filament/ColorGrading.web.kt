@@ -36,7 +36,7 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            jsBuilder.toneMapping(toneMapper.jsToneMapping)
+            jsBuilder.toneMapper(toneMapper.jsToneMapper)
             return this
         }
 
@@ -137,8 +137,10 @@ actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — customLut is not bound in filament.js.")
-        actual fun customLut(data: FloatArray, dimension: Int): Builder = jsUnsupported("ColorGrading.Builder.customLut")
+        actual fun customLut(data: FloatArray, dimension: Int): Builder {
+            jsBuilder.customLut(data.toJsNumbers(), dimension.toDouble())
+            return this
+        }
 
         actual fun fastMath(fastMath: Boolean): Builder {
             jsBuilder.fastMath(fastMath)

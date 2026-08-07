@@ -5,6 +5,7 @@ package io.github.erkko68.filament.web
 external class LightManager : JsAny {
 fun hasComponent(entity: Entity): Boolean
 fun getComponentCount(): Double
+fun destroy(entity: Entity): Unit
 fun getInstance(entity: Entity): LightManager_Instance
 fun getType(instance: LightManager_Instance): LightManager_Type
 fun isDirectional(instance: LightManager_Instance): Boolean

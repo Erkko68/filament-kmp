@@ -30,6 +30,7 @@ fun getShutterSpeed(): Double
 fun getSensitivity(): Double
 fun getFocalLength(): Double
 fun getFieldOfViewInDegrees(direction: Camera_Fov): Double
+fun getEntity(): Entity
 fun getFocusDistance(): Double
 fun setFocusDistance(distance: Double): Unit
 fun setShift(shift: float2): Unit

@@ -105,17 +105,27 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `Engine.isValidStream` | Throws | — |
 | `Engine.paused` | Tracked locally only — pausing requires a multi-threaded engine, which the web build is not | Stop your own frame loop instead |
 | `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
-| `View.BloomOptions.dirt`/`dirtStrength` | Silent no-op — `Texture` fields inside embind value objects are unsupported upstream | — |
+| `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor`, `AmbientOcclusionOptions.ssct` | Silent no-op, and the getter reports the engine default | — |
+| `Texture.Builder.swizzle` | Bound, but `build()` rejects a swizzled texture — WebGL has no texture swizzle (`Texture.isTextureSwizzleSupported` returns `false`) | — |
+| `Texture.Builder.importTexture` | Silent no-op — takes a backend texture handle, which `filament.js` does not expose | — |
+| `Scene.getEntities`/`forEach` | Mirrors the entities added through this wrapper | — |
+
+The five option fields above are the only ones missing from their embind value objects:
+beamsplitter skips pointer and nested-struct members, emitting
+`// JavaScript binding for <field> is not yet supported` in `jsbindings_generated.cpp`.
+`Scene` has no `getEntities()` in C++ at all — only `forEach(Invocable)`, which embind
+cannot bind — so membership is tracked in the wrapper.
 
 > [!NOTE]
-> Everything else in the table that used to live here — `SkinningBuffer`, `MorphTargetBuffer`,
-> `Fence`, shadow types (VSM/DPCF/PCSS), frustum culling, non-indexed geometry,
-> `Renderer.copyFrame`/`readPixels`, `MaterialInstance.material`/`duplicate`/`setScissor`,
-> `Camera.getFieldOfViewInDegrees`, `LightManager.getComponentCount`,
-> `Texture.isTextureSwizzleSupported`, `SurfaceOrientation.Builder.tangents`, and the gltfio
-> instance/joint/morph-name accessors — is now fully wired. It requires a `filament.js`/`filament.wasm`
-> built from Filament `main` with the expanded web bindings (upstream PR pending); the stock
-> 1.73.0 release prebuilts do not include them.
+> Everything else that used to be listed here — `SkinningBuffer`, `MorphTargetBuffer`, `Fence`,
+> shadow types (VSM/DPCF/PCSS), frustum culling, non-indexed geometry,
+> `Renderer.copyFrame`/`readPixels`, the `View` option getters, `Material`'s reflective API,
+> integer/boolean-vector material parameters, `MaterialInstance.getConstant*`, the full
+> `ToneMapper` hierarchy, `ColorGrading.Builder.customLut`, `Camera.entity`,
+> `LightManager.destroy`, `TransformManager.getChildCount`, `Texture.getTarget`/`getFormat`,
+> `Skybox.Builder.intensity`, and the gltfio accessors and `ResourceLoader` — is now fully
+> wired. It requires a `filament.js`/`filament.wasm` carrying the expanded web bindings
+> (upstream PR pending); the stock release prebuilts do not include them.
 
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.
 

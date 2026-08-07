@@ -22,6 +22,7 @@ import io.github.erkko68.filament.web.CullingMode
 private external interface JsMaterialInstanceExt : JsAny  {
     fun setBoolParameter(name: String, value: ReadonlyArray<JsBoolean>)
     fun setFloatParameter(name: String, value: ReadonlyArray<JsNumber>)
+    fun setIntParameter(name: String, value: ReadonlyArray<JsNumber>)
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -42,18 +43,15 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Int) {
-        jsMaterialInstance.setFloatParameter(name, x.toDouble())
+        jsMaterialInstance.setIntParameter(name, x.toDouble())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
-    actual fun getConstantBoolean(name: String): Boolean = jsUnsupported("MaterialInstance.getConstantBoolean")
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
-    actual fun getConstantFloat(name: String): Float = jsUnsupported("MaterialInstance.getConstantFloat")
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
-    actual fun getConstantInt(name: String): Int = jsUnsupported("MaterialInstance.getConstantInt")
+    actual fun getConstantBoolean(name: String): Boolean = jsMaterialInstance.getConstantBool(name)
+    actual fun getConstantFloat(name: String): Float = jsMaterialInstance.getConstantFloat(name).toFloat()
+    actual fun getConstantInt(name: String): Int = jsMaterialInstance.getConstantInt(name).toInt()
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
-        ext.setBoolParameter(name, listOf(x, y).toJsBooleans())
+        jsMaterialInstance.setBool2Parameter(name, listOf(x, y).toJsBooleans())
     }
 
     actual fun setParameter(name: String, x: Float, y: Float) {
@@ -61,11 +59,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Int, y: Int) {
-        jsMaterialInstance.setFloat2Parameter(name, jsNumbers(x.toFloat(), y.toFloat()))
+        jsMaterialInstance.setInt2Parameter(name, jsNumbers(x, y))
     }
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean, z: Boolean) {
-        ext.setBoolParameter(name, listOf(x, y, z).toJsBooleans())
+        jsMaterialInstance.setBool3Parameter(name, listOf(x, y, z).toJsBooleans())
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float) {
@@ -73,7 +71,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Int, y: Int, z: Int) {
-        jsMaterialInstance.setFloat3Parameter(name, jsNumbers(x.toFloat(), y.toFloat(), z.toFloat()))
+        jsMaterialInstance.setInt3Parameter(name, jsNumbers(x, y, z))
     }
 
     actual fun setParameter(
@@ -83,7 +81,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         z: Boolean,
         w: Boolean
     ) {
-        ext.setBoolParameter(name, listOf(x, y, z, w).toJsBooleans())
+        jsMaterialInstance.setBool4Parameter(name, listOf(x, y, z, w).toJsBooleans())
     }
 
     actual fun setParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
@@ -91,7 +89,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) {
-        jsMaterialInstance.setFloat4Parameter(name, jsNumbers(x.toFloat(), y.toFloat(), z.toFloat(), w.toFloat()))
+        jsMaterialInstance.setInt4Parameter(name, jsNumbers(x, y, z, w))
     }
 
     actual fun setParameter(
@@ -121,7 +119,12 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         count: Int
     ) {
         val sub = v.slice(offset until (offset + count))
-        ext.setFloatParameter(name, sub.toJsNumbers())
+        when (type) {
+            IntElement.INT -> ext.setIntParameter(name, sub.toJsNumbers())
+            IntElement.INT2 -> jsMaterialInstance.setInt2Parameter(name, sub.toJsNumbers())
+            IntElement.INT3 -> jsMaterialInstance.setInt3Parameter(name, sub.toJsNumbers())
+            IntElement.INT4 -> jsMaterialInstance.setInt4Parameter(name, sub.toJsNumbers())
+        }
     }
 
     actual fun setParameter(
@@ -244,13 +247,7 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         set(value) { jsMaterialInstance.setDepthWrite(value) }
 
     actual var isStencilWriteEnabled: Boolean
-        // Upstream oversight: `MaterialInstance::isStencilWriteEnabled()` exists in C++
-        // and every sibling (`isColorWriteEnabled`, `isDepthWriteEnabled`,
-        // `isDepthCullingEnabled`, `isDoubleSided`) is bound in jsbindings.cpp, but this
-        // one was missed. Falling back to the Filament runtime default (StencilState's
-        // `stencilWrite = false` in backend/DriverEnums.h). TODO: file a one-line PR
-        // upstream to bind it next to `setStencilWrite`.
-        get() = false
+        get() = jsMaterialInstance.isStencilWriteEnabled()
         set(value) { jsMaterialInstance.setStencilWrite(value) }
 
     actual var isDepthCullingEnabled: Boolean

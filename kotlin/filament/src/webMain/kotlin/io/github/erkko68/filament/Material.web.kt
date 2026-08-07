@@ -1,5 +1,16 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.Shading as JsShading
+import io.github.erkko68.filament.web.Interpolation as JsInterpolation
+import io.github.erkko68.filament.web.BlendingMode as JsBlendingMode
+import io.github.erkko68.filament.web.TransparencyMode as JsTransparencyMode
+import io.github.erkko68.filament.web.RefractionMode as JsRefractionMode
+import io.github.erkko68.filament.web.RefractionType as JsRefractionType
+import io.github.erkko68.filament.web.ReflectionMode as JsReflectionMode
+import io.github.erkko68.filament.web.VertexDomain as JsVertexDomain
+import io.github.erkko68.filament.web.CullingMode as JsCullingMode
+import io.github.erkko68.filament.web.FeatureLevel as JsFeatureLevel
+import io.github.erkko68.filament.web.Material_ParameterInfo as JsParameterInfo
 import io.github.erkko68.filament.web.Material as JSMaterial
 import org.khronos.webgl.set
 
@@ -27,94 +38,107 @@ actual class Material(internal val jsMaterial: JSMaterial) {
         return jsMaterial.getName()
     }
 
-    actual fun getShading(): Shading {
-        return Shading.LIT
+    actual fun getShading(): Shading = when (jsMaterial.getShading()) {
+        JsShading.UNLIT -> Shading.UNLIT
+        JsShading.SUBSURFACE -> Shading.SUBSURFACE
+        JsShading.CLOTH -> Shading.CLOTH
+        JsShading.SPECULAR_GLOSSINESS -> Shading.SPECULAR_GLOSSINESS
+        else -> Shading.LIT
     }
 
-    actual fun getInterpolation(): Interpolation {
-        return Interpolation.SMOOTH
+    actual fun getInterpolation(): Interpolation = when (jsMaterial.getInterpolation()) {
+        JsInterpolation.FLAT -> Interpolation.FLAT
+        else -> Interpolation.SMOOTH
     }
 
-    actual fun getBlendingMode(): BlendingMode {
-        return BlendingMode.OPAQUE
+    // BlendingMode::CUSTOM has no common-API counterpart; it reports as TRANSPARENT.
+    actual fun getBlendingMode(): BlendingMode = when (jsMaterial.getBlendingMode()) {
+        JsBlendingMode.TRANSPARENT, JsBlendingMode.CUSTOM -> BlendingMode.TRANSPARENT
+        JsBlendingMode.ADD -> BlendingMode.ADD
+        JsBlendingMode.MASKED -> BlendingMode.MASKED
+        JsBlendingMode.FADE -> BlendingMode.FADE
+        JsBlendingMode.MULTIPLY -> BlendingMode.MULTIPLY
+        JsBlendingMode.SCREEN -> BlendingMode.SCREEN
+        else -> BlendingMode.OPAQUE
     }
 
-    actual fun getTransparencyMode(): TransparencyMode {
-        return TransparencyMode.DEFAULT
+    actual fun getTransparencyMode(): TransparencyMode = when (jsMaterial.getTransparencyMode()) {
+        JsTransparencyMode.TWO_PASSES_ONE_SIDE -> TransparencyMode.TWO_PASSES_ONE_SIDE
+        JsTransparencyMode.TWO_PASSES_TWO_SIDES -> TransparencyMode.TWO_PASSES_TWO_SIDES
+        else -> TransparencyMode.DEFAULT
     }
 
-    actual fun getRefractionMode(): RefractionMode {
-        return RefractionMode.NONE
+    actual fun getRefractionMode(): RefractionMode = when (jsMaterial.getRefractionMode()) {
+        JsRefractionMode.CUBEMAP -> RefractionMode.CUBEMAP
+        JsRefractionMode.SCREEN_SPACE -> RefractionMode.SCREEN_SPACE
+        else -> RefractionMode.NONE
     }
 
-    actual fun getRefractionType(): RefractionType {
-        return RefractionType.SOLID
+    actual fun getRefractionType(): RefractionType = when (jsMaterial.getRefractionType()) {
+        JsRefractionType.THIN -> RefractionType.THIN
+        else -> RefractionType.SOLID
     }
 
-    actual fun getReflectionMode(): ReflectionMode {
-        return ReflectionMode.DEFAULT
+    actual fun getReflectionMode(): ReflectionMode = when (jsMaterial.getReflectionMode()) {
+        JsReflectionMode.SCREEN_SPACE -> ReflectionMode.SCREEN_SPACE
+        else -> ReflectionMode.DEFAULT
     }
 
-    actual fun getVertexDomain(): VertexDomain {
-        return VertexDomain.OBJECT
+    actual fun getVertexDomain(): VertexDomain = when (jsMaterial.getVertexDomain()) {
+        JsVertexDomain.WORLD -> VertexDomain.WORLD
+        JsVertexDomain.VIEW -> VertexDomain.VIEW
+        JsVertexDomain.DEVICE -> VertexDomain.DEVICE
+        else -> VertexDomain.OBJECT
     }
 
-    actual fun getCullingMode(): CullingMode {
-        return CullingMode.BACK
+    actual fun getCullingMode(): CullingMode = when (jsMaterial.getCullingMode()) {
+        JsCullingMode.NONE -> CullingMode.NONE
+        JsCullingMode.FRONT -> CullingMode.FRONT
+        JsCullingMode.FRONT_AND_BACK -> CullingMode.FRONT_AND_BACK
+        else -> CullingMode.BACK
     }
 
-    actual fun isColorWriteEnabled(): Boolean {
-        return true
+    actual fun isColorWriteEnabled(): Boolean = jsMaterial.isColorWriteEnabled()
+
+    actual fun isDepthWriteEnabled(): Boolean = jsMaterial.isDepthWriteEnabled()
+
+    actual fun isDepthCullingEnabled(): Boolean = jsMaterial.isDepthCullingEnabled()
+
+    actual fun isDoubleSided(): Boolean = jsMaterial.isDoubleSided()
+
+    actual fun isAlphaToCoverageEnabled(): Boolean = jsMaterial.isAlphaToCoverageEnabled()
+
+    actual fun getMaskThreshold(): Float = jsMaterial.getMaskThreshold().toFloat()
+
+    actual fun getSpecularAntiAliasingVariance(): Float =
+        jsMaterial.getSpecularAntiAliasingVariance().toFloat()
+
+    actual fun getSpecularAntiAliasingThreshold(): Float =
+        jsMaterial.getSpecularAntiAliasingThreshold().toFloat()
+
+    actual fun getFeatureLevel(): Engine.FeatureLevel = when (jsMaterial.getFeatureLevel()) {
+        JsFeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
+        JsFeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
+        else -> Engine.FeatureLevel.FEATURE_LEVEL_1
     }
 
-    actual fun isDepthWriteEnabled(): Boolean {
-        return true
-    }
-
-    actual fun isDepthCullingEnabled(): Boolean {
-        return true
-    }
-
-    actual fun isDoubleSided(): Boolean {
-        return false
-    }
-
-    actual fun isAlphaToCoverageEnabled(): Boolean {
-        return false
-    }
-
-    actual fun getMaskThreshold(): Float {
-        return 0.4f
-    }
-
-    actual fun getSpecularAntiAliasingVariance(): Float {
-        return 0.0f
-    }
-
-    actual fun getSpecularAntiAliasingThreshold(): Float {
-        return 0.0f
-    }
-
-    actual fun getFeatureLevel(): Engine.FeatureLevel {
-        return Engine.FeatureLevel.FEATURE_LEVEL_1
-    }
-
-    actual fun getParameterCount(): Int {
-        return 0
-    }
+    actual fun getParameterCount(): Int = jsMaterial.getParameterCount().toInt()
 
     actual fun getParameters(): List<Parameter> {
-        return emptyList()
+        val params = jsMaterial.getParameters()
+        return List(params.size) { i ->
+            val p = params[i]!!
+            Parameter(p.name, p.parameterType(), Parameter.Precision.entries[p.precision], p.count)
+        }
     }
 
     actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
-        return emptySet()
+        val bitset = jsMaterial.getRequiredAttributes().toInt()
+        return VertexBuffer.VertexAttribute.entries
+            .filterTo(mutableSetOf()) { (bitset and (1 shl it.ordinal)) != 0 }
     }
 
-    actual fun hasParameter(name: String): Boolean {
-        val params = getParameters()
-        return params.any { it.name == name }
-    }
+    actual fun hasParameter(name: String): Boolean = jsMaterial.hasParameter(name)
 
     actual fun setDefaultParameter(name: String, value: Int) {
         // Default parameters are set at material instance creation time in JS
@@ -216,5 +240,24 @@ actual class Material(internal val jsMaterial: JSMaterial) {
         }
 
         actual enum class ShadowSamplingQuality { HARD, LOW }
+    }
+}
+
+// ParameterInfo packs a union: `type`, `samplerType` and `subpassType` live in separate
+// enum spaces, selected by isSampler/isSubpass. The common Parameter.Type flattens them —
+// UniformType[0..17] then the samplers then SUBPASS_INPUT — and those prefixes match the
+// backend enums, so the offsets below are exact.
+private fun JsParameterInfo.parameterType(): Material.Parameter.Type {
+    val entries = Material.Parameter.Type.entries
+    return when {
+        isSubpass -> Material.Parameter.Type.SUBPASS_INPUT
+        // SamplerType also declares SAMPLER_CUBEMAP_ARRAY, which the common enum lacks and
+        // WebGL 2 cannot express; it would run past the sampler range, so it is clamped out.
+        isSampler -> entries[
+            Material.Parameter.Type.SAMPLER_2D.ordinal +
+                (samplerType ?: 0).coerceIn(0, Material.Parameter.Type.SAMPLER_3D.ordinal -
+                    Material.Parameter.Type.SAMPLER_2D.ordinal)
+        ]
+        else -> entries[(type ?: 0).coerceIn(0, Material.Parameter.Type.MAT4.ordinal)]
     }
 }

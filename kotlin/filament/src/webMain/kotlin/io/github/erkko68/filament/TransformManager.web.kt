@@ -80,12 +80,10 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         return id
     }
 
-    // Upstream binds getChildren as a single embind LAMBDA returning an
-    // EntityVector — there's no separately exposed getChildCount, so derive it.
-    actual fun getChildCount(instance: EntityInstance): Int {
-        val vec = jsTransformManager.getChildren(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>())
-        return vec.size().toInt()
-    }
+    actual fun getChildCount(instance: EntityInstance): Int =
+        jsTransformManager.getChildCount(
+            InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()
+        ).toInt()
 
     actual fun getChildren(
         instance: EntityInstance,
@@ -155,8 +153,7 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
         jsTransformManager.commitLocalTransformTransaction()
     }
 
-    actual var isAccurateTranslationsEnabled: Boolean = false
-        set(value) {
-            field = value
-        }
+    actual var isAccurateTranslationsEnabled: Boolean
+        get() = jsTransformManager.isAccurateTranslationsEnabled()
+        set(value) { jsTransformManager.setAccurateTranslationsEnabled(value) }
 }

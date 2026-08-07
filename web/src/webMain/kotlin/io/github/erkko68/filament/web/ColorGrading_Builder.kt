@@ -8,6 +8,8 @@ fun quality(qualityLevel: ColorGrading_QualityLevel): ColorGrading_Builder
 fun format(format: ColorGrading_LutFormat): ColorGrading_Builder
 fun dimensions(dim: Double): ColorGrading_Builder
 fun toneMapping(toneMapping: ColorGrading_ToneMapping): ColorGrading_Builder
+fun toneMapper(toneMapper: ToneMapper): ColorGrading_Builder
+fun customLut(lut: js.array.ReadonlyArray<JsNumber>, dimension: Double): ColorGrading_Builder
 fun luminanceScaling(luminanceScaling: Boolean): ColorGrading_Builder
 fun gamutMapping(gamutMapping: Boolean): ColorGrading_Builder
 fun exposure(exposure: Double): ColorGrading_Builder

@@ -7,6 +7,9 @@ fun hasComponent(entity: Entity): Boolean
 fun getInstance(entity: Entity): TransformManager_Instance
 fun create(entity: Entity): Unit
 fun destroy(entity: Entity): Unit
+fun getChildCount(instance: TransformManager_Instance): Double
+fun isAccurateTranslationsEnabled(): Boolean
+fun setAccurateTranslationsEnabled(enable: Boolean): Unit
 fun setParent(instance: TransformManager_Instance, parent: TransformManager_Instance): Unit
 fun setTransform(instance: TransformManager_Instance, xform: mat4): Unit
 fun getTransform(instance: TransformManager_Instance): mat4

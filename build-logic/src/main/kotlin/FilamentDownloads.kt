@@ -6,7 +6,6 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -175,16 +174,10 @@ object FilamentDownloads {
  * forces re-extraction when the version bumps OR the in-tarball prefix changes
  * (e.g. the Windows CRT variant mt<->md) — a plain "dir non-empty" check would
  * silently reuse a stale extraction.
- *
- * [localBundleDir] (web only, from $FILAMENT_WEB_BUNDLE_DIR) takes the bundle from
- * a local Filament build instead of the release tarball, so web bindings can be
- * exercised before the matching Filament release ships. The stamp records the
- * source path, so pointing elsewhere — or unsetting it — re-syncs.
  */
 abstract class DownloadFilamentPrebuiltsTask : DefaultTask() {
     @get:Input abstract val filamentVersion: Property<String>
     @get:Input abstract val target: Property<String>
-    @get:Optional @get:Input abstract val localBundleDir: Property<String>
     @get:OutputDirectory abstract val outputDir: DirectoryProperty
     // Not an output: shared across tasks and deliberately clean-surviving.
     @get:Internal abstract val cacheDir: DirectoryProperty
@@ -198,8 +191,7 @@ abstract class DownloadFilamentPrebuiltsTask : DefaultTask() {
         val outDir = outputDir.get().asFile
 
         val stampFile = outDir.resolve(".prebuilt-source")
-        val local = localBundleDir.orNull?.takeIf { it.isNotBlank() }
-        val stamp = if (local != null) "local|$local" else "$version|$prefix"
+        val stamp = "$version|$prefix"
         if (outDir.exists() && (outDir.list()?.isNotEmpty() == true) &&
             stampFile.isFile && stampFile.readText().trim() == stamp
         ) {
@@ -209,21 +201,6 @@ abstract class DownloadFilamentPrebuiltsTask : DefaultTask() {
 
         // Wipe any previous extraction so different variants/versions never mix.
         outDir.listFiles()?.forEach { it.deleteRecursively() }
-
-        if (local != null) {
-            val src = File(local)
-            val names = listOf("filament.js", "filament.wasm", "filament.d.ts")
-            val copied = names.count { name ->
-                val f = src.resolve(name)
-                f.isFile.also { if (it) f.copyTo(outDir.resolve(name), overwrite = true) }
-            }
-            check(copied == names.size) {
-                "FILAMENT_WEB_BUNDLE_DIR='$local' is missing ${names.filterNot { src.resolve(it).isFile }}"
-            }
-            stampFile.writeText(stamp + "\n")
-            logger.lifecycle("[$targetName] local bundle <- $src")
-            return
-        }
 
         logger.lifecycle("[$targetName]")
         val tarball = FilamentDownloads.releaseTarball(cacheDir.get().asFile, version, suffix, logger)

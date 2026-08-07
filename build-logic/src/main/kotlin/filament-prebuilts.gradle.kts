@@ -31,9 +31,6 @@ prebuiltTargets.forEach { targetName ->
         description = "Downloads Filament $filaVersion prebuilt libraries for $targetName."
         filamentVersion.set(filaVersion)
         target.set(targetName)
-        if (targetName == "web") {
-            localBundleDir.set(providers.environmentVariable("FILAMENT_WEB_BUNDLE_DIR"))
-        }
         // Web prebuilts land directly in prebuilts/web/; all others in prebuilts/<target>/lib/.
         outputDir.set(
             if (targetName == "web") layout.projectDirectory.dir("prebuilts/web")

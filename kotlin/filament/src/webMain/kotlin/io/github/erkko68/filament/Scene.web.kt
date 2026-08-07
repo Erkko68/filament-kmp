@@ -10,8 +10,8 @@ actual class Scene(internal val jsScene: JSScene) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 
-    // Scene::getEntities/forEach are not bound (jsbindings.cpp exposes only the counts and
-    // hasEntity), so membership is mirrored here to back getEntities()/forEach().
+    // Scene has no getEntities() in C++ at all — only forEach(Invocable), which embind
+    // cannot bind — so membership is mirrored here to back getEntities()/forEach().
     private val _entities = mutableSetOf<Int>()
 
     actual var skybox: Skybox?

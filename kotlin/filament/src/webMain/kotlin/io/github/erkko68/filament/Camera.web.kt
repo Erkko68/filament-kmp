@@ -10,7 +10,7 @@ import io.github.erkko68.filament.web.Camera_Projection
 import io.github.erkko68.filament.web.Camera_Fov
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity = 0) {
+actual class Camera(internal val jsCamera: JSCamera) {
 
     actual fun setProjection(
         projection: Projection,
@@ -218,12 +218,7 @@ actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity
     }
 
     actual val entity: Entity
-        // TODO(js): Camera::getEntity() exists in C++ but is not bound in
-        // jsbindings.cpp. We instead remember the entity at construction time
-        // (Engine.createCamera passes it in). For Cameras obtained via
-        // Engine.getCameraComponent() the value will be the entity argument
-        // that was used. Returns 0 only if Camera was constructed without one.
-        get() = _entity
+        get() = jsCamera.getEntity().getId().toInt()
 
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }
