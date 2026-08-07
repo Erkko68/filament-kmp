@@ -8,18 +8,6 @@ import io.github.erkko68.filament.web.PixelDataType
 import io.github.erkko68.filament.web.Texture_Builder as JSTextureBuilder
 import org.khronos.webgl.set
 
-// The generated Texture external only binds setImage(engine, level, pbd); the deep/sub-region
-// overload exists in filament.js but isn't emitted, so re-type it here instead of `asDynamic()`.
-private external interface JsTextureExt : JsAny  {
-    fun setImage(
-        engine: io.github.erkko68.filament.web.Engine,
-        level: Int, xoffset: Int, yoffset: Int, zoffset: Int,
-        width: Int, height: Int, depth: Int,
-        pbd: JSPixelBufferDescriptor,
-    )
-}
-
-@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class Texture(val jsTexture: JSTexture) {
     // Filament JS exposes dimensions only via `_getWidth(engine, level)` etc.
     // (see jsbindings.cpp), so when an engine is known we delegate; otherwise
@@ -76,14 +64,7 @@ actual class Texture(val jsTexture: JSTexture) {
         }
 
         actual fun sampler(target: Sampler): Builder {
-            jsBuilder.sampler(when (target) {
-                Sampler.SAMPLER_2D -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D
-                Sampler.SAMPLER_2D_ARRAY -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D_ARRAY
-                Sampler.SAMPLER_CUBEMAP -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP
-                Sampler.SAMPLER_EXTERNAL -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL
-                Sampler.SAMPLER_3D -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_3D
-                Sampler.SAMPLER_CUBEMAP_ARRAY -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP_ARRAY
-            })
+            jsBuilder.sampler(mapSampler(target))
             return this
         }
 
@@ -229,8 +210,7 @@ actual class Texture(val jsTexture: JSTexture) {
         height: Int,
         descriptor: PixelBufferDescriptor
     ) {
-        // JS bindings only support setImage(engine, level, pbd); sub-region upload not available
-        jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
+        jsTexture.setImage(engine.jsEngine, level.toDouble(), xoffset.toDouble(), yoffset.toDouble(), width.toDouble(), height.toDouble(), descriptor.jsPbd)
     }
 
     actual fun setImage(
@@ -244,10 +224,7 @@ actual class Texture(val jsTexture: JSTexture) {
         depth: Int,
         descriptor: PixelBufferDescriptor
     ) {
-        // Deep setImage is for 3D textures or arrays
-        jsTexture.unsafeCast<JsTextureExt>().setImage(
-            engine.jsEngine, level, xoffset, yoffset, zoffset, width, height, depth, descriptor.jsPbd
-        )
+        jsTexture.setImage(engine.jsEngine, level.toDouble(), xoffset.toDouble(), yoffset.toDouble(), zoffset.toDouble(), width.toDouble(), height.toDouble(), depth.toDouble(), descriptor.jsPbd)
     }
 
     actual fun setExternalStream(
@@ -265,7 +242,7 @@ actual class Texture(val jsTexture: JSTexture) {
             engine: Engine,
             format: InternalFormat
         ): Boolean {
-            return true
+            return JSTexture.isTextureFormatSupported(engine.jsEngine, mapInternalFormat(format))
         }
 
         actual fun isTextureFormatMipmappable(
@@ -295,11 +272,11 @@ actual class Texture(val jsTexture: JSTexture) {
             engine: Engine,
             type: Sampler
         ): Int {
-            return 8192
+            return JSTexture.getMaxTextureSize(engine.jsEngine, mapSampler(type)).toInt()
         }
 
         actual fun getMaxArrayTextureLayers(engine: Engine): Int {
-            return 256
+            return JSTexture.getMaxArrayTextureLayers(engine.jsEngine).toInt()
         }
 
         actual fun computeDataSize(
@@ -326,6 +303,15 @@ actual class Texture(val jsTexture: JSTexture) {
 // first 101 entries line up 1:1 with the common enum and the ordinal is the mapping. The
 // trailing RGTC/BPTC formats have no JS counterpart (WebGL cannot sample them anyway).
 private const val JS_INTERNAL_FORMAT_COUNT = 101
+
+private fun mapSampler(s: Texture.Sampler): io.github.erkko68.filament.web.Texture_Sampler = when (s) {
+    Texture.Sampler.SAMPLER_2D -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D
+    Texture.Sampler.SAMPLER_2D_ARRAY -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D_ARRAY
+    Texture.Sampler.SAMPLER_CUBEMAP -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP
+    Texture.Sampler.SAMPLER_EXTERNAL -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL
+    Texture.Sampler.SAMPLER_3D -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_3D
+    Texture.Sampler.SAMPLER_CUBEMAP_ARRAY -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP_ARRAY
+}
 
 private fun mapInternalFormat(format: Texture.InternalFormat): JSTextureInternalFormat {
     val ordinal = format.ordinal

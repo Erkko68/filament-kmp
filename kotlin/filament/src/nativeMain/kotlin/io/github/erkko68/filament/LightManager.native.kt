@@ -108,6 +108,14 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
         actual var transform: FloatArray
             get() = FloatArray(4) { nativeOptions.transform[it] }
             set(value) { for (i in 0 until 4.coerceAtMost(value.size)) nativeOptions.transform[i] = value[i] }
+
+        actual var polygonOffsetConstant: Float
+            get() = nativeOptions.polygonOffsetConstant
+            set(value) { nativeOptions.polygonOffsetConstant = value }
+
+        actual var polygonOffsetSlope: Float
+            get() = nativeOptions.polygonOffsetSlope
+            set(value) { nativeOptions.polygonOffsetSlope = value }
     }
 
     actual object ShadowCascades {

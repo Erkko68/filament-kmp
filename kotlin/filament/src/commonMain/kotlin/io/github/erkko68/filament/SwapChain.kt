@@ -83,6 +83,7 @@ expect class SwapChain {
      *
      * @return The native window object, or null if not available
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns null — SwapChain wraps an HTML5 canvas on web, not an OS native window handle.")
     val nativeWindow: Any?
 
     /**
@@ -92,6 +93,7 @@ expect class SwapChain {
      *
      * @return The native object handle as a long value
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns sentinel value 1L — SwapChain handle is not exposed as a numeric pointer on web.")
     val nativeObject: Long
 
     /**
@@ -99,6 +101,7 @@ expect class SwapChain {
      *
      * @return true if a frame scheduled callback is set, false otherwise
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     val isFrameScheduledCallbackSet: Boolean
 
     /**
@@ -113,6 +116,7 @@ expect class SwapChain {
      * @param callback The callback function to invoke when frame GPU rendering completes.
      *                 Pass null or a no-op function to unset the callback.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     fun setFrameCompletedCallback(callback: () -> Unit)
 
     /**
@@ -133,6 +137,7 @@ expect class SwapChain {
      * @param callback The callback function to invoke when the frame is scheduled.
      *                 Pass null or a no-op function to unset the callback.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     fun setFrameScheduledCallback(callback: () -> Unit)
 
     /**
@@ -144,6 +149,7 @@ expect class SwapChain {
      *
      * @return true if [setFrameRate] is definitively supported, false otherwise
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
     fun isFrameRateChangeSupported(): Boolean
 
     /**
@@ -153,6 +159,7 @@ expect class SwapChain {
      *
      * @param frameRate The intended frame rate in frames per second. 0.0f clears/resets the rate.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — display frame rate switching is not supported on web; pacing is browser-managed.")
     fun setFrameRate(frameRate: Float)
 
     /**
@@ -162,5 +169,6 @@ expect class SwapChain {
      * @param compatibility Frame rate compatibility mode.
      * @param strategy      Change strategy for non-seamless transitions.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — display frame rate switching is not supported on web; pacing is browser-managed.")
     fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy)
 }

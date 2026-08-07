@@ -54,8 +54,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             bands: Int,
             sh: FloatArray
         ): Builder {
-            // JS bindings don't seem to have radiance, mapping to irradiance
-            jsBuilder.irradianceSh(bands.toDouble(), sh.toJsNumbers())
+            jsBuilder.radianceSh(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 

@@ -2,8 +2,8 @@ package io.github.erkko68.filament
 
 
 import io.github.erkko68.filament.web.interop.emptyJsObject
-
 import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.readNumbersInto
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import org.khronos.webgl.get
@@ -14,24 +14,36 @@ import io.github.erkko68.filament.web.`Renderer_ClearOptions` as JSRendererClear
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
-    actual var displayInfo: DisplayInfo = DisplayInfo()
+    private var _displayInfo = DisplayInfo()
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setDisplayInfo is not bound in filament.js; frame pacing is managed by the browser.")
+    actual var displayInfo: DisplayInfo
+        get() = _displayInfo
         set(value) {
-            field = value
-            // Renderer_DisplayInfo not in JS bindings
+            _displayInfo = value
         }
 
-    actual var frameRateOptions: FrameRateOptions = FrameRateOptions()
+    private var _frameRateOptions = FrameRateOptions()
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setFrameRateOptions is not bound in filament.js; frame pacing is managed by the browser.")
+    actual var frameRateOptions: FrameRateOptions
+        get() = _frameRateOptions
         set(value) {
-            field = value
-            // JS bindings for setFrameRateOptions are often missing or simplified
+            _frameRateOptions = value
         }
 
-    actual var clearOptions: ClearOptions = ClearOptions()
+    actual var clearOptions: ClearOptions
+        get() {
+            val jsOptions = jsRenderer.getClearOptions()
+            return ClearOptions().apply {
+                clearColor = jsOptions.clearColor?.readNumbersInto(DoubleArray(4)) ?: doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+                clear = jsOptions.clear ?: false
+                discard = jsOptions.discard ?: true
+            }
+        }
         set(value) {
-            field = value
             val jsOptions = emptyJsObject().unsafeCast<JSRendererClearOptions>()
             jsOptions.clearColor = value.clearColor.toJsNumbers()
             jsOptions.clear = value.clear
+            jsOptions.discard = value.discard
             jsRenderer.setClearOptions(jsOptions)
         }
 
@@ -43,18 +55,19 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         swapChain: SwapChain,
         frameTimeNanos: Long
     ): Boolean {
-        // JS beginFrame doesn't take frameTimeNanos in current bindings
         return jsRenderer.beginFrame(swapChain.jsSwapChain)
     }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) {
+        jsRenderer.setPresentationTime(monotonicClockNanos.toDouble())
     }
 
-    // TODO(js): bound upstream as embind int64 (BigInt); stubbed like setPresentationTime.
     actual fun setDesiredPresentationTime(monotonicClockNanos: Long) {
+        jsRenderer.setDesiredPresentationTime(monotonicClockNanos.toDouble())
     }
 
     actual fun setRenderingDeadline(monotonicClockNanos: Long) {
+        jsRenderer.setRenderingDeadline(monotonicClockNanos.toDouble())
     }
 
     actual fun endFrame() {
@@ -87,7 +100,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     }
 
     actual fun renderStandaloneView(view: View) {
-        jsRenderer.renderView(view.jsView)
+        jsRenderer.renderStandaloneView(view.jsView)
     }
 
     actual fun copyFrame(
@@ -168,7 +181,7 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
     actual class ClearOptions {
         actual var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
         actual var clear: Boolean = false
-        actual var discard: Boolean = false
+        actual var discard: Boolean = true
     }
 
     actual companion object {

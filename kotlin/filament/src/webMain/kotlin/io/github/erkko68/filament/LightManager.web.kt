@@ -11,14 +11,8 @@ import io.github.erkko68.filament.web.interop.toJsNumbers
 import io.github.erkko68.filament.web.LightManager as JSLightManager
 import io.github.erkko68.filament.web.`LightManager_Builder` as JSLightManagerBuilder
 import io.github.erkko68.filament.web.LightManager_Type
+import io.github.erkko68.filament.web.LightManager_ShadowCascades.Companion as JSShadowCascades
 import io.github.erkko68.filament.web.Entity as JSEntity
-
-// ShadowOptions fields not emitted into the generated option external.
-private external interface ShadowOptionsExt : JsAny {
-    var lispsm: Boolean?
-    var shadowBulbRadius: Double?
-    var transform: JsAny?
-}
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
@@ -100,19 +94,17 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         return jsLightManager.getFalloff(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
     }
 
-    // get{Inner,Outer}ConeAngle aren't bound in upstream jsbindings.cpp (v1.71.4) —
-    // mirror the last setSpotLightCone value per-instance so the common getters
-    // return what was set.
-    private val coneAngles = mutableMapOf<Int, Pair<Float, Float>>()
-
     actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) {
-        coneAngles[instance] = inner to outer
         jsLightManager.setSpotLightCone(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), inner.toDouble(), outer.toDouble())
     }
 
-    actual fun getInnerConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.first ?: 0f
+    actual fun getInnerConeAngle(instance: EntityInstance): Float {
+        return jsLightManager.getSpotLightConeInner(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
+    }
 
-    actual fun getOuterConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.second ?: 0f
+    actual fun getOuterConeAngle(instance: EntityInstance): Float {
+        return jsLightManager.getSpotLightConeOuter(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
+    }
 
     actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) {
         jsLightManager.setSunAngularRadius(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), angularRadius.toDouble())
@@ -175,14 +167,23 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         actual var shadowBulbRadius: Float = 0.02f
         // Identity quaternion (x,y,z,w); 4 floats like jvm/native, not a 16-float mat4.
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
+        actual var polygonOffsetConstant: Float = 0.5f
+        actual var polygonOffsetSlope: Float = 2.0f
     }
 
+    // The JS forms return the (cascades - 1) splits instead of filling an out-parameter.
     actual object ShadowCascades {
         actual fun computeUniformSplits(splitPositions: FloatArray, cascades: Int) {
+            JSShadowCascades.computeUniformSplits(cascades.toDouble()).readNumbersInto(splitPositions)
         }
         actual fun computeLogSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float) {
+            JSShadowCascades.computeLogSplits(cascades.toDouble(), near.toDouble(), far.toDouble())
+                .readNumbersInto(splitPositions)
         }
         actual fun computePracticalSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float, lambda: Float) {
+            JSShadowCascades.computePracticalSplits(
+                cascades.toDouble(), near.toDouble(), far.toDouble(), lambda.toDouble()
+            ).readNumbersInto(splitPositions)
         }
     }
 
@@ -225,10 +226,11 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
             js.screenSpaceContactShadows = options.screenSpaceContactShadows
             js.stepCount = options.stepCount.toDouble()
             js.maxShadowDistance = options.maxShadowDistance.toDouble()
-            val ext = js.unsafeCast<ShadowOptionsExt>()
-            ext.lispsm = options.lispsm
-            ext.shadowBulbRadius = options.shadowBulbRadius.toDouble()
-            ext.transform = options.transform.toJsNumbers()
+            js.lispsm = options.lispsm
+            js.shadowBulbRadius = options.shadowBulbRadius.toDouble()
+            js.transform = options.transform.toJsNumbers()
+            js.polygonOffsetConstant = options.polygonOffsetConstant.toDouble()
+            js.polygonOffsetSlope = options.polygonOffsetSlope.toDouble()
             jsBuilder.shadowOptions(js)
             return this
         }
@@ -259,8 +261,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun intensity(watts: Float, efficiency: Float): Builder {
-            // intensityEnergy not in JS builder bindings; use intensity instead
-            jsBuilder.intensity(watts.toDouble())
+            jsBuilder.intensityEnergy(watts.toDouble(), efficiency.toDouble())
             return this
         }
 

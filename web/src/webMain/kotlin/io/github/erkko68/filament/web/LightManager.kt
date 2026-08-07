@@ -24,6 +24,8 @@ fun setFalloff(instance: LightManager_Instance, radius: Double): Unit
 fun getFalloff(instance: LightManager_Instance): Double
 fun setShadowOptions(instance: LightManager_Instance, options: LightManager_ShadowOptions): Unit
 fun setSpotLightCone(instance: LightManager_Instance, inner: Double, outer: Double): Unit
+fun getSpotLightConeInner(instance: LightManager_Instance): Double
+fun getSpotLightConeOuter(instance: LightManager_Instance): Double
 fun setSunAngularRadius(instance: LightManager_Instance, angularRadius: Double): Unit
 fun getSunAngularRadius(instance: LightManager_Instance): Double
 fun setSunHaloSize(instance: LightManager_Instance, haloSize: Double): Unit

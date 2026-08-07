@@ -106,6 +106,14 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
         actual var transform: FloatArray
             get() = FilaLightManagerShadowOptions.transform(nativeOptions).let { s -> FloatArray(4) { s.getFloatAt(it) } }
             set(value) { val s = FilaLightManagerShadowOptions.transform(nativeOptions); for (i in 0 until 4.coerceAtMost(value.size)) s.setFloatAt(i, value[i]) }
+
+        actual var polygonOffsetConstant: Float
+            get() = FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions, value) }
+
+        actual var polygonOffsetSlope: Float
+            get() = FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions, value) }
     }
 
     actual object ShadowCascades {

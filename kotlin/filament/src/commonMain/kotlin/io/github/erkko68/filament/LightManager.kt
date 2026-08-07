@@ -149,6 +149,25 @@ expect class LightManager {
          * Ignored for non-directional lights. Default: identity.
          */
         var transform: FloatArray
+
+        /**
+         * Constant bias in depth-resolution units by which shadows are moved away from
+         * the light. The default value of 0.5 is used to round depth values up.
+         * Generally this value shouldn't be changed or at least be small and positive.
+         * Ignored when the View's ShadowType is set to VSM.
+         * Default: 0.5.
+         */
+        var polygonOffsetConstant: Float
+
+        /**
+         * Bias based on the change in depth in depth-resolution units by which shadows
+         * are moved away from the light. The default value of 2.0 works well with
+         * SHADOW_SAMPLING_PCF_LOW. Generally this value is between 0.5 and the size in
+         * texel of the PCF filter. Setting this value correctly is essential for LiSPSM
+         * shadow maps. Ignored when the View's ShadowType is set to VSM.
+         * Default: 2.0.
+         */
+        var polygonOffsetSlope: Float
     }
 
     /**

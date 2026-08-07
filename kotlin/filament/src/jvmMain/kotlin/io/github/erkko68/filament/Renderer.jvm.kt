@@ -35,6 +35,7 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
     actual val engine: Engine get() = engineRef
 
     private var _displayInfo = DisplayInfo()
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setDisplayInfo is not bound in filament.js; frame pacing is managed by the browser.")
     actual var displayInfo: DisplayInfo
         get() = _displayInfo
         set(value) {
@@ -47,6 +48,7 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
         }
 
     private var _frameRateOptions = FrameRateOptions()
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setFrameRateOptions is not bound in filament.js; frame pacing is managed by the browser.")
     actual var frameRateOptions: FrameRateOptions
         get() = _frameRateOptions
         set(value) {

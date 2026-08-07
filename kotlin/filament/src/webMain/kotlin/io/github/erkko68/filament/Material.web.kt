@@ -12,6 +12,7 @@ import io.github.erkko68.filament.web.CullingMode as JsCullingMode
 import io.github.erkko68.filament.web.FeatureLevel as JsFeatureLevel
 import io.github.erkko68.filament.web.Material_ParameterInfo as JsParameterInfo
 import io.github.erkko68.filament.web.Material as JSMaterial
+import io.github.erkko68.filament.web.interop.jsNumbers
 import org.khronos.webgl.set
 
 actual class Material(internal val jsMaterial: JSMaterial) {
@@ -140,29 +141,29 @@ actual class Material(internal val jsMaterial: JSMaterial) {
 
     actual fun hasParameter(name: String): Boolean = jsMaterial.hasParameter(name)
 
+    // setDefaultParameter is setParameter on the default instance, same as the C++ inline.
     actual fun setDefaultParameter(name: String, value: Int) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setIntParameter(name, value.toDouble())
     }
 
     actual fun setDefaultParameter(name: String, value: Boolean) {
-        // Default parameters are set at material instance creation time in JS
-        // The JS Material API doesn't expose direct default parameter setting
+        jsMaterial.getDefaultInstance().setBoolParameter(name, value)
     }
 
     actual fun setDefaultParameter(name: String, value: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloatParameter(name, value.toDouble())
     }
 
     actual fun setDefaultParameter(name: String, x: Float, y: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloat2Parameter(name, jsNumbers(x, y))
     }
 
     actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloat3Parameter(name, jsNumbers(x, y, z))
     }
 
     actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloat4Parameter(name, jsNumbers(x, y, z, w))
     }
 
     actual fun getParameterTransformName(samplerName: String): String? {

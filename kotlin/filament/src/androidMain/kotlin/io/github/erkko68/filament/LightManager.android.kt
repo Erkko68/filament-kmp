@@ -76,6 +76,9 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
         actual var transform: FloatArray
             get() = nativeOptions.transform
             set(value) { nativeOptions.transform = value }
+
+        actual var polygonOffsetConstant: Float = 0.5f
+        actual var polygonOffsetSlope: Float = 2.0f
             
         internal fun toNative(): AndroidLightManager.ShadowOptions = nativeOptions
     }

@@ -7,6 +7,8 @@ fun setProjection(proj: Camera_Projection, left: Double, right: Double, bottom: 
 fun setProjectionFov(fovInDegrees: Double, aspect: Double, near: Double, far: Double, fov: Camera_Fov): Unit
 fun setLensProjection(focalLength: Double, aspect: Double, near: Double, far: Double): Unit
 fun setCustomProjection(projection: mat4, near: Double, far: Double): Unit
+fun setEyeModelMatrix(eyeId: Double, model: mat4): Unit
+fun setCustomEyeProjection(projections: js.array.ReadonlyArray<mat4>, projectionForCulling: mat4, near: Double, far: Double): Unit
 fun setScaling(scale: double2): Unit
 fun getProjectionMatrix(): mat4
 fun getCullingProjectionMatrix(): mat4

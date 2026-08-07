@@ -107,6 +107,10 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
 | `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor`, `AmbientOcclusionOptions.ssct` | Silent no-op, and the getter reports the engine default | — |
 | `Texture.Builder.swizzle` | Bound, but `build()` rejects a swizzled texture — WebGL has no texture swizzle (`Texture.isTextureSwizzleSupported` returns `false`) | — |
+| `Renderer.displayInfo`, `Renderer.frameRateOptions` | Tracked locally only — `setDisplayInfo`/`setFrameRateOptions` are not bound in `filament.js`; frame pacing is managed by the browser | — |
+| `SwapChain.setFrameCompletedCallback`, `SwapChain.setFrameScheduledCallback` | Silent no-op / tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is browser-managed | — |
+| `SwapChain.setFrameRate`, `SwapChain.isFrameRateChangeSupported` | Silent no-op / returns false — display frame rate switching is not supported on web | — |
+| `SwapChain.nativeWindow`, `SwapChain.nativeObject` | Returns null / sentinel `1L` — `SwapChain` wraps an HTML5 canvas on web rather than an OS native window handle | — |
 | `Texture.Builder.importTexture` | Silent no-op — takes a backend texture handle, which `filament.js` does not expose | — |
 | `Scene.getEntities`/`forEach` | Mirrors the entities added through this wrapper | — |
 
@@ -115,17 +119,6 @@ beamsplitter skips pointer and nested-struct members, emitting
 `// JavaScript binding for <field> is not yet supported` in `jsbindings_generated.cpp`.
 `Scene` has no `getEntities()` in C++ at all — only `forEach(Invocable)`, which embind
 cannot bind — so membership is tracked in the wrapper.
-
-> [!NOTE]
-> Everything else that used to be listed here — `SkinningBuffer`, `MorphTargetBuffer`, `Fence`,
-> shadow types (VSM/DPCF/PCSS), frustum culling, non-indexed geometry,
-> `Renderer.copyFrame`/`readPixels`, the `View` option getters, `Material`'s reflective API,
-> integer/boolean-vector material parameters, `MaterialInstance.getConstant*`, the full
-> `ToneMapper` hierarchy, `ColorGrading.Builder.customLut`, `Camera.entity`,
-> `LightManager.destroy`, `TransformManager.getChildCount`, `Texture.getTarget`/`getFormat`,
-> `Skybox.Builder.intensity`, and the gltfio accessors and `ResourceLoader` — is now fully
-> wired. It requires a `filament.js`/`filament.wasm` carrying the expanded web bindings
-> (upstream PR pending); the stock release prebuilts do not include them.
 
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.
 

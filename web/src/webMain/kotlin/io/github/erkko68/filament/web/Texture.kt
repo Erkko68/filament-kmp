@@ -4,6 +4,8 @@ package io.github.erkko68.filament.web
 
 external class Texture : JsAny {
 fun setImage(engine: Engine, level: Double, pbd: driver_PixelBufferDescriptor): Unit
+fun setImage(engine: Engine, level: Double, xoffset: Double, yoffset: Double, width: Double, height: Double, pbd: driver_PixelBufferDescriptor): Unit
+fun setImage(engine: Engine, level: Double, xoffset: Double, yoffset: Double, zoffset: Double, width: Double, height: Double, depth: Double, pbd: driver_PixelBufferDescriptor): Unit
 fun getWidth(engine: Engine, level: Double = definedExternally): Double
 fun getHeight(engine: Engine, level: Double = definedExternally): Double
 fun getDepth(engine: Engine, level: Double = definedExternally): Double

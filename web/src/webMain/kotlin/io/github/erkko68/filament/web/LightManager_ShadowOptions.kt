@@ -23,4 +23,11 @@ var polygonOffsetSlope: Double?
 var screenSpaceContactShadows: Boolean?
 var stepCount: Double?
 var maxShadowDistance: Double?
+var lispsm: Boolean?
+var shadowBulbRadius: Double?
+var penumbraScale: Double?
+var penumbraRatioScale: Double?
+var maxPenumbraRatio: Double?
+var maxSearchRadius: Double?
+var transform: quat?
 }
