@@ -13,6 +13,12 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-08-08
+
+### Added
+- **Filament 1.74.1**: Upgraded bundled Filament engine to 1.74.1. Recompiled embedded standard, test, and sample `.filamat` materials.
+- **`Renderer` APIs** (`filament`): bound `materialTime`, `setMaterialTimeEpoch`, and `pauseRenderThread` across all 5 target platforms (`android`, `jvm`, `native`, `js`, `wasm`).
+
 ### Fixed
 - **`FilamentInstance.getAnimator()` before resource load handed back a broken animator** (`gltfio`): gltfio creates the animator while loading resources (`FFilamentInstance::createAnimator` is guarded by `mResourcesLoaded`), so calling it any earlier returns `nullptr` upstream — and our wrappers passed that straight into an `Animator`, which then crashed on first use with no hint as to why. On `wasmJs` it surfaced instead as a bare `NullPointerException` thrown at the JS interop boundary, since the `gltfio$FilamentInstance.getAnimator` external claimed a non-null return. Every target but Android now checks and throws `IllegalStateException` naming the fix (load the asset's resources first); on Android the Java binding wraps the null pointer itself, so it stays undetectable there. The precondition is documented on `getAnimator()`, and `FilamentInstanceTest` pins both halves.
 - **Right-click panning did nothing on desktop and web** ([#98](https://github.com/Erkko68/filament-kmp/issues/98)) (`filament-compose`): the drag gestures started with foundation's `awaitFirstDown`, whose `firstDownRefersToPrimaryMouseButtonOnly()` is `true` on skiko (JVM desktop, web, iOS) — a secondary-button press never opened a gesture, so `grabBegin(…, strafe = true)` was never reached and panning was silently dead (Android was unaffected). The gesture layer now awaits its own down that accepts any mouse button. Flight mouse-look responds to right-drag for the same reason.
@@ -324,7 +330,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.3.1...HEAD
+[0.3.1]: https://github.com/Erkko68/filament-kmp/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/Erkko68/filament-kmp/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta03...0.2.0
 [0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03

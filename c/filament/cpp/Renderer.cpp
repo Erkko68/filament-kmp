@@ -84,6 +84,18 @@ void FilaRenderer_resetUserTime(FilaRenderer* renderer) {
     FILA_CAST(Renderer, renderer)->resetUserTime();
 }
 
+double FilaRenderer_getMaterialTime(const FilaRenderer* renderer) {
+    return FILA_CONST_CAST(Renderer, renderer)->getMaterialTime();
+}
+
+void FilaRenderer_setMaterialTimeEpoch(FilaRenderer* renderer, int64_t timeEpochInNs) {
+    FILA_CAST(Renderer, renderer)->setMaterialTimeEpoch(timeEpochInNs);
+}
+
+void FilaRenderer_pauseRenderThread(FilaRenderer* renderer, uint64_t timeNs) {
+    FILA_CAST(Renderer, renderer)->pauseRenderThread(timeNs);
+}
+
 void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info) {
     FILA_CAST(Renderer, renderer)->setDisplayInfo({ .refreshRate = info->refreshRate });
 }
