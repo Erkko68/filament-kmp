@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import io.github.erkko68.filament.utils.Float3
 import io.github.erkko68.filament.utils.Quaternion
 import io.github.erkko68.filament.utils.RotationsOrder
@@ -9,6 +10,7 @@ import io.github.erkko68.filament.utils.quaternion
 import io.github.erkko68.filament.utils.radians
 import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
 // Aliased where the name would collide with the Rotation member of the same name.
 import io.github.erkko68.filament.utils.angle as quatAngle
@@ -18,7 +20,7 @@ import io.github.erkko68.filament.utils.slerp as quatSlerp
 /**
  * A point in 3-D space.
  *
- * Distinct from [Direction], [Scale], and [Color] so the compiler stops you passing one where
+ * Distinct from [Direction], [Scale], and [LinearColor] so the compiler stops you passing one where
  * another is expected (they are all float-triples and trivially confused). All four are
  * **immutable**, which also makes them stable Compose inputs — passing them to scene composables
  * doesn't force needless recompositions the way the mutable [Float3] did.
@@ -265,28 +267,56 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
 /**
  * An RGB color (linear or sRGB depending on the consuming API). Distinct from the spatial
  * vectors so a [Color] can't be passed as a [Position]. Components are [r]/[g]/[b].
+>>>>>>> 49d060dff025ac8ca6d16494c01f956dffb14c54
  *
- * Interop with Compose UI colors: construct from an [androidx.compose.ui.graphics.Color]
- * (`Color(MaterialTheme.colorScheme.primary)`) or convert back with [toComposeColor]. The
- * alpha channel is dropped — scene colors are RGB.
+ * Deliberately **not** called `Color`: `androidx.compose.ui.graphics.Color` is in scope in
+ * practically every file that uses this library, and two same-named colour types with different
+ * transfer functions is a trap.
+ *
+ * Interop with Compose UI colours goes through [fromComposeColor] / [toComposeColor], which apply
+ * the sRGB transfer function in each direction — Compose colours are gamma-encoded, so copying
+ * their components across raw would wash the result out. Alpha is dropped; scene colours are RGB.
+ *
+ * ```kotlin
+ * val tint = LinearColor.fromComposeColor(MaterialTheme.colorScheme.primary)
+ * ```
  */
-data class Color(val r: Float, val g: Float, val b: Float) {
+data class LinearColor(val r: Float, val g: Float, val b: Float) {
     /** Uniform value on all channels (grey). */
     constructor(v: Float) : this(v, v, v)
-    /** From a filament-utils [Float3] (x→r, y→g, z→b). */
+    /** From a filament-utils [Float3] (x→r, y→g, z→b), assumed already linear. */
     constructor(v: Float3) : this(v.x, v.y, v.z)
-    /** From a Compose UI color (alpha is dropped). */
-    constructor(v: androidx.compose.ui.graphics.Color) : this(v.red, v.green, v.blue)
 
-    operator fun times(s: Float) = Color(r * s, g * s, b * s)
-    operator fun plus(o: Color) = Color(r + o.r, g + o.g, b + o.b)
+    operator fun times(s: Float) = LinearColor(r * s, g * s, b * s)
+    operator fun plus(o: LinearColor) = LinearColor(r + o.r, g + o.g, b + o.b)
 
     fun toFloat3() = Float3(r, g, b)
 
-    /** As a Compose UI color (alpha 1). Channels are clamped to 0..1 by Compose. */
-    fun toComposeColor() = androidx.compose.ui.graphics.Color(
-        r.coerceIn(0f, 1f), g.coerceIn(0f, 1f), b.coerceIn(0f, 1f),
-    )
+    /**
+     * As a gamma-encoded Compose UI colour (alpha 1), for feeding a scene colour back into
+     * Compose UI. Channels are clamped to 0..1 — over-bright values lose their headroom.
+     */
+    fun toComposeColor(): androidx.compose.ui.graphics.Color =
+        androidx.compose.ui.graphics.Color(
+            linearToSrgb(r), linearToSrgb(g), linearToSrgb(b),
+        )
+
+    companion object {
+        /**
+         * Converts a Compose UI colour to linear space, dropping alpha. Handles any source colour
+         * space (sRGB, Display P3, …) by converting through Compose's own colour management.
+         */
+        fun fromComposeColor(v: androidx.compose.ui.graphics.Color): LinearColor {
+            val linear = v.convert(ColorSpaces.LinearSrgb)
+            return LinearColor(linear.red, linear.green, linear.blue)
+        }
+    }
+}
+
+/** sRGB OETF — linear component to gamma-encoded. */
+private fun linearToSrgb(c: Float): Float {
+    val v = c.coerceIn(0f, 1f)
+    return if (v <= 0.0031308f) v * 12.92f else 1.055f * v.pow(1f / 2.4f) - 0.055f
 }
 
 /** Reinterpret a [Float3] as a [Position]. */
@@ -295,7 +325,7 @@ fun Float3.toPosition() = Position(x, y, z)
 fun Float3.toDirection() = Direction(x, y, z)
 /** Reinterpret a [Float3] as a [Scale]. */
 fun Float3.toScale() = Scale(x, y, z)
-/** Reinterpret a [Float3] as a [Color] (x→r, y→g, z→b). */
-fun Float3.toColor() = Color(x, y, z)
+/** Reinterpret a [Float3] as a [LinearColor] (x→r, y→g, z→b). */
+fun Float3.toLinearColor() = LinearColor(x, y, z)
 /** Reinterpret a [Quaternion] as a [Rotation]. */
 fun Quaternion.toRotation() = Rotation(x, y, z, w)

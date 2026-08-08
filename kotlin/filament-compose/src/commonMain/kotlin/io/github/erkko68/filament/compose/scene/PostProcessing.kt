@@ -69,7 +69,7 @@ data class Vignette(
     val midPoint: Float = 0.5f,
     val roundness: Float = 0.5f,
     val feather: Float = 0.5f,
-    val color: Color = Color(0f, 0f, 0f),
+    val color: LinearColor = LinearColor(0f, 0f, 0f),
 )
 
 /** Height-based and volumetric fog. */
@@ -78,7 +78,7 @@ data class Fog(
     val density: Float = 0.1f,
     val height: Float = 0.0f,
     val heightFalloff: Float = 1.0f,
-    val color: Color = Color(0f, 0f, 0f),
+    val color: LinearColor = LinearColor(0f, 0f, 0f),
 )
 
 /** Screen-space ambient occlusion (SSAO). */

@@ -115,6 +115,10 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `RenderableManager` non-indexed `geometry`/`setGeometryAt` overloads | Throws | Use the indexed overloads (with an `IndexBuffer`) |
 | `RenderableManager.Builder.geometryType` | Throws (embind "unbound types") | Omit it — geometry defaults to `DYNAMIC` |
 | `RenderableManager.Builder` `skinning(bones)`/`skinning(skinningBuffer)`/`morphing(buffer)`/`enableSkinningBuffers` | Silent no-op; `morphing(count)` degrades to a boolean enable | glTF skinning/morphing works through `gltfio` |
+| `RenderableManager.getMorphTargetCount` | Always returns `0` | Not registered with embind (it exists in C++). Count morph targets from the glTF JSON |
+| `RenderableManager.setMorphWeights` | Only the first 4 weights apply; a non-zero `offset` is ignored | filament.js binds only the legacy 4-scalar form. 1–3 weights are zero-padded and animate correctly |
+| `RenderableManager.setMorphTargetBufferOffsetAt` | Silent no-op | **None.** Callable on a `gltfio`-loaded renderable, but the offset cannot be changed on web — author the glTF so each primitive reads from the offset it needs |
+| `RenderableManager.setSkinningBuffer` | Silent no-op | Unreachable in practice: it takes a `SkinningBuffer`, and `SkinningBuffer.Builder.build` throws on web |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
 | `SkinningBuffer` | `Builder.build` throws; `setBonesAt` is a no-op | glTF skinning works through `gltfio` |
 | `MorphTargetBuffer` | `Builder.build` throws | glTF morph targets work through `gltfio` (`GltfInstance.morphWeights`) |

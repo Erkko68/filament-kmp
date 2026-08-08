@@ -72,7 +72,7 @@ internal data class LightSnapshot(
     val type: LightManager.Type,
     val direction: Direction,
     val position: Position,
-    val color: Color,
+    val color: LinearColor,
     val intensity: LightIntensity,
     val shadow: ShadowConfig?,
     val castLight: Boolean,
@@ -243,7 +243,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
 @Composable
 fun FilamentSceneScope.DirectionalLight(
     direction: Direction = Direction(0.3f, -1f, -0.5f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
@@ -272,7 +272,7 @@ fun FilamentSceneScope.DirectionalLight(
 @Composable
 fun FilamentSceneScope.SunLight(
     direction: Direction = Direction(0.3f, -1f, -0.5f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     sun: SunParams = SunParams(),
     shadow: ShadowConfig? = null,
@@ -304,7 +304,7 @@ fun FilamentSceneScope.SunLight(
 @Composable
 fun FilamentSceneScope.PointLight(
     position: Position = Position(0f, 2f, 0f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     castLight: Boolean = true,
@@ -335,7 +335,7 @@ fun FilamentSceneScope.PointLight(
 fun FilamentSceneScope.SpotLight(
     position: Position = Position(0f, 2f, 0f),
     direction: Direction = Direction(0f, -1f, 0f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     cone: SpotCone = SpotCone(),
@@ -370,7 +370,7 @@ fun FilamentSceneScope.SpotLight(
 fun FilamentSceneScope.FocusedSpotLight(
     position: Position = Position(0f, 2f, 0f),
     direction: Direction = Direction(0f, -1f, 0f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     cone: SpotCone = SpotCone(),

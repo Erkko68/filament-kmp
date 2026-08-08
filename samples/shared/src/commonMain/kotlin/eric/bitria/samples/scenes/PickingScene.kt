@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.rememberFilamentViewState
-import io.github.erkko68.filament.compose.scene.Color as FilColor
+import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.GltfInstance
 import io.github.erkko68.filament.compose.scene.LightIntensity
@@ -54,7 +54,7 @@ fun PickingScene(onBack: () -> Unit) {
         initialTarget     = Position(0f, 0f, 0f),
         initialProjection = Projection.Perspective(fovDegrees = 40.0),
     )
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
     val viewState = rememberFilamentViewState()
 
     val entityToIndex = remember { mutableStateMapOf<Int, Int>() }
