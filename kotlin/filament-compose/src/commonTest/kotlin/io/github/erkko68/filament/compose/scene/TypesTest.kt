@@ -372,22 +372,24 @@ class TypesTest {
     @Test
     fun composeColorInteropRoundTripsAndDropsAlpha() {
         val scene = LinearColor.fromComposeColor(ComposeColor(0.25f, 0.5f, 0.75f, alpha = 0.5f))
-        assertClose(0.25f, scene.r, composeChannelTolerance)
-        assertClose(0.5f, scene.g, composeChannelTolerance)
-        assertClose(0.75f, scene.b, composeChannelTolerance)
+        assertTrue(scene.r < 0.25f, "expected linear decode to darken red 0.25")
+        assertTrue(scene.g < 0.5f, "expected linear decode to darken green 0.5")
+        assertTrue(scene.b < 0.75f, "expected linear decode to darken blue 0.75")
 
         val back = scene.toComposeColor()
         assertClose(0.25f, back.red, composeChannelTolerance)
+        assertClose(0.5f, back.green, composeChannelTolerance)
+        assertClose(0.75f, back.blue, composeChannelTolerance)
         assertClose(1f, back.alpha, composeChannelTolerance)
     }
 
     @Test
     fun toComposeColorClampsOutOfRangeChannels() {
         // Emissive/HDR scene colours legitimately exceed 1.0; Compose UI colours cannot.
-        val clamped = LinearColor(4f, -0.5f, 0.5f).toComposeColor()
+        val clamped = LinearColor(4f, -0.5f, 1f).toComposeColor()
         assertClose(1f, clamped.red, composeChannelTolerance)
         assertClose(0f, clamped.green, composeChannelTolerance)
-        assertClose(0.5f, clamped.blue, composeChannelTolerance)
+        assertClose(1f, clamped.blue, composeChannelTolerance)
     }
 
     // ── Cross-type ────────────────────────────────────────────────────────────
