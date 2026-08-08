@@ -67,16 +67,33 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 
 ## Vector types
 
-`Position`, `Direction`, `Scale`, `Rotation`, and `Color` are distinct immutable data classes (not
-`typealias`es for `Float3`/`Quaternion`). Being distinct, the compiler stops you passing a `Color`
+`Position`, `Direction`, `Scale`, `Rotation`, and `LinearColor` are distinct immutable data classes (not
+`typealias`es for `Float3`/`Quaternion`). Being distinct, the compiler stops you passing a `LinearColor`
 where a `Position` is expected; being **immutable**, they're stable Compose inputs — passing them to
 scene composables doesn't trigger the needless recompositions a mutable `Float3` would.
 
-Construct them directly (`Position(x, y, z)`, `Color(r, g, b)`, `Position(0f)` for uniform), read
-components (`.x/.y/.z`, and `.r/.g/.b` for `Color`), and use the common operators (`+`, `-`,
-`* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot, swizzles),
-hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
-`toDirection()` / `toScale()` / `toColor()` — needed only for that advanced math.
+Construct them directly (`Position(x, y, z)`, `LinearColor(r, g, b)`, `Position(0f)` for uniform),
+read components (`.x/.y/.z`, and `.r/.g/.b` for `LinearColor`), and use the common operators (`+`,
+`-`, `* scalar`) in-domain. To cross into filament-utils `Float3` vector math (cross, dot,
+swizzles), hop with the `Position(float3)` constructors, `toFloat3()`, or `Float3.toPosition()` /
+`toDirection()` / `toScale()` / `toLinearColor()` — needed only for that advanced math.
+
+### Colour spaces
+
+`LinearColor` is **linear** — the space Filament works in for light colours, `baseColor`
+parameters, skybox and fog colours. `androidx.compose.ui.graphics.Color` is **gamma-encoded**. The
+two are not interchangeable, which is why the scene type is not also called `Color`:
+
+```kotlin
+// Correct — applies the sRGB transfer function
+val tint = LinearColor.fromComposeColor(MaterialTheme.colorScheme.primary)
+
+// Wrong — copying components across raw leaves the colour washed out
+val tint = LinearColor(c.red, c.green, c.blue)
+```
+
+`toComposeColor()` converts back, clamping to 0..1 (over-bright values above 1, which lights
+accept, lose their headroom).
 
 The axes have names: `Direction.Up`/`Down`/`Left`/`Right`/`Forward`/`Back` (and `Zero`), where
 `Forward` is **−Z** — the axis glTF and Filament aim along.
@@ -126,6 +143,34 @@ The API changes things in two deliberate ways, split by **who writes the value**
 
 If you're wondering which form an API should take: if the framework never writes it, it's a value
 parameter.
+
+## Dynamic scene contents: use `key()`
+
+Scene composables own real Filament resources — entities, `FilamentInstance`s, animator state. As
+everywhere in Compose, that identity is positional: it follows the *slot*, not the item. Emitting a
+list without keys means inserting or reordering re-associates every slot after the change point,
+and each affected composable tears its entity down and builds a new one:
+
+```kotlin
+// Wrong — removing enemies[0] rebuilds every remaining instance,
+// resetting animation playback and paying createInstance again
+enemies.forEach { enemy ->
+    GltfInstance(asset = enemyAsset, position = enemy.position)
+}
+
+// Right — identity follows the enemy, so untouched entries keep their entity and animator
+enemies.forEach { enemy ->
+    key(enemy.id) {
+        GltfInstance(asset = enemyAsset, position = enemy.position)
+    }
+}
+```
+
+The failure mode is quiet: the scene still looks broadly correct, but animations restart, `onCreate`
+re-runs, and any entity-keyed map you populated there points at stale entities. Wrap in `key()`
+whenever the collection can change — appending to the end is the only safe unkeyed case.
+
+The same applies to `Group`, primitives, and lights emitted from a list.
 
 ## Driving updates
 
@@ -409,7 +454,7 @@ asset shipping (they work on Web too): `rememberColorMaterialInstance`,
 return a ready `MaterialInstance` for a primitive.
 
 ```kotlin
-Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))
+Cube(material = rememberColorMaterialInstance(LinearColor(0.9f, 0.25f, 0.3f)))
 ```
 
 For custom materials, the loaders (`rememberMaterial`, `rememberMaterialInstance`, `rememberTexture`)

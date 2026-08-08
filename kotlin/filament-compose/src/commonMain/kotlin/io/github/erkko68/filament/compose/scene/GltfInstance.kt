@@ -51,6 +51,15 @@ private class GltfInstanceScopeImpl(
  * GltfInstance(tree, position = Position(0f, 0f, 0f))
  * GltfInstance(tree, position = Position(5f, 0f, 0f))
  * ```
+ * ### Emitting from a list
+ * Wrap each call in `key()` when the collection can change:
+ * ```kotlin
+ * enemies.forEach { enemy -> key(enemy.id) { GltfInstance(enemyAsset, enemy.position) } }
+ * ```
+ * Without it, identity follows the slot rather than the item, so inserting or reordering makes
+ * every later entry destroy its instance and build a new one — restarting animation playback and
+ * re-running [onCreate]. Appending to the end is the only safe unkeyed case.
+ *
  * ### Lifecycle Note
  * Filament's `gltfio` does not have a `destroyInstance` API; instances are automatically
  * destroyed when the parent [GltfAsset] is destroyed. To avoid memory pressure, avoid
@@ -188,10 +197,18 @@ fun FilamentSceneScope.GltfInstance(
         animationState?.apply(instance.getAnimator(), frame.deltaSeconds)
     }
 
-    // Vertex morph-target weights, applied to every renderable that has morph targets. Keyed on
-    // the weights' contents (toList) so a new array with equal values doesn't re-push.
-    DisposableEffect(instance, morphWeights?.toList()) {
-        if (morphWeights != null) {
+    // Vertex morph-target weights, applied to every renderable that has morph targets.
+    //
+    // Content-compared rather than keyed: FloatArray is an unstable Compose parameter type, so this
+    // composable recomposes with its parent even when nothing changed, and morph weights are
+    // animated per frame by nature. Keying on `morphWeights?.toList()` would box every float on
+    // every one of those recompositions just to decide whether to skip a push — allocating more
+    // than the gating saves. The remembered copy compares exactly and only allocates when the
+    // weights actually change.
+    val lastMorphWeights = remember(instance) { arrayOfNulls<FloatArray>(1) }
+    SideEffect {
+        if (morphWeights != null && !morphWeights.contentEquals(lastMorphWeights[0])) {
+            lastMorphWeights[0] = morphWeights.copyOf()
             val rm = engine.getRenderableManager()
             for (entity in instance.getEntities()) {
                 if (!rm.hasComponent(entity)) continue
@@ -199,7 +216,6 @@ fun FilamentSceneScope.GltfInstance(
                 if (rm.getMorphTargetCount(ri) > 0) rm.setMorphWeights(ri, morphWeights, 0)
             }
         }
-        onDispose { }
     }
 
     // Shadow-flag overrides on every renderable. null keeps the asset's authored values.

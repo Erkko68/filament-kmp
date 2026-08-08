@@ -19,7 +19,7 @@ sealed class SkyboxSource {
      * Solid-color skybox. [color] is (r, g, b); [alpha] controls blending with the clear color.
      */
     data class Color(
-        val color: io.github.erkko68.filament.compose.scene.Color = io.github.erkko68.filament.compose.scene.Color(0.1f, 0.125f, 0.15f),
+        val color: LinearColor = LinearColor(0.1f, 0.125f, 0.15f),
         val alpha: Float = 1.0f,
     ) : SkyboxSource()
 
@@ -35,7 +35,7 @@ sealed class SkyboxSource {
  * [source] removes the skybox entirely.
  *
  * ```kotlin
- * val sky = rememberSkyboxState(initialSource = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+ * val sky = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)))
  * val scene = rememberFilamentScene(skyboxState = sky) { ... }
  *
  * // Toggle at runtime

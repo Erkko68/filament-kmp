@@ -239,7 +239,7 @@ fun App() {
         target     = Position(0f, 0.5f, 0f),
         projection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val skybox = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f)))
+    val skybox = rememberSkyboxState(SkyboxSource.Color(LinearColor(0.1f, 0.12f, 0.15f)))
 
     MaterialTheme {
         // The content lambda declares the world; the viewport is configured by value.

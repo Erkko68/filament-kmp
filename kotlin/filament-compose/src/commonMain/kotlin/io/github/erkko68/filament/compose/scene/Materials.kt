@@ -273,6 +273,6 @@ internal fun rememberConfiguredMaterialInstance(
     return instance
 }
 
-/** Sets a `float3` parameter from a [Color], keeping call sites typed against the colour value class. */
-fun MaterialInstance.setParameter(name: String, color: Color) =
+/** Sets a `float3` parameter from a [LinearColor], keeping call sites typed against the colour value class. */
+fun MaterialInstance.setParameter(name: String, color: LinearColor) =
     setParameter(name, color.r, color.g, color.b)
