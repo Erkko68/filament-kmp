@@ -30,7 +30,12 @@ actual class FilamentInstance internal constructor(var nativeHandle: MemorySegme
 
     actual fun getEntityCount(): Int = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
 
-    actual fun getAnimator(): Animator = Animator(FilamentC.FilaFilamentInstance_getAnimator(nativeHandle))
+    actual fun getAnimator(): Animator {
+        // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
+        val handle = FilamentC.FilaFilamentInstance_getAnimator(nativeHandle)
+        check(!handle.isNullPtr()) { ANIMATOR_NOT_LOADED }
+        return Animator(handle)
+    }
 
     actual fun getBoundingBox(): Box = confined { a ->
         val b = FilamentC.FilaFilamentInstance_getBoundingBox(a, nativeHandle)
