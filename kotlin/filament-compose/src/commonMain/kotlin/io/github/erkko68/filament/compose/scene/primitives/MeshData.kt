@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene.primitives
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
@@ -21,9 +22,9 @@ import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.compose.scene.LocalGroupVisible
 import io.github.erkko68.filament.compose.scene.LocalParentEntity
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.Scale
 import io.github.erkko68.filament.toBytes
-import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * CPU-side geometry buffers. [indices] uses unsigned 32-bit indices. [boundingBox] is used by
@@ -33,6 +34,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * by **content** (a data class would compare the arrays by reference), so a caller re-creating
  * identical arrays each recomposition doesn't re-upload the GPU buffers.
  */
+@Immutable
 internal class MeshData(
     val positions: FloatArray,
     val normals: FloatArray,
@@ -116,7 +118,7 @@ internal fun Mesh(
     mesh: MeshData,
     material: MaterialInstance?,
     position: Position,
-    rotation: Quaternion,
+    rotation: Rotation,
     scale: Scale,
     pivot: Position,
     visible: Boolean,

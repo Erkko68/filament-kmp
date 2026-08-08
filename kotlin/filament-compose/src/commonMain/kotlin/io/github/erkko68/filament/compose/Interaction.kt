@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -327,6 +328,8 @@ fun Modifier.mapGestures(controller: MapCameraController): Modifier =
  * The per-frame simulation is driven automatically by [rememberFlightCameraController] (via [OnFrame]) —
  * you don't need a separate loop composable.
  */
+// @Stable: `speedWheel` is a read-only config array; the rest is stable or snapshot-backed.
+@Stable
 class FlightCameraController internal constructor(
     internal val manipulator: Manipulator,
     private val cameraState: CameraState,

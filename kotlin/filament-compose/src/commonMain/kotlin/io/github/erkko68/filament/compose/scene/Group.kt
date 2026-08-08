@@ -11,7 +11,6 @@ import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.internal.transformMatrix
-import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * Provides the current parent entity for nested scene composables. Null at the top level
@@ -60,7 +59,7 @@ internal val LocalGroupVisible = compositionLocalOf { true }
 @Composable
 fun FilamentSceneScope.Group(
     position: Position = Position(0f),
-    rotation: Quaternion = Quaternion(),
+    rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     visible: Boolean = true,

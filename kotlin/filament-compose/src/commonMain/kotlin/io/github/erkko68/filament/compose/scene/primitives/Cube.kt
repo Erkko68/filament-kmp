@@ -7,8 +7,8 @@ import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * A unit cube centered on the origin (in mesh space). Six faces, 24 vertices (4 per face so
@@ -19,7 +19,7 @@ import io.github.erkko68.filament.utils.Quaternion
  * @param material  The material to apply to every face, or null while it is still loading
  *   (nothing renders until it arrives). Use [rememberMaterial] + [rememberMaterialInstance].
  * @param position  World-space position of the [pivot] point.
- * @param rotation  World-space rotation as a quaternion.
+ * @param rotation  World-space rotation. Build one with [Rotation.axisAngle]/[Rotation.euler].
  * @param scale     Per-axis scale applied after [size].
  * @param pivot     Point in mesh space that rotation/scale revolve around and that ends up at
  *   [position]. Defaults to the cube centre.
@@ -35,7 +35,7 @@ import io.github.erkko68.filament.utils.Quaternion
 fun FilamentSceneScope.Cube(
     material: MaterialInstance?,
     position: Position = Position(0f),
-    rotation: Quaternion = Quaternion(),
+    rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     size: Float = 1f,
