@@ -2,6 +2,8 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,6 +16,7 @@ import io.github.erkko68.filament.Skybox as FilamentSkybox
 /**
  * Source for a [SkyboxState]: either a solid color or a cubemap texture.
  */
+@Immutable
 sealed class SkyboxSource {
     /**
      * Solid-color skybox. [color] is (r, g, b); [alpha] controls blending with the clear color.
@@ -43,6 +46,7 @@ sealed class SkyboxSource {
  * sky.intensity = 30_000f
  * ```
  */
+@Stable
 class SkyboxState internal constructor(
     initialSource: SkyboxSource?,
     initialShowSun: Boolean,

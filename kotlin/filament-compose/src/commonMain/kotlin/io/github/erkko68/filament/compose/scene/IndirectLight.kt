@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ data class SphericalHarmonics(
  * val scene = rememberFilamentScene(indirectLightState = ibl) { ... }
  * ```
  */
+@Stable
 class IndirectLightState internal constructor(
     initialReflections: Texture?,
     initialIrradianceCubemap: Texture?,

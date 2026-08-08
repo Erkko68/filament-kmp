@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
@@ -19,6 +20,7 @@ import kotlin.math.sqrt
  * Spot / focused-spot cone angles (half-angles in radians).
  * [innerAngle] must be ≤ [outerAngle].
  */
+@Immutable
 data class SpotCone(
     val innerAngle: Float = 0.5f,
     val outerAngle: Float = 0.6f,
@@ -32,6 +34,7 @@ data class SpotCone(
  * @param haloSize Halo radius as a multiplier of the sun's angular radius.
  * @param haloFalloff Halo falloff exponent (higher = tighter halo).
  */
+@Immutable
 data class SunParams(
     val angularRadius: Float = 1.9f,
     val haloSize: Float = 10f,
@@ -46,6 +49,7 @@ data class SunParams(
  * Follows the same "correlated params become a value type" idiom as [Projection]/[SpotCone]/
  * [SunParams]. The default everywhere is `LuminousPower(100_000f)`.
  */
+@Immutable
 sealed interface LightIntensity {
     /**
      * Illuminance in lux for directional lights, luminous power in lumen for point/spot lights —
