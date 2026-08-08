@@ -7,8 +7,8 @@ import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * A flat quad lying in the XZ plane centered on the origin. The mesh is two-sided by default:
@@ -36,7 +36,7 @@ import io.github.erkko68.filament.utils.Quaternion
 fun FilamentSceneScope.Plane(
     material: MaterialInstance?,
     position: Position = Position(0f),
-    rotation: Quaternion = Quaternion(),
+    rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     width: Float = 1f,

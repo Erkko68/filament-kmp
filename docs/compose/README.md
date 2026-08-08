@@ -67,10 +67,10 @@ Forgetting to destroy Filament objects leaks GPU memory until the `Engine` itsel
 
 ## Vector types
 
-`Position`, `Direction`, `Scale`, and `LinearColor` are distinct immutable data classes (not
-`typealias`es for `Float3`). Being distinct, the compiler stops you passing a `LinearColor` where a
-`Position` is expected; being **immutable**, they're stable Compose inputs — passing them to scene
-composables doesn't trigger the needless recompositions a mutable `Float3` would.
+`Position`, `Direction`, `Scale`, `Rotation`, and `LinearColor` are distinct immutable data classes (not
+`typealias`es for `Float3`/`Quaternion`). Being distinct, the compiler stops you passing a `LinearColor`
+where a `Position` is expected; being **immutable**, they're stable Compose inputs — passing them to
+scene composables doesn't trigger the needless recompositions a mutable `Float3` would.
 
 Construct them directly (`Position(x, y, z)`, `LinearColor(r, g, b)`, `Position(0f)` for uniform),
 read components (`.x/.y/.z`, and `.r/.g/.b` for `LinearColor`), and use the common operators (`+`,
@@ -94,6 +94,38 @@ val tint = LinearColor(c.red, c.green, c.blue)
 
 `toComposeColor()` converts back, clamping to 0..1 (over-bright values above 1, which lights
 accept, lose their headroom).
+
+The axes have names: `Direction.Up`/`Down`/`Left`/`Right`/`Forward`/`Back` (and `Zero`), where
+`Forward` is **−Z** — the axis glTF and Filament aim along.
+
+`Rotation` is a unit quaternion, but you rarely spell one out. Build it with
+`Rotation.axisAngle(Direction.Up, degrees = 45f)` or `Rotation.euler(yaw = 45f)`, compose
+two with `*` (right operand applied first), and use `Rotation.Identity` for none — the default on
+every scene composable. The builders take directions, not unit vectors: length is ignored, so a
+raw displacement like `target - eye` goes straight in. The rest of the usual scene work is on the
+type:
+
+| | |
+|---|---|
+| `Rotation.lookTowards(forward, up)` | aim local −Z (the glTF forward axis) at something — turrets, billboards, chase cams |
+| `Rotation.fromTo(from, to)` | shortest arc between two directions |
+| `Rotation.slerp(a, b, t)` / `nlerp` | blend between two poses |
+| `toEuler()` | read pitch/yaw/roll back in degrees (debug UI, clamping an axis) |
+| `angleTo(other)` | smallest angle between two orientations, in degrees |
+| `normalized()` | shed drift after accumulating many products |
+| `toRotationMatrix()` | column-major 3×3 (9 floats), for Filament builders that take one |
+
+Equality is component-wise, which is not the same as "same orientation" — that is what makes a
+`Rotation` a skippable Compose input, but ask `angleTo` against a tolerance rather than `==` when
+you mean the latter.
+
+For anything past that — matrix interop, swizzles, your own interpolation — hop to filament-utils'
+`Quaternion` and back. They are the same four floats and the conversion is lossless:
+
+```kotlin
+val blended = Rotation(myOwnInterpolation(a.toQuaternion(), b.toQuaternion()))
+val asRotation = someQuaternion.toRotation()   // or Rotation(someQuaternion)
+```
 
 ## Value parameters vs. state holders
 

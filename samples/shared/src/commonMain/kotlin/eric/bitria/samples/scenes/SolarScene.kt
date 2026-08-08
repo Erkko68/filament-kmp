@@ -18,7 +18,9 @@ import io.github.erkko68.filament.compose.scene.RenderQuality
 import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Group
 import io.github.erkko68.filament.compose.scene.PointLight
+import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -27,8 +29,6 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberEmissiveMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
-import io.github.erkko68.filament.utils.Float3
-import io.github.erkko68.filament.utils.Quaternion
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -117,7 +117,7 @@ fun SolarScene(onBack: () -> Unit) {
                     Sphere(
                         material = rememberColorMaterialInstance(p.color),
                         radius   = p.radius,
-                        rotation = Quaternion.fromAxisAngle(Float3(0f, 1f, 0f), spinDegrees),
+                        rotation = Rotation.axisAngle(Direction(0f, 1f, 0f), spinDegrees),
                     )
                 }
             }

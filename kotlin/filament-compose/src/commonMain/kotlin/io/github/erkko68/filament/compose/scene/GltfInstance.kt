@@ -10,7 +10,6 @@ import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.compose.OnFrame
 import io.github.erkko68.filament.gltfio.FilamentInstance
-import io.github.erkko68.filament.utils.Quaternion
 
 /**
  * Scope for interacting with a specific glTF instance via low-level Filament APIs.
@@ -68,7 +67,7 @@ private class GltfInstanceScopeImpl(
  *
  * @param asset A loaded asset from [rememberGltfAsset], or null while still loading.
  * @param position World-space translation.
- * @param rotation World-space rotation as a quaternion.
+ * @param rotation World-space rotation. Build one with [Rotation.axisAngle]/[Rotation.euler].
  * @param scale Per-axis scale.
  * @param pivot The point in mesh space that rotation and scale revolve around, and that
  *   ends up at [position] in world space. Defaults to `(0,0,0)` — the glTF's own root origin.
@@ -99,7 +98,7 @@ private class GltfInstanceScopeImpl(
 fun FilamentSceneScope.GltfInstance(
     asset: GltfAsset?,
     position: Position = Position(0f),
-    rotation: Quaternion = Quaternion(),
+    rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     animationIndex: Int? = null,
