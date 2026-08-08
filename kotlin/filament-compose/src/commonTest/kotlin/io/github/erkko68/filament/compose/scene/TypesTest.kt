@@ -32,7 +32,7 @@ class TypesTest {
             "expected $expected but was $actual",
         )
 
-    private fun assertClose(expected: Color, actual: Color, tolerance: Float = 1e-5f) =
+    private fun assertClose(expected: LinearColor, actual: LinearColor, tolerance: Float = 1e-5f) =
         assertTrue(
             kotlin.math.abs(expected.r - actual.r) < tolerance &&
                 kotlin.math.abs(expected.g - actual.g) < tolerance &&
@@ -350,28 +350,28 @@ class TypesTest {
         assertClose(0f, Rotation.lookTowards(Direction.Forward).angleTo(Rotation.Identity), 1e-3f)
     }
 
-    // ── Color ─────────────────────────────────────────────────────────────────
+    // ── LinearColor ───────────────────────────────────────────────────────────
 
     @Test
     fun colorUniformConstructorMakesGrey() {
-        assertEquals(Color(0.5f, 0.5f, 0.5f), Color(0.5f))
+        assertEquals(LinearColor(0.5f, 0.5f, 0.5f), LinearColor(0.5f))
     }
 
     @Test
     fun colorSupportsScalingAndAdding() {
-        assertClose(Color(0.2f, 0.4f, 0.6f), Color(0.1f, 0.2f, 0.3f) * 2f)
-        assertClose(Color(0.3f, 0.5f, 0.7f), Color(0.1f, 0.2f, 0.3f) + Color(0.2f, 0.3f, 0.4f))
+        assertClose(LinearColor(0.2f, 0.4f, 0.6f), LinearColor(0.1f, 0.2f, 0.3f) * 2f)
+        assertClose(LinearColor(0.3f, 0.5f, 0.7f), LinearColor(0.1f, 0.2f, 0.3f) + LinearColor(0.2f, 0.3f, 0.4f))
     }
 
     @Test
     fun colorMapsFloat3ComponentsToRgbInOrder() {
-        assertEquals(Color(0.1f, 0.2f, 0.3f), Float3(0.1f, 0.2f, 0.3f).toColor())
-        assertEquals(Float3(0.1f, 0.2f, 0.3f), Color(0.1f, 0.2f, 0.3f).toFloat3())
+        assertEquals(LinearColor(0.1f, 0.2f, 0.3f), Float3(0.1f, 0.2f, 0.3f).toLinearColor())
+        assertEquals(Float3(0.1f, 0.2f, 0.3f), LinearColor(0.1f, 0.2f, 0.3f).toFloat3())
     }
 
     @Test
     fun composeColorInteropRoundTripsAndDropsAlpha() {
-        val scene = Color(ComposeColor(0.25f, 0.5f, 0.75f, alpha = 0.5f))
+        val scene = LinearColor.fromComposeColor(ComposeColor(0.25f, 0.5f, 0.75f, alpha = 0.5f))
         assertClose(0.25f, scene.r, composeChannelTolerance)
         assertClose(0.5f, scene.g, composeChannelTolerance)
         assertClose(0.75f, scene.b, composeChannelTolerance)
@@ -384,7 +384,7 @@ class TypesTest {
     @Test
     fun toComposeColorClampsOutOfRangeChannels() {
         // Emissive/HDR scene colours legitimately exceed 1.0; Compose UI colours cannot.
-        val clamped = Color(4f, -0.5f, 0.5f).toComposeColor()
+        val clamped = LinearColor(4f, -0.5f, 0.5f).toComposeColor()
         assertClose(1f, clamped.red, composeChannelTolerance)
         assertClose(0f, clamped.green, composeChannelTolerance)
         assertClose(0.5f, clamped.blue, composeChannelTolerance)
