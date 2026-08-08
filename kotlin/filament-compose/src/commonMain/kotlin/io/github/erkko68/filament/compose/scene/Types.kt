@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import io.github.erkko68.filament.utils.Float3
 import io.github.erkko68.filament.utils.Quaternion
@@ -29,6 +30,7 @@ import io.github.erkko68.filament.utils.slerp as quatSlerp
  * (`Position(myFloat3)`), or drop out with [toFloat3]/[Float3.toPosition]. Common in-domain math
  * (translate, scale) is available as operators so you rarely need to.
  */
+@Immutable
 data class Position(val x: Float, val y: Float, val z: Float) {
     /** Uniform value on all axes. */
     constructor(v: Float) : this(v, v, v)
@@ -47,6 +49,7 @@ data class Position(val x: Float, val y: Float, val z: Float) {
  * A direction / displacement vector in 3-D space. See [Position] for the rationale behind the
  * distinct type and the [Float3] interop story.
  */
+@Immutable
 data class Direction(val x: Float, val y: Float, val z: Float) {
     constructor(v: Float) : this(v, v, v)
     constructor(v: Float3) : this(v.x, v.y, v.z)
@@ -80,6 +83,7 @@ data class Direction(val x: Float, val y: Float, val z: Float) {
 /**
  * A per-axis scale factor. See [Position] for the rationale behind the distinct type.
  */
+@Immutable
 data class Scale(val x: Float, val y: Float, val z: Float) {
     constructor(v: Float) : this(v, v, v)
     constructor(v: Float3) : this(v.x, v.y, v.z)
@@ -123,6 +127,7 @@ data class Scale(val x: Float, val y: Float, val z: Float) {
  * values let a composable skip), but to ask whether two orientations agree use
  * [angleTo] against a tolerance rather than `==`.
  */
+@Immutable
 data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
     /** From a filament-utils [Quaternion]. */
     constructor(q: Quaternion) : this(q.x, q.y, q.z, q.w)
@@ -266,8 +271,7 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
 
 /**
  * An RGB color (linear or sRGB depending on the consuming API). Distinct from the spatial
- * vectors so a [Color] can't be passed as a [Position]. Components are [r]/[g]/[b].
->>>>>>> 49d060dff025ac8ca6d16494c01f956dffb14c54
+ * vectors so a [LinearColor] can't be passed as a [Position]. Components are [r]/[g]/[b].
  *
  * Deliberately **not** called `Color`: `androidx.compose.ui.graphics.Color` is in scope in
  * practically every file that uses this library, and two same-named colour types with different
@@ -281,6 +285,7 @@ data class Rotation(val x: Float, val y: Float, val z: Float, val w: Float) {
  * val tint = LinearColor.fromComposeColor(MaterialTheme.colorScheme.primary)
  * ```
  */
+@Immutable
 data class LinearColor(val r: Float, val g: Float, val b: Float) {
     /** Uniform value on all channels (grey). */
     constructor(v: Float) : this(v, v, v)

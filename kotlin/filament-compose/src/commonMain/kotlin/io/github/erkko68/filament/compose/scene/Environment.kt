@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -39,6 +40,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * scene simply renders without IBL/skybox until then. Both remain mutable afterward (e.g.
  * `env.indirectLightState.intensity = …`, `env.indirectLightState.rotation = …`).
  */
+@Stable
 class Environment internal constructor(
     val indirectLightState: IndirectLightState,
     val skyboxState: SkyboxState?,

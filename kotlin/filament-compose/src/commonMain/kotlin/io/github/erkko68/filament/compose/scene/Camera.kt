@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import io.github.erkko68.filament.utils.Mat4
  * - [Orthographic] — parallel projection (useful for UI, 2-D, CAD).
  * - [Lens] — physical lens simulation (focal-length / sensor size).
  */
+@Immutable
 sealed class Projection {
     data class Perspective(
         val fovDegrees: Double = 45.0,
@@ -51,6 +53,7 @@ sealed class Projection {
  *
  * Default values correspond to a typical outdoor daylight exposure (EV ≈ 15).
  */
+@Immutable
 data class Exposure(
     val aperture: Float = 16f,
     val shutterSpeed: Float = 1f / 125f,
