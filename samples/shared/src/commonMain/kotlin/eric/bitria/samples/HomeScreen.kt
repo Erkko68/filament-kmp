@@ -28,6 +28,7 @@ private val ENTRIES = listOf(
     "Texture (PNG)" to Screen.Texture,
     "Environment (KTX)" to Screen.KTXEnvironment,
     "Environment (HDR)" to Screen.HDREnvironment,
+    "Transparency (GLB)" to Screen.Transparent,
 )
 
 @Composable

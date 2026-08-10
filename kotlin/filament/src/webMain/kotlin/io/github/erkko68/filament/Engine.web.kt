@@ -1,7 +1,9 @@
 package io.github.erkko68.filament
 
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
 import io.github.erkko68.filament.web.Engine as JSEngine
+import io.github.erkko68.filament.web.EngineCreateOptions as JSEngineCreateOptions
 import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
 import org.w3c.dom.HTMLCanvasElement
@@ -317,6 +319,15 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 
     actual companion object {
+        /**
+         * `Engine.create` builds the WebGL context with `alpha: false` by default, which makes
+         * every frame opaque no matter what the View blend mode is. Always request an alpha
+         * channel — an opaque render still writes alpha 1, so this only adds the option of
+         * transparency.
+         */
+        private fun glOptions(): JSEngineCreateOptions =
+            emptyJsObject().unsafeCast<JSEngineCreateOptions>().apply { alpha = true }
+
         actual fun create(): Engine {
             // On JS, Filament needs a WebGL-backed canvas. If no shared context is
             // provided, allocate a hidden offscreen <canvas> that the consumer can
@@ -331,7 +342,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             canvas.style.left = "-9999px"
             canvas.style.top = "0"
             doc.body?.appendChild(canvas)
-            return Engine(JSEngine.create(canvas), canvas)
+            return Engine(JSEngine.create(canvas, glOptions()), canvas)
         }
 
         actual fun create(backend: Backend): Engine {
@@ -340,7 +351,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
         actual fun create(sharedContext: Any): Engine {
             if (sharedContext is HTMLCanvasElement) {
-                return Engine(JSEngine.create(sharedContext), sharedContext)
+                return Engine(JSEngine.create(sharedContext, glOptions()), sharedContext)
             }
             return create()
         }

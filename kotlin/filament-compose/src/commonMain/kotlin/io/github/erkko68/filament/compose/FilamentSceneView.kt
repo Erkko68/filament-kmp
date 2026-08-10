@@ -60,6 +60,7 @@ fun FilamentSceneView(
     shadows: Shadows? = Shadows.Pcf,
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
+    transparent: Boolean = false,
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val scene = rememberFilamentScene(
@@ -78,6 +79,7 @@ fun FilamentSceneView(
         shadows = shadows,
         screenSpaceRefractionEnabled = screenSpaceRefractionEnabled,
         stencilBufferEnabled = stencilBufferEnabled,
+        transparent = transparent,
     )
 }
 
@@ -99,6 +101,7 @@ fun FilamentSceneView(
     shadows: Shadows? = Shadows.Pcf,
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
+    transparent: Boolean = false,
     content: @Composable FilamentSceneScope.() -> Unit,
 ) = FilamentSceneView(
     modifier = modifier,
@@ -112,5 +115,6 @@ fun FilamentSceneView(
     shadows = shadows,
     screenSpaceRefractionEnabled = screenSpaceRefractionEnabled,
     stencilBufferEnabled = stencilBufferEnabled,
+    transparent = transparent,
     content = content,
 )
