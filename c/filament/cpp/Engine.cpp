@@ -61,15 +61,18 @@ void FilaEngineBuilder_config(FilaEngineBuilder *builder,
   wrapper->config.minCommandBufferSizeMB = config->minCommandBufferSizeMB;
   wrapper->config.perFrameCommandsSizeMB = config->perFrameCommandsSizeMB;
   wrapper->config.jobSystemThreadCount = config->jobSystemThreadCount;
+  wrapper->config.disableParallelShaderCompile = config->disableParallelShaderCompile;
   wrapper->config.stereoscopicType =
       static_cast<Engine::StereoscopicType>(config->stereoscopicType);
   wrapper->config.stereoscopicEyeCount = config->stereoscopicEyeCount;
   wrapper->config.resourceAllocatorCacheSizeMB = config->resourceAllocatorCacheSizeMB;
   wrapper->config.resourceAllocatorCacheMaxAge = config->resourceAllocatorCacheMaxAge;
+  wrapper->config.disableHandleUseAfterFreeCheck = config->disableHandleUseAfterFreeCheck;
   wrapper->config.preferredShaderLanguage =
       static_cast<Engine::Config::ShaderLanguage>(
           config->preferredShaderLanguage);
   wrapper->config.forceGLES2Context = config->forceGLES2Context;
+  wrapper->config.assertNativeWindowIsValid = config->assertNativeWindowIsValid;
   wrapper->config.gpuContextPriority =
       static_cast<Engine::GpuContextPriority>(config->gpuContextPriority);
   wrapper->config.sharedUboInitialSizeInBytes = config->sharedUboInitialSizeInBytes;

@@ -51,16 +51,19 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         actual var minCommandBufferSizeMB: Long = 1
         actual var perFrameCommandsSizeMB: Long = 2
         actual var jobSystemThreadCount: Long = 0
+        actual var disableParallelShaderCompile: Boolean = false
         actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
         actual var stereoscopicEyeCount: Long = 2
         actual var resourceAllocatorCacheSizeMB: Long = 64
         actual var resourceAllocatorCacheMaxAge: Long = 1
+        actual var disableHandleUseAfterFreeCheck: Boolean = false
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
         }
         actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
         actual var forceGLES2Context: Boolean = false
+        actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         actual var sharedUboInitialSizeInBytes: Long = 256 * 64
 
@@ -71,12 +74,15 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
             native.minCommandBufferSizeMB = minCommandBufferSizeMB.toUInt()
             native.perFrameCommandsSizeMB = perFrameCommandsSizeMB.toUInt()
             native.jobSystemThreadCount = jobSystemThreadCount.toUInt()
+            native.disableParallelShaderCompile = disableParallelShaderCompile
             native.stereoscopicType = stereoscopicType.toNative()
             native.stereoscopicEyeCount = stereoscopicEyeCount.toUByte()
             native.resourceAllocatorCacheSizeMB = resourceAllocatorCacheSizeMB.toUInt()
             native.resourceAllocatorCacheMaxAge = resourceAllocatorCacheMaxAge.toUByte()
+            native.disableHandleUseAfterFreeCheck = disableHandleUseAfterFreeCheck
             native.preferredShaderLanguage = preferredShaderLanguage.ordinal
             native.forceGLES2Context = forceGLES2Context
+            native.assertNativeWindowIsValid = assertNativeWindowIsValid
             native.gpuContextPriority = gpuContextPriority.toNative()
             native.sharedUboInitialSizeInBytes = sharedUboInitialSizeInBytes.toUInt()
         }

@@ -50,16 +50,19 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         actual var minCommandBufferSizeMB: Long = 1
         actual var perFrameCommandsSizeMB: Long = 2
         actual var jobSystemThreadCount: Long = 0
+        actual var disableParallelShaderCompile: Boolean = false
         actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
         actual var stereoscopicEyeCount: Long = 2
         actual var resourceAllocatorCacheSizeMB: Long = 64
         actual var resourceAllocatorCacheMaxAge: Long = 1
+        actual var disableHandleUseAfterFreeCheck: Boolean = false
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
         }
         actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
         actual var forceGLES2Context: Boolean = false
+        actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         actual var sharedUboInitialSizeInBytes: Long = 256 * 64
 
@@ -71,12 +74,15 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
             FilaEngineConfig.minCommandBufferSizeMB(s, minCommandBufferSizeMB.toInt())
             FilaEngineConfig.perFrameCommandsSizeMB(s, perFrameCommandsSizeMB.toInt())
             FilaEngineConfig.jobSystemThreadCount(s, jobSystemThreadCount.toInt())
+            FilaEngineConfig.disableParallelShaderCompile(s, disableParallelShaderCompile)
             FilaEngineConfig.stereoscopicType(s, stereoscopicType.toNative())
             FilaEngineConfig.stereoscopicEyeCount(s, stereoscopicEyeCount.toByte())
             FilaEngineConfig.resourceAllocatorCacheSizeMB(s, resourceAllocatorCacheSizeMB.toInt())
             FilaEngineConfig.resourceAllocatorCacheMaxAge(s, resourceAllocatorCacheMaxAge.toByte())
+            FilaEngineConfig.disableHandleUseAfterFreeCheck(s, disableHandleUseAfterFreeCheck)
             FilaEngineConfig.preferredShaderLanguage(s, preferredShaderLanguage.ordinal)
             FilaEngineConfig.forceGLES2Context(s, forceGLES2Context)
+            FilaEngineConfig.assertNativeWindowIsValid(s, assertNativeWindowIsValid)
             FilaEngineConfig.gpuContextPriority(s, gpuContextPriority.toNative())
             FilaEngineConfig.sharedUboInitialSizeInBytes(s, sharedUboInitialSizeInBytes.toInt())
             return s

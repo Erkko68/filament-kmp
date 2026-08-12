@@ -73,10 +73,12 @@ fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
 fun isValidSwapChain(swapChain: SwapChain): Boolean
 companion object {
 fun getSteadyClockTimeNano(): Double
-fun create(canvas: org.w3c.dom.HTMLCanvasElement, options: EngineCreateOptions = definedExternally): Engine
+fun create(canvas: org.w3c.dom.HTMLCanvasElement, options: EngineCreateOptions = definedExternally, config: Engine_Config = definedExternally): Engine
 fun destroy(engine: Engine): Unit
 fun getMaxStereoscopicEyes(): Double
+fun createDefaultConfig(): Engine_Config
 }
+
 }
 
 // ── Engine ────────────────────────────────────────────────────────────────────
