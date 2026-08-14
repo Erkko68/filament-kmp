@@ -2,6 +2,8 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,12 +16,13 @@ import io.github.erkko68.filament.Skybox as FilamentSkybox
 /**
  * Source for a [SkyboxState]: either a solid color or a cubemap texture.
  */
+@Immutable
 sealed class SkyboxSource {
     /**
      * Solid-color skybox. [color] is (r, g, b); [alpha] controls blending with the clear color.
      */
     data class Color(
-        val color: io.github.erkko68.filament.compose.scene.Color = io.github.erkko68.filament.compose.scene.Color(0.1f, 0.125f, 0.15f),
+        val color: LinearColor = LinearColor(0.1f, 0.125f, 0.15f),
         val alpha: Float = 1.0f,
     ) : SkyboxSource()
 
@@ -35,7 +38,7 @@ sealed class SkyboxSource {
  * [source] removes the skybox entirely.
  *
  * ```kotlin
- * val sky = rememberSkyboxState(initialSource = SkyboxSource.Color(Color(0.05f, 0.05f, 0.08f)))
+ * val sky = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.05f, 0.05f, 0.08f)))
  * val scene = rememberFilamentScene(skyboxState = sky) { ... }
  *
  * // Toggle at runtime
@@ -43,6 +46,7 @@ sealed class SkyboxSource {
  * sky.intensity = 30_000f
  * ```
  */
+@Stable
 class SkyboxState internal constructor(
     initialSource: SkyboxSource?,
     initialShowSun: Boolean,

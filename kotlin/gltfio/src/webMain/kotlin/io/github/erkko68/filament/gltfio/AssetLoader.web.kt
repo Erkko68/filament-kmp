@@ -40,6 +40,10 @@ actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine
         jsLoader.destroyAsset(asset.jsAsset)
     }
 
+    actual fun gc() {
+        jsLoader.gc()
+    }
+
     actual companion object {
         actual fun create(
             engine: Engine,

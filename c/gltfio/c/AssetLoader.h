@@ -17,6 +17,7 @@ FilaFilamentInstance* FilaAssetLoader_createInstance(FilaAssetLoader* loader, Fi
 void FilaAssetLoader_enableDiagnostics(FilaAssetLoader* loader, bool enable);
 
 void FilaAssetLoader_destroyAsset(FilaAssetLoader* loader, FilaFilamentAsset* asset);
+void FilaAssetLoader_gc(FilaAssetLoader* loader);
 
 #ifdef __cplusplus
 }

@@ -33,5 +33,17 @@ class EntityManagerTest : FilamentTestFixture() {
         for (e in entities) {
             assertFalse(em.isAlive(e))
         }
+
+        try {
+            assertTrue(em.getMaxEntityCount() > 0)
+        } catch (_: UnsupportedOperationException) {
+            // Expected on WEB target until Filament 1.75.1 JS bindings ship
+        }
+
+        try {
+            em.advanceEpoch()
+        } catch (_: UnsupportedOperationException) {
+            // Expected on WEB target until Filament 1.75.1 JS bindings ship
+        }
     }
 }

@@ -21,20 +21,20 @@ ready `MaterialInstance` you drop straight into a primitive:
 
 ```kotlin
 // LIT solid colour (baseColor / metallic / roughness / reflectance)
-Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))
+Cube(material = rememberColorMaterialInstance(LinearColor(0.9f, 0.25f, 0.3f)))
 
 // UNLIT flat colour — ignores scene lighting
-Plane(material = rememberUnlitColorMaterialInstance(Color(0.1f, 0.1f, 0.12f)))
+Plane(material = rememberUnlitColorMaterialInstance(LinearColor(0.1f, 0.1f, 0.12f)))
 
 // LIT textured base colour (geometry needs uv0 — all built-in primitives supply it)
 val tex = rememberTexture { Res.readBytes("files/textures/wood.png") }
 tex?.let { Sphere(material = rememberTexturedMaterialInstance(it)) }
 
 // UNLIT emissive — glows through bloom when intensity > 1
-Sphere(material = rememberEmissiveMaterialInstance(Color(1f, 0.85f, 0.4f), intensity = 4f))
+Sphere(material = rememberEmissiveMaterialInstance(LinearColor(1f, 0.85f, 0.4f), intensity = 4f))
 
 // LIT with alpha transparency — pre-multiplied, two-pass so solids self-composite correctly
-Sphere(material = rememberTransparentColorMaterialInstance(Color(0.3f, 0.6f, 0.9f), alpha = 0.35f))
+Sphere(material = rememberTransparentColorMaterialInstance(LinearColor(0.3f, 0.6f, 0.9f), alpha = 0.35f))
 ```
 
 Parameters track Compose state automatically — pass a new `color`/`intensity` and the instance is

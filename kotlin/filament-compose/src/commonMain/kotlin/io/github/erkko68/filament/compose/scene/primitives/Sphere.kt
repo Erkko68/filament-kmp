@@ -7,8 +7,8 @@ import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.Scale
-import io.github.erkko68.filament.utils.Quaternion
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -36,7 +36,7 @@ import kotlin.math.sin
 fun FilamentSceneScope.Sphere(
     material: MaterialInstance?,
     position: Position = Position(0f),
-    rotation: Quaternion = Quaternion(),
+    rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
     radius: Float = 0.5f,

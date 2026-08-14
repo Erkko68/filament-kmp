@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
@@ -19,6 +20,7 @@ import kotlin.math.sqrt
  * Spot / focused-spot cone angles (half-angles in radians).
  * [innerAngle] must be ≤ [outerAngle].
  */
+@Immutable
 data class SpotCone(
     val innerAngle: Float = 0.5f,
     val outerAngle: Float = 0.6f,
@@ -32,6 +34,7 @@ data class SpotCone(
  * @param haloSize Halo radius as a multiplier of the sun's angular radius.
  * @param haloFalloff Halo falloff exponent (higher = tighter halo).
  */
+@Immutable
 data class SunParams(
     val angularRadius: Float = 1.9f,
     val haloSize: Float = 10f,
@@ -46,6 +49,7 @@ data class SunParams(
  * Follows the same "correlated params become a value type" idiom as [Projection]/[SpotCone]/
  * [SunParams]. The default everywhere is `LuminousPower(100_000f)`.
  */
+@Immutable
 sealed interface LightIntensity {
     /**
      * Illuminance in lux for directional lights, luminous power in lumen for point/spot lights —
@@ -72,7 +76,7 @@ internal data class LightSnapshot(
     val type: LightManager.Type,
     val direction: Direction,
     val position: Position,
-    val color: Color,
+    val color: LinearColor,
     val intensity: LightIntensity,
     val shadow: ShadowConfig?,
     val castLight: Boolean,
@@ -243,7 +247,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
 @Composable
 fun FilamentSceneScope.DirectionalLight(
     direction: Direction = Direction(0.3f, -1f, -0.5f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     shadow: ShadowConfig? = null,
     castLight: Boolean = true,
@@ -272,7 +276,7 @@ fun FilamentSceneScope.DirectionalLight(
 @Composable
 fun FilamentSceneScope.SunLight(
     direction: Direction = Direction(0.3f, -1f, -0.5f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     sun: SunParams = SunParams(),
     shadow: ShadowConfig? = null,
@@ -304,7 +308,7 @@ fun FilamentSceneScope.SunLight(
 @Composable
 fun FilamentSceneScope.PointLight(
     position: Position = Position(0f, 2f, 0f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     castLight: Boolean = true,
@@ -335,7 +339,7 @@ fun FilamentSceneScope.PointLight(
 fun FilamentSceneScope.SpotLight(
     position: Position = Position(0f, 2f, 0f),
     direction: Direction = Direction(0f, -1f, 0f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     cone: SpotCone = SpotCone(),
@@ -370,7 +374,7 @@ fun FilamentSceneScope.SpotLight(
 fun FilamentSceneScope.FocusedSpotLight(
     position: Position = Position(0f, 2f, 0f),
     direction: Direction = Direction(0f, -1f, 0f),
-    color: Color = Color(1f, 1f, 1f),
+    color: LinearColor = LinearColor(1f, 1f, 1f),
     intensity: LightIntensity = LightIntensity.LuminousPower(100_000f),
     falloff: Float = 10f,
     cone: SpotCone = SpotCone(),

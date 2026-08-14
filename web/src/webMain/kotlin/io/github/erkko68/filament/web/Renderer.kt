@@ -12,6 +12,9 @@ fun beginFrame(swapChain: SwapChain): Boolean
 fun endFrame(): Unit
 fun getUserTime(): Double
 fun resetUserTime(): Unit
+fun getMaterialTime(): Double
+fun setMaterialTimeEpoch(timeEpochInNs: Double): Unit
+fun pauseRenderThread(timeNs: Double): Unit
 fun skipNextFrames(frames: Double): Unit
 fun getFrameToSkipCount(): Double
 fun shouldRenderFrame(): Boolean

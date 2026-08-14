@@ -44,4 +44,8 @@ void FilaAssetLoader_destroyAsset(FilaAssetLoader* loader, FilaFilamentAsset* as
     ((AssetLoader*) loader)->destroyAsset((FilamentAsset*) asset);
 }
 
+void FilaAssetLoader_gc(FilaAssetLoader* loader) {
+    ((AssetLoader*) loader)->gc();
+}
+
 }

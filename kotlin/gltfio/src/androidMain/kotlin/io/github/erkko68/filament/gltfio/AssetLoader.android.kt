@@ -63,4 +63,8 @@ actual class AssetLoader internal constructor(
     actual fun destroyAsset(asset: FilamentAsset) {
         nativeObject.destroyAsset(asset.nativeObject)
     }
+
+    actual fun gc() {
+        nativeObject.gc()
+    }
 }

@@ -6,4 +6,4 @@ package io.github.erkko68.filament.web
  * Asynchronously initializes the WebGPU adapter and device.
  * This must be awaited before initializing the Filament Engine with the WebGPU backend.
  */
-external fun initWebGPU(): js.promise.Promise<js.core.Void>
+external fun initWebGPU(): js.promise.Promise<JsAny?>

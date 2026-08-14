@@ -34,7 +34,7 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
             FilaLightManagerShadowOptions.maxShadowDistance(nativeOptions, 0.3f)
             FilaLightManagerVsmShadowOptions.elvsm(vsm, false)
             FilaLightManagerVsmShadowOptions.blurWidth(vsm, 0.0f)
-            FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, 0.02f)
+            FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, -1.0f)
             // Identity quaternion (x,y,z,w) = (0,0,0,1); only w needs setting (arena zeroed the rest).
             FilaLightManagerShadowOptions.transform(nativeOptions).setFloatAt(3, 1.0f)
         }

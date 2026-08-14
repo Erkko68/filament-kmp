@@ -263,6 +263,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         jsRenderableManager.getMorphTargetCount(
             InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>()).toInt()
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op, though unreachable in practice — SkinningBuffer.Builder.build throws on web, so no instance can be obtained to pass here.")
     actual fun setSkinningBuffer(
         instance: EntityInstance,
         skinningBuffer: SkinningBuffer,
@@ -279,12 +280,15 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         weights: FloatArray,
         offset: Int
     ) {
-        // The 4-argument setMorphWeights takes neither an offset nor a variable count.
         jsRenderableManager.setMorphWeightsOffset(
             InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
             weights.toJsNumbers(), offset.toDouble())
     }
 
+    // Unlike setSkinningBuffer this takes no buffer argument, so it *is* reachable — on any
+    // gltfio-loaded renderable — and silently does nothing there. gltfio is where you hit this gap,
+    // not a way around it.
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op with no workaround — filament.js binds no per-primitive morph-buffer offset; author the glTF so each primitive reads from the offset it needs.")
     actual fun setMorphTargetBufferOffsetAt(
         instance: EntityInstance,
         level: Int,

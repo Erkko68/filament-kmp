@@ -55,6 +55,10 @@ void FilaRenderer_readPixelsRenderTarget(FilaRenderer* renderer, FilaRenderTarge
 double FilaRenderer_getUserTime(const FilaRenderer* renderer);
 void FilaRenderer_resetUserTime(FilaRenderer* renderer);
 
+double FilaRenderer_getMaterialTime(const FilaRenderer* renderer);
+void FilaRenderer_setMaterialTimeEpoch(FilaRenderer* renderer, int64_t timeEpochInNs);
+void FilaRenderer_pauseRenderThread(FilaRenderer* renderer, uint64_t timeNs);
+
 void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info);
 void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options);
 void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClearOptions* options);

@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -45,6 +46,9 @@ import io.github.erkko68.filament.gltfio.Animator
  * rememberAnimationTrack(anim, runIndex,  weight = speed)
  * ```
  */
+// @Stable: the observable surface is all snapshot-backed; currentIndex/currentTime/previousIndex/
+// previousTime/blend are per-frame mixer scratch touched only from OnFrame.
+@Stable
 class AnimationState internal constructor(
     initialIndex: Int?,
     initialSpeed: Float,
@@ -163,6 +167,7 @@ class AnimationState internal constructor(
  * Filament blends the whole skeleton per call, so per-bone masks and additive layers are not
  * expressible — drive the [Animator] yourself for that.
  */
+@Stable
 class AnimationMixer {
     /** Pauses advancement of every track while true; poses hold in place. Observable, like
      *  [AnimationState.isPaused]. */

@@ -9,7 +9,9 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.Filament
 import io.github.erkko68.filament.Scene
+import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.FilamentSceneScopeInstance
 import io.github.erkko68.filament.compose.LocalFilamentEngine
@@ -79,6 +81,75 @@ fun withFilamentScene(
     slot = {}
     waitForIdle()
     mainClock.autoAdvance = true
+}
+
+/**
+ * Like [withFilamentScene], but creates and destroys the [Engine] and [Scene] **on Compose's own UI
+ * dispatcher** instead of taking them from a fixture, and hands them to [body].
+ *
+ * Needed for anything that touches Filament from inside a coroutine effect. `LaunchedEffect` bodies
+ * resume on the UI dispatcher (`AWT-EventQueue-0` on JVM desktop), while the [TierBSceneFixture]
+ * `@BeforeTest` runs on the JUnit worker thread — so an engine created there is driven from two
+ * threads the moment an effect calls into it. Thread-affine pieces of Filament (notably gltfio's
+ * `ResourceLoader`, which `rememberGltfAsset` uses) answer that with a native `PreconditionPanic`
+ * that no `try`/`catch` can intercept: the whole test process dies with SIGABRT. Real apps never see
+ * it, because `rememberFilamentEngine` creates the engine on the same dispatcher its effects run on
+ * — which is exactly the arrangement this harness reproduces.
+ *
+ * [body] is skipped entirely when no GPU backend is available, mirroring [TierBSceneFixture]'s gate,
+ * so callers need no `engine ?: return` dance.
+ */
+@OptIn(ExperimentalTestApi::class)
+fun withUiThreadFilamentScene(
+    body: ComposeUiTest.(setContent: SetSceneContent, engine: Engine, scene: Scene) -> Unit,
+) = runComposeUiTest {
+    mainClock.autoAdvance = false
+
+    var created: Pair<Engine, Scene>? = null
+    runOnUiThread {
+        Filament.init()
+        // See RenderingTestFixture: never call Engine.create on a host with no GPU — Filament aborts
+        // on its driver thread, which try/catch cannot recover.
+        if (TestEnv.gpuBackendAvailable) {
+            val e = try {
+                Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid() }
+            } catch (t: Throwable) {
+                null
+            }
+            if (e != null) created = e to e.createScene()
+        }
+    }
+
+    created?.let { (engine, scene) ->
+        var slot by mutableStateOf<@Composable FilamentSceneScope.() -> Unit>({})
+        setContent {
+            CompositionLocalProvider(
+                LocalFilamentEngine provides engine,
+                LocalFilamentScene provides scene,
+            ) {
+                FilamentSceneScopeInstance.slot()
+            }
+        }
+        val setSceneContent: SetSceneContent = { content ->
+            slot = content
+            mainClock.advanceTimeByFrame()
+        }
+        body(setSceneContent, engine, scene)
+
+        // Same wasmJs teardown ordering as withFilamentScene — dispose before restoring the clock.
+        slot = {}
+        waitForIdle()
+    }
+    mainClock.autoAdvance = true
+
+    // Tear down on the UI thread too: the engine was created there and is thread-affine.
+    runOnUiThread {
+        created?.let { (engine, scene) ->
+            engine.destroyScene(scene)
+            engine.flushAndWait()
+            engine.destroy()
+        }
+    }
 }
 
 /**

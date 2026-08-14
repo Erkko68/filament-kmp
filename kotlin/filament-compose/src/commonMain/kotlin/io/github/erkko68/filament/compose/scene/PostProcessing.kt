@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.Immutable
 import io.github.erkko68.filament.ColorGrading
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.ToneMapper
@@ -28,6 +29,7 @@ import io.github.erkko68.filament.View
  *
  * @param enabled Master switch for all post-processing (maps to `View.isPostProcessingEnabled`).
  */
+@Immutable
 data class PostProcessing(
     val enabled: Boolean = true,
     val bloom: Bloom? = null,
@@ -56,6 +58,7 @@ data class PostProcessing(
  *   half the render width for a smoother halo on retina/iOS screens.
  * @param levels Mip levels in the bloom chain (3..12). Higher = wider, softer halo.
  */
+@Immutable
 data class Bloom(
     val strength: Float = 0.10f,
     val thresholdEnabled: Boolean = true,
@@ -65,23 +68,26 @@ data class Bloom(
 )
 
 /** Vignette — darkens the corners of the viewport. */
+@Immutable
 data class Vignette(
     val midPoint: Float = 0.5f,
     val roundness: Float = 0.5f,
     val feather: Float = 0.5f,
-    val color: Color = Color(0f, 0f, 0f),
+    val color: LinearColor = LinearColor(0f, 0f, 0f),
 )
 
 /** Height-based and volumetric fog. */
+@Immutable
 data class Fog(
     val distance: Float = 0.0f,
     val density: Float = 0.1f,
     val height: Float = 0.0f,
     val heightFalloff: Float = 1.0f,
-    val color: Color = Color(0f, 0f, 0f),
+    val color: LinearColor = LinearColor(0f, 0f, 0f),
 )
 
 /** Screen-space ambient occlusion (SSAO). */
+@Immutable
 data class AmbientOcclusion(
     val radius: Float = 0.3f,
     val bias: Float = 0.01f,
@@ -90,6 +96,7 @@ data class AmbientOcclusion(
 )
 
 /** Anti-aliasing: MSAA (hardware), FXAA (post-process), and TAA (temporal). */
+@Immutable
 data class AntiAliasing(
     val msaaEnabled: Boolean = false,
     val msaaSampleCount: Int = 4,
@@ -98,6 +105,7 @@ data class AntiAliasing(
 )
 
 /** Screen-space reflections (SSR). */
+@Immutable
 data class ScreenSpaceReflections(
     val thickness: Float = 0.1f,
     val bias: Float = 0.01f,
@@ -111,6 +119,7 @@ data class ScreenSpaceReflections(
  * re-bake the grading LUT on every recomposition). The native operator is constructed only when
  * the configuration is actually applied.
  */
+@Immutable
 sealed interface ToneMapping {
     /** ACES RRT + sRGB ODT — Filament's recommended default. */
     data object ACES : ToneMapping
@@ -152,6 +161,7 @@ internal fun ToneMapping.toToneMapper(): ToneMapper = when (this) {
 }
 
 /** Color grading — exposure, white balance, contrast, tone mapping, etc. */
+@Immutable
 data class ColorGrade(
     val exposure: Float = 0.0f,
     val contrast: Float = 1.0f,
@@ -168,6 +178,7 @@ data class ColorGrade(
  * @param cocScale Scales the circle-of-confusion radius. Larger = more blur.
  * @param nativeResolution Run DoF at native resolution (higher quality, more expensive).
  */
+@Immutable
 data class DepthOfField(
     val cocScale: Float = 1.0f,
     val maxApertureDiameter: Float = 0.01f,
@@ -184,6 +195,7 @@ data class DepthOfField(
  * @param minScale Minimum scale factor (e.g. 0.5 = half resolution).
  * @param maxScale Maximum scale factor (1.0 = native).
  */
+@Immutable
 data class DynamicResolution(
     val minScale: Float = 0.5f,
     val maxScale: Float = 1.0f,
@@ -196,12 +208,14 @@ data class DynamicResolution(
  * Dithering applied at tonemap time. [View.Dithering.TEMPORAL] (Filament's native default)
  * hides 8-bit banding in dark gradients and bloom halos.
  */
+@Immutable
 data class Dithering(val mode: View.Dithering = View.Dithering.TEMPORAL)
 
 /**
  * Precision of the view's HDR color buffer. [View.Quality.HIGH] (the native default) is
  * RGBA16F where supported — needed for emissive values above 1.0 to survive into bloom.
  */
+@Immutable
 data class RenderQuality(val hdrColorBuffer: View.Quality = View.Quality.HIGH)
 
 /**

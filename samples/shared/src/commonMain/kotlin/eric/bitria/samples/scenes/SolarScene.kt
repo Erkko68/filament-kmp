@@ -15,10 +15,12 @@ import io.github.erkko68.filament.compose.scene.Bloom
 import io.github.erkko68.filament.compose.scene.Dithering
 import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.RenderQuality
-import io.github.erkko68.filament.compose.scene.Color as FilColor
+import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Group
 import io.github.erkko68.filament.compose.scene.PointLight
+import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Position
+import io.github.erkko68.filament.compose.scene.Rotation
 import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.scene.SkyboxSource
@@ -27,14 +29,12 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberEmissiveMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
-import io.github.erkko68.filament.utils.Float3
-import io.github.erkko68.filament.utils.Quaternion
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 private data class Planet(
-    val color: FilColor,
+    val color: LinearColor,
     val radius: Float,
     val orbitRadius: Float,
     val orbitSpeed: Float, // radians per second
@@ -42,10 +42,10 @@ private data class Planet(
 )
 
 private val PLANETS = listOf(
-    Planet(FilColor(0.65f, 0.65f, 0.70f), radius = 0.20f, orbitRadius = 1.8f, orbitSpeed = 1.6f, spinSpeed = 4.0f), // mercury
-    Planet(FilColor(0.95f, 0.65f, 0.30f), radius = 0.32f, orbitRadius = 2.7f, orbitSpeed = 1.2f, spinSpeed = 2.5f), // venus
-    Planet(FilColor(0.25f, 0.55f, 0.95f), radius = 0.36f, orbitRadius = 3.8f, orbitSpeed = 0.9f, spinSpeed = 3.0f), // earth
-    Planet(FilColor(0.85f, 0.30f, 0.20f), radius = 0.26f, orbitRadius = 5.0f, orbitSpeed = 0.6f, spinSpeed = 2.0f), // mars
+    Planet(LinearColor(0.65f, 0.65f, 0.70f), radius = 0.20f, orbitRadius = 1.8f, orbitSpeed = 1.6f, spinSpeed = 4.0f), // mercury
+    Planet(LinearColor(0.95f, 0.65f, 0.30f), radius = 0.32f, orbitRadius = 2.7f, orbitSpeed = 1.2f, spinSpeed = 2.5f), // venus
+    Planet(LinearColor(0.25f, 0.55f, 0.95f), radius = 0.36f, orbitRadius = 3.8f, orbitSpeed = 0.9f, spinSpeed = 3.0f), // earth
+    Planet(LinearColor(0.85f, 0.30f, 0.20f), radius = 0.26f, orbitRadius = 5.0f, orbitSpeed = 0.6f, spinSpeed = 2.0f), // mars
 )
 
 /**
@@ -61,7 +61,7 @@ fun SolarScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 50.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.02f, 0.03f, 0.06f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.02f, 0.03f, 0.06f)))
 
     val time by rememberSceneClock()
 
@@ -93,13 +93,13 @@ fun SolarScene(onBack: () -> Unit) {
             Group(position = Position(0f, sunY, 0f)) {
                 Sphere(
                     material = rememberEmissiveMaterialInstance(
-                        color     = FilColor(1.0f, 0.85f, 0.40f),
+                        color     = LinearColor(1.0f, 0.85f, 0.40f),
                         intensity = 4.0f,
                     ),
                     radius = 0.7f,
                 )
                 PointLight(
-                    color     = FilColor(1f, 0.85f, 0.5f),
+                    color     = LinearColor(1f, 0.85f, 0.5f),
                     intensity = LightIntensity.LuminousPower(400_000f),
                     falloff   = 15f,
                     position  = Position(0f, 0f, 0f),
@@ -117,7 +117,7 @@ fun SolarScene(onBack: () -> Unit) {
                     Sphere(
                         material = rememberColorMaterialInstance(p.color),
                         radius   = p.radius,
-                        rotation = Quaternion.fromAxisAngle(Float3(0f, 1f, 0f), spinDegrees),
+                        rotation = Rotation.axisAngle(Direction(0f, 1f, 0f), spinDegrees),
                     )
                 }
             }

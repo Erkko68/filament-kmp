@@ -39,4 +39,10 @@ actual class EntityManager internal constructor(var nativeHandle: MemorySegment?
     }
 
     actual fun isAlive(entity: Entity): Boolean = FilamentC.FilaEntityManager_isAlive(nativeHandle, entity)
+
+    actual fun advanceEpoch() {
+        FilamentC.FilaEntityManager_advanceEpoch(nativeHandle)
+    }
+
+    actual fun getMaxEntityCount(): Int = FilamentC.FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
 }

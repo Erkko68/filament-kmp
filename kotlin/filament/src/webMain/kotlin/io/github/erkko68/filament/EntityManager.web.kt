@@ -28,6 +28,24 @@ actual class EntityManager(internal val jsEntityManager: JSEntityManager) {
 
     actual fun isAlive(entity: Entity): Boolean = registry.containsKey(entity)
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — advanceEpoch is not bound in filament.js.")
+    actual fun advanceEpoch() {
+        if (jsHasMember(jsEntityManager, "advanceEpoch")) {
+            jsEntityManager.advanceEpoch()
+        } else {
+            jsUnsupported("EntityManager.advanceEpoch")
+        }
+    }
+
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getMaxEntityCount is not bound in filament.js.")
+    actual fun getMaxEntityCount(): Int {
+        return if (jsHasMember(jsEntityManager, "getMaxEntityCount")) {
+            jsEntityManager.getMaxEntityCount().toInt()
+        } else {
+            jsUnsupported("EntityManager.getMaxEntityCount")
+        }
+    }
+
     actual companion object {
         private val registry = HashMap<Int, JSEntity>()
 

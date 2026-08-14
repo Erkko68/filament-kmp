@@ -26,16 +26,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.3.0")
+            implementation("io.github.erkko68.filament:filament-compose:0.3.1")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.3.0")
+            implementation("io.github.erkko68.filament:gltfio:0.3.1")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.3.0")
+            implementation("io.github.erkko68.filament:filament-utils:0.3.1")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.3.0")
+            implementation("io.github.erkko68.filament:filamat:0.3.1")
         }
     }
 }
@@ -239,7 +239,7 @@ fun App() {
         target     = Position(0f, 0.5f, 0f),
         projection = Projection.Perspective(fovDegrees = 45.0),
     )
-    val skybox = rememberSkyboxState(SkyboxSource.Color(Color(0.1f, 0.12f, 0.15f)))
+    val skybox = rememberSkyboxState(SkyboxSource.Color(LinearColor(0.1f, 0.12f, 0.15f)))
 
     MaterialTheme {
         // The content lambda declares the world; the viewport is configured by value.

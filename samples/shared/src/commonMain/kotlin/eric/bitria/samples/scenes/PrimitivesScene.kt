@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraController
-import io.github.erkko68.filament.compose.scene.Color as FilColor
+import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.LightIntensity
@@ -31,7 +31,7 @@ fun PrimitivesScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.08f, 0.10f, 0.14f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.08f, 0.10f, 0.14f)))
 
     Box(Modifier.fillMaxSize()) {
         FilamentSceneView(
@@ -46,13 +46,13 @@ fun PrimitivesScene(onBack: () -> Unit) {
                 intensity = LightIntensity.LuminousPower(100_000f),
             )
             // Built-in LIT colour material — no .mat to author or ship.
-            Cube(    material = rememberColorMaterialInstance(FilColor(0.90f, 0.25f, 0.30f)),
+            Cube(    material = rememberColorMaterialInstance(LinearColor(0.90f, 0.25f, 0.30f)),
                      position = Position(-2f, 0.5f, 0f), size = 0.75f)
-            Sphere(  material = rememberColorMaterialInstance(FilColor(0.20f, 0.55f, 0.95f)),
+            Sphere(  material = rememberColorMaterialInstance(LinearColor(0.20f, 0.55f, 0.95f)),
                      position = Position( 2f, 0.5f, 0f), radius = 0.48f)
-            Cylinder(material = rememberColorMaterialInstance(FilColor(0.95f, 0.82f, 0.25f)),
+            Cylinder(material = rememberColorMaterialInstance(LinearColor(0.95f, 0.82f, 0.25f)),
                      position = Position(0f, 0.6f, -2f), radius = 0.3f, height = 1.2f)
-            Plane(   material = rememberColorMaterialInstance(FilColor(0.28f, 0.30f, 0.36f)),
+            Plane(   material = rememberColorMaterialInstance(LinearColor(0.28f, 0.30f, 0.36f)),
                      position = Position(0f, -0.01f, 0f), width = 9f, depth = 9f)
         }
         BackButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart))

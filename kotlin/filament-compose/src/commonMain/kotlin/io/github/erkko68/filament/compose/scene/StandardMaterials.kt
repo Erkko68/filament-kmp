@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.github.erkko68.filament.Engine
@@ -61,6 +62,9 @@ enum class StandardMaterial {
  * instead of compiling four identical shader packages. Provided by `rememberFilamentScene` via
  * [LocalStandardMaterials] and disposed with the scene. Each type builds lazily on first use.
  */
+// @Stable: a per-engine memo table. Its identity is what composition keys on; the map is a
+// write-once cache never observed as state.
+@Stable
 internal class StandardMaterialCache(val engine: Engine) {
     private val cache = HashMap<StandardMaterial, Material>()
 
@@ -114,7 +118,7 @@ fun rememberStandardMaterial(
  * straight into a primitive:
  *
  * ```kotlin
- * Cube(material = rememberColorMaterialInstance(Color(0.9f, 0.25f, 0.3f)))
+ * Cube(material = rememberColorMaterialInstance(LinearColor(0.9f, 0.25f, 0.3f)))
  * ```
  *
  * @param color Linear-sRGB base colour.
@@ -125,7 +129,7 @@ fun rememberStandardMaterial(
  */
 @Composable
 fun rememberColorMaterialInstance(
-    color: Color,
+    color: LinearColor,
     metallic: Float = 0f,
     roughness: Float = 0.5f,
     reflectance: Float = 0.5f,
@@ -149,7 +153,7 @@ fun rememberColorMaterialInstance(
  */
 @Composable
 fun rememberUnlitColorMaterialInstance(
-    color: Color,
+    color: LinearColor,
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Unlit, engine)
@@ -205,7 +209,7 @@ fun rememberTexturedMaterialInstance(
  */
 @Composable
 fun rememberEmissiveMaterialInstance(
-    color: Color,
+    color: LinearColor,
     intensity: Float = 1f,
     engine: Engine = LocalFilamentEngine.current,
 ): MaterialInstance {
@@ -225,7 +229,7 @@ fun rememberEmissiveMaterialInstance(
  * primitive for glass-like looks.
  *
  * ```kotlin
- * Sphere(material = rememberTransparentColorMaterialInstance(Color(0.3f, 0.6f, 0.9f), alpha = 0.35f))
+ * Sphere(material = rememberTransparentColorMaterialInstance(LinearColor(0.3f, 0.6f, 0.9f), alpha = 0.35f))
  * ```
  *
  * @param color Linear-sRGB base colour.
@@ -237,7 +241,7 @@ fun rememberEmissiveMaterialInstance(
  */
 @Composable
 fun rememberTransparentColorMaterialInstance(
-    color: Color,
+    color: LinearColor,
     alpha: Float = 0.5f,
     metallic: Float = 0f,
     roughness: Float = 0.5f,

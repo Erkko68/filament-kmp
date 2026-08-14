@@ -263,6 +263,25 @@ expect class Renderer {
     fun resetUserTime()
 
     /**
+     * Get material time in seconds.
+     */
+    val materialTime: Double
+
+    /**
+     * Set the epoch for material time in nanoseconds.
+     *
+     * @param timeEpochInNs Epoch timestamp in steady_clock nanoseconds.
+     */
+    fun setMaterialTimeEpoch(timeEpochInNs: Long)
+
+    /**
+     * Pause the render thread for a specified duration in nanoseconds.
+     *
+     * @param timeNs Duration in nanoseconds to pause the render thread.
+     */
+    fun pauseRenderThread(timeNs: Long)
+
+    /**
      * Skip the next N frames for frame pacing.
      *
      * @param frameCount Number of frames to skip.

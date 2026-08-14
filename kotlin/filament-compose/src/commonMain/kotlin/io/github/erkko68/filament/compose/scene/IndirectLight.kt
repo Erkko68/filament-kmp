@@ -2,6 +2,8 @@ package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +19,9 @@ import io.github.erkko68.filament.IndirectLight as FilamentIndirectLight
  * @param bands        Number of SH bands (1, 2, or 3 — determines coefficient count: 1, 4, or 9).
  * @param coefficients Packed RGB SH coefficients; length must be `bands² × 3`.
  */
+// @Immutable: read-only, and equality is by content (below) — the compiler would otherwise infer
+// unstable from the FloatArray and force every holder to recompose.
+@Immutable
 data class SphericalHarmonics(
     val bands: Int,
     val coefficients: FloatArray,
@@ -47,18 +52,19 @@ data class SphericalHarmonics(
  * val scene = rememberFilamentScene(indirectLightState = ibl) { ... }
  * ```
  */
+@Stable
 class IndirectLightState internal constructor(
     initialReflections: Texture?,
     initialIrradianceCubemap: Texture?,
     initialIrradianceSh: SphericalHarmonics?,
     initialIntensity: Float,
-    initialRotation: FloatArray?,
+    initialRotation: Rotation?,
 ) {
     var reflections: Texture?            by mutableStateOf(initialReflections)
     var irradianceCubemap: Texture?      by mutableStateOf(initialIrradianceCubemap)
     var irradianceSh: SphericalHarmonics? by mutableStateOf(initialIrradianceSh)
     var intensity: Float                  by mutableStateOf(initialIntensity)
-    var rotation: FloatArray?             by mutableStateOf(initialRotation)
+    var rotation: Rotation?               by mutableStateOf(initialRotation)
 }
 
 /**
@@ -69,7 +75,7 @@ class IndirectLightState internal constructor(
  * @param initialIrradianceCubemap Diffuse irradiance cubemap texture.
  * @param initialIrradianceSh      Diffuse irradiance via spherical harmonics (alternative to cubemap).
  * @param initialIntensity         IBL intensity scale.
- * @param initialRotation          Optional 3×3 column-major rotation matrix (9 floats). Null = identity.
+ * @param initialRotation          Optional rotation of the environment. Null = identity.
  */
 @Composable
 fun rememberIndirectLightState(
@@ -77,7 +83,7 @@ fun rememberIndirectLightState(
     initialIrradianceCubemap: Texture? = null,
     initialIrradianceSh: SphericalHarmonics? = null,
     initialIntensity: Float = 30_000f,
-    initialRotation: FloatArray? = null,
+    initialRotation: Rotation? = null,
 ): IndirectLightState = remember {
     IndirectLightState(initialReflections, initialIrradianceCubemap, initialIrradianceSh,
         initialIntensity, initialRotation)
@@ -94,16 +100,15 @@ internal fun ApplyIndirectLight(state: IndirectLightState, engine: Engine, scene
     val irradianceSh      = state.irradianceSh
     val intensity         = state.intensity
     val rotation          = state.rotation
-    val rotationKey       = rotation?.toList()
 
-    DisposableEffect(scene, reflections, irradianceCubemap, irradianceSh, intensity, rotationKey) {
+    DisposableEffect(scene, reflections, irradianceCubemap, irradianceSh, intensity, rotation) {
         val builder = FilamentIndirectLight.Builder().intensity(intensity)
         reflections?.let { builder.reflections(it) }
         when {
             irradianceCubemap != null -> builder.irradiance(irradianceCubemap)
             irradianceSh      != null -> builder.irradiance(irradianceSh.bands, irradianceSh.coefficients)
         }
-        rotation?.let { builder.rotation(it) }
+        rotation?.let { builder.rotation(it.toRotationMatrix()) }
 
         val ibl = builder.build(engine)
         scene.indirectLight = ibl

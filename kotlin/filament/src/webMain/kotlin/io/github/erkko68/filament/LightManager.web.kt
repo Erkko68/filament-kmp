@@ -164,7 +164,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         actual var maxShadowDistance: Float = 0.3f
         actual var elvsm: Boolean = false
         actual var blurWidth: Float = 0.0f
-        actual var shadowBulbRadius: Float = 0.02f
+        actual var shadowBulbRadius: Float = -1.0f
         // Identity quaternion (x,y,z,w); 4 floats like jvm/native, not a 16-float mat4.
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
         actual var polygonOffsetConstant: Float = 0.5f

@@ -112,6 +112,9 @@ actual class Renderer internal constructor(
 
     actual val userTime: Double get() = nativeRenderer.userTime
     actual fun resetUserTime() = nativeRenderer.resetUserTime()
+    actual val materialTime: Double get() = nativeRenderer.materialTime
+    actual fun setMaterialTimeEpoch(timeEpochInNs: Long) = nativeRenderer.setMaterialTimeEpoch(timeEpochInNs)
+    actual fun pauseRenderThread(timeNs: Long) = nativeRenderer.pauseRenderThread(timeNs)
     actual fun skipNextFrames(frameCount: Int) = nativeRenderer.skipNextFrames(frameCount)
     actual val frameToSkipCount: Int get() = nativeRenderer.frameToSkipCount
 }

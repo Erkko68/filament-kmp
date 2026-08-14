@@ -101,6 +101,10 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `gltfio.UbershaderProvider` (`createMaterialInstance`/`getMaterial`) | Throws | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
 | `filament-utils.HDRLoader.createTexture` | Throws | Convert HDRs to KTX1 offline with `cmgen` |
 | `filament-utils.IBLPrefilterContext` (`EquirectangularToCubemap`/`SpecularFilter`) | Silent no-op — `run` returns the input texture unchanged | Prefilter environments offline with `cmgen` and load the KTX |
+| `RenderableManager.getMorphTargetCount` | Always returns `0` | Not registered with embind (it exists in C++). Count morph targets from the glTF JSON |
+| `RenderableManager.setMorphWeights` | Only the first 4 weights apply; a non-zero `offset` is ignored | filament.js binds only the legacy 4-scalar form. 1–3 weights are zero-padded and animate correctly |
+| `RenderableManager.setMorphTargetBufferOffsetAt` | Silent no-op | **None.** Callable on a `gltfio`-loaded renderable, but the offset cannot be changed on web — author the glTF so each primitive reads from the offset it needs |
+| `RenderableManager.setSkinningBuffer` | Silent no-op | Unreachable in practice: it takes a `SkinningBuffer`, and `SkinningBuffer.Builder.build` throws on web |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
 | `Engine.isValidStream` | Throws | — |
 | `Engine.isValid` | Returns `true` unconditionally — `filament.js` binds no engine-level validity check, only the `isValidX` family for resources | — |

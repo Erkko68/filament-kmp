@@ -27,7 +27,7 @@ import eric.bitria.samples.shared.resources.Res
 import io.github.erkko68.filament.compose.FilamentSceneView
 import io.github.erkko68.filament.compose.orbitGestures
 import io.github.erkko68.filament.compose.rememberOrbitCameraController
-import io.github.erkko68.filament.compose.scene.Color as FilColor
+import io.github.erkko68.filament.compose.scene.LinearColor
 import io.github.erkko68.filament.compose.scene.DirectionalLight
 import io.github.erkko68.filament.compose.scene.LightIntensity
 import io.github.erkko68.filament.compose.scene.Direction
@@ -67,7 +67,7 @@ fun LightingScene(onBack: () -> Unit) {
         initialProjection = Projection.Perspective(fovDegrees = 45.0),
     )
     val orbit  = rememberOrbitCameraController(cameraState)
-    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(FilColor(0.03f, 0.03f, 0.05f)))
+    val skybox = rememberSkyboxState(initialSource = SkyboxSource.Color(LinearColor(0.03f, 0.03f, 0.05f)))
 
     var kind by remember { mutableStateOf(LightKind.Directional) }
     var intensity by remember { mutableFloatStateOf(0.6f) }  // 0..1, mapped per type
@@ -98,7 +98,7 @@ fun LightingScene(onBack: () -> Unit) {
                 )
                 LightKind.Point -> PointLight(
                     position  = Position(0f, 4f, 2f),
-                    color     = FilColor(1f, 0.9f, 0.7f),
+                    color     = LinearColor(1f, 0.9f, 0.7f),
                     intensity = LightIntensity.LuminousPower(intensity * 20_000_000f),
                     falloff   = 25f,
                 )
@@ -114,7 +114,7 @@ fun LightingScene(onBack: () -> Unit) {
 
             // Ground plane (receives shadows) + a glTF caster.
             Plane(
-                material    = rememberColorMaterialInstance(FilColor(0.35f, 0.35f, 0.4f)),
+                material    = rememberColorMaterialInstance(LinearColor(0.35f, 0.35f, 0.4f)),
                 width       = 14f,
                 depth       = 14f,
                 castShadows = false,  // pure ground receiver

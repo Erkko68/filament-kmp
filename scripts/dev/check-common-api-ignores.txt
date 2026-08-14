@@ -42,3 +42,11 @@ View.AmbientOcclusion        # deprecated enum; AmbientOcclusionOptions.enabled 
 View.getAmbientOcclusion
 View.setAmbientOcclusion
 Renderer.mirrorFrame         # deprecated; copyFrame replaces it
+
+# --- Android frame-pacing plumbing ---
+FramePacer
+Renderer.FrameInfo
+Renderer.getFrameInfoHistory
+Renderer.getMaxFrameHistorySize
+Renderer.hasGpuFallenBehind
+Renderer.setFrameScheduleTime

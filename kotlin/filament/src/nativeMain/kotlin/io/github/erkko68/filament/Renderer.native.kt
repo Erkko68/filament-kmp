@@ -154,6 +154,9 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
 
     actual val userTime: Double get() = FilaRenderer_getUserTime(nativeHandle)
     actual fun resetUserTime() = FilaRenderer_resetUserTime(nativeHandle)
+    actual val materialTime: Double get() = FilaRenderer_getMaterialTime(nativeHandle)
+    actual fun setMaterialTimeEpoch(timeEpochInNs: Long) = FilaRenderer_setMaterialTimeEpoch(nativeHandle, timeEpochInNs)
+    actual fun pauseRenderThread(timeNs: Long) = FilaRenderer_pauseRenderThread(nativeHandle, timeNs.toULong())
     actual fun skipNextFrames(frameCount: Int) = FilaRenderer_skipNextFrames(nativeHandle, frameCount.toUInt())
     actual val frameToSkipCount: Int get() = FilaRenderer_getFrameToSkipCount(nativeHandle).toInt()
 }

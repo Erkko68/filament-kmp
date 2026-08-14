@@ -81,6 +81,17 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         jsRenderer.resetUserTime()
     }
 
+    actual val materialTime: Double
+        get() = jsRenderer.getMaterialTime().toDouble()
+
+    actual fun setMaterialTimeEpoch(timeEpochInNs: Long) {
+        jsRenderer.setMaterialTimeEpoch(timeEpochInNs.toDouble())
+    }
+
+    actual fun pauseRenderThread(timeNs: Long) {
+        jsRenderer.pauseRenderThread(timeNs.toDouble())
+    }
+
     actual val frameToSkipCount: Int
         get() = jsRenderer.getFrameToSkipCount().toInt()
 
