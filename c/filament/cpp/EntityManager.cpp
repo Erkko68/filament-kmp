@@ -36,4 +36,12 @@ bool FilaEntityManager_isAlive(FilaEntityManager* em, FilaEntity entityId) {
     return UTILS_CAST(EntityManager, em)->isAlive(entity);
 }
 
+void FilaEntityManager_advanceEpoch(FilaEntityManager* em) {
+    UTILS_CAST(EntityManager, em)->advanceEpoch();
+}
+
+size_t FilaEntityManager_getMaxEntityCount(FilaEntityManager* em) {
+    return UTILS_CAST(EntityManager, em)->getMaxEntityCount();
+}
+
 } // extern "C"

@@ -51,4 +51,6 @@ actual class AssetLoader(var nativeHandle: MemorySegment?) {
         FilamentC.FilaAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
         asset.nativeHandle = null
     }
+
+    actual fun gc() = FilamentC.FilaAssetLoader_gc(nativeHandle)
 }

@@ -413,11 +413,13 @@ public final class io/github/erkko68/filament/EntityKt {
 
 public final class io/github/erkko68/filament/EntityManager {
 	public static final field Companion Lio/github/erkko68/filament/EntityManager$Companion;
+	public final fun advanceEpoch ()V
 	public final fun create ()I
 	public final fun create (I)[I
 	public final fun create ([I)[I
 	public final fun destroy (I)V
 	public final fun destroy ([I)V
+	public final fun getMaxEntityCount ()I
 	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun isAlive (I)Z
 	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
@@ -1154,8 +1156,10 @@ public final class io/github/erkko68/filament/Renderer {
 	public final fun getEngine ()Lio/github/erkko68/filament/Engine;
 	public final fun getFrameRateOptions ()Lio/github/erkko68/filament/Renderer$FrameRateOptions;
 	public final fun getFrameToSkipCount ()I
+	public final fun getMaterialTime ()D
 	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun getUserTime ()D
+	public final fun pauseRenderThread (J)V
 	public final fun readPixels (IIIILio/github/erkko68/filament/Texture$PixelBufferDescriptor;)V
 	public final fun readPixels (Lio/github/erkko68/filament/RenderTarget;IIIILio/github/erkko68/filament/Texture$PixelBufferDescriptor;)V
 	public final fun render (Lio/github/erkko68/filament/View;)V
@@ -1165,6 +1169,7 @@ public final class io/github/erkko68/filament/Renderer {
 	public final fun setDesiredPresentationTime (J)V
 	public final fun setDisplayInfo (Lio/github/erkko68/filament/Renderer$DisplayInfo;)V
 	public final fun setFrameRateOptions (Lio/github/erkko68/filament/Renderer$FrameRateOptions;)V
+	public final fun setMaterialTimeEpoch (J)V
 	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 	public final fun setPresentationTime (J)V
 	public final fun setRenderingDeadline (J)V

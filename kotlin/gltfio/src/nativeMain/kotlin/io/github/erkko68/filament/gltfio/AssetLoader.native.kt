@@ -64,4 +64,8 @@ actual class AssetLoader(public var nativeHandle: CPointer<FilaAssetLoader>?) {
         FilaAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
         asset.nativeHandle = null
     }
+
+    actual fun gc() {
+        FilaAssetLoader_gc(nativeHandle)
+    }
 }

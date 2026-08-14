@@ -37,4 +37,10 @@ actual class EntityManager internal constructor(var nativeHandle: CPointer<FilaE
     }
 
     actual fun isAlive(entity: Entity): Boolean = FilaEntityManager_isAlive(nativeHandle, entity.toUInt())
+
+    actual fun advanceEpoch() {
+        FilaEntityManager_advanceEpoch(nativeHandle)
+    }
+
+    actual fun getMaxEntityCount(): Int = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
 }

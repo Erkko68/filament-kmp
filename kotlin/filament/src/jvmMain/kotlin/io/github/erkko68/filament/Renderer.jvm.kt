@@ -146,6 +146,9 @@ actual class Renderer constructor(private val engineRef: Engine, public var nati
 
     actual val userTime: Double get() = FilamentC.FilaRenderer_getUserTime(nativeHandle)
     actual fun resetUserTime() = FilamentC.FilaRenderer_resetUserTime(nativeHandle)
+    actual val materialTime: Double get() = FilamentC.FilaRenderer_getMaterialTime(nativeHandle)
+    actual fun setMaterialTimeEpoch(timeEpochInNs: Long) = FilamentC.FilaRenderer_setMaterialTimeEpoch(nativeHandle, timeEpochInNs)
+    actual fun pauseRenderThread(timeNs: Long) = FilamentC.FilaRenderer_pauseRenderThread(nativeHandle, timeNs)
     actual fun skipNextFrames(frameCount: Int) = FilamentC.FilaRenderer_skipNextFrames(nativeHandle, frameCount)
     actual val frameToSkipCount: Int get() = FilamentC.FilaRenderer_getFrameToSkipCount(nativeHandle)
 }

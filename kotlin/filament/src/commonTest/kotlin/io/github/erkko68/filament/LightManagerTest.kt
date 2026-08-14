@@ -71,7 +71,7 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(1.0f, o.shadowNearHint, 1e-6f)
         assertEquals(100.0f, o.shadowFarHint, 1e-6f)
         assertEquals(0.3f, o.maxShadowDistance, 1e-6f)
-        assertEquals(0.02f, o.shadowBulbRadius, 1e-6f)
+        assertEquals(-1.0f, o.shadowBulbRadius, 1e-6f)
         assertFalse(o.stable)
         // lispsm is forced false on every platform to match the Android binding and avoid PCSS
         // penumbra artifacts (Filament's C++ default is true; overridable via ShadowOptions.lispsm).
