@@ -6,5 +6,7 @@ external class SwapChain : JsAny {
 
 companion object {
 fun isSRGBSwapChainSupported(engine: Engine): Boolean
+fun isProtectedContentSupported(engine: Engine): Boolean
+fun isMSAASwapChainSupported(engine: Engine, sampleCount: Double): Boolean
 }
 }

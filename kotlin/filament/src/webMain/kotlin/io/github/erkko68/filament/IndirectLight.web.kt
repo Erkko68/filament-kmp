@@ -41,12 +41,12 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             bands: Int,
             sh: FloatArray
         ): Builder {
-            jsBuilder.irradianceSh(bands.toDouble(), sh.toJsNumbers())
+            jsBuilder.irradiance(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 
         actual fun irradiance(cubemap: Texture): Builder {
-            jsBuilder.irradianceTex(cubemap.jsTexture)
+            jsBuilder.irradiance(cubemap.jsTexture)
             return this
         }
 
@@ -54,7 +54,7 @@ actual class IndirectLight(val jsIndirectLight: JSIndirectLight) {
             bands: Int,
             sh: FloatArray
         ): Builder {
-            jsBuilder.radianceSh(bands.toDouble(), sh.toJsNumbers())
+            jsBuilder.radiance(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 

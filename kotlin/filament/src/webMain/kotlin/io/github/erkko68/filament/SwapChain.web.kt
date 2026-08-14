@@ -39,7 +39,7 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
 
     actual companion object {
         actual fun isProtectedContentSupported(engine: Engine): Boolean {
-            return false
+            return JSSwapChain.isProtectedContentSupported(engine.jsEngine)
         }
 
         actual fun isSRGBSwapChainSupported(engine: Engine): Boolean {
@@ -50,7 +50,7 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
             engine: Engine,
             samples: Int
         ): Boolean {
-            return false
+            return JSSwapChain.isMSAASwapChainSupported(engine.jsEngine, samples.toDouble())
         }
     }
 }

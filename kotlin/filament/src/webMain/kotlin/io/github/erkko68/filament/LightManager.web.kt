@@ -79,7 +79,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) {
-        jsLightManager.setIntensity(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
+        jsLightManager.setIntensityCandela(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
     }
 
     actual fun getIntensity(instance: EntityInstance): Float {
@@ -99,11 +99,11 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
     }
 
     actual fun getInnerConeAngle(instance: EntityInstance): Float {
-        return jsLightManager.getSpotLightConeInner(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getSpotLightInnerCone(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
     }
 
     actual fun getOuterConeAngle(instance: EntityInstance): Float {
-        return jsLightManager.getSpotLightConeOuter(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
+        return jsLightManager.getSpotLightOuterCone(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
     }
 
     actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) {
@@ -266,7 +266,7 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         }
 
         actual fun intensityCandela(intensity: Float): Builder {
-            jsBuilder.intensity(intensity.toDouble())
+            jsBuilder.intensityCandela(intensity.toDouble())
             return this
         }
 

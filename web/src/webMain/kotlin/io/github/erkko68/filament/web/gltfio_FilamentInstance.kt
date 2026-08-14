@@ -9,6 +9,9 @@ fun getEntities(): Vector<Entity>
 fun getRoot(): Entity
 // Nullable: gltfio creates the animator during resource load, so this is null before then.
 fun getAnimator(): (gltfio_Animator?)
+fun getEntityCount(): Double
+fun getMaterialInstanceCount(): Double
+fun getMaterialVariantCount(): Double
 fun getSkinNames(): Vector<JsString>
 fun getSkinCount(): Double
 fun getJointCountAt(skinIndex: Double): Double

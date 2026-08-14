@@ -14,6 +14,15 @@ fun getRenderableEntities(): js.array.ReadonlyArray<Entity>
 fun getCameraEntities(): js.array.ReadonlyArray<Entity>
 fun getRoot(): Entity
 fun popRenderable(): Entity
+fun popRenderables(count: Double): Vector<Entity>
+fun getEntityCount(): Double
+fun getLightEntityCount(): Double
+fun getRenderableEntityCount(): Double
+fun getCameraEntityCount(): Double
+fun getResourceUriCount(): Double
+fun getMorphTargetCountAt(entity: Entity): Double
+fun getSceneCount(): Double
+fun getAssetInstanceCount(): Double
 fun getInstance(): gltfio_FilamentInstance
 fun getAssetInstances(): js.array.ReadonlyArray<gltfio_FilamentInstance>
 fun getResourceUris(): js.array.ReadonlyArray<JsString>

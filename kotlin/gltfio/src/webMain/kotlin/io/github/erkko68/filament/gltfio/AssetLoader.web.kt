@@ -46,7 +46,13 @@ actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine
             materials: MaterialProvider,
             entities: EntityManager?
         ): AssetLoader {
-            val jsLoader = engine.jsEngine.createAssetLoader()
+            // Route through the caller's provider when it is one we can hand to embind;
+            // createAssetLoader() would build a second UbershaderProvider of its own.
+            val jsLoader = if (materials is UbershaderProvider) {
+                JSAssetLoader(engine.jsEngine, materials.jsProvider)
+            } else {
+                engine.jsEngine.createAssetLoader()
+            }
             return AssetLoader(jsLoader, engine)
         }
 

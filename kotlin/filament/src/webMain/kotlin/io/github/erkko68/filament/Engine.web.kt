@@ -10,12 +10,13 @@ import io.github.erkko68.filament.web.interop.jsSetBoolean
 import org.w3c.dom.HTMLCanvasElement
 
 actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HTMLCanvasElement? = null) {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns true unconditionally — filament.js binds no engine-level validity check, only the isValidX family for resources.")
     actual fun isValid(): Boolean {
         return true
     }
 
     actual fun destroy() {
-        // JS engine is typically managed by the GC
+        JSEngine.destroy(jsEngine)
     }
 
     actual val backend: Backend get() = fromJsBackend(jsEngine.getBackend())
@@ -82,14 +83,16 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidSkybox(skybox: Skybox): Boolean = jsEngine.isValidSkybox(skybox.jsSkybox)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = jsEngine.isValidColorGrading(colorGrading.jsColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = jsEngine.isValidTexture(texture.jsTexture)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — Stream cannot be constructed on web, so there is never a stream to validate.")
     actual fun isValidStream(stream: Stream): Boolean = jsUnsupported("Engine.isValidStream")
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores the surface — filament.js binds createSwapChain() with no arguments, and it always targets the canvas the engine was created with.")
     actual fun createSwapChain(surface: NativeSurface): SwapChain {
         return SwapChain(jsEngine.createSwapChain())
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores the surface and the flags — filament.js binds createSwapChain() with no arguments, and it always targets the canvas the engine was created with.")
     actual fun createSwapChain(
         surface: NativeSurface,
         flags: Long
@@ -97,6 +100,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         return createSwapChain(surface)
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores width/height/flags — filament.js has no headless swap chain; the swap chain always targets the canvas the engine was created with, at that canvas's size.")
     actual fun createSwapChain(
         width: Int,
         height: Int,
@@ -228,16 +232,17 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 
     actual fun flushAndWait() {
-        jsEngine.execute()
+        jsEngine.flushAndWait()
     }
 
     actual fun flushAndWait(timeout: Long): Boolean {
-        jsEngine.execute()
+        // The web build is single-threaded, so the wait always completes — no timeout to honour.
+        jsEngine.flushAndWait()
         return true
     }
 
     actual fun flush() {
-        jsEngine.execute()
+        jsEngine.flush()
     }
 
     actual fun hasUnrecoverableFailure(): Boolean = jsEngine.hasUnrecoverableFailure()
@@ -261,17 +266,12 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.enableAccurateTranslations()
     }
 
-    actual fun hasFeatureFlag(name: String): Boolean {
-        return false
-    }
+    actual fun hasFeatureFlag(name: String): Boolean = jsEngine.hasFeatureFlag(name)
 
-    actual fun setFeatureFlag(name: String, value: Boolean): Boolean {
-        return false
-    }
+    actual fun setFeatureFlag(name: String, value: Boolean): Boolean = jsEngine.setFeatureFlag(name, value)
 
-    actual fun getFeatureFlag(name: String): Boolean {
-        return false
-    }
+    // Undefined (→ null) when no such flag exists; the other targets return false there too.
+    actual fun getFeatureFlag(name: String): Boolean = jsEngine.getFeatureFlag(name) ?: false
 
     actual fun compile(
         priority: CompilerPriorityQueue,

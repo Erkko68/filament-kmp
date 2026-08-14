@@ -103,6 +103,8 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `filament-utils.IBLPrefilterContext` (`EquirectangularToCubemap`/`SpecularFilter`) | Silent no-op — `run` returns the input texture unchanged | Prefilter environments offline with `cmgen` and load the KTX |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
 | `Engine.isValidStream` | Throws | — |
+| `Engine.isValid` | Returns `true` unconditionally — `filament.js` binds no engine-level validity check, only the `isValidX` family for resources | — |
+| `Engine.createSwapChain` | Ignores the surface, size and flags — `filament.js` binds `createSwapChain()` with no arguments, and it always targets the canvas the engine was created with | Create one engine per canvas, or composite offscreen (see the multi-view compositor) |
 | `Engine.paused` | Tracked locally only — pausing requires a multi-threaded engine, which the web build is not | Stop your own frame loop instead |
 | `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
 | `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor`, `AmbientOcclusionOptions.ssct` | Silent no-op, and the getter reports the engine default | — |

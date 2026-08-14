@@ -28,7 +28,12 @@ actual class FilamentAsset(
 
     actual fun popRenderable(): Entity = jsAsset.popRenderable().registerAndGetId()
 
-    actual fun popRenderables(entities: IntArray): Int = 0
+    actual fun popRenderables(entities: IntArray): Int {
+        val popped = jsAsset.popRenderables(entities.size.toDouble())
+        val count = popped.size().toInt()
+        for (i in 0 until count) entities[i] = popped.get(i.toDouble()).registerAndGetId()
+        return count
+    }
 
     actual fun getEntities(): IntArray = jsAsset.getEntities().registerAndGetIds()
 
@@ -44,13 +49,9 @@ actual class FilamentAsset(
 
     actual fun getFirstEntityByName(name: String): Entity = jsAsset.getFirstEntityByName(name).registerAndGetId()
 
-    actual fun getEntityCount(): Int {
-        return jsAsset.getEntities().size
-    }
+    actual fun getEntityCount(): Int = jsAsset.getEntityCount().toInt()
 
-    actual fun getAssetInstanceCount(): Int {
-        return jsAsset.getAssetInstances().size
-    }
+    actual fun getAssetInstanceCount(): Int = jsAsset.getAssetInstanceCount().toInt()
 
     actual fun getAssetInstances(): Array<FilamentInstance> {
         val jsInstances = jsAsset.getAssetInstances()

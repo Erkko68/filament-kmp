@@ -30,9 +30,7 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         return result
     }
 
-    actual fun getEntityCount(): Int {
-        return jsInstance.getEntities().size().toInt()
-    }
+    actual fun getEntityCount(): Int = jsInstance.getEntityCount().toInt()
 
     actual fun getAnimator(): Animator {
         // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.

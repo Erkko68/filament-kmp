@@ -259,9 +259,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     ): Boolean = jsRenderableManager.getLightChannel(
         InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
 
-    actual fun getMorphTargetCount(instance: EntityInstance): Int {
-        return 0
-    }
+    actual fun getMorphTargetCount(instance: EntityInstance): Int =
+        jsRenderableManager.getMorphTargetCount(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>()).toInt()
 
     actual fun setSkinningBuffer(
         instance: EntityInstance,
@@ -269,6 +269,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         count: Int,
         offset: Int
     ) {
+        jsRenderableManager.setSkinningBuffer(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
+            skinningBuffer.jsSkinningBuffer, count.toDouble(), offset.toDouble())
     }
 
     actual fun setMorphWeights(
@@ -276,9 +279,10 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         weights: FloatArray,
         offset: Int
     ) {
-        if (weights.size >= 4) {
-            jsRenderableManager.setMorphWeights(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), weights[0].toDouble(), weights[1].toDouble(), weights[2].toDouble(), weights[3].toDouble())
-        }
+        // The 4-argument setMorphWeights takes neither an offset nor a variable count.
+        jsRenderableManager.setMorphWeightsOffset(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
+            weights.toJsNumbers(), offset.toDouble())
     }
 
     actual fun setMorphTargetBufferOffsetAt(
@@ -287,6 +291,9 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         primitiveIndex: Int,
         offset: Int
     ) {
+        jsRenderableManager.setMorphTargetBufferOffsetAt(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
+            level.toDouble(), primitiveIndex.toDouble(), offset.toDouble())
     }
 
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }

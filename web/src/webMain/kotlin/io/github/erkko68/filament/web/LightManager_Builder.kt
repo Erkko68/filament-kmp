@@ -12,6 +12,7 @@ fun color(rgb: float3): LightManager_Builder
 fun direction(value: float3): LightManager_Builder
 fun intensity(value: Double): LightManager_Builder
 fun intensityEnergy(watts: Double, efficiency: Double): LightManager_Builder
+fun intensityCandela(value: Double): LightManager_Builder
 fun falloff(value: Double): LightManager_Builder
 fun position(value: float3): LightManager_Builder
 fun spotLightCone(inner: Double, outer: Double): LightManager_Builder

@@ -4,6 +4,12 @@ package io.github.erkko68.filament.web
 
 external class Engine : JsAny {
 fun execute(): Unit
+fun flush(): Unit
+fun flushAndWait(): Unit
+fun setFeatureFlag(name: String, value: Boolean): Boolean
+fun hasFeatureFlag(name: String): Boolean
+// Undefined (→ null) when no flag by that name exists.
+fun getFeatureFlag(name: String): Boolean?
 fun createCamera(entity: Entity): Camera
 fun createMaterial(urlOrBuffer: BufferReference, options: EngineCreateMaterialOptions = definedExternally): Material
 fun createRenderer(): Renderer

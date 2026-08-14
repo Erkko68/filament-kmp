@@ -16,6 +16,10 @@ fun isShadowReceiver(instance: RenderableManager_Instance): Boolean
 fun setBones(instance: RenderableManager_Instance, transforms: js.array.ReadonlyArray<RenderableManager_Bone>, offset: Double): Unit
 fun setBonesFromMatrices(instance: RenderableManager_Instance, transforms: js.array.ReadonlyArray<mat4>, offset: Double): Unit
 fun setMorphWeights(instance: RenderableManager_Instance, a: Double, b: Double, c: Double, d: Double): Unit
+fun setMorphWeightsOffset(instance: RenderableManager_Instance, weights: JsAny?, offset: Double): Unit
+fun getMorphTargetCount(instance: RenderableManager_Instance): Double
+fun setMorphTargetBufferOffsetAt(instance: RenderableManager_Instance, level: Double, primitiveIndex: Double, offset: Double): Unit
+fun setSkinningBuffer(instance: RenderableManager_Instance, skinningBuffer: SkinningBuffer, count: Double, offset: Double): Unit
 fun getAxisAlignedBoundingBox(instance: RenderableManager_Instance): Box
 fun getPrimitiveCount(instance: RenderableManager_Instance): Double
 fun setMaterialInstanceAt(instance: RenderableManager_Instance, primitiveIndex: Double, materialInstance: MaterialInstance): Unit
