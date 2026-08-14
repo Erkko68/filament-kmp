@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.compose.scene
 
+import androidx.compose.runtime.Immutable
 import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.View
 
@@ -47,9 +48,10 @@ import io.github.erkko68.filament.View
  * @property bulbRadius Soft-shadow penumbra size, world units. Only under [Shadows.Dpcf]/[Shadows.Pcss].
  * @property blurWidth Blur width; only under the [Shadows.Vsm] technique. 0 disables.
  * @property elvsm Exponential Layered VSM — better light-leak reduction at 2× shadow memory. Only under [Shadows.Vsm].
- * @property transform Optional unit quaternion `(x, y, z, w)` rotating the shadow's direction
+ * @property transform Optional rotation `(Rotation)` rotating the shadow's direction
  *   (directional-only, artistic). Null = identity (no rotation).
  */
+@Immutable
 data class ShadowConfig(
     val mapSize: Int = 1024,
     val constantBias: Float = 0.001f,
@@ -67,7 +69,7 @@ data class ShadowConfig(
     val bulbRadius: Float = 0.02f,
     val blurWidth: Float = 0f,
     val elvsm: Boolean = false,
-    val transform: List<Float>? = null,
+    val transform: Rotation? = null,
 )
 
 internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
@@ -93,7 +95,7 @@ internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
     o.shadowBulbRadius = bulbRadius
     o.blurWidth = blurWidth
     o.elvsm = elvsm
-    transform?.let { o.transform = it.toFloatArray() }
+    transform?.let { o.transform = floatArrayOf(it.x, it.y, it.z, it.w) }
     return o
 }
 
@@ -108,6 +110,7 @@ internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
  * to [Pcf]; [Vsm]/[Dpcf]/[Pcss] are silently ignored on web (disabling via `null` still works). See
  * the Web "Current limitations" in docs/platform-notes.md.
  */
+@Immutable
 sealed interface Shadows {
     /** Percentage-Closer Filtering — hard-edged, cheapest, and Filament's default. */
     data object Pcf : Shadows

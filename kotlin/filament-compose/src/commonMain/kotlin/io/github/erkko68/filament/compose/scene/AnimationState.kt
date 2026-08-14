@@ -167,6 +167,7 @@ class AnimationState internal constructor(
  * Filament blends the whole skeleton per call, so per-bone masks and additive layers are not
  * expressible — drive the [Animator] yourself for that.
  */
+@Stable
 class AnimationMixer {
     /** Pauses advancement of every track while true; poses hold in place. Observable, like
      *  [AnimationState.isPaused]. */

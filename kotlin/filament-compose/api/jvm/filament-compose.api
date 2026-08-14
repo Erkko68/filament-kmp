@@ -793,8 +793,8 @@ public final class io/github/erkko68/filament/compose/scene/ScreenSpaceReflectio
 public final class io/github/erkko68/filament/compose/scene/ShadowConfig {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (IFFFFFZZILjava/util/List;ZFIFFZLjava/util/List;)V
-	public synthetic fun <init> (IFFFFFZZILjava/util/List;ZFIFFZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IFFFFFZZILjava/util/List;ZFIFFZLio/github/erkko68/filament/compose/scene/Rotation;)V
+	public synthetic fun <init> (IFFFFFZZILjava/util/List;ZFIFFZLio/github/erkko68/filament/compose/scene/Rotation;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()I
 	public final fun component10 ()Ljava/util/List;
 	public final fun component11 ()Z
@@ -803,7 +803,7 @@ public final class io/github/erkko68/filament/compose/scene/ShadowConfig {
 	public final fun component14 ()F
 	public final fun component15 ()F
 	public final fun component16 ()Z
-	public final fun component17 ()Ljava/util/List;
+	public final fun component17 ()Lio/github/erkko68/filament/compose/scene/Rotation;
 	public final fun component2 ()F
 	public final fun component3 ()F
 	public final fun component4 ()F
@@ -812,8 +812,8 @@ public final class io/github/erkko68/filament/compose/scene/ShadowConfig {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()I
-	public final fun copy (IFFFFFZZILjava/util/List;ZFIFFZLjava/util/List;)Lio/github/erkko68/filament/compose/scene/ShadowConfig;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/ShadowConfig;IFFFFFZZILjava/util/List;ZFIFFZLjava/util/List;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/ShadowConfig;
+	public final fun copy (IFFFFFZZILjava/util/List;ZFIFFZLio/github/erkko68/filament/compose/scene/Rotation;)Lio/github/erkko68/filament/compose/scene/ShadowConfig;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/ShadowConfig;IFFFFFZZILjava/util/List;ZFIFFZLio/github/erkko68/filament/compose/scene/Rotation;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/ShadowConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBlurWidth ()F
 	public final fun getBulbRadius ()F
@@ -831,7 +831,7 @@ public final class io/github/erkko68/filament/compose/scene/ShadowConfig {
 	public final fun getShadowFarHint ()F
 	public final fun getShadowNearHint ()F
 	public final fun getStable ()Z
-	public final fun getTransform ()Ljava/util/List;
+	public final fun getTransform ()Lio/github/erkko68/filament/compose/scene/Rotation;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
