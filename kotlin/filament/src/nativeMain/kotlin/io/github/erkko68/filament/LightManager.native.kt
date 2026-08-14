@@ -32,7 +32,7 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
             nativeOptions.maxShadowDistance = 0.3f
             nativeOptions.vsm.elvsm = false
             nativeOptions.vsm.blurWidth = 0.0f
-            nativeOptions.shadowBulbRadius = 0.02f
+            nativeOptions.shadowBulbRadius = -1.0f
             // Identity quaternion (x,y,z,w) = (0,0,0,1). A zero/garbage transform collapses the
             // directional shadow frustum, so shadows silently fail to render.
             nativeOptions.transform[0] = 0.0f

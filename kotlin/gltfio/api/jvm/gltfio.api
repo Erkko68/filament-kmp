@@ -19,6 +19,7 @@ public final class io/github/erkko68/filament/gltfio/AssetLoader {
 	public final fun createInstancedAsset ([B[Lio/github/erkko68/filament/gltfio/FilamentInstance;)Lio/github/erkko68/filament/gltfio/FilamentAsset;
 	public final fun destroyAsset (Lio/github/erkko68/filament/gltfio/FilamentAsset;)V
 	public final fun enableDiagnostics (Z)V
+	public final fun gc ()V
 	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }

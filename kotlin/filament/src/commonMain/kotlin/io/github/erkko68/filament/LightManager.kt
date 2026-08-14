@@ -140,7 +140,9 @@ expect class LightManager {
 
         /**
          * Light bulb radius for soft shadow effects (DPCF/PCSS only).
-         * Default: 0.02 (2 cm).
+         * For spot and point lights, this is the radius of the light bulb in meters.
+         * For directional lights, this is tan(angularRadius).
+         * Default: -1.0 (automatic calculation based on light type).
          */
         var shadowBulbRadius: Float
 

@@ -207,7 +207,7 @@ actual class Material(internal val jsMaterial: JSMaterial) {
             // Convert ByteArray to Uint8Array for JS
             val int8 = org.khronos.webgl.Int8Array(payload.size)
             payload.forEachIndexed { i, b -> int8[i] = b }
-            val uint8 = org.khronos.webgl.Uint8Array(int8.buffer)
+            val uint8 = org.khronos.webgl.Uint8Array(int8.buffer, int8.byteOffset, int8.length)
             // A bad payload C++-throws out of embind; map it to a catchable Kotlin exception
             // (matches jvm/native, and keeps the raw JS value out of coroutine machinery).
             val jsMaterial = catchingJsThrows { engine.jsEngine.createMaterial(uint8) }

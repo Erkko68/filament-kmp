@@ -18,4 +18,10 @@ actual class EntityManager internal constructor(val nativeEntityManager: Android
     actual fun destroy(entities: IntArray) = nativeEntityManager.destroy(entities)
 
     actual fun isAlive(entity: Entity): Boolean = nativeEntityManager.isAlive(entity)
+
+    actual fun advanceEpoch() {
+        nativeEntityManager.advanceEpoch()
+    }
+
+    actual fun getMaxEntityCount(): Int = nativeEntityManager.maxEntityCount
 }
