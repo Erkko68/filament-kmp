@@ -413,11 +413,13 @@ public final class io/github/erkko68/filament/EntityKt {
 
 public final class io/github/erkko68/filament/EntityManager {
 	public static final field Companion Lio/github/erkko68/filament/EntityManager$Companion;
+	public final fun advanceEpoch ()V
 	public final fun create ()I
 	public final fun create (I)[I
 	public final fun create ([I)[I
 	public final fun destroy (I)V
 	public final fun destroy ([I)V
+	public final fun getMaxEntityCount ()I
 	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun isAlive (I)Z
 	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V

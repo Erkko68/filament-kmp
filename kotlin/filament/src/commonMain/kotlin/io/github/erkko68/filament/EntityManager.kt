@@ -83,4 +83,14 @@ expect class EntityManager {
      * @return true if the entity is alive, false if it has been destroyed.
      */
     fun isAlive(entity: Entity): Boolean
+
+    /**
+     * Advance the entity manager epoch, invalidating all currently active entity IDs.
+     */
+    fun advanceEpoch()
+
+    /**
+     * Get the maximum number of entities that can be created.
+     */
+    fun getMaxEntityCount(): Int
 }

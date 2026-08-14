@@ -94,4 +94,9 @@ expect class AssetLoader {
      * @param asset The FilamentAsset to destroy.
      */
     fun destroyAsset(asset: FilamentAsset)
+
+    /**
+     * Reclaims unused entities and components across all assets owned by this loader.
+     */
+    fun gc()
 }
