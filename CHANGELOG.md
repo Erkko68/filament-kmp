@@ -13,7 +13,11 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-08-08
+
 ### Added
+- **Filament 1.74.1**: Upgraded bundled Filament engine to 1.74.1. Recompiled embedded standard, test, and sample `.filamat` materials.
+- **`Renderer` APIs** (`filament`): bound `materialTime`, `setMaterialTimeEpoch`, and `pauseRenderThread` across all 5 target platforms (`android`, `jvm`, `native`, `js`, `wasm`).
 - **Named axis directions** (`filament-compose`): `Direction.Up`/`Down`/`Left`/`Right`/`Forward`/`Back`/`Zero`, with `Forward` spelling out the −Z convention glTF and Filament aim along — the axis literal most often got wrong. `Rotation.lookTowards` now defaults its `up` to `Direction.Up`.
 - **`Rotation.toRotationMatrix()`** (`filament-compose`): the column-major 3×3 (9 floats) that Filament's builders take.
 - **Scene value-type test suite** (tests): `TypesTest` covers `Position`/`Direction`/`Scale`/`Rotation`/`Color` — operators, `Float3`/`Quaternion`/Compose-UI interop, `normalized()` on a zero vector, `toComposeColor()` clamping of HDR channels, and the two properties the Compose stability work rests on: constructing from a mutable filament-utils value copies rather than aliases it, and equal values compare equal.
@@ -25,7 +29,6 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`Rotation`'s hot operators no longer round-trip through `Quaternion`** (`filament-compose`): `*` (both overloads), `inverse`, `normalized`, `axisAngle` and `nlerp` do their own float math, so an operation that ran per frame per entity allocates one object instead of four. `euler`, `fromTo`, `lookTowards`, `slerp`, `toEuler` and `angleTo` still delegate, where the trig dominates anyway.
 - **Compose stability audited end to end** (`filament-compose`): a `compose-stability.conf` marks Filament's opaque native handles (`Engine`, `Scene`, `View`, `MaterialInstance`, `FilamentAsset`, `Manipulator`, `Float2`, …) stable — their unstable-by-default inference was poisoning every class holding one — and `@Stable`/`@Immutable` now annotate all state holders and value types (`CameraState`, `GltfAsset`, `AnimationState`, `AnimationMixer`, `IndirectLightState`, `Environment`, `SkyboxState`, `SkyboxSource`, `PostProcessing` and all 12 effect classes, `ShadowConfig`, `Shadows`, `Projection`, `Exposure`, `SpotCone`, `SunParams`, `LightIntensity`). `ShadowConfig.transform` now takes a `Rotation?` for consistency across the API. Unstable composable arguments dropped 108 → 36 and effectively-stable classes rose 44/69 → 59/69; everything still unstable is an array or an `Any?` key, where no fix exists. Build with `-PcomposeMetrics` to regenerate the reports under `build/compose-reports`.
 - **`IndirectLightState.rotation` takes a `Rotation`** (`filament-compose`, source-breaking): it was the last "rotation" in the Compose API still spelled as a raw `FloatArray`, whose identity equality forced the apply effect to key off a `toList()` copy and which never reported a change when mutated in place. It is now a `Rotation` keyed directly, converted at the Filament boundary with `toRotationMatrix()`.
-
 ### Fixed
 - **Compose UI colour interop ignored the sRGB transfer function** (`filament-compose`, behaviour-breaking): the `Color(composeColor)` constructor added in 0.3.0 copied `.red`/`.green`/`.blue` straight across, but `androidx.compose.ui.graphics.Color` is gamma-encoded while Filament works in linear space — so `Color(MaterialTheme.colorScheme.primary)` produced a markedly too-bright colour (sRGB 0.5 became linear 0.5 instead of 0.214, a 2.3× error at mid-grey). `LinearColor.fromComposeColor()` now converts through Compose's own colour management, which also handles non-sRGB sources such as Display P3, and `toComposeColor()` re-encodes on the way back. If you compensated by pre-darkening your colours, remove the workaround.
 - **`Rotation.fromTo` was wrong for anything but unit-length inputs** (`filament-compose`): it forwarded its `Direction`s to a shortest-arc formula that assumes unit length, so a plain displacement produced a plausible-looking but wrong angle — `fromTo((3,0,0), (0,5,0))` gave 172° for what is a 90° turn. Both inputs are normalized now, as the type's docs always implied ("only the two directions matter"). `Rotation.lookTowards` had the same flaw in its degenerate-basis check: it tested `dot(forward, up)` against a threshold without normalizing `up` first, so a longer `up` vector (say `Direction(0f, 2f, 0f)`) tripped the parallel branch for perfectly good inputs and silently substituted a fallback axis, rolling the result.
@@ -345,7 +348,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.3.1...HEAD
+[0.3.1]: https://github.com/Erkko68/filament-kmp/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/Erkko68/filament-kmp/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta03...0.2.0
 [0.1.3-beta03]: https://github.com/Erkko68/filament-kmp/compare/0.1.3-beta02...0.1.3-beta03
