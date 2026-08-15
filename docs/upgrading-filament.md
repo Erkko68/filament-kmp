@@ -262,6 +262,18 @@ cd samples/shared/src/commonMain/composeResources/files/materials
 Commit the refreshed `.filamat`; the embed task picks them up on the next build. `StandardMaterialLifecycleTest`
 (Tier-B) fails to build a material if a blob is stale or corrupt.
 
+The web sample commits its own copy of the engine so it runs standalone, and a `.filamat` built by the
+new `matc` will not load in the old engine (`MATERIAL_VERSION` mismatch) — refresh it in the same pass:
+
+```sh
+for t in jsMain wasmJsMain; do
+    cp prebuilts/web/filament.js prebuilts/web/filament.wasm "samples/webApp/src/$t/resources/"
+done
+```
+
+CI's `js` job `cmp`s these against `prebuilts/web/`, so a missed copy fails the build rather than the
+browser.
+
 ### 7. Verify
 
 ```sh
