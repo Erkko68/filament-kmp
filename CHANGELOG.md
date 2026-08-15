@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Fixed
+- **Web sample crashed on every material since 1.75.0** (samples): `samples/webApp` commits its own `filament.js`/`filament.wasm` so it runs standalone, and the 1.75.0 upgrade recompiled the `.filamat` blobs to `MATERIAL_VERSION` 75 without refreshing them — so the sample fed v75 materials to a 1.74.1 engine. Both target copies are back in sync with `prebuilts/web/`, the upgrade guide lists the copy step, and CI's `js` job now `cmp`s them so a missed refresh fails the build instead of the browser.
+
 ## [0.3.1] — 2026-08-14
 
 ### Added
