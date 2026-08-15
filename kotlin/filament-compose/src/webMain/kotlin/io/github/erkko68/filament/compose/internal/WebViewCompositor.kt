@@ -19,8 +19,8 @@ import kotlin.math.max
  * So every view of one engine shares this compositor. It renders each registered view into its own
  * region of the engine's (offscreen) canvas in a single frame, then `drawImage`-blits each region
  * onto that view's own 2D canvas. Blitting straight from the WebGL canvas needs no readback API and
- * stays on the GPU. Each view's 2D canvas is displayed through the normal Compose HTML-interop path
- * (see `FilamentSurface`), which is what actually makes the hole-punch reveal it.
+ * stays on the GPU. The blit clears first, so a translucent view keeps its alpha. Each view's 2D
+ * canvas is displayed through the normal Compose HTML-interop path (see `FilamentSurface`).
  */
 internal class WebViewCompositor private constructor(private val engine: Engine) {
 
@@ -132,6 +132,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
                 e.target.width = r.width
                 e.target.height = r.height
             }
+            ctx.clearRect(0.0, 0.0, r.width.toDouble(), r.height.toDouble())
             ctx.drawImage(
                 canvas,
                 r.left.toDouble(), r.top.toDouble(), r.width.toDouble(), r.height.toDouble(),

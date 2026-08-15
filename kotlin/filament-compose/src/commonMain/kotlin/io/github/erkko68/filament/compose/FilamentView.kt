@@ -5,6 +5,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import io.github.erkko68.filament.Renderer
+import io.github.erkko68.filament.View.BlendMode
 import io.github.erkko68.filament.compose.internal.FilamentSurface
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.PostProcessing
@@ -41,6 +43,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  *   each light's `shadow` ([io.github.erkko68.filament.compose.scene.ShadowConfig]).
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
+ * @param transparent Enable alpha transparency blending for the view surface.
  */
 @Composable
 fun FilamentView(
@@ -53,6 +56,7 @@ fun FilamentView(
     shadows: Shadows? = Shadows.Pcf,
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
+    transparent: Boolean = false,
 ) {
     val engine        = scene.engine
     val filamentScene = scene.scene
@@ -64,13 +68,23 @@ fun FilamentView(
     // Wire the scene/camera onto the view and apply the render flags. Re-runs only when the
     // underlying objects or flags change.
     remember(view, filamentScene, camera, frustumCullingEnabled,
-             shadows, screenSpaceRefractionEnabled, stencilBufferEnabled) {
+             shadows, screenSpaceRefractionEnabled, stencilBufferEnabled, transparent) {
         view.scene = filamentScene
         view.camera = camera
         view.isFrustumCullingEnabled = frustumCullingEnabled
         shadows.applyTo(view)
         view.isScreenSpaceRefractionEnabled = screenSpaceRefractionEnabled
         view.isStencilBufferEnabled = stencilBufferEnabled
+        view.blendMode = if (transparent) BlendMode.TRANSLUCENT else BlendMode.OPAQUE
+    }
+
+    // Transparent needs an explicit alpha-0 clear: the default (clear=false, discard=true) leaves
+    // the swapchain's untouched pixels undefined, which shows up as opaque garbage/white.
+    remember(renderer, transparent) {
+        renderer.clearOptions = Renderer.ClearOptions().apply {
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+            clear = transparent
+        }
     }
 
     // Apply post-processing as a value. Re-applies whenever the config changes; the allocated
@@ -121,6 +135,7 @@ fun FilamentView(
         engine   = engine,
         renderer = renderer,
         view     = view,
+        transparent = transparent,
         onResize = onResize,
     )
 }
