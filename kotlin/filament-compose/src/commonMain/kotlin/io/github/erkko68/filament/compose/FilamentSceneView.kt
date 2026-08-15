@@ -44,6 +44,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  *   each light's `shadow` ([io.github.erkko68.filament.compose.scene.ShadowConfig]).
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
+ * @param transparent Enable alpha transparency blending for the view surface.
  * @param content Scene composables ([io.github.erkko68.filament.compose.scene.DirectionalLight],
  *   `GltfInstance`, `Group`, primitives, …).
  */
