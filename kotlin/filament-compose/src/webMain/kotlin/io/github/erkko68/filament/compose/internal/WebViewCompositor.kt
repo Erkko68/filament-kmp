@@ -39,7 +39,14 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
 
     private val canvas: HTMLCanvasElement = engine.jsCanvas
         ?: error("WebViewCompositor requires an Engine created with a canvas")
-    private val renderer: Renderer = engine.createRenderer()
+    // The engine canvas is offscreen, so the browser's implicit post-composite clear may never run
+    // (it doesn't on Android Chrome) and frames accumulate. Clear it ourselves every beginFrame.
+    private val renderer: Renderer = engine.createRenderer().apply {
+        clearOptions = Renderer.ClearOptions().apply {
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+            clear = true
+        }
+    }
     private val entries = ArrayList<Entry>()
     private var swapChain: SwapChain? = null
     private var rafId: Int = 0
