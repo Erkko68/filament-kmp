@@ -42,10 +42,19 @@ class RendererRenderingTest : RenderingTestFixture() {
             readbackDone.done = true
         }
 
-        if (renderer.beginFrame(swapChain, 0L)) {
-            renderer.render(view)
-            renderer.readPixels(0, 0, w, h, pbd)
-            renderer.endFrame()
+        // beginFrame may skip a frame while the backend warms up (a cold software-GL
+        // emulator does), and a skipped frame never issues the readPixels — so retry it
+        // rather than let the pump below blame the readback for a frame that never ran.
+        var began = false
+        var frameTries = 0
+        while (!began && frameTries++ < 10) {
+            began = renderer.beginFrame(swapChain, 0L)
+            if (began) {
+                renderer.render(view)
+                renderer.readPixels(0, 0, w, h, pbd)
+                renderer.endFrame()
+            }
+            engine.flushAndWait()
         }
         // Pump until the readback callback fires (it's async on GLES backends).
         var tries = 0
@@ -54,6 +63,7 @@ class RendererRenderingTest : RenderingTestFixture() {
         // readPixels is a no-op on web (not bound in jsbindings.cpp); everywhere else
         // the readback must actually land — a silent skip here verifies nothing.
         if (TestEnv.target != TestTarget.JS) {
+            assertTrue(began, "beginFrame never accepted a frame in $frameTries tries")
             assertTrue(readbackDone.done, "readPixels callback never fired")
             assertTrue(pixels.any { it.toInt() != 0 }, "readPixels delivered an all-zero buffer")
         }

@@ -82,10 +82,18 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
         val pbd = Texture.PixelBufferDescriptor(pixels, pixels.size, Texture.Format.RGBA, Texture.Type.UBYTE) {
             readbackDone.done = true
         }
-        if (renderer.beginFrame(swapChain, 0L)) {
-            renderer.render(view)
-            renderer.readPixels(0, 0, width, height, pbd)
-            renderer.endFrame()
+        // A skipped beginFrame never issues the readPixels, so retry it — otherwise a
+        // frame the backend declined comes back as "the readback never landed".
+        var began = false
+        var frameTries = 0
+        while (!began && frameTries++ < 10) {
+            began = renderer.beginFrame(swapChain, 0L)
+            if (began) {
+                renderer.render(view)
+                renderer.readPixels(0, 0, width, height, pbd)
+                renderer.endFrame()
+            }
+            engine.flushAndWait()
         }
         var tries = 0
         while (!readbackDone.done && tries++ < 20) engine.flushAndWait()
