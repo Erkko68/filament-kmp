@@ -58,27 +58,40 @@ fun rememberRenderTargetTexture(
     if (width <= 0 || height <= 0) return null
 
     val color = remember(engine, width, height) {
-        Texture.Builder()
-            .width(width).height(height).levels(1)
-            .sampler(Texture.Sampler.SAMPLER_2D)
-            .format(Texture.InternalFormat.RGBA8)
-            .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
-            .build(engine)
-    }
+        runCatching {
+            Texture.Builder()
+                .width(width).height(height).levels(1)
+                .sampler(Texture.Sampler.SAMPLER_2D)
+                .format(Texture.InternalFormat.RGBA8)
+                .usage(Texture.Usage.COLOR_ATTACHMENT or Texture.Usage.SAMPLEABLE)
+                .build(engine)
+        }.getOrNull()
+    } ?: return null
+
     val depth = remember(engine, width, height) {
-        Texture.Builder()
-            .width(width).height(height).levels(1)
-            .sampler(Texture.Sampler.SAMPLER_2D)
-            .format(Texture.InternalFormat.DEPTH24)
-            .usage(Texture.Usage.DEPTH_ATTACHMENT)
-            .build(engine)
+        runCatching {
+            Texture.Builder()
+                .width(width).height(height).levels(1)
+                .sampler(Texture.Sampler.SAMPLER_2D)
+                .format(Texture.InternalFormat.DEPTH24)
+                .usage(Texture.Usage.DEPTH_ATTACHMENT)
+                .build(engine)
+        }.getOrNull()
     }
-    val target = remember(color, depth) {
-        RenderTarget.Builder()
-            .texture(RenderTarget.AttachmentPoint.COLOR, color)
-            .texture(RenderTarget.AttachmentPoint.DEPTH, depth)
-            .build(engine)
-    }
+
+    val target = remember(engine, color, depth) {
+        runCatching {
+            RenderTarget.Builder()
+                .texture(RenderTarget.AttachmentPoint.COLOR, color)
+                .apply {
+                    if (depth != null) {
+                        texture(RenderTarget.AttachmentPoint.DEPTH, depth)
+                    }
+                }
+                .build(engine)
+        }.getOrNull()
+    } ?: return null
+
     val view     = remember(engine) { engine.createView() }
     val camera   = remember(engine) { engine.createCamera() }
     val renderer = remember(engine) { engine.createRenderer() }
@@ -123,7 +136,7 @@ fun rememberRenderTargetTexture(
             engine.destroyCamera(camera)
             engine.destroyRenderTarget(target)
             engine.destroyTexture(color)
-            engine.destroyTexture(depth)
+            depth?.let { engine.destroyTexture(it) }
         }
     }
 
