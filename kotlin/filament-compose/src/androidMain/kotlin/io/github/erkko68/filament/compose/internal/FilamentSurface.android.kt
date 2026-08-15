@@ -42,70 +42,70 @@ internal actual fun FilamentSurface(
     // factory runs once, so the surface type and its swapchain flags are fixed at creation —
     // key() rebuilds both when transparency is toggled.
     key(transparent) {
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            if (transparent) {
-                TextureView(context).apply {
-                    isOpaque = false
-                    surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-                        override fun onSurfaceTextureAvailable(
-                            surfaceTexture: SurfaceTexture,
-                            width: Int,
-                            height: Int
-                        ) {
-                            val surface = Surface(surfaceTexture)
-                            swapChainRef.value = engine.createSwapChain(
-                                NativeSurface(surface),
-                                SWAP_CHAIN_CONFIG_TRANSPARENT,
-                            )
-                            updateViewport(width, height)
-                        }
+        AndroidView(
+            modifier = modifier,
+            factory = { context ->
+                if (transparent) {
+                    TextureView(context).apply {
+                        isOpaque = false
+                        surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                            override fun onSurfaceTextureAvailable(
+                                surfaceTexture: SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) {
+                                val surface = Surface(surfaceTexture)
+                                swapChainRef.value = engine.createSwapChain(
+                                    NativeSurface(surface),
+                                    SWAP_CHAIN_CONFIG_TRANSPARENT,
+                                )
+                                updateViewport(width, height)
+                            }
 
-                        override fun onSurfaceTextureSizeChanged(
-                            surfaceTexture: SurfaceTexture,
-                            width: Int,
-                            height: Int
-                        ) {
-                            updateViewport(width, height)
-                        }
+                            override fun onSurfaceTextureSizeChanged(
+                                surfaceTexture: SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) {
+                                updateViewport(width, height)
+                            }
 
-                        override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
-                            swapChainRef.value?.let { engine.destroySwapChain(it) }
-                            swapChainRef.value = null
-                            return true
-                        }
+                            override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
+                                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                                swapChainRef.value = null
+                                return true
+                            }
 
-                        override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {}
+                            override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {}
+                        }
+                    }
+                } else {
+                    SurfaceView(context).apply {
+                        holder.addCallback(object : SurfaceHolder.Callback {
+                            override fun surfaceCreated(holder: SurfaceHolder) {
+                                swapChainRef.value = engine.createSwapChain(NativeSurface(holder.surface))
+                                updateViewport(width, height)
+                            }
+                            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+                                updateViewport(width, height)
+                            }
+                            override fun surfaceDestroyed(holder: SurfaceHolder) {
+                                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                                swapChainRef.value = null
+                            }
+                        })
                     }
                 }
-            } else {
-                SurfaceView(context).apply {
-                    holder.addCallback(object : SurfaceHolder.Callback {
-                        override fun surfaceCreated(holder: SurfaceHolder) {
-                            swapChainRef.value = engine.createSwapChain(NativeSurface(holder.surface))
-                            updateViewport(width, height)
-                        }
-                        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-                            updateViewport(width, height)
-                        }
-                        override fun surfaceDestroyed(holder: SurfaceHolder) {
-                            swapChainRef.value?.let { engine.destroySwapChain(it) }
-                            swapChainRef.value = null
-                        }
-                    })
-                }
-            }
-        },
-        update = {},
-    )
+            },
+            update = {},
+        )
 
-    DisposableEffect(Unit) {
-        onDispose {
-            swapChainRef.value?.let { engine.destroySwapChain(it) }
-            swapChainRef.value = null
+        DisposableEffect(Unit) {
+            onDispose {
+                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                swapChainRef.value = null
+            }
         }
-    }
     }
 
     FilamentRenderLoop { frameTime ->

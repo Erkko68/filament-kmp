@@ -13,6 +13,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **Transparent views** (`filament-compose`): `FilamentView`/`FilamentSceneView` take `transparent = true`, which renders the 3D content over the Compose UI behind it instead of over an opaque background. Each platform needed a different surface: Android swaps `SurfaceView` for a non-opaque `TextureView` with a `CONFIG_TRANSPARENT` swapchain, iOS makes the `CAMetalLayer` non-opaque and hosts the interop view with `placedAsOverlay` (a plain interop view has Compose punch a hole that erases everything drawn behind it), web moves the per-view canvas in front of the Compose canvas with no hole-punch, and JVM reads back `PREMUL` instead of `OPAQUE` alpha. On top of that the view gets `BlendMode.TRANSLUCENT` and an explicit `clear = true`, alpha-0 `ClearOptions` — the default (`clear = false`, `discard = true`) leaves untouched swapchain pixels undefined, which renders as opaque garbage. Because the surface type is fixed at creation, toggling the flag rebuilds the surface. See [Compose integration strategies → Transparency](docs/compose/integration-strategies.md#transparency) and the new `Transparency (GLB)` sample.
+- **WebGL context attributes** (`web`): `EngineCreateOptions` now declares `alpha`, `antialias`, `depth`, `majorVersion` and `minorVersion` — everything except `backend` is forwarded verbatim to `canvas.getContext("webgl2", …)`, which upstream's `filament.d.ts` never declared. `Engine.create` now always requests `alpha: true`, since the WebGL default of `alpha: false` forces every frame opaque no matter the view's blend mode.
+
 ## [0.3.1] — 2026-08-14
 
 ### Added

@@ -66,15 +66,41 @@ How a `FilamentView` composites against the rest of the UI follows directly from
 
 In short: desktop offers full layering because the frame is a texture inside Compose; the other platforms can only render the 3D plane *below* Compose.
 
+## Transparency
+
+`FilamentView(transparent = true)` (and the same parameter on `FilamentSceneView`) makes the view's
+background alpha-0 so Compose content **behind** it shows through — the one case where Android, iOS
+and Web escape the "3D plane below Compose" rule above, because the surface moves in front and
+composites by alpha instead of being revealed by a hole punch.
+
+It sets `View.BlendMode.TRANSLUCENT` plus a `clear = true`, alpha-0 `ClearOptions` — the default
+(`clear = false`, `discard = true`) leaves untouched swapchain pixels undefined, which shows up as
+opaque garbage. Each platform then needs its own surface change:
+
+| Platform | What changes |
+| :--- | :--- |
+| **Android** | `SurfaceView` → `TextureView` with `isOpaque = false`; swapchain gets `CONFIG_TRANSPARENT`. A `TextureView` composites in the view hierarchy rather than owning a hardware layer, so it costs more than the opaque path. |
+| **iOS** | `CAMetalLayer.opaque = false`, swapchain gets `CONFIG_TRANSPARENT`, and the interop view is `placedAsOverlay` — as a normal interop view Compose punches a hole for it and erases whatever was drawn behind. |
+| **Web** | The per-view 2D canvas moves *in front* of the Compose canvas (`zIndex: 1`, `pointer-events: none`) with no hole punch, and the blit `clearRect`s first so the view's own alpha survives. `Engine.create` also always requests `alpha: true` on the WebGL context — it defaults to `alpha: false`, which forces every frame opaque regardless of blend mode. |
+| **JVM / Desktop** | The readback image switches from `OPAQUE` to `PREMUL` alpha; the rest of the path already composites through Compose. |
+
+The surface type and its swapchain flags are fixed when the platform view is created, so toggling
+`transparent` at runtime rebuilds the surface (via `key(transparent)`) rather than mutating it.
+
+Two consequences worth knowing: on Android/iOS/Web the surface is now on top, so Compose content
+drawn *above* the view in the layout shows **through** it rather than covering it (draw the
+foreground UI as part of the scene, or accept the see-through). And transparency is per-view state,
+not a scene property — two views of one scene can differ.
+
 ## Future Direction
 
 The stacking limitation on Android, iOS, and Web is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile, **WebGPU** on the web — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way the JVM/Metal path already shares a GPU texture with Skia. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch and per-view blit workarounds. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
 
 ## Summary
 
-| Platform | Strategy | Per-frame copy | Compose overlay | Stack multiple views |
-| :--- | :--- | :--- | :--- | :--- |
-| **Android** | Native `SurfaceView` + SwapChain | None | On top only | No |
-| **iOS** | Native `CAMetalLayer` + SwapChain | None | On top only | No |
-| **Web** | Offscreen canvas + per-view `drawImage` blit | GPU canvas→canvas | On top only | No (side-by-side OK) |
-| **JVM / Desktop** | Offscreen readable SwapChain + `readPixels` | GPU→CPU every frame | Above or below | Yes |
+| Platform | Strategy | Per-frame copy | Compose overlay | Stack multiple views | `transparent = true` |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Android** | Native `SurfaceView` + SwapChain | None | On top only | No | `TextureView`, `CONFIG_TRANSPARENT` |
+| **iOS** | Native `CAMetalLayer` + SwapChain | None | On top only | No | non-opaque layer, `placedAsOverlay` |
+| **Web** | Offscreen canvas + per-view `drawImage` blit | GPU canvas→canvas | On top only | No (side-by-side OK) | canvas in front, `alpha: true` context |
+| **JVM / Desktop** | Offscreen readable SwapChain + `readPixels` | GPU→CPU every frame | Above or below | Yes | `PREMUL` readback |

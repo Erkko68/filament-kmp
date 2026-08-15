@@ -28,6 +28,7 @@ import platform.CoreGraphics.CGSizeMake
 import platform.Metal.MTLCreateSystemDefaultDevice
 import platform.Metal.MTLPixelFormatBGRA8Unorm
 import platform.QuartzCore.CAMetalLayer
+import platform.UIKit.UIColor
 import platform.UIKit.UIScreen
 import platform.UIKit.UIView
 
@@ -52,66 +53,66 @@ internal actual fun FilamentSurface(
     // factory runs once, so layer opacity and swapchain flags are fixed at creation —
     // key() rebuilds both when transparency is toggled.
     key(transparent) {
-    UIKitView(
-        factory = {
-            object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
-                private var surfaceAttached = false
+        UIKitView(
+            factory = {
+                object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
+                    private var surfaceAttached = false
 
-                private val metalLayer = CAMetalLayer().apply {
-                    opaque = !transparent
-                    pixelFormat = MTLPixelFormatBGRA8Unorm
-                    device = MTLCreateSystemDefaultDevice() as MTLDeviceProtocol?
-                }
-
-                init {
-                    userInteractionEnabled = false
-                    opaque = !transparent
-                    if (transparent) {
-                        backgroundColor = platform.UIKit.UIColor.clearColor
+                    private val metalLayer = CAMetalLayer().apply {
+                        opaque = !transparent
+                        pixelFormat = MTLPixelFormatBGRA8Unorm
+                        device = MTLCreateSystemDefaultDevice() as MTLDeviceProtocol?
                     }
-                    layer.addSublayer(metalLayer)
-                }
 
-                override fun layoutSubviews() {
-                    super.layoutSubviews()
-
-                    metalLayer.frame = bounds
-
-                    val scale = UIScreen.mainScreen.scale
-                    metalLayer.contentsScale = scale
-
-                    val width = (bounds.useContents { size.width } * scale).toInt()
-                    val height = (bounds.useContents { size.height } * scale).toInt()
-
-                    if (width > 0 && height > 0) {
-                        if (!surfaceAttached) {
-                            swapChainRef.value = engine.createSwapChain(
-                                NativeSurface(interpretCPointer(metalLayer.objcPtr())),
-                                if (transparent) SWAP_CHAIN_CONFIG_TRANSPARENT else 0L,
-                            )
-                            surfaceAttached = true
+                    init {
+                        userInteractionEnabled = false
+                        opaque = !transparent
+                        if (transparent) {
+                            backgroundColor = UIColor.clearColor
                         }
-                        metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
-                        view.viewport = Viewport(0, 0, width, height)
-                        onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
+                        layer.addSublayer(metalLayer)
+                    }
+
+                    override fun layoutSubviews() {
+                        super.layoutSubviews()
+
+                        metalLayer.frame = bounds
+
+                        val scale = UIScreen.mainScreen.scale
+                        metalLayer.contentsScale = scale
+
+                        val width = (bounds.useContents { size.width } * scale).toInt()
+                        val height = (bounds.useContents { size.height } * scale).toInt()
+
+                        if (width > 0 && height > 0) {
+                            if (!surfaceAttached) {
+                                swapChainRef.value = engine.createSwapChain(
+                                    NativeSurface(interpretCPointer(metalLayer.objcPtr())),
+                                    if (transparent) SWAP_CHAIN_CONFIG_TRANSPARENT else 0L,
+                                )
+                                surfaceAttached = true
+                            }
+                            metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
+                            view.viewport = Viewport(0, 0, width, height)
+                            onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
+                        }
                     }
                 }
-            }
-        },
-        modifier = modifier,
-        update = {},
-        onRelease = {},
-        // placedAsOverlay: below the Metal canvas Compose punches a transparent hole for the interop
-        // view, erasing whatever Compose drew behind it. As an overlay it composites on top instead.
-        properties = UIKitInteropProperties(interactionMode = null, placedAsOverlay = transparent),
-    )
+            },
+            modifier = modifier,
+            update = {},
+            onRelease = {},
+            // placedAsOverlay: below the Metal canvas Compose punches a transparent hole for the interop
+            // view, erasing whatever Compose drew behind it. As an overlay it composites on top instead.
+            properties = UIKitInteropProperties(interactionMode = null, placedAsOverlay = transparent),
+        )
 
-    DisposableEffect(Unit) {
-        onDispose {
-            swapChainRef.value?.let { engine.destroySwapChain(it) }
-            swapChainRef.value = null
+        DisposableEffect(Unit) {
+            onDispose {
+                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                swapChainRef.value = null
+            }
         }
-    }
     }
 
     FilamentRenderLoop { frameTime ->
