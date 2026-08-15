@@ -48,7 +48,7 @@ public abstract interface class io/github/erkko68/filament/compose/FilamentScene
 
 public final class io/github/erkko68/filament/compose/FilamentSceneViewKt {
 	public static final fun FilamentSceneView (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/FilamentViewState;Lio/github/erkko68/filament/compose/scene/SkyboxState;Lio/github/erkko68/filament/compose/scene/IndirectLightState;Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Shadows;ZZZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
-	public static final fun FilamentSceneView (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/Environment;Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/FilamentViewState;Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Shadows;ZZZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun FilamentSceneView (Landroidx/compose/ui/Modifier;Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/compose/scene/Environment;Lio/github/erkko68/filament/compose/scene/CameraState;Lio/github/erkko68/filament/compose/FilamentViewState;Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Shadows;ZZZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/FilamentViewKt {
@@ -1121,6 +1121,7 @@ public final class io/github/erkko68/filament/compose/scene/ToneMapping$PBRNeutr
 public final class io/github/erkko68/filament/compose/scene/TypesKt {
 	public static final fun toDirection (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Direction;
 	public static final fun toLinearColor (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/LinearColor;
+	public static final fun toLinearColor-8_81llA (J)Lio/github/erkko68/filament/compose/scene/LinearColor;
 	public static final fun toPosition (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Position;
 	public static final fun toRotation (Lio/github/erkko68/filament/utils/Quaternion;)Lio/github/erkko68/filament/compose/scene/Rotation;
 	public static final fun toScale (Lio/github/erkko68/filament/utils/Float3;)Lio/github/erkko68/filament/compose/scene/Scale;

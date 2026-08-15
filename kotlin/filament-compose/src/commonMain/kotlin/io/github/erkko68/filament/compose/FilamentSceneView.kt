@@ -91,9 +91,9 @@ fun FilamentSceneView(
  */
 @Composable
 fun FilamentSceneView(
+    modifier: Modifier = Modifier,
     engine: Engine,
     environment: io.github.erkko68.filament.compose.scene.Environment,
-    modifier: Modifier = Modifier,
     cameraState: CameraState = rememberCameraState(),
     viewState: FilamentViewState = rememberFilamentViewState(),
     postProcessing: PostProcessing = PostProcessing(),

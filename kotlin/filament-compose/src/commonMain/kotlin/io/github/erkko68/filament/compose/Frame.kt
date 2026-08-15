@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -15,6 +16,7 @@ import kotlinx.coroutines.isActive
  *   or backgrounded frame doesn't produce a huge time jump. Zero on the first frame.
  * @property elapsedSeconds Seconds since this [OnFrame] entered the composition.
  */
+@Immutable
 data class FrameInfo(
     val frameTimeNanos: Long,
     val deltaSeconds: Float,

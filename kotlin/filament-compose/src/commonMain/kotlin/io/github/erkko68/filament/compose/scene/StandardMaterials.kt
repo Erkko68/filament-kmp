@@ -11,6 +11,7 @@ import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 
 /**
  * The built-in materials shipped with `filament-compose` — precompiled `.filamat` blobs embedded
@@ -95,7 +96,7 @@ internal val LocalStandardMaterials = staticCompositionLocalOf<StandardMaterialC
 @Composable
 fun rememberStandardMaterial(
     type: StandardMaterial,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): Material {
     val cache = LocalStandardMaterials.current
     return if (cache != null && cache.engine == engine) {
@@ -133,7 +134,7 @@ fun rememberColorMaterialInstance(
     metallic: Float = 0f,
     roughness: Float = 0.5f,
     reflectance: Float = 0.5f,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Lit, engine)
     return rememberConfiguredMaterialInstance(material, color, metallic, roughness, reflectance, engine = engine) {
@@ -154,7 +155,7 @@ fun rememberColorMaterialInstance(
 @Composable
 fun rememberUnlitColorMaterialInstance(
     color: LinearColor,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Unlit, engine)
     return rememberConfiguredMaterialInstance(material, color, engine = engine) {
@@ -187,7 +188,7 @@ fun rememberTexturedMaterialInstance(
         TextureSampler.MagFilter.LINEAR,
         TextureSampler.WrapMode.REPEAT,
     ),
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Textured, engine)
     // `sampler` is captured (not keyed): it's almost always the constant default, and a new value
@@ -211,7 +212,7 @@ fun rememberTexturedMaterialInstance(
 fun rememberEmissiveMaterialInstance(
     color: LinearColor,
     intensity: Float = 1f,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Emissive, engine)
     return rememberConfiguredMaterialInstance(material, color, intensity, engine = engine) {
@@ -246,7 +247,7 @@ fun rememberTransparentColorMaterialInstance(
     metallic: Float = 0f,
     roughness: Float = 0.5f,
     reflectance: Float = 0.5f,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance {
     val material = rememberStandardMaterial(StandardMaterial.Transparent, engine)
     return rememberConfiguredMaterialInstance(material, color, alpha, metallic, roughness, reflectance, engine = engine) {

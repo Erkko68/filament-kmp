@@ -9,7 +9,9 @@ import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.LightManager
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.OnFrame
 import kotlin.math.sqrt
 
@@ -154,8 +156,8 @@ internal data class LightSnapshot(
  */
 @Composable
 internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
-    val engine = LocalFilamentEngine.current
-    val scene  = LocalFilamentScene.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
+    val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
 
     val entity = remember { engine.getEntityManager().create() }
@@ -415,8 +417,8 @@ fun FilamentSceneScope.Light(
     vararg keys: Any?,
     configure: LightManager.Builder.() -> Unit,
 ) {
-    val engine = LocalFilamentEngine.current
-    val scene  = LocalFilamentScene.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
+    val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
 
     val entity = remember { engine.getEntityManager().create() }

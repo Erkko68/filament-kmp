@@ -126,6 +126,11 @@ class CameraState internal constructor(
         if (attachedCamera == camera) attachedCamera = null
     }
 
+    // Scratch buffers for the matrix getters — one CameraState is attached to one view (see
+    // attach), so reads are single-threaded. Saves the array alloc, not the Mat4 alloc.
+    private val tmpViewArray = FloatArray(16)
+    private val tmpProjArray = DoubleArray(16)
+
     /**
      * View matrix (world→view) computed by Filament. Null until this state is attached to a
      * [io.github.erkko68.filament.compose.FilamentView].
@@ -134,7 +139,7 @@ class CameraState internal constructor(
      * reading it repeatedly in a hot loop.
      */
     val viewMatrix: Mat4?
-        get() = attachedCamera?.getViewMatrix(null as FloatArray?)?.toMat4()
+        get() = attachedCamera?.getViewMatrix(tmpViewArray)?.toMat4()
 
     /**
      * Projection matrix (view→clip) computed by Filament. Null until this state is attached to a
@@ -145,7 +150,7 @@ class CameraState internal constructor(
      * (`viewState.view?.camera?.getProjectionMatrix()`).
      */
     val projectionMatrix: Mat4?
-        get() = attachedCamera?.getProjectionMatrix(null as DoubleArray?)?.toMat4()
+        get() = attachedCamera?.getProjectionMatrix(tmpProjArray)?.toMat4()
 
     internal fun snapshot(): CameraSnapshot =
         CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)

@@ -10,6 +10,7 @@ import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.internal.transformMatrix
 
 /**
@@ -66,7 +67,7 @@ fun FilamentSceneScope.Group(
     onCreate: EntityScope.() -> Unit = {},
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
-    val engine = LocalFilamentEngine.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
     val outerParent = LocalParentEntity.current
 
     val groupEntity = remember { engine.getEntityManager().create() }

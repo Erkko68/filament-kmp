@@ -324,6 +324,14 @@ private fun linearToSrgb(c: Float): Float {
     return if (v <= 0.0031308f) v * 12.92f else 1.055f * v.pow(1f / 2.4f) - 0.055f
 }
 
+/**
+ * Convert a Compose UI [androidx.compose.ui.graphics.Color] to a scene-ready [LinearColor],
+ * applying the sRGB→linear transfer. Alpha is dropped. Covers ARGB ints too, via Compose's own
+ * `Color(0xFF2196F3)` constructor.
+ */
+fun androidx.compose.ui.graphics.Color.toLinearColor(): LinearColor =
+    LinearColor.fromComposeColor(this)
+
 /** Reinterpret a [Float3] as a [Position]. */
 fun Float3.toPosition() = Position(x, y, z)
 /** Reinterpret a [Float3] as a [Direction]. */
