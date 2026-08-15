@@ -178,6 +178,16 @@ jobs:
             :kotlin:gltfio:jsTest \
             :kotlin:filament-compose:jsTest \
             --no-configuration-cache
+      - name: Web sample ships the bundled engine
+        # The sample commits filament.js/.wasm so it runs standalone; a Filament upgrade
+        # that misses them pairs a new .filamat with an old engine and crashes at runtime.
+        run: |
+          ./gradlew downloadPrebuilts_web --no-configuration-cache
+          for t in jsMain wasmJsMain; do
+            for f in filament.js filament.wasm; do
+              cmp prebuilts/web/$f samples/webApp/src/$t/resources/$f
+            done
+          done
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
