@@ -31,6 +31,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * }
  * ```
  *
+ * @param modifier Modifier for the view's layout node.
  * @param engine Engine backing the scene. Defaults to a dedicated engine created and destroyed
  *   with this composable. Pass a [rememberFilamentEngine] value to share an engine.
  * @param cameraState Hoisted camera state. The default constructs a new state.
@@ -87,14 +88,15 @@ fun FilamentSceneView(
 /**
  * Overload wiring a loaded [io.github.erkko68.filament.compose.scene.Environment] (from
  * `rememberKTXEnvironment` / `rememberHDREnvironment`) into the all-in-one view without threading
- * its two states by hand. [engine] is required here (no default): it must be the same engine the
- * environment's textures were loaded on. All other parameters match the primary overload.
+ * its two states by hand. [engine] and [environment] are required and therefore lead the list —
+ * the engine must be the same one the environment's textures were loaded on. [modifier] keeps its
+ * place as the first optional parameter; all other parameters match the primary overload.
  */
 @Composable
 fun FilamentSceneView(
-    modifier: Modifier = Modifier,
     engine: Engine,
     environment: io.github.erkko68.filament.compose.scene.Environment,
+    modifier: Modifier = Modifier,
     cameraState: CameraState = rememberCameraState(),
     viewState: FilamentViewState = rememberFilamentViewState(),
     postProcessing: PostProcessing = PostProcessing(),

@@ -160,7 +160,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
 
-    val entity = remember { engine.getEntityManager().create() }
+    val entity = remember(engine) { engine.getEntityManager().create() }
 
     // Entity destruction is registered *first* so it runs *last* on dispose (Compose tears effects
     // down in reverse registration order), keeping the entity live while the cleanups below run.
@@ -421,7 +421,7 @@ fun FilamentSceneScope.Light(
     val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
 
-    val entity = remember { engine.getEntityManager().create() }
+    val entity = remember(engine) { engine.getEntityManager().create() }
 
     DisposableEffect(entity) {
         onDispose {

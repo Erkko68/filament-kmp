@@ -10,6 +10,8 @@ import androidx.compose.ui.test.MouseButton
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.unit.dp
+import io.github.erkko68.filament.compose.scene.LensScaling
+import io.github.erkko68.filament.compose.scene.LensShift
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Exposure
@@ -17,7 +19,6 @@ import io.github.erkko68.filament.compose.scene.Position
 import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
-import io.github.erkko68.filament.utils.Float2
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -37,8 +38,8 @@ class FlightLookGestureTest : ComposeTestFixture() {
             initialProjection = Projection.Perspective(),
             initialExposure = Exposure(),
             initialFocusDistance = 10f,
-            initialShift = Float2(0f, 0f),
-            initialScaling = Float2(1f, 1f),
+            initialShift = LensShift.None,
+            initialScaling = LensScaling.Identity,
         )
         withFilamentScene(engine, scene) { _ ->
             setContent {

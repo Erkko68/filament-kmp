@@ -19,6 +19,8 @@ import io.github.erkko68.filament.compose.internal.transformMatrix
  * GltfInstance) read this and reparent their own entity via `TransformManager.setParent`
  * when it's non-null, so their `position`/`rotation`/`scale` become local to the parent.
  */
+// compositionLocalOf, not static (unlike LocalFilamentEngine): these two change as groups nest
+// and as `visible` toggles at runtime, so recomposing only the readers is the cheaper trade.
 internal val LocalParentEntity = compositionLocalOf<Entity?> { null }
 
 /**
@@ -56,6 +58,7 @@ internal val LocalGroupVisible = compositionLocalOf { true }
  *   renderable (cheaply, keeping entities and state alive) — a show/hide toggle for the group.
  * @param onCreate  Runs once when the group's transform entity is created, with the entity and
  *   engine in scope ([EntityScope]).
+ * @param content   Scene composables placed under this group's transform.
  */
 @Composable
 fun FilamentSceneScope.Group(
@@ -70,7 +73,7 @@ fun FilamentSceneScope.Group(
     val engine = LocalFilamentEngine.current ?: noFilamentEngine()
     val outerParent = LocalParentEntity.current
 
-    val groupEntity = remember { engine.getEntityManager().create() }
+    val groupEntity = remember(engine) { engine.getEntityManager().create() }
 
     DisposableEffect(groupEntity) {
         val tm = engine.getTransformManager()
