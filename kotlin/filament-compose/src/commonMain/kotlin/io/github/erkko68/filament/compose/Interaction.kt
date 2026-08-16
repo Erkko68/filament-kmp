@@ -202,6 +202,7 @@ class OrbitCameraController internal constructor(
  * FilamentView(scene = scene, cameraState = cameraState, modifier = Modifier.orbitGestures(orbit))
  * ```
  *
+ * @param cameraState    Camera this controller drives; also seeds its home pose.
  * @param zoomSpeed      Scroll / pinch zoom sensitivity.
  * @param orbitSpeedX    Horizontal orbit drag sensitivity; negative inverts that axis.
  * @param orbitSpeedY    Vertical orbit drag sensitivity; negative inverts that axis.
@@ -276,6 +277,7 @@ class MapCameraController internal constructor(
  * The tuning parameters are reactive — changing them at runtime rebuilds the manipulator
  * while keeping the current camera pose, so nothing jumps.
  *
+ * @param cameraState Camera this controller drives; also seeds its home pose.
  * @param mapWidth    Pannable world extent along X.
  * @param mapHeight   Pannable world extent along Z.
  * @param minDistance Minimum zoom distance (closest the camera can get).
@@ -377,6 +379,7 @@ class FlightCameraController internal constructor(
  * Speed sits on an exponential curve spanning [speedSteps] scroll notches: the camera starts at
  * [initialMoveSpeed], full scroll-up reaches [maxMoveSpeed], full scroll-down `1 / maxMoveSpeed`.
  *
+ * @param cameraState      Camera this controller drives; also seeds its start pose.
  * @param startPitch       Initial pitch in degrees (positive = look up).
  * @param startYaw         Initial yaw in degrees.
  * @param maxMoveSpeed     Movement speed in world units per second at full scroll-up.

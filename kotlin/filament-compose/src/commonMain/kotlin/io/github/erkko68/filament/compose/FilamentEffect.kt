@@ -38,10 +38,10 @@ fun FilamentSceneScope.FilamentEffect(
     vararg keys: Any?,
     block: FilamentEffectScope.() -> Unit,
 ) {
-    val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
+    val scene = LocalFilamentScene.current ?: noFilamentScene()
 
-    val scope = remember { FilamentEffectScopeImpl(engine, scene) }
+    val scope = remember(engine, scene) { FilamentEffectScopeImpl(engine, scene) }
 
     DisposableEffect(keys = keys) {
         scope.disposeAction = null

@@ -1,10 +1,11 @@
 package io.github.erkko68.filament.compose.scene
 
+import io.github.erkko68.filament.compose.scene.LensScaling
+import io.github.erkko68.filament.compose.scene.LensShift
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.assertEntitiesDestroyed
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.composeScene
-import io.github.erkko68.filament.utils.Float2
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,8 +23,8 @@ class CameraNodeLifecycleTest : ComposeTestFixture() {
         initialProjection = Projection.Perspective(),
         initialExposure = Exposure(),
         initialFocusDistance = 10f,
-        initialShift = Float2(0f, 0f),
-        initialScaling = Float2(1f, 1f),
+        initialShift = LensShift.None,
+        initialScaling = LensScaling.Identity,
     )
 
     // Assertions live in the harness callbacks and the test returns the harness result so JS's

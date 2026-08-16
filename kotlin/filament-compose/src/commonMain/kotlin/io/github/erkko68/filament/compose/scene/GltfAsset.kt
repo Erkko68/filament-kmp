@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
 import io.github.erkko68.filament.gltfio.ResourceLoader
@@ -152,7 +153,7 @@ internal fun rememberGltfAsset(
 fun rememberGltfAsset(
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     load: suspend () -> ByteArray,
 ): GltfAsset? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {

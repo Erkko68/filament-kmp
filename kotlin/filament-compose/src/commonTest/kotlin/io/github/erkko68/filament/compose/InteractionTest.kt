@@ -2,6 +2,8 @@ package io.github.erkko68.filament.compose
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import io.github.erkko68.filament.compose.scene.LensScaling
+import io.github.erkko68.filament.compose.scene.LensShift
 import io.github.erkko68.filament.compose.scene.CameraState
 import io.github.erkko68.filament.compose.scene.Direction
 import io.github.erkko68.filament.compose.scene.Exposure
@@ -10,7 +12,6 @@ import io.github.erkko68.filament.compose.scene.Projection
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.compose.testutils.SetSceneContent
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
-import io.github.erkko68.filament.utils.Float2
 import io.github.erkko68.filament.utils.Manipulator
 import kotlin.math.sqrt
 import kotlin.test.Ignore
@@ -33,8 +34,8 @@ class InteractionTest : ComposeTestFixture() {
         initialProjection = Projection.Perspective(),
         initialExposure = Exposure(),
         initialFocusDistance = 10f,
-        initialShift = Float2(0f, 0f),
-        initialScaling = Float2(1f, 1f),
+        initialShift = LensShift.None,
+        initialScaling = LensScaling.Identity,
     )
 
     private fun CameraState.eyeDistanceTo(x: Float, y: Float, z: Float): Float {

@@ -4,7 +4,6 @@ import io.github.erkko68.filament.Camera
 import io.github.erkko68.filament.compose.testutils.ComposeTestFixture
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
-import io.github.erkko68.filament.utils.Float2
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,8 +23,8 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         projection: Projection = Projection.Perspective(),
         exposure: Exposure = Exposure(),
         focusDistance: Float = 10f,
-        shift: Float2 = Float2(0f, 0f),
-        scaling: Float2 = Float2(1f, 1f),
+        shift: LensShift = LensShift.None,
+        scaling: LensScaling = LensScaling.Identity,
     ) = CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
 
     @Test
@@ -72,8 +71,8 @@ class CameraSnapshotApplyTest : ComposeTestFixture() {
         val camera = newCamera()
         snapshot(
             exposure = Exposure(aperture = 8f, shutterSpeed = 1f / 60f, sensitivity = 200f),
-            shift = Float2(0.1f, 0.2f),
-            scaling = Float2(0.5f, 0.5f),
+            shift = LensShift(0.1f, 0.2f),
+            scaling = LensScaling(0.5f, 0.5f),
         ).applyTo(camera, aspect = 1.0)
 
         assertEquals(8f, camera.aperture, 1e-4f)

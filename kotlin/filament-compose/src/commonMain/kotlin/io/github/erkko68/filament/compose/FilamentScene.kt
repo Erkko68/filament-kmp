@@ -96,8 +96,10 @@ fun rememberFilamentScene(
  * val scene  = rememberFilamentScene(engine, env) { GltfInstance(asset = duck) }
  * ```
  *
- * [engine] is required here (no default): it must be the same engine the environment's textures
- * were loaded on — a fresh default engine would mix resources across engines.
+ * @param engine Required here (no default): it must be the same engine the environment's textures
+ *   were loaded on — a fresh default engine would mix resources across engines.
+ * @param environment Loaded environment supplying both the skybox and IBL states.
+ * @param content Scene composables, as in the primary overload.
  */
 @Composable
 fun rememberFilamentScene(
