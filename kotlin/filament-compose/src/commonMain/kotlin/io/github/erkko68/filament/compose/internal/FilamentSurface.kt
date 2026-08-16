@@ -17,5 +17,6 @@ internal expect fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
+    transparent: Boolean = false,
     onResize: (aspect: Double) -> Unit,
 )

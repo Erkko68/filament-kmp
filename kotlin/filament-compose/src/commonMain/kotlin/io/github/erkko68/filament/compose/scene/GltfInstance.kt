@@ -4,7 +4,9 @@ import androidx.compose.runtime.*
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.internal.logWarn
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.gltfio.FilamentAsset
@@ -113,8 +115,8 @@ fun FilamentSceneScope.GltfInstance(
 ) {
     if (asset == null) return
 
-    val engine = LocalFilamentEngine.current
-    val scene = LocalFilamentScene.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
+    val scene = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
     // A hidden enclosing Group hides its whole subtree.
     val effectiveVisible = visible && LocalGroupVisible.current

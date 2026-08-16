@@ -5,6 +5,7 @@ package io.github.erkko68.filament.compose.internal
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,8 +28,12 @@ import platform.CoreGraphics.CGSizeMake
 import platform.Metal.MTLCreateSystemDefaultDevice
 import platform.Metal.MTLPixelFormatBGRA8Unorm
 import platform.QuartzCore.CAMetalLayer
+import platform.UIKit.UIColor
 import platform.UIKit.UIScreen
 import platform.UIKit.UIView
+
+/** `SwapChain::CONFIG_TRANSPARENT` — not exposed as a constant by the bindings yet. */
+private const val SWAP_CHAIN_CONFIG_TRANSPARENT = 0x1L
 
 @Composable
 internal actual fun FilamentSurface(
@@ -36,6 +41,7 @@ internal actual fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
+    transparent: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
     val swapChainRef = remember { Ref<SwapChain>() }
@@ -44,57 +50,68 @@ internal actual fun FilamentSurface(
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
 
-    UIKitView(
-        factory = {
-            object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
-                private var surfaceAttached = false
+    // factory runs once, so layer opacity and swapchain flags are fixed at creation —
+    // key() rebuilds both when transparency is toggled.
+    key(transparent) {
+        UIKitView(
+            factory = {
+                object : UIView(frame = CGRectMake(0.0, 0.0, 0.0, 0.0)) {
+                    private var surfaceAttached = false
 
-                private val metalLayer = CAMetalLayer().apply {
-                    opaque = true
-                    pixelFormat = MTLPixelFormatBGRA8Unorm
-                    device = MTLCreateSystemDefaultDevice() as MTLDeviceProtocol?
-                }
+                    private val metalLayer = CAMetalLayer().apply {
+                        opaque = !transparent
+                        pixelFormat = MTLPixelFormatBGRA8Unorm
+                        device = MTLCreateSystemDefaultDevice() as MTLDeviceProtocol?
+                    }
 
-                init {
-                    userInteractionEnabled = false
-                    layer.addSublayer(metalLayer)
-                }
-
-                override fun layoutSubviews() {
-                    super.layoutSubviews()
-
-                    metalLayer.frame = bounds
-
-                    val scale = UIScreen.mainScreen.scale
-                    metalLayer.contentsScale = scale
-
-                    val width = (bounds.useContents { size.width } * scale).toInt()
-                    val height = (bounds.useContents { size.height } * scale).toInt()
-
-                    if (width > 0 && height > 0) {
-                        if (!surfaceAttached) {
-                            swapChainRef.value = engine.createSwapChain(
-                                NativeSurface(interpretCPointer(metalLayer.objcPtr()))
-                            )
-                            surfaceAttached = true
+                    init {
+                        userInteractionEnabled = false
+                        opaque = !transparent
+                        if (transparent) {
+                            backgroundColor = UIColor.clearColor
                         }
-                        metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
-                        view.viewport = Viewport(0, 0, width, height)
-                        onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
+                        layer.addSublayer(metalLayer)
+                    }
+
+                    override fun layoutSubviews() {
+                        super.layoutSubviews()
+
+                        metalLayer.frame = bounds
+
+                        val scale = UIScreen.mainScreen.scale
+                        metalLayer.contentsScale = scale
+
+                        val width = (bounds.useContents { size.width } * scale).toInt()
+                        val height = (bounds.useContents { size.height } * scale).toInt()
+
+                        if (width > 0 && height > 0) {
+                            if (!surfaceAttached) {
+                                swapChainRef.value = engine.createSwapChain(
+                                    NativeSurface(interpretCPointer(metalLayer.objcPtr())),
+                                    if (transparent) SWAP_CHAIN_CONFIG_TRANSPARENT else 0L,
+                                )
+                                surfaceAttached = true
+                            }
+                            metalLayer.drawableSize = CGSizeMake(width.toDouble(), height.toDouble())
+                            view.viewport = Viewport(0, 0, width, height)
+                            onResizeRef.value?.invoke(width.toDouble() / height.toDouble())
+                        }
                     }
                 }
-            }
-        },
-        modifier = modifier,
-        update = {},
-        onRelease = {},
-        properties = UIKitInteropProperties(interactionMode = null),
-    )
+            },
+            modifier = modifier,
+            update = {},
+            onRelease = {},
+            // placedAsOverlay: below the Metal canvas Compose punches a transparent hole for the interop
+            // view, erasing whatever Compose drew behind it. As an overlay it composites on top instead.
+            properties = UIKitInteropProperties(interactionMode = null, placedAsOverlay = transparent),
+        )
 
-    DisposableEffect(Unit) {
-        onDispose {
-            swapChainRef.value?.let { engine.destroySwapChain(it) }
-            swapChainRef.value = null
+        DisposableEffect(Unit) {
+            onDispose {
+                swapChainRef.value?.let { engine.destroySwapChain(it) }
+                swapChainRef.value = null
+            }
         }
     }
 

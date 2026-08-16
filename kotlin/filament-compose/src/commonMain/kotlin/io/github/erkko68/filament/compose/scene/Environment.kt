@@ -8,7 +8,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.utils.EquirectangularToCubemap
 import io.github.erkko68.filament.utils.HDRLoader
 import io.github.erkko68.filament.utils.IBLPrefilterContext
@@ -52,8 +51,9 @@ class Environment internal constructor(
  * texture lifetimes, and [IndirectLightState]/[SkyboxState].
  *
  * Call it **outside** `rememberFilamentScene { }` (its result feeds the scene's parameters), so
- * the [engine] is typically hoisted via [io.github.erkko68.filament.compose.rememberFilamentEngine]
- * and shared with the scene.
+ * the [engine] is hoisted via [io.github.erkko68.filament.compose.rememberFilamentEngine] and shared
+ * with the scene — which is why it is required here rather than defaulted from the composition
+ * local: outside a scene there is no engine in scope to default to.
  *
  * The returned [Environment] is non-null and stable; its states fill in once the KTX bytes
  * load. Failures (load lambda throwing, or undecodable KTX) are reported once via [onError] and
@@ -61,21 +61,22 @@ class Environment internal constructor(
  *
  * For raw equirectangular `.hdr` images (no offline `cmgen` bake) use [rememberHDREnvironment].
  *
+ * @param engine    Engine the environment's textures are allocated on. Leads the parameter list
+ *   because it is required — the result feeds a scene built on this same engine, and this is
+ *   called outside `rememberFilamentScene { }`, so there is never an engine in scope to default to.
  * @param initialIntensity IBL intensity scale, applied to the state on first composition only —
  *   mutate `environment.indirectLightState.intensity` to change it afterwards.
  * @param key       Reloads when this changes. Defaults to [Unit] for static assets.
  * @param onError   Invoked once per failure (load threw, or the KTX failed to decode).
- * @param engine    Engine the environment's textures are allocated on. Defaults to the engine in
- *   the current composition scope; hoist and pass one explicitly when calling outside a scene.
  * @param skybox    Optional loader for the skybox cubemap KTX. Null = IBL only, no background.
  * @param ibl       Loader for the IBL KTX (prefiltered reflection cubemap + irradiance SH).
  */
 @Composable
 fun rememberKTXEnvironment(
+    engine: Engine,
     initialIntensity: Float = 30_000f,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
-    engine: Engine = LocalFilamentEngine.current,
     skybox: (suspend () -> ByteArray)? = null,
     ibl: suspend () -> ByteArray,
 ): Environment {
@@ -155,24 +156,24 @@ fun rememberKTXEnvironment(
  * lower quality. Prefer KTX when you can bake offline; use this for raw `.hdr` workflows. The
  * prefilter runs on the GPU at load, so the first frames render before it lands.
  *
+ * @param engine     Engine the environment's textures are allocated on. Required and first — see
+ *   [rememberKTXEnvironment].
  * @param initialIntensity IBL intensity scale, applied to the state on first composition only —
  *   mutate `environment.indirectLightState.intensity` to change it afterwards.
  * @param showSkybox Render the environment cubemap as the skybox. False = IBL only.
  * @param format     Internal format for the decoded HDR equirect texture.
  * @param key        Reloads when this changes. Defaults to [Unit] for static assets.
  * @param onError    Invoked once if [hdr] throws or the bytes can't be decoded as HDR.
- * @param engine     Engine the environment's textures are allocated on. Defaults to the engine in
- *   the current composition scope; hoist and pass one explicitly when calling outside a scene.
  * @param hdr        Loader for the equirectangular HDR bytes (2:1 aspect).
  */
 @Composable
 fun rememberHDREnvironment(
+    engine: Engine,
     initialIntensity: Float = 30_000f,
     showSkybox: Boolean = true,
     format: Texture.InternalFormat = Texture.InternalFormat.R11F_G11F_B10F,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
-    engine: Engine = LocalFilamentEngine.current,
     hdr: suspend () -> ByteArray,
 ): Environment {
     val indirectLightState = rememberIndirectLightState(initialIntensity = initialIntensity)

@@ -17,7 +17,9 @@ import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.compose.EntityScope
 import io.github.erkko68.filament.compose.EntityScopeImpl
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.LocalFilamentScene
+import io.github.erkko68.filament.compose.noFilamentScene
 import io.github.erkko68.filament.compose.internal.transformMatrix
 import io.github.erkko68.filament.compose.scene.LocalGroupVisible
 import io.github.erkko68.filament.compose.scene.LocalParentEntity
@@ -128,8 +130,8 @@ internal fun Mesh(
 ) {
     if (material == null) return
 
-    val engine = LocalFilamentEngine.current
-    val scene  = LocalFilamentScene.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
+    val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
     // A hidden enclosing Group hides its whole subtree.
     val effectiveVisible = visible && LocalGroupVisible.current

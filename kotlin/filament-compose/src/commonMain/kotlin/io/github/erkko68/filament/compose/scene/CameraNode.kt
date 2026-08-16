@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.compose.FilamentSceneScope
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.OnFrame
 
 /**
@@ -41,7 +42,7 @@ fun FilamentSceneScope.CameraNode(
     targetOffset: Position = Position(0f, 0f, -1f),
     up: Direction = Direction(0f, 1f, 0f),
 ) {
-    val engine = LocalFilamentEngine.current
+    val engine = LocalFilamentEngine.current ?: noFilamentEngine()
     val parent = LocalParentEntity.current
     val world = remember { FloatArray(16) }
 

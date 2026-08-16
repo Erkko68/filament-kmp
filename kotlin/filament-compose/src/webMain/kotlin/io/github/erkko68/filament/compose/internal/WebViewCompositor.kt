@@ -11,6 +11,7 @@ import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * On web a Filament [Engine] is bound to a single WebGL context/canvas — `createSwapChain` takes no
@@ -19,8 +20,8 @@ import kotlin.math.max
  * So every view of one engine shares this compositor. It renders each registered view into its own
  * region of the engine's (offscreen) canvas in a single frame, then `drawImage`-blits each region
  * onto that view's own 2D canvas. Blitting straight from the WebGL canvas needs no readback API and
- * stays on the GPU. Each view's 2D canvas is displayed through the normal Compose HTML-interop path
- * (see `FilamentSurface`), which is what actually makes the hole-punch reveal it.
+ * stays on the GPU. The blit clears first, so a translucent view keeps its alpha. Each view's 2D
+ * canvas is displayed through the normal Compose HTML-interop path (see `FilamentSurface`).
  */
 internal class WebViewCompositor private constructor(private val engine: Engine) {
 
@@ -39,7 +40,14 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
 
     private val canvas: HTMLCanvasElement = engine.jsCanvas
         ?: error("WebViewCompositor requires an Engine created with a canvas")
-    private val renderer: Renderer = engine.createRenderer()
+    // The engine canvas is offscreen, so the browser's implicit post-composite clear may never run
+    // (it doesn't on Android Chrome) and frames accumulate. Clear it ourselves every beginFrame.
+    private val renderer: Renderer = engine.createRenderer().apply {
+        clearOptions = Renderer.ClearOptions().apply {
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+            clear = true
+        }
+    }
     private val entries = ArrayList<Entry>()
     private var swapChain: SwapChain? = null
     private var rafId: Int = 0
@@ -94,13 +102,17 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     private fun renderFrame() {
         if (entries.isEmpty()) return
 
+        val dpr = window.devicePixelRatio.coerceAtLeast(1.0)
+
         // The offscreen canvas must span every view's window rect so each can be rendered into its
         // own slice in one frame; views sit at distinct screen positions so they don't overlap.
         var unionW = 0
         var unionH = 0
         for (e in entries) {
-            unionW = max(unionW, e.rect.right)
-            unionH = max(unionH, e.rect.bottom)
+            val physRight = (e.rect.right * dpr).roundToInt()
+            val physBottom = (e.rect.bottom * dpr).roundToInt()
+            unionW = max(unionW, physRight)
+            unionH = max(unionH, physBottom)
         }
         if (unionW <= 0 || unionH <= 0) return
         if (canvas.width != unionW || canvas.height != unionH) {
@@ -114,28 +126,45 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
                 if (e.disposed) continue
                 val r = e.rect
                 if (r.width <= 0 || r.height <= 0) continue
+                val physLeft = (r.left * dpr).roundToInt()
+                val physTop = (r.top * dpr).roundToInt()
+                val physRight = (r.right * dpr).roundToInt()
+                val physBottom = (r.bottom * dpr).roundToInt()
+                val physWidth = physRight - physLeft
+                val physHeight = physBottom - physTop
+                if (physWidth <= 0 || physHeight <= 0) continue
+
                 // Compose rect is top-left origin; Filament viewport origin is bottom-left.
-                e.view.viewport = Viewport(r.left, unionH - (r.top + r.height), r.width, r.height)
+                e.view.viewport = Viewport(physLeft, unionH - (physTop + physHeight), physWidth, physHeight)
                 renderer.render(e.view)
             }
             renderer.endFrame()
         }
 
         // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
-        // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == rect.top.
+        // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == physTop.
         for (e in entries) {
             if (e.disposed) continue
             val r = e.rect
             val ctx = e.ctx ?: continue
             if (r.width <= 0 || r.height <= 0) continue
-            if (e.target.width != r.width || e.target.height != r.height) {
-                e.target.width = r.width
-                e.target.height = r.height
+            val physLeft = (r.left * dpr).roundToInt()
+            val physTop = (r.top * dpr).roundToInt()
+            val physRight = (r.right * dpr).roundToInt()
+            val physBottom = (r.bottom * dpr).roundToInt()
+            val physWidth = physRight - physLeft
+            val physHeight = physBottom - physTop
+            if (physWidth <= 0 || physHeight <= 0) continue
+
+            if (e.target.width != physWidth || e.target.height != physHeight) {
+                e.target.width = physWidth
+                e.target.height = physHeight
             }
+            ctx.clearRect(0.0, 0.0, physWidth.toDouble(), physHeight.toDouble())
             ctx.drawImage(
                 canvas,
-                r.left.toDouble(), r.top.toDouble(), r.width.toDouble(), r.height.toDouble(),
-                0.0, 0.0, r.width.toDouble(), r.height.toDouble(),
+                physLeft.toDouble(), physTop.toDouble(), physWidth.toDouble(), physHeight.toDouble(),
+                0.0, 0.0, physWidth.toDouble(), physHeight.toDouble(),
             )
         }
     }

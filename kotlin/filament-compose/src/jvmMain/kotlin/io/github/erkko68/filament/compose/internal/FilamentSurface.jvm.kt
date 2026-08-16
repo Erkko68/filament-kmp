@@ -54,8 +54,13 @@ private const val SLOT_DISPLAYED = 3
  * readbacks pipeline with rendering. Calls FilamentC directly to keep the segment-based
  * readPixels fast path private to this file instead of widening the public bindings.
  */
-private class Readback(val width: Int, val height: Int) {
-    val imageInfo = ImageInfo(width, height, ColorType.RGBA_8888, ColorAlphaType.OPAQUE)
+private class Readback(val width: Int, val height: Int, transparent: Boolean = false) {
+    val imageInfo = ImageInfo(
+        width,
+        height,
+        ColorType.RGBA_8888,
+        if (transparent) ColorAlphaType.PREMUL else ColorAlphaType.OPAQUE
+    )
 
     class Slot(sizeInBytes: Int) {
         val data: Data = Data.makeUninitialized(sizeInBytes)
@@ -160,6 +165,7 @@ internal actual fun FilamentSurface(
     engine: Engine,
     renderer: Renderer,
     view: View,
+    transparent: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
@@ -198,7 +204,7 @@ internal actual fun FilamentSurface(
         }
     }
 
-    DisposableEffect(textureSize) {
+    DisposableEffect(textureSize, transparent) {
         val w = textureSize.width
         val h = textureSize.height
 
@@ -206,7 +212,7 @@ internal actual fun FilamentSurface(
             val swapChain = engine.createSwapChain(w, h, SWAP_CHAIN_CONFIG_READABLE)
             view.viewport = Viewport(0, 0, w, h)
             onResizeRef.value?.invoke(w.toDouble() / h.toDouble())
-            surface = OffscreenSurface(swapChain, Readback(w, h))
+            surface = OffscreenSurface(swapChain, Readback(w, h, transparent))
         }
 
         onDispose {

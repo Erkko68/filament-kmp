@@ -1,11 +1,11 @@
 package io.github.erkko68.filament
 
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
 import io.github.erkko68.filament.web.Engine as JSEngine
 import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
 import io.github.erkko68.filament.web.EngineCreateOptions
-import io.github.erkko68.filament.web.interop.emptyJsObject
 import io.github.erkko68.filament.web.interop.jsSetBoolean
 import org.w3c.dom.HTMLCanvasElement
 
@@ -357,6 +357,12 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         actual fun create(sharedContext: Any): Engine =
             create(sharedContext as? HTMLCanvasElement ?: offscreenCanvas(), null, null)
 
+        /**
+         * `Engine.create` builds the WebGL context with `alpha: false` by default, which makes
+         * every frame opaque no matter what the View blend mode is. Always request an alpha
+         * channel — an opaque render still writes alpha 1, so this only adds the option of
+         * transparency.
+         */
         private fun create(
             canvas: HTMLCanvasElement,
             backend: Backend?,
@@ -364,7 +370,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             features: Map<String, Boolean> = emptyMap(),
             colorGrading: ColorGrading.Builder? = null,
         ): Engine {
-            val options = emptyJsObject().unsafeCast<EngineCreateOptions>()
+            val options = emptyJsObject().unsafeCast<EngineCreateOptions>().apply { alpha = true }
             backend?.let { options.backend = toJsBackend(it) }
             colorGrading?.let { options.colorGrading = it.jsBuilder }
             if (features.isNotEmpty()) {

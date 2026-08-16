@@ -60,6 +60,50 @@ data class Exposure(
     val sensitivity: Float = 100f,
 )
 
+// ── Public: lens shift and scaling ───────────────────────────────────────────
+
+/**
+ * Lens shift — moves the projection off-axis without rotating the camera, in units of half the
+ * viewport (`1` shifts by a full half-width/height). Used for tilt-shift looks, and for keeping
+ * verticals parallel in architectural shots.
+ *
+ * Distinct from [LensScaling] for the same reason [Position] is distinct from [Direction]: both
+ * are float pairs on the projection and trivially swapped by accident.
+ */
+@Immutable
+data class LensShift(val x: Float, val y: Float) {
+    /** From a filament-utils [Float2]. */
+    constructor(v: Float2) : this(v.x, v.y)
+
+    fun toFloat2() = Float2(x, y)
+
+    companion object {
+        /** No shift — the projection stays centred. */
+        val None = LensShift(0f, 0f)
+    }
+}
+
+/**
+ * Projection scaling — multiplies the projection along each axis. `2` on one axis zooms that axis
+ * in; unequal values give an anamorphic squeeze.
+ *
+ * Not to be confused with [Scale], which sizes an object in the scene; this reshapes the frustum.
+ */
+@Immutable
+data class LensScaling(val x: Float, val y: Float) {
+    /** Uniform on both axes. */
+    constructor(v: Float) : this(v, v)
+    /** From a filament-utils [Float2]. */
+    constructor(v: Float2) : this(v.x, v.y)
+
+    fun toFloat2() = Float2(x, y)
+
+    companion object {
+        /** Unscaled — the projection Filament computes from the [Projection] alone. */
+        val Identity = LensScaling(1f, 1f)
+    }
+}
+
 // ── Hoisted state ─────────────────────────────────────────────────────────────
 
 /**
@@ -93,8 +137,8 @@ class CameraState internal constructor(
     initialProjection: Projection,
     initialExposure: Exposure,
     initialFocusDistance: Float,
-    initialShift: Float2,
-    initialScaling: Float2,
+    initialShift: LensShift,
+    initialScaling: LensScaling,
 ) {
     var eye:        Position   by mutableStateOf(initialEye)
     var target:     Position   by mutableStateOf(initialTarget)
@@ -107,8 +151,11 @@ class CameraState internal constructor(
      * `PostProcessing(depthOfField = …)` to place the focal plane. Ignored without DoF.
      */
     var focusDistance: Float   by mutableStateOf(initialFocusDistance)
-    var shift:      Float2     by mutableStateOf(initialShift)
-    var scaling:    Float2     by mutableStateOf(initialScaling)
+    /** Off-axis lens shift; [LensShift.None] leaves the projection centred. */
+    var shift:      LensShift  by mutableStateOf(initialShift)
+
+    /** Per-axis projection scaling; [LensScaling.Identity] leaves the frustum as computed. */
+    var scaling:    LensScaling by mutableStateOf(initialScaling)
 
     internal var attachedCamera: FilamentCamera? = null
     internal var aspect: Double = 1.0
@@ -126,6 +173,11 @@ class CameraState internal constructor(
         if (attachedCamera == camera) attachedCamera = null
     }
 
+    // Scratch buffers for the matrix getters — one CameraState is attached to one view (see
+    // attach), so reads are single-threaded. Saves the array alloc, not the Mat4 alloc.
+    private val tmpViewArray = FloatArray(16)
+    private val tmpProjArray = DoubleArray(16)
+
     /**
      * View matrix (world→view) computed by Filament. Null until this state is attached to a
      * [io.github.erkko68.filament.compose.FilamentView].
@@ -134,7 +186,7 @@ class CameraState internal constructor(
      * reading it repeatedly in a hot loop.
      */
     val viewMatrix: Mat4?
-        get() = attachedCamera?.getViewMatrix(null as FloatArray?)?.toMat4()
+        get() = attachedCamera?.getViewMatrix(tmpViewArray)?.toMat4()
 
     /**
      * Projection matrix (view→clip) computed by Filament. Null until this state is attached to a
@@ -145,7 +197,7 @@ class CameraState internal constructor(
      * (`viewState.view?.camera?.getProjectionMatrix()`).
      */
     val projectionMatrix: Mat4?
-        get() = attachedCamera?.getProjectionMatrix(null as DoubleArray?)?.toMat4()
+        get() = attachedCamera?.getProjectionMatrix(tmpProjArray)?.toMat4()
 
     internal fun snapshot(): CameraSnapshot =
         CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
@@ -162,8 +214,8 @@ internal data class CameraSnapshot(
     val projection: Projection,
     val exposure: Exposure,
     val focusDistance: Float,
-    val shift: Float2,
-    val scaling: Float2,
+    val shift: LensShift,
+    val scaling: LensScaling,
 ) {
     fun applyTo(camera: FilamentCamera, aspect: Double) {
         camera.lookAt(
@@ -203,8 +255,8 @@ fun rememberCameraState(
     initialProjection: Projection = Projection.Perspective(),
     initialExposure: Exposure = Exposure(),
     initialFocusDistance: Float = 10f,
-    initialShift: Float2 = Float2(0f, 0f),
-    initialScaling: Float2 = Float2(1f, 1f),
+    initialShift: LensShift = LensShift.None,
+    initialScaling: LensScaling = LensScaling.Identity,
 ): CameraState = remember {
     CameraState(initialEye, initialTarget, initialUp, initialProjection, initialExposure,
         initialFocusDistance, initialShift, initialScaling)

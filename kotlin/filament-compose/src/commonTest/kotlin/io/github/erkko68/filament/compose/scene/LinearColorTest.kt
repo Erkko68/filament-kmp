@@ -65,4 +65,13 @@ class LinearColorTest {
     fun toComposeColorClampsOverbright() {
         assertEquals(1f, LinearColor(4f, 4f, 4f).toComposeColor().red, 1e-5f)
     }
+
+    // sRGB 0x80 (0.50196) -> linear ((0.50196 + 0.055) / 1.055)^2.4 = 0.21586
+    @Test
+    fun toLinearColorAppliesSrgbTransfer() {
+        val linear = ComposeColor(0xFF808080).toLinearColor()
+        assertEquals(0.21586f, linear.r, 1e-4f)
+        assertEquals(0.21586f, linear.g, 1e-4f)
+        assertEquals(0.21586f, linear.b, 1e-4f)
+    }
 }

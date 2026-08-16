@@ -11,6 +11,7 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.utils.TextureLoader
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -43,7 +44,7 @@ import kotlin.coroutines.cancellation.CancellationException
 fun rememberMaterial(
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     load: suspend () -> ByteArray,
 ): Material? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {
@@ -119,7 +120,7 @@ fun rememberTexture(
     type: TextureLoader.TextureType = TextureLoader.TextureType.COLOR,
     key: Any = Unit,
     onError: ((Throwable) -> Unit)? = null,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     load: suspend () -> ByteArray,
 ): Texture? {
     val bytes by produceState<ByteArray?>(initialValue = null, key) {
@@ -186,18 +187,13 @@ internal fun rememberTexture(
 @Composable
 fun rememberMaterialInstance(
     material: Material?,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance? {
-    val instance = remember(material) {
-        material?.createInstance()
-    }
+    if (material == null) return null
+    val instance = remember(material) { material.createInstance() }
 
-    if (instance != null) {
-        DisposableEffect(instance) {
-            onDispose {
-                engine.destroyMaterialInstance(instance)
-            }
-        }
+    DisposableEffect(instance) {
+        onDispose { engine.destroyMaterialInstance(instance) }
     }
 
     return instance
@@ -234,7 +230,7 @@ fun rememberMaterialInstance(
 fun rememberMaterialInstance(
     material: Material?,
     vararg keys: Any?,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     configure: MaterialInstance.() -> Unit,
 ): MaterialInstance? {
     if (material == null) return null
@@ -250,7 +246,7 @@ fun rememberMaterialInstance(
 internal fun rememberConfiguredMaterialInstance(
     material: Material,
     vararg keys: Any?,
-    engine: Engine = LocalFilamentEngine.current,
+    engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     configure: MaterialInstance.() -> Unit,
 ): MaterialInstance {
     val instance = remember(material) {
