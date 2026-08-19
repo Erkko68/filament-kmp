@@ -18,12 +18,12 @@ import io.github.erkko68.filament.compose.scene.Scale
  *
  * @param material  The material to apply to every face, or null while it is still loading
  *   (nothing renders until it arrives). Use [rememberMaterial] + [rememberMaterialInstance].
+ * @param size      Edge length in mesh space. The mesh is rebuilt when this changes.
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation. Build one with [Rotation.axisAngle]/[Rotation.euler].
  * @param scale     Per-axis scale applied after [size].
  * @param pivot     Point in mesh space that rotation/scale revolve around and that ends up at
  *   [position]. Defaults to the cube centre.
- * @param size      Edge length in mesh space. The mesh is rebuilt when this changes.
  * @param visible   Whether this renderable is in the scene. False removes it from the
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the cube casts shadows onto other renderables. On by default.
@@ -34,11 +34,11 @@ import io.github.erkko68.filament.compose.scene.Scale
 @Composable
 fun FilamentSceneScope.Cube(
     material: MaterialInstance?,
+    size: Float = 1f,
     position: Position = Position(0f),
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    size: Float = 1f,
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,

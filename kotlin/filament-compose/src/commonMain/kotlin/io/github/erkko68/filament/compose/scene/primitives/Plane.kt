@@ -17,14 +17,14 @@ import io.github.erkko68.filament.compose.scene.Scale
  * requiring a `doubleSided` material.
  *
  * @param material  Material applied to both faces, or null while it is still loading.
- * @param position  World-space position of the [pivot] point.
- * @param rotation  World-space rotation. Use this to make a wall or a ceiling.
- * @param scale     Per-axis scale.
- * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the plane centre.
  * @param width     Size along the X axis in mesh space.
  * @param depth     Size along the Z axis in mesh space.
  * @param doubleSided  When true (default) the mesh has both faces. Set false to omit the back
  *   side when you know nothing will ever look at it from below.
+ * @param position  World-space position of the [pivot] point.
+ * @param rotation  World-space rotation. Use this to make a wall or a ceiling.
+ * @param scale     Per-axis scale.
+ * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the plane centre.
  * @param visible   Whether this renderable is in the scene. False removes it from the
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the plane casts shadows onto other renderables. On by default;
@@ -35,13 +35,13 @@ import io.github.erkko68.filament.compose.scene.Scale
 @Composable
 fun FilamentSceneScope.Plane(
     material: MaterialInstance?,
+    width: Float = 1f,
+    depth: Float = 1f,
+    doubleSided: Boolean = true,
     position: Position = Position(0f),
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    width: Float = 1f,
-    depth: Float = 1f,
-    doubleSided: Boolean = true,
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,

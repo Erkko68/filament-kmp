@@ -456,7 +456,7 @@ public final class io/github/erkko68/filament/compose/scene/GltfAssetKt {
 }
 
 public final class io/github/erkko68/filament/compose/scene/GltfInstanceKt {
-	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FLjava/lang/Boolean;Ljava/lang/Boolean;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun GltfInstance (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/compose/scene/GltfAsset;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Ljava/lang/Integer;FLio/github/erkko68/filament/compose/scene/AnimationState;[FZLjava/lang/Boolean;Ljava/lang/Boolean;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public abstract interface class io/github/erkko68/filament/compose/scene/GltfInstanceScope {
@@ -1190,22 +1190,22 @@ public final class io/github/erkko68/filament/compose/scene/Vignette {
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/CubeKt {
-	public static final fun Cube (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Cube (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;FLio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/CylinderKt {
-	public static final fun Cylinder (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FFIZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Cylinder (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;FFILio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/MeshKt {
-	public static final fun Mesh (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;[F[F[F[ILio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/Box;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Mesh (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;[F[F[F[ILio/github/erkko68/filament/Box;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/PlaneKt {
-	public static final fun Plane (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FFZZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Plane (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;FFZLio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/github/erkko68/filament/compose/scene/primitives/SphereKt {
-	public static final fun Sphere (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;Lio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;FIIZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
+	public static final fun Sphere (Lio/github/erkko68/filament/compose/FilamentSceneScope;Lio/github/erkko68/filament/MaterialInstance;FIILio/github/erkko68/filament/compose/scene/Position;Lio/github/erkko68/filament/compose/scene/Rotation;Lio/github/erkko68/filament/compose/scene/Scale;Lio/github/erkko68/filament/compose/scene/Position;ZZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
