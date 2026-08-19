@@ -416,14 +416,36 @@ cross-cutting patterns. For *what each composable is*, follow the API reference.
 
 Pure-Kotlin mesh primitives (`Cube`, `Sphere`, `Cylinder`, `Plane`, `Mesh`) build a
 `VertexBuffer`/`IndexBuffer` and a single-primitive renderable internally. Place them inside
-`rememberFilamentScene { }`. Every primitive accepts the same transform set — `position`,
-`rotation`, `scale`, `pivot` — plus an `onCreate: EntityScope.() -> Unit` callback that fires once
-the renderable is added to the scene, with the created `entity` and the `engine` in scope (use it
-to register the entity with `view.pick` callbacks).
-They also take `castShadows`/`receiveShadows` (both default `true`) — set `castShadows = false` on a
-pure ground/receiver `Plane` to avoid it shadowing itself. When wrapped in a `Group { }` the
-primitive's transform becomes local to the group. `Mesh` is the escape hatch for custom triangle
-geometry the built-in primitives don't cover.
+`rememberFilamentScene { }`.
+
+All five read in the same order — **material → shape → transform → flags → `onCreate`**:
+
+```kotlin
+Cylinder(
+    material = brass,                       // what it looks like
+    radius = 0.3f, height = 2f,             // what it is — rebuilds the mesh when it changes
+    position = Position(0f, 1f, 0f),        // where it goes: position, rotation, scale, pivot
+    rotation = Rotation.axisAngle(Direction.Right, 90f),
+    visible = true, castShadows = true, receiveShadows = true,
+    onCreate = { /* entity + engine in scope */ },
+)
+```
+
+The shape parameters differ per primitive (`Cube`: `size`; `Sphere`: `radius`, `rings`, `segments`;
+`Cylinder`: `radius`, `height`, `segments`; `Plane`: `width`, `depth`, `doubleSided`; `Mesh`:
+`positions`, `normals`, `uvs`, `indices`, `boundingBox`) and changing one rebuilds the mesh, while
+changing a transform only updates it in place. Everything after them is shared:
+
+- `position`/`rotation`/`scale`/`pivot` — inside a `Group { }` these become local to the group.
+- `visible` — removes the renderable from the scene without destroying it, so toggling is cheap and
+  entity identity survives.
+- `castShadows`/`receiveShadows` (both `true`) — set `castShadows = false` on a pure ground/receiver
+  `Plane` to avoid it shadowing itself.
+- `onCreate: EntityScope.() -> Unit` — fires once when the renderable is added to the scene, with the
+  created `entity` and the `engine` in scope (use it to register the entity with `view.pick`).
+
+`Mesh` is the escape hatch for custom triangle geometry the built-in primitives don't cover; its
+geometry arrays are compared by content, so re-creating identical arrays doesn't re-upload them.
 
 ### Environment
 
@@ -510,5 +532,9 @@ FilamentView(
 ```
 
 Per-light shadow-map quality (resolution, bias, cascades, penumbra size) is set separately via each
-light's `shadow = ShadowConfig(...)`. Soft shadows need both halves: a `Shadows.Pcss`/`Shadows.Dpcf`
-technique on the view *and* a `ShadowConfig.bulbRadius` on the casting light.
+light's `shadow = ShadowConfig(...)`; passing `null` means that light casts no shadow. Soft shadows
+come from the view technique — `Shadows.Dpcf` or `Shadows.Pcss`. Under PCSS the penumbra size is
+physical, driven by each light's `ShadowConfig.bulbRadius` (the light-bulb radius in world units).
+The default is negative, which lets Filament pick per light type — `1.0` for directional, `0.06` (an
+A19 bulb) for spot, and the sun's angular radius × halo size for `SunLight`. Set it explicitly only
+to make one light's shadows deliberately softer or sharper than physically correct.

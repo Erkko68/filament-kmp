@@ -9,7 +9,7 @@ repeat runs skip the download.
 | [`ci.yml`](ci.yml) | **push to `main`** and **every PR** (no path filters — docs included); **manual dispatch** (job picker) | One job per platform (jvm matrix / js / wasm / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
 | [`status-{jvm,js,wasm,ios,android}.yml`](status-jvm.yml) | `workflow_run` after **CI** completes on `main` | Reflect each platform job's conclusion from the latest `main` CI run into their own conclusion, powering the per-platform README badges. A *skipped* job (verified-merge, see below) counts as passing — only a real failure turns a badge red. |
 | [`pages.yml`](pages.yml) | push to `main` touching the web target (`web/**`, `kotlin/**/src/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and deploys it to GitHub Pages. Already scoped to web-relevant paths, so docs changes never trigger it. |
-| [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central. See [Releasing](#releasing) below. |
+| [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central, then cuts the matching GitHub release with that version's CHANGELOG section as its notes. See [Releasing](#releasing) below. |
 
 ## Running CI
 
@@ -70,6 +70,14 @@ git push origin 0.3.0
 
 The tag's name becomes the published version (passed to Gradle as `-PlibVersion=${tag}`),
 so the tag and `gradle.properties` should match.
+
+Once Maven Central succeeds, the last step creates the **GitHub release** for that tag, using the
+tag's own `## [<version>]` section of [CHANGELOG.md](../../CHANGELOG.md) as the release notes — so
+the changelog is the single source of truth and nothing is written twice. It runs only on a tag
+push (a `workflow_dispatch` run has no tag to hang a release off), and if the changelog has no
+section for that version it logs a warning and falls back to GitHub's generated notes rather than
+publishing an empty release. Re-running a publish for a tag that already has a release will fail on
+this step — delete the release first, or edit it by hand.
 
 ### Required secrets
 

@@ -94,7 +94,7 @@ fun LightingScene(onBack: () -> Unit) {
                 LightKind.Directional -> DirectionalLight(
                     direction = dir,
                     intensity = LightIntensity.LuminousPower(intensity * 150_000f),
-                    shadow    = if (shadows) ShadowConfig(mapSize = 4096, bulbRadius = 0.03f) else null,
+                    shadow    = if (shadows) ShadowConfig(mapSize = 4096) else null,
                 )
                 LightKind.Point -> PointLight(
                     position  = Position(0f, 4f, 2f),
@@ -108,7 +108,7 @@ fun LightingScene(onBack: () -> Unit) {
                     intensity = LightIntensity.LuminousPower(intensity * 30_000_000f),
                     falloff   = 30f,
                     cone      = SpotCone(innerAngle = coneOuter * 0.6f, outerAngle = coneOuter),
-                    shadow    = if (shadows) ShadowConfig(mapSize = 4096, bulbRadius = 0.05f) else null,
+                    shadow    = if (shadows) ShadowConfig(mapSize = 4096) else null,
                 )
             }
 

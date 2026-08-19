@@ -21,13 +21,13 @@ import kotlin.math.sin
  * `4 * (segments + 1)` vertices and `4 * segments` triangles.
  *
  * @param material  Material applied to side and caps, or null while it is still loading.
+ * @param radius    Cylinder radius in mesh space.
+ * @param height    Full height along Y in mesh space.
+ * @param segments  Number of radial subdivisions. Minimum 3.
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation.
  * @param scale     Per-axis scale.
  * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the cylinder centre.
- * @param radius    Cylinder radius in mesh space.
- * @param height    Full height along Y in mesh space.
- * @param segments  Number of radial subdivisions. Minimum 3.
  * @param visible   Whether this renderable is in the scene. False removes it from the
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the cylinder casts shadows onto other renderables. On by default.
@@ -37,13 +37,13 @@ import kotlin.math.sin
 @Composable
 fun FilamentSceneScope.Cylinder(
     material: MaterialInstance?,
+    radius: Float = 0.5f,
+    height: Float = 1f,
+    segments: Int = 32,
     position: Position = Position(0f),
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    radius: Float = 0.5f,
-    height: Float = 1f,
-    segments: Int = 32,
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,
