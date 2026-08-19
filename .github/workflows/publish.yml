@@ -78,6 +78,8 @@ jobs:
   publish:
     needs: build-natives
     runs-on: macos-latest
+    permissions:
+      contents: write   # gh release create
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
@@ -139,3 +141,26 @@ jobs:
             :kotlin:filament-compose:publishAllPublicationsToMavenCentralRepository \
             :web:publishAllPublicationsToMavenCentralRepository \
             --no-configuration-cache
+
+      # ── GitHub release ──────────────────────────────────────────────────────
+      # Only after Maven Central succeeded, and only for a real tag push — a
+      # dispatch run has no tag to hang a release off. Notes are the tag's own
+      # CHANGELOG section; a missing section falls back to generated notes
+      # rather than publishing an empty release.
+      - name: Create GitHub release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { f = 1; next }
+            f && /^## \[/ { exit }
+            f { print }
+          ' CHANGELOG.md > release-notes.md
+          if [ -s release-notes.md ]; then
+            gh release create "$VERSION" --title "$VERSION" --notes-file release-notes.md
+          else
+            echo "::warning::no CHANGELOG section for $VERSION — using generated notes"
+            gh release create "$VERSION" --title "$VERSION" --generate-notes
+          fi

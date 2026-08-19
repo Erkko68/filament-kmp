@@ -16,7 +16,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 ## [0.4.0] — 2026-08-19
 
 ### Added
-- **Filament 1.75.0**: Upgraded bundled Filament engine to 1.75.0 and recompiled the embedded standard, test, and sample `.filamat` materials for `MATERIAL_VERSION 75`. Newly bound: `EntityManager.advanceEpoch()`, `EntityManager.getMaxEntityCount()`, `AssetLoader.gc()`. 1.75's new per-light PCSS controls (`penumbraScale`, `penumbraRatioScale`, `maxPenumbraRatio`, `maxSearchRadius`) and the matching `SoftShadowOptions` globals are C++-only upstream — Filament's own Android binding doesn't expose them, so there is nothing to mirror yet.
+- **Filament 1.75.0**: Upgraded bundled Filament engine to 1.75.0. `MATERIAL_VERSION` went **74 → 75**, so every embedded standard, test, and sample `.filamat` was recompiled — **if you ship your own compiled materials you must recompile them with 1.75.0's `matc`**, since the engine rejects a `.filamat` built by a different `matc` version. Newly bound: `EntityManager.advanceEpoch()`, `EntityManager.getMaxEntityCount()`, `AssetLoader.gc()`. 1.75's new per-light PCSS controls (`penumbraScale`, `penumbraRatioScale`, `maxPenumbraRatio`, `maxSearchRadius`) and the matching `SoftShadowOptions` globals are C++-only upstream — Filament's own Android binding doesn't expose them, so there is nothing to mirror yet.
 - **`LensShift` / `LensScaling`** (`filament-compose`): typed replacements for the raw `Float2` that `CameraState.shift` and `CameraState.scaling` used to take — the last two float-tuples in the Compose surface that weren't wrapped, and the two easiest to swap by accident. `LensShift.None` and `LensScaling.Identity` name the defaults; both convert to and from `Float2` for filament-utils math.
 - **`Color.toLinearColor()`** (`filament-compose`): extension converting a Compose UI `Color` to a scene-space `LinearColor`, applying the sRGB→linear transfer. Covers ARGB ints through Compose's own `Color(0xFF2196F3)` constructor.
 - **Transparent views** (`filament-compose`): `FilamentView`/`FilamentSceneView` take `transparent = true`, which renders the 3D content over the Compose UI behind it instead of over an opaque background. Each platform needed a different surface: Android swaps `SurfaceView` for a non-opaque `TextureView` with a `CONFIG_TRANSPARENT` swapchain, iOS makes the `CAMetalLayer` non-opaque and hosts the interop view with `placedAsOverlay` (a plain interop view has Compose punch a hole that erases everything drawn behind it), web moves the per-view canvas in front of the Compose canvas with no hole-punch, and JVM reads back `PREMUL` instead of `OPAQUE` alpha. On top of that the view gets `BlendMode.TRANSLUCENT` and an explicit `clear = true`, alpha-0 `ClearOptions` — the default (`clear = false`, `discard = true`) leaves untouched swapchain pixels undefined, which renders as opaque garbage. Because the surface type is fixed at creation, toggling the flag rebuilds the surface. See [Compose integration strategies → Transparency](docs/compose/integration-strategies.md#transparency) and the new `Transparency (GLB)` sample.
@@ -41,7 +41,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Migration from `0.3.1`
 
-Everything below is source-breaking only for **positional** callers; named arguments are unaffected.
+**Recompile your materials.** `MATERIAL_VERSION` went 74 → 75 with Filament 1.75.0: any `.filamat` you ship must be rebuilt with 1.75.0's `matc` or the engine will reject it at load. The built-in `StandardMaterial`s need nothing — they ship recompiled.
+
+The API changes below are source-breaking only for **positional** callers; named arguments are unaffected.
 
 | Old | New |
 |---|---|
