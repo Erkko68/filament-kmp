@@ -147,7 +147,7 @@ strip_comments() {
 # require a `public` modifier the way METHOD does.
 extract_java_surface() {
   awk '
-    BEGIN { depth = 0; scope[0] = "file" }
+    BEGIN { depth = 0; scope[0] = "file"; cname[0] = "" }
     {
       line = $0
 
@@ -156,26 +156,30 @@ extract_java_surface() {
       # Any visibility — scope tracking needs package-private types too.
       # No \b here: the awk shipped on macOS does not implement it.
       declares_type = match(line, /(^|[ \t])(class|interface|enum|@interface)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)
-      if (declares_type) pending_type = 1
+      if (declares_type) {
+        decl = substr(line, RSTART, RLENGTH)
+        n = split(decl, parts, /[ \t]+/)
+        pending_type = 1; pending_name = parts[n]
+      }
 
       if (declares_type && match(line, /(public|protected)[ \t]+([a-z]+[ \t]+)*(class|interface|enum|@interface)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)) {
         decl = substr(line, RSTART, RLENGTH)
         n = split(decl, parts, /[ \t]+/)
-        printf "NESTED\t%s\t%d\n", parts[n], dep; dep = 0
+        printf "NESTED\t%s\t%d\t%s\n", parts[n], dep, cname[depth]; dep = 0
       }
       # Enum constants / annotation-typedef constants: indented ALL_CAPS
       # identifier immediately followed by "," ";" "(" or "=".
       else if (scope[depth] == "class" && match(line, /^[ \t]+[A-Z][A-Z0-9_]{2,}[ \t]*[,;(=]/)) {
         id = substr(line, RSTART, RLENGTH)
         gsub(/[^A-Z0-9_]/, "", id)
-        printf "CONST\t%s\t%d\n", id, dep; dep = 0
+        printf "CONST\t%s\t%d\t%s\n", id, dep, cname[depth]; dep = 0
       }
       # Public methods: permissive about modifiers/return type, require "(".
       else if (match(line, /public[ \t]+(static[ \t]+)?(final[ \t]+)?(synchronized[ \t]+)?(abstract[ \t]+)?(native[ \t]+)?([A-Za-z_][A-Za-z0-9_<>\[\],?@. \t]*[ \t]+)?[A-Za-z_][A-Za-z0-9_]*[ \t]*\(/)) {
         sig = substr(line, RSTART, RLENGTH)
         sub(/[ \t]*\($/, "", sig)
         n = split(sig, parts, /[ \t]+/)
-        printf "METHOD\t%s\t%d\n", parts[n], dep; dep = 0
+        printf "METHOD\t%s\t%d\t%s\n", parts[n], dep, cname[depth]; dep = 0
       }
       # Fields: `[modifiers] Type name` terminated by "=" or ";", at class
       # scope, with no "(" on the line (which would make it a method or a
@@ -185,7 +189,7 @@ extract_java_surface() {
         decl = substr(line, RSTART, RLENGTH)
         sub(/[ \t]*(\[\])?[ \t]*[=;]$/, "", decl)
         n = split(decl, parts, /[ \t]+/)
-        printf "FIELD\t%s\t%d\n", parts[n], dep; dep = 0
+        printf "FIELD\t%s\t%d\t%s\n", parts[n], dep, cname[depth]; dep = 0
       }
 
       # Brace accounting, after the emit so a declaration is judged in the
@@ -193,8 +197,15 @@ extract_java_surface() {
       rest = line
       while (length(rest) > 0) {
         c = substr(rest, 1, 1)
-        if (c == "{") { depth++; scope[depth] = pending_type ? "class" : "block"; pending_type = 0 }
-        else if (c == "}") { if (depth > 0) delete scope[depth]; if (depth > 0) depth-- }
+        if (c == "{") {
+          depth++
+          scope[depth] = pending_type ? "class" : "block"
+          cname[depth] = pending_type ? pending_name : cname[depth - 1]
+          pending_type = 0
+        }
+        else if (c == "}") {
+          if (depth > 0) { delete scope[depth]; delete cname[depth]; depth-- }
+        }
         rest = substr(rest, 2)
       }
     }
@@ -273,11 +284,22 @@ for entry in "${MODULES[@]}"; do
     fi
 
     file_out=""
-    while IFS=$'\t' read -r kind name dep; do
+    while IFS=$'\t' read -r kind name dep owner; do
       [[ -z "$name" ]] && continue
       [[ "$name" =~ $SKIP_NAMES_REGEX ]] && continue
       [[ "$name" == "$classname" ]] && continue
       is_ignored "$classname.$name" && continue
+      # Members of an ignored nested type are ignored with it: suppressing
+      # `Renderer.FrameInfo` has to suppress FrameInfo's fields too.
+      if [[ -n "$owner" && "$owner" != "$classname" ]]; then
+        is_ignored "$classname.$owner" && continue
+        is_ignored "$owner" && continue
+        is_ignored "$owner.$name" && continue
+      fi
+      # Qualify the report when the member comes from a nested type — `View`
+      # alone has maxPenumbraRatio in two different option structs.
+      label="$name"
+      [[ -n "$owner" && "$owner" != "$classname" ]] && label="$owner.$name"
 
       case "$kind" in
         NESTED|CONST|FIELD)
@@ -305,10 +327,10 @@ for entry in "${MODULES[@]}"; do
       esac
 
       if [[ "$dep" == "1" ]]; then
-        file_out="${file_out}    $(printf '%-8s' "$kind") ${name}  (deprecated upstream)"$'\n'
+        file_out="${file_out}    $(printf '%-8s' "$kind") ${label}  (deprecated upstream)"$'\n'
         module_deprecated=$((module_deprecated + 1))
       else
-        file_out="${file_out}    $(printf '%-8s' "$kind") ${name}"$'\n'
+        file_out="${file_out}    $(printf '%-8s' "$kind") ${label}"$'\n'
         module_missing=$((module_missing + 1))
       fi
     done <<< "$surface"
@@ -334,7 +356,8 @@ if [[ $TOTAL_MISSING -gt 0 ]]; then
   echo "Tip: each entry is public Filament Android API surface with no matching"
   echo "identifier in the KMP commonMain expects. Either:"
   echo "  - add the expect (and the four actuals: jvm/android/native/js), or"
-  echo "  - confirm it doesn't apply to KMP and add 'Class' or 'Class.member' to"
+  echo "  - confirm it doesn't apply to KMP and add 'Class', 'Class.member' or
+    'Class.NestedType' (which also suppresses that type's members) to"
   echo "    scripts/dev/check-common-api-ignores.txt (with a comment saying why)."
   exit 1
 fi
