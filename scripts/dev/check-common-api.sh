@@ -15,6 +15,11 @@
 #                   commonMain.
 #   4. METHOD     — every public Java method name is referenced in commonMain
 #                   (property-bridged: getFoo/setFoo/isFoo ↔ foo).
+#   5. FIELD      — every non-private field exists in commonMain. Filament's
+#                   option structs (ShadowOptions, FogOptions, Engine.Config)
+#                   expose state as bare fields rather than accessors, so
+#                   without this the contents of every value struct went
+#                   unchecked. Fields prefixed `m` are treated as internal.
 #
 # Kotlin sources are tokenized with comments stripped first, so a method that
 # is only *mentioned in KDoc* no longer counts as covered (it used to).
@@ -51,7 +56,9 @@ declare -a MODULES=(
 #   - JNI plumbing (n*, native objects, nativeObject, getNativeObject, finalize)
 #   - Object overrides (hashCode, equals, toString)
 #   - Internal lifecycle (clearNativeObject)
-SKIP_NAMES_REGEX='^(n[A-Z]|nativeObject$|getNativeObject$|finalize$|hashCode$|equals$|toString$|clearNativeObject$|access\$)'
+#   - Filament's own member/static field conventions (mFoo, sFoo) — always
+#     implementation detail, never public surface
+SKIP_NAMES_REGEX='^(n[A-Z]|m[A-Z]|s[A-Z]|nativeObject$|getNativeObject$|finalize$|hashCode$|equals$|toString$|clearNativeObject$|access\$)'
 
 # Java classes we never want to compare (Android-only / not applicable to KMP):
 #   - NioUtils, Platform*, NativeSurface, SwapChainFlags: infra plumbing
@@ -130,31 +137,66 @@ strip_comments() {
 
 # Emit "KIND<TAB>name<TAB>deprecated-flag" lines for a Java source on stdin.
 # Kinds: NESTED (public nested type), CONST (enum constant / ALL_CAPS public
-# constant), METHOD (public method). Comments are already stripped.
-# A pending @Deprecated annotation marks the next emitted member.
+# constant), FIELD (non-private instance/static field), METHOD (public method).
+# Comments are already stripped. A pending @Deprecated marks the next member.
+#
+# Brace depth is tracked so that FIELD and CONST only fire at class scope —
+# without it every local variable in a method body would look like a field.
+# Filament's option structs (ShadowOptions, FogOptions, Engine.Config, …)
+# expose their state as bare package-private fields, which is why FIELD cannot
+# require a `public` modifier the way METHOD does.
 extract_java_surface() {
   awk '
-    { line = $0 }
-    /@Deprecated/ { dep = 1 }
-    # Public nested types (top-level class filtered out by caller).
-    match(line, /(public|protected)[ \t]+([a-z]+[ \t]+)*(class|interface|enum|@interface)[ \t]+[A-Za-z_][A-Za-z0-9_]*/) {
-      decl = substr(line, RSTART, RLENGTH)
-      n = split(decl, parts, /[ \t]+/)
-      printf "NESTED\t%s\t%d\n", parts[n], dep; dep = 0; next
-    }
-    # Enum constants / annotation-typedef constants: indented ALL_CAPS
-    # identifier immediately followed by "," ";" "(" or "=".
-    match(line, /^[ \t]+[A-Z][A-Z0-9_]{2,}[ \t]*[,;(=]/) {
-      id = substr(line, RSTART, RLENGTH)
-      gsub(/[^A-Z0-9_]/, "", id)
-      printf "CONST\t%s\t%d\n", id, dep; dep = 0; next
-    }
-    # Public methods: permissive about modifiers/return type, require "(".
-    match(line, /public[ \t]+(static[ \t]+)?(final[ \t]+)?(synchronized[ \t]+)?(abstract[ \t]+)?(native[ \t]+)?([A-Za-z_][A-Za-z0-9_<>\[\],?@. \t]*[ \t]+)?[A-Za-z_][A-Za-z0-9_]*[ \t]*\(/) {
-      sig = substr(line, RSTART, RLENGTH)
-      sub(/[ \t]*\($/, "", sig)
-      n = split(sig, parts, /[ \t]+/)
-      printf "METHOD\t%s\t%d\n", parts[n], dep; dep = 0; next
+    BEGIN { depth = 0; scope[0] = "file" }
+    {
+      line = $0
+
+      if (line ~ /@Deprecated/) dep = 1
+
+      # Any visibility — scope tracking needs package-private types too.
+      # No \b here: the awk shipped on macOS does not implement it.
+      declares_type = match(line, /(^|[ \t])(class|interface|enum|@interface)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)
+      if (declares_type) pending_type = 1
+
+      if (declares_type && match(line, /(public|protected)[ \t]+([a-z]+[ \t]+)*(class|interface|enum|@interface)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)) {
+        decl = substr(line, RSTART, RLENGTH)
+        n = split(decl, parts, /[ \t]+/)
+        printf "NESTED\t%s\t%d\n", parts[n], dep; dep = 0
+      }
+      # Enum constants / annotation-typedef constants: indented ALL_CAPS
+      # identifier immediately followed by "," ";" "(" or "=".
+      else if (scope[depth] == "class" && match(line, /^[ \t]+[A-Z][A-Z0-9_]{2,}[ \t]*[,;(=]/)) {
+        id = substr(line, RSTART, RLENGTH)
+        gsub(/[^A-Z0-9_]/, "", id)
+        printf "CONST\t%s\t%d\n", id, dep; dep = 0
+      }
+      # Public methods: permissive about modifiers/return type, require "(".
+      else if (match(line, /public[ \t]+(static[ \t]+)?(final[ \t]+)?(synchronized[ \t]+)?(abstract[ \t]+)?(native[ \t]+)?([A-Za-z_][A-Za-z0-9_<>\[\],?@. \t]*[ \t]+)?[A-Za-z_][A-Za-z0-9_]*[ \t]*\(/)) {
+        sig = substr(line, RSTART, RLENGTH)
+        sub(/[ \t]*\($/, "", sig)
+        n = split(sig, parts, /[ \t]+/)
+        printf "METHOD\t%s\t%d\n", parts[n], dep; dep = 0
+      }
+      # Fields: `[modifiers] Type name` terminated by "=" or ";", at class
+      # scope, with no "(" on the line (which would make it a method or a
+      # constructor call). Private fields are implementation detail.
+      else if (scope[depth] == "class" && line !~ /\(/ && line !~ /\bprivate\b/ &&
+               match(line, /^[ \t]*([A-Za-z_][A-Za-z0-9_]*[ \t]+)*[A-Za-z_][A-Za-z0-9_.<>,?]*(\[\])?[ \t]+[a-z][A-Za-z0-9_]*[ \t]*(\[\])?[ \t]*[=;]/)) {
+        decl = substr(line, RSTART, RLENGTH)
+        sub(/[ \t]*(\[\])?[ \t]*[=;]$/, "", decl)
+        n = split(decl, parts, /[ \t]+/)
+        printf "FIELD\t%s\t%d\n", parts[n], dep; dep = 0
+      }
+
+      # Brace accounting, after the emit so a declaration is judged in the
+      # scope that contains it. A type declaration claims the next "{".
+      rest = line
+      while (length(rest) > 0) {
+        c = substr(rest, 1, 1)
+        if (c == "{") { depth++; scope[depth] = pending_type ? "class" : "block"; pending_type = 0 }
+        else if (c == "}") { if (depth > 0) delete scope[depth]; if (depth > 0) depth-- }
+        rest = substr(rest, 2)
+      }
     }
   ' | sort -u
 }
@@ -238,7 +280,7 @@ for entry in "${MODULES[@]}"; do
       is_ignored "$classname.$name" && continue
 
       case "$kind" in
-        NESTED|CONST)
+        NESTED|CONST|FIELD)
           has_token "$name" && continue
           ;;
         METHOD)
