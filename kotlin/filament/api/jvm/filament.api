@@ -317,7 +317,10 @@ public final class io/github/erkko68/filament/Engine$CompilerPriorityQueue : jav
 
 public final class io/github/erkko68/filament/Engine$Config {
 	public fun <init> ()V
+	public final fun getAssertNativeWindowIsValid ()Z
 	public final fun getCommandBufferSizeMB ()J
+	public final fun getDisableHandleUseAfterFreeCheck ()Z
+	public final fun getDisableParallelShaderCompile ()Z
 	public final fun getDriverHandleArenaSizeMB ()J
 	public final fun getForceGLES2Context ()Z
 	public final fun getGpuContextPriority ()Lio/github/erkko68/filament/Engine$GpuContextPriority;
@@ -331,7 +334,10 @@ public final class io/github/erkko68/filament/Engine$Config {
 	public final fun getSharedUboInitialSizeInBytes ()J
 	public final fun getStereoscopicEyeCount ()J
 	public final fun getStereoscopicType ()Lio/github/erkko68/filament/Engine$StereoscopicType;
+	public final fun setAssertNativeWindowIsValid (Z)V
 	public final fun setCommandBufferSizeMB (J)V
+	public final fun setDisableHandleUseAfterFreeCheck (Z)V
+	public final fun setDisableParallelShaderCompile (Z)V
 	public final fun setDriverHandleArenaSizeMB (J)V
 	public final fun setForceGLES2Context (Z)V
 	public final fun setGpuContextPriority (Lio/github/erkko68/filament/Engine$GpuContextPriority;)V
@@ -594,6 +600,8 @@ public final class io/github/erkko68/filament/LightManager$ShadowOptions {
 	public final fun getMapSize ()I
 	public final fun getMaxShadowDistance ()F
 	public final fun getNormalBias ()F
+	public final fun getPolygonOffsetConstant ()F
+	public final fun getPolygonOffsetSlope ()F
 	public final fun getScreenSpaceContactShadows ()Z
 	public final fun getShadowBulbRadius ()F
 	public final fun getShadowCascades ()I
@@ -611,6 +619,8 @@ public final class io/github/erkko68/filament/LightManager$ShadowOptions {
 	public final fun setMapSize (I)V
 	public final fun setMaxShadowDistance (F)V
 	public final fun setNormalBias (F)V
+	public final fun setPolygonOffsetConstant (F)V
+	public final fun setPolygonOffsetSlope (F)V
 	public final fun setScreenSpaceContactShadows (Z)V
 	public final fun setShadowBulbRadius (F)V
 	public final fun setShadowCascades (I)V
@@ -2126,7 +2136,6 @@ public final class io/github/erkko68/filament/View$FogOptions {
 	public final fun getColor ()[F
 	public final fun getCutOffDistance ()F
 	public final fun getDensity ()F
-	public final fun getDensityMap ()Lio/github/erkko68/filament/Texture;
 	public final fun getDistance ()F
 	public final fun getEnabled ()Z
 	public final fun getFogColorFromIbl ()Z
@@ -2139,7 +2148,6 @@ public final class io/github/erkko68/filament/View$FogOptions {
 	public final fun setColor ([F)V
 	public final fun setCutOffDistance (F)V
 	public final fun setDensity (F)V
-	public final fun setDensityMap (Lio/github/erkko68/filament/Texture;)V
 	public final fun setDistance (F)V
 	public final fun setEnabled (Z)V
 	public final fun setFogColorFromIbl (Z)V

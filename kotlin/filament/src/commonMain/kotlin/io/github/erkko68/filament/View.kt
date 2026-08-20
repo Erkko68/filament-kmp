@@ -322,7 +322,6 @@ expect class View {
          */
         var color: FloatArray
 
-
         /**
          * Distance in world units [m] after which the fog calculation is disabled. This can be
          * used to exclude the skybox. The SkyBox is typically at a distance of 1e19 in world
