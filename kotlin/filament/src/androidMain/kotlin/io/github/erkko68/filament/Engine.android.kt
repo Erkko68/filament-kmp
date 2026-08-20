@@ -61,6 +61,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         actual var jobSystemThreadCount: Long
             get() = android.jobSystemThreadCount
             set(value) { android.jobSystemThreadCount = value }
+
+        actual var disableParallelShaderCompile: Boolean
+            get() = android.disableParallelShaderCompile
+            set(value) { android.disableParallelShaderCompile = value }
         actual var stereoscopicType: StereoscopicType
             get() = StereoscopicType.fromAndroid(android.stereoscopicType)
             set(value) { android.stereoscopicType = value.toAndroid() }
@@ -73,6 +77,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         actual var resourceAllocatorCacheMaxAge: Long
             get() = android.resourceAllocatorCacheMaxAge
             set(value) { android.resourceAllocatorCacheMaxAge = value }
+
+        actual var disableHandleUseAfterFreeCheck: Boolean
+            get() = android.disableHandleUseAfterFreeCheck
+            set(value) { android.disableHandleUseAfterFreeCheck = value }
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
@@ -87,6 +95,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         actual var forceGLES2Context: Boolean
             get() = android.forceGLES2Context
             set(value) { android.forceGLES2Context = value }
+
+        actual var assertNativeWindowIsValid: Boolean
+            get() = android.assertNativeWindowIsValid
+            set(value) { android.assertNativeWindowIsValid = value }
         actual var gpuContextPriority: GpuContextPriority
             get() = GpuContextPriority.fromAndroid(android.gpuContextPriority)
             set(value) { android.gpuContextPriority = value.toAndroid() }
@@ -179,6 +191,9 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         config.resourceAllocatorCacheMaxAge = androidConfig.resourceAllocatorCacheMaxAge
         config.preferredShaderLanguage = Config.ShaderLanguage.fromAndroid(androidConfig.preferredShaderLanguage)
         config.forceGLES2Context = androidConfig.forceGLES2Context
+        config.assertNativeWindowIsValid = androidConfig.assertNativeWindowIsValid
+        config.disableParallelShaderCompile = androidConfig.disableParallelShaderCompile
+        config.disableHandleUseAfterFreeCheck = androidConfig.disableHandleUseAfterFreeCheck
         config.gpuContextPriority = GpuContextPriority.fromAndroid(androidConfig.gpuContextPriority)
         config.sharedUboInitialSizeInBytes = androidConfig.sharedUboInitialSizeInBytes
         return config

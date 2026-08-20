@@ -39,6 +39,9 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
             nativeOptions.transform[1] = 0.0f
             nativeOptions.transform[2] = 0.0f
             nativeOptions.transform[3] = 1.0f
+            // 0 means "defer to the View-wide SoftShadowOptions" — matches Filament's defaults.
+            nativeOptions.maxPenumbraRatio = 0.0f
+            nativeOptions.maxSearchRadius = 0.0f
         }
 
         actual var mapSize: Int
@@ -108,6 +111,14 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
         actual var transform: FloatArray
             get() = FloatArray(4) { nativeOptions.transform[it] }
             set(value) { for (i in 0 until 4.coerceAtMost(value.size)) nativeOptions.transform[i] = value[i] }
+
+        actual var maxPenumbraRatio: Float
+            get() = nativeOptions.maxPenumbraRatio
+            set(value) { nativeOptions.maxPenumbraRatio = value }
+
+        actual var maxSearchRadius: Float
+            get() = nativeOptions.maxSearchRadius
+            set(value) { nativeOptions.maxSearchRadius = value }
     }
 
     actual object ShadowCascades {

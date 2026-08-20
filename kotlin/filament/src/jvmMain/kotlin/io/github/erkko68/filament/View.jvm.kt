@@ -128,6 +128,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
     actual class DepthOfFieldOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var cocScale: Float = 1.0f
+        actual var cocAspectRatio: Float = 1.0f
         actual var maxApertureDiameter: Float = 0.01f
         actual var filter: Filter = Filter.MEDIAN
         actual var nativeResolution: Boolean = false
@@ -163,6 +164,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         actual var bilateralThreshold: Float = 0.05f
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
+        actual var gtao: Gtao = Gtao()
         actual class Ssct actual constructor() {
             actual var enabled: Boolean = false
             actual var lightConeRad: Float = 1.0f
@@ -174,6 +176,14 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             actual var depthSlopeBias: Float = 0.01f
             actual var sampleCount: Int = 4
             actual var rayCount: Int = 1
+        }
+        actual class Gtao actual constructor() {
+            actual var sampleSliceCount: Int = 4
+            actual var sampleStepsPerSlice: Int = 3
+            actual var thicknessHeuristic: Float = 0.004f
+            actual var useVisibilityBitmasks: Boolean = false
+            actual var constThickness: Float = 0.5f
+            actual var linearThickness: Boolean = false
         }
     }
 
@@ -217,6 +227,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
     actual class SoftShadowOptions actual constructor() {
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f
+        actual var maxPenumbraRatio: Float = 10.0f
+        actual var maxSearchRadius: Float = 1.0f
     }
 
     actual class GuardBandOptions actual constructor() {
@@ -425,6 +437,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             DepthOfFieldOptions().apply {
                 enabled = FilaViewDepthOfFieldOptions.enabled(out)
                 cocScale = FilaViewDepthOfFieldOptions.cocScale(out)
+                cocAspectRatio = FilaViewDepthOfFieldOptions.cocAspectRatio(out)
                 maxApertureDiameter = FilaViewDepthOfFieldOptions.maxApertureDiameter(out)
                 filter = DepthOfFieldOptions.Filter.entries[FilaViewDepthOfFieldOptions.filter(out)]
                 nativeResolution = FilaViewDepthOfFieldOptions.nativeResolution(out)
@@ -440,6 +453,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 val c = FilaViewDepthOfFieldOptions.allocate(arena)
                 FilaViewDepthOfFieldOptions.enabled(c, value.enabled)
                 FilaViewDepthOfFieldOptions.cocScale(c, value.cocScale)
+                FilaViewDepthOfFieldOptions.cocAspectRatio(c, value.cocAspectRatio)
                 FilaViewDepthOfFieldOptions.maxApertureDiameter(c, value.maxApertureDiameter)
                 FilaViewDepthOfFieldOptions.filter(c, value.filter.ordinal)
                 FilaViewDepthOfFieldOptions.nativeResolution(c, value.nativeResolution)
@@ -517,6 +531,15 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                     sampleCount = FilaViewAmbientOcclusionOptions.ssct.sampleCount(ssctSeg).toInt()
                     rayCount = FilaViewAmbientOcclusionOptions.ssct.rayCount(ssctSeg).toInt()
                 }
+                gtao = AmbientOcclusionOptions.Gtao().apply {
+                    val gtaoSeg = FilaViewAmbientOcclusionOptions.gtao(out)
+                    sampleSliceCount = FilaViewAmbientOcclusionOptions.gtao.sampleSliceCount(gtaoSeg).toInt()
+                    sampleStepsPerSlice = FilaViewAmbientOcclusionOptions.gtao.sampleStepsPerSlice(gtaoSeg).toInt()
+                    thicknessHeuristic = FilaViewAmbientOcclusionOptions.gtao.thicknessHeuristic(gtaoSeg)
+                    useVisibilityBitmasks = FilaViewAmbientOcclusionOptions.gtao.useVisibilityBitmasks(gtaoSeg)
+                    constThickness = FilaViewAmbientOcclusionOptions.gtao.constThickness(gtaoSeg)
+                    linearThickness = FilaViewAmbientOcclusionOptions.gtao.linearThickness(gtaoSeg)
+                }
             }
         }
         set(value) {
@@ -549,6 +572,13 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 FilaViewAmbientOcclusionOptions.ssct.depthSlopeBias(ssctSeg, value.ssct.depthSlopeBias)
                 FilaViewAmbientOcclusionOptions.ssct.sampleCount(ssctSeg, value.ssct.sampleCount.toByte())
                 FilaViewAmbientOcclusionOptions.ssct.rayCount(ssctSeg, value.ssct.rayCount.toByte())
+                val gtaoSeg = FilaViewAmbientOcclusionOptions.gtao(c)
+                FilaViewAmbientOcclusionOptions.gtao.sampleSliceCount(gtaoSeg, value.gtao.sampleSliceCount.toByte())
+                FilaViewAmbientOcclusionOptions.gtao.sampleStepsPerSlice(gtaoSeg, value.gtao.sampleStepsPerSlice.toByte())
+                FilaViewAmbientOcclusionOptions.gtao.thicknessHeuristic(gtaoSeg, value.gtao.thicknessHeuristic)
+                FilaViewAmbientOcclusionOptions.gtao.useVisibilityBitmasks(gtaoSeg, value.gtao.useVisibilityBitmasks)
+                FilaViewAmbientOcclusionOptions.gtao.constThickness(gtaoSeg, value.gtao.constThickness)
+                FilaViewAmbientOcclusionOptions.gtao.linearThickness(gtaoSeg, value.gtao.linearThickness)
                 FilamentC.FilaView_setAmbientOcclusionOptions(nativeHandle, c)
             }
         }
@@ -667,6 +697,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             SoftShadowOptions().apply {
                 penumbraScale = FilaViewSoftShadowOptions.penumbraScale(out)
                 penumbraRatioScale = FilaViewSoftShadowOptions.penumbraRatioScale(out)
+                maxPenumbraRatio = FilaViewSoftShadowOptions.maxPenumbraRatio(out)
+                maxSearchRadius = FilaViewSoftShadowOptions.maxSearchRadius(out)
             }
         }
         set(value) {
@@ -674,6 +706,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
                 val c = FilaViewSoftShadowOptions.allocate(arena)
                 FilaViewSoftShadowOptions.penumbraScale(c, value.penumbraScale)
                 FilaViewSoftShadowOptions.penumbraRatioScale(c, value.penumbraRatioScale)
+                FilaViewSoftShadowOptions.maxPenumbraRatio(c, value.maxPenumbraRatio)
+                FilaViewSoftShadowOptions.maxSearchRadius(c, value.maxSearchRadius)
                 FilamentC.FilaView_setSoftShadowOptions(nativeHandle, c)
             }
         }

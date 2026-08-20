@@ -13,6 +13,10 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **Option-struct fields missing from common** (`filament`): `View.SoftShadowOptions.maxPenumbraRatio`/`maxSearchRadius`, `View.DepthOfFieldOptions.cocAspectRatio`, `LightManager.ShadowOptions.maxPenumbraRatio`/`maxSearchRadius`, `Engine.Config.disableParallelShaderCompile`/`disableHandleUseAfterFreeCheck`/`assertNativeWindowIsValid`, and a nested `View.AmbientOcclusionOptions.Gtao` (6 fields) so GTAO can be tuned and not just selected. The last three groups are `@PlatformGap`-annotated on web — see [Platform notes](docs/platform-notes.md).
+- **`check-common-api.sh` audits struct fields** (build): the audit compared classes, nested types, constants and method *names*, so the contents of every option struct went unchecked — Filament's Android bindings expose them as bare fields. Findings are now attributed to their owning nested type, so ignoring `Renderer.FrameInfo` ignores its fields too, and `View`'s two different `maxPenumbraRatio` fields are distinguishable.
+
 ## [0.4.0] — 2026-08-19
 
 > [!WARNING]

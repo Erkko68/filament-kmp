@@ -56,7 +56,7 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 ./gradlew downloadPrebuilts                              # re-fetches libs + headers at <new>
 
 # 4. Audit the surface
-scripts/dev/check-common-api.sh                          # Android API methods missing from commonMain
+scripts/dev/check-common-api.sh                          # Android API members missing from commonMain
 scripts/dev/check-js-bindings.sh                         # jsbindings.cpp methods missing from the JS overlay
 
 # 5. Apply changes (per-layer recipe below), update tests
@@ -131,18 +131,21 @@ class) can no longer happen silently.
 ### 4. Audit the public surface
 
 ```sh
-scripts/dev/check-common-api.sh     # Android Java methods absent from commonMain expects
+scripts/dev/check-common-api.sh     # Android Java members absent from commonMain expects
 scripts/dev/check-js-bindings.sh    # jsbindings.cpp registrations absent from the JS overlay
 ```
 
 Both are **diagnostic only** — they never edit anything. They print the gaps; you decide what to
 act on, following the two-sources-of-truth rule above.
 
-`check-common-api.sh` checks four kinds of surface per module — whole classes, nested types,
-enum/`ALL_CAPS` constants, and public methods — with Kotlin comments stripped before matching
-(so a KDoc mention doesn't count as coverage). Members `@Deprecated` upstream are flagged
-informationally and don't fail the run. Intentional gaps (Android-only plumbing, Java SAM
-interfaces replaced by Kotlin lambdas, deprecated API) are suppressed via
+`check-common-api.sh` checks five kinds of surface per module — whole classes, nested types,
+enum/`ALL_CAPS` constants, public methods, and non-private fields — with Kotlin comments
+stripped before matching (so a KDoc mention doesn't count as coverage). The field check exists
+because Filament's option structs (`ShadowOptions`, `FogOptions`, `Engine.Config`, …) expose
+their state as bare fields rather than accessors, so a method-only audit never looked inside
+them. Members `@Deprecated` upstream are flagged informationally and don't fail the run.
+Intentional gaps (Android-only plumbing, Java SAM interfaces replaced by Kotlin lambdas,
+deprecated API) are suppressed via
 [`scripts/dev/check-common-api-ignores.txt`](../scripts/dev/check-common-api-ignores.txt) —
 add `Class` or `Class.member` entries there with a comment saying why, rather than editing the
 script. The script exits non-zero when anything unsuppressed is missing, so it's CI-able.

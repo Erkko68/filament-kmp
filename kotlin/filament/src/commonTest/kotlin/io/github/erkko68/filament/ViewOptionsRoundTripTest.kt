@@ -65,13 +65,14 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     fun depthOfFieldOptionsRoundTrip() {
         setUpView()
         view.depthOfFieldOptions = View.DepthOfFieldOptions().apply {
-            enabled = true; cocScale = 2f; maxApertureDiameter = 0.01f
+            enabled = true; cocScale = 2f; cocAspectRatio = 1.5f; maxApertureDiameter = 0.01f
             filter = View.DepthOfFieldOptions.Filter.MEDIAN; nativeResolution = true
             foregroundRingCount = 3; backgroundRingCount = 4; fastGatherRingCount = 2
             maxForegroundCOC = 5; maxBackgroundCOC = 6
         }
         view.depthOfFieldOptions.run {
-            assertTrue(enabled); assertEquals(2f, cocScale); assertEquals(0.01f, maxApertureDiameter)
+            assertTrue(enabled); assertEquals(2f, cocScale); assertEquals(1.5f, cocAspectRatio)
+            assertEquals(0.01f, maxApertureDiameter)
             assertEquals(View.DepthOfFieldOptions.Filter.MEDIAN, filter); assertTrue(nativeResolution)
             assertEquals(3, foregroundRingCount); assertEquals(4, backgroundRingCount)
             assertEquals(2, fastGatherRingCount); assertEquals(5, maxForegroundCOC)
@@ -143,6 +144,10 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
                 lightDirection = floatArrayOf(0f, -1f, 0f); depthBias = 0.02f
                 depthSlopeBias = 0.03f; sampleCount = 6; rayCount = 2
             }
+            gtao = View.AmbientOcclusionOptions.Gtao().apply {
+                sampleSliceCount = 6; sampleStepsPerSlice = 5; thicknessHeuristic = 0.02f
+                useVisibilityBitmasks = true; constThickness = 0.75f; linearThickness = true
+            }
         }
         view.ambientOcclusionOptions.run {
             assertEquals(0.5f, radius); assertEquals(0.001f, bias); assertEquals(1.5f, intensity)
@@ -156,6 +161,11 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
                 assertEquals(1.2f, contactDistanceMax); assertEquals(0.9f, intensity)
                 assertArr(floatArrayOf(0f, -1f, 0f), lightDirection); assertEquals(0.02f, depthBias)
                 assertEquals(0.03f, depthSlopeBias); assertEquals(6, sampleCount); assertEquals(2, rayCount)
+            }
+            gtao.run {
+                assertEquals(6, sampleSliceCount); assertEquals(5, sampleStepsPerSlice)
+                assertEquals(0.02f, thicknessHeuristic); assertTrue(useVisibilityBitmasks)
+                assertEquals(0.75f, constThickness); assertTrue(linearThickness)
             }
         }
     }
@@ -188,9 +198,11 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         }
         view.softShadowOptions = View.SoftShadowOptions().apply {
             penumbraScale = 2f; penumbraRatioScale = 1.5f
+            maxPenumbraRatio = 8f; maxSearchRadius = 0.75f
         }
         view.softShadowOptions.run {
             assertEquals(2f, penumbraScale); assertEquals(1.5f, penumbraRatioScale)
+            assertEquals(8f, maxPenumbraRatio); assertEquals(0.75f, maxSearchRadius)
         }
         view.multiSampleAntiAliasingOptions = View.MultiSampleAntiAliasingOptions().apply {
             enabled = true; sampleCount = 4; customResolve = true

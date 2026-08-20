@@ -98,6 +98,7 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         val native = FilamentView.DepthOfFieldOptions()
         actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
         actual var cocScale: Float get() = native.cocScale; set(v) { native.cocScale = v }
+        actual var cocAspectRatio: Float get() = native.cocAspectRatio; set(v) { native.cocAspectRatio = v }
         actual var maxApertureDiameter: Float get() = native.maxApertureDiameter; set(v) { native.maxApertureDiameter = v }
         actual var filter: Filter 
             get() = Filter.values()[native.filter.ordinal]
@@ -157,6 +158,15 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             actual var sampleCount: Int = 4
             actual var rayCount: Int = 1
         }
+        actual var gtao: Gtao = Gtao()
+        actual class Gtao actual constructor() {
+            actual var sampleSliceCount: Int = 4
+            actual var sampleStepsPerSlice: Int = 3
+            actual var thicknessHeuristic: Float = 0.004f
+            actual var useVisibilityBitmasks: Boolean = false
+            actual var constThickness: Float = 0.5f
+            actual var linearThickness: Boolean = false
+        }
     }
 
     actual class TemporalAntiAliasingOptions actual constructor() {
@@ -203,6 +213,8 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
         val native = FilamentView.SoftShadowOptions()
         actual var penumbraScale: Float get() = native.penumbraScale; set(v) { native.penumbraScale = v }
         actual var penumbraRatioScale: Float get() = native.penumbraRatioScale; set(v) { native.penumbraRatioScale = v }
+        actual var maxPenumbraRatio: Float get() = native.maxPenumbraRatio; set(v) { native.maxPenumbraRatio = v }
+        actual var maxSearchRadius: Float get() = native.maxSearchRadius; set(v) { native.maxSearchRadius = v }
     }
 
     actual class GuardBandOptions actual constructor() {
@@ -355,6 +367,9 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             val kmp = DepthOfFieldOptions()
             kmp.enabled = o.enabled
             kmp.cocScale = o.cocScale
+            // Reflects what was set, not what the engine has: nSetDepthOfFieldOptions never
+            // marshals cocAspectRatio (upstream). @PlatformGap on the common declaration.
+            kmp.cocAspectRatio = o.cocAspectRatio
             kmp.maxApertureDiameter = o.maxApertureDiameter
             kmp.filter = io.github.erkko68.filament.View.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
             kmp.nativeResolution = o.nativeResolution
@@ -409,7 +424,16 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             kmpSsct.sampleCount = o.ssctSampleCount
             kmpSsct.rayCount = o.ssctRayCount
             kmp.ssct = kmpSsct
-            
+
+            val kmpGtao = io.github.erkko68.filament.View.AmbientOcclusionOptions.Gtao()
+            kmpGtao.sampleSliceCount = o.gtaoSampleSliceCount
+            kmpGtao.sampleStepsPerSlice = o.gtaoSampleStepsPerSlice
+            kmpGtao.thicknessHeuristic = o.gtaoThicknessHeuristic
+            kmpGtao.useVisibilityBitmasks = o.gtaoUseVisibilityBitmasks
+            kmpGtao.constThickness = o.gtaoConstThickness
+            kmpGtao.linearThickness = o.gtaoLinearThickness
+            kmp.gtao = kmpGtao
+
             return kmp
         }
         set(value) {
@@ -437,6 +461,12 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             n.ssctDepthSlopeBias = value.ssct.depthSlopeBias
             n.ssctSampleCount = value.ssct.sampleCount
             n.ssctRayCount = value.ssct.rayCount
+            n.gtaoSampleSliceCount = value.gtao.sampleSliceCount
+            n.gtaoSampleStepsPerSlice = value.gtao.sampleStepsPerSlice
+            n.gtaoThicknessHeuristic = value.gtao.thicknessHeuristic
+            n.gtaoUseVisibilityBitmasks = value.gtao.useVisibilityBitmasks
+            n.gtaoConstThickness = value.gtao.constThickness
+            n.gtaoLinearThickness = value.gtao.linearThickness
             this@View.nativeView.setAmbientOcclusionOptions(n)
         }
 
@@ -516,6 +546,8 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             val kmp = SoftShadowOptions()
             kmp.penumbraScale = o.penumbraScale
             kmp.penumbraRatioScale = o.penumbraRatioScale
+            kmp.maxPenumbraRatio = o.maxPenumbraRatio
+            kmp.maxSearchRadius = o.maxSearchRadius
             return kmp
         }
         set(value) { this@View.nativeView.setSoftShadowOptions(value.native) }

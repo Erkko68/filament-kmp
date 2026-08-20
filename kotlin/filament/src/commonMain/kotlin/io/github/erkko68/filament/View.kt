@@ -388,6 +388,13 @@ expect class View {
         var cocScale: Float
 
         /**
+         * Circle-of-confusion aspect ratio, scaling the bokeh horizontally against vertically.
+         * 1.0 gives circular bokeh; other values give anamorphic ovals. Default: 1.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
+        var cocAspectRatio: Float
+
+        /**
          * Maximum aperture diameter in meters (zero to disable rotation). Default: 0.01.
          */
         var maxApertureDiameter: Float
@@ -617,6 +624,57 @@ expect class View {
              */
             var rayCount: Int
         }
+
+        /**
+         * Ground-Truth-based Ambient Occlusion tuning. Only takes effect when [aoType] is
+         * [AmbientOcclusionType.GTAO].
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
+        var gtao: Gtao
+
+        /**
+         * Ground-Truth-based Ambient Occlusion options.
+         */
+        class Gtao() {
+            /**
+             * Number of slices. Higher values make less noise. Default: 4.
+             */
+            var sampleSliceCount: Int
+
+            /**
+             * Number of steps the radius is divided into for integration. Higher values make less
+             * bias. Default: 3.
+             */
+            var sampleStepsPerSlice: Int
+
+            /**
+             * Thickness heuristic, should be close to 0. No effect when [useVisibilityBitmasks] is
+             * true. Default: 0.004.
+             */
+            var thicknessHeuristic: Float
+
+            /**
+             * Enables visibility-bitmask mode. Bent normals do not work under this mode.
+             *
+             * Changing this at runtime is very expensive — it may trigger a shader recompilation.
+             * Default: false.
+             */
+            var useVisibilityBitmasks: Boolean
+
+            /**
+             * Constant world-space thickness assumed for on-screen objects. Only takes effect when
+             * [useVisibilityBitmasks] is true. Default: 0.5.
+             */
+            var constThickness: Float
+
+            /**
+             * Increases thickness with distance to keep detail on distant surfaces.
+             *
+             * Changing this at runtime is very expensive — it may trigger a shader recompilation.
+             * Default: false.
+             */
+            var linearThickness: Boolean
+        }
     }
 
     /**
@@ -834,6 +892,22 @@ expect class View {
          * greater than 1. Default: 1.0.
          */
         var penumbraRatioScale: Float
+
+        /**
+         * Caps the penumbra ratio used by PCSS contact hardening, applied as a smooth asymptotic
+         * squash rather than a hard clamp. Limits how soft a shadow can get as the occluder moves
+         * away from the receiver. Default: 10.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — the wasm registers the field but the vendored externals do not declare it, so it never reaches the engine.")
+        var maxPenumbraRatio: Float
+
+        /**
+         * Limits the physical footprint, in world units, of the PCSS blocker search. Acts as a
+         * global ceiling on the per-light [LightManager.ShadowOptions.maxSearchRadius].
+         * Default: 1.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — the wasm registers the field but the vendored externals do not declare it, so it never reaches the engine.")
+        var maxSearchRadius: Float
     }
 
     /**
