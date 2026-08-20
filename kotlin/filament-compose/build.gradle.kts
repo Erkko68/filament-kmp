@@ -124,3 +124,21 @@ kotlin {
         }
     }
 }
+
+// ── Published-artifact size trimming (Maven Central deployment bundle cap) ────
+// Two payloads get duplicated across all seven per-target publications and dominate
+// the deployment bundle. Neither is useful to a consumer.
+
+// 1. EmbeddedMaterials.kt is 3.3 MB of generated base64. Seven sources jars carry it.
+// KMP sources jars are org.gradle.jvm.tasks.Jar, not the bundling.Jar that `Jar` resolves to.
+tasks.withType<org.gradle.jvm.tasks.Jar>().matching { it.name.endsWith("SourcesJar") }.configureEach {
+    exclude("**/EmbeddedMaterials.kt")
+}
+
+// 2. The Compose plugin stages the skiko web runtime (9.8 MB, mostly skiko.wasm) into
+//    jsMain resources for app bundling, and Kotlin/JS packs resources into the klib.
+//    Consumer apps unpack their own copy. jsTest keeps its (the plugin stages that
+//    compilation's resources separately), so Karma still serves skiko.
+tasks.named<ProcessResources>("jsProcessResources") {
+    exclude("skiko.wasm", "skiko.mjs", "skikod8.mjs", "js-reexport-symbols.mjs")
+}

@@ -14,9 +14,10 @@ import io.github.erkko68.filament.View
  * - **Per-light quality** — [ShadowConfig], passed as a light's `shadow`. Controls that one caster's
  *   shadow map: resolution, bias, cascades, contact shadows, penumbra size.
  *
- * Both levels disable with `null`, symmetrically. A soft shadow needs both halves: a per-light
- * [ShadowConfig.bulbRadius] *and* a view technique of [Shadows.Dpcf] or [Shadows.Pcss] (this split
- * mirrors Filament — penumbra size is per-caster, the soft algorithm is per-view).
+ * Both levels disable with `null`, symmetrically. A soft shadow needs a view technique of
+ * [Shadows.Dpcf] or [Shadows.Pcss]; under PCSS the penumbra size additionally comes from each
+ * light's [ShadowConfig.bulbRadius] (this split mirrors Filament — penumbra size is per-caster,
+ * the soft algorithm is per-view).
  */
 
 /**
@@ -45,7 +46,9 @@ import io.github.erkko68.filament.View
  * @property contactShadows Enable screen-space contact shadows (SSCS) for fine, close-up contact detail.
  * @property contactShadowDistance SSCS max occluder distance, world units.
  * @property contactShadowSteps SSCS ray-march step count (directional lights only); higher = better, costlier.
- * @property bulbRadius Soft-shadow penumbra size, world units. Only under [Shadows.Dpcf]/[Shadows.Pcss].
+ * @property bulbRadius Light-bulb radius driving soft-shadow penumbra size, world units. Only under
+ *   [Shadows.Pcss]. Negative (the default) lets Filament pick per light type: 1.0 for directional,
+ *   0.06 (an A19 bulb) for spot, and sun angular radius × halo size for [SunLight].
  * @property blurWidth Blur width; only under the [Shadows.Vsm] technique. 0 disables.
  * @property elvsm Exponential Layered VSM — better light-leak reduction at 2× shadow memory. Only under [Shadows.Vsm].
  * @property transform Optional rotation `(Rotation)` rotating the shadow's direction
@@ -66,7 +69,7 @@ data class ShadowConfig(
     val contactShadows: Boolean = false,
     val contactShadowDistance: Float = 0.3f,
     val contactShadowSteps: Int = 8,
-    val bulbRadius: Float = 0.02f,
+    val bulbRadius: Float = -1f,
     val blurWidth: Float = 0f,
     val elvsm: Boolean = false,
     val transform: Rotation? = null,
@@ -136,8 +139,9 @@ sealed interface Shadows {
     ) : Shadows
 
     /**
-     * Dynamic Percentage-Closer soft Filtering — soft shadows whose penumbra grows with each light's
-     * [ShadowConfig.bulbRadius]. Cheaper than [Pcss].
+     * Dynamic Percentage-Closer soft Filtering — soft shadows whose penumbra grows with distance
+     * from the occluder. Cheaper than [Pcss]; as of Filament 1.75 the per-light
+     * [ShadowConfig.bulbRadius] feeds PCSS only, so tune DPCF through [penumbraScale] instead.
      *
      * @property penumbraScale Global multiplier on penumbra size.
      * @property penumbraRatioScale Scales how fast the penumbra widens with distance.

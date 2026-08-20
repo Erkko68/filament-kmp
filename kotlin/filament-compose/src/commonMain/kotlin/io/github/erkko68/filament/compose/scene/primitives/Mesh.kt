@@ -39,13 +39,13 @@ import io.github.erkko68.filament.compose.scene.Scale
  * @param normals     Per-vertex normals as xyz triples. Must match [positions] in length.
  * @param uvs         Per-vertex UVs as uv pairs. Length must be `2 * vertexCount`.
  * @param indices     Triangle indices (32-bit). Length must be a multiple of 3.
+ * @param boundingBox AABB used for frustum culling. Defaults to one computed from [positions].
+ *   Provide an explicit box if you skip culling or animate vertices beyond the static bounds.
  * @param position    World-space position of the [pivot] point.
  * @param rotation    World-space rotation. Build one with [Rotation.axisAngle]/[Rotation.euler].
  * @param scale       Per-axis scale.
  * @param pivot       Mesh-space point that rotation/scale revolve around and that ends up at
  *   [position]. Defaults to the mesh origin.
- * @param boundingBox AABB used for frustum culling. Defaults to one computed from [positions].
- *   Provide an explicit box if you skip culling or animate vertices beyond the static bounds.
  * @param visible   Whether this renderable is in the scene. False removes it from the
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows    Whether the mesh casts shadows onto other renderables. On by default.
@@ -61,11 +61,11 @@ fun FilamentSceneScope.Mesh(
     normals: FloatArray,
     uvs: FloatArray,
     indices: IntArray,
+    boundingBox: Box? = null,
     position: Position = Position(0f),
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    boundingBox: Box? = null,
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,

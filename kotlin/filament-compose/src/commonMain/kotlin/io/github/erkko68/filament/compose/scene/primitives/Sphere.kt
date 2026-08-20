@@ -19,13 +19,13 @@ import kotlin.math.sin
  * (`rings * segments * 2` triangles total).
  *
  * @param material  The material applied to the whole sphere, or null while it is still loading.
+ * @param radius    Sphere radius in mesh space.
+ * @param rings     Latitude subdivisions. Minimum 2.
+ * @param segments  Longitude subdivisions. Minimum 3.
  * @param position  World-space position of the [pivot] point.
  * @param rotation  World-space rotation.
  * @param scale     Per-axis scale.
  * @param pivot     Point in mesh space that rotation/scale revolve around. Defaults to the sphere centre.
- * @param radius    Sphere radius in mesh space.
- * @param rings     Latitude subdivisions. Minimum 2.
- * @param segments  Longitude subdivisions. Minimum 3.
  * @param visible   Whether this renderable is in the scene. False removes it from the
  *   scene (cheaply, keeping the entity alive) — a show/hide toggle without losing state.
  * @param castShadows     Whether the sphere casts shadows onto other renderables. On by default.
@@ -35,13 +35,13 @@ import kotlin.math.sin
 @Composable
 fun FilamentSceneScope.Sphere(
     material: MaterialInstance?,
+    radius: Float = 0.5f,
+    rings: Int = 16,
+    segments: Int = 32,
     position: Position = Position(0f),
     rotation: Rotation = Rotation.Identity,
     scale: Scale = Scale(1f),
     pivot: Position = Position(0f),
-    radius: Float = 0.5f,
-    rings: Int = 16,
-    segments: Int = 32,
     visible: Boolean = true,
     castShadows: Boolean = true,
     receiveShadows: Boolean = true,

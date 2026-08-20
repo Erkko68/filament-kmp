@@ -84,12 +84,12 @@ private class GltfInstanceScopeImpl(
  *   blending) and takes precedence over [animationIndex]/[animationTime].
  * @param morphWeights Optional vertex morph-target weights applied to every renderable in the
  *   instance that has morph targets. Pass null to leave morph weights untouched.
+ * @param visible Whether the instance's entities are in the scene. False removes them (cheaply,
+ *   keeping the instance and its state alive) — a show/hide toggle.
  * @param castShadows Overrides shadow casting for every renderable in the instance; null (the
  *   default) keeps what the asset authored — matching the primitives' `castShadows` toggle.
  * @param receiveShadows Overrides shadow receiving for every renderable in the instance; null
  *   (the default) keeps what the asset authored.
- * @param visible Whether the instance's entities are in the scene. False removes them (cheaply,
- *   keeping the instance and its state alive) — a show/hide toggle.
  * @param onCreate Called once when the instance is first added to the scene. Use for one-time
  *   setup such as swapping materials or finding entities by name.
  * @param onUpdate Called on every **recomposition** (not every frame — a static scene never
@@ -107,9 +107,9 @@ fun FilamentSceneScope.GltfInstance(
     animationTime: Float = 0f,
     animationState: AnimationState? = null,
     morphWeights: FloatArray? = null,
+    visible: Boolean = true,
     castShadows: Boolean? = null,
     receiveShadows: Boolean? = null,
-    visible: Boolean = true,
     onCreate: GltfInstanceScope.() -> Unit = {},
     onUpdate: GltfInstanceScope.() -> Unit = {},
 ) {
