@@ -13,6 +13,26 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Added
+- **Web API parity with the expanded JS bindings** (`filament`, `gltfio`, web only): the web actuals now call the engine wherever upstream's expanded `jsbindings.cpp` exposes an entry point, instead of mirroring state in Kotlin or throwing. `@PlatformGap` annotations drop from 224 to 108 — fences, `SkinningBuffer`/`MorphTargetBuffer`, `MaterialInstance.material`/`duplicate`, `Material` reflection, the `ToneMapper` hierarchy, `LightManager.shadowOptions`/`getComponentCount`, `View.shadowType`/`isFrustumCullingEnabled`, the `Texture` getters/`swizzle`/`external`, `Renderer.readPixels`/`copyFrame`, the non-indexed `RenderableManager` geometry overloads, `Camera.getFieldOfViewInDegrees`, `Scene.skybox`/`indirectLight` and the `gltfio` instance/material accessors all reach the engine now.
+- **`gltfio.ResourceLoader` is a real loader on web** (`gltfio`): backed by `gltfio$ResourceLoader` with the Stb and Ktx2 texture providers registered, so `asyncGetLoadProgress()` reports real progress instead of a placeholder.
+- **`Engine.Config.disableParallelShaderCompile` / `disableHandleUseAfterFreeCheck` / `assertNativeWindowIsValid`** (`filament`): three upstream `Engine::Config` fields that were never bound, wired through the C layer to all five platforms.
+- **`LightManager.ShadowOptions.polygonOffsetConstant` / `polygonOffsetSlope`** (`filament`): the depth-bias pair, unbound until now. Ignored when the View's `ShadowType` is VSM.
+
+### Changed
+- **Web `View` stops mirroring engine state** (`filament`): 25 cached fields drop to 4 — only `scene`/`camera`/`renderTarget`/`colorGrading` stay cached for wrapper identity, exactly as the JVM and Android actuals do. Every option struct, `name`, `viewport`, `visibleLayers`, `dithering`, `antiAliasing` and `getLastDynamicResolutionScale` is engine-backed, and the option setters push the fields they had been dropping (bloom `quality`/`lensFlare`/`ghost*`/`halo*`, DoF ring counts, AO `quality`/`bentNormals`).
+- **[Platform notes](docs/platform-notes.md) rewritten for the new web surface**: the remaining gaps are now mostly structural rather than unbound — canvas-scoped `createSwapChain`, non-blocking `Fence.wait`, browser-managed frame pacing, and the five option fields beamsplitter skips because they are pointers or nested structs.
+
+### Fixed
+- **Integer material parameters were marshalled as floats on web** (`filament`): `MaterialInstance.setParameter(name, Int…)` — scalar, `int2`/`int3`/`int4` and the array forms — all routed through `setFloatParameter`, so an `int` uniform silently received a float. They use `setIntParameter`/`setInt{2,3,4}Parameter` now, and boolean vectors `setBool{2,3,4}Parameter`.
+- **Web `Material` reflection returned invented values** (`filament`): `getShading()` always answered `LIT`, `getBlendingMode()` `OPAQUE` and `getParameterCount()` `0`, so `hasParameter()` was always `false`. All query the material now.
+- **Web tone mappers silently degraded** (`filament`): `PBRNeutral`, `GT7` and `Agx` all fell back to ACES, and `Generic` ignored its contrast/mid-gray/hdrMax parameters. Each constructs its own operator now.
+- **Web texture formats fell back to `RGBA8`** (`filament`): `Texture.Builder.format` mapped only 10 of the 109 `InternalFormat` values, so e.g. a `DEPTH24_STENCIL8` texture was built as colour. The mapping is exact in both directions now.
+- **`AssetLoader.destroy` leaked the loader on web** (`gltfio`): it called `delete()`, whose embind destructor for `AssetLoader` is a no-op; it calls the static `destroy` that actually frees it now.
+
+### Removed
+- **`View.FogOptions.densityMap`** (`filament`, **source-breaking**): the field was fabricated — upstream's `FogOptions` has no such member, so it was write-only and did nothing. Use `skyColor`.
+
 ## [0.4.0] — 2026-08-19
 
 > [!WARNING]
@@ -20,7 +40,6 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Added
 - **Filament 1.75.0**: engine upgraded. Newly bound: `EntityManager.advanceEpoch()`/`getMaxEntityCount()`, `AssetLoader.gc()`.
-- **Web API parity with the expanded JS bindings** (`filament`, `gltfio`, web only): the web actuals call the engine wherever upstream's expanded `jsbindings.cpp` exposes an entry point instead of mirroring state in Kotlin or returning a placeholder. `View` drops 25 cached fields to 4 (matching the JVM/Android actuals), and `Material` reflection, `MaterialInstance.getConstant*`, `ColorGrading.Builder.customLut`, the `ToneMapper` hierarchy, `Camera.entity`, `LightManager.destroy`, `TransformManager.getChildCount`, the `Texture` getters/`swizzle`/`external`, `Skybox.Builder.intensity`, `Scene.skybox`/`indirectLight` and the buffer counts all reach the engine now. `gltfio.ResourceLoader` is a real one with the Stb and Ktx2 texture providers registered, so `asyncGetLoadProgress()` reports real progress.
 - **`LensShift` / `LensScaling`** (`filament-compose`): typed replacements for the raw `Float2` on `CameraState.shift`/`scaling`; both convert to and from `Float2`.
 - **`Color.toLinearColor()`** (`filament-compose`): Compose UI `Color` → scene `LinearColor`, applying the sRGB→linear transfer.
 - **Transparent views** (`filament-compose`): `FilamentView`/`FilamentSceneView` take `transparent = true` to render over the Compose UI behind them — see [Transparency](docs/compose/integration-strategies.md#transparency) and the new `Transparency (GLB)` sample.
@@ -38,11 +57,6 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`FrameInfo` annotated `@Immutable`** (`filament-compose`) for Compose stability tracking.
 
 ### Fixed
-- **Integer material parameters were marshalled as floats on web** (`filament`): `MaterialInstance.setParameter(name, Int…)` — scalar, `int2`/`int3`/`int4` and the array forms — all routed through `setFloatParameter`. They use `setIntParameter`/`setInt{2,3,4}Parameter` now, and boolean vectors `setBool{2,3,4}Parameter`.
-- **Web `Material` reflection returned invented values** (`filament`): `getShading()` always answered `LIT`, `getBlendingMode()` `OPAQUE`, `getParameterCount()` `0`, so `hasParameter()` was always `false`. All query the material now.
-- **Web tone mappers silently degraded** (`filament`): `PBRNeutral`, `GT7` and `Agx` fell back to ACES and `Generic` ignored its parameters. Each constructs its own operator now.
-- **Web texture formats fell back to `RGBA8`** (`filament`): `Texture.Builder.format` mapped only 10 of 109 `InternalFormat` values (a `DEPTH24_STENCIL8` texture was built as colour). The mapping is exact in both directions now.
-- **`AssetLoader.destroy` leaked the loader on web** (`gltfio`): it called `delete()`, whose embind destructor for `AssetLoader` is a no-op; it calls the static `destroy` now.
 - **Conditional `DisposableEffect` in `rememberMaterialInstance`** (`filament-compose`): the disposal effect entered and left the composition as the material loaded; the null material short-circuits before it now.
 - **Filament objects mutated during composition** (`filament-compose`): `FilamentView` and `rememberRenderTargetTexture` applied view wiring inside `remember { }`; both use a keyed `DisposableEffect` now.
 - **Unkeyed `remember` on engine-owned objects** (`filament-compose`): `FilamentEffect`'s scope and the `Group`/`Light` entities are keyed on `engine`, so swapping engines no longer leaves them pointing at a destroyed one.
