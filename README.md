@@ -86,8 +86,8 @@ All published under `io.github.erkko68.filament`. The Desktop/JVM bindings (Proj
 
 Releases are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`):
 
-- **`X.Y.0` (minor)** — the normal release channel. Each new upstream **Filament feature release** (1.73 → 1.74 → …) ships as a minor bump, together with any wrapper API additions or changes accumulated since the last one. This is where regular work lands; breaking wrapper API changes may appear here and are always listed in the [changelog](CHANGELOG.md).
-- **`X.Y.Z` (patch)** — bug fixes only: upstream Filament point releases (e.g. 1.73.1) and fixes in the wrapper itself. Safe to pick up without reading anything.
+- **`X.Y.0` (minor)** — the normal release channel. Any change to the public API — new bindings from an upstream release of any kind, or wrapper API additions and changes — ships as a minor bump. New upstream **Filament feature releases** (1.73 → 1.74 → …) always land here. Breaking wrapper API changes may appear here and are always listed in the [changelog](CHANGELOG.md).
+- **`X.Y.Z` (patch)** — no API surface change: bug fixes in the wrapper, and upstream point releases picked up without binding anything new. Safe to pick up without reading anything.
 - **`X.0.0` (major)** — reserved for maturity milestones and very large changes (a stabilized public API, a full architectural rework). Routine upstream tracking never triggers a major bump — expect minor releases to keep flowing for as long as Filament keeps releasing.
 
 All `io.github.erkko68.filament:*` artifacts share one version and must be upgraded together. The project is actively maintained long-term and tracks upstream Filament releases as they are published (see [docs/upgrading-filament.md](docs/upgrading-filament.md) for the process). Larger technical direction — like zero-copy GPU sharing with Compose — lives in the [Roadmap](ROADMAP.md).
