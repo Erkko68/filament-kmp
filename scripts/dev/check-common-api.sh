@@ -60,13 +60,19 @@ declare -a MODULES=(
 #     implementation detail, never public surface
 SKIP_NAMES_REGEX='^(n[A-Z]|m[A-Z]|s[A-Z]|nativeObject$|getNativeObject$|finalize$|hashCode$|equals$|toString$|clearNativeObject$|access\$)'
 
-# Java classes we never want to compare (Android-only / not applicable to KMP):
-#   - NioUtils, Platform*, NativeSurface, SwapChainFlags: infra plumbing
-#   - Stream, TextureHelper, ChoreographerHelper: Android Surface/Bitmap infra
-#   - AutomationEngine, ImageDiff, RemoteServer: Android testing/CI tooling
-#   - DeviceUtils, Asserts, MathUtils, UsedBy*: Android device/JNI internals
-#   - Filament, FilamentHelper: Android library loader init
-SKIP_CLASSES_REGEX='^(NioUtils|AndroidPlatform.*|Platform|NativeSurface|SwapChainFlags|Stream|AutomationEngine|ImageDiff|RemoteServer|DeviceUtils|Filament|FilamentHelper|DisplayHelper|UiHelper|TextureHelper|ChoreographerHelper|Asserts|MathUtils|Entity|EntityInstance|UsedByNative|UsedByReflection)$'
+# Java classes we never want to compare. Several of these have cross-platform
+# C++ counterparts — the reason to skip them is not "Android-only":
+#   - NioUtils, Platform*, NativeSurface, SwapChainFlags, DeviceUtils, Asserts,
+#     UsedBy*: JNI/Android infra with no Kotlin equivalent.
+#   - TextureHelper, ChoreographerHelper, DisplayHelper, UiHelper, Filament,
+#     FilamentHelper: Android Surface/Bitmap/loader glue.
+#   - AutomationEngine, RemoteServer (libs/viewer), ImageDiff (libs/imageio):
+#     cross-platform C++, but dev/automation tooling rather than rendering API,
+#     and absent from our prebuilts.
+#   - MathUtils: Java helper over libs/math; we vendor kotlin-math instead.
+#   - Entity, EntityInstance: real C++ types (utils/Entity.h), deliberately
+#     modelled as Int in common — see docs/platform-notes.md.
+SKIP_CLASSES_REGEX='^(NioUtils|AndroidPlatform.*|Platform|NativeSurface|SwapChainFlags|AutomationEngine|ImageDiff|RemoteServer|DeviceUtils|Filament|FilamentHelper|DisplayHelper|UiHelper|TextureHelper|ChoreographerHelper|Asserts|MathUtils|Entity|EntityInstance|UsedByNative|UsedByReflection)$'
 
 FILAMENT_SRC=""
 TAG=""
