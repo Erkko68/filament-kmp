@@ -25,6 +25,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 - Uses the official `com.google.android.filament` Maven library — same code path Google uses internally.
 - `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
 - Minimum `compileSdk`: **34**. Minimum `minSdk`: **24**.
+- `View.DepthOfFieldOptions.cocAspectRatio` is tracked locally only. Upstream's JNI bridge is a positional argument list rebuilt with a designated initialiser, and `nSetDepthOfFieldOptions` never took the field — so the engine keeps `1.0` while the getter reports what you set. Other platforms apply it normally.
 
 ### Screen rotation and configuration changes
 

@@ -391,6 +391,7 @@ expect class View {
          * Circle-of-confusion aspect ratio, scaling the bokeh horizontally against vertically.
          * 1.0 gives circular bokeh; other values give anamorphic ovals. Default: 1.0.
          */
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
         var cocAspectRatio: Float
 
         /**
