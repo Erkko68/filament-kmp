@@ -294,12 +294,16 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         actual var minCommandBufferSizeMB: Long = 16
         actual var perFrameCommandsSizeMB: Long = 8
         actual var jobSystemThreadCount: Long = 1
+        // TODO(web-api-parity): Engine.create takes WebGL context attributes, not an Engine::Config.
+        actual var disableParallelShaderCompile: Boolean = false
         actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
         actual var stereoscopicEyeCount: Long = 1
         actual var resourceAllocatorCacheSizeMB: Long = 64
         actual var resourceAllocatorCacheMaxAge: Long = 60
+        actual var disableHandleUseAfterFreeCheck: Boolean = false
         actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
         actual var forceGLES2Context: Boolean = false
+        actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         actual var sharedUboInitialSizeInBytes: Long = 1024
 

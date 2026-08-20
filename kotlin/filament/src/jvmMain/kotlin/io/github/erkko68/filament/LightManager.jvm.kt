@@ -37,6 +37,9 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
             FilaLightManagerShadowOptions.shadowBulbRadius(nativeOptions, -1.0f)
             // Identity quaternion (x,y,z,w) = (0,0,0,1); only w needs setting (arena zeroed the rest).
             FilaLightManagerShadowOptions.transform(nativeOptions).setFloatAt(3, 1.0f)
+            // 0 means "defer to the View-wide SoftShadowOptions" — matches Filament's defaults.
+            FilaLightManagerShadowOptions.maxPenumbraRatio(nativeOptions, 0.0f)
+            FilaLightManagerShadowOptions.maxSearchRadius(nativeOptions, 0.0f)
         }
 
         actual var mapSize: Int
@@ -106,6 +109,14 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
         actual var transform: FloatArray
             get() = FilaLightManagerShadowOptions.transform(nativeOptions).let { s -> FloatArray(4) { s.getFloatAt(it) } }
             set(value) { val s = FilaLightManagerShadowOptions.transform(nativeOptions); for (i in 0 until 4.coerceAtMost(value.size)) s.setFloatAt(i, value[i]) }
+
+        actual var maxPenumbraRatio: Float
+            get() = FilaLightManagerShadowOptions.maxPenumbraRatio(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.maxPenumbraRatio(nativeOptions, value) }
+
+        actual var maxSearchRadius: Float
+            get() = FilaLightManagerShadowOptions.maxSearchRadius(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.maxSearchRadius(nativeOptions, value) }
     }
 
     actual object ShadowCascades {

@@ -108,6 +108,9 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `View.shadowType` | Silent no-op — technique locked to **PCF** (stock prebuilts don't bind `setShadowType`) | In `filament-compose`, `Shadows.Vsm`/`Dpcf`/`Pcss` are ignored on web; `Shadows.Pcf` and `null` work |
 | `View.isFrustumCullingEnabled` | Setter is a silent no-op (getter tracked locally) | — |
 | `LightManager.Builder.shadowOptions` | Silent no-op (embind can't marshal the `mat4f` field) | Per-light shadow options stay at Filament defaults |
+| `View.AmbientOcclusionOptions.gtao` | Tracked locally only — `Options.h` marks the struct `%codegen_skip_javascript%`, so `filament.js` states outright that the binding does not exist | GTAO can be *selected* via `aoType`; it runs with Filament's default tuning |
+| `View.SoftShadowOptions.maxPenumbraRatio` / `maxSearchRadius` | Tracked locally only — registered in the wasm, but absent from the vendored externals (upstream's `filament.d.ts` never declared them) | — |
+| `Engine.Config.disableParallelShaderCompile` / `disableHandleUseAfterFreeCheck` / `assertNativeWindowIsValid` | Tracked locally only — `Engine.create` takes WebGL context attributes, not an `Engine::Config` | — |
 | `LightManager.getComponentCount` | Throws | — |
 | `MaterialInstance.material` (getter) | Throws | Keep a reference to the `Material` you instanced |
 | `MaterialInstance.duplicate` | Silent no-op — returns the source instance unchanged | Create a fresh instance from the `Material` and re-set parameters |

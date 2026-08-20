@@ -151,6 +151,22 @@ expect class LightManager {
          * Ignored for non-directional lights. Default: identity.
          */
         var transform: FloatArray
+
+
+
+        /**
+         * Per-light cap on the PCSS penumbra ratio, applied as a smooth asymptotic squash.
+         * 0 defers to the View-wide [View.SoftShadowOptions.maxPenumbraRatio]. Default: 0.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
+        var maxPenumbraRatio: Float
+
+        /**
+         * Per-light limit, in world units, on the PCSS blocker-search footprint. 0 defers to the
+         * View-wide [View.SoftShadowOptions.maxSearchRadius]. Default: 0.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
+        var maxSearchRadius: Float
     }
 
     /**

@@ -76,6 +76,14 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
         actual var transform: FloatArray
             get() = nativeOptions.transform
             set(value) { nativeOptions.transform = value }
+
+        actual var maxPenumbraRatio: Float
+            get() = nativeOptions.maxPenumbraRatio
+            set(value) { nativeOptions.maxPenumbraRatio = value }
+
+        actual var maxSearchRadius: Float
+            get() = nativeOptions.maxSearchRadius
+            set(value) { nativeOptions.maxSearchRadius = value }
             
         internal fun toNative(): AndroidLightManager.ShadowOptions = nativeOptions
     }

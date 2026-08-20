@@ -187,10 +187,13 @@ extract_java_surface() {
         n = split(sig, parts, /[ \t]+/)
         printf "METHOD\t%s\t%d\t%s\n", parts[n], dep, cname[depth]; dep = 0
       }
-      # Fields: `[modifiers] Type name` terminated by "=" or ";", at class
-      # scope, with no "(" on the line (which would make it a method or a
-      # constructor call). Private fields are implementation detail.
-      else if (scope[depth] == "class" && line !~ /\(/ && line !~ /\bprivate\b/ &&
+      # Fields: `public|protected Type name` terminated by "=" or ";", at
+      # class scope, with no "(" on the line (which would make it a method or
+      # a constructor call). Public-only, like the METHOD rule: Filament has
+      # package-private fields that are public in C++ but deliberately not
+      # Android API (LightManager.ShadowOptions.polygonOffsetConstant), and
+      # this audit measures against the Java public surface.
+      else if (scope[depth] == "class" && line !~ /\(/ && line ~ /(^|[ \t])(public|protected)[ \t]/ &&
                match(line, /^[ \t]*([A-Za-z_][A-Za-z0-9_]*[ \t]+)*[A-Za-z_][A-Za-z0-9_.<>,?]*(\[\])?[ \t]+[a-z][A-Za-z0-9_]*[ \t]*(\[\])?[ \t]*[=;]/)) {
         decl = substr(line, RSTART, RLENGTH)
         sub(/[ \t]*(\[\])?[ \t]*[=;]$/, "", decl)

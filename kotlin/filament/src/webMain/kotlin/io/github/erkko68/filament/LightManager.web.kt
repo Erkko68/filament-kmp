@@ -176,6 +176,10 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         actual var shadowBulbRadius: Float = -1.0f
         // Identity quaternion (x,y,z,w); 4 floats like jvm/native, not a 16-float mat4.
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
+        // TODO(web-api-parity): unreachable while Builder.shadowOptions stays a no-op on web —
+        // upstream's embind registers ShadowOptions with an unregisterable mat4f field.
+        actual var maxPenumbraRatio: Float = 0.0f
+        actual var maxSearchRadius: Float = 0.0f
     }
 
     actual object ShadowCascades {

@@ -84,6 +84,7 @@ typedef struct FilaViewFogOptions {
 
 typedef struct FilaViewDepthOfFieldOptions {
     float cocScale;
+    float cocAspectRatio;
     float maxApertureDiameter;
     bool enabled;
     int filter;
@@ -128,6 +129,14 @@ typedef struct FilaViewAmbientOcclusionOptions {
         uint8_t rayCount;
         bool enabled;
     } ssct;
+    struct {
+        uint8_t sampleSliceCount;
+        uint8_t sampleStepsPerSlice;
+        float thicknessHeuristic;
+        bool useVisibilityBitmasks;
+        float constThickness;
+        bool linearThickness;
+    } gtao;
     int aoType;
 } FilaViewAmbientOcclusionOptions;
 
@@ -176,6 +185,8 @@ typedef struct FilaViewVsmShadowOptions {
 typedef struct FilaViewSoftShadowOptions {
     float penumbraScale;
     float penumbraRatioScale;
+    float maxPenumbraRatio;
+    float maxSearchRadius;
 } FilaViewSoftShadowOptions;
 
 typedef struct FilaViewGuardBandOptions {

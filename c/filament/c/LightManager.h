@@ -39,6 +39,8 @@ typedef struct FilaLightManagerShadowOptions {
     FilaLightManagerVsmShadowOptions vsm;
     float shadowBulbRadius;
     float transform[4];
+    float maxPenumbraRatio;
+    float maxSearchRadius;
 } FilaLightManagerShadowOptions;
 
 // Instance

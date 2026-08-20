@@ -28,6 +28,8 @@ class LightManagerTest : FilamentTestFixture() {
             blurWidth = 2.0f
             shadowBulbRadius = 0.05f
             transform = floatArrayOf(1f, 0f, 0f, 0f)
+            maxPenumbraRatio = 6f
+            maxSearchRadius = 0.25f
         }
         assertEquals(1024, options.mapSize)
         assertEquals(2, options.shadowCascades)
@@ -46,6 +48,8 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(2.0f, options.blurWidth)
         assertEquals(0.05f, options.shadowBulbRadius)
         assertEquals(1f, options.transform[0])
+        assertEquals(6f, options.maxPenumbraRatio)
+        assertEquals(0.25f, options.maxSearchRadius)
 
         val splits = FloatArray(4)
         LightManager.ShadowCascades.computeUniformSplits(splits, 4)
@@ -80,6 +84,9 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(0f, o.transform[1], 1e-6f)
         assertEquals(0f, o.transform[2], 1e-6f)
         assertEquals(1f, o.transform[3], 1e-6f)
+        // 0 means "defer to the View-wide SoftShadowOptions" — Filament's own default.
+        assertEquals(0f, o.maxPenumbraRatio, 1e-6f)
+        assertEquals(0f, o.maxSearchRadius, 1e-6f)
     }
 
     @Test

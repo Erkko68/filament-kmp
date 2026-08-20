@@ -125,6 +125,9 @@ expect class Engine {
         var perFrameCommandsSizeMB: Long
         /** Number of threads for the job system (0 = CPU count). */
         var jobSystemThreadCount: Long
+        /** Disable backend parallel shader compilation, forcing serial compilation. */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — filament.js's Engine.create takes WebGL context attributes, not an Engine::Config.")
+        var disableParallelShaderCompile: Boolean
         /** Stereoscopic rendering technique to use. */
         var stereoscopicType: StereoscopicType
         /** Number of stereoscopic eyes (usually 2 for VR). */
@@ -133,6 +136,9 @@ expect class Engine {
         var resourceAllocatorCacheSizeMB: Long
         /** Maximum age of cached resources (in frames). */
         var resourceAllocatorCacheMaxAge: Long
+        /** Disable the debug check that catches use of a destroyed backend handle. */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — filament.js's Engine.create takes WebGL context attributes, not an Engine::Config.")
+        var disableHandleUseAfterFreeCheck: Boolean
 
         /**
          * Preferred shader language for platform.
@@ -150,6 +156,9 @@ expect class Engine {
         var preferredShaderLanguage: ShaderLanguage
         /** Force OpenGL ES 2.0 context (if applicable). */
         var forceGLES2Context: Boolean
+        /** Assert that the native window handed to `createSwapChain` is valid. */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — filament.js's Engine.create takes WebGL context attributes, not an Engine::Config.")
+        var assertNativeWindowIsValid: Boolean
         /** GPU context priority hint for the driver. */
         var gpuContextPriority: GpuContextPriority
         /** Initial size of shared uniform buffer objects in bytes. */

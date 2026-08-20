@@ -17,6 +17,9 @@ class EngineTest {
             minCommandBufferSizeMB = 12
             perFrameCommandsSizeMB = 12
             jobSystemThreadCount = 2
+            disableParallelShaderCompile = true
+            disableHandleUseAfterFreeCheck = true
+            assertNativeWindowIsValid = true
             stereoscopicType = Engine.StereoscopicType.NONE
             stereoscopicEyeCount = 2
             resourceAllocatorCacheSizeMB = 16
@@ -32,6 +35,9 @@ class EngineTest {
         assertEquals(12, config.minCommandBufferSizeMB)
         assertEquals(12, config.perFrameCommandsSizeMB)
         assertEquals(2, config.jobSystemThreadCount)
+        assertTrue(config.disableParallelShaderCompile)
+        assertTrue(config.disableHandleUseAfterFreeCheck)
+        assertTrue(config.assertNativeWindowIsValid)
         assertEquals(Engine.StereoscopicType.NONE, config.stereoscopicType)
         assertEquals(2, config.stereoscopicEyeCount)
         assertEquals(16, config.resourceAllocatorCacheSizeMB)
