@@ -48,36 +48,20 @@ internal actual fun FilamentSurface(
                 if (transparent) {
                     TextureView(context).apply {
                         isOpaque = false
-                        surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-                            override fun onSurfaceTextureAvailable(
-                                surfaceTexture: SurfaceTexture,
-                                width: Int,
-                                height: Int
-                            ) {
-                                val surface = Surface(surfaceTexture)
+                        surfaceTextureListener = filamentSurfaceTextureListener(
+                            onAvailable = { surface, width, height ->
                                 swapChainRef.value = engine.createSwapChain(
                                     NativeSurface(surface),
                                     SWAP_CHAIN_CONFIG_TRANSPARENT,
                                 )
                                 updateViewport(width, height)
-                            }
-
-                            override fun onSurfaceTextureSizeChanged(
-                                surfaceTexture: SurfaceTexture,
-                                width: Int,
-                                height: Int
-                            ) {
-                                updateViewport(width, height)
-                            }
-
-                            override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
+                            },
+                            onResized = ::updateViewport,
+                            onDestroyed = {
                                 swapChainRef.value?.let { engine.destroySwapChain(it) }
                                 swapChainRef.value = null
-                                return true
-                            }
-
-                            override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {}
-                        }
+                            },
+                        )
                     }
                 } else {
                     SurfaceView(context).apply {
@@ -115,4 +99,35 @@ internal actual fun FilamentSurface(
             renderer.endFrame()
         }
     }
+}
+
+/**
+ * TextureView listener that owns the [Surface] it wraps around the [SurfaceTexture]: [onDestroyed]
+ * runs first (the swapchain still needs the surface), then the surface is released instead of being
+ * left to the finalizer.
+ */
+internal fun filamentSurfaceTextureListener(
+    onAvailable: (Surface, width: Int, height: Int) -> Unit,
+    onResized: (width: Int, height: Int) -> Unit,
+    onDestroyed: () -> Unit,
+): TextureView.SurfaceTextureListener = object : TextureView.SurfaceTextureListener {
+    private var surface: Surface? = null
+
+    override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+        val s = Surface(surfaceTexture).also { surface = it }
+        onAvailable(s, width, height)
+    }
+
+    override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+        onResized(width, height)
+    }
+
+    override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
+        onDestroyed()
+        surface?.release()
+        surface = null
+        return true
+    }
+
+    override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {}
 }
