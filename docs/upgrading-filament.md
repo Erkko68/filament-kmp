@@ -186,17 +186,16 @@ which layers it reaches.
 
 **The JS actual** depends on whether the method is in `jsbindings.cpp`:
 
-- **Registered in `jsbindings.cpp`** (reachable at runtime): add the declaration to the overlay
-  `web/src/webMain` as a typed external declaration, then call it from the
-  `jsMain` actual. Instance methods are added by **declaration merging** — reopen the class as an
-  `interface` of the same name:
-  ```ts
-  export interface ColorGrading$Builder {
-      fastMath(fastMath: boolean): ColorGrading$Builder;
+- **Registered in `jsbindings.cpp`** (reachable at runtime): add the member to the
+  hand-maintained Kotlin externals under `web/src/webMain/kotlin/…/web/` (one file per
+  upstream type), then call it from the `jsMain` actual:
+  ```kotlin
+  external class ColorGrading$Builder {
+      fun fastMath(fastMath: Boolean): ColorGrading$Builder
   }
   ```
-  (Statics and field/typo corrections can't be expressed by merging — those go in
-  `js/patches/filament.dts-overrides.json`. See [`js/README.md`](../js/README.md).)
+  Check the signature against `jsbindings.cpp`, not against upstream's `filament.d.ts` —
+  the d.ts lags the real bindings. See [`web/README.md`](../web/README.md).
 - **Not in `jsbindings.cpp`** (no Web binding exists — e.g. `Engine.Builder` has no JS
   equivalent): make the `jsMain` actual a no-op stub and mark it:
   ```kotlin
