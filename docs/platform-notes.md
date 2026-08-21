@@ -42,11 +42,11 @@ In a pure Compose app none of that applies: layouts are code, theming reacts to 
 
 This is standard practice for graphics, video, and game apps on Android. The `SurfaceView` still receives `surfaceChanged` on resize, so the viewport and aspect ratio update correctly without any extra code.
 
-## iOS / macOS (Kotlin/Native)
+## iOS (Kotlin/Native)
 
 - Renders via `CAMetalLayer` embedded in a `UIKitView`.
 - Use static frameworks (`isStatic = true`) — keeps the Filament symbols inside your app binary and avoids dynamic-library loader issues.
-- macOS via JVM (Compose Desktop) and macOS via Kotlin/Native are **different code paths**. The Kotlin/Native path binds the C wrapper via `cinterop`; the JVM path binds the same C wrapper via Project Panama (FFM).
+- Published Apple targets are **`iosArm64`** and **`iosSimulatorArm64`**; there is no `iosX64` and no standalone macOS Kotlin/Native target. Desktop macOS is served by the **JVM** target, which binds the same C wrapper through Project Panama (FFM) rather than `cinterop` — a different code path with the same API.
 
 ### iOS Simulator: shadows render black
 
