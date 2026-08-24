@@ -602,6 +602,10 @@ public final class io/github/erkko68/filament/LightManager$ShadowOptions {
 	public final fun getMaxSearchRadius ()F
 	public final fun getMaxShadowDistance ()F
 	public final fun getNormalBias ()F
+	public final fun getPenumbraRatioScale ()F
+	public final fun getPenumbraScale ()F
+	public final fun getPolygonOffsetConstant ()F
+	public final fun getPolygonOffsetSlope ()F
 	public final fun getScreenSpaceContactShadows ()Z
 	public final fun getShadowBulbRadius ()F
 	public final fun getShadowCascades ()I
@@ -621,6 +625,10 @@ public final class io/github/erkko68/filament/LightManager$ShadowOptions {
 	public final fun setMaxSearchRadius (F)V
 	public final fun setMaxShadowDistance (F)V
 	public final fun setNormalBias (F)V
+	public final fun setPenumbraRatioScale (F)V
+	public final fun setPenumbraScale (F)V
+	public final fun setPolygonOffsetConstant (F)V
+	public final fun setPolygonOffsetSlope (F)V
 	public final fun setScreenSpaceContactShadows (Z)V
 	public final fun setShadowBulbRadius (F)V
 	public final fun setShadowCascades (I)V

@@ -38,6 +38,8 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
             // Identity quaternion (x,y,z,w) = (0,0,0,1); only w needs setting (arena zeroed the rest).
             FilaLightManagerShadowOptions.transform(nativeOptions).setFloatAt(3, 1.0f)
             // 0 means "defer to the View-wide SoftShadowOptions" — matches Filament's defaults.
+            FilaLightManagerShadowOptions.penumbraScale(nativeOptions, 1.0f)
+            FilaLightManagerShadowOptions.penumbraRatioScale(nativeOptions, 1.0f)
             FilaLightManagerShadowOptions.maxPenumbraRatio(nativeOptions, 0.0f)
             FilaLightManagerShadowOptions.maxSearchRadius(nativeOptions, 0.0f)
         }
@@ -109,6 +111,24 @@ actual class LightManager internal constructor(internal val nativeLightManager: 
         actual var transform: FloatArray
             get() = FilaLightManagerShadowOptions.transform(nativeOptions).let { s -> FloatArray(4) { s.getFloatAt(it) } }
             set(value) { val s = FilaLightManagerShadowOptions.transform(nativeOptions); for (i in 0 until 4.coerceAtMost(value.size)) s.setFloatAt(i, value[i]) }
+
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        actual var polygonOffsetConstant: Float
+            get() = FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions, value) }
+
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        actual var polygonOffsetSlope: Float
+            get() = FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions, value) }
+
+        actual var penumbraScale: Float
+            get() = FilaLightManagerShadowOptions.penumbraScale(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.penumbraScale(nativeOptions, value) }
+
+        actual var penumbraRatioScale: Float
+            get() = FilaLightManagerShadowOptions.penumbraRatioScale(nativeOptions)
+            set(value) { FilaLightManagerShadowOptions.penumbraRatioScale(nativeOptions, value) }
 
         actual var maxPenumbraRatio: Float
             get() = FilaLightManagerShadowOptions.maxPenumbraRatio(nativeOptions)
