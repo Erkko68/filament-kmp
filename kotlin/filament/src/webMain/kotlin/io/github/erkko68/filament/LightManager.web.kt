@@ -167,8 +167,12 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         actual var shadowBulbRadius: Float = -1.0f
         // Identity quaternion (x,y,z,w); 4 floats like jvm/native, not a 16-float mat4.
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         actual var polygonOffsetConstant: Float = 0.5f
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         actual var polygonOffsetSlope: Float = 2.0f
+        actual var penumbraScale: Float = 1.0f
+        actual var penumbraRatioScale: Float = 1.0f
         actual var maxPenumbraRatio: Float = 0.0f
         actual var maxSearchRadius: Float = 0.0f
     }
@@ -233,6 +237,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
             js.transform = options.transform.toJsNumbers()
             js.polygonOffsetConstant = options.polygonOffsetConstant.toDouble()
             js.polygonOffsetSlope = options.polygonOffsetSlope.toDouble()
+            js.penumbraScale = options.penumbraScale.toDouble()
+            js.penumbraRatioScale = options.penumbraRatioScale.toDouble()
             js.maxPenumbraRatio = options.maxPenumbraRatio.toDouble()
             js.maxSearchRadius = options.maxSearchRadius.toDouble()
             jsBuilder.shadowOptions(js)

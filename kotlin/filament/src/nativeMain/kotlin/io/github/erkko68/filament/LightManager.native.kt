@@ -39,6 +39,8 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
             nativeOptions.transform[1] = 0.0f
             nativeOptions.transform[2] = 0.0f
             nativeOptions.transform[3] = 1.0f
+            nativeOptions.penumbraScale = 1.0f
+            nativeOptions.penumbraRatioScale = 1.0f
             // 0 means "defer to the View-wide SoftShadowOptions" — matches Filament's defaults.
             nativeOptions.maxPenumbraRatio = 0.0f
             nativeOptions.maxSearchRadius = 0.0f
@@ -112,13 +114,23 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
             get() = FloatArray(4) { nativeOptions.transform[it] }
             set(value) { for (i in 0 until 4.coerceAtMost(value.size)) nativeOptions.transform[i] = value[i] }
 
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         actual var polygonOffsetConstant: Float
             get() = nativeOptions.polygonOffsetConstant
             set(value) { nativeOptions.polygonOffsetConstant = value }
 
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         actual var polygonOffsetSlope: Float
             get() = nativeOptions.polygonOffsetSlope
             set(value) { nativeOptions.polygonOffsetSlope = value }
+        actual var penumbraScale: Float
+            get() = nativeOptions.penumbraScale
+            set(value) { nativeOptions.penumbraScale = value }
+
+        actual var penumbraRatioScale: Float
+            get() = nativeOptions.penumbraRatioScale
+            set(value) { nativeOptions.penumbraRatioScale = value }
+
         actual var maxPenumbraRatio: Float
             get() = nativeOptions.maxPenumbraRatio
             set(value) { nativeOptions.maxPenumbraRatio = value }

@@ -77,8 +77,18 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
             get() = nativeOptions.transform
             set(value) { nativeOptions.transform = value }
 
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         actual var polygonOffsetConstant: Float = 0.5f
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         actual var polygonOffsetSlope: Float = 2.0f
+        actual var penumbraScale: Float
+            get() = nativeOptions.penumbraScale
+            set(value) { nativeOptions.penumbraScale = value }
+
+        actual var penumbraRatioScale: Float
+            get() = nativeOptions.penumbraRatioScale
+            set(value) { nativeOptions.penumbraRatioScale = value }
+
         actual var maxPenumbraRatio: Float
             get() = nativeOptions.maxPenumbraRatio
             set(value) { nativeOptions.maxPenumbraRatio = value }

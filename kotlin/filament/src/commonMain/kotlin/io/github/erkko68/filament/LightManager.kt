@@ -159,6 +159,7 @@ expect class LightManager {
          * Ignored when the View's ShadowType is set to VSM.
          * Default: 0.5.
          */
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         var polygonOffsetConstant: Float
 
         /**
@@ -169,7 +170,21 @@ expect class LightManager {
          * shadow maps. Ignored when the View's ShadowType is set to VSM.
          * Default: 2.0.
          */
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, so the engine keeps its default; the getter still reports what you set.")
         var polygonOffsetSlope: Float
+
+        /**
+         * Per-light scale on the final PCSS penumbra size, modulated with the View-wide
+         * [View.SoftShadowOptions.penumbraScale] (global * local). Default: 1.0.
+         */
+        var penumbraScale: Float
+
+        /**
+         * Per-light scale on the PCSS geometric ratio — how fast the shadow softens with
+         * blocker distance — modulated with [View.SoftShadowOptions.penumbraRatioScale].
+         * Default: 1.0.
+         */
+        var penumbraRatioScale: Float
 
         /**
          * Per-light cap on the PCSS penumbra ratio, applied as a smooth asymptotic squash.
