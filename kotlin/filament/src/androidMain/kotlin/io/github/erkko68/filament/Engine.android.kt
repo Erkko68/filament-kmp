@@ -80,10 +80,6 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
             get() = android.disableHandleUseAfterFreeCheck
             set(value) { android.disableHandleUseAfterFreeCheck = value }
 
-        actual var disableHandleUseAfterFreeCheck: Boolean
-            get() = android.disableHandleUseAfterFreeCheck
-            set(value) { android.disableHandleUseAfterFreeCheck = value }
-
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
             internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.values()[ordinal]
