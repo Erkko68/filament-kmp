@@ -155,6 +155,42 @@ expect class LightManager {
 
 
         /**
+         * Constant bias in depth-resolution units by which shadows are moved away from
+         * the light. The default value of 0.5 is used to round depth values up.
+         * Generally this value shouldn't be changed or at least be small and positive.
+         * Ignored when the View's ShadowType is set to VSM.
+         * Default: 0.5.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        var polygonOffsetConstant: Float
+
+        /**
+         * Bias based on the change in depth in depth-resolution units by which shadows
+         * are moved away from the light. The default value of 2.0 works well with
+         * SHADOW_SAMPLING_PCF_LOW. Generally this value is between 0.5 and the size in
+         * texel of the PCF filter. Setting this value correctly is essential for LiSPSM
+         * shadow maps. Ignored when the View's ShadowType is set to VSM.
+         * Default: 2.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        var polygonOffsetSlope: Float
+
+        /**
+         * Per-light scale on the final PCSS penumbra size, modulated with the View-wide
+         * [View.SoftShadowOptions.penumbraScale] (global * local). Default: 1.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
+        var penumbraScale: Float
+
+        /**
+         * Per-light scale on the PCSS geometric ratio — how fast the shadow softens with
+         * blocker distance — modulated with [View.SoftShadowOptions.penumbraRatioScale].
+         * Default: 1.0.
+         */
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
+        var penumbraRatioScale: Float
+
+        /**
          * Per-light cap on the PCSS penumbra ratio, applied as a smooth asymptotic squash.
          * 0 defers to the View-wide [View.SoftShadowOptions.maxPenumbraRatio]. Default: 0.0.
          */

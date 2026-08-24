@@ -50,6 +50,8 @@ void FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* builder, con
     shadowOptions.vsm.blurWidth = options->vsm.blurWidth;
     shadowOptions.shadowBulbRadius = options->shadowBulbRadius;
     std::copy_n(options->transform, 4, shadowOptions.transform.xyzw.v);
+    shadowOptions.penumbraScale = options->penumbraScale;
+    shadowOptions.penumbraRatioScale = options->penumbraRatioScale;
     shadowOptions.maxPenumbraRatio = options->maxPenumbraRatio;
     shadowOptions.maxSearchRadius = options->maxSearchRadius;
 
