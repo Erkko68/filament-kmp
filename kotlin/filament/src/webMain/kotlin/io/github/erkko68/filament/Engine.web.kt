@@ -87,12 +87,12 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidStream(stream: Stream): Boolean = jsUnsupported("Engine.isValidStream")
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores the surface — filament.js binds createSwapChain() with no arguments, and it always targets the canvas the engine was created with.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores the surface — PlatformWebGL::createSwapChain discards nativeWindow, so the swap chain always targets the canvas the engine's GL context was created with.")
     actual fun createSwapChain(surface: NativeSurface): SwapChain {
         return SwapChain(jsEngine.createSwapChain())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores the surface and the flags — filament.js binds createSwapChain() with no arguments, and it always targets the canvas the engine was created with.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores the surface and the flags — PlatformWebGL::createSwapChain discards nativeWindow, so the swap chain always targets the canvas the engine's GL context was created with.")
     actual fun createSwapChain(
         surface: NativeSurface,
         flags: Long
@@ -100,7 +100,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         return createSwapChain(surface)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores width/height/flags — filament.js has no headless swap chain; the swap chain always targets the canvas the engine was created with, at that canvas's size.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "ignores width/height/flags — PlatformWebGL has no headless swap chain (it returns nullptr); the swap chain always targets the engine's canvas, at that canvas's size.")
     actual fun createSwapChain(
         width: Int,
         height: Int,

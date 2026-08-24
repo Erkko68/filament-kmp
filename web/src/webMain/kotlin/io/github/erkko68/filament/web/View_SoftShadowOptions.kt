@@ -20,4 +20,14 @@ var penumbraScale: Double?
      * Acceptable values are equal to or greater than 1.
      */
 var penumbraRatioScale: Double?
+/**
+     * Global default maximum geometric ratio applied to PCSS, as a smooth asymptotic squash.
+     * Individual lights can override it via LightManager$ShadowOptions.maxPenumbraRatio.
+     */
+var maxPenumbraRatio: Double?
+/**
+     * Global default maximum world-space radius for the PCSS blocker search.
+     * Individual lights can override it via LightManager$ShadowOptions.maxSearchRadius.
+     */
+var maxSearchRadius: Double?
 }

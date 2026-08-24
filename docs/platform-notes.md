@@ -25,6 +25,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 - Uses the official `com.google.android.filament` Maven library — same code path Google uses internally.
 - `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
 - Minimum `compileSdk`: **34**. Minimum `minSdk`: **24**.
+- `View.DepthOfFieldOptions.cocAspectRatio` is tracked locally only. Upstream's JNI bridge is a positional argument list rebuilt with a designated initialiser, and `nSetDepthOfFieldOptions` never took the field — so the engine keeps `1.0` while the getter reports what you set. Other platforms apply it normally.
 
 ### Screen rotation and configuration changes
 
@@ -41,11 +42,11 @@ In a pure Compose app none of that applies: layouts are code, theming reacts to 
 
 This is standard practice for graphics, video, and game apps on Android. The `SurfaceView` still receives `surfaceChanged` on resize, so the viewport and aspect ratio update correctly without any extra code.
 
-## iOS / macOS (Kotlin/Native)
+## iOS (Kotlin/Native)
 
 - Renders via `CAMetalLayer` embedded in a `UIKitView`.
 - Use static frameworks (`isStatic = true`) — keeps the Filament symbols inside your app binary and avoids dynamic-library loader issues.
-- macOS via JVM (Compose Desktop) and macOS via Kotlin/Native are **different code paths**. The Kotlin/Native path binds the C wrapper via `cinterop`; the JVM path binds the same C wrapper via Project Panama (FFM).
+- Published Apple targets are **`iosArm64`** and **`iosSimulatorArm64`**; there is no `iosX64` and no standalone macOS Kotlin/Native target. Desktop macOS is served by the **JVM** target, which binds the same C wrapper through Project Panama (FFM) rather than `cinterop` — a different code path with the same API.
 
 ### iOS Simulator: shadows render black
 
@@ -111,7 +112,7 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `Engine.createSwapChain` | Ignores the surface, size and flags — `filament.js` binds `createSwapChain()` with no arguments, and it always targets the canvas the engine was created with | Create one engine per canvas, or composite offscreen (see the multi-view compositor) |
 | `Engine.paused` | Tracked locally only — pausing requires a multi-threaded engine, which the web build is not | Stop your own frame loop instead |
 | `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
-| `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor`, `AmbientOcclusionOptions.ssct` | Silent no-op, and the getter reports the engine default | — |
+| `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor`, `AmbientOcclusionOptions.ssct`/`gtao` | Silent no-op, and the getter reports the engine default | GTAO can still be *selected* via `aoType`; it runs with Filament's default tuning |
 | `Texture.Builder.swizzle` | Bound, but `build()` rejects a swizzled texture — WebGL has no texture swizzle (`Texture.isTextureSwizzleSupported` returns `false`) | — |
 | `Renderer.displayInfo`, `Renderer.frameRateOptions` | Tracked locally only — `setDisplayInfo`/`setFrameRateOptions` are not bound in `filament.js`; frame pacing is managed by the browser | — |
 | `SwapChain.setFrameCompletedCallback`, `SwapChain.setFrameScheduledCallback` | Silent no-op / tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is browser-managed | — |

@@ -170,6 +170,18 @@ expect class LightManager {
          * Default: 2.0.
          */
         var polygonOffsetSlope: Float
+
+        /**
+         * Per-light cap on the PCSS penumbra ratio, applied as a smooth asymptotic squash.
+         * 0 defers to the View-wide [View.SoftShadowOptions.maxPenumbraRatio]. Default: 0.0.
+         */
+        var maxPenumbraRatio: Float
+
+        /**
+         * Per-light limit, in world units, on the PCSS blocker-search footprint. 0 defers to the
+         * View-wide [View.SoftShadowOptions.maxSearchRadius]. Default: 0.0.
+         */
+        var maxSearchRadius: Float
     }
 
     /**

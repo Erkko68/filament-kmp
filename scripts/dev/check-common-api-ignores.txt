@@ -50,3 +50,36 @@ Renderer.getFrameInfoHistory
 Renderer.getMaxFrameHistorySize
 Renderer.hasGpuFallenBehind
 Renderer.setFrameScheduleTime
+
+# --- Nested C++ structs that Android's codegen flattens ---
+# Options.h marks AmbientOcclusionOptions::ssct and ::gtao %codegen_java_flatten%,
+# so Java gets ssctEnabled/gtaoSampleSliceCount while C++ (and we) keep the
+# nested struct. common models them as AmbientOcclusionOptions.Ssct / .Gtao,
+# which is the C++ shape rather than the flattened Java one.
+View.ssctEnabled
+View.ssctLightConeRad
+View.ssctShadowDistance
+View.ssctContactDistanceMax
+View.ssctIntensity
+View.ssctLightDirection
+View.ssctDepthBias
+View.ssctDepthSlopeBias
+View.ssctSampleCount
+View.ssctRayCount
+View.gtaoSampleSliceCount
+View.gtaoSampleStepsPerSlice
+View.gtaoThicknessHeuristic
+View.gtaoUseVisibilityBitmasks
+View.gtaoConstThickness
+View.gtaoLinearThickness
+
+# --- Compressed CPU texture uploads (not bound; see Texture.CompressedFormat) ---
+Texture.compressedFormat         # PixelBufferDescriptor's compressed-upload pair
+Texture.compressedSizeInBytes    # compressed textures load via ktxreader (KTX1Loader)
+
+# --- Declared in Java but never reaching C++ ---
+Engine.textureUseAfterFreePoolSize  # Engine.Config field that Builder.config() never passes to nSetBuilderConfig; no Engine::Config counterpart in 1.75.0
+MaterialBuilder.number              # int payload of the TargetApi enum, read only by the JNI call
+
+# --- Android-typed arguments ---
+Stream.setAcquiredImage      # takes an android.hardware.HardwareBuffer / Image

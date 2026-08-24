@@ -382,7 +382,7 @@ expect class Engine {
     /** Validate a Texture. @return true if valid. */
     fun isValidTexture(texture: Texture): Boolean
     /** Validate a Stream. @return true if valid. @throws UnsupportedOperationException on JS — Stream is unbound on web. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — Stream cannot be constructed on web, so there is never a stream to validate.")
     fun isValidStream(stream: Stream): Boolean
     /** Validate a SwapChain. @return true if valid. */
     fun isValidSwapChain(swapChain: SwapChain): Boolean

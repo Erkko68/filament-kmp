@@ -2,8 +2,13 @@
 
 This guide walks you through adding Filament KMP to a Kotlin Multiplatform project and rendering your first scene on each supported target.
 
+There are two ways to use the library. The platform setup in step 3 — JDK floor, framework linking, web bundle — applies to both; the entry points shown there are the Compose ones.
+
+- **With Compose Multiplatform** — `filament-compose` owns the surface and the render loop; you declare the scene. This guide takes that route.
+- **Without Compose** — depend on `filament` alone and drive `Engine` / `Renderer` / `SwapChain` yourself, against your own window or fully headless. That route is documented in **[Using the Engine Without Compose](engine.md)**.
+
 > [!NOTE]
-> Filament KMP requires **Kotlin 2.0+**, **Compose Multiplatform 1.7+**, and **JDK 22+** (required by the Project Panama / FFM bindings used for Desktop/JVM).
+> Filament KMP requires **Kotlin 2.0+** and, for the Desktop/JVM target, **JDK 22+** (the floor for the Project Panama / FFM bindings). **Compose Multiplatform 1.7+** is needed only if you use `filament-compose`.
 
 ## 1. Add the Maven Central repository
 
@@ -41,7 +46,12 @@ kotlin {
 }
 ```
 
-If you're not using Compose and want to drive the engine directly, depend on `filament` instead of `filament-compose`. See **[Modules](modules.md)** for the full coordinates list and dependency graph.
+If you're not using Compose and want to drive the engine directly, depend on `filament` instead of `filament-compose` — it has no Compose dependency at all. See **[Using the Engine Without Compose](engine.md)**.
+
+> [!NOTE]
+> **You only download the targets you declare.** Kotlin Multiplatform publishes one variant per target, so an Android-only app never fetches the iOS klibs and a JS app never fetches the desktop natives. The single exception is the JVM/Desktop native runtime, which defaults to carrying all four desktop platforms — narrow it to one before packaging an installer. See **[What Gradle actually downloads](modules.md#what-gradle-actually-downloads)**.
+
+See **[Modules](modules.md)** for the full coordinates list, the per-target dependency table, and the dependency graph.
 
 ## 3. Configure each target
 
@@ -70,13 +80,14 @@ class MainActivity : ComponentActivity() {
 }
 ```
 
-### iOS / macOS
+### iOS
 
 The native Filament libraries ship in the Kotlin/Native klib, so there's nothing to download manually. Just declare the framework in your `iosMain` source set as usual:
 
 ```kotlin
 kotlin {
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+    // Published Apple targets: iosArm64 (device) and iosSimulatorArm64. There is no iosX64.
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true

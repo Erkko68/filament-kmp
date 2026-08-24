@@ -263,6 +263,7 @@ actual class View(internal val jsView: JSView) {
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_DepthOfFieldOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.cocScale = value.cocScale.toDouble()
+            jsOptions.cocAspectRatio = value.cocAspectRatio.toDouble()
             jsOptions.maxApertureDiameter = value.maxApertureDiameter.toDouble()
             jsOptions.nativeResolution = value.nativeResolution
             jsOptions.foregroundRingCount = value.foregroundRingCount.toDouble()
@@ -494,12 +495,16 @@ actual class View(internal val jsView: JSView) {
             SoftShadowOptions().apply {
                 penumbraScale = o.penumbraScale.f()
                 penumbraRatioScale = o.penumbraRatioScale.f()
+                maxPenumbraRatio = o.maxPenumbraRatio.f()
+                maxSearchRadius = o.maxSearchRadius.f()
             }
         }
         set(value) {
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_SoftShadowOptions`>()
             jsOptions.penumbraScale = value.penumbraScale.toDouble()
             jsOptions.penumbraRatioScale = value.penumbraRatioScale.toDouble()
+            jsOptions.maxPenumbraRatio = value.maxPenumbraRatio.toDouble()
+            jsOptions.maxSearchRadius = value.maxSearchRadius.toDouble()
             jsView.setSoftShadowOptions(jsOptions)
         }
 
@@ -663,6 +668,8 @@ actual class View(internal val jsView: JSView) {
     actual class DepthOfFieldOptions {
         actual var enabled: Boolean = false
         actual var cocScale: Float = 1.0f
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
+        actual var cocAspectRatio: Float = 1.0f
         actual var maxApertureDiameter: Float = 0.01f
         actual var filter: Filter = Filter.MEDIAN
         actual var nativeResolution: Boolean = false
@@ -696,6 +703,8 @@ actual class View(internal val jsView: JSView) {
         actual var bilateralThreshold: Float = 0.05f
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
+        actual var gtao: Gtao = Gtao()
         actual class Ssct {
             actual var enabled: Boolean = false
             actual var lightConeRad: Float = 1.0f
@@ -707,6 +716,17 @@ actual class View(internal val jsView: JSView) {
             actual var depthSlopeBias: Float = 0.01f
             actual var sampleCount: Int = 4
             actual var rayCount: Int = 1
+        }
+        // TODO(web-api-parity): filament.js says outright "JavaScript binding for gtao is not yet
+        // supported, must use default value" — the nested struct is %codegen_skip_javascript%, so
+        // these are tracked locally and the engine keeps its GTAO defaults.
+        actual class Gtao {
+            actual var sampleSliceCount: Int = 4
+            actual var sampleStepsPerSlice: Int = 3
+            actual var thicknessHeuristic: Float = 0.004f
+            actual var useVisibilityBitmasks: Boolean = false
+            actual var constThickness: Float = 0.5f
+            actual var linearThickness: Boolean = false
         }
     }
     actual class TemporalAntiAliasingOptions {
@@ -746,6 +766,8 @@ actual class View(internal val jsView: JSView) {
     actual class SoftShadowOptions {
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f
+        actual var maxPenumbraRatio: Float = 10.0f
+        actual var maxSearchRadius: Float = 1.0f
     }
     actual class GuardBandOptions {
         actual var enabled: Boolean = false

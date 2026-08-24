@@ -2,11 +2,19 @@
 
 Welcome. These docs cover everything you need to build with `filament-kmp` — from a 5-minute Gradle setup to the lower-level Filament concepts the wrapper exposes.
 
+Filament KMP is two things stacked: **Kotlin Multiplatform bindings to the Filament engine**
+(`filament`, `gltfio`, `filament-utils`, `filamat`), and an **optional Compose Multiplatform
+layer** on top (`filament-compose`). Both are first-class — pick whichever fits your app.
+
 ## Getting started
 
 - **[Getting Started](getting-started.md)** — Add the dependency, configure each platform, and render your first scene.
-- **[Modules](modules.md)** — What each published artifact does, Maven coordinates, dependency graph.
+- **[Modules](modules.md)** — What each published artifact does, which dependency each target needs, and what Gradle actually downloads.
 - **[Platform Notes](platform-notes.md)** — Backend selection, per-platform gotchas, known issues.
+
+## Using the engine directly (no Compose)
+
+- **[Using the Engine Without Compose](engine.md)** — Own the render loop: `Engine` / `View` / `Renderer` / `SwapChain`, attaching to your own surface on each platform, headless rendering and readback, glTF loading, lifecycle and threading rules.
 
 ## Compose Multiplatform integration
 

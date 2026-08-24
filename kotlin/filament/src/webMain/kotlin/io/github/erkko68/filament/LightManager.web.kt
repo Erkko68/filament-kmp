@@ -169,6 +169,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
         actual var polygonOffsetConstant: Float = 0.5f
         actual var polygonOffsetSlope: Float = 2.0f
+        actual var maxPenumbraRatio: Float = 0.0f
+        actual var maxSearchRadius: Float = 0.0f
     }
 
     // The JS forms return the (cascades - 1) splits instead of filling an out-parameter.
@@ -231,6 +233,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
             js.transform = options.transform.toJsNumbers()
             js.polygonOffsetConstant = options.polygonOffsetConstant.toDouble()
             js.polygonOffsetSlope = options.polygonOffsetSlope.toDouble()
+            js.maxPenumbraRatio = options.maxPenumbraRatio.toDouble()
+            js.maxSearchRadius = options.maxSearchRadius.toDouble()
             jsBuilder.shadowOptions(js)
             return this
         }

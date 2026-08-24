@@ -129,6 +129,8 @@ void FilaView_setSoftShadowOptions(FilaView* view, const FilaViewSoftShadowOptio
     View::SoftShadowOptions cppOptions;
     cppOptions.penumbraScale = options->penumbraScale;
     cppOptions.penumbraRatioScale = options->penumbraRatioScale;
+    cppOptions.maxPenumbraRatio = options->maxPenumbraRatio;
+    cppOptions.maxSearchRadius = options->maxSearchRadius;
     FILA_CAST(View, view)->setSoftShadowOptions(cppOptions);
 }
 
@@ -146,6 +148,8 @@ void FilaView_getSoftShadowOptions(const FilaView* view, FilaViewSoftShadowOptio
     const View::SoftShadowOptions& opts = FILA_CONST_CAST(View, view)->getSoftShadowOptions();
     out->penumbraScale = opts.penumbraScale;
     out->penumbraRatioScale = opts.penumbraRatioScale;
+    out->maxPenumbraRatio = opts.maxPenumbraRatio;
+    out->maxSearchRadius = opts.maxSearchRadius;
 }
 
 void FilaView_setRenderQuality(FilaView* view, FilaViewQualityLevel hdrColorBufferQuality) {
@@ -218,6 +222,12 @@ void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaViewAmbientOc
     cppOptions.ssct.sampleCount = options->ssct.sampleCount;
     cppOptions.ssct.rayCount = options->ssct.rayCount;
     cppOptions.ssct.enabled = options->ssct.enabled;
+    cppOptions.gtao.sampleSliceCount = options->gtao.sampleSliceCount;
+    cppOptions.gtao.sampleStepsPerSlice = options->gtao.sampleStepsPerSlice;
+    cppOptions.gtao.thicknessHeuristic = options->gtao.thicknessHeuristic;
+    cppOptions.gtao.useVisibilityBitmasks = options->gtao.useVisibilityBitmasks;
+    cppOptions.gtao.constThickness = options->gtao.constThickness;
+    cppOptions.gtao.linearThickness = options->gtao.linearThickness;
     cppOptions.aoType = static_cast<View::AmbientOcclusionOptions::AmbientOcclusionType>(options->aoType);
     FILA_CAST(View, view)->setAmbientOcclusionOptions(cppOptions);
 }
@@ -248,6 +258,12 @@ void FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaViewAmbientOc
     out->ssct.sampleCount = cppOptions.ssct.sampleCount;
     out->ssct.rayCount = cppOptions.ssct.rayCount;
     out->ssct.enabled = cppOptions.ssct.enabled;
+    out->gtao.sampleSliceCount = cppOptions.gtao.sampleSliceCount;
+    out->gtao.sampleStepsPerSlice = cppOptions.gtao.sampleStepsPerSlice;
+    out->gtao.thicknessHeuristic = cppOptions.gtao.thicknessHeuristic;
+    out->gtao.useVisibilityBitmasks = cppOptions.gtao.useVisibilityBitmasks;
+    out->gtao.constThickness = cppOptions.gtao.constThickness;
+    out->gtao.linearThickness = cppOptions.gtao.linearThickness;
     out->aoType = static_cast<int>(cppOptions.aoType);
 }
 
@@ -342,6 +358,7 @@ FilaViewBlendMode FilaView_getBlendMode(const FilaView* view) {
 void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaViewDepthOfFieldOptions* options) {
     View::DepthOfFieldOptions cppOptions;
     cppOptions.cocScale = options->cocScale;
+    cppOptions.cocAspectRatio = options->cocAspectRatio;
     cppOptions.maxApertureDiameter = options->maxApertureDiameter;
     cppOptions.enabled = options->enabled;
     cppOptions.filter = static_cast<View::DepthOfFieldOptions::Filter>(options->filter);
@@ -357,6 +374,7 @@ void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaViewDepthOfFieldO
 void FilaView_getDepthOfFieldOptions(const FilaView* view, FilaViewDepthOfFieldOptions* out) {
     const View::DepthOfFieldOptions& cppOptions = FILA_CONST_CAST(View, view)->getDepthOfFieldOptions();
     out->cocScale = cppOptions.cocScale;
+    out->cocAspectRatio = cppOptions.cocAspectRatio;
     out->maxApertureDiameter = cppOptions.maxApertureDiameter;
     out->enabled = cppOptions.enabled;
     out->filter = static_cast<int>(cppOptions.filter);

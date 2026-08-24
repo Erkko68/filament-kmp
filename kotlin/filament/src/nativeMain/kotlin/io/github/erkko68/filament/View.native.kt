@@ -78,6 +78,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual class DepthOfFieldOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var cocScale: Float = 1.0f
+        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
+        actual var cocAspectRatio: Float = 1.0f
         actual var maxApertureDiameter: Float = 0.01f
         actual var filter: Filter = Filter.MEDIAN
         actual var nativeResolution: Boolean = false
@@ -113,6 +115,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var bilateralThreshold: Float = 0.05f
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
+        actual var gtao: Gtao = Gtao()
         actual class Ssct actual constructor() {
             actual var enabled: Boolean = false
             actual var lightConeRad: Float = 1.0f
@@ -124,6 +128,14 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             actual var depthSlopeBias: Float = 0.01f
             actual var sampleCount: Int = 4
             actual var rayCount: Int = 1
+        }
+        actual class Gtao actual constructor() {
+            actual var sampleSliceCount: Int = 4
+            actual var sampleStepsPerSlice: Int = 3
+            actual var thicknessHeuristic: Float = 0.004f
+            actual var useVisibilityBitmasks: Boolean = false
+            actual var constThickness: Float = 0.5f
+            actual var linearThickness: Boolean = false
         }
     }
 
@@ -167,6 +179,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     actual class SoftShadowOptions actual constructor() {
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f
+        actual var maxPenumbraRatio: Float = 10.0f
+        actual var maxSearchRadius: Float = 1.0f
     }
 
     actual class GuardBandOptions actual constructor() {
@@ -367,6 +381,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             DepthOfFieldOptions().apply {
                 enabled = out.enabled
                 cocScale = out.cocScale
+                cocAspectRatio = out.cocAspectRatio
                 maxApertureDiameter = out.maxApertureDiameter
                 filter = DepthOfFieldOptions.Filter.entries[out.filter]
                 nativeResolution = out.nativeResolution
@@ -382,6 +397,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 val cOptions = alloc<FilaViewDepthOfFieldOptions>()
                 cOptions.enabled = value.enabled
                 cOptions.cocScale = value.cocScale
+                cOptions.cocAspectRatio = value.cocAspectRatio
                 cOptions.maxApertureDiameter = value.maxApertureDiameter
                 cOptions.filter = value.filter.ordinal
                 cOptions.nativeResolution = value.nativeResolution
@@ -448,6 +464,14 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                     sampleCount = out.ssct.sampleCount.toInt()
                     rayCount = out.ssct.rayCount.toInt()
                 }
+                gtao = AmbientOcclusionOptions.Gtao().apply {
+                    sampleSliceCount = out.gtao.sampleSliceCount.toInt()
+                    sampleStepsPerSlice = out.gtao.sampleStepsPerSlice.toInt()
+                    thicknessHeuristic = out.gtao.thicknessHeuristic
+                    useVisibilityBitmasks = out.gtao.useVisibilityBitmasks
+                    constThickness = out.gtao.constThickness
+                    linearThickness = out.gtao.linearThickness
+                }
             }
         }
         set(value) {
@@ -478,6 +502,12 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 cOptions.ssct.depthSlopeBias = value.ssct.depthSlopeBias
                 cOptions.ssct.sampleCount = value.ssct.sampleCount.toUByte()
                 cOptions.ssct.rayCount = value.ssct.rayCount.toUByte()
+                cOptions.gtao.sampleSliceCount = value.gtao.sampleSliceCount.toUByte()
+                cOptions.gtao.sampleStepsPerSlice = value.gtao.sampleStepsPerSlice.toUByte()
+                cOptions.gtao.thicknessHeuristic = value.gtao.thicknessHeuristic
+                cOptions.gtao.useVisibilityBitmasks = value.gtao.useVisibilityBitmasks
+                cOptions.gtao.constThickness = value.gtao.constThickness
+                cOptions.gtao.linearThickness = value.gtao.linearThickness
                 FilaView_setAmbientOcclusionOptions(nativeHandle, cOptions.ptr)
             }
         }
@@ -595,6 +625,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             SoftShadowOptions().apply {
                 penumbraScale = out.penumbraScale
                 penumbraRatioScale = out.penumbraRatioScale
+                maxPenumbraRatio = out.maxPenumbraRatio
+                maxSearchRadius = out.maxSearchRadius
             }
         }
         set(value) {
@@ -602,6 +634,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
                 val cOptions = alloc<FilaViewSoftShadowOptions>()
                 cOptions.penumbraScale = value.penumbraScale
                 cOptions.penumbraRatioScale = value.penumbraRatioScale
+                cOptions.maxPenumbraRatio = value.maxPenumbraRatio
+                cOptions.maxSearchRadius = value.maxSearchRadius
                 FilaView_setSoftShadowOptions(nativeHandle, cOptions.ptr)
             }
         }

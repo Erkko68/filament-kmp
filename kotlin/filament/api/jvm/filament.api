@@ -598,6 +598,8 @@ public final class io/github/erkko68/filament/LightManager$ShadowOptions {
 	public final fun getElvsm ()Z
 	public final fun getLispsm ()Z
 	public final fun getMapSize ()I
+	public final fun getMaxPenumbraRatio ()F
+	public final fun getMaxSearchRadius ()F
 	public final fun getMaxShadowDistance ()F
 	public final fun getNormalBias ()F
 	public final fun getPolygonOffsetConstant ()F
@@ -617,6 +619,8 @@ public final class io/github/erkko68/filament/LightManager$ShadowOptions {
 	public final fun setElvsm (Z)V
 	public final fun setLispsm (Z)V
 	public final fun setMapSize (I)V
+	public final fun setMaxPenumbraRatio (F)V
+	public final fun setMaxSearchRadius (F)V
 	public final fun setMaxShadowDistance (F)V
 	public final fun setNormalBias (F)V
 	public final fun setPolygonOffsetConstant (F)V
@@ -1951,6 +1955,7 @@ public final class io/github/erkko68/filament/View$AmbientOcclusionOptions {
 	public final fun getBias ()F
 	public final fun getBilateralThreshold ()F
 	public final fun getEnabled ()Z
+	public final fun getGtao ()Lio/github/erkko68/filament/View$AmbientOcclusionOptions$Gtao;
 	public final fun getIntensity ()F
 	public final fun getLowPassFilter ()Lio/github/erkko68/filament/View$Quality;
 	public final fun getMinHorizonAngleRad ()F
@@ -1965,6 +1970,7 @@ public final class io/github/erkko68/filament/View$AmbientOcclusionOptions {
 	public final fun setBias (F)V
 	public final fun setBilateralThreshold (F)V
 	public final fun setEnabled (Z)V
+	public final fun setGtao (Lio/github/erkko68/filament/View$AmbientOcclusionOptions$Gtao;)V
 	public final fun setIntensity (F)V
 	public final fun setLowPassFilter (Lio/github/erkko68/filament/View$Quality;)V
 	public final fun setMinHorizonAngleRad (F)V
@@ -1982,6 +1988,22 @@ public final class io/github/erkko68/filament/View$AmbientOcclusionOptions$Ambie
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
 	public static fun values ()[Lio/github/erkko68/filament/View$AmbientOcclusionOptions$AmbientOcclusionType;
+}
+
+public final class io/github/erkko68/filament/View$AmbientOcclusionOptions$Gtao {
+	public fun <init> ()V
+	public final fun getConstThickness ()F
+	public final fun getLinearThickness ()Z
+	public final fun getSampleSliceCount ()I
+	public final fun getSampleStepsPerSlice ()I
+	public final fun getThicknessHeuristic ()F
+	public final fun getUseVisibilityBitmasks ()Z
+	public final fun setConstThickness (F)V
+	public final fun setLinearThickness (Z)V
+	public final fun setSampleSliceCount (I)V
+	public final fun setSampleStepsPerSlice (I)V
+	public final fun setThicknessHeuristic (F)V
+	public final fun setUseVisibilityBitmasks (Z)V
 }
 
 public final class io/github/erkko68/filament/View$AmbientOcclusionOptions$Ssct {
@@ -2077,6 +2099,7 @@ public final class io/github/erkko68/filament/View$BloomOptions$BlendMode : java
 public final class io/github/erkko68/filament/View$DepthOfFieldOptions {
 	public fun <init> ()V
 	public final fun getBackgroundRingCount ()I
+	public final fun getCocAspectRatio ()F
 	public final fun getCocScale ()F
 	public final fun getEnabled ()Z
 	public final fun getFastGatherRingCount ()I
@@ -2087,6 +2110,7 @@ public final class io/github/erkko68/filament/View$DepthOfFieldOptions {
 	public final fun getMaxForegroundCOC ()I
 	public final fun getNativeResolution ()Z
 	public final fun setBackgroundRingCount (I)V
+	public final fun setCocAspectRatio (F)V
 	public final fun setCocScale (F)V
 	public final fun setEnabled (Z)V
 	public final fun setFastGatherRingCount (I)V
@@ -2225,8 +2249,12 @@ public final class io/github/erkko68/filament/View$ShadowType : java/lang/Enum {
 
 public final class io/github/erkko68/filament/View$SoftShadowOptions {
 	public fun <init> ()V
+	public final fun getMaxPenumbraRatio ()F
+	public final fun getMaxSearchRadius ()F
 	public final fun getPenumbraRatioScale ()F
 	public final fun getPenumbraScale ()F
+	public final fun setMaxPenumbraRatio (F)V
+	public final fun setMaxSearchRadius (F)V
 	public final fun setPenumbraRatioScale (F)V
 	public final fun setPenumbraScale (F)V
 }

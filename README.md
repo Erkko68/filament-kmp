@@ -1,7 +1,7 @@
 # Filament KMP
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.erkko68.filament/filament-compose?label=Maven%20Central&color=blue)](https://central.sonatype.com/namespace/io.github.erkko68.filament)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.md)
 [![Filament](https://img.shields.io/badge/Filament-1.75.0-orange)](https://github.com/google/filament)
 [![Kotlin](https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF?logo=kotlin)](https://kotlinlang.org/docs/multiplatform.html)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-4285F4?logo=jetpackcompose)](https://www.jetbrains.com/lp/compose-multiplatform/)
@@ -12,11 +12,10 @@
 [![iOS](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-ios.yml)
 [![Android](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml/badge.svg?branch=main)](https://github.com/Erkko68/filament-kmp/actions/workflows/status-android.yml)
 
+**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web (JS & Wasm)** — as a plain Kotlin Multiplatform library, with an optional **Compose Multiplatform** layer on top.
+
 > [!NOTE]
 > **Unofficial project.** This is a community-maintained Kotlin Multiplatform wrapper around [Google's Filament](https://github.com/google/filament). It is not affiliated with, endorsed by, or supported by Google or the Filament team.
-
-
-**Filament KMP** brings the same physically based renderer that powers Android's Filament to **iOS**, **Desktop/JVM**, and **Web (JS & Wasm)**, with first-class **Compose Multiplatform** integration.
 
 <img src="docs/images/platforms-hero.png" alt="The same scene rendering on Android, iOS, Desktop and Web" width="800"/>
 
@@ -33,6 +32,21 @@ FilamentSceneView(
 ```
 
 The world is declared in the content lambda; the viewport's look is configured by value. Need several cameras over one world? Hoist the scene with `rememberFilamentScene { … }` and feed it to multiple `FilamentView`s.
+
+**Not using Compose?** `filament`, `gltfio`, `filament-utils` and `filamat` are plain Kotlin bindings with no Compose dependency — drive `Engine` / `Renderer` / `SwapChain` yourself against your own `SurfaceView`, `CAMetalLayer`, GLFW window or `<canvas>`, or render headless and read the pixels back:
+
+```kotlin
+val engine    = Engine.create()
+val swapChain = engine.createSwapChain(NativeSurface(myNativeWindow))
+val renderer  = engine.createRenderer()
+
+if (renderer.beginFrame(swapChain, frameTimeNanos)) {
+    renderer.render(view)
+    renderer.endFrame()
+}
+```
+
+See **[Using the Engine Without Compose](docs/engine.md)**.
 
 ## Platform support
 
@@ -62,19 +76,22 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            // Compose integration (pulls in the engine), or just "…:filament:0.4.0" without Compose.
             implementation("io.github.erkko68.filament:filament-compose:0.4.0")
         }
     }
 }
 ```
 
-For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**.
+The same coordinates work on every target — Gradle resolves one variant per target you declare, so you don't download the platforms you don't build for. (The one exception: the Desktop/JVM natives default to all four desktop platforms; one snippet narrows them — see [what Gradle actually downloads](docs/modules.md#what-gradle-actually-downloads).)
+
+For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**, and **[Modules](docs/modules.md#dependencies-by-target)** for the per-target dependency table.
 
 ## Modules
 
 | Artifact | Description |
 | :--- | :--- |
-| `filament` | Core renderer — `Engine`, `Scene`, `View`, `Renderer`, `Camera`, `Texture`, `Material`. |
+| `filament` | Core renderer — `Engine`, `Scene`, `View`, `Renderer`, `Camera`, `Texture`, `Material`. No Compose dependency. |
 | `filament-compose` | Compose Multiplatform integration — `rememberFilamentScene` / `FilamentView` (and the `FilamentSceneView` shortcut), scene DSL, camera state, value-based post-processing. |
 | `gltfio` | glTF / GLB asset loading — `AssetLoader`, `FilamentAsset`, `Animator`. |
 | `filamat` | Runtime material compilation — `MaterialBuilder`. |
@@ -105,7 +122,8 @@ The public API stays as close as possible to the **Android Filament API**, so ex
 ### This project
 - **[API Reference](https://erkko68.github.io/filament-kmp/api/)** — generated KDoc for all published modules.
 - **[Getting Started](docs/getting-started.md)** — per-platform Gradle setup, first scene.
-- **[Modules](docs/modules.md)** — published artifacts, dependency graph, when you need what.
+- **[Modules](docs/modules.md)** — published artifacts, per-target dependencies, what Gradle downloads.
+- **[Using the Engine Without Compose](docs/engine.md)** — own render loop, own surface, headless rendering.
 - **[Platform Notes](docs/platform-notes.md)** — backends, gotchas (Windows JVM shutdown, web limits, iOS embedding).
 - **[Compose Integration](docs/compose/README.md)** — scene-vs-view model, `FilamentSceneView` / `rememberFilamentScene` / `FilamentView`, scene DSL, post-processing.
 - **[Repository Structure](docs/repo-structure.md)** — for contributors.
@@ -126,4 +144,4 @@ The web build is also deployed live to **[erkko68.github.io/filament-kmp](https:
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](LICENSE). Filament itself is also Apache-2.0 licensed by Google.
+Licensed under the [Apache License, Version 2.0](LICENSE.md). Filament itself is also Apache-2.0 licensed by Google.

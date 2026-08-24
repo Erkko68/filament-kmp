@@ -79,6 +79,13 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
 
         actual var polygonOffsetConstant: Float = 0.5f
         actual var polygonOffsetSlope: Float = 2.0f
+        actual var maxPenumbraRatio: Float
+            get() = nativeOptions.maxPenumbraRatio
+            set(value) { nativeOptions.maxPenumbraRatio = value }
+
+        actual var maxSearchRadius: Float
+            get() = nativeOptions.maxSearchRadius
+            set(value) { nativeOptions.maxSearchRadius = value }
             
         internal fun toNative(): AndroidLightManager.ShadowOptions = nativeOptions
     }

@@ -80,6 +80,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
             get() = android.disableHandleUseAfterFreeCheck
             set(value) { android.disableHandleUseAfterFreeCheck = value }
 
+        actual var disableHandleUseAfterFreeCheck: Boolean
+            get() = android.disableHandleUseAfterFreeCheck
+            set(value) { android.disableHandleUseAfterFreeCheck = value }
+
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
             internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.values()[ordinal]
@@ -188,6 +192,9 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         config.resourceAllocatorCacheMaxAge = androidConfig.resourceAllocatorCacheMaxAge
         config.preferredShaderLanguage = Config.ShaderLanguage.fromAndroid(androidConfig.preferredShaderLanguage)
         config.forceGLES2Context = androidConfig.forceGLES2Context
+        config.assertNativeWindowIsValid = androidConfig.assertNativeWindowIsValid
+        config.disableParallelShaderCompile = androidConfig.disableParallelShaderCompile
+        config.disableHandleUseAfterFreeCheck = androidConfig.disableHandleUseAfterFreeCheck
         config.gpuContextPriority = GpuContextPriority.fromAndroid(androidConfig.gpuContextPriority)
         config.sharedUboInitialSizeInBytes = androidConfig.sharedUboInitialSizeInBytes
         return config
@@ -210,7 +217,7 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = nativeEngine.isValidColorGrading(colorGrading.nativeColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = nativeEngine.isValidTexture(texture.nativeTexture)
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(renderTarget.nativeRenderTarget)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — Stream cannot be constructed on web, so there is never a stream to validate.")
     actual fun isValidStream(stream: Stream): Boolean = nativeEngine.isValidStream(stream.nativeStream)
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
 
