@@ -243,6 +243,7 @@ actual class View(internal val jsView: JSView) {
             DepthOfFieldOptions().apply {
                 enabled = o.enabled.b()
                 cocScale = o.cocScale.f()
+                cocAspectRatio = o.cocAspectRatio.f()
                 maxApertureDiameter = o.maxApertureDiameter.f()
                 nativeResolution = o.nativeResolution.b()
                 foregroundRingCount = o.foregroundRingCount.i()

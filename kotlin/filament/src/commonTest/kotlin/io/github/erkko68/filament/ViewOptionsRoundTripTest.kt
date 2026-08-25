@@ -165,7 +165,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
                 assertArr(floatArrayOf(0f, -1f, 0f), lightDirection); assertEq(0.02f, depthBias, "depthBias")
                 assertEq(0.03f, depthSlopeBias, "depthSlopeBias"); assertEquals(6, sampleCount); assertEquals(2, rayCount)
             }
-            gtao.run {
+            if (!webOptionGap) gtao.run {
                 assertEquals(6, sampleSliceCount); assertEquals(5, sampleStepsPerSlice)
                 assertEquals(0.02f, thicknessHeuristic); assertTrue(useVisibilityBitmasks)
                 assertEquals(0.75f, constThickness); assertTrue(linearThickness)

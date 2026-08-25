@@ -33,6 +33,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Web texture formats fell back to `RGBA8`** (`filament`): `Texture.Builder.format` mapped only 10 of the 109 `InternalFormat` values, so e.g. a `DEPTH24_STENCIL8` texture was built as colour. The mapping is exact in both directions now.
 - **`AssetLoader.destroy` leaked the loader on web** (`gltfio`): it called `delete()`, whose embind destructor for `AssetLoader` is a no-op; it calls the static `destroy` that actually frees it now.
 - **`Engine.destroy` leaked its canvas and GL context on web** (`filament`): the hidden canvas `Engine.create` allocates stayed in the document with its WebGL context live, so repeated create/destroy walked into the browser's context limit. A caller-supplied canvas is left untouched.
+- **Web `View.depthOfFieldOptions` dropped `cocAspectRatio`** (`filament`): the setter pushed it to the engine but the getter never read it back, so it always answered the 1.0 default.
 
 ### Removed
 - **`View.FogOptions.densityMap`** (`filament`, **source-breaking**): the field was fabricated — upstream's `FogOptions` has no such member, so it was write-only and did nothing. Use `skyColor`.
