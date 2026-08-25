@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 
 import io.github.erkko68.filament.web.interop.emptyJsObject
+import io.github.erkko68.filament.web.interop.loseWebGlContext
 import io.github.erkko68.filament.web.Engine as JSEngine
 import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
@@ -9,7 +10,13 @@ import io.github.erkko68.filament.web.EngineCreateOptions
 import io.github.erkko68.filament.web.interop.jsSetBoolean
 import org.w3c.dom.HTMLCanvasElement
 
-actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HTMLCanvasElement? = null) {
+actual class Engine private constructor(
+    val jsEngine: JSEngine,
+    val jsCanvas: HTMLCanvasElement? = null,
+    // Only the hidden canvas we allocated ourselves is ours to tear down; a caller's
+    // shared canvas outlives the engine and may back another one later.
+    private val ownsCanvas: Boolean = false,
+) {
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns true unconditionally — filament.js binds no engine-level validity check, only the isValidX family for resources.")
     actual fun isValid(): Boolean {
         return true
@@ -17,6 +24,12 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
     actual fun destroy() {
         JSEngine.destroy(jsEngine)
+        // The canvas and its GL context outlive the engine, and browsers cap how
+        // many contexts are live at once, so release both here.
+        if (ownsCanvas) jsCanvas?.let { canvas ->
+            loseWebGlContext(canvas)
+            canvas.remove()
+        }
     }
 
     actual val backend: Backend get() = fromJsBackend(jsEngine.getBackend())
@@ -339,7 +352,10 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder { this.colorGrading = colorGrading; return this }
 
         actual fun build(): Engine {
-            val engine = create(canvas ?: offscreenCanvas(), backend, config, features, colorGrading)
+            val engine = create(
+                canvas ?: offscreenCanvas(), backend, config, features, colorGrading,
+                ownsCanvas = canvas == null,
+            )
             featureLevel?.let {
                 // Builder::featureLevel takes the min of the request and what the backend
                 // supports; setActiveFeatureLevel throws instead, so clamp first.
@@ -350,12 +366,15 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 
     actual companion object {
-        actual fun create(): Engine = create(offscreenCanvas(), null, null)
+        actual fun create(): Engine = create(offscreenCanvas(), null, null, ownsCanvas = true)
 
-        actual fun create(backend: Backend): Engine = create(offscreenCanvas(), backend, null)
+        actual fun create(backend: Backend): Engine =
+            create(offscreenCanvas(), backend, null, ownsCanvas = true)
 
-        actual fun create(sharedContext: Any): Engine =
-            create(sharedContext as? HTMLCanvasElement ?: offscreenCanvas(), null, null)
+        actual fun create(sharedContext: Any): Engine {
+            val shared = sharedContext as? HTMLCanvasElement
+            return create(shared ?: offscreenCanvas(), null, null, ownsCanvas = shared == null)
+        }
 
         /**
          * `Engine.create` builds the WebGL context with `alpha: false` by default, which makes
@@ -369,6 +388,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             config: Config?,
             features: Map<String, Boolean> = emptyMap(),
             colorGrading: ColorGrading.Builder? = null,
+            ownsCanvas: Boolean = false,
         ): Engine {
             val options = emptyJsObject().unsafeCast<EngineCreateOptions>().apply { alpha = true }
             backend?.let { options.backend = toJsBackend(it) }
@@ -381,7 +401,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             // No config → let the JS binding keep its own createDefaultConfig() values.
             val jsEngine = if (config == null) JSEngine.create(canvas, options)
                            else JSEngine.create(canvas, options, config.toJs())
-            return Engine(jsEngine, canvas)
+            return Engine(jsEngine, canvas, ownsCanvas)
         }
 
         actual fun getSteadyClockTimeNano(): Long {
