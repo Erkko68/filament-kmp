@@ -34,6 +34,7 @@
 #   scripts/dev/check-common-api.sh                 # uses .filament-src-cache @ filaVersion
 #   scripts/dev/check-common-api.sh --tag v1.71.4   # specific tag
 #   scripts/dev/check-common-api.sh /path/to/clone  # explicit Filament tree
+#   scripts/dev/check-common-api.sh --self-test     # check the Kotlin field parser
 #
 # Exit code: 0 when clean, 1 when anything unsuppressed is missing (CI-able).
 
@@ -79,6 +80,7 @@ TAG=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --tag) TAG="$2"; shift 2 ;;
+    --self-test) SELF_TEST=1; shift ;;
     -h|--help) sed -n '2,/^$/p' "$0" | sed 's/^# \?//'; exit 0 ;;
     *) FILAMENT_SRC="$1"; shift ;;
   esac
@@ -139,6 +141,60 @@ strip_comments() {
       print line
     }
   '
+}
+
+# Emit "Owner<TAB>property" for every val/var in a Kotlin source on stdin, where
+# Owner is the nearest enclosing class/interface/object. Comments are already
+# stripped. This is what makes the FIELD check *scoped*: a flat token set cannot
+# tell View.SoftShadowOptions.penumbraScale from
+# LightManager.ShadowOptions.penumbraScale, so one covers for the other.
+#
+# Both property forms are handled: declared in the body (`class Foo { var x }`)
+# and declared in the primary constructor (`class Viewport(var left: Int)`),
+# which has no braces at all.
+extract_kotlin_fields() {
+  awk '
+    BEGIN { depth = 0; cname[0] = "" }
+    {
+      line = $0
+
+      # A type declaration claims the next "{" (or its constructor parens).
+      if (match(line, /(^|[ \t])(class|interface|object)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)) {
+        decl = substr(line, RSTART, RLENGTH)
+        n = split(decl, parts, /[ \t]+/)
+        pending_type = 1; pending_name = parts[n]
+      }
+
+      # A property belongs to the type being declared when it sits in the
+      # primary constructor of that type — either still open from a previous
+      # line (paren > 0) or opened on this very line.
+      ctor = pending_type && (paren > 0 || (match(line, /(^|[ \t])(class|interface|object)[ \t]/) && index(line, "(") > 0))
+      owner = ctor ? pending_name : cname[depth]
+      rest = line
+      while (match(rest, /(^|[^A-Za-z0-9_])(val|var)[ \t]+[A-Za-z_][A-Za-z0-9_]*/)) {
+        decl = substr(rest, RSTART, RLENGTH)
+        n = split(decl, parts, /[ \t]+/)
+        if (owner != "") print owner "\t" parts[n]
+        rest = substr(rest, RSTART + RLENGTH)
+      }
+
+      # Brace/paren accounting, after the emit so a declaration is judged in
+      # the scope that contains it.
+      rest = line
+      while (length(rest) > 0) {
+        c = substr(rest, 1, 1)
+        if (c == "(") paren++
+        else if (c == ")") { if (paren > 0) paren-- }
+        else if (c == "{") {
+          depth++
+          cname[depth] = pending_type ? pending_name : cname[depth - 1]
+          pending_type = 0
+        }
+        else if (c == "}") { if (depth > 0) { delete cname[depth]; depth-- } }
+        rest = substr(rest, 2)
+      }
+    }
+  ' | sort -u
 }
 
 # Emit "KIND<TAB>name<TAB>deprecated-flag" lines for a Java source on stdin.
@@ -221,6 +277,34 @@ extract_java_surface() {
   ' | sort -u
 }
 
+# --self-test exercises extract_kotlin_fields against a fixture covering the
+# shapes that matter: nested types, a sibling type reusing a property name (the
+# collision that motivated the scoping), and primary-constructor properties.
+if [[ "${SELF_TEST:-0}" == "1" ]]; then
+  expected="Inner	only
+Inner	shared
+Outer	shared
+Point	x
+Point	y"
+  actual="$(printf '%s\n' \
+    'class Outer {' \
+    '    var shared: Float = 0f' \
+    '    class Inner {' \
+    '        var shared: Float = 0f' \
+    '        var only: Int = 0' \
+    '    }' \
+    '}' \
+    'class Point(var x: Int, var y: Int)' \
+    | strip_comments | extract_kotlin_fields)"
+  if [[ "$actual" == "$expected" ]]; then
+    echo "self-test: extract_kotlin_fields OK"
+    exit 0
+  fi
+  echo "self-test FAILED" >&2
+  diff <(printf '%s\n' "$expected") <(printf '%s\n' "$actual") >&2 || true
+  exit 1
+fi
+
 # macOS-safe first-char lowercasing (BSD sed has no \L).
 lower_first() { printf '%s%s' "$(printf '%s' "${1:0:1}" | tr '[:upper:]' '[:lower:]')" "${1:1}"; }
 
@@ -255,7 +339,18 @@ for entry in "${MODULES[@]}"; do
     | grep -oE '\b(class|interface|object)[ \t]+[A-Z][A-Za-z0-9_]*' \
     | awk '{print $2}' | sort -u > "$kt_types"
 
+  # Owner-scoped property set, for the FIELD check.
+  kt_fields="$TMP_DIR/fields-$mod"
+  find "${src_dirs[@]}" -name '*.kt' -exec cat {} + 2>/dev/null \
+    | strip_comments \
+    | extract_kotlin_fields > "$kt_fields"
+
   has_token() { grep -qxF -- "$1" "$kt_tokens"; }
+  # A Java field is covered only if commonMain declares that property on that
+  # same type. Java's own nested-type name is the key, so this relies on the
+  # Kotlin nesting matching Java's; where it deliberately doesn't (the
+  # %codegen_java_flatten% structs) the ignores file already covers it.
+  has_scoped_field() { grep -qxF -- "$1	$2" "$kt_fields"; }
 
   module_missing=0
   module_deprecated=0
@@ -311,7 +406,16 @@ for entry in "${MODULES[@]}"; do
       [[ -n "$owner" && "$owner" != "$classname" ]] && label="$owner.$name"
 
       case "$kind" in
-        NESTED|CONST|FIELD)
+        FIELD)
+          # Scoped: the property must be declared on this very type. Falls back
+          # to the flat set only when the owner is unknown.
+          if [[ -n "$owner" ]]; then
+            has_scoped_field "$owner" "$name" && continue
+          else
+            has_token "$name" && continue
+          fi
+          ;;
+        NESTED|CONST)
           has_token "$name" && continue
           ;;
         METHOD)
