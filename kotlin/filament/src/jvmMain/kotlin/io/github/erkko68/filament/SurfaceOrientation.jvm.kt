@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) {
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) : AutoCloseable {
     actual class Builder actual constructor() {
         // Geometry pointers handed to the builder are read at build(); they must outlive each
         // setter call, so allocate them in a builder-scoped arena closed when build() runs.
@@ -84,6 +84,9 @@ actual class SurfaceOrientation @InternalFilamentApi constructor(internal val na
             System.arraycopy(seg.toShorts(), 0, buffer, 0, buffer.size)
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         FilamentC.FilaSurfaceOrientation_destroy(nativeHandle)

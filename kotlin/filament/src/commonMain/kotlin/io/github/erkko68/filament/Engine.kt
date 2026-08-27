@@ -39,7 +39,7 @@ package io.github.erkko68.filament
  * Engine.destroy(engine)
  * ```
  */
-expect class Engine {
+expect class Engine : AutoCloseable {
     /**
      * Rendering backend selection.
      */
@@ -288,6 +288,9 @@ expect class Engine {
      * should ideally be destroyed first, though the Engine will clean up remaining resources.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 
     /**
      * The rendering backend being used by this Engine.

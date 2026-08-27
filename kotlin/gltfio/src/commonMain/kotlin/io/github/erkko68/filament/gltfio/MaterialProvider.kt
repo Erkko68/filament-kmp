@@ -14,7 +14,7 @@ import io.github.erkko68.filament.PlatformGap
  * @see UbershaderProvider
  * @see AssetLoader
  */
-expect interface MaterialProvider {
+expect interface MaterialProvider : AutoCloseable {
     /**
      * Creates or fetches a compiled Filament material, then creates an instance from it.
      *
@@ -45,6 +45,9 @@ expect interface MaterialProvider {
 
     /** Frees the provider itself (cached materials survive unless [destroyMaterials] was called). */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 }
 
 /**
@@ -71,4 +74,5 @@ expect class UbershaderProvider : MaterialProvider {
     override fun needsDummyData(attrib: Int): Boolean
     override fun destroyMaterials()
     override fun destroy()
+    override fun close()
 }

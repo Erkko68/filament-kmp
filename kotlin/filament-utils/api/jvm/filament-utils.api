@@ -178,8 +178,9 @@ public final class io/github/erkko68/filament/utils/Bool4 {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/github/erkko68/filament/utils/EquirectangularToCubemap {
+public final class io/github/erkko68/filament/utils/EquirectangularToCubemap : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
 }
@@ -763,8 +764,9 @@ public final class io/github/erkko68/filament/utils/HalfKt {
 	public static final fun truncate-lGUE2Mw (S)S
 }
 
-public final class io/github/erkko68/filament/utils/IBLPrefilterContext {
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/Engine;)V
+	public fun close ()V
 	public final fun destroy ()V
 }
 
@@ -1028,8 +1030,9 @@ public final class io/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle {
 	public final fun getSkybox ()Lio/github/erkko68/filament/Skybox;
 }
 
-public final class io/github/erkko68/filament/utils/Manipulator {
+public final class io/github/erkko68/filament/utils/Manipulator : java/lang/AutoCloseable {
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
 	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
@@ -1552,8 +1555,9 @@ public final class io/github/erkko68/filament/utils/ScalarKt {
 	public static final fun sqr-lGUE2Mw (S)S
 }
 
-public final class io/github/erkko68/filament/utils/SpecularFilter {
+public final class io/github/erkko68/filament/utils/SpecularFilter : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
 }

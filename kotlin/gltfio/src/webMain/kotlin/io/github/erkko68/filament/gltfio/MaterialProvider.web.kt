@@ -9,7 +9,7 @@ import io.github.erkko68.filament.web.gltfio_UbershaderProvider
 import io.github.erkko68.filament.web.VertexAttribute as JSVertexAttribute
 import io.github.erkko68.filament.nativeObject
 
-actual interface MaterialProvider {
+actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(
         config: MaterialKey,
         uvmap: IntArray,
@@ -82,6 +82,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
     }
 
     // filament.js binds no destructor that frees the provider itself; this releases what it owns.
+    actual override fun close() = destroy()
     actual override fun destroy() = destroyMaterials()
 }
 

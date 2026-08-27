@@ -151,7 +151,7 @@ public final class io/github/erkko68/filament/gltfio/MaterialKey {
 	public final fun setVolumeThicknessUV (I)V
 }
 
-public abstract interface class io/github/erkko68/filament/gltfio/MaterialProvider {
+public abstract interface class io/github/erkko68/filament/gltfio/MaterialProvider : java/lang/AutoCloseable {
 	public abstract fun createMaterialInstance (Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;Ljava/lang/String;)Lio/github/erkko68/filament/MaterialInstance;
 	public static synthetic fun createMaterialInstance$default (Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/erkko68/filament/MaterialInstance;
 	public abstract fun destroy ()V
@@ -176,7 +176,7 @@ public final class io/github/erkko68/filament/gltfio/NativeObject_jvmKt {
 	public static final fun getNativeObject (Lio/github/erkko68/filament/gltfio/ResourceLoader;)Ljava/lang/foreign/MemorySegment;
 }
 
-public final class io/github/erkko68/filament/gltfio/ResourceLoader {
+public final class io/github/erkko68/filament/gltfio/ResourceLoader : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/Engine;Z)V
 	public synthetic fun <init> (Lio/github/erkko68/filament/Engine;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun addResourceData (Ljava/lang/String;[B)V
@@ -184,6 +184,7 @@ public final class io/github/erkko68/filament/gltfio/ResourceLoader {
 	public final fun asyncCancelLoad ()V
 	public final fun asyncGetLoadProgress ()F
 	public final fun asyncUpdateLoad ()V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun evictResourceData ()V
 	public final fun hasResourceData (Ljava/lang/String;)Z
@@ -192,6 +193,7 @@ public final class io/github/erkko68/filament/gltfio/ResourceLoader {
 
 public final class io/github/erkko68/filament/gltfio/UbershaderProvider : io/github/erkko68/filament/gltfio/MaterialProvider {
 	public fun <init> (Lio/github/erkko68/filament/Engine;)V
+	public fun close ()V
 	public fun createMaterialInstance (Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;Ljava/lang/String;)Lio/github/erkko68/filament/MaterialInstance;
 	public fun destroy ()V
 	public fun destroyMaterials ()V

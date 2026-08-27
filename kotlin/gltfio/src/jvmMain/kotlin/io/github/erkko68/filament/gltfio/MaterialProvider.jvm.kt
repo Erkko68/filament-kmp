@@ -16,7 +16,7 @@ import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.nativeObject
 
-actual interface MaterialProvider {
+actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): MaterialInstance?
     actual fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): Material?
     actual fun getMaterials(): Array<Material>
@@ -68,6 +68,8 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
 
     actual override fun needsDummyData(attrib: Int): Boolean = FilamentC.FilaMaterialProvider_needsDummyData(nativeHandle, attrib)
     actual override fun destroyMaterials() = FilamentC.FilaMaterialProvider_destroyMaterials(nativeHandle)
+
+    actual override fun close() = destroy()
 
     actual override fun destroy() {
         FilamentC.FilaMaterialProvider_destroy(nativeHandle)

@@ -428,7 +428,7 @@ private class Flight(cfg: Cfg) : Base(cfg) {
 
 // ── Public actual class ───────────────────────────────────────────────────────
 
-actual class Manipulator internal constructor(private val impl: Base) {
+actual class Manipulator internal constructor(private val impl: Base) : AutoCloseable {
 
     actual enum class Mode { ORBIT, MAP, FLIGHT }
     actual enum class Fov  { VERTICAL, HORIZONTAL }
@@ -465,6 +465,9 @@ actual class Manipulator internal constructor(private val impl: Base) {
             Mode.FLIGHT -> Flight(cfg)
         })
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {}
     actual fun getMode(): Mode = when (impl) {

@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaEngine
 import cnames.structs.FilaEngineBuilder
 
-actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaEngine>?) {
+actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaEngine>?) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(FilaEngine_getTransformManager(nativeHandle)!!) }
     private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)!!) }
     private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!) }
@@ -147,6 +147,8 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     }
 
     actual fun isValid(): Boolean = nativeHandle != null
+    actual override fun close() = destroy()
+
     actual fun destroy() {
         nativeHandle?.let { FilaEngine_destroy(it) }
         nativeHandle = null

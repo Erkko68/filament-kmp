@@ -22,11 +22,14 @@ import io.github.erkko68.filament.Texture
  *
  * @param engine the [Engine] to use for all GPU operations
  */
-expect class IBLPrefilterContext(engine: Engine) {
+expect class IBLPrefilterContext(engine: Engine) : AutoCloseable {
     /**
      * Destroys all GPU resources created during initialization.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 }
 
 /**
@@ -39,11 +42,14 @@ expect class IBLPrefilterContext(engine: Engine) {
  *
  * @param context the [IBLPrefilterContext] to use
  */
-expect class EquirectangularToCubemap(context: IBLPrefilterContext) {
+expect class EquirectangularToCubemap(context: IBLPrefilterContext) : AutoCloseable {
     /**
      * Destroys all GPU resources created during initialization.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 
     /**
      * Converts the given equirectangular [Texture] to a cubemap.
@@ -66,11 +72,14 @@ expect class EquirectangularToCubemap(context: IBLPrefilterContext) {
  *
  * @param context the [IBLPrefilterContext] to use
  */
-expect class SpecularFilter(context: IBLPrefilterContext) {
+expect class SpecularFilter(context: IBLPrefilterContext) : AutoCloseable {
     /**
      * Destroys all GPU resources created during initialization.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 
     /**
      * Generates a prefiltered specular cubemap from the given environment cubemap.

@@ -31,7 +31,7 @@ package io.github.erkko68.filament.utils
  *
  * @see Bookmark
  */
-expect class Manipulator {
+expect class Manipulator : AutoCloseable {
     /** Camera manipulation mode. */
     enum class Mode {
         /** Rotates and dollies around a target point. */
@@ -134,6 +134,9 @@ expect class Manipulator {
 
     /** Destroys the manipulator and releases all resources. */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 
     /**
      * Gets the immutable mode of the manipulator.

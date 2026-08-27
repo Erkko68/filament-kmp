@@ -9,7 +9,7 @@ import io.github.erkko68.filament.isNullPtr
 import java.lang.foreign.MemorySegment
 import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
+actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) : AutoCloseable {
     internal var nativeHandle: MemorySegment? = FilamentC.FilaResourceLoader_create(engine.nativeObject, normalizeSkinningWeights)
     private val providers = mutableListOf<MemorySegment>()
 
@@ -29,6 +29,9 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
             }
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         nativeHandle?.let { FilamentC.FilaResourceLoader_destroy(it) }

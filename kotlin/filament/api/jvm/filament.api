@@ -192,9 +192,10 @@ public final class io/github/erkko68/filament/Colors$RgbaType : java/lang/Enum {
 	public static fun values ()[Lio/github/erkko68/filament/Colors$RgbaType;
 }
 
-public final class io/github/erkko68/filament/Engine {
+public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public static final field Companion Lio/github/erkko68/filament/Engine$Companion;
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun close ()V
 	public final fun compile (Lio/github/erkko68/filament/Engine$CompilerPriorityQueue;Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/View;Lio/github/erkko68/filament/Engine$FeatureState;Lio/github/erkko68/filament/Engine$FeatureState;Lkotlin/jvm/functions/Function0;)V
 	public static synthetic fun compile$default (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/Engine$CompilerPriorityQueue;Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/View;Lio/github/erkko68/filament/Engine$FeatureState;Lio/github/erkko68/filament/Engine$FeatureState;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun createCamera ()Lio/github/erkko68/filament/Camera;
@@ -1341,8 +1342,9 @@ public final class io/github/erkko68/filament/Stream$StreamType : java/lang/Enum
 	public static fun values ()[Lio/github/erkko68/filament/Stream$StreamType;
 }
 
-public final class io/github/erkko68/filament/SurfaceOrientation {
+public final class io/github/erkko68/filament/SurfaceOrientation : java/lang/AutoCloseable {
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun getQuatsAsFloat ([FI)V
 	public final fun getQuatsAsHalf ([SI)V

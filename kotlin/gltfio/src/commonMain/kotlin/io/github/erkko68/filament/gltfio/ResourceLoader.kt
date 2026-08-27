@@ -29,7 +29,7 @@ import io.github.erkko68.filament.Engine
  * @see FilamentAsset
  * @see AssetLoader
  */
-expect class ResourceLoader {
+expect class ResourceLoader : AutoCloseable {
     /**
      * Create a ResourceLoader.
      *
@@ -44,6 +44,9 @@ expect class ResourceLoader {
      * CPU-side data blobs can be freed.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 
     /**
      * Feeds the binary content of an external resource into the loader's URI cache.

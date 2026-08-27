@@ -16,11 +16,14 @@ actual class Engine @InternalFilamentApi constructor(
     // Only the hidden canvas we allocated ourselves is ours to tear down; a caller's
     // shared canvas outlives the engine and may back another one later.
     private val ownsCanvas: Boolean = false,
-) {
+) : AutoCloseable {
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns true unconditionally — filament.js binds no engine-level validity check, only the isValidX family for resources.")
     actual fun isValid(): Boolean {
         return true
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         JSEngine.destroy(jsEngine)

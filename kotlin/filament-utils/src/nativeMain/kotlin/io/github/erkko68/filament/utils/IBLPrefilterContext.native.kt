@@ -9,16 +9,20 @@ import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.nativeObject
 
-actual class IBLPrefilterContext actual constructor(engine: Engine) {
+actual class IBLPrefilterContext actual constructor(engine: Engine) : AutoCloseable {
     internal val nativeHandle = FilaIBLPrefilterContext_create(engine.nativeObject)!!
+
+    actual override fun close() = destroy()
 
     actual fun destroy() {
         FilaIBLPrefilterContext_destroy(nativeHandle)
     }
 }
 
-actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterContext) {
+actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterContext) : AutoCloseable {
     private val nativeHandle = FilaIBLPrefilterEquirectangularToCubemap_create(context.nativeHandle)!!
+
+    actual override fun close() = destroy()
 
     actual fun destroy() {
         FilaIBLPrefilterEquirectangularToCubemap_destroy(nativeHandle)
@@ -31,8 +35,10 @@ actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterCo
     }
 }
 
-actual class SpecularFilter actual constructor(context: IBLPrefilterContext) {
+actual class SpecularFilter actual constructor(context: IBLPrefilterContext) : AutoCloseable {
     private val nativeHandle = FilaIBLPrefilterSpecularFilter_create(context.nativeHandle)!!
+
+    actual override fun close() = destroy()
 
     actual fun destroy() {
         FilaIBLPrefilterSpecularFilter_destroy(nativeHandle)

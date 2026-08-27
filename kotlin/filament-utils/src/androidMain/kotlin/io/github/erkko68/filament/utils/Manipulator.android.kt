@@ -1,6 +1,6 @@
 package io.github.erkko68.filament.utils
 
-actual class Manipulator internal constructor(internal val androidHandle: com.google.android.filament.utils.Manipulator) {
+actual class Manipulator internal constructor(internal val androidHandle: com.google.android.filament.utils.Manipulator) : AutoCloseable {
 
     actual enum class Mode {
         ORBIT, MAP, FLIGHT
@@ -117,6 +117,10 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
             return Manipulator(builder.build(com.google.android.filament.utils.Manipulator.Mode.values()[mode.ordinal]))
         }
     }
+
+
+    actual override fun close() = destroy()
+
 
 
     actual fun destroy() {

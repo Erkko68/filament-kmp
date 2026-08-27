@@ -7,7 +7,7 @@ import cnames.structs.FilaManipulator
 import cnames.structs.FilaBookmark
 import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaManipulator>) {
+actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaManipulator>) : AutoCloseable {
 
     actual enum class Mode {
         ORBIT, MAP, FLIGHT
@@ -125,6 +125,9 @@ actual class Manipulator @InternalFilamentApi constructor(internal val nativeHan
             return Manipulator(handle)
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         FilaManipulator_destroy(nativeHandle)

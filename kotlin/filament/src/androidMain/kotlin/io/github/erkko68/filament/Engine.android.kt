@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.Engine as AndroidEngine
 
-actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: AndroidEngine) {
+actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: AndroidEngine) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(nativeEngine.transformManager) }
     private val mLightManager by lazy { LightManager(nativeEngine.lightManager) }
     private val mRenderableManager by lazy { RenderableManager(nativeEngine.renderableManager) }
@@ -166,6 +166,8 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
     }
 
     actual fun isValid(): Boolean = nativeEngine.isValid
+    actual override fun close() = destroy()
+
     actual fun destroy() = nativeEngine.destroy()
     actual val backend: Backend get() = Backend.fromAndroid(nativeEngine.backend)
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromAndroid(nativeEngine.supportedFeatureLevel)

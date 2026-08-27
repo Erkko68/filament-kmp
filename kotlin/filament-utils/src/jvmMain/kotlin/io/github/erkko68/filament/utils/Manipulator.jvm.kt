@@ -8,7 +8,7 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) {
+actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) : AutoCloseable {
     actual enum class Mode { ORBIT, MAP, FLIGHT }
     actual enum class Fov { VERTICAL, HORIZONTAL }
     actual enum class Key { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
@@ -47,6 +47,9 @@ actual class Manipulator @InternalFilamentApi constructor(internal val nativeHan
             return Manipulator(handle)
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() = FilamentC.FilaManipulator_destroy(nativeHandle)
 

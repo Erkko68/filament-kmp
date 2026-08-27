@@ -8,7 +8,7 @@ import cnames.structs.FilaResourceLoader
 import cnames.structs.FilaTextureProvider
 import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader {
+actual class ResourceLoader : AutoCloseable {
     internal var nativeHandle: CPointer<FilaResourceLoader>?
     private val providers = mutableListOf<CPointer<FilaTextureProvider>>()
 
@@ -30,6 +30,9 @@ actual class ResourceLoader {
             providers.add(ktx2Provider)
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         nativeHandle?.let { FilaResourceLoader_destroy(it) }

@@ -7,7 +7,7 @@ import io.github.erkko68.filament.web.gltfio_TextureProvider
 import org.khronos.webgl.set
 import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
+actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) : AutoCloseable {
     private val jsLoader = gltfio_ResourceLoader(engine.nativeObject, normalizeSkinningWeights)
 
     init {
@@ -21,6 +21,9 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
             jsLoader.addTextureProvider("image/webp", gltfio_TextureProvider.createWebpProvider(engine.nativeObject))
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         jsLoader.delete()
