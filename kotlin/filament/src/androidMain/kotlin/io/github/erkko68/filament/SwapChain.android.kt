@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.SwapChain as AndroidSwapChain
 
-actual class SwapChain internal constructor(val nativeSwapChain: AndroidSwapChain) {
+actual class SwapChain @InternalFilamentApi constructor(internal val nativeSwapChain: AndroidSwapChain) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 

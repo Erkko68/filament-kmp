@@ -5,8 +5,9 @@ import io.github.erkko68.filament.utils.cinterop.*
 import kotlinx.cinterop.*
 import cnames.structs.FilaManipulator
 import cnames.structs.FilaBookmark
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Manipulator internal constructor(internal val nativeHandle: CPointer<FilaManipulator>) {
+actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaManipulator>) {
 
     actual enum class Mode {
         ORBIT, MAP, FLIGHT
@@ -195,5 +196,5 @@ actual class Manipulator internal constructor(internal val nativeHandle: CPointe
         FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
     }
 
-    actual class Bookmark internal constructor(internal val nativeHandle: CPointer<FilaBookmark>)
+    actual class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaBookmark>)
 }

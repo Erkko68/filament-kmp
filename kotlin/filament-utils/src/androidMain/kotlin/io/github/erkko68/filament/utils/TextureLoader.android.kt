@@ -4,6 +4,7 @@ import com.google.android.filament.utils.TextureType as GoogleTextureType
 import com.google.android.filament.utils.loadTexture as googleLoadTexture
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.nativeObject
 
 actual object TextureLoader {
 
@@ -18,7 +19,7 @@ actual object TextureLoader {
     actual fun loadTexture(engine: Engine, buffer: ByteArray, type: TextureType): Texture? {
         val googleType = GoogleTextureType.entries[type.ordinal]
         return Texture(googleLoadTexture(
-            engine.nativeEngine,
+            engine.nativeObject,
             buffer,
             googleType
         ))

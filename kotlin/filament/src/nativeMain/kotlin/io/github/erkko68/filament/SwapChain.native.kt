@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaSwapChain
 
-actual class SwapChain internal constructor(internal var nativeHandle: CPointer<FilaSwapChain>?) {
+actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaSwapChain>?) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 

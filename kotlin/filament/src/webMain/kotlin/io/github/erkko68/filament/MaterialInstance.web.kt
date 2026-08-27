@@ -26,7 +26,7 @@ private external interface JsMaterialInstanceExt : JsAny  {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstance) {
+actual class MaterialInstance @InternalFilamentApi constructor(internal val jsMaterialInstance: JSMaterialInstance) {
     private val ext: JsMaterialInstanceExt get() = jsMaterialInstance.unsafeCast<JsMaterialInstanceExt>()
     actual val material: Material
         get() = Material(jsMaterialInstance.getMaterial())

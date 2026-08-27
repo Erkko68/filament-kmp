@@ -8,7 +8,7 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 
-actual class Renderer constructor(private val engineRef: Engine, public var nativeHandle: MemorySegment?) {
+actual class Renderer @InternalFilamentApi constructor(private val engineRef: Engine, internal var nativeHandle: MemorySegment?) {
     actual class DisplayInfo actual constructor() {
         actual var refreshRate: Float = 60.0f
     }

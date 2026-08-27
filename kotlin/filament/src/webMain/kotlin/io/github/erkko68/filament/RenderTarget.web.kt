@@ -5,7 +5,7 @@ import io.github.erkko68.filament.web.`RenderTarget_Builder` as JSRenderTargetBu
 import io.github.erkko68.filament.web.RenderTarget_AttachmentPoint
 import io.github.erkko68.filament.web.Texture_CubemapFace
 
-actual class RenderTarget internal constructor(
+actual class RenderTarget @InternalFilamentApi constructor(
     internal val jsRenderTarget: JSRenderTarget,
     private val engine: Engine? = null,
 ) {

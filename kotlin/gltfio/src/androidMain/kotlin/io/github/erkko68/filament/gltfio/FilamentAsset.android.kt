@@ -3,8 +3,9 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset internal constructor(
+actual class FilamentAsset @InternalFilamentApi constructor(
     internal val nativeObject: com.google.android.filament.gltfio.FilamentAsset
 ) {
     private var knownInstances: Array<FilamentInstance>? = null

@@ -7,7 +7,7 @@ import io.github.erkko68.filament.web.VertexBuffer_AttributeType as JSVertexBuff
 import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class VertexBuffer(internal val jsVertexBuffer: JSVertexBuffer) {
+actual class VertexBuffer @InternalFilamentApi constructor(internal val jsVertexBuffer: JSVertexBuffer) {
     actual val vertexCount: Int get() = jsVertexBuffer.getVertexCount().toInt()
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {

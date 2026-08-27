@@ -6,24 +6,25 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaResourceLoader
 import cnames.structs.FilaTextureProvider
+import io.github.erkko68.filament.nativeObject
 
 actual class ResourceLoader {
-    public var nativeHandle: CPointer<FilaResourceLoader>?
+    internal var nativeHandle: CPointer<FilaResourceLoader>?
     private val providers = mutableListOf<CPointer<FilaTextureProvider>>()
 
     actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
-        val loader = FilaResourceLoader_create(engine.nativeHandle, normalizeSkinningWeights)
+        val loader = FilaResourceLoader_create(engine.nativeObject, normalizeSkinningWeights)
         nativeHandle = loader
         
         // Auto-initialize texture providers to match Android behavior
-        val stbProvider = FilaResourceLoader_createStbProvider(engine.nativeHandle)
+        val stbProvider = FilaResourceLoader_createStbProvider(engine.nativeObject)
         if (stbProvider != null) {
             FilaResourceLoader_addTextureProvider(loader, "image/jpeg", stbProvider)
             FilaResourceLoader_addTextureProvider(loader, "image/png", stbProvider)
             providers.add(stbProvider)
         }
         
-        val ktx2Provider = FilaResourceLoader_createKtx2Provider(engine.nativeHandle)
+        val ktx2Provider = FilaResourceLoader_createKtx2Provider(engine.nativeObject)
         if (ktx2Provider != null) {
             FilaResourceLoader_addTextureProvider(loader, "image/ktx2", ktx2Provider)
             providers.add(ktx2Provider)

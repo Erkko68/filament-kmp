@@ -15,7 +15,7 @@ import io.github.erkko68.filament.web.LightManager_ShadowCascades.Companion as J
 import io.github.erkko68.filament.web.Entity as JSEntity
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class LightManager(internal val jsLightManager: JSLightManager) {
+actual class LightManager @InternalFilamentApi constructor(internal val jsLightManager: JSLightManager) {
     actual fun getComponentCount(): Int = jsLightManager.getComponentCount().toInt()
 
     actual fun hasComponent(entity: Entity): Boolean =

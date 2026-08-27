@@ -6,8 +6,9 @@ import io.github.erkko68.filament.ffm.FilamentC
 import io.github.erkko68.filament.getFloatAt
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Manipulator internal constructor(internal val nativeHandle: MemorySegment) {
+actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) {
     actual enum class Mode { ORBIT, MAP, FLIGHT }
     actual enum class Fov { VERTICAL, HORIZONTAL }
     actual enum class Key { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
@@ -83,5 +84,5 @@ actual class Manipulator internal constructor(internal val nativeHandle: MemoryS
     actual fun getHomeBookmark(): Bookmark = Bookmark(FilamentC.FilaManipulator_getHomeBookmark(nativeHandle))
     actual fun jumpToBookmark(bookmark: Bookmark) = FilamentC.FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
 
-    actual class Bookmark internal constructor(internal val nativeHandle: MemorySegment)
+    actual class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment)
 }

@@ -8,7 +8,7 @@ import io.github.erkko68.filament.web.PixelDataType
 import io.github.erkko68.filament.web.Texture_Builder as JSTextureBuilder
 import org.khronos.webgl.set
 
-actual class Texture(val jsTexture: JSTexture) {
+actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JSTexture) {
     // Filament JS exposes dimensions only via `_getWidth(engine, level)` etc.
     // (see jsbindings.cpp), so when an engine is known we delegate; otherwise
     // we fall back to the dimensions captured when the Texture was built.

@@ -7,6 +7,7 @@ import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.web.gltfio_UbershaderProvider
 import io.github.erkko68.filament.web.VertexAttribute as JSVertexAttribute
+import io.github.erkko68.filament.nativeObject
 
 actual interface MaterialProvider {
     actual fun createMaterialInstance(
@@ -30,7 +31,7 @@ actual interface MaterialProvider {
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — they take a MaterialKey, which filament.js cannot bind (bitfield-packed); the rest of the provider is the real ubershader provider.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    internal val jsProvider = gltfio_UbershaderProvider(engine.jsEngine)
+    internal val jsProvider = gltfio_UbershaderProvider(engine.nativeObject)
 
     actual override fun createMaterialInstance(
         config: MaterialKey,

@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.EntityManager as AndroidEntityManager
 
-actual class EntityManager internal constructor(val nativeEntityManager: AndroidEntityManager) {
+actual class EntityManager @InternalFilamentApi constructor(internal val nativeEntityManager: AndroidEntityManager) {
     actual companion object {
         actual fun get(): EntityManager = EntityManager(AndroidEntityManager.get())
     }

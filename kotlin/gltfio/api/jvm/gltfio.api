@@ -5,9 +5,7 @@ public final class io/github/erkko68/filament/gltfio/Animator {
 	public final fun getAnimationCount ()I
 	public final fun getAnimationDuration (I)F
 	public final fun getAnimationName (I)Ljava/lang/String;
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun resetBoneMatrices ()V
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 	public final fun updateBoneMatrices ()V
 }
 
@@ -20,8 +18,6 @@ public final class io/github/erkko68/filament/gltfio/AssetLoader {
 	public final fun destroyAsset (Lio/github/erkko68/filament/gltfio/FilamentAsset;)V
 	public final fun enableDiagnostics (Z)V
 	public final fun gc ()V
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/gltfio/AssetLoader$Companion {
@@ -47,18 +43,17 @@ public final class io/github/erkko68/filament/gltfio/FilamentAsset {
 	public final fun getLightEntities ()[I
 	public final fun getMorphTargetNames (I)[Ljava/lang/String;
 	public final fun getName (I)Ljava/lang/String;
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun getRenderableEntities ()[I
 	public final fun getResourceUris ()[Ljava/lang/String;
 	public final fun getRoot ()I
 	public final fun popRenderable ()I
 	public final fun popRenderables ([I)I
 	public final fun releaseSourceData ()V
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/gltfio/FilamentInstance {
 	public fun <init> ()V
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun applyMaterialVariant (I)V
 	public final fun attachSkin (II)V
 	public final fun detachSkin (II)V
@@ -71,11 +66,9 @@ public final class io/github/erkko68/filament/gltfio/FilamentInstance {
 	public final fun getJointsAt (I)[I
 	public final fun getMaterialInstances ()[Lio/github/erkko68/filament/MaterialInstance;
 	public final fun getMaterialVariantNames ()[Ljava/lang/String;
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun getRoot ()I
 	public final fun getSkinCount ()I
 	public final fun getSkinNames ()[Ljava/lang/String;
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/gltfio/Gltfio {
@@ -166,13 +159,21 @@ public abstract interface class io/github/erkko68/filament/gltfio/MaterialProvid
 	public abstract fun getMaterial (Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;)Lio/github/erkko68/filament/Material;
 	public static synthetic fun getMaterial$default (Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;ILjava/lang/Object;)Lio/github/erkko68/filament/Material;
 	public abstract fun getMaterials ()[Lio/github/erkko68/filament/Material;
-	public abstract fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
+	public abstract fun nativeObject ()Ljava/lang/foreign/MemorySegment;
 	public abstract fun needsDummyData (I)Z
 }
 
 public final class io/github/erkko68/filament/gltfio/MaterialProvider$DefaultImpls {
 	public static synthetic fun createMaterialInstance$default (Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/erkko68/filament/MaterialInstance;
 	public static synthetic fun getMaterial$default (Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;ILjava/lang/Object;)Lio/github/erkko68/filament/Material;
+}
+
+public final class io/github/erkko68/filament/gltfio/NativeObject_jvmKt {
+	public static final fun getNativeObject (Lio/github/erkko68/filament/gltfio/Animator;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/gltfio/AssetLoader;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/gltfio/FilamentAsset;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/gltfio/FilamentInstance;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/gltfio/ResourceLoader;)Ljava/lang/foreign/MemorySegment;
 }
 
 public final class io/github/erkko68/filament/gltfio/ResourceLoader {
@@ -185,10 +186,8 @@ public final class io/github/erkko68/filament/gltfio/ResourceLoader {
 	public final fun asyncUpdateLoad ()V
 	public final fun destroy ()V
 	public final fun evictResourceData ()V
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun hasResourceData (Ljava/lang/String;)Z
 	public final fun loadResources (Lio/github/erkko68/filament/gltfio/FilamentAsset;)Z
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/gltfio/UbershaderProvider : io/github/erkko68/filament/gltfio/MaterialProvider {
@@ -198,7 +197,7 @@ public final class io/github/erkko68/filament/gltfio/UbershaderProvider : io/git
 	public fun destroyMaterials ()V
 	public fun getMaterial (Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;)Lio/github/erkko68/filament/Material;
 	public fun getMaterials ()[Lio/github/erkko68/filament/Material;
-	public fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
+	public fun nativeObject ()Ljava/lang/foreign/MemorySegment;
 	public fun needsDummyData (I)Z
 }
 

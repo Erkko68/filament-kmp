@@ -54,7 +54,7 @@ private object Picking {
     }
 }
 
-actual class View internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class View @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }

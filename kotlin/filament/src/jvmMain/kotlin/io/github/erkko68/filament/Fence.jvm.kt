@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class Fence internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class Fence @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
 

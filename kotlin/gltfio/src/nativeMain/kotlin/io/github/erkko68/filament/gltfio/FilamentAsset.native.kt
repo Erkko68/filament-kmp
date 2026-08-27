@@ -7,8 +7,9 @@ import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaFilamentAsset
 import cnames.structs.FilaFilamentInstance
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?) {
+actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaFilamentAsset>?) {
     actual fun getRoot(): Entity = FilaFilamentAsset_getRoot(nativeHandle).toInt()
 
     actual fun popRenderable(): Entity = FilaFilamentAsset_popRenderable(nativeHandle).toInt()

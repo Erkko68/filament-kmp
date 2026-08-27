@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaLightManager
 import cnames.structs.FilaLightManagerBuilder
 
-actual class LightManager internal constructor(val nativeLightManager: CPointer<FilaLightManager>) {
+actual class LightManager @InternalFilamentApi constructor(internal val nativeLightManager: CPointer<FilaLightManager>) {
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
 
     actual class ShadowOptions actual constructor() {

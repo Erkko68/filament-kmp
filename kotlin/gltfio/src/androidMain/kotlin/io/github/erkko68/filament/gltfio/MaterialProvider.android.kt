@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.nativeObject
 
 actual interface MaterialProvider {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
@@ -17,7 +18,7 @@ actual interface MaterialProvider {
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    private val nativeObject = com.google.android.filament.gltfio.UbershaderProvider(engine.nativeEngine)
+    private val nativeObject = com.google.android.filament.gltfio.UbershaderProvider(engine.nativeObject)
 
     actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? {
         val nativeInstance = nativeObject.createMaterialInstance(config.nativeObject, uvmap, label, extras) ?: return null

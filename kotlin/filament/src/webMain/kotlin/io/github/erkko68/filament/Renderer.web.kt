@@ -13,7 +13,7 @@ import io.github.erkko68.filament.web.Renderer as JSRenderer
 import io.github.erkko68.filament.web.`Renderer_ClearOptions` as JSRendererClearOptions
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
+actual class Renderer @InternalFilamentApi constructor(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
     private var _displayInfo = DisplayInfo()
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setDisplayInfo is not bound in filament.js; frame pacing is managed by the browser.")
     actual var displayInfo: DisplayInfo

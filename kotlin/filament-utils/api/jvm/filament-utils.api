@@ -1029,6 +1029,7 @@ public final class io/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle {
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun destroy ()V
 	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
 	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
@@ -1047,6 +1048,7 @@ public final class io/github/erkko68/filament/utils/Manipulator {
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Bookmark {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Builder {
@@ -1342,6 +1344,11 @@ public final class io/github/erkko68/filament/utils/MatrixKt {
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat2;)Lio/github/erkko68/filament/utils/Mat2;
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat3;)Lio/github/erkko68/filament/utils/Mat3;
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
+}
+
+public final class io/github/erkko68/filament/utils/NativeObject_jvmKt {
+	public static final fun getNativeObject (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/utils/Manipulator;)Ljava/lang/foreign/MemorySegment;
 }
 
 public final class io/github/erkko68/filament/utils/Quaternion {

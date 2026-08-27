@@ -16,7 +16,7 @@ import io.github.erkko68.filament.web.`RenderableManager_Builder` as JSRenderabl
 import io.github.erkko68.filament.web.RenderableManager_PrimitiveType
 import io.github.erkko68.filament.web.Entity as JSEntity
 
-actual class RenderableManager(internal val jsRenderableManager: JSRenderableManager) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val jsRenderableManager: JSRenderableManager) {
     actual fun hasComponent(entity: Entity): Boolean {
         return jsRenderableManager.hasComponent(EntityManager.jsEntityOf(entity))
     }

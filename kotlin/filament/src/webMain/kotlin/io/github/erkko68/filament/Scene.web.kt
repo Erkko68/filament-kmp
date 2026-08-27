@@ -4,7 +4,7 @@ import io.github.erkko68.filament.web.interop.toJsArray
 
 import io.github.erkko68.filament.web.Scene as JSScene
 
-actual class Scene(internal val jsScene: JSScene) {
+actual class Scene @InternalFilamentApi constructor(internal val jsScene: JSScene) {
     // Cached for wrapper identity, as on the other platforms; the engine-side getters back
     // the case where the scene was populated outside this wrapper.
     private var _skybox: Skybox? = null

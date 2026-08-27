@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaFence
 
-actual class Fence internal constructor(internal var nativeHandle: CPointer<FilaFence>?) {
+actual class Fence @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaFence>?) {
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
 

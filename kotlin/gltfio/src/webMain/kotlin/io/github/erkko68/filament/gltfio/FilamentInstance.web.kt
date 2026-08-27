@@ -9,8 +9,9 @@ import io.github.erkko68.filament.web.`gltfio_FilamentInstance` as JSFilamentIns
 import io.github.erkko68.filament.web.Vector
 import io.github.erkko68.filament.web.Entity
 import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
+actual class FilamentInstance @InternalFilamentApi constructor(internal val jsInstance: JSFilamentInstance) {
     actual fun getRoot(): Int {
         val jsEntity = jsInstance.getRoot()
         val id = jsEntity.getId().toInt()

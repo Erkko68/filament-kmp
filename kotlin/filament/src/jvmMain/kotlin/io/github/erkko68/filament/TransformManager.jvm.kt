@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class TransformManager internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class TransformManager @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual fun hasComponent(entity: Entity): Boolean = FilamentC.FilaTransformManager_hasComponent(nativeHandle, entity)
     actual fun getInstance(entity: Entity): EntityInstance = FilamentC.FilaTransformManager_getInstance(nativeHandle, entity)
 

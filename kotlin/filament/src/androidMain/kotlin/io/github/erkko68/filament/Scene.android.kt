@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-actual class Scene internal constructor(val nativeScene: com.google.android.filament.Scene) {
+actual class Scene @InternalFilamentApi constructor(internal val nativeScene: com.google.android.filament.Scene) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 

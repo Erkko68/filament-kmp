@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.RenderableManager as AndroidRenderableManager
 
-actual class RenderableManager internal constructor(val nativeRenderableManager: AndroidRenderableManager) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val nativeRenderableManager: AndroidRenderableManager) {
     actual enum class PrimitiveType(val value: Int) {
         POINTS(0), LINES(1), LINE_STRIP(3), TRIANGLES(4), TRIANGLE_STRIP(5);
         internal fun toNative(): AndroidRenderableManager.PrimitiveType {

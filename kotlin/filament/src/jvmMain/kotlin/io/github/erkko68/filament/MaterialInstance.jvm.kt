@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class MaterialInstance constructor(
+actual class MaterialInstance @InternalFilamentApi constructor(
     internal val nativeHandle: MemorySegment?
 ) {
     actual enum class BooleanElement { BOOL, BOOL2, BOOL3, BOOL4 }

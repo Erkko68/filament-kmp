@@ -1,8 +1,9 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.web.`gltfio_Animator` as JSAnimator
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Animator(internal val jsAnimator: JSAnimator) {
+actual class Animator @InternalFilamentApi constructor(internal val jsAnimator: JSAnimator) {
     actual fun applyAnimation(index: Int, time: Float) {
         jsAnimator.applyAnimation(index.toDouble(), time.toDouble())
     }

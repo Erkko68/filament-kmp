@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.Engine as AndroidEngine
 
-actual class Engine public constructor(val nativeEngine: AndroidEngine) {
+actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: AndroidEngine) {
     private val mTransformManager by lazy { TransformManager(nativeEngine.transformManager) }
     private val mLightManager by lazy { LightManager(nativeEngine.lightManager) }
     private val mRenderableManager by lazy { RenderableManager(nativeEngine.renderableManager) }

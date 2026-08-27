@@ -3,9 +3,10 @@ package io.github.erkko68.filament.filamat
 import kotlinx.cinterop.*
 import cnames.structs.FilaPackage
 import io.github.erkko68.filament.filamat.cinterop.*
+import io.github.erkko68.filament.InternalFilamentApi
 
 @OptIn(ExperimentalForeignApi::class)
-actual class MaterialPackage internal constructor(private val nativeHandle: CPointer<FilaPackage>?) {
+actual class MaterialPackage @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaPackage>?) {
     actual fun getBuffer(): ByteArray {
         val size = FilaPackage_getSize(nativeHandle).toInt()
         val data = FilaPackage_getData(nativeHandle)

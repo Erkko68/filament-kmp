@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.MaterialInstance as AndroidMaterialInstance
 
-actual class MaterialInstance constructor(
+actual class MaterialInstance @InternalFilamentApi constructor(
     private var mMaterial: Material?, 
     internal val nativeMaterialInstance: AndroidMaterialInstance
 ) {

@@ -259,7 +259,12 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$VertexDoma
 }
 
 public final class io/github/erkko68/filament/filamat/MaterialPackage {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getBuffer ()[B
 	public final fun isValid ()Z
+}
+
+public final class io/github/erkko68/filament/filamat/NativeObject_jvmKt {
+	public static final fun getNativeObject (Lio/github/erkko68/filament/filamat/MaterialPackage;)Ljava/lang/foreign/MemorySegment;
 }
 

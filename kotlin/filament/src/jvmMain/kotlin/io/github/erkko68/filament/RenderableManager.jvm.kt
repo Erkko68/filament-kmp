@@ -19,7 +19,7 @@ private fun RenderableManager.GeometryType.toNative(): Int = when (this) {
     RenderableManager.GeometryType.STATIC -> FilamentC.FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC()
 }
 
-actual class RenderableManager internal constructor(internal val nativeHandle: MemorySegment) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) {
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
     actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 

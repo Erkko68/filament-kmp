@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.IntSize
 import io.github.erkko68.filament.Completions
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
+import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
@@ -79,7 +80,7 @@ private class Readback(val width: Int, val height: Int, transparent: Boolean = f
 
     /** UI thread. Starts an async GPU→CPU copy of the current frame into a free slot, if any. */
     fun issueReadPixels(renderer: Renderer) {
-        val rendererHandle = renderer.nativeHandle ?: return
+        val rendererHandle = renderer.nativeObject ?: return
         val slot = slots.firstOrNull { it.state.get() == SLOT_FREE } ?: return
         slot.seq = ++issueSeq
         slot.state.set(SLOT_IN_FLIGHT)

@@ -7,7 +7,7 @@ import io.github.erkko68.filament.web.ColorGrading as JSColorGrading
 import io.github.erkko68.filament.web.`ColorGrading_Builder` as JSColorGradingBuilder
 import io.github.erkko68.filament.web.ColorGrading_QualityLevel
 
-actual class ColorGrading(internal val jsColorGrading: JSColorGrading) {
+actual class ColorGrading @InternalFilamentApi constructor(internal val jsColorGrading: JSColorGrading) {
     actual class Builder {
         internal val jsBuilder = JSColorGrading.Builder()
 

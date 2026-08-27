@@ -9,7 +9,7 @@ import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.TransformManager as JSTransformManager
 
-actual class TransformManager(internal val jsTransformManager: JSTransformManager) {
+actual class TransformManager @InternalFilamentApi constructor(internal val jsTransformManager: JSTransformManager) {
     // `EntityInstance` is a typealias for `Int` in common code, but on JS the
     // The upstream binding returns an opaque `TransformManager$Instance` JS object with no
     // numeric ID, and a fresh wrapper each call. Cache the registered EntityInstance id per

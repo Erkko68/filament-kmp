@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class Texture public constructor(public var nativeHandle: MemorySegment?) {
+actual class Texture @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
 
     actual enum class Sampler {
         SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY;

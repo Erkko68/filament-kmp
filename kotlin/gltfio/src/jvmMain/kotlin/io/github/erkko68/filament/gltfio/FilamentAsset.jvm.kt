@@ -12,8 +12,9 @@ import io.github.erkko68.filament.isNullPtr
 import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset(var nativeHandle: MemorySegment?) {
+actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual fun getRoot(): Entity = FilamentC.FilaFilamentAsset_getRoot(nativeHandle)
     actual fun popRenderable(): Entity = FilamentC.FilaFilamentAsset_popRenderable(nativeHandle)
 

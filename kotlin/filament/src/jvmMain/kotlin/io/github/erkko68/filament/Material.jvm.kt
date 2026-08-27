@@ -5,7 +5,7 @@ import io.github.erkko68.filament.ffm.FilaMaterialParameterInfo
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class Material constructor(internal var nativeHandle: MemorySegment?) {
+actual class Material @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }

@@ -5,7 +5,7 @@ import io.github.erkko68.filament.ffm.FilaEngineConfig
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class Engine public constructor(public var nativeHandle: MemorySegment?) {
+actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     private val mTransformManager by lazy { TransformManager(FilamentC.FilaEngine_getTransformManager(nativeHandle)) }
     private val mLightManager by lazy { LightManager(FilamentC.FilaEngine_getLightManager(nativeHandle)) }
     private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle)) }

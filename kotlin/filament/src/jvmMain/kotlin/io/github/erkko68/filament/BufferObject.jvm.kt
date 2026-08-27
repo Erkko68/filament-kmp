@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class BufferObject internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class BindingType {
         VERTEX,
         UNIFORM,

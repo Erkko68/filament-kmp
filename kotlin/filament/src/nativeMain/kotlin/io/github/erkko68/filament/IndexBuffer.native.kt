@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaIndexBuffer
 
-actual class IndexBuffer internal constructor(internal var nativeHandle: CPointer<FilaIndexBuffer>?) {
+actual class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaIndexBuffer>?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaIndexBufferBuilder_create()
         actual enum class IndexType { USHORT, UINT }

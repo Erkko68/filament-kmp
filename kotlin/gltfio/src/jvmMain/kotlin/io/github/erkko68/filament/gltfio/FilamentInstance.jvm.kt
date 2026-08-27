@@ -10,8 +10,9 @@ import io.github.erkko68.filament.isNullPtr
 import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentInstance internal constructor(var nativeHandle: MemorySegment?) {
+actual class FilamentInstance @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual constructor() : this(null)
 
     actual fun getRoot(): Int = FilamentC.FilaFilamentInstance_getRoot(nativeHandle)

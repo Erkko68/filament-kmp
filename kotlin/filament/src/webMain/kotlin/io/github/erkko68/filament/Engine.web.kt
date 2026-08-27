@@ -10,9 +10,9 @@ import io.github.erkko68.filament.web.EngineCreateOptions
 import io.github.erkko68.filament.web.interop.jsSetBoolean
 import org.w3c.dom.HTMLCanvasElement
 
-actual class Engine private constructor(
-    val jsEngine: JSEngine,
-    val jsCanvas: HTMLCanvasElement? = null,
+actual class Engine @InternalFilamentApi constructor(
+    internal val jsEngine: JSEngine,
+    internal val jsCanvas: HTMLCanvasElement? = null,
     // Only the hidden canvas we allocated ourselves is ours to tear down; a caller's
     // shared canvas outlives the engine and may back another one later.
     private val ownsCanvas: Boolean = false,

@@ -31,7 +31,7 @@ private fun View.Quality.toJs(): io.github.erkko68.filament.web.View_QualityLeve
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class View(internal val jsView: JSView) {
+actual class View @InternalFilamentApi constructor(internal val jsView: JSView) {
     // Wrapper identity, as on the other platforms: the engine hands back a raw JS/native
     // object, so the Kotlin wrapper the caller set is what the getter must return.
     private var _scene: Scene? = null

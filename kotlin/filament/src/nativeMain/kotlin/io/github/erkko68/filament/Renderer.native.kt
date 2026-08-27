@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaRenderer
 
-actual class Renderer public constructor(public var nativeHandle: CPointer<FilaRenderer>?) {
+actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaRenderer>?) {
     actual class DisplayInfo actual constructor() {
         actual var refreshRate: Float = 60.0f
     }

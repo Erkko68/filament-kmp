@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaVertexBuffer
 
-actual class VertexBuffer internal constructor(internal var nativeHandle: CPointer<FilaVertexBuffer>?) {
+actual class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaVertexBuffer>?) {
     actual enum class VertexAttribute {
         POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
         CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7

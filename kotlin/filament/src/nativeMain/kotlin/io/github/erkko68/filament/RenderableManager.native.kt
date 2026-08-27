@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaRenderableManager
 import cnames.structs.FilaRenderableManagerBuilder
 
-actual class RenderableManager internal constructor(internal val nativeHandle: CPointer<FilaRenderableManager>) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaRenderableManager>) {
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
     actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 

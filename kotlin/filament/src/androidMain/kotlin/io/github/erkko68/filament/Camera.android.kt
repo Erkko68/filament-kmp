@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.Camera as AndroidCamera
 
-actual class Camera internal constructor(val nativeCamera: AndroidCamera) {
+actual class Camera @InternalFilamentApi constructor(internal val nativeCamera: AndroidCamera) {
     actual enum class Projection {
         PERSPECTIVE, ORTHO;
         internal fun toAndroid() = AndroidCamera.Projection.values()[ordinal]

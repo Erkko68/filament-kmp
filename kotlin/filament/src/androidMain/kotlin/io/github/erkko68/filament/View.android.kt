@@ -4,7 +4,7 @@ import com.google.android.filament.View as FilamentView
 import com.google.android.filament.Texture as FilamentTexture
 import com.google.android.filament.Viewport as FilamentViewport
 
-actual class View internal constructor(internal val nativeView: FilamentView) {
+actual class View @InternalFilamentApi constructor(internal val nativeView: FilamentView) {
     internal val getNativeObject: Long get() = nativeView.nativeObject
     
     private var mScene: Scene? = null

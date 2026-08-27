@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaScene
 
-actual class Scene internal constructor(internal var nativeHandle: CPointer<FilaScene>?) {
+actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaScene>?) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 

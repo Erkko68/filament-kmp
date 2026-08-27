@@ -8,6 +8,8 @@ import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaMaterialProvider
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.nativeObject
 
 actual interface MaterialProvider {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
@@ -17,12 +19,12 @@ actual interface MaterialProvider {
     actual fun destroyMaterials()
     actual fun destroy()
     
-    fun getNativeHandle(): CPointer<FilaMaterialProvider>?
+    @InternalFilamentApi fun nativeObject(): CPointer<FilaMaterialProvider>?
 }
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeHandle, null, 0u)
+    public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, null, 0u)
 
     actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? {
         return memScoped {
@@ -77,5 +79,5 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         nativeHandle = null
     }
 
-    override fun getNativeHandle(): CPointer<FilaMaterialProvider>? = nativeHandle
+    @InternalFilamentApi override fun nativeObject(): CPointer<FilaMaterialProvider>? = nativeHandle
 }

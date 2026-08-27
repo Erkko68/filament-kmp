@@ -5,19 +5,20 @@ import io.github.erkko68.filament.web.driver_BufferDescriptor
 import io.github.erkko68.filament.web.gltfio_ResourceLoader
 import io.github.erkko68.filament.web.gltfio_TextureProvider
 import org.khronos.webgl.set
+import io.github.erkko68.filament.nativeObject
 
 actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
-    private val jsLoader = gltfio_ResourceLoader(engine.jsEngine, normalizeSkinningWeights)
+    private val jsLoader = gltfio_ResourceLoader(engine.nativeObject, normalizeSkinningWeights)
 
     init {
         // Same providers extensions.js registers in its loadResources helper; without them
         // the loader has no way to decode embedded or external textures.
-        val stb = gltfio_TextureProvider.createStbProvider(engine.jsEngine)
+        val stb = gltfio_TextureProvider.createStbProvider(engine.nativeObject)
         jsLoader.addTextureProvider("image/jpeg", stb)
         jsLoader.addTextureProvider("image/png", stb)
-        jsLoader.addTextureProvider("image/ktx2", gltfio_TextureProvider.createKtx2Provider(engine.jsEngine))
+        jsLoader.addTextureProvider("image/ktx2", gltfio_TextureProvider.createKtx2Provider(engine.nativeObject))
         if (gltfio_TextureProvider.isWebpSupported()) {
-            jsLoader.addTextureProvider("image/webp", gltfio_TextureProvider.createWebpProvider(engine.jsEngine))
+            jsLoader.addTextureProvider("image/webp", gltfio_TextureProvider.createWebpProvider(engine.nativeObject))
         }
     }
 

@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class RenderTarget internal constructor(internal var nativeHandle: MemorySegment?, private val textures: Array<Texture?>) {
+actual class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?, private val textures: Array<Texture?>) {
     actual enum class AttachmentPoint {
         COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH
     }

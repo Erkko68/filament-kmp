@@ -6,7 +6,7 @@ import io.github.erkko68.filament.web.IndexBuffer_IndexType
 import org.khronos.webgl.set
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class IndexBuffer(internal val jsIndexBuffer: JSIndexBuffer) {
+actual class IndexBuffer @InternalFilamentApi constructor(internal val jsIndexBuffer: JSIndexBuffer) {
     actual val indexCount: Int get() = jsIndexBuffer.getIndexCount().toInt()
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {

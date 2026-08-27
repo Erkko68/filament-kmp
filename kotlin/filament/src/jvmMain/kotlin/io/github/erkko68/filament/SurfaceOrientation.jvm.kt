@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class SurfaceOrientation internal constructor(internal val nativeHandle: MemorySegment) {
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) {
     actual class Builder actual constructor() {
         // Geometry pointers handed to the builder are read at build(); they must outlive each
         // setter call, so allocate them in a builder-scoped arena closed when build() runs.

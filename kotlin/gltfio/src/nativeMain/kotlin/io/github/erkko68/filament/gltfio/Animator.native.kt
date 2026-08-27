@@ -4,8 +4,9 @@ package io.github.erkko68.filament.gltfio
 import kotlinx.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaAnimator
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Animator(public var nativeHandle: CPointer<FilaAnimator>?) {
+actual class Animator @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaAnimator>?) {
     actual fun applyAnimation(index: Int, time: Float) {
         FilaAnimator_applyAnimation(nativeHandle, index.toULong(), time)
     }

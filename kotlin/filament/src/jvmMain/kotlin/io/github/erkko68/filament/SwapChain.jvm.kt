@@ -6,7 +6,7 @@ import io.github.erkko68.filament.ffm.FilaSwapChainFrameScheduledCallback
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class SwapChain internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 

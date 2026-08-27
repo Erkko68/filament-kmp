@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.LightManager as AndroidLightManager
 import com.google.android.filament.Engine as AndroidEngine
 
-actual class LightManager internal constructor(val nativeLightManager: AndroidLightManager) {
+actual class LightManager @InternalFilamentApi constructor(internal val nativeLightManager: AndroidLightManager) {
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
 
     actual class ShadowOptions actual constructor() {

@@ -9,8 +9,9 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.web.`gltfio_FilamentAsset` as JSFilamentAsset
 import io.github.erkko68.filament.web.Entity as JSEntity
 import io.github.erkko68.filament.web.Aabb
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset(
+actual class FilamentAsset @InternalFilamentApi constructor(
     internal val jsAsset: JSFilamentAsset,
     private val _engine: Engine? = null
 ) {

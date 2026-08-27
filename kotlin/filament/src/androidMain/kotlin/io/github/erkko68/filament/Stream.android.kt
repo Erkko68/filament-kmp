@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.Stream as AndroidStream
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
-actual class Stream internal constructor(val nativeStream: AndroidStream) {
+actual class Stream @InternalFilamentApi constructor(internal val nativeStream: AndroidStream) {
     actual enum class StreamType {
         NATIVE,
         ACQUIRED

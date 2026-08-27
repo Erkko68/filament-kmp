@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.RenderTarget as AndroidRenderTarget
 
-actual class RenderTarget internal constructor(val nativeRenderTarget: AndroidRenderTarget, private val textures: Array<Texture?>) {
+actual class RenderTarget @InternalFilamentApi constructor(internal val nativeRenderTarget: AndroidRenderTarget, private val textures: Array<Texture?>) {
     actual enum class AttachmentPoint {
         COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH
     }

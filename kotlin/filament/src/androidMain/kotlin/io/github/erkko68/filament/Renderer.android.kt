@@ -3,9 +3,9 @@ package io.github.erkko68.filament
 import com.google.android.filament.Renderer as AndroidRenderer
 import com.google.android.filament.Viewport as AndroidViewport
 
-actual class Renderer internal constructor(
+actual class Renderer @InternalFilamentApi constructor(
     private val _engine: Engine,
-    val nativeRenderer: AndroidRenderer
+    internal val nativeRenderer: AndroidRenderer
 ) {
     private var mDisplayInfo: DisplayInfo? = null
     private var mFrameRateOptions: FrameRateOptions? = null

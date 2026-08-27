@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaBufferObject
 
-actual class BufferObject internal constructor(internal var nativeHandle: CPointer<FilaBufferObject>?) {
+actual class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaBufferObject>?) {
     actual enum class BindingType {
         VERTEX,
         UNIFORM,

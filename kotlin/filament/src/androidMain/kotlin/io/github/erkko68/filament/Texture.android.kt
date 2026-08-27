@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.Texture as AndroidTexture
 import java.nio.Buffer
 
-actual class Texture public constructor(val nativeTexture: AndroidTexture) {
+actual class Texture @InternalFilamentApi constructor(internal val nativeTexture: AndroidTexture) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidTexture.Builder()
 

@@ -14,7 +14,7 @@ import io.github.erkko68.filament.web.Camera_Fov
 private const val MAX_STEREOSCOPIC_EYES = 4
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Camera(internal val jsCamera: JSCamera) {
+actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCamera) {
 
     actual fun setProjection(
         projection: Projection,

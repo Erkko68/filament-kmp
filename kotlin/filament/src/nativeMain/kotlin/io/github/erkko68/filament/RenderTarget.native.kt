@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaRenderTarget
 
-actual class RenderTarget internal constructor(internal var nativeHandle: CPointer<FilaRenderTarget>?, private val textures: Array<Texture?>) {
+actual class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaRenderTarget>?, private val textures: Array<Texture?>) {
     actual enum class AttachmentPoint {
         COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH
     }

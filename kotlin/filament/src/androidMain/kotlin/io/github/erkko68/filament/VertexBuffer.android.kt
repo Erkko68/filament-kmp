@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.VertexBuffer as AndroidVertexBuffer
 import java.nio.Buffer
 
-actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVertexBuffer) {
+actual class VertexBuffer @InternalFilamentApi constructor(internal val nativeVertexBuffer: AndroidVertexBuffer) {
     actual enum class VertexAttribute {
         POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
         CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7

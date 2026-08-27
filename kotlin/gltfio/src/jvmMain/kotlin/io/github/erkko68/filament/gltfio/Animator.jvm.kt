@@ -4,8 +4,9 @@ import io.github.erkko68.filament.cString
 import io.github.erkko68.filament.ffm.FilamentC
 import io.github.erkko68.filament.isNullPtr
 import java.lang.foreign.MemorySegment
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Animator(var nativeHandle: MemorySegment?) {
+actual class Animator @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual fun applyAnimation(index: Int, time: Float) = FilamentC.FilaAnimator_applyAnimation(nativeHandle, index.toLong(), time)
     actual fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float) =
         FilamentC.FilaAnimator_applyCrossFade(nativeHandle, previousIndex.toLong(), previousTime, alpha)

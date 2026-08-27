@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class Scene internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 

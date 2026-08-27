@@ -6,7 +6,7 @@ import io.github.erkko68.filament.ffm.FilaLightManagerVsmShadowOptions
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class LightManager internal constructor(internal val nativeLightManager: MemorySegment) {
+actual class LightManager @InternalFilamentApi constructor(internal val nativeLightManager: MemorySegment) {
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
 
     actual class ShadowOptions actual constructor() {

@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.web.Entity as JSEntity
 import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 
-actual class EntityManager(internal val jsEntityManager: JSEntityManager) {
+actual class EntityManager @InternalFilamentApi constructor(internal val jsEntityManager: JSEntityManager) {
     actual fun create(): Entity {
         val jsEntity = jsEntityManager.create()
         val id = jsEntity.getId().toInt()

@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.web.SwapChain as JSSwapChain
 
-actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
+actual class SwapChain @InternalFilamentApi constructor(internal val jsSwapChain: JSSwapChain) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 

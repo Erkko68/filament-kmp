@@ -1,6 +1,8 @@
 package io.github.erkko68.filament.gltfio
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Animator(val nativeObject: com.google.android.filament.gltfio.Animator) {
+
+actual class Animator @InternalFilamentApi constructor(internal val nativeObject: com.google.android.filament.gltfio.Animator) {
     actual fun applyAnimation(index: Int, time: Float) {
         nativeObject.applyAnimation(index, time)
     }

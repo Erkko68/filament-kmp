@@ -15,7 +15,7 @@ import io.github.erkko68.filament.web.Material as JSMaterial
 import io.github.erkko68.filament.web.interop.jsNumbers
 import org.khronos.webgl.set
 
-actual class Material(internal val jsMaterial: JSMaterial) {
+actual class Material @InternalFilamentApi constructor(internal val jsMaterial: JSMaterial) {
     actual fun compile(
         priority: CompilerPriorityQueue,
         variants: Int,

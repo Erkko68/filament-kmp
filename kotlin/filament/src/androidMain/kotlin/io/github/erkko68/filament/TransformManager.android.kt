@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.TransformManager as AndroidTransformManager
 
-actual class TransformManager internal constructor(val nativeTransformManager: AndroidTransformManager) {
+actual class TransformManager @InternalFilamentApi constructor(internal val nativeTransformManager: AndroidTransformManager) {
     actual fun hasComponent(entity: Entity): Boolean = nativeTransformManager.hasComponent(entity)
     actual fun getInstance(entity: Entity): EntityInstance = nativeTransformManager.getInstance(entity)
     

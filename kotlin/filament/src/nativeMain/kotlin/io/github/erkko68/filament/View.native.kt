@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaView
 
-actual class View internal constructor(internal var nativeHandle: CPointer<FilaView>?) {
+actual class View @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaView>?) {
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
