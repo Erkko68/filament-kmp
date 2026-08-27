@@ -69,12 +69,8 @@ actual class Scene @InternalFilamentApi constructor(internal val jsScene: JSScen
         return jsScene.hasEntity(EntityManager.jsEntityOf(entity))
     }
 
-    actual fun getEntities(): IntArray {
-        return _entities.toIntArray()
-    }
-
-    actual fun getEntities(outArray: IntArray?): IntArray {
-        val result = outArray ?: IntArray(_entities.size)
+    actual fun getEntities(out: IntArray?): IntArray {
+        val result = out ?: IntArray(_entities.size)
         _entities.toIntArray().copyInto(result)
         return result
     }

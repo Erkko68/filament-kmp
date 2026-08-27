@@ -484,7 +484,7 @@ expect class RenderableManager {
      * @see Builder.boundingBox()
      * @see RenderableManager.setAxisAlignedBoundingBox()
      */
-    fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box
+    fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box? = null): Box
 
     /**
      * Changes the visibility bits.

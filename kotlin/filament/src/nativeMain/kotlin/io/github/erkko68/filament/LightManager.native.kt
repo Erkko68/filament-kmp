@@ -192,25 +192,28 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
 
     actual fun getType(instance: EntityInstance): Type = Type.values()[FilaLightManager_getType(nativeLightManager, instance.toUInt()).toInt()]
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { FilaLightManager_setDirection(nativeLightManager, instance.toUInt(), x, y, z) }
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
-        out.usePinned { pinned ->
+    actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
             FilaLightManager_getDirection(nativeLightManager, instance.toUInt(), pinned.addressOf(0))
         }
-        return out
+        return result
     }
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { FilaLightManager_setPosition(nativeLightManager, instance.toUInt(), x, y, z) }
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
-        out.usePinned { pinned ->
+    actual fun getPosition(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
             FilaLightManager_getPosition(nativeLightManager, instance.toUInt(), pinned.addressOf(0))
         }
-        return out
+        return result
     }
     actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { FilaLightManager_setColor(nativeLightManager, instance.toUInt(), r, g, b) }
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
-        out.usePinned { pinned ->
+    actual fun getColor(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
             FilaLightManager_getColor(nativeLightManager, instance.toUInt(), pinned.addressOf(0))
         }
-        return out
+        return result
     }
     actual fun setIntensity(instance: EntityInstance, intensity: Float) { FilaLightManager_setIntensity(nativeLightManager, instance.toUInt(), intensity) }
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) { FilaLightManager_setIntensityEfficiency(nativeLightManager, instance.toUInt(), watts, efficiency) }

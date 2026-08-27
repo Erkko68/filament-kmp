@@ -44,8 +44,8 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         jsLightManager.setDirection(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
     }
 
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
-        val result = out
+    actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         (jsLightManager.getDirection(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
@@ -54,8 +54,8 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         jsLightManager.setPosition(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
     }
 
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
-        val result = out
+    actual fun getPosition(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         (jsLightManager.getPosition(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
@@ -64,8 +64,8 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         jsLightManager.setColor(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), jsNumbers(r, g, b))
     }
 
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
-        val result = out
+    actual fun getColor(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         (jsLightManager.getColor(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }

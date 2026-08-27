@@ -540,8 +540,10 @@ public final class io/github/erkko68/filament/LightManager {
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun destroy (I)V
 	public final fun getColor (I[F)[F
+	public static synthetic fun getColor$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getComponentCount ()I
 	public final fun getDirection (I[F)[F
+	public static synthetic fun getDirection$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getFalloff (I)F
 	public final fun getInnerConeAngle (I)F
 	public final fun getInstance (I)I
@@ -549,6 +551,7 @@ public final class io/github/erkko68/filament/LightManager {
 	public final fun getLightChannel (II)Z
 	public final fun getOuterConeAngle (I)F
 	public final fun getPosition (I[F)[F
+	public static synthetic fun getPosition$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getSunAngularRadius (I)F
 	public final fun getSunHaloFalloff (I)F
 	public final fun getSunHaloSize (I)F
@@ -1110,6 +1113,7 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun clearMaterialInstanceAt (II)V
 	public final fun destroy (I)V
 	public final fun getAxisAlignedBoundingBox (ILio/github/erkko68/filament/Box;)Lio/github/erkko68/filament/Box;
+	public static synthetic fun getAxisAlignedBoundingBox$default (Lio/github/erkko68/filament/RenderableManager;ILio/github/erkko68/filament/Box;ILjava/lang/Object;)Lio/github/erkko68/filament/Box;
 	public final fun getBlendOrderAt (II)I
 	public final fun getChannel (I)I
 	public final fun getEnabledAttributesAt (II)Ljava/util/Set;
@@ -1272,8 +1276,8 @@ public final class io/github/erkko68/filament/Scene {
 	public final fun addEntities ([I)V
 	public final fun addEntity (I)V
 	public final fun forEach (Lkotlin/jvm/functions/Function1;)V
-	public final fun getEntities ()[I
 	public final fun getEntities ([I)[I
+	public static synthetic fun getEntities$default (Lio/github/erkko68/filament/Scene;[IILjava/lang/Object;)[I
 	public final fun getEntityCount ()I
 	public final fun getIndirectLight ()Lio/github/erkko68/filament/IndirectLight;
 	public final fun getLightCount ()I
@@ -1823,12 +1827,17 @@ public final class io/github/erkko68/filament/TransformManager {
 	public final fun destroy (I)V
 	public final fun getChildCount (I)I
 	public final fun getChildren (I[I)[I
+	public static synthetic fun getChildren$default (Lio/github/erkko68/filament/TransformManager;I[IILjava/lang/Object;)[I
 	public final fun getInstance (I)I
 	public final fun getParent (I)I
 	public final fun getTransform (I[D)[D
 	public final fun getTransform (I[F)[F
+	public static synthetic fun getTransform$default (Lio/github/erkko68/filament/TransformManager;I[DILjava/lang/Object;)[D
+	public static synthetic fun getTransform$default (Lio/github/erkko68/filament/TransformManager;I[FILjava/lang/Object;)[F
 	public final fun getWorldTransform (I[D)[D
 	public final fun getWorldTransform (I[F)[F
+	public static synthetic fun getWorldTransform$default (Lio/github/erkko68/filament/TransformManager;I[DILjava/lang/Object;)[D
+	public static synthetic fun getWorldTransform$default (Lio/github/erkko68/filament/TransformManager;I[FILjava/lang/Object;)[F
 	public final fun hasComponent (I)Z
 	public final fun isAccurateTranslationsEnabled ()Z
 	public final fun openLocalTransformTransaction ()V

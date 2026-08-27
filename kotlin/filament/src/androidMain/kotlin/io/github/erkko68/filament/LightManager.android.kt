@@ -140,11 +140,11 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
 
     actual fun getType(instance: EntityInstance): Type = Type.values()[nativeLightManager.getType(instance).ordinal]
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { nativeLightManager.setDirection(instance, x, y, z) }
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray = nativeLightManager.getDirection(instance, out)
+    actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getDirection(instance, out ?: FloatArray(3))
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { nativeLightManager.setPosition(instance, x, y, z) }
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray = nativeLightManager.getPosition(instance, out)
+    actual fun getPosition(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getPosition(instance, out ?: FloatArray(3))
     actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { nativeLightManager.setColor(instance, r, g, b) }
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray = nativeLightManager.getColor(instance, out)
+    actual fun getColor(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getColor(instance, out ?: FloatArray(3))
     actual fun setIntensity(instance: EntityInstance, intensity: Float) { nativeLightManager.setIntensity(instance, intensity) }
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) { nativeLightManager.setIntensity(instance, watts, efficiency) }
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) { nativeLightManager.setIntensityCandela(instance, intensity) }

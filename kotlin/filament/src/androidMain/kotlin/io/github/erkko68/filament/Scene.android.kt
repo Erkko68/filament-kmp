@@ -30,8 +30,7 @@ actual class Scene @InternalFilamentApi constructor(internal val nativeScene: co
     actual val lightCount: Int get() = nativeScene.lightCount
     actual fun hasEntity(entity: Entity): Boolean = nativeScene.hasEntity(entity)
 
-    actual fun getEntities(): IntArray = nativeScene.getEntities()
-    actual fun getEntities(outArray: IntArray?): IntArray = nativeScene.getEntities(outArray)
+    actual fun getEntities(out: IntArray?): IntArray = nativeScene.getEntities(out)
 
     actual fun forEach(block: (Entity) -> Unit) {
         nativeScene.getEntities(null).forEach(block)

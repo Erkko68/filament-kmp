@@ -95,7 +95,7 @@ expect class TransformManager {
      * @param outEntities Optional array to fill with child entity IDs
      * @return Array of child entity IDs
      */
-    fun getChildren(instance: EntityInstance, outEntities: IntArray?): IntArray
+    fun getChildren(instance: EntityInstance, outEntities: IntArray? = null): IntArray
 
     /**
      * Sets the local transform for a transform instance.
@@ -120,7 +120,7 @@ expect class TransformManager {
      * @param outLocalTransform Optional array to fill with the local transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getTransform(instance: EntityInstance, outLocalTransform: FloatArray?): FloatArray
+    fun getTransform(instance: EntityInstance, outLocalTransform: FloatArray? = null): FloatArray
 
     /**
      * Gets the local transform for a transform instance.
@@ -129,7 +129,7 @@ expect class TransformManager {
      * @param outLocalTransform Optional array to fill with the local transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getTransform(instance: EntityInstance, outLocalTransform: DoubleArray?): DoubleArray
+    fun getTransform(instance: EntityInstance, outLocalTransform: DoubleArray? = null): DoubleArray
 
     /**
      * Gets the world transform for a transform instance (accounting for parent transforms).
@@ -138,7 +138,7 @@ expect class TransformManager {
      * @param outWorldTransform Optional array to fill with the world transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getWorldTransform(instance: EntityInstance, outWorldTransform: FloatArray?): FloatArray
+    fun getWorldTransform(instance: EntityInstance, outWorldTransform: FloatArray? = null): FloatArray
 
     /**
      * Gets the world transform for a transform instance (accounting for parent transforms).
@@ -147,7 +147,7 @@ expect class TransformManager {
      * @param outWorldTransform Optional array to fill with the world transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getWorldTransform(instance: EntityInstance, outWorldTransform: DoubleArray?): DoubleArray
+    fun getWorldTransform(instance: EntityInstance, outWorldTransform: DoubleArray? = null): DoubleArray
 
     /**
      * Opens a local transform transaction.

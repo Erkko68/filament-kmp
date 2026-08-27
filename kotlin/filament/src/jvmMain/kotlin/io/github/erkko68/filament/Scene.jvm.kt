@@ -39,11 +39,9 @@ actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: M
     actual val lightCount: Int get() = FilamentC.FilaScene_getLightCount(nativeHandle).toInt()
     actual fun hasEntity(entity: Entity): Boolean = FilamentC.FilaScene_hasEntity(nativeHandle, entity)
 
-    actual fun getEntities(): IntArray = getEntities(null)
-
-    actual fun getEntities(outArray: IntArray?): IntArray {
+    actual fun getEntities(out: IntArray?): IntArray {
         val count = entityCount
-        val result = if (outArray != null && outArray.size >= count) outArray else IntArray(count)
+        val result = if (out != null && out.size >= count) out else IntArray(count)
         if (count > 0) {
             confined { arena ->
                 val seg = arena.intArr(count)

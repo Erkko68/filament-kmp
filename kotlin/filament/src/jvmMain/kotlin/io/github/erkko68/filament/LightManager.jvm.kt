@@ -193,31 +193,34 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
 
     actual fun getType(instance: EntityInstance): Type = Type.values()[FilamentC.FilaLightManager_getType(nativeLightManager, instance)]
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { FilamentC.FilaLightManager_setDirection(nativeLightManager, instance, x, y, z) }
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
+    actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         confined { arena ->
             val seg = arena.floatArr(3)
             FilamentC.FilaLightManager_getDirection(nativeLightManager, instance, seg)
-            System.arraycopy(seg.toFloats(), 0, out, 0, 3)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
         }
-        return out
+        return result
     }
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { FilamentC.FilaLightManager_setPosition(nativeLightManager, instance, x, y, z) }
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
+    actual fun getPosition(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         confined { arena ->
             val seg = arena.floatArr(3)
             FilamentC.FilaLightManager_getPosition(nativeLightManager, instance, seg)
-            System.arraycopy(seg.toFloats(), 0, out, 0, 3)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
         }
-        return out
+        return result
     }
     actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { FilamentC.FilaLightManager_setColor(nativeLightManager, instance, r, g, b) }
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
+    actual fun getColor(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         confined { arena ->
             val seg = arena.floatArr(3)
             FilamentC.FilaLightManager_getColor(nativeLightManager, instance, seg)
-            System.arraycopy(seg.toFloats(), 0, out, 0, 3)
+            System.arraycopy(seg.toFloats(), 0, result, 0, 3)
         }
-        return out
+        return result
     }
     actual fun setIntensity(instance: EntityInstance, intensity: Float) { FilamentC.FilaLightManager_setIntensity(nativeLightManager, instance, intensity) }
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) { FilamentC.FilaLightManager_setIntensityEfficiency(nativeLightManager, instance, watts, efficiency) }
