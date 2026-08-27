@@ -13,6 +13,13 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
     private var _isShadowingEnabled: Boolean = true
     private var _isScreenSpaceRefractionEnabled: Boolean = false
 
+    actual class RenderQuality actual constructor() {
+        internal val nativeQuality = FilamentView.RenderQuality()
+        actual var hdrColorBuffer: Quality
+            get() = Quality.entries[nativeQuality.hdrColorBuffer.ordinal]
+            set(value) { nativeQuality.hdrColorBuffer = FilamentView.QualityLevel.entries[value.ordinal] }
+    }
+
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
@@ -107,7 +114,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.hdrColorBuffer = io.github.erkko68.filament.View.Quality.entries[o.hdrColorBuffer.ordinal]
             return kmp
         }
-        set(value) { this@View.nativeView.setRenderQuality(value.toAndroid()) }
+        set(value) { this@View.nativeView.setRenderQuality(value.nativeQuality) }
     
     actual var bloomOptions: BloomOptions
         get() {

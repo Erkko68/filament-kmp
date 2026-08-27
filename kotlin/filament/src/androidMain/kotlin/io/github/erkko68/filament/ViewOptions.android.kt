@@ -16,12 +16,6 @@ internal fun DynamicResolutionOptions.toAndroid(): FilamentView.DynamicResolutio
     return n
 }
 
-internal fun RenderQuality.toAndroid(): FilamentView.RenderQuality {
-    val n = FilamentView.RenderQuality()
-    n.hdrColorBuffer = FilamentView.QualityLevel.entries[hdrColorBuffer.ordinal]
-    return n
-}
-
 internal fun BloomOptions.toAndroid(): FilamentView.BloomOptions {
     val n = FilamentView.BloomOptions()
     n.dirt = dirt?.nativeObject

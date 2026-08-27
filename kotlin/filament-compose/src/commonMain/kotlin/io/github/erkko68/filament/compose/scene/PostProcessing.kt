@@ -5,7 +5,6 @@ import io.github.erkko68.filament.ColorGrading
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.ToneMapper
 import io.github.erkko68.filament.View
-import io.github.erkko68.filament.RenderQuality
 import io.github.erkko68.filament.DepthOfFieldOptions
 
 /**

@@ -608,6 +608,10 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         }
     }
 
+    actual class RenderQuality {
+        actual var hdrColorBuffer: Quality = Quality.HIGH
+    }
+
     actual class PickingQueryResult actual constructor(
         actual val renderable: Int,
         actual val depth: Float,

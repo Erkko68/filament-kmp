@@ -4,7 +4,6 @@ import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
 import io.github.erkko68.filament.DynamicResolutionOptions
-import io.github.erkko68.filament.RenderQuality
 import io.github.erkko68.filament.BloomOptions
 import io.github.erkko68.filament.DepthOfFieldOptions
 import io.github.erkko68.filament.AmbientOcclusionOptions
@@ -54,7 +53,7 @@ class EnumRoundTripTest : FilamentTestFixture() {
         )
         roundTrip<View.Quality>(
             "RenderQuality.hdrColorBuffer",
-            { view.renderQuality = RenderQuality().apply { hdrColorBuffer = it } },
+            { view.renderQuality = View.RenderQuality().apply { hdrColorBuffer = it } },
             { view.renderQuality.hdrColorBuffer },
         )
         roundTrip<DepthOfFieldOptions.Filter>(

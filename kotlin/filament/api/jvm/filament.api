@@ -1529,20 +1529,6 @@ public abstract interface annotation class io/github/erkko68/filament/PlatformGa
 	public abstract fun platforms ()[Lio/github/erkko68/filament/FilamentPlatform;
 }
 
-public final class io/github/erkko68/filament/RenderQuality {
-	public fun <init> ()V
-	public fun <init> (Lio/github/erkko68/filament/View$Quality;)V
-	public synthetic fun <init> (Lio/github/erkko68/filament/View$Quality;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/github/erkko68/filament/View$Quality;
-	public final fun copy (Lio/github/erkko68/filament/View$Quality;)Lio/github/erkko68/filament/RenderQuality;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/RenderQuality;Lio/github/erkko68/filament/View$Quality;ILjava/lang/Object;)Lio/github/erkko68/filament/RenderQuality;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getHdrColorBuffer ()Lio/github/erkko68/filament/View$Quality;
-	public fun hashCode ()I
-	public final fun setHdrColorBuffer (Lio/github/erkko68/filament/View$Quality;)V
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/github/erkko68/filament/RenderTarget {
 	public fun <init> (Ljava/lang/foreign/MemorySegment;[Lio/github/erkko68/filament/Texture;)V
 	public final fun getFace (Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;)Lio/github/erkko68/filament/Texture$CubemapFace;
@@ -2529,7 +2515,7 @@ public final class io/github/erkko68/filament/View {
 	public final fun getMaterialGlobal (I)[F
 	public final fun getMultiSampleAntiAliasingOptions ()Lio/github/erkko68/filament/MultiSampleAntiAliasingOptions;
 	public final fun getName ()Ljava/lang/String;
-	public final fun getRenderQuality ()Lio/github/erkko68/filament/RenderQuality;
+	public final fun getRenderQuality ()Lio/github/erkko68/filament/View$RenderQuality;
 	public final fun getRenderTarget ()Lio/github/erkko68/filament/RenderTarget;
 	public final fun getScene ()Lio/github/erkko68/filament/Scene;
 	public final fun getScreenSpaceReflectionsOptions ()Lio/github/erkko68/filament/ScreenSpaceReflectionsOptions;
@@ -2570,7 +2556,7 @@ public final class io/github/erkko68/filament/View {
 	public final fun setMultiSampleAntiAliasingOptions (Lio/github/erkko68/filament/MultiSampleAntiAliasingOptions;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setPostProcessingEnabled (Z)V
-	public final fun setRenderQuality (Lio/github/erkko68/filament/RenderQuality;)V
+	public final fun setRenderQuality (Lio/github/erkko68/filament/View$RenderQuality;)V
 	public final fun setRenderTarget (Lio/github/erkko68/filament/RenderTarget;)V
 	public final fun setScene (Lio/github/erkko68/filament/Scene;)V
 	public final fun setScreenSpaceReflectionsOptions (Lio/github/erkko68/filament/ScreenSpaceReflectionsOptions;)V
@@ -2627,6 +2613,12 @@ public final class io/github/erkko68/filament/View$Quality : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/View$Quality;
 	public static fun values ()[Lio/github/erkko68/filament/View$Quality;
+}
+
+public final class io/github/erkko68/filament/View$RenderQuality {
+	public fun <init> ()V
+	public final fun getHdrColorBuffer ()Lio/github/erkko68/filament/View$Quality;
+	public final fun setHdrColorBuffer (Lio/github/erkko68/filament/View$Quality;)V
 }
 
 public final class io/github/erkko68/filament/View$ShadowType : java/lang/Enum {

@@ -2,7 +2,6 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.DynamicResolutionOptions
-import io.github.erkko68.filament.RenderQuality
 import io.github.erkko68.filament.BloomOptions
 import io.github.erkko68.filament.FogOptions
 import io.github.erkko68.filament.DepthOfFieldOptions
@@ -59,7 +58,7 @@ class ViewTest : FilamentTestFixture() {
         assertEquals(0.5f, dro.sharpness)
         assertEquals(View.Quality.HIGH, dro.quality)
 
-        val rq = RenderQuality().apply {
+        val rq = View.RenderQuality().apply {
             hdrColorBuffer = View.Quality.HIGH
         }
         assertEquals(View.Quality.HIGH, rq.hdrColorBuffer)
@@ -278,7 +277,7 @@ class ViewTest : FilamentTestFixture() {
         assertTrue(view.dynamicResolutionOptions.enabled)
         assertNotNull(view.lastDynamicResolutionScale)
 
-        view.renderQuality = RenderQuality().apply { hdrColorBuffer = View.Quality.HIGH }
+        view.renderQuality = View.RenderQuality().apply { hdrColorBuffer = View.Quality.HIGH }
         assertEquals(View.Quality.HIGH, view.renderQuality.hdrColorBuffer)
 
         view.bloomOptions = BloomOptions().apply { enabled = true }

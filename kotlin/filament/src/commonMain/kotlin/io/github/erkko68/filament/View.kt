@@ -59,6 +59,17 @@ expect class View {
     enum class AntiAliasing { NONE, FXAA }
 
     /**
+     * Structure used to set the quality of the HDR color buffer.
+     *
+     * Kept nested: one field, and `RenderQuality` at package level would collide with
+     * filament-compose's own `RenderQuality`.
+     */
+    class RenderQuality() {
+        /** Sets the quality of the HDR color buffer. Default: HIGH. */
+        var hdrColorBuffer: Quality
+    }
+
+    /**
      * Result of a picking (color-picking) query.
      *
      * @param renderable Entity ID of the picked renderable

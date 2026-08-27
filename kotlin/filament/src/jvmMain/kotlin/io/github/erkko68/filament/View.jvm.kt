@@ -55,6 +55,10 @@ private object Picking {
 }
 
 actual class View @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
+    actual class RenderQuality actual constructor() {
+        actual var hdrColorBuffer: Quality = Quality.HIGH
+    }
+
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }

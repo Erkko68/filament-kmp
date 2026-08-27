@@ -58,21 +58,6 @@ data class DynamicResolutionOptions(
 )
 
 /**
- * Options to control color buffer precision and quality settings.
- *
- * A quality of HIGH or ULTRA means using an RGB16F or RGBA16F color buffer. Colors in the
- * LDR range (0..1) have a 10 bit precision. A quality of LOW or MEDIUM means using an
- * R11G11B10F opaque color buffer or an RGBA16F transparent color buffer. With R11G11B10F,
- * colors in the LDR range have a precision of either 6 bits (red and green) or 5 bits (blue).
- */
-data class RenderQuality(
-    /**
-     * Sets the quality of the HDR color buffer. Default: HIGH.
-     */
-    var hdrColorBuffer: View.Quality = View.Quality.HIGH,
-)
-
-/**
  * Options to control the bloom post-processing effect.
  *
  * Bloom allows bright areas to glow and bleed into surrounding areas, creating a
