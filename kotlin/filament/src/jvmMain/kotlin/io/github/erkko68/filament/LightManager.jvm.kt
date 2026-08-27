@@ -191,7 +191,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
     actual fun getInstance(entity: Entity): EntityInstance = FilamentC.FilaLightManager_getInstance(nativeLightManager, entity)
     actual fun destroy(entity: Entity) { FilamentC.FilaLightManager_destroy(nativeLightManager, entity) }
 
-    actual fun getType(instance: EntityInstance): Type = Type.values()[FilamentC.FilaLightManager_getType(nativeLightManager, instance)]
+    actual fun getType(instance: EntityInstance): Type = Type.entries[FilamentC.FilaLightManager_getType(nativeLightManager, instance)]
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { FilamentC.FilaLightManager_setDirection(nativeLightManager, instance, x, y, z) }
     actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray {
         val result = out ?: FloatArray(3)

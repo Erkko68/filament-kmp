@@ -31,7 +31,7 @@ class RendererRenderingTest : RenderingTestFixture() {
             this.viewport = Viewport(0, 0, w, h)
         }
         // Opaque red clear so the readback is non-zero and proves the pipeline ran.
-        renderer.clearOptions = Renderer.ClearOptions().apply {
+        renderer.clearOptions = ClearOptions().apply {
             clearColor = doubleArrayOf(1.0, 0.0, 0.0, 1.0)
             clear = true
         }

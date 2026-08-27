@@ -36,15 +36,15 @@ actual class VertexBuffer @InternalFilamentApi constructor(internal val nativeVe
         }
         actual fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int, byteStride: Int): Builder {
             nativeBuilder.attribute(
-                AndroidVertexBuffer.VertexAttribute.values()[attribute.ordinal],
+                AndroidVertexBuffer.VertexAttribute.entries[attribute.ordinal],
                 bufferIndex,
-                AndroidVertexBuffer.AttributeType.values()[attributeType.ordinal],
+                AndroidVertexBuffer.AttributeType.entries[attributeType.ordinal],
                 byteOffset, byteStride
             )
             return this
         }
         actual fun normalized(attribute: VertexAttribute, enabled: Boolean): Builder {
-            nativeBuilder.normalized(AndroidVertexBuffer.VertexAttribute.values()[attribute.ordinal], enabled)
+            nativeBuilder.normalized(AndroidVertexBuffer.VertexAttribute.entries[attribute.ordinal], enabled)
             return this
         }
         actual fun build(engine: Engine): VertexBuffer = VertexBuffer(nativeBuilder.build(engine.nativeEngine))

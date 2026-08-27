@@ -43,52 +43,6 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         }
     }
 
-    actual class Config actual constructor() {
-        actual var commandBufferSizeMB: Long = 3 * 1
-        actual var perRenderPassArenaSizeMB: Long = 3
-        actual var driverHandleArenaSizeMB: Long = 0
-        actual var minCommandBufferSizeMB: Long = 1
-        actual var perFrameCommandsSizeMB: Long = 2
-        actual var jobSystemThreadCount: Long = 0
-        actual var disableParallelShaderCompile: Boolean = false
-        actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
-        actual var stereoscopicEyeCount: Long = 2
-        actual var resourceAllocatorCacheSizeMB: Long = 64
-        actual var resourceAllocatorCacheMaxAge: Long = 1
-        actual var disableHandleUseAfterFreeCheck: Boolean = false
-
-        actual enum class ShaderLanguage {
-            DEFAULT, MSL, METAL_LIBRARY;
-        }
-        actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
-        actual var forceGLES2Context: Boolean = false
-        actual var assertNativeWindowIsValid: Boolean = false
-        actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
-        actual var sharedUboInitialSizeInBytes: Long = 256 * 64
-
-        internal fun toNative(arena: Arena): MemorySegment {
-            val s = FilaEngineConfig.allocate(arena)
-            FilaEngineConfig.commandBufferSizeMB(s, commandBufferSizeMB.toInt())
-            FilaEngineConfig.perRenderPassArenaSizeMB(s, perRenderPassArenaSizeMB.toInt())
-            FilaEngineConfig.driverHandleArenaSizeMB(s, driverHandleArenaSizeMB.toInt())
-            FilaEngineConfig.minCommandBufferSizeMB(s, minCommandBufferSizeMB.toInt())
-            FilaEngineConfig.perFrameCommandsSizeMB(s, perFrameCommandsSizeMB.toInt())
-            FilaEngineConfig.jobSystemThreadCount(s, jobSystemThreadCount.toInt())
-            FilaEngineConfig.disableParallelShaderCompile(s, disableParallelShaderCompile)
-            FilaEngineConfig.stereoscopicType(s, stereoscopicType.toNative())
-            FilaEngineConfig.stereoscopicEyeCount(s, stereoscopicEyeCount.toByte())
-            FilaEngineConfig.resourceAllocatorCacheSizeMB(s, resourceAllocatorCacheSizeMB.toInt())
-            FilaEngineConfig.resourceAllocatorCacheMaxAge(s, resourceAllocatorCacheMaxAge.toByte())
-            FilaEngineConfig.disableHandleUseAfterFreeCheck(s, disableHandleUseAfterFreeCheck)
-            FilaEngineConfig.preferredShaderLanguage(s, preferredShaderLanguage.ordinal)
-            FilaEngineConfig.forceGLES2Context(s, forceGLES2Context)
-            FilaEngineConfig.assertNativeWindowIsValid(s, assertNativeWindowIsValid)
-            FilaEngineConfig.gpuContextPriority(s, gpuContextPriority.toNative())
-            FilaEngineConfig.sharedUboInitialSizeInBytes(s, sharedUboInitialSizeInBytes.toInt())
-            return s
-        }
-    }
-
     actual class Builder actual constructor() {
         init { ensureFilamentLoaded() }
         private val nativeBuilder = FilamentC.FilaEngineBuilder_create()
@@ -106,7 +60,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
             return this
         }
 
-        actual fun config(config: Config): Builder {
+        actual fun config(config: EngineConfig): Builder {
             confined { arena -> FilamentC.FilaEngineBuilder_config(nativeBuilder, config.toNative(arena)) }
             return this
         }
@@ -143,7 +97,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         actual fun create(): Engine = Builder().build()
         actual fun create(backend: Backend): Engine = Builder().backend(backend).build()
         actual fun create(sharedContext: Any): Engine = Builder().sharedContext(sharedContext).build()
-        actual fun getSteadyClockTimeNano(): Long {
+        actual val steadyClockTimeNano: Long get() {
             ensureFilamentLoaded()
             return FilamentC.FilaEngine_getSteadyClockTimeNano()
         }
@@ -166,9 +120,9 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual var isAutomaticInstancingEnabled: Boolean
         get() = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
         set(value) { FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
-    actual val config: Config get() {
+    actual val config: EngineConfig get() {
         // C-wrapper doesn't expose getConfig; return defaults (matches nativeMain).
-        return Config()
+        return EngineConfig()
     }
     actual val maxStereoscopicEyes: Long get() = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
 

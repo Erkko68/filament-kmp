@@ -27,7 +27,7 @@ actual class Stream @InternalFilamentApi constructor(internal val nativeStream: 
         }
     }
 
-    actual val streamType: StreamType get() = StreamType.values()[nativeStream.getStreamType().ordinal]
+    actual val streamType: StreamType get() = StreamType.entries[nativeStream.getStreamType().ordinal]
 
     actual fun setDimensions(width: Int, height: Int) {
         nativeStream.setDimensions(width, height)

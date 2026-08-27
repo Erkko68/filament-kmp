@@ -28,11 +28,11 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
             return this
         }
         actual fun sampler(target: Sampler): Builder {
-            nativeBuilder.sampler(AndroidTexture.Sampler.values()[target.ordinal])
+            nativeBuilder.sampler(AndroidTexture.Sampler.entries[target.ordinal])
             return this
         }
         actual fun format(format: InternalFormat): Builder {
-            nativeBuilder.format(AndroidTexture.InternalFormat.values()[format.ordinal])
+            nativeBuilder.format(AndroidTexture.InternalFormat.entries[format.ordinal])
             return this
         }
         actual fun usage(usage: Int): Builder {
@@ -41,10 +41,10 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
         }
         actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder {
             nativeBuilder.swizzle(
-                AndroidTexture.Swizzle.values()[r.ordinal],
-                AndroidTexture.Swizzle.values()[g.ordinal],
-                AndroidTexture.Swizzle.values()[b.ordinal],
-                AndroidTexture.Swizzle.values()[a.ordinal]
+                AndroidTexture.Swizzle.entries[r.ordinal],
+                AndroidTexture.Swizzle.entries[g.ordinal],
+                AndroidTexture.Swizzle.entries[b.ordinal],
+                AndroidTexture.Swizzle.entries[a.ordinal]
             )
             return this
         }
@@ -151,8 +151,8 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
             val executor = if (runnable != null) java.util.concurrent.Executor { it.run() } else null
             return AndroidTexture.PixelBufferDescriptor(
                 byteBuffer,
-                AndroidTexture.Format.values()[format.ordinal],
-                AndroidTexture.Type.values()[type.ordinal],
+                AndroidTexture.Format.entries[format.ordinal],
+                AndroidTexture.Type.entries[type.ordinal],
                 alignment, left, top, stride, executor, runnable
             )
         }
@@ -162,8 +162,8 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
     actual fun getHeight(level: Int): Int = nativeTexture.getHeight(level)
     actual fun getDepth(level: Int): Int = nativeTexture.getDepth(level)
     actual val levels: Int get() = nativeTexture.levels
-    actual val target: Sampler get() = Sampler.values()[nativeTexture.target.ordinal]
-    actual val format: InternalFormat get() = InternalFormat.values()[nativeTexture.format.ordinal]
+    actual val target: Sampler get() = Sampler.entries[nativeTexture.target.ordinal]
+    actual val format: InternalFormat get() = InternalFormat.entries[nativeTexture.format.ordinal]
 
     actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
         nativeTexture.setImage(engine.nativeEngine, level, descriptor.toNative())
@@ -187,25 +187,25 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
 
     actual companion object {
         actual fun isTextureFormatSupported(engine: Engine, format: InternalFormat): Boolean =
-            AndroidTexture.isTextureFormatSupported(engine.nativeEngine, AndroidTexture.InternalFormat.values()[format.ordinal])
+            AndroidTexture.isTextureFormatSupported(engine.nativeEngine, AndroidTexture.InternalFormat.entries[format.ordinal])
         actual fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
-            AndroidTexture.isTextureFormatMipmappable(engine.nativeEngine, AndroidTexture.InternalFormat.values()[format.ordinal])
+            AndroidTexture.isTextureFormatMipmappable(engine.nativeEngine, AndroidTexture.InternalFormat.entries[format.ordinal])
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
             AndroidTexture.isTextureSwizzleSupported(engine.nativeEngine)
         actual fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean =
             AndroidTexture.validatePixelFormatAndType(
-                AndroidTexture.InternalFormat.values()[internalFormat.ordinal],
-                AndroidTexture.Format.values()[pixelDataFormat.ordinal],
-                AndroidTexture.Type.values()[pixelDataType.ordinal]
+                AndroidTexture.InternalFormat.entries[internalFormat.ordinal],
+                AndroidTexture.Format.entries[pixelDataFormat.ordinal],
+                AndroidTexture.Type.entries[pixelDataType.ordinal]
             )
         actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int =
-            AndroidTexture.getMaxTextureSize(engine.nativeEngine, AndroidTexture.Sampler.values()[type.ordinal])
+            AndroidTexture.getMaxTextureSize(engine.nativeEngine, AndroidTexture.Sampler.entries[type.ordinal])
         actual fun getMaxArrayTextureLayers(engine: Engine): Int =
             AndroidTexture.getMaxArrayTextureLayers(engine.nativeEngine)
         actual fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
             AndroidTexture.PixelBufferDescriptor.computeDataSize(
-                AndroidTexture.Format.values()[format.ordinal],
-                AndroidTexture.Type.values()[type.ordinal],
+                AndroidTexture.Format.entries[format.ordinal],
+                AndroidTexture.Type.entries[type.ordinal],
                 stride, height, alignment
             )
     }

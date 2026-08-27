@@ -98,18 +98,18 @@ actual class MaterialInstance @InternalFilamentApi constructor(
         set(value) { FilamentC.FilaMaterialInstance_setDoubleSided(nativeHandle, value) }
 
     actual var transparencyMode: Material.TransparencyMode
-        get() = Material.TransparencyMode.values()[FilamentC.FilaMaterialInstance_getTransparencyMode(nativeHandle)]
+        get() = Material.TransparencyMode.entries[FilamentC.FilaMaterialInstance_getTransparencyMode(nativeHandle)]
         set(value) { FilamentC.FilaMaterialInstance_setTransparencyMode(nativeHandle, value.ordinal) }
 
     actual var cullingMode: Material.CullingMode
-        get() = Material.CullingMode.values()[FilamentC.FilaMaterialInstance_getCullingMode(nativeHandle)]
+        get() = Material.CullingMode.entries[FilamentC.FilaMaterialInstance_getCullingMode(nativeHandle)]
         set(value) { FilamentC.FilaMaterialInstance_setCullingMode(nativeHandle, value.ordinal) }
 
     actual fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode) {
         FilamentC.FilaMaterialInstance_setCullingModeSeparate(nativeHandle, colorPassCullingMode.ordinal, shadowPassCullingMode.ordinal)
     }
 
-    actual val shadowCullingMode: Material.CullingMode get() = Material.CullingMode.values()[FilamentC.FilaMaterialInstance_getShadowCullingMode(nativeHandle)]
+    actual val shadowCullingMode: Material.CullingMode get() = Material.CullingMode.entries[FilamentC.FilaMaterialInstance_getShadowCullingMode(nativeHandle)]
 
     actual var isColorWriteEnabled: Boolean
         get() = FilamentC.FilaMaterialInstance_isColorWriteEnabled(nativeHandle)
@@ -126,7 +126,7 @@ actual class MaterialInstance @InternalFilamentApi constructor(
         set(value) { FilamentC.FilaMaterialInstance_setDepthCulling(nativeHandle, value) }
 
     actual var depthFunc: TextureSampler.CompareFunction
-        get() = TextureSampler.CompareFunction.values()[FilamentC.FilaMaterialInstance_getDepthFunc(nativeHandle)]
+        get() = TextureSampler.CompareFunction.entries[FilamentC.FilaMaterialInstance_getDepthFunc(nativeHandle)]
         set(value) { FilamentC.FilaMaterialInstance_setDepthFunc(nativeHandle, value.ordinal) }
 
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace) {

@@ -118,15 +118,15 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
     actual val defaultInstance: MaterialInstance get() = MaterialInstance(FilamentC.FilaMaterial_getDefaultInstance(nativeHandle))
 
     actual val name: String get() = FilamentC.FilaMaterial_getName(nativeHandle).let { if (it.isNullPtr()) "" else it.cString() }
-    actual val shading: Shading get() = Shading.values()[FilamentC.FilaMaterial_getShading(nativeHandle)]
-    actual val interpolation: Interpolation get() = Interpolation.values()[FilamentC.FilaMaterial_getInterpolation(nativeHandle)]
-    actual val blendingMode: BlendingMode get() = BlendingMode.values()[FilamentC.FilaMaterial_getBlendingMode(nativeHandle)]
-    actual val transparencyMode: TransparencyMode get() = TransparencyMode.values()[FilamentC.FilaMaterial_getTransparencyMode(nativeHandle)]
-    actual val refractionMode: RefractionMode get() = RefractionMode.values()[FilamentC.FilaMaterial_getRefractionMode(nativeHandle)]
-    actual val refractionType: RefractionType get() = RefractionType.values()[FilamentC.FilaMaterial_getRefractionType(nativeHandle)]
-    actual val reflectionMode: ReflectionMode get() = ReflectionMode.values()[FilamentC.FilaMaterial_getReflectionMode(nativeHandle)]
-    actual val vertexDomain: VertexDomain get() = VertexDomain.values()[FilamentC.FilaMaterial_getVertexDomain(nativeHandle)]
-    actual val cullingMode: CullingMode get() = CullingMode.values()[FilamentC.FilaMaterial_getCullingMode(nativeHandle)]
+    actual val shading: Shading get() = Shading.entries[FilamentC.FilaMaterial_getShading(nativeHandle)]
+    actual val interpolation: Interpolation get() = Interpolation.entries[FilamentC.FilaMaterial_getInterpolation(nativeHandle)]
+    actual val blendingMode: BlendingMode get() = BlendingMode.entries[FilamentC.FilaMaterial_getBlendingMode(nativeHandle)]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[FilamentC.FilaMaterial_getTransparencyMode(nativeHandle)]
+    actual val refractionMode: RefractionMode get() = RefractionMode.entries[FilamentC.FilaMaterial_getRefractionMode(nativeHandle)]
+    actual val refractionType: RefractionType get() = RefractionType.entries[FilamentC.FilaMaterial_getRefractionType(nativeHandle)]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[FilamentC.FilaMaterial_getReflectionMode(nativeHandle)]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[FilamentC.FilaMaterial_getVertexDomain(nativeHandle)]
+    actual val cullingMode: CullingMode get() = CullingMode.entries[FilamentC.FilaMaterial_getCullingMode(nativeHandle)]
 
     actual val isColorWriteEnabled: Boolean get() = FilamentC.FilaMaterial_isColorWriteEnabled(nativeHandle)
     actual val isDepthWriteEnabled: Boolean get() = FilamentC.FilaMaterial_isDepthWriteEnabled(nativeHandle)
@@ -152,8 +152,8 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
                 val namePtr = FilaMaterialParameterInfo.name(info)
                 Parameter(
                     if (namePtr.isNullPtr()) "" else namePtr.cString(),
-                    Parameter.Type.values()[FilaMaterialParameterInfo.type(info).toInt() and 0xFF],
-                    Parameter.Precision.values()[FilaMaterialParameterInfo.precision(info).toInt() and 0xFF],
+                    Parameter.Type.entries[FilaMaterialParameterInfo.type(info).toInt() and 0xFF],
+                    Parameter.Precision.entries[FilaMaterialParameterInfo.precision(info).toInt() and 0xFF],
                     FilaMaterialParameterInfo.count(info)
                 )
             }

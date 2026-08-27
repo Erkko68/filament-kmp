@@ -74,23 +74,23 @@ actual class TextureSampler {
     }
 
     actual var minFilter: MinFilter
-        get() = MinFilter.values()[nativeSampler.minFilter.ordinal]
+        get() = MinFilter.entries[nativeSampler.minFilter.ordinal]
         set(value) { nativeSampler.minFilter = value.toFila() }
 
     actual var magFilter: MagFilter
-        get() = MagFilter.values()[nativeSampler.magFilter.ordinal]
+        get() = MagFilter.entries[nativeSampler.magFilter.ordinal]
         set(value) { nativeSampler.magFilter = value.toFila() }
 
     actual var wrapModeS: WrapMode
-        get() = WrapMode.values()[nativeSampler.wrapModeS.ordinal]
+        get() = WrapMode.entries[nativeSampler.wrapModeS.ordinal]
         set(value) { nativeSampler.wrapModeS = value.toFila() }
 
     actual var wrapModeT: WrapMode
-        get() = WrapMode.values()[nativeSampler.wrapModeT.ordinal]
+        get() = WrapMode.entries[nativeSampler.wrapModeT.ordinal]
         set(value) { nativeSampler.wrapModeT = value.toFila() }
 
     actual var wrapModeR: WrapMode
-        get() = WrapMode.values()[nativeSampler.wrapModeR.ordinal]
+        get() = WrapMode.entries[nativeSampler.wrapModeR.ordinal]
         set(value) { nativeSampler.wrapModeR = value.toFila() }
 
     actual var anisotropy: Float
@@ -98,16 +98,16 @@ actual class TextureSampler {
         set(value) { nativeSampler.anisotropy = value }
 
     actual var compareMode: CompareMode
-        get() = CompareMode.values()[nativeSampler.compareMode.ordinal]
+        get() = CompareMode.entries[nativeSampler.compareMode.ordinal]
         set(value) { nativeSampler.compareMode = value.toFila() }
 
     actual var compareFunction: CompareFunction
-        get() = CompareFunction.values()[nativeSampler.compareFunction.ordinal]
+        get() = CompareFunction.entries[nativeSampler.compareFunction.ordinal]
         set(value) { nativeSampler.compareFunction = value.toFila() }
 
-    private fun WrapMode.toFila() = FilaTextureSampler.WrapMode.values()[this.ordinal]
-    private fun MinFilter.toFila() = FilaTextureSampler.MinFilter.values()[this.ordinal]
-    private fun MagFilter.toFila() = FilaTextureSampler.MagFilter.values()[this.ordinal]
-    private fun CompareMode.toFila() = FilaTextureSampler.CompareMode.values()[this.ordinal]
-    private fun CompareFunction.toFila() = FilaTextureSampler.CompareFunction.values()[this.ordinal]
+    private fun WrapMode.toFila() = FilaTextureSampler.WrapMode.entries[this.ordinal]
+    private fun MinFilter.toFila() = FilaTextureSampler.MinFilter.entries[this.ordinal]
+    private fun MagFilter.toFila() = FilaTextureSampler.MagFilter.entries[this.ordinal]
+    private fun CompareMode.toFila() = FilaTextureSampler.CompareMode.entries[this.ordinal]
+    private fun CompareFunction.toFila() = FilaTextureSampler.CompareFunction.entries[this.ordinal]
 }

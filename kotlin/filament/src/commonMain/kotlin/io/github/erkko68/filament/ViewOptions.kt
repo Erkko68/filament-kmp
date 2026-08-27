@@ -292,7 +292,12 @@ data class FogOptions(
      * is always used. Default: null.
      */
     var skyColor: Texture? = null,
-)
+) {
+    // `color` is an array, whose generated equality is by reference; compare contents.
+    private fun key() = listOf(enabled, distance, density, height, heightFalloff, color.toList(), cutOffDistance, maximumOpacity, inScatteringStart, inScatteringSize, fogColorFromIbl, skyColor)
+    override fun equals(other: Any?) = this === other || (other is FogOptions && key() == other.key())
+    override fun hashCode() = key().hashCode()
+}
 
 /**
  * Options to control Depth of Field (DoF) effect in the scene.
@@ -386,7 +391,12 @@ data class VignetteOptions(
     var midPoint: Float = 0.5f,
 
     /**
-     * Controls the shape of the vignette, from a rounded rectangle (0.0), to an oval (0.5),
+     * Controls the shape of th {
+    // `color` is an array, whose generated equality is by reference; compare contents.
+    private fun key() = listOf(enabled, midPoint, roundness, feather, color.toList())
+    override fun equals(other: Any?) = this === other || (other is VignetteOptions && key() == other.key())
+    override fun hashCode() = key().hashCode()
+}e vignette, from a rounded rectangle (0.0), to an oval (0.5),
      * to a circle (1.0). Default: 0.5.
      */
     var roundness: Float = 0.5f,
@@ -519,7 +529,12 @@ data class AmbientOcclusionOptions(
         var contactDistanceMax: Float = 1.0f,
 
         /**
-         * Intensity of SSCT effect. Default: 0.8.
+         * In {
+        // `lightDirection` is an array, whose generated equality is by reference; compare contents.
+        private fun key() = listOf(enabled, lightConeRad, shadowDistance, contactDistanceMax, intensity, lightDirection.toList(), depthBias, depthSlopeBias, sampleCount, rayCount)
+        override fun equals(other: Any?) = this === other || (other is Ssct && key() == other.key())
+        override fun hashCode() = key().hashCode()
+    }tensity of SSCT effect. Default: 0.8.
          */
         var intensity: Float = 0.8f,
 

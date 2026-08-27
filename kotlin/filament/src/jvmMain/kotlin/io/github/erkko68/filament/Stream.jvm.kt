@@ -30,7 +30,7 @@ actual class Stream @InternalFilamentApi constructor(internal var nativeHandle: 
         }
     }
 
-    actual val streamType: StreamType get() = StreamType.values()[FilamentC.FilaStream_getStreamType(nativeHandle)]
+    actual val streamType: StreamType get() = StreamType.entries[FilamentC.FilaStream_getStreamType(nativeHandle)]
 
     actual fun setDimensions(width: Int, height: Int) {
         FilamentC.FilaStream_setDimensions(nativeHandle, width, height)

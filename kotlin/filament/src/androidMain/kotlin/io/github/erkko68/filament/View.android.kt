@@ -58,9 +58,9 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
         }
 
     actual var blendMode: BlendMode
-        get() = io.github.erkko68.filament.View.BlendMode.values()[this@View.nativeView.blendMode.ordinal]
+        get() = io.github.erkko68.filament.View.BlendMode.entries[this@View.nativeView.blendMode.ordinal]
         set(value) {
-            this@View.nativeView.blendMode = FilamentView.BlendMode.values()[value.ordinal]
+            this@View.nativeView.blendMode = FilamentView.BlendMode.entries[value.ordinal]
         }
 
     actual fun setVisibleLayers(select: Int, values: Int) {
@@ -77,8 +77,8 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
 
 
     actual var dithering: Dithering
-        get() = io.github.erkko68.filament.View.Dithering.values()[this@View.nativeView.dithering.ordinal]
-        set(value) { this@View.nativeView.dithering = FilamentView.Dithering.values()[value.ordinal] }
+        get() = io.github.erkko68.filament.View.Dithering.entries[this@View.nativeView.dithering.ordinal]
+        set(value) { this@View.nativeView.dithering = FilamentView.Dithering.entries[value.ordinal] }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
         get() {
@@ -89,7 +89,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.minScale = o.minScale
             kmp.maxScale = o.maxScale
             kmp.sharpness = o.sharpness
-            kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
+            kmp.quality = io.github.erkko68.filament.View.Quality.entries[o.quality.ordinal]
             return kmp
         }
         set(value) { this@View.nativeView.setDynamicResolutionOptions(value.toAndroid()) }
@@ -104,7 +104,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
         get() {
             val o = this@View.nativeView.renderQuality
             val kmp = RenderQuality()
-            kmp.hdrColorBuffer = io.github.erkko68.filament.View.Quality.values()[o.hdrColorBuffer.ordinal]
+            kmp.hdrColorBuffer = io.github.erkko68.filament.View.Quality.entries[o.hdrColorBuffer.ordinal]
             return kmp
         }
         set(value) { this@View.nativeView.setRenderQuality(value.toAndroid()) }
@@ -130,8 +130,8 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.haloThickness = o.haloThickness
             kmp.haloThreshold = o.haloThreshold
             kmp.highlight = o.highlight
-            kmp.blendMode = io.github.erkko68.filament.BloomOptions.BlendMode.values()[o.blendMode.ordinal]
-            kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
+            kmp.blendMode = io.github.erkko68.filament.BloomOptions.BlendMode.entries[o.blendMode.ordinal]
+            kmp.quality = io.github.erkko68.filament.View.Quality.entries[o.quality.ordinal]
             return kmp
         }
         set(value) { this@View.nativeView.setBloomOptions(value.toAndroid()) }
@@ -165,7 +165,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             // marshals cocAspectRatio (upstream). @PlatformGap on the common declaration.
             kmp.cocAspectRatio = o.cocAspectRatio
             kmp.maxApertureDiameter = o.maxApertureDiameter
-            kmp.filter = io.github.erkko68.filament.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
+            kmp.filter = io.github.erkko68.filament.DepthOfFieldOptions.Filter.entries[o.filter.ordinal]
             kmp.nativeResolution = o.nativeResolution
             kmp.foregroundRingCount = o.foregroundRingCount
             kmp.backgroundRingCount = o.backgroundRingCount
@@ -198,11 +198,11 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.intensity = o.intensity
             kmp.power = o.power
             kmp.minHorizonAngleRad = o.minHorizonAngleRad
-            kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
-            kmp.lowPassFilter = io.github.erkko68.filament.View.Quality.values()[o.lowPassFilter.ordinal]
-            kmp.upsampling = io.github.erkko68.filament.View.Quality.values()[o.upsampling.ordinal]
+            kmp.quality = io.github.erkko68.filament.View.Quality.entries[o.quality.ordinal]
+            kmp.lowPassFilter = io.github.erkko68.filament.View.Quality.entries[o.lowPassFilter.ordinal]
+            kmp.upsampling = io.github.erkko68.filament.View.Quality.entries[o.upsampling.ordinal]
             kmp.enabled = o.enabled
-            kmp.aoType = AmbientOcclusionOptions.AmbientOcclusionType.values()[o.aoType.ordinal]
+            kmp.aoType = AmbientOcclusionOptions.AmbientOcclusionType.entries[o.aoType.ordinal]
             kmp.bentNormals = o.bentNormals
             kmp.resolution = o.resolution
 
@@ -237,11 +237,11 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             n.intensity = value.intensity
             n.power = value.power
             n.minHorizonAngleRad = value.minHorizonAngleRad
-            n.quality = FilamentView.QualityLevel.values()[value.quality.ordinal]
-            n.lowPassFilter = FilamentView.QualityLevel.values()[value.lowPassFilter.ordinal]
-            n.upsampling = FilamentView.QualityLevel.values()[value.upsampling.ordinal]
+            n.quality = FilamentView.QualityLevel.entries[value.quality.ordinal]
+            n.lowPassFilter = FilamentView.QualityLevel.entries[value.lowPassFilter.ordinal]
+            n.upsampling = FilamentView.QualityLevel.entries[value.upsampling.ordinal]
             n.enabled = value.enabled
-            n.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.values()[value.aoType.ordinal]
+            n.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.entries[value.aoType.ordinal]
             n.bentNormals = value.bentNormals
             n.resolution = value.resolution
             // Map flattened
@@ -277,9 +277,9 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.filterInput = o.filterInput
             kmp.useYCoCg = o.useYCoCg
             kmp.hdr = o.hdr
-            kmp.boxType = TemporalAntiAliasingOptions.BoxType.values()[o.boxType.ordinal]
-            kmp.boxClipping = TemporalAntiAliasingOptions.BoxClipping.values()[o.boxClipping.ordinal]
-            kmp.jitterPattern = TemporalAntiAliasingOptions.JitterPattern.values()[o.jitterPattern.ordinal]
+            kmp.boxType = TemporalAntiAliasingOptions.BoxType.entries[o.boxType.ordinal]
+            kmp.boxClipping = TemporalAntiAliasingOptions.BoxClipping.entries[o.boxClipping.ordinal]
+            kmp.jitterPattern = TemporalAntiAliasingOptions.JitterPattern.entries[o.jitterPattern.ordinal]
             kmp.varianceGamma = o.varianceGamma
             kmp.preventFlickering = o.preventFlickering
             kmp.historyReprojection = o.historyReprojection
@@ -318,7 +318,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
         get() = this@View.mShadowType
         set(value) {
             this@View.mShadowType = value
-            this@View.nativeView.setShadowType(FilamentView.ShadowType.values()[value.ordinal])
+            this@View.nativeView.setShadowType(FilamentView.ShadowType.entries[value.ordinal])
         }
 
     actual var vsmShadowOptions: VsmShadowOptions
@@ -403,8 +403,8 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
     }
 
     actual var antiAliasing: AntiAliasing
-        get() = AntiAliasing.values()[nativeView.antiAliasing.ordinal]
-        set(value) { nativeView.antiAliasing = FilamentView.AntiAliasing.values()[value.ordinal] }
+        get() = AntiAliasing.entries[nativeView.antiAliasing.ordinal]
+        set(value) { nativeView.antiAliasing = FilamentView.AntiAliasing.entries[value.ordinal] }
 
     actual var colorGrading: ColorGrading?
         get() = mColorGrading

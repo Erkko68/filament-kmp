@@ -11,12 +11,12 @@ import kotlin.test.assertTrue
 class RendererTest : FilamentTestFixture() {
     @Test
     fun testOptionsAndProperties() {
-        val di = Renderer.DisplayInfo().apply {
+        val di = DisplayInfo().apply {
             refreshRate = 60f
         }
         assertEquals(60f, di.refreshRate)
 
-        val fro = Renderer.FrameRateOptions().apply {
+        val fro = FrameRateOptions().apply {
             interval = 1f
             headRoomRatio = 0.05f
             scaleRate = 0.5f
@@ -27,7 +27,7 @@ class RendererTest : FilamentTestFixture() {
         assertEquals(0.5f, fro.scaleRate)
         assertEquals(8, fro.history)
 
-        val co = Renderer.ClearOptions().apply {
+        val co = ClearOptions().apply {
             clearColor = doubleArrayOf(0.1, 0.2, 0.3, 1.0)
             clear = true
             discard = true
@@ -46,15 +46,15 @@ class RendererTest : FilamentTestFixture() {
         assertEquals(engine, renderer.engine)
 
         // Set options
-        val di = Renderer.DisplayInfo().apply { refreshRate = 120f }
+        val di = DisplayInfo().apply { refreshRate = 120f }
         renderer.displayInfo = di
         assertEquals(120f, renderer.displayInfo.refreshRate)
 
-        val fro = Renderer.FrameRateOptions().apply { interval = 2f }
+        val fro = FrameRateOptions().apply { interval = 2f }
         renderer.frameRateOptions = fro
         assertEquals(2f, renderer.frameRateOptions.interval)
 
-        val co = Renderer.ClearOptions().apply { clear = false }
+        val co = ClearOptions().apply { clear = false }
         renderer.clearOptions = co
         assertFalse(renderer.clearOptions.clear)
 

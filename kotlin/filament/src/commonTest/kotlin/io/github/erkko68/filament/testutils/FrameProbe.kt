@@ -14,6 +14,7 @@ import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.VertexBuffer
 import io.github.erkko68.filament.Viewport
 import io.github.erkko68.filament.toBytes
+import io.github.erkko68.filament.ClearOptions
 
 /**
  * Renders a scene into a readable headless swapchain and reads the pixels back,
@@ -37,10 +38,10 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
     }
     private val swapChain = engine.createSwapChain(width, height, SWAP_CHAIN_CONFIG_READABLE)
     private val renderer = engine.createRenderer().apply {
-        clearOptions = Renderer.ClearOptions().apply {
-            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 1.0)
-            clear = true
-        }
+        clearOptions = ClearOptions(
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 1.0),
+            clear = true,
+        )
     }
 
     private val materials = mutableListOf<Material>()

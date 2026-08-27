@@ -26,61 +26,6 @@ package io.github.erkko68.filament
  * @see View
  */
 expect class Renderer {
-    /**
-     * Display refresh-rate information for frame pacing and dynamic resolution scaling.
-     *
-     * This is used to achieve correct frame pacing and dynamic resolution scaling.
-     */
-    class DisplayInfo() {
-        /** Refresh rate of the display in Hz. Set to 0 for offscreen rendering or to disable frame pacing. Default: 60. */
-        var refreshRate: Float
-    }
-
-    /**
-     * Frame rate control and dynamic resolution scaling options.
-     *
-     * Controls the desired frame rate and how quickly the system reacts to GPU load changes.
-     *
-     * interval: Desired frame interval in multiples of the refresh period (1 / DisplayInfo.refreshRate).
-     *           Set to 1 to render at the display refresh rate.
-     *
-     * The parameters below are relevant when some Views are using dynamic resolution scaling:
-     *
-     * headRoomRatio: Additional headroom for the GPU as a ratio of the target frame time.
-     *                Useful for taking into account constant costs like post-processing or
-     *                GPU drivers on different platforms.
-     * scaleRate: Rate at which the GPU load is adjusted to reach the target frame rate.
-     *            This value can be computed as 1 / N, where N is the number of frames
-     *            needed to reach 64% of the target scale factor. Higher values make the
-     *            dynamic resolution react faster.
-     * history: History size for filtering GPU load. Higher values tend to filter more.
-     *          Clamped to 31.
-     */
-    class FrameRateOptions() {
-        /** Additional headroom for the GPU as a fraction of target frame time. */
-        var headRoomRatio: Float
-        /** Rate at which GPU load is adjusted; computed as 1/N frames to reach 64% target. */
-        var scaleRate: Float
-        /** History size for load filtering (clamped to 31). */
-        var history: Int
-        /** Desired frame interval (1 = render every vsync). */
-        var interval: Float
-    }
-
-    /**
-     * ClearOptions control how the SwapChain is cleared or discarded at the beginning of a frame.
-     *
-     * The RenderTarget is cleared using the clearColor. The RenderTarget is cleared using this color,
-     * which won't be tone-mapped since tone-mapping is part of View rendering (this is not).
-     */
-    class ClearOptions() {
-        /** RGBA clear color. Values are stored as doubles. The backend converts them as-is based on format. */
-        var clearColor: DoubleArray
-        /** Whether the SwapChain should be cleared using clearColor. Default: false. */
-        var clear: Boolean
-        /** Whether the SwapChain content should be discarded. Default: true. Set false to preserve existing content. */
-        var discard: Boolean
-    }
 
     /** Bit flags for the `flags` argument of [copyFrame]. */
     object MirrorFrameFlag {

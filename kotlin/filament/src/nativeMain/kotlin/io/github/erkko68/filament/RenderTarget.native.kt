@@ -12,7 +12,7 @@ actual class RenderTarget @InternalFilamentApi constructor(internal var nativeHa
 
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaRenderTargetBuilder_create()
-        private val textures = arrayOfNulls<Texture>(AttachmentPoint.values().size)
+        private val textures = arrayOfNulls<Texture>(AttachmentPoint.entries.size)
 
         actual fun texture(attachment: AttachmentPoint, texture: Texture?): Builder {
             textures[attachment.ordinal] = texture
@@ -48,7 +48,7 @@ actual class RenderTarget @InternalFilamentApi constructor(internal var nativeHa
         FilaRenderTarget_getMipLevel(nativeHandle, attachment.ordinal.toUInt()).toInt()
 
     actual fun getFace(attachment: AttachmentPoint): Texture.CubemapFace =
-        Texture.CubemapFace.values()[FilaRenderTarget_getFace(nativeHandle, attachment.ordinal.toUInt()).toInt()]
+        Texture.CubemapFace.entries[FilaRenderTarget_getFace(nativeHandle, attachment.ordinal.toUInt()).toInt()]
 
     actual fun getLayer(attachment: AttachmentPoint): Int =
         FilaRenderTarget_getLayer(nativeHandle, attachment.ordinal.toUInt()).toInt()

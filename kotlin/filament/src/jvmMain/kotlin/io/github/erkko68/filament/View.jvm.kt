@@ -104,7 +104,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         set(value) { FilamentC.FilaView_setViewport(nativeHandle, value.left, value.bottom, value.width, value.height) }
 
     actual var blendMode: BlendMode
-        get() = BlendMode.values()[FilamentC.FilaView_getBlendMode(nativeHandle)]
+        get() = BlendMode.entries[FilamentC.FilaView_getBlendMode(nativeHandle)]
         set(value) { FilamentC.FilaView_setBlendMode(nativeHandle, value.ordinal) }
 
     actual fun setVisibleLayers(select: Int, values: Int) { FilamentC.FilaView_setVisibleLayers(nativeHandle, select.toByte(), values.toByte()) }
@@ -119,7 +119,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         set(value) { FilamentC.FilaView_setPostProcessingEnabled(nativeHandle, value) }
 
     actual var dithering: Dithering
-        get() = Dithering.values()[FilamentC.FilaView_getDithering(nativeHandle)]
+        get() = Dithering.entries[FilamentC.FilaView_getDithering(nativeHandle)]
         set(value) { FilamentC.FilaView_setDithering(nativeHandle, value.ordinal) }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
@@ -629,7 +629,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
     }
 
     actual var antiAliasing: AntiAliasing
-        get() = AntiAliasing.values()[FilamentC.FilaView_getAntiAliasing(nativeHandle)]
+        get() = AntiAliasing.entries[FilamentC.FilaView_getAntiAliasing(nativeHandle)]
         set(value) { FilamentC.FilaView_setAntiAliasing(nativeHandle, value.ordinal) }
 
     actual var colorGrading: ColorGrading?

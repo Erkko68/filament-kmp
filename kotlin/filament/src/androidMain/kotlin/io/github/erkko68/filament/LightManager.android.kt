@@ -113,7 +113,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
     }
 
     actual class Builder actual constructor(type: Type) {
-        private val nativeBuilder = AndroidLightManager.Builder(AndroidLightManager.Type.values()[type.ordinal])
+        private val nativeBuilder = AndroidLightManager.Builder(AndroidLightManager.Type.entries[type.ordinal])
         
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { nativeBuilder.lightChannel(channel, enable) }
         actual fun castShadows(enable: Boolean): Builder = apply { nativeBuilder.castShadows(enable) }
@@ -138,7 +138,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
     actual fun getInstance(entity: Entity): EntityInstance = nativeLightManager.getInstance(entity)
     actual fun destroy(entity: Entity) { nativeLightManager.destroy(entity) }
 
-    actual fun getType(instance: EntityInstance): Type = Type.values()[nativeLightManager.getType(instance).ordinal]
+    actual fun getType(instance: EntityInstance): Type = Type.entries[nativeLightManager.getType(instance).ordinal]
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { nativeLightManager.setDirection(instance, x, y, z) }
     actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getDirection(instance, out ?: FloatArray(3))
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { nativeLightManager.setPosition(instance, x, y, z) }

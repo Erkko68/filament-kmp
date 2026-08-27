@@ -38,8 +38,8 @@ actual class SwapChain @InternalFilamentApi constructor(internal val nativeSwapC
     actual fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy) =
         nativeSwapChain.setFrameRate(
             frameRate,
-            AndroidSwapChain.FrameRateCompatibility.values()[compatibility.ordinal],
-            AndroidSwapChain.ChangeFrameRateStrategy.values()[strategy.ordinal]
+            AndroidSwapChain.FrameRateCompatibility.entries[compatibility.ordinal],
+            AndroidSwapChain.ChangeFrameRateStrategy.entries[strategy.ordinal]
         )
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns sentinel value 1L — SwapChain handle is not exposed as a numeric pointer on web.")

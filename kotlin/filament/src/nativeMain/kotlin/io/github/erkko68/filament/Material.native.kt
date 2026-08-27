@@ -113,15 +113,15 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
     actual val defaultInstance: MaterialInstance get() = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))
 
     actual val name: String get() = FilaMaterial_getName(nativeHandle)?.toKString() ?: ""
-    actual val shading: Shading get() = Shading.values()[FilaMaterial_getShading(nativeHandle).toInt()]
-    actual val interpolation: Interpolation get() = Interpolation.values()[FilaMaterial_getInterpolation(nativeHandle).toInt()]
-    actual val blendingMode: BlendingMode get() = BlendingMode.values()[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
-    actual val transparencyMode: TransparencyMode get() = TransparencyMode.values()[FilaMaterial_getTransparencyMode(nativeHandle).toInt()]
-    actual val refractionMode: RefractionMode get() = RefractionMode.values()[FilaMaterial_getRefractionMode(nativeHandle)]
-    actual val refractionType: RefractionType get() = RefractionType.values()[FilaMaterial_getRefractionType(nativeHandle)]
-    actual val reflectionMode: ReflectionMode get() = ReflectionMode.values()[FilaMaterial_getReflectionMode(nativeHandle)]
-    actual val vertexDomain: VertexDomain get() = VertexDomain.values()[FilaMaterial_getVertexDomain(nativeHandle).toInt()]
-    actual val cullingMode: CullingMode get() = CullingMode.values()[FilaMaterial_getCullingMode(nativeHandle).toInt()]
+    actual val shading: Shading get() = Shading.entries[FilaMaterial_getShading(nativeHandle).toInt()]
+    actual val interpolation: Interpolation get() = Interpolation.entries[FilaMaterial_getInterpolation(nativeHandle).toInt()]
+    actual val blendingMode: BlendingMode get() = BlendingMode.entries[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[FilaMaterial_getTransparencyMode(nativeHandle).toInt()]
+    actual val refractionMode: RefractionMode get() = RefractionMode.entries[FilaMaterial_getRefractionMode(nativeHandle)]
+    actual val refractionType: RefractionType get() = RefractionType.entries[FilaMaterial_getRefractionType(nativeHandle)]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[FilaMaterial_getReflectionMode(nativeHandle)]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[FilaMaterial_getVertexDomain(nativeHandle).toInt()]
+    actual val cullingMode: CullingMode get() = CullingMode.entries[FilaMaterial_getCullingMode(nativeHandle).toInt()]
     
     actual val isColorWriteEnabled: Boolean get() = FilaMaterial_isColorWriteEnabled(nativeHandle)
     actual val isDepthWriteEnabled: Boolean get() = FilaMaterial_isDepthWriteEnabled(nativeHandle)
@@ -145,8 +145,8 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
             val info = infoArray[i]
             Parameter(
                 info.name?.toKString() ?: "",
-                Parameter.Type.values()[info.type.toInt()],
-                Parameter.Precision.values()[info.precision.toInt()],
+                Parameter.Type.entries[info.type.toInt()],
+                Parameter.Precision.entries[info.precision.toInt()],
                 info.count.toInt()
             )
         }

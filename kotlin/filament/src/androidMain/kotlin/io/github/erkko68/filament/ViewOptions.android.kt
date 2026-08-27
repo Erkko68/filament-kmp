@@ -12,13 +12,13 @@ internal fun DynamicResolutionOptions.toAndroid(): FilamentView.DynamicResolutio
     n.sharpness = sharpness
     n.enabled = enabled
     n.homogeneousScaling = homogeneousScaling
-    n.quality = FilamentView.QualityLevel.values()[quality.ordinal]
+    n.quality = FilamentView.QualityLevel.entries[quality.ordinal]
     return n
 }
 
 internal fun RenderQuality.toAndroid(): FilamentView.RenderQuality {
     val n = FilamentView.RenderQuality()
-    n.hdrColorBuffer = FilamentView.QualityLevel.values()[hdrColorBuffer.ordinal]
+    n.hdrColorBuffer = FilamentView.QualityLevel.entries[hdrColorBuffer.ordinal]
     return n
 }
 
@@ -29,11 +29,11 @@ internal fun BloomOptions.toAndroid(): FilamentView.BloomOptions {
     n.strength = strength
     n.resolution = resolution
     n.levels = levels
-    n.blendMode = FilamentView.BloomOptions.BlendMode.values()[blendMode.ordinal]
+    n.blendMode = FilamentView.BloomOptions.BlendMode.entries[blendMode.ordinal]
     n.threshold = threshold
     n.enabled = enabled
     n.highlight = highlight
-    n.quality = FilamentView.QualityLevel.values()[quality.ordinal]
+    n.quality = FilamentView.QualityLevel.entries[quality.ordinal]
     n.lensFlare = lensFlare
     n.starburst = starburst
     n.chromaticAberration = chromaticAberration
@@ -69,7 +69,7 @@ internal fun DepthOfFieldOptions.toAndroid(): FilamentView.DepthOfFieldOptions {
     n.cocAspectRatio = cocAspectRatio
     n.maxApertureDiameter = maxApertureDiameter
     n.enabled = enabled
-    n.filter = FilamentView.DepthOfFieldOptions.Filter.values()[filter.ordinal]
+    n.filter = FilamentView.DepthOfFieldOptions.Filter.entries[filter.ordinal]
     n.nativeResolution = nativeResolution
     n.foregroundRingCount = foregroundRingCount
     n.backgroundRingCount = backgroundRingCount
@@ -91,16 +91,16 @@ internal fun VignetteOptions.toAndroid(): FilamentView.VignetteOptions {
 
 internal fun AmbientOcclusionOptions.toAndroid(): FilamentView.AmbientOcclusionOptions {
     val n = FilamentView.AmbientOcclusionOptions()
-    n.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.values()[aoType.ordinal]
+    n.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.entries[aoType.ordinal]
     n.radius = radius
     n.power = power
     n.bias = bias
     n.resolution = resolution
     n.intensity = intensity
     n.bilateralThreshold = bilateralThreshold
-    n.quality = FilamentView.QualityLevel.values()[quality.ordinal]
-    n.lowPassFilter = FilamentView.QualityLevel.values()[lowPassFilter.ordinal]
-    n.upsampling = FilamentView.QualityLevel.values()[upsampling.ordinal]
+    n.quality = FilamentView.QualityLevel.entries[quality.ordinal]
+    n.lowPassFilter = FilamentView.QualityLevel.entries[lowPassFilter.ordinal]
+    n.upsampling = FilamentView.QualityLevel.entries[upsampling.ordinal]
     n.enabled = enabled
     n.bentNormals = bentNormals
     n.minHorizonAngleRad = minHorizonAngleRad
@@ -135,9 +135,9 @@ internal fun TemporalAntiAliasingOptions.toAndroid(): FilamentView.TemporalAntiA
     n.filterInput = filterInput
     n.useYCoCg = useYCoCg
     n.hdr = hdr
-    n.boxType = FilamentView.TemporalAntiAliasingOptions.BoxType.values()[boxType.ordinal]
-    n.boxClipping = FilamentView.TemporalAntiAliasingOptions.BoxClipping.values()[boxClipping.ordinal]
-    n.jitterPattern = FilamentView.TemporalAntiAliasingOptions.JitterPattern.values()[jitterPattern.ordinal]
+    n.boxType = FilamentView.TemporalAntiAliasingOptions.BoxType.entries[boxType.ordinal]
+    n.boxClipping = FilamentView.TemporalAntiAliasingOptions.BoxClipping.entries[boxClipping.ordinal]
+    n.jitterPattern = FilamentView.TemporalAntiAliasingOptions.JitterPattern.entries[jitterPattern.ordinal]
     n.varianceGamma = varianceGamma
     n.preventFlickering = preventFlickering
     n.historyReprojection = historyReprojection

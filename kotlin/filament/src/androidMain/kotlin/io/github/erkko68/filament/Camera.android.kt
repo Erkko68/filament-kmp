@@ -5,11 +5,11 @@ import com.google.android.filament.Camera as AndroidCamera
 actual class Camera @InternalFilamentApi constructor(internal val nativeCamera: AndroidCamera) {
     actual enum class Projection {
         PERSPECTIVE, ORTHO;
-        internal fun toAndroid() = AndroidCamera.Projection.values()[ordinal]
+        internal fun toAndroid() = AndroidCamera.Projection.entries[ordinal]
     }
     actual enum class Fov {
         VERTICAL, HORIZONTAL;
-        internal fun toAndroid() = AndroidCamera.Fov.values()[ordinal]
+        internal fun toAndroid() = AndroidCamera.Fov.entries[ordinal]
     }
  
     actual fun setProjection(projection: Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double) {

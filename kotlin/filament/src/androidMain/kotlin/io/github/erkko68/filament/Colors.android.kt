@@ -5,17 +5,17 @@ import com.google.android.filament.Colors as AndroidColors
 actual object Colors {
     actual enum class RgbType {
         SRGB, LINEAR;
-        internal fun toAndroid() = AndroidColors.RgbType.values()[ordinal]
+        internal fun toAndroid() = AndroidColors.RgbType.entries[ordinal]
     }
 
     actual enum class RgbaType {
         SRGB, LINEAR, PREMULTIPLIED_SRGB, PREMULTIPLIED_LINEAR;
-        internal fun toAndroid() = AndroidColors.RgbaType.values()[ordinal]
+        internal fun toAndroid() = AndroidColors.RgbaType.entries[ordinal]
     }
 
     actual enum class Conversion {
         ACCURATE, FAST;
-        internal fun toAndroid() = AndroidColors.Conversion.values()[ordinal]
+        internal fun toAndroid() = AndroidColors.Conversion.entries[ordinal]
     }
 
     actual fun toLinear(type: RgbType, r: Float, g: Float, b: Float): FloatArray =

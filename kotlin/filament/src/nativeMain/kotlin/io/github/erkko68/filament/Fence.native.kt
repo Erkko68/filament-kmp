@@ -12,7 +12,7 @@ actual class Fence @InternalFilamentApi constructor(internal var nativeHandle: C
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     actual fun wait(mode: Mode, timeout: Long): FenceStatus {
         val result = FilaFence_wait(nativeHandle, mode.ordinal.toUInt(), timeout.toULong())
-        return FenceStatus.values()[result + 1] // ERROR is -1, ordinal 0
+        return FenceStatus.entries[result + 1] // ERROR is -1, ordinal 0
     }
 
     actual val nativeObject: Long get() = nativeHandle?.rawValue?.toLong() ?: 0L
@@ -21,7 +21,7 @@ actual class Fence @InternalFilamentApi constructor(internal var nativeHandle: C
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
             val result = FilaFence_waitAndDestroy(fence.nativeHandle, mode.ordinal.toUInt())
             fence.nativeHandle = null
-            return FenceStatus.values()[result + 1]
+            return FenceStatus.entries[result + 1]
         }
     }
 }

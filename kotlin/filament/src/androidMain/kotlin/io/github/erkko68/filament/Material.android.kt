@@ -74,7 +74,7 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
         }
 
         actual fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder {
-            androidBuilder.shadowSamplingQuality(AndroidMaterial.Builder.ShadowSamplingQuality.values()[quality.ordinal])
+            androidBuilder.shadowSamplingQuality(AndroidMaterial.Builder.ShadowSamplingQuality.entries[quality.ordinal])
             return this
         }
 
@@ -97,7 +97,7 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
         callback: (() -> Unit)?
     ) {
         nativeMaterial.compile(
-            AndroidMaterial.CompilerPriorityQueue.values()[priority.ordinal],
+            AndroidMaterial.CompilerPriorityQueue.entries[priority.ordinal],
             variants,
             null,
             callback
@@ -109,15 +109,15 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
     actual val defaultInstance: MaterialInstance get() = mDefaultInstance
 
     actual val name: String get() = nativeMaterial.name
-    actual val shading: Shading get() = Shading.values()[nativeMaterial.shading.ordinal]
-    actual val interpolation: Interpolation get() = Interpolation.values()[nativeMaterial.interpolation.ordinal]
-    actual val blendingMode: BlendingMode get() = BlendingMode.values()[nativeMaterial.blendingMode.ordinal]
-    actual val transparencyMode: TransparencyMode get() = TransparencyMode.values()[nativeMaterial.transparencyMode.ordinal]
-    actual val refractionMode: RefractionMode get() = RefractionMode.values()[nativeMaterial.refractionMode.ordinal]
-    actual val refractionType: RefractionType get() = RefractionType.values()[nativeMaterial.refractionType.ordinal]
-    actual val reflectionMode: ReflectionMode get() = ReflectionMode.values()[nativeMaterial.reflectionMode.ordinal]
-    actual val vertexDomain: VertexDomain get() = VertexDomain.values()[nativeMaterial.vertexDomain.ordinal]
-    actual val cullingMode: CullingMode get() = CullingMode.values()[nativeMaterial.cullingMode.ordinal]
+    actual val shading: Shading get() = Shading.entries[nativeMaterial.shading.ordinal]
+    actual val interpolation: Interpolation get() = Interpolation.entries[nativeMaterial.interpolation.ordinal]
+    actual val blendingMode: BlendingMode get() = BlendingMode.entries[nativeMaterial.blendingMode.ordinal]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[nativeMaterial.transparencyMode.ordinal]
+    actual val refractionMode: RefractionMode get() = RefractionMode.entries[nativeMaterial.refractionMode.ordinal]
+    actual val refractionType: RefractionType get() = RefractionType.entries[nativeMaterial.refractionType.ordinal]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[nativeMaterial.reflectionMode.ordinal]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[nativeMaterial.vertexDomain.ordinal]
+    actual val cullingMode: CullingMode get() = CullingMode.entries[nativeMaterial.cullingMode.ordinal]
     actual val isColorWriteEnabled: Boolean get() = nativeMaterial.isColorWriteEnabled
     actual val isDepthWriteEnabled: Boolean get() = nativeMaterial.isDepthWriteEnabled
     actual val isDepthCullingEnabled: Boolean get() = nativeMaterial.isDepthCullingEnabled
@@ -131,8 +131,8 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
     actual val parameters: List<Parameter> get() = nativeMaterial.parameters.map { p ->
         Parameter(
             p.name,
-            Parameter.Type.values()[p.type.ordinal],
-            Parameter.Precision.values()[p.precision.ordinal],
+            Parameter.Type.entries[p.type.ordinal],
+            Parameter.Precision.entries[p.precision.ordinal],
             p.count
         )
     }

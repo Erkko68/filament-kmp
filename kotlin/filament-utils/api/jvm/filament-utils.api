@@ -1007,8 +1007,11 @@ public final class io/github/erkko68/filament/utils/Int4 {
 public final class io/github/erkko68/filament/utils/KTX1Loader {
 	public static final field INSTANCE Lio/github/erkko68/filament/utils/KTX1Loader;
 	public final fun createIndirectLight (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
+	public static synthetic fun createIndirectLight$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
 	public final fun createSkybox (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
+	public static synthetic fun createSkybox$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
 	public final fun createTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun createTexture$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
 	public final fun getSphericalHarmonics ([B)[F
 }
 

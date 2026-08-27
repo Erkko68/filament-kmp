@@ -13,6 +13,7 @@ import io.github.erkko68.filament.compose.scene.PostProcessing
 import io.github.erkko68.filament.compose.scene.Shadows
 import io.github.erkko68.filament.compose.scene.applyTo
 import io.github.erkko68.filament.compose.scene.rememberCameraState
+import io.github.erkko68.filament.ClearOptions
 
 /**
  * A viewport onto a [FilamentScene]. Each `FilamentView` owns one Filament `View`, `Camera`,
@@ -84,10 +85,10 @@ fun FilamentView(
     // Transparent needs an explicit alpha-0 clear: the default (clear=false, discard=true) leaves
     // the swapchain's untouched pixels undefined, which shows up as opaque garbage/white.
     DisposableEffect(renderer, transparent) {
-        renderer.clearOptions = Renderer.ClearOptions().apply {
-            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
-            clear = transparent
-        }
+        renderer.clearOptions = ClearOptions(
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0),
+            clear = transparent,
+        )
         onDispose {}
     }
 

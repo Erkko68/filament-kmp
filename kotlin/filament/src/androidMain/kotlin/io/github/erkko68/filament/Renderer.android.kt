@@ -10,41 +10,6 @@ actual class Renderer @InternalFilamentApi constructor(
     private var mDisplayInfo: DisplayInfo? = null
     private var mFrameRateOptions: FrameRateOptions? = null
     private var mClearOptions: ClearOptions? = null
-    actual class DisplayInfo actual constructor() {
-        val nativeInfo = AndroidRenderer.DisplayInfo()
-        actual var refreshRate: Float
-            get() = nativeInfo.refreshRate
-            set(value) { nativeInfo.refreshRate = value }
-    }
- 
-    actual class FrameRateOptions actual constructor() {
-        val nativeOptions = AndroidRenderer.FrameRateOptions()
-        actual var interval: Float
-            get() = nativeOptions.interval
-            set(value) { nativeOptions.interval = value }
-        actual var headRoomRatio: Float
-            get() = nativeOptions.headRoomRatio
-            set(value) { nativeOptions.headRoomRatio = value }
-        actual var scaleRate: Float
-            get() = nativeOptions.scaleRate
-            set(value) { nativeOptions.scaleRate = value }
-        actual var history: Int
-            get() = nativeOptions.history
-            set(value) { nativeOptions.history = value }
-    }
- 
-    actual class ClearOptions actual constructor() {
-        val nativeOptions = AndroidRenderer.ClearOptions()
-        actual var clearColor: DoubleArray
-            get() = nativeOptions.clearColor
-            set(value) { nativeOptions.clearColor = value }
-        actual var clear: Boolean
-            get() = nativeOptions.clear
-            set(value) { nativeOptions.clear = value }
-        actual var discard: Boolean
-            get() = nativeOptions.discard
-            set(value) { nativeOptions.discard = value }
-    }
  
     actual object MirrorFrameFlag {
         actual val COMMIT: Int = AndroidRenderer.MIRROR_FRAME_FLAG_COMMIT
@@ -62,7 +27,7 @@ actual class Renderer @InternalFilamentApi constructor(
         }
         set(value) {
             mDisplayInfo = value
-            nativeRenderer.setDisplayInfo(value.nativeInfo)
+            nativeRenderer.setDisplayInfo(value.toAndroid())
         }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setFrameRateOptions is not bound in filament.js; frame pacing is managed by the browser.")
@@ -73,7 +38,7 @@ actual class Renderer @InternalFilamentApi constructor(
         }
         set(value) {
             mFrameRateOptions = value
-            nativeRenderer.setFrameRateOptions(value.nativeOptions)
+            nativeRenderer.setFrameRateOptions(value.toAndroid())
         }
 
     actual var clearOptions: ClearOptions
@@ -83,7 +48,7 @@ actual class Renderer @InternalFilamentApi constructor(
         }
         set(value) {
             mClearOptions = value
-            nativeRenderer.setClearOptions(value.nativeOptions)
+            nativeRenderer.setClearOptions(value.toAndroid())
         }
 
     actual fun setPresentationTime(monotonicClockNanos: Long) = nativeRenderer.setPresentationTime(monotonicClockNanos)
