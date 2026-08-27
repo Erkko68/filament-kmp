@@ -8,7 +8,7 @@ repeat runs skip the download.
 | :--- | :--- | :--- |
 | [`ci.yml`](ci.yml) | **push to `main`** and **every PR** (no path filters — docs included); **manual dispatch** (job picker) | One job per platform (jvm matrix / js / wasm / ios / android). Each job sets up + builds the native library once, then runs **build → test → sample** as sequential steps that reuse those outputs. The sample steps build the `samples/` apps (a composite `includeBuild` of this repo) to verify the umbrella library is consumable end-to-end — catching breakage pure unit tests miss (Compose config, resource loading, native linking). See [Running CI](#running-ci). |
 | [`status-{jvm,js,wasm,ios,android}.yml`](status-jvm.yml) | `workflow_run` after **CI** completes on `main` | Reflect each platform job's conclusion from the latest `main` CI run into their own conclusion, powering the per-platform README badges. A *skipped* job (verified-merge, see below) counts as passing — only a real failure turns a badge red. |
-| [`pages.yml`](pages.yml) | push to `main` touching the web target (`web/**`, `kotlin/**/src/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and deploys it to GitHub Pages. Already scoped to web-relevant paths, so docs changes never trigger it. |
+| [`pages.yml`](pages.yml) | push to `main` touching the web target (`web/**`, `kotlin/**/src/**`, `samples/webApp/**`, … — see its `paths:` filter) / manual dispatch | Builds the `webApp` sample's production webpack bundle and the Dokka API docs, and deploys both to GitHub Pages (docs under `/api`). Already scoped to web-relevant paths, so docs changes never trigger it. Also runs on a **published release**, which is what archives that version's docs on the orphan `docs-archive` branch for re-publishing under `/api/older/<version>` — see [Versioned API docs](#versioned-api-docs). |
 | [`publish.yml`](publish.yml) | tag matching `[0-9]*` / manual dispatch | Releases to Maven Central, then cuts the matching GitHub release with that version's CHANGELOG section as its notes. See [Releasing](#releasing) below. |
 
 ## Running CI
@@ -58,6 +58,24 @@ The publish workflow is a two-phase pipeline:
    directory, then invokes `publishAllPublicationsToMavenCentralRepository` for every module
    with `-PcArtifactsDir=...` so the `:java` module bundles every platform's native into its
    resources (the `:kotlin:*` jvm artifacts pick it up transitively).
+
+### Versioned API docs
+
+The docs job labels the site with `libVersion` from `gradle.properties` and Dokka's versioning
+plugin renders a version dropdown. Only a published release goes live — pushes to `main` and PRs
+build the site and throw it away, so the deployed docs always describe a released version. Released versions live as `<version>/` directories on the orphan
+**`docs-archive`** branch: every run clones it into `build/previousDocs` before generating, but
+only a **published release** writes back — it force-pushes a single fresh commit with the tag's
+docs added (a store, not a history, otherwise the repo would gain a full copy of the site per
+build). Pushes to `main` still redeploy `/api`, they just never touch the archive, so each
+version is archived once, built from its tag.
+
+A generated site is ~90 MB and GitHub Pages caps one site at 1 GB, so the archive keeps only the
+four newest versions (the tags stay, so anything older can be rebuilt).
+
+The archive starts empty, so the first release after this landed shows no dropdown — it appears
+from the second one on. Releases older than that are not backfilled; their docs can still be
+rebuilt from their tags with `./gradlew dokkaGenerate`.
 
 ### How to cut a release
 
