@@ -12,7 +12,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
         internal fun toAndroid() = AndroidEngine.Backend.entries[ordinal]
         companion object {
-            internal fun fromAndroid(backend: AndroidEngine.Backend) = values()[backend.ordinal]
+            internal fun fromAndroid(backend: AndroidEngine.Backend) = entries[backend.ordinal]
         }
     }
 
@@ -20,7 +20,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
         internal fun toAndroid() = AndroidEngine.FeatureLevel.entries[ordinal]
         companion object {
-            internal fun fromAndroid(level: AndroidEngine.FeatureLevel) = values()[level.ordinal]
+            internal fun fromAndroid(level: AndroidEngine.FeatureLevel) = entries[level.ordinal]
         }
     }
 
@@ -28,7 +28,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         NONE, INSTANCED, MULTIVIEW;
         internal fun toAndroid() = AndroidEngine.StereoscopicType.entries[ordinal]
         companion object {
-            internal fun fromAndroid(type: AndroidEngine.StereoscopicType) = values()[type.ordinal]
+            internal fun fromAndroid(type: AndroidEngine.StereoscopicType) = entries[type.ordinal]
         }
     }
 
@@ -36,7 +36,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
         internal fun toAndroid() = AndroidEngine.GpuContextPriority.entries[ordinal]
         companion object {
-            internal fun fromAndroid(priority: AndroidEngine.GpuContextPriority) = values()[priority.ordinal]
+            internal fun fromAndroid(priority: AndroidEngine.GpuContextPriority) = entries[priority.ordinal]
         }
     }
 
@@ -82,9 +82,9 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
-            internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.values()[ordinal]
+            internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.entries[ordinal]
             companion object {
-                internal fun fromAndroid(lang: AndroidEngine.Config.ShaderLanguage) = values()[lang.ordinal]
+                internal fun fromAndroid(lang: AndroidEngine.Config.ShaderLanguage) = entries[lang.ordinal]
             }
         }
         actual var preferredShaderLanguage: ShaderLanguage
@@ -272,7 +272,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
     actual fun flush() = nativeEngine.flush()
     actual val hasUnrecoverableFailure: Boolean get() = nativeEngine.hasUnrecoverableFailure()
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = nativeEngine.isPaused
         set(value) { nativeEngine.isPaused = value }
     actual fun unprotected() = nativeEngine.unprotected()

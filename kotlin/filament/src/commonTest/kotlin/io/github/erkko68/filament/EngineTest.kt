@@ -48,6 +48,14 @@ class EngineTest {
     }
 
     @Test
+    fun testConfigIsReportedBackByTheEngine() {
+        val config = Engine.Config().apply { resourceAllocatorCacheMaxAge = 7 }
+        Engine.Builder().backend(Engine.Backend.NOOP).config(config).build().use { engine ->
+            assertEquals(7, engine.config.resourceAllocatorCacheMaxAge)
+        }
+    }
+
+    @Test
     fun testEngineLifecycleAndProperties() {
         Filament.init()
         val engine = Engine.create(Engine.Backend.NOOP)
@@ -88,10 +96,10 @@ class EngineTest {
         assertFalse(engine.hasUnrecoverableFailure)
 
         // Paused state
-        assertFalse(engine.paused)
-        engine.paused = true
-        assertTrue(engine.paused)
-        engine.paused = false
+        assertFalse(engine.isPaused)
+        engine.isPaused = true
+        assertTrue(engine.isPaused)
+        engine.isPaused = false
         
         // Feature flags / other methods
         engine.unprotected()

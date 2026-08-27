@@ -10,12 +10,14 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     private val mLightManager by lazy { LightManager(FilamentC.FilaEngine_getLightManager(nativeHandle)) }
     private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle)) }
     private val mEntityManager by lazy { EntityManager(FilamentC.FilaEngine_getEntityManager(nativeHandle)) }
+    // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
+    internal var mConfig: Config? = null
 
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(backend: Int): Backend = values()[backend]
+            internal fun fromNative(backend: Int): Backend = entries[backend]
         }
     }
 
@@ -23,7 +25,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(level: Int): FeatureLevel = values()[level]
+            internal fun fromNative(level: Int): FeatureLevel = entries[level]
         }
     }
 
@@ -31,7 +33,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         NONE, INSTANCED, MULTIVIEW;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(type: Int): StereoscopicType = values()[type]
+            internal fun fromNative(type: Int): StereoscopicType = entries[type]
         }
     }
 
@@ -39,7 +41,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(priority: Int): GpuContextPriority = values()[priority]
+            internal fun fromNative(priority: Int): GpuContextPriority = entries[priority]
         }
     }
 
@@ -92,6 +94,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual class Builder actual constructor() {
         init { ensureFilamentLoaded() }
         private val nativeBuilder = FilamentC.FilaEngineBuilder_create()
+        private var mConfig: Config? = null
 
         actual fun backend(backend: Backend): Builder {
             FilamentC.FilaEngineBuilder_backend(nativeBuilder, backend.toNative())
@@ -108,6 +111,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
 
         actual fun config(config: Config): Builder {
             confined { arena -> FilamentC.FilaEngineBuilder_config(nativeBuilder, config.toNative(arena)) }
+            mConfig = config
             return this
         }
 
@@ -135,7 +139,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
             val handle = FilamentC.FilaEngineBuilder_build(nativeBuilder)
             FilamentC.FilaEngineBuilder_destroy(nativeBuilder)
             if (handle.isNullPtr()) throw IllegalStateException("Failed to build Engine")
-            return Engine(handle)
+            return Engine(handle).apply { mConfig = this@Builder.mConfig }
         }
     }
 
@@ -166,10 +170,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual var isAutomaticInstancingEnabled: Boolean
         get() = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
         set(value) { FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
-    actual val config: Config get() {
-        // C-wrapper doesn't expose getConfig; return defaults (matches nativeMain).
-        return Config()
-    }
+    actual val config: Config get() = mConfig ?: Config()
     actual val maxStereoscopicEyes: Long get() = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilamentC.FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
@@ -296,7 +297,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun flush() = FilamentC.FilaEngine_flush(nativeHandle)
     actual val hasUnrecoverableFailure: Boolean get() = FilamentC.FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = FilamentC.FilaEngine_isPaused(nativeHandle)
         set(value) { FilamentC.FilaEngine_setPaused(nativeHandle, value) }
     actual fun unprotected() = FilamentC.FilaEngine_unprotected(nativeHandle)

@@ -174,8 +174,8 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         ))
     }
     
-    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
-        val result = outBox ?: Box()
+    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box?): Box {
+        val result = out ?: Box()
         val androidBox = com.google.android.filament.Box()
         nativeRenderableManager.getAxisAlignedBoundingBox(instance, androidBox)
         result.center[0] = androidBox.center[0]

@@ -30,9 +30,9 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
 
     actual fun getChildCount(instance: EntityInstance): Int = FilamentC.FilaTransformManager_getChildCount(nativeHandle, instance).toInt()
 
-    actual fun getChildren(instance: EntityInstance, outEntities: IntArray?): IntArray {
+    actual fun getChildren(instance: EntityInstance, out: IntArray?): IntArray {
         val count = getChildCount(instance)
-        val result = outEntities ?: IntArray(count)
+        val result = out ?: IntArray(count)
         if (count > 0) {
             confined { arena ->
                 val seg = arena.intArr(count)
@@ -51,8 +51,8 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
         confined { arena -> FilamentC.FilaTransformManager_setTransformFp64(nativeHandle, instance, arena.doubles(localTransform)) }
     }
 
-    actual fun getTransform(instance: EntityInstance, outLocalTransform: FloatArray?): FloatArray {
-        val result = outLocalTransform ?: FloatArray(16)
+    actual fun getTransform(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
         confined { arena ->
             val seg = arena.floatArr(16)
             FilamentC.FilaTransformManager_getTransform(nativeHandle, instance, seg)
@@ -61,8 +61,8 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
         return result
     }
 
-    actual fun getTransform(instance: EntityInstance, outLocalTransform: DoubleArray?): DoubleArray {
-        val result = outLocalTransform ?: DoubleArray(16)
+    actual fun getTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
         confined { arena ->
             val seg = arena.doubleArr(16)
             FilamentC.FilaTransformManager_getTransformFp64(nativeHandle, instance, seg)
@@ -71,8 +71,8 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
         return result
     }
 
-    actual fun getWorldTransform(instance: EntityInstance, outWorldTransform: FloatArray?): FloatArray {
-        val result = outWorldTransform ?: FloatArray(16)
+    actual fun getWorldTransform(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
         confined { arena ->
             val seg = arena.floatArr(16)
             FilamentC.FilaTransformManager_getWorldTransform(nativeHandle, instance, seg)
@@ -81,8 +81,8 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
         return result
     }
 
-    actual fun getWorldTransform(instance: EntityInstance, outWorldTransform: DoubleArray?): DoubleArray {
-        val result = outWorldTransform ?: DoubleArray(16)
+    actual fun getWorldTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
         confined { arena ->
             val seg = arena.doubleArr(16)
             FilamentC.FilaTransformManager_getWorldTransformFp64(nativeHandle, instance, seg)

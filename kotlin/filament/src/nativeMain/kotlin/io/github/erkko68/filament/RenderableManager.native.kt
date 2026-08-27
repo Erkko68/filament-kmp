@@ -90,12 +90,12 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
             box.center[0], box.center[1], box.center[2],
             box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
     }
-    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
+    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box?): Box {
         memScoped {
             val center = allocArray<FloatVar>(3)
             val halfExtent = allocArray<FloatVar>(3)
             FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance.toUInt(), center, halfExtent)
-            val result = outBox ?: Box()
+            val result = out ?: Box()
             result.center[0] = center[0]
             result.center[1] = center[1]
             result.center[2] = center[2]

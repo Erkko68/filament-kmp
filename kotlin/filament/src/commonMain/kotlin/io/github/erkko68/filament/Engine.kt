@@ -206,7 +206,7 @@ expect class Engine : AutoCloseable {
         /**
          * Pause rendering immediately after Engine creation.
          *
-         * Set `engine.paused = false` to resume.
+         * Set `engine.isPaused = false` to resume.
          *
          * @param paused true to start paused, false to start active.
          * @return This Builder, for chaining calls.
@@ -317,6 +317,9 @@ expect class Engine : AutoCloseable {
 
     /**
      * The Engine's advanced configuration — the Config object used when creating this Engine.
+     * On JVM and iOS the C wrapper has no getConfig, so this is the Config the [Builder] was
+     * handed; mutating that object after [Builder.build] changes what is reported here, not the
+     * Engine.
      */
     val config: Config
 
@@ -459,7 +462,7 @@ expect class Engine : AutoCloseable {
     val hasUnrecoverableFailure: Boolean
     /** Whether rendering is currently paused. Set to pause or resume rendering. */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
-    var paused: Boolean
+    var isPaused: Boolean
     /** Deprecated no-op method. */
     fun unprotected()
     /** Check if a feature flag exists. */

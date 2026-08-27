@@ -244,12 +244,12 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun getHasUnrecoverableFailure ()Z
 	public final fun getLightManager ()Lio/github/erkko68/filament/LightManager;
 	public final fun getMaxStereoscopicEyes ()J
-	public final fun getPaused ()Z
 	public final fun getRenderableManager ()Lio/github/erkko68/filament/RenderableManager;
 	public final fun getSupportedFeatureLevel ()Lio/github/erkko68/filament/Engine$FeatureLevel;
 	public final fun getTransformManager ()Lio/github/erkko68/filament/TransformManager;
 	public final fun hasFeatureFlag (Ljava/lang/String;)Z
 	public final fun isAutomaticInstancingEnabled ()Z
+	public final fun isPaused ()Z
 	public final fun isValid ()Z
 	public final fun isValidColorGrading (Lio/github/erkko68/filament/ColorGrading;)Z
 	public final fun isValidExpensiveMaterialInstance (Lio/github/erkko68/filament/MaterialInstance;)Z

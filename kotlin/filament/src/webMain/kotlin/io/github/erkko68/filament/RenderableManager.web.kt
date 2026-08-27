@@ -41,13 +41,13 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val jsR
 
     actual fun getAxisAlignedBoundingBox(
         instance: EntityInstance,
-        outBox: Box?
+        out: Box?
     ): Box {
         val jsBox = jsRenderableManager.getAxisAlignedBoundingBox(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>())
         val center = jsBox.center!!.toFloatArray(3)
         val halfExtent = jsBox.halfExtent!!.toFloatArray(3)
         
-        val result = outBox ?: Box()
+        val result = out ?: Box()
         for (i in 0 until 3) {
             result.center[i] = center[i]
             result.halfExtent[i] = halfExtent[i]

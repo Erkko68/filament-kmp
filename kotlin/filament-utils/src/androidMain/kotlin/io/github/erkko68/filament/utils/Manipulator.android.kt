@@ -45,7 +45,7 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         }
 
         actual fun fovDirection(fov: Fov): Builder {
-            builder.fovDirection(com.google.android.filament.utils.Manipulator.Fov.values()[fov.ordinal])
+            builder.fovDirection(com.google.android.filament.utils.Manipulator.Fov.entries[fov.ordinal])
             return this
         }
 
@@ -110,7 +110,7 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         }
 
         actual fun build(mode: Mode): Manipulator {
-            return Manipulator(builder.build(com.google.android.filament.utils.Manipulator.Mode.values()[mode.ordinal]))
+            return Manipulator(builder.build(com.google.android.filament.utils.Manipulator.Mode.entries[mode.ordinal]))
         }
     }
 

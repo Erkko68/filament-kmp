@@ -23,8 +23,8 @@ actual class TransformManager @InternalFilamentApi constructor(internal val nati
     
     actual fun getChildCount(instance: EntityInstance): Int = nativeTransformManager.getChildCount(instance)
     
-    actual fun getChildren(instance: EntityInstance, outEntities: IntArray?): IntArray = 
-        nativeTransformManager.getChildren(instance, outEntities)
+    actual fun getChildren(instance: EntityInstance, out: IntArray?): IntArray = 
+        nativeTransformManager.getChildren(instance, out)
     
     actual fun setTransform(instance: EntityInstance, localTransform: FloatArray) = 
         nativeTransformManager.setTransform(instance, localTransform)
@@ -32,17 +32,17 @@ actual class TransformManager @InternalFilamentApi constructor(internal val nati
     actual fun setTransform(instance: EntityInstance, localTransform: DoubleArray) = 
         nativeTransformManager.setTransform(instance, localTransform)
     
-    actual fun getTransform(instance: EntityInstance, outLocalTransform: FloatArray?): FloatArray = 
-        nativeTransformManager.getTransform(instance, outLocalTransform)
+    actual fun getTransform(instance: EntityInstance, out: FloatArray?): FloatArray = 
+        nativeTransformManager.getTransform(instance, out)
         
-    actual fun getTransform(instance: EntityInstance, outLocalTransform: DoubleArray?): DoubleArray = 
-        nativeTransformManager.getTransform(instance, outLocalTransform)
+    actual fun getTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray = 
+        nativeTransformManager.getTransform(instance, out)
     
-    actual fun getWorldTransform(instance: EntityInstance, outWorldTransform: FloatArray?): FloatArray = 
-        nativeTransformManager.getWorldTransform(instance, outWorldTransform)
+    actual fun getWorldTransform(instance: EntityInstance, out: FloatArray?): FloatArray = 
+        nativeTransformManager.getWorldTransform(instance, out)
         
-    actual fun getWorldTransform(instance: EntityInstance, outWorldTransform: DoubleArray?): DoubleArray = 
-        nativeTransformManager.getWorldTransform(instance, outWorldTransform)
+    actual fun getWorldTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray = 
+        nativeTransformManager.getWorldTransform(instance, out)
     
     actual fun openLocalTransformTransaction() = nativeTransformManager.openLocalTransformTransaction()
     actual fun commitLocalTransformTransaction() = nativeTransformManager.commitLocalTransformTransaction()

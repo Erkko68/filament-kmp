@@ -40,9 +40,9 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
     
     actual fun getChildCount(instance: EntityInstance): Int = FilaTransformManager_getChildCount(nativeHandle, instance.toUInt()).toInt()
     
-    actual fun getChildren(instance: EntityInstance, outEntities: IntArray?): IntArray {
+    actual fun getChildren(instance: EntityInstance, out: IntArray?): IntArray {
         val count = getChildCount(instance)
-        val result = outEntities ?: IntArray(count)
+        val result = out ?: IntArray(count)
         if (count > 0) {
             result.usePinned { 
                 FilaTransformManager_getChildren(nativeHandle, instance.toUInt(), it.addressOf(0).reinterpret(), count.toULong())
@@ -63,32 +63,32 @@ actual class TransformManager @InternalFilamentApi constructor(internal var nati
         }
     }
     
-    actual fun getTransform(instance: EntityInstance, outLocalTransform: FloatArray?): FloatArray {
-        val result = outLocalTransform ?: FloatArray(16)
+    actual fun getTransform(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
         result.usePinned { 
             FilaTransformManager_getTransform(nativeHandle, instance.toUInt(), it.addressOf(0))
         }
         return result
     }
         
-    actual fun getTransform(instance: EntityInstance, outLocalTransform: DoubleArray?): DoubleArray {
-        val result = outLocalTransform ?: DoubleArray(16)
+    actual fun getTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
         result.usePinned { 
             FilaTransformManager_getTransformFp64(nativeHandle, instance.toUInt(), it.addressOf(0))
         }
         return result
     }
     
-    actual fun getWorldTransform(instance: EntityInstance, outWorldTransform: FloatArray?): FloatArray {
-        val result = outWorldTransform ?: FloatArray(16)
+    actual fun getWorldTransform(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
         result.usePinned { 
             FilaTransformManager_getWorldTransform(nativeHandle, instance.toUInt(), it.addressOf(0))
         }
         return result
     }
         
-    actual fun getWorldTransform(instance: EntityInstance, outWorldTransform: DoubleArray?): DoubleArray {
-        val result = outWorldTransform ?: DoubleArray(16)
+    actual fun getWorldTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
         result.usePinned { 
             FilaTransformManager_getWorldTransformFp64(nativeHandle, instance.toUInt(), it.addressOf(0))
         }

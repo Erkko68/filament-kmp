@@ -265,7 +265,7 @@ actual class Engine @InternalFilamentApi constructor(
     private var _paused: Boolean = false
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = _paused
         set(value) { _paused = value }
 

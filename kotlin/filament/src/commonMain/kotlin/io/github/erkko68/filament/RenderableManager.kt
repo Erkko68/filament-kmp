@@ -479,12 +479,12 @@ expect class RenderableManager {
      * Gets the bounding box used for frustum culling.
      *
      * @param instance Instance of the component obtained from getInstance()
-     * @param outBox optional output Box; if null, a new Box is created
+     * @param out optional output Box; if null, a new Box is created
      * @return the axis-aligned bounding box
      * @see Builder.boundingBox()
      * @see RenderableManager.setAxisAlignedBoundingBox()
      */
-    fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box? = null): Box
+    fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box? = null): Box
 
     /**
      * Changes the visibility bits.

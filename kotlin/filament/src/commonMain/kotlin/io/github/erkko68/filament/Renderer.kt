@@ -95,15 +95,24 @@ expect class Renderer {
     /** Get the Engine that created this Renderer. */
     val engine: Engine
 
-    /** Get/set display information for frame pacing and dynamic resolution. */
+    /**
+     * Get/set display information for frame pacing and dynamic resolution.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setDisplayInfo is not bound in filament.js; frame pacing is managed by the browser.")
     var displayInfo: DisplayInfo
 
-    /** Get/set frame rate control and dynamic resolution options. */
+    /**
+     * Get/set frame rate control and dynamic resolution options.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setFrameRateOptions is not bound in filament.js; frame pacing is managed by the browser.")
     var frameRateOptions: FrameRateOptions
 
-    /** Get/set clear behavior for the SwapChain. */
+    /**
+     * Get/set clear behavior for the SwapChain.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var clearOptions: ClearOptions
 
     /**
