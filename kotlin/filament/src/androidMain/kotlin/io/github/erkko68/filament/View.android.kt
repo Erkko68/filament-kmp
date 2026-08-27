@@ -28,213 +28,6 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
     private var mShadowType: ShadowType = ShadowType.PCF
     private var mColorGrading: ColorGrading? = null
 
-    actual class DynamicResolutionOptions actual constructor() {
-        val native = FilamentView.DynamicResolutionOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var homogeneousScaling: Boolean get() = native.homogeneousScaling; set(v) { native.homogeneousScaling = v }
-        actual var minScale: Float get() = native.minScale; set(v) { native.minScale = v }
-        actual var maxScale: Float get() = native.maxScale; set(v) { native.maxScale = v }
-        actual var sharpness: Float get() = native.sharpness; set(v) { native.sharpness = v }
-        actual var quality: Quality 
-            get() = Quality.values()[native.quality.ordinal]
-            set(v) { native.quality = FilamentView.QualityLevel.values()[v.ordinal] }
-    }
-
-    actual class RenderQuality actual constructor() {
-        val native = FilamentView.RenderQuality()
-        actual var hdrColorBuffer: Quality 
-            get() = Quality.values()[native.hdrColorBuffer.ordinal]
-            set(v) { native.hdrColorBuffer = FilamentView.QualityLevel.values()[v.ordinal] }
-    }
-
-    actual class BloomOptions actual constructor() {
-        val native = FilamentView.BloomOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var levels: Int get() = native.levels; set(v) { native.levels = v }
-        actual var resolution: Int get() = native.resolution; set(v) { native.resolution = v }
-        actual var strength: Float get() = native.strength; set(v) { native.strength = v }
-        actual var threshold: Boolean get() = native.threshold; set(v) { native.threshold = v }
-        actual var dirt: Texture?
-            get() = native.dirt?.let { Texture(it) }
-            set(v) { native.dirt = v?.nativeTexture }
-        actual var dirtStrength: Float get() = native.dirtStrength; set(v) { native.dirtStrength = v }
-        actual var quality: Quality 
-            get() = Quality.values()[native.quality.ordinal]
-            set(v) { native.quality = FilamentView.QualityLevel.values()[v.ordinal] }
-        actual var lensFlare: Boolean get() = native.lensFlare; set(v) { native.lensFlare = v }
-        actual var starburst: Boolean get() = native.starburst; set(v) { native.starburst = v }
-        actual var chromaticAberration: Float get() = native.chromaticAberration; set(v) { native.chromaticAberration = v }
-        actual var ghostCount: Int get() = native.ghostCount; set(v) { native.ghostCount = v }
-        actual var ghostSpacing: Float get() = native.ghostSpacing; set(v) { native.ghostSpacing = v }
-        actual var ghostThreshold: Float get() = native.ghostThreshold; set(v) { native.ghostThreshold = v }
-        actual var haloRadius: Float get() = native.haloRadius; set(v) { native.haloRadius = v }
-        actual var haloThickness: Float get() = native.haloThickness; set(v) { native.haloThickness = v }
-        actual var haloThreshold: Float get() = native.haloThreshold; set(v) { native.haloThreshold = v }
-        actual var highlight: Float get() = native.highlight; set(v) { native.highlight = v }
-        actual var blendMode: BloomOptions.BlendMode 
-            get() = BloomOptions.BlendMode.values()[native.blendMode.ordinal]
-            set(v) { native.blendMode = FilamentView.BloomOptions.BlendMode.values()[v.ordinal] }
-        actual enum class BlendMode { ADD, INTERPOLATE }
-    }
-
-    actual class FogOptions actual constructor() {
-        val native = FilamentView.FogOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var distance: Float get() = native.distance; set(v) { native.distance = v }
-        actual var density: Float get() = native.density; set(v) { native.density = v }
-        actual var height: Float get() = native.height; set(v) { native.height = v }
-        actual var heightFalloff: Float get() = native.heightFalloff; set(v) { native.heightFalloff = v }
-        actual var color: FloatArray get() = native.color; set(v) { native.color = v }
-        actual var cutOffDistance: Float get() = native.cutOffDistance; set(v) { native.cutOffDistance = v }
-        actual var maximumOpacity: Float get() = native.maximumOpacity; set(v) { native.maximumOpacity = v }
-        actual var inScatteringStart: Float get() = native.inScatteringStart; set(v) { native.inScatteringStart = v }
-        actual var inScatteringSize: Float get() = native.inScatteringSize; set(v) { native.inScatteringSize = v }
-        actual var fogColorFromIbl: Boolean get() = native.fogColorFromIbl; set(v) { native.fogColorFromIbl = v }
-        actual var skyColor: Texture? = null
-    }
-
-    actual class DepthOfFieldOptions actual constructor() {
-        val native = FilamentView.DepthOfFieldOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var cocScale: Float get() = native.cocScale; set(v) { native.cocScale = v }
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
-        actual var cocAspectRatio: Float get() = native.cocAspectRatio; set(v) { native.cocAspectRatio = v }
-        actual var maxApertureDiameter: Float get() = native.maxApertureDiameter; set(v) { native.maxApertureDiameter = v }
-        actual var filter: Filter 
-            get() = Filter.values()[native.filter.ordinal]
-            set(v) { native.filter = FilamentView.DepthOfFieldOptions.Filter.values()[v.ordinal] }
-        actual var nativeResolution: Boolean get() = native.nativeResolution; set(v) { native.nativeResolution = v }
-        actual var foregroundRingCount: Int get() = native.foregroundRingCount; set(v) { native.foregroundRingCount = v }
-        actual var backgroundRingCount: Int get() = native.backgroundRingCount; set(v) { native.backgroundRingCount = v }
-        actual var fastGatherRingCount: Int get() = native.fastGatherRingCount; set(v) { native.fastGatherRingCount = v }
-        actual var maxForegroundCOC: Int get() = native.maxForegroundCOC; set(v) { native.maxForegroundCOC = v }
-        actual var maxBackgroundCOC: Int get() = native.maxBackgroundCOC; set(v) { native.maxBackgroundCOC = v }
-        actual enum class Filter { NONE, UNUSED, MEDIAN }
-    }
-
-    actual class VignetteOptions actual constructor() {
-        val native = FilamentView.VignetteOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var midPoint: Float get() = native.midPoint; set(v) { native.midPoint = v }
-        actual var roundness: Float get() = native.roundness; set(v) { native.roundness = v }
-        actual var feather: Float get() = native.feather; set(v) { native.feather = v }
-        actual var color: FloatArray get() = native.color; set(v) { native.color = v }
-    }
-
-    actual class AmbientOcclusionOptions actual constructor() {
-        actual enum class AmbientOcclusionType { SAO, GTAO }
-        val native = FilamentView.AmbientOcclusionOptions()
-        actual var aoType: AmbientOcclusionType
-            get() = AmbientOcclusionType.values()[native.aoType.ordinal]
-            set(v) { native.aoType = FilamentView.AmbientOcclusionOptions.AmbientOcclusionType.values()[v.ordinal] }
-        actual var radius: Float get() = native.radius; set(v) { native.radius = v }
-        actual var bias: Float get() = native.bias; set(v) { native.bias = v }
-        actual var intensity: Float get() = native.intensity; set(v) { native.intensity = v }
-        actual var power: Float get() = native.power; set(v) { native.power = v }
-        actual var minHorizonAngleRad: Float get() = native.minHorizonAngleRad; set(v) { native.minHorizonAngleRad = v }
-        actual var quality: Quality 
-            get() = Quality.values()[native.quality.ordinal]
-            set(v) { native.quality = FilamentView.QualityLevel.values()[v.ordinal] }
-        actual var lowPassFilter: Quality 
-            get() = Quality.values()[native.lowPassFilter.ordinal]
-            set(v) { native.lowPassFilter = FilamentView.QualityLevel.values()[v.ordinal] }
-        actual var upsampling: Quality 
-            get() = Quality.values()[native.upsampling.ordinal]
-            set(v) { native.upsampling = FilamentView.QualityLevel.values()[v.ordinal] }
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var bentNormals: Boolean get() = native.bentNormals; set(v) { native.bentNormals = v }
-        actual var bilateralThreshold: Float get() = native.bilateralThreshold; set(v) { native.bilateralThreshold = v }
-        actual var resolution: Float get() = native.resolution; set(v) { native.resolution = v }
-        actual var ssct: Ssct = Ssct()
-        actual class Ssct actual constructor() {
-            actual var enabled: Boolean = false
-            actual var lightConeRad: Float = 1.0f
-            actual var shadowDistance: Float = 0.3f
-            actual var contactDistanceMax: Float = 1.0f
-            actual var intensity: Float = 0.8f
-            actual var lightDirection: FloatArray = floatArrayOf(0f, -1f, 0f)
-            actual var depthBias: Float = 0.01f
-            actual var depthSlopeBias: Float = 0.01f
-            actual var sampleCount: Int = 4
-            actual var rayCount: Int = 1
-        }
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
-        actual var gtao: Gtao = Gtao()
-        actual class Gtao actual constructor() {
-            actual var sampleSliceCount: Int = 4
-            actual var sampleStepsPerSlice: Int = 3
-            actual var thicknessHeuristic: Float = 0.004f
-            actual var useVisibilityBitmasks: Boolean = false
-            actual var constThickness: Float = 0.5f
-            actual var linearThickness: Boolean = false
-        }
-    }
-
-    actual class TemporalAntiAliasingOptions actual constructor() {
-        actual enum class BoxType { AABB, AABB_VARIANCE }
-        actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
-        actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
-        val native = FilamentView.TemporalAntiAliasingOptions()
-        actual var feedback: Float get() = native.feedback; set(v) { native.feedback = v }
-        actual var lodBias: Float get() = native.lodBias; set(v) { native.lodBias = v }
-        actual var sharpness: Float get() = native.sharpness; set(v) { native.sharpness = v }
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var upscaling: Float get() = native.upscaling; set(v) { native.upscaling = v }
-        actual var filterHistory: Boolean get() = native.filterHistory; set(v) { native.filterHistory = v }
-        actual var filterInput: Boolean get() = native.filterInput; set(v) { native.filterInput = v }
-        actual var useYCoCg: Boolean get() = native.useYCoCg; set(v) { native.useYCoCg = v }
-        actual var hdr: Boolean get() = native.hdr; set(v) { native.hdr = v }
-        actual var boxType: BoxType get() = BoxType.values()[native.boxType.ordinal]; set(v) { native.boxType = FilamentView.TemporalAntiAliasingOptions.BoxType.values()[v.ordinal] }
-        actual var boxClipping: BoxClipping get() = BoxClipping.values()[native.boxClipping.ordinal]; set(v) { native.boxClipping = FilamentView.TemporalAntiAliasingOptions.BoxClipping.values()[v.ordinal] }
-        actual var jitterPattern: JitterPattern get() = JitterPattern.values()[native.jitterPattern.ordinal]; set(v) { native.jitterPattern = FilamentView.TemporalAntiAliasingOptions.JitterPattern.values()[v.ordinal] }
-        actual var varianceGamma: Float get() = native.varianceGamma; set(v) { native.varianceGamma = v }
-        actual var preventFlickering: Boolean get() = native.preventFlickering; set(v) { native.preventFlickering = v }
-        actual var historyReprojection: Boolean get() = native.historyReprojection; set(v) { native.historyReprojection = v }
-    }
-
-    actual class ScreenSpaceReflectionsOptions actual constructor() {
-        val native = FilamentView.ScreenSpaceReflectionsOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var thickness: Float get() = native.thickness; set(v) { native.thickness = v }
-        actual var bias: Float get() = native.bias; set(v) { native.bias = v }
-        actual var maxDistance: Float get() = native.maxDistance; set(v) { native.maxDistance = v }
-        actual var stride: Float get() = native.stride; set(v) { native.stride = v }
-    }
-
-    actual class VsmShadowOptions actual constructor() {
-        val native = FilamentView.VsmShadowOptions()
-        actual var anisotropy: Int get() = native.anisotropy; set(v) { native.anisotropy = v }
-        actual var mipmapping: Boolean get() = native.mipmapping; set(v) { native.mipmapping = v }
-        actual var msaaSamples: Int get() = native.msaaSamples; set(v) { native.msaaSamples = v }
-        actual var highPrecision: Boolean get() = native.highPrecision; set(v) { native.highPrecision = v }
-        actual var lightBleedReduction: Float get() = native.lightBleedReduction; set(v) { native.lightBleedReduction = v }
-    }
-
-    actual class SoftShadowOptions actual constructor() {
-        val native = FilamentView.SoftShadowOptions()
-        actual var penumbraScale: Float get() = native.penumbraScale; set(v) { native.penumbraScale = v }
-        actual var penumbraRatioScale: Float get() = native.penumbraRatioScale; set(v) { native.penumbraRatioScale = v }
-        actual var maxPenumbraRatio: Float get() = native.maxPenumbraRatio; set(v) { native.maxPenumbraRatio = v }
-        actual var maxSearchRadius: Float get() = native.maxSearchRadius; set(v) { native.maxSearchRadius = v }
-    }
-
-    actual class GuardBandOptions actual constructor() {
-        val native = FilamentView.GuardBandOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-    }
-
-    actual class StereoscopicOptions actual constructor() {
-        val native = FilamentView.StereoscopicOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-    }
-
-    actual class MultiSampleAntiAliasingOptions actual constructor() {
-        val native = FilamentView.MultiSampleAntiAliasingOptions()
-        actual var enabled: Boolean get() = native.enabled; set(v) { native.enabled = v }
-        actual var sampleCount: Int get() = native.sampleCount; set(v) { native.sampleCount = v }
-        actual var customResolve: Boolean get() = native.customResolve; set(v) { native.customResolve = v }
-    }
-
     actual var name: String?
         get() = this@View.nativeView.name
         set(value) { this@View.nativeView.setName(value ?: "") }
@@ -299,7 +92,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
             return kmp
         }
-        set(value) { this@View.nativeView.setDynamicResolutionOptions(value.native) }
+        set(value) { this@View.nativeView.setDynamicResolutionOptions(value.toAndroid()) }
 
     actual val lastDynamicResolutionScale: FloatArray get() {
         val out = FloatArray(2)
@@ -314,7 +107,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.hdrColorBuffer = io.github.erkko68.filament.View.Quality.values()[o.hdrColorBuffer.ordinal]
             return kmp
         }
-        set(value) { this@View.nativeView.setRenderQuality(value.native) }
+        set(value) { this@View.nativeView.setRenderQuality(value.toAndroid()) }
     
     actual var bloomOptions: BloomOptions
         get() {
@@ -337,11 +130,11 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.haloThickness = o.haloThickness
             kmp.haloThreshold = o.haloThreshold
             kmp.highlight = o.highlight
-            kmp.blendMode = io.github.erkko68.filament.View.BloomOptions.BlendMode.values()[o.blendMode.ordinal]
+            kmp.blendMode = io.github.erkko68.filament.BloomOptions.BlendMode.values()[o.blendMode.ordinal]
             kmp.quality = io.github.erkko68.filament.View.Quality.values()[o.quality.ordinal]
             return kmp
         }
-        set(value) { this@View.nativeView.setBloomOptions(value.native) }
+        set(value) { this@View.nativeView.setBloomOptions(value.toAndroid()) }
 
     actual var fogOptions: FogOptions
         get() {
@@ -360,7 +153,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.fogColorFromIbl = o.fogColorFromIbl
             return kmp
         }
-        set(value) { this@View.nativeView.setFogOptions(value.native) }
+        set(value) { this@View.nativeView.setFogOptions(value.toAndroid()) }
 
     actual var depthOfFieldOptions: DepthOfFieldOptions
         get() {
@@ -372,7 +165,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             // marshals cocAspectRatio (upstream). @PlatformGap on the common declaration.
             kmp.cocAspectRatio = o.cocAspectRatio
             kmp.maxApertureDiameter = o.maxApertureDiameter
-            kmp.filter = io.github.erkko68.filament.View.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
+            kmp.filter = io.github.erkko68.filament.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
             kmp.nativeResolution = o.nativeResolution
             kmp.foregroundRingCount = o.foregroundRingCount
             kmp.backgroundRingCount = o.backgroundRingCount
@@ -381,7 +174,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.maxBackgroundCOC = o.maxBackgroundCOC
             return kmp
         }
-        set(value) { this@View.nativeView.setDepthOfFieldOptions(value.native) }
+        set(value) { this@View.nativeView.setDepthOfFieldOptions(value.toAndroid()) }
 
     actual var vignetteOptions: VignetteOptions
         get() {
@@ -394,7 +187,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.color = o.color
             return kmp
         }
-        set(value) { this@View.nativeView.setVignetteOptions(value.native) }
+        set(value) { this@View.nativeView.setVignetteOptions(value.toAndroid()) }
 
     actual var ambientOcclusionOptions: AmbientOcclusionOptions
         get() {
@@ -413,7 +206,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.bentNormals = o.bentNormals
             kmp.resolution = o.resolution
 
-            val kmpSsct = io.github.erkko68.filament.View.AmbientOcclusionOptions.Ssct()
+            val kmpSsct = io.github.erkko68.filament.AmbientOcclusionOptions.Ssct()
             kmpSsct.enabled = o.ssctEnabled
             kmpSsct.lightConeRad = o.ssctLightConeRad
             kmpSsct.shadowDistance = o.ssctShadowDistance
@@ -426,7 +219,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmpSsct.rayCount = o.ssctRayCount
             kmp.ssct = kmpSsct
 
-            val kmpGtao = io.github.erkko68.filament.View.AmbientOcclusionOptions.Gtao()
+            val kmpGtao = io.github.erkko68.filament.AmbientOcclusionOptions.Gtao()
             kmpGtao.sampleSliceCount = o.gtaoSampleSliceCount
             kmpGtao.sampleStepsPerSlice = o.gtaoSampleStepsPerSlice
             kmpGtao.thicknessHeuristic = o.gtaoThicknessHeuristic
@@ -438,7 +231,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             return kmp
         }
         set(value) {
-            val n = value.native
+            val n = value.toAndroid()
             n.radius = value.radius
             n.bias = value.bias
             n.intensity = value.intensity
@@ -492,7 +285,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.historyReprojection = o.historyReprojection
             return kmp
         }
-        set(value) { this@View.nativeView.setTemporalAntiAliasingOptions(value.native) }
+        set(value) { this@View.nativeView.setTemporalAntiAliasingOptions(value.toAndroid()) }
 
     actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
         get() {
@@ -505,7 +298,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.stride = o.stride
             return kmp
         }
-        set(value) { this@View.nativeView.setScreenSpaceReflectionsOptions(value.native) }
+        set(value) { this@View.nativeView.setScreenSpaceReflectionsOptions(value.toAndroid()) }
 
     actual var gridSize: Double
         get() = this@View.nativeView.gridSize
@@ -539,7 +332,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.lightBleedReduction = o.lightBleedReduction
             return kmp
         }
-        set(value) { this@View.nativeView.setVsmShadowOptions(value.native) }
+        set(value) { this@View.nativeView.setVsmShadowOptions(value.toAndroid()) }
     actual var softShadowOptions: SoftShadowOptions
         get() {
             val o = this@View.nativeView.softShadowOptions
@@ -550,7 +343,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.maxSearchRadius = o.maxSearchRadius
             return kmp
         }
-        set(value) { this@View.nativeView.setSoftShadowOptions(value.native) }
+        set(value) { this@View.nativeView.setSoftShadowOptions(value.toAndroid()) }
     actual var guardBandOptions: GuardBandOptions
         get() {
             val o = this@View.nativeView.guardBandOptions
@@ -558,7 +351,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.enabled = o.enabled
             return kmp
         }
-        set(value) { this@View.nativeView.setGuardBandOptions(value.native) }
+        set(value) { this@View.nativeView.setGuardBandOptions(value.toAndroid()) }
     actual var stereoscopicOptions: StereoscopicOptions
         get() {
             val o = this@View.nativeView.stereoscopicOptions
@@ -566,7 +359,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.enabled = o.enabled
             return kmp
         }
-        set(value) { this@View.nativeView.setStereoscopicOptions(value.native) }
+        set(value) { this@View.nativeView.setStereoscopicOptions(value.toAndroid()) }
     actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
         get() {
             val o = this@View.nativeView.multiSampleAntiAliasingOptions
@@ -576,7 +369,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             kmp.customResolve = o.customResolve
             return kmp
         }
-        set(value) { this@View.nativeView.setMultiSampleAntiAliasingOptions(value.native) }
+        set(value) { this@View.nativeView.setMultiSampleAntiAliasingOptions(value.toAndroid()) }
 
     actual var isFrustumCullingEnabled: Boolean
         get() = this@View.nativeView.isFrustumCullingEnabled

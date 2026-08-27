@@ -29,6 +29,7 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
 import io.github.erkko68.filament.compose.scene.rememberColorMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberEmissiveMaterialInstance
 import io.github.erkko68.filament.compose.scene.rememberSkyboxState
+import io.github.erkko68.filament.RenderQuality
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

@@ -24,6 +24,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`LightManager.ShadowOptions.polygonOffsetConstant` / `polygonOffsetSlope`** (`filament`): the depth-bias pair, unbound until now. Ignored when the View's `ShadowType` is VSM, and `@PlatformGap`-annotated on Android — the fields are package-private in Android's `ShadowOptions`, so only the other platforms reach the engine.
 
 ### Changed
+- **View option structs are data classes** (`filament`): the 14 nested `View.*Options` classes move to the `io.github.erkko68.filament` package as top-level `data class`es — `BloomOptions(enabled = true, strength = 0.4f)` now works, along with `copy()`, structural equality and `toString()`. Referenced as `BloomOptions` rather than `View.BloomOptions`.
+- **`Viewport` is a data class and `Box` has value semantics** (`filament`): both had no `equals`, so hoisting one into Compose state saw every recomposition as a change. `Box`'s redundant no-arg secondary constructor is gone.
 - **Symmetric accessor names on the managers** (`filament`): `setCulling`/`isCullingEnabled` becomes `setCullingEnabled`/`isCullingEnabled`, `getFogEnabled` becomes `isFogEnabled`, and `setCastShadows`/`setReceiveShadows` become `setShadowCaster`/`setShadowReceiver` to match `isShadowCaster`/`isShadowReceiver`.
 - **`Entity` where it was a bare `Int`** (`filament`, `gltfio`): `View.fogEntity`, `FilamentInstance.root` and `attachSkin`/`detachSkin`'s `target`.
 - **`Filamat.shutdown()` replaces `MaterialBuilder.shutdown()`** (`filamat`): init and teardown now live on the same object, matching `Filament.init()` and `Gltfio.init()`.

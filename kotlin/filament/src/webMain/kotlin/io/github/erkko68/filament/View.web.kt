@@ -175,8 +175,8 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
                 highlight = o.highlight.f()
                 blendMode = when (o.blendMode) {
                     io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE ->
-                        View.BloomOptions.BlendMode.INTERPOLATE
-                    else -> View.BloomOptions.BlendMode.ADD
+                        BloomOptions.BlendMode.INTERPOLATE
+                    else -> BloomOptions.BlendMode.ADD
                 }
             }
         }
@@ -199,8 +199,8 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsOptions.haloThreshold = value.haloThreshold.toDouble()
             jsOptions.highlight = value.highlight.toDouble()
             jsOptions.blendMode = when (value.blendMode) {
-                View.BloomOptions.BlendMode.ADD -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.ADD
-                View.BloomOptions.BlendMode.INTERPOLATE -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE
+                BloomOptions.BlendMode.ADD -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.ADD
+                BloomOptions.BlendMode.INTERPOLATE -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE
             }
             jsView.setBloomOptions(jsOptions)
         }
@@ -253,10 +253,10 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
                 maxBackgroundCOC = o.maxBackgroundCOC.i()
                 filter = when (o.filter) {
                     io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.NONE ->
-                        View.DepthOfFieldOptions.Filter.NONE
+                        DepthOfFieldOptions.Filter.NONE
                     io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.UNUSED ->
-                        View.DepthOfFieldOptions.Filter.UNUSED
-                    else -> View.DepthOfFieldOptions.Filter.MEDIAN
+                        DepthOfFieldOptions.Filter.UNUSED
+                    else -> DepthOfFieldOptions.Filter.MEDIAN
                 }
             }
         }
@@ -273,9 +273,9 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsOptions.maxForegroundCOC = value.maxForegroundCOC.toDouble()
             jsOptions.maxBackgroundCOC = value.maxBackgroundCOC.toDouble()
             jsOptions.filter = when (value.filter) {
-                View.DepthOfFieldOptions.Filter.NONE   -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.NONE
-                View.DepthOfFieldOptions.Filter.UNUSED -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.UNUSED
-                View.DepthOfFieldOptions.Filter.MEDIAN -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.MEDIAN
+                DepthOfFieldOptions.Filter.NONE   -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.NONE
+                DepthOfFieldOptions.Filter.UNUSED -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.UNUSED
+                DepthOfFieldOptions.Filter.MEDIAN -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.MEDIAN
             }
             jsView.setDepthOfFieldOptions(jsOptions)
         }
@@ -619,166 +619,4 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
     actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
-    actual class DynamicResolutionOptions {
-        actual var enabled: Boolean = false
-        actual var homogeneousScaling: Boolean = false
-        actual var minScale: Float = 0.5f
-        actual var maxScale: Float = 1.0f
-        actual var sharpness: Float = 0.9f
-        actual var quality: Quality = Quality.LOW
-    }
-    actual class RenderQuality {
-        actual var hdrColorBuffer: Quality = Quality.HIGH
-    }
-    actual class BloomOptions {
-        actual var enabled: Boolean = false
-        actual var levels: Int = 6
-        actual var resolution: Int = 384
-        actual var strength: Float = 0.10f
-        actual var threshold: Boolean = true
-        actual var dirt: Texture? = null
-        actual var dirtStrength: Float = 0.20f
-        actual var quality: Quality = Quality.LOW
-        actual var lensFlare: Boolean = false
-        actual var starburst: Boolean = true
-        actual var chromaticAberration: Float = 0.005f
-        actual var ghostCount: Int = 4
-        actual var ghostSpacing: Float = 0.6f
-        actual var ghostThreshold: Float = 10.0f
-        actual var haloRadius: Float = 0.4f
-        actual var haloThickness: Float = 0.1f
-        actual var haloThreshold: Float = 10.0f
-        actual var highlight: Float = 1000.0f
-        actual var blendMode: BlendMode = BlendMode.ADD
-        actual enum class BlendMode { ADD, INTERPOLATE }
-    }
-    actual class FogOptions {
-        actual var enabled: Boolean = false
-        actual var distance: Float = 0.0f
-        actual var density: Float = 0.1f
-        actual var height: Float = 0.0f
-        actual var heightFalloff: Float = 1.0f
-        actual var color: FloatArray = floatArrayOf(1.0f, 1.0f, 1.0f)
-        actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
-        actual var maximumOpacity: Float = 1.0f
-        actual var inScatteringStart: Float = 0.0f
-        actual var inScatteringSize: Float = -1.0f
-        actual var fogColorFromIbl: Boolean = false
-        actual var skyColor: Texture? = null
-    }
-    actual class DepthOfFieldOptions {
-        actual var enabled: Boolean = false
-        actual var cocScale: Float = 1.0f
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
-        actual var cocAspectRatio: Float = 1.0f
-        actual var maxApertureDiameter: Float = 0.01f
-        actual var filter: Filter = Filter.MEDIAN
-        actual var nativeResolution: Boolean = false
-        actual var foregroundRingCount: Int = 0
-        actual var backgroundRingCount: Int = 0
-        actual var fastGatherRingCount: Int = 0
-        actual var maxForegroundCOC: Int = 0
-        actual var maxBackgroundCOC: Int = 0
-        actual enum class Filter { NONE, UNUSED, MEDIAN }
-    }
-    actual class VignetteOptions {
-        actual var enabled: Boolean = false
-        actual var midPoint: Float = 0.5f
-        actual var roundness: Float = 0.5f
-        actual var feather: Float = 0.5f
-        actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
-    }
-    actual class AmbientOcclusionOptions {
-        actual enum class AmbientOcclusionType { SAO, GTAO }
-        actual var aoType: AmbientOcclusionType = AmbientOcclusionType.SAO
-        actual var radius: Float = 0.3f
-        actual var bias: Float = 0.0005f
-        actual var intensity: Float = 1.0f
-        actual var power: Float = 1.0f
-        actual var minHorizonAngleRad: Float = 0.0f
-        actual var quality: Quality = Quality.LOW
-        actual var lowPassFilter: Quality = Quality.MEDIUM
-        actual var upsampling: Quality = Quality.LOW
-        actual var enabled: Boolean = false
-        actual var bentNormals: Boolean = false
-        actual var bilateralThreshold: Float = 0.05f
-        actual var resolution: Float = 0.5f
-        actual var ssct: Ssct = Ssct()
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
-        actual var gtao: Gtao = Gtao()
-        actual class Ssct {
-            actual var enabled: Boolean = false
-            actual var lightConeRad: Float = 1.0f
-            actual var shadowDistance: Float = 0.3f
-            actual var contactDistanceMax: Float = 1.0f
-            actual var intensity: Float = 0.8f
-            actual var lightDirection: FloatArray = floatArrayOf(0.0f, -1.0f, 0.0f)
-            actual var depthBias: Float = 0.01f
-            actual var depthSlopeBias: Float = 0.01f
-            actual var sampleCount: Int = 4
-            actual var rayCount: Int = 1
-        }
-        // TODO(web-api-parity): filament.js says outright "JavaScript binding for gtao is not yet
-        // supported, must use default value" — the nested struct is %codegen_skip_javascript%, so
-        // these are tracked locally and the engine keeps its GTAO defaults.
-        actual class Gtao {
-            actual var sampleSliceCount: Int = 4
-            actual var sampleStepsPerSlice: Int = 3
-            actual var thicknessHeuristic: Float = 0.004f
-            actual var useVisibilityBitmasks: Boolean = false
-            actual var constThickness: Float = 0.5f
-            actual var linearThickness: Boolean = false
-        }
-    }
-    actual class TemporalAntiAliasingOptions {
-        actual enum class BoxType { AABB, AABB_VARIANCE }
-        actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
-        actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
-        actual var feedback: Float = 0.12f
-        actual var lodBias: Float = -1.0f
-        actual var sharpness: Float = 0.0f
-        actual var enabled: Boolean = false
-        actual var upscaling: Float = 1.0f
-        actual var filterHistory: Boolean = true
-        actual var filterInput: Boolean = true
-        actual var useYCoCg: Boolean = false
-        actual var hdr: Boolean = true
-        actual var boxType: BoxType = BoxType.AABB
-        actual var boxClipping: BoxClipping = BoxClipping.ACCURATE
-        actual var jitterPattern: JitterPattern = JitterPattern.HALTON_23_X16
-        actual var varianceGamma: Float = 1.0f
-        actual var preventFlickering: Boolean = false
-        actual var historyReprojection: Boolean = true
-    }
-    actual class ScreenSpaceReflectionsOptions {
-        actual var enabled: Boolean = false
-        actual var thickness: Float = 0.1f
-        actual var bias: Float = 0.01f
-        actual var maxDistance: Float = 3.0f
-        actual var stride: Float = 2.0f
-    }
-    actual class VsmShadowOptions {
-        actual var anisotropy: Int = 0
-        actual var mipmapping: Boolean = false
-        actual var msaaSamples: Int = 1
-        actual var highPrecision: Boolean = false
-        actual var lightBleedReduction: Float = 0.15f
-    }
-    actual class SoftShadowOptions {
-        actual var penumbraScale: Float = 1.0f
-        actual var penumbraRatioScale: Float = 1.0f
-        actual var maxPenumbraRatio: Float = 10.0f
-        actual var maxSearchRadius: Float = 1.0f
-    }
-    actual class GuardBandOptions {
-        actual var enabled: Boolean = false
-    }
-    actual class StereoscopicOptions {
-        actual var enabled: Boolean = false
-    }
-    actual class MultiSampleAntiAliasingOptions {
-        actual var enabled: Boolean = false
-        actual var sampleCount: Int = 4
-        actual var customResolve: Boolean = false
-    }
 }

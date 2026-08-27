@@ -305,17 +305,17 @@ public final class io/github/erkko68/filament/compose/scene/ColorGrade {
 public final class io/github/erkko68/filament/compose/scene/DepthOfField {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;Z)V
-	public synthetic fun <init> (FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;Z)V
+	public synthetic fun <init> (FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()F
 	public final fun component2 ()F
-	public final fun component3 ()Lio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;
+	public final fun component3 ()Lio/github/erkko68/filament/DepthOfFieldOptions$Filter;
 	public final fun component4 ()Z
-	public final fun copy (FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;Z)Lio/github/erkko68/filament/compose/scene/DepthOfField;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/DepthOfField;FFLio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;ZILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/DepthOfField;
+	public final fun copy (FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;Z)Lio/github/erkko68/filament/compose/scene/DepthOfField;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/DepthOfField;FFLio/github/erkko68/filament/DepthOfFieldOptions$Filter;ZILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/DepthOfField;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCocScale ()F
-	public final fun getFilter ()Lio/github/erkko68/filament/View$DepthOfFieldOptions$Filter;
+	public final fun getFilter ()Lio/github/erkko68/filament/DepthOfFieldOptions$Filter;
 	public final fun getMaxApertureDiameter ()F
 	public final fun getNativeResolution ()Z
 	public fun hashCode ()I
@@ -640,12 +640,12 @@ public final class io/github/erkko68/filament/compose/scene/Position {
 public final class io/github/erkko68/filament/compose/scene/PostProcessing {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/compose/scene/RenderQuality;)V
-	public synthetic fun <init> (ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/compose/scene/RenderQuality;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/RenderQuality;)V
+	public synthetic fun <init> (ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/RenderQuality;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component10 ()Lio/github/erkko68/filament/compose/scene/DynamicResolution;
 	public final fun component11 ()Lio/github/erkko68/filament/compose/scene/Dithering;
-	public final fun component12 ()Lio/github/erkko68/filament/compose/scene/RenderQuality;
+	public final fun component12 ()Lio/github/erkko68/filament/RenderQuality;
 	public final fun component2 ()Lio/github/erkko68/filament/compose/scene/Bloom;
 	public final fun component3 ()Lio/github/erkko68/filament/compose/scene/Vignette;
 	public final fun component4 ()Lio/github/erkko68/filament/compose/scene/Fog;
@@ -654,8 +654,8 @@ public final class io/github/erkko68/filament/compose/scene/PostProcessing {
 	public final fun component7 ()Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;
 	public final fun component8 ()Lio/github/erkko68/filament/compose/scene/ColorGrade;
 	public final fun component9 ()Lio/github/erkko68/filament/compose/scene/DepthOfField;
-	public final fun copy (ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/compose/scene/RenderQuality;)Lio/github/erkko68/filament/compose/scene/PostProcessing;
-	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/compose/scene/RenderQuality;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/PostProcessing;
+	public final fun copy (ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/RenderQuality;)Lio/github/erkko68/filament/compose/scene/PostProcessing;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/compose/scene/PostProcessing;ZLio/github/erkko68/filament/compose/scene/Bloom;Lio/github/erkko68/filament/compose/scene/Vignette;Lio/github/erkko68/filament/compose/scene/Fog;Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;Lio/github/erkko68/filament/compose/scene/AntiAliasing;Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;Lio/github/erkko68/filament/compose/scene/ColorGrade;Lio/github/erkko68/filament/compose/scene/DepthOfField;Lio/github/erkko68/filament/compose/scene/DynamicResolution;Lio/github/erkko68/filament/compose/scene/Dithering;Lio/github/erkko68/filament/RenderQuality;ILjava/lang/Object;)Lio/github/erkko68/filament/compose/scene/PostProcessing;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAmbientOcclusion ()Lio/github/erkko68/filament/compose/scene/AmbientOcclusion;
 	public final fun getAntiAliasing ()Lio/github/erkko68/filament/compose/scene/AntiAliasing;
@@ -666,7 +666,7 @@ public final class io/github/erkko68/filament/compose/scene/PostProcessing {
 	public final fun getDynamicResolution ()Lio/github/erkko68/filament/compose/scene/DynamicResolution;
 	public final fun getEnabled ()Z
 	public final fun getFog ()Lio/github/erkko68/filament/compose/scene/Fog;
-	public final fun getRenderQuality ()Lio/github/erkko68/filament/compose/scene/RenderQuality;
+	public final fun getRenderQuality ()Lio/github/erkko68/filament/RenderQuality;
 	public final fun getScreenSpaceReflections ()Lio/github/erkko68/filament/compose/scene/ScreenSpaceReflections;
 	public final fun getVignette ()Lio/github/erkko68/filament/compose/scene/Vignette;
 	public fun hashCode ()I
