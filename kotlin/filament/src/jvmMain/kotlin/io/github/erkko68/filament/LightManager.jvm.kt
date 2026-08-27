@@ -39,7 +39,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
             FilaLightManagerShadowOptions.transform(nativeOptions).setFloatAt(3, 1.0f)
             FilaLightManagerShadowOptions.penumbraScale(nativeOptions, 1.0f)
             FilaLightManagerShadowOptions.penumbraRatioScale(nativeOptions, 1.0f)
-            // 0 means "defer to the View-wide SoftShadowOptions" — matches Filament's defaults.
+            // 0 means "defer to the View-wide View.SoftShadowOptions" — matches Filament's defaults.
             FilaLightManagerShadowOptions.maxPenumbraRatio(nativeOptions, 0.0f)
             FilaLightManagerShadowOptions.maxSearchRadius(nativeOptions, 0.0f)
         }

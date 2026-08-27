@@ -13,7 +13,6 @@ import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.max
 import kotlin.math.roundToInt
 import io.github.erkko68.filament.canvas
-import io.github.erkko68.filament.ClearOptions
 
 /**
  * On web a Filament [Engine] is bound to a single WebGL context/canvas — `createSwapChain` takes no
@@ -45,10 +44,10 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     // The engine canvas is offscreen, so the browser's implicit post-composite clear may never run
     // (it doesn't on Android Chrome) and frames accumulate. Clear it ourselves every beginFrame.
     private val renderer: Renderer = engine.createRenderer().apply {
-        clearOptions = ClearOptions(
-            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0),
-            clear = true,
-        )
+        clearOptions = Renderer.ClearOptions().apply {
+            clearColor = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+            clear = true
+        }
     }
     private val entries = ArrayList<Entry>()
     private var swapChain: SwapChain? = null

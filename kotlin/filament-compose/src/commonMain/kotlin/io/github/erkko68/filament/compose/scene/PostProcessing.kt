@@ -5,7 +5,6 @@ import io.github.erkko68.filament.ColorGrading
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.ToneMapper
 import io.github.erkko68.filament.View
-import io.github.erkko68.filament.DepthOfFieldOptions
 
 /**
  * Per-view visual configuration: post-processing effects plus render-quality options. Pass to
@@ -183,7 +182,7 @@ data class ColorGrade(
 data class DepthOfField(
     val cocScale: Float = 1.0f,
     val maxApertureDiameter: Float = 0.01f,
-    val filter: DepthOfFieldOptions.Filter = DepthOfFieldOptions.Filter.MEDIAN,
+    val filter: View.DepthOfFieldOptions.Filter = View.DepthOfFieldOptions.Filter.MEDIAN,
     val nativeResolution: Boolean = false,
 )
 

@@ -9,6 +9,22 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 
 actual class Renderer @InternalFilamentApi constructor(private val engineRef: Engine, internal var nativeHandle: MemorySegment?) {
+    actual class DisplayInfo actual constructor() {
+        actual var refreshRate: Float = 60.0f
+    }
+
+    actual class FrameRateOptions actual constructor() {
+        actual var interval: Float = 1.0f
+        actual var headRoomRatio: Float = 0.0f
+        actual var scaleRate: Float = 1.0f / 15.0f
+        actual var history: Int = 15
+    }
+
+    actual class ClearOptions actual constructor() {
+        actual var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+        actual var clear: Boolean = false
+        actual var discard: Boolean = true
+    }
 
     actual object MirrorFrameFlag {
         actual val COMMIT: Int = 0x1

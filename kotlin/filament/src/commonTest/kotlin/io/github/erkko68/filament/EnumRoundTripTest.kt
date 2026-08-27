@@ -3,11 +3,6 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
-import io.github.erkko68.filament.DynamicResolutionOptions
-import io.github.erkko68.filament.BloomOptions
-import io.github.erkko68.filament.DepthOfFieldOptions
-import io.github.erkko68.filament.AmbientOcclusionOptions
-import io.github.erkko68.filament.TemporalAntiAliasingOptions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -41,14 +36,14 @@ class EnumRoundTripTest : FilamentTestFixture() {
     @Test
     fun viewOptionEnumsRoundTripEveryEntry() {
         val view = engine.createView()
-        roundTrip<BloomOptions.BlendMode>(
-            "BloomOptions.blendMode",
-            { view.bloomOptions = BloomOptions().apply { blendMode = it } },
+        roundTrip<View.BloomOptions.BlendMode>(
+            "View.BloomOptions.blendMode",
+            { view.bloomOptions = View.BloomOptions().apply { blendMode = it } },
             { view.bloomOptions.blendMode },
         )
         roundTrip<View.Quality>(
-            "DynamicResolutionOptions.quality",
-            { view.dynamicResolutionOptions = DynamicResolutionOptions().apply { quality = it } },
+            "View.DynamicResolutionOptions.quality",
+            { view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply { quality = it } },
             { view.dynamicResolutionOptions.quality },
         )
         roundTrip<View.Quality>(
@@ -56,44 +51,44 @@ class EnumRoundTripTest : FilamentTestFixture() {
             { view.renderQuality = View.RenderQuality().apply { hdrColorBuffer = it } },
             { view.renderQuality.hdrColorBuffer },
         )
-        roundTrip<DepthOfFieldOptions.Filter>(
-            "DepthOfFieldOptions.filter",
-            { view.depthOfFieldOptions = DepthOfFieldOptions().apply { filter = it } },
+        roundTrip<View.DepthOfFieldOptions.Filter>(
+            "View.DepthOfFieldOptions.filter",
+            { view.depthOfFieldOptions = View.DepthOfFieldOptions().apply { filter = it } },
             { view.depthOfFieldOptions.filter },
         )
         roundTrip<View.Quality>(
-            "AmbientOcclusionOptions.quality",
-            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { quality = it } },
+            "View.AmbientOcclusionOptions.quality",
+            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { quality = it } },
             { view.ambientOcclusionOptions.quality },
         )
         roundTrip<View.Quality>(
-            "AmbientOcclusionOptions.lowPassFilter",
-            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { lowPassFilter = it } },
+            "View.AmbientOcclusionOptions.lowPassFilter",
+            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { lowPassFilter = it } },
             { view.ambientOcclusionOptions.lowPassFilter },
         )
         roundTrip<View.Quality>(
-            "AmbientOcclusionOptions.upsampling",
-            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { upsampling = it } },
+            "View.AmbientOcclusionOptions.upsampling",
+            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { upsampling = it } },
             { view.ambientOcclusionOptions.upsampling },
         )
-        roundTrip<AmbientOcclusionOptions.AmbientOcclusionType>(
-            "AmbientOcclusionOptions.aoType",
-            { view.ambientOcclusionOptions = AmbientOcclusionOptions().apply { aoType = it } },
+        roundTrip<View.AmbientOcclusionOptions.AmbientOcclusionType>(
+            "View.AmbientOcclusionOptions.aoType",
+            { view.ambientOcclusionOptions = View.AmbientOcclusionOptions().apply { aoType = it } },
             { view.ambientOcclusionOptions.aoType },
         )
-        roundTrip<TemporalAntiAliasingOptions.BoxType>(
-            "TemporalAntiAliasingOptions.boxType",
-            { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { boxType = it } },
+        roundTrip<View.TemporalAntiAliasingOptions.BoxType>(
+            "View.TemporalAntiAliasingOptions.boxType",
+            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { boxType = it } },
             { view.temporalAntiAliasingOptions.boxType },
         )
-        roundTrip<TemporalAntiAliasingOptions.BoxClipping>(
-            "TemporalAntiAliasingOptions.boxClipping",
-            { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { boxClipping = it } },
+        roundTrip<View.TemporalAntiAliasingOptions.BoxClipping>(
+            "View.TemporalAntiAliasingOptions.boxClipping",
+            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { boxClipping = it } },
             { view.temporalAntiAliasingOptions.boxClipping },
         )
-        roundTrip<TemporalAntiAliasingOptions.JitterPattern>(
-            "TemporalAntiAliasingOptions.jitterPattern",
-            { view.temporalAntiAliasingOptions = TemporalAntiAliasingOptions().apply { jitterPattern = it } },
+        roundTrip<View.TemporalAntiAliasingOptions.JitterPattern>(
+            "View.TemporalAntiAliasingOptions.jitterPattern",
+            { view.temporalAntiAliasingOptions = View.TemporalAntiAliasingOptions().apply { jitterPattern = it } },
             { view.temporalAntiAliasingOptions.jitterPattern },
         )
         engine.destroyView(view)

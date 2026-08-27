@@ -40,6 +40,72 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         }
     }
 
+    actual class Config actual constructor() {
+        private val android = AndroidEngine.Config()
+
+        actual var commandBufferSizeMB: Long
+            get() = android.commandBufferSizeMB
+            set(value) { android.commandBufferSizeMB = value }
+        actual var perRenderPassArenaSizeMB: Long
+            get() = android.perRenderPassArenaSizeMB
+            set(value) { android.perRenderPassArenaSizeMB = value }
+        actual var driverHandleArenaSizeMB: Long
+            get() = android.driverHandleArenaSizeMB
+            set(value) { android.driverHandleArenaSizeMB = value }
+        actual var minCommandBufferSizeMB: Long
+            get() = android.minCommandBufferSizeMB
+            set(value) { android.minCommandBufferSizeMB = value }
+        actual var perFrameCommandsSizeMB: Long
+            get() = android.perFrameCommandsSizeMB
+            set(value) { android.perFrameCommandsSizeMB = value }
+        actual var jobSystemThreadCount: Long
+            get() = android.jobSystemThreadCount
+            set(value) { android.jobSystemThreadCount = value }
+        actual var disableParallelShaderCompile: Boolean
+            get() = android.disableParallelShaderCompile
+            set(value) { android.disableParallelShaderCompile = value }
+        actual var stereoscopicType: StereoscopicType
+            get() = StereoscopicType.fromAndroid(android.stereoscopicType)
+            set(value) { android.stereoscopicType = value.toAndroid() }
+        actual var stereoscopicEyeCount: Long
+            get() = android.stereoscopicEyeCount
+            set(value) { android.stereoscopicEyeCount = value }
+        actual var resourceAllocatorCacheSizeMB: Long
+            get() = android.resourceAllocatorCacheSizeMB
+            set(value) { android.resourceAllocatorCacheSizeMB = value }
+        actual var resourceAllocatorCacheMaxAge: Long
+            get() = android.resourceAllocatorCacheMaxAge
+            set(value) { android.resourceAllocatorCacheMaxAge = value }
+        actual var disableHandleUseAfterFreeCheck: Boolean
+            get() = android.disableHandleUseAfterFreeCheck
+            set(value) { android.disableHandleUseAfterFreeCheck = value }
+
+        actual enum class ShaderLanguage {
+            DEFAULT, MSL, METAL_LIBRARY;
+            internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.values()[ordinal]
+            companion object {
+                internal fun fromAndroid(lang: AndroidEngine.Config.ShaderLanguage) = values()[lang.ordinal]
+            }
+        }
+        actual var preferredShaderLanguage: ShaderLanguage
+            get() = ShaderLanguage.fromAndroid(android.preferredShaderLanguage)
+            set(value) { android.preferredShaderLanguage = value.toAndroid() }
+        actual var forceGLES2Context: Boolean
+            get() = android.forceGLES2Context
+            set(value) { android.forceGLES2Context = value }
+        actual var assertNativeWindowIsValid: Boolean
+            get() = android.assertNativeWindowIsValid
+            set(value) { android.assertNativeWindowIsValid = value }
+        actual var gpuContextPriority: GpuContextPriority
+            get() = GpuContextPriority.fromAndroid(android.gpuContextPriority)
+            set(value) { android.gpuContextPriority = value.toAndroid() }
+        actual var sharedUboInitialSizeInBytes: Long
+            get() = android.sharedUboInitialSizeInBytes
+            set(value) { android.sharedUboInitialSizeInBytes = value }
+
+        internal fun toAndroid() = android
+    }
+
     actual class Builder actual constructor() {
         private val android = AndroidEngine.Builder()
 
@@ -53,7 +119,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
             return this
         }
 
-        actual fun config(config: EngineConfig): Builder {
+        actual fun config(config: Config): Builder {
             android.config(config.toAndroid())
             return this
         }
@@ -112,8 +178,8 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
     actual var isAutomaticInstancingEnabled: Boolean
         get() = nativeEngine.isAutomaticInstancingEnabled
         set(value) { nativeEngine.setAutomaticInstancingEnabled(value) }
-    actual val config: EngineConfig get() {
-        val config = EngineConfig()
+    actual val config: Config get() {
+        val config = Config()
         val androidConfig = nativeEngine.config
         config.commandBufferSizeMB = androidConfig.commandBufferSizeMB
         config.perRenderPassArenaSizeMB = androidConfig.perRenderPassArenaSizeMB
@@ -125,7 +191,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         config.stereoscopicEyeCount = androidConfig.stereoscopicEyeCount
         config.resourceAllocatorCacheSizeMB = androidConfig.resourceAllocatorCacheSizeMB
         config.resourceAllocatorCacheMaxAge = androidConfig.resourceAllocatorCacheMaxAge
-        config.preferredShaderLanguage = shaderLanguageFromAndroid(androidConfig.preferredShaderLanguage)
+        config.preferredShaderLanguage = Config.ShaderLanguage.fromAndroid(androidConfig.preferredShaderLanguage)
         config.forceGLES2Context = androidConfig.forceGLES2Context
         config.assertNativeWindowIsValid = androidConfig.assertNativeWindowIsValid
         config.disableParallelShaderCompile = androidConfig.disableParallelShaderCompile

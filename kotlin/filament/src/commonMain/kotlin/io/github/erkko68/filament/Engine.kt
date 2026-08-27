@@ -108,6 +108,61 @@ expect class Engine : AutoCloseable {
     }
 
     /**
+     * Advanced parameters for customizing Engine initialization.
+     *
+     * These settings control memory allocation, threading, and rendering behavior.
+     */
+    class Config() {
+        /** Size of the command buffer in MB (default depends on backend). */
+        var commandBufferSizeMB: Long
+        /** Per-render-pass arena size in MB. */
+        var perRenderPassArenaSizeMB: Long
+        /** Driver handle arena size in MB. */
+        var driverHandleArenaSizeMB: Long
+        /** Minimum command buffer size in MB. */
+        var minCommandBufferSizeMB: Long
+        /** Size of per-frame commands in MB. */
+        var perFrameCommandsSizeMB: Long
+        /** Number of threads for the job system (0 = CPU count). */
+        var jobSystemThreadCount: Long
+        /** Disable backend parallel shader compilation (forces serial compilation). */
+        var disableParallelShaderCompile: Boolean
+        /** Stereoscopic rendering technique to use. */
+        var stereoscopicType: StereoscopicType
+        /** Number of stereoscopic eyes (usually 2 for VR). */
+        var stereoscopicEyeCount: Long
+        /** Size of the resource allocator cache in MB. */
+        var resourceAllocatorCacheSizeMB: Long
+        /** Maximum age of cached resources (in frames). */
+        var resourceAllocatorCacheMaxAge: Long
+        /** Disable the debug check that catches use of a destroyed backend handle. */
+        var disableHandleUseAfterFreeCheck: Boolean
+
+        /**
+         * Preferred shader language for platform.
+         */
+        enum class ShaderLanguage {
+            /** Use platform default. */
+            DEFAULT,
+            /** Metal Shading Language (Apple). */
+            MSL,
+            /** Pre-compiled Metal library. */
+            METAL_LIBRARY,
+        }
+
+        /** Preferred shader language to use. */
+        var preferredShaderLanguage: ShaderLanguage
+        /** Force OpenGL ES 2.0 context (if applicable). */
+        var forceGLES2Context: Boolean
+        /** Assert that the native window passed to `createSwapChain` is valid. */
+        var assertNativeWindowIsValid: Boolean
+        /** GPU context priority hint for the driver. */
+        var gpuContextPriority: GpuContextPriority
+        /** Initial size of shared uniform buffer objects in bytes. */
+        var sharedUboInitialSizeInBytes: Long
+    }
+
+    /**
      * Builder for creating and configuring an Engine instance.
      */
     class Builder() {
@@ -136,7 +191,7 @@ expect class Engine : AutoCloseable {
          * @param config Configuration object with memory and threading settings.
          * @return This Builder, for chaining calls.
          */
-        fun config(config: EngineConfig): Builder
+        fun config(config: Config): Builder
 
         /**
          * Set the feature level to use.
@@ -263,7 +318,7 @@ expect class Engine : AutoCloseable {
     /**
      * The Engine's advanced configuration — the Config object used when creating this Engine.
      */
-    val config: EngineConfig
+    val config: Config
 
     /**
      * Get the maximum number of stereoscopic eyes configured for this Engine.

@@ -47,11 +47,11 @@ actual class Engine @InternalFilamentApi constructor(
         get() = jsEngine.isAutomaticInstancingEnabled()
         set(value) { jsEngine.setAutomaticInstancingEnabled(value) }
 
-    actual val config: EngineConfig get() {
+    actual val config: Config get() {
         // The JS binding's getConfig() returns a JS object with the same shape
-        // as EngineConfig. Map it back into our actual class.
+        // as Engine.Config. Map it back into our actual class.
         val jsCfg = jsEngine.getConfig()
-        return EngineConfig().apply {
+        return Config().apply {
             jsCfg.commandBufferSizeMB?.let { commandBufferSizeMB = it.toLong() }
             jsCfg.perRenderPassArenaSizeMB?.let { perRenderPassArenaSizeMB = it.toLong() }
             jsCfg.driverHandleArenaSizeMB?.let { driverHandleArenaSizeMB = it.toLong() }
@@ -307,6 +307,28 @@ actual class Engine @InternalFilamentApi constructor(
     actual enum class GpuContextPriority { DEFAULT, LOW, MEDIUM, HIGH, REALTIME }
     // Defaults mirror filament's Engine::Config (Engine.h), same as the other platforms.
 
+    actual class Config {
+        actual var commandBufferSizeMB: Long = 3
+        actual var perRenderPassArenaSizeMB: Long = 3
+        actual var driverHandleArenaSizeMB: Long = 0
+        actual var minCommandBufferSizeMB: Long = 1
+        actual var perFrameCommandsSizeMB: Long = 2
+        actual var jobSystemThreadCount: Long = 0
+        actual var disableParallelShaderCompile: Boolean = false
+        actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
+        actual var stereoscopicEyeCount: Long = 2
+        actual var resourceAllocatorCacheSizeMB: Long = 64
+        actual var resourceAllocatorCacheMaxAge: Long = 1
+        actual var disableHandleUseAfterFreeCheck: Boolean = false
+        actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
+        actual var forceGLES2Context: Boolean = false
+        actual var assertNativeWindowIsValid: Boolean = false
+        actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
+        actual var sharedUboInitialSizeInBytes: Long = 256 * 64
+
+        actual enum class ShaderLanguage { DEFAULT, MSL, METAL_LIBRARY }
+    }
+
     // filament.js has no Engine::Builder — `Filament.Engine.create(canvas, options, config)`
     // is the only entry point, and it carries the Builder-only settings on its options object.
     // featureLevel is applied right after construction (clamped, as Builder does). `paused`
@@ -314,7 +336,7 @@ actual class Engine @InternalFilamentApi constructor(
     actual class Builder {
         private var backend: Backend? = null
         private var canvas: HTMLCanvasElement? = null
-        private var config: EngineConfig? = null
+        private var config: Config? = null
         private var featureLevel: FeatureLevel? = null
         private val features = mutableMapOf<String, Boolean>()
         private var colorGrading: ColorGrading.Builder? = null
@@ -324,7 +346,7 @@ actual class Engine @InternalFilamentApi constructor(
             canvas = sharedContext as? HTMLCanvasElement
             return this
         }
-        actual fun config(config: EngineConfig): Builder { this.config = config; return this }
+        actual fun config(config: Config): Builder { this.config = config; return this }
         actual fun featureLevel(featureLevel: FeatureLevel): Builder { this.featureLevel = featureLevel; return this }
         actual fun paused(paused: Boolean): Builder = this
         actual fun feature(name: String, value: Boolean): Builder { features[name] = value; return this }
@@ -364,7 +386,7 @@ actual class Engine @InternalFilamentApi constructor(
         private fun create(
             canvas: HTMLCanvasElement,
             backend: Backend?,
-            config: EngineConfig?,
+            config: Config?,
             features: Map<String, Boolean> = emptyMap(),
             colorGrading: ColorGrading.Builder? = null,
             ownsCanvas: Boolean = false,
@@ -413,7 +435,7 @@ private fun offscreenCanvas(): HTMLCanvasElement {
 
 // extensions.js does `Object.assign(createDefaultConfig(), config)`, so a plain object
 // carrying only the fields we model is enough.
-private fun EngineConfig.toJs(): io.github.erkko68.filament.web.Engine_Config =
+private fun Engine.Config.toJs(): io.github.erkko68.filament.web.Engine_Config =
     emptyJsObject().unsafeCast<io.github.erkko68.filament.web.Engine_Config>().apply {
         commandBufferSizeMB = this@toJs.commandBufferSizeMB.toDouble()
         perRenderPassArenaSizeMB = this@toJs.perRenderPassArenaSizeMB.toDouble()
@@ -480,10 +502,10 @@ private fun fromJsGpuContextPriority(p: io.github.erkko68.filament.web.GpuContex
     else -> error("unreachable")
 }
 
-private fun fromJsShaderLanguage(sl: io.github.erkko68.filament.web.ShaderLanguage): EngineConfig.ShaderLanguage = when (sl) {
-    io.github.erkko68.filament.web.ShaderLanguage.DEFAULT -> EngineConfig.ShaderLanguage.DEFAULT
-    io.github.erkko68.filament.web.ShaderLanguage.MSL -> EngineConfig.ShaderLanguage.MSL
-    io.github.erkko68.filament.web.ShaderLanguage.METAL_LIBRARY -> EngineConfig.ShaderLanguage.METAL_LIBRARY
+private fun fromJsShaderLanguage(sl: io.github.erkko68.filament.web.ShaderLanguage): Engine.Config.ShaderLanguage = when (sl) {
+    io.github.erkko68.filament.web.ShaderLanguage.DEFAULT -> Engine.Config.ShaderLanguage.DEFAULT
+    io.github.erkko68.filament.web.ShaderLanguage.MSL -> Engine.Config.ShaderLanguage.MSL
+    io.github.erkko68.filament.web.ShaderLanguage.METAL_LIBRARY -> Engine.Config.ShaderLanguage.METAL_LIBRARY
     else -> error("unreachable")
 }
 
@@ -510,8 +532,8 @@ private fun toJsGpuContextPriority(p: Engine.GpuContextPriority): io.github.erkk
     Engine.GpuContextPriority.REALTIME -> io.github.erkko68.filament.web.GpuContextPriority.REALTIME
 }
 
-private fun toJsShaderLanguage(sl: EngineConfig.ShaderLanguage): io.github.erkko68.filament.web.ShaderLanguage = when (sl) {
-    EngineConfig.ShaderLanguage.DEFAULT -> io.github.erkko68.filament.web.ShaderLanguage.DEFAULT
-    EngineConfig.ShaderLanguage.MSL -> io.github.erkko68.filament.web.ShaderLanguage.MSL
-    EngineConfig.ShaderLanguage.METAL_LIBRARY -> io.github.erkko68.filament.web.ShaderLanguage.METAL_LIBRARY
+private fun toJsShaderLanguage(sl: Engine.Config.ShaderLanguage): io.github.erkko68.filament.web.ShaderLanguage = when (sl) {
+    Engine.Config.ShaderLanguage.DEFAULT -> io.github.erkko68.filament.web.ShaderLanguage.DEFAULT
+    Engine.Config.ShaderLanguage.MSL -> io.github.erkko68.filament.web.ShaderLanguage.MSL
+    Engine.Config.ShaderLanguage.METAL_LIBRARY -> io.github.erkko68.filament.web.ShaderLanguage.METAL_LIBRARY
 }

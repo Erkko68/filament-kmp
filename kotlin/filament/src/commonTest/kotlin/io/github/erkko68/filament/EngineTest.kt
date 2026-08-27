@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 class EngineTest {
     @Test
     fun testConfigProperties() {
-        val config = EngineConfig().apply {
+        val config = Engine.Config().apply {
             commandBufferSizeMB = 64
             perRenderPassArenaSizeMB = 12
             driverHandleArenaSizeMB = 12
@@ -23,7 +23,7 @@ class EngineTest {
             stereoscopicEyeCount = 2
             resourceAllocatorCacheSizeMB = 16
             resourceAllocatorCacheMaxAge = 10
-            preferredShaderLanguage = EngineConfig.ShaderLanguage.DEFAULT
+            preferredShaderLanguage = Engine.Config.ShaderLanguage.DEFAULT
             forceGLES2Context = false
             gpuContextPriority = Engine.GpuContextPriority.DEFAULT
             sharedUboInitialSizeInBytes = 1024
@@ -41,7 +41,7 @@ class EngineTest {
         assertEquals(2, config.stereoscopicEyeCount)
         assertEquals(16, config.resourceAllocatorCacheSizeMB)
         assertEquals(10, config.resourceAllocatorCacheMaxAge)
-        assertEquals(EngineConfig.ShaderLanguage.DEFAULT, config.preferredShaderLanguage)
+        assertEquals(Engine.Config.ShaderLanguage.DEFAULT, config.preferredShaderLanguage)
         assertFalse(config.forceGLES2Context)
         assertEquals(Engine.GpuContextPriority.DEFAULT, config.gpuContextPriority)
         assertEquals(1024, config.sharedUboInitialSizeInBytes)

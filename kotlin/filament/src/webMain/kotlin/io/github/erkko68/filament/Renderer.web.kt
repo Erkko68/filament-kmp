@@ -168,6 +168,25 @@ actual class Renderer @InternalFilamentApi constructor(internal val jsRenderer: 
         jsRenderer.skipNextFrames(frameCount.toDouble())
     }
 
+    actual class DisplayInfo {
+        actual var refreshRate: Float = 60.0f
+            get() = field
+            set(value) { field = value }
+    }
+
+    actual class FrameRateOptions {
+        actual var interval: Float = 1.0f
+        actual var headRoomRatio: Float = 0.0f
+        actual var scaleRate: Float = 1.0f / 15.0f
+        actual var history: Int = 15
+    }
+
+    actual class ClearOptions {
+        actual var clearColor: DoubleArray = doubleArrayOf(0.0, 0.0, 0.0, 0.0)
+        actual var clear: Boolean = false
+        actual var discard: Boolean = true
+    }
+
     actual object MirrorFrameFlag {
         actual val COMMIT: Int = 1
         actual val SET_PRESENTATION_TIME: Int = 2

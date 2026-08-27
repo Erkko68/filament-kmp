@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
-import io.github.erkko68.filament.SoftShadowOptions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -97,7 +96,7 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(2.0f, o.polygonOffsetSlope, 1e-6f)
         assertEquals(1f, o.penumbraScale, 1e-6f)
         assertEquals(1f, o.penumbraRatioScale, 1e-6f)
-        // 0 means "defer to the View-wide SoftShadowOptions" — Filament's own default.
+        // 0 means "defer to the View-wide View.SoftShadowOptions" — Filament's own default.
         assertEquals(0f, o.maxPenumbraRatio, 1e-6f)
         assertEquals(0f, o.maxSearchRadius, 1e-6f)
     }

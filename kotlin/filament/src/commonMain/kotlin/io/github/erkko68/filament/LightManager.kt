@@ -175,26 +175,26 @@ expect class LightManager {
 
         /**
          * Per-light scale on the final PCSS penumbra size, modulated with the View-wide
-         * [SoftShadowOptions.penumbraScale] (global * local). Default: 1.0.
+         * [View.SoftShadowOptions.penumbraScale] (global * local). Default: 1.0.
          */
         var penumbraScale: Float
 
         /**
          * Per-light scale on the PCSS geometric ratio — how fast the shadow softens with
-         * blocker distance — modulated with [SoftShadowOptions.penumbraRatioScale].
+         * blocker distance — modulated with [View.SoftShadowOptions.penumbraRatioScale].
          * Default: 1.0.
          */
         var penumbraRatioScale: Float
 
         /**
          * Per-light cap on the PCSS penumbra ratio, applied as a smooth asymptotic squash.
-         * 0 defers to the View-wide [SoftShadowOptions.maxPenumbraRatio]. Default: 0.0.
+         * 0 defers to the View-wide [View.SoftShadowOptions.maxPenumbraRatio]. Default: 0.0.
          */
         var maxPenumbraRatio: Float
 
         /**
          * Per-light limit, in world units, on the PCSS blocker-search footprint. 0 defers to the
-         * View-wide [SoftShadowOptions.maxSearchRadius]. Default: 0.0.
+         * View-wide [View.SoftShadowOptions.maxSearchRadius]. Default: 0.0.
          */
         var maxSearchRadius: Float
     }
