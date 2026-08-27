@@ -13,6 +13,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+### Changed
+- **Versioned API docs**: the published Dokka site now carries a version dropdown; older releases stay online under `/api/older/<version>`.
+
 ### Fixed
 - **Leaked `Surface` on transparent Android views** (`filament-compose`): the `TextureView` path wrapped the `SurfaceTexture` in a `Surface` and never released it, leaving it to the finalizer.
 

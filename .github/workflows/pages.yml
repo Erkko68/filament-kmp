@@ -31,6 +31,13 @@ on:
       - 'gradle.properties'
       - 'buildSrc/**'
       - '.github/workflows/pages.yml'
+  # A published release is the only event that DEPLOYS, and the only one that writes
+  # a version into the docs archive — the live site therefore always matches a
+  # release, never an in-flight main. (A `tags:` filter on `push` would be dead
+  # here: path filters never match a tag push.) publish.yml creates the release once
+  # Maven Central accepts.
+  release:
+    types: [published]
   workflow_dispatch:
 
 # Concurrency: per-ref so PR runs don't cancel a main deploy; within a ref the
@@ -68,6 +75,9 @@ jobs:
           path: samples/webApp/build/dist/js/productionExecutable
 
   docs:
+    # `contents: write` so the docs archive branch can be pushed (see below).
+    permissions:
+      contents: write
     # macOS: Dokka documents every platform, so it builds each one for its
     # analysis classpath — iOS cinterop needs Xcode, plus JVM (:java/jextract),
     # JS externals and Android. iOS native is only buildable on macOS.
@@ -85,11 +95,53 @@ jobs:
       - name: Accept Android SDK licenses
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
+      # Previously published versions live as <version>/ dirs on the orphan
+      # `docs-archive` branch; Dokka's versioning plugin renders the dropdown from
+      # them and re-emits them under api/older/, so one deploy serves every version.
+      # Fetched only when this run deploys or archives — it's a ~350 MB clone, a
+      # validation build proves as much rendering the current version alone, and the
+      # archive push force-pushes this directory, so it must be complete first.
+      - name: Restore archived doc versions
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        run: |
+          git clone -q --depth 1 --single-branch --branch docs-archive \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" \
+            build/previousDocs || mkdir -p build/previousDocs
+          rm -rf build/previousDocs/.git
+          # Never let the archive hold the version we're about to render — a re-run or a
+          # manual dispatch would otherwise list the same version twice.
+          rm -rf "build/previousDocs/$(grep '^libVersion=' gradle.properties | cut -d= -f2)"
+
       - name: Generate API docs
         # Aggregates :kotlin:filament, :kotlin:filamat, :kotlin:filament-utils,
         # :kotlin:gltfio, :kotlin:filament-compose into build/dokka/html (Dokka v2).
         # :java and :web modules are excluded (FFM internals / generated externals).
+        # The version label comes from libVersion in gradle.properties.
         run: ./gradlew dokkaGenerate --no-configuration-cache
+
+      # Releases only, so a version lands in the archive exactly once, built from its
+      # tag; other events generate the docs purely to prove Dokka still works.
+      # Force-push a single orphan commit — the branch is a store, not a history, so
+      # the repo doesn't grow a copy of the whole site per build.
+      - name: Archive this version's docs
+        if: github.event_name == 'release'
+        run: |
+          version=$(grep '^libVersion=' gradle.properties | cut -d= -f2)
+          rm -rf "build/previousDocs/$version"
+          cp -R build/dokka/html "build/previousDocs/$version"
+          rm -rf "build/previousDocs/$version/older"  # don't archive the nested copies
+          # One version is ~90 MB and GitHub Pages caps a site at 1 GB, so keep only
+          # the newest few; older releases stay reachable through their git tags.
+          cd build/previousDocs
+          ls -1 | sort -Vr | tail -n +5 | while read -r stale; do rm -rf "$stale"; done
+          git init -q -b docs-archive
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "API docs @ $version"
+          git push -qf \
+            "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" \
+            docs-archive
 
       - uses: actions/upload-artifact@v7
         with:
@@ -97,8 +149,9 @@ jobs:
           path: build/dokka/html
 
   deploy:
-    # Build-only on PRs; deploy only from main pushes / manual dispatch.
-    if: github.event_name != 'pull_request'
+    # Pushes to main and PRs are validation builds only — a release (or a manual
+    # dispatch, which publishes whatever the chosen ref holds) is what goes live.
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     needs: [web, docs]
     runs-on: ubuntu-latest
     environment:

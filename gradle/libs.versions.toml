@@ -45,6 +45,7 @@ android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref 
 compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "composeMultiplatform" }
 vanniktech-publish-gradlePlugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "vanniktech-publish" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+dokka-versioningPlugin = { module = "org.jetbrains.dokka:versioning-plugin", version.ref = "dokka" }
 kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commons-compress" }
 junit = { module = "junit:junit", version.ref = "junit" }

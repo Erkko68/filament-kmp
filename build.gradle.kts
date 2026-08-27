@@ -36,6 +36,19 @@ dependencies {
     dokka(project(":kotlin:filament-utils"))
     dokka(project(":kotlin:gltfio"))
     dokka(project(":kotlin:filament-compose"))
+    dokkaPlugin(libs.dokka.versioningPlugin)
+}
+
+// ── API docs versioning ───────────────────────────────────────────────────────
+// The versioning plugin renders the version dropdown and copies each directory of
+// build/previousDocs/<version> into the site under `older/`, so one deploy serves
+// every release. CI restores that dir from the `docs-archive` branch and pushes the
+// freshly built version back; locally it's absent and only this version renders.
+dokka {
+    pluginsConfiguration.versioning {
+        version = providers.gradleProperty("libVersion").getOrElse("0.1.0-SNAPSHOT")
+        olderVersionsDir = layout.buildDirectory.dir("previousDocs")
+    }
 }
 
 // ── Test-coverage aggregation (Kover) ─────────────────────────────────────────
