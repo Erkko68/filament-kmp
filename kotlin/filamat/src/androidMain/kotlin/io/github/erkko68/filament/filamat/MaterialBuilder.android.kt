@@ -90,11 +90,6 @@ actual class MaterialBuilder actual constructor() {
         NONE, PREPROCESSOR, SIZE, PERFORMANCE
     }
 
-    actual companion object {
-        actual fun init() = Filamat.init()
-        actual fun shutdown() = AndroidMaterialBuilder.shutdown()
-    }
-
     actual fun build(): MaterialPackage {
         val pkg = builder.build()
         return MaterialPackage(pkg)

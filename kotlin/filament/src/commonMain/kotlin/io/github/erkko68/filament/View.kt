@@ -1111,7 +1111,7 @@ expect class View {
     fun setDynamicLightingOptions(zNear: Float, zFar: Float)
 
     /** Entity representing the large-scale fog object; can be transformed via TransformManager. */
-    val fogEntity: Int
+    val fogEntity: Entity
 
     /** Post-process anti-aliasing operator ([AntiAliasing.FXAA] by default). */
     var antiAliasing: AntiAliasing

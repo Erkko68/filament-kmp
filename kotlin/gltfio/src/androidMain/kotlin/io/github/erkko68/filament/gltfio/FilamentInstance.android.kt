@@ -2,6 +2,7 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.Entity
 
 actual class FilamentInstance {
     internal var nativeObject: com.google.android.filament.gltfio.FilamentInstance? = null
@@ -17,7 +18,7 @@ actual class FilamentInstance {
         this.ownerAsset = ownerAsset
     }
 
-    actual val root: Int get() = nativeObject!!.root
+    actual val root: Entity get() = nativeObject!!.root
 
     actual val entities: IntArray get() = nativeObject!!.entities
 
@@ -36,11 +37,11 @@ actual class FilamentInstance {
     
     actual val skinNames: List<String> get() = nativeObject!!.skinNames.toList()
     
-    actual fun attachSkin(skinIndex: Int, target: Int) {
+    actual fun attachSkin(skinIndex: Int, target: Entity) {
         nativeObject!!.attachSkin(skinIndex, target)
     }
     
-    actual fun detachSkin(skinIndex: Int, target: Int) {
+    actual fun detachSkin(skinIndex: Int, target: Entity) {
         nativeObject!!.detachSkin(skinIndex, target)
     }
     

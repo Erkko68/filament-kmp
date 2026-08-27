@@ -13,10 +13,6 @@ actual class Manipulator @InternalFilamentApi constructor(internal val nativeHan
         ORBIT, MAP, FLIGHT
     }
 
-    actual enum class Fov {
-        VERTICAL, HORIZONTAL
-    }
-
     actual enum class Key {
         FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN
     }

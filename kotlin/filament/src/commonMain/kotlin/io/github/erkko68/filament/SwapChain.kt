@@ -117,7 +117,7 @@ expect class SwapChain {
      *                 Pass null or a no-op function to unset the callback.
      */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    fun setFrameCompletedCallback(callback: () -> Unit)
+    fun setFrameCompletedCallback(callback: (() -> Unit)? = null)
 
     /**
      * Sets a callback to be invoked when a frame is scheduled for presentation.
@@ -138,7 +138,7 @@ expect class SwapChain {
      *                 Pass null or a no-op function to unset the callback.
      */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    fun setFrameScheduledCallback(callback: () -> Unit)
+    fun setFrameScheduledCallback(callback: (() -> Unit)? = null)
 
     /**
      * Returns whether this SwapChain supports the [setFrameRate] API.

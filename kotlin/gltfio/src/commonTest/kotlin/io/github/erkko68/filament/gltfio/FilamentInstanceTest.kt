@@ -10,6 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import io.github.erkko68.filament.Entity
 
 class FilamentInstanceTest : GltfioTestFixture() {
     @Test

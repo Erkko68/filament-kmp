@@ -573,7 +573,7 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         return jsView.getMaterialGlobal(index.toDouble())?.toFloatArray(4) ?: FloatArray(4)
     }
 
-    actual val fogEntity: Int
+    actual val fogEntity: Entity
         get() = jsView.getFogEntity().getId().toInt()
 
     actual val visibleRenderableCount: Int get() = jsView.getVisibleRenderableCount().toInt()

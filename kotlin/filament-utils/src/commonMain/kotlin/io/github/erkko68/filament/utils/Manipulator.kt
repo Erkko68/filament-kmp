@@ -1,5 +1,10 @@
 package io.github.erkko68.filament.utils
 
+import io.github.erkko68.filament.Camera
+
+/** The axis held constant when the viewport changes in MAP mode. */
+typealias Fov = Camera.Fov
+
 /**
  * Helper that enables camera interaction similar to sketchfab or Google Maps.
  *
@@ -40,12 +45,6 @@ expect class Manipulator : AutoCloseable {
         MAP,
         /** First-person free-flight camera. */
         FLIGHT
-    }
-
-    /** The axis held constant when the viewport changes in MAP mode. */
-    enum class Fov {
-        VERTICAL,
-        HORIZONTAL
     }
 
     /**

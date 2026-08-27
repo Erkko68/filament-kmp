@@ -11,11 +11,12 @@ import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.Entity
 
 actual class FilamentInstance @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual constructor() : this(null)
 
-    actual val root: Int get() = FilamentC.FilaFilamentInstance_getRoot(nativeHandle)
+    actual val root: Entity get() = FilamentC.FilaFilamentInstance_getRoot(nativeHandle)
 
     actual val entities: IntArray get() {
         val count = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
@@ -56,8 +57,8 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal var nati
         }
     }
 
-    actual fun attachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toLong(), target)
-    actual fun detachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toLong(), target)
+    actual fun attachSkin(skinIndex: Int, target: Entity) = FilamentC.FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toLong(), target)
+    actual fun detachSkin(skinIndex: Int, target: Entity) = FilamentC.FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toLong(), target)
 
     actual fun getJointCountAt(skinIndex: Int): Int = FilamentC.FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex.toLong()).toInt()
 

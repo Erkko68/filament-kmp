@@ -22,8 +22,13 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     private var frameScheduledRef: StableRef<() -> Unit>? = null
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
         frameCompletedRef?.dispose()
+        frameCompletedRef = null
+        if (callback == null) {
+            FilaSwapChain_setFrameCompletedCallback(nativeHandle, null, null, null)
+            return
+        }
         val stableRef = StableRef.create(callback)
         frameCompletedRef = stableRef
         val callbackWrapper = staticCFunction { _: CPointer<FilaSwapChain>?, user: COpaquePointer? ->
@@ -34,8 +39,13 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
         frameScheduledRef?.dispose()
+        frameScheduledRef = null
+        if (callback == null) {
+            FilaSwapChain_setFrameScheduledCallback(nativeHandle, null, null, null)
+            return
+        }
         val stableRef = StableRef.create(callback)
         frameScheduledRef = stableRef
         val callbackWrapper = staticCFunction { user: COpaquePointer? ->

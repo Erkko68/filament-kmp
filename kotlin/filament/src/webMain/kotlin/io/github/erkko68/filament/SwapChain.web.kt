@@ -12,11 +12,11 @@ actual class SwapChain @InternalFilamentApi constructor(internal val jsSwapChain
     private var frameScheduledCallback: (() -> Unit)? = null
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
         frameScheduledCallback = callback
     }
 

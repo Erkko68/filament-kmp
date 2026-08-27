@@ -6,10 +6,6 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         ORBIT, MAP, FLIGHT
     }
 
-    actual enum class Fov {
-        VERTICAL, HORIZONTAL
-    }
-
     actual enum class Key {
         FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN
     }

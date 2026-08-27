@@ -16,13 +16,13 @@ actual class SwapChain @InternalFilamentApi constructor(internal val nativeSwapC
     actual val nativeWindow: Any? get() = nativeSwapChain.nativeWindow
     
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
-        nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback() })
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
+        nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback?.invoke() })
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
-        nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback() })
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
+        nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback?.invoke() })
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")

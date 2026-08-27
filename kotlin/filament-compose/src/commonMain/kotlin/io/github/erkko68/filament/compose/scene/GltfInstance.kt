@@ -227,8 +227,8 @@ fun FilamentSceneScope.GltfInstance(
             for (entity in instance.entities) {
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
-                if (castShadows != null) rm.setCastShadows(ri, castShadows)
-                if (receiveShadows != null) rm.setReceiveShadows(ri, receiveShadows)
+                if (castShadows != null) rm.setShadowCaster(ri, castShadows)
+                if (receiveShadows != null) rm.setShadowReceiver(ri, receiveShadows)
             }
         }
         onDispose { }

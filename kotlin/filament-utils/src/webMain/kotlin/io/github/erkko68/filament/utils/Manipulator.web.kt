@@ -431,7 +431,6 @@ private class Flight(cfg: Cfg) : Base(cfg) {
 actual class Manipulator internal constructor(private val impl: Base) : AutoCloseable {
 
     actual enum class Mode { ORBIT, MAP, FLIGHT }
-    actual enum class Fov  { VERTICAL, HORIZONTAL }
     actual enum class Key  { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
 
     actual class Bookmark internal constructor(internal val data: BmData)

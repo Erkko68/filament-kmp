@@ -77,7 +77,7 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val jsR
     actual fun getChannel(instance: EntityInstance): Int =
         jsRenderableManager.getChannel(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>()).toInt()
 
-    actual fun setCulling(instance: EntityInstance, enabled: Boolean) {
+    actual fun setCullingEnabled(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setCulling(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
@@ -88,14 +88,14 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val jsR
         jsRenderableManager.setFogEnabled(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
-    actual fun getFogEnabled(instance: EntityInstance): Boolean =
+    actual fun isFogEnabled(instance: EntityInstance): Boolean =
         jsRenderableManager.getFogEnabled(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>())
 
-    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) {
+    actual fun setShadowCaster(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setCastShadows(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
-    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) {
+    actual fun setShadowReceiver(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setReceiveShadows(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 

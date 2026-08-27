@@ -601,7 +601,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
         this@View.nativeView.setMaterialGlobal(index, value)
     }
     actual fun getMaterialGlobal(index: Int): FloatArray = this@View.nativeView.getMaterialGlobal(index, null)
-    actual val fogEntity: Int get() = this@View.nativeView.fogEntity
+    actual val fogEntity: Entity get() = this@View.nativeView.fogEntity
     actual val visibleRenderableCount: Int get() = this@View.nativeView.visibleRenderableCount
     actual fun clearFrameHistory(engine: Engine) { this@View.nativeView.clearFrameHistory(engine.nativeEngine) }
 

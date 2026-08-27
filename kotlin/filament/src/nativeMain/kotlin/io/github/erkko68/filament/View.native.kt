@@ -725,7 +725,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         }
         return result
     }
-    actual val fogEntity: Int get() = FilaView_getFogEntity(nativeHandle).toInt()
+    actual val fogEntity: Entity get() = FilaView_getFogEntity(nativeHandle).toInt()
     actual val visibleRenderableCount: Int get() = FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 

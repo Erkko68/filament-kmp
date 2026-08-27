@@ -68,16 +68,16 @@ class RenderableManagerTest : FilamentTestFixture() {
         // rm.setChannel(inst, 2)
         // assertEquals(2, rm.getChannel(inst))
 
-        // rm.setCulling(inst, false)
+        // rm.setCullingEnabled(inst, false)
         // assertTrue(!rm.isCullingEnabled(inst))
 
         // rm.setFogEnabled(inst, false)
-        // assertTrue(!rm.getFogEnabled(inst))
+        // assertTrue(!rm.isFogEnabled(inst))
 
-        // rm.setCastShadows(inst, false)
+        // rm.setShadowCaster(inst, false)
         // assertTrue(!rm.isShadowCaster(inst))
 
-        // rm.setReceiveShadows(inst, false)
+        // rm.setShadowReceiver(inst, false)
         // assertTrue(!rm.isShadowReceiver(inst))
 
         // rm.setScreenSpaceContactShadows(inst, false)

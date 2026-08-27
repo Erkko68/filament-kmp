@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
+import io.github.erkko68.filament.Entity
 
 /**
  * FilamentInstance provides access to a hierarchy of entities instanced from a glTF asset.
@@ -35,7 +36,7 @@ expect class FilamentInstance {
     constructor()
 
     /** Gets the transform root entity of this instance, which has no matching glTF node. */
-    val root: Int
+    val root: Entity
 
     /**
      * Gets the entities of this instance, one per glTF node. All have a Transform component;
@@ -81,10 +82,10 @@ expect class FilamentInstance {
      * Attaches the given skin to the given node entity, which must have an associated mesh with
      * BONE_INDICES and BONE_WEIGHTS attributes. No-op if the skin index or target is invalid.
      */
-    fun attachSkin(skinIndex: Int, target: Int)
+    fun attachSkin(skinIndex: Int, target: Entity)
 
     /** Detaches the given skin from the given node entity. No-op if skin index or target is invalid. */
-    fun detachSkin(skinIndex: Int, target: Int)
+    fun detachSkin(skinIndex: Int, target: Entity)
 
     /** Gets the number of joints in the skin at [skinIndex]. */
     fun getJointCountAt(skinIndex: Int): Int

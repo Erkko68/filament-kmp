@@ -1113,7 +1113,6 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun getBlendOrderAt (II)I
 	public final fun getChannel (I)I
 	public final fun getEnabledAttributesAt (II)Ljava/util/Set;
-	public final fun getFogEnabled (I)Z
 	public final fun getInstance (I)I
 	public final fun getInstanceCount (I)I
 	public final fun getLightChannel (II)Z
@@ -1123,6 +1122,7 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun getPriority (I)I
 	public final fun hasComponent (I)Z
 	public final fun isCullingEnabled (I)Z
+	public final fun isFogEnabled (I)Z
 	public final fun isGlobalBlendOrderEnabledAt (II)Z
 	public final fun isScreenSpaceContactShadowsEnabled (I)Z
 	public final fun isShadowCaster (I)Z
@@ -1131,9 +1131,8 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun setBlendOrderAt (III)V
 	public final fun setBonesAsMatrices (I[FII)V
 	public final fun setBonesAsQuaternions (I[FII)V
-	public final fun setCastShadows (IZ)V
 	public final fun setChannel (II)V
-	public final fun setCulling (IZ)V
+	public final fun setCullingEnabled (IZ)V
 	public final fun setFogEnabled (IZ)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;II)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;Lio/github/erkko68/filament/IndexBuffer;II)V
@@ -1145,8 +1144,9 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun setMorphWeights (I[FI)V
 	public static synthetic fun setMorphWeights$default (Lio/github/erkko68/filament/RenderableManager;I[FIILjava/lang/Object;)V
 	public final fun setPriority (II)V
-	public final fun setReceiveShadows (IZ)V
 	public final fun setScreenSpaceContactShadows (IZ)V
+	public final fun setShadowCaster (IZ)V
+	public final fun setShadowReceiver (IZ)V
 	public final fun setSkinningBuffer (ILio/github/erkko68/filament/SkinningBuffer;II)V
 }
 
@@ -1377,9 +1377,11 @@ public final class io/github/erkko68/filament/SwapChain {
 	public final fun isFrameRateChangeSupported ()Z
 	public final fun isFrameScheduledCallbackSet ()Z
 	public final fun setFrameCompletedCallback (Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun setFrameCompletedCallback$default (Lio/github/erkko68/filament/SwapChain;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun setFrameRate (F)V
 	public final fun setFrameRate (FLio/github/erkko68/filament/SwapChain$FrameRateCompatibility;Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;)V
 	public final fun setFrameScheduledCallback (Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun setFrameScheduledCallback$default (Lio/github/erkko68/filament/SwapChain;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
 public final class io/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy : java/lang/Enum {

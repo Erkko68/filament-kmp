@@ -793,7 +793,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         FilamentC.FilaView_getMaterialGlobal(nativeHandle, index, out)
         out.toFloats()
     }
-    actual val fogEntity: Int get() = FilamentC.FilaView_getFogEntity(nativeHandle)
+    actual val fogEntity: Entity get() = FilamentC.FilaView_getFogEntity(nativeHandle)
     actual val visibleRenderableCount: Int get() = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilamentC.FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 

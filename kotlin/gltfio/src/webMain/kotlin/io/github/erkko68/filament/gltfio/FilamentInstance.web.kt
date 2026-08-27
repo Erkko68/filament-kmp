@@ -7,12 +7,12 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.web.`gltfio_FilamentInstance` as JSFilamentInstance
 import io.github.erkko68.filament.web.Vector
-import io.github.erkko68.filament.web.Entity
+import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentInstance @InternalFilamentApi constructor(internal val jsInstance: JSFilamentInstance) {
-    actual val root: Int get() {
+    actual val root: Entity get() {
         val jsEntity = jsInstance.getRoot()
         val id = jsEntity.getId().toInt()
         EntityManager.register(id, jsEntity)
@@ -59,13 +59,11 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         return result.toList()
     }
 
-    actual fun attachSkin(skinIndex: Int, target: Int) {
-        // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
+    actual fun attachSkin(skinIndex: Int, target: Entity) {
         jsInstance.attachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 
-    actual fun detachSkin(skinIndex: Int, target: Int) {
-        // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
+    actual fun detachSkin(skinIndex: Int, target: Entity) {
         jsInstance.detachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 

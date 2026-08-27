@@ -1065,7 +1065,7 @@ public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public final fun flightStartOrientation (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun flightStartPosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun fovDegrees (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
-	public final fun fovDirection (Lio/github/erkko68/filament/utils/Manipulator$Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun fovDirection (Lio/github/erkko68/filament/Camera$Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun groundPlane (FFFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun mapExtent (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun mapMinDistance (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
@@ -1076,14 +1076,6 @@ public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public final fun upVector (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun viewport (II)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun zoomSpeed (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
-}
-
-public final class io/github/erkko68/filament/utils/Manipulator$Fov : java/lang/Enum {
-	public static final field HORIZONTAL Lio/github/erkko68/filament/utils/Manipulator$Fov;
-	public static final field VERTICAL Lio/github/erkko68/filament/utils/Manipulator$Fov;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Fov;
-	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Fov;
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Key : java/lang/Enum {

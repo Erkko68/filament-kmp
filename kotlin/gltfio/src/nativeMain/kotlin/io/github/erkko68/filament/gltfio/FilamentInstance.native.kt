@@ -6,6 +6,7 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaFilamentInstance
+import io.github.erkko68.filament.Entity
 
 actual class FilamentInstance {
     public var nativeHandle: CPointer<FilaFilamentInstance>? = null
@@ -16,7 +17,7 @@ actual class FilamentInstance {
         this.nativeHandle = nativeHandle
     }
 
-    actual val root: Int get() = FilaFilamentInstance_getRoot(nativeHandle).toInt()
+    actual val root: Entity get() = FilaFilamentInstance_getRoot(nativeHandle).toInt()
 
     actual val entities: IntArray get() {
         val count = FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
@@ -60,11 +61,11 @@ actual class FilamentInstance {
         }
     }
 
-    actual fun attachSkin(skinIndex: Int, target: Int) {
+    actual fun attachSkin(skinIndex: Int, target: Entity) {
         FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toULong(), target.toUInt())
     }
 
-    actual fun detachSkin(skinIndex: Int, target: Int) {
+    actual fun detachSkin(skinIndex: Int, target: Entity) {
         FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toULong(), target.toUInt())
     }
 

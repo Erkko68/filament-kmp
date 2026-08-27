@@ -10,7 +10,6 @@ import io.github.erkko68.filament.InternalFilamentApi
 
 actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) : AutoCloseable {
     actual enum class Mode { ORBIT, MAP, FLIGHT }
-    actual enum class Fov { VERTICAL, HORIZONTAL }
     actual enum class Key { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
 
     actual class Builder actual constructor() {

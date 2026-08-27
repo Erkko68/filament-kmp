@@ -25,8 +25,13 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     private var frameScheduledArena: Arena? = null
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
         frameCompletedArena?.close()
+        frameCompletedArena = null
+        if (callback == null) {
+            FilamentC.FilaSwapChain_setFrameCompletedCallback(nativeHandle, NULL, NULL, NULL)
+            return
+        }
         val arena = Arena.ofShared()
         frameCompletedArena = arena
         val cb = FilaSwapChainFrameCompletedCallback.allocate({ _, _ -> callback() }, arena)
@@ -34,8 +39,13 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
         frameScheduledArena?.close()
+        frameScheduledArena = null
+        if (callback == null) {
+            FilamentC.FilaSwapChain_setFrameScheduledCallback(nativeHandle, NULL, NULL, NULL)
+            return
+        }
         val arena = Arena.ofShared()
         frameScheduledArena = arena
         val cb = FilaSwapChainFrameScheduledCallback.allocate({ _ -> callback() }, arena)
