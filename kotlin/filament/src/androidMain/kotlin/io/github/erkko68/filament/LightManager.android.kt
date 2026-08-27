@@ -133,7 +133,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
         actual fun build(engine: Engine, entity: Entity) { nativeBuilder.build(engine.nativeEngine, entity) }
     }
 
-    actual fun getComponentCount(): Int = nativeLightManager.componentCount
+    actual val componentCount: Int get() = nativeLightManager.componentCount
     actual fun hasComponent(entity: Entity): Boolean = nativeLightManager.hasComponent(entity)
     actual fun getInstance(entity: Entity): EntityInstance = nativeLightManager.getInstance(entity)
     actual fun destroy(entity: Entity) { nativeLightManager.destroy(entity) }

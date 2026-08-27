@@ -53,7 +53,7 @@ actual class Manipulator @InternalFilamentApi constructor(internal val nativeHan
 
     actual fun destroy() = FilamentC.FilaManipulator_destroy(nativeHandle)
 
-    actual fun getMode(): Mode = Mode.entries[FilamentC.FilaManipulator_getMode(nativeHandle)]
+    actual val mode: Mode get() = Mode.entries[FilamentC.FilaManipulator_getMode(nativeHandle)]
 
     actual fun setViewport(width: Int, height: Int) = FilamentC.FilaManipulator_setViewport(nativeHandle, width, height)
 
@@ -83,8 +83,8 @@ actual class Manipulator @InternalFilamentApi constructor(internal val nativeHan
     actual fun scroll(x: Int, y: Int, delta: Float) = FilamentC.FilaManipulator_scroll(nativeHandle, x, y, delta)
     actual fun update(deltaTime: Float) = FilamentC.FilaManipulator_update(nativeHandle, deltaTime)
 
-    actual fun getCurrentBookmark(): Bookmark = Bookmark(FilamentC.FilaManipulator_getCurrentBookmark(nativeHandle))
-    actual fun getHomeBookmark(): Bookmark = Bookmark(FilamentC.FilaManipulator_getHomeBookmark(nativeHandle))
+    actual val currentBookmark: Bookmark get() = Bookmark(FilamentC.FilaManipulator_getCurrentBookmark(nativeHandle))
+    actual val homeBookmark: Bookmark get() = Bookmark(FilamentC.FilaManipulator_getHomeBookmark(nativeHandle))
     actual fun jumpToBookmark(bookmark: Bookmark) = FilamentC.FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
 
     actual class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment)

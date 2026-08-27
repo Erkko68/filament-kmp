@@ -276,7 +276,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
     actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
         this@View.nativeView.setLayerEnabled(layer, enabled)
     }
-    actual fun getVisibleLayers(): Int = this@View.nativeView.visibleLayers
+    actual val visibleLayers: Int get() = this@View.nativeView.visibleLayers
 
     actual var isPostProcessingEnabled: Boolean
         get() = this@View.nativeView.isPostProcessingEnabled
@@ -301,7 +301,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
         }
         set(value) { this@View.nativeView.setDynamicResolutionOptions(value.native) }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray {
+    actual val lastDynamicResolutionScale: FloatArray get() {
         val out = FloatArray(2)
         this@View.nativeView.getLastDynamicResolutionScale(out)
         return out
@@ -602,7 +602,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
     }
     actual fun getMaterialGlobal(index: Int): FloatArray = this@View.nativeView.getMaterialGlobal(index, null)
     actual val fogEntity: Int get() = this@View.nativeView.fogEntity
-    actual fun getVisibleRenderableCount(): Int = this@View.nativeView.visibleRenderableCount
+    actual val visibleRenderableCount: Int get() = this@View.nativeView.visibleRenderableCount
     actual fun clearFrameHistory(engine: Engine) { this@View.nativeView.clearFrameHistory(engine.nativeEngine) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {

@@ -12,14 +12,14 @@ import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentInstance @InternalFilamentApi constructor(internal val jsInstance: JSFilamentInstance) {
-    actual fun getRoot(): Int {
+    actual val root: Int get() {
         val jsEntity = jsInstance.getRoot()
         val id = jsEntity.getId().toInt()
         EntityManager.register(id, jsEntity)
         return id
     }
 
-    actual fun getEntities(): IntArray {
+    actual val entities: IntArray get() {
         val vector = jsInstance.getEntities()
         val result = IntArray(vector.size().toInt())
         for (i in 0 until vector.size().toInt()) {
@@ -31,32 +31,32 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         return result
     }
 
-    actual fun getEntityCount(): Int = jsInstance.getEntityCount().toInt()
+    actual val entityCount: Int get() = jsInstance.getEntityCount().toInt()
 
-    actual fun getAnimator(): Animator {
+    actual val animator: Animator get() {
         // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
         return Animator(checkNotNull(jsInstance.getAnimator()) { ANIMATOR_NOT_LOADED })
     }
 
-    actual fun getBoundingBox(): Box {
+    actual val boundingBox: Box get() {
         return Box()
     }
 
-    actual fun getAsset(): FilamentAsset {
+    actual val asset: FilamentAsset get() {
         return FilamentAsset(jsInstance.getAsset())
     }
 
-    actual fun getSkinCount(): Int {
+    actual val skinCount: Int get() {
         return jsInstance.getSkinNames().size().toInt()
     }
 
-    actual fun getSkinNames(): Array<String> {
+    actual val skinNames: List<String> get() {
         val vector = jsInstance.getSkinNames()
         val result = Array(vector.size().toInt()) { "" }
         for (i in 0 until vector.size().toInt()) {
             result[i] = vector.get(i.toDouble()).toString()
         }
-        return result
+        return result.toList()
     }
 
     actual fun attachSkin(skinIndex: Int, target: Int) {
@@ -87,16 +87,16 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         jsInstance.applyMaterialVariant(variantIndex.toDouble())
     }
 
-    actual fun getMaterialInstances(): Array<MaterialInstance> {
+    actual val materialInstances: List<MaterialInstance> get() {
         val vector = jsInstance.getMaterialInstances()
-        return Array(vector.size().toInt()) { i ->
+        return List(vector.size().toInt()) { i ->
             MaterialInstance(vector.get(i.toDouble()))
         }
     }
 
-    actual fun getMaterialVariantNames(): Array<String> {
+    actual val materialVariantNames: List<String> get() {
         val names = jsInstance.getMaterialVariantNames()
-        return Array(names.size) { names[it].toString() }
+        return List(names.size) { names[it].toString() }
     }
 
     actual constructor() : this(emptyJsObject().unsafeCast<JSFilamentInstance>()) {

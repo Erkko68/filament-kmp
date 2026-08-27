@@ -27,7 +27,7 @@ actual class SwapChain @InternalFilamentApi constructor(internal val jsSwapChain
     actual val nativeObject: Long get() = 1L
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
-    actual fun isFrameRateChangeSupported(): Boolean = false
+    actual val isFrameRateChangeSupported: Boolean get() = false
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — display frame rate switching is not supported on web; pacing is browser-managed.")
     actual fun setFrameRate(frameRate: Float) {

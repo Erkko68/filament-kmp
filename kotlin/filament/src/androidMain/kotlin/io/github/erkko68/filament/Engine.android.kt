@@ -165,16 +165,19 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         }
     }
 
-    actual fun isValid(): Boolean = nativeEngine.isValid
+    actual val isValid: Boolean get() = nativeEngine.isValid
     actual override fun close() = destroy()
 
     actual fun destroy() = nativeEngine.destroy()
     actual val backend: Backend get() = Backend.fromAndroid(nativeEngine.backend)
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromAndroid(nativeEngine.supportedFeatureLevel)
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.setActiveFeatureLevel(featureLevel.toAndroid()))
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.activeFeatureLevel)
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = nativeEngine.setAutomaticInstancingEnabled(enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = nativeEngine.isAutomaticInstancingEnabled
+    actual var activeFeatureLevel: FeatureLevel
+        get() = FeatureLevel.fromAndroid(nativeEngine.activeFeatureLevel)
+        set(value) { nativeEngine.setActiveFeatureLevel(value.toAndroid()) }
+
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = nativeEngine.isAutomaticInstancingEnabled
+        set(value) { nativeEngine.setAutomaticInstancingEnabled(value) }
     actual val config: Config get() {
         val config = Config()
         val androidConfig = nativeEngine.config
@@ -197,7 +200,7 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
         config.sharedUboInitialSizeInBytes = androidConfig.sharedUboInitialSizeInBytes
         return config
     }
-    actual fun getMaxStereoscopicEyes(): Long = nativeEngine.maxStereoscopicEyes
+    actual val maxStereoscopicEyes: Long get() = nativeEngine.maxStereoscopicEyes
     
     actual fun isValidRenderer(renderer: Renderer): Boolean = nativeEngine.isValidRenderer(renderer.nativeRenderer)
     actual fun isValidView(view: View): Boolean = nativeEngine.isValidView(view.nativeView)
@@ -259,15 +262,15 @@ actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: 
     actual fun destroyStream(stream: Stream) { nativeEngine.destroyStream(stream.nativeStream) }
     actual fun destroyEntity(entity: Entity) { nativeEngine.destroyEntity(entity) }
 
-    actual fun getTransformManager(): TransformManager = mTransformManager
-    actual fun getLightManager(): LightManager = mLightManager
-    actual fun getRenderableManager(): RenderableManager = mRenderableManager
-    actual fun getEntityManager(): EntityManager = mEntityManager
+    actual val transformManager: TransformManager get() = mTransformManager
+    actual val lightManager: LightManager get() = mLightManager
+    actual val renderableManager: RenderableManager get() = mRenderableManager
+    actual val entityManager: EntityManager get() = mEntityManager
 
     actual fun flushAndWait() = nativeEngine.flushAndWait()
     actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
     actual fun flush() = nativeEngine.flush()
-    actual fun hasUnrecoverableFailure(): Boolean = nativeEngine.hasUnrecoverableFailure()
+    actual val hasUnrecoverableFailure: Boolean get() = nativeEngine.hasUnrecoverableFailure()
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     actual var paused: Boolean
         get() = nativeEngine.isPaused

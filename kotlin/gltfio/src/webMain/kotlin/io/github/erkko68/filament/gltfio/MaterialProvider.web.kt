@@ -23,7 +23,7 @@ actual interface MaterialProvider : AutoCloseable {
         label: String?
     ): Material?
 
-    actual fun getMaterials(): Array<Material>
+    actual val materials: List<Material>
     actual fun needsDummyData(attrib: Int): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
@@ -61,9 +61,9 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         )
     }
 
-    actual override fun getMaterials(): Array<Material> {
+    actual override val materials: List<Material> get() {
         val jsMaterials = jsProvider.getMaterials()
-        return Array(jsMaterials.size) { Material(jsMaterials[it]!!) }
+        return List(jsMaterials.size) { Material(jsMaterials[it]!!) }
     }
 
     actual override fun needsDummyData(attrib: Int): Boolean {

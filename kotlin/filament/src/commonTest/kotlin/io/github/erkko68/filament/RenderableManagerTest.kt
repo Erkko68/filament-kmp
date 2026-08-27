@@ -49,7 +49,7 @@ class RenderableManagerTest : FilamentTestFixture() {
         //     .screenSpaceContactShadows(true)
         //     .build(engine, entity)
 
-        // val rm = engine.getRenderableManager()
+        // val rm = engine.renderableManager
         // assertTrue(rm.hasComponent(entity))
 
         // val inst = rm.getInstance(entity)

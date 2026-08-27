@@ -25,8 +25,8 @@ class GroupLifecycleTest : ComposeTestFixture() {
         composeScene(
             engine, scene,
             whileComposed = {
-                lightEntity = scene.getEntities().single()
-                val tm = engine.getTransformManager()
+                lightEntity = scene.entities.single()
+                val tm = engine.transformManager
                 val lightParent = tm.getParent(tm.getInstance(lightEntity))
                 assertTrue(groupEntity >= 0, "Group should have created a transform entity")
                 assertEquals(groupEntity, lightParent, "child light should be parented to the group")
@@ -49,7 +49,7 @@ class GroupLifecycleTest : ComposeTestFixture() {
         composeScene(
             engine, scene,
             whileComposed = {
-                val tm = engine.getTransformManager()
+                val tm = engine.transformManager
                 val innerParent = tm.getParent(tm.getInstance(innerGroup))
                 val childCountUnderInner = tm.getChildCount(tm.getInstance(innerGroup))
                 assertEquals(outerGroup, innerParent, "inner group should be parented to the outer group")

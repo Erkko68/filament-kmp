@@ -117,34 +117,34 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(FilamentC.FilaMaterial_createInstance(nativeHandle))
     actual fun createInstance(name: String): MaterialInstance = confined { arena -> MaterialInstance(FilamentC.FilaMaterial_createInstanceWithName(nativeHandle, arena.cstr(name))) }
-    actual fun getDefaultInstance(): MaterialInstance = MaterialInstance(FilamentC.FilaMaterial_getDefaultInstance(nativeHandle))
+    actual val defaultInstance: MaterialInstance get() = MaterialInstance(FilamentC.FilaMaterial_getDefaultInstance(nativeHandle))
 
-    actual fun getName(): String = FilamentC.FilaMaterial_getName(nativeHandle).let { if (it.isNullPtr()) "" else it.cString() }
-    actual fun getShading(): Shading = Shading.values()[FilamentC.FilaMaterial_getShading(nativeHandle)]
-    actual fun getInterpolation(): Interpolation = Interpolation.values()[FilamentC.FilaMaterial_getInterpolation(nativeHandle)]
-    actual fun getBlendingMode(): BlendingMode = BlendingMode.values()[FilamentC.FilaMaterial_getBlendingMode(nativeHandle)]
-    actual fun getTransparencyMode(): TransparencyMode = TransparencyMode.values()[FilamentC.FilaMaterial_getTransparencyMode(nativeHandle)]
-    actual fun getRefractionMode(): RefractionMode = RefractionMode.values()[FilamentC.FilaMaterial_getRefractionMode(nativeHandle)]
-    actual fun getRefractionType(): RefractionType = RefractionType.values()[FilamentC.FilaMaterial_getRefractionType(nativeHandle)]
-    actual fun getReflectionMode(): ReflectionMode = ReflectionMode.values()[FilamentC.FilaMaterial_getReflectionMode(nativeHandle)]
-    actual fun getVertexDomain(): VertexDomain = VertexDomain.values()[FilamentC.FilaMaterial_getVertexDomain(nativeHandle)]
-    actual fun getCullingMode(): CullingMode = CullingMode.values()[FilamentC.FilaMaterial_getCullingMode(nativeHandle)]
+    actual val name: String get() = FilamentC.FilaMaterial_getName(nativeHandle).let { if (it.isNullPtr()) "" else it.cString() }
+    actual val shading: Shading get() = Shading.values()[FilamentC.FilaMaterial_getShading(nativeHandle)]
+    actual val interpolation: Interpolation get() = Interpolation.values()[FilamentC.FilaMaterial_getInterpolation(nativeHandle)]
+    actual val blendingMode: BlendingMode get() = BlendingMode.values()[FilamentC.FilaMaterial_getBlendingMode(nativeHandle)]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.values()[FilamentC.FilaMaterial_getTransparencyMode(nativeHandle)]
+    actual val refractionMode: RefractionMode get() = RefractionMode.values()[FilamentC.FilaMaterial_getRefractionMode(nativeHandle)]
+    actual val refractionType: RefractionType get() = RefractionType.values()[FilamentC.FilaMaterial_getRefractionType(nativeHandle)]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.values()[FilamentC.FilaMaterial_getReflectionMode(nativeHandle)]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.values()[FilamentC.FilaMaterial_getVertexDomain(nativeHandle)]
+    actual val cullingMode: CullingMode get() = CullingMode.values()[FilamentC.FilaMaterial_getCullingMode(nativeHandle)]
 
-    actual fun isColorWriteEnabled(): Boolean = FilamentC.FilaMaterial_isColorWriteEnabled(nativeHandle)
-    actual fun isDepthWriteEnabled(): Boolean = FilamentC.FilaMaterial_isDepthWriteEnabled(nativeHandle)
-    actual fun isDepthCullingEnabled(): Boolean = FilamentC.FilaMaterial_isDepthCullingEnabled(nativeHandle)
-    actual fun isDoubleSided(): Boolean = FilamentC.FilaMaterial_isDoubleSided(nativeHandle)
-    actual fun isAlphaToCoverageEnabled(): Boolean = FilamentC.FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
+    actual val isColorWriteEnabled: Boolean get() = FilamentC.FilaMaterial_isColorWriteEnabled(nativeHandle)
+    actual val isDepthWriteEnabled: Boolean get() = FilamentC.FilaMaterial_isDepthWriteEnabled(nativeHandle)
+    actual val isDepthCullingEnabled: Boolean get() = FilamentC.FilaMaterial_isDepthCullingEnabled(nativeHandle)
+    actual val isDoubleSided: Boolean get() = FilamentC.FilaMaterial_isDoubleSided(nativeHandle)
+    actual val isAlphaToCoverageEnabled: Boolean get() = FilamentC.FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
 
-    actual fun getMaskThreshold(): Float = FilamentC.FilaMaterial_getMaskThreshold(nativeHandle)
-    actual fun getSpecularAntiAliasingVariance(): Float = FilamentC.FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
-    actual fun getSpecularAntiAliasingThreshold(): Float = FilamentC.FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
-    actual fun getFeatureLevel(): Engine.FeatureLevel = Engine.FeatureLevel.entries[FilamentC.FilaMaterial_getFeatureLevel(nativeHandle)]
+    actual val maskThreshold: Float get() = FilamentC.FilaMaterial_getMaskThreshold(nativeHandle)
+    actual val specularAntiAliasingVariance: Float get() = FilamentC.FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
+    actual val specularAntiAliasingThreshold: Float get() = FilamentC.FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
+    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[FilamentC.FilaMaterial_getFeatureLevel(nativeHandle)]
 
-    actual fun getParameterCount(): Int = FilamentC.FilaMaterial_getParameterCount(nativeHandle)
+    actual val parameterCount: Int get() = FilamentC.FilaMaterial_getParameterCount(nativeHandle)
 
-    actual fun getParameters(): List<Parameter> {
-        val count = getParameterCount()
+    actual val parameters: List<Parameter> get() {
+        val count = parameterCount
         if (count == 0) return emptyList()
         return confined { arena ->
             val arr = FilaMaterialParameterInfo.allocateArray(count.toLong(), arena)
@@ -162,7 +162,7 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
         }
     }
 
-    actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
         val bitset = FilamentC.FilaMaterial_getRequiredAttributes(nativeHandle)
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
         VertexBuffer.VertexAttribute.entries.forEach { attr ->

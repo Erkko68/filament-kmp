@@ -16,7 +16,7 @@ import io.github.erkko68.filament.web.Entity as JSEntity
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager @InternalFilamentApi constructor(internal val jsLightManager: JSLightManager) {
-    actual fun getComponentCount(): Int = jsLightManager.getComponentCount().toInt()
+    actual val componentCount: Int get() = jsLightManager.getComponentCount().toInt()
 
     actual fun hasComponent(entity: Entity): Boolean =
         jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))

@@ -236,7 +236,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         val mask = (1 shl layer).toUByte()
         FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0u)
     }
-    actual fun getVisibleLayers(): Int = FilaView_getVisibleLayers(nativeHandle).toInt()
+    actual val visibleLayers: Int get() = FilaView_getVisibleLayers(nativeHandle).toInt()
 
     actual var isPostProcessingEnabled: Boolean
         get() = FilaView_isPostProcessingEnabled(nativeHandle)
@@ -274,7 +274,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
             }
         }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray = memScoped {
+    actual val lastDynamicResolutionScale: FloatArray get() = memScoped {
         val out = allocArray<FloatVar>(2)
         FilaView_getLastDynamicResolutionScale(nativeHandle, out)
         floatArrayOf(out[0], out[1])
@@ -726,7 +726,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         return result
     }
     actual val fogEntity: Int get() = FilaView_getFogEntity(nativeHandle).toInt()
-    actual fun getVisibleRenderableCount(): Int = FilaView_getVisibleRenderableCount(nativeHandle)
+    actual val visibleRenderableCount: Int get() = FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {

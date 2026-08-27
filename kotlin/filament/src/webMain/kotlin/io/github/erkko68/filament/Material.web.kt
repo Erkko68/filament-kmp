@@ -31,15 +31,15 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
         return MaterialInstance(jsMaterial.createNamedInstance(name))
     }
 
-    actual fun getDefaultInstance(): MaterialInstance {
+    actual val defaultInstance: MaterialInstance get() {
         return MaterialInstance(jsMaterial.getDefaultInstance())
     }
 
-    actual fun getName(): String {
+    actual val name: String get() {
         return jsMaterial.getName()
     }
 
-    actual fun getShading(): Shading = when (jsMaterial.getShading()) {
+    actual val shading: Shading get() = when (jsMaterial.getShading()) {
         JsShading.UNLIT -> Shading.UNLIT
         JsShading.SUBSURFACE -> Shading.SUBSURFACE
         JsShading.CLOTH -> Shading.CLOTH
@@ -47,13 +47,13 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
         else -> Shading.LIT
     }
 
-    actual fun getInterpolation(): Interpolation = when (jsMaterial.getInterpolation()) {
+    actual val interpolation: Interpolation get() = when (jsMaterial.getInterpolation()) {
         JsInterpolation.FLAT -> Interpolation.FLAT
         else -> Interpolation.SMOOTH
     }
 
     // BlendingMode::CUSTOM has no common-API counterpart; it reports as TRANSPARENT.
-    actual fun getBlendingMode(): BlendingMode = when (jsMaterial.getBlendingMode()) {
+    actual val blendingMode: BlendingMode get() = when (jsMaterial.getBlendingMode()) {
         JsBlendingMode.TRANSPARENT, JsBlendingMode.CUSTOM -> BlendingMode.TRANSPARENT
         JsBlendingMode.ADD -> BlendingMode.ADD
         JsBlendingMode.MASKED -> BlendingMode.MASKED
@@ -63,69 +63,69 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
         else -> BlendingMode.OPAQUE
     }
 
-    actual fun getTransparencyMode(): TransparencyMode = when (jsMaterial.getTransparencyMode()) {
+    actual val transparencyMode: TransparencyMode get() = when (jsMaterial.getTransparencyMode()) {
         JsTransparencyMode.TWO_PASSES_ONE_SIDE -> TransparencyMode.TWO_PASSES_ONE_SIDE
         JsTransparencyMode.TWO_PASSES_TWO_SIDES -> TransparencyMode.TWO_PASSES_TWO_SIDES
         else -> TransparencyMode.DEFAULT
     }
 
-    actual fun getRefractionMode(): RefractionMode = when (jsMaterial.getRefractionMode()) {
+    actual val refractionMode: RefractionMode get() = when (jsMaterial.getRefractionMode()) {
         JsRefractionMode.CUBEMAP -> RefractionMode.CUBEMAP
         JsRefractionMode.SCREEN_SPACE -> RefractionMode.SCREEN_SPACE
         else -> RefractionMode.NONE
     }
 
-    actual fun getRefractionType(): RefractionType = when (jsMaterial.getRefractionType()) {
+    actual val refractionType: RefractionType get() = when (jsMaterial.getRefractionType()) {
         JsRefractionType.THIN -> RefractionType.THIN
         else -> RefractionType.SOLID
     }
 
-    actual fun getReflectionMode(): ReflectionMode = when (jsMaterial.getReflectionMode()) {
+    actual val reflectionMode: ReflectionMode get() = when (jsMaterial.getReflectionMode()) {
         JsReflectionMode.SCREEN_SPACE -> ReflectionMode.SCREEN_SPACE
         else -> ReflectionMode.DEFAULT
     }
 
-    actual fun getVertexDomain(): VertexDomain = when (jsMaterial.getVertexDomain()) {
+    actual val vertexDomain: VertexDomain get() = when (jsMaterial.getVertexDomain()) {
         JsVertexDomain.WORLD -> VertexDomain.WORLD
         JsVertexDomain.VIEW -> VertexDomain.VIEW
         JsVertexDomain.DEVICE -> VertexDomain.DEVICE
         else -> VertexDomain.OBJECT
     }
 
-    actual fun getCullingMode(): CullingMode = when (jsMaterial.getCullingMode()) {
+    actual val cullingMode: CullingMode get() = when (jsMaterial.getCullingMode()) {
         JsCullingMode.NONE -> CullingMode.NONE
         JsCullingMode.FRONT -> CullingMode.FRONT
         JsCullingMode.FRONT_AND_BACK -> CullingMode.FRONT_AND_BACK
         else -> CullingMode.BACK
     }
 
-    actual fun isColorWriteEnabled(): Boolean = jsMaterial.isColorWriteEnabled()
+    actual val isColorWriteEnabled: Boolean get() = jsMaterial.isColorWriteEnabled()
 
-    actual fun isDepthWriteEnabled(): Boolean = jsMaterial.isDepthWriteEnabled()
+    actual val isDepthWriteEnabled: Boolean get() = jsMaterial.isDepthWriteEnabled()
 
-    actual fun isDepthCullingEnabled(): Boolean = jsMaterial.isDepthCullingEnabled()
+    actual val isDepthCullingEnabled: Boolean get() = jsMaterial.isDepthCullingEnabled()
 
-    actual fun isDoubleSided(): Boolean = jsMaterial.isDoubleSided()
+    actual val isDoubleSided: Boolean get() = jsMaterial.isDoubleSided()
 
-    actual fun isAlphaToCoverageEnabled(): Boolean = jsMaterial.isAlphaToCoverageEnabled()
+    actual val isAlphaToCoverageEnabled: Boolean get() = jsMaterial.isAlphaToCoverageEnabled()
 
-    actual fun getMaskThreshold(): Float = jsMaterial.getMaskThreshold().toFloat()
+    actual val maskThreshold: Float get() = jsMaterial.getMaskThreshold().toFloat()
 
-    actual fun getSpecularAntiAliasingVariance(): Float =
+    actual val specularAntiAliasingVariance: Float get() =
         jsMaterial.getSpecularAntiAliasingVariance().toFloat()
 
-    actual fun getSpecularAntiAliasingThreshold(): Float =
+    actual val specularAntiAliasingThreshold: Float get() =
         jsMaterial.getSpecularAntiAliasingThreshold().toFloat()
 
-    actual fun getFeatureLevel(): Engine.FeatureLevel = when (jsMaterial.getFeatureLevel()) {
+    actual val featureLevel: Engine.FeatureLevel get() = when (jsMaterial.getFeatureLevel()) {
         JsFeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
         JsFeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
         else -> Engine.FeatureLevel.FEATURE_LEVEL_1
     }
 
-    actual fun getParameterCount(): Int = jsMaterial.getParameterCount().toInt()
+    actual val parameterCount: Int get() = jsMaterial.getParameterCount().toInt()
 
-    actual fun getParameters(): List<Parameter> {
+    actual val parameters: List<Parameter> get() {
         val params = jsMaterial.getParameters()
         return List(params.size) { i ->
             val p = params[i]!!
@@ -133,7 +133,7 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
         }
     }
 
-    actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
         val bitset = jsMaterial.getRequiredAttributes().toInt()
         return VertexBuffer.VertexAttribute.entries
             .filterTo(mutableSetOf()) { (bitset and (1 shl it.ordinal)) != 0 }

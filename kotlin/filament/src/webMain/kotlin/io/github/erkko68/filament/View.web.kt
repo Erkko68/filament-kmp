@@ -89,7 +89,7 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         jsView.setLayerEnabled(layer.toDouble(), enabled)
     }
 
-    actual fun getVisibleLayers(): Int = jsView.getVisibleLayers().toInt()
+    actual val visibleLayers: Int get() = jsView.getVisibleLayers().toInt()
 
     actual var isPostProcessingEnabled: Boolean
         get() = jsView.isPostProcessingEnabled()
@@ -576,7 +576,7 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
     actual val fogEntity: Int
         get() = jsView.getFogEntity().getId().toInt()
 
-    actual fun getVisibleRenderableCount(): Int = jsView.getVisibleRenderableCount().toInt()
+    actual val visibleRenderableCount: Int get() = jsView.getVisibleRenderableCount().toInt()
 
     actual fun clearFrameHistory(engine: Engine) {
         jsView.clearFrameHistory(engine.jsEngine)
@@ -595,7 +595,7 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             if (value != null) jsView.setColorGrading(value.jsColorGrading)
         }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray =
+    actual val lastDynamicResolutionScale: FloatArray get() =
         jsView.getLastDynamicResolutionScale()?.toFloatArray(2) ?: floatArrayOf(1.0f, 1.0f)
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {

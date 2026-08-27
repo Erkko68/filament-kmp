@@ -19,7 +19,7 @@ import io.github.erkko68.filament.nativeObject
 actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): MaterialInstance?
     actual fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): Material?
-    actual fun getMaterials(): Array<Material>
+    actual val materials: List<Material>
     actual fun needsDummyData(attrib: Int): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
@@ -56,13 +56,13 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
             handle.takeUnless { it.isNullPtr() }?.let { Material(it) }
         }
 
-    actual override fun getMaterials(): Array<Material> {
+    actual override val materials: List<Material> get() {
         val count = FilamentC.FilaMaterialProvider_getMaterialsCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         return confined { a ->
             val out = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaMaterialProvider_getMaterials(nativeHandle, out)
-            Array(count) { Material(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
+            List(count) { Material(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
         }
     }
 

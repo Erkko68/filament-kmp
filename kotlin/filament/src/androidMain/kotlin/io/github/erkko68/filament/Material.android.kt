@@ -108,29 +108,29 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance())
     actual fun createInstance(name: String): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance(name))
-    actual fun getDefaultInstance(): MaterialInstance = mDefaultInstance
+    actual val defaultInstance: MaterialInstance get() = mDefaultInstance
 
-    actual fun getName(): String = nativeMaterial.name
-    actual fun getShading(): Shading = Shading.values()[nativeMaterial.shading.ordinal]
-    actual fun getInterpolation(): Interpolation = Interpolation.values()[nativeMaterial.interpolation.ordinal]
-    actual fun getBlendingMode(): BlendingMode = BlendingMode.values()[nativeMaterial.blendingMode.ordinal]
-    actual fun getTransparencyMode(): TransparencyMode = TransparencyMode.values()[nativeMaterial.transparencyMode.ordinal]
-    actual fun getRefractionMode(): RefractionMode = RefractionMode.values()[nativeMaterial.refractionMode.ordinal]
-    actual fun getRefractionType(): RefractionType = RefractionType.values()[nativeMaterial.refractionType.ordinal]
-    actual fun getReflectionMode(): ReflectionMode = ReflectionMode.values()[nativeMaterial.reflectionMode.ordinal]
-    actual fun getVertexDomain(): VertexDomain = VertexDomain.values()[nativeMaterial.vertexDomain.ordinal]
-    actual fun getCullingMode(): CullingMode = CullingMode.values()[nativeMaterial.cullingMode.ordinal]
-    actual fun isColorWriteEnabled(): Boolean = nativeMaterial.isColorWriteEnabled
-    actual fun isDepthWriteEnabled(): Boolean = nativeMaterial.isDepthWriteEnabled
-    actual fun isDepthCullingEnabled(): Boolean = nativeMaterial.isDepthCullingEnabled
-    actual fun isDoubleSided(): Boolean = nativeMaterial.isDoubleSided
-    actual fun isAlphaToCoverageEnabled(): Boolean = nativeMaterial.isAlphaToCoverageEnabled
-    actual fun getMaskThreshold(): Float = nativeMaterial.maskThreshold
-    actual fun getSpecularAntiAliasingVariance(): Float = nativeMaterial.specularAntiAliasingVariance
-    actual fun getSpecularAntiAliasingThreshold(): Float = nativeMaterial.specularAntiAliasingThreshold
-    actual fun getFeatureLevel(): Engine.FeatureLevel = Engine.FeatureLevel.entries[nativeMaterial.featureLevel.ordinal]
-    actual fun getParameterCount(): Int = nativeMaterial.parameterCount
-    actual fun getParameters(): List<Parameter> = nativeMaterial.parameters.map { p ->
+    actual val name: String get() = nativeMaterial.name
+    actual val shading: Shading get() = Shading.values()[nativeMaterial.shading.ordinal]
+    actual val interpolation: Interpolation get() = Interpolation.values()[nativeMaterial.interpolation.ordinal]
+    actual val blendingMode: BlendingMode get() = BlendingMode.values()[nativeMaterial.blendingMode.ordinal]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.values()[nativeMaterial.transparencyMode.ordinal]
+    actual val refractionMode: RefractionMode get() = RefractionMode.values()[nativeMaterial.refractionMode.ordinal]
+    actual val refractionType: RefractionType get() = RefractionType.values()[nativeMaterial.refractionType.ordinal]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.values()[nativeMaterial.reflectionMode.ordinal]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.values()[nativeMaterial.vertexDomain.ordinal]
+    actual val cullingMode: CullingMode get() = CullingMode.values()[nativeMaterial.cullingMode.ordinal]
+    actual val isColorWriteEnabled: Boolean get() = nativeMaterial.isColorWriteEnabled
+    actual val isDepthWriteEnabled: Boolean get() = nativeMaterial.isDepthWriteEnabled
+    actual val isDepthCullingEnabled: Boolean get() = nativeMaterial.isDepthCullingEnabled
+    actual val isDoubleSided: Boolean get() = nativeMaterial.isDoubleSided
+    actual val isAlphaToCoverageEnabled: Boolean get() = nativeMaterial.isAlphaToCoverageEnabled
+    actual val maskThreshold: Float get() = nativeMaterial.maskThreshold
+    actual val specularAntiAliasingVariance: Float get() = nativeMaterial.specularAntiAliasingVariance
+    actual val specularAntiAliasingThreshold: Float get() = nativeMaterial.specularAntiAliasingThreshold
+    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[nativeMaterial.featureLevel.ordinal]
+    actual val parameterCount: Int get() = nativeMaterial.parameterCount
+    actual val parameters: List<Parameter> get() = nativeMaterial.parameters.map { p ->
         Parameter(
             p.name,
             Parameter.Type.values()[p.type.ordinal],
@@ -139,7 +139,7 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
         )
     }
 
-    actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
         val attrSet = nativeMaterial.requiredAttributes
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
         // We iterate over our KMP enum entries and check if they exist in the Java set

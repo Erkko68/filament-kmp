@@ -128,7 +128,7 @@ fun FilamentSceneScope.GltfInstance(
                 // primary instance, but only for one GltfInstance — aliasing it under several
                 // composables would leave them fighting over one transform/animator.
                 asset.primaryInstanceClaimed = true
-                asset.filamentAsset.getInstance()
+                asset.filamentAsset.instance
             } else {
                 logWarn(
                     "GltfInstance could not create an additional instance for this asset " +
@@ -146,14 +146,14 @@ fun FilamentSceneScope.GltfInstance(
     val createdFired = remember(instance) { booleanArrayOf(false) }
     DisposableEffect(instance, effectiveVisible) {
         if (effectiveVisible) {
-            scene.addEntities(instance.getEntities())
+            scene.addEntities(instance.entities)
             if (!createdFired[0]) {
                 createdFired[0] = true
                 GltfInstanceScopeImpl(instance, asset.filamentAsset, engine).onCreate()
             }
         }
         onDispose {
-            if (effectiveVisible) scene.removeEntities(instance.getEntities())
+            if (effectiveVisible) scene.removeEntities(instance.entities)
         }
     }
 
@@ -161,8 +161,8 @@ fun FilamentSceneScope.GltfInstance(
     // would re-run on every recomposition, but the transform math and JNI call are
     // wasted if nothing moved.
     DisposableEffect(instance, position, rotation, scale, pivot) {
-        val tm = engine.getTransformManager()
-        val root = instance.getRoot()
+        val tm = engine.transformManager
+        val root = instance.root
         if (tm.hasComponent(root)) {
             tm.setTransform(tm.getInstance(root), transformMatrix(position, rotation, scale, pivot))
         }
@@ -173,8 +173,8 @@ fun FilamentSceneScope.GltfInstance(
     // transform component on the root, so no need to create one here.
     DisposableEffect(instance, parent) {
         if (parent != null) {
-            val tm = engine.getTransformManager()
-            val root = instance.getRoot()
+            val tm = engine.transformManager
+            val root = instance.root
             if (tm.hasComponent(root)) {
                 tm.setParent(tm.getInstance(root), tm.getInstance(parent))
             }
@@ -185,8 +185,8 @@ fun FilamentSceneScope.GltfInstance(
     // Manual single-shot animation. Skipped when a hoisted AnimationState is driving playback.
     DisposableEffect(instance, animationIndex, animationTime, animationState) {
         if (animationState == null && animationIndex != null) {
-            val animator = instance.getAnimator()
-            if (animationIndex >= 0 && animationIndex < animator.getAnimationCount()) {
+            val animator = instance.animator
+            if (animationIndex >= 0 && animationIndex < animator.animationCount) {
                 animator.applyAnimation(animationIndex, animationTime)
                 animator.updateBoneMatrices()
             }
@@ -196,7 +196,7 @@ fun FilamentSceneScope.GltfInstance(
 
     // Auto-advancing, cross-fading playback driven by the hoisted AnimationState.
     OnFrame { frame ->
-        animationState?.apply(instance.getAnimator(), frame.deltaSeconds)
+        animationState?.apply(instance.animator, frame.deltaSeconds)
     }
 
     // Vertex morph-target weights, applied to every renderable that has morph targets.
@@ -211,8 +211,8 @@ fun FilamentSceneScope.GltfInstance(
     SideEffect {
         if (morphWeights != null && !morphWeights.contentEquals(lastMorphWeights[0])) {
             lastMorphWeights[0] = morphWeights.copyOf()
-            val rm = engine.getRenderableManager()
-            for (entity in instance.getEntities()) {
+            val rm = engine.renderableManager
+            for (entity in instance.entities) {
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
                 if (rm.getMorphTargetCount(ri) > 0) rm.setMorphWeights(ri, morphWeights, 0)
@@ -223,8 +223,8 @@ fun FilamentSceneScope.GltfInstance(
     // Shadow-flag overrides on every renderable. null keeps the asset's authored values.
     DisposableEffect(instance, castShadows, receiveShadows) {
         if (castShadows != null || receiveShadows != null) {
-            val rm = engine.getRenderableManager()
-            for (entity in instance.getEntities()) {
+            val rm = engine.renderableManager
+            for (entity in instance.entities) {
                 if (!rm.hasComponent(entity)) continue
                 val ri = rm.getInstance(entity)
                 if (castShadows != null) rm.setCastShadows(ri, castShadows)

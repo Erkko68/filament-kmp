@@ -18,7 +18,7 @@ actual class Engine @InternalFilamentApi constructor(
     private val ownsCanvas: Boolean = false,
 ) : AutoCloseable {
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns true unconditionally — filament.js binds no engine-level validity check, only the isValidX family for resources.")
-    actual fun isValid(): Boolean {
+    actual val isValid: Boolean get() {
         return true
     }
 
@@ -39,16 +39,13 @@ actual class Engine @InternalFilamentApi constructor(
 
     actual val supportedFeatureLevel: FeatureLevel get() = fromJsFeatureLevel(jsEngine.getSupportedFeatureLevel())
 
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel =
-        fromJsFeatureLevel(jsEngine.setActiveFeatureLevel(toJsFeatureLevel(featureLevel)))
+    actual var activeFeatureLevel: FeatureLevel
+        get() = fromJsFeatureLevel(jsEngine.getActiveFeatureLevel())
+        set(value) { jsEngine.setActiveFeatureLevel(toJsFeatureLevel(value)) }
 
-    actual fun getActiveFeatureLevel(): FeatureLevel = fromJsFeatureLevel(jsEngine.getActiveFeatureLevel())
-
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) {
-        jsEngine.setAutomaticInstancingEnabled(enable)
-    }
-
-    actual fun isAutomaticInstancingEnabled(): Boolean = jsEngine.isAutomaticInstancingEnabled()
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = jsEngine.isAutomaticInstancingEnabled()
+        set(value) { jsEngine.setAutomaticInstancingEnabled(value) }
 
     actual val config: Config get() {
         // The JS binding's getConfig() returns a JS object with the same shape
@@ -75,7 +72,7 @@ actual class Engine @InternalFilamentApi constructor(
         }
     }
 
-    actual fun getMaxStereoscopicEyes(): Long {
+    actual val maxStereoscopicEyes: Long get() {
         return JSEngine.getMaxStereoscopicEyes().toLong()
     }
 
@@ -231,19 +228,19 @@ actual class Engine @InternalFilamentApi constructor(
         jsEngine.destroyEntity(EntityManager.jsEntityOf(entity))
     }
 
-    actual fun getTransformManager(): TransformManager {
+    actual val transformManager: TransformManager get() {
         return TransformManager(jsEngine.getTransformManager())
     }
 
-    actual fun getLightManager(): LightManager {
+    actual val lightManager: LightManager get() {
         return LightManager(jsEngine.getLightManager())
     }
 
-    actual fun getRenderableManager(): RenderableManager {
+    actual val renderableManager: RenderableManager get() {
         return RenderableManager(jsEngine.getRenderableManager())
     }
 
-    actual fun getEntityManager(): EntityManager {
+    actual val entityManager: EntityManager get() {
         return EntityManager(JSEntityManager.get())
     }
 
@@ -261,7 +258,7 @@ actual class Engine @InternalFilamentApi constructor(
         jsEngine.flush()
     }
 
-    actual fun hasUnrecoverableFailure(): Boolean = jsEngine.hasUnrecoverableFailure()
+    actual val hasUnrecoverableFailure: Boolean get() = jsEngine.hasUnrecoverableFailure()
 
     // Engine::setPaused panics on single-threaded builds ("Pause is meant for multi-threaded
     // platforms"), so it stays unbound on web — track locally for the getter/setter round-trip.
@@ -362,7 +359,7 @@ actual class Engine @InternalFilamentApi constructor(
             featureLevel?.let {
                 // Builder::featureLevel takes the min of the request and what the backend
                 // supports; setActiveFeatureLevel throws instead, so clamp first.
-                engine.setActiveFeatureLevel(minOf(it, engine.supportedFeatureLevel))
+                engine.activeFeatureLevel = minOf(it, engine.supportedFeatureLevel)
             }
             return engine
         }

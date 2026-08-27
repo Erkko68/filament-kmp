@@ -398,7 +398,7 @@ expect class LightManager {
      * Check with EntityManager.isAlive() before use if needed.
      * @return Number of light components
      */
-    fun getComponentCount(): Int
+    val componentCount: Int
 
     /**
      * Returns whether a particular entity has a light component.

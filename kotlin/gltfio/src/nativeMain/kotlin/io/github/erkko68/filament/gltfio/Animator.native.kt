@@ -23,7 +23,7 @@ actual class Animator @InternalFilamentApi constructor(internal var nativeHandle
         FilaAnimator_resetBoneMatrices(nativeHandle)
     }
 
-    actual fun getAnimationCount(): Int = FilaAnimator_getAnimationCount(nativeHandle).toInt()
+    actual val animationCount: Int get() = FilaAnimator_getAnimationCount(nativeHandle).toInt()
 
     actual fun getAnimationDuration(index: Int): Float = FilaAnimator_getAnimationDuration(nativeHandle, index.toULong())
 

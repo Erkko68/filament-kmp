@@ -193,9 +193,9 @@ actual class Texture @InternalFilamentApi constructor(internal var nativeHandle:
     actual fun getWidth(level: Int): Int = FilamentC.FilaTexture_getWidth(nativeHandle, level.toLong()).toInt()
     actual fun getHeight(level: Int): Int = FilamentC.FilaTexture_getHeight(nativeHandle, level.toLong()).toInt()
     actual fun getDepth(level: Int): Int = FilamentC.FilaTexture_getDepth(nativeHandle, level.toLong()).toInt()
-    actual fun getLevels(): Int = FilamentC.FilaTexture_getLevels(nativeHandle).toInt()
-    actual fun getTarget(): Sampler = Sampler.fromNative(FilamentC.FilaTexture_getTarget(nativeHandle))
-    actual fun getFormat(): InternalFormat = InternalFormat.fromNative(FilamentC.FilaTexture_getFormat(nativeHandle))
+    actual val levels: Int get() = FilamentC.FilaTexture_getLevels(nativeHandle).toInt()
+    actual val target: Sampler get() = Sampler.fromNative(FilamentC.FilaTexture_getTarget(nativeHandle))
+    actual val format: InternalFormat get() = InternalFormat.fromNative(FilamentC.FilaTexture_getFormat(nativeHandle))
 
     actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
         setImage(engine, level, 0, 0, 0, getWidth(level), getHeight(level), getDepth(level), descriptor)

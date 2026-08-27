@@ -13,16 +13,16 @@ class AnimatorTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val resourceLoader = ResourceLoader(engine)
         resourceLoader.loadResources(asset)
 
-        val animator = asset.getInstance().getAnimator()
+        val animator = asset.instance.animator
         // Fox ships with multiple animation tracks (Survey / Walk / Run).
-        assertTrue(animator.getAnimationCount() > 1)
+        assertTrue(animator.animationCount > 1)
 
         animator.applyAnimation(0, 0.1f)
         animator.applyCrossFade(1, 0.1f, 0.5f)
@@ -40,15 +40,15 @@ class AnimatorTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val resourceLoader = ResourceLoader(engine)
         resourceLoader.loadResources(asset)
 
-        val animator = asset.getInstance().getAnimator()
-        val animCount = animator.getAnimationCount()
+        val animator = asset.instance.animator
+        val animCount = animator.animationCount
         // BoxAnimated ships with at least one animation track.
         assertTrue(animCount > 0)
 
@@ -79,7 +79,7 @@ class AnimatorTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -87,10 +87,10 @@ class AnimatorTest : GltfioTestFixture() {
         val resourceLoader = ResourceLoader(engine)
         resourceLoader.loadResources(asset)
 
-        val animator = asset.getInstance().getAnimator()
+        val animator = asset.instance.animator
         assertNotNull(animator)
 
-        val animCount = animator.getAnimationCount()
+        val animCount = animator.animationCount
         assertTrue(animCount >= 0)
 
         for (i in 0 until animCount) {
@@ -110,7 +110,7 @@ class AnimatorTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -118,8 +118,8 @@ class AnimatorTest : GltfioTestFixture() {
         val resourceLoader = ResourceLoader(engine)
         resourceLoader.loadResources(asset)
 
-        val animator = asset.getInstance().getAnimator()
-        val animCount = animator.getAnimationCount()
+        val animator = asset.instance.animator
+        val animCount = animator.animationCount
 
         if (animCount > 0) {
             val duration = animator.getAnimationDuration(0)

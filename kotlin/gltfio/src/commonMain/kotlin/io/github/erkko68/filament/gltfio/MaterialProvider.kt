@@ -29,7 +29,7 @@ expect interface MaterialProvider : AutoCloseable {
     fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String? = null): io.github.erkko68.filament.Material?
 
     /** Gets the provider's cache of compiled materials (weak references). */
-    fun getMaterials(): Array<io.github.erkko68.filament.Material>
+    val materials: List<io.github.erkko68.filament.Material>
 
     /**
      * Returns true if the given vertex attribute must be present. Some providers (e.g.
@@ -70,7 +70,7 @@ expect class UbershaderProvider : MaterialProvider {
 
     override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
     override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
-    override fun getMaterials(): Array<io.github.erkko68.filament.Material>
+    override val materials: List<io.github.erkko68.filament.Material>
     override fun needsDummyData(attrib: Int): Boolean
     override fun destroyMaterials()
     override fun destroy()

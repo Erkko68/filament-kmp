@@ -51,33 +51,33 @@ class EngineTest {
     fun testEngineLifecycleAndProperties() {
         Filament.init()
         val engine = Engine.create(Engine.Backend.NOOP)
-        assertTrue(engine.isValid())
+        assertTrue(engine.isValid)
         
         // Assert backend is NOOP (or fallback, but since we requested NOOP and JVM supports it, it should be NOOP)
         assertNotNull(engine.backend)
 
-        val activeFl = engine.getActiveFeatureLevel()
+        val activeFl = engine.activeFeatureLevel
         val supportedFl = engine.supportedFeatureLevel
         assertNotNull(activeFl)
         assertNotNull(supportedFl)
         
-        engine.setActiveFeatureLevel(supportedFl)
+        engine.activeFeatureLevel = supportedFl
         
-        engine.setAutomaticInstancingEnabled(true)
-        assertTrue(engine.isAutomaticInstancingEnabled())
-        engine.setAutomaticInstancingEnabled(false)
-        assertFalse(engine.isAutomaticInstancingEnabled())
+        engine.isAutomaticInstancingEnabled = true
+        assertTrue(engine.isAutomaticInstancingEnabled)
+        engine.isAutomaticInstancingEnabled = false
+        assertFalse(engine.isAutomaticInstancingEnabled)
         
         val cfg = engine.config
         assertNotNull(cfg)
         
-        assertTrue(engine.getMaxStereoscopicEyes() >= 1)
+        assertTrue(engine.maxStereoscopicEyes >= 1)
         
         // Managers
-        assertNotNull(engine.getTransformManager())
-        assertNotNull(engine.getLightManager())
-        assertNotNull(engine.getRenderableManager())
-        assertNotNull(engine.getEntityManager())
+        assertNotNull(engine.transformManager)
+        assertNotNull(engine.lightManager)
+        assertNotNull(engine.renderableManager)
+        assertNotNull(engine.entityManager)
         
         // Flush & wait
         engine.flush()
@@ -85,7 +85,7 @@ class EngineTest {
         engine.flushAndWait(100L)
 
         // A healthy engine reports no unrecoverable (device-lost) failure
-        assertFalse(engine.hasUnrecoverableFailure())
+        assertFalse(engine.hasUnrecoverableFailure)
 
         // Paused state
         assertFalse(engine.paused)
@@ -153,7 +153,7 @@ class EngineTest {
                     .toneMapper(ToneMapper.Linear())
             )
             .build()
-        assertTrue(engine.isValid())
+        assertTrue(engine.isValid)
         engine.destroy()
     }
 }

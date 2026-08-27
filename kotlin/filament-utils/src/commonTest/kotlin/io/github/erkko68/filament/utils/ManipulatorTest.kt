@@ -23,7 +23,7 @@ class ManipulatorTest : UtilsTestFixture() {
     @Test
     fun testOrbitModeIsReported() {
         val m = buildOrbitManipulator()
-        assertEquals(Manipulator.Mode.ORBIT, m.getMode())
+        assertEquals(Manipulator.Mode.ORBIT, m.mode)
         m.destroy()
     }
 
@@ -34,7 +34,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .mapExtent(100f, 100f)
             .mapMinDistance(1f)
             .build(Manipulator.Mode.MAP)
-        assertEquals(Manipulator.Mode.MAP, m.getMode())
+        assertEquals(Manipulator.Mode.MAP, m.mode)
         m.destroy()
     }
 
@@ -49,7 +49,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .flightPanSpeed(0.01f, 0.01f)
             .flightMoveDamping(0.5f)
             .build(Manipulator.Mode.FLIGHT)
-        assertEquals(Manipulator.Mode.FLIGHT, m.getMode())
+        assertEquals(Manipulator.Mode.FLIGHT, m.mode)
         m.destroy()
     }
 
@@ -139,9 +139,9 @@ class ManipulatorTest : UtilsTestFixture() {
     @Test
     fun testBookmarks() {
         val m = buildOrbitManipulator()
-        val home = m.getHomeBookmark()
+        val home = m.homeBookmark
         assertNotNull(home)
-        val current = m.getCurrentBookmark()
+        val current = m.currentBookmark
         assertNotNull(current)
         m.jumpToBookmark(home)
         m.jumpToBookmark(current)
@@ -180,7 +180,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .groundPlane(0f, 1f, 0f, 0f)
             .panning(false)
             .build(Manipulator.Mode.ORBIT)
-        assertEquals(Manipulator.Mode.ORBIT, m.getMode())
+        assertEquals(Manipulator.Mode.ORBIT, m.mode)
         m.destroy()
     }
 }

@@ -238,6 +238,7 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun getConfig ()Lio/github/erkko68/filament/Engine$Config;
 	public final fun getEntityManager ()Lio/github/erkko68/filament/EntityManager;
 	public final fun getFeatureFlag (Ljava/lang/String;)Z
+	public final fun getHasUnrecoverableFailure ()Z
 	public final fun getLightManager ()Lio/github/erkko68/filament/LightManager;
 	public final fun getMaxStereoscopicEyes ()J
 	public final fun getPaused ()Z
@@ -245,7 +246,6 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun getSupportedFeatureLevel ()Lio/github/erkko68/filament/Engine$FeatureLevel;
 	public final fun getTransformManager ()Lio/github/erkko68/filament/TransformManager;
 	public final fun hasFeatureFlag (Ljava/lang/String;)Z
-	public final fun hasUnrecoverableFailure ()Z
 	public final fun isAutomaticInstancingEnabled ()Z
 	public final fun isValid ()Z
 	public final fun isValidColorGrading (Lio/github/erkko68/filament/ColorGrading;)Z
@@ -266,7 +266,7 @@ public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public final fun isValidTexture (Lio/github/erkko68/filament/Texture;)Z
 	public final fun isValidVertexBuffer (Lio/github/erkko68/filament/VertexBuffer;)Z
 	public final fun isValidView (Lio/github/erkko68/filament/View;)Z
-	public final fun setActiveFeatureLevel (Lio/github/erkko68/filament/Engine$FeatureLevel;)Lio/github/erkko68/filament/Engine$FeatureLevel;
+	public final fun setActiveFeatureLevel (Lio/github/erkko68/filament/Engine$FeatureLevel;)V
 	public final fun setAutomaticInstancingEnabled (Z)V
 	public final fun setFeatureFlag (Ljava/lang/String;Z)Z
 	public final fun setPaused (Z)V

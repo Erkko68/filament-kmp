@@ -19,7 +19,7 @@ actual class Animator @InternalFilamentApi constructor(internal val nativeObject
         nativeObject.resetBoneMatrices()
     }
 
-    actual fun getAnimationCount(): Int = nativeObject.animationCount
+    actual val animationCount: Int get() = nativeObject.animationCount
 
     actual fun getAnimationDuration(index: Int): Float = nativeObject.getAnimationDuration(index)
 

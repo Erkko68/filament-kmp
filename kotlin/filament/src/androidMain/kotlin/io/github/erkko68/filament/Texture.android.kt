@@ -163,9 +163,9 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
     actual fun getWidth(level: Int): Int = nativeTexture.getWidth(level)
     actual fun getHeight(level: Int): Int = nativeTexture.getHeight(level)
     actual fun getDepth(level: Int): Int = nativeTexture.getDepth(level)
-    actual fun getLevels(): Int = nativeTexture.levels
-    actual fun getTarget(): Sampler = Sampler.values()[nativeTexture.target.ordinal]
-    actual fun getFormat(): InternalFormat = InternalFormat.values()[nativeTexture.format.ordinal]
+    actual val levels: Int get() = nativeTexture.levels
+    actual val target: Sampler get() = Sampler.values()[nativeTexture.target.ordinal]
+    actual val format: InternalFormat get() = InternalFormat.values()[nativeTexture.format.ordinal]
 
     actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
         nativeTexture.setImage(engine.nativeEngine, level, descriptor.toNative())

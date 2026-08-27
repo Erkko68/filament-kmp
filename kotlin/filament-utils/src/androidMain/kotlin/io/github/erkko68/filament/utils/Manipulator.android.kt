@@ -127,7 +127,7 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         // Android Manipulator doesn't have a destroy method in the public API (GC handles it)
     }
 
-    actual fun getMode(): Mode = Mode.entries[androidHandle.mode.ordinal]
+    actual val mode: Mode get() = Mode.entries[androidHandle.mode.ordinal]
 
     actual fun setViewport(width: Int, height: Int) {
         androidHandle.setViewport(width, height)
@@ -172,9 +172,9 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         androidHandle.update(deltaTime)
     }
 
-    actual fun getCurrentBookmark(): Bookmark = Bookmark(androidHandle.currentBookmark)
+    actual val currentBookmark: Bookmark get() = Bookmark(androidHandle.currentBookmark)
 
-    actual fun getHomeBookmark(): Bookmark = Bookmark(androidHandle.homeBookmark)
+    actual val homeBookmark: Bookmark get() = Bookmark(androidHandle.homeBookmark)
 
     actual fun jumpToBookmark(bookmark: Bookmark) {
         androidHandle.jumpToBookmark(bookmark.androidValue as com.google.android.filament.utils.Bookmark)

@@ -186,7 +186,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
         }
     }
 
-    actual fun getComponentCount(): Int = FilamentC.FilaLightManager_getComponentCount(nativeLightManager).toInt()
+    actual val componentCount: Int get() = FilamentC.FilaLightManager_getComponentCount(nativeLightManager).toInt()
     actual fun hasComponent(entity: Entity): Boolean = FilamentC.FilaLightManager_hasComponent(nativeLightManager, entity)
     actual fun getInstance(entity: Entity): EntityInstance = FilamentC.FilaLightManager_getInstance(nativeLightManager, entity)
     actual fun destroy(entity: Entity) { FilamentC.FilaLightManager_destroy(nativeLightManager, entity) }

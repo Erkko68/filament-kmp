@@ -103,7 +103,7 @@ class LightManagerTest : FilamentTestFixture() {
 
     @Test
     fun testSunLightLifecycle() {
-        val lm = engine.getLightManager()
+        val lm = engine.lightManager
         assertNotNull(lm)
 
         val entity = EntityManager.get().create()
@@ -164,7 +164,7 @@ class LightManagerTest : FilamentTestFixture() {
 
     @Test
     fun testSpotLightLifecycle() {
-        val lm = engine.getLightManager()
+        val lm = engine.lightManager
         val entity = EntityManager.get().create()
         
         LightManager.Builder(LightManager.Type.SPOT)

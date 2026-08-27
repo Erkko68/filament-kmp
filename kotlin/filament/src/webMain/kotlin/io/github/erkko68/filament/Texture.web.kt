@@ -175,12 +175,12 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         return if (level == 0) _depth else (_depth shr level).coerceAtLeast(1)
     }
 
-    actual fun getLevels(): Int {
+    actual val levels: Int get() {
         engine?.let { return jsTexture.getLevels(it.jsEngine).toInt() }
         return _levels
     }
 
-    actual fun getTarget(): Sampler = when (jsTexture.getTarget()) {
+    actual val target: Sampler get() = when (jsTexture.getTarget()) {
         io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D_ARRAY -> Sampler.SAMPLER_2D_ARRAY
         io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP -> Sampler.SAMPLER_CUBEMAP
         io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL -> Sampler.SAMPLER_EXTERNAL
@@ -189,7 +189,7 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         else -> Sampler.SAMPLER_2D
     }
 
-    actual fun getFormat(): InternalFormat = jsTexture.getFormat().toCommon()
+    actual val format: InternalFormat get() = jsTexture.getFormat().toCommon()
 
     actual fun setImage(
         engine: Engine,

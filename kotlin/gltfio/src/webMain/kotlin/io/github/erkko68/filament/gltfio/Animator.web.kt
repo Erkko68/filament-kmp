@@ -20,7 +20,7 @@ actual class Animator @InternalFilamentApi constructor(internal val jsAnimator: 
         jsAnimator.resetBoneMatrices()
     }
 
-    actual fun getAnimationCount(): Int {
+    actual val animationCount: Int get() {
         return jsAnimator.getAnimationCount().toInt()
     }
 

@@ -347,53 +347,53 @@ expect class Material {
      *
      * @return The default MaterialInstance.
      */
-    fun getDefaultInstance(): MaterialInstance
+    val defaultInstance: MaterialInstance
 
     /**
      * Get the name of this material.
      *
      * @return Material name string (from the matc-compiled blob).
      */
-    fun getName(): String
+    val name: String
 
     /** Get the shading model. */
-    fun getShading(): Shading
+    val shading: Shading
 
     /** Get the vertex attribute interpolation mode. */
-    fun getInterpolation(): Interpolation
+    val interpolation: Interpolation
 
     /** Get the blending mode. */
-    fun getBlendingMode(): BlendingMode
+    val blendingMode: BlendingMode
 
     /** Get the transparency rendering mode (only relevant for TRANSPARENT/FADE blending). */
-    fun getTransparencyMode(): TransparencyMode
+    val transparencyMode: TransparencyMode
 
     /** Get the refraction mode. */
-    fun getRefractionMode(): RefractionMode
+    val refractionMode: RefractionMode
 
     /** Get the refraction surface type. */
-    fun getRefractionType(): RefractionType
+    val refractionType: RefractionType
 
     /** Get the reflection mode. */
-    fun getReflectionMode(): ReflectionMode
+    val reflectionMode: ReflectionMode
 
     /** Get the vertex coordinate space domain. */
-    fun getVertexDomain(): VertexDomain
+    val vertexDomain: VertexDomain
 
     /** Get the face culling mode. */
-    fun getCullingMode(): CullingMode
+    val cullingMode: CullingMode
 
     /** Check if color writes are enabled. Default is true. */
-    fun isColorWriteEnabled(): Boolean
+    val isColorWriteEnabled: Boolean
 
     /** Check if depth writes are enabled. Default is true. */
-    fun isDepthWriteEnabled(): Boolean
+    val isDepthWriteEnabled: Boolean
 
     /** Check if depth testing is enabled. Default is true. */
-    fun isDepthCullingEnabled(): Boolean
+    val isDepthCullingEnabled: Boolean
 
     /** Check if this material renders both front and back faces (double-sided). Default is false (back culling). */
-    fun isDoubleSided(): Boolean
+    val isDoubleSided: Boolean
 
     /**
      * Check if alpha-to-coverage is enabled.
@@ -401,7 +401,7 @@ expect class Material {
      * Alpha-to-coverage converts alpha values to a coverage mask for MSAA, improving
      * transparency rendering quality with MSAA.
      */
-    fun isAlphaToCoverageEnabled(): Boolean
+    val isAlphaToCoverageEnabled: Boolean
 
     /**
      * Get the alpha threshold for MASKED blending mode.
@@ -410,7 +410,7 @@ expect class Material {
      *
      * @return Threshold value in [0, 1].
      */
-    fun getMaskThreshold(): Float
+    val maskThreshold: Float
 
     /**
      * Get the specular anti-aliasing variance.
@@ -419,7 +419,7 @@ expect class Material {
      *
      * @return Variance in [0, 1].
      */
-    fun getSpecularAntiAliasingVariance(): Float
+    val specularAntiAliasingVariance: Float
 
     /**
      * Get the specular anti-aliasing threshold.
@@ -428,24 +428,24 @@ expect class Material {
      *
      * @return Threshold in [0, 1].
      */
-    fun getSpecularAntiAliasingThreshold(): Float
+    val specularAntiAliasingThreshold: Float
 
     /** Get the minimum required feature level for this material. */
-    fun getFeatureLevel(): Engine.FeatureLevel
+    val featureLevel: Engine.FeatureLevel
 
     /**
      * Get the number of parameters declared by this material.
      *
      * @return Parameter count (0 if the material has no parameters).
      */
-    fun getParameterCount(): Int
+    val parameterCount: Int
 
     /**
      * Get metadata about all parameters declared by this material.
      *
      * @return List of Parameter objects describing each parameter.
      */
-    fun getParameters(): List<Parameter>
+    val parameters: List<Parameter>
 
     /**
      * Check whether a parameter with the given name exists.
@@ -541,5 +541,5 @@ expect class Material {
      *
      * @return Set of required VertexAttribute values (e.g., POSITION, TANGENTS, UV0, COLOR, etc.).
      */
-    fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute>
+    val requiredAttributes: Set<VertexBuffer.VertexAttribute>
 }

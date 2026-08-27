@@ -38,7 +38,7 @@ actual class EntityManager @InternalFilamentApi constructor(internal val jsEntit
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getMaxEntityCount is not bound in filament.js.")
-    actual fun getMaxEntityCount(): Int {
+    actual val maxEntityCount: Int get() {
         return if (jsHasMember(jsEntityManager, "getMaxEntityCount")) {
             jsEntityManager.getMaxEntityCount().toInt()
         } else {

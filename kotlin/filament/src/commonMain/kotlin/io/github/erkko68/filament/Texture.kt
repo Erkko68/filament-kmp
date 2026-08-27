@@ -346,21 +346,21 @@ expect class Texture {
      * @note If this texture is using Sampler.SAMPLER_EXTERNAL, the dimensions
      * of the texture are unknown and this method always returns whatever was set on the Builder.
      */
-    fun getLevels(): Int
+    val levels: Int
 
     /**
      * Return this texture Sampler as set by Builder.sampler().
      *
      * @return this texture Sampler as set by Builder.sampler()
      */
-    fun getTarget(): Sampler
+    val target: Sampler
 
     /**
      * Return this texture InternalFormat as set by Builder.format().
      *
      * @return this texture InternalFormat as set by Builder.format().
      */
-    fun getFormat(): InternalFormat
+    val format: InternalFormat
 
     /**
      * Updates a 2D texture level with image data from a buffer.

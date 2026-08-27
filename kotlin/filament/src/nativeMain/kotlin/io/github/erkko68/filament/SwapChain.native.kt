@@ -49,7 +49,7 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     actual val isFrameScheduledCallbackSet: Boolean get() = FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
-    actual fun isFrameRateChangeSupported(): Boolean = FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
+    actual val isFrameRateChangeSupported: Boolean get() = FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — display frame rate switching is not supported on web; pacing is browser-managed.")
     actual fun setFrameRate(frameRate: Float) =

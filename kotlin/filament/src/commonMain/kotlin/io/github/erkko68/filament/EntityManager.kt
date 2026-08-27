@@ -92,5 +92,5 @@ expect class EntityManager {
     /**
      * Get the maximum number of entities that can be created.
      */
-    fun getMaxEntityCount(): Int
+    val maxEntityCount: Int
 }

@@ -146,7 +146,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         actual fun getSteadyClockTimeNano(): Long = FilaEngine_getSteadyClockTimeNano().toLong()
     }
 
-    actual fun isValid(): Boolean = nativeHandle != null
+    actual val isValid: Boolean get() = nativeHandle != null
     actual override fun close() = destroy()
 
     actual fun destroy() {
@@ -156,15 +156,18 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
 
     actual val backend: Backend get() = Backend.fromNative(FilaEngine_getBackend(nativeHandle))
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilaEngine_getSupportedFeatureLevel(nativeHandle))
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilaEngine_getActiveFeatureLevel(nativeHandle))
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+    actual var activeFeatureLevel: FeatureLevel
+        get() = FeatureLevel.fromNative(FilaEngine_getActiveFeatureLevel(nativeHandle))
+        set(value) { FilaEngine_setActiveFeatureLevel(nativeHandle, value.toNative()) }
+
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+        set(value) { FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
     actual val config: Config get() {
         // C-wrapper doesn't expose getConfig, we'd need to track it or return default
         return Config()
     }
-    actual fun getMaxStereoscopicEyes(): Long = FilaEngine_getMaxStereoscopicEyes(nativeHandle).toLong()
+    actual val maxStereoscopicEyes: Long get() = FilaEngine_getMaxStereoscopicEyes(nativeHandle).toLong()
 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilaEngine_isValidView(nativeHandle, view.nativeHandle)
@@ -280,15 +283,15 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     }
     actual fun destroyEntity(entity: Entity) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
 
-    actual fun getTransformManager(): TransformManager = mTransformManager
-    actual fun getLightManager(): LightManager = mLightManager
-    actual fun getRenderableManager(): RenderableManager = mRenderableManager
-    actual fun getEntityManager(): EntityManager = mEntityManager
+    actual val transformManager: TransformManager get() = mTransformManager
+    actual val lightManager: LightManager get() = mLightManager
+    actual val renderableManager: RenderableManager get() = mRenderableManager
+    actual val entityManager: EntityManager get() = mEntityManager
 
     actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000u) }
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())
     actual fun flush() = FilaEngine_flush(nativeHandle)
-    actual fun hasUnrecoverableFailure(): Boolean = FilaEngine_hasUnrecoverableFailure(nativeHandle)
+    actual val hasUnrecoverableFailure: Boolean get() = FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     actual var paused: Boolean
         get() = FilaEngine_isPaused(nativeHandle)

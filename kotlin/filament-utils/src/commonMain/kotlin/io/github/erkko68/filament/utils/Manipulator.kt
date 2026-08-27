@@ -143,7 +143,7 @@ expect class Manipulator : AutoCloseable {
      *
      * @return the [Mode] this manipulator was created with
      */
-    fun getMode(): Mode
+    val mode: Mode
 
     /**
      * Sets the viewport dimensions. The manipulator uses this to process grab events and raycasts.
@@ -244,7 +244,7 @@ expect class Manipulator : AutoCloseable {
      * @return a [Bookmark] representing the current camera state
      * @see jumpToBookmark
      */
-    fun getCurrentBookmark(): Bookmark
+    val currentBookmark: Bookmark
 
     /**
      * Gets a handle that can be used to reset the manipulator back to its home position.
@@ -252,7 +252,7 @@ expect class Manipulator : AutoCloseable {
      * @return a [Bookmark] representing the home camera state
      * @see jumpToBookmark
      */
-    fun getHomeBookmark(): Bookmark
+    val homeBookmark: Bookmark
 
     /**
      * Sets the manipulator position and orientation back to a previously stashed state.

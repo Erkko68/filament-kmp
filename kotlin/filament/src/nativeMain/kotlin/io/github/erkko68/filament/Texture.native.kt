@@ -253,9 +253,9 @@ actual class Texture @InternalFilamentApi constructor(internal var nativeHandle:
     actual fun getWidth(level: Int): Int = FilaTexture_getWidth(nativeHandle, level.toULong()).toInt()
     actual fun getHeight(level: Int): Int = FilaTexture_getHeight(nativeHandle, level.toULong()).toInt()
     actual fun getDepth(level: Int): Int = FilaTexture_getDepth(nativeHandle, level.toULong()).toInt()
-    actual fun getLevels(): Int = FilaTexture_getLevels(nativeHandle).toInt()
-    actual fun getTarget(): Sampler = Sampler.fromNative(FilaTexture_getTarget(nativeHandle))
-    actual fun getFormat(): InternalFormat = InternalFormat.fromNative(FilaTexture_getFormat(nativeHandle))
+    actual val levels: Int get() = FilaTexture_getLevels(nativeHandle).toInt()
+    actual val target: Sampler get() = Sampler.fromNative(FilaTexture_getTarget(nativeHandle))
+    actual val format: InternalFormat get() = InternalFormat.fromNative(FilaTexture_getFormat(nativeHandle))
 
     private class PixelBufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 

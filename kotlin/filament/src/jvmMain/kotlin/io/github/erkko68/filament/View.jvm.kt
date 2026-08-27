@@ -285,7 +285,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         val mask = (1 shl layer).toByte()
         FilamentC.FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0)
     }
-    actual fun getVisibleLayers(): Int = FilamentC.FilaView_getVisibleLayers(nativeHandle).toInt()
+    actual val visibleLayers: Int get() = FilamentC.FilaView_getVisibleLayers(nativeHandle).toInt()
 
     actual var isPostProcessingEnabled: Boolean
         get() = FilamentC.FilaView_isPostProcessingEnabled(nativeHandle)
@@ -327,7 +327,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
             }
         }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray = confined { arena ->
+    actual val lastDynamicResolutionScale: FloatArray get() = confined { arena ->
         val out = arena.floatArr(2)
         FilamentC.FilaView_getLastDynamicResolutionScale(nativeHandle, out)
         out.toFloats()
@@ -794,7 +794,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         out.toFloats()
     }
     actual val fogEntity: Int get() = FilamentC.FilaView_getFogEntity(nativeHandle)
-    actual fun getVisibleRenderableCount(): Int = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
+    actual val visibleRenderableCount: Int get() = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilamentC.FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {

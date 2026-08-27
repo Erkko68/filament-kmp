@@ -470,7 +470,7 @@ actual class Manipulator internal constructor(private val impl: Base) : AutoClos
 
 
     actual fun destroy() {}
-    actual fun getMode(): Mode = when (impl) {
+    actual val mode: Mode get() = when (impl) {
         is Orbit   -> Mode.ORBIT
         is MapManip -> Mode.MAP
         else        -> Mode.FLIGHT
@@ -488,7 +488,7 @@ actual class Manipulator internal constructor(private val impl: Base) : AutoClos
     actual fun keyUp(key: Key)                            = impl.keyUp(key.ordinal)
     actual fun scroll(x: Int, y: Int, delta: Float)      = impl.scroll(x, y, delta)
     actual fun update(deltaTime: Float)                   = impl.update(deltaTime)
-    actual fun getCurrentBookmark()                       = Bookmark(impl.getCurrentBookmark())
-    actual fun getHomeBookmark()                          = Bookmark(impl.getHomeBookmark())
+    actual val currentBookmark: Bookmark get() = Bookmark(impl.getCurrentBookmark())
+    actual val homeBookmark: Bookmark get() = Bookmark(impl.getHomeBookmark())
     actual fun jumpToBookmark(bookmark: Bookmark)         = impl.jumpToBookmark(bookmark.data)
 }

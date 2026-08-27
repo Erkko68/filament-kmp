@@ -38,7 +38,7 @@ internal class GltfioContext private constructor(
             val entry = entries.getOrPut(engine) {
                 Gltfio.init()
                 val materials = UbershaderProvider(engine)
-                val loader = AssetLoader.create(engine, materials, engine.getEntityManager())
+                val loader = AssetLoader.create(engine, materials, engine.entityManager)
                 Entry(GltfioContext(loader, materials), refCount = 0)
             }
             entry.refCount++

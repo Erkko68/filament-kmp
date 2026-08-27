@@ -35,16 +35,16 @@ expect class FilamentInstance {
     constructor()
 
     /** Gets the transform root entity of this instance, which has no matching glTF node. */
-    fun getRoot(): Int
+    val root: Int
 
     /**
      * Gets the entities of this instance, one per glTF node. All have a Transform component;
      * some also have a Renderable or Name component.
      */
-    fun getEntities(): IntArray
+    val entities: IntArray
 
     /** Gets the number of entities returned by [getEntities]. */
-    fun getEntityCount(): Int
+    val entityCount: Int
 
     /**
      * Returns the animation engine for this instance.
@@ -60,22 +60,22 @@ expect class FilamentInstance {
      *
      * @throws IllegalStateException if the asset's resources have not been loaded yet.
      */
-    fun getAnimator(): Animator
+    val animator: Animator
 
     /**
      * Gets the axis-aligned bounding box from the min/max values in the glTF accessors,
      * transformed for this instance.
      */
-    fun getBoundingBox(): Box
+    val boundingBox: Box
 
     /** Gets the [FilamentAsset] that owns this instance. */
-    fun getAsset(): FilamentAsset
+    val asset: FilamentAsset
 
     /** Gets the number of skins declared in the asset. */
-    fun getSkinCount(): Int
+    val skinCount: Int
 
     /** Gets the names of all skins, in skin-index order. */
-    fun getSkinNames(): Array<String>
+    val skinNames: List<String>
 
     /**
      * Attaches the given skin to the given node entity, which must have an associated mesh with
@@ -101,13 +101,13 @@ expect class FilamentInstance {
     fun applyMaterialVariant(variantIndex: Int)
 
     /** Gets all material instances of this instance. These are already bound to renderables. */
-    fun getMaterialInstances(): Array<io.github.erkko68.filament.MaterialInstance>
+    val materialInstances: List<io.github.erkko68.filament.MaterialInstance>
 
     /** Gets the names of all material variants declared in the asset, in variant-index order. */
-    fun getMaterialVariantNames(): Array<String>
+    val materialVariantNames: List<String>
 }
 
 /** Message for the [FilamentInstance.getAnimator] guard each platform applies. */
 internal const val ANIMATOR_NOT_LOADED: String =
-    "FilamentInstance.getAnimator() is only available once the asset's resources are loaded — " +
+    "FilamentInstance.animator is only available once the asset's resources are loaded — " +
         "call ResourceLoader.loadResources(asset), or wait for an async load to finish, first."

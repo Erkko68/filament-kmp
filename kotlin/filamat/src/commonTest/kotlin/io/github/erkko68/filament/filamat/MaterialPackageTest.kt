@@ -21,13 +21,13 @@ class MaterialPackageTest : FilamatTestFixture() {
     @Test
     fun testMaterialPackageIsValid() {
         val pkg = buildMinimalPackage() ?: return
-        assertTrue(pkg.isValid(), "MaterialPackage built from a valid shader must be valid")
+        assertTrue(pkg.isValid, "MaterialPackage built from a valid shader must be valid")
     }
 
     @Test
     fun testMaterialPackageBufferIsNonEmpty() {
         val pkg = buildMinimalPackage() ?: return
-        val buffer = pkg.getBuffer()
+        val buffer = pkg.buffer
         assertNotNull(buffer)
         assertTrue(buffer.isNotEmpty(), "Compiled material package buffer must not be empty")
     }
@@ -35,7 +35,7 @@ class MaterialPackageTest : FilamatTestFixture() {
     @Test
     fun testMaterialPackageBufferHasReasonableSize() {
         val pkg = buildMinimalPackage() ?: return
-        val buffer = pkg.getBuffer()
+        val buffer = pkg.buffer
         // A compiled Filament material package is a chunked binary blob; even a minimal
         // unlit material is well over a few hundred bytes once shader stages are encoded.
         assertTrue(buffer.size > 64, "Compiled material package should be larger than 64 bytes, was ${buffer.size}")

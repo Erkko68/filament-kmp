@@ -149,7 +149,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         }
     }
 
-    actual fun isValid(): Boolean = !nativeHandle.isNullPtr()
+    actual val isValid: Boolean get() = !nativeHandle.isNullPtr()
     actual override fun close() = destroy()
 
     actual fun destroy() {
@@ -159,15 +159,18 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
 
     actual val backend: Backend get() = Backend.fromNative(FilamentC.FilaEngine_getBackend(nativeHandle))
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilamentC.FilaEngine_getSupportedFeatureLevel(nativeHandle))
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_getActiveFeatureLevel(nativeHandle))
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+    actual var activeFeatureLevel: FeatureLevel
+        get() = FeatureLevel.fromNative(FilamentC.FilaEngine_getActiveFeatureLevel(nativeHandle))
+        set(value) { FilamentC.FilaEngine_setActiveFeatureLevel(nativeHandle, value.toNative()) }
+
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+        set(value) { FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
     actual val config: Config get() {
         // C-wrapper doesn't expose getConfig; return defaults (matches nativeMain).
         return Config()
     }
-    actual fun getMaxStereoscopicEyes(): Long = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
+    actual val maxStereoscopicEyes: Long get() = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilamentC.FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilamentC.FilaEngine_isValidView(nativeHandle, view.nativeHandle)
@@ -283,15 +286,15 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     }
     actual fun destroyEntity(entity: Entity) = FilamentC.FilaEntityManager_destroy(FilamentC.FilaEngine_getEntityManager(nativeHandle), entity)
 
-    actual fun getTransformManager(): TransformManager = mTransformManager
-    actual fun getLightManager(): LightManager = mLightManager
-    actual fun getRenderableManager(): RenderableManager = mRenderableManager
-    actual fun getEntityManager(): EntityManager = mEntityManager
+    actual val transformManager: TransformManager get() = mTransformManager
+    actual val lightManager: LightManager get() = mLightManager
+    actual val renderableManager: RenderableManager get() = mRenderableManager
+    actual val entityManager: EntityManager get() = mEntityManager
 
     actual fun flushAndWait() { FilamentC.FilaEngine_flushAndWait(nativeHandle, 1_000_000_000L) }
     actual fun flushAndWait(timeout: Long): Boolean = FilamentC.FilaEngine_flushAndWait(nativeHandle, timeout)
     actual fun flush() = FilamentC.FilaEngine_flush(nativeHandle)
-    actual fun hasUnrecoverableFailure(): Boolean = FilamentC.FilaEngine_hasUnrecoverableFailure(nativeHandle)
+    actual val hasUnrecoverableFailure: Boolean get() = FilamentC.FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     actual var paused: Boolean
         get() = FilamentC.FilaEngine_isPaused(nativeHandle)

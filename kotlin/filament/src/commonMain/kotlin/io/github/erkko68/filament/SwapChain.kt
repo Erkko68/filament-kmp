@@ -150,7 +150,7 @@ expect class SwapChain {
      * @return true if [setFrameRate] is definitively supported, false otherwise
      */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
-    fun isFrameRateChangeSupported(): Boolean
+    val isFrameRateChangeSupported: Boolean
 
     /**
      * Sets the intended frame rate for this SwapChain.

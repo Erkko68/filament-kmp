@@ -13,7 +13,7 @@ actual class Animator @InternalFilamentApi constructor(internal var nativeHandle
     actual fun updateBoneMatrices() = FilamentC.FilaAnimator_updateBoneMatrices(nativeHandle)
     actual fun resetBoneMatrices() = FilamentC.FilaAnimator_resetBoneMatrices(nativeHandle)
 
-    actual fun getAnimationCount(): Int = FilamentC.FilaAnimator_getAnimationCount(nativeHandle).toInt()
+    actual val animationCount: Int get() = FilamentC.FilaAnimator_getAnimationCount(nativeHandle).toInt()
     actual fun getAnimationDuration(index: Int): Float = FilamentC.FilaAnimator_getAnimationDuration(nativeHandle, index.toLong())
     actual fun getAnimationName(index: Int): String? =
         FilamentC.FilaAnimator_getAnimationName(nativeHandle, index.toLong()).takeUnless { it.isNullPtr() }?.cString()

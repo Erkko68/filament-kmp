@@ -40,11 +40,11 @@ class LightLifecycleTest : ComposeTestFixture() {
         for ((name, light) in lights) {
             setContent { light() }
             waitForIdle()
-            val entities = scene.getEntities()
+            val entities = scene.entities
             assertEquals(1, scene.lightCount, "$name should add exactly one light while composed")
             assertEquals(1, entities.size, "$name should add exactly one entity while composed")
             assertTrue(
-                entities.size == 1 && engine.getLightManager().hasComponent(entities[0]),
+                entities.size == 1 && engine.lightManager.hasComponent(entities[0]),
                 "$name should have a live light component while composed",
             )
 
@@ -65,13 +65,13 @@ class LightLifecycleTest : ComposeTestFixture() {
             DirectionalLight(intensity = LightIntensity.LuminousPower(intensity))
         }
         waitForIdle()
-        val capturedEntity = scene.getEntities().single()
+        val capturedEntity = scene.entities.single()
 
         repeat(5) {
             intensity += 10_000f
             waitForIdle()
             assertEquals(1, scene.lightCount, "update must not duplicate the light")
-            assertEquals(capturedEntity, scene.getEntities().single(), "entity must be stable across updates")
+            assertEquals(capturedEntity, scene.entities.single(), "entity must be stable across updates")
         }
 
         setContent {}

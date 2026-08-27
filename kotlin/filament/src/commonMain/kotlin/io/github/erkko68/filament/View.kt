@@ -997,7 +997,7 @@ expect class View {
     fun setLayerEnabled(layer: Int, enabled: Boolean)
 
     /** Returns the current visible-layer bitmask. */
-    fun getVisibleLayers(): Int
+    val visibleLayers: Int
 
     /**
      * Enables or disables the post-processing stage (tone mapping, bloom, color grading, FXAA,
@@ -1012,7 +1012,7 @@ expect class View {
     var dynamicResolutionOptions: DynamicResolutionOptions
 
     /** Returns the `[x, y]` scale factors dynamic resolution used on the last frame. */
-    fun getLastDynamicResolutionScale(): FloatArray
+    val lastDynamicResolutionScale: FloatArray
 
     /** Global quality/performance trade-offs (e.g. color-buffer precision) for this View. */
     var renderQuality: RenderQuality
@@ -1126,7 +1126,7 @@ expect class View {
      * @return the number of visible renderables, or -1 if no value is available (e.g. before the
      *         first render call, or if the scene was detached).
      */
-    fun getVisibleRenderableCount(): Int
+    val visibleRenderableCount: Int
 
     /**
      * Asynchronously picks the renderable at viewport coordinates ([x], [y]) — origin bottom-left —

@@ -29,7 +29,7 @@ public final class io/github/erkko68/filament/gltfio/AssetLoader$Companion {
 public final class io/github/erkko68/filament/gltfio/FilamentAsset {
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getAssetInstanceCount ()I
-	public final fun getAssetInstances ()[Lio/github/erkko68/filament/gltfio/FilamentInstance;
+	public final fun getAssetInstances ()Ljava/util/List;
 	public final fun getBoundingBox ()Lio/github/erkko68/filament/Box;
 	public final fun getCameraEntities ()[I
 	public final fun getEngine ()Lio/github/erkko68/filament/Engine;
@@ -41,10 +41,10 @@ public final class io/github/erkko68/filament/gltfio/FilamentAsset {
 	public final fun getFirstEntityByName (Ljava/lang/String;)I
 	public final fun getInstance ()Lio/github/erkko68/filament/gltfio/FilamentInstance;
 	public final fun getLightEntities ()[I
-	public final fun getMorphTargetNames (I)[Ljava/lang/String;
+	public final fun getMorphTargetNames (I)Ljava/util/List;
 	public final fun getName (I)Ljava/lang/String;
 	public final fun getRenderableEntities ()[I
-	public final fun getResourceUris ()[Ljava/lang/String;
+	public final fun getResourceUris ()Ljava/util/List;
 	public final fun getRoot ()I
 	public final fun popRenderable ()I
 	public final fun popRenderables ([I)I
@@ -64,11 +64,11 @@ public final class io/github/erkko68/filament/gltfio/FilamentInstance {
 	public final fun getEntityCount ()I
 	public final fun getJointCountAt (I)I
 	public final fun getJointsAt (I)[I
-	public final fun getMaterialInstances ()[Lio/github/erkko68/filament/MaterialInstance;
-	public final fun getMaterialVariantNames ()[Ljava/lang/String;
+	public final fun getMaterialInstances ()Ljava/util/List;
+	public final fun getMaterialVariantNames ()Ljava/util/List;
 	public final fun getRoot ()I
 	public final fun getSkinCount ()I
-	public final fun getSkinNames ()[Ljava/lang/String;
+	public final fun getSkinNames ()Ljava/util/List;
 }
 
 public final class io/github/erkko68/filament/gltfio/Gltfio {
@@ -158,7 +158,7 @@ public abstract interface class io/github/erkko68/filament/gltfio/MaterialProvid
 	public abstract fun destroyMaterials ()V
 	public abstract fun getMaterial (Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;)Lio/github/erkko68/filament/Material;
 	public static synthetic fun getMaterial$default (Lio/github/erkko68/filament/gltfio/MaterialProvider;Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;ILjava/lang/Object;)Lio/github/erkko68/filament/Material;
-	public abstract fun getMaterials ()[Lio/github/erkko68/filament/Material;
+	public abstract fun getMaterials ()Ljava/util/List;
 	public abstract fun nativeObject ()Ljava/lang/foreign/MemorySegment;
 	public abstract fun needsDummyData (I)Z
 }
@@ -198,7 +198,7 @@ public final class io/github/erkko68/filament/gltfio/UbershaderProvider : io/git
 	public fun destroy ()V
 	public fun destroyMaterials ()V
 	public fun getMaterial (Lio/github/erkko68/filament/gltfio/MaterialKey;[ILjava/lang/String;)Lio/github/erkko68/filament/Material;
-	public fun getMaterials ()[Lio/github/erkko68/filament/Material;
+	public fun getMaterials ()Ljava/util/List;
 	public fun nativeObject ()Ljava/lang/foreign/MemorySegment;
 	public fun needsDummyData (I)Z
 }

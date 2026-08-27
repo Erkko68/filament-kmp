@@ -7,7 +7,7 @@ import io.github.erkko68.filament.InternalFilamentApi
 
 @OptIn(ExperimentalForeignApi::class)
 actual class MaterialPackage @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaPackage>?) {
-    actual fun getBuffer(): ByteArray {
+    actual val buffer: ByteArray get() {
         val size = FilaPackage_getSize(nativeHandle).toInt()
         val data = FilaPackage_getData(nativeHandle)
         if (data == null || size <= 0) return ByteArray(0)
@@ -21,7 +21,7 @@ actual class MaterialPackage @InternalFilamentApi constructor(internal val nativ
         return bytes
     }
 
-    actual fun isValid(): Boolean = FilaPackage_isValid(nativeHandle)
+    actual val isValid: Boolean get() = FilaPackage_isValid(nativeHandle)
 
     protected fun finalize() {
         FilaPackage_destroy(nativeHandle)

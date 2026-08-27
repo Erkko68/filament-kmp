@@ -51,7 +51,7 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         }
         builder.build(engine, entity)
 
-        val rm = engine.getRenderableManager()
+        val rm = engine.renderableManager
         assertTrue(rm.hasComponent(entity))
         val inst = rm.getInstance(entity)
         assertTrue(inst != 0)

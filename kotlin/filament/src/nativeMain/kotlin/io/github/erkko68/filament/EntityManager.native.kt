@@ -42,5 +42,5 @@ actual class EntityManager @InternalFilamentApi constructor(internal var nativeH
         FilaEntityManager_advanceEpoch(nativeHandle)
     }
 
-    actual fun getMaxEntityCount(): Int = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
+    actual val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
 }

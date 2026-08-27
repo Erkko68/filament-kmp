@@ -48,31 +48,31 @@ class MaterialTest : FilamentTestFixture() {
         // assertNotNull(mat)
 
         // // Test parameters and attributes
-        // assertTrue(mat.getName().isNotEmpty())
-        // assertNotNull(mat.getShading())
-        // assertNotNull(mat.getInterpolation())
-        // assertNotNull(mat.getBlendingMode())
-        // assertNotNull(mat.getTransparencyMode())
-        // assertNotNull(mat.getRefractionMode())
-        // assertNotNull(mat.getRefractionType())
-        // assertNotNull(mat.getReflectionMode())
-        // assertNotNull(mat.getVertexDomain())
-        // assertNotNull(mat.getCullingMode())
+        // assertTrue(mat.name.isNotEmpty())
+        // assertNotNull(mat.shading)
+        // assertNotNull(mat.interpolation)
+        // assertNotNull(mat.blendingMode)
+        // assertNotNull(mat.transparencyMode)
+        // assertNotNull(mat.refractionMode)
+        // assertNotNull(mat.refractionType)
+        // assertNotNull(mat.reflectionMode)
+        // assertNotNull(mat.vertexDomain)
+        // assertNotNull(mat.cullingMode)
 
-        // assertTrue(mat.isColorWriteEnabled())
-        // assertTrue(mat.isDepthWriteEnabled())
-        // assertTrue(mat.isDepthCullingEnabled())
-        // assertNotNull(mat.isDoubleSided())
-        // assertNotNull(mat.isAlphaToCoverageEnabled())
+        // assertTrue(mat.isColorWriteEnabled)
+        // assertTrue(mat.isDepthWriteEnabled)
+        // assertTrue(mat.isDepthCullingEnabled)
+        // assertNotNull(mat.isDoubleSided)
+        // assertNotNull(mat.isAlphaToCoverageEnabled)
 
-        // assertTrue(mat.getMaskThreshold() >= 0f)
-        // assertTrue(mat.getSpecularAntiAliasingVariance() >= 0f)
-        // assertTrue(mat.getSpecularAntiAliasingThreshold() >= 0f)
-        // assertNotNull(mat.getFeatureLevel())
+        // assertTrue(mat.maskThreshold >= 0f)
+        // assertTrue(mat.specularAntiAliasingVariance >= 0f)
+        // assertTrue(mat.specularAntiAliasingThreshold >= 0f)
+        // assertNotNull(mat.featureLevel)
 
-        // assertTrue(mat.getParameterCount() >= 0)
-        // assertNotNull(mat.getParameters())
-        // assertNotNull(mat.getRequiredAttributes())
+        // assertTrue(mat.parameterCount >= 0)
+        // assertNotNull(mat.parameters)
+        // assertNotNull(mat.requiredAttributes)
 
         // // Test instance creation
         // val inst1 = mat.createInstance()
@@ -81,7 +81,7 @@ class MaterialTest : FilamentTestFixture() {
         // val inst2 = mat.createInstance("named_instance")
         // assertNotNull(inst2)
 
-        // val defInst = mat.getDefaultInstance()
+        // val defInst = mat.defaultInstance
         // assertNotNull(defInst)
 
         // // Clean up

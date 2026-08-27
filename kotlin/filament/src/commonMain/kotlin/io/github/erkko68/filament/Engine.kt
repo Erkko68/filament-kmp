@@ -279,7 +279,7 @@ expect class Engine : AutoCloseable {
      *
      * @return true if the Engine is valid and can be used, false if destroyed.
      */
-    fun isValid(): Boolean
+    val isValid: Boolean
 
     /**
      * Destroy the Engine and all its resources.
@@ -303,37 +303,17 @@ expect class Engine : AutoCloseable {
     val supportedFeatureLevel: FeatureLevel
 
     /**
-     * Set the active feature level.
+     * The active feature level.
      *
-     * The feature level must not exceed the supported level for this backend.
-     *
-     * @param featureLevel The desired FeatureLevel.
-     * @return The actually set FeatureLevel (may be clamped to supported level).
+     * Assigning a level that exceeds [supportedFeatureLevel] clamps it; read the property back
+     * to see what was actually set.
      */
-    fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel
+    var activeFeatureLevel: FeatureLevel
 
     /**
-     * Get the currently active feature level.
-     *
-     * @return The active FeatureLevel.
+     * Whether the engine automatically batches identical renderables to reduce draw calls.
      */
-    fun getActiveFeatureLevel(): FeatureLevel
-
-    /**
-     * Enable or disable automatic GPU instancing of identical drawables.
-     *
-     * When enabled, the engine automatically batches identical renderables to reduce draw calls.
-     *
-     * @param enable true to enable instancing, false to disable.
-     */
-    fun setAutomaticInstancingEnabled(enable: Boolean)
-
-    /**
-     * Check if automatic GPU instancing is enabled.
-     *
-     * @return true if instancing is enabled, false otherwise.
-     */
-    fun isAutomaticInstancingEnabled(): Boolean
+    var isAutomaticInstancingEnabled: Boolean
 
     /**
      * The Engine's advanced configuration — the Config object used when creating this Engine.
@@ -345,7 +325,7 @@ expect class Engine : AutoCloseable {
      *
      * @return Number of eyes (typically 2 for VR, 1 for monoscopic).
      */
-    fun getMaxStereoscopicEyes(): Long
+    val maxStereoscopicEyes: Long
     /**
      * Validate a Renderer object created by this Engine.
      *
@@ -458,13 +438,13 @@ expect class Engine : AutoCloseable {
     fun destroyEntity(entity: Entity)
 
     /** Get the TransformManager for managing entity transforms. */
-    fun getTransformManager(): TransformManager
+    val transformManager: TransformManager
     /** Get the LightManager for managing light components. */
-    fun getLightManager(): LightManager
+    val lightManager: LightManager
     /** Get the RenderableManager for managing renderable components. */
-    fun getRenderableManager(): RenderableManager
+    val renderableManager: RenderableManager
     /** Get the EntityManager for creating and managing entities. */
-    fun getEntityManager(): EntityManager
+    val entityManager: EntityManager
 
     /** Block until all pending GPU work completes (potentially long wait). */
     fun flushAndWait()
@@ -476,7 +456,7 @@ expect class Engine : AutoCloseable {
      * Whether the Engine is in an unrecoverable failure state (e.g. the GPU device was lost).
      * Once true, the Engine must be destroyed and recreated. @return true if such a failure occurred.
      */
-    fun hasUnrecoverableFailure(): Boolean
+    val hasUnrecoverableFailure: Boolean
     /** Whether rendering is currently paused. Set to pause or resume rendering. */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — pausing requires a multi-threaded engine, which the web build is not.")
     var paused: Boolean
