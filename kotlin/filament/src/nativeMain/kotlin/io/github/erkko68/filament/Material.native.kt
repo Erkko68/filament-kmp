@@ -18,18 +18,16 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
 
-    actual class UserVariantFilterBit {
-        actual companion object {
-            actual val DIRECTIONAL_LIGHTING = 0x01
-            actual val DYNAMIC_LIGHTING = 0x02
-            actual val SHADOW_RECEIVER = 0x04
-            actual val SKINNING = 0x08
-            actual val FOG = 0x10
-            actual val VSM = 0x20
-            actual val SSR = 0x40
-            actual val STE = 0x80
-            actual val ALL = 0xFF
-        }
+    actual object UserVariantFilterBit {
+        actual val DIRECTIONAL_LIGHTING = 0x01
+        actual val DYNAMIC_LIGHTING = 0x02
+        actual val SHADOW_RECEIVER = 0x04
+        actual val SKINNING = 0x08
+        actual val FOG = 0x10
+        actual val VSM = 0x20
+        actual val SSR = 0x40
+        actual val STE = 0x80
+        actual val ALL = 0xFF
     }
 
     actual class Parameter actual constructor(

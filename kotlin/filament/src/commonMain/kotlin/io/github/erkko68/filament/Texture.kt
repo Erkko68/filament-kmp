@@ -244,31 +244,29 @@ expect class Texture {
     /**
      * Texture usage flags affecting memory layout and capabilities.
      */
-    class Usage {
-        companion object {
-            /** Texture is usable as a color attachment. */
-            val COLOR_ATTACHMENT: Int
-            /** Texture is usable as a depth attachment. */
-            val DEPTH_ATTACHMENT: Int
-            /** Texture is usable as a stencil attachment. */
-            val STENCIL_ATTACHMENT: Int
-            /** Texture can have data uploaded via setImage(). */
-            val UPLOADABLE: Int
-            /** Texture can be sampled in shaders. */
-            val SAMPLEABLE: Int
-            /** Texture is usable as a subpass input. */
-            val SUBPASS_INPUT: Int
-            /** Texture is usable as a blit source. */
-            val BLIT_SRC: Int
-            /** Texture is usable as a blit destination. */
-            val BLIT_DST: Int
-            /** Texture is protected (secure content). */
-            val PROTECTED: Int
-            /** Texture can have mipmaps generated via generateMipmaps(). */
-            val GEN_MIPMAPPABLE: Int
-            /** Default usage. */
-            val DEFAULT: Int
-        }
+    object Usage {
+        /** Texture is usable as a color attachment. */
+        val COLOR_ATTACHMENT: Int
+        /** Texture is usable as a depth attachment. */
+        val DEPTH_ATTACHMENT: Int
+        /** Texture is usable as a stencil attachment. */
+        val STENCIL_ATTACHMENT: Int
+        /** Texture can have data uploaded via setImage(). */
+        val UPLOADABLE: Int
+        /** Texture can be sampled in shaders. */
+        val SAMPLEABLE: Int
+        /** Texture is usable as a subpass input. */
+        val SUBPASS_INPUT: Int
+        /** Texture is usable as a blit source. */
+        val BLIT_SRC: Int
+        /** Texture is usable as a blit destination. */
+        val BLIT_DST: Int
+        /** Texture is protected (secure content). */
+        val PROTECTED: Int
+        /** Texture can have mipmaps generated via generateMipmaps(). */
+        val GEN_MIPMAPPABLE: Int
+        /** Default usage. */
+        val DEFAULT: Int
     }
 
     /**

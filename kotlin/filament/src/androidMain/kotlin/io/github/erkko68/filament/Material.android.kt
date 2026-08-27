@@ -18,18 +18,16 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
     
-    actual class UserVariantFilterBit {
-        actual companion object {
-            actual val DIRECTIONAL_LIGHTING = AndroidMaterial.UserVariantFilterBit.DIRECTIONAL_LIGHTING
-            actual val DYNAMIC_LIGHTING = AndroidMaterial.UserVariantFilterBit.DYNAMIC_LIGHTING
-            actual val SHADOW_RECEIVER = AndroidMaterial.UserVariantFilterBit.SHADOW_RECEIVER
-            actual val SKINNING = AndroidMaterial.UserVariantFilterBit.SKINNING
-            actual val FOG = AndroidMaterial.UserVariantFilterBit.FOG
-            actual val VSM = AndroidMaterial.UserVariantFilterBit.VSM
-            actual val SSR = AndroidMaterial.UserVariantFilterBit.SSR
-            actual val STE = AndroidMaterial.UserVariantFilterBit.STE
-            actual val ALL = AndroidMaterial.UserVariantFilterBit.ALL
-        }
+    actual object UserVariantFilterBit {
+        actual val DIRECTIONAL_LIGHTING = AndroidMaterial.UserVariantFilterBit.DIRECTIONAL_LIGHTING
+        actual val DYNAMIC_LIGHTING = AndroidMaterial.UserVariantFilterBit.DYNAMIC_LIGHTING
+        actual val SHADOW_RECEIVER = AndroidMaterial.UserVariantFilterBit.SHADOW_RECEIVER
+        actual val SKINNING = AndroidMaterial.UserVariantFilterBit.SKINNING
+        actual val FOG = AndroidMaterial.UserVariantFilterBit.FOG
+        actual val VSM = AndroidMaterial.UserVariantFilterBit.VSM
+        actual val SSR = AndroidMaterial.UserVariantFilterBit.SSR
+        actual val STE = AndroidMaterial.UserVariantFilterBit.STE
+        actual val ALL = AndroidMaterial.UserVariantFilterBit.ALL
     }
 
     actual class Parameter actual constructor(

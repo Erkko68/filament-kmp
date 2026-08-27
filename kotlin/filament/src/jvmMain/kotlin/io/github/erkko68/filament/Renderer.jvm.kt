@@ -26,10 +26,10 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
         actual var discard: Boolean = true
     }
 
-    actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 0x1
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 0x2
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 0x4
+    actual object MirrorFrameFlag {
+        actual val COMMIT: Int = 0x1
+        actual val SET_PRESENTATION_TIME: Int = 0x2
+        actual val CLEAR: Int = 0x4
     }
 
     actual val engine: Engine get() = engineRef

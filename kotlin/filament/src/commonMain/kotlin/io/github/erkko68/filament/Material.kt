@@ -147,27 +147,25 @@ expect class Material {
      * saves compilation time and memory. For example, if your app doesn't use stereoscopic rendering,
      * clear the STE bit.
      */
-    class UserVariantFilterBit {
-        companion object {
-            /** Variant for directional lighting */
-            val DIRECTIONAL_LIGHTING: Int
-            /** Variant for dynamic (local) lighting */
-            val DYNAMIC_LIGHTING: Int
-            /** Variant for shadow-receiving objects */
-            val SHADOW_RECEIVER: Int
-            /** Variant for skinned/skeletal animation */
-            val SKINNING: Int
-            /** Variant for fog effects */
-            val FOG: Int
-            /** Variant for Variance Shadow Maps */
-            val VSM: Int
-            /** Variant for Screen-Space Reflections */
-            val SSR: Int
-            /** Variant for stereoscopic rendering */
-            val STE: Int
-            /** All variants combined */
-            val ALL: Int
-        }
+    object UserVariantFilterBit {
+        /** Variant for directional lighting */
+        val DIRECTIONAL_LIGHTING: Int
+        /** Variant for dynamic (local) lighting */
+        val DYNAMIC_LIGHTING: Int
+        /** Variant for shadow-receiving objects */
+        val SHADOW_RECEIVER: Int
+        /** Variant for skinned/skeletal animation */
+        val SKINNING: Int
+        /** Variant for fog effects */
+        val FOG: Int
+        /** Variant for Variance Shadow Maps */
+        val VSM: Int
+        /** Variant for Screen-Space Reflections */
+        val SSR: Int
+        /** Variant for stereoscopic rendering */
+        val STE: Int
+        /** All variants combined */
+        val ALL: Int
     }
 
     /**

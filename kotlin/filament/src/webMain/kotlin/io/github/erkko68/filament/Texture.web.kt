@@ -120,20 +120,18 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
 
     actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
 
-    actual class Usage {
-        actual companion object {
-            actual val COLOR_ATTACHMENT: Int = 1
-            actual val DEPTH_ATTACHMENT: Int = 2
-            actual val STENCIL_ATTACHMENT: Int = 4
-            actual val UPLOADABLE: Int = 8
-            actual val SAMPLEABLE: Int = 16
-            actual val SUBPASS_INPUT: Int = 32
-            actual val BLIT_SRC: Int = 64
-            actual val BLIT_DST: Int = 128
-            actual val PROTECTED: Int = 256
-            actual val GEN_MIPMAPPABLE: Int = 512
-            actual val DEFAULT: Int = 24
-        }
+    actual object Usage {
+        actual val COLOR_ATTACHMENT: Int = 1
+        actual val DEPTH_ATTACHMENT: Int = 2
+        actual val STENCIL_ATTACHMENT: Int = 4
+        actual val UPLOADABLE: Int = 8
+        actual val SAMPLEABLE: Int = 16
+        actual val SUBPASS_INPUT: Int = 32
+        actual val BLIT_SRC: Int = 64
+        actual val BLIT_DST: Int = 128
+        actual val PROTECTED: Int = 256
+        actual val GEN_MIPMAPPABLE: Int = 512
+        actual val DEFAULT: Int = 24
     }
 
     actual class PixelBufferDescriptor actual constructor(

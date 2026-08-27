@@ -46,10 +46,10 @@ actual class Renderer @InternalFilamentApi constructor(
             set(value) { nativeOptions.discard = value }
     }
  
-    actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = AndroidRenderer.MIRROR_FRAME_FLAG_COMMIT
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = AndroidRenderer.MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = AndroidRenderer.MIRROR_FRAME_FLAG_CLEAR
+    actual object MirrorFrameFlag {
+        actual val COMMIT: Int = AndroidRenderer.MIRROR_FRAME_FLAG_COMMIT
+        actual val SET_PRESENTATION_TIME: Int = AndroidRenderer.MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME
+        actual val CLEAR: Int = AndroidRenderer.MIRROR_FRAME_FLAG_CLEAR
     }
 
     actual val engine: Engine get() = _engine

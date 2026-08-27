@@ -859,11 +859,7 @@ public final class io/github/erkko68/filament/Material$UboBatchingMode : java/la
 }
 
 public final class io/github/erkko68/filament/Material$UserVariantFilterBit {
-	public static final field Companion Lio/github/erkko68/filament/Material$UserVariantFilterBit$Companion;
-	public fun <init> ()V
-}
-
-public final class io/github/erkko68/filament/Material$UserVariantFilterBit$Companion {
+	public static final field INSTANCE Lio/github/erkko68/filament/Material$UserVariantFilterBit;
 	public final fun getALL ()I
 	public final fun getDIRECTIONAL_LIGHTING ()I
 	public final fun getDYNAMIC_LIGHTING ()I
@@ -1206,7 +1202,6 @@ public final class io/github/erkko68/filament/RenderableManager$PrimitiveType : 
 }
 
 public final class io/github/erkko68/filament/Renderer {
-	public static final field Companion Lio/github/erkko68/filament/Renderer$Companion;
 	public fun <init> (Lio/github/erkko68/filament/Engine;Ljava/lang/foreign/MemorySegment;)V
 	public final fun beginFrame (Lio/github/erkko68/filament/SwapChain;J)Z
 	public final fun copyFrame (Lio/github/erkko68/filament/SwapChain;Lio/github/erkko68/filament/Viewport;Lio/github/erkko68/filament/Viewport;I)V
@@ -1247,12 +1242,6 @@ public final class io/github/erkko68/filament/Renderer$ClearOptions {
 	public final fun setDiscard (Z)V
 }
 
-public final class io/github/erkko68/filament/Renderer$Companion {
-	public final fun getMIRROR_FRAME_FLAG_CLEAR ()I
-	public final fun getMIRROR_FRAME_FLAG_COMMIT ()I
-	public final fun getMIRROR_FRAME_FLAG_SET_PRESENTATION_TIME ()I
-}
-
 public final class io/github/erkko68/filament/Renderer$DisplayInfo {
 	public fun <init> ()V
 	public final fun getRefreshRate ()F
@@ -1269,6 +1258,13 @@ public final class io/github/erkko68/filament/Renderer$FrameRateOptions {
 	public final fun setHistory (I)V
 	public final fun setInterval (F)V
 	public final fun setScaleRate (F)V
+}
+
+public final class io/github/erkko68/filament/Renderer$MirrorFrameFlag {
+	public static final field INSTANCE Lio/github/erkko68/filament/Renderer$MirrorFrameFlag;
+	public final fun getCLEAR ()I
+	public final fun getCOMMIT ()I
+	public final fun getSET_PRESENTATION_TIME ()I
 }
 
 public final class io/github/erkko68/filament/Scene {
@@ -1662,11 +1658,7 @@ public final class io/github/erkko68/filament/Texture$Type : java/lang/Enum {
 }
 
 public final class io/github/erkko68/filament/Texture$Usage {
-	public static final field Companion Lio/github/erkko68/filament/Texture$Usage$Companion;
-	public fun <init> ()V
-}
-
-public final class io/github/erkko68/filament/Texture$Usage$Companion {
+	public static final field INSTANCE Lio/github/erkko68/filament/Texture$Usage;
 	public final fun getBLIT_DST ()I
 	public final fun getBLIT_SRC ()I
 	public final fun getCOLOR_ATTACHMENT ()I

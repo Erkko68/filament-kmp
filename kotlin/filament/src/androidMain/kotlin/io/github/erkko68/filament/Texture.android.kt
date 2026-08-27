@@ -109,20 +109,18 @@ actual class Texture @InternalFilamentApi constructor(internal val nativeTexture
 
     actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
 
-    actual class Usage {
-        actual companion object {
-            actual val COLOR_ATTACHMENT = AndroidTexture.Usage.COLOR_ATTACHMENT
-            actual val DEPTH_ATTACHMENT = AndroidTexture.Usage.DEPTH_ATTACHMENT
-            actual val STENCIL_ATTACHMENT = AndroidTexture.Usage.STENCIL_ATTACHMENT
-            actual val UPLOADABLE = AndroidTexture.Usage.UPLOADABLE
-            actual val SAMPLEABLE = AndroidTexture.Usage.SAMPLEABLE
-            actual val SUBPASS_INPUT = AndroidTexture.Usage.SUBPASS_INPUT
-            actual val BLIT_SRC = AndroidTexture.Usage.BLIT_SRC
-            actual val BLIT_DST = AndroidTexture.Usage.BLIT_DST
-            actual val PROTECTED = AndroidTexture.Usage.PROTECTED
-            actual val GEN_MIPMAPPABLE = AndroidTexture.Usage.GEN_MIPMAPPABLE
-            actual val DEFAULT = AndroidTexture.Usage.DEFAULT
-        }
+    actual object Usage {
+        actual val COLOR_ATTACHMENT = AndroidTexture.Usage.COLOR_ATTACHMENT
+        actual val DEPTH_ATTACHMENT = AndroidTexture.Usage.DEPTH_ATTACHMENT
+        actual val STENCIL_ATTACHMENT = AndroidTexture.Usage.STENCIL_ATTACHMENT
+        actual val UPLOADABLE = AndroidTexture.Usage.UPLOADABLE
+        actual val SAMPLEABLE = AndroidTexture.Usage.SAMPLEABLE
+        actual val SUBPASS_INPUT = AndroidTexture.Usage.SUBPASS_INPUT
+        actual val BLIT_SRC = AndroidTexture.Usage.BLIT_SRC
+        actual val BLIT_DST = AndroidTexture.Usage.BLIT_DST
+        actual val PROTECTED = AndroidTexture.Usage.PROTECTED
+        actual val GEN_MIPMAPPABLE = AndroidTexture.Usage.GEN_MIPMAPPABLE
+        actual val DEFAULT = AndroidTexture.Usage.DEFAULT
     }
 
     actual class PixelBufferDescriptor actual constructor(

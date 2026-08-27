@@ -183,18 +183,16 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
     actual enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
-    actual class UserVariantFilterBit {
-        actual companion object {
-            actual val DIRECTIONAL_LIGHTING: Int = 1
-            actual val DYNAMIC_LIGHTING: Int = 2
-            actual val SHADOW_RECEIVER: Int = 4
-            actual val SKINNING: Int = 8
-            actual val FOG: Int = 16
-            actual val VSM: Int = 32
-            actual val SSR: Int = 64
-            actual val STE: Int = 128
-            actual val ALL: Int = 255
-        }
+    actual object UserVariantFilterBit {
+        actual val DIRECTIONAL_LIGHTING: Int = 1
+        actual val DYNAMIC_LIGHTING: Int = 2
+        actual val SHADOW_RECEIVER: Int = 4
+        actual val SKINNING: Int = 8
+        actual val FOG: Int = 16
+        actual val VSM: Int = 32
+        actual val SSR: Int = 64
+        actual val STE: Int = 128
+        actual val ALL: Int = 255
     }
 
     actual class Parameter actual constructor(

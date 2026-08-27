@@ -195,10 +195,10 @@ actual class Renderer @InternalFilamentApi constructor(internal val jsRenderer: 
         actual var discard: Boolean = true
     }
 
-    actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 1
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 2
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 4
+    actual object MirrorFrameFlag {
+        actual val COMMIT: Int = 1
+        actual val SET_PRESENTATION_TIME: Int = 2
+        actual val CLEAR: Int = 4
     }
 }
 

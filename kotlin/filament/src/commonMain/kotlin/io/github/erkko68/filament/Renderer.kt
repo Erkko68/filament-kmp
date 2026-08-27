@@ -82,13 +82,14 @@ expect class Renderer {
         var discard: Boolean
     }
 
-    companion object {
+    /** Bit flags for the `flags` argument of [copyFrame]. */
+    object MirrorFrameFlag {
         /** Indicates dstSwapChain should be committed after copyFrame. */
-        val MIRROR_FRAME_FLAG_COMMIT: Int
+        val COMMIT: Int
         /** Indicates presentation time should be set on dstSwapChain in copyFrame. */
-        val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int
+        val SET_PRESENTATION_TIME: Int
         /** Indicates dstSwapChain should be cleared to black before copyFrame. */
-        val MIRROR_FRAME_FLAG_CLEAR: Int
+        val CLEAR: Int
     }
 
     /** Get the Engine that created this Renderer. */
