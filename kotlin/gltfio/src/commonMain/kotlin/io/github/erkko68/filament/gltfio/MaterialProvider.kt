@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.VertexBuffer
 
 /**
  * MaterialProvider supplies materials to glTF assets during loading.
@@ -35,7 +36,7 @@ expect interface MaterialProvider : AutoCloseable {
      * Returns true if the given vertex attribute must be present. Some providers (e.g.
      * ubershader) require dummy attribute values when the glTF model does not provide them.
      */
-    fun needsDummyData(attrib: Int): Boolean
+    fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
 
     /**
      * Destroys all cached materials. NOT called automatically on [destroy], which lets clients
@@ -71,7 +72,7 @@ expect class UbershaderProvider : MaterialProvider {
     override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
     override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
     override val materials: List<io.github.erkko68.filament.Material>
-    override fun needsDummyData(attrib: Int): Boolean
+    override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     override fun destroyMaterials()
     override fun destroy()
     override fun close()

@@ -8,6 +8,7 @@ import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.web.gltfio_UbershaderProvider
 import io.github.erkko68.filament.web.VertexAttribute as JSVertexAttribute
 import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.VertexBuffer
 
 actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(
@@ -24,7 +25,7 @@ actual interface MaterialProvider : AutoCloseable {
     ): Material?
 
     actual val materials: List<Material>
-    actual fun needsDummyData(attrib: Int): Boolean
+    actual fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
 }
@@ -66,8 +67,8 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         return List(jsMaterials.size) { Material(jsMaterials[it]!!) }
     }
 
-    actual override fun needsDummyData(attrib: Int): Boolean {
-        val js = jsVertexAttribute(attrib) ?: return false
+    actual override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean {
+        val js = jsVertexAttribute(attrib.ordinal) ?: return false
         return jsProvider.needsDummyData(js)
     }
 

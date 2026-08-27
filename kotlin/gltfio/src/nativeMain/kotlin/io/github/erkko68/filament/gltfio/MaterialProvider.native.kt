@@ -10,12 +10,13 @@ import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.VertexBuffer
 
 actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
     actual fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
     actual val materials: List<io.github.erkko68.filament.Material>
-    actual fun needsDummyData(attrib: Int): Boolean
+    actual fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
     
@@ -66,8 +67,8 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         }
     }
 
-    actual override fun needsDummyData(attrib: Int): Boolean {
-        return FilaMaterialProvider_needsDummyData(nativeHandle, attrib)
+    actual override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean {
+        return FilaMaterialProvider_needsDummyData(nativeHandle, attrib.ordinal)
     }
 
     actual override fun destroyMaterials() {

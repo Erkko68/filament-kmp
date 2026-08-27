@@ -25,6 +25,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`LightManager.ShadowOptions.polygonOffsetConstant` / `polygonOffsetSlope`** (`filament`): the depth-bias pair, unbound until now. Ignored when the View's `ShadowType` is VSM, and `@PlatformGap`-annotated on Android — the fields are package-private in Android's `ShadowOptions`, so only the other platforms reach the engine.
 
 ### Changed
+- **`MaterialKey` is a data class** (`gltfio`): 35 mutable fields with a no-argument constructor was the worst construct-then-mutate struct in the API. It is now a common `data class` — `MaterialKey(unlit = true, hasBaseColorTexture = true)` — and `constrainMaterial` becomes an extension, matching upstream where it is a free function.
+- **`MaterialKey.alphaMode` is an `AlphaMode` enum** (`gltfio`, **source-breaking**): was a raw `Int`. `AlphaMode.OPAQUE`/`MASK`/`BLEND`.
+- **`MaterialProvider.needsDummyData` takes a `VertexBuffer.VertexAttribute`** (`gltfio`, **source-breaking**): was a raw `Int` attribute ordinal.
 - **`Renderer` and `Engine` option structs are data classes** (`filament`): `DisplayInfo`, `FrameRateOptions` and `ClearOptions` move to the `io.github.erkko68.filament` package, and `Engine.Config` becomes a top-level `EngineConfig` — the same treatment the `View` option structs got, for the same reason.
 - **`enum.entries` replaces `enum.values()`** (`filament`, `filamat`, `gltfio`, `filament-utils`): 216 lookups, many of them in property getters that ran on every read. `values()` allocates a fresh array per call; `entries` is cached.
 - **`Engine.getSteadyClockTimeNano()` is `Engine.steadyClockTimeNano`** (`filament`): the last zero-argument getter left in the common surface.
