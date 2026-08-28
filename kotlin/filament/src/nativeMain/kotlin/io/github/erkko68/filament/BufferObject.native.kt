@@ -61,7 +61,7 @@ actual class BufferObject @InternalFilamentApi constructor(internal var nativeHa
         val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
             val ref = user!!.asStableRef<BufferPinWrapper>()
             val wrap = ref.get()
-            wrap.callback?.invoke()
+            upcall { wrap.callback?.invoke() }
             wrap.pinned.unpin()
             ref.dispose()
         }

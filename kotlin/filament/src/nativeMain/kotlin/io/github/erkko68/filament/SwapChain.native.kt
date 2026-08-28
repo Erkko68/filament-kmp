@@ -18,44 +18,53 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns null — SwapChain wraps an HTML5 canvas on web, not an OS native window handle.")
     actual val nativeWindow: Any? get() = null
 
-    private var frameCompletedRef: StableRef<() -> Unit>? = null
-    private var frameScheduledRef: StableRef<() -> Unit>? = null
+    // One StableRef per swapchain, disposed only when the swapchain is destroyed. Re-setting a
+    // callback swaps a field on the holder rather than disposing the ref: freeing what the
+    // backend still holds for an in-flight frame is a use-after-free. `staticCFunction` on a
+    // non-capturing lambda is a compile-time constant, so the wrappers cost nothing to rebuild.
+    private class FrameCallbacks {
+        var completed: (() -> Unit)? = null
+        var scheduled: (() -> Unit)? = null
+    }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
+    private val callbacks = FrameCallbacks()
+    private var callbacksRef: StableRef<FrameCallbacks>? = StableRef.create(callbacks)
+
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
     actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
-        frameCompletedRef?.dispose()
-        frameCompletedRef = null
-        if (callback == null) {
+        callbacks.completed = callback
+        val ref = callbacksRef
+        if (callback == null || ref == null) {
             FilaSwapChain_setFrameCompletedCallback(nativeHandle, null, null, null)
             return
         }
-        val stableRef = StableRef.create(callback)
-        frameCompletedRef = stableRef
-        val callbackWrapper = staticCFunction { _: CPointer<FilaSwapChain>?, user: COpaquePointer? ->
-            val ref = user!!.asStableRef<() -> Unit>()
-            ref.get().invoke()
+        val wrapper = staticCFunction { _: CPointer<FilaSwapChain>?, user: COpaquePointer? ->
+            upcall { user!!.asStableRef<FrameCallbacks>().get().completed?.invoke() }
         }
-        FilaSwapChain_setFrameCompletedCallback(nativeHandle, null, callbackWrapper, stableRef.asCPointer())
+        FilaSwapChain_setFrameCompletedCallback(nativeHandle, null, wrapper, ref.asCPointer())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
-        frameScheduledRef?.dispose()
-        frameScheduledRef = null
-        if (callback == null) {
+        callbacks.scheduled = callback
+        val ref = callbacksRef
+        if (callback == null || ref == null) {
             FilaSwapChain_setFrameScheduledCallback(nativeHandle, null, null, null)
             return
         }
-        val stableRef = StableRef.create(callback)
-        frameScheduledRef = stableRef
-        val callbackWrapper = staticCFunction { user: COpaquePointer? ->
-            val ref = user!!.asStableRef<() -> Unit>()
-            ref.get().invoke()
+        val wrapper = staticCFunction { user: COpaquePointer? ->
+            upcall { user!!.asStableRef<FrameCallbacks>().get().scheduled?.invoke() }
         }
-        FilaSwapChain_setFrameScheduledCallback(nativeHandle, null, callbackWrapper, stableRef.asCPointer())
+        FilaSwapChain_setFrameScheduledCallback(nativeHandle, null, wrapper, ref.asCPointer())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
+    // Called once the swapchain is destroyed and no further frame callbacks can fire.
+    internal fun releaseCallbackStubs() {
+        callbacks.completed = null
+        callbacks.scheduled = null
+        callbacksRef?.dispose()
+        callbacksRef = null
+    }
+
     actual val isFrameScheduledCallbackSet: Boolean get() = FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")

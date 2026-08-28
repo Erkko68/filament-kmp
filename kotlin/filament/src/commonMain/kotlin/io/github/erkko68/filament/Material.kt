@@ -541,3 +541,18 @@ expect class Material {
      */
     val requiredAttributes: Set<VertexBuffer.VertexAttribute>
 }
+
+// ParameterInfo packs a union: `type` holds a UniformType, a SamplerType or a SubpassType,
+// selected by isSampler/isSubpass. Parameter.Type flattens the three enums in that order, so
+// the sampler range is just an offset. The coerces drop UniformType.STRUCT and
+// SamplerType.SAMPLER_CUBEMAP_ARRAY, which Parameter.Type does not model.
+internal fun materialParameterType(raw: Int, isSampler: Boolean, isSubpass: Boolean): Material.Parameter.Type {
+    val entries = Material.Parameter.Type.entries
+    val first = Material.Parameter.Type.SAMPLER_2D.ordinal
+    val last = Material.Parameter.Type.SAMPLER_3D.ordinal
+    return when {
+        isSubpass -> Material.Parameter.Type.SUBPASS_INPUT
+        isSampler -> entries[(first + raw).coerceIn(first, last)]
+        else -> entries[raw.coerceIn(0, Material.Parameter.Type.MAT4.ordinal)]
+    }
+}

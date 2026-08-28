@@ -199,6 +199,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun destroySwapChain(swapChain: SwapChain) {
         FilamentC.FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
         swapChain.nativeHandle = null
+        swapChain.releaseCallbackStubs()
     }
 
     actual fun createView(): View = View(FilamentC.FilaEngine_createView(nativeHandle))

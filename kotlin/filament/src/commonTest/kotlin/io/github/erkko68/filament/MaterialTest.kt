@@ -9,6 +9,21 @@ import kotlin.test.assertTrue
 
 class MaterialTest : FilamentTestFixture() {
     @Test
+    fun testParameterTypeUnionDecoding() {
+        // UniformType space
+        assertEquals(Material.Parameter.Type.FLOAT3, materialParameterType(6, isSampler = false, isSubpass = false))
+        // UniformType.STRUCT (18) has no Parameter.Type; it must not spill into the sampler range.
+        assertEquals(Material.Parameter.Type.MAT4, materialParameterType(18, isSampler = false, isSubpass = false))
+        // SamplerType space is offset, not shared with UniformType
+        assertEquals(Material.Parameter.Type.SAMPLER_2D, materialParameterType(0, isSampler = true, isSubpass = false))
+        assertEquals(Material.Parameter.Type.SAMPLER_3D, materialParameterType(4, isSampler = true, isSubpass = false))
+        // SamplerType.SAMPLER_CUBEMAP_ARRAY (5) is unmodelled and clamps to the last sampler.
+        assertEquals(Material.Parameter.Type.SAMPLER_3D, materialParameterType(5, isSampler = true, isSubpass = false))
+        // SubpassType space ignores the raw value entirely
+        assertEquals(Material.Parameter.Type.SUBPASS_INPUT, materialParameterType(0, isSampler = false, isSubpass = true))
+    }
+
+    @Test
     fun testUserVariantFlags() {
         val d = Material.UserVariantFilterBit.DIRECTIONAL_LIGHTING
         val dy = Material.UserVariantFilterBit.DYNAMIC_LIGHTING

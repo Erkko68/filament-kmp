@@ -27,6 +27,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 - Minimum `compileSdk`: **34**. Minimum `minSdk`: **24**.
 - `LightManager.ShadowOptions.polygonOffsetConstant` / `polygonOffsetSlope` are tracked locally only. Both are package-private in `com.google.android.filament.LightManager$ShadowOptions` (public in C++ and marshalled by `nBuilderShadowOptions`, so this is an upstream visibility oversight) — Kotlin cannot write them, so the engine keeps 0.5 / 2.0 while the getter reports what you set. Other platforms apply them normally.
 - `View.DepthOfFieldOptions.cocAspectRatio` is tracked locally only. Upstream's JNI bridge is a positional argument list rebuilt with a designated initialiser, and `nSetDepthOfFieldOptions` never took the field — so the engine keeps `1.0` while the getter reports what you set. Other platforms apply it normally.
+- `SwapChain.setFrameScheduledCallback(null)` stops your callback firing, but the engine keeps a no-op one installed. Upstream's `nSetFrameScheduledCallback` always builds a `JniCallback` and both Java overloads are `@NonNull`, so there is no way to hand it the empty callback Filament unsets on. `isFrameScheduledCallbackSet` answers from what you set through this wrapper, so it reads the same as on every other platform — only `com.google.android.filament.SwapChain.isFrameScheduledCallbackSet()`, read directly, still reports `true`.
 
 ### Screen rotation and configuration changes
 
@@ -116,7 +117,7 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor`, `AmbientOcclusionOptions.ssct`/`gtao` | Silent no-op, and the getter reports the engine default | GTAO can still be *selected* via `aoType`; it runs with Filament's default tuning |
 | `Texture.Builder.swizzle` | Bound, but `build()` rejects a swizzled texture — WebGL has no texture swizzle (`Texture.isTextureSwizzleSupported` returns `false`) | — |
 | `Renderer.displayInfo`, `Renderer.frameRateOptions` | Tracked locally only — `setDisplayInfo`/`setFrameRateOptions` are not bound in `filament.js`; frame pacing is managed by the browser | — |
-| `SwapChain.setFrameCompletedCallback`, `SwapChain.setFrameScheduledCallback` | Silent no-op / tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is browser-managed | — |
+| `SwapChain.setFrameCompletedCallback` | Silent no-op — `filament.js` does not bind it, and binding it would not help: `OpenGLDriver::setFrameCompletedCallback` is an empty function, so it fires on Metal only (the same is true on Android and on Vulkan/GL desktop) | — |
 | `SwapChain.setFrameRate`, `SwapChain.isFrameRateChangeSupported` | Silent no-op / returns false — display frame rate switching is not supported on web | — |
 | `SwapChain.nativeWindow`, `SwapChain.nativeObject` | Returns null / sentinel `1L` — `SwapChain` wraps an HTML5 canvas on web rather than an OS native window handle | — |
 | `Texture.Builder.importTexture` | Silent no-op — takes a backend texture handle, which `filament.js` does not expose | — |

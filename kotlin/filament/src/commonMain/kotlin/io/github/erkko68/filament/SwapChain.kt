@@ -101,7 +101,6 @@ expect class SwapChain {
      *
      * @return true if a frame scheduled callback is set, false otherwise
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     val isFrameScheduledCallbackSet: Boolean
 
     /**
@@ -113,10 +112,13 @@ expect class SwapChain {
      * Use this callback to be notified when GPU rendering is finished, useful for synchronization
      * or performance monitoring.
      *
+     * Only the Metal backend supports this callback. Every other backend accepts it and never
+     * calls it. (This is not true of [setFrameScheduledCallback], which fires on all of them.)
+     *
      * @param callback The callback function to invoke when frame GPU rendering completes.
      *                 Pass null or a no-op function to unset the callback.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
     fun setFrameCompletedCallback(callback: (() -> Unit)? = null)
 
     /**
@@ -137,7 +139,6 @@ expect class SwapChain {
      * @param callback The callback function to invoke when the frame is scheduled.
      *                 Pass null or a no-op function to unset the callback.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     fun setFrameScheduledCallback(callback: (() -> Unit)? = null)
 
     /**

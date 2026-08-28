@@ -197,6 +197,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun destroySwapChain(swapChain: SwapChain) {
         FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
         swapChain.nativeHandle = null
+        swapChain.releaseCallbackStubs()
     }
 
     actual fun createView(): View = View(FilaEngine_createView(nativeHandle))
@@ -316,7 +317,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         val cCallback: FilaEngineCompileCallback? = if (callback != null) {
             staticCFunction { userData: COpaquePointer? ->
                 val ref = userData!!.asStableRef<() -> Unit>()
-                ref.get().invoke()
+                upcall(ref.get())
                 ref.dispose()
             }
         } else null

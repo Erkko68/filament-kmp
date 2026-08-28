@@ -100,8 +100,7 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
             val stableRef = StableRef.create(callback)
             val callbackWrapper = staticCFunction { _: CPointer<FilaMaterial>?, user: COpaquePointer? ->
                 val ref = user!!.asStableRef<(() -> Unit)>()
-                val cb = ref.get()
-                cb.invoke()
+                upcall(ref.get())
                 ref.dispose()
             }
             FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, callbackWrapper, stableRef.asCPointer())
@@ -145,7 +144,7 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
             val info = infoArray[i]
             Parameter(
                 info.name?.toKString() ?: "",
-                Parameter.Type.entries[info.type.toInt()],
+                materialParameterType(info.type.toInt(), info.isSampler != 0.toUByte(), info.isSubpass != 0.toUByte()),
                 Parameter.Precision.entries[info.precision.toInt()],
                 info.count.toInt()
             )

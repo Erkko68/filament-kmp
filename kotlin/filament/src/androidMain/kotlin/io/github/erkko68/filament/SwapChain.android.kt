@@ -15,18 +15,24 @@ actual class SwapChain @InternalFilamentApi constructor(internal val nativeSwapC
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns null — SwapChain wraps an HTML5 canvas on web, not an OS native window handle.")
     actual val nativeWindow: Any? get() = nativeSwapChain.nativeWindow
     
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
+    // Upstream's nSetFrameCompletedCallback/nSetFrameScheduledCallback always install a
+    // JniCallback, and both Java overloads are @NonNull, so there is no way to hand the engine
+    // the empty callback it unsets on. Null therefore installs a Runnable that does nothing,
+    // and [isFrameScheduledCallbackSet] answers from what was set here rather than from the
+    // engine — otherwise it would keep reporting true after a clear.
+    private var frameScheduled: (() -> Unit)? = null
+
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
     actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
         nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback?.invoke() })
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
+        frameScheduled = callback
         nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback?.invoke() })
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual val isFrameScheduledCallbackSet: Boolean get() = nativeSwapChain.isFrameScheduledCallbackSet
+    actual val isFrameScheduledCallbackSet: Boolean get() = frameScheduled != null
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
     actual val isFrameRateChangeSupported: Boolean get() = nativeSwapChain.isFrameRateChangeSupported()

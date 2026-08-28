@@ -152,7 +152,11 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
                 val namePtr = FilaMaterialParameterInfo.name(info)
                 Parameter(
                     if (namePtr.isNullPtr()) "" else namePtr.cString(),
-                    Parameter.Type.entries[FilaMaterialParameterInfo.type(info).toInt() and 0xFF],
+                    materialParameterType(
+                        FilaMaterialParameterInfo.type(info).toInt() and 0xFF,
+                        FilaMaterialParameterInfo.isSampler(info) != 0.toByte(),
+                        FilaMaterialParameterInfo.isSubpass(info) != 0.toByte(),
+                    ),
                     Parameter.Precision.entries[FilaMaterialParameterInfo.precision(info).toInt() and 0xFF],
                     FilaMaterialParameterInfo.count(info)
                 )

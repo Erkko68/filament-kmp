@@ -748,12 +748,14 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         val stableRef = kotlinx.cinterop.StableRef.create(callback)
         val cCallback = staticCFunction { result: CPointer<FilaViewPickingQueryResult>?, user: COpaquePointer? ->
             val ref = user!!.asStableRef<(PickingQueryResult) -> Unit>()
-            result?.pointed?.let { r ->
-                ref.get().invoke(PickingQueryResult(
-                    r.renderable.toInt(),
-                    r.depth,
-                    floatArrayOf(r.fragCoords[0], r.fragCoords[1], r.fragCoords[2])
-                ))
+            upcall {
+                result?.pointed?.let { r ->
+                    ref.get().invoke(PickingQueryResult(
+                        r.renderable.toInt(),
+                        r.depth,
+                        floatArrayOf(r.fragCoords[0], r.fragCoords[1], r.fragCoords[2])
+                    ))
+                }
             }
             ref.dispose()
         }

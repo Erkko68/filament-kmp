@@ -19,19 +19,16 @@ import io.github.erkko68.filament.ffm.FilaViewVsmShadowOptions
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
 
 // One-shot picking callback: persistent stub keyed by userData address (same approach as Completions).
 private object Picking {
     private val arena = Arena.ofShared()
-    private val actions = ConcurrentHashMap<Long, (View.PickingQueryResult) -> Unit>()
-    private val counter = AtomicLong(1L)
+    private val registry = CallbackRegistry<(View.PickingQueryResult) -> Unit>()
 
     val stub: MemorySegment by lazy {
         FilaViewPickingCallback.allocate({ result, userData ->
-            val cb = actions.remove(userData.address())
-            if (cb != null && !result.isNullPtr()) {
+            val cb = registry.take(userData)
+            if (cb != null && !result.isNullPtr()) upcall {
                 val r = result.reinterpret(FilaViewPickingQueryResult.layout().byteSize())
                 val fragCoordsSeg = FilaViewPickingQueryResult.fragCoords(r)
                 cb(View.PickingQueryResult(
@@ -47,11 +44,7 @@ private object Picking {
         }, arena)
     }
 
-    fun register(cb: (View.PickingQueryResult) -> Unit): MemorySegment {
-        val id = counter.getAndIncrement()
-        actions[id] = cb
-        return MemorySegment.ofAddress(id)
-    }
+    fun register(cb: (View.PickingQueryResult) -> Unit): MemorySegment = registry.register(cb)
 }
 
 actual class View @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {

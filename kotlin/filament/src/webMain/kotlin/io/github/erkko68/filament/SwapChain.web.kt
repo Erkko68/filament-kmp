@@ -9,19 +9,15 @@ actual class SwapChain @InternalFilamentApi constructor(internal val jsSwapChain
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns null — SwapChain wraps an HTML5 canvas on web, not an OS native window handle.")
     actual val nativeWindow: Any? get() = null
 
-    private var frameScheduledCallback: (() -> Unit)? = null
-
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
     actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
     actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
-        frameScheduledCallback = callback
+        jsSwapChain.setFrameScheduledCallback(callback)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — frame callbacks are only supported on the Metal backend; on web, frame presentation is managed by the browser.")
-    actual val isFrameScheduledCallbackSet: Boolean get() = frameScheduledCallback != null
+    actual val isFrameScheduledCallbackSet: Boolean get() = jsSwapChain.isFrameScheduledCallbackSet()
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns sentinel value 1L — SwapChain handle is not exposed as a numeric pointer on web.")
     actual val nativeObject: Long get() = 1L

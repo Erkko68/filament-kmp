@@ -107,7 +107,7 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
     // back into the caller's ByteArray, invoke the callback, and free the buffer.
     private fun readPixelsInto(buffer: Texture.PixelBufferDescriptor): Pair<MemorySegment, MemorySegment> {
         val dataArena = Arena.ofShared()
-        val seg = dataArena.allocate(buffer.storage.size.toLong())
+        val seg = dataArena.byteBuffer(buffer.storage.size)
         val userData = Completions.register {
             try {
                 MemorySegment.copy(seg, ValueLayout.JAVA_BYTE, 0L, buffer.storage, 0, buffer.storage.size)

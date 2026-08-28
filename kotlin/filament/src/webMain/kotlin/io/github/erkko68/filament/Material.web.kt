@@ -242,21 +242,13 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
     }
 }
 
-// ParameterInfo packs a union: `type`, `samplerType` and `subpassType` live in separate
-// enum spaces, selected by isSampler/isSubpass. The common Parameter.Type flattens them —
-// UniformType[0..17] then the samplers then SUBPASS_INPUT — and those prefixes match the
-// backend enums, so the offsets below are exact.
-private fun JsParameterInfo.parameterType(): Material.Parameter.Type {
-    val entries = Material.Parameter.Type.entries
-    return when {
-        isSubpass -> Material.Parameter.Type.SUBPASS_INPUT
-        // SamplerType also declares SAMPLER_CUBEMAP_ARRAY, which the common enum lacks and
-        // WebGL 2 cannot express; it would run past the sampler range, so it is clamped out.
-        isSampler -> entries[
-            Material.Parameter.Type.SAMPLER_2D.ordinal +
-                (samplerType ?: 0).coerceIn(0, Material.Parameter.Type.SAMPLER_3D.ordinal -
-                    Material.Parameter.Type.SAMPLER_2D.ordinal)
-        ]
-        else -> entries[(type ?: 0).coerceIn(0, Material.Parameter.Type.MAT4.ordinal)]
-    }
-}
+// filament.js splits the union across three fields; materialParameterType takes the one
+// isSampler/isSubpass selects.
+private fun JsParameterInfo.parameterType(): Material.Parameter.Type = materialParameterType(
+    when {
+        isSubpass -> 0
+        isSampler -> samplerType ?: 0
+        else -> type ?: 0
+    },
+    isSampler, isSubpass,
+)
