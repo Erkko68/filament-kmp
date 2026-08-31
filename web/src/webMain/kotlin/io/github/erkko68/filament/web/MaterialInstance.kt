@@ -1,16 +1,31 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
 external class MaterialInstance : JsAny {
 fun getName(): String
+fun getMaterial(): Material
+fun duplicate(): MaterialInstance
+fun duplicateNamed(name: String): MaterialInstance
 fun setBoolParameter(name: String, value: Boolean): Unit
+fun setBool2Parameter(name: String, value: bool2): Unit
+fun setBool3Parameter(name: String, value: bool3): Unit
+fun setBool4Parameter(name: String, value: bool4): Unit
+fun setIntParameter(name: String, value: Double): Unit
+fun setInt2Parameter(name: String, value: int2): Unit
+fun setInt3Parameter(name: String, value: int3): Unit
+fun setInt4Parameter(name: String, value: int4): Unit
 fun setFloatParameter(name: String, value: Double): Unit
 fun setFloat2Parameter(name: String, value: float2): Unit
 fun setFloat3Parameter(name: String, value: float3): Unit
 fun setFloat4Parameter(name: String, value: float4): Unit
+fun setConstantBool(name: String, value: Boolean): Unit
+fun setConstantFloat(name: String, value: Double): Unit
+fun setConstantInt(name: String, value: Double): Unit
+fun getConstantBool(name: String): Boolean
+fun getConstantFloat(name: String): Double
+fun getConstantInt(name: String): Double
+fun isStencilWriteEnabled(): Boolean
 fun setMat3Parameter(name: String, value: mat4): Unit
 fun setMat4Parameter(name: String, value: mat3): Unit
 fun setTextureParameter(name: String, value: Texture, sampler: TextureSampler): Unit
@@ -18,6 +33,8 @@ fun setColor3Parameter(name: String, ctype: RgbType, value: float3): Unit
 fun setColor4Parameter(name: String, ctype: RgbaType, value: float4): Unit
 fun setPolygonOffset(scale: Double, constant: Double): Unit
 fun setMaskThreshold(threshold: Double): Unit
+fun setScissor(left: Double, bottom: Double, width: Double, height: Double): Unit
+fun unsetScissor(): Unit
 fun setDoubleSided(doubleSided: Boolean): Unit
 fun setCullingMode(mode: CullingMode): Unit
 fun setColorWrite(enable: Boolean): Unit
@@ -47,14 +64,6 @@ fun getSpecularAntiAliasingThreshold(): Double
 fun setSpecularAntiAliasingThreshold(value: Double): Unit
 fun getSpecularAntiAliasingVariance(): Double
 fun setSpecularAntiAliasingVariance(value: Double): Unit
-fun getMaterial(): Material
-fun duplicate(): MaterialInstance
-fun duplicateNamed(name: String): MaterialInstance
-fun getConstantBool(name: String): Boolean
-fun getConstantFloat(name: String): Double
-fun getConstantInt(name: String): Double
-fun setScissor(left: Double, bottom: Double, width: Double, height: Double): Unit
-fun unsetScissor(): Unit
 }
 
 // ── MaterialInstance ──────────────────────────────────────────────────────────

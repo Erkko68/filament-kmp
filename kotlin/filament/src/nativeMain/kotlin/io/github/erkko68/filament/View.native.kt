@@ -114,6 +114,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         actual var bilateralThreshold: Float = 0.05f
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
         actual var gtao: Gtao = Gtao()
         actual class Ssct actual constructor() {
             actual var enabled: Boolean = false

@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -12,11 +10,11 @@ fun getRenderableCount(): Double
 fun remove(entity: Entity): Unit
 fun removeEntities(entities: js.array.ReadonlyArray<Entity>): Unit
 fun setIndirectLight(ibl: IndirectLight?): Unit
+fun getIndirectLight(): IndirectLight?
 fun setSkybox(sky: Skybox?): Unit
+fun getSkybox(): Skybox?
 fun getEntityCount(): Double
 fun hasEntity(entity: Entity): Boolean
-fun getIndirectLight(): IndirectLight?
-fun getSkybox(): Skybox?
 }
 
 // ── Scene ─────────────────────────────────────────────────────────────────────

@@ -157,6 +157,7 @@ actual class View @InternalFilamentApi constructor(internal val nativeView: Fila
             actual var sampleCount: Int = 4
             actual var rayCount: Int = 1
         }
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
         actual var gtao: Gtao = Gtao()
         actual class Gtao actual constructor() {
             actual var sampleSliceCount: Int = 4

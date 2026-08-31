@@ -243,7 +243,6 @@ expect class ColorGrading {
          * @param dimension Dimension of the custom LUT (e.g. 16, 32, 64)
          * @return This Builder, for chaining calls
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — customLut is not bound in filament.js.")
         fun customLut(data: FloatArray, dimension: Int): Builder
 
         /**

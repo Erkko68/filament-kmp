@@ -12,8 +12,6 @@ import io.github.erkko68.filament.isNullPtr
 import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
@@ -73,10 +71,8 @@ actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeH
 
     actual val entityCount: Int get() = FilamentC.FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstanceCount: Int get() = FilamentC.FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstances: List<FilamentInstance> get() {
         val count = assetInstanceCount
         if (count == 0) return emptyList()

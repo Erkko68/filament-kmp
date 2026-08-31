@@ -1,8 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.Entity
 
 /**
@@ -104,7 +102,6 @@ expect class FilamentInstance {
     fun applyMaterialVariant(variantIndex: Int)
 
     /** Gets all material instances of this instance. These are already bound to renderables. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     val materialInstances: List<io.github.erkko68.filament.MaterialInstance>
 
     /** Gets the names of all material variants declared in the asset, in variant-index order. */

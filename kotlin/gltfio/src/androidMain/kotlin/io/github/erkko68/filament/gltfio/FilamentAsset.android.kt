@@ -3,8 +3,6 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentAsset @InternalFilamentApi constructor(
@@ -44,10 +42,8 @@ actual class FilamentAsset @InternalFilamentApi constructor(
 
     actual val entityCount: Int get() = nativeObject.entities.size
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstanceCount: Int get() = resolveKnownInstances().size
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstances: List<FilamentInstance> get() = resolveKnownInstances().toList()
 
     actual val boundingBox: Box get() {

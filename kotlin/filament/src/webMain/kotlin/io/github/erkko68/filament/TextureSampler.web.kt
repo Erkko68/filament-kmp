@@ -61,7 +61,10 @@ actual class TextureSampler {
         val minJs = mapMinFilter(minFilter)
         val magJs = mapMagFilter(magFilter)
         val wrapJs = mapWrapMode(wrapModeS)
-        val ts = JSTextureSampler(minJs.unsafeCast<JSMinFilter>(), magJs, wrapJs)
+        val ts = JSTextureSampler(minJs, magJs, wrapJs)
+        // The constructor takes one wrap mode for all three axes.
+        ts.setWrapModeT(mapWrapMode(wrapModeT))
+        ts.setWrapModeR(mapWrapMode(wrapModeR))
         ts.setAnisotropy(anisotropy.toDouble())
         if (compareMode != CompareMode.NONE) {
             ts.setCompareMode(mapCompareMode(compareMode), mapCompareFunc(compareFunction))

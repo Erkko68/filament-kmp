@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -11,4 +9,5 @@ fun color(rgba: float4): Skybox_Builder
 fun environment(envmap: Texture): Skybox_Builder
 fun showSun(show: Boolean): Skybox_Builder
 fun priority(priority: Double): Skybox_Builder
+fun intensity(envIntensity: Double): Skybox_Builder
 }

@@ -92,7 +92,6 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(0f, o.transform[1], 1e-6f)
         assertEquals(0f, o.transform[2], 1e-6f)
         assertEquals(1f, o.transform[3], 1e-6f)
-        // 0 means "defer to the View-wide SoftShadowOptions" — Filament's own default.
         assertEquals(0.5f, o.polygonOffsetConstant, 1e-6f)
         assertEquals(2.0f, o.polygonOffsetSlope, 1e-6f)
         assertEquals(1f, o.penumbraScale, 1e-6f)

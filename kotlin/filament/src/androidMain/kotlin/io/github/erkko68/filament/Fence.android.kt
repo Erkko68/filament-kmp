@@ -6,6 +6,7 @@ actual class Fence @InternalFilamentApi constructor(internal val nativeFence: An
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     actual fun wait(mode: Mode, timeout: Long): FenceStatus {
         val androidMode = AndroidFence.Mode.entries[mode.ordinal]
         val result = nativeFence.wait(androidMode, timeout)

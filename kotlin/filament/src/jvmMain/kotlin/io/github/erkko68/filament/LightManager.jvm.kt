@@ -113,12 +113,10 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
             get() = FilaLightManagerShadowOptions.transform(nativeOptions).let { s -> FloatArray(4) { s.getFloatAt(it) } }
             set(value) { val s = FilaLightManagerShadowOptions.transform(nativeOptions); for (i in 0 until 4.coerceAtMost(value.size)) s.setFloatAt(i, value[i]) }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetConstant: Float
             get() = FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions)
             set(value) { FilaLightManagerShadowOptions.polygonOffsetConstant(nativeOptions, value) }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetSlope: Float
             get() = FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions)
             set(value) { FilaLightManagerShadowOptions.polygonOffsetSlope(nativeOptions, value) }
@@ -169,7 +167,6 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
 
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
         actual fun castShadows(enable: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_castShadows(nativeBuilder, enable) }
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder = apply { FilamentC.FilaLightManagerBuilder_shadowOptions(nativeBuilder, options.nativeOptions) }
         actual fun castLight(enabled: Boolean): Builder = apply { FilamentC.FilaLightManagerBuilder_castLight(nativeBuilder, enabled) }
         actual fun position(x: Float, y: Float, z: Float): Builder = apply { FilamentC.FilaLightManagerBuilder_position(nativeBuilder, x, y, z) }

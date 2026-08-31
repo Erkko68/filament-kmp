@@ -16,6 +16,7 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
         actual fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = FilamentC.FilaSwapChain_isMSAASwapChainSupported(engine.nativeHandle, samples)
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns null — SwapChain wraps an HTML5 canvas on web, not an OS native window handle.")
     actual val nativeWindow: Any? get() = null
 
     // One stub per swapchain, allocated on first use and freed only when the swapchain is
@@ -65,12 +66,15 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
     actual val isFrameRateChangeSupported: Boolean get() = FilamentC.FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — display frame rate switching is not supported on web; pacing is browser-managed.")
     actual fun setFrameRate(frameRate: Float) =
         setFrameRate(frameRate, FrameRateCompatibility.DEFAULT, ChangeFrameRateStrategy.ONLY_IF_SEAMLESS)
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — display frame rate switching is not supported on web; pacing is browser-managed.")
     actual fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy) {
         FilamentC.FilaSwapChain_setFrameRate(nativeHandle, frameRate, compatibility.ordinal.toByte(), strategy.ordinal.toByte())
     }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns sentinel value 1L — SwapChain handle is not exposed as a numeric pointer on web.")
     actual val nativeObject: Long get() = nativeHandle?.address() ?: 0L
 }

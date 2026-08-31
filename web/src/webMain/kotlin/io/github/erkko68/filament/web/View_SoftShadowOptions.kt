@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -22,8 +20,14 @@ var penumbraScale: Double?
      * Acceptable values are equal to or greater than 1.
      */
 var penumbraRatioScale: Double?
-/** Maximum penumbra-to-blocker ratio a PCSS shadow may reach. */
+/**
+     * Global default maximum geometric ratio applied to PCSS, as a smooth asymptotic squash.
+     * Individual lights can override it via LightManager$ShadowOptions.maxPenumbraRatio.
+     */
 var maxPenumbraRatio: Double?
-/** Maximum blocker-search radius, in shadow-map texels. */
+/**
+     * Global default maximum world-space radius for the PCSS blocker search.
+     * Individual lights can override it via LightManager$ShadowOptions.maxSearchRadius.
+     */
 var maxSearchRadius: Double?
 }

@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -16,17 +14,26 @@ fun getRenderableEntities(): js.array.ReadonlyArray<Entity>
 fun getCameraEntities(): js.array.ReadonlyArray<Entity>
 fun getRoot(): Entity
 fun popRenderable(): Entity
+fun popRenderables(count: Double): Vector<Entity>
+fun getEntityCount(): Double
+fun getLightEntityCount(): Double
+fun getRenderableEntityCount(): Double
+fun getCameraEntityCount(): Double
+fun getResourceUriCount(): Double
+fun getMorphTargetCountAt(entity: Entity): Double
+fun getSceneCount(): Double
+fun getAssetInstanceCount(): Double
 fun getInstance(): gltfio_FilamentInstance
 fun getAssetInstances(): js.array.ReadonlyArray<gltfio_FilamentInstance>
 fun getResourceUris(): js.array.ReadonlyArray<JsString>
 fun getBoundingBox(): Aabb
 fun getName(entity: Entity): String
 fun getExtras(entity: Entity): String
+fun getMorphTargetNames(entity: Entity): js.array.ReadonlyArray<JsString>
 fun getWireframe(): Entity
 fun getEngine(): Engine
 fun releaseSourceData(): Unit
 fun getFirstEntityByName(name: String): Entity
-fun getMorphTargetNames(entity: Entity): js.array.ReadonlyArray<JsString>
 }
 
 // ── gltfio ────────────────────────────────────────────────────────────────────
