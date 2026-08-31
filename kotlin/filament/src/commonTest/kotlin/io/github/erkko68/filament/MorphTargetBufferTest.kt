@@ -7,7 +7,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@IgnoreJs // MorphTargetBuffer is not bound in the web wrapper; Builder.build throws there.
 class MorphTargetBufferTest : FilamentTestFixture() {
     @Test
     fun testMorphTargetBufferLifecycle() {

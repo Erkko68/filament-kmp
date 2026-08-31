@@ -44,6 +44,21 @@ fun getFogEntity(): Entity
 fun getVisibleRenderableCount(): Double
 fun clearFrameHistory(engine: Engine): Unit
 fun setDynamicLightingOptions(zLightNear: Double, zLightFar: Double): Unit
+fun getViewport(): float4
+fun getSampleCount(): Double
+fun getShadowType(): View_ShadowType
+fun getSoftShadowOptions(): View_SoftShadowOptions
+fun getVsmShadowOptions(): View_VsmShadowOptions
+fun getDynamicResolutionOptions(): View_DynamicResolutionOptions
+fun setDynamicResolutionOptions(options: View_DynamicResolutionOptions): Unit
+fun getLastDynamicResolutionScale(): float2
+fun hasCamera(): Boolean
+fun isShadowingEnabled(): Boolean
+fun isFrustumCullingEnabled(): Boolean
+fun setFrustumCullingEnabled(enabled: Boolean): Unit
+fun setDithering(dithering: View_Dithering): Unit
+fun setChannelDepthClearEnabled(channel: Double, enabled: Boolean): Unit
+fun isChannelDepthClearEnabled(channel: Double): Boolean
 }
 
 // ── View ──────────────────────────────────────────────────────────────────────

@@ -6,7 +6,6 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@IgnoreJs // Fence is not bound in the web wrapper; createFence throws there.
 class FenceTest : FilamentTestFixture() {
     @Test
     fun testFenceLifecycle() {

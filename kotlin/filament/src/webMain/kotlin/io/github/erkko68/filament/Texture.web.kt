@@ -277,11 +277,8 @@ actual class Texture(val jsTexture: JSTexture) {
             return JSTexture.isTextureFormatMipmappable(engine.jsEngine, mapInternalFormat(format))
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns false — not bound in filament.js.")
-        actual fun isTextureSwizzleSupported(engine: Engine): Boolean {
-            // TODO(js): isTextureSwizzleSupported not bound in jsbindings.cpp.
-            return false
-        }
+        actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
+            JSTexture.isTextureSwizzleSupported(engine.jsEngine)
 
         actual fun validatePixelFormatAndType(
             internalFormat: InternalFormat,
@@ -326,20 +323,17 @@ actual class Texture(val jsTexture: JSTexture) {
     }
 }
 
+// The JS enum registers Filament's TextureFormat in declaration order, the same order the
+// common enum follows, so the two map by ordinal — the old hand-written `when` covered 10 of
+// them and silently substituted RGBA8 for the rest (a DEPTH24_STENCIL8 texture came out as
+// colour).
+private const val JS_INTERNAL_FORMAT_COUNT = 101
+
 private fun mapInternalFormat(format: Texture.InternalFormat): JSTextureInternalFormat {
-    return when(format) {
-        Texture.InternalFormat.R8 -> JSTextureInternalFormat.R8
-        Texture.InternalFormat.RGBA8 -> JSTextureInternalFormat.RGBA8
-        Texture.InternalFormat.SRGB8_A8 -> JSTextureInternalFormat.SRGB8_A8
-        Texture.InternalFormat.RGB8 -> JSTextureInternalFormat.RGB8
-        Texture.InternalFormat.SRGB8 -> JSTextureInternalFormat.SRGB8
-        Texture.InternalFormat.DEPTH16 -> JSTextureInternalFormat.DEPTH16
-        Texture.InternalFormat.DEPTH24 -> JSTextureInternalFormat.DEPTH24
-        Texture.InternalFormat.DEPTH32F -> JSTextureInternalFormat.DEPTH32F
-        Texture.InternalFormat.RGBA16F -> JSTextureInternalFormat.RGBA16F
-        Texture.InternalFormat.RGBA32F -> JSTextureInternalFormat.RGBA32F
-        else -> JSTextureInternalFormat.RGBA8 // Fallback
-    }
+    val ordinal = format.ordinal
+    if (ordinal >= JS_INTERNAL_FORMAT_COUNT) return JSTextureInternalFormat.RGBA8
+    return JSTextureInternalFormat.values
+        .unsafeCast<js.array.JsArray<JSTextureInternalFormat>>()[ordinal]!!
 }
 
 private fun mapFormat(format: Texture.Format): PixelDataFormat {

@@ -197,9 +197,6 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         jsRenderableManager.setGeometryAt(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), jsType, vb.jsVertexBuffer, ib.jsIndexBuffer, offset.toDouble(), count.toDouble())
     }
 
-    // TODO(js): non-indexed setGeometryAt is not exposed in jsbindings.cpp as of
-    // Filament 1.71.5 (only the indexed overload is bound). Web/WASM can't reach this.
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed setGeometryAt overload.")
     actual fun setGeometryAt(
         instance: EntityInstance,
         primitiveIndex: Int,
@@ -208,9 +205,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         offset: Int,
         count: Int
     ) {
-        throw UnsupportedOperationException(
-            "Non-indexed setGeometryAt is not available on web — Filament.js does not bind this overload."
-        )
+        val jsType = when (type) {
+            PrimitiveType.POINTS -> RenderableManager_PrimitiveType.POINTS
+            PrimitiveType.LINES -> RenderableManager_PrimitiveType.LINES
+            PrimitiveType.LINE_STRIP -> RenderableManager_PrimitiveType.LINE_STRIP
+            PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
+            PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
+        }
+        jsRenderableManager.setGeometryNoIndicesAt(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), primitiveIndex.toDouble(), jsType, vb.jsVertexBuffer, offset.toDouble(), count.toDouble())
     }
 
     actual fun setBlendOrderAt(
@@ -366,20 +368,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
-        // TODO(js): non-indexed (attribute-less / procedural) geometry overloads are not
-        // bound in jsbindings.cpp as of Filament 1.71.5 — only the indexed overloads exist.
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder {
-            throw UnsupportedOperationException(
-                "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
-            )
+            jsBuilder.geometryNoIndicesOffset(index.toDouble(), mapPrimitiveType(type), vb.jsVertexBuffer, offset.toDouble(), count.toDouble())
+            return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder {
-            throw UnsupportedOperationException(
-                "Non-indexed RenderableManager.Builder.geometry is not available on web — Filament.js does not bind this overload."
-            )
+            jsBuilder.geometryNoIndices(index.toDouble(), mapPrimitiveType(type), vb.jsVertexBuffer)
+            return this
         }
 
         @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
@@ -465,33 +461,39 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js only binds the bone-count skinning overload; glTF skinning works through gltfio.")
         actual fun skinning(
             boneCount: Int,
             bones: FloatArray
         ): Builder {
+            // 7 floats per bone: unit quaternion (x, y, z, w) followed by translation (x, y, z).
+            @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+            val jsBones = List(boneCount) { i ->
+                val b = i * 7
+                val bone = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.RenderableManager_Bone>()
+                bone.unitQuaternion = jsNumbers(bones[b + 0], bones[b + 1], bones[b + 2], bones[b + 3])
+                bone.translation = jsNumbers(bones[b + 4], bones[b + 5], bones[b + 6])
+                bone
+            }
+            jsBuilder.skinningBones(jsBones.toJsArray())
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js; glTF skinning works through gltfio.")
         actual fun skinning(
             skinningBuffer: SkinningBuffer,
             boneCount: Int,
             offset: Int
         ): Builder {
+            jsBuilder.skinningBuffer(skinningBuffer.jsSkinningBuffer, boneCount.toDouble(), offset.toDouble())
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js only binds a boolean enable, so the target count is reduced to targetCount > 0.")
         actual fun morphing(targetCount: Int): Builder {
-            // The JS Builder's morphing() takes only a boolean enable — the per-target
-            // count overload isn't bound. Pass `enable = (count > 0)`.
-            jsBuilder.morphing(targetCount > 0)
+            jsBuilder.morphingTargetCount(targetCount.toDouble())
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — MorphTargetBuffer itself is unbound in filament.js; glTF morphing works through gltfio.")
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder {
+            jsBuilder.morphingBuffer(morphTargetBuffer.jsMorphTargetBuffer)
             return this
         }
 
@@ -508,10 +510,8 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js.")
         actual fun enableSkinningBuffers(enabled: Boolean): Builder {
-            // TODO(js): not exposed in the JS Builder; SkinningBuffer itself isn't
-            // bound, so the underlying API is unreachable on web.
+            jsBuilder.enableSkinningBuffers(enabled)
             return this
         }
 
@@ -524,4 +524,11 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
             jsBuilder.build(engine.jsEngine, EntityManager.jsEntityOf(entity))
         }
     }
+}
+private fun mapPrimitiveType(type: RenderableManager.PrimitiveType): RenderableManager_PrimitiveType = when (type) {
+    RenderableManager.PrimitiveType.POINTS -> RenderableManager_PrimitiveType.POINTS
+    RenderableManager.PrimitiveType.LINES -> RenderableManager_PrimitiveType.LINES
+    RenderableManager.PrimitiveType.LINE_STRIP -> RenderableManager_PrimitiveType.LINE_STRIP
+    RenderableManager.PrimitiveType.TRIANGLES -> RenderableManager_PrimitiveType.TRIANGLES
+    RenderableManager.PrimitiveType.TRIANGLE_STRIP -> RenderableManager_PrimitiveType.TRIANGLE_STRIP
 }

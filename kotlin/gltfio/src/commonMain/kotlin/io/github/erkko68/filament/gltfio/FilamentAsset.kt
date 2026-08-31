@@ -107,7 +107,6 @@ expect class FilamentAsset {
     fun getExtras(entity: Entity): String?
 
     /** Gets the morph target names declared on the given entity, in target order. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     fun getMorphTargetNames(entity: Entity): Array<String>
 
     /** Gets the URIs of all externally-referenced buffers/textures (to feed [ResourceLoader]). */

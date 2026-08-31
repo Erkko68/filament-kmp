@@ -181,7 +181,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         }
         view.dynamicResolutionOptions.run {
             assertTrue(enabled); assertTrue(homogeneousScaling); assertEquals(0.5f, minScale)
-            assertEquals(0.5f, maxScale); assertEquals(0.6f, sharpness); assertEquals(View.Quality.HIGH, quality)
+            assertEquals(0.5f, maxScale); assertEq(0.6f, sharpness, "sharpness"); assertEquals(View.Quality.HIGH, quality)
         }
     }
 
@@ -194,7 +194,7 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         }
         view.vsmShadowOptions.run {
             assertEquals(2, anisotropy); assertTrue(mipmapping); assertEquals(4, msaaSamples)
-            assertTrue(highPrecision); assertEquals(0.2f, lightBleedReduction)
+            assertTrue(highPrecision); assertEq(0.2f, lightBleedReduction, "lightBleedReduction")
         }
         view.softShadowOptions = View.SoftShadowOptions().apply {
             penumbraScale = 2f; penumbraRatioScale = 1.5f
@@ -215,5 +215,11 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
     private fun assertArr(expected: FloatArray, actual: FloatArray) {
         assertEquals(expected.size, actual.size)
         for (i in expected.indices) assertEquals(expected[i], actual[i], 1e-6f, "index $i")
+    }
+
+    // These values round-trip through the engine as C++ float, and Kotlin/JS carries Float as a
+    // double, so the read-back is the float32-rounded value rather than the literal.
+    private fun assertEq(expected: Float, actual: Float, name: String) {
+        assertEquals(expected, actual, 1e-6f, name)
     }
 }

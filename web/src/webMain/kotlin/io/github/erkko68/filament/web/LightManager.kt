@@ -34,6 +34,7 @@ fun setShadowCaster(instance: LightManager_Instance, shadowCaster: Boolean): Dou
 fun isShadowCaster(instance: LightManager_Instance): Boolean
 fun getLightChannel(instance: LightManager_Instance, channel: Double): Boolean
 fun setLightChannel(instance: LightManager_Instance, channel: Double, enable: Boolean): Unit
+fun getComponentCount(): Double
 companion object {
 fun Builder(ltype: LightManager_Type): LightManager_Builder
 }

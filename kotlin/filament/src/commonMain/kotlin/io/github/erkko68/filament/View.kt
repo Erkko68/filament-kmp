@@ -322,10 +322,6 @@ expect class View {
          */
         var color: FloatArray
 
-        /**
-         * Optional density map texture for varying fog density across the scene. Default: null.
-         */
-        var densityMap: Texture?
 
         /**
          * Distance in world units [m] after which the fog calculation is disabled. This can be
@@ -1051,7 +1047,6 @@ expect class View {
     var renderTarget: RenderTarget?
 
     /** Shadow mapping technique for the whole View ([ShadowType.PCF], VSM, DPCF, PCSS). */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op unless the filament.js build binds setShadowType (stock upstream prebuilts do not) — web stays on PCF shadows.")
     var shadowType: ShadowType
 
     /** Variance shadow mapping options; only applies when [shadowType] is [ShadowType.VSM]. */
@@ -1070,7 +1065,6 @@ expect class View {
     var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
 
     /** Culls renderables outside the camera frustum. Default: true (disable only for debugging). */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setter is a silent no-op — setFrustumCullingEnabled is not bound in filament.js; the getter reflects the locally tracked value.")
     var isFrustumCullingEnabled: Boolean
 
     /** Master switch for shadow mapping in this View. Default: true. */

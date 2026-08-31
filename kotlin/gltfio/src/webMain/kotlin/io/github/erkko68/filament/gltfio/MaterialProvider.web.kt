@@ -5,6 +5,7 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.web.gltfio_UbershaderProvider
 
 actual interface MaterialProvider {
     actual fun createMaterialInstance(
@@ -28,7 +29,10 @@ actual interface MaterialProvider {
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
+    private val jsProvider = gltfio_UbershaderProvider(engine.jsEngine)
     private val materials = mutableListOf<Material>()
+    // A second destroyMaterials() on the same provider aborts in the wasm heap.
+    private var materialsDestroyed = false
 
     actual override fun createMaterialInstance(
         config: MaterialKey,
@@ -66,10 +70,14 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
     }
 
     actual override fun destroyMaterials() {
+        if (!materialsDestroyed) {
+            jsProvider.destroyMaterials()
+            materialsDestroyed = true
+        }
         materials.clear()
     }
 
     actual override fun destroy() {
-        materials.clear()
+        destroyMaterials()
     }
 }

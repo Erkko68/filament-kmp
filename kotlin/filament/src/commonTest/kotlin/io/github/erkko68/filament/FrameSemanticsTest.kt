@@ -26,7 +26,9 @@ import kotlin.test.assertTrue
  *   open floor        caster        shadow
  *   x ≈ [-1.5,-0.7]   [-0.5,0.5]    [0.6,1.4]      (world units, y=0 plane)
  */
-@IgnoreJs // Renderer.readPixels is a no-op on web (not bound in jsbindings.cpp).
+// readPixels is bound on web and its callback does fire — but only after the browser runs
+// more frames, which this synchronous harness never lets it do (a probe needed ~12 rAF ticks).
+@IgnoreJs
 class FrameSemanticsTest : RenderingTestFixture() {
 
     private fun litScene(engine: Engine, probe: FrameProbe, shadows: Boolean = true, casterCz: Float = 0f): Entity {

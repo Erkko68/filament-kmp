@@ -98,7 +98,6 @@ actual class FilamentAsset(var nativeHandle: MemorySegment?) {
     actual fun getExtras(entity: Entity): String? =
         FilamentC.FilaFilamentAsset_getExtras(nativeHandle, entity).takeUnless { it.isNullPtr() }?.cString()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     actual fun getMorphTargetNames(entity: Entity): Array<String> {
         val count = FilamentC.FilaFilamentAsset_getMorphTargetCountAt(nativeHandle, entity).toInt()
         if (count == 0) return emptyArray()

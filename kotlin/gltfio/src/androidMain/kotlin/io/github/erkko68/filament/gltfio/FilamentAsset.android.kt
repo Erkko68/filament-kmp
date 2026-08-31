@@ -61,7 +61,6 @@ actual class FilamentAsset internal constructor(
 
     actual fun getExtras(entity: Entity): String? = nativeObject.getExtras(entity)
     
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     actual fun getMorphTargetNames(entity: Entity): Array<String> = nativeObject.getMorphTargetNames(entity)
     
     actual fun getResourceUris(): Array<String> = nativeObject.resourceUris

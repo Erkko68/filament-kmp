@@ -89,11 +89,9 @@ expect class FilamentInstance {
     fun detachSkin(skinIndex: Int, target: Int)
 
     /** Gets the number of joints in the skin at [skinIndex]. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     fun getJointCountAt(skinIndex: Int): Int
 
     /** Gets the joint entities of the skin at [skinIndex]. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     fun getJointsAt(skinIndex: Int): IntArray
 
     /**

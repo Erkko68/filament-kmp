@@ -3,7 +3,6 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unbound in filament.js — Builder.build throws and setBonesAt is a silent no-op; glTF skinning still works through gltfio.")
 actual class SkinningBuffer internal constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilamentC.FilaSkinningBufferBuilder_create()

@@ -131,7 +131,6 @@ expect class RenderableManager {
          * @param count number of vertices to read (for triangles, this should be a multiple of 3)
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder
 
         /**
@@ -142,7 +141,6 @@ expect class RenderableManager {
          * @param vb specifies the vertex buffer, which in turn specifies a set of attributes
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed geometry overloads.")
         fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder
 
         /**
@@ -315,7 +313,6 @@ expect class RenderableManager {
          * @param bones the initial set of transforms (one for each bone)
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js only binds the bone-count skinning overload; glTF skinning works through gltfio.")
         fun skinning(boneCount: Int, bones: FloatArray): Builder
 
         /**
@@ -329,7 +326,6 @@ expect class RenderableManager {
          * @param offset offset in the SkinningBuffer
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js; glTF skinning works through gltfio.")
         fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder
 
         /**
@@ -342,7 +338,6 @@ expect class RenderableManager {
          * @param enabled If true, enables buffer object mode.  False by default.
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — SkinningBuffer itself is unbound in filament.js.")
         fun enableSkinningBuffers(enabled: Boolean): Builder
 
         /**
@@ -361,7 +356,6 @@ expect class RenderableManager {
          * @param targetCount the number of morph targets
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js only binds a boolean enable, so the target count is reduced to targetCount > 0.")
         fun morphing(targetCount: Int): Builder
 
         /**
@@ -379,7 +373,6 @@ expect class RenderableManager {
          * @param morphTargetBuffer the morph target buffer
          * @return Builder reference for chaining calls.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — MorphTargetBuffer itself is unbound in filament.js; glTF morphing works through gltfio.")
         fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder
 
         /**
@@ -696,7 +689,6 @@ expect class RenderableManager {
      * @param offset vertex offset in the vertex buffer
      * @param count number of vertices to render
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — filament.js only binds the indexed setGeometryAt overload.")
     fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int)
 
     /**

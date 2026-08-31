@@ -45,10 +45,8 @@ actual class FilamentInstance {
         nativeObject!!.detachSkin(skinIndex, target)
     }
     
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     actual fun getJointCountAt(skinIndex: Int): Int = nativeObject!!.getJointCountAt(skinIndex)
     
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     actual fun getJointsAt(skinIndex: Int): IntArray = nativeObject!!.getJointsAt(skinIndex)
     
     actual fun applyMaterialVariant(variantIndex: Int) {

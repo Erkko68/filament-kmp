@@ -192,7 +192,6 @@ actual class Texture public constructor(val nativeTexture: AndroidTexture) {
             AndroidTexture.isTextureFormatSupported(engine.nativeEngine, AndroidTexture.InternalFormat.values()[format.ordinal])
         actual fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
             AndroidTexture.isTextureFormatMipmappable(engine.nativeEngine, AndroidTexture.InternalFormat.values()[format.ordinal])
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns false — not bound in filament.js.")
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
             AndroidTexture.isTextureSwizzleSupported(engine.nativeEngine)
         actual fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean =

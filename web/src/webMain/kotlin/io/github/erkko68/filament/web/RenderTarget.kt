@@ -12,6 +12,7 @@ fun getFace(attachment: RenderTarget_AttachmentPoint): Texture_CubemapFace
 fun getLayer(): Double
 fun getLayer(attachment: RenderTarget_AttachmentPoint): Double
 fun getTexture(attachment: RenderTarget_AttachmentPoint): Texture
+fun getSupportedColorAttachmentsCount(): Double
 companion object {
 fun Builder(): RenderTarget_Builder
 }

@@ -25,7 +25,6 @@ package io.github.erkko68.filament
  *
  * @see RenderableManager
  */
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "Builder.build throws UnsupportedOperationException — the standalone API is unbound in filament.js; gltfio handles glTF morph targets internally.")
 expect class MorphTargetBuffer {
     /**
      * Builder for creating MorphTargetBuffer instances.

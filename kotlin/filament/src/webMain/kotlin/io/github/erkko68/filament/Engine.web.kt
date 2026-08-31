@@ -2,6 +2,7 @@ package io.github.erkko68.filament
 
 
 import io.github.erkko68.filament.web.interop.emptyJsObject
+import io.github.erkko68.filament.web.interop.loseWebGlContext
 import io.github.erkko68.filament.web.Engine as JSEngine
 import io.github.erkko68.filament.web.Engine_Config as JSEngineConfig
 import io.github.erkko68.filament.web.GpuContextPriority as JSGpuContextPriority
@@ -12,13 +13,25 @@ import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
 import org.w3c.dom.HTMLCanvasElement
 
-actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HTMLCanvasElement? = null) {
+actual class Engine private constructor(
+    val jsEngine: JSEngine,
+    val jsCanvas: HTMLCanvasElement? = null,
+    // Only the hidden canvas we allocated ourselves is ours to tear down; a caller's shared
+    // canvas outlives the engine and may back another one later.
+    private val ownsCanvas: Boolean = false,
+) {
     actual fun isValid(): Boolean {
         return true
     }
 
     actual fun destroy() {
-        // JS engine is typically managed by the GC
+        JSEngine.destroy(jsEngine)
+        // The canvas and its GL context outlive the engine, and browsers cap how many
+        // contexts are live at once, so release both here.
+        if (ownsCanvas) jsCanvas?.let { canvas ->
+            loseWebGlContext(canvas)
+            canvas.remove()
+        }
     }
 
     actual val backend: Backend get() = fromJsBackend(jsEngine.getBackend())
@@ -67,15 +80,14 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidRenderer(renderer: Renderer): Boolean = jsEngine.isValidRenderer(renderer.jsRenderer)
     actual fun isValidView(view: View): Boolean = jsEngine.isValidView(view.jsView)
     actual fun isValidScene(scene: Scene): Boolean = jsEngine.isValidScene(scene.jsScene)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun isValidFence(fence: Fence): Boolean = jsUnsupported("Engine.isValidFence")
+    actual fun isValidFence(fence: Fence): Boolean = jsEngine.isValidFence(fence.jsFence)
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = jsEngine.isValidRenderTarget(renderTarget.jsRenderTarget)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = jsEngine.isValidIndexBuffer(indexBuffer.jsIndexBuffer)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = jsEngine.isValidVertexBuffer(vertexBuffer.jsVertexBuffer)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = jsUnsupported("Engine.isValidSkinningBuffer")
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = jsUnsupported("Engine.isValidMorphTargetBuffer")
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean =
+        jsEngine.isValidSkinningBuffer(skinningBuffer.jsSkinningBuffer)
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean =
+        jsEngine.isValidMorphTargetBuffer(morphTargetBuffer.jsMorphTargetBuffer)
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = jsEngine.isValidIndirectLight(ibl.jsIndirectLight)
     actual fun isValidMaterial(material: Material): Boolean = jsEngine.isValidMaterial(material.jsMaterial)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean =
@@ -85,7 +97,6 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isValidSkybox(skybox: Skybox): Boolean = jsEngine.isValidSkybox(skybox.jsSkybox)
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = jsEngine.isValidColorGrading(colorGrading.jsColorGrading)
     actual fun isValidTexture(texture: Texture): Boolean = jsEngine.isValidTexture(texture.jsTexture)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun isValidStream(stream: Stream): Boolean = jsUnsupported("Engine.isValidStream")
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = jsEngine.isValidSwapChain(swapChain.jsSwapChain)
 
@@ -157,11 +168,10 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         jsEngine.destroyScene(scene.jsScene)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — fences are not bound in filament.js.")
-    actual fun createFence(): Fence =
-        jsUnsupported("Engine.createFence", "Fences gate GPU/CPU sync, which filament.js does not expose.")
+    actual fun createFence(): Fence = Fence(jsEngine.createFence())
 
     actual fun destroyFence(fence: Fence) {
+        jsEngine.destroyFence(fence.jsFence)
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
@@ -173,9 +183,11 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     }
 
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        jsEngine.destroySkinningBuffer(skinningBuffer.jsSkinningBuffer)
     }
 
     actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        jsEngine.destroyMorphTargetBuffer(morphTargetBuffer.jsMorphTargetBuffer)
     }
 
     actual fun destroyIndirectLight(ibl: IndirectLight) {
@@ -395,7 +407,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             canvas.style.left = "-9999px"
             canvas.style.top = "0"
             doc.body?.appendChild(canvas)
-            return Engine(createJs(canvas, config), canvas)
+            return Engine(createJs(canvas, config), canvas, ownsCanvas = true)
         }
 
         actual fun create(backend: Backend): Engine {

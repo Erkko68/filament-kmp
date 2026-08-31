@@ -22,4 +22,8 @@ var penumbraScale: Double?
      * Acceptable values are equal to or greater than 1.
      */
 var penumbraRatioScale: Double?
+/** Maximum penumbra-to-blocker ratio a PCSS shadow may reach. */
+var maxPenumbraRatio: Double?
+/** Maximum blocker-search radius, in shadow-map texels. */
+var maxSearchRadius: Double?
 }

@@ -16,3 +16,8 @@ fun jsBigInt(s: String): JsAny = js("BigInt(s)")
 
 /** `Number(x)` — coerces a possible BigInt down to a JS number. */
 fun jsNumberOf(x: JsAny?): Double = js("Number(x)")
+
+/** Drops a canvas's WebGL context. Browsers cap how many are live at once. */
+// No `?.` — the Kotlin/Wasm js() parser rejects optional chaining.
+fun loseWebGlContext(canvas: JsAny): Unit =
+    js("((gl) => gl && gl.getExtension('WEBGL_lose_context') && gl.getExtension('WEBGL_lose_context').loseContext())(canvas.getContext('webgl2') || canvas.getContext('webgl'))")

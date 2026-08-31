@@ -1,23 +1,27 @@
 package io.github.erkko68.filament
 
-// TODO(js): MorphTargetBuffer is not bound in upstream jsbindings.cpp (v1.71.5).
-// The actual is a transparent record of the
-// Builder inputs so common-tests reading `vertexCount`/`count`/flags pass.
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "Builder.build throws UnsupportedOperationException — the standalone API is unbound in filament.js; gltfio handles glTF morph targets internally.")
+import org.khronos.webgl.set
+import io.github.erkko68.filament.web.MorphTargetBuffer as JSMorphTargetBuffer
+
 actual class MorphTargetBuffer internal constructor(
-    internal val jsMorphTargetBuffer: Any? = null,
-    actual val vertexCount: Int = 0,
-    actual val count: Int = 0,
-    actual val hasPositions: Boolean = false,
-    actual val hasTangents: Boolean = false,
-    actual val isCustomMorphingEnabled: Boolean = false,
+    internal val jsMorphTargetBuffer: JSMorphTargetBuffer,
 ) {
+    actual val vertexCount: Int get() = jsMorphTargetBuffer.getVertexCount().toInt()
+    actual val count: Int get() = jsMorphTargetBuffer.getCount().toInt()
+    actual val hasPositions: Boolean get() = jsMorphTargetBuffer.hasPositions()
+    actual val hasTangents: Boolean get() = jsMorphTargetBuffer.hasTangents()
+    actual val isCustomMorphingEnabled: Boolean get() = jsMorphTargetBuffer.isCustomMorphingEnabled()
+
     actual fun setPositionsAt(
         engine: Engine,
         targetIndex: Int,
         positions: FloatArray,
         count: Int
     ) {
+        val typed = org.khronos.webgl.Float32Array(positions.size).also { arr ->
+            positions.forEachIndexed { i, v -> arr[i] = v }
+        }
+        jsMorphTargetBuffer.setPositionsAt(engine.jsEngine, targetIndex.toDouble(), typed, count.toDouble(), 0.0)
     }
 
     actual fun setTangentsAt(
@@ -26,44 +30,41 @@ actual class MorphTargetBuffer internal constructor(
         tangents: ShortArray,
         count: Int
     ) {
+        val typed = org.khronos.webgl.Int16Array(tangents.size).also { arr ->
+            tangents.forEachIndexed { i, v -> arr[i] = v }
+        }
+        jsMorphTargetBuffer.setTangentsAt(engine.jsEngine, targetIndex.toDouble(), typed, count.toDouble(), 0.0)
     }
 
     actual class Builder {
-        private var vertexCount: Int = 0
-        private var count: Int = 0
-        private var hasPositions: Boolean = false
-        private var hasTangents: Boolean = false
-        private var isCustomMorphingEnabled: Boolean = false
+        private val jsBuilder = JSMorphTargetBuffer.Builder()
 
         actual fun vertexCount(vertexCount: Int): Builder {
-            this.vertexCount = vertexCount
+            jsBuilder.vertexCount(vertexCount.toDouble())
             return this
         }
 
         actual fun count(count: Int): Builder {
-            this.count = count
+            jsBuilder.count(count.toDouble())
             return this
         }
 
         actual fun withPositions(enabled: Boolean): Builder {
-            this.hasPositions = enabled
+            jsBuilder.withPositions(enabled)
             return this
         }
 
         actual fun withTangents(enabled: Boolean): Builder {
-            this.hasTangents = enabled
+            jsBuilder.withTangents(enabled)
             return this
         }
 
         actual fun enableCustomMorphing(enabled: Boolean): Builder {
-            this.isCustomMorphingEnabled = enabled
+            jsBuilder.enableCustomMorphing(enabled)
             return this
         }
 
         actual fun build(engine: Engine): MorphTargetBuffer =
-            jsUnsupported(
-                "MorphTargetBuffer",
-                "Morph targets are handled internally by gltfio on web; the standalone API is unbound."
-            )
+            MorphTargetBuffer(jsBuilder.build(engine.jsEngine))
     }
 }

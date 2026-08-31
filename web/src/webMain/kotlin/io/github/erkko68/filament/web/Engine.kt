@@ -66,6 +66,15 @@ fun isValidColorGrading(colorGrading: ColorGrading): Boolean
 fun isValidTexture(texture: Texture): Boolean
 fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
 fun isValidSwapChain(swapChain: SwapChain): Boolean
+fun createFence(): Fence
+fun destroyFence(fence: Fence): Unit
+fun destroySkinningBuffer(skinningBuffer: SkinningBuffer): Unit
+fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Unit
+fun isValidFence(fence: Fence): Boolean
+fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
+fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
+// extensions.js wrapper around the wasm `_createSwapChainForCanvas`.
+fun createSwapChainForCanvas(canvas: org.w3c.dom.HTMLCanvasElement): SwapChain
 companion object {
 fun getSteadyClockTimeNano(): Double
 fun create(canvas: org.w3c.dom.HTMLCanvasElement, options: EngineCreateOptions = definedExternally, config: Engine_Config = definedExternally): Engine

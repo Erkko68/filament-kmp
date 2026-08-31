@@ -209,3 +209,35 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimu
     // the already-decided flag (SIMCTL_CHILD_ is the prefix simctl spawn unwraps).
     environment("SIMCTL_CHILD_FILAMENT_TEST_GPU", simGpu)
 }
+
+// ── Browser test-count assertion ──────────────────────────────────────────────
+// Karma retries a crashed page (browserDisconnectTolerance = 2 in each module's
+// karma.config.d) and the reporter keeps only the last attempt, so js/wasmJs
+// browser tasks can drop whole suites and still exit SUCCESS. Ignored tests are
+// still written to the XML as skipped, so the suite total must equal the @Test
+// count in the sources that feed these targets.
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest>().configureEach {
+    val testSources = listOf("commonTest", "webTest")
+        .map { layout.projectDirectory.dir("src/$it") }
+    val resultsDir = layout.buildDirectory.dir("test-results/$name")
+    doLast {
+        // A --tests filter deliberately runs a subset; only a full run is comparable.
+        if (filter.includePatterns.isNotEmpty() ||
+            (filter as org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter)
+                .commandLineIncludePatterns.isNotEmpty()
+        ) return@doLast
+        val expected = testSources.filter { it.asFile.isDirectory }.sumOf { dir ->
+            dir.asFileTree.matching { include("**/*.kt") }
+                .sumOf { f -> f.readLines().count { it.trimStart().startsWith("@Test") } }
+        }
+        val actual = resultsDir.get().asFileTree.matching { include("TEST-*.xml") }
+            .sumOf { f ->
+                Regex("""<testsuite[^>]*\stests="(\d+)"""").find(f.readText())
+                    ?.groupValues?.get(1)?.toInt() ?: 0
+            }
+        check(actual >= expected) {
+            "$path reported $actual of $expected tests — Karma dropped suites. " +
+                "Re-run; if it persists the browser is crashing mid-suite."
+        }
+    }
+}

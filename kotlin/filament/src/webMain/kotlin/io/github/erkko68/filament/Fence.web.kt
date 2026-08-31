@@ -1,17 +1,26 @@
 package io.github.erkko68.filament
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unusable — Engine.createFence throws; filament.js exposes no GPU/CPU fence API.")
-actual class Fence {
+import io.github.erkko68.filament.web.Fence_Mode
+import io.github.erkko68.filament.web.Fence as JSFence
+import io.github.erkko68.filament.web.FenceStatus as JSFenceStatus
+
+actual class Fence(internal val jsFence: JSFence) {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     actual fun wait(
         mode: Mode,
         timeout: Long
     ): FenceStatus {
-        // JS doesn't support blocking waits. Return satisfied immediately.
-        return FenceStatus.CONDITION_SATISFIED
+        val jsMode = when (mode) {
+            Mode.FLUSH -> Fence_Mode.FLUSH
+            Mode.DONT_FLUSH -> Fence_Mode.DONT_FLUSH
+        }
+        return when (jsFence.wait(jsMode, 0.0)) {
+            JSFenceStatus.CONDITION_SATISFIED -> FenceStatus.CONDITION_SATISFIED
+            JSFenceStatus.TIMEOUT_EXPIRED -> FenceStatus.TIMEOUT_EXPIRED
+            else -> FenceStatus.ERROR
+        }
     }
 
-    // Fence isn't bound in upstream jsbindings.cpp (v1.71.4). Return a non-zero
-    // sentinel so callers checking `nativeObject != 0` treat the fence as live.
     actual val nativeObject: Long get() = 1L
 
     actual enum class Mode { FLUSH, DONT_FLUSH }
@@ -19,8 +28,7 @@ actual class Fence {
 
     actual companion object {
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
-            // JS doesn't support blocking waits
-            return FenceStatus.CONDITION_SATISFIED
+            return fence.wait(mode, 0L)
         }
     }
 }

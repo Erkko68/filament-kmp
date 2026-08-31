@@ -26,6 +26,7 @@ fun getWireframe(): Entity
 fun getEngine(): Engine
 fun releaseSourceData(): Unit
 fun getFirstEntityByName(name: String): Entity
+fun getMorphTargetNames(entity: Entity): js.array.ReadonlyArray<JsString>
 }
 
 // ── gltfio ────────────────────────────────────────────────────────────────────

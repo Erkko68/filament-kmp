@@ -2,7 +2,6 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.Fence as AndroidFence
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unusable — Engine.createFence throws; filament.js exposes no GPU/CPU fence API.")
 actual class Fence internal constructor(val nativeFence: AndroidFence) {
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }

@@ -14,8 +14,7 @@ import io.github.erkko68.filament.web.Entity as JSEntity
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager(internal val jsLightManager: JSLightManager) {
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
-    actual fun getComponentCount(): Int = jsUnsupported("LightManager.getComponentCount")
+    actual fun getComponentCount(): Int = jsLightManager.getComponentCount().toInt()
 
     // Upstream LightManager binding doesn't expose `destroy(Entity)` —
     // components are usually torn down via `engine.destroyEntity`, but we

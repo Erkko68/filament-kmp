@@ -35,6 +35,7 @@ fun getFocusDistance(): Double
 fun setFocusDistance(distance: Double): Unit
 fun setShift(shift: float2): Unit
 fun getShift(): float2
+fun getFieldOfViewInDegrees(direction: Camera_Fov): Double
 companion object {
 fun inverseProjection(p: mat4): mat4
 fun computeEffectiveFocalLength(focalLength: Double, focusDistance: Double): Double
