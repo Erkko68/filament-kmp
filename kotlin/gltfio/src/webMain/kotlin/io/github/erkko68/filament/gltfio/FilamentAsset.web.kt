@@ -9,8 +9,6 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.web.`gltfio_FilamentAsset` as JSFilamentAsset
 import io.github.erkko68.filament.web.Entity as JSEntity
 import io.github.erkko68.filament.web.Aabb
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentAsset @InternalFilamentApi constructor(
@@ -31,7 +29,12 @@ actual class FilamentAsset @InternalFilamentApi constructor(
 
     actual fun popRenderable(): Entity = jsAsset.popRenderable().registerAndGetId()
 
-    actual fun popRenderables(entities: IntArray): Int = 0
+    actual fun popRenderables(entities: IntArray): Int {
+        val popped = jsAsset.popRenderables(entities.size.toDouble())
+        val count = popped.size().toInt()
+        for (i in 0 until count) entities[i] = popped.get(i.toDouble()).registerAndGetId()
+        return count
+    }
 
     actual val entities: IntArray get() = jsAsset.getEntities().registerAndGetIds()
 
@@ -47,13 +50,10 @@ actual class FilamentAsset @InternalFilamentApi constructor(
 
     actual fun getFirstEntityByName(name: String): Entity = jsAsset.getFirstEntityByName(name).registerAndGetId()
 
-    // gltfio$FilamentAsset binds no getEntityCount/getAssetInstanceCount; count the arrays.
-    actual val entityCount: Int get() = jsAsset.getEntities().size
+    actual val entityCount: Int get() = jsAsset.getEntityCount().toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual val assetInstanceCount: Int get() = jsAsset.getAssetInstances().size
+    actual val assetInstanceCount: Int get() = jsAsset.getAssetInstanceCount().toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstances: List<FilamentInstance> get() {
         val jsInstances = jsAsset.getAssetInstances()
         return List(jsInstances.size) { i -> FilamentInstance(jsInstances[i]) }

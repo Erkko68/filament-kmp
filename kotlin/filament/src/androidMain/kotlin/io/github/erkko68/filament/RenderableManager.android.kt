@@ -45,7 +45,6 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         actual fun geometryType(type: GeometryType): Builder {
             nativeBuilder.geometryType(type.toNative())
             return this

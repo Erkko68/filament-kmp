@@ -43,7 +43,6 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
             FilamentC.FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle)
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         actual fun geometryType(type: GeometryType): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_geometryType(nativeBuilder, type.toNative())
         }

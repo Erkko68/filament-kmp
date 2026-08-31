@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.testsupport.TestEnv
+import io.github.erkko68.filament.testsupport.TestTarget
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,13 +33,14 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         }
         view.bloomOptions.run {
             assertTrue(enabled); assertEquals(5, levels); assertEquals(384, resolution)
-            assertEquals(0.7f, strength); assertEquals(false, threshold)
-            assertEquals(0.3f, dirtStrength); assertEquals(View.Quality.HIGH, quality)
+            assertEq(0.7f, strength, "strength"); assertEquals(false, threshold)
+            if (!webOptionGap) assertEq(0.3f, dirtStrength, "dirtStrength")
+            assertEquals(View.Quality.HIGH, quality)
             assertTrue(lensFlare); assertEquals(false, starburst)
-            assertEquals(0.1f, chromaticAberration); assertEquals(3, ghostCount)
-            assertEquals(0.6f, ghostSpacing); assertEquals(2f, ghostThreshold)
-            assertEquals(0.4f, haloRadius); assertEquals(0.2f, haloThickness)
-            assertEquals(3f, haloThreshold); assertEquals(1000f, highlight)
+            assertEq(0.1f, chromaticAberration, "chromaticAberration"); assertEquals(3, ghostCount)
+            assertEq(0.6f, ghostSpacing, "ghostSpacing"); assertEq(2f, ghostThreshold, "ghostThreshold")
+            assertEq(0.4f, haloRadius, "haloRadius"); assertEq(0.2f, haloThickness, "haloThickness")
+            assertEq(3f, haloThreshold, "haloThreshold"); assertEq(1000f, highlight, "highlight")
             assertEquals(View.BloomOptions.BlendMode.INTERPOLATE, blendMode)
         }
     }
@@ -52,11 +55,11 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             inScatteringSize = 3f; fogColorFromIbl = true
         }
         view.fogOptions.run {
-            assertTrue(enabled); assertEquals(10f, distance); assertEquals(0.5f, density)
-            assertEquals(2f, height); assertEquals(1.5f, heightFalloff)
+            assertTrue(enabled); assertEq(10f, distance, "distance"); assertEq(0.5f, density, "density")
+            assertEq(2f, height, "height"); assertEq(1.5f, heightFalloff, "heightFalloff")
             assertArr(floatArrayOf(0.1f, 0.2f, 0.3f), color)
-            assertEquals(100f, cutOffDistance); assertEquals(0.8f, maximumOpacity)
-            assertEquals(5f, inScatteringStart); assertEquals(3f, inScatteringSize)
+            assertEq(100f, cutOffDistance, "cutOffDistance"); assertEq(0.8f, maximumOpacity, "maximumOpacity")
+            assertEq(5f, inScatteringStart, "inScatteringStart"); assertEq(3f, inScatteringSize, "inScatteringSize")
             assertTrue(fogColorFromIbl)
         }
     }
@@ -71,8 +74,8 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             maxForegroundCOC = 5; maxBackgroundCOC = 6
         }
         view.depthOfFieldOptions.run {
-            assertTrue(enabled); assertEquals(2f, cocScale); assertEquals(1.5f, cocAspectRatio)
-            assertEquals(0.01f, maxApertureDiameter)
+            assertTrue(enabled); assertEq(2f, cocScale, "cocScale"); assertEq(1.5f, cocAspectRatio, "cocAspectRatio")
+            assertEq(0.01f, maxApertureDiameter, "maxApertureDiameter")
             assertEquals(View.DepthOfFieldOptions.Filter.MEDIAN, filter); assertTrue(nativeResolution)
             assertEquals(3, foregroundRingCount); assertEquals(4, backgroundRingCount)
             assertEquals(2, fastGatherRingCount); assertEquals(5, maxForegroundCOC)
@@ -88,8 +91,8 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             color = floatArrayOf(0.1f, 0.2f, 0.3f, 1f)
         }
         view.vignetteOptions.run {
-            assertTrue(enabled); assertEquals(0.5f, midPoint); assertEquals(0.6f, roundness)
-            assertEquals(0.4f, feather); assertArr(floatArrayOf(0.1f, 0.2f, 0.3f, 1f), color)
+            assertTrue(enabled); assertEq(0.5f, midPoint, "midPoint"); assertEq(0.6f, roundness, "roundness")
+            assertEq(0.4f, feather, "feather"); assertArr(floatArrayOf(0.1f, 0.2f, 0.3f, 1f), color)
         }
     }
 
@@ -106,13 +109,13 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             varianceGamma = 1.1f; preventFlickering = true; historyReprojection = false
         }
         view.temporalAntiAliasingOptions.run {
-            assertEquals(0.12f, feedback); assertEquals(-1f, lodBias); assertEquals(0.3f, sharpness)
-            assertTrue(enabled); assertEquals(1f, upscaling); assertTrue(filterHistory)
+            assertEq(0.12f, feedback, "feedback"); assertEq(-1f, lodBias, "lodBias"); assertEq(0.3f, sharpness, "sharpness")
+            assertTrue(enabled); assertEq(1f, upscaling, "upscaling"); assertTrue(filterHistory)
             assertEquals(false, filterInput); assertTrue(useYCoCg); assertEquals(false, hdr)
             assertEquals(View.TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE, boxType)
             assertEquals(View.TemporalAntiAliasingOptions.BoxClipping.NONE, boxClipping)
             assertEquals(View.TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4, jitterPattern)
-            assertEquals(1.1f, varianceGamma); assertTrue(preventFlickering)
+            assertEq(1.1f, varianceGamma, "varianceGamma"); assertTrue(preventFlickering)
             assertEquals(false, historyReprojection)
         }
     }
@@ -124,8 +127,8 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             enabled = true; thickness = 0.1f; bias = 0.2f; maxDistance = 3f; stride = 2f
         }
         view.screenSpaceReflectionsOptions.run {
-            assertTrue(enabled); assertEquals(0.1f, thickness); assertEquals(0.2f, bias)
-            assertEquals(3f, maxDistance); assertEquals(2f, stride)
+            assertTrue(enabled); assertEq(0.1f, thickness, "thickness"); assertEq(0.2f, bias, "bias")
+            assertEq(3f, maxDistance, "maxDistance"); assertEq(2f, stride, "stride")
         }
     }
 
@@ -150,19 +153,19 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             }
         }
         view.ambientOcclusionOptions.run {
-            assertEquals(0.5f, radius); assertEquals(0.001f, bias); assertEquals(1.5f, intensity)
-            assertEquals(1.2f, power); assertEquals(0.3f, minHorizonAngleRad)
+            assertEq(0.5f, radius, "radius"); assertEq(0.001f, bias, "bias"); assertEq(1.5f, intensity, "intensity")
+            assertEq(1.2f, power, "power"); assertEq(0.3f, minHorizonAngleRad, "minHorizonAngleRad")
             assertEquals(View.Quality.HIGH, quality); assertEquals(View.Quality.MEDIUM, lowPassFilter)
             assertEquals(View.Quality.LOW, upsampling); assertTrue(enabled); assertTrue(bentNormals)
-            assertEquals(0.05f, bilateralThreshold); assertEquals(0.5f, resolution)
+            assertEq(0.05f, bilateralThreshold, "bilateralThreshold"); assertEq(0.5f, resolution, "resolution")
             assertEquals(View.AmbientOcclusionOptions.AmbientOcclusionType.GTAO, aoType)
-            ssct.run {
-                assertTrue(enabled); assertEquals(1.0f, lightConeRad); assertEquals(0.4f, shadowDistance)
-                assertEquals(1.2f, contactDistanceMax); assertEquals(0.9f, intensity)
-                assertArr(floatArrayOf(0f, -1f, 0f), lightDirection); assertEquals(0.02f, depthBias)
-                assertEquals(0.03f, depthSlopeBias); assertEquals(6, sampleCount); assertEquals(2, rayCount)
+            if (!webOptionGap) ssct.run {
+                assertTrue(enabled); assertEq(1.0f, lightConeRad, "lightConeRad"); assertEq(0.4f, shadowDistance, "shadowDistance")
+                assertEq(1.2f, contactDistanceMax, "contactDistanceMax"); assertEq(0.9f, intensity, "intensity")
+                assertArr(floatArrayOf(0f, -1f, 0f), lightDirection); assertEq(0.02f, depthBias, "depthBias")
+                assertEq(0.03f, depthSlopeBias, "depthSlopeBias"); assertEquals(6, sampleCount); assertEquals(2, rayCount)
             }
-            gtao.run {
+            if (!webOptionGap) gtao.run {
                 assertEquals(6, sampleSliceCount); assertEquals(5, sampleStepsPerSlice)
                 assertEquals(0.02f, thicknessHeuristic); assertTrue(useVisibilityBitmasks)
                 assertEquals(0.75f, constThickness); assertTrue(linearThickness)
@@ -180,8 +183,8 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             sharpness = 0.6f; quality = View.Quality.HIGH
         }
         view.dynamicResolutionOptions.run {
-            assertTrue(enabled); assertTrue(homogeneousScaling); assertEquals(0.5f, minScale)
-            assertEquals(0.5f, maxScale); assertEq(0.6f, sharpness, "sharpness"); assertEquals(View.Quality.HIGH, quality)
+            assertTrue(enabled); assertTrue(homogeneousScaling); assertEq(0.5f, minScale, "minScale")
+            assertEq(0.5f, maxScale, "maxScale"); assertEq(0.6f, sharpness, "sharpness"); assertEquals(View.Quality.HIGH, quality)
         }
     }
 
@@ -201,8 +204,8 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
             maxPenumbraRatio = 8f; maxSearchRadius = 0.75f
         }
         view.softShadowOptions.run {
-            assertEquals(2f, penumbraScale); assertEquals(1.5f, penumbraRatioScale)
-            assertEquals(8f, maxPenumbraRatio); assertEquals(0.75f, maxSearchRadius)
+            assertEq(2f, penumbraScale, "penumbraScale"); assertEq(1.5f, penumbraRatioScale, "penumbraRatioScale")
+            assertEq(8f, maxPenumbraRatio, "maxPenumbraRatio"); assertEq(0.75f, maxSearchRadius, "maxSearchRadius")
         }
         view.multiSampleAntiAliasingOptions = View.MultiSampleAntiAliasingOptions().apply {
             enabled = true; sampleCount = 4; customResolve = true
@@ -217,8 +220,16 @@ class ViewOptionsRoundTripTest : FilamentTestFixture() {
         for (i in expected.indices) assertEquals(expected[i], actual[i], 1e-6f, "index $i")
     }
 
-    // These values round-trip through the engine as C++ float, and Kotlin/JS carries Float as a
-    // double, so the read-back is the float32-rounded value rather than the literal.
+    /**
+     * BloomOptions::dirt/dirtStrength, FogOptions::skyColor and AmbientOcclusionOptions::
+     * ssct/gtao are the only option fields with no embind binding — beamsplitter skips
+     * pointer and nested-struct members ("JavaScript binding for X is not yet supported"),
+     * so on web they cannot be pushed to the engine and never round-trip.
+     */
+    private val webOptionGap get() = TestEnv.target == TestTarget.JS
+
+    // These values round-trip through the engine as C++ float, and Kotlin/JS carries Float
+    // as a double, so the read-back is the float32-rounded value rather than the literal.
     private fun assertEq(expected: Float, actual: Float, name: String) {
         assertEquals(expected, actual, 1e-6f, name)
     }

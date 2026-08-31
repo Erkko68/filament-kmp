@@ -1,8 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.Entity
 
@@ -55,7 +53,6 @@ actual class FilamentInstance {
         nativeObject!!.applyMaterialVariant(variantIndex)
     }
     
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val materialInstances: List<io.github.erkko68.filament.MaterialInstance> get() {
         val natives = nativeObject!!.materialInstances
         return List(natives.size) { i -> io.github.erkko68.filament.MaterialInstance(natives[i]) }

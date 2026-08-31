@@ -1,6 +1,18 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.web.Shading as JsShading
+import io.github.erkko68.filament.web.Interpolation as JsInterpolation
+import io.github.erkko68.filament.web.BlendingMode as JsBlendingMode
+import io.github.erkko68.filament.web.TransparencyMode as JsTransparencyMode
+import io.github.erkko68.filament.web.RefractionMode as JsRefractionMode
+import io.github.erkko68.filament.web.RefractionType as JsRefractionType
+import io.github.erkko68.filament.web.ReflectionMode as JsReflectionMode
+import io.github.erkko68.filament.web.VertexDomain as JsVertexDomain
+import io.github.erkko68.filament.web.CullingMode as JsCullingMode
+import io.github.erkko68.filament.web.FeatureLevel as JsFeatureLevel
+import io.github.erkko68.filament.web.Material_ParameterInfo as JsParameterInfo
 import io.github.erkko68.filament.web.Material as JSMaterial
+import io.github.erkko68.filament.web.interop.jsNumbers
 import org.khronos.webgl.set
 
 actual class Material @InternalFilamentApi constructor(internal val jsMaterial: JSMaterial) {
@@ -27,75 +39,131 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
         return jsMaterial.getName()
     }
 
-    // jsbindings.cpp binds none of Material's reflection getters, so these report
-    // the matc defaults rather than what the compiled material actually declares.
-    actual val shading: Shading get() = Shading.LIT
+    actual val shading: Shading get() = when (jsMaterial.getShading()) {
+        JsShading.UNLIT -> Shading.UNLIT
+        JsShading.SUBSURFACE -> Shading.SUBSURFACE
+        JsShading.CLOTH -> Shading.CLOTH
+        JsShading.SPECULAR_GLOSSINESS -> Shading.SPECULAR_GLOSSINESS
+        else -> Shading.LIT
+    }
 
-    actual val interpolation: Interpolation get() = Interpolation.SMOOTH
+    actual val interpolation: Interpolation get() = when (jsMaterial.getInterpolation()) {
+        JsInterpolation.FLAT -> Interpolation.FLAT
+        else -> Interpolation.SMOOTH
+    }
 
-    actual val blendingMode: BlendingMode get() = BlendingMode.OPAQUE
+    // BlendingMode::CUSTOM has no common-API counterpart; it reports as TRANSPARENT.
+    actual val blendingMode: BlendingMode get() = when (jsMaterial.getBlendingMode()) {
+        JsBlendingMode.TRANSPARENT, JsBlendingMode.CUSTOM -> BlendingMode.TRANSPARENT
+        JsBlendingMode.ADD -> BlendingMode.ADD
+        JsBlendingMode.MASKED -> BlendingMode.MASKED
+        JsBlendingMode.FADE -> BlendingMode.FADE
+        JsBlendingMode.MULTIPLY -> BlendingMode.MULTIPLY
+        JsBlendingMode.SCREEN -> BlendingMode.SCREEN
+        else -> BlendingMode.OPAQUE
+    }
 
-    actual val transparencyMode: TransparencyMode get() = TransparencyMode.DEFAULT
+    actual val transparencyMode: TransparencyMode get() = when (jsMaterial.getTransparencyMode()) {
+        JsTransparencyMode.TWO_PASSES_ONE_SIDE -> TransparencyMode.TWO_PASSES_ONE_SIDE
+        JsTransparencyMode.TWO_PASSES_TWO_SIDES -> TransparencyMode.TWO_PASSES_TWO_SIDES
+        else -> TransparencyMode.DEFAULT
+    }
 
-    actual val refractionMode: RefractionMode get() = RefractionMode.NONE
+    actual val refractionMode: RefractionMode get() = when (jsMaterial.getRefractionMode()) {
+        JsRefractionMode.CUBEMAP -> RefractionMode.CUBEMAP
+        JsRefractionMode.SCREEN_SPACE -> RefractionMode.SCREEN_SPACE
+        else -> RefractionMode.NONE
+    }
 
-    actual val refractionType: RefractionType get() = RefractionType.SOLID
+    actual val refractionType: RefractionType get() = when (jsMaterial.getRefractionType()) {
+        JsRefractionType.THIN -> RefractionType.THIN
+        else -> RefractionType.SOLID
+    }
 
-    actual val reflectionMode: ReflectionMode get() = ReflectionMode.DEFAULT
+    actual val reflectionMode: ReflectionMode get() = when (jsMaterial.getReflectionMode()) {
+        JsReflectionMode.SCREEN_SPACE -> ReflectionMode.SCREEN_SPACE
+        else -> ReflectionMode.DEFAULT
+    }
 
-    actual val vertexDomain: VertexDomain get() = VertexDomain.OBJECT
+    actual val vertexDomain: VertexDomain get() = when (jsMaterial.getVertexDomain()) {
+        JsVertexDomain.WORLD -> VertexDomain.WORLD
+        JsVertexDomain.VIEW -> VertexDomain.VIEW
+        JsVertexDomain.DEVICE -> VertexDomain.DEVICE
+        else -> VertexDomain.OBJECT
+    }
 
-    actual val cullingMode: CullingMode get() = CullingMode.BACK
+    actual val cullingMode: CullingMode get() = when (jsMaterial.getCullingMode()) {
+        JsCullingMode.NONE -> CullingMode.NONE
+        JsCullingMode.FRONT -> CullingMode.FRONT
+        JsCullingMode.FRONT_AND_BACK -> CullingMode.FRONT_AND_BACK
+        else -> CullingMode.BACK
+    }
 
-    actual val isColorWriteEnabled: Boolean get() = true
+    actual val isColorWriteEnabled: Boolean get() = jsMaterial.isColorWriteEnabled()
 
-    actual val isDepthWriteEnabled: Boolean get() = true
+    actual val isDepthWriteEnabled: Boolean get() = jsMaterial.isDepthWriteEnabled()
 
-    actual val isDepthCullingEnabled: Boolean get() = true
+    actual val isDepthCullingEnabled: Boolean get() = jsMaterial.isDepthCullingEnabled()
 
-    actual val isDoubleSided: Boolean get() = false
+    actual val isDoubleSided: Boolean get() = jsMaterial.isDoubleSided()
 
-    actual val isAlphaToCoverageEnabled: Boolean get() = false
+    actual val isAlphaToCoverageEnabled: Boolean get() = jsMaterial.isAlphaToCoverageEnabled()
 
-    actual val maskThreshold: Float get() = 0.4f
+    actual val maskThreshold: Float get() = jsMaterial.getMaskThreshold().toFloat()
 
-    actual val specularAntiAliasingVariance: Float get() = 0.0f
+    actual val specularAntiAliasingVariance: Float get() =
+        jsMaterial.getSpecularAntiAliasingVariance().toFloat()
 
-    actual val specularAntiAliasingThreshold: Float get() = 0.0f
+    actual val specularAntiAliasingThreshold: Float get() =
+        jsMaterial.getSpecularAntiAliasingThreshold().toFloat()
 
-    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.FEATURE_LEVEL_1
+    actual val featureLevel: Engine.FeatureLevel get() = when (jsMaterial.getFeatureLevel()) {
+        JsFeatureLevel.FEATURE_LEVEL_2 -> Engine.FeatureLevel.FEATURE_LEVEL_2
+        JsFeatureLevel.FEATURE_LEVEL_3 -> Engine.FeatureLevel.FEATURE_LEVEL_3
+        else -> Engine.FeatureLevel.FEATURE_LEVEL_1
+    }
 
-    actual val parameterCount: Int get() = 0
+    actual val parameterCount: Int get() = jsMaterial.getParameterCount().toInt()
 
-    actual val parameters: List<Parameter> get() = emptyList()
+    actual val parameters: List<Parameter> get() {
+        val params = jsMaterial.getParameters()
+        return List(params.size) { i ->
+            val p = params[i]!!
+            Parameter(p.name, p.parameterType(), Parameter.Precision.entries[p.precision], p.count)
+        }
+    }
 
-    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() = emptySet()
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
+        val bitset = jsMaterial.getRequiredAttributes().toInt()
+        return VertexBuffer.VertexAttribute.entries
+            .filterTo(mutableSetOf()) { (bitset and (1 shl it.ordinal)) != 0 }
+    }
 
-    actual fun hasParameter(name: String): Boolean = parameters.any { it.name == name }
+    actual fun hasParameter(name: String): Boolean = jsMaterial.hasParameter(name)
 
+    // setDefaultParameter is setParameter on the default instance, same as the C++ inline.
     actual fun setDefaultParameter(name: String, value: Int) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setIntParameter(name, value.toDouble())
     }
 
     actual fun setDefaultParameter(name: String, value: Boolean) {
-        // Default parameters are set at material instance creation time in JS
-        // The JS Material API doesn't expose direct default parameter setting
+        jsMaterial.getDefaultInstance().setBoolParameter(name, value)
     }
 
     actual fun setDefaultParameter(name: String, value: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloatParameter(name, value.toDouble())
     }
 
     actual fun setDefaultParameter(name: String, x: Float, y: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloat2Parameter(name, jsNumbers(x, y))
     }
 
     actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloat3Parameter(name, jsNumbers(x, y, z))
     }
 
     actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) {
-        // Default parameters are set at material instance creation time in JS
+        jsMaterial.getDefaultInstance().setFloat4Parameter(name, jsNumbers(x, y, z, w))
     }
 
     actual fun getParameterTransformName(samplerName: String): String? {
@@ -173,3 +241,14 @@ actual class Material @InternalFilamentApi constructor(internal val jsMaterial: 
         actual enum class ShadowSamplingQuality { HARD, LOW }
     }
 }
+
+// filament.js splits the union across three fields; materialParameterType takes the one
+// isSampler/isSubpass selects.
+private fun JsParameterInfo.parameterType(): Material.Parameter.Type = materialParameterType(
+    when {
+        isSubpass -> 0
+        isSampler -> samplerType ?: 0
+        else -> type ?: 0
+    },
+    isSampler, isSubpass,
+)

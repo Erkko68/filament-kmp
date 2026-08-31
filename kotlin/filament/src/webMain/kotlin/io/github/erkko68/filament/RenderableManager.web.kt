@@ -259,39 +259,29 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val jsR
     ): Boolean = jsRenderableManager.getLightChannel(
         InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), channel.toDouble())
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "always returns 0 — RenderableManager::getMorphTargetCount is not registered with embind (it exists in C++ but google/filament#10216 did not add it); count morph targets from the glTF JSON instead.")
-    actual fun getMorphTargetCount(instance: EntityInstance): Int {
-        return 0
-    }
+    actual fun getMorphTargetCount(instance: EntityInstance): Int =
+        jsRenderableManager.getMorphTargetCount(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>()).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op, though unreachable in practice — SkinningBuffer.Builder.build throws on web, so no instance can be obtained to pass here.")
     actual fun setSkinningBuffer(
         instance: EntityInstance,
         skinningBuffer: SkinningBuffer,
         count: Int,
         offset: Int
     ) {
+        jsRenderableManager.setSkinningBuffer(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
+            skinningBuffer.jsSkinningBuffer, count.toDouble(), offset.toDouble())
     }
 
-    /**
-     * Weights beyond the first four are dropped and a non-zero [offset] is ignored: filament.js
-     * binds only the legacy `setMorphWeights(instance, a, b, c, d)` form, with no pointer/count/offset
-     * overload. Fewer than four weights are zero-padded, so 1–3 morph targets animate correctly.
-     */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "degraded — filament.js binds only the legacy 4-scalar form, so weights past the 4th are dropped and a non-zero offset is ignored (1–3 weights are zero-padded and work).")
     actual fun setMorphWeights(
         instance: EntityInstance,
         weights: FloatArray,
         offset: Int
     ) {
-        if (offset != 0) return
-        // Zero-pad to the four scalars the JS binding takes. Bailing out below four (as this used to)
-        // made every 1–3 target model silently unanimated on web.
-        fun w(i: Int): Double = if (i < weights.size) weights[i].toDouble() else 0.0
-        jsRenderableManager.setMorphWeights(
+        jsRenderableManager.setMorphWeightsOffset(
             InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
-            w(0), w(1), w(2), w(3),
-        )
+            weights.toJsNumbers(), offset.toDouble())
     }
 
     // Unlike setSkinningBuffer this takes no buffer argument, so it *is* reachable — on any
@@ -304,6 +294,9 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val jsR
         primitiveIndex: Int,
         offset: Int
     ) {
+        jsRenderableManager.setMorphTargetBufferOffsetAt(
+            InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(),
+            level.toDouble(), primitiveIndex.toDouble(), offset.toDouble())
     }
 
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
@@ -378,11 +371,12 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val jsR
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws an embind \"unbound types\" Error — filament.js does not register Builder.geometryType.")
         actual fun geometryType(type: GeometryType): Builder {
-            // GeometryType isn't bound as a JS enum upstream — pass the ordinal.
-            // Filament's C++ enum order: DYNAMIC=0, STATIC_BOUNDS=1, STATIC=2.
-            jsBuilder.geometryType(type.ordinal.toDouble())
+            jsBuilder.geometryType(when (type) {
+                GeometryType.DYNAMIC -> io.github.erkko68.filament.web.RenderableManager_Builder_GeometryType.DYNAMIC
+                GeometryType.STATIC_BOUNDS -> io.github.erkko68.filament.web.RenderableManager_Builder_GeometryType.STATIC_BOUNDS
+                GeometryType.STATIC -> io.github.erkko68.filament.web.RenderableManager_Builder_GeometryType.STATIC
+            })
             return this
         }
 

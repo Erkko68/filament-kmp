@@ -3,8 +3,6 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Box
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 /**
  * FilamentAsset owns a loaded glTF 2.0 asset and all its Filament objects.
@@ -85,11 +83,9 @@ expect class FilamentAsset {
     val entityCount: Int
 
     /** Returns the number of instances created from this asset (>= 1 unless detached). */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     val assetInstanceCount: Int
 
     /** Returns every [FilamentInstance] created from this asset. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     val assetInstances: List<FilamentInstance>
 
     /**

@@ -82,7 +82,6 @@ class FilamentInstanceTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // getMaterialInstances hits an unregistered vector return type (embind "unbound types") in the web prebuilt.
     fun testInstanceMaterials() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return

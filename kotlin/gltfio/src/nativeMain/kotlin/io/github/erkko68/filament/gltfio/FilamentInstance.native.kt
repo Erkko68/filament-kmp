@@ -6,8 +6,6 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaFilamentInstance
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.Entity
 
 actual class FilamentInstance {
@@ -87,7 +85,6 @@ actual class FilamentInstance {
         FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex.toULong())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val materialInstances: List<io.github.erkko68.filament.MaterialInstance> get() {
         val count = FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
         if (count == 0) return emptyList()

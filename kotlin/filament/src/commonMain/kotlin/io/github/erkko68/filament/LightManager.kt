@@ -161,7 +161,6 @@ expect class LightManager {
          * Ignored when the View's ShadowType is set to VSM.
          * Default: 0.5.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var polygonOffsetConstant: Float
 
         /**
@@ -172,14 +171,12 @@ expect class LightManager {
          * shadow maps. Ignored when the View's ShadowType is set to VSM.
          * Default: 2.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var polygonOffsetSlope: Float
 
         /**
          * Per-light scale on the final PCSS penumbra size, modulated with the View-wide
          * [View.SoftShadowOptions.penumbraScale] (global * local). Default: 1.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var penumbraScale: Float
 
         /**
@@ -187,21 +184,18 @@ expect class LightManager {
          * blocker distance — modulated with [View.SoftShadowOptions.penumbraRatioScale].
          * Default: 1.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var penumbraRatioScale: Float
 
         /**
          * Per-light cap on the PCSS penumbra ratio, applied as a smooth asymptotic squash.
          * 0 defers to the View-wide [View.SoftShadowOptions.maxPenumbraRatio]. Default: 0.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var maxPenumbraRatio: Float
 
         /**
          * Per-light limit, in world units, on the PCSS blocker-search footprint. 0 defers to the
          * View-wide [View.SoftShadowOptions.maxSearchRadius]. Default: 0.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var maxSearchRadius: Float
     }
 
@@ -269,7 +263,6 @@ expect class LightManager {
          * @param options ShadowOptions configuration
          * @return This Builder
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         fun shadowOptions(options: ShadowOptions): Builder
 
         /**
@@ -404,7 +397,6 @@ expect class LightManager {
      * Returns the number of light components (may include inactive/destroyed lights).
      * Check with EntityManager.isAlive() before use if needed.
      * @return Number of light components
-     * @throws UnsupportedOperationException on JS — getComponentCount is unbound in the web wrapper.
      */
     val componentCount: Int
 

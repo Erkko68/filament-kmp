@@ -99,32 +99,33 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | API | Behavior on web | Workaround |
 | :--- | :--- | :--- |
 | `filamat.MaterialBuilder` | Throws on construction | Compile materials offline with `matc`, load the `.filamat` via `Material.Builder().payload(...)` |
-| `gltfio.UbershaderProvider` (`createMaterialInstance`/`getMaterial`) | Throws | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
-| `gltfio.FilamentAsset.getAssetInstances` / `getAssetInstanceCount` | Throws (embind "unbound types") | Track instances returned by `AssetLoader.createInstance` yourself |
-| `gltfio.FilamentInstance.getMaterialInstances` | Throws (embind "unbound types") | — |
+| `gltfio.UbershaderProvider.createMaterialInstance` / `getMaterial` | Throws — both take a `MaterialKey`, which `filament.js` cannot bind (it is bitfield-packed); the rest of the provider is the real ubershader provider | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
 | `filament-utils.HDRLoader.createTexture` | Throws | Convert HDRs to KTX1 offline with `cmgen` |
 | `filament-utils.IBLPrefilterContext` (`EquirectangularToCubemap`/`SpecularFilter`) | Silent no-op — `run` returns the input texture unchanged | Prefilter environments offline with `cmgen` and load the KTX |
-| `LightManager.Builder.shadowOptions` | Silent no-op (embind can't marshal the `mat4f` field) | Per-light shadow options stay at Filament defaults |
-| `View.AmbientOcclusionOptions.gtao` | Tracked locally only — `Options.h` marks the struct `%codegen_skip_javascript%`, so `filament.js` states outright that the binding does not exist | GTAO can be *selected* via `aoType`; it runs with Filament's default tuning |
+| `View.AmbientOcclusionOptions.gtao` | Tracked locally only — `Options.h` marks the struct `%codegen_skip_javascript%`, so `filament.js` has no binding and the engine keeps its GTAO defaults | GTAO can still be *selected* via `aoType`; it runs with Filament's default tuning |
 | `Renderer.readPixels` (both overloads) | Bound, but the completion callback only fires once the browser has run more frames (~12 in a headless Chrome probe) — a synchronous poll loop inside one task never sees it | Keep rendering and re-check the buffer from `requestAnimationFrame`, not from a busy loop |
-| `RenderableManager.Builder.geometryType` | Throws (embind "unbound types") | Omit it — geometry defaults to `DYNAMIC` |
-| `RenderableManager.getMorphTargetCount` | Always returns `0` | Not registered with embind (it exists in C++). Count morph targets from the glTF JSON |
-| `RenderableManager.setMorphWeights` | Only the first 4 weights apply; a non-zero `offset` is ignored | filament.js binds only the legacy 4-scalar form. 1–3 weights are zero-padded and animate correctly |
 | `RenderableManager.setMorphTargetBufferOffsetAt` | Silent no-op | **None.** Callable on a `gltfio`-loaded renderable, but the offset cannot be changed on web — author the glTF so each primitive reads from the offset it needs |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
 | `Engine.isValidStream` | Throws | `Stream` itself has no web equivalent |
 | `Engine.isValid` | Returns `true` unconditionally — `filament.js` binds no engine-level validity check, only the `isValidX` family for resources | — |
-| `Engine.isPaused` | Tracked locally only; does not pause rendering | Stop your own frame loop instead |
+| `Engine.createSwapChain` | Ignores the surface, size and flags — `PlatformWebGL::createSwapChain` discards `nativeWindow` and has no headless path, so the swap chain always targets the canvas the engine's GL context was created with, at that canvas's size | Create one engine per canvas, or composite offscreen (see the multi-view compositor) |
+| `Engine.isPaused` | Tracked locally only — pausing requires a multi-threaded engine, which the web build is not | Stop your own frame loop instead |
+| `EntityManager.advanceEpoch`, `EntityManager.maxEntityCount` | Throws | Not bound in `filament.js` |
 | `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
 | `Renderer.displayInfo`, `Renderer.frameRateOptions` | Tracked locally only — `setDisplayInfo`/`setFrameRateOptions` are not bound in `filament.js`; frame pacing is managed by the browser | — |
 | `SwapChain.setFrameCompletedCallback` | Silent no-op — `filament.js` does not bind it, and binding it would not help: `OpenGLDriver::setFrameCompletedCallback` is an empty function, so it fires on Metal only (the same is true on Android and on Vulkan/GL desktop) | — |
-| `SwapChain.setFrameScheduledCallback` | Tracked locally only — `filament.js` binds no frame-scheduled callback, so it never fires; `isFrameScheduledCallbackSet` reports what you set | — |
-| `SwapChain.isFrameRateChangeSupported` | Returns false — display frame rate switching is not supported on web; pacing is browser-managed | — |
-| `SurfaceOrientation.Builder.tangents` | Silent no-op | Provide normals/uvs and let the builder derive the orientation |
+| `SwapChain.setFrameRate`, `SwapChain.isFrameRateChangeSupported` | Silent no-op / returns false — display frame rate switching is not supported on web; pacing is browser-managed | — |
+| `SwapChain.nativeWindow`, `SwapChain.nativeObject` | Returns null / sentinel `1L` — `SwapChain` wraps an HTML5 canvas on web rather than an OS native window handle | — |
+| `Texture.Builder.importTexture` | Silent no-op — takes a backend texture handle, which `filament.js` does not expose | — |
+
+`View.BloomOptions.dirt`/`dirtStrength`, `FogOptions.skyColor` and `AmbientOcclusionOptions.ssct`/`gtao`
+are the only option fields missing from their embind value objects: beamsplitter skips pointer and
+nested-struct members, emitting `// JavaScript binding for <field> is not yet supported` in
+`jsbindings_generated.cpp`. They cannot round-trip on web.
 
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.
 
-Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
+Suitable for glTF pipelines and custom materials. Image-based lighting still needs KTX1 environments prepared offline with `cmgen` — raw HDR decoding and runtime prefiltering have no web binding.
 
 ### Bundle size
 

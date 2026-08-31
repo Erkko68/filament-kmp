@@ -77,12 +77,10 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
             get() = nativeOptions.transform
             set(value) { nativeOptions.transform = value }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetConstant: Float
             get() = nativeOptions.polygonOffsetConstant
             set(value) { nativeOptions.polygonOffsetConstant = value }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetSlope: Float
             get() = nativeOptions.polygonOffsetSlope
             set(value) { nativeOptions.polygonOffsetSlope = value }
@@ -123,7 +121,6 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
         
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { nativeBuilder.lightChannel(channel, enable) }
         actual fun castShadows(enable: Boolean): Builder = apply { nativeBuilder.castShadows(enable) }
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder = apply { nativeBuilder.shadowOptions(options.toNative()) }
         actual fun castLight(enabled: Boolean): Builder = apply { nativeBuilder.castLight(enabled) }
         actual fun position(x: Float, y: Float, z: Float): Builder = apply { nativeBuilder.position(x, y, z) }

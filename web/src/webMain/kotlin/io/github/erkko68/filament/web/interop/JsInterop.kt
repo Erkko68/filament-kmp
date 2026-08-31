@@ -11,6 +11,11 @@ package io.github.erkko68.filament.web.interop
 // empty block (returns undefined -> NPE) by the Kotlin/Wasm js() compiler.
 fun emptyJsObject(): JsAny = js("({})")
 
+/** `obj[key] = value` — for JS maps keyed by a runtime string, e.g. engine feature flags. */
+fun jsSetBoolean(obj: JsAny, key: String, value: Boolean) {
+    js("obj[key] = value")
+}
+
 /** `BigInt(s)` — Filament.js's steady-clock frame APIs take a JS BigInt. */
 fun jsBigInt(s: String): JsAny = js("BigInt(s)")
 
