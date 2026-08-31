@@ -60,6 +60,7 @@ scripts/dev/check-common-api.sh                          # Android API members m
 scripts/dev/check-js-bindings.sh                         # jsbindings.cpp methods missing from the JS overlay
 
 # 5. Apply changes (per-layer recipe below), update tests
+scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
 
 # 6. Verify
 scripts/dev/run-tests.sh                                 # jvm + js + ios (+ android if a device is attached)
@@ -236,45 +237,19 @@ in [`kotlin/filament-compose/src/commonMain/materials/`](../kotlin/filament-comp
 and the `generateEmbeddedMaterials` Gradle task base64-encodes them into a generated Kotlin object.
 
 A compiled `.filamat` is tied to the Filament ABI, so **whenever `MATERIAL_VERSION` changes** (watch
-the step-1 diff), recompile all five with the `matc` from the matching release. `matc` ships in the
-release tarball under `bin/` — the same archive the prebuilts come from, cached at
-`.gradle/filament-prebuilts-cache/filament-v<new>-<os>.tgz` after step 3:
+the step-1 diff), every committed blob must be recompiled with the `matc` of the matching release —
+including the two that live outside `filament-compose` (the `emissive` test material and the
+`textured` sample material) and the web sample's vendored engine copy, which won't load a newer blob:
 
 ```sh
-tar -xzf .gradle/filament-prebuilts-cache/filament-v<new>-mac.tgz -C /tmp --strip-components=1 filament/bin/matc
-cd kotlin/filament-compose/src/commonMain/materials
-for m in standard_lit standard_unlit standard_textured standard_emissive; do
-    /tmp/bin/matc -p all -a all -o "$m.filamat" "$m.mat"   # variant filter is in the .mat source
-done
+scripts/dev/rebuild-materials.sh
 ```
 
-Two more `.filamat` blobs live outside that directory and need the same treatment:
-
-```sh
-# test material (copy the output to filament-compose's commonTest resources too)
-cd kotlin/filament/src/commonTest/resources
-/tmp/bin/matc -p all -a all -o emissive.filamat emissive.mat
-cp emissive.filamat ../../../../filament-compose/src/commonTest/resources/
-
-# sample material
-cd samples/shared/src/commonMain/composeResources/files/materials
-/tmp/bin/matc -p all -a all -o textured.filamat textured.mat
-```
-
-Commit the refreshed `.filamat`; the embed task picks them up on the next build. `StandardMaterialLifecycleTest`
-(Tier-B) fails to build a material if a blob is stale or corrupt.
-
-The web sample commits its own copy of the engine so it runs standalone, and a `.filamat` built by the
-new `matc` will not load in the old engine (`MATERIAL_VERSION` mismatch) — refresh it in the same pass:
-
-```sh
-for t in jsMain wasmJsMain; do
-    cp prebuilts/web/filament.js prebuilts/web/filament.wasm "samples/webApp/src/$t/resources/"
-done
-```
-
-CI's `js` job `cmp`s these against `prebuilts/web/`, so a missed copy fails the build rather than the
-browser.
+The script pulls `matc` out of the release tarball cached by step 3, recompiles every `.mat` in the
+repo in place, syncs the shared `emissive.filamat` copy, and refreshes `samples/webApp`'s engine.
+Commit the refreshed blobs; the embed tasks pick them up on the next build. `StandardMaterialLifecycleTest`
+(Tier-B) fails to build a material if a blob is stale or corrupt. CI's `js` job `cmp`s the sample's
+engine copy against `prebuilts/web/`, so a missed refresh fails the build rather than the browser.
 
 ### 7. Verify
 

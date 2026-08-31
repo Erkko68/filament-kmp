@@ -151,7 +151,11 @@ expect class Material {
         companion object {
             /** Variant for directional lighting */
             val DIRECTIONAL_LIGHTING: Int
-            /** Variant for dynamic (local) lighting */
+            /**
+             * Variant for dynamic (local) lighting. Since 1.76.0 dynamic lighting is a
+             * specialization constant, so this no longer shrinks offline `.filamat` blobs —
+             * it only prunes runtime pipeline compilations.
+             */
             val DYNAMIC_LIGHTING: Int
             /** Variant for shadow-receiving objects */
             val SHADOW_RECEIVER: Int

@@ -322,6 +322,7 @@ public final class io/github/erkko68/filament/Engine$Config {
 	public final fun getDisableHandleUseAfterFreeCheck ()Z
 	public final fun getDisableParallelShaderCompile ()Z
 	public final fun getDriverHandleArenaSizeMB ()J
+	public final fun getEnableMultipleDirectionalLights ()Z
 	public final fun getForceGLES2Context ()Z
 	public final fun getGpuContextPriority ()Lio/github/erkko68/filament/Engine$GpuContextPriority;
 	public final fun getJobSystemThreadCount ()J
@@ -339,6 +340,7 @@ public final class io/github/erkko68/filament/Engine$Config {
 	public final fun setDisableHandleUseAfterFreeCheck (Z)V
 	public final fun setDisableParallelShaderCompile (Z)V
 	public final fun setDriverHandleArenaSizeMB (J)V
+	public final fun setEnableMultipleDirectionalLights (Z)V
 	public final fun setForceGLES2Context (Z)V
 	public final fun setGpuContextPriority (Lio/github/erkko68/filament/Engine$GpuContextPriority;)V
 	public final fun setJobSystemThreadCount (J)V

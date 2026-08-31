@@ -77,10 +77,15 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
             get() = nativeOptions.transform
             set(value) { nativeOptions.transform = value }
 
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
-        actual var polygonOffsetConstant: Float = 0.5f
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
-        actual var polygonOffsetSlope: Float = 2.0f
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
+        actual var polygonOffsetConstant: Float
+            get() = nativeOptions.polygonOffsetConstant
+            set(value) { nativeOptions.polygonOffsetConstant = value }
+
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
+        actual var polygonOffsetSlope: Float
+            get() = nativeOptions.polygonOffsetSlope
+            set(value) { nativeOptions.polygonOffsetSlope = value }
 
         actual var penumbraScale: Float
             get() = nativeOptions.penumbraScale

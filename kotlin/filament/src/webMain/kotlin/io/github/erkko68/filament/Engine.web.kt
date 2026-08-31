@@ -3,6 +3,10 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.web.interop.emptyJsObject
 import io.github.erkko68.filament.web.Engine as JSEngine
+import io.github.erkko68.filament.web.Engine_Config as JSEngineConfig
+import io.github.erkko68.filament.web.GpuContextPriority as JSGpuContextPriority
+import io.github.erkko68.filament.web.ShaderLanguage as JSShaderLanguage
+import io.github.erkko68.filament.web.StereoscopicType as JSStereoscopicType
 import io.github.erkko68.filament.web.EngineCreateOptions as JSEngineCreateOptions
 import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
@@ -33,10 +37,9 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual fun isAutomaticInstancingEnabled(): Boolean = jsEngine.isAutomaticInstancingEnabled()
 
     actual val config: Config get() {
-        // The JS binding's getConfig() returns a JS object with the same shape
-        // as Engine.Config. Map it back into our actual class. Fields the JS
-        // binding doesn't expose (stereoscopicType, gpuContextPriority,
-        // preferredShaderLanguage as enum) keep their defaults.
+        // getConfig() returns a JS object shaped like Engine.Config. The three enum fields
+        // come back as embind enum objects, which map back only by identity — not worth it,
+        // they keep the Config defaults.
         val jsCfg = jsEngine.getConfig()
         return Config().apply {
             jsCfg.commandBufferSizeMB?.let { commandBufferSizeMB = it.toLong() }
@@ -50,6 +53,10 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             jsCfg.resourceAllocatorCacheMaxAge?.let { resourceAllocatorCacheMaxAge = it.toLong() }
             jsCfg.sharedUboInitialSizeInBytes?.let { sharedUboInitialSizeInBytes = it.toLong() }
             jsCfg.forceGLES2Context?.let { forceGLES2Context = it }
+            jsCfg.disableParallelShaderCompile?.let { disableParallelShaderCompile = it }
+            jsCfg.disableHandleUseAfterFreeCheck?.let { disableHandleUseAfterFreeCheck = it }
+            jsCfg.assertNativeWindowIsValid?.let { assertNativeWindowIsValid = it }
+            jsCfg.enableMultipleDirectionalLights?.let { enableMultipleDirectionalLights = it }
         }
     }
 
@@ -287,39 +294,79 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
     actual enum class FeatureLevel { FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3 }
     actual enum class StereoscopicType { NONE, INSTANCED, MULTIVIEW }
     actual enum class GpuContextPriority { DEFAULT, LOW, MEDIUM, HIGH, REALTIME }
+    /** Defaults mirror Filament's own `Engine::Config` — they now reach the engine via `create`. */
     actual class Config {
-        actual var commandBufferSizeMB: Long = 64
-        actual var perRenderPassArenaSizeMB: Long = 32
-        actual var driverHandleArenaSizeMB: Long = 16
-        actual var minCommandBufferSizeMB: Long = 16
-        actual var perFrameCommandsSizeMB: Long = 8
-        actual var jobSystemThreadCount: Long = 1
-        // TODO(web-api-parity): Engine.create takes WebGL context attributes, not an Engine::Config.
+        actual var commandBufferSizeMB: Long = 3
+        actual var perRenderPassArenaSizeMB: Long = 3
+        actual var driverHandleArenaSizeMB: Long = 0
+        actual var minCommandBufferSizeMB: Long = 1
+        actual var perFrameCommandsSizeMB: Long = 2
+        actual var jobSystemThreadCount: Long = 0
         actual var disableParallelShaderCompile: Boolean = false
         actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
-        actual var stereoscopicEyeCount: Long = 1
+        actual var stereoscopicEyeCount: Long = 2
         actual var resourceAllocatorCacheSizeMB: Long = 64
-        actual var resourceAllocatorCacheMaxAge: Long = 60
+        actual var resourceAllocatorCacheMaxAge: Long = 1
         actual var disableHandleUseAfterFreeCheck: Boolean = false
         actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
         actual var forceGLES2Context: Boolean = false
         actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
-        actual var sharedUboInitialSizeInBytes: Long = 1024
+        actual var sharedUboInitialSizeInBytes: Long = 256 * 64
+        actual var enableMultipleDirectionalLights: Boolean = false
 
         actual enum class ShaderLanguage { DEFAULT, MSL, METAL_LIBRARY }
+
+        /** Filament.js merges this over `createDefaultConfig()`, so every field must be set. */
+        internal fun toJs(): JSEngineConfig =
+            emptyJsObject().unsafeCast<JSEngineConfig>().apply {
+                commandBufferSizeMB = this@Config.commandBufferSizeMB.toDouble()
+                perRenderPassArenaSizeMB = this@Config.perRenderPassArenaSizeMB.toDouble()
+                driverHandleArenaSizeMB = this@Config.driverHandleArenaSizeMB.toDouble()
+                minCommandBufferSizeMB = this@Config.minCommandBufferSizeMB.toDouble()
+                perFrameCommandsSizeMB = this@Config.perFrameCommandsSizeMB.toDouble()
+                jobSystemThreadCount = this@Config.jobSystemThreadCount.toDouble()
+                disableParallelShaderCompile = this@Config.disableParallelShaderCompile
+                stereoscopicType = when (this@Config.stereoscopicType) {
+                    StereoscopicType.NONE -> JSStereoscopicType.NONE
+                    StereoscopicType.INSTANCED -> JSStereoscopicType.INSTANCED
+                    StereoscopicType.MULTIVIEW -> JSStereoscopicType.MULTIVIEW
+                }
+                stereoscopicEyeCount = this@Config.stereoscopicEyeCount.toDouble()
+                resourceAllocatorCacheSizeMB = this@Config.resourceAllocatorCacheSizeMB.toDouble()
+                resourceAllocatorCacheMaxAge = this@Config.resourceAllocatorCacheMaxAge.toDouble()
+                disableHandleUseAfterFreeCheck = this@Config.disableHandleUseAfterFreeCheck
+                preferredShaderLanguage = when (this@Config.preferredShaderLanguage) {
+                    ShaderLanguage.DEFAULT -> JSShaderLanguage.DEFAULT
+                    ShaderLanguage.MSL -> JSShaderLanguage.MSL
+                    ShaderLanguage.METAL_LIBRARY -> JSShaderLanguage.METAL_LIBRARY
+                }
+                forceGLES2Context = this@Config.forceGLES2Context
+                assertNativeWindowIsValid = this@Config.assertNativeWindowIsValid
+                gpuContextPriority = when (this@Config.gpuContextPriority) {
+                    GpuContextPriority.DEFAULT -> JSGpuContextPriority.DEFAULT
+                    GpuContextPriority.LOW -> JSGpuContextPriority.LOW
+                    GpuContextPriority.MEDIUM -> JSGpuContextPriority.MEDIUM
+                    GpuContextPriority.HIGH -> JSGpuContextPriority.HIGH
+                    GpuContextPriority.REALTIME -> JSGpuContextPriority.REALTIME
+                }
+                sharedUboInitialSizeInBytes = this@Config.sharedUboInitialSizeInBytes.toDouble()
+                enableMultipleDirectionalLights = this@Config.enableMultipleDirectionalLights
+            }
     }
 
     actual class Builder {
+        private var config: Config? = null
+
         actual fun backend(backend: Backend): Builder = this
         actual fun sharedContext(sharedContext: Any): Builder = this
-        actual fun config(config: Config): Builder = this
+        actual fun config(config: Config): Builder = apply { this.config = config }
         actual fun featureLevel(featureLevel: FeatureLevel): Builder = this
         actual fun paused(paused: Boolean): Builder = this
         actual fun feature(name: String, value: Boolean): Builder = this
         // TODO(js): Engine.Builder.colorGrading is not registered in jsbindings.cpp (filament.js has no Engine.Builder).
         actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder = this
-        actual fun build(): Engine = create()
+        actual fun build(): Engine = create(config)
     }
 
     actual companion object {
@@ -332,7 +379,9 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
         private fun glOptions(): JSEngineCreateOptions =
             emptyJsObject().unsafeCast<JSEngineCreateOptions>().apply { alpha = true }
 
-        actual fun create(): Engine {
+        actual fun create(): Engine = create(null)
+
+        private fun create(config: Config?): Engine {
             // On JS, Filament needs a WebGL-backed canvas. If no shared context is
             // provided, allocate a hidden offscreen <canvas> that the consumer can
             // read back from (see Engine.jsCanvas).
@@ -346,7 +395,7 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
             canvas.style.left = "-9999px"
             canvas.style.top = "0"
             doc.body?.appendChild(canvas)
-            return Engine(JSEngine.create(canvas, glOptions()), canvas)
+            return Engine(createJs(canvas, config), canvas)
         }
 
         actual fun create(backend: Backend): Engine {
@@ -355,10 +404,14 @@ actual class Engine private constructor(val jsEngine: JSEngine, val jsCanvas: HT
 
         actual fun create(sharedContext: Any): Engine {
             if (sharedContext is HTMLCanvasElement) {
-                return Engine(JSEngine.create(sharedContext, glOptions()), sharedContext)
+                return Engine(createJs(sharedContext, null), sharedContext)
             }
             return create()
         }
+
+        private fun createJs(canvas: HTMLCanvasElement, config: Config?): JSEngine =
+            if (config == null) JSEngine.create(canvas, glOptions())
+            else JSEngine.create(canvas, glOptions(), config.toJs())
 
         actual fun getSteadyClockTimeNano(): Long {
             // Filament.js returns a BigInt here. Coerce it to a JS number *before* it

@@ -9,7 +9,7 @@
 material {
     name : TestLit,
     shadingModel : lit,
-    variantFilter : [ skinning, ssr, stereo, fog, dynamicLighting ],
+    variantFilter : [ skinning, ssr, stereo, fog ],
     parameters : [
         { type : float3, name : baseColor },
         { type : float,  name : metallic },

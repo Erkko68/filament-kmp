@@ -367,8 +367,6 @@ actual class View internal constructor(internal val nativeView: FilamentView) {
             val kmp = DepthOfFieldOptions()
             kmp.enabled = o.enabled
             kmp.cocScale = o.cocScale
-            // Reflects what was set, not what the engine has: nSetDepthOfFieldOptions never
-            // marshals cocAspectRatio (upstream). @PlatformGap on the common declaration.
             kmp.cocAspectRatio = o.cocAspectRatio
             kmp.maxApertureDiameter = o.maxApertureDiameter
             kmp.filter = io.github.erkko68.filament.View.DepthOfFieldOptions.Filter.values()[o.filter.ordinal]
