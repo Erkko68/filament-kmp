@@ -15,6 +15,8 @@ fun setIndirectLight(ibl: IndirectLight?): Unit
 fun setSkybox(sky: Skybox?): Unit
 fun getEntityCount(): Double
 fun hasEntity(entity: Entity): Boolean
+fun getIndirectLight(): IndirectLight?
+fun getSkybox(): Skybox?
 }
 
 // ── Scene ─────────────────────────────────────────────────────────────────────

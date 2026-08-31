@@ -13,9 +13,6 @@ import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
 
 actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
-    private val skinJointCounts = mutableMapOf<Int, Int>()
-    private val skinJoints = mutableMapOf<Int, IntArray>()
-
     actual fun getRoot(): Int {
         val jsEntity = jsInstance.getRoot()
         val id = jsEntity.getId().toInt()
@@ -52,9 +49,7 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         return FilamentAsset(jsInstance.getAsset())
     }
 
-    actual fun getSkinCount(): Int {
-        return jsInstance.getSkinNames().size().toInt()
-    }
+    actual fun getSkinCount(): Int = jsInstance.getSkinCount().toInt()
 
     actual fun getSkinNames(): Array<String> {
         val vector = jsInstance.getSkinNames()
@@ -75,14 +70,17 @@ actual class FilamentInstance(internal val jsInstance: JSFilamentInstance) {
         jsInstance.detachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
-    actual fun getJointCountAt(skinIndex: Int): Int {
-        return skinJointCounts[skinIndex] ?: 0
-    }
+    actual fun getJointCountAt(skinIndex: Int): Int =
+        jsInstance.getJointCountAt(skinIndex.toDouble()).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     actual fun getJointsAt(skinIndex: Int): IntArray {
-        return skinJoints[skinIndex] ?: IntArray(0)
+        val joints = jsInstance.getJointsAt(skinIndex.toDouble())
+        return IntArray(joints.size) { i ->
+            val jsEntity = joints[i]
+            val id = jsEntity.getId().toInt()
+            EntityManager.register(id, jsEntity)
+            id
+        }
     }
 
     actual fun applyMaterialVariant(variantIndex: Int) {

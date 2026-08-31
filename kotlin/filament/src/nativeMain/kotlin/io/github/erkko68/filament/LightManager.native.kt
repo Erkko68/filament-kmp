@@ -187,7 +187,6 @@ actual class LightManager internal constructor(val nativeLightManager: CPointer<
         }
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     actual fun getComponentCount(): Int = FilaLightManager_getComponentCount(nativeLightManager).toInt()
     actual fun hasComponent(entity: Entity): Boolean = FilaLightManager_hasComponent(nativeLightManager, entity.toUInt())
     actual fun getInstance(entity: Entity): EntityInstance = FilaLightManager_getInstance(nativeLightManager, entity.toUInt()).toInt()

@@ -90,7 +90,6 @@ expect class MaterialInstance {
          * @param name Optional debug name for the new instance (null to use other's name).
          * @return A new MaterialInstance with all parameters copied from other.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the source instance unchanged; filament.js does not expose MaterialInstance duplication.")
         fun duplicate(other: MaterialInstance, name: String? = null): MaterialInstance
     }
 
@@ -99,7 +98,6 @@ expect class MaterialInstance {
      *
      * @return The parent Material. The Material owns all instances created from it.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "getter throws UnsupportedOperationException — filament.js does not expose MaterialInstance.getMaterial.")
     val material: Material
 
     /**
@@ -312,21 +310,18 @@ expect class MaterialInstance {
      * Returns the boolean value of a material specialization constant.
      * @param name Constant name as defined in the material
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
     fun getConstantBoolean(name: String): Boolean
 
     /**
      * Returns the float value of a material specialization constant.
      * @param name Constant name as defined in the material
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
     fun getConstantFloat(name: String): Float
 
     /**
      * Returns the integer value of a material specialization constant.
      * @param name Constant name as defined in the material
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
     fun getConstantInt(name: String): Int
 
     /**

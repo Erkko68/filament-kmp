@@ -32,7 +32,6 @@ class ShadowsApplyTest : ComposeTestFixture() {
     }
 
     @Test
-    @IgnoreJs // setShadowType is unbound in the web wrapper; technique is locked to PCF there.
     fun eachTechniqueSelectsItsShadowType() {
         val view = newView()
         Shadows.Pcf.applyTo(view)

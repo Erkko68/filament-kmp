@@ -17,24 +17,18 @@ import io.github.erkko68.filament.web.StencilOperation
 import io.github.erkko68.filament.web.CompareFunc
 import io.github.erkko68.filament.web.CullingMode
 
-// Members the generated MaterialInstance external doesn't cover: the vector/array overloads
-// of setBoolParameter/setFloatParameter (the scalar forms are generated), and the optional
-// setScissor/unsetScissor (present only in newer filament.js, so feature-detected).
+// The vector/array overloads of setBoolParameter/setFloatParameter — embind registers one
+// name per arity, which the single-signature externals can't express.
 private external interface JsMaterialInstanceExt : JsAny  {
     fun setBoolParameter(name: String, value: ReadonlyArray<JsBoolean>)
     fun setFloatParameter(name: String, value: ReadonlyArray<JsNumber>)
-    // Declared as methods (not function-typed properties) so they keep their `this` binding when
-    // invoked — a detached embind method aborts with a native BindingError. Probed before calling.
-    fun setScissor(left: Int, bottom: Int, width: Int, height: Int)
-    fun unsetScissor()
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstance) {
     private val ext: JsMaterialInstanceExt get() = jsMaterialInstance.unsafeCast<JsMaterialInstanceExt>()
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "getter throws UnsupportedOperationException — filament.js does not expose MaterialInstance.getMaterial.")
     actual val material: Material
-        get() = jsUnsupported("MaterialInstance.getMaterial", "filament.js does not expose MaterialInstance.getMaterial.")
+        get() = Material(jsMaterialInstance.getMaterial())
 
     actual val name: String
         get() = jsMaterialInstance.getName()
@@ -51,12 +45,9 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
         jsMaterialInstance.setFloatParameter(name, x.toDouble())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
-    actual fun getConstantBoolean(name: String): Boolean = jsUnsupported("MaterialInstance.getConstantBoolean")
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
-    actual fun getConstantFloat(name: String): Float = jsUnsupported("MaterialInstance.getConstantFloat")
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getConstant is not bound in filament.js.")
-    actual fun getConstantInt(name: String): Int = jsUnsupported("MaterialInstance.getConstantInt")
+    actual fun getConstantBoolean(name: String): Boolean = jsMaterialInstance.getConstantBool(name)
+    actual fun getConstantFloat(name: String): Float = jsMaterialInstance.getConstantFloat(name).toFloat()
+    actual fun getConstantInt(name: String): Int = jsMaterialInstance.getConstantInt(name).toInt()
 
     actual fun setParameter(name: String, x: Boolean, y: Boolean) {
         ext.setBoolParameter(name, listOf(x, y).toJsBooleans())
@@ -180,11 +171,11 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     }
 
     actual fun setScissor(left: Int, bottom: Int, width: Int, height: Int) {
-        if (jsHasMember(jsMaterialInstance, "setScissor")) ext.setScissor(left, bottom, width, height)
+        jsMaterialInstance.setScissor(left.toDouble(), bottom.toDouble(), width.toDouble(), height.toDouble())
     }
 
     actual fun unsetScissor() {
-        if (jsHasMember(jsMaterialInstance, "unsetScissor")) ext.unsetScissor()
+        jsMaterialInstance.unsetScissor()
     }
 
     actual fun setPolygonOffset(scale: Float, constant: Float) {
@@ -406,13 +397,13 @@ actual class MaterialInstance(internal val jsMaterialInstance: JSMaterialInstanc
     actual enum class StencilOperation { KEEP, ZERO, REPLACE, INCR_CLAMP, INCR_WRAP, DECR_CLAMP, DECR_WRAP, INVERT }
     actual enum class StencilFace { FRONT, BACK, FRONT_AND_BACK }
     actual companion object {
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the source instance unchanged; filament.js does not expose MaterialInstance duplication.")
         actual fun duplicate(
             other: MaterialInstance,
             name: String?
-        ): MaterialInstance {
-            return other
-        }
+        ): MaterialInstance = MaterialInstance(
+            if (name != null) other.jsMaterialInstance.duplicateNamed(name)
+            else other.jsMaterialInstance.duplicate()
+        )
     }
 }
 

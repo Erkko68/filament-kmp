@@ -70,10 +70,8 @@ actual class FilamentInstance {
         FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toULong(), target.toUInt())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns 0 — filament.js exposes no joint API.")
     actual fun getJointCountAt(skinIndex: Int): Int = FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex.toULong()).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — filament.js exposes no joint API.")
     actual fun getJointsAt(skinIndex: Int): IntArray {
         val count = getJointCountAt(skinIndex)
         if (count == 0) return IntArray(0)

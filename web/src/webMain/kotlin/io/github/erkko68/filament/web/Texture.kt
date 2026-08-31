@@ -12,6 +12,7 @@ fun getDepth(engine: Engine, level: Double = definedExternally): Double
 fun getLevels(engine: Engine): Double
 fun generateMipmaps(engine: Engine): Unit
 companion object {
+fun isTextureSwizzleSupported(engine: Engine): Boolean
 fun isTextureFormatMipmappable(engine: Engine, format: Texture_InternalFormat): Boolean
 fun validatePixelFormatAndType(internalFormat: Texture_InternalFormat, format: PixelDataFormat, type: PixelDataType): Boolean
 fun Builder(): Texture_Builder

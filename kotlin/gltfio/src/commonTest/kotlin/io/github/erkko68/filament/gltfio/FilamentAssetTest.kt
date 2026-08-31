@@ -80,7 +80,6 @@ class FilamentAssetTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // FilamentAsset.getMorphTargetNames is a hardcoded empty stub in the web wrapper (not exposed by filament.js).
     fun testMorphTargetNames() {
         val bytes = TestGlb.getAnimatedMorphCubeGlbBytes()
         if (bytes.isEmpty()) return

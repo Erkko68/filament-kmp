@@ -5,19 +5,24 @@ import io.github.erkko68.filament.web.interop.toJsArray
 import io.github.erkko68.filament.web.Scene as JSScene
 
 actual class Scene(internal val jsScene: JSScene) {
+    // Cached for wrapper identity, as on the other platforms; the engine-side getters back
+    // the case where the scene was populated outside this wrapper.
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
+
+    // Scene has no getEntities() in C++ at all — only forEach(Invocable), which embind
+    // cannot bind — so membership is mirrored here to back getEntities()/forEach().
     private val _entities = mutableSetOf<Int>()
 
     actual var skybox: Skybox?
-        get() = _skybox
+        get() = _skybox ?: jsScene.getSkybox()?.let { Skybox(it) }
         set(value) {
             _skybox = value
             jsScene.setSkybox(value?.jsSkybox)
         }
 
     actual var indirectLight: IndirectLight?
-        get() = _indirectLight
+        get() = _indirectLight ?: jsScene.getIndirectLight()?.let { IndirectLight(it) }
         set(value) {
             _indirectLight = value
             jsScene.setIndirectLight(value?.jsIndirectLight)

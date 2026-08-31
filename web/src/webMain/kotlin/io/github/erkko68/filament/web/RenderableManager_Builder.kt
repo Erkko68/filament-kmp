@@ -29,6 +29,13 @@ fun lightChannel(channel: Double, enable: Boolean): RenderableManager_Builder
 fun instances(instanceCount: Double): RenderableManager_Builder
 fun globalBlendOrderEnabled(index: Double, enabled: Boolean): RenderableManager_Builder
 fun screenSpaceContactShadows(enable: Boolean): RenderableManager_Builder
+fun geometryNoIndices(slot: Double, ptype: RenderableManager_PrimitiveType, vb: VertexBuffer): RenderableManager_Builder
+fun geometryNoIndicesOffset(slot: Double, ptype: RenderableManager_PrimitiveType, vb: VertexBuffer, offset: Double, count: Double): RenderableManager_Builder
+fun enableSkinningBuffers(enabled: Boolean): RenderableManager_Builder
+fun skinningBuffer(skinningBuffer: SkinningBuffer, boneCount: Double, offset: Double): RenderableManager_Builder
+fun morphingTargetCount(targetCount: Double): RenderableManager_Builder
+fun morphingBuffer(morphTargetBuffer: MorphTargetBuffer): RenderableManager_Builder
+fun morphingBufferOffset(level: Double, primitiveIndex: Double, offset: Double): RenderableManager_Builder
 }
 
 // ── Builders (the d.ts under-reports these too) ───────────────────────────────

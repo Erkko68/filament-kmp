@@ -67,7 +67,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         actual var height: Float = 0.0f
         actual var heightFalloff: Float = 1.0f
         actual var color: FloatArray = floatArrayOf(1.0f, 1.0f, 1.0f)
-        actual var densityMap: Texture? = null
         actual var cutOffDistance: Float = Float.POSITIVE_INFINITY
         actual var maximumOpacity: Float = 1.0f
         actual var inScatteringStart: Float = 0.0f
@@ -586,7 +585,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             FilaView_setRenderTarget(nativeHandle, value?.nativeHandle)
         }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op unless the filament.js build binds setShadowType (stock upstream prebuilts do not) — web stays on PCF shadows.")
     actual var shadowType: ShadowType
         get() = mShadowType
         set(value) {
@@ -688,7 +686,6 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             }
         }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setter is a silent no-op — setFrustumCullingEnabled is not bound in filament.js; the getter reflects the locally tracked value.")
     actual var isFrustumCullingEnabled: Boolean
         get() = FilaView_isFrustumCullingEnabled(nativeHandle)
         set(value) { FilaView_setFrustumCullingEnabled(nativeHandle, value) }

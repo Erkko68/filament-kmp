@@ -41,6 +41,7 @@ fun isCullingEnabled(instance: RenderableManager_Instance): Boolean
 fun setCulling(instance: RenderableManager_Instance, enable: Boolean): Unit
 fun isScreenSpaceContactShadowsEnabled(instance: RenderableManager_Instance): Boolean
 fun setScreenSpaceContactShadows(instance: RenderableManager_Instance, enabled: Boolean): Unit
+fun setGeometryNoIndicesAt(instance: RenderableManager_Instance, primitiveIndex: Double, type: RenderableManager_PrimitiveType, vertices: VertexBuffer, offset: Double, count: Double): Unit
 companion object {
 fun Builder(ngeos: Double): RenderableManager_Builder
 }

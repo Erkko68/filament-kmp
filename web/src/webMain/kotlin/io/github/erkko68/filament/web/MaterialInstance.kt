@@ -47,6 +47,14 @@ fun getSpecularAntiAliasingThreshold(): Double
 fun setSpecularAntiAliasingThreshold(value: Double): Unit
 fun getSpecularAntiAliasingVariance(): Double
 fun setSpecularAntiAliasingVariance(value: Double): Unit
+fun getMaterial(): Material
+fun duplicate(): MaterialInstance
+fun duplicateNamed(name: String): MaterialInstance
+fun getConstantBool(name: String): Boolean
+fun getConstantFloat(name: String): Double
+fun getConstantInt(name: String): Double
+fun setScissor(left: Double, bottom: Double, width: Double, height: Double): Unit
+fun unsetScissor(): Unit
 }
 
 // ── MaterialInstance ──────────────────────────────────────────────────────────

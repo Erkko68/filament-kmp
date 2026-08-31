@@ -6,7 +6,11 @@ package io.github.erkko68.filament.web
 
 @JsName("Texture\$InternalFormat")
 external class Texture_InternalFormat : JsAny {
+// embind gives every enum value an integer `value`, and `values` maps that integer back
+// to the value object (see __embind_register_enum_value in filament.js).
+val value: Double
 companion object {
+val values: JsAny
 val R8: Texture_InternalFormat
 val R8_SNORM: Texture_InternalFormat
 val R8UI: Texture_InternalFormat

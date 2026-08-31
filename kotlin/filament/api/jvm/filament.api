@@ -2166,7 +2166,6 @@ public final class io/github/erkko68/filament/View$FogOptions {
 	public final fun getColor ()[F
 	public final fun getCutOffDistance ()F
 	public final fun getDensity ()F
-	public final fun getDensityMap ()Lio/github/erkko68/filament/Texture;
 	public final fun getDistance ()F
 	public final fun getEnabled ()Z
 	public final fun getFogColorFromIbl ()Z
@@ -2179,7 +2178,6 @@ public final class io/github/erkko68/filament/View$FogOptions {
 	public final fun setColor ([F)V
 	public final fun setCutOffDistance (F)V
 	public final fun setDensity (F)V
-	public final fun setDensityMap (Lio/github/erkko68/filament/Texture;)V
 	public final fun setDistance (F)V
 	public final fun setEnabled (Z)V
 	public final fun setFogColorFromIbl (Z)V

@@ -406,7 +406,6 @@ expect class LightManager {
      * @return Number of light components
      * @throws UnsupportedOperationException on JS — getComponentCount is unbound in the web wrapper.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — not bound in filament.js.")
     fun getComponentCount(): Int
 
     /**

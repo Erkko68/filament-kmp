@@ -16,13 +16,11 @@ actual class MaterialInstance constructor(
     actual enum class StencilFace { FRONT, BACK, FRONT_AND_BACK }
  
     actual companion object {
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the source instance unchanged; filament.js does not expose MaterialInstance duplication.")
         actual fun duplicate(other: MaterialInstance, name: String?): MaterialInstance {
             return MaterialInstance(FilaMaterialInstance_duplicate(other.nativeHandle, name))
         }
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "getter throws UnsupportedOperationException — filament.js does not expose MaterialInstance.getMaterial.")
     actual val material: Material get() = Material(FilaMaterialInstance_getMaterial(nativeHandle))
     actual val name: String get() = FilaMaterialInstance_getName(nativeHandle)?.toKString() ?: ""
 

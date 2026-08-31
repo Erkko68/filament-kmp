@@ -107,7 +107,6 @@ class FilamentInstanceTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // getJointsAt/getJointCountAt are unpopulated stubs in the web wrapper (no joint API in filament.js).
     fun testSkinnedInstanceJointsAndSkins() {
         val bytes = TestGlb.getFoxGlbBytes()
         if (bytes.isEmpty()) return

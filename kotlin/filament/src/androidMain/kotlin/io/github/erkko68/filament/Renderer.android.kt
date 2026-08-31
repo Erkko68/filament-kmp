@@ -94,19 +94,18 @@ actual class Renderer internal constructor(
     actual fun endFrame() = nativeRenderer.endFrame()
     actual fun render(view: View) = nativeRenderer.render(view.nativeView)
     actual fun renderStandaloneView(view: View) = nativeRenderer.renderStandaloneView(view.nativeView)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.copyFrame is not bound in filament.js.")
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) =
         nativeRenderer.copyFrame(dstSwapChain.nativeSwapChain, 
             AndroidViewport(dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height),
             AndroidViewport(srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height), 
             flags)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         nativeRenderer.readPixels(xoffset, yoffset, width, height, buffer.toNative())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — Renderer.readPixels is not bound in filament.js.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         nativeRenderer.readPixels(renderTarget.nativeRenderTarget, xoffset, yoffset, width, height, buffer.toNative())
     }

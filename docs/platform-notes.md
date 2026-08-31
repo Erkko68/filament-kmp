@@ -100,35 +100,19 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `filamat.MaterialBuilder` | Throws on construction | Compile materials offline with `matc`, load the `.filamat` via `Material.Builder().payload(...)` |
 | `gltfio.UbershaderProvider` (`createMaterialInstance`/`getMaterial`) | Throws | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
 | `gltfio.FilamentAsset.getAssetInstances` / `getAssetInstanceCount` | Throws (embind "unbound types") | Track instances returned by `AssetLoader.createInstance` yourself |
-| `gltfio.FilamentAsset.getMorphTargetNames` | Returns an empty array | Read target names from the glTF JSON directly |
 | `gltfio.FilamentInstance.getMaterialInstances` | Throws (embind "unbound types") | — |
-| `gltfio.FilamentInstance.getJointCountAt` / `getJointsAt` | Returns 0 / empty array | — (skinned *playback* via `Animator` works) |
 | `filament-utils.HDRLoader.createTexture` | Throws | Convert HDRs to KTX1 offline with `cmgen` |
 | `filament-utils.IBLPrefilterContext` (`EquirectangularToCubemap`/`SpecularFilter`) | Silent no-op — `run` returns the input texture unchanged | Prefilter environments offline with `cmgen` and load the KTX |
-| `View.shadowType` | Silent no-op — technique locked to **PCF** (stock prebuilts don't bind `setShadowType`) | In `filament-compose`, `Shadows.Vsm`/`Dpcf`/`Pcss` are ignored on web; `Shadows.Pcf` and `null` work |
-| `View.isFrustumCullingEnabled` | Setter is a silent no-op (getter tracked locally) | — |
 | `LightManager.Builder.shadowOptions` | Silent no-op (embind can't marshal the `mat4f` field) | Per-light shadow options stay at Filament defaults |
 | `View.AmbientOcclusionOptions.gtao` | Tracked locally only — `Options.h` marks the struct `%codegen_skip_javascript%`, so `filament.js` states outright that the binding does not exist | GTAO can be *selected* via `aoType`; it runs with Filament's default tuning |
-| `View.SoftShadowOptions.maxPenumbraRatio` / `maxSearchRadius` | Tracked locally only — registered in the wasm, but absent from the vendored externals (upstream's `filament.d.ts` never declared them) | — |
-| `LightManager.getComponentCount` | Throws | — |
-| `MaterialInstance.material` (getter) | Throws | Keep a reference to the `Material` you instanced |
-| `MaterialInstance.duplicate` | Silent no-op — returns the source instance unchanged | Create a fresh instance from the `Material` and re-set parameters |
-| `Renderer.copyFrame` / `readPixels` (both overloads) | Silent no-op | — |
-| `RenderableManager` non-indexed `geometry`/`setGeometryAt` overloads | Throws | Use the indexed overloads (with an `IndexBuffer`) |
+| `Renderer.readPixels` (both overloads) | Bound, but the completion callback only fires once the browser has run more frames (~12 in a headless Chrome probe) — a synchronous poll loop inside one task never sees it | Keep rendering and re-check the buffer from `requestAnimationFrame`, not from a busy loop |
 | `RenderableManager.Builder.geometryType` | Throws (embind "unbound types") | Omit it — geometry defaults to `DYNAMIC` |
-| `RenderableManager.Builder` `skinning(bones)`/`skinning(skinningBuffer)`/`morphing(buffer)`/`enableSkinningBuffers` | Silent no-op; `morphing(count)` degrades to a boolean enable | glTF skinning/morphing works through `gltfio` |
 | `RenderableManager.getMorphTargetCount` | Always returns `0` | Not registered with embind (it exists in C++). Count morph targets from the glTF JSON |
 | `RenderableManager.setMorphWeights` | Only the first 4 weights apply; a non-zero `offset` is ignored | filament.js binds only the legacy 4-scalar form. 1–3 weights are zero-padded and animate correctly |
 | `RenderableManager.setMorphTargetBufferOffsetAt` | Silent no-op | **None.** Callable on a `gltfio`-loaded renderable, but the offset cannot be changed on web — author the glTF so each primitive reads from the offset it needs |
-| `RenderableManager.setSkinningBuffer` | Silent no-op | Unreachable in practice: it takes a `SkinningBuffer`, and `SkinningBuffer.Builder.build` throws on web |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
-| `SkinningBuffer` | `Builder.build` throws; `setBonesAt` is a no-op | glTF skinning works through `gltfio` |
-| `MorphTargetBuffer` | `Builder.build` throws | glTF morph targets work through `gltfio` (`GltfInstance.morphWeights`) |
-| `Fence` / `Engine.createFence` | Throws | — |
-| `Engine.isValid{Fence,SkinningBuffer,MorphTargetBuffer,Stream}` | Throws | — |
+| `Engine.isValidStream` | Throws | `Stream` itself has no web equivalent |
 | `Engine.paused` | Tracked locally only; does not pause rendering | Stop your own frame loop instead |
-| `Texture.Companion.isTextureSwizzleSupported` | Always `false` | — |
-| `Camera.getFieldOfViewInDegrees` | Always `0.0` | Track the FOV you set yourself |
 | `SurfaceOrientation.Builder.tangents` | Silent no-op | Provide normals/uvs and let the builder derive the orientation |
 
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.

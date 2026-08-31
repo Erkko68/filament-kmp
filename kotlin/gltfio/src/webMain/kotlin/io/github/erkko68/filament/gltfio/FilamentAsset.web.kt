@@ -85,10 +85,9 @@ actual class FilamentAsset(
         return jsAsset.getExtras(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns an empty array — not exposed by filament.js.")
     actual fun getMorphTargetNames(entity: Entity): Array<String> {
-        // getMorphTargetNames is not available in JS bindings
-        return emptyArray()
+        val names = jsAsset.getMorphTargetNames(EntityManager.jsEntityOf(entity))
+        return Array(names.size) { names[it].toString() }
     }
 
     actual fun getResourceUris(): Array<String> {

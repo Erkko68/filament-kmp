@@ -18,6 +18,15 @@ Run [`scripts/dev/check-js-bindings.sh`](../scripts/dev/check-js-bindings.sh) on
 every Filament version bump: it diffs the embind registrations in
 `jsbindings.cpp` against the declarations here and prints what's missing.
 
+Four entries in that report are deliberately left undeclared:
+
+| Reported missing | Why |
+| :--- | :--- |
+| `EntityManager.getActiveEntityCount` | Behind `#if FILAMENT_UTILS_TRACK_ENTITIES`, which the release bundle is not built with — the symbol is in `jsbindings.cpp` but not in the shipped wasm |
+| `Engine.isValidStream` | `Stream` has no JS class binding, so no argument of that type can exist |
+| `Ktx1Bundle.*` | KTX1 assets load through `Engine.createIblFromKtx1` / `createTextureFromKtx1`; the bundle type is not part of our public surface |
+| `MeshReader.loadMeshFromBuffer`, `MeshReader$MaterialRegistry.keys` | `filamesh` is not part of our public surface |
+
 ## Conventions
 
 - Naming: upstream's `$`-separated flat names map to `_`

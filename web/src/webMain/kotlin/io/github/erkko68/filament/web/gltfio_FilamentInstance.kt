@@ -18,4 +18,7 @@ fun getMaterialInstances(): Vector<MaterialInstance>
 fun detachMaterialInstances(): Unit
 fun getMaterialVariantNames(): js.array.ReadonlyArray<JsString>
 fun applyMaterialVariant(index: Double): Unit
+fun getSkinCount(): Double
+fun getJointCountAt(skinIndex: Double): Double
+fun getJointsAt(skinIndex: Double): js.array.ReadonlyArray<Entity>
 }
