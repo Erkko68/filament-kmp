@@ -76,6 +76,8 @@ void FilaEngineBuilder_config(FilaEngineBuilder *builder,
   wrapper->config.gpuContextPriority =
       static_cast<Engine::GpuContextPriority>(config->gpuContextPriority);
   wrapper->config.sharedUboInitialSizeInBytes = config->sharedUboInitialSizeInBytes;
+  wrapper->config.enableMultipleDirectionalLights =
+      config->enableMultipleDirectionalLights;
 
   wrapper->builder.config(&wrapper->config);
 }

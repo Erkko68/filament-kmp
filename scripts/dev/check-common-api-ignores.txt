@@ -78,7 +78,7 @@ Texture.compressedFormat         # PixelBufferDescriptor's compressed-upload pai
 Texture.compressedSizeInBytes    # compressed textures load via ktxreader (KTX1Loader)
 
 # --- Declared in Java but never reaching C++ ---
-Engine.textureUseAfterFreePoolSize  # Engine.Config field that Builder.config() never passes to nSetBuilderConfig; no Engine::Config counterpart in 1.75.0
+Engine.textureUseAfterFreePoolSize  # Engine.Config field that Builder.config() never passes to nSetBuilderConfig; no Engine::Config counterpart in 1.76.0
 MaterialBuilder.number              # int payload of the TargetApi enum, read only by the JNI call
 
 # --- Android-typed arguments ---

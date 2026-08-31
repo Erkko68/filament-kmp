@@ -42,6 +42,7 @@ typedef struct FilaEngineConfig {
     bool assertNativeWindowIsValid;
     int32_t gpuContextPriority;
     uint32_t sharedUboInitialSizeInBytes;
+    bool enableMultipleDirectionalLights;
 } FilaEngineConfig;
 
 // Builder

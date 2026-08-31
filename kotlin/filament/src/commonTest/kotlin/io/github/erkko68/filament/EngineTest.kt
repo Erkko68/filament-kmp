@@ -28,6 +28,7 @@ class EngineTest {
             forceGLES2Context = false
             gpuContextPriority = Engine.GpuContextPriority.DEFAULT
             sharedUboInitialSizeInBytes = 1024
+            enableMultipleDirectionalLights = true
         }
         assertEquals(64, config.commandBufferSizeMB)
         assertEquals(12, config.perRenderPassArenaSizeMB)
@@ -46,6 +47,7 @@ class EngineTest {
         assertFalse(config.forceGLES2Context)
         assertEquals(Engine.GpuContextPriority.DEFAULT, config.gpuContextPriority)
         assertEquals(1024, config.sharedUboInitialSizeInBytes)
+        assertTrue(config.enableMultipleDirectionalLights)
     }
 
     @Test
@@ -147,8 +149,12 @@ class EngineTest {
     @Test
     fun testEngineBuilderWithColorGrading() {
         Filament.init()
+        // The config rides along here rather than in its own test: each engine costs a WebGL
+        // context in the browser, and the suite is already near Chrome's ceiling. On web it
+        // marshals into filament.js's Engine$Config value_object, which aborts if mistyped.
         val engine = Engine.Builder()
             .backend(Engine.Backend.NOOP)
+            .config(Engine.Config().apply { enableMultipleDirectionalLights = true })
             .colorGrading(
                 ColorGrading.Builder()
                     .quality(ColorGrading.QualityLevel.HIGH)

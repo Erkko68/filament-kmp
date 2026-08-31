@@ -13,14 +13,20 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+> [!WARNING]
+> **Recompile your materials** — `MATERIAL_VERSION` 75 → 76. Any `.filamat` you ship must be rebuilt with 1.76.0's `matc`; the engine rejects blobs from another version. The built-in `StandardMaterial`s ship recompiled.
+
 ### Changed
 - **Versioned API docs**: the published Dokka site now carries a version dropdown; older releases stay online under `/api/older/<version>`.
 
 ### Fixed
+- **`Engine.Builder.config()` reaches the engine on web** (`filament`): the builder dropped the `Engine.Config` on the floor — filament.js's `Engine.create` has taken an `Engine::Config` as its third argument all along. All 20 fields now apply, and web's `Config` defaults match Filament's own (they were invented while nothing read them, and would have allocated ~120 MB of arenas).
+- **Android platform gaps closed by 1.76.0** (`filament`): `View.DepthOfFieldOptions.cocAspectRatio` now reaches the engine (upstream's JNI setter never marshalled it), and `LightManager.ShadowOptions.polygonOffset*` are writable (they were package-private in Java). Both were tracked locally only on Android.
 - **Leaked `Surface` on transparent Android views** (`filament-compose`): the `TextureView` path wrapped the `SurfaceTexture` in a `Surface` and never released it, leaving it to the finalizer.
 
 ### Added
-- **`LightManager.ShadowOptions.polygonOffsetConstant` / `polygonOffsetSlope`** (`filament`): the depth-bias pair. Package-private in Android's `ShadowOptions` but public in C++ and marshalled by the same JNI call, so they are bound everywhere and `@PlatformGap`-annotated on Android — see [Platform notes](docs/platform-notes.md). Ignored when the View's `ShadowType` is VSM.
+- **Filament 1.76.0**: engine upgraded. `Engine.Config.enableMultipleDirectionalLights` opts into up to four extra directional lights beyond the dominant one (no shadows, no sun disc).
+- **`LightManager.ShadowOptions.polygonOffsetConstant` / `polygonOffsetSlope`** (`filament`): the depth-bias pair, bound on every platform. Ignored when the View's `ShadowType` is VSM.
 - **`LightManager.ShadowOptions.penumbraScale` / `penumbraRatioScale`** (`filament`): the per-light PCSS softness pair, public in Filament's Android bindings and marshalled by `nBuilderShadowOptions`, but missing here — `check-common-api.sh` looks tokens up module-wide, so `View.SoftShadowOptions.penumbraScale` was covering for them. `@PlatformGap`-annotated on web, like the rest of `ShadowOptions`.
 - **Option-struct fields missing from common** (`filament`): `View.SoftShadowOptions.maxPenumbraRatio`/`maxSearchRadius`, `View.DepthOfFieldOptions.cocAspectRatio`, `LightManager.ShadowOptions.maxPenumbraRatio`/`maxSearchRadius`, `Engine.Config.disableParallelShaderCompile`/`disableHandleUseAfterFreeCheck`/`assertNativeWindowIsValid`, and a nested `View.AmbientOcclusionOptions.Gtao` (6 fields) so GTAO can be tuned and not just selected. The last three groups are `@PlatformGap`-annotated on web — see [Platform notes](docs/platform-notes.md).
 - **`check-common-api.sh` scopes the field check to the owning type** (build): coverage was decided by one flat, module-wide token set, so any field name declared on *some* type counted as covering that name on *every* type — `View.SoftShadowOptions.penumbraScale` was standing in for `LightManager.ShadowOptions.penumbraScale`. Fields are now matched against the properties commonMain actually declares on that type. `--self-test` checks the parser.

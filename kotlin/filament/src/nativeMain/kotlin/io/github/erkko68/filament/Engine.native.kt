@@ -66,6 +66,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         actual var sharedUboInitialSizeInBytes: Long = 256 * 64
+        actual var enableMultipleDirectionalLights: Boolean = false
 
         internal fun toNative(native: FilaEngineConfig) {
             native.commandBufferSizeMB = commandBufferSizeMB.toUInt()
@@ -85,6 +86,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
             native.assertNativeWindowIsValid = assertNativeWindowIsValid
             native.gpuContextPriority = gpuContextPriority.toNative()
             native.sharedUboInitialSizeInBytes = sharedUboInitialSizeInBytes.toUInt()
+            native.enableMultipleDirectionalLights = enableMultipleDirectionalLights
         }
     }
 

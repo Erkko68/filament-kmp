@@ -161,7 +161,7 @@ expect class LightManager {
          * Ignored when the View's ShadowType is set to VSM.
          * Default: 0.5.
          */
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var polygonOffsetConstant: Float
 
         /**
@@ -172,7 +172,7 @@ expect class LightManager {
          * shadow maps. Ignored when the View's ShadowType is set to VSM.
          * Default: 2.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         var polygonOffsetSlope: Float
 
         /**

@@ -106,6 +106,10 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
             get() = android.sharedUboInitialSizeInBytes
             set(value) { android.sharedUboInitialSizeInBytes = value }
 
+        actual var enableMultipleDirectionalLights: Boolean
+            get() = android.enableMultipleDirectionalLights
+            set(value) { android.enableMultipleDirectionalLights = value }
+
         internal fun toAndroid() = android
     }
 
@@ -196,6 +200,7 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         config.disableHandleUseAfterFreeCheck = androidConfig.disableHandleUseAfterFreeCheck
         config.gpuContextPriority = GpuContextPriority.fromAndroid(androidConfig.gpuContextPriority)
         config.sharedUboInitialSizeInBytes = androidConfig.sharedUboInitialSizeInBytes
+        config.enableMultipleDirectionalLights = androidConfig.enableMultipleDirectionalLights
         return config
     }
     actual fun getMaxStereoscopicEyes(): Long = nativeEngine.maxStereoscopicEyes

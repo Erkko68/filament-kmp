@@ -65,6 +65,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         actual var assertNativeWindowIsValid: Boolean = false
         actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
         actual var sharedUboInitialSizeInBytes: Long = 256 * 64
+        actual var enableMultipleDirectionalLights: Boolean = false
 
         internal fun toNative(arena: Arena): MemorySegment {
             val s = FilaEngineConfig.allocate(arena)
@@ -85,6 +86,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
             FilaEngineConfig.assertNativeWindowIsValid(s, assertNativeWindowIsValid)
             FilaEngineConfig.gpuContextPriority(s, gpuContextPriority.toNative())
             FilaEngineConfig.sharedUboInitialSizeInBytes(s, sharedUboInitialSizeInBytes.toInt())
+            FilaEngineConfig.enableMultipleDirectionalLights(s, enableMultipleDirectionalLights)
             return s
         }
     }

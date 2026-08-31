@@ -27,9 +27,8 @@ import io.github.erkko68.filament.View
  *
  * Many fields apply only under a specific view [Shadows] technique (noted per property). Defaults
  * mirror Filament's, except [lispsm] (defaults `false` here for cleaner soft shadows). Filament's
- * `polygonOffset*` depth-bias fields are deliberately **not** exposed — they're package-private in
- * the Android binding and so can't be surfaced cross-platform; use [constantBias]/[normalBias] for
- * acne instead.
+ * `polygonOffset*` depth-bias fields are not exposed here; use [constantBias]/[normalBias] for acne
+ * instead, or the core [LightManager.ShadowOptions] for the raw pair.
  *
  * @property mapSize Shadow-map resolution in texels; power-of-two ≥ 8. Higher = sharper but costlier.
  * @property constantBias World-space depth bias pushing shadows off surfaces (reduces acne). Ignored for VSM.

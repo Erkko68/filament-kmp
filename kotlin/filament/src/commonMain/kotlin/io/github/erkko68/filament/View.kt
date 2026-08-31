@@ -45,7 +45,7 @@ expect class View {
      *
      * - PCF: Percentage Closer Filtering (standard soft shadows)
      * - VSM: Variance Shadow Maps
-     * - DPCF: Directional Percentage Closer Filtering
+     * - DPCF: deprecated upstream since 1.76.0 — falls back to PCSS
      * - PCSS: Percentage Closer Soft Shadows (physically-based)
      * - PCFd: Directional PCF variant
      */
@@ -391,7 +391,6 @@ expect class View {
          * Circle-of-confusion aspect ratio, scaling the bokeh horizontally against vertically.
          * 1.0 gives circular bokeh; other values give anamorphic ovals. Default: 1.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID], behavior = "tracked locally only — upstream's nSetDepthOfFieldOptions does not marshal cocAspectRatio, so the engine keeps 1.0; the getter still reports what you set.")
         var cocAspectRatio: Float
 
         /**

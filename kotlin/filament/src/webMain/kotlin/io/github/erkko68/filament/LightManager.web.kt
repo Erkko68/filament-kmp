@@ -178,9 +178,9 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
         // TODO(web-api-parity): unreachable while Builder.shadowOptions stays a no-op on web —
         // upstream's embind registers ShadowOptions with an unregisterable mat4f field.
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetConstant: Float = 0.5f
-        @PlatformGap(platforms = [FilamentPlatform.ANDROID, FilamentPlatform.WEB], behavior = "tracked locally only — the field is package-private in Android's LightManager.ShadowOptions, and on web Builder.shadowOptions is itself a no-op; the getter still reports what you set.")
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetSlope: Float = 2.0f
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f

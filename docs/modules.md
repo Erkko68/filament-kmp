@@ -173,6 +173,6 @@ Adding `filament-compose` gives you `filament`. Adding `gltfio` or `filament-uti
 
 ## Versioning
 
-All modules share a single version, currently **`0.4.0`**, tracking Filament **1.75.0** upstream. Always upgrade all `io.github.erkko68.filament:*` artifacts together — mixed versions are not supported.
+All modules share a single version, currently **`0.4.0`**, tracking Filament **1.76.0** upstream. Always upgrade all `io.github.erkko68.filament:*` artifacts together — mixed versions are not supported.
 
 The Filament version is exposed as `filaVersion` in the root `gradle.properties` and matches the upstream tag of [`google/filament`](https://github.com/google/filament/releases).
