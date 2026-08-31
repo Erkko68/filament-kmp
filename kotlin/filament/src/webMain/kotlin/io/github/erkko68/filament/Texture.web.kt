@@ -20,7 +20,7 @@ private external interface JsTextureExt : JsAny  {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Texture(val jsTexture: JSTexture) {
+actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JSTexture) {
     // Filament JS exposes dimensions only via `_getWidth(engine, level)` etc.
     // (see jsbindings.cpp), so when an engine is known we delegate; otherwise
     // we fall back to the dimensions captured when the Texture was built.
@@ -144,20 +144,18 @@ actual class Texture(val jsTexture: JSTexture) {
 
     actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
 
-    actual class Usage {
-        actual companion object {
-            actual val COLOR_ATTACHMENT: Int = 1
-            actual val DEPTH_ATTACHMENT: Int = 2
-            actual val STENCIL_ATTACHMENT: Int = 4
-            actual val UPLOADABLE: Int = 8
-            actual val SAMPLEABLE: Int = 16
-            actual val SUBPASS_INPUT: Int = 32
-            actual val BLIT_SRC: Int = 64
-            actual val BLIT_DST: Int = 128
-            actual val PROTECTED: Int = 256
-            actual val GEN_MIPMAPPABLE: Int = 512
-            actual val DEFAULT: Int = 24
-        }
+    actual object Usage {
+        actual val COLOR_ATTACHMENT: Int = 1
+        actual val DEPTH_ATTACHMENT: Int = 2
+        actual val STENCIL_ATTACHMENT: Int = 4
+        actual val UPLOADABLE: Int = 8
+        actual val SAMPLEABLE: Int = 16
+        actual val SUBPASS_INPUT: Int = 32
+        actual val BLIT_SRC: Int = 64
+        actual val BLIT_DST: Int = 128
+        actual val PROTECTED: Int = 256
+        actual val GEN_MIPMAPPABLE: Int = 512
+        actual val DEFAULT: Int = 24
     }
 
     actual class PixelBufferDescriptor actual constructor(
@@ -199,18 +197,14 @@ actual class Texture(val jsTexture: JSTexture) {
         return if (level == 0) _depth else (_depth shr level).coerceAtLeast(1)
     }
 
-    actual fun getLevels(): Int {
+    actual val levels: Int get() {
         engine?.let { return jsTexture.getLevels(it.jsEngine).toInt() }
         return _levels
     }
 
-    actual fun getTarget(): Sampler {
-        return _target
-    }
+    actual val target: Sampler get() = _target
 
-    actual fun getFormat(): InternalFormat {
-        return _format
-    }
+    actual val format: InternalFormat get() = _format
 
     actual fun setImage(
         engine: Engine,

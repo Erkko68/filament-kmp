@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.LightManager as AndroidLightManager
 import com.google.android.filament.Engine as AndroidEngine
 
-actual class LightManager internal constructor(val nativeLightManager: AndroidLightManager) {
+actual class LightManager @InternalFilamentApi constructor(internal val nativeLightManager: AndroidLightManager) {
     actual enum class Type { SUN, DIRECTIONAL, POINT, FOCUSED_SPOT, SPOT }
 
     actual class ShadowOptions actual constructor() {
@@ -119,7 +119,7 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
     }
 
     actual class Builder actual constructor(type: Type) {
-        private val nativeBuilder = AndroidLightManager.Builder(AndroidLightManager.Type.values()[type.ordinal])
+        private val nativeBuilder = AndroidLightManager.Builder(AndroidLightManager.Type.entries[type.ordinal])
         
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { nativeBuilder.lightChannel(channel, enable) }
         actual fun castShadows(enable: Boolean): Builder = apply { nativeBuilder.castShadows(enable) }
@@ -140,18 +140,18 @@ actual class LightManager internal constructor(val nativeLightManager: AndroidLi
         actual fun build(engine: Engine, entity: Entity) { nativeBuilder.build(engine.nativeEngine, entity) }
     }
 
-    actual fun getComponentCount(): Int = nativeLightManager.componentCount
+    actual val componentCount: Int get() = nativeLightManager.componentCount
     actual fun hasComponent(entity: Entity): Boolean = nativeLightManager.hasComponent(entity)
     actual fun getInstance(entity: Entity): EntityInstance = nativeLightManager.getInstance(entity)
     actual fun destroy(entity: Entity) { nativeLightManager.destroy(entity) }
 
-    actual fun getType(instance: EntityInstance): Type = Type.values()[nativeLightManager.getType(instance).ordinal]
+    actual fun getType(instance: EntityInstance): Type = Type.entries[nativeLightManager.getType(instance).ordinal]
     actual fun setDirection(instance: EntityInstance, x: Float, y: Float, z: Float) { nativeLightManager.setDirection(instance, x, y, z) }
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray = nativeLightManager.getDirection(instance, out)
+    actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getDirection(instance, out ?: FloatArray(3))
     actual fun setPosition(instance: EntityInstance, x: Float, y: Float, z: Float) { nativeLightManager.setPosition(instance, x, y, z) }
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray = nativeLightManager.getPosition(instance, out)
+    actual fun getPosition(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getPosition(instance, out ?: FloatArray(3))
     actual fun setColor(instance: EntityInstance, r: Float, g: Float, b: Float) { nativeLightManager.setColor(instance, r, g, b) }
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray = nativeLightManager.getColor(instance, out)
+    actual fun getColor(instance: EntityInstance, out: FloatArray?): FloatArray = nativeLightManager.getColor(instance, out ?: FloatArray(3))
     actual fun setIntensity(instance: EntityInstance, intensity: Float) { nativeLightManager.setIntensity(instance, intensity) }
     actual fun setIntensity(instance: EntityInstance, watts: Float, efficiency: Float) { nativeLightManager.setIntensity(instance, watts, efficiency) }
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) { nativeLightManager.setIntensityCandela(instance, intensity) }

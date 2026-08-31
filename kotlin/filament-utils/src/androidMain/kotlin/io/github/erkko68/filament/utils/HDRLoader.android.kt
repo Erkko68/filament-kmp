@@ -7,6 +7,7 @@ import java.nio.ByteOrder
 import com.google.android.filament.utils.HDRLoader as AndroidHDRLoader
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.nativeObject
 
 actual object HDRLoader {
 
@@ -19,7 +20,7 @@ actual object HDRLoader {
             put(buffer)
             rewind()
         }
-        val androidTexture = AndroidHDRLoader.createTexture(engine.nativeEngine, byteBuffer)
+        val androidTexture = AndroidHDRLoader.createTexture(engine.nativeObject, byteBuffer)
         return androidTexture?.let { Texture(it) }
     }
 }

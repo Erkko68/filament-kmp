@@ -4,7 +4,7 @@ import com.google.android.filament.Material as AndroidMaterial
 import java.nio.Buffer
 import java.util.BitSet
 
-actual class Material constructor(internal val nativeMaterial: AndroidMaterial) {
+actual class Material @InternalFilamentApi constructor(internal val nativeMaterial: AndroidMaterial) {
     private val mDefaultInstance: MaterialInstance by lazy { MaterialInstance(this, nativeMaterial.defaultInstance) }
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
@@ -18,18 +18,16 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
     
-    actual class UserVariantFilterBit {
-        actual companion object {
-            actual val DIRECTIONAL_LIGHTING = AndroidMaterial.UserVariantFilterBit.DIRECTIONAL_LIGHTING
-            actual val DYNAMIC_LIGHTING = AndroidMaterial.UserVariantFilterBit.DYNAMIC_LIGHTING
-            actual val SHADOW_RECEIVER = AndroidMaterial.UserVariantFilterBit.SHADOW_RECEIVER
-            actual val SKINNING = AndroidMaterial.UserVariantFilterBit.SKINNING
-            actual val FOG = AndroidMaterial.UserVariantFilterBit.FOG
-            actual val VSM = AndroidMaterial.UserVariantFilterBit.VSM
-            actual val SSR = AndroidMaterial.UserVariantFilterBit.SSR
-            actual val STE = AndroidMaterial.UserVariantFilterBit.STE
-            actual val ALL = AndroidMaterial.UserVariantFilterBit.ALL
-        }
+    actual object UserVariantFilterBit {
+        actual val DIRECTIONAL_LIGHTING = AndroidMaterial.UserVariantFilterBit.DIRECTIONAL_LIGHTING
+        actual val DYNAMIC_LIGHTING = AndroidMaterial.UserVariantFilterBit.DYNAMIC_LIGHTING
+        actual val SHADOW_RECEIVER = AndroidMaterial.UserVariantFilterBit.SHADOW_RECEIVER
+        actual val SKINNING = AndroidMaterial.UserVariantFilterBit.SKINNING
+        actual val FOG = AndroidMaterial.UserVariantFilterBit.FOG
+        actual val VSM = AndroidMaterial.UserVariantFilterBit.VSM
+        actual val SSR = AndroidMaterial.UserVariantFilterBit.SSR
+        actual val STE = AndroidMaterial.UserVariantFilterBit.STE
+        actual val ALL = AndroidMaterial.UserVariantFilterBit.ALL
     }
 
     actual class Parameter actual constructor(
@@ -76,7 +74,7 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
         }
 
         actual fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder {
-            androidBuilder.shadowSamplingQuality(AndroidMaterial.Builder.ShadowSamplingQuality.values()[quality.ordinal])
+            androidBuilder.shadowSamplingQuality(AndroidMaterial.Builder.ShadowSamplingQuality.entries[quality.ordinal])
             return this
         }
 
@@ -99,7 +97,7 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
         callback: (() -> Unit)?
     ) {
         nativeMaterial.compile(
-            AndroidMaterial.CompilerPriorityQueue.values()[priority.ordinal],
+            AndroidMaterial.CompilerPriorityQueue.entries[priority.ordinal],
             variants,
             null,
             callback
@@ -108,38 +106,38 @@ actual class Material constructor(internal val nativeMaterial: AndroidMaterial) 
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance())
     actual fun createInstance(name: String): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance(name))
-    actual fun getDefaultInstance(): MaterialInstance = mDefaultInstance
+    actual val defaultInstance: MaterialInstance get() = mDefaultInstance
 
-    actual fun getName(): String = nativeMaterial.name
-    actual fun getShading(): Shading = Shading.values()[nativeMaterial.shading.ordinal]
-    actual fun getInterpolation(): Interpolation = Interpolation.values()[nativeMaterial.interpolation.ordinal]
-    actual fun getBlendingMode(): BlendingMode = BlendingMode.values()[nativeMaterial.blendingMode.ordinal]
-    actual fun getTransparencyMode(): TransparencyMode = TransparencyMode.values()[nativeMaterial.transparencyMode.ordinal]
-    actual fun getRefractionMode(): RefractionMode = RefractionMode.values()[nativeMaterial.refractionMode.ordinal]
-    actual fun getRefractionType(): RefractionType = RefractionType.values()[nativeMaterial.refractionType.ordinal]
-    actual fun getReflectionMode(): ReflectionMode = ReflectionMode.values()[nativeMaterial.reflectionMode.ordinal]
-    actual fun getVertexDomain(): VertexDomain = VertexDomain.values()[nativeMaterial.vertexDomain.ordinal]
-    actual fun getCullingMode(): CullingMode = CullingMode.values()[nativeMaterial.cullingMode.ordinal]
-    actual fun isColorWriteEnabled(): Boolean = nativeMaterial.isColorWriteEnabled
-    actual fun isDepthWriteEnabled(): Boolean = nativeMaterial.isDepthWriteEnabled
-    actual fun isDepthCullingEnabled(): Boolean = nativeMaterial.isDepthCullingEnabled
-    actual fun isDoubleSided(): Boolean = nativeMaterial.isDoubleSided
-    actual fun isAlphaToCoverageEnabled(): Boolean = nativeMaterial.isAlphaToCoverageEnabled
-    actual fun getMaskThreshold(): Float = nativeMaterial.maskThreshold
-    actual fun getSpecularAntiAliasingVariance(): Float = nativeMaterial.specularAntiAliasingVariance
-    actual fun getSpecularAntiAliasingThreshold(): Float = nativeMaterial.specularAntiAliasingThreshold
-    actual fun getFeatureLevel(): Engine.FeatureLevel = Engine.FeatureLevel.entries[nativeMaterial.featureLevel.ordinal]
-    actual fun getParameterCount(): Int = nativeMaterial.parameterCount
-    actual fun getParameters(): List<Parameter> = nativeMaterial.parameters.map { p ->
+    actual val name: String get() = nativeMaterial.name
+    actual val shading: Shading get() = Shading.entries[nativeMaterial.shading.ordinal]
+    actual val interpolation: Interpolation get() = Interpolation.entries[nativeMaterial.interpolation.ordinal]
+    actual val blendingMode: BlendingMode get() = BlendingMode.entries[nativeMaterial.blendingMode.ordinal]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[nativeMaterial.transparencyMode.ordinal]
+    actual val refractionMode: RefractionMode get() = RefractionMode.entries[nativeMaterial.refractionMode.ordinal]
+    actual val refractionType: RefractionType get() = RefractionType.entries[nativeMaterial.refractionType.ordinal]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[nativeMaterial.reflectionMode.ordinal]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[nativeMaterial.vertexDomain.ordinal]
+    actual val cullingMode: CullingMode get() = CullingMode.entries[nativeMaterial.cullingMode.ordinal]
+    actual val isColorWriteEnabled: Boolean get() = nativeMaterial.isColorWriteEnabled
+    actual val isDepthWriteEnabled: Boolean get() = nativeMaterial.isDepthWriteEnabled
+    actual val isDepthCullingEnabled: Boolean get() = nativeMaterial.isDepthCullingEnabled
+    actual val isDoubleSided: Boolean get() = nativeMaterial.isDoubleSided
+    actual val isAlphaToCoverageEnabled: Boolean get() = nativeMaterial.isAlphaToCoverageEnabled
+    actual val maskThreshold: Float get() = nativeMaterial.maskThreshold
+    actual val specularAntiAliasingVariance: Float get() = nativeMaterial.specularAntiAliasingVariance
+    actual val specularAntiAliasingThreshold: Float get() = nativeMaterial.specularAntiAliasingThreshold
+    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[nativeMaterial.featureLevel.ordinal]
+    actual val parameterCount: Int get() = nativeMaterial.parameterCount
+    actual val parameters: List<Parameter> get() = nativeMaterial.parameters.map { p ->
         Parameter(
             p.name,
-            Parameter.Type.values()[p.type.ordinal],
-            Parameter.Precision.values()[p.precision.ordinal],
+            Parameter.Type.entries[p.type.ordinal],
+            Parameter.Precision.entries[p.precision.ordinal],
             p.count
         )
     }
 
-    actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
         val attrSet = nativeMaterial.requiredAttributes
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
         // We iterate over our KMP enum entries and check if they exist in the Java set

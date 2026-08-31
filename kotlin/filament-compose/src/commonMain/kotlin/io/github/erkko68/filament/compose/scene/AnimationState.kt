@@ -103,7 +103,7 @@ class AnimationState internal constructor(
     internal fun apply(animator: Animator, dtSeconds: Float) {
         val dt = if (isPaused) 0f else dtSeconds
         if (mixer.tracks.isNotEmpty()) mixer.apply(animator, dt)
-        else applySingle(animator, animator.getAnimationCount(), dt)
+        else applySingle(animator, animator.animationCount, dt)
     }
 
     private fun applySingle(animator: Animator, count: Int, dt: Float) {
@@ -154,7 +154,7 @@ class AnimationState internal constructor(
  * val mixer = rememberAnimationMixer()
  * val walk = remember { mixer.addTrack(walkIndex) }
  * val run  = remember { mixer.addTrack(runIndex, weight = 0f) }
- * GltfInstance(asset = character, onCreate = { animator = instance.getAnimator() })
+ * GltfInstance(asset = character, onCreate = { animator = instance.animator })
  * OnFrame { frame ->
  *     walk.weight = 1f - moveSpeed; run.weight = moveSpeed
  *     animator?.let { mixer.apply(it, frame.deltaSeconds) }
@@ -200,7 +200,7 @@ class AnimationMixer {
     /** Advances every track by [dtSeconds] and pushes the blended pose onto [animator]. */
     fun apply(animator: Animator, dtSeconds: Float) {
         val dt = if (isPaused) 0f else dtSeconds
-        val count = animator.getAnimationCount()
+        val count = animator.animationCount
         var accum = 0f
         var applied = false
         for (t in _tracks) {
@@ -342,7 +342,7 @@ fun rememberAnimationTrack(
  * val mixer = rememberAnimationMixer()
  * val walk = remember { mixer.addTrack(walkIndex) }
  * var animator by remember { mutableStateOf<Animator?>(null) }
- * GltfInstance(asset = character, onCreate = { animator = instance.getAnimator() })
+ * GltfInstance(asset = character, onCreate = { animator = instance.animator })
  * OnFrame { frame -> animator?.let { mixer.apply(it, frame.deltaSeconds) } }
  * ```
  */
@@ -363,7 +363,7 @@ fun rememberAnimationMixer(): AnimationMixer = remember { AnimationMixer() }
 fun rememberAnimationNames(asset: GltfAsset?): List<String?> =
     remember(asset, asset?.isReady) {
         if (asset == null || !asset.isReady) emptyList()
-        else asset.filamentAsset.getInstance().getAnimator().let { animator ->
-            List(animator.getAnimationCount()) { animator.getAnimationName(it) }
+        else asset.filamentAsset.instance.animator.let { animator ->
+            List(animator.animationCount) { animator.getAnimationName(it) }
         }
     }

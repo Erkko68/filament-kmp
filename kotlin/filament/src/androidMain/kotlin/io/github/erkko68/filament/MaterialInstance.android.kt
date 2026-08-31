@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.MaterialInstance as AndroidMaterialInstance
 
-actual class MaterialInstance constructor(
+actual class MaterialInstance @InternalFilamentApi constructor(
     private var mMaterial: Material?, 
     internal val nativeMaterialInstance: AndroidMaterialInstance
 ) {
@@ -51,22 +51,22 @@ actual class MaterialInstance constructor(
  
     actual fun setParameter(name: String, type: Colors.RgbType, r: Float, g: Float, b: Float) {
         val linear = Colors.toLinear(type, r, g, b)
-        nativeMaterialInstance.setParameter(name, com.google.android.filament.Colors.RgbType.values()[type.ordinal], linear[0], linear[1], linear[2])
+        nativeMaterialInstance.setParameter(name, com.google.android.filament.Colors.RgbType.entries[type.ordinal], linear[0], linear[1], linear[2])
     }
  
     actual fun setParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float) {
         val linear = Colors.toLinear(type, r, g, b, a)
-        nativeMaterialInstance.setParameter(name, com.google.android.filament.Colors.RgbaType.values()[type.ordinal], linear[0], linear[1], linear[2], linear[3])
+        nativeMaterialInstance.setParameter(name, com.google.android.filament.Colors.RgbaType.entries[type.ordinal], linear[0], linear[1], linear[2], linear[3])
     }
     
     actual fun setParameter(name: String, type: BooleanElement, v: BooleanArray, offset: Int, count: Int) {
-        nativeMaterialInstance.setParameter(name, AndroidMaterialInstance.BooleanElement.values()[type.ordinal], v, offset, count)
+        nativeMaterialInstance.setParameter(name, AndroidMaterialInstance.BooleanElement.entries[type.ordinal], v, offset, count)
     }
     actual fun setParameter(name: String, type: IntElement, v: IntArray, offset: Int, count: Int) {
-        nativeMaterialInstance.setParameter(name, AndroidMaterialInstance.IntElement.values()[type.ordinal], v, offset, count)
+        nativeMaterialInstance.setParameter(name, AndroidMaterialInstance.IntElement.entries[type.ordinal], v, offset, count)
     }
     actual fun setParameter(name: String, type: FloatElement, v: FloatArray, offset: Int, count: Int) {
-        nativeMaterialInstance.setParameter(name, AndroidMaterialInstance.FloatElement.values()[type.ordinal], v, offset, count)
+        nativeMaterialInstance.setParameter(name, AndroidMaterialInstance.FloatElement.entries[type.ordinal], v, offset, count)
     }
 
     actual fun setScissor(left: Int, bottom: Int, width: Int, height: Int) { nativeMaterialInstance.setScissor(left, bottom, width, height) }
@@ -87,26 +87,26 @@ actual class MaterialInstance constructor(
         set(value) { nativeMaterialInstance.setDoubleSided(value) }
     
     actual var transparencyMode: Material.TransparencyMode
-        get() = Material.TransparencyMode.values()[nativeMaterialInstance.transparencyMode.ordinal]
+        get() = Material.TransparencyMode.entries[nativeMaterialInstance.transparencyMode.ordinal]
         set(value) {
-            nativeMaterialInstance.setTransparencyMode(com.google.android.filament.Material.TransparencyMode.values()[value.ordinal])
+            nativeMaterialInstance.setTransparencyMode(com.google.android.filament.Material.TransparencyMode.entries[value.ordinal])
         }
     
     actual var cullingMode: Material.CullingMode
-        get() = Material.CullingMode.values()[nativeMaterialInstance.cullingMode.ordinal]
+        get() = Material.CullingMode.entries[nativeMaterialInstance.cullingMode.ordinal]
         set(value) {
-            nativeMaterialInstance.setCullingMode(com.google.android.filament.Material.CullingMode.values()[value.ordinal])
+            nativeMaterialInstance.setCullingMode(com.google.android.filament.Material.CullingMode.entries[value.ordinal])
         }
 
     actual fun setCullingMode(colorPassCullingMode: Material.CullingMode, shadowPassCullingMode: Material.CullingMode) {
         nativeMaterialInstance.setCullingMode(
-            com.google.android.filament.Material.CullingMode.values()[colorPassCullingMode.ordinal],
-            com.google.android.filament.Material.CullingMode.values()[shadowPassCullingMode.ordinal]
+            com.google.android.filament.Material.CullingMode.entries[colorPassCullingMode.ordinal],
+            com.google.android.filament.Material.CullingMode.entries[shadowPassCullingMode.ordinal]
         )
     }
 
     actual val shadowCullingMode: Material.CullingMode 
-        get() = Material.CullingMode.values()[nativeMaterialInstance.shadowCullingMode.ordinal]
+        get() = Material.CullingMode.entries[nativeMaterialInstance.shadowCullingMode.ordinal]
     
     actual var isColorWriteEnabled: Boolean
         get() = nativeMaterialInstance.isColorWriteEnabled
@@ -123,62 +123,62 @@ actual class MaterialInstance constructor(
         set(value) { nativeMaterialInstance.setDepthCulling(value) }
 
     actual var depthFunc: TextureSampler.CompareFunction
-        get() = TextureSampler.CompareFunction.values()[nativeMaterialInstance.depthFunc.ordinal]
+        get() = TextureSampler.CompareFunction.entries[nativeMaterialInstance.depthFunc.ordinal]
         set(value) {
-            nativeMaterialInstance.setDepthFunc(com.google.android.filament.TextureSampler.CompareFunction.values()[value.ordinal])
+            nativeMaterialInstance.setDepthFunc(com.google.android.filament.TextureSampler.CompareFunction.entries[value.ordinal])
         }
     
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction, face: StencilFace) {
         nativeMaterialInstance.setStencilCompareFunction(
-            com.google.android.filament.TextureSampler.CompareFunction.values()[func.ordinal],
-            com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal]
+            com.google.android.filament.TextureSampler.CompareFunction.entries[func.ordinal],
+            com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal]
         )
     }
     actual fun setStencilCompareFunction(func: TextureSampler.CompareFunction) {
-        nativeMaterialInstance.setStencilCompareFunction(com.google.android.filament.TextureSampler.CompareFunction.values()[func.ordinal])
+        nativeMaterialInstance.setStencilCompareFunction(com.google.android.filament.TextureSampler.CompareFunction.entries[func.ordinal])
     }
     actual fun setStencilOpStencilFail(op: StencilOperation, face: StencilFace) {
         nativeMaterialInstance.setStencilOpStencilFail(
-            com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal],
-            com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal]
+            com.google.android.filament.MaterialInstance.StencilOperation.entries[op.ordinal],
+            com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal]
         )
     }
     actual fun setStencilOpStencilFail(op: StencilOperation) {
-        nativeMaterialInstance.setStencilOpStencilFail(com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal])
+        nativeMaterialInstance.setStencilOpStencilFail(com.google.android.filament.MaterialInstance.StencilOperation.entries[op.ordinal])
     }
     actual fun setStencilOpDepthFail(op: StencilOperation, face: StencilFace) {
         nativeMaterialInstance.setStencilOpDepthFail(
-            com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal],
-            com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal]
+            com.google.android.filament.MaterialInstance.StencilOperation.entries[op.ordinal],
+            com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal]
         )
     }
     actual fun setStencilOpDepthFail(op: StencilOperation) {
-        nativeMaterialInstance.setStencilOpDepthFail(com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal])
+        nativeMaterialInstance.setStencilOpDepthFail(com.google.android.filament.MaterialInstance.StencilOperation.entries[op.ordinal])
     }
     actual fun setStencilOpDepthStencilPass(op: StencilOperation, face: StencilFace) {
         nativeMaterialInstance.setStencilOpDepthStencilPass(
-            com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal],
-            com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal]
+            com.google.android.filament.MaterialInstance.StencilOperation.entries[op.ordinal],
+            com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal]
         )
     }
     actual fun setStencilOpDepthStencilPass(op: StencilOperation) {
-        nativeMaterialInstance.setStencilOpDepthStencilPass(com.google.android.filament.MaterialInstance.StencilOperation.values()[op.ordinal])
+        nativeMaterialInstance.setStencilOpDepthStencilPass(com.google.android.filament.MaterialInstance.StencilOperation.entries[op.ordinal])
     }
 
     actual fun setStencilReferenceValue(value: Int, face: StencilFace) {
-        nativeMaterialInstance.setStencilReferenceValue(value, com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal])
+        nativeMaterialInstance.setStencilReferenceValue(value, com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal])
     }
     actual fun setStencilReferenceValue(value: Int) {
         nativeMaterialInstance.setStencilReferenceValue(value)
     }
     actual fun setStencilReadMask(readMask: Int, face: StencilFace) {
-        nativeMaterialInstance.setStencilReadMask(readMask, com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal])
+        nativeMaterialInstance.setStencilReadMask(readMask, com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal])
     }
     actual fun setStencilReadMask(readMask: Int) {
         nativeMaterialInstance.setStencilReadMask(readMask)
     }
     actual fun setStencilWriteMask(writeMask: Int, face: StencilFace) {
-        nativeMaterialInstance.setStencilWriteMask(writeMask, com.google.android.filament.MaterialInstance.StencilFace.values()[face.ordinal])
+        nativeMaterialInstance.setStencilWriteMask(writeMask, com.google.android.filament.MaterialInstance.StencilFace.entries[face.ordinal])
     }
     actual fun setStencilWriteMask(writeMask: Int) {
         nativeMaterialInstance.setStencilWriteMask(writeMask)

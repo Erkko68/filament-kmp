@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.IndexBuffer as AndroidIndexBuffer
 import java.nio.Buffer
 
-actual class IndexBuffer internal constructor(val nativeIndexBuffer: AndroidIndexBuffer) {
+actual class IndexBuffer @InternalFilamentApi constructor(internal val nativeIndexBuffer: AndroidIndexBuffer) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidIndexBuffer.Builder()
         actual enum class IndexType { USHORT, UINT }

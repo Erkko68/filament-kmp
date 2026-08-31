@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.web.Material as JSMaterial
 import org.khronos.webgl.set
 
-actual class Material(internal val jsMaterial: JSMaterial) {
+actual class Material @InternalFilamentApi constructor(internal val jsMaterial: JSMaterial) {
     actual fun compile(
         priority: CompilerPriorityQueue,
         variants: Int,
@@ -19,102 +19,59 @@ actual class Material(internal val jsMaterial: JSMaterial) {
         return MaterialInstance(jsMaterial.createNamedInstance(name))
     }
 
-    actual fun getDefaultInstance(): MaterialInstance {
+    actual val defaultInstance: MaterialInstance get() {
         return MaterialInstance(jsMaterial.getDefaultInstance())
     }
 
-    actual fun getName(): String {
+    actual val name: String get() {
         return jsMaterial.getName()
     }
 
-    actual fun getShading(): Shading {
-        return Shading.LIT
-    }
+    // jsbindings.cpp binds none of Material's reflection getters, so these report
+    // the matc defaults rather than what the compiled material actually declares.
+    actual val shading: Shading get() = Shading.LIT
 
-    actual fun getInterpolation(): Interpolation {
-        return Interpolation.SMOOTH
-    }
+    actual val interpolation: Interpolation get() = Interpolation.SMOOTH
 
-    actual fun getBlendingMode(): BlendingMode {
-        return BlendingMode.OPAQUE
-    }
+    actual val blendingMode: BlendingMode get() = BlendingMode.OPAQUE
 
-    actual fun getTransparencyMode(): TransparencyMode {
-        return TransparencyMode.DEFAULT
-    }
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.DEFAULT
 
-    actual fun getRefractionMode(): RefractionMode {
-        return RefractionMode.NONE
-    }
+    actual val refractionMode: RefractionMode get() = RefractionMode.NONE
 
-    actual fun getRefractionType(): RefractionType {
-        return RefractionType.SOLID
-    }
+    actual val refractionType: RefractionType get() = RefractionType.SOLID
 
-    actual fun getReflectionMode(): ReflectionMode {
-        return ReflectionMode.DEFAULT
-    }
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.DEFAULT
 
-    actual fun getVertexDomain(): VertexDomain {
-        return VertexDomain.OBJECT
-    }
+    actual val vertexDomain: VertexDomain get() = VertexDomain.OBJECT
 
-    actual fun getCullingMode(): CullingMode {
-        return CullingMode.BACK
-    }
+    actual val cullingMode: CullingMode get() = CullingMode.BACK
 
-    actual fun isColorWriteEnabled(): Boolean {
-        return true
-    }
+    actual val isColorWriteEnabled: Boolean get() = true
 
-    actual fun isDepthWriteEnabled(): Boolean {
-        return true
-    }
+    actual val isDepthWriteEnabled: Boolean get() = true
 
-    actual fun isDepthCullingEnabled(): Boolean {
-        return true
-    }
+    actual val isDepthCullingEnabled: Boolean get() = true
 
-    actual fun isDoubleSided(): Boolean {
-        return false
-    }
+    actual val isDoubleSided: Boolean get() = false
 
-    actual fun isAlphaToCoverageEnabled(): Boolean {
-        return false
-    }
+    actual val isAlphaToCoverageEnabled: Boolean get() = false
 
-    actual fun getMaskThreshold(): Float {
-        return 0.4f
-    }
+    actual val maskThreshold: Float get() = 0.4f
 
-    actual fun getSpecularAntiAliasingVariance(): Float {
-        return 0.0f
-    }
+    actual val specularAntiAliasingVariance: Float get() = 0.0f
 
-    actual fun getSpecularAntiAliasingThreshold(): Float {
-        return 0.0f
-    }
+    actual val specularAntiAliasingThreshold: Float get() = 0.0f
 
-    actual fun getFeatureLevel(): Engine.FeatureLevel {
-        return Engine.FeatureLevel.FEATURE_LEVEL_1
-    }
+    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.FEATURE_LEVEL_1
 
-    actual fun getParameterCount(): Int {
-        return 0
-    }
+    actual val parameterCount: Int get() = 0
 
-    actual fun getParameters(): List<Parameter> {
-        return emptyList()
-    }
+    actual val parameters: List<Parameter> get() = emptyList()
 
-    actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
-        return emptySet()
-    }
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() = emptySet()
 
-    actual fun hasParameter(name: String): Boolean {
-        val params = getParameters()
-        return params.any { it.name == name }
-    }
+    actual fun hasParameter(name: String): Boolean = parameters.any { it.name == name }
 
     actual fun setDefaultParameter(name: String, value: Int) {
         // Default parameters are set at material instance creation time in JS
@@ -158,18 +115,16 @@ actual class Material(internal val jsMaterial: JSMaterial) {
     actual enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
-    actual class UserVariantFilterBit {
-        actual companion object {
-            actual val DIRECTIONAL_LIGHTING: Int = 1
-            actual val DYNAMIC_LIGHTING: Int = 2
-            actual val SHADOW_RECEIVER: Int = 4
-            actual val SKINNING: Int = 8
-            actual val FOG: Int = 16
-            actual val VSM: Int = 32
-            actual val SSR: Int = 64
-            actual val STE: Int = 128
-            actual val ALL: Int = 255
-        }
+    actual object UserVariantFilterBit {
+        actual val DIRECTIONAL_LIGHTING: Int = 1
+        actual val DYNAMIC_LIGHTING: Int = 2
+        actual val SHADOW_RECEIVER: Int = 4
+        actual val SKINNING: Int = 8
+        actual val FOG: Int = 16
+        actual val VSM: Int = 32
+        actual val SSR: Int = 64
+        actual val STE: Int = 128
+        actual val ALL: Int = 255
     }
 
     actual class Parameter actual constructor(

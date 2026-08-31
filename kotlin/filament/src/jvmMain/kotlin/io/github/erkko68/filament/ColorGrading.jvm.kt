@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class ColorGrading internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
         internal val nativeHandle: MemorySegment = FilamentC.FilaColorGradingBuilder_create()
 

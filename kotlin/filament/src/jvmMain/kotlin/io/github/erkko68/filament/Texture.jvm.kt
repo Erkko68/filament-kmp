@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class Texture public constructor(public var nativeHandle: MemorySegment?) {
+actual class Texture @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
 
     actual enum class Sampler {
         SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY;
@@ -139,20 +139,18 @@ actual class Texture public constructor(public var nativeHandle: MemorySegment?)
         internal fun toNative(): Int = ordinal
     }
 
-    actual class Usage {
-        actual companion object {
-            actual val COLOR_ATTACHMENT: Int = FilamentC.FILA_TEXTURE_USAGE_COLOR_ATTACHMENT()
-            actual val DEPTH_ATTACHMENT: Int = FilamentC.FILA_TEXTURE_USAGE_DEPTH_ATTACHMENT()
-            actual val STENCIL_ATTACHMENT: Int = FilamentC.FILA_TEXTURE_USAGE_STENCIL_ATTACHMENT()
-            actual val UPLOADABLE: Int = FilamentC.FILA_TEXTURE_USAGE_UPLOADABLE()
-            actual val SAMPLEABLE: Int = FilamentC.FILA_TEXTURE_USAGE_SAMPLEABLE()
-            actual val SUBPASS_INPUT: Int = FilamentC.FILA_TEXTURE_USAGE_SUBPASS_INPUT()
-            actual val BLIT_SRC: Int = FilamentC.FILA_TEXTURE_USAGE_BLIT_SRC()
-            actual val BLIT_DST: Int = FilamentC.FILA_TEXTURE_USAGE_BLIT_DST()
-            actual val PROTECTED: Int = FilamentC.FILA_TEXTURE_USAGE_PROTECTED()
-            actual val GEN_MIPMAPPABLE: Int = FilamentC.FILA_TEXTURE_USAGE_GEN_MIPMAPPABLE()
-            actual val DEFAULT: Int = FilamentC.FILA_TEXTURE_USAGE_DEFAULT()
-        }
+    actual object Usage {
+        actual val COLOR_ATTACHMENT: Int = FilamentC.FILA_TEXTURE_USAGE_COLOR_ATTACHMENT()
+        actual val DEPTH_ATTACHMENT: Int = FilamentC.FILA_TEXTURE_USAGE_DEPTH_ATTACHMENT()
+        actual val STENCIL_ATTACHMENT: Int = FilamentC.FILA_TEXTURE_USAGE_STENCIL_ATTACHMENT()
+        actual val UPLOADABLE: Int = FilamentC.FILA_TEXTURE_USAGE_UPLOADABLE()
+        actual val SAMPLEABLE: Int = FilamentC.FILA_TEXTURE_USAGE_SAMPLEABLE()
+        actual val SUBPASS_INPUT: Int = FilamentC.FILA_TEXTURE_USAGE_SUBPASS_INPUT()
+        actual val BLIT_SRC: Int = FilamentC.FILA_TEXTURE_USAGE_BLIT_SRC()
+        actual val BLIT_DST: Int = FilamentC.FILA_TEXTURE_USAGE_BLIT_DST()
+        actual val PROTECTED: Int = FilamentC.FILA_TEXTURE_USAGE_PROTECTED()
+        actual val GEN_MIPMAPPABLE: Int = FilamentC.FILA_TEXTURE_USAGE_GEN_MIPMAPPABLE()
+        actual val DEFAULT: Int = FilamentC.FILA_TEXTURE_USAGE_DEFAULT()
     }
 
     actual class PixelBufferDescriptor actual constructor(
@@ -193,9 +191,9 @@ actual class Texture public constructor(public var nativeHandle: MemorySegment?)
     actual fun getWidth(level: Int): Int = FilamentC.FilaTexture_getWidth(nativeHandle, level.toLong()).toInt()
     actual fun getHeight(level: Int): Int = FilamentC.FilaTexture_getHeight(nativeHandle, level.toLong()).toInt()
     actual fun getDepth(level: Int): Int = FilamentC.FilaTexture_getDepth(nativeHandle, level.toLong()).toInt()
-    actual fun getLevels(): Int = FilamentC.FilaTexture_getLevels(nativeHandle).toInt()
-    actual fun getTarget(): Sampler = Sampler.fromNative(FilamentC.FilaTexture_getTarget(nativeHandle))
-    actual fun getFormat(): InternalFormat = InternalFormat.fromNative(FilamentC.FilaTexture_getFormat(nativeHandle))
+    actual val levels: Int get() = FilamentC.FilaTexture_getLevels(nativeHandle).toInt()
+    actual val target: Sampler get() = Sampler.fromNative(FilamentC.FilaTexture_getTarget(nativeHandle))
+    actual val format: InternalFormat get() = InternalFormat.fromNative(FilamentC.FilaTexture_getFormat(nativeHandle))
 
     actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
         setImage(engine, level, 0, 0, 0, getWidth(level), getHeight(level), getDepth(level), descriptor)

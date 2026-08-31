@@ -6,9 +6,7 @@ import io.github.erkko68.filament.web.interop.toJsNumbers
 import io.github.erkko68.filament.web.Skybox as JSSkybox
 import io.github.erkko68.filament.web.`Skybox_Builder` as JSSkyboxBuilder
 
-actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float? = null) {
-    private var _layerMask = 0xFF
-
+actual class Skybox @InternalFilamentApi constructor(internal val jsSkybox: JSSkybox, private val builderIntensity: Float? = null) {
     actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
         jsSkybox.setColor(jsNumbers(r, g, b, a))
     }
@@ -22,7 +20,6 @@ actual class Skybox(val jsSkybox: JSSkybox, private val builderIntensity: Float?
     actual val layerMask: Int get() = jsSkybox.getLayerMask().toInt()
 
     actual fun setLayerMask(select: Int, value: Int) {
-        _layerMask = value
         jsSkybox.setLayerMask(select.toDouble(), value.toDouble())
     }
 

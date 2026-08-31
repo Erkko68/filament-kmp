@@ -82,8 +82,8 @@ class MaterialKeyTest : GltfioTestFixture() {
     fun testIntPropertiesRoundTrip() {
         val key = MaterialKey()
 
-        key.alphaMode = 2; assertEquals(2, key.alphaMode)
-        key.alphaMode = 0; assertEquals(0, key.alphaMode)
+        key.alphaMode = AlphaMode.BLEND; assertEquals(AlphaMode.BLEND, key.alphaMode)
+        key.alphaMode = AlphaMode.OPAQUE; assertEquals(AlphaMode.OPAQUE, key.alphaMode)
 
         key.metallicRoughnessUV = 1; assertEquals(1, key.metallicRoughnessUV)
         key.baseColorUV = 1;         assertEquals(1, key.baseColorUV)

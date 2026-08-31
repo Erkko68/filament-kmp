@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.SwapChain as AndroidSwapChain
 
-actual class SwapChain internal constructor(val nativeSwapChain: AndroidSwapChain) {
+actual class SwapChain @InternalFilamentApi constructor(internal val nativeSwapChain: AndroidSwapChain) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 
@@ -14,25 +14,35 @@ actual class SwapChain internal constructor(val nativeSwapChain: AndroidSwapChai
 
     actual val nativeWindow: Any? get() = nativeSwapChain.nativeWindow
     
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
-        nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback() })
+    // Upstream's nSetFrameCompletedCallback/nSetFrameScheduledCallback always install a
+    // JniCallback, and both Java overloads are @NonNull, so there is no way to hand the engine
+    // the empty callback it unsets on. Null therefore installs a Runnable that does nothing,
+    // and [isFrameScheduledCallbackSet] answers from what was set here rather than from the
+    // engine — otherwise it would keep reporting true after a clear.
+    private var frameScheduled: (() -> Unit)? = null
+
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
+        nativeSwapChain.setFrameCompletedCallback(Runnable::run, Runnable { callback?.invoke() })
     }
 
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
-        nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback() })
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
+        frameScheduled = callback
+        nativeSwapChain.setFrameScheduledCallback(Runnable::run, Runnable { callback?.invoke() })
     }
 
-    actual val isFrameScheduledCallbackSet: Boolean get() = nativeSwapChain.isFrameScheduledCallbackSet
+    actual val isFrameScheduledCallbackSet: Boolean get() = frameScheduled != null
 
-    actual fun isFrameRateChangeSupported(): Boolean = nativeSwapChain.isFrameRateChangeSupported()
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
+    actual val isFrameRateChangeSupported: Boolean get() = nativeSwapChain.isFrameRateChangeSupported()
 
     actual fun setFrameRate(frameRate: Float) = nativeSwapChain.setFrameRate(frameRate)
 
     actual fun setFrameRate(frameRate: Float, compatibility: FrameRateCompatibility, strategy: ChangeFrameRateStrategy) =
         nativeSwapChain.setFrameRate(
             frameRate,
-            AndroidSwapChain.FrameRateCompatibility.values()[compatibility.ordinal],
-            AndroidSwapChain.ChangeFrameRateStrategy.values()[strategy.ordinal]
+            AndroidSwapChain.FrameRateCompatibility.entries[compatibility.ordinal],
+            AndroidSwapChain.ChangeFrameRateStrategy.entries[strategy.ordinal]
         )
 
     actual val nativeObject: Long get() = nativeSwapChain.nativeObject

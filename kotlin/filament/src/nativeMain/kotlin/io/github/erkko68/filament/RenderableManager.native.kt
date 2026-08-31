@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaRenderableManager
 import cnames.structs.FilaRenderableManagerBuilder
 
-actual class RenderableManager internal constructor(internal val nativeHandle: CPointer<FilaRenderableManager>) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaRenderableManager>) {
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
     actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 
@@ -91,12 +91,12 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
             box.center[0], box.center[1], box.center[2],
             box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
     }
-    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
+    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box?): Box {
         memScoped {
             val center = allocArray<FloatVar>(3)
             val halfExtent = allocArray<FloatVar>(3)
             FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance.toUInt(), center, halfExtent)
-            val result = outBox ?: Box()
+            val result = out ?: Box()
             result.center[0] = center[0]
             result.center[1] = center[1]
             result.center[2] = center[2]
@@ -112,12 +112,12 @@ actual class RenderableManager internal constructor(internal val nativeHandle: C
     actual fun getPriority(instance: EntityInstance): Int = FilaRenderableManager_getPriority(nativeHandle, instance.toUInt()).toInt()
     actual fun setChannel(instance: EntityInstance, channel: Int) = FilaRenderableManager_setChannel(nativeHandle, instance.toUInt(), channel.toUByte())
     actual fun getChannel(instance: EntityInstance): Int = FilaRenderableManager_getChannel(nativeHandle, instance.toUInt()).toInt()
-    actual fun setCulling(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setCulling(nativeHandle, instance.toUInt(), enabled)
+    actual fun setCullingEnabled(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setCulling(nativeHandle, instance.toUInt(), enabled)
     actual fun isCullingEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_isCullingEnabled(nativeHandle, instance.toUInt())
     actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setFogEnabled(nativeHandle, instance.toUInt(), enabled)
-    actual fun getFogEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_getFogEnabled(nativeHandle, instance.toUInt())
-    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setCastShadows(nativeHandle, instance.toUInt(), enabled)
-    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setReceiveShadows(nativeHandle, instance.toUInt(), enabled)
+    actual fun isFogEnabled(instance: EntityInstance): Boolean = FilaRenderableManager_getFogEnabled(nativeHandle, instance.toUInt())
+    actual fun setShadowCaster(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setCastShadows(nativeHandle, instance.toUInt(), enabled)
+    actual fun setShadowReceiver(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setReceiveShadows(nativeHandle, instance.toUInt(), enabled)
     actual fun setScreenSpaceContactShadows(instance: EntityInstance, enabled: Boolean) = FilaRenderableManager_setScreenSpaceContactShadows(nativeHandle, instance.toUInt(), enabled)
     actual fun isShadowCaster(instance: EntityInstance): Boolean = FilaRenderableManager_isShadowCaster(nativeHandle, instance.toUInt())
     actual fun isShadowReceiver(instance: EntityInstance): Boolean = FilaRenderableManager_isShadowReceiver(nativeHandle, instance.toUInt())

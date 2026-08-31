@@ -9,7 +9,7 @@ package io.github.erkko68.filament.filamat
  *
  * **Initialization:**
  * Call Filamat.init() before building any materials. This initializes internal compiler resources.
- * Call MaterialBuilder.shutdown() when finished to release resources.
+ * Call Filamat.shutdown() when finished to release resources.
  *
  * **Typical usage:**
  * ```
@@ -22,7 +22,7 @@ package io.github.erkko68.filament.filamat
  *
  * val package = builder.package
  * // Use package with Engine.Material creation
- * MaterialBuilder.shutdown()
+ * Filamat.shutdown()
  * ```
  *
  * @see MaterialBuilder
@@ -36,4 +36,9 @@ expect object Filamat {
      * internal compiler resources and shader compilation infrastructure.
      */
     fun init()
+
+    /**
+     * Release the compiler's global state. Call when done building materials.
+     */
+    fun shutdown()
 }

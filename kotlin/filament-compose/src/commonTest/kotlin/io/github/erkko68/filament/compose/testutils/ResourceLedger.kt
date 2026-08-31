@@ -29,7 +29,7 @@ fun assertSceneEmpty(scene: Scene, message: String = "scene should be empty afte
 
 /** Asserts none of [entities] is still alive in the engine's entity manager (no leaked entities). */
 fun assertEntitiesDestroyed(engine: Engine, entities: IntArray) {
-    val em = engine.getEntityManager()
+    val em = engine.entityManager
     for (e in entities) {
         assertFalse(em.isAlive(e), "entity $e should be destroyed after disposal")
     }

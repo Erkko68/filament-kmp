@@ -428,10 +428,9 @@ private class Flight(cfg: Cfg) : Base(cfg) {
 
 // ── Public actual class ───────────────────────────────────────────────────────
 
-actual class Manipulator internal constructor(private val impl: Base) {
+actual class Manipulator internal constructor(private val impl: Base) : AutoCloseable {
 
     actual enum class Mode { ORBIT, MAP, FLIGHT }
-    actual enum class Fov  { VERTICAL, HORIZONTAL }
     actual enum class Key  { FORWARD, LEFT, BACKWARD, RIGHT, UP, DOWN }
 
     actual class Bookmark internal constructor(internal val data: BmData)
@@ -466,8 +465,11 @@ actual class Manipulator internal constructor(private val impl: Base) {
         })
     }
 
+    actual override fun close() = destroy()
+
+
     actual fun destroy() {}
-    actual fun getMode(): Mode = when (impl) {
+    actual val mode: Mode get() = when (impl) {
         is Orbit   -> Mode.ORBIT
         is MapManip -> Mode.MAP
         else        -> Mode.FLIGHT
@@ -485,7 +487,7 @@ actual class Manipulator internal constructor(private val impl: Base) {
     actual fun keyUp(key: Key)                            = impl.keyUp(key.ordinal)
     actual fun scroll(x: Int, y: Int, delta: Float)      = impl.scroll(x, y, delta)
     actual fun update(deltaTime: Float)                   = impl.update(deltaTime)
-    actual fun getCurrentBookmark()                       = Bookmark(impl.getCurrentBookmark())
-    actual fun getHomeBookmark()                          = Bookmark(impl.getHomeBookmark())
+    actual val currentBookmark: Bookmark get() = Bookmark(impl.getCurrentBookmark())
+    actual val homeBookmark: Bookmark get() = Bookmark(impl.getHomeBookmark())
     actual fun jumpToBookmark(bookmark: Bookmark)         = impl.jumpToBookmark(bookmark.data)
 }

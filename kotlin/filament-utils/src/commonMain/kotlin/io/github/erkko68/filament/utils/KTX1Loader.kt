@@ -53,7 +53,7 @@ expect object KTX1Loader {
      * @param options decoding options, including sRGB toggle
      * @return the created [Texture], or null on failure
      */
-    fun createTexture(engine: Engine, buffer: ByteArray, options: Options): Texture?
+    fun createTexture(engine: Engine, buffer: ByteArray, options: Options = Options()): Texture?
 
     /**
      * Creates a Filament [IndirectLight] from KTX1 bytes containing a cubemap and spherical harmonics.
@@ -63,7 +63,7 @@ expect object KTX1Loader {
      * @param options decoding options, including sRGB toggle
      * @return an [IndirectLightBundle] containing the [IndirectLight] and its cubemap [Texture]
      */
-    fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle
+    fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options = Options()): IndirectLightBundle
 
     /**
      * Creates a Filament [Skybox] from KTX1 bytes containing a cubemap.
@@ -73,7 +73,7 @@ expect object KTX1Loader {
      * @param options decoding options, including sRGB toggle
      * @return a [SkyboxBundle] containing the [Skybox] and its cubemap [Texture]
      */
-    fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle
+    fun createSkybox(engine: Engine, buffer: ByteArray, options: Options = Options()): SkyboxBundle
 
     /**
      * Extracts spherical harmonics coefficients from KTX1 bytes.

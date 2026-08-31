@@ -8,6 +8,7 @@ import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.Uint8Array
 import org.khronos.webgl.set
+import io.github.erkko68.filament.nativeObject
 
 // Texture::Usage bits (filament/backend/DriverEnums.h). DEFAULT = UPLOADABLE | SAMPLEABLE.
 private const val UPLOADABLE = 0x0008
@@ -28,7 +29,7 @@ actual object TextureLoader {
     ): Texture? {
         if (buffer.isEmpty()) return null
 
-        val jsEngine = engine.jsEngine
+        val jsEngine = engine.nativeObject
         // Filament's embind decoders expect a Uint8Array view (a raw Int8Array is rejected with a
         // native BindingError); match the Uint8Array idiom used across the JS bindings.
         val int8 = Int8Array(buffer.size)

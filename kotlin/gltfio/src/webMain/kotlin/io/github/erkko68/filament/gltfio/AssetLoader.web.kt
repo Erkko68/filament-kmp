@@ -5,6 +5,8 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.web.interop.toJsArray
 import org.khronos.webgl.set
 import io.github.erkko68.filament.web.gltfio_AssetLoader as JSAssetLoader
+import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.InternalFilamentApi
 
 private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
     val int8 = org.khronos.webgl.Int8Array(size)
@@ -12,7 +14,7 @@ private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
     return org.khronos.webgl.Uint8Array(int8.buffer)
 }
 
-actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine: Engine) {
+actual class AssetLoader @InternalFilamentApi constructor(internal val jsLoader: JSAssetLoader, private val engine: Engine) {
     actual fun createAsset(buffer: ByteArray): FilamentAsset? {
         val jsAsset = jsLoader.createAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>())
         return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
@@ -49,7 +51,7 @@ actual class AssetLoader(private val jsLoader: JSAssetLoader, private val engine
             materials: MaterialProvider,
             entities: EntityManager?
         ): AssetLoader {
-            val jsLoader = engine.jsEngine.createAssetLoader()
+            val jsLoader = engine.nativeObject.createAssetLoader()
             return AssetLoader(jsLoader, engine)
         }
 

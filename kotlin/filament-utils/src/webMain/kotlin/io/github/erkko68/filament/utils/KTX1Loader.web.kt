@@ -10,6 +10,7 @@ import io.github.erkko68.filament.web.Skybox as JSSkybox
 import org.khronos.webgl.ArrayBufferView
 import org.khronos.webgl.Int8Array
 import org.khronos.webgl.set
+import io.github.erkko68.filament.nativeObject
 
 private fun ByteArray.toArrayBufferView(): ArrayBufferView {
     val int8 = Int8Array(size)
@@ -52,7 +53,7 @@ actual object KTX1Loader {
 
     actual fun createTexture(engine: Engine, buffer: ByteArray, options: Options): Texture? {
         return try {
-            Texture(engine.jsEngine.createTextureFromKtx1(buffer.toArrayBufferView()))
+            Texture(engine.nativeObject.createTextureFromKtx1(buffer.toArrayBufferView()))
         } catch (e: Exception) {
             null
         }
@@ -60,7 +61,7 @@ actual object KTX1Loader {
 
     actual fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle {
         return try {
-            val jsIbl = engine.jsEngine.createIblFromKtx1(buffer.toArrayBufferView())
+            val jsIbl = engine.nativeObject.createIblFromKtx1(buffer.toArrayBufferView())
             val indirectLight = IndirectLight(jsIbl)
             val cubemap = indirectLight.reflectionsTexture
             IndirectLightBundle(indirectLight, cubemap)
@@ -71,7 +72,7 @@ actual object KTX1Loader {
 
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
         return try {
-            val jsSky = engine.jsEngine.createSkyFromKtx1(buffer.toArrayBufferView())
+            val jsSky = engine.nativeObject.createSkyFromKtx1(buffer.toArrayBufferView())
             val skybox = Skybox(jsSky)
             val cubemap = skybox.texture
             SkyboxBundle(skybox, cubemap)

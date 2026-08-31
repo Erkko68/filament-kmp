@@ -1,117 +1,88 @@
 package io.github.erkko68.filament.gltfio
 
-actual class MaterialKey {
-    internal val nativeObject = com.google.android.filament.gltfio.MaterialProvider.MaterialKey()
+// The Android bindings model MaterialKey as a mutable upstream object, so the common data
+// class is marshalled across field by field.
 
-    actual constructor()
+internal fun MaterialKey.toAndroid(): com.google.android.filament.gltfio.MaterialProvider.MaterialKey {
+    val n = com.google.android.filament.gltfio.MaterialProvider.MaterialKey()
+    n.doubleSided = doubleSided
+    n.unlit = unlit
+    n.hasVertexColors = hasVertexColors
+    n.hasBaseColorTexture = hasBaseColorTexture
+    n.hasNormalTexture = hasNormalTexture
+    n.hasOcclusionTexture = hasOcclusionTexture
+    n.hasEmissiveTexture = hasEmissiveTexture
+    n.useSpecularGlossiness = useSpecularGlossiness
+    n.alphaMode = alphaMode.ordinal
+    n.enableDiagnostics = enableDiagnostics
+    n.hasMetallicRoughnessTexture = hasMetallicRoughnessTexture
+    n.metallicRoughnessUV = metallicRoughnessUV
+    n.baseColorUV = baseColorUV
+    n.hasClearCoatTexture = hasClearCoatTexture
+    n.clearCoatUV = clearCoatUV
+    n.hasClearCoatRoughnessTexture = hasClearCoatRoughnessTexture
+    n.clearCoatRoughnessUV = clearCoatRoughnessUV
+    n.hasClearCoatNormalTexture = hasClearCoatNormalTexture
+    n.clearCoatNormalUV = clearCoatNormalUV
+    n.hasClearCoat = hasClearCoat
+    n.hasTransmission = hasTransmission
+    n.hasTextureTransforms = hasTextureTransforms
+    n.emissiveUV = emissiveUV
+    n.aoUV = aoUV
+    n.normalUV = normalUV
+    n.hasTransmissionTexture = hasTransmissionTexture
+    n.transmissionUV = transmissionUV
+    n.hasSheenColorTexture = hasSheenColorTexture
+    n.sheenColorUV = sheenColorUV
+    n.hasSheenRoughnessTexture = hasSheenRoughnessTexture
+    n.sheenRoughnessUV = sheenRoughnessUV
+    n.hasVolumeThicknessTexture = hasVolumeThicknessTexture
+    n.volumeThicknessUV = volumeThicknessUV
+    n.hasSheen = hasSheen
+    n.hasIOR = hasIOR
+    return n
+}
 
-    actual var doubleSided: Boolean
-        get() = nativeObject.doubleSided
-        set(value) { nativeObject.doubleSided = value }
-    actual var unlit: Boolean
-        get() = nativeObject.unlit
-        set(value) { nativeObject.unlit = value }
-    actual var hasVertexColors: Boolean
-        get() = nativeObject.hasVertexColors
-        set(value) { nativeObject.hasVertexColors = value }
-    actual var hasBaseColorTexture: Boolean
-        get() = nativeObject.hasBaseColorTexture
-        set(value) { nativeObject.hasBaseColorTexture = value }
-    actual var hasNormalTexture: Boolean
-        get() = nativeObject.hasNormalTexture
-        set(value) { nativeObject.hasNormalTexture = value }
-    actual var hasOcclusionTexture: Boolean
-        get() = nativeObject.hasOcclusionTexture
-        set(value) { nativeObject.hasOcclusionTexture = value }
-    actual var hasEmissiveTexture: Boolean
-        get() = nativeObject.hasEmissiveTexture
-        set(value) { nativeObject.hasEmissiveTexture = value }
-    actual var useSpecularGlossiness: Boolean
-        get() = nativeObject.useSpecularGlossiness
-        set(value) { nativeObject.useSpecularGlossiness = value }
-    actual var alphaMode: Int
-        get() = nativeObject.alphaMode
-        set(value) { nativeObject.alphaMode = value }
-    actual var enableDiagnostics: Boolean
-        get() = nativeObject.enableDiagnostics
-        set(value) { nativeObject.enableDiagnostics = value }
-    actual var hasMetallicRoughnessTexture: Boolean
-        get() = nativeObject.hasMetallicRoughnessTexture
-        set(value) { nativeObject.hasMetallicRoughnessTexture = value }
-    actual var metallicRoughnessUV: Int
-        get() = nativeObject.metallicRoughnessUV
-        set(value) { nativeObject.metallicRoughnessUV = value }
-    actual var baseColorUV: Int
-        get() = nativeObject.baseColorUV
-        set(value) { nativeObject.baseColorUV = value }
-    actual var hasClearCoatTexture: Boolean
-        get() = nativeObject.hasClearCoatTexture
-        set(value) { nativeObject.hasClearCoatTexture = value }
-    actual var clearCoatUV: Int
-        get() = nativeObject.clearCoatUV
-        set(value) { nativeObject.clearCoatUV = value }
-    actual var hasClearCoatRoughnessTexture: Boolean
-        get() = nativeObject.hasClearCoatRoughnessTexture
-        set(value) { nativeObject.hasClearCoatRoughnessTexture = value }
-    actual var clearCoatRoughnessUV: Int
-        get() = nativeObject.clearCoatRoughnessUV
-        set(value) { nativeObject.clearCoatRoughnessUV = value }
-    actual var hasClearCoatNormalTexture: Boolean
-        get() = nativeObject.hasClearCoatNormalTexture
-        set(value) { nativeObject.hasClearCoatNormalTexture = value }
-    actual var clearCoatNormalUV: Int
-        get() = nativeObject.clearCoatNormalUV
-        set(value) { nativeObject.clearCoatNormalUV = value }
-    actual var hasClearCoat: Boolean
-        get() = nativeObject.hasClearCoat
-        set(value) { nativeObject.hasClearCoat = value }
-    actual var hasTransmission: Boolean
-        get() = nativeObject.hasTransmission
-        set(value) { nativeObject.hasTransmission = value }
-    actual var hasTextureTransforms: Boolean
-        get() = nativeObject.hasTextureTransforms
-        set(value) { nativeObject.hasTextureTransforms = value }
-    actual var emissiveUV: Int
-        get() = nativeObject.emissiveUV
-        set(value) { nativeObject.emissiveUV = value }
-    actual var aoUV: Int
-        get() = nativeObject.aoUV
-        set(value) { nativeObject.aoUV = value }
-    actual var normalUV: Int
-        get() = nativeObject.normalUV
-        set(value) { nativeObject.normalUV = value }
-    actual var hasTransmissionTexture: Boolean
-        get() = nativeObject.hasTransmissionTexture
-        set(value) { nativeObject.hasTransmissionTexture = value }
-    actual var transmissionUV: Int
-        get() = nativeObject.transmissionUV
-        set(value) { nativeObject.transmissionUV = value }
-    actual var hasSheenColorTexture: Boolean
-        get() = nativeObject.hasSheenColorTexture
-        set(value) { nativeObject.hasSheenColorTexture = value }
-    actual var sheenColorUV: Int
-        get() = nativeObject.sheenColorUV
-        set(value) { nativeObject.sheenColorUV = value }
-    actual var hasSheenRoughnessTexture: Boolean
-        get() = nativeObject.hasSheenRoughnessTexture
-        set(value) { nativeObject.hasSheenRoughnessTexture = value }
-    actual var sheenRoughnessUV: Int
-        get() = nativeObject.sheenRoughnessUV
-        set(value) { nativeObject.sheenRoughnessUV = value }
-    actual var hasVolumeThicknessTexture: Boolean
-        get() = nativeObject.hasVolumeThicknessTexture
-        set(value) { nativeObject.hasVolumeThicknessTexture = value }
-    actual var volumeThicknessUV: Int
-        get() = nativeObject.volumeThicknessUV
-        set(value) { nativeObject.volumeThicknessUV = value }
-    actual var hasSheen: Boolean
-        get() = nativeObject.hasSheen
-        set(value) { nativeObject.hasSheen = value }
-    actual var hasIOR: Boolean
-        get() = nativeObject.hasIOR
-        set(value) { nativeObject.hasIOR = value }
+internal fun MaterialKey.copyFrom(n: com.google.android.filament.gltfio.MaterialProvider.MaterialKey) {
+    doubleSided = n.doubleSided
+    unlit = n.unlit
+    hasVertexColors = n.hasVertexColors
+    hasBaseColorTexture = n.hasBaseColorTexture
+    hasNormalTexture = n.hasNormalTexture
+    hasOcclusionTexture = n.hasOcclusionTexture
+    hasEmissiveTexture = n.hasEmissiveTexture
+    useSpecularGlossiness = n.useSpecularGlossiness
+    alphaMode = AlphaMode.entries[n.alphaMode]
+    enableDiagnostics = n.enableDiagnostics
+    hasMetallicRoughnessTexture = n.hasMetallicRoughnessTexture
+    metallicRoughnessUV = n.metallicRoughnessUV
+    baseColorUV = n.baseColorUV
+    hasClearCoatTexture = n.hasClearCoatTexture
+    clearCoatUV = n.clearCoatUV
+    hasClearCoatRoughnessTexture = n.hasClearCoatRoughnessTexture
+    clearCoatRoughnessUV = n.clearCoatRoughnessUV
+    hasClearCoatNormalTexture = n.hasClearCoatNormalTexture
+    clearCoatNormalUV = n.clearCoatNormalUV
+    hasClearCoat = n.hasClearCoat
+    hasTransmission = n.hasTransmission
+    hasTextureTransforms = n.hasTextureTransforms
+    emissiveUV = n.emissiveUV
+    aoUV = n.aoUV
+    normalUV = n.normalUV
+    hasTransmissionTexture = n.hasTransmissionTexture
+    transmissionUV = n.transmissionUV
+    hasSheenColorTexture = n.hasSheenColorTexture
+    sheenColorUV = n.sheenColorUV
+    hasSheenRoughnessTexture = n.hasSheenRoughnessTexture
+    sheenRoughnessUV = n.sheenRoughnessUV
+    hasVolumeThicknessTexture = n.hasVolumeThicknessTexture
+    volumeThicknessUV = n.volumeThicknessUV
+    hasSheen = n.hasSheen
+    hasIOR = n.hasIOR
+}
 
-    actual fun constrainMaterial(uvmap: IntArray) {
-        nativeObject.constrainMaterial(uvmap)
-    }
+actual fun MaterialKey.constrainMaterial(uvmap: IntArray) {
+    val n = toAndroid()
+    n.constrainMaterial(uvmap)
+    copyFrom(n)
 }

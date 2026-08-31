@@ -1,7 +1,7 @@
 package io.github.erkko68.filament
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
-actual class Stream(internal val jsStream: Any?) {
+actual class Stream @InternalFilamentApi constructor(internal val jsStream: Any?) {
     actual val streamType: StreamType get() = StreamType.NATIVE
 
     actual fun setDimensions(width: Int, height: Int) {

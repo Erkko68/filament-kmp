@@ -8,6 +8,7 @@ import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaFilamentInstance
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.Entity
 
 actual class FilamentInstance {
     public var nativeHandle: CPointer<FilaFilamentInstance>? = null
@@ -18,9 +19,9 @@ actual class FilamentInstance {
         this.nativeHandle = nativeHandle
     }
 
-    actual fun getRoot(): Int = FilaFilamentInstance_getRoot(nativeHandle).toInt()
+    actual val root: Entity get() = FilaFilamentInstance_getRoot(nativeHandle).toInt()
 
-    actual fun getEntities(): IntArray {
+    actual val entities: IntArray get() {
         val count = FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
         if (count == 0) return IntArray(0)
         memScoped {
@@ -30,16 +31,16 @@ actual class FilamentInstance {
         }
     }
 
-    actual fun getEntityCount(): Int = FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
+    actual val entityCount: Int get() = FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
 
-    actual fun getAnimator(): Animator {
+    actual val animator: Animator get() {
         // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
         val handle = FilaFilamentInstance_getAnimator(nativeHandle)
         checkNotNull(handle) { ANIMATOR_NOT_LOADED }
         return Animator(handle)
     }
 
-    actual fun getBoundingBox(): Box {
+    actual val boundingBox: Box get() {
         return FilaFilamentInstance_getBoundingBox(nativeHandle).useContents {
             Box(
                 centerX, centerY, centerZ,
@@ -48,25 +49,25 @@ actual class FilamentInstance {
         }
     }
 
-    actual fun getAsset(): FilamentAsset = FilamentAsset(FilaFilamentInstance_getAsset(nativeHandle))
+    actual val asset: FilamentAsset get() = FilamentAsset(FilaFilamentInstance_getAsset(nativeHandle))
 
-    actual fun getSkinCount(): Int = FilaFilamentInstance_getSkinCount(nativeHandle).toInt()
+    actual val skinCount: Int get() = FilaFilamentInstance_getSkinCount(nativeHandle).toInt()
 
-    actual fun getSkinNames(): Array<String> {
-        val count = getSkinCount()
-        if (count == 0) return emptyArray()
+    actual val skinNames: List<String> get() {
+        val count = skinCount
+        if (count == 0) return emptyList()
         memScoped {
             val names = allocArray<CPointerVar<ByteVar>>(count)
             FilaFilamentInstance_getSkinNames(nativeHandle, names)
-            return Array(count) { names[it]?.toKString() ?: "" }
+            return List(count) { names[it]?.toKString() ?: "" }
         }
     }
 
-    actual fun attachSkin(skinIndex: Int, target: Int) {
+    actual fun attachSkin(skinIndex: Int, target: Entity) {
         FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toULong(), target.toUInt())
     }
 
-    actual fun detachSkin(skinIndex: Int, target: Int) {
+    actual fun detachSkin(skinIndex: Int, target: Entity) {
         FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toULong(), target.toUInt())
     }
 
@@ -87,23 +88,23 @@ actual class FilamentInstance {
     }
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getMaterialInstances(): Array<io.github.erkko68.filament.MaterialInstance> {
+    actual val materialInstances: List<io.github.erkko68.filament.MaterialInstance> get() {
         val count = FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         memScoped {
             val instances = allocArray<CPointerVar<cnames.structs.FilaMaterialInstance>>(count)
             FilaFilamentInstance_getMaterialInstances(nativeHandle, instances)
-            return Array(count) { io.github.erkko68.filament.MaterialInstance(instances[it]) }
+            return List(count) { io.github.erkko68.filament.MaterialInstance(instances[it]) }
         }
     }
 
-    actual fun getMaterialVariantNames(): Array<String> {
+    actual val materialVariantNames: List<String> get() {
         val count = FilaFilamentInstance_getMaterialVariantCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         memScoped {
             val names = allocArray<CPointerVar<ByteVar>>(count)
             FilaFilamentInstance_getMaterialVariantNames(nativeHandle, names)
-            return Array(count) { names[it]?.toKString() ?: "" }
+            return List(count) { names[it]?.toKString() ?: "" }
         }
     }
 }

@@ -5,8 +5,9 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset internal constructor(
+actual class FilamentAsset @InternalFilamentApi constructor(
     internal val nativeObject: com.google.android.filament.gltfio.FilamentAsset
 ) {
     private var knownInstances: Array<FilamentInstance>? = null
@@ -21,19 +22,19 @@ actual class FilamentAsset internal constructor(
         return arrayOf(primary).also { knownInstances = it }
     }
 
-    actual fun getRoot(): Entity = nativeObject.root
+    actual val root: Entity get() = nativeObject.root
     
     actual fun popRenderable(): Entity = nativeObject.popRenderable()
     
     actual fun popRenderables(entities: IntArray): Int = nativeObject.popRenderables(entities)
 
-    actual fun getEntities(): IntArray = nativeObject.entities
+    actual val entities: IntArray get() = nativeObject.entities
     
-    actual fun getLightEntities(): IntArray = nativeObject.lightEntities
+    actual val lightEntities: IntArray get() = nativeObject.lightEntities
     
-    actual fun getRenderableEntities(): IntArray = nativeObject.renderableEntities
+    actual val renderableEntities: IntArray get() = nativeObject.renderableEntities
     
-    actual fun getCameraEntities(): IntArray = nativeObject.cameraEntities
+    actual val cameraEntities: IntArray get() = nativeObject.cameraEntities
 
     actual fun getEntitiesByName(name: String): IntArray = nativeObject.getEntitiesByName(name)
 
@@ -41,15 +42,15 @@ actual class FilamentAsset internal constructor(
     
     actual fun getFirstEntityByName(name: String): Entity = nativeObject.getFirstEntityByName(name)
 
-    actual fun getEntityCount(): Int = nativeObject.entities.size
+    actual val entityCount: Int get() = nativeObject.entities.size
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getAssetInstanceCount(): Int = resolveKnownInstances().size
+    actual val assetInstanceCount: Int get() = resolveKnownInstances().size
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getAssetInstances(): Array<FilamentInstance> = resolveKnownInstances()
+    actual val assetInstances: List<FilamentInstance> get() = resolveKnownInstances().toList()
 
-    actual fun getBoundingBox(): Box {
+    actual val boundingBox: Box get() {
         val nativeBox = nativeObject.boundingBox
         return Box(
             nativeBox.center[0], nativeBox.center[1], nativeBox.center[2],
@@ -61,15 +62,15 @@ actual class FilamentAsset internal constructor(
 
     actual fun getExtras(entity: Entity): String? = nativeObject.getExtras(entity)
     
-    actual fun getMorphTargetNames(entity: Entity): Array<String> = nativeObject.getMorphTargetNames(entity)
+    actual fun getMorphTargetNames(entity: Entity): List<String> = nativeObject.getMorphTargetNames(entity).toList()
     
-    actual fun getResourceUris(): Array<String> = nativeObject.resourceUris
+    actual val resourceUris: List<String> get() = nativeObject.resourceUris.toList()
 
     actual fun releaseSourceData() {
         nativeObject.releaseSourceData()
     }
 
-    actual fun getEngine(): Engine = Engine(nativeObject.engine)
+    actual val engine: Engine get() = Engine(nativeObject.engine)
 
-    actual fun getInstance(): FilamentInstance = resolveKnownInstances().first()
+    actual val instance: FilamentInstance get() = resolveKnownInstances().first()
 }

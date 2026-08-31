@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaIndexBuffer
 
-actual class IndexBuffer internal constructor(internal var nativeHandle: CPointer<FilaIndexBuffer>?) {
+actual class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaIndexBuffer>?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaIndexBufferBuilder_create()
         actual enum class IndexType { USHORT, UINT }
@@ -38,7 +38,7 @@ actual class IndexBuffer internal constructor(internal var nativeHandle: CPointe
         val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
             val ref = user!!.asStableRef<BufferPinWrapper>()
             val wrap = ref.get()
-            wrap.callback?.invoke()
+            upcall { wrap.callback?.invoke() }
             wrap.pinned.unpin()
             ref.dispose()
         }

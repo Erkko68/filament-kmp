@@ -63,6 +63,20 @@ Android Java API (the canonical Kotlin-facing surface); JS externals must match 
 surface in upstream `web/filament-js/jsbindings.cpp`. The `scripts/dev/check-*.sh` scripts
 report gaps — run them when adding bindings or bumping `filaVersion`.
 
+### Kotlin idiom vs. upstream shape
+
+Mirroring the API is not the same as mirroring the Java. Two deliberate rules:
+
+- **Builders mirror upstream verbatim.** The seventeen `Builder` classes keep the fluent
+  `.width(64).height(64).build(engine)` chain, one method per upstream setter, in upstream's
+  order. This is what makes Filament's own C++ and Android docs readable against this library,
+  and `MaterialBuilder`'s fifty-odd setters would be an unusable constructor. Do not "modernize"
+  a builder into a DSL or a data class.
+- **Everything else is idiomatic Kotlin.** Outside a builder, a zero-argument `getX()` should be
+  a `val`, a `getX()`/`setX()` pair a `var`, a returned collection a `List`/`Set` rather than an
+  array, and an optional out-parameter `out: T? = null`. Raw backend handles are `internal`,
+  reachable only through the `@InternalFilamentApi` `nativeObject` accessors.
+
 ## Versioning & releases
 
 Versions are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`), and all

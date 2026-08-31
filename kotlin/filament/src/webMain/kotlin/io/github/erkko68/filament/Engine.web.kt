@@ -13,16 +13,20 @@ import io.github.erkko68.filament.web.EntityManager as JSEntityManager
 import io.github.erkko68.filament.web.Entity as JSEntity
 import org.w3c.dom.HTMLCanvasElement
 
-actual class Engine private constructor(
-    val jsEngine: JSEngine,
-    val jsCanvas: HTMLCanvasElement? = null,
+actual class Engine @InternalFilamentApi constructor(
+    internal val jsEngine: JSEngine,
+    internal val jsCanvas: HTMLCanvasElement? = null,
     // Only the hidden canvas we allocated ourselves is ours to tear down; a caller's shared
     // canvas outlives the engine and may back another one later.
     private val ownsCanvas: Boolean = false,
-) {
-    actual fun isValid(): Boolean {
+) : AutoCloseable {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns true unconditionally — filament.js binds no engine-level validity check, only the isValidX family for resources.")
+    actual val isValid: Boolean get() {
         return true
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         JSEngine.destroy(jsEngine)
@@ -38,16 +42,13 @@ actual class Engine private constructor(
 
     actual val supportedFeatureLevel: FeatureLevel get() = fromJsFeatureLevel(jsEngine.getSupportedFeatureLevel())
 
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel =
-        fromJsFeatureLevel(jsEngine.setActiveFeatureLevel(toJsFeatureLevel(featureLevel)))
+    actual var activeFeatureLevel: FeatureLevel
+        get() = fromJsFeatureLevel(jsEngine.getActiveFeatureLevel())
+        set(value) { jsEngine.setActiveFeatureLevel(toJsFeatureLevel(value)) }
 
-    actual fun getActiveFeatureLevel(): FeatureLevel = fromJsFeatureLevel(jsEngine.getActiveFeatureLevel())
-
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) {
-        jsEngine.setAutomaticInstancingEnabled(enable)
-    }
-
-    actual fun isAutomaticInstancingEnabled(): Boolean = jsEngine.isAutomaticInstancingEnabled()
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = jsEngine.isAutomaticInstancingEnabled()
+        set(value) { jsEngine.setAutomaticInstancingEnabled(value) }
 
     actual val config: Config get() {
         // getConfig() returns a JS object shaped like Engine.Config. The three enum fields
@@ -73,7 +74,7 @@ actual class Engine private constructor(
         }
     }
 
-    actual fun getMaxStereoscopicEyes(): Long {
+    actual val maxStereoscopicEyes: Long get() {
         return JSEngine.getMaxStereoscopicEyes().toLong()
     }
 
@@ -225,19 +226,19 @@ actual class Engine private constructor(
         jsEngine.destroyEntity(EntityManager.jsEntityOf(entity))
     }
 
-    actual fun getTransformManager(): TransformManager {
+    actual val transformManager: TransformManager get() {
         return TransformManager(jsEngine.getTransformManager())
     }
 
-    actual fun getLightManager(): LightManager {
+    actual val lightManager: LightManager get() {
         return LightManager(jsEngine.getLightManager())
     }
 
-    actual fun getRenderableManager(): RenderableManager {
+    actual val renderableManager: RenderableManager get() {
         return RenderableManager(jsEngine.getRenderableManager())
     }
 
-    actual fun getEntityManager(): EntityManager {
+    actual val entityManager: EntityManager get() {
         return EntityManager(JSEntityManager.get())
     }
 
@@ -254,14 +255,14 @@ actual class Engine private constructor(
         jsEngine.execute()
     }
 
-    actual fun hasUnrecoverableFailure(): Boolean = jsEngine.hasUnrecoverableFailure()
+    actual val hasUnrecoverableFailure: Boolean get() = jsEngine.hasUnrecoverableFailure()
 
     // TODO(js): paused state not bound in upstream jsbindings.cpp — track locally
     // so the common getter/setter round-trip works.
     private var _paused: Boolean = false
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = _paused
         set(value) { _paused = value }
 
@@ -396,7 +397,7 @@ actual class Engine private constructor(
         private fun create(config: Config?): Engine {
             // On JS, Filament needs a WebGL-backed canvas. If no shared context is
             // provided, allocate a hidden offscreen <canvas> that the consumer can
-            // read back from (see Engine.jsCanvas).
+            // read back from (see Engine.canvas).
             val doc = kotlinx.browser.document
             val canvas = doc.createElement("canvas") as HTMLCanvasElement
             canvas.width = 1
@@ -425,7 +426,7 @@ actual class Engine private constructor(
             if (config == null) JSEngine.create(canvas, glOptions())
             else JSEngine.create(canvas, glOptions(), config.toJs())
 
-        actual fun getSteadyClockTimeNano(): Long {
+        actual val steadyClockTimeNano: Long get() {
             // Filament.js returns a BigInt here. Coerce it to a JS number *before* it
             // crosses the interop boundary: wasmJs's adapter throws marshaling a BigInt
             // into the externally-typed Double (js tolerates it, wasm doesn't).

@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
-actual class Stream internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class Stream @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class StreamType {
         NATIVE,
         ACQUIRED
@@ -30,7 +30,7 @@ actual class Stream internal constructor(internal var nativeHandle: MemorySegmen
         }
     }
 
-    actual val streamType: StreamType get() = StreamType.values()[FilamentC.FilaStream_getStreamType(nativeHandle)]
+    actual val streamType: StreamType get() = StreamType.entries[FilamentC.FilaStream_getStreamType(nativeHandle)]
 
     actual fun setDimensions(width: Int, height: Int) {
         FilamentC.FilaStream_setDimensions(nativeHandle, width, height)

@@ -250,7 +250,7 @@ class ViewTest : FilamentTestFixture() {
 
         view.setVisibleLayers(0x3, 0x1)
         view.setLayerEnabled(0, true)
-        assertEquals(0x1, view.getVisibleLayers())
+        assertEquals(0x1, view.visibleLayers)
 
         view.isPostProcessingEnabled = true
         assertTrue(view.isPostProcessingEnabled)
@@ -262,7 +262,7 @@ class ViewTest : FilamentTestFixture() {
         // without frame-time support (Noop/sim report isFrameTimeSupported()=false since 1.72.0).
         view.dynamicResolutionOptions = View.DynamicResolutionOptions().apply { enabled = true; minScale = 1f; maxScale = 1f }
         assertTrue(view.dynamicResolutionOptions.enabled)
-        assertNotNull(view.getLastDynamicResolutionScale())
+        assertNotNull(view.lastDynamicResolutionScale)
 
         view.renderQuality = View.RenderQuality().apply { hdrColorBuffer = View.Quality.HIGH }
         assertEquals(View.Quality.HIGH, view.renderQuality.hdrColorBuffer)
@@ -332,7 +332,7 @@ class ViewTest : FilamentTestFixture() {
         assertTrue(view.fogEntity >= 0)
 
         // Never rendered — the visible-renderable cache is invalid, so -1.
-        assertEquals(-1, view.getVisibleRenderableCount())
+        assertEquals(-1, view.visibleRenderableCount)
 
         view.antiAliasing = View.AntiAliasing.FXAA
         assertEquals(View.AntiAliasing.FXAA, view.antiAliasing)

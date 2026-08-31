@@ -14,7 +14,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .zoomSpeed(0.1f)
             .orbitHomePosition(0f, 0f, 10f)
             .orbitSpeed(0.01f, 0.01f)
-            .fovDirection(Manipulator.Fov.VERTICAL)
+            .fovDirection(Fov.VERTICAL)
             .fovDegrees(45f)
             .farPlane(100f)
             .panning(true)
@@ -23,7 +23,7 @@ class ManipulatorTest : UtilsTestFixture() {
     @Test
     fun testOrbitModeIsReported() {
         val m = buildOrbitManipulator()
-        assertEquals(Manipulator.Mode.ORBIT, m.getMode())
+        assertEquals(Manipulator.Mode.ORBIT, m.mode)
         m.destroy()
     }
 
@@ -34,7 +34,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .mapExtent(100f, 100f)
             .mapMinDistance(1f)
             .build(Manipulator.Mode.MAP)
-        assertEquals(Manipulator.Mode.MAP, m.getMode())
+        assertEquals(Manipulator.Mode.MAP, m.mode)
         m.destroy()
     }
 
@@ -49,7 +49,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .flightPanSpeed(0.01f, 0.01f)
             .flightMoveDamping(0.5f)
             .build(Manipulator.Mode.FLIGHT)
-        assertEquals(Manipulator.Mode.FLIGHT, m.getMode())
+        assertEquals(Manipulator.Mode.FLIGHT, m.mode)
         m.destroy()
     }
 
@@ -139,9 +139,9 @@ class ManipulatorTest : UtilsTestFixture() {
     @Test
     fun testBookmarks() {
         val m = buildOrbitManipulator()
-        val home = m.getHomeBookmark()
+        val home = m.homeBookmark
         assertNotNull(home)
-        val current = m.getCurrentBookmark()
+        val current = m.currentBookmark
         assertNotNull(current)
         m.jumpToBookmark(home)
         m.jumpToBookmark(current)
@@ -166,7 +166,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .zoomSpeed(0.5f)
             .orbitHomePosition(0f, 5f, 20f)
             .orbitSpeed(0.005f, 0.005f)
-            .fovDirection(Manipulator.Fov.HORIZONTAL)
+            .fovDirection(Fov.HORIZONTAL)
             .fovDegrees(60f)
             .farPlane(500f)
             .mapExtent(200f, 200f)
@@ -180,7 +180,7 @@ class ManipulatorTest : UtilsTestFixture() {
             .groundPlane(0f, 1f, 0f, 0f)
             .panning(false)
             .build(Manipulator.Mode.ORBIT)
-        assertEquals(Manipulator.Mode.ORBIT, m.getMode())
+        assertEquals(Manipulator.Mode.ORBIT, m.mode)
         m.destroy()
     }
 }

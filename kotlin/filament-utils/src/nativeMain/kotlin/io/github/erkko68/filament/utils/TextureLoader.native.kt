@@ -5,6 +5,7 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.utils.cinterop.*
 import kotlinx.cinterop.*
+import io.github.erkko68.filament.nativeObject
 
 actual object TextureLoader {
     actual enum class TextureType {
@@ -16,7 +17,7 @@ actual object TextureLoader {
     actual fun loadTexture(engine: Engine, buffer: ByteArray, type: TextureType): Texture? {
         val handle = buffer.usePinned { pinned ->
             FilaTextureLoader_loadTexture(
-                engine.nativeHandle,
+                engine.nativeObject,
                 pinned.addressOf(0),
                 buffer.size.toULong(),
                 type == TextureType.COLOR // sRGB if COLOR

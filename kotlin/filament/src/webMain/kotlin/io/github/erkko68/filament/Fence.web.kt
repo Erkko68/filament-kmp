@@ -4,7 +4,7 @@ import io.github.erkko68.filament.web.Fence_Mode
 import io.github.erkko68.filament.web.Fence as JSFence
 import io.github.erkko68.filament.web.FenceStatus as JSFenceStatus
 
-actual class Fence(internal val jsFence: JSFence) {
+actual class Fence @InternalFilamentApi constructor(internal val jsFence: JSFence) {
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     actual fun wait(
         mode: Mode,
