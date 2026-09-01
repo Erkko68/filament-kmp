@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaScene
 
-actual class Scene internal constructor(internal var nativeHandle: CPointer<FilaScene>?) {
+actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaScene>?) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 
@@ -45,11 +45,9 @@ actual class Scene internal constructor(internal var nativeHandle: CPointer<Fila
     actual val lightCount: Int get() = FilaScene_getLightCount(nativeHandle).toInt()
     actual fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity.toUInt())
 
-    actual fun getEntities(): IntArray = getEntities(null)
-
-    actual fun getEntities(outArray: IntArray?): IntArray {
+    actual fun getEntities(out: IntArray?): IntArray {
         val count = entityCount
-        val result = if (outArray != null && outArray.size >= count) outArray else IntArray(count)
+        val result = if (out != null && out.size >= count) out else IntArray(count)
         if (count > 0) {
             result.usePinned { pinned ->
                 FilaScene_getEntities(nativeHandle, pinned.addressOf(0).reinterpret(), count.toULong())

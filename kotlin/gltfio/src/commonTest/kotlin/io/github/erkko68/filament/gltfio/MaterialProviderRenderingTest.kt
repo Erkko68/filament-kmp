@@ -29,7 +29,7 @@ class MaterialProviderRenderingTest : GltfioRenderingTestFixture() {
         val mat = provider.getMaterial(key, uvmap)
         assertNotNull(mat)
         assertNotNull(provider.getMaterial(key, uvmap, "label"))
-        assertNotNull(mat.getDefaultInstance())
+        assertNotNull(mat.defaultInstance)
 
         // KNOWN ABORT — not exercised here. mat.createInstance() (and therefore
         // provider.createMaterialInstance) aborts the process on this ubershader

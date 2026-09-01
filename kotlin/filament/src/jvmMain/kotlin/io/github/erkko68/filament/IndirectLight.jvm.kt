@@ -4,7 +4,7 @@ import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class IndirectLight constructor(internal var nativeHandle: MemorySegment?) {
+actual class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
         // SH coefficient / rotation arrays are read at build(); keep them in a builder-scoped arena.
         private val arena = Arena.ofConfined()

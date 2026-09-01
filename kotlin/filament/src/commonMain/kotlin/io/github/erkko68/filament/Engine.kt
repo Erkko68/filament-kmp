@@ -39,7 +39,7 @@ package io.github.erkko68.filament
  * Engine.destroy(engine)
  * ```
  */
-expect class Engine {
+expect class Engine : AutoCloseable {
     /**
      * Rendering backend selection.
      */
@@ -212,7 +212,7 @@ expect class Engine {
         /**
          * Pause rendering immediately after Engine creation.
          *
-         * Set `engine.paused = false` to resume.
+         * Set `engine.isPaused = false` to resume.
          *
          * @param paused true to start paused, false to start active.
          * @return This Builder, for chaining calls.
@@ -277,7 +277,7 @@ expect class Engine {
          *
          * @return Current time in nanoseconds since an unspecified epoch.
          */
-        fun getSteadyClockTimeNano(): Long
+        val steadyClockTimeNano: Long
     }
 
     /**
@@ -285,7 +285,7 @@ expect class Engine {
      *
      * @return true if the Engine is valid and can be used, false if destroyed.
      */
-    fun isValid(): Boolean
+    val isValid: Boolean
 
     /**
      * Destroy the Engine and all its resources.
@@ -294,6 +294,9 @@ expect class Engine {
      * should ideally be destroyed first, though the Engine will clean up remaining resources.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 
     /**
      * The rendering backend being used by this Engine.
@@ -306,40 +309,23 @@ expect class Engine {
     val supportedFeatureLevel: FeatureLevel
 
     /**
-     * Set the active feature level.
+     * The active feature level.
      *
-     * The feature level must not exceed the supported level for this backend.
-     *
-     * @param featureLevel The desired FeatureLevel.
-     * @return The actually set FeatureLevel (may be clamped to supported level).
+     * Assigning a level that exceeds [supportedFeatureLevel] clamps it; read the property back
+     * to see what was actually set.
      */
-    fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel
+    var activeFeatureLevel: FeatureLevel
 
     /**
-     * Get the currently active feature level.
-     *
-     * @return The active FeatureLevel.
+     * Whether the engine automatically batches identical renderables to reduce draw calls.
      */
-    fun getActiveFeatureLevel(): FeatureLevel
-
-    /**
-     * Enable or disable automatic GPU instancing of identical drawables.
-     *
-     * When enabled, the engine automatically batches identical renderables to reduce draw calls.
-     *
-     * @param enable true to enable instancing, false to disable.
-     */
-    fun setAutomaticInstancingEnabled(enable: Boolean)
-
-    /**
-     * Check if automatic GPU instancing is enabled.
-     *
-     * @return true if instancing is enabled, false otherwise.
-     */
-    fun isAutomaticInstancingEnabled(): Boolean
+    var isAutomaticInstancingEnabled: Boolean
 
     /**
      * The Engine's advanced configuration — the Config object used when creating this Engine.
+     * On JVM and iOS the C wrapper has no getConfig, so this is the Config the [Builder] was
+     * handed; mutating that object after [Builder.build] changes what is reported here, not the
+     * Engine.
      */
     val config: Config
 
@@ -348,7 +334,7 @@ expect class Engine {
      *
      * @return Number of eyes (typically 2 for VR, 1 for monoscopic).
      */
-    fun getMaxStereoscopicEyes(): Long
+    val maxStereoscopicEyes: Long
     /**
      * Validate a Renderer object created by this Engine.
      *
@@ -460,13 +446,13 @@ expect class Engine {
     fun destroyEntity(entity: Entity)
 
     /** Get the TransformManager for managing entity transforms. */
-    fun getTransformManager(): TransformManager
+    val transformManager: TransformManager
     /** Get the LightManager for managing light components. */
-    fun getLightManager(): LightManager
+    val lightManager: LightManager
     /** Get the RenderableManager for managing renderable components. */
-    fun getRenderableManager(): RenderableManager
+    val renderableManager: RenderableManager
     /** Get the EntityManager for creating and managing entities. */
-    fun getEntityManager(): EntityManager
+    val entityManager: EntityManager
 
     /** Block until all pending GPU work completes (potentially long wait). */
     fun flushAndWait()
@@ -478,10 +464,10 @@ expect class Engine {
      * Whether the Engine is in an unrecoverable failure state (e.g. the GPU device was lost).
      * Once true, the Engine must be destroyed and recreated. @return true if such a failure occurred.
      */
-    fun hasUnrecoverableFailure(): Boolean
+    val hasUnrecoverableFailure: Boolean
     /** Whether rendering is currently paused. Set to pause or resume rendering. */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
-    var paused: Boolean
+    var isPaused: Boolean
     /** Deprecated no-op method. */
     fun unprotected()
     /** Check if a feature flag exists. */

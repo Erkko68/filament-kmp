@@ -3,16 +3,18 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.EntityManager
 import java.nio.ByteBuffer
+import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class AssetLoader internal constructor(
+actual class AssetLoader @InternalFilamentApi constructor(
     internal val nativeObject: com.google.android.filament.gltfio.AssetLoader
 ) {
     actual companion object {
         actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
             val nativeLoader = com.google.android.filament.gltfio.AssetLoader(
-                engine.nativeEngine,
+                engine.nativeObject,
                 materials.getNativeProvider(),
-                (entities ?: EntityManager.get()).nativeEntityManager
+                (entities ?: EntityManager.get()).nativeObject
             )
             return AssetLoader(nativeLoader)
         }

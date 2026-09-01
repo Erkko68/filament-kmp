@@ -7,27 +7,31 @@ import io.github.erkko68.filament.cstr
 import io.github.erkko68.filament.ffm.FilamentC
 import io.github.erkko68.filament.isNullPtr
 import java.lang.foreign.MemorySegment
+import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
-    var nativeHandle: MemorySegment? = FilamentC.FilaResourceLoader_create(engine.nativeHandle, normalizeSkinningWeights)
+actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) : AutoCloseable {
+    internal var nativeHandle: MemorySegment? = FilamentC.FilaResourceLoader_create(engine.nativeObject, normalizeSkinningWeights)
     private val providers = mutableListOf<MemorySegment>()
 
     init {
         // Auto-register the stb + ktx2 texture providers, matching the Android/native behaviour.
         confined { a ->
-            val stb = FilamentC.FilaResourceLoader_createStbProvider(engine.nativeHandle)
+            val stb = FilamentC.FilaResourceLoader_createStbProvider(engine.nativeObject)
             if (!stb.isNullPtr()) {
                 FilamentC.FilaResourceLoader_addTextureProvider(nativeHandle, a.cstr("image/jpeg"), stb)
                 FilamentC.FilaResourceLoader_addTextureProvider(nativeHandle, a.cstr("image/png"), stb)
                 providers.add(stb)
             }
-            val ktx2 = FilamentC.FilaResourceLoader_createKtx2Provider(engine.nativeHandle)
+            val ktx2 = FilamentC.FilaResourceLoader_createKtx2Provider(engine.nativeObject)
             if (!ktx2.isNullPtr()) {
                 FilamentC.FilaResourceLoader_addTextureProvider(nativeHandle, a.cstr("image/ktx2"), ktx2)
                 providers.add(ktx2)
             }
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         nativeHandle?.let { FilamentC.FilaResourceLoader_destroy(it) }

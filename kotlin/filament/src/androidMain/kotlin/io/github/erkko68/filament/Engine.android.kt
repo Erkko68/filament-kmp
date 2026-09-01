@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.Engine as AndroidEngine
 
-actual class Engine public constructor(val nativeEngine: AndroidEngine) {
+actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: AndroidEngine) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(nativeEngine.transformManager) }
     private val mLightManager by lazy { LightManager(nativeEngine.lightManager) }
     private val mRenderableManager by lazy { RenderableManager(nativeEngine.renderableManager) }
@@ -10,33 +10,33 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
 
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
-        internal fun toAndroid() = AndroidEngine.Backend.values()[ordinal]
+        internal fun toAndroid() = AndroidEngine.Backend.entries[ordinal]
         companion object {
-            internal fun fromAndroid(backend: AndroidEngine.Backend) = values()[backend.ordinal]
+            internal fun fromAndroid(backend: AndroidEngine.Backend) = entries[backend.ordinal]
         }
     }
 
     actual enum class FeatureLevel {
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
-        internal fun toAndroid() = AndroidEngine.FeatureLevel.values()[ordinal]
+        internal fun toAndroid() = AndroidEngine.FeatureLevel.entries[ordinal]
         companion object {
-            internal fun fromAndroid(level: AndroidEngine.FeatureLevel) = values()[level.ordinal]
+            internal fun fromAndroid(level: AndroidEngine.FeatureLevel) = entries[level.ordinal]
         }
     }
 
     actual enum class StereoscopicType {
         NONE, INSTANCED, MULTIVIEW;
-        internal fun toAndroid() = AndroidEngine.StereoscopicType.values()[ordinal]
+        internal fun toAndroid() = AndroidEngine.StereoscopicType.entries[ordinal]
         companion object {
-            internal fun fromAndroid(type: AndroidEngine.StereoscopicType) = values()[type.ordinal]
+            internal fun fromAndroid(type: AndroidEngine.StereoscopicType) = entries[type.ordinal]
         }
     }
 
     actual enum class GpuContextPriority {
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
-        internal fun toAndroid() = AndroidEngine.GpuContextPriority.values()[ordinal]
+        internal fun toAndroid() = AndroidEngine.GpuContextPriority.entries[ordinal]
         companion object {
-            internal fun fromAndroid(priority: AndroidEngine.GpuContextPriority) = values()[priority.ordinal]
+            internal fun fromAndroid(priority: AndroidEngine.GpuContextPriority) = entries[priority.ordinal]
         }
     }
 
@@ -84,9 +84,9 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
-            internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.values()[ordinal]
+            internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.entries[ordinal]
             companion object {
-                internal fun fromAndroid(lang: AndroidEngine.Config.ShaderLanguage) = values()[lang.ordinal]
+                internal fun fromAndroid(lang: AndroidEngine.Config.ShaderLanguage) = entries[lang.ordinal]
             }
         }
         actual var preferredShaderLanguage: ShaderLanguage
@@ -167,19 +167,24 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
             return Engine(AndroidEngine.create(sharedContext))
         }
 
-        actual fun getSteadyClockTimeNano(): Long {
+        actual val steadyClockTimeNano: Long get() {
             return AndroidEngine.getSteadyClockTimeNano()
         }
     }
 
-    actual fun isValid(): Boolean = nativeEngine.isValid
+    actual val isValid: Boolean get() = nativeEngine.isValid
+    actual override fun close() = destroy()
+
     actual fun destroy() = nativeEngine.destroy()
     actual val backend: Backend get() = Backend.fromAndroid(nativeEngine.backend)
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromAndroid(nativeEngine.supportedFeatureLevel)
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.setActiveFeatureLevel(featureLevel.toAndroid()))
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromAndroid(nativeEngine.activeFeatureLevel)
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = nativeEngine.setAutomaticInstancingEnabled(enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = nativeEngine.isAutomaticInstancingEnabled
+    actual var activeFeatureLevel: FeatureLevel
+        get() = FeatureLevel.fromAndroid(nativeEngine.activeFeatureLevel)
+        set(value) { nativeEngine.setActiveFeatureLevel(value.toAndroid()) }
+
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = nativeEngine.isAutomaticInstancingEnabled
+        set(value) { nativeEngine.setAutomaticInstancingEnabled(value) }
     actual val config: Config get() {
         val config = Config()
         val androidConfig = nativeEngine.config
@@ -203,7 +208,7 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
         config.enableMultipleDirectionalLights = androidConfig.enableMultipleDirectionalLights
         return config
     }
-    actual fun getMaxStereoscopicEyes(): Long = nativeEngine.maxStereoscopicEyes
+    actual val maxStereoscopicEyes: Long get() = nativeEngine.maxStereoscopicEyes
     
     actual fun isValidRenderer(renderer: Renderer): Boolean = nativeEngine.isValidRenderer(renderer.nativeRenderer)
     actual fun isValidView(view: View): Boolean = nativeEngine.isValidView(view.nativeView)
@@ -264,17 +269,17 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual fun destroyStream(stream: Stream) { nativeEngine.destroyStream(stream.nativeStream) }
     actual fun destroyEntity(entity: Entity) { nativeEngine.destroyEntity(entity) }
 
-    actual fun getTransformManager(): TransformManager = mTransformManager
-    actual fun getLightManager(): LightManager = mLightManager
-    actual fun getRenderableManager(): RenderableManager = mRenderableManager
-    actual fun getEntityManager(): EntityManager = mEntityManager
+    actual val transformManager: TransformManager get() = mTransformManager
+    actual val lightManager: LightManager get() = mLightManager
+    actual val renderableManager: RenderableManager get() = mRenderableManager
+    actual val entityManager: EntityManager get() = mEntityManager
 
     actual fun flushAndWait() = nativeEngine.flushAndWait()
     actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
     actual fun flush() = nativeEngine.flush()
-    actual fun hasUnrecoverableFailure(): Boolean = nativeEngine.hasUnrecoverableFailure()
+    actual val hasUnrecoverableFailure: Boolean get() = nativeEngine.hasUnrecoverableFailure()
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = nativeEngine.isPaused
         set(value) { nativeEngine.isPaused = value }
     actual fun unprotected() = nativeEngine.unprotected()
@@ -288,9 +293,9 @@ actual class Engine public constructor(val nativeEngine: AndroidEngine) {
     actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
 
     actual fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)?) {
-        val androidPriority = com.google.android.filament.Material.CompilerPriorityQueue.values()[priority.ordinal]
-        val androidShadow = AndroidEngine.FeatureState.values()[shadowReceiver.ordinal]
-        val androidSkinning = AndroidEngine.FeatureState.values()[skinning.ordinal]
+        val androidPriority = com.google.android.filament.Material.CompilerPriorityQueue.entries[priority.ordinal]
+        val androidShadow = AndroidEngine.FeatureState.entries[shadowReceiver.ordinal]
+        val androidSkinning = AndroidEngine.FeatureState.entries[skinning.ordinal]
         nativeEngine.compile(androidPriority, material.nativeMaterial, view.nativeView, androidShadow, androidSkinning, null, callback?.let { Runnable { it() } })
     }
 }

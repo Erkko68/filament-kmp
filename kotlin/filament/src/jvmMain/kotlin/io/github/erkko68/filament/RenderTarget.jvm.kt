@@ -3,14 +3,14 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class RenderTarget internal constructor(internal var nativeHandle: MemorySegment?, private val textures: Array<Texture?>) {
+actual class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?, private val textures: Array<Texture?>) {
     actual enum class AttachmentPoint {
         COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH
     }
 
     actual class Builder actual constructor() {
         private val nativeBuilder = FilamentC.FilaRenderTargetBuilder_create()
-        private val textures = arrayOfNulls<Texture>(AttachmentPoint.values().size)
+        private val textures = arrayOfNulls<Texture>(AttachmentPoint.entries.size)
 
         actual fun texture(attachment: AttachmentPoint, texture: Texture?): Builder {
             textures[attachment.ordinal] = texture
@@ -46,7 +46,7 @@ actual class RenderTarget internal constructor(internal var nativeHandle: Memory
         FilamentC.FilaRenderTarget_getMipLevel(nativeHandle, attachment.ordinal).toInt()
 
     actual fun getFace(attachment: AttachmentPoint): Texture.CubemapFace =
-        Texture.CubemapFace.values()[FilamentC.FilaRenderTarget_getFace(nativeHandle, attachment.ordinal)]
+        Texture.CubemapFace.entries[FilamentC.FilaRenderTarget_getFace(nativeHandle, attachment.ordinal)]
 
     actual fun getLayer(attachment: AttachmentPoint): Int =
         FilamentC.FilaRenderTarget_getLayer(nativeHandle, attachment.ordinal)

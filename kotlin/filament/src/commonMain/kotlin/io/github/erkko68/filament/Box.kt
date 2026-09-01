@@ -9,8 +9,6 @@ class Box(
     /** Half extent from the center on all 3 axes */
     val halfExtent: FloatArray = FloatArray(3)
 ) {
-    constructor() : this(FloatArray(3), FloatArray(3))
-
     constructor(centerX: Float, centerY: Float, centerZ: Float, halfExtentX: Float, halfExtentY: Float, halfExtentZ: Float) : this(
         floatArrayOf(centerX, centerY, centerZ),
         floatArrayOf(halfExtentX, halfExtentY, halfExtentZ)
@@ -41,6 +39,15 @@ class Box(
         halfExtent[1] = y
         halfExtent[2] = z
     }
+
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            (other is Box && center.contentEquals(other.center) && halfExtent.contentEquals(other.halfExtent))
+
+    override fun hashCode(): Int = 31 * center.contentHashCode() + halfExtent.contentHashCode()
+
+    override fun toString(): String =
+        "Box(center=${center.contentToString()}, halfExtent=${halfExtent.contentToString()})"
 
     /**
      * Computes the lowest coordinates corner of the box.

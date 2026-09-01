@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.MorphTargetBuffer as AndroidMorphTargetBuffer
 
-actual class MorphTargetBuffer internal constructor(val nativeMorphTargetBuffer: AndroidMorphTargetBuffer) {
+actual class MorphTargetBuffer @InternalFilamentApi constructor(internal val nativeMorphTargetBuffer: AndroidMorphTargetBuffer) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidMorphTargetBuffer.Builder()
 

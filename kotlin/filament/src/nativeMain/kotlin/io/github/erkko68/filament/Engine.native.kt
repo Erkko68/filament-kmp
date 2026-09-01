@@ -6,17 +6,19 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaEngine
 import cnames.structs.FilaEngineBuilder
 
-actual class Engine public constructor(public var nativeHandle: CPointer<FilaEngine>?) {
+actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaEngine>?) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(FilaEngine_getTransformManager(nativeHandle)!!) }
     private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)!!) }
     private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!) }
     private val mEntityManager by lazy { EntityManager(FilaEngine_getEntityManager(nativeHandle)!!) }
+    // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
+    internal var mConfig: Config? = null
 
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
         internal fun toNative(): UInt = ordinal.toUInt()
         companion object {
-            internal fun fromNative(backend: Int): Backend = values()[backend]
+            internal fun fromNative(backend: Int): Backend = entries[backend]
         }
     }
 
@@ -24,7 +26,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
         internal fun toNative(): UInt = ordinal.toUInt()
         companion object {
-            internal fun fromNative(level: UInt): FeatureLevel = values()[level.toInt()]
+            internal fun fromNative(level: UInt): FeatureLevel = entries[level.toInt()]
         }
     }
 
@@ -32,7 +34,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         NONE, INSTANCED, MULTIVIEW;
         internal fun toNative(): UInt = ordinal.toUInt()
         companion object {
-            internal fun fromNative(type: UInt): StereoscopicType = values()[type.toInt()]
+            internal fun fromNative(type: UInt): StereoscopicType = entries[type.toInt()]
         }
     }
 
@@ -40,7 +42,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(priority: Int): GpuContextPriority = values()[priority]
+            internal fun fromNative(priority: Int): GpuContextPriority = entries[priority]
         }
     }
 
@@ -92,6 +94,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
 
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaEngineBuilder_create()!!
+        private var mConfig: Config? = null
 
         actual fun backend(backend: Backend): Builder {
             FilaEngineBuilder_backend(nativeBuilder, backend.toNative())
@@ -111,6 +114,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
                 config.toNative(nativeConfig)
                 FilaEngineBuilder_config(nativeBuilder, nativeConfig.ptr)
             }
+            mConfig = config
             return this
         }
 
@@ -138,6 +142,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
             val handle = FilaEngineBuilder_build(nativeBuilder)
             FilaEngineBuilder_destroy(nativeBuilder)
             return Engine(handle ?: throw IllegalStateException("Failed to build Engine"))
+                .apply { mConfig = this@Builder.mConfig }
         }
     }
 
@@ -145,10 +150,12 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         actual fun create(): Engine = Builder().build()
         actual fun create(backend: Backend): Engine = Builder().backend(backend).build()
         actual fun create(sharedContext: Any): Engine = Builder().sharedContext(sharedContext).build()
-        actual fun getSteadyClockTimeNano(): Long = FilaEngine_getSteadyClockTimeNano().toLong()
+        actual val steadyClockTimeNano: Long get() = FilaEngine_getSteadyClockTimeNano().toLong()
     }
 
-    actual fun isValid(): Boolean = nativeHandle != null
+    actual val isValid: Boolean get() = nativeHandle != null
+    actual override fun close() = destroy()
+
     actual fun destroy() {
         nativeHandle?.let { FilaEngine_destroy(it) }
         nativeHandle = null
@@ -156,15 +163,15 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
 
     actual val backend: Backend get() = Backend.fromNative(FilaEngine_getBackend(nativeHandle))
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilaEngine_getSupportedFeatureLevel(nativeHandle))
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilaEngine_getActiveFeatureLevel(nativeHandle))
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
-    actual val config: Config get() {
-        // C-wrapper doesn't expose getConfig, we'd need to track it or return default
-        return Config()
-    }
-    actual fun getMaxStereoscopicEyes(): Long = FilaEngine_getMaxStereoscopicEyes(nativeHandle).toLong()
+    actual var activeFeatureLevel: FeatureLevel
+        get() = FeatureLevel.fromNative(FilaEngine_getActiveFeatureLevel(nativeHandle))
+        set(value) { FilaEngine_setActiveFeatureLevel(nativeHandle, value.toNative()) }
+
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+        set(value) { FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
+    actual val config: Config get() = mConfig ?: Config()
+    actual val maxStereoscopicEyes: Long get() = FilaEngine_getMaxStereoscopicEyes(nativeHandle).toLong()
 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilaEngine_isValidView(nativeHandle, view.nativeHandle)
@@ -191,6 +198,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
     actual fun destroySwapChain(swapChain: SwapChain) {
         FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
         swapChain.nativeHandle = null
+        swapChain.releaseCallbackStubs()
     }
 
     actual fun createView(): View = View(FilaEngine_createView(nativeHandle))
@@ -279,17 +287,17 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
     }
     actual fun destroyEntity(entity: Entity) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity.toUInt())
 
-    actual fun getTransformManager(): TransformManager = mTransformManager
-    actual fun getLightManager(): LightManager = mLightManager
-    actual fun getRenderableManager(): RenderableManager = mRenderableManager
-    actual fun getEntityManager(): EntityManager = mEntityManager
+    actual val transformManager: TransformManager get() = mTransformManager
+    actual val lightManager: LightManager get() = mLightManager
+    actual val renderableManager: RenderableManager get() = mRenderableManager
+    actual val entityManager: EntityManager get() = mEntityManager
 
     actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000u) }
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())
     actual fun flush() = FilaEngine_flush(nativeHandle)
-    actual fun hasUnrecoverableFailure(): Boolean = FilaEngine_hasUnrecoverableFailure(nativeHandle)
+    actual val hasUnrecoverableFailure: Boolean get() = FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = FilaEngine_isPaused(nativeHandle)
         set(value) { FilaEngine_setPaused(nativeHandle, value) }
     actual fun unprotected() = FilaEngine_unprotected(nativeHandle)
@@ -310,7 +318,7 @@ actual class Engine public constructor(public var nativeHandle: CPointer<FilaEng
         val cCallback: FilaEngineCompileCallback? = if (callback != null) {
             staticCFunction { userData: COpaquePointer? ->
                 val ref = userData!!.asStableRef<() -> Unit>()
-                ref.get().invoke()
+                upcall(ref.get())
                 ref.dispose()
             }
         } else null

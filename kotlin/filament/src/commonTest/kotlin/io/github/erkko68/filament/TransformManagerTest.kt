@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 class TransformManagerTest : FilamentTestFixture() {
     @Test
     fun testTransformManagerLifecycle() {
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         assertNotNull(tm)
 
         val entity = EntityManager.get().create()

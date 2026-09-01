@@ -11,4 +11,6 @@ actual object Filamat {
         ensureFilamentLoaded()
         FilamentC.FilaMaterialBuilder_init()
     }
+
+    actual fun shutdown() = FilamentC.FilaMaterialBuilder_shutdown()
 }

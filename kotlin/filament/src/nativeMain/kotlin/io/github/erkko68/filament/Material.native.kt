@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaMaterial
 
-actual class Material constructor(internal var nativeHandle: CPointer<FilaMaterial>?) {
+actual class Material @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaMaterial>?) {
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
@@ -18,18 +18,16 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
 
-    actual class UserVariantFilterBit {
-        actual companion object {
-            actual val DIRECTIONAL_LIGHTING = 0x01
-            actual val DYNAMIC_LIGHTING = 0x02
-            actual val SHADOW_RECEIVER = 0x04
-            actual val SKINNING = 0x08
-            actual val FOG = 0x10
-            actual val VSM = 0x20
-            actual val SSR = 0x40
-            actual val STE = 0x80
-            actual val ALL = 0xFF
-        }
+    actual object UserVariantFilterBit {
+        actual val DIRECTIONAL_LIGHTING = 0x01
+        actual val DYNAMIC_LIGHTING = 0x02
+        actual val SHADOW_RECEIVER = 0x04
+        actual val SKINNING = 0x08
+        actual val FOG = 0x10
+        actual val VSM = 0x20
+        actual val SSR = 0x40
+        actual val STE = 0x80
+        actual val ALL = 0xFF
     }
 
     actual class Parameter actual constructor(
@@ -102,8 +100,7 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
             val stableRef = StableRef.create(callback)
             val callbackWrapper = staticCFunction { _: CPointer<FilaMaterial>?, user: COpaquePointer? ->
                 val ref = user!!.asStableRef<(() -> Unit)>()
-                val cb = ref.get()
-                cb.invoke()
+                upcall(ref.get())
                 ref.dispose()
             }
             FilaMaterial_compile(nativeHandle, priority.ordinal.toUInt(), variants.toUInt(), null, callbackWrapper, stableRef.asCPointer())
@@ -112,34 +109,34 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
 
     actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
     actual fun createInstance(name: String): MaterialInstance = MaterialInstance(FilaMaterial_createInstanceWithName(nativeHandle, name))
-    actual fun getDefaultInstance(): MaterialInstance = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))
+    actual val defaultInstance: MaterialInstance get() = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))
 
-    actual fun getName(): String = FilaMaterial_getName(nativeHandle)?.toKString() ?: ""
-    actual fun getShading(): Shading = Shading.values()[FilaMaterial_getShading(nativeHandle).toInt()]
-    actual fun getInterpolation(): Interpolation = Interpolation.values()[FilaMaterial_getInterpolation(nativeHandle).toInt()]
-    actual fun getBlendingMode(): BlendingMode = BlendingMode.values()[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
-    actual fun getTransparencyMode(): TransparencyMode = TransparencyMode.values()[FilaMaterial_getTransparencyMode(nativeHandle).toInt()]
-    actual fun getRefractionMode(): RefractionMode = RefractionMode.values()[FilaMaterial_getRefractionMode(nativeHandle)]
-    actual fun getRefractionType(): RefractionType = RefractionType.values()[FilaMaterial_getRefractionType(nativeHandle)]
-    actual fun getReflectionMode(): ReflectionMode = ReflectionMode.values()[FilaMaterial_getReflectionMode(nativeHandle)]
-    actual fun getVertexDomain(): VertexDomain = VertexDomain.values()[FilaMaterial_getVertexDomain(nativeHandle).toInt()]
-    actual fun getCullingMode(): CullingMode = CullingMode.values()[FilaMaterial_getCullingMode(nativeHandle).toInt()]
+    actual val name: String get() = FilaMaterial_getName(nativeHandle)?.toKString() ?: ""
+    actual val shading: Shading get() = Shading.entries[FilaMaterial_getShading(nativeHandle).toInt()]
+    actual val interpolation: Interpolation get() = Interpolation.entries[FilaMaterial_getInterpolation(nativeHandle).toInt()]
+    actual val blendingMode: BlendingMode get() = BlendingMode.entries[FilaMaterial_getBlendingMode(nativeHandle).toInt()]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[FilaMaterial_getTransparencyMode(nativeHandle).toInt()]
+    actual val refractionMode: RefractionMode get() = RefractionMode.entries[FilaMaterial_getRefractionMode(nativeHandle)]
+    actual val refractionType: RefractionType get() = RefractionType.entries[FilaMaterial_getRefractionType(nativeHandle)]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[FilaMaterial_getReflectionMode(nativeHandle)]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[FilaMaterial_getVertexDomain(nativeHandle).toInt()]
+    actual val cullingMode: CullingMode get() = CullingMode.entries[FilaMaterial_getCullingMode(nativeHandle).toInt()]
     
-    actual fun isColorWriteEnabled(): Boolean = FilaMaterial_isColorWriteEnabled(nativeHandle)
-    actual fun isDepthWriteEnabled(): Boolean = FilaMaterial_isDepthWriteEnabled(nativeHandle)
-    actual fun isDepthCullingEnabled(): Boolean = FilaMaterial_isDepthCullingEnabled(nativeHandle)
-    actual fun isDoubleSided(): Boolean = FilaMaterial_isDoubleSided(nativeHandle)
-    actual fun isAlphaToCoverageEnabled(): Boolean = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
+    actual val isColorWriteEnabled: Boolean get() = FilaMaterial_isColorWriteEnabled(nativeHandle)
+    actual val isDepthWriteEnabled: Boolean get() = FilaMaterial_isDepthWriteEnabled(nativeHandle)
+    actual val isDepthCullingEnabled: Boolean get() = FilaMaterial_isDepthCullingEnabled(nativeHandle)
+    actual val isDoubleSided: Boolean get() = FilaMaterial_isDoubleSided(nativeHandle)
+    actual val isAlphaToCoverageEnabled: Boolean get() = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
     
-    actual fun getMaskThreshold(): Float = FilaMaterial_getMaskThreshold(nativeHandle)
-    actual fun getSpecularAntiAliasingVariance(): Float = FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
-    actual fun getSpecularAntiAliasingThreshold(): Float = FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
-    actual fun getFeatureLevel(): Engine.FeatureLevel = Engine.FeatureLevel.entries[FilaMaterial_getFeatureLevel(nativeHandle).toInt()]
+    actual val maskThreshold: Float get() = FilaMaterial_getMaskThreshold(nativeHandle)
+    actual val specularAntiAliasingVariance: Float get() = FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
+    actual val specularAntiAliasingThreshold: Float get() = FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
+    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[FilaMaterial_getFeatureLevel(nativeHandle).toInt()]
     
-    actual fun getParameterCount(): Int = FilaMaterial_getParameterCount(nativeHandle).toInt()
+    actual val parameterCount: Int get() = FilaMaterial_getParameterCount(nativeHandle).toInt()
 
-    actual fun getParameters(): List<Parameter> = memScoped {
-        val count = getParameterCount()
+    actual val parameters: List<Parameter> get() = memScoped {
+        val count = parameterCount
         if (count == 0) return emptyList()
         val infoArray = allocArray<FilaMaterialParameterInfo>(count)
         val actualCount = FilaMaterial_getParameters(nativeHandle, infoArray, count.toUInt())
@@ -147,14 +144,14 @@ actual class Material constructor(internal var nativeHandle: CPointer<FilaMateri
             val info = infoArray[i]
             Parameter(
                 info.name?.toKString() ?: "",
-                Parameter.Type.values()[info.type.toInt()],
-                Parameter.Precision.values()[info.precision.toInt()],
+                materialParameterType(info.type.toInt(), info.isSampler != 0.toUByte(), info.isSubpass != 0.toUByte()),
+                Parameter.Precision.entries[info.precision.toInt()],
                 info.count.toInt()
             )
         }
     }
 
-    actual fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute> {
+    actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
         val bitset = FilaMaterial_getRequiredAttributes(nativeHandle)
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
         VertexBuffer.VertexAttribute.entries.forEach { attr ->

@@ -10,6 +10,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import io.github.erkko68.filament.Entity
 
 class FilamentInstanceTest : GltfioTestFixture() {
     @Test
@@ -18,17 +19,17 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val instance = asset.getInstance()
+        val instance = asset.instance
         assertNotNull(instance)
 
-        assertTrue(instance.getRoot() != 0)
-        val entityCount = instance.getEntityCount()
+        assertTrue(instance.root != 0)
+        val entityCount = instance.entityCount
         assertTrue(entityCount > 0)
-        assertEquals(entityCount, instance.getEntities().size)
+        assertEquals(entityCount, instance.entities.size)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
@@ -41,11 +42,11 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val bbox = asset.getInstance().getBoundingBox()
+        val bbox = asset.instance.boundingBox
         assertNotNull(bbox)
         assertNotNull(bbox.center)
         assertNotNull(bbox.halfExtent)
@@ -61,14 +62,14 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val instance = asset.getInstance()
-        val skinCount = instance.getSkinCount()
+        val instance = asset.instance
+        val skinCount = instance.skinCount
         assertTrue(skinCount >= 0)
-        assertNotNull(instance.getSkinNames())
+        assertNotNull(instance.skinNames)
 
         if (skinCount > 0) {
             instance.getJointCountAt(0)
@@ -87,19 +88,19 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val instance = asset.getInstance()
-        val variantNames = instance.getMaterialVariantNames()
+        val instance = asset.instance
+        val variantNames = instance.materialVariantNames
         assertNotNull(variantNames)
 
         if (variantNames.isNotEmpty()) {
             instance.applyMaterialVariant(0)
         }
 
-        assertNotNull(instance.getMaterialInstances())
+        assertNotNull(instance.materialInstances)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
@@ -112,19 +113,19 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val resourceLoader = ResourceLoader(engine)
         resourceLoader.loadResources(asset)
 
-        val instance = asset.getInstance()
-        val skinCount = instance.getSkinCount()
+        val instance = asset.instance
+        val skinCount = instance.skinCount
         // Fox is a rigged model with at least one skin.
         assertTrue(skinCount > 0)
 
-        val skinNames = instance.getSkinNames()
+        val skinNames = instance.skinNames
         assertEquals(skinCount, skinNames.size)
 
         val jointCount = instance.getJointCountAt(0)
@@ -149,12 +150,12 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val instance = asset.getInstance()
-        val variantNames = instance.getMaterialVariantNames()
+        val instance = asset.instance
+        val variantNames = instance.materialVariantNames
         // The synthetic asset declares two KHR_materials_variants.
         assertEquals(2, variantNames.size)
 
@@ -172,22 +173,22 @@ class FilamentInstanceTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val instance = asset.getInstance()
-        assertNotNull(instance.getAsset())
+        val instance = asset.instance
+        assertNotNull(instance.asset)
 
         // gltfio creates the animator during resource load, so it does not exist yet — every
         // target but Android can see that and says so instead of handing back a broken animator.
         if (TestEnv.target != TestTarget.ANDROID) {
-            assertFailsWith<IllegalStateException> { instance.getAnimator() }
+            assertFailsWith<IllegalStateException> { instance.animator }
         }
 
         val resourceLoader = ResourceLoader(engine)
         assertTrue(resourceLoader.loadResources(asset))
-        assertNotNull(instance.getAnimator())
+        assertNotNull(instance.animator)
 
         resourceLoader.destroy()
         loader.destroyAsset(asset)

@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import com.google.android.filament.VertexBuffer as AndroidVertexBuffer
 import java.nio.Buffer
 
-actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVertexBuffer) {
+actual class VertexBuffer @InternalFilamentApi constructor(internal val nativeVertexBuffer: AndroidVertexBuffer) {
     actual enum class VertexAttribute {
         POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
         CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7
@@ -36,15 +36,15 @@ actual class VertexBuffer internal constructor(val nativeVertexBuffer: AndroidVe
         }
         actual fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int, byteStride: Int): Builder {
             nativeBuilder.attribute(
-                AndroidVertexBuffer.VertexAttribute.values()[attribute.ordinal],
+                AndroidVertexBuffer.VertexAttribute.entries[attribute.ordinal],
                 bufferIndex,
-                AndroidVertexBuffer.AttributeType.values()[attributeType.ordinal],
+                AndroidVertexBuffer.AttributeType.entries[attributeType.ordinal],
                 byteOffset, byteStride
             )
             return this
         }
         actual fun normalized(attribute: VertexAttribute, enabled: Boolean): Builder {
-            nativeBuilder.normalized(AndroidVertexBuffer.VertexAttribute.values()[attribute.ordinal], enabled)
+            nativeBuilder.normalized(AndroidVertexBuffer.VertexAttribute.entries[attribute.ordinal], enabled)
             return this
         }
         actual fun build(engine: Engine): VertexBuffer = VertexBuffer(nativeBuilder.build(engine.nativeEngine))

@@ -147,31 +147,29 @@ expect class Material {
      * saves compilation time and memory. For example, if your app doesn't use stereoscopic rendering,
      * clear the STE bit.
      */
-    class UserVariantFilterBit {
-        companion object {
-            /** Variant for directional lighting */
-            val DIRECTIONAL_LIGHTING: Int
-            /**
-             * Variant for dynamic (local) lighting. Since 1.76.0 dynamic lighting is a
-             * specialization constant, so this no longer shrinks offline `.filamat` blobs —
-             * it only prunes runtime pipeline compilations.
-             */
-            val DYNAMIC_LIGHTING: Int
-            /** Variant for shadow-receiving objects */
-            val SHADOW_RECEIVER: Int
-            /** Variant for skinned/skeletal animation */
-            val SKINNING: Int
-            /** Variant for fog effects */
-            val FOG: Int
-            /** Variant for Variance Shadow Maps */
-            val VSM: Int
-            /** Variant for Screen-Space Reflections */
-            val SSR: Int
-            /** Variant for stereoscopic rendering */
-            val STE: Int
-            /** All variants combined */
-            val ALL: Int
-        }
+    object UserVariantFilterBit {
+        /** Variant for directional lighting */
+        val DIRECTIONAL_LIGHTING: Int
+        /**
+         * Variant for dynamic (local) lighting. Since 1.76.0 dynamic lighting is a
+         * specialization constant, so this no longer shrinks offline `.filamat` blobs —
+         * it only prunes runtime pipeline compilations.
+         */
+        val DYNAMIC_LIGHTING: Int
+        /** Variant for shadow-receiving objects */
+        val SHADOW_RECEIVER: Int
+        /** Variant for skinned/skeletal animation */
+        val SKINNING: Int
+        /** Variant for fog effects */
+        val FOG: Int
+        /** Variant for Variance Shadow Maps */
+        val VSM: Int
+        /** Variant for Screen-Space Reflections */
+        val SSR: Int
+        /** Variant for stereoscopic rendering */
+        val STE: Int
+        /** All variants combined */
+        val ALL: Int
     }
 
     /**
@@ -351,53 +349,53 @@ expect class Material {
      *
      * @return The default MaterialInstance.
      */
-    fun getDefaultInstance(): MaterialInstance
+    val defaultInstance: MaterialInstance
 
     /**
      * Get the name of this material.
      *
      * @return Material name string (from the matc-compiled blob).
      */
-    fun getName(): String
+    val name: String
 
     /** Get the shading model. */
-    fun getShading(): Shading
+    val shading: Shading
 
     /** Get the vertex attribute interpolation mode. */
-    fun getInterpolation(): Interpolation
+    val interpolation: Interpolation
 
     /** Get the blending mode. */
-    fun getBlendingMode(): BlendingMode
+    val blendingMode: BlendingMode
 
     /** Get the transparency rendering mode (only relevant for TRANSPARENT/FADE blending). */
-    fun getTransparencyMode(): TransparencyMode
+    val transparencyMode: TransparencyMode
 
     /** Get the refraction mode. */
-    fun getRefractionMode(): RefractionMode
+    val refractionMode: RefractionMode
 
     /** Get the refraction surface type. */
-    fun getRefractionType(): RefractionType
+    val refractionType: RefractionType
 
     /** Get the reflection mode. */
-    fun getReflectionMode(): ReflectionMode
+    val reflectionMode: ReflectionMode
 
     /** Get the vertex coordinate space domain. */
-    fun getVertexDomain(): VertexDomain
+    val vertexDomain: VertexDomain
 
     /** Get the face culling mode. */
-    fun getCullingMode(): CullingMode
+    val cullingMode: CullingMode
 
     /** Check if color writes are enabled. Default is true. */
-    fun isColorWriteEnabled(): Boolean
+    val isColorWriteEnabled: Boolean
 
     /** Check if depth writes are enabled. Default is true. */
-    fun isDepthWriteEnabled(): Boolean
+    val isDepthWriteEnabled: Boolean
 
     /** Check if depth testing is enabled. Default is true. */
-    fun isDepthCullingEnabled(): Boolean
+    val isDepthCullingEnabled: Boolean
 
     /** Check if this material renders both front and back faces (double-sided). Default is false (back culling). */
-    fun isDoubleSided(): Boolean
+    val isDoubleSided: Boolean
 
     /**
      * Check if alpha-to-coverage is enabled.
@@ -405,7 +403,7 @@ expect class Material {
      * Alpha-to-coverage converts alpha values to a coverage mask for MSAA, improving
      * transparency rendering quality with MSAA.
      */
-    fun isAlphaToCoverageEnabled(): Boolean
+    val isAlphaToCoverageEnabled: Boolean
 
     /**
      * Get the alpha threshold for MASKED blending mode.
@@ -414,7 +412,7 @@ expect class Material {
      *
      * @return Threshold value in [0, 1].
      */
-    fun getMaskThreshold(): Float
+    val maskThreshold: Float
 
     /**
      * Get the specular anti-aliasing variance.
@@ -423,7 +421,7 @@ expect class Material {
      *
      * @return Variance in [0, 1].
      */
-    fun getSpecularAntiAliasingVariance(): Float
+    val specularAntiAliasingVariance: Float
 
     /**
      * Get the specular anti-aliasing threshold.
@@ -432,24 +430,24 @@ expect class Material {
      *
      * @return Threshold in [0, 1].
      */
-    fun getSpecularAntiAliasingThreshold(): Float
+    val specularAntiAliasingThreshold: Float
 
     /** Get the minimum required feature level for this material. */
-    fun getFeatureLevel(): Engine.FeatureLevel
+    val featureLevel: Engine.FeatureLevel
 
     /**
      * Get the number of parameters declared by this material.
      *
      * @return Parameter count (0 if the material has no parameters).
      */
-    fun getParameterCount(): Int
+    val parameterCount: Int
 
     /**
      * Get metadata about all parameters declared by this material.
      *
      * @return List of Parameter objects describing each parameter.
      */
-    fun getParameters(): List<Parameter>
+    val parameters: List<Parameter>
 
     /**
      * Check whether a parameter with the given name exists.
@@ -545,5 +543,20 @@ expect class Material {
      *
      * @return Set of required VertexAttribute values (e.g., POSITION, TANGENTS, UV0, COLOR, etc.).
      */
-    fun getRequiredAttributes(): Set<VertexBuffer.VertexAttribute>
+    val requiredAttributes: Set<VertexBuffer.VertexAttribute>
+}
+
+// ParameterInfo packs a union: `type` holds a UniformType, a SamplerType or a SubpassType,
+// selected by isSampler/isSubpass. Parameter.Type flattens the three enums in that order, so
+// the sampler range is just an offset. The coerces drop UniformType.STRUCT and
+// SamplerType.SAMPLER_CUBEMAP_ARRAY, which Parameter.Type does not model.
+internal fun materialParameterType(raw: Int, isSampler: Boolean, isSubpass: Boolean): Material.Parameter.Type {
+    val entries = Material.Parameter.Type.entries
+    val first = Material.Parameter.Type.SAMPLER_2D.ordinal
+    val last = Material.Parameter.Type.SAMPLER_3D.ordinal
+    return when {
+        isSubpass -> Material.Parameter.Type.SUBPASS_INPUT
+        isSampler -> entries[(first + raw).coerceIn(first, last)]
+        else -> entries[raw.coerceIn(0, Material.Parameter.Type.MAT4.ordinal)]
+    }
 }

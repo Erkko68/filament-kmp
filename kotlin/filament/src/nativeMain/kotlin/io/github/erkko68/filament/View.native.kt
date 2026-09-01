@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaView
 
-actual class View internal constructor(internal var nativeHandle: CPointer<FilaView>?) {
+actual class View @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaView>?) {
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
@@ -226,7 +226,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         set(value) { FilaView_setViewport(nativeHandle, value.left, value.bottom, value.width.toUInt(), value.height.toUInt()) }
 
     actual var blendMode: BlendMode
-        get() = BlendMode.values()[FilaView_getBlendMode(nativeHandle).toInt()]
+        get() = BlendMode.entries[FilaView_getBlendMode(nativeHandle).toInt()]
         set(value) { FilaView_setBlendMode(nativeHandle, value.ordinal.toUInt()) }
 
     actual fun setVisibleLayers(select: Int, values: Int) { FilaView_setVisibleLayers(nativeHandle, select.toUByte(), values.toUByte()) }
@@ -234,14 +234,14 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         val mask = (1 shl layer).toUByte()
         FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0u)
     }
-    actual fun getVisibleLayers(): Int = FilaView_getVisibleLayers(nativeHandle).toInt()
+    actual val visibleLayers: Int get() = FilaView_getVisibleLayers(nativeHandle).toInt()
 
     actual var isPostProcessingEnabled: Boolean
         get() = FilaView_isPostProcessingEnabled(nativeHandle)
         set(value) { FilaView_setPostProcessingEnabled(nativeHandle, value) }
 
     actual var dithering: Dithering
-        get() = Dithering.values()[FilaView_getDithering(nativeHandle).toInt()]
+        get() = Dithering.entries[FilaView_getDithering(nativeHandle).toInt()]
         set(value) { FilaView_setDithering(nativeHandle, value.ordinal.toUInt()) }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
@@ -272,7 +272,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
             }
         }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray = memScoped {
+    actual val lastDynamicResolutionScale: FloatArray get() = memScoped {
         val out = allocArray<FloatVar>(2)
         FilaView_getLastDynamicResolutionScale(nativeHandle, out)
         floatArrayOf(out[0], out[1])
@@ -723,8 +723,8 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         }
         return result
     }
-    actual val fogEntity: Int get() = FilaView_getFogEntity(nativeHandle).toInt()
-    actual fun getVisibleRenderableCount(): Int = FilaView_getVisibleRenderableCount(nativeHandle)
+    actual val fogEntity: Entity get() = FilaView_getFogEntity(nativeHandle).toInt()
+    actual val visibleRenderableCount: Int get() = FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
@@ -732,7 +732,7 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
     }
 
     actual var antiAliasing: AntiAliasing
-        get() = AntiAliasing.values()[FilaView_getAntiAliasing(nativeHandle).toInt()]
+        get() = AntiAliasing.entries[FilaView_getAntiAliasing(nativeHandle).toInt()]
         set(value) { FilaView_setAntiAliasing(nativeHandle, value.ordinal.toUInt()) }
 
     actual var colorGrading: ColorGrading?
@@ -746,12 +746,14 @@ actual class View internal constructor(internal var nativeHandle: CPointer<FilaV
         val stableRef = kotlinx.cinterop.StableRef.create(callback)
         val cCallback = staticCFunction { result: CPointer<FilaViewPickingQueryResult>?, user: COpaquePointer? ->
             val ref = user!!.asStableRef<(PickingQueryResult) -> Unit>()
-            result?.pointed?.let { r ->
-                ref.get().invoke(PickingQueryResult(
-                    r.renderable.toInt(),
-                    r.depth,
-                    floatArrayOf(r.fragCoords[0], r.fragCoords[1], r.fragCoords[2])
-                ))
+            upcall {
+                result?.pointed?.let { r ->
+                    ref.get().invoke(PickingQueryResult(
+                        r.renderable.toInt(),
+                        r.depth,
+                        floatArrayOf(r.fragCoords[0], r.fragCoords[1], r.fragCoords[2])
+                    ))
+                }
             }
             ref.dispose()
         }

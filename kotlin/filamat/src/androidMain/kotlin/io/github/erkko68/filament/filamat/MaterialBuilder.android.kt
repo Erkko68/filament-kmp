@@ -90,11 +90,6 @@ actual class MaterialBuilder actual constructor() {
         NONE, PREPROCESSOR, SIZE, PERFORMANCE
     }
 
-    actual companion object {
-        actual fun init() = Filamat.init()
-        actual fun shutdown() = AndroidMaterialBuilder.shutdown()
-    }
-
     actual fun build(): MaterialPackage {
         val pkg = builder.build()
         return MaterialPackage(pkg)
@@ -106,57 +101,57 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual fun materialDomain(domain: MaterialDomain): MaterialBuilder {
-        builder.materialDomain(AndroidMaterialBuilder.MaterialDomain.values()[domain.ordinal])
+        builder.materialDomain(AndroidMaterialBuilder.MaterialDomain.entries[domain.ordinal])
         return this
     }
 
     actual fun shading(shading: Shading): MaterialBuilder {
-        builder.shading(AndroidMaterialBuilder.Shading.values()[shading.ordinal])
+        builder.shading(AndroidMaterialBuilder.Shading.entries[shading.ordinal])
         return this
     }
 
     actual fun interpolation(interpolation: Interpolation): MaterialBuilder {
-        builder.interpolation(AndroidMaterialBuilder.Interpolation.values()[interpolation.ordinal])
+        builder.interpolation(AndroidMaterialBuilder.Interpolation.entries[interpolation.ordinal])
         return this
     }
 
     actual fun uniformParameter(type: UniformType, name: String): MaterialBuilder {
-        builder.uniformParameter(AndroidMaterialBuilder.UniformType.values()[type.ordinal], name)
+        builder.uniformParameter(AndroidMaterialBuilder.UniformType.entries[type.ordinal], name)
         return this
     }
 
     actual fun uniformParameter(type: UniformType, precision: ParameterPrecision, name: String): MaterialBuilder {
-        builder.uniformParameter(AndroidMaterialBuilder.UniformType.values()[type.ordinal], AndroidMaterialBuilder.ParameterPrecision.values()[precision.ordinal], name)
+        builder.uniformParameter(AndroidMaterialBuilder.UniformType.entries[type.ordinal], AndroidMaterialBuilder.ParameterPrecision.entries[precision.ordinal], name)
         return this
     }
 
     actual fun uniformParameterArray(type: UniformType, size: Int, name: String): MaterialBuilder {
-        builder.uniformParameterArray(AndroidMaterialBuilder.UniformType.values()[type.ordinal], size, name)
+        builder.uniformParameterArray(AndroidMaterialBuilder.UniformType.entries[type.ordinal], size, name)
         return this
     }
 
     actual fun uniformParameterArray(type: UniformType, size: Int, precision: ParameterPrecision, name: String): MaterialBuilder {
-        builder.uniformParameterArray(AndroidMaterialBuilder.UniformType.values()[type.ordinal], size, AndroidMaterialBuilder.ParameterPrecision.values()[precision.ordinal], name)
+        builder.uniformParameterArray(AndroidMaterialBuilder.UniformType.entries[type.ordinal], size, AndroidMaterialBuilder.ParameterPrecision.entries[precision.ordinal], name)
         return this
     }
 
     actual fun samplerParameter(type: SamplerType, format: SamplerFormat, precision: ParameterPrecision, name: String): MaterialBuilder {
         builder.samplerParameter(
-            AndroidMaterialBuilder.SamplerType.values()[type.ordinal],
-            AndroidMaterialBuilder.SamplerFormat.values()[format.ordinal],
-            AndroidMaterialBuilder.ParameterPrecision.values()[precision.ordinal],
+            AndroidMaterialBuilder.SamplerType.entries[type.ordinal],
+            AndroidMaterialBuilder.SamplerFormat.entries[format.ordinal],
+            AndroidMaterialBuilder.ParameterPrecision.entries[precision.ordinal],
             name
         )
         return this
     }
 
     actual fun variable(variable: Variable, name: String): MaterialBuilder {
-        builder.variable(AndroidMaterialBuilder.Variable.values()[variable.ordinal], name)
+        builder.variable(AndroidMaterialBuilder.Variable.entries[variable.ordinal], name)
         return this
     }
 
     actual fun require(attribute: VertexAttribute): MaterialBuilder {
-        builder.require(AndroidMaterialBuilder.VertexAttribute.values()[attribute.ordinal])
+        builder.require(AndroidMaterialBuilder.VertexAttribute.entries[attribute.ordinal])
         return this
     }
 
@@ -171,22 +166,22 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual fun blending(mode: BlendingMode): MaterialBuilder {
-        builder.blending(AndroidMaterialBuilder.BlendingMode.values()[mode.ordinal])
+        builder.blending(AndroidMaterialBuilder.BlendingMode.entries[mode.ordinal])
         return this
     }
 
     actual fun postLightingBlending(mode: BlendingMode): MaterialBuilder {
-        builder.postLightingBlending(AndroidMaterialBuilder.BlendingMode.values()[mode.ordinal])
+        builder.postLightingBlending(AndroidMaterialBuilder.BlendingMode.entries[mode.ordinal])
         return this
     }
 
     actual fun vertexDomain(vertexDomain: VertexDomain): MaterialBuilder {
-        builder.vertexDomain(AndroidMaterialBuilder.VertexDomain.values()[vertexDomain.ordinal])
+        builder.vertexDomain(AndroidMaterialBuilder.VertexDomain.entries[vertexDomain.ordinal])
         return this
     }
 
     actual fun culling(mode: CullingMode): MaterialBuilder {
-        builder.culling(AndroidMaterialBuilder.CullingMode.values()[mode.ordinal])
+        builder.culling(AndroidMaterialBuilder.CullingMode.entries[mode.ordinal])
         return this
     }
 
@@ -251,17 +246,17 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual fun refractionMode(mode: RefractionMode): MaterialBuilder {
-        builder.refractionMode(AndroidMaterialBuilder.RefractionMode.values()[mode.ordinal])
+        builder.refractionMode(AndroidMaterialBuilder.RefractionMode.entries[mode.ordinal])
         return this
     }
 
     actual fun reflectionMode(mode: ReflectionMode): MaterialBuilder {
-        builder.reflectionMode(AndroidMaterialBuilder.ReflectionMode.values()[mode.ordinal])
+        builder.reflectionMode(AndroidMaterialBuilder.ReflectionMode.entries[mode.ordinal])
         return this
     }
 
     actual fun refractionType(type: RefractionType): MaterialBuilder {
-        builder.refractionType(AndroidMaterialBuilder.RefractionType.values()[type.ordinal])
+        builder.refractionType(AndroidMaterialBuilder.RefractionType.entries[type.ordinal])
         return this
     }
 
@@ -286,27 +281,27 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual fun specularAmbientOcclusion(specularAO: SpecularAmbientOcclusion): MaterialBuilder {
-        builder.specularAmbientOcclusion(AndroidMaterialBuilder.SpecularAmbientOcclusion.values()[specularAO.ordinal])
+        builder.specularAmbientOcclusion(AndroidMaterialBuilder.SpecularAmbientOcclusion.entries[specularAO.ordinal])
         return this
     }
 
     actual fun transparencyMode(mode: TransparencyMode): MaterialBuilder {
-        builder.transparencyMode(AndroidMaterialBuilder.TransparencyMode.values()[mode.ordinal])
+        builder.transparencyMode(AndroidMaterialBuilder.TransparencyMode.entries[mode.ordinal])
         return this
     }
 
     actual fun platform(platform: Platform): MaterialBuilder {
-        builder.platform(AndroidMaterialBuilder.Platform.values()[platform.ordinal])
+        builder.platform(AndroidMaterialBuilder.Platform.entries[platform.ordinal])
         return this
     }
 
     actual fun targetApi(api: TargetApi): MaterialBuilder {
-        builder.targetApi(AndroidMaterialBuilder.TargetApi.values()[api.ordinal])
+        builder.targetApi(AndroidMaterialBuilder.TargetApi.entries[api.ordinal])
         return this
     }
 
     actual fun optimization(optimization: Optimization): MaterialBuilder {
-        builder.optimization(AndroidMaterialBuilder.Optimization.values()[optimization.ordinal])
+        builder.optimization(AndroidMaterialBuilder.Optimization.entries[optimization.ordinal])
         return this
     }
 

@@ -4,7 +4,7 @@ import io.github.erkko68.filament.web.interop.toJsArray
 
 import io.github.erkko68.filament.web.Scene as JSScene
 
-actual class Scene(internal val jsScene: JSScene) {
+actual class Scene @InternalFilamentApi constructor(internal val jsScene: JSScene) {
     // Cached for wrapper identity, as on the other platforms; the engine-side getters back
     // the case where the scene was populated outside this wrapper.
     private var _skybox: Skybox? = null
@@ -69,12 +69,8 @@ actual class Scene(internal val jsScene: JSScene) {
         return jsScene.hasEntity(EntityManager.jsEntityOf(entity))
     }
 
-    actual fun getEntities(): IntArray {
-        return _entities.toIntArray()
-    }
-
-    actual fun getEntities(outArray: IntArray?): IntArray {
-        val result = outArray ?: IntArray(_entities.size)
+    actual fun getEntities(out: IntArray?): IntArray {
+        val result = out ?: IntArray(_entities.size)
         _entities.toIntArray().copyInto(result)
         return result
     }

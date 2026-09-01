@@ -3,10 +3,11 @@ package io.github.erkko68.filament.filamat
 import kotlinx.cinterop.*
 import cnames.structs.FilaPackage
 import io.github.erkko68.filament.filamat.cinterop.*
+import io.github.erkko68.filament.InternalFilamentApi
 
 @OptIn(ExperimentalForeignApi::class)
-actual class MaterialPackage internal constructor(private val nativeHandle: CPointer<FilaPackage>?) {
-    actual fun getBuffer(): ByteArray {
+actual class MaterialPackage @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaPackage>?) {
+    actual val buffer: ByteArray get() {
         val size = FilaPackage_getSize(nativeHandle).toInt()
         val data = FilaPackage_getData(nativeHandle)
         if (data == null || size <= 0) return ByteArray(0)
@@ -20,7 +21,7 @@ actual class MaterialPackage internal constructor(private val nativeHandle: CPoi
         return bytes
     }
 
-    actual fun isValid(): Boolean = FilaPackage_isValid(nativeHandle)
+    actual val isValid: Boolean get() = FilaPackage_isValid(nativeHandle)
 
     protected fun finalize() {
         FilaPackage_destroy(nativeHandle)

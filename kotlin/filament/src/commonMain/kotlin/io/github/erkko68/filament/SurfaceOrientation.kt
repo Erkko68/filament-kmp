@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 /**
  * The surface orientation helper can be used to populate Filament-style TANGENTS buffers.
  */
-expect class SurfaceOrientation {
+expect class SurfaceOrientation : AutoCloseable {
     /**
      * The Builder is used to construct an immutable surface orientation helper.
      *
@@ -144,4 +144,7 @@ expect class SurfaceOrientation {
      * Destroys this SurfaceOrientation instance and releases associated resources.
      */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 }

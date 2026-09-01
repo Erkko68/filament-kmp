@@ -26,7 +26,7 @@ open class RenderingTestFixture {
         if (!TestEnv.gpuBackendAvailable) return
         engine = try {
             Engine.create(Engine.Backend.DEFAULT)
-                .takeIf { it.isValid() }
+                .takeIf { it.isValid }
                 // DEFAULT can silently resolve to NOOP when the real backend fails to
                 // initialize (e.g. an iOS simulator session without Metal). A NOOP engine
                 // is "valid" but rasterizes nothing, so Tier C frame assertions would

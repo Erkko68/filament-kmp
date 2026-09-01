@@ -3,6 +3,7 @@ package io.github.erkko68.filament.gltfio
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.VertexBuffer
 
 /**
  * MaterialProvider supplies materials to glTF assets during loading.
@@ -14,7 +15,7 @@ import io.github.erkko68.filament.PlatformGap
  * @see UbershaderProvider
  * @see AssetLoader
  */
-expect interface MaterialProvider {
+expect interface MaterialProvider : AutoCloseable {
     /**
      * Creates or fetches a compiled Filament material, then creates an instance from it.
      *
@@ -29,13 +30,13 @@ expect interface MaterialProvider {
     fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String? = null): io.github.erkko68.filament.Material?
 
     /** Gets the provider's cache of compiled materials (weak references). */
-    fun getMaterials(): Array<io.github.erkko68.filament.Material>
+    val materials: List<io.github.erkko68.filament.Material>
 
     /**
      * Returns true if the given vertex attribute must be present. Some providers (e.g.
      * ubershader) require dummy attribute values when the glTF model does not provide them.
      */
-    fun needsDummyData(attrib: Int): Boolean
+    fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
 
     /**
      * Destroys all cached materials. NOT called automatically on [destroy], which lets clients
@@ -45,6 +46,9 @@ expect interface MaterialProvider {
 
     /** Frees the provider itself (cached materials survive unless [destroyMaterials] was called). */
     fun destroy()
+
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
 }
 
 /**
@@ -67,8 +71,9 @@ expect class UbershaderProvider : MaterialProvider {
 
     override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
     override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
-    override fun getMaterials(): Array<io.github.erkko68.filament.Material>
-    override fun needsDummyData(attrib: Int): Boolean
+    override val materials: List<io.github.erkko68.filament.Material>
+    override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     override fun destroyMaterials()
     override fun destroy()
+    override fun close()
 }

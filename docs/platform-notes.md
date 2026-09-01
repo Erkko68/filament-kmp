@@ -25,6 +25,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 - Uses the official `com.google.android.filament` Maven library — same code path Google uses internally.
 - `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
 - Minimum `compileSdk`: **34**. Minimum `minSdk`: **24**.
+- `SwapChain.setFrameScheduledCallback(null)` stops your callback firing, but the engine keeps a no-op one installed. Upstream's `nSetFrameScheduledCallback` always builds a `JniCallback` and both Java overloads are `@NonNull`, so there is no way to hand it the empty callback Filament unsets on. `isFrameScheduledCallbackSet` answers from what you set through this wrapper, so it reads the same as on every other platform — only `com.google.android.filament.SwapChain.isFrameScheduledCallbackSet()`, read directly, still reports `true`.
 
 ### Screen rotation and configuration changes
 
@@ -112,7 +113,13 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 | `RenderableManager.setMorphTargetBufferOffsetAt` | Silent no-op | **None.** Callable on a `gltfio`-loaded renderable, but the offset cannot be changed on web — author the glTF so each primitive reads from the offset it needs |
 | `Stream` | Throws on construction | External/native video streams have no web equivalent |
 | `Engine.isValidStream` | Throws | `Stream` itself has no web equivalent |
-| `Engine.paused` | Tracked locally only; does not pause rendering | Stop your own frame loop instead |
+| `Engine.isValid` | Returns `true` unconditionally — `filament.js` binds no engine-level validity check, only the `isValidX` family for resources | — |
+| `Engine.isPaused` | Tracked locally only; does not pause rendering | Stop your own frame loop instead |
+| `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
+| `Renderer.displayInfo`, `Renderer.frameRateOptions` | Tracked locally only — `setDisplayInfo`/`setFrameRateOptions` are not bound in `filament.js`; frame pacing is managed by the browser | — |
+| `SwapChain.setFrameCompletedCallback` | Silent no-op — `filament.js` does not bind it, and binding it would not help: `OpenGLDriver::setFrameCompletedCallback` is an empty function, so it fires on Metal only (the same is true on Android and on Vulkan/GL desktop) | — |
+| `SwapChain.setFrameScheduledCallback` | Tracked locally only — `filament.js` binds no frame-scheduled callback, so it never fires; `isFrameScheduledCallbackSet` reports what you set | — |
+| `SwapChain.isFrameRateChangeSupported` | Returns false — display frame rate switching is not supported on web; pacing is browser-managed | — |
 | `SurfaceOrientation.Builder.tangents` | Silent no-op | Provide normals/uvs and let the builder derive the orientation |
 
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.

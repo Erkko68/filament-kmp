@@ -4,8 +4,9 @@ package io.github.erkko68.filament.gltfio
 import kotlinx.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaAnimator
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Animator(public var nativeHandle: CPointer<FilaAnimator>?) {
+actual class Animator @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaAnimator>?) {
     actual fun applyAnimation(index: Int, time: Float) {
         FilaAnimator_applyAnimation(nativeHandle, index.toULong(), time)
     }
@@ -22,7 +23,7 @@ actual class Animator(public var nativeHandle: CPointer<FilaAnimator>?) {
         FilaAnimator_resetBoneMatrices(nativeHandle)
     }
 
-    actual fun getAnimationCount(): Int = FilaAnimator_getAnimationCount(nativeHandle).toInt()
+    actual val animationCount: Int get() = FilaAnimator_getAnimationCount(nativeHandle).toInt()
 
     actual fun getAnimationDuration(index: Int): Float = FilaAnimator_getAnimationDuration(nativeHandle, index.toULong())
 

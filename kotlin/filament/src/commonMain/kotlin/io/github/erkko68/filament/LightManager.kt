@@ -406,7 +406,7 @@ expect class LightManager {
      * @return Number of light components
      * @throws UnsupportedOperationException on JS — getComponentCount is unbound in the web wrapper.
      */
-    fun getComponentCount(): Int
+    val componentCount: Int
 
     /**
      * Returns whether a particular entity has a light component.
@@ -451,7 +451,7 @@ expect class LightManager {
      * @param out FloatArray of at least 3 elements [x, y, z]
      * @return The out array
      */
-    fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray
+    fun getDirection(instance: EntityInstance, out: FloatArray? = null): FloatArray
 
     /**
      * Dynamically update the light's position in world space.
@@ -469,7 +469,7 @@ expect class LightManager {
      * @param out FloatArray of at least 3 elements [x, y, z]
      * @return The out array
      */
-    fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray
+    fun getPosition(instance: EntityInstance, out: FloatArray? = null): FloatArray
 
     /**
      * Dynamically update the light's color in linear sRGB.
@@ -486,7 +486,7 @@ expect class LightManager {
      * @param out FloatArray of at least 3 elements [r, g, b]
      * @return The out array
      */
-    fun getColor(instance: EntityInstance, out: FloatArray): FloatArray
+    fun getColor(instance: EntityInstance, out: FloatArray? = null): FloatArray
 
     /**
      * Dynamically update the light's intensity.

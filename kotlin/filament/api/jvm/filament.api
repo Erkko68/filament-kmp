@@ -3,12 +3,15 @@ public final class io/github/erkko68/filament/Box {
 	public fun <init> (FFFFFF)V
 	public fun <init> ([F[F)V
 	public synthetic fun <init> ([F[FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCenter ()[F
 	public final fun getHalfExtent ()[F
 	public final fun getMax ()[F
 	public final fun getMin ()[F
+	public fun hashCode ()I
 	public final fun setCenter (FFF)V
 	public final fun setHalfExtent (FFF)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/github/erkko68/filament/BufferExtensionsKt {
@@ -18,6 +21,7 @@ public final class io/github/erkko68/filament/BufferExtensionsKt {
 }
 
 public final class io/github/erkko68/filament/BufferObject {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getByteCount ()I
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[B)V
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[BII)V
@@ -42,6 +46,7 @@ public final class io/github/erkko68/filament/BufferObject$Builder {
 }
 
 public final class io/github/erkko68/filament/Camera {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;I)V
 	public final fun getAperture ()F
 	public final fun getCullingFar ()F
 	public final fun getCullingProjectionMatrix ([D)[D
@@ -109,6 +114,7 @@ public final class io/github/erkko68/filament/Camera$Projection : java/lang/Enum
 }
 
 public final class io/github/erkko68/filament/ColorGrading {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/ColorGrading$Builder {
@@ -189,9 +195,10 @@ public final class io/github/erkko68/filament/Colors$RgbaType : java/lang/Enum {
 	public static fun values ()[Lio/github/erkko68/filament/Colors$RgbaType;
 }
 
-public final class io/github/erkko68/filament/Engine {
+public final class io/github/erkko68/filament/Engine : java/lang/AutoCloseable {
 	public static final field Companion Lio/github/erkko68/filament/Engine$Companion;
 	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun close ()V
 	public final fun compile (Lio/github/erkko68/filament/Engine$CompilerPriorityQueue;Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/View;Lio/github/erkko68/filament/Engine$FeatureState;Lio/github/erkko68/filament/Engine$FeatureState;Lkotlin/jvm/functions/Function0;)V
 	public static synthetic fun compile$default (Lio/github/erkko68/filament/Engine;Lio/github/erkko68/filament/Engine$CompilerPriorityQueue;Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/View;Lio/github/erkko68/filament/Engine$FeatureState;Lio/github/erkko68/filament/Engine$FeatureState;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun createCamera ()Lio/github/erkko68/filament/Camera;
@@ -234,16 +241,15 @@ public final class io/github/erkko68/filament/Engine {
 	public final fun getConfig ()Lio/github/erkko68/filament/Engine$Config;
 	public final fun getEntityManager ()Lio/github/erkko68/filament/EntityManager;
 	public final fun getFeatureFlag (Ljava/lang/String;)Z
+	public final fun getHasUnrecoverableFailure ()Z
 	public final fun getLightManager ()Lio/github/erkko68/filament/LightManager;
 	public final fun getMaxStereoscopicEyes ()J
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
-	public final fun getPaused ()Z
 	public final fun getRenderableManager ()Lio/github/erkko68/filament/RenderableManager;
 	public final fun getSupportedFeatureLevel ()Lio/github/erkko68/filament/Engine$FeatureLevel;
 	public final fun getTransformManager ()Lio/github/erkko68/filament/TransformManager;
 	public final fun hasFeatureFlag (Ljava/lang/String;)Z
-	public final fun hasUnrecoverableFailure ()Z
 	public final fun isAutomaticInstancingEnabled ()Z
+	public final fun isPaused ()Z
 	public final fun isValid ()Z
 	public final fun isValidColorGrading (Lio/github/erkko68/filament/ColorGrading;)Z
 	public final fun isValidExpensiveMaterialInstance (Lio/github/erkko68/filament/MaterialInstance;)Z
@@ -263,10 +269,9 @@ public final class io/github/erkko68/filament/Engine {
 	public final fun isValidTexture (Lio/github/erkko68/filament/Texture;)Z
 	public final fun isValidVertexBuffer (Lio/github/erkko68/filament/VertexBuffer;)Z
 	public final fun isValidView (Lio/github/erkko68/filament/View;)Z
-	public final fun setActiveFeatureLevel (Lio/github/erkko68/filament/Engine$FeatureLevel;)Lio/github/erkko68/filament/Engine$FeatureLevel;
+	public final fun setActiveFeatureLevel (Lio/github/erkko68/filament/Engine$FeatureLevel;)V
 	public final fun setAutomaticInstancingEnabled (Z)V
 	public final fun setFeatureFlag (Ljava/lang/String;Z)Z
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 	public final fun setPaused (Z)V
 	public final fun unprotected ()V
 }
@@ -421,6 +426,7 @@ public final class io/github/erkko68/filament/EntityKt {
 
 public final class io/github/erkko68/filament/EntityManager {
 	public static final field Companion Lio/github/erkko68/filament/EntityManager$Companion;
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun advanceEpoch ()V
 	public final fun create ()I
 	public final fun create (I)[I
@@ -428,9 +434,7 @@ public final class io/github/erkko68/filament/EntityManager {
 	public final fun destroy (I)V
 	public final fun destroy ([I)V
 	public final fun getMaxEntityCount ()I
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun isAlive (I)Z
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/EntityManager$Companion {
@@ -439,6 +443,7 @@ public final class io/github/erkko68/filament/EntityManager$Companion {
 
 public final class io/github/erkko68/filament/Fence {
 	public static final field Companion Lio/github/erkko68/filament/Fence$Companion;
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getNativeObject ()J
 	public final fun wait (Lio/github/erkko68/filament/Fence$Mode;J)Lio/github/erkko68/filament/Fence$FenceStatus;
 }
@@ -481,6 +486,7 @@ public final class io/github/erkko68/filament/FilamentPlatform : java/lang/Enum 
 }
 
 public final class io/github/erkko68/filament/IndexBuffer {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getIndexCount ()I
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[B)V
 	public final fun setBuffer (Lio/github/erkko68/filament/Engine;[BII)V
@@ -532,11 +538,17 @@ public final class io/github/erkko68/filament/IndirectLight$Companion {
 	public static synthetic fun getDirectionEstimate$default (Lio/github/erkko68/filament/IndirectLight$Companion;[F[FILjava/lang/Object;)[F
 }
 
+public abstract interface annotation class io/github/erkko68/filament/InternalFilamentApi : java/lang/annotation/Annotation {
+}
+
 public final class io/github/erkko68/filament/LightManager {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun destroy (I)V
 	public final fun getColor (I[F)[F
+	public static synthetic fun getColor$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getComponentCount ()I
 	public final fun getDirection (I[F)[F
+	public static synthetic fun getDirection$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getFalloff (I)F
 	public final fun getInnerConeAngle (I)F
 	public final fun getInstance (I)I
@@ -544,6 +556,7 @@ public final class io/github/erkko68/filament/LightManager {
 	public final fun getLightChannel (II)Z
 	public final fun getOuterConeAngle (I)F
 	public final fun getPosition (I[F)[F
+	public static synthetic fun getPosition$default (Lio/github/erkko68/filament/LightManager;I[FILjava/lang/Object;)[F
 	public final fun getSunAngularRadius (I)F
 	public final fun getSunHaloFalloff (I)F
 	public final fun getSunHaloSize (I)F
@@ -851,11 +864,7 @@ public final class io/github/erkko68/filament/Material$UboBatchingMode : java/la
 }
 
 public final class io/github/erkko68/filament/Material$UserVariantFilterBit {
-	public static final field Companion Lio/github/erkko68/filament/Material$UserVariantFilterBit$Companion;
-	public fun <init> ()V
-}
-
-public final class io/github/erkko68/filament/Material$UserVariantFilterBit$Companion {
+	public static final field INSTANCE Lio/github/erkko68/filament/Material$UserVariantFilterBit;
 	public final fun getALL ()I
 	public final fun getDIRECTIONAL_LIGHTING ()I
 	public final fun getDYNAMIC_LIGHTING ()I
@@ -1007,6 +1016,7 @@ public final class io/github/erkko68/filament/MaterialInstance$StencilOperation 
 }
 
 public final class io/github/erkko68/filament/MorphTargetBuffer {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getCount ()I
 	public final fun getHasPositions ()Z
 	public final fun getHasTangents ()Z
@@ -1029,6 +1039,34 @@ public final class io/github/erkko68/filament/MorphTargetBuffer$Builder {
 	public static synthetic fun withTangents$default (Lio/github/erkko68/filament/MorphTargetBuffer$Builder;ZILjava/lang/Object;)Lio/github/erkko68/filament/MorphTargetBuffer$Builder;
 }
 
+public final class io/github/erkko68/filament/NativeObject_jvmKt {
+	public static final fun getNativeObject (Lio/github/erkko68/filament/BufferObject;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Camera;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/ColorGrading;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Engine;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/EntityManager;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Fence;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/IndexBuffer;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/IndirectLight;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/LightManager;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Material;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/MaterialInstance;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/MorphTargetBuffer;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/RenderTarget;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/RenderableManager;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Renderer;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Scene;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/SkinningBuffer;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Skybox;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Stream;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/SurfaceOrientation;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/SwapChain;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Texture;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/TransformManager;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/VertexBuffer;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/View;)Ljava/lang/foreign/MemorySegment;
+}
+
 public final class io/github/erkko68/filament/NativeSurface {
 	public fun <init> (Ljava/lang/Object;)V
 	public final fun getNativeWindow ()Ljava/lang/Object;
@@ -1040,6 +1078,7 @@ public abstract interface annotation class io/github/erkko68/filament/PlatformGa
 }
 
 public final class io/github/erkko68/filament/RenderTarget {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;[Lio/github/erkko68/filament/Texture;)V
 	public final fun getFace (Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;)Lio/github/erkko68/filament/Texture$CubemapFace;
 	public final fun getLayer (Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;)I
 	public final fun getMipLevel (Lio/github/erkko68/filament/RenderTarget$AttachmentPoint;)I
@@ -1071,13 +1110,14 @@ public final class io/github/erkko68/filament/RenderTarget$Builder {
 }
 
 public final class io/github/erkko68/filament/RenderableManager {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun clearMaterialInstanceAt (II)V
 	public final fun destroy (I)V
 	public final fun getAxisAlignedBoundingBox (ILio/github/erkko68/filament/Box;)Lio/github/erkko68/filament/Box;
+	public static synthetic fun getAxisAlignedBoundingBox$default (Lio/github/erkko68/filament/RenderableManager;ILio/github/erkko68/filament/Box;ILjava/lang/Object;)Lio/github/erkko68/filament/Box;
 	public final fun getBlendOrderAt (II)I
 	public final fun getChannel (I)I
 	public final fun getEnabledAttributesAt (II)Ljava/util/Set;
-	public final fun getFogEnabled (I)Z
 	public final fun getInstance (I)I
 	public final fun getInstanceCount (I)I
 	public final fun getLightChannel (II)Z
@@ -1087,6 +1127,7 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun getPriority (I)I
 	public final fun hasComponent (I)Z
 	public final fun isCullingEnabled (I)Z
+	public final fun isFogEnabled (I)Z
 	public final fun isGlobalBlendOrderEnabledAt (II)Z
 	public final fun isScreenSpaceContactShadowsEnabled (I)Z
 	public final fun isShadowCaster (I)Z
@@ -1095,9 +1136,8 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun setBlendOrderAt (III)V
 	public final fun setBonesAsMatrices (I[FII)V
 	public final fun setBonesAsQuaternions (I[FII)V
-	public final fun setCastShadows (IZ)V
 	public final fun setChannel (II)V
-	public final fun setCulling (IZ)V
+	public final fun setCullingEnabled (IZ)V
 	public final fun setFogEnabled (IZ)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;II)V
 	public final fun setGeometryAt (IILio/github/erkko68/filament/RenderableManager$PrimitiveType;Lio/github/erkko68/filament/VertexBuffer;Lio/github/erkko68/filament/IndexBuffer;II)V
@@ -1109,8 +1149,9 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun setMorphWeights (I[FI)V
 	public static synthetic fun setMorphWeights$default (Lio/github/erkko68/filament/RenderableManager;I[FIILjava/lang/Object;)V
 	public final fun setPriority (II)V
-	public final fun setReceiveShadows (IZ)V
 	public final fun setScreenSpaceContactShadows (IZ)V
+	public final fun setShadowCaster (IZ)V
+	public final fun setShadowReceiver (IZ)V
 	public final fun setSkinningBuffer (ILio/github/erkko68/filament/SkinningBuffer;II)V
 }
 
@@ -1166,7 +1207,6 @@ public final class io/github/erkko68/filament/RenderableManager$PrimitiveType : 
 }
 
 public final class io/github/erkko68/filament/Renderer {
-	public static final field Companion Lio/github/erkko68/filament/Renderer$Companion;
 	public fun <init> (Lio/github/erkko68/filament/Engine;Ljava/lang/foreign/MemorySegment;)V
 	public final fun beginFrame (Lio/github/erkko68/filament/SwapChain;J)Z
 	public final fun copyFrame (Lio/github/erkko68/filament/SwapChain;Lio/github/erkko68/filament/Viewport;Lio/github/erkko68/filament/Viewport;I)V
@@ -1177,7 +1217,6 @@ public final class io/github/erkko68/filament/Renderer {
 	public final fun getFrameRateOptions ()Lio/github/erkko68/filament/Renderer$FrameRateOptions;
 	public final fun getFrameToSkipCount ()I
 	public final fun getMaterialTime ()D
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun getUserTime ()D
 	public final fun pauseRenderThread (J)V
 	public final fun readPixels (IIIILio/github/erkko68/filament/Texture$PixelBufferDescriptor;)V
@@ -1190,7 +1229,6 @@ public final class io/github/erkko68/filament/Renderer {
 	public final fun setDisplayInfo (Lio/github/erkko68/filament/Renderer$DisplayInfo;)V
 	public final fun setFrameRateOptions (Lio/github/erkko68/filament/Renderer$FrameRateOptions;)V
 	public final fun setMaterialTimeEpoch (J)V
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 	public final fun setPresentationTime (J)V
 	public final fun setRenderingDeadline (J)V
 	public final fun setVsyncTime (J)V
@@ -1207,12 +1245,6 @@ public final class io/github/erkko68/filament/Renderer$ClearOptions {
 	public final fun setClear (Z)V
 	public final fun setClearColor ([D)V
 	public final fun setDiscard (Z)V
-}
-
-public final class io/github/erkko68/filament/Renderer$Companion {
-	public final fun getMIRROR_FRAME_FLAG_CLEAR ()I
-	public final fun getMIRROR_FRAME_FLAG_COMMIT ()I
-	public final fun getMIRROR_FRAME_FLAG_SET_PRESENTATION_TIME ()I
 }
 
 public final class io/github/erkko68/filament/Renderer$DisplayInfo {
@@ -1233,12 +1265,20 @@ public final class io/github/erkko68/filament/Renderer$FrameRateOptions {
 	public final fun setScaleRate (F)V
 }
 
+public final class io/github/erkko68/filament/Renderer$MirrorFrameFlag {
+	public static final field INSTANCE Lio/github/erkko68/filament/Renderer$MirrorFrameFlag;
+	public final fun getCLEAR ()I
+	public final fun getCOMMIT ()I
+	public final fun getSET_PRESENTATION_TIME ()I
+}
+
 public final class io/github/erkko68/filament/Scene {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun addEntities ([I)V
 	public final fun addEntity (I)V
 	public final fun forEach (Lkotlin/jvm/functions/Function1;)V
-	public final fun getEntities ()[I
 	public final fun getEntities ([I)[I
+	public static synthetic fun getEntities$default (Lio/github/erkko68/filament/Scene;[IILjava/lang/Object;)[I
 	public final fun getEntityCount ()I
 	public final fun getIndirectLight ()Lio/github/erkko68/filament/IndirectLight;
 	public final fun getLightCount ()I
@@ -1253,6 +1293,7 @@ public final class io/github/erkko68/filament/Scene {
 }
 
 public final class io/github/erkko68/filament/SkinningBuffer {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getBoneCount ()I
 	public final fun setBonesAsMatrices (Lio/github/erkko68/filament/Engine;[FII)V
 	public final fun setBonesAsQuaternions (Lio/github/erkko68/filament/Engine;[FII)V
@@ -1285,6 +1326,7 @@ public final class io/github/erkko68/filament/Skybox$Builder {
 }
 
 public final class io/github/erkko68/filament/Stream {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getStreamType ()Lio/github/erkko68/filament/Stream$StreamType;
 	public final fun getTimestamp ()J
 	public final fun setDimensions (II)V
@@ -1305,7 +1347,9 @@ public final class io/github/erkko68/filament/Stream$StreamType : java/lang/Enum
 	public static fun values ()[Lio/github/erkko68/filament/Stream$StreamType;
 }
 
-public final class io/github/erkko68/filament/SurfaceOrientation {
+public final class io/github/erkko68/filament/SurfaceOrientation : java/lang/AutoCloseable {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun getQuatsAsFloat ([FI)V
 	public final fun getQuatsAsHalf ([SI)V
@@ -1332,14 +1376,17 @@ public final class io/github/erkko68/filament/SurfaceOrientation$Builder {
 
 public final class io/github/erkko68/filament/SwapChain {
 	public static final field Companion Lio/github/erkko68/filament/SwapChain$Companion;
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getNativeObject ()J
 	public final fun getNativeWindow ()Ljava/lang/Object;
 	public final fun isFrameRateChangeSupported ()Z
 	public final fun isFrameScheduledCallbackSet ()Z
 	public final fun setFrameCompletedCallback (Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun setFrameCompletedCallback$default (Lio/github/erkko68/filament/SwapChain;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun setFrameRate (F)V
 	public final fun setFrameRate (FLio/github/erkko68/filament/SwapChain$FrameRateCompatibility;Lio/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy;)V
 	public final fun setFrameScheduledCallback (Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun setFrameScheduledCallback$default (Lio/github/erkko68/filament/SwapChain;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
 public final class io/github/erkko68/filament/SwapChain$ChangeFrameRateStrategy : java/lang/Enum {
@@ -1374,7 +1421,6 @@ public final class io/github/erkko68/filament/Texture {
 	public final fun getHeight (I)I
 	public static synthetic fun getHeight$default (Lio/github/erkko68/filament/Texture;IILjava/lang/Object;)I
 	public final fun getLevels ()I
-	public final fun getNativeHandle ()Ljava/lang/foreign/MemorySegment;
 	public final fun getTarget ()Lio/github/erkko68/filament/Texture$Sampler;
 	public final fun getWidth (I)I
 	public static synthetic fun getWidth$default (Lio/github/erkko68/filament/Texture;IILjava/lang/Object;)I
@@ -1382,7 +1428,6 @@ public final class io/github/erkko68/filament/Texture {
 	public final fun setImage (Lio/github/erkko68/filament/Engine;IIIIIIILio/github/erkko68/filament/Texture$PixelBufferDescriptor;)V
 	public final fun setImage (Lio/github/erkko68/filament/Engine;IIIIILio/github/erkko68/filament/Texture$PixelBufferDescriptor;)V
 	public final fun setImage (Lio/github/erkko68/filament/Engine;ILio/github/erkko68/filament/Texture$PixelBufferDescriptor;)V
-	public final fun setNativeHandle (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/Texture$Builder {
@@ -1620,11 +1665,7 @@ public final class io/github/erkko68/filament/Texture$Type : java/lang/Enum {
 }
 
 public final class io/github/erkko68/filament/Texture$Usage {
-	public static final field Companion Lio/github/erkko68/filament/Texture$Usage$Companion;
-	public fun <init> ()V
-}
-
-public final class io/github/erkko68/filament/Texture$Usage$Companion {
+	public static final field INSTANCE Lio/github/erkko68/filament/Texture$Usage;
 	public final fun getBLIT_DST ()I
 	public final fun getBLIT_SRC ()I
 	public final fun getCOLOR_ATTACHMENT ()I
@@ -1777,6 +1818,7 @@ public final class io/github/erkko68/filament/ToneMapper$PBRNeutralToneMapper : 
 }
 
 public final class io/github/erkko68/filament/TransformManager {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun commitLocalTransformTransaction ()V
 	public final fun create (I)I
 	public final fun create (II[D)I
@@ -1784,12 +1826,17 @@ public final class io/github/erkko68/filament/TransformManager {
 	public final fun destroy (I)V
 	public final fun getChildCount (I)I
 	public final fun getChildren (I[I)[I
+	public static synthetic fun getChildren$default (Lio/github/erkko68/filament/TransformManager;I[IILjava/lang/Object;)[I
 	public final fun getInstance (I)I
 	public final fun getParent (I)I
 	public final fun getTransform (I[D)[D
 	public final fun getTransform (I[F)[F
+	public static synthetic fun getTransform$default (Lio/github/erkko68/filament/TransformManager;I[DILjava/lang/Object;)[D
+	public static synthetic fun getTransform$default (Lio/github/erkko68/filament/TransformManager;I[FILjava/lang/Object;)[F
 	public final fun getWorldTransform (I[D)[D
 	public final fun getWorldTransform (I[F)[F
+	public static synthetic fun getWorldTransform$default (Lio/github/erkko68/filament/TransformManager;I[DILjava/lang/Object;)[D
+	public static synthetic fun getWorldTransform$default (Lio/github/erkko68/filament/TransformManager;I[FILjava/lang/Object;)[F
 	public final fun hasComponent (I)Z
 	public final fun isAccurateTranslationsEnabled ()Z
 	public final fun openLocalTransformTransaction ()V
@@ -1800,6 +1847,7 @@ public final class io/github/erkko68/filament/TransformManager {
 }
 
 public final class io/github/erkko68/filament/VertexBuffer {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun getVertexCount ()I
 	public final fun setBufferAt (Lio/github/erkko68/filament/Engine;I[B)V
 	public final fun setBufferAt (Lio/github/erkko68/filament/Engine;I[BII)V
@@ -1875,6 +1923,7 @@ public final class io/github/erkko68/filament/VertexBuffer$VertexAttribute : jav
 }
 
 public final class io/github/erkko68/filament/View {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 	public final fun clearFrameHistory (Lio/github/erkko68/filament/Engine;)V
 	public final fun getAmbientOcclusionOptions ()Lio/github/erkko68/filament/View$AmbientOcclusionOptions;
 	public final fun getAntiAliasing ()Lio/github/erkko68/filament/View$AntiAliasing;
@@ -2365,13 +2414,22 @@ public final class io/github/erkko68/filament/Viewport {
 	public fun <init> ()V
 	public fun <init> (IIII)V
 	public synthetic fun <init> (IIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun copy (IIII)Lio/github/erkko68/filament/Viewport;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/Viewport;IIIIILjava/lang/Object;)Lio/github/erkko68/filament/Viewport;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBottom ()I
 	public final fun getHeight ()I
 	public final fun getLeft ()I
 	public final fun getWidth ()I
+	public fun hashCode ()I
 	public final fun setBottom (I)V
 	public final fun setHeight (I)V
 	public final fun setLeft (I)V
 	public final fun setWidth (I)V
+	public fun toString ()Ljava/lang/String;
 }
 

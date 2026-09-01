@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaMorphTargetBuffer
 
-actual class MorphTargetBuffer internal constructor(internal var nativeHandle: CPointer<FilaMorphTargetBuffer>?) {
+actual class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaMorphTargetBuffer>?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaMorphTargetBufferBuilder_create()
 

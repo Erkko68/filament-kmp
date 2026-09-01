@@ -163,16 +163,6 @@ actual class MaterialBuilder {
         PERFORMANCE
     }
 
-    actual companion object {
-        actual fun init() {
-            // No initialization needed for JS
-        }
-
-        actual fun shutdown() {
-            // No shutdown needed for JS
-        }
-    }
-
     actual fun build(): MaterialPackage {
         throw UnsupportedOperationException(
             "MaterialBuilder.build() is not supported on JS. " +

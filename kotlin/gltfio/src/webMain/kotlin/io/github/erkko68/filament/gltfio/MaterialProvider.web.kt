@@ -6,8 +6,10 @@ import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.web.gltfio_UbershaderProvider
+import io.github.erkko68.filament.VertexBuffer
+import io.github.erkko68.filament.nativeObject
 
-actual interface MaterialProvider {
+actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(
         config: MaterialKey,
         uvmap: IntArray,
@@ -21,16 +23,15 @@ actual interface MaterialProvider {
         label: String?
     ): Material?
 
-    actual fun getMaterials(): Array<Material>
-    actual fun needsDummyData(attrib: Int): Boolean
+    actual val materials: List<Material>
+    actual fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
 }
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    private val jsProvider = gltfio_UbershaderProvider(engine.jsEngine)
-    private val materials = mutableListOf<Material>()
+    private val jsProvider = gltfio_UbershaderProvider(engine.nativeObject)
     // A second destroyMaterials() on the same provider aborts in the wasm heap.
     private var materialsDestroyed = false
 
@@ -61,23 +62,19 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         )
     }
 
-    actual override fun getMaterials(): Array<Material> {
-        return materials.toTypedArray()
-    }
+    // gltfio$UbershaderProvider binds only destroyMaterials(), so there is no material
+    // cache to report and no dummy-data query to forward.
+    actual override val materials: List<Material> get() = emptyList()
 
-    actual override fun needsDummyData(attrib: Int): Boolean {
-        return false
-    }
+    actual override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = false
 
     actual override fun destroyMaterials() {
         if (!materialsDestroyed) {
             jsProvider.destroyMaterials()
             materialsDestroyed = true
         }
-        materials.clear()
     }
 
-    actual override fun destroy() {
-        destroyMaterials()
-    }
+    actual override fun close() = destroy()
+    actual override fun destroy() = destroyMaterials()
 }

@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaCamera
 
-actual class Camera internal constructor(
+actual class Camera @InternalFilamentApi constructor(
     internal var nativeHandle: CPointer<FilaCamera>?,
     actual val entity: Entity
 ) {

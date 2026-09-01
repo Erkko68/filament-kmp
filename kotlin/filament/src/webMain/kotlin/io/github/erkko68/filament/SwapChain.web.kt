@@ -2,20 +2,22 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.web.SwapChain as JSSwapChain
 
-actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
+actual class SwapChain @InternalFilamentApi constructor(internal val jsSwapChain: JSSwapChain) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 
     actual val nativeWindow: Any? get() = null
 
-    // SwapChain callback hooks aren't bound in upstream jsbindings.cpp (v1.71.4).
+    // SwapChain callback hooks aren't bound in upstream jsbindings.cpp (v1.76.0).
     // Track locally so the common API reflects the callbacks being installed.
     private var frameScheduledCallback: (() -> Unit)? = null
 
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
     }
 
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js binds no frame-scheduled callback, so it never fires; isFrameScheduledCallbackSet reports what was set here.")
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
         frameScheduledCallback = callback
     }
 
@@ -25,8 +27,8 @@ actual class SwapChain(internal val jsSwapChain: JSSwapChain) {
     // callers checking `nativeObject != 0` treat the swap chain as live.
     actual val nativeObject: Long get() = 1L
 
-    // TODO(js): frame rate APIs not registered in jsbindings.cpp.
-    actual fun isFrameRateChangeSupported(): Boolean = false
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
+    actual val isFrameRateChangeSupported: Boolean get() = false
 
     actual fun setFrameRate(frameRate: Float) {
     }

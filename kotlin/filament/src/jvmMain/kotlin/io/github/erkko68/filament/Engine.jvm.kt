@@ -5,17 +5,19 @@ import io.github.erkko68.filament.ffm.FilaEngineConfig
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class Engine public constructor(public var nativeHandle: MemorySegment?) {
+actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(FilamentC.FilaEngine_getTransformManager(nativeHandle)) }
     private val mLightManager by lazy { LightManager(FilamentC.FilaEngine_getLightManager(nativeHandle)) }
     private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle)) }
     private val mEntityManager by lazy { EntityManager(FilamentC.FilaEngine_getEntityManager(nativeHandle)) }
+    // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
+    internal var mConfig: Config? = null
 
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(backend: Int): Backend = values()[backend]
+            internal fun fromNative(backend: Int): Backend = entries[backend]
         }
     }
 
@@ -23,7 +25,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(level: Int): FeatureLevel = values()[level]
+            internal fun fromNative(level: Int): FeatureLevel = entries[level]
         }
     }
 
@@ -31,7 +33,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         NONE, INSTANCED, MULTIVIEW;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(type: Int): StereoscopicType = values()[type]
+            internal fun fromNative(type: Int): StereoscopicType = entries[type]
         }
     }
 
@@ -39,7 +41,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
         internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromNative(priority: Int): GpuContextPriority = values()[priority]
+            internal fun fromNative(priority: Int): GpuContextPriority = entries[priority]
         }
     }
 
@@ -94,6 +96,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     actual class Builder actual constructor() {
         init { ensureFilamentLoaded() }
         private val nativeBuilder = FilamentC.FilaEngineBuilder_create()
+        private var mConfig: Config? = null
 
         actual fun backend(backend: Backend): Builder {
             FilamentC.FilaEngineBuilder_backend(nativeBuilder, backend.toNative())
@@ -110,6 +113,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
 
         actual fun config(config: Config): Builder {
             confined { arena -> FilamentC.FilaEngineBuilder_config(nativeBuilder, config.toNative(arena)) }
+            mConfig = config
             return this
         }
 
@@ -137,7 +141,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
             val handle = FilamentC.FilaEngineBuilder_build(nativeBuilder)
             FilamentC.FilaEngineBuilder_destroy(nativeBuilder)
             if (handle.isNullPtr()) throw IllegalStateException("Failed to build Engine")
-            return Engine(handle)
+            return Engine(handle).apply { mConfig = this@Builder.mConfig }
         }
     }
 
@@ -145,13 +149,15 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
         actual fun create(): Engine = Builder().build()
         actual fun create(backend: Backend): Engine = Builder().backend(backend).build()
         actual fun create(sharedContext: Any): Engine = Builder().sharedContext(sharedContext).build()
-        actual fun getSteadyClockTimeNano(): Long {
+        actual val steadyClockTimeNano: Long get() {
             ensureFilamentLoaded()
             return FilamentC.FilaEngine_getSteadyClockTimeNano()
         }
     }
 
-    actual fun isValid(): Boolean = !nativeHandle.isNullPtr()
+    actual val isValid: Boolean get() = !nativeHandle.isNullPtr()
+    actual override fun close() = destroy()
+
     actual fun destroy() {
         nativeHandle?.let { FilamentC.FilaEngine_destroy(it) }
         nativeHandle = null
@@ -159,15 +165,15 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
 
     actual val backend: Backend get() = Backend.fromNative(FilamentC.FilaEngine_getBackend(nativeHandle))
     actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilamentC.FilaEngine_getSupportedFeatureLevel(nativeHandle))
-    actual fun setActiveFeatureLevel(featureLevel: FeatureLevel): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_setActiveFeatureLevel(nativeHandle, featureLevel.toNative()))
-    actual fun getActiveFeatureLevel(): FeatureLevel = FeatureLevel.fromNative(FilamentC.FilaEngine_getActiveFeatureLevel(nativeHandle))
-    actual fun setAutomaticInstancingEnabled(enable: Boolean) = FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, enable)
-    actual fun isAutomaticInstancingEnabled(): Boolean = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
-    actual val config: Config get() {
-        // C-wrapper doesn't expose getConfig; return defaults (matches nativeMain).
-        return Config()
-    }
-    actual fun getMaxStereoscopicEyes(): Long = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
+    actual var activeFeatureLevel: FeatureLevel
+        get() = FeatureLevel.fromNative(FilamentC.FilaEngine_getActiveFeatureLevel(nativeHandle))
+        set(value) { FilamentC.FilaEngine_setActiveFeatureLevel(nativeHandle, value.toNative()) }
+
+    actual var isAutomaticInstancingEnabled: Boolean
+        get() = FilamentC.FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+        set(value) { FilamentC.FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
+    actual val config: Config get() = mConfig ?: Config()
+    actual val maxStereoscopicEyes: Long get() = FilamentC.FilaEngine_getMaxStereoscopicEyes(nativeHandle)
 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilamentC.FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilamentC.FilaEngine_isValidView(nativeHandle, view.nativeHandle)
@@ -194,6 +200,7 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     actual fun destroySwapChain(swapChain: SwapChain) {
         FilamentC.FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
         swapChain.nativeHandle = null
+        swapChain.releaseCallbackStubs()
     }
 
     actual fun createView(): View = View(FilamentC.FilaEngine_createView(nativeHandle))
@@ -282,17 +289,17 @@ actual class Engine public constructor(public var nativeHandle: MemorySegment?) 
     }
     actual fun destroyEntity(entity: Entity) = FilamentC.FilaEntityManager_destroy(FilamentC.FilaEngine_getEntityManager(nativeHandle), entity)
 
-    actual fun getTransformManager(): TransformManager = mTransformManager
-    actual fun getLightManager(): LightManager = mLightManager
-    actual fun getRenderableManager(): RenderableManager = mRenderableManager
-    actual fun getEntityManager(): EntityManager = mEntityManager
+    actual val transformManager: TransformManager get() = mTransformManager
+    actual val lightManager: LightManager get() = mLightManager
+    actual val renderableManager: RenderableManager get() = mRenderableManager
+    actual val entityManager: EntityManager get() = mEntityManager
 
     actual fun flushAndWait() { FilamentC.FilaEngine_flushAndWait(nativeHandle, 1_000_000_000L) }
     actual fun flushAndWait(timeout: Long): Boolean = FilamentC.FilaEngine_flushAndWait(nativeHandle, timeout)
     actual fun flush() = FilamentC.FilaEngine_flush(nativeHandle)
-    actual fun hasUnrecoverableFailure(): Boolean = FilamentC.FilaEngine_hasUnrecoverableFailure(nativeHandle)
+    actual val hasUnrecoverableFailure: Boolean get() = FilamentC.FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
-    actual var paused: Boolean
+    actual var isPaused: Boolean
         get() = FilamentC.FilaEngine_isPaused(nativeHandle)
         set(value) { FilamentC.FilaEngine_setPaused(nativeHandle, value) }
     actual fun unprotected() = FilamentC.FilaEngine_unprotected(nativeHandle)

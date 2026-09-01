@@ -12,6 +12,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.max
 import kotlin.math.roundToInt
+import io.github.erkko68.filament.canvas
 
 /**
  * On web a Filament [Engine] is bound to a single WebGL context/canvas — `createSwapChain` takes no
@@ -38,7 +39,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         var disposed: Boolean = false
     }
 
-    private val canvas: HTMLCanvasElement = engine.jsCanvas
+    private val canvas: HTMLCanvasElement = engine.canvas
         ?: error("WebViewCompositor requires an Engine created with a canvas")
     // The engine canvas is offscreen, so the browser's implicit post-composite clear may never run
     // (it doesn't on Android Chrome) and frames accumulate. Clear it ourselves every beginFrame.
@@ -121,7 +122,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         }
 
         val sc = swapChain ?: engine.createSwapChain(NativeSurface(canvas)).also { swapChain = it }
-        if (renderer.beginFrame(sc, Engine.getSteadyClockTimeNano())) {
+        if (renderer.beginFrame(sc, Engine.steadyClockTimeNano)) {
             for (e in entries) {
                 if (e.disposed) continue
                 val r = e.rect

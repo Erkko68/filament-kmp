@@ -11,8 +11,9 @@ import io.github.erkko68.filament.web.Entity as JSEntity
 import io.github.erkko68.filament.web.Aabb
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset(
+actual class FilamentAsset @InternalFilamentApi constructor(
     internal val jsAsset: JSFilamentAsset,
     private val _engine: Engine? = null
 ) {
@@ -26,19 +27,19 @@ actual class FilamentAsset(
         return IntArray(size) { i -> this[i]!!.registerAndGetId() }
     }
 
-    actual fun getRoot(): Entity = jsAsset.getRoot().registerAndGetId()
+    actual val root: Entity get() = jsAsset.getRoot().registerAndGetId()
 
     actual fun popRenderable(): Entity = jsAsset.popRenderable().registerAndGetId()
 
     actual fun popRenderables(entities: IntArray): Int = 0
 
-    actual fun getEntities(): IntArray = jsAsset.getEntities().registerAndGetIds()
+    actual val entities: IntArray get() = jsAsset.getEntities().registerAndGetIds()
 
-    actual fun getLightEntities(): IntArray = jsAsset.getLightEntities().registerAndGetIds()
+    actual val lightEntities: IntArray get() = jsAsset.getLightEntities().registerAndGetIds()
 
-    actual fun getRenderableEntities(): IntArray = jsAsset.getRenderableEntities().registerAndGetIds()
+    actual val renderableEntities: IntArray get() = jsAsset.getRenderableEntities().registerAndGetIds()
 
-    actual fun getCameraEntities(): IntArray = jsAsset.getCameraEntities().registerAndGetIds()
+    actual val cameraEntities: IntArray get() = jsAsset.getCameraEntities().registerAndGetIds()
 
     actual fun getEntitiesByName(name: String): IntArray = jsAsset.getEntitiesByName(name).registerAndGetIds()
 
@@ -46,22 +47,19 @@ actual class FilamentAsset(
 
     actual fun getFirstEntityByName(name: String): Entity = jsAsset.getFirstEntityByName(name).registerAndGetId()
 
-    actual fun getEntityCount(): Int {
-        return jsAsset.getEntities().size
-    }
+    // gltfio$FilamentAsset binds no getEntityCount/getAssetInstanceCount; count the arrays.
+    actual val entityCount: Int get() = jsAsset.getEntities().size
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getAssetInstanceCount(): Int {
-        return jsAsset.getAssetInstances().size
-    }
+    actual val assetInstanceCount: Int get() = jsAsset.getAssetInstances().size
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getAssetInstances(): Array<FilamentInstance> {
+    actual val assetInstances: List<FilamentInstance> get() {
         val jsInstances = jsAsset.getAssetInstances()
-        return Array(jsInstances.size) { i -> FilamentInstance(jsInstances[i]) }
+        return List(jsInstances.size) { i -> FilamentInstance(jsInstances[i]) }
     }
 
-    actual fun getBoundingBox(): Box {
+    actual val boundingBox: Box get() {
         val aabb = jsAsset.getBoundingBox()
         val minArr = aabb.min!!.toFloatArray(3)
         val maxArr = aabb.max!!.toFloatArray(3)
@@ -85,25 +83,25 @@ actual class FilamentAsset(
         return jsAsset.getExtras(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
     }
 
-    actual fun getMorphTargetNames(entity: Entity): Array<String> {
+    actual fun getMorphTargetNames(entity: Entity): List<String> {
         val names = jsAsset.getMorphTargetNames(EntityManager.jsEntityOf(entity))
-        return Array(names.size) { names[it].toString() }
+        return List(names.size) { names[it].toString() }
     }
 
-    actual fun getResourceUris(): Array<String> {
+    actual val resourceUris: List<String> get() {
         val uris = jsAsset.getResourceUris()
-        return Array(uris.size) { uris[it].toString() }
+        return List(uris.size) { uris[it].toString() }
     }
 
     actual fun releaseSourceData() {
         jsAsset.releaseSourceData()
     }
 
-    actual fun getEngine(): Engine {
+    actual val engine: Engine get() {
         return _engine ?: throw UnsupportedOperationException("Engine reference not available - FilamentAsset was not created with Engine context")
     }
 
-    actual fun getInstance(): FilamentInstance {
+    actual val instance: FilamentInstance get() {
         return FilamentInstance(jsAsset.getInstance())
     }
 
