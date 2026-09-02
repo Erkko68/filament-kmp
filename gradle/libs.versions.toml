@@ -10,7 +10,7 @@ android-jvmTarget = "11"
 jvm-target = "22"
 androidx-activity = "1.13.0"
 annotations = "26.1.0"
-composeMultiplatform = "1.11.1"
+composeMultiplatform = "1.12.0"
 # androidx Compose UI version that composeMultiplatform resolves to on Android — keep in sync with
 # composeMultiplatform (used only for the Android-only ui-test-manifest, which JetBrains Compose
 # doesn't republish). Verify after a Compose MP bump: ./gradlew :kotlin:filament-compose:dependencies
