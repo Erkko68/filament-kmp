@@ -31,7 +31,7 @@ dokka = "2.2.0"
 kover = "0.9.9"
 # tar.gz extraction for the prebuilt-download tasks in build-logic (replaced the Python scripts)
 commons-compress = "1.28.0"
-binary-compatibility-validator = "0.18.1"
+binary-compatibility-validator = "0.18.2"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
