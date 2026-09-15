@@ -16,9 +16,9 @@ Use this path when you are:
 ```kotlin
 // build.gradle.kts — no Compose plugin required
 commonMain.dependencies {
-    implementation("io.github.erkko68.filament:filament:0.4.0")
-    implementation("io.github.erkko68.filament:gltfio:0.4.0")        // optional
-    implementation("io.github.erkko68.filament:filament-utils:0.4.0") // optional
+    implementation("io.github.erkko68.filament:filament:0.5.0")
+    implementation("io.github.erkko68.filament:gltfio:0.5.0")        // optional
+    implementation("io.github.erkko68.filament:filament-utils:0.5.0") // optional
 }
 ```
 
@@ -137,12 +137,12 @@ for a complete, working implementation you can copy.
 
 ```kotlin
 val provider = UbershaderProvider(engine)
-val assetLoader = AssetLoader.create(engine, provider, engine.getEntityManager())
+val assetLoader = AssetLoader.create(engine, provider, engine.entityManager)
 val asset = assetLoader.createAsset(glbBytes)!!
 
 val resourceLoader = ResourceLoader(engine)
 resourceLoader.loadResources(asset)      // must run before textures/morph targets exist
-scene.addEntities(asset.getEntities())
+scene.addEntities(asset.entities)
 
 // Teardown, in this order.
 resourceLoader.destroy()

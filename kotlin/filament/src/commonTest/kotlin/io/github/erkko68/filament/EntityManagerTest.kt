@@ -37,13 +37,13 @@ class EntityManagerTest : FilamentTestFixture() {
         try {
             assertTrue(em.maxEntityCount > 0)
         } catch (_: UnsupportedOperationException) {
-            // Expected on WEB target until Filament 1.75.1 JS bindings ship
+            // Expected on WEB: not bound in filament.js
         }
 
         try {
             em.advanceEpoch()
         } catch (_: UnsupportedOperationException) {
-            // Expected on WEB target until Filament 1.75.1 JS bindings ship
+            // Expected on WEB: not bound in filament.js
         }
     }
 }

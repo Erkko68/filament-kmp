@@ -76,8 +76,8 @@ dependencyResolutionManagement {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Compose integration (pulls in the engine), or just "…:filament:0.4.0" without Compose.
-            implementation("io.github.erkko68.filament:filament-compose:0.4.0")
+            // Compose integration (pulls in the engine), or just "…:filament:0.5.0" without Compose.
+            implementation("io.github.erkko68.filament:filament-compose:0.5.0")
         }
     }
 }
@@ -113,7 +113,7 @@ All `io.github.erkko68.filament:*` artifacts share one version and must be upgra
 
 The public API stays as close as possible to the **Android Filament API**, so existing Filament knowledge transfers directly. Differences:
 
-- **Kotlin properties** instead of `get*()` / `set*()` for single-value state accessors (e.g. `view.scene`, `camera.focusDistance`, `engine.backend`, `engine.paused`, `engine.config`). The boundary is deliberate: manager *lookups* that read as factory-ish accessors stay methods to match the Android Filament API — `engine.getTransformManager()`, `getLightManager()`, `getRenderableManager()`, `getEntityManager()` — as do calls that perform work or take arguments (`engine.getFeatureFlag(name)`, `engine.setActiveFeatureLevel(level)`).
+- **Kotlin properties** instead of `get*()` / `set*()` for single-value state accessors (e.g. `view.scene`, `camera.focusDistance`, `engine.backend`, `engine.isPaused`, `engine.config`). The boundary is deliberate: manager *lookups* that read as factory-ish accessors stay methods to match the Android Filament API — `engine.getTransformManager()`, `getLightManager()`, `getRenderableManager()`, `getEntityManager()` — as do calls that perform work or take arguments (`engine.getFeatureFlag(name)`, `engine.setActiveFeatureLevel(level)`).
 - **Removed** APIs that are deprecated upstream or strictly Android-only (require `Context` or Android UI classes).
 - **Compose DSL** layered on top — fully optional; the raw `Engine` and friends remain accessible via `FilamentEffect`.
 

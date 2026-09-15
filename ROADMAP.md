@@ -18,6 +18,22 @@ API-surface enforcement) are done, and the focus shifts to tracking upstream and
   table in [Platform Notes](docs/platform-notes.md); web-specific limits come from what
   `filament.js` binds upstream.
 
+## Upstream API consistency
+
+Filament's per-language bindings are hand-written and drift apart: Android's Java API misses
+parts of the C++ API, `filament.js` misses parts of both (and some of its methods lag behind their
+C++ versions), and each release reopens the gaps. Every missing upstream binding becomes a
+`@PlatformGap` here, however complete our common API is.
+
+- **Upstream is moving to generated bindings.** Filament is annotating its public C++ headers so
+  bindings can be generated from them automatically —
+  [google/filament#10410](https://github.com/google/filament/pull/10410) (`APIGEN` annotations and
+  `Slice` APIs) is the first step.
+- **What it means for us** — once Java and JS bindings come from one generated source, both
+  should cover the whole C++ API. We can then drop most `@PlatformGap`s and the hand-written web
+  stubs and offer one complete API on every platform. Until then we keep closing gaps per release
+  with `check-common-api.sh` and `check-js-bindings.sh`.
+
 ## Cross-platform GPU sharing & the Dawn convergence
 
 > **Scope: `filament-compose` only.** This roadmap is about the display bridge in the
