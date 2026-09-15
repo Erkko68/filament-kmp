@@ -1,28 +1,24 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.web.driver_BufferDescriptor
-import io.github.erkko68.filament.web.gltfio_Ktx2Provider
 import io.github.erkko68.filament.web.gltfio_ResourceLoader
-import io.github.erkko68.filament.web.gltfio_StbProvider
-import io.github.erkko68.filament.web.gltfio_WebpProvider
+import io.github.erkko68.filament.web.gltfio_TextureProvider
 import org.khronos.webgl.set
 import io.github.erkko68.filament.nativeObject
 
 actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) : AutoCloseable {
     private val jsLoader = gltfio_ResourceLoader(engine.nativeObject, normalizeSkinningWeights)
-    private val stbProvider = gltfio_StbProvider(engine.nativeObject)
 
     init {
-        // The same decoders extensions.js registers in its own loadResources helper; without
-        // them the loader cannot decode embedded or external textures.
-        jsLoader.addStbProvider("image/jpeg", stbProvider)
-        jsLoader.addStbProvider("image/png", stbProvider)
-        jsLoader.addKtx2Provider("image/ktx2", gltfio_Ktx2Provider(engine.nativeObject))
-        if (gltfio_WebpProvider.isWebpSupported()) {
-            jsLoader.addWebpProvider("image/webp", gltfio_WebpProvider(engine.nativeObject))
+        // Same providers extensions.js registers in its loadResources helper; without them
+        // the loader has no way to decode embedded or external textures.
+        val stb = gltfio_TextureProvider.createStbProvider(engine.nativeObject)
+        jsLoader.addTextureProvider("image/jpeg", stb)
+        jsLoader.addTextureProvider("image/png", stb)
+        jsLoader.addTextureProvider("image/ktx2", gltfio_TextureProvider.createKtx2Provider(engine.nativeObject))
+        if (gltfio_TextureProvider.isWebpSupported()) {
+            jsLoader.addTextureProvider("image/webp", gltfio_TextureProvider.createWebpProvider(engine.nativeObject))
         }
     }
 
@@ -49,12 +45,12 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
         jsLoader.asyncUpdateLoad()
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js binds no asyncCancelLoad; let the load finish instead.")
     actual fun asyncCancelLoad() {
+        jsLoader.asyncCancelLoad()
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js binds no evictResourceData; the loader frees its copies when destroyed.")
     actual fun evictResourceData() {
+        jsLoader.evictResourceData()
     }
 }
 

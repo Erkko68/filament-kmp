@@ -35,6 +35,7 @@ actual class AssetLoader @InternalFilamentApi constructor(internal val jsLoader:
     }
 
     actual fun enableDiagnostics(enable: Boolean) {
+        jsLoader.enableDiagnostics(enable)
     }
 
     actual fun destroyAsset(asset: FilamentAsset) {
@@ -51,12 +52,20 @@ actual class AssetLoader @InternalFilamentApi constructor(internal val jsLoader:
             materials: MaterialProvider,
             entities: EntityManager?
         ): AssetLoader {
-            val jsLoader = engine.nativeObject.createAssetLoader()
+            // Route through the caller's provider when it is one we can hand to embind;
+            // createAssetLoader() would build a second UbershaderProvider of its own.
+            val jsLoader = if (materials is UbershaderProvider) {
+                JSAssetLoader(engine.nativeObject, materials.jsProvider)
+            } else {
+                engine.nativeObject.createAssetLoader()
+            }
             return AssetLoader(jsLoader, engine)
         }
 
         actual fun destroy(loader: AssetLoader) {
-            loader.jsLoader.delete()
+            // AssetLoader's embind raw_destructor is a no-op, so `delete()` leaks the
+            // loader; the static destroy() is the one that actually frees it.
+            io.github.erkko68.filament.web.gltfio_AssetLoader.destroy(loader.jsLoader)
         }
     }
 }

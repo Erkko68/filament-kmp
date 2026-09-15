@@ -893,7 +893,6 @@ expect class View {
          * squash rather than a hard clamp. Limits how soft a shadow can get as the occluder moves
          * away from the receiver. Default: 10.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — the wasm registers the field but the vendored externals do not declare it, so it never reaches the engine.")
         var maxPenumbraRatio: Float
 
         /**
@@ -901,7 +900,6 @@ expect class View {
          * global ceiling on the per-light [LightManager.ShadowOptions.maxSearchRadius].
          * Default: 1.0.
          */
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — the wasm registers the field but the vendored externals do not declare it, so it never reaches the engine.")
         var maxSearchRadius: Float
     }
 

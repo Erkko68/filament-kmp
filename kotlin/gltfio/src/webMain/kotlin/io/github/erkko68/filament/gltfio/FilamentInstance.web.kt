@@ -9,8 +9,6 @@ import io.github.erkko68.filament.web.`gltfio_FilamentInstance` as JSFilamentIns
 import io.github.erkko68.filament.web.Vector
 import io.github.erkko68.filament.Entity
 import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentInstance @InternalFilamentApi constructor(internal val jsInstance: JSFilamentInstance) {
@@ -33,7 +31,7 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         return result
     }
 
-    actual val entityCount: Int get() = jsInstance.getEntities().size().toInt()
+    actual val entityCount: Int get() = jsInstance.getEntityCount().toInt()
 
     actual val animator: Animator get() {
         // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
@@ -48,7 +46,9 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         return FilamentAsset(jsInstance.getAsset())
     }
 
-    actual val skinCount: Int get() = jsInstance.getSkinCount().toInt()
+    actual val skinCount: Int get() {
+        return jsInstance.getSkinNames().size().toInt()
+    }
 
     actual val skinNames: List<String> get() {
         val vector = jsInstance.getSkinNames()
@@ -67,8 +67,9 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         jsInstance.detachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
     }
 
-    actual fun getJointCountAt(skinIndex: Int): Int =
-        jsInstance.getJointCountAt(skinIndex.toDouble()).toInt()
+    actual fun getJointCountAt(skinIndex: Int): Int {
+        return jsInstance.getJointCountAt(skinIndex.toDouble()).toInt()
+    }
 
     actual fun getJointsAt(skinIndex: Int): IntArray {
         val joints = jsInstance.getJointsAt(skinIndex.toDouble())
@@ -84,7 +85,6 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal val jsIn
         jsInstance.applyMaterialVariant(variantIndex.toDouble())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val materialInstances: List<MaterialInstance> get() {
         val vector = jsInstance.getMaterialInstances()
         return List(vector.size().toInt()) { i ->

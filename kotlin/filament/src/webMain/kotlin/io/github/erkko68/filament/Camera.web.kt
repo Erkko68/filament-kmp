@@ -3,14 +3,18 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.web.interop.readNumbersInto
 
 import io.github.erkko68.filament.web.interop.jsNumbers
+import io.github.erkko68.filament.web.interop.toJsArray
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.Camera as JSCamera
 import io.github.erkko68.filament.web.Camera_Projection
 import io.github.erkko68.filament.web.Camera_Fov
 
+// backend::CONFIG_MAX_STEREOSCOPIC_EYES
+private const val MAX_STEREOSCOPIC_EYES = 4
+
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCamera, private val _entity: Entity = 0) {
+actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCamera) {
 
     actual fun setProjection(
         projection: Projection,
@@ -55,9 +59,11 @@ actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCa
         near: Double,
         far: Double
     ) {
-        // JS bindings don't expose a separate culling matrix setter easily,
-        // we use the main projection matrix.
-        jsCamera.setCustomProjection(matrix.toJsNumbers(), near, far)
+        // No 2-matrix setCustomProjection in JS; the per-eye form writes the same state, so feed
+        // it the one projection repeated for every eye (extra entries past the engine's
+        // stereoscopicEyeCount are ignored, and the count must be >= it).
+        val projections = List(MAX_STEREOSCOPIC_EYES) { matrix.toJsNumbers() }.toJsArray()
+        jsCamera.setCustomEyeProjection(projections, matrixForCulling.toJsNumbers(), near, far)
     }
 
     actual fun setCustomEyeProjection(
@@ -67,10 +73,15 @@ actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCa
         near: Double,
         far: Double
     ) {
-        // Multi-eye projection is specialized in C++, not directly exposed in simple JS bindings
+        // `projection` is count 4x4 matrices packed end to end.
+        val projections = List(count) { eye ->
+            projection.copyOfRange(eye * 16, eye * 16 + 16).toJsNumbers()
+        }.toJsArray()
+        jsCamera.setCustomEyeProjection(projections, projectionForCulling.toJsNumbers(), near, far)
     }
 
     actual fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray) {
+        jsCamera.setEyeModelMatrix(eyeId.toDouble(), modelMatrix.toJsNumbers())
     }
 
     actual fun setScaling(x: Double, y: Double) {
@@ -218,12 +229,7 @@ actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCa
     }
 
     actual val entity: Entity
-        // TODO(js): Camera::getEntity() exists in C++ but is not bound in
-        // jsbindings.cpp. We instead remember the entity at construction time
-        // (Engine.createCamera passes it in). For Cameras obtained via
-        // Engine.getCameraComponent() the value will be the entity argument
-        // that was used. Returns 0 only if Camera was constructed without one.
-        get() = _entity
+        get() = jsCamera.getEntity().getId().toInt()
 
     actual enum class Projection { PERSPECTIVE, ORTHO }
     actual enum class Fov { VERTICAL, HORIZONTAL }

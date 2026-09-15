@@ -1,5 +1,3 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
@@ -18,11 +16,16 @@ fun isShadowReceiver(instance: RenderableManager_Instance): Boolean
 fun setBones(instance: RenderableManager_Instance, transforms: js.array.ReadonlyArray<RenderableManager_Bone>, offset: Double): Unit
 fun setBonesFromMatrices(instance: RenderableManager_Instance, transforms: js.array.ReadonlyArray<mat4>, offset: Double): Unit
 fun setMorphWeights(instance: RenderableManager_Instance, a: Double, b: Double, c: Double, d: Double): Unit
+fun setMorphWeightsOffset(instance: RenderableManager_Instance, weights: JsAny?, offset: Double): Unit
+fun getMorphTargetCount(instance: RenderableManager_Instance): Double
+fun setMorphTargetBufferOffsetAt(instance: RenderableManager_Instance, level: Double, primitiveIndex: Double, offset: Double): Unit
+fun setSkinningBuffer(instance: RenderableManager_Instance, skinningBuffer: SkinningBuffer, count: Double, offset: Double): Unit
 fun getAxisAlignedBoundingBox(instance: RenderableManager_Instance): Box
 fun getPrimitiveCount(instance: RenderableManager_Instance): Double
 fun setMaterialInstanceAt(instance: RenderableManager_Instance, primitiveIndex: Double, materialInstance: MaterialInstance): Unit
 fun getMaterialInstanceAt(instance: RenderableManager_Instance, primitiveIndex: Double): MaterialInstance
 fun setGeometryAt(instance: RenderableManager_Instance, primitiveIndex: Double, type: RenderableManager_PrimitiveType, vertices: VertexBuffer, indices: IndexBuffer, offset: Double, count: Double): Unit
+fun setGeometryNoIndicesAt(instance: RenderableManager_Instance, primitiveIndex: Double, type: RenderableManager_PrimitiveType, vertices: VertexBuffer, offset: Double, count: Double): Unit
 fun setBlendOrderAt(instance: RenderableManager_Instance, primitiveIndex: Double, order: Double): Unit
 fun getEnabledAttributesAt(instance: RenderableManager_Instance, primitiveIndex: Double): Double
 fun getBlendOrderAt(instance: RenderableManager_Instance, primitiveIndex: Double): Double
@@ -41,7 +44,6 @@ fun isCullingEnabled(instance: RenderableManager_Instance): Boolean
 fun setCulling(instance: RenderableManager_Instance, enable: Boolean): Unit
 fun isScreenSpaceContactShadowsEnabled(instance: RenderableManager_Instance): Boolean
 fun setScreenSpaceContactShadows(instance: RenderableManager_Instance, enabled: Boolean): Unit
-fun setGeometryNoIndicesAt(instance: RenderableManager_Instance, primitiveIndex: Double, type: RenderableManager_PrimitiveType, vertices: VertexBuffer, offset: Double, count: Double): Unit
 companion object {
 fun Builder(ngeos: Double): RenderableManager_Builder
 }

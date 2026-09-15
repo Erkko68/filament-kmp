@@ -8,38 +8,23 @@ import io.github.erkko68.filament.web.PixelDataType
 import io.github.erkko68.filament.web.Texture_Builder as JSTextureBuilder
 import org.khronos.webgl.set
 
-// The generated Texture external only binds setImage(engine, level, pbd); the deep/sub-region
-// overload exists in filament.js but isn't emitted, so re-type it here instead of `asDynamic()`.
-private external interface JsTextureExt : JsAny  {
-    fun setImage(
-        engine: io.github.erkko68.filament.web.Engine,
-        level: Int, xoffset: Int, yoffset: Int, zoffset: Int,
-        width: Int, height: Int, depth: Int,
-        pbd: JSPixelBufferDescriptor,
-    )
-}
-
-@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JSTexture) {
     // Filament JS exposes dimensions only via `_getWidth(engine, level)` etc.
     // (see jsbindings.cpp), so when an engine is known we delegate; otherwise
     // we fall back to the dimensions captured when the Texture was built.
+    // getTarget/getFormat take no engine, so they always go to the engine.
     internal var engine: Engine? = null
     private var _width = 0
     private var _height = 0
     private var _depth = 0
     private var _levels = 1
-    private var _format = InternalFormat.RGBA8
-    private var _target = Sampler.SAMPLER_2D
 
-    internal constructor(jsTexture: JSTexture, engine: Engine, width: Int, height: Int, depth: Int, levels: Int, format: InternalFormat, target: Sampler) : this(jsTexture) {
+    internal constructor(jsTexture: JSTexture, engine: Engine, width: Int, height: Int, depth: Int, levels: Int) : this(jsTexture) {
         this.engine = engine
         _width = width
         _height = height
         _depth = depth
         _levels = levels
-        _format = format
-        _target = target
     }
 
     actual class Builder actual constructor() {
@@ -48,8 +33,6 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         private var _height = 1
         private var _depth = 1
         private var _levels = 1
-        private var _format = InternalFormat.RGBA8
-        private var _target = Sampler.SAMPLER_2D
 
         actual fun width(width: Int): Builder {
             _width = width
@@ -76,29 +59,16 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         }
 
         actual fun samples(samples: Int): Builder {
-            // Not in JS?
+            jsBuilder.samples(samples.toDouble())
             return this
         }
 
         actual fun sampler(target: Sampler): Builder {
-            _target = target
-            // Upstream binds only SAMPLER_2D / SAMPLER_CUBEMAP / SAMPLER_EXTERNAL.
-            // Map common-API samplers to the closest JS-bound option so the
-            // native side knows e.g. that a texture is a cubemap (needed by
-            // Skybox/IndirectLight which assert isCubemap()).
-            val jsSampler = when (target) {
-                Sampler.SAMPLER_CUBEMAP, Sampler.SAMPLER_CUBEMAP_ARRAY ->
-                    io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP
-                Sampler.SAMPLER_EXTERNAL ->
-                    io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL
-                else -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D
-            }
-            jsBuilder.sampler(jsSampler)
+            jsBuilder.sampler(mapSampler(target))
             return this
         }
 
         actual fun format(format: InternalFormat): Builder {
-            _format = format
             jsBuilder.format(mapInternalFormat(format))
             return this
         }
@@ -108,25 +78,31 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
             return this
         }
 
+        // WebGL has no texture swizzle, so build() rejects a swizzled texture; the binding
+        // exists so callers get that explicit error instead of a silently ignored swizzle.
+        // Pair with Texture.isTextureSwizzleSupported, which returns false here.
         actual fun swizzle(
             r: Swizzle,
             g: Swizzle,
             b: Swizzle,
             a: Swizzle
         ): Builder {
+            jsBuilder.swizzle(mapSwizzle(r), mapSwizzle(g), mapSwizzle(b), mapSwizzle(a))
             return this
         }
 
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — importTexture takes a backend texture handle, which filament.js does not expose.")
         actual fun importTexture(id: Long): Builder {
             return this
         }
 
         actual fun external(): Builder {
+            jsBuilder.external()
             return this
         }
 
         actual fun build(engine: Engine): Texture {
-            return Texture(jsBuilder.build(engine.jsEngine), engine, _width, _height, _depth, _levels, _format, _target)
+            return Texture(jsBuilder.build(engine.jsEngine), engine, _width, _height, _depth, _levels)
         }
     }
 
@@ -202,9 +178,16 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         return _levels
     }
 
-    actual val target: Sampler get() = _target
+    actual val target: Sampler get() = when (jsTexture.getTarget()) {
+        io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D_ARRAY -> Sampler.SAMPLER_2D_ARRAY
+        io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP -> Sampler.SAMPLER_CUBEMAP
+        io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL -> Sampler.SAMPLER_EXTERNAL
+        io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_3D -> Sampler.SAMPLER_3D
+        io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP_ARRAY -> Sampler.SAMPLER_CUBEMAP_ARRAY
+        else -> Sampler.SAMPLER_2D
+    }
 
-    actual val format: InternalFormat get() = _format
+    actual val format: InternalFormat get() = jsTexture.getFormat().toCommon()
 
     actual fun setImage(
         engine: Engine,
@@ -225,8 +208,7 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         height: Int,
         descriptor: PixelBufferDescriptor
     ) {
-        // JS bindings only support setImage(engine, level, pbd); sub-region upload not available
-        jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
+        jsTexture.setImage(engine.jsEngine, level.toDouble(), xoffset.toDouble(), yoffset.toDouble(), width.toDouble(), height.toDouble(), descriptor.jsPbd)
     }
 
     actual fun setImage(
@@ -240,10 +222,7 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         depth: Int,
         descriptor: PixelBufferDescriptor
     ) {
-        // Deep setImage is for 3D textures or arrays
-        jsTexture.unsafeCast<JsTextureExt>().setImage(
-            engine.jsEngine, level, xoffset, yoffset, zoffset, width, height, depth, descriptor.jsPbd
-        )
+        jsTexture.setImage(engine.jsEngine, level.toDouble(), xoffset.toDouble(), yoffset.toDouble(), zoffset.toDouble(), width.toDouble(), height.toDouble(), depth.toDouble(), descriptor.jsPbd)
     }
 
     actual fun setExternalStream(
@@ -261,7 +240,7 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
             engine: Engine,
             format: InternalFormat
         ): Boolean {
-            return true
+            return JSTexture.isTextureFormatSupported(engine.jsEngine, mapInternalFormat(format))
         }
 
         actual fun isTextureFormatMipmappable(
@@ -271,8 +250,9 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
             return JSTexture.isTextureFormatMipmappable(engine.jsEngine, mapInternalFormat(format))
         }
 
-        actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
-            JSTexture.isTextureSwizzleSupported(engine.jsEngine)
+        actual fun isTextureSwizzleSupported(engine: Engine): Boolean {
+            return JSTexture.isTextureSwizzleSupported(engine.jsEngine)
+        }
 
         actual fun validatePixelFormatAndType(
             internalFormat: InternalFormat,
@@ -290,11 +270,11 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
             engine: Engine,
             type: Sampler
         ): Int {
-            return 8192
+            return JSTexture.getMaxTextureSize(engine.jsEngine, mapSampler(type)).toInt()
         }
 
         actual fun getMaxArrayTextureLayers(engine: Engine): Int {
-            return 256
+            return JSTexture.getMaxArrayTextureLayers(engine.jsEngine).toInt()
         }
 
         actual fun computeDataSize(
@@ -317,17 +297,37 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
     }
 }
 
-// The JS enum registers Filament's TextureFormat in declaration order, the same order the
-// common enum follows, so the two map by ordinal — the old hand-written `when` covered 10 of
-// them and silently substituted RGBA8 for the rest (a DEPTH24_STENCIL8 texture came out as
-// colour).
+// Texture$InternalFormat registers Filament's TextureFormat in declaration order, so the
+// first 101 entries line up 1:1 with the common enum and the ordinal is the mapping. The
+// trailing RGTC/BPTC formats have no JS counterpart (WebGL cannot sample them anyway).
 private const val JS_INTERNAL_FORMAT_COUNT = 101
+
+private fun mapSampler(s: Texture.Sampler): io.github.erkko68.filament.web.Texture_Sampler = when (s) {
+    Texture.Sampler.SAMPLER_2D -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D
+    Texture.Sampler.SAMPLER_2D_ARRAY -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D_ARRAY
+    Texture.Sampler.SAMPLER_CUBEMAP -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP
+    Texture.Sampler.SAMPLER_EXTERNAL -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL
+    Texture.Sampler.SAMPLER_3D -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_3D
+    Texture.Sampler.SAMPLER_CUBEMAP_ARRAY -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP_ARRAY
+}
 
 private fun mapInternalFormat(format: Texture.InternalFormat): JSTextureInternalFormat {
     val ordinal = format.ordinal
     if (ordinal >= JS_INTERNAL_FORMAT_COUNT) return JSTextureInternalFormat.RGBA8
     return JSTextureInternalFormat.values
         .unsafeCast<js.array.JsArray<JSTextureInternalFormat>>()[ordinal]!!
+}
+
+private fun JSTextureInternalFormat.toCommon(): Texture.InternalFormat =
+    Texture.InternalFormat.entries[value.toInt()]
+
+private fun mapSwizzle(s: Texture.Swizzle): io.github.erkko68.filament.web.Texture_Swizzle = when (s) {
+    Texture.Swizzle.SUBSTITUTE_ZERO -> io.github.erkko68.filament.web.Texture_Swizzle.SUBSTITUTE_ZERO
+    Texture.Swizzle.SUBSTITUTE_ONE -> io.github.erkko68.filament.web.Texture_Swizzle.SUBSTITUTE_ONE
+    Texture.Swizzle.CHANNEL_0 -> io.github.erkko68.filament.web.Texture_Swizzle.CHANNEL_0
+    Texture.Swizzle.CHANNEL_1 -> io.github.erkko68.filament.web.Texture_Swizzle.CHANNEL_1
+    Texture.Swizzle.CHANNEL_2 -> io.github.erkko68.filament.web.Texture_Swizzle.CHANNEL_2
+    Texture.Swizzle.CHANNEL_3 -> io.github.erkko68.filament.web.Texture_Swizzle.CHANNEL_3
 }
 
 private fun mapFormat(format: Texture.Format): PixelDataFormat {

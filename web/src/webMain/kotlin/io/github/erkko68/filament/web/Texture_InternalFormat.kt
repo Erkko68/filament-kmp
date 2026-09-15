@@ -1,13 +1,11 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
 @JsName("Texture\$InternalFormat")
 external class Texture_InternalFormat : JsAny {
-// embind gives every enum value an integer `value`, and `values` maps that integer back
-// to the value object (see __embind_register_enum_value in filament.js).
+// embind gives every enum value an integer `value`; `values` maps that integer back to
+// the value object (see __embind_register_enum_value in filament.js).
 val value: Double
 companion object {
 val values: JsAny

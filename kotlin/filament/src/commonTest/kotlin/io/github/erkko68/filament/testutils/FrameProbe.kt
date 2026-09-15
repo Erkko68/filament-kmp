@@ -88,7 +88,14 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
             renderer.endFrame()
         }
         var tries = 0
-        while (!readbackDone.done && tries++ < 20) engine.flushAndWait()
+        while (!readbackDone.done && tries++ < 20) {
+            engine.flushAndWait()
+            // GL backends deliver readbacks asynchronously (fence + poll on later
+            // ticks), so pump empty frames until the callback fires.
+            if (!readbackDone.done && renderer.beginFrame(swapChain, 0L)) {
+                renderer.endFrame()
+            }
+        }
         return if (readbackDone.done) pixels else null
     }
 

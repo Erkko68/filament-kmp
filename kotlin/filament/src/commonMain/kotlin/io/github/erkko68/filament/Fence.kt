@@ -36,6 +36,7 @@ expect class Fence {
      *         FenceStatus.TIMEOUT_EXPIRED if the time out expired, or
      *         FenceStatus.ERROR in other cases.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
     fun wait(mode: Mode, timeout: Long): FenceStatus
 
     val nativeObject: Long

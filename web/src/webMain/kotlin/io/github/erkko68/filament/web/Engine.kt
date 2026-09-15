@@ -1,16 +1,24 @@
-// Automatically generated - do not modify!
-
 package io.github.erkko68.filament.web
 
 // unhandled import: * as glm from "gl-matrix"
 
 external class Engine : JsAny {
 fun execute(): Unit
+fun flush(): Unit
+fun flushAndWait(): Unit
+fun setFeatureFlag(name: String, value: Boolean): Boolean
+fun hasFeatureFlag(name: String): Boolean
+// Undefined (→ null) when no flag by that name exists.
+fun getFeatureFlag(name: String): Boolean?
 fun createCamera(entity: Entity): Camera
 fun createMaterial(urlOrBuffer: BufferReference, options: EngineCreateMaterialOptions = definedExternally): Material
 fun createRenderer(): Renderer
+fun createFence(): Fence
+fun destroyFence(fence: Fence): Unit
 fun createScene(): Scene
 fun createSwapChain(): SwapChain
+// extensions.js wrapper around the wasm `_createSwapChainForCanvas`.
+fun createSwapChainForCanvas(canvas: org.w3c.dom.HTMLCanvasElement): SwapChain
 fun createTextureFromJpeg(urlOrBuffer: BufferReference, options: JsAny = definedExternally): Texture
 fun createTextureFromPng(urlOrBuffer: BufferReference, options: JsAny = definedExternally): Texture
 fun createIblFromKtx1(urlOrBuffer: BufferReference): IndirectLight
@@ -36,6 +44,8 @@ fun destroyColorGrading(colorGrading: ColorGrading): Unit
 fun getCameraComponent(entity: Entity): Camera
 fun getLightManager(): LightManager
 fun destroyVertexBuffer(vertexBuffer: VertexBuffer): Unit
+fun destroySkinningBuffer(skinningBuffer: SkinningBuffer): Unit
+fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Unit
 fun getRenderableManager(): RenderableManager
 fun getSupportedFormatSuffix(suffix: String): Unit
 fun getTransformManager(): TransformManager
@@ -53,6 +63,9 @@ fun hasUnrecoverableFailure(): Boolean
 fun getConfig(): Engine_Config
 fun getEntityManager(): EntityManager
 fun isValidRenderer(renderer: Renderer): Boolean
+fun isValidFence(fence: Fence): Boolean
+fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
+fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
 fun isValidView(view: View): Boolean
 fun isValidScene(scene: Scene): Boolean
 fun isValidIndexBuffer(buffer: IndexBuffer): Boolean
@@ -66,21 +79,14 @@ fun isValidColorGrading(colorGrading: ColorGrading): Boolean
 fun isValidTexture(texture: Texture): Boolean
 fun isValidRenderTarget(renderTarget: RenderTarget): Boolean
 fun isValidSwapChain(swapChain: SwapChain): Boolean
-fun createFence(): Fence
-fun destroyFence(fence: Fence): Unit
-fun destroySkinningBuffer(skinningBuffer: SkinningBuffer): Unit
-fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Unit
-fun isValidFence(fence: Fence): Boolean
-fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean
-fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean
-// extensions.js wrapper around the wasm `_createSwapChainForCanvas`.
-fun createSwapChainForCanvas(canvas: org.w3c.dom.HTMLCanvasElement): SwapChain
 companion object {
 fun getSteadyClockTimeNano(): Double
 fun create(canvas: org.w3c.dom.HTMLCanvasElement, options: EngineCreateOptions = definedExternally, config: Engine_Config = definedExternally): Engine
 fun destroy(engine: Engine): Unit
 fun getMaxStereoscopicEyes(): Double
+fun createDefaultConfig(): Engine_Config
 }
+
 }
 
 // ── Engine ────────────────────────────────────────────────────────────────────

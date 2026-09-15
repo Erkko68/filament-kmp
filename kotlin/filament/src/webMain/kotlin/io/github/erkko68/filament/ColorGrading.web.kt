@@ -9,7 +9,7 @@ import io.github.erkko68.filament.web.ColorGrading_QualityLevel
 
 actual class ColorGrading @InternalFilamentApi constructor(internal val jsColorGrading: JSColorGrading) {
     actual class Builder {
-        private val jsBuilder = JSColorGrading.Builder()
+        internal val jsBuilder = JSColorGrading.Builder()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
             jsBuilder.quality(when (qualityLevel) {
@@ -36,7 +36,7 @@ actual class ColorGrading @InternalFilamentApi constructor(internal val jsColorG
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            jsBuilder.toneMapping(toneMapper.jsToneMapping)
+            jsBuilder.toneMapper(toneMapper.jsToneMapper)
             return this
         }
 
@@ -137,8 +137,10 @@ actual class ColorGrading @InternalFilamentApi constructor(internal val jsColorG
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — customLut is not bound in filament.js.")
-        actual fun customLut(data: FloatArray, dimension: Int): Builder = jsUnsupported("ColorGrading.Builder.customLut")
+        actual fun customLut(data: FloatArray, dimension: Int): Builder {
+            jsBuilder.customLut(data.toJsNumbers(), dimension.toDouble())
+            return this
+        }
 
         actual fun fastMath(fastMath: Boolean): Builder {
             jsBuilder.fastMath(fastMath)

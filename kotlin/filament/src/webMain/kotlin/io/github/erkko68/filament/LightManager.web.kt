@@ -4,35 +4,29 @@ import io.github.erkko68.filament.web.interop.readNumbersInto
 
 import io.github.erkko68.filament.web.LightManager_Instance as JSLightManagerInstance
 
+import io.github.erkko68.filament.web.interop.emptyJsObject
 import io.github.erkko68.filament.web.interop.jsNumbers
 import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.LightManager as JSLightManager
 import io.github.erkko68.filament.web.`LightManager_Builder` as JSLightManagerBuilder
 import io.github.erkko68.filament.web.LightManager_Type
+import io.github.erkko68.filament.web.LightManager_ShadowCascades.Companion as JSShadowCascades
 import io.github.erkko68.filament.web.Entity as JSEntity
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class LightManager @InternalFilamentApi constructor(internal val jsLightManager: JSLightManager) {
     actual val componentCount: Int get() = jsLightManager.getComponentCount().toInt()
 
-    // Upstream LightManager binding doesn't expose `destroy(Entity)` —
-    // components are usually torn down via `engine.destroyEntity`, but we
-    // don't have an Engine reference here. Track local removals so the
-    // common API's destroy / hasComponent round-trip behaves as expected.
-    private val destroyed = mutableSetOf<Entity>()
-
-    actual fun hasComponent(entity: Entity): Boolean {
-        if (entity in destroyed) return false
-        return jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))
-    }
+    actual fun hasComponent(entity: Entity): Boolean =
+        jsLightManager.hasComponent(EntityManager.jsEntityOf(entity))
 
     actual fun getInstance(entity: Entity): EntityInstance {
         return InstanceRegistry.register(jsLightManager.getInstance(EntityManager.jsEntityOf(entity)))
     }
 
     actual fun destroy(entity: Entity) {
-        destroyed += entity
+        jsLightManager.destroy(EntityManager.jsEntityOf(entity))
     }
 
     actual fun getType(instance: EntityInstance): Type {
@@ -85,7 +79,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
     }
 
     actual fun setIntensityCandela(instance: EntityInstance, intensity: Float) {
-        jsLightManager.setIntensity(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
+        jsLightManager.setIntensityCandela(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), intensity.toDouble())
     }
 
     actual fun getIntensity(instance: EntityInstance): Float {
@@ -100,19 +94,17 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         return jsLightManager.getFalloff(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
     }
 
-    // get{Inner,Outer}ConeAngle aren't bound in upstream jsbindings.cpp (v1.71.4) —
-    // mirror the last setSpotLightCone value per-instance so the common getters
-    // return what was set.
-    private val coneAngles = mutableMapOf<Int, Pair<Float, Float>>()
-
     actual fun setSpotLightCone(instance: EntityInstance, inner: Float, outer: Float) {
-        coneAngles[instance] = inner to outer
         jsLightManager.setSpotLightCone(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), inner.toDouble(), outer.toDouble())
     }
 
-    actual fun getInnerConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.first ?: 0f
+    actual fun getInnerConeAngle(instance: EntityInstance): Float {
+        return jsLightManager.getSpotLightInnerCone(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
+    }
 
-    actual fun getOuterConeAngle(instance: EntityInstance): Float = coneAngles[instance]?.second ?: 0f
+    actual fun getOuterConeAngle(instance: EntityInstance): Float {
+        return jsLightManager.getSpotLightOuterCone(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()).toFloat()
+    }
 
     actual fun setSunAngularRadius(instance: EntityInstance, angularRadius: Float) {
         jsLightManager.setSunAngularRadius(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), angularRadius.toDouble())
@@ -175,11 +167,7 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         actual var shadowBulbRadius: Float = -1.0f
         // Identity quaternion (x,y,z,w); 4 floats like jvm/native, not a 16-float mat4.
         actual var transform: FloatArray = floatArrayOf(0f, 0f, 0f, 1f)
-        // TODO(web-api-parity): unreachable while Builder.shadowOptions stays a no-op on web —
-        // upstream's embind registers ShadowOptions with an unregisterable mat4f field.
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetConstant: Float = 0.5f
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetSlope: Float = 2.0f
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f
@@ -187,12 +175,19 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         actual var maxSearchRadius: Float = 0.0f
     }
 
+    // The JS forms return the (cascades - 1) splits instead of filling an out-parameter.
     actual object ShadowCascades {
         actual fun computeUniformSplits(splitPositions: FloatArray, cascades: Int) {
+            JSShadowCascades.computeUniformSplits(cascades.toDouble()).readNumbersInto(splitPositions)
         }
         actual fun computeLogSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float) {
+            JSShadowCascades.computeLogSplits(cascades.toDouble(), near.toDouble(), far.toDouble())
+                .readNumbersInto(splitPositions)
         }
         actual fun computePracticalSplits(splitPositions: FloatArray, cascades: Int, near: Float, far: Float, lambda: Float) {
+            JSShadowCascades.computePracticalSplits(
+                cascades.toDouble(), near.toDouble(), far.toDouble(), lambda.toDouble()
+            ).readNumbersInto(splitPositions)
         }
     }
 
@@ -217,17 +212,34 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder {
-            // TODO(js): no-op on JS. jsbindings.cpp registers the ShadowOptions
-            // value_object with a `transform` field typed as mat4f, but the
-            // only mat4 type in the embind registry is `flatmat4` — a wrapper
-            // struct registered under a different RTTI. embind looks up mat4f,
-            // finds nothing, and throws "unbound types" for any input. The
-            // upstream `Filament.shadowOptions(overrides)` wrapper itself
-            // omits `transform`/`lispsm`/`shadowBulbRadius` from its defaults
-            // because no JS caller can populate them. Until upstream registers
-            // mat4f (or changes the field to flatmat4), this is unreachable.
+            val js = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.LightManager_ShadowOptions>()
+            js.mapSize = options.mapSize.toDouble()
+            js.shadowCascades = options.shadowCascades.toDouble()
+            js.cascadeSplitPositions = options.cascadeSplitPositions.toJsNumbers()
+            val vsm = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.LightManager_ShadowOptions_Vsm>()
+            vsm.elvsm = options.elvsm
+            vsm.blurWidth = options.blurWidth.toDouble()
+            js.vsm = vsm
+            js.constantBias = options.constantBias.toDouble()
+            js.normalBias = options.normalBias.toDouble()
+            js.shadowFar = options.shadowFar.toDouble()
+            js.shadowNearHint = options.shadowNearHint.toDouble()
+            js.shadowFarHint = options.shadowFarHint.toDouble()
+            js.stable = options.stable
+            js.screenSpaceContactShadows = options.screenSpaceContactShadows
+            js.stepCount = options.stepCount.toDouble()
+            js.maxShadowDistance = options.maxShadowDistance.toDouble()
+            js.lispsm = options.lispsm
+            js.shadowBulbRadius = options.shadowBulbRadius.toDouble()
+            js.transform = options.transform.toJsNumbers()
+            js.polygonOffsetConstant = options.polygonOffsetConstant.toDouble()
+            js.polygonOffsetSlope = options.polygonOffsetSlope.toDouble()
+            js.penumbraScale = options.penumbraScale.toDouble()
+            js.penumbraRatioScale = options.penumbraRatioScale.toDouble()
+            js.maxPenumbraRatio = options.maxPenumbraRatio.toDouble()
+            js.maxSearchRadius = options.maxSearchRadius.toDouble()
+            jsBuilder.shadowOptions(js)
             return this
         }
 
@@ -257,13 +269,12 @@ actual class LightManager @InternalFilamentApi constructor(internal val jsLightM
         }
 
         actual fun intensity(watts: Float, efficiency: Float): Builder {
-            // intensityEnergy not in JS builder bindings; use intensity instead
-            jsBuilder.intensity(watts.toDouble())
+            jsBuilder.intensityEnergy(watts.toDouble(), efficiency.toDouble())
             return this
         }
 
         actual fun intensityCandela(intensity: Float): Builder {
-            jsBuilder.intensity(intensity.toDouble())
+            jsBuilder.intensityCandela(intensity.toDouble())
             return this
         }
 

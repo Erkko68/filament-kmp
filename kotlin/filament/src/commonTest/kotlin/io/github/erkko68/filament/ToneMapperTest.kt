@@ -33,16 +33,16 @@ class ToneMapperTest : FilamentTestFixture() {
         assertNotNull(t8)
 
         t8.contrast = 2.0f
-        assertEquals(2.0f, t8.contrast)
+        assertEquals(2.0f, t8.contrast, 1e-6f)
 
         t8.midGrayIn = 0.25f
-        assertEquals(0.25f, t8.midGrayIn)
+        assertEquals(0.25f, t8.midGrayIn, 1e-6f)
 
         t8.midGrayOut = 0.35f
-        assertEquals(0.35f, t8.midGrayOut)
+        assertEquals(0.35f, t8.midGrayOut, 1e-6f)
 
         t8.hdrMax = 12f
-        assertEquals(12f, t8.hdrMax)
+        assertEquals(12f, t8.hdrMax, 1e-6f)
 
         val t9 = ToneMapper.DisplayRange()
         assertNotNull(t9)

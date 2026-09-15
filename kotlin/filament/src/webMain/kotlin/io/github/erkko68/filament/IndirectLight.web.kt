@@ -41,12 +41,12 @@ actual class IndirectLight @InternalFilamentApi constructor(internal val jsIndir
             bands: Int,
             sh: FloatArray
         ): Builder {
-            jsBuilder.irradianceSh(bands.toDouble(), sh.toJsNumbers())
+            jsBuilder.irradiance(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 
         actual fun irradiance(cubemap: Texture): Builder {
-            jsBuilder.irradianceTex(cubemap.jsTexture)
+            jsBuilder.irradiance(cubemap.jsTexture)
             return this
         }
 
@@ -54,8 +54,7 @@ actual class IndirectLight @InternalFilamentApi constructor(internal val jsIndir
             bands: Int,
             sh: FloatArray
         ): Builder {
-            // JS bindings don't seem to have radiance, mapping to irradiance
-            jsBuilder.irradianceSh(bands.toDouble(), sh.toJsNumbers())
+            jsBuilder.radiance(bands.toDouble(), sh.toJsNumbers())
             return this
         }
 

@@ -1,13 +1,11 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /** Real-backend coverage for [Texture] upload/mipmap bindings. See [RenderingTestFixture]. */
-@IgnoreJs // WebGL wrapper: half-float / sub-region setImage not supported here.
 class TextureRenderingTest : RenderingTestFixture() {
     @Test
     fun testTextureSetImageAndMipmaps() {

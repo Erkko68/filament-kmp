@@ -46,20 +46,20 @@ class PostProcessingApplyTest : ComposeTestFixture() {
         ).applyTo(view, engine)
 
         assertTrue(view.bloomOptions.enabled)
-        assertEquals(0.42f, view.bloomOptions.strength)
+        assertEquals(0.42f, view.bloomOptions.strength, 1e-6f)
         assertEquals(8, view.bloomOptions.levels)
         assertTrue(view.vignetteOptions.enabled)
-        assertEquals(0.3f, view.vignetteOptions.midPoint)
+        assertEquals(0.3f, view.vignetteOptions.midPoint, 1e-6f)
         assertTrue(view.fogOptions.enabled)
-        assertEquals(0.25f, view.fogOptions.density)
+        assertEquals(0.25f, view.fogOptions.density, 1e-6f)
         assertTrue(view.ambientOcclusionOptions.enabled)
-        assertEquals(0.5f, view.ambientOcclusionOptions.radius)
+        assertEquals(0.5f, view.ambientOcclusionOptions.radius, 1e-6f)
         assertTrue(view.screenSpaceReflectionsOptions.enabled)
-        assertEquals(5f, view.screenSpaceReflectionsOptions.maxDistance)
+        assertEquals(5f, view.screenSpaceReflectionsOptions.maxDistance, 1e-6f)
         assertTrue(view.depthOfFieldOptions.enabled)
-        assertEquals(2f, view.depthOfFieldOptions.cocScale)
+        assertEquals(2f, view.depthOfFieldOptions.cocScale, 1e-6f)
         assertTrue(view.dynamicResolutionOptions.enabled)
-        assertEquals(0.5f, view.dynamicResolutionOptions.minScale)
+        assertEquals(0.5f, view.dynamicResolutionOptions.minScale, 1e-6f)
     }
 
     @Test

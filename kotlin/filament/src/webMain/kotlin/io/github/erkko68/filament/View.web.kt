@@ -9,64 +9,39 @@ import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.View as JSView
 
-// Setters the generated externals don't cover. Declared as methods (not function-typed
-// properties) so they're invoked as `obj.method(...)` and keep their `this` binding — embind
-// throws BindingError if the bound function is detached from its receiver.
-private external interface JsViewExt : JsAny  {
-    fun setDithering(dithering: io.github.erkko68.filament.web.View_Dithering)
-    fun setDynamicResolutionOptions(options: io.github.erkko68.filament.web.View_DynamicResolutionOptions)
-    fun setRenderQuality(quality: io.github.erkko68.filament.web.View_RenderQuality)
-    fun setShadowType(type: io.github.erkko68.filament.web.View_ShadowType)
-    fun setVsmShadowOptions(options: io.github.erkko68.filament.web.View_VsmShadowOptions)
-    fun setSoftShadowOptions(options: io.github.erkko68.filament.web.View_SoftShadowOptions)
-    fun getColorGrading(): io.github.erkko68.filament.web.ColorGrading?
+// The option externals type every field nullable because the .d.ts marks them optional,
+// but a value_object coming back from the engine always carries all of them — the
+// fallbacks below are unreachable and only exist to satisfy the type system.
+private fun Double?.f(): Float = this?.toFloat() ?: 0f
+private fun Double?.i(): Int = this?.toInt() ?: 0
+private fun Boolean?.b(): Boolean = this == true
+
+private fun io.github.erkko68.filament.web.View_QualityLevel?.toQuality(): View.Quality = when (this) {
+    io.github.erkko68.filament.web.View_QualityLevel.LOW -> View.Quality.LOW
+    io.github.erkko68.filament.web.View_QualityLevel.MEDIUM -> View.Quality.MEDIUM
+    io.github.erkko68.filament.web.View_QualityLevel.ULTRA -> View.Quality.ULTRA
+    else -> View.Quality.HIGH
 }
 
-// Value-object fields not emitted into the generated option externals.
-private external interface BloomOptionsExt : JsAny  {
-    var highlight: Double
-    var dirt: io.github.erkko68.filament.web.Texture?
-    var dirtStrength: Double
-}
-private external interface AoOptionsExt : JsAny  {
-    var ssct: io.github.erkko68.filament.web.View_AmbientOcclusionOptions_Ssct
+private fun View.Quality.toJs(): io.github.erkko68.filament.web.View_QualityLevel = when (this) {
+    View.Quality.LOW -> io.github.erkko68.filament.web.View_QualityLevel.LOW
+    View.Quality.MEDIUM -> io.github.erkko68.filament.web.View_QualityLevel.MEDIUM
+    View.Quality.HIGH -> io.github.erkko68.filament.web.View_QualityLevel.HIGH
+    View.Quality.ULTRA -> io.github.erkko68.filament.web.View_QualityLevel.ULTRA
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 actual class View @InternalFilamentApi constructor(internal val jsView: JSView) {
-    private val ext: JsViewExt get() = jsView.unsafeCast<JsViewExt>()
     // Wrapper identity, as on the other platforms: the engine hands back a raw JS/native
     // object, so the Kotlin wrapper the caller set is what the getter must return.
     private var _scene: Scene? = null
     private var _camera: Camera? = null
-    private var _viewport: Viewport = Viewport(0, 0, 0, 0)
-    private var _visibleLayersValues: Int = 0
-    private var _dithering: Dithering = Dithering.TEMPORAL
-    private var _antiAliasing: AntiAliasing = AntiAliasing.NONE
-    private var _dynamicResolutionOptions = DynamicResolutionOptions()
-    private var _renderQuality = RenderQuality()
-    private var _bloomOptions = BloomOptions()
-    private var _fogOptions = FogOptions()
-    private var _depthOfFieldOptions = DepthOfFieldOptions()
-    private var _vignetteOptions = VignetteOptions()
-    private var _ambientOcclusionOptions = AmbientOcclusionOptions()
-    private var _temporalAntiAliasingOptions = TemporalAntiAliasingOptions()
-    private var _screenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions()
-    private var _vsmShadowOptions = VsmShadowOptions()
-    private var _softShadowOptions = SoftShadowOptions()
-    private var _guardBandOptions = GuardBandOptions()
-    private var _stereoscopicOptions = StereoscopicOptions()
-    private var _multiSampleAntiAliasingOptions = MultiSampleAntiAliasingOptions()
-    private var _shadowType = ShadowType.PCF
     private var _renderTarget: RenderTarget? = null
-    private var _postProcessingEnabled = true
+    private var _colorGrading: ColorGrading? = null
 
-    // View::getName/setName aren't bound in upstream jsbindings.cpp (v1.71.4) —
-    // track locally so the common getter/setter round-trip works.
-    private var _name: String? = null
     actual var name: String?
-        get() = _name
-        set(value) { _name = value }
+        get() = jsView.getName().takeIf { it.isNotEmpty() }
+        set(value) { jsView.setName(value ?: "") }
 
     actual var scene: Scene?
         get() = _scene
@@ -107,32 +82,25 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         }
 
     actual fun setVisibleLayers(select: Int, values: Int) {
-        _visibleLayersValues = values
         jsView.setVisibleLayers(select.toDouble(), values.toDouble())
     }
 
     actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
-        val select = 1 shl layer
-        val values = if (enabled) select else 0
-        setVisibleLayers(select, values)
+        jsView.setLayerEnabled(layer.toDouble(), enabled)
     }
 
-    // jsbindings.cpp binds setVisibleLayers but no getter; mirror what was set.
-    actual val visibleLayers: Int get() = _visibleLayersValues
+    actual val visibleLayers: Int get() = jsView.getVisibleLayers().toInt()
 
-    // getView().isPostProcessingEnabled isn't bound upstream; the setter is, so mirror
-    // the value locally for a correct getter/setter round-trip (default: enabled).
     actual var isPostProcessingEnabled: Boolean
-        get() = _postProcessingEnabled
-        set(value) {
-            _postProcessingEnabled = value
-            jsView.setPostProcessingEnabled(value)
-        }
+        get() = jsView.isPostProcessingEnabled()
+        set(value) { jsView.setPostProcessingEnabled(value) }
 
     actual var antiAliasing: AntiAliasing
-        get() = _antiAliasing
+        get() = when (jsView.getAntiAliasing()) {
+            io.github.erkko68.filament.web.View_AntiAliasing.FXAA -> AntiAliasing.FXAA
+            else -> AntiAliasing.NONE
+        }
         set(value) {
-            _antiAliasing = value
             jsView.setAntiAliasing(when (value) {
                 AntiAliasing.NONE -> io.github.erkko68.filament.web.View_AntiAliasing.NONE
                 AntiAliasing.FXAA -> io.github.erkko68.filament.web.View_AntiAliasing.FXAA
@@ -140,30 +108,27 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         }
 
     actual var dithering: Dithering
-        get() = _dithering
+        get() = when (jsView.getDithering()) {
+            io.github.erkko68.filament.web.View_Dithering.NONE -> Dithering.NONE
+            else -> Dithering.TEMPORAL
+        }
         set(value) {
-            _dithering = value
             val jsDith = when(value) {
                 Dithering.NONE -> io.github.erkko68.filament.web.View_Dithering.NONE
                 Dithering.TEMPORAL -> io.github.erkko68.filament.web.View_Dithering.TEMPORAL
             }
-            ext.setDithering(jsDith)
+            jsView.setDithering(jsDith)
         }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
         get() = jsView.getDynamicResolutionOptions().let { o ->
             DynamicResolutionOptions().apply {
-                enabled = o.enabled ?: false
-                homogeneousScaling = o.homogeneousScaling ?: false
+                enabled = o.enabled.b()
+                homogeneousScaling = o.homogeneousScaling.b()
                 minScale = (o.minScale?.toFloatArray(2) ?: FloatArray(2))[0]
                 maxScale = (o.maxScale?.toFloatArray(2) ?: FloatArray(2))[0]
-                sharpness = (o.sharpness ?: 0.0).toFloat()
-                quality = when (o.quality) {
-                    io.github.erkko68.filament.web.View_QualityLevel.MEDIUM -> View.Quality.MEDIUM
-                    io.github.erkko68.filament.web.View_QualityLevel.HIGH -> View.Quality.HIGH
-                    io.github.erkko68.filament.web.View_QualityLevel.ULTRA -> View.Quality.ULTRA
-                    else -> View.Quality.LOW
-                }
+                sharpness = o.sharpness.f()
+                quality = o.quality.toQuality()
             }
         }
         set(value) {
@@ -173,57 +138,91 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsOptions.minScale = jsNumbers(value.minScale, value.minScale)
             jsOptions.maxScale = jsNumbers(value.maxScale, value.maxScale)
             jsOptions.sharpness = value.sharpness.toDouble()
-            jsOptions.quality = when(value.quality) {
-                View.Quality.LOW -> io.github.erkko68.filament.web.View_QualityLevel.LOW
-                View.Quality.MEDIUM -> io.github.erkko68.filament.web.View_QualityLevel.MEDIUM
-                View.Quality.HIGH -> io.github.erkko68.filament.web.View_QualityLevel.HIGH
-                View.Quality.ULTRA -> io.github.erkko68.filament.web.View_QualityLevel.ULTRA
-            }
-            ext.setDynamicResolutionOptions(jsOptions)
+            jsOptions.quality = value.quality.toJs()
+            jsView.setDynamicResolutionOptions(jsOptions)
         }
 
     actual var renderQuality: RenderQuality
-        get() = _renderQuality
+        get() = RenderQuality().apply {
+            hdrColorBuffer = jsView.getRenderQuality().hdrColorBuffer.toQuality()
+        }
         set(value) {
-            _renderQuality = value
             val jsQuality = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_RenderQuality`>()
-            jsQuality.hdrColorBuffer = when(value.hdrColorBuffer) {
-                View.Quality.LOW -> io.github.erkko68.filament.web.View_QualityLevel.LOW
-                View.Quality.MEDIUM -> io.github.erkko68.filament.web.View_QualityLevel.MEDIUM
-                View.Quality.HIGH -> io.github.erkko68.filament.web.View_QualityLevel.HIGH
-                View.Quality.ULTRA -> io.github.erkko68.filament.web.View_QualityLevel.ULTRA
-            }
-            // Push to the JS view — without this the setter was a silent no-op and the
-            // hdrColorBuffer quality stayed at whatever Filament.js defaults to.
-            ext.setRenderQuality(jsQuality)
+            jsQuality.hdrColorBuffer = value.hdrColorBuffer.toJs()
+            jsView.setRenderQuality(jsQuality)
         }
 
+    // `dirt`/`dirtStrength` are not registered on the View$BloomOptions value_object
+    // ("JavaScript binding for dirt is not yet supported"), so they cannot round-trip.
     actual var bloomOptions: BloomOptions
-        get() = _bloomOptions
+        get() = jsView.getBloomOptions().let { o ->
+            BloomOptions().apply {
+                enabled = o.enabled.b()
+                levels = o.levels.i()
+                resolution = o.resolution.i()
+                strength = o.strength.f()
+                threshold = o.threshold.b()
+                quality = o.quality.toQuality()
+                lensFlare = o.lensFlare.b()
+                starburst = o.starburst.b()
+                chromaticAberration = o.chromaticAberration.f()
+                ghostCount = o.ghostCount.i()
+                ghostSpacing = o.ghostSpacing.f()
+                ghostThreshold = o.ghostThreshold.f()
+                haloRadius = o.haloRadius.f()
+                haloThickness = o.haloThickness.f()
+                haloThreshold = o.haloThreshold.f()
+                highlight = o.highlight.f()
+                blendMode = when (o.blendMode) {
+                    io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE ->
+                        View.BloomOptions.BlendMode.INTERPOLATE
+                    else -> View.BloomOptions.BlendMode.ADD
+                }
+            }
+        }
         set(value) {
-            _bloomOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_BloomOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.levels = value.levels.toDouble()
             jsOptions.resolution = value.resolution.toDouble()
             jsOptions.strength = value.strength.toDouble()
             jsOptions.threshold = value.threshold
+            jsOptions.quality = value.quality.toJs()
+            jsOptions.lensFlare = value.lensFlare
+            jsOptions.starburst = value.starburst
+            jsOptions.chromaticAberration = value.chromaticAberration.toDouble()
+            jsOptions.ghostCount = value.ghostCount.toDouble()
+            jsOptions.ghostSpacing = value.ghostSpacing.toDouble()
+            jsOptions.ghostThreshold = value.ghostThreshold.toDouble()
+            jsOptions.haloRadius = value.haloRadius.toDouble()
+            jsOptions.haloThickness = value.haloThickness.toDouble()
+            jsOptions.haloThreshold = value.haloThreshold.toDouble()
+            jsOptions.highlight = value.highlight.toDouble()
             jsOptions.blendMode = when (value.blendMode) {
                 View.BloomOptions.BlendMode.ADD -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.ADD
                 View.BloomOptions.BlendMode.INTERPOLATE -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE
             }
-            jsOptions.unsafeCast<BloomOptionsExt>().let {
-                it.highlight = value.highlight.toDouble()
-                it.dirt = value.dirt?.jsTexture
-                it.dirtStrength = value.dirtStrength.toDouble()
-            }
             jsView.setBloomOptions(jsOptions)
         }
 
+    // `skyColor` is not registered on the View$FogOptions value_object, so it cannot round-trip.
     actual var fogOptions: FogOptions
-        get() = _fogOptions
+        get() = jsView.getFogOptions().let { o ->
+            FogOptions().apply {
+                enabled = o.enabled.b()
+                distance = o.distance.f()
+                density = o.density.f()
+                height = o.height.f()
+                heightFalloff = o.heightFalloff.f()
+                color = o.color?.toFloatArray(3) ?: floatArrayOf(1f, 1f, 1f)
+                cutOffDistance = o.cutOffDistance.f()
+                maximumOpacity = o.maximumOpacity.f()
+                inScatteringStart = o.inScatteringStart.f()
+                inScatteringSize = o.inScatteringSize.f()
+                fogColorFromIbl = o.fogColorFromIbl.b()
+            }
+        }
         set(value) {
-            _fogOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_FogOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.distance = value.distance.toDouble()
@@ -240,15 +239,39 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         }
 
     actual var depthOfFieldOptions: DepthOfFieldOptions
-        get() = _depthOfFieldOptions
+        get() = jsView.getDepthOfFieldOptions().let { o ->
+            DepthOfFieldOptions().apply {
+                enabled = o.enabled.b()
+                cocScale = o.cocScale.f()
+                cocAspectRatio = o.cocAspectRatio.f()
+                maxApertureDiameter = o.maxApertureDiameter.f()
+                nativeResolution = o.nativeResolution.b()
+                foregroundRingCount = o.foregroundRingCount.i()
+                backgroundRingCount = o.backgroundRingCount.i()
+                fastGatherRingCount = o.fastGatherRingCount.i()
+                maxForegroundCOC = o.maxForegroundCOC.i()
+                maxBackgroundCOC = o.maxBackgroundCOC.i()
+                filter = when (o.filter) {
+                    io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.NONE ->
+                        View.DepthOfFieldOptions.Filter.NONE
+                    io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.UNUSED ->
+                        View.DepthOfFieldOptions.Filter.UNUSED
+                    else -> View.DepthOfFieldOptions.Filter.MEDIAN
+                }
+            }
+        }
         set(value) {
-            _depthOfFieldOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_DepthOfFieldOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.cocScale = value.cocScale.toDouble()
             jsOptions.cocAspectRatio = value.cocAspectRatio.toDouble()
             jsOptions.maxApertureDiameter = value.maxApertureDiameter.toDouble()
             jsOptions.nativeResolution = value.nativeResolution
+            jsOptions.foregroundRingCount = value.foregroundRingCount.toDouble()
+            jsOptions.backgroundRingCount = value.backgroundRingCount.toDouble()
+            jsOptions.fastGatherRingCount = value.fastGatherRingCount.toDouble()
+            jsOptions.maxForegroundCOC = value.maxForegroundCOC.toDouble()
+            jsOptions.maxBackgroundCOC = value.maxBackgroundCOC.toDouble()
             jsOptions.filter = when (value.filter) {
                 View.DepthOfFieldOptions.Filter.NONE   -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.NONE
                 View.DepthOfFieldOptions.Filter.UNUSED -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.UNUSED
@@ -258,9 +281,16 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         }
 
     actual var vignetteOptions: VignetteOptions
-        get() = _vignetteOptions
+        get() = jsView.getVignetteOptions().let { o ->
+            VignetteOptions().apply {
+                enabled = o.enabled.b()
+                midPoint = o.midPoint.f()
+                roundness = o.roundness.f()
+                feather = o.feather.f()
+                color = o.color?.toFloatArray(4) ?: floatArrayOf(0f, 0f, 0f, 1f)
+            }
+        }
         set(value) {
-            _vignetteOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_VignetteOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.midPoint = value.midPoint.toDouble()
@@ -270,10 +300,31 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsView.setVignetteOptions(jsOptions)
         }
 
+    // `ssct` (and `gtao`) are not registered on the View$AmbientOcclusionOptions
+    // value_object, so those sub-structs cannot be pushed to or read back from the engine.
     actual var ambientOcclusionOptions: AmbientOcclusionOptions
-        get() = _ambientOcclusionOptions
+        get() = jsView.getAmbientOcclusionOptions().let { o ->
+            AmbientOcclusionOptions().apply {
+                enabled = o.enabled.b()
+                aoType = when (o.aoType) {
+                    io.github.erkko68.filament.web.View_AmbientOcclusionOptions_AmbientOcclusionType.GTAO ->
+                        AmbientOcclusionOptions.AmbientOcclusionType.GTAO
+                    else -> AmbientOcclusionOptions.AmbientOcclusionType.SAO
+                }
+                radius = o.radius.f()
+                bias = o.bias.f()
+                intensity = o.intensity.f()
+                power = o.power.f()
+                resolution = o.resolution.f()
+                bilateralThreshold = o.bilateralThreshold.f()
+                minHorizonAngleRad = o.minHorizonAngleRad.f()
+                bentNormals = o.bentNormals.b()
+                quality = o.quality.toQuality()
+                lowPassFilter = o.lowPassFilter.toQuality()
+                upsampling = o.upsampling.toQuality()
+            }
+        }
         set(value) {
-            _ambientOcclusionOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_AmbientOcclusionOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.aoType = when (value.aoType) {
@@ -286,21 +337,55 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsOptions.power = value.power.toDouble()
             jsOptions.resolution = value.resolution.toDouble()
             jsOptions.bilateralThreshold = value.bilateralThreshold.toDouble()
-            
-            val jsSsct = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_AmbientOcclusionOptions_Ssct`>()
-            jsSsct.enabled = value.ssct.enabled
-            jsSsct.lightConeRad = value.ssct.lightConeRad.toDouble()
-            jsSsct.shadowDistance = value.ssct.shadowDistance.toDouble()
-            jsSsct.contactDistanceMax = value.ssct.contactDistanceMax.toDouble()
-            jsOptions.unsafeCast<AoOptionsExt>().ssct = jsSsct
-            
+            jsOptions.minHorizonAngleRad = value.minHorizonAngleRad.toDouble()
+            jsOptions.bentNormals = value.bentNormals
+            jsOptions.quality = value.quality.toJs()
+            jsOptions.lowPassFilter = value.lowPassFilter.toJs()
+            jsOptions.upsampling = value.upsampling.toJs()
             jsView.setAmbientOcclusionOptions(jsOptions)
         }
 
     actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
-        get() = _temporalAntiAliasingOptions
+        get() = jsView.getTemporalAntiAliasingOptions().let { o ->
+            TemporalAntiAliasingOptions().apply {
+                enabled = o.enabled.b()
+                feedback = o.feedback.f()
+                lodBias = o.lodBias.f()
+                sharpness = o.sharpness.f()
+                upscaling = o.upscaling.f()
+                filterHistory = o.filterHistory.b()
+                filterInput = o.filterInput.b()
+                useYCoCg = o.useYCoCg.b()
+                hdr = o.hdr.b()
+                varianceGamma = o.varianceGamma.f()
+                preventFlickering = o.preventFlickering.b()
+                historyReprojection = o.historyReprojection.b()
+                boxType = when (o.boxType) {
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxType.AABB_VARIANCE ->
+                        TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE
+                    else -> TemporalAntiAliasingOptions.BoxType.AABB
+                }
+                boxClipping = when (o.boxClipping) {
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.CLAMP ->
+                        TemporalAntiAliasingOptions.BoxClipping.CLAMP
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.NONE ->
+                        TemporalAntiAliasingOptions.BoxClipping.NONE
+                    else -> TemporalAntiAliasingOptions.BoxClipping.ACCURATE
+                }
+                jitterPattern = when (o.jitterPattern) {
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.RGSS_X4 ->
+                        TemporalAntiAliasingOptions.JitterPattern.RGSS_X4
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.UNIFORM_HELIX_X4 ->
+                        TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X8 ->
+                        TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X8
+                    io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X32 ->
+                        TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X32
+                    else -> TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X16
+                }
+            }
+        }
         set(value) {
-            _temporalAntiAliasingOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_TemporalAntiAliasingOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.feedback = value.feedback.toDouble()
@@ -334,9 +419,16 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         }
 
     actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
-        get() = _screenSpaceReflectionsOptions
+        get() = jsView.getScreenSpaceReflectionsOptions().let { o ->
+            ScreenSpaceReflectionsOptions().apply {
+                enabled = o.enabled.b()
+                thickness = o.thickness.f()
+                bias = o.bias.f()
+                maxDistance = o.maxDistance.f()
+                stride = o.stride.f()
+            }
+        }
         set(value) {
-            _screenSpaceReflectionsOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_ScreenSpaceReflectionsOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.thickness = value.thickness.toDouble()
@@ -376,17 +468,17 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
                 ShadowType.PCSS -> io.github.erkko68.filament.web.View_ShadowType.PCSS
                 ShadowType.PCFd -> io.github.erkko68.filament.web.View_ShadowType.PCFd
             }
-            ext.setShadowType(jsType)
+            jsView.setShadowType(jsType)
         }
 
     actual var vsmShadowOptions: VsmShadowOptions
         get() = jsView.getVsmShadowOptions().let { o ->
             VsmShadowOptions().apply {
-                anisotropy = (o.anisotropy ?: 0.0).toInt()
-                mipmapping = o.mipmapping ?: false
-                msaaSamples = (o.msaaSamples ?: 1.0).toInt()
-                highPrecision = o.highPrecision ?: false
-                lightBleedReduction = (o.lightBleedReduction ?: 0.0).toFloat()
+                anisotropy = o.anisotropy.i()
+                mipmapping = o.mipmapping.b()
+                msaaSamples = o.msaaSamples.i()
+                highPrecision = o.highPrecision.b()
+                lightBleedReduction = o.lightBleedReduction.f()
             }
         }
         set(value) {
@@ -396,16 +488,16 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsOptions.msaaSamples = value.msaaSamples.toDouble()
             jsOptions.highPrecision = value.highPrecision
             jsOptions.lightBleedReduction = value.lightBleedReduction.toDouble()
-            ext.setVsmShadowOptions(jsOptions)
+            jsView.setVsmShadowOptions(jsOptions)
         }
 
     actual var softShadowOptions: SoftShadowOptions
         get() = jsView.getSoftShadowOptions().let { o ->
             SoftShadowOptions().apply {
-                penumbraScale = (o.penumbraScale ?: 1.0).toFloat()
-                penumbraRatioScale = (o.penumbraRatioScale ?: 1.0).toFloat()
-                maxPenumbraRatio = (o.maxPenumbraRatio ?: 1.0).toFloat()
-                maxSearchRadius = (o.maxSearchRadius ?: 0.0).toFloat()
+                penumbraScale = o.penumbraScale.f()
+                penumbraRatioScale = o.penumbraRatioScale.f()
+                maxPenumbraRatio = o.maxPenumbraRatio.f()
+                maxSearchRadius = o.maxSearchRadius.f()
             }
         }
         set(value) {
@@ -414,31 +506,34 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsOptions.penumbraRatioScale = value.penumbraRatioScale.toDouble()
             jsOptions.maxPenumbraRatio = value.maxPenumbraRatio.toDouble()
             jsOptions.maxSearchRadius = value.maxSearchRadius.toDouble()
-            ext.setSoftShadowOptions(jsOptions)
+            jsView.setSoftShadowOptions(jsOptions)
         }
 
     actual var guardBandOptions: GuardBandOptions
-        get() = _guardBandOptions
+        get() = GuardBandOptions().apply { enabled = jsView.getGuardBandOptions().enabled.b() }
         set(value) {
-            _guardBandOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_GuardBandOptions`>()
             jsOptions.enabled = value.enabled
             jsView.setGuardBandOptions(jsOptions)
         }
 
     actual var stereoscopicOptions: StereoscopicOptions
-        get() = _stereoscopicOptions
+        get() = StereoscopicOptions().apply { enabled = jsView.getStereoscopicOptions().enabled.b() }
         set(value) {
-            _stereoscopicOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_StereoscopicOptions`>()
             jsOptions.enabled = value.enabled
             jsView.setStereoscopicOptions(jsOptions)
         }
 
     actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
-        get() = _multiSampleAntiAliasingOptions
+        get() = jsView.getMultiSampleAntiAliasingOptions().let { o ->
+            MultiSampleAntiAliasingOptions().apply {
+                enabled = o.enabled.b()
+                sampleCount = o.sampleCount.i()
+                customResolve = o.customResolve.b()
+            }
+        }
         set(value) {
-            _multiSampleAntiAliasingOptions = value
             val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_MultiSampleAntiAliasingOptions`>()
             jsOptions.enabled = value.enabled
             jsOptions.sampleCount = value.sampleCount.toDouble()
@@ -446,8 +541,6 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             jsView.setMultiSampleAntiAliasingOptions(jsOptions)
         }
 
-    // Only setters are bound on JS for these three; the getters stay tracked locally.
-    private var _isFrustumCullingEnabled: Boolean = true
     actual var isFrustumCullingEnabled: Boolean
         get() = jsView.isFrustumCullingEnabled()
         set(value) { jsView.setFrustumCullingEnabled(value) }
@@ -455,8 +548,8 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         get() = jsView.isShadowingEnabled()
         set(value) { jsView.setShadowingEnabled(value) }
     actual var isScreenSpaceRefractionEnabled: Boolean
-        get() = true
-        set(value) {} // setScreenSpaceRefractionEnabled isn't bound in jsbindings.cpp
+        get() = jsView.isScreenSpaceRefractionEnabled()
+        set(value) { jsView.setScreenSpaceRefractionEnabled(value) }
 
     actual var isStencilBufferEnabled: Boolean
         get() = jsView.isStencilBufferEnabled()
@@ -493,12 +586,12 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         jsView.setDynamicLightingOptions(zNear.toDouble(), zFar.toDouble())
     }
 
+    // Cached for wrapper identity like the other platforms; the engine-side getter still
+    // backs the case where the view was given a ColorGrading outside this wrapper.
     actual var colorGrading: ColorGrading?
-        get() {
-            val jsColorGrading = ext.getColorGrading()
-            return if (jsColorGrading != null) ColorGrading(jsColorGrading) else null
-        }
+        get() = _colorGrading ?: jsView.getColorGrading()?.let { ColorGrading(it) }
         set(value) {
+            _colorGrading = value
             if (value != null) jsView.setColorGrading(value.jsColorGrading)
         }
 
@@ -610,6 +703,7 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var bilateralThreshold: Float = 0.05f
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
+        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "tracked locally only — Options.h marks the gtao struct %codegen_skip_javascript%, so filament.js has no binding and the engine keeps its GTAO defaults.")
         actual var gtao: Gtao = Gtao()
         actual class Ssct {
             actual var enabled: Boolean = false
@@ -672,8 +766,6 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
     actual class SoftShadowOptions {
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f
-        // TODO(web-api-parity): the wasm registers both on the View$SoftShadowOptions value
-        // object, but the vendored externals (from upstream's filament.d.ts) don't declare them.
         actual var maxPenumbraRatio: Float = 10.0f
         actual var maxSearchRadius: Float = 1.0f
     }

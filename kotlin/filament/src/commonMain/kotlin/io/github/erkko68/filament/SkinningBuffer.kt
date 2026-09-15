@@ -49,7 +49,6 @@ expect class SkinningBuffer {
          *
          * @param engine Engine to associate this SkinningBuffer with
          * @return The newly created SkinningBuffer
-         * @throws UnsupportedOperationException on JS — SkinningBuffer is unbound in the web wrapper.
          */
         fun build(engine: Engine): SkinningBuffer
     }
