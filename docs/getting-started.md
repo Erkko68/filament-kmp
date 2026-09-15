@@ -8,7 +8,7 @@ There are two ways to use the library. The platform setup in step 3 — JDK floo
 - **Without Compose** — depend on `filament` alone and drive `Engine` / `Renderer` / `SwapChain` yourself, against your own window or fully headless. That route is documented in **[Using the Engine Without Compose](engine.md)**.
 
 > [!NOTE]
-> Filament KMP requires **Kotlin 2.0+** and, for the Desktop/JVM target, **JDK 22+** (the floor for the Project Panama / FFM bindings). **Compose Multiplatform 1.7+** is needed only if you use `filament-compose`.
+> Filament KMP requires **Kotlin 2.0+** and, for the Desktop/JVM target, **JDK 22+** (the floor for the Project Panama / FFM bindings). `filament-compose` needs **Compose Multiplatform 1.12+** and, on Android, **AGP 9.1+**.
 
 ## 1. Add the Maven Central repository
 
@@ -31,16 +31,16 @@ Most apps want **`filament-compose`** — it pulls in the core renderer and the 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.erkko68.filament:filament-compose:0.4.0")
+            implementation("io.github.erkko68.filament:filament-compose:0.5.0")
 
             // Optional: glTF / GLB model loading
-            implementation("io.github.erkko68.filament:gltfio:0.4.0")
+            implementation("io.github.erkko68.filament:gltfio:0.5.0")
 
             // Optional: math helpers, HDR/KTX loaders, camera manipulators
-            implementation("io.github.erkko68.filament:filament-utils:0.4.0")
+            implementation("io.github.erkko68.filament:filament-utils:0.5.0")
 
             // Optional: runtime material compilation (most apps don't need this)
-            implementation("io.github.erkko68.filament:filamat:0.4.0")
+            implementation("io.github.erkko68.filament:filamat:0.5.0")
         }
     }
 }
@@ -57,12 +57,12 @@ See **[Modules](modules.md)** for the full coordinates list, the per-target depe
 
 ### Android
 
-No extra configuration. Android uses the official `com.google.android.filament` Maven artifact, which is pulled in transitively. The minimum supported `compileSdk` is **34**.
+No extra configuration. Android uses the official `com.google.android.filament` Maven artifact, which is pulled in transitively. The minimum supported `compileSdk` is **37** (required by Filament 1.76.0).
 
 ```kotlin
 // androidApp/build.gradle.kts
 android {
-    compileSdk = 34
+    compileSdk = 37
     defaultConfig { minSdk = 24 }
 }
 ```

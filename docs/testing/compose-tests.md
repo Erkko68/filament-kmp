@@ -122,8 +122,8 @@ Filament exposes no global object count, but enough local accounting to prove "c
 // after composeScene(...) returns (composition disposed):
 assertEquals(0, scene.entityCount)        // Scene.entityCount / .lightCount / .renderableCount
 assertEquals(0, scene.lightCount)
-assertFalse(engine.getEntityManager().isAlive(capturedEntity))   // entity actually destroyed
-assertFalse(engine.getLightManager().hasComponent(capturedEntity))
+assertFalse(engine.entityManager.isAlive(capturedEntity))   // entity actually destroyed
+assertFalse(engine.lightManager.hasComponent(capturedEntity))
 ```
 
 `ResourceLedger.kt` provides `assertSceneEmpty(scene)` and `assertEntitiesDestroyed(engine, entities)`

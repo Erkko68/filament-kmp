@@ -147,7 +147,7 @@ val package = MaterialBuilder()
     .uniformParameter(MaterialBuilder.UniformType.FLOAT3, "baseColor")
     .material("void material(inout MaterialInputs m) { prepareMaterial(m); m.baseColor.rgb = materialParams.baseColor; }")
     .build()
-val template = Material.Builder().payload(package.getBuffer()).build(engine)
+val template = Material.Builder().payload(package.buffer).build(engine)
 ```
 
 > [!WARNING]

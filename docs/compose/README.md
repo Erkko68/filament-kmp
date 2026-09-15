@@ -285,7 +285,7 @@ val walk = remember { mixer.addTrack(walkIndex) }
 val run  = remember { mixer.addTrack(runIndex, weight = 0f) }
 var animator by remember { mutableStateOf<Animator?>(null) }
 
-GltfInstance(asset = character, onCreate = { animator = instance.getAnimator() })
+GltfInstance(asset = character, onCreate = { animator = instance.animator })
 
 OnFrame { frame ->
     walk.weight = 1f - moveSpeed; run.weight = moveSpeed   // computed by your game logic

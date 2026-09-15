@@ -24,7 +24,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 
 - Uses the official `com.google.android.filament` Maven library — same code path Google uses internally.
 - `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
-- Minimum `compileSdk`: **34**. Minimum `minSdk`: **24**.
+- Minimum `compileSdk`: **37**. Minimum `minSdk`: **24**.
 - `SwapChain.setFrameScheduledCallback(null)` stops your callback firing, but the engine keeps a no-op one installed. Upstream's `nSetFrameScheduledCallback` always builds a `JniCallback` and both Java overloads are `@NonNull`, so there is no way to hand it the empty callback Filament unsets on. `isFrameScheduledCallbackSet` answers from what you set through this wrapper, so it reads the same as on every other platform — only `com.google.android.filament.SwapChain.isFrameScheduledCallbackSet()`, read directly, still reports `true`.
 
 ### Screen rotation and configuration changes
