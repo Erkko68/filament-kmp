@@ -6,6 +6,7 @@ import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class MaterialBuilderTest : FilamatTestFixture() {
 
@@ -130,6 +131,10 @@ class MaterialBuilderTest : FilamatTestFixture() {
                 .useLegacyMorphing()
                 .build()
 
+        // Package.invalidPackage() is non-null, so assertNotNull alone passes even when
+        // MaterialBuilder::init() never ran and the compile was skipped.
         assertNotNull(pkg)
+        assertTrue(pkg.isValid, "material did not compile — was Filamat.init() called?")
+        assertTrue(pkg.buffer.isNotEmpty(), "valid package with an empty buffer")
     }
 }

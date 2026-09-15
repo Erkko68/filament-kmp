@@ -2,13 +2,17 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
 import java.nio.ByteBuffer
+import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader {
+actual class ResourceLoader : AutoCloseable {
     private val nativeObject: com.google.android.filament.gltfio.ResourceLoader
 
     actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
-        nativeObject = com.google.android.filament.gltfio.ResourceLoader(engine.nativeEngine, normalizeSkinningWeights)
+        nativeObject = com.google.android.filament.gltfio.ResourceLoader(engine.nativeObject, normalizeSkinningWeights)
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         nativeObject.destroy()

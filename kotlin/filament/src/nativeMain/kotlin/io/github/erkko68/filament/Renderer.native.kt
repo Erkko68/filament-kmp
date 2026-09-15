@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaRenderer
 
-actual class Renderer public constructor(public var nativeHandle: CPointer<FilaRenderer>?) {
+actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaRenderer>?) {
     actual class DisplayInfo actual constructor() {
         actual var refreshRate: Float = 60.0f
     }
@@ -23,10 +23,10 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         actual var discard: Boolean = true
     }
 
-    actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 0x1
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 0x2
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 0x4
+    actual object MirrorFrameFlag {
+        actual val COMMIT: Int = 0x1
+        actual val SET_PRESENTATION_TIME: Int = 0x2
+        actual val CLEAR: Int = 0x4
     }
 
     private lateinit var _engine: Engine
@@ -113,7 +113,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
             val ref = user!!.asStableRef<ReadPixelsPinWrapper>()
             val wrap = ref.get()
-            wrap.callback?.invoke()
+            upcall { wrap.callback?.invoke() }
             wrap.pinned.unpin()
             ref.dispose()
         }
@@ -138,7 +138,7 @@ actual class Renderer public constructor(public var nativeHandle: CPointer<FilaR
         val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
             val ref = user!!.asStableRef<ReadPixelsPinWrapper>()
             val wrap = ref.get()
-            wrap.callback?.invoke()
+            upcall { wrap.callback?.invoke() }
             wrap.pinned.unpin()
             ref.dispose()
         }

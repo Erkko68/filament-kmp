@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaStream
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
-actual class Stream internal constructor(internal var nativeHandle: CPointer<FilaStream>?) {
+actual class Stream @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaStream>?) {
     actual enum class StreamType {
         NATIVE,
         ACQUIRED
@@ -32,7 +32,7 @@ actual class Stream internal constructor(internal var nativeHandle: CPointer<Fil
         }
     }
 
-    actual val streamType: StreamType get() = StreamType.values()[FilaStream_getStreamType(nativeHandle).toInt()]
+    actual val streamType: StreamType get() = StreamType.entries[FilaStream_getStreamType(nativeHandle).toInt()]
 
     actual fun setDimensions(width: Int, height: Int) {
         FilaStream_setDimensions(nativeHandle, width.toUInt(), height.toUInt())

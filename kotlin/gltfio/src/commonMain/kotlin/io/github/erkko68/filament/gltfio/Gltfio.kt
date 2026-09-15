@@ -18,8 +18,8 @@ package io.github.erkko68.filament.gltfio
  * val resourceLoader = ResourceLoader(engine)
  * resourceLoader.loadResources(asset)  // Load textures and data
  *
- * val instance = asset.getInstance()
- * scene.addEntity(instance.getRoot())
+ * val instance = asset.instance
+ * scene.addEntity(instance.root)
  *
  * loader.destroyAsset(asset)
  * AssetLoader.destroy(loader)

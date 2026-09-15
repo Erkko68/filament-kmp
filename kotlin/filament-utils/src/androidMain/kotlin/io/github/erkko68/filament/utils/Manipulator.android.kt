@@ -1,13 +1,9 @@
 package io.github.erkko68.filament.utils
 
-actual class Manipulator internal constructor(internal val androidHandle: com.google.android.filament.utils.Manipulator) {
+actual class Manipulator internal constructor(internal val androidHandle: com.google.android.filament.utils.Manipulator) : AutoCloseable {
 
     actual enum class Mode {
         ORBIT, MAP, FLIGHT
-    }
-
-    actual enum class Fov {
-        VERTICAL, HORIZONTAL
     }
 
     actual enum class Key {
@@ -49,7 +45,7 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         }
 
         actual fun fovDirection(fov: Fov): Builder {
-            builder.fovDirection(com.google.android.filament.utils.Manipulator.Fov.values()[fov.ordinal])
+            builder.fovDirection(com.google.android.filament.utils.Manipulator.Fov.entries[fov.ordinal])
             return this
         }
 
@@ -114,16 +110,20 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         }
 
         actual fun build(mode: Mode): Manipulator {
-            return Manipulator(builder.build(com.google.android.filament.utils.Manipulator.Mode.values()[mode.ordinal]))
+            return Manipulator(builder.build(com.google.android.filament.utils.Manipulator.Mode.entries[mode.ordinal]))
         }
     }
+
+
+    actual override fun close() = destroy()
+
 
 
     actual fun destroy() {
         // Android Manipulator doesn't have a destroy method in the public API (GC handles it)
     }
 
-    actual fun getMode(): Mode = Mode.entries[androidHandle.mode.ordinal]
+    actual val mode: Mode get() = Mode.entries[androidHandle.mode.ordinal]
 
     actual fun setViewport(width: Int, height: Int) {
         androidHandle.setViewport(width, height)
@@ -168,9 +168,9 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
         androidHandle.update(deltaTime)
     }
 
-    actual fun getCurrentBookmark(): Bookmark = Bookmark(androidHandle.currentBookmark)
+    actual val currentBookmark: Bookmark get() = Bookmark(androidHandle.currentBookmark)
 
-    actual fun getHomeBookmark(): Bookmark = Bookmark(androidHandle.homeBookmark)
+    actual val homeBookmark: Bookmark get() = Bookmark(androidHandle.homeBookmark)
 
     actual fun jumpToBookmark(bookmark: Bookmark) {
         androidHandle.jumpToBookmark(bookmark.androidValue as com.google.android.filament.utils.Bookmark)

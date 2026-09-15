@@ -10,7 +10,7 @@ import io.github.erkko68.filament.web.Camera_Projection
 import io.github.erkko68.filament.web.Camera_Fov
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Camera(internal val jsCamera: JSCamera, private val _entity: Entity = 0) {
+actual class Camera @InternalFilamentApi constructor(internal val jsCamera: JSCamera, private val _entity: Entity = 0) {
 
     actual fun setProjection(
         projection: Projection,

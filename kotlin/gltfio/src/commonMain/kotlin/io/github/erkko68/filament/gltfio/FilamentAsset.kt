@@ -30,7 +30,7 @@ expect class FilamentAsset {
      * "super root" whose children are the per-instance roots, allowing all instances to be
      * moved en masse.
      */
-    fun getRoot(): Entity
+    val root: Entity
 
     /**
      * Pops a ready renderable off the async-load queue, or returns 0 if none is ready.
@@ -54,13 +54,13 @@ expect class FilamentAsset {
      * Gets the list of entities, one per glTF node. All have a Transform component; some also
      * have a Renderable and/or Light component.
      */
-    fun getEntities(): IntArray
+    val entities: IntArray
 
     /** Gets the entities representing lights. All of these have a Light component. */
-    fun getLightEntities(): IntArray
+    val lightEntities: IntArray
 
     /** Gets the entities that have Renderable components. */
-    fun getRenderableEntities(): IntArray
+    val renderableEntities: IntArray
 
     /**
      * Gets the entities representing cameras. All of these have a Camera component.
@@ -70,7 +70,7 @@ expect class FilamentAsset {
      * the aspect ratio independently of the projection:
      * `camera.setScaling(1.0 / newAspectRatio, 1.0)`.
      */
-    fun getCameraEntities(): IntArray
+    val cameraEntities: IntArray
 
     /** Gets all entities whose name label matches [name] exactly. */
     fun getEntitiesByName(name: String): IntArray
@@ -82,15 +82,15 @@ expect class FilamentAsset {
     fun getFirstEntityByName(name: String): Entity
 
     /** Gets the number of entities returned by [getEntities]. */
-    fun getEntityCount(): Int
+    val entityCount: Int
 
     /** Returns the number of instances created from this asset (>= 1 unless detached). */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    fun getAssetInstanceCount(): Int
+    val assetInstanceCount: Int
 
     /** Returns every [FilamentInstance] created from this asset. */
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    fun getAssetInstances(): Array<FilamentInstance>
+    val assetInstances: List<FilamentInstance>
 
     /**
      * Gets the bounding box computed from the min/max values in the glTF accessors.
@@ -98,7 +98,7 @@ expect class FilamentAsset {
      * This is a straightforward load-time AABB over the asset data — it does not account for
      * per-instance transforms (see [FilamentInstance.getBoundingBox] for that).
      */
-    fun getBoundingBox(): Box
+    val boundingBox: Box
 
     /** Gets the name label for the given entity, or null if it has none. */
     fun getName(entity: Entity): String?
@@ -107,10 +107,10 @@ expect class FilamentAsset {
     fun getExtras(entity: Entity): String?
 
     /** Gets the morph target names declared on the given entity, in target order. */
-    fun getMorphTargetNames(entity: Entity): Array<String>
+    fun getMorphTargetNames(entity: Entity): List<String>
 
     /** Gets the URIs of all externally-referenced buffers/textures (to feed [ResourceLoader]). */
-    fun getResourceUris(): Array<String>
+    val resourceUris: List<String>
 
     /**
      * Reclaims CPU-side memory for URI strings, binding lists, and raw animation data.
@@ -121,8 +121,8 @@ expect class FilamentAsset {
     fun releaseSourceData()
 
     /** Returns the [Engine] associated with the [AssetLoader] that created this asset. */
-    fun getEngine(): Engine
+    val engine: Engine
 
     /** Convenience accessor for the first instance ([getAssetInstances]`[0]`). */
-    fun getInstance(): FilamentInstance
+    val instance: FilamentInstance
 }

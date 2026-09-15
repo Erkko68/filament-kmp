@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.RenderableManager as AndroidRenderableManager
 
-actual class RenderableManager internal constructor(val nativeRenderableManager: AndroidRenderableManager) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val nativeRenderableManager: AndroidRenderableManager) {
     actual enum class PrimitiveType(val value: Int) {
         POINTS(0), LINES(1), LINE_STRIP(3), TRIANGLES(4), TRIANGLE_STRIP(5);
         internal fun toNative(): AndroidRenderableManager.PrimitiveType {
@@ -175,8 +175,8 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
         ))
     }
     
-    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
-        val result = outBox ?: Box()
+    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box?): Box {
+        val result = out ?: Box()
         val androidBox = com.google.android.filament.Box()
         nativeRenderableManager.getAxisAlignedBoundingBox(instance, androidBox)
         result.center[0] = androidBox.center[0]
@@ -193,12 +193,12 @@ actual class RenderableManager internal constructor(val nativeRenderableManager:
     actual fun getPriority(instance: EntityInstance): Int = nativeRenderableManager.getPriority(instance)
     actual fun setChannel(instance: EntityInstance, channel: Int) = nativeRenderableManager.setChannel(instance, channel)
     actual fun getChannel(instance: EntityInstance): Int = nativeRenderableManager.getChannel(instance)
-    actual fun setCulling(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setCulling(instance, enabled)
+    actual fun setCullingEnabled(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setCulling(instance, enabled)
     actual fun isCullingEnabled(instance: EntityInstance): Boolean = nativeRenderableManager.isCullingEnabled(instance)
     actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setFogEnabled(instance, enabled)
-    actual fun getFogEnabled(instance: EntityInstance): Boolean = nativeRenderableManager.getFogEnabled(instance)
-    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setCastShadows(instance, enabled)
-    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setReceiveShadows(instance, enabled)
+    actual fun isFogEnabled(instance: EntityInstance): Boolean = nativeRenderableManager.getFogEnabled(instance)
+    actual fun setShadowCaster(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setCastShadows(instance, enabled)
+    actual fun setShadowReceiver(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setReceiveShadows(instance, enabled)
     actual fun setScreenSpaceContactShadows(instance: EntityInstance, enabled: Boolean) = nativeRenderableManager.setScreenSpaceContactShadows(instance, enabled)
     actual fun isShadowCaster(instance: EntityInstance): Boolean = nativeRenderableManager.isShadowCaster(instance)
     actual fun isShadowReceiver(instance: EntityInstance): Boolean = nativeRenderableManager.isShadowReceiver(instance)

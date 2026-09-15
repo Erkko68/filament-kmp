@@ -13,10 +13,10 @@ class FilamatTest : FilamatTestFixture() {
 
     @Test
     fun testMaterialBuilderInitShutdownCycle() {
-        MaterialBuilder.shutdown()
-        MaterialBuilder.init()
-        MaterialBuilder.shutdown()
-        MaterialBuilder.init()
+        Filamat.shutdown()
+        Filamat.init()
+        Filamat.shutdown()
+        Filamat.init()
         // Verifies that init/shutdown can be called in sequence without crashing.
         // tearDown() in FilamatTestFixture calls shutdown() once more after this.
     }

@@ -178,8 +178,9 @@ public final class io/github/erkko68/filament/utils/Bool4 {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/github/erkko68/filament/utils/EquirectangularToCubemap {
+public final class io/github/erkko68/filament/utils/EquirectangularToCubemap : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
 }
@@ -763,8 +764,9 @@ public final class io/github/erkko68/filament/utils/HalfKt {
 	public static final fun truncate-lGUE2Mw (S)S
 }
 
-public final class io/github/erkko68/filament/utils/IBLPrefilterContext {
+public final class io/github/erkko68/filament/utils/IBLPrefilterContext : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/Engine;)V
+	public fun close ()V
 	public final fun destroy ()V
 }
 
@@ -1005,8 +1007,11 @@ public final class io/github/erkko68/filament/utils/Int4 {
 public final class io/github/erkko68/filament/utils/KTX1Loader {
 	public static final field INSTANCE Lio/github/erkko68/filament/utils/KTX1Loader;
 	public final fun createIndirectLight (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
+	public static synthetic fun createIndirectLight$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/KTX1Loader$IndirectLightBundle;
 	public final fun createSkybox (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
+	public static synthetic fun createSkybox$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle;
 	public final fun createTexture (Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;)Lio/github/erkko68/filament/Texture;
+	public static synthetic fun createTexture$default (Lio/github/erkko68/filament/utils/KTX1Loader;Lio/github/erkko68/filament/Engine;[BLio/github/erkko68/filament/utils/KTX1Loader$Options;ILjava/lang/Object;)Lio/github/erkko68/filament/Texture;
 	public final fun getSphericalHarmonics ([B)[F
 }
 
@@ -1028,7 +1033,9 @@ public final class io/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle {
 	public final fun getSkybox ()Lio/github/erkko68/filament/Skybox;
 }
 
-public final class io/github/erkko68/filament/utils/Manipulator {
+public final class io/github/erkko68/filament/utils/Manipulator : java/lang/AutoCloseable {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
 	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
@@ -1047,6 +1054,7 @@ public final class io/github/erkko68/filament/utils/Manipulator {
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Bookmark {
+	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Builder {
@@ -1060,7 +1068,7 @@ public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public final fun flightStartOrientation (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun flightStartPosition (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun fovDegrees (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
-	public final fun fovDirection (Lio/github/erkko68/filament/utils/Manipulator$Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
+	public final fun fovDirection (Lio/github/erkko68/filament/Camera$Fov;)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun groundPlane (FFFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun mapExtent (FF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun mapMinDistance (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
@@ -1071,14 +1079,6 @@ public final class io/github/erkko68/filament/utils/Manipulator$Builder {
 	public final fun upVector (FFF)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun viewport (II)Lio/github/erkko68/filament/utils/Manipulator$Builder;
 	public final fun zoomSpeed (F)Lio/github/erkko68/filament/utils/Manipulator$Builder;
-}
-
-public final class io/github/erkko68/filament/utils/Manipulator$Fov : java/lang/Enum {
-	public static final field HORIZONTAL Lio/github/erkko68/filament/utils/Manipulator$Fov;
-	public static final field VERTICAL Lio/github/erkko68/filament/utils/Manipulator$Fov;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/utils/Manipulator$Fov;
-	public static fun values ()[Lio/github/erkko68/filament/utils/Manipulator$Fov;
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Key : java/lang/Enum {
@@ -1344,6 +1344,11 @@ public final class io/github/erkko68/filament/utils/MatrixKt {
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
 }
 
+public final class io/github/erkko68/filament/utils/NativeObject_jvmKt {
+	public static final fun getNativeObject (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)Ljava/lang/foreign/MemorySegment;
+	public static final fun getNativeObject (Lio/github/erkko68/filament/utils/Manipulator;)Ljava/lang/foreign/MemorySegment;
+}
+
 public final class io/github/erkko68/filament/utils/Quaternion {
 	public static final field Companion Lio/github/erkko68/filament/utils/Quaternion$Companion;
 	public fun <init> ()V
@@ -1545,8 +1550,9 @@ public final class io/github/erkko68/filament/utils/ScalarKt {
 	public static final fun sqr-lGUE2Mw (S)S
 }
 
-public final class io/github/erkko68/filament/utils/SpecularFilter {
+public final class io/github/erkko68/filament/utils/SpecularFilter : java/lang/AutoCloseable {
 	public fun <init> (Lio/github/erkko68/filament/utils/IBLPrefilterContext;)V
+	public fun close ()V
 	public final fun destroy ()V
 	public final fun run (Lio/github/erkko68/filament/Texture;)Lio/github/erkko68/filament/Texture;
 }

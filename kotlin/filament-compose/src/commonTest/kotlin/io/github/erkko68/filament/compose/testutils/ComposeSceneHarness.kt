@@ -112,7 +112,7 @@ fun withUiThreadFilamentScene(
         // on its driver thread, which try/catch cannot recover.
         if (TestEnv.gpuBackendAvailable) {
             val e = try {
-                Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid() }
+                Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid }
             } catch (t: Throwable) {
                 null
             }

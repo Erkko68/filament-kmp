@@ -12,13 +12,15 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.Entity
 
-actual class FilamentInstance internal constructor(var nativeHandle: MemorySegment?) {
+actual class FilamentInstance @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual constructor() : this(null)
 
-    actual fun getRoot(): Int = FilamentC.FilaFilamentInstance_getRoot(nativeHandle)
+    actual val root: Entity get() = FilamentC.FilaFilamentInstance_getRoot(nativeHandle)
 
-    actual fun getEntities(): IntArray {
+    actual val entities: IntArray get() {
         val count = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
         if (count == 0) return IntArray(0)
         return confined { a ->
@@ -28,37 +30,37 @@ actual class FilamentInstance internal constructor(var nativeHandle: MemorySegme
         }
     }
 
-    actual fun getEntityCount(): Int = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
+    actual val entityCount: Int get() = FilamentC.FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
 
-    actual fun getAnimator(): Animator {
+    actual val animator: Animator get() {
         // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
         val handle = FilamentC.FilaFilamentInstance_getAnimator(nativeHandle)
         check(!handle.isNullPtr()) { ANIMATOR_NOT_LOADED }
         return Animator(handle)
     }
 
-    actual fun getBoundingBox(): Box = confined { a ->
+    actual val boundingBox: Box get() = confined { a ->
         val b = FilamentC.FilaFilamentInstance_getBoundingBox(a, nativeHandle)
         Box(FilaBox.centerX(b), FilaBox.centerY(b), FilaBox.centerZ(b),
             FilaBox.halfExtentX(b), FilaBox.halfExtentY(b), FilaBox.halfExtentZ(b))
     }
 
-    actual fun getAsset(): FilamentAsset = FilamentAsset(FilamentC.FilaFilamentInstance_getAsset(nativeHandle))
+    actual val asset: FilamentAsset get() = FilamentAsset(FilamentC.FilaFilamentInstance_getAsset(nativeHandle))
 
-    actual fun getSkinCount(): Int = FilamentC.FilaFilamentInstance_getSkinCount(nativeHandle).toInt()
+    actual val skinCount: Int get() = FilamentC.FilaFilamentInstance_getSkinCount(nativeHandle).toInt()
 
-    actual fun getSkinNames(): Array<String> {
-        val count = getSkinCount()
-        if (count == 0) return emptyArray()
+    actual val skinNames: List<String> get() {
+        val count = skinCount
+        if (count == 0) return emptyList()
         return confined { a ->
             val names = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaFilamentInstance_getSkinNames(nativeHandle, names)
-            Array(count) { names.getAtIndex(ValueLayout.ADDRESS, it.toLong()).let { p -> if (p.isNullPtr()) "" else p.cString() } }
+            List(count) { names.getAtIndex(ValueLayout.ADDRESS, it.toLong()).let { p -> if (p.isNullPtr()) "" else p.cString() } }
         }
     }
 
-    actual fun attachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toLong(), target)
-    actual fun detachSkin(skinIndex: Int, target: Int) = FilamentC.FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toLong(), target)
+    actual fun attachSkin(skinIndex: Int, target: Entity) = FilamentC.FilaFilamentInstance_attachSkin(nativeHandle, skinIndex.toLong(), target)
+    actual fun detachSkin(skinIndex: Int, target: Entity) = FilamentC.FilaFilamentInstance_detachSkin(nativeHandle, skinIndex.toLong(), target)
 
     actual fun getJointCountAt(skinIndex: Int): Int = FilamentC.FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex.toLong()).toInt()
 
@@ -75,23 +77,23 @@ actual class FilamentInstance internal constructor(var nativeHandle: MemorySegme
     actual fun applyMaterialVariant(variantIndex: Int) = FilamentC.FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex.toLong())
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getMaterialInstances(): Array<MaterialInstance> {
+    actual val materialInstances: List<MaterialInstance> get() {
         val count = FilamentC.FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         return confined { a ->
             val out = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaFilamentInstance_getMaterialInstances(nativeHandle, out)
-            Array(count) { MaterialInstance(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
+            List(count) { MaterialInstance(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
         }
     }
 
-    actual fun getMaterialVariantNames(): Array<String> {
+    actual val materialVariantNames: List<String> get() {
         val count = FilamentC.FilaFilamentInstance_getMaterialVariantCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         return confined { a ->
             val names = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaFilamentInstance_getMaterialVariantNames(nativeHandle, names)
-            Array(count) { names.getAtIndex(ValueLayout.ADDRESS, it.toLong()).let { p -> if (p.isNullPtr()) "" else p.cString() } }
+            List(count) { names.getAtIndex(ValueLayout.ADDRESS, it.toLong()).let { p -> if (p.isNullPtr()) "" else p.cString() } }
         }
     }
 }

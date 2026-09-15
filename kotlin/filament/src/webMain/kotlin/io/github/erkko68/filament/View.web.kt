@@ -33,8 +33,10 @@ private external interface AoOptionsExt : JsAny  {
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class View(internal val jsView: JSView) {
+actual class View @InternalFilamentApi constructor(internal val jsView: JSView) {
     private val ext: JsViewExt get() = jsView.unsafeCast<JsViewExt>()
+    // Wrapper identity, as on the other platforms: the engine hands back a raw JS/native
+    // object, so the Kotlin wrapper the caller set is what the getter must return.
     private var _scene: Scene? = null
     private var _camera: Camera? = null
     private var _viewport: Viewport = Viewport(0, 0, 0, 0)
@@ -115,7 +117,8 @@ actual class View(internal val jsView: JSView) {
         setVisibleLayers(select, values)
     }
 
-    actual fun getVisibleLayers(): Int = _visibleLayersValues
+    // jsbindings.cpp binds setVisibleLayers but no getter; mirror what was set.
+    actual val visibleLayers: Int get() = _visibleLayersValues
 
     // getView().isPostProcessingEnabled isn't bound upstream; the setter is, so mirror
     // the value locally for a correct getter/setter round-trip (default: enabled).
@@ -477,10 +480,10 @@ actual class View(internal val jsView: JSView) {
         return jsView.getMaterialGlobal(index.toDouble())?.toFloatArray(4) ?: FloatArray(4)
     }
 
-    actual val fogEntity: Int
+    actual val fogEntity: Entity
         get() = jsView.getFogEntity().getId().toInt()
 
-    actual fun getVisibleRenderableCount(): Int = jsView.getVisibleRenderableCount().toInt()
+    actual val visibleRenderableCount: Int get() = jsView.getVisibleRenderableCount().toInt()
 
     actual fun clearFrameHistory(engine: Engine) {
         jsView.clearFrameHistory(engine.jsEngine)
@@ -499,9 +502,8 @@ actual class View(internal val jsView: JSView) {
             if (value != null) jsView.setColorGrading(value.jsColorGrading)
         }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray {
-        return floatArrayOf(1.0f, 1.0f)
-    }
+    actual val lastDynamicResolutionScale: FloatArray get() =
+        jsView.getLastDynamicResolutionScale()?.toFloatArray(2) ?: floatArrayOf(1.0f, 1.0f)
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
         jsView.pick(x.toDouble(), y.toDouble()) { result ->

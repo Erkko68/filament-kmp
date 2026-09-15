@@ -10,12 +10,17 @@ using namespace filament;
 extern "C" {
 
 void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* swapChain, FilaCallbackHandler* handler, FilaSwapChainFrameCompletedCallback callback, void* userData) {
-    FILA_CAST(SwapChain, swapChain)->setFrameCompletedCallback(
+    auto* sc = FILA_CAST(SwapChain, swapChain);
+    if (!callback) {
+        // Filament unsets on a default-constructed callback. Wrapping a null pointer in a
+        // lambda would install a live std::function that does nothing instead.
+        sc->setFrameCompletedCallback();
+        return;
+    }
+    sc->setFrameCompletedCallback(
         reinterpret_cast<backend::CallbackHandler*>(handler),
-        [callback, userData](SwapChain* sc) {
-            if (callback) {
-                callback(reinterpret_cast<FilaSwapChain*>(sc), userData);
-            }
+        [callback, userData](SwapChain* s) {
+            callback(reinterpret_cast<FilaSwapChain*>(s), userData);
         }
     );
 }
@@ -33,13 +38,20 @@ bool FilaSwapChain_isProtectedContentSupported(FilaEngine* engine) {
 }
 
 void FilaSwapChain_setFrameScheduledCallback(FilaSwapChain* swapChain, FilaCallbackHandler* handler, FilaSwapChainFrameScheduledCallback callback, void* userData) {
-    FILA_CAST(SwapChain, swapChain)->setFrameScheduledCallback(
+    auto* sc = FILA_CAST(SwapChain, swapChain);
+    if (!callback) {
+        sc->setFrameScheduledCallback();
+        return;
+    }
+    sc->setFrameScheduledCallback(
         reinterpret_cast<backend::CallbackHandler*>(handler),
-        [callback, userData](backend::PresentCallable) {
-            // Ignore PresentCallable, which is only meaningful with the Metal backend.
-            if (callback) {
-                callback(userData);
-            }
+        [callback, userData](backend::PresentCallable presentCallable) {
+            // Metal hands presentation to whoever sets this callback and presents nothing itself;
+            // every other backend has already presented by now and passes noopPresent. Call it
+            // first so the ordering matches, and because an uncalled PresentCallable leaks the
+            // frame. Our callback carries no PresentCallable, so the caller cannot do it.
+            presentCallable();
+            callback(userData);
         }
     );
 }

@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaBufferObject
 
-actual class BufferObject internal constructor(internal var nativeHandle: CPointer<FilaBufferObject>?) {
+actual class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaBufferObject>?) {
     actual enum class BindingType {
         VERTEX,
         UNIFORM,
@@ -61,7 +61,7 @@ actual class BufferObject internal constructor(internal var nativeHandle: CPoint
         val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
             val ref = user!!.asStableRef<BufferPinWrapper>()
             val wrap = ref.get()
-            wrap.callback?.invoke()
+            upcall { wrap.callback?.invoke() }
             wrap.pinned.unpin()
             ref.dispose()
         }

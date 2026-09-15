@@ -6,7 +6,7 @@ import io.github.erkko68.filament.ffm.FilaSwapChainFrameScheduledCallback
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
-actual class SwapChain internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class FrameRateCompatibility { DEFAULT, FIXED_SOURCE }
     actual enum class ChangeFrameRateStrategy { ONLY_IF_SEAMLESS, ALWAYS }
 
@@ -18,30 +18,52 @@ actual class SwapChain internal constructor(internal var nativeHandle: MemorySeg
 
     actual val nativeWindow: Any? get() = null
 
-    // Persistent upcall stubs: the arena must outlive the swapchain, so it is replaced (and the
-    // old one closed) on each re-set. The lambda is captured directly — userData stays NULL.
-    private var frameCompletedArena: Arena? = null
-    private var frameScheduledArena: Arena? = null
+    // One stub per swapchain, allocated on first use and freed only when the swapchain is
+    // destroyed. Re-setting a callback swaps the field the stub reads rather than reallocating:
+    // freeing a stub the backend still holds for an in-flight frame is a use-after-free.
+    private var callbackArena: Arena? = Arena.ofShared()
+    private var frameCompletedStub: MemorySegment? = null
+    private var frameScheduledStub: MemorySegment? = null
+    @Volatile private var frameCompleted: (() -> Unit)? = null
+    @Volatile private var frameScheduled: (() -> Unit)? = null
 
-    actual fun setFrameCompletedCallback(callback: () -> Unit) {
-        frameCompletedArena?.close()
-        val arena = Arena.ofShared()
-        frameCompletedArena = arena
-        val cb = FilaSwapChainFrameCompletedCallback.allocate({ _, _ -> callback() }, arena)
-        FilamentC.FilaSwapChain_setFrameCompletedCallback(nativeHandle, NULL, cb, NULL)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
+    actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
+        frameCompleted = callback
+        val arena = callbackArena
+        if (callback != null && frameCompletedStub == null && arena != null) {
+            frameCompletedStub = FilaSwapChainFrameCompletedCallback.allocate(
+                { _, _ -> frameCompleted?.let { upcall(it) } }, arena)
+        }
+        val stub = if (callback == null) NULL else frameCompletedStub ?: NULL
+        FilamentC.FilaSwapChain_setFrameCompletedCallback(nativeHandle, NULL, stub, NULL)
     }
 
-    actual fun setFrameScheduledCallback(callback: () -> Unit) {
-        frameScheduledArena?.close()
-        val arena = Arena.ofShared()
-        frameScheduledArena = arena
-        val cb = FilaSwapChainFrameScheduledCallback.allocate({ _ -> callback() }, arena)
-        FilamentC.FilaSwapChain_setFrameScheduledCallback(nativeHandle, NULL, cb, NULL)
+    actual fun setFrameScheduledCallback(callback: (() -> Unit)?) {
+        frameScheduled = callback
+        val arena = callbackArena
+        if (callback != null && frameScheduledStub == null && arena != null) {
+            frameScheduledStub = FilaSwapChainFrameScheduledCallback.allocate(
+                { _ -> frameScheduled?.let { upcall(it) } }, arena)
+        }
+        val stub = if (callback == null) NULL else frameScheduledStub ?: NULL
+        FilamentC.FilaSwapChain_setFrameScheduledCallback(nativeHandle, NULL, stub, NULL)
+    }
+
+    // Called once the swapchain is destroyed and no further frame callbacks can fire.
+    internal fun releaseCallbackStubs() {
+        frameCompleted = null
+        frameScheduled = null
+        frameCompletedStub = null
+        frameScheduledStub = null
+        callbackArena?.close()
+        callbackArena = null
     }
 
     actual val isFrameScheduledCallbackSet: Boolean get() = FilamentC.FilaSwapChain_isFrameScheduledCallbackSet(nativeHandle)
 
-    actual fun isFrameRateChangeSupported(): Boolean = FilamentC.FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
+    actual val isFrameRateChangeSupported: Boolean get() = FilamentC.FilaSwapChain_isFrameRateChangeSupported(nativeHandle)
 
     actual fun setFrameRate(frameRate: Float) =
         setFrameRate(frameRate, FrameRateCompatibility.DEFAULT, ChangeFrameRateStrategy.ONLY_IF_SEAMLESS)

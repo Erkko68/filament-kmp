@@ -4,7 +4,7 @@ import io.github.erkko68.filament.web.BufferObject_BindingType
 import io.github.erkko68.filament.web.BufferObject as JSBufferObject
 import org.khronos.webgl.set
 
-actual class BufferObject(internal val jsBufferObject: JSBufferObject) {
+actual class BufferObject @InternalFilamentApi constructor(internal val jsBufferObject: JSBufferObject) {
     actual val byteCount: Int get() = jsBufferObject.getByteCount().toInt()
 
     private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {

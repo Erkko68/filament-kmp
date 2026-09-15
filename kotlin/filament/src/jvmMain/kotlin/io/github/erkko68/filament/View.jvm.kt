@@ -19,19 +19,16 @@ import io.github.erkko68.filament.ffm.FilaViewVsmShadowOptions
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
 
 // One-shot picking callback: persistent stub keyed by userData address (same approach as Completions).
 private object Picking {
     private val arena = Arena.ofShared()
-    private val actions = ConcurrentHashMap<Long, (View.PickingQueryResult) -> Unit>()
-    private val counter = AtomicLong(1L)
+    private val registry = CallbackRegistry<(View.PickingQueryResult) -> Unit>()
 
     val stub: MemorySegment by lazy {
         FilaViewPickingCallback.allocate({ result, userData ->
-            val cb = actions.remove(userData.address())
-            if (cb != null && !result.isNullPtr()) {
+            val cb = registry.take(userData)
+            if (cb != null && !result.isNullPtr()) upcall {
                 val r = result.reinterpret(FilaViewPickingQueryResult.layout().byteSize())
                 val fragCoordsSeg = FilaViewPickingQueryResult.fragCoords(r)
                 cb(View.PickingQueryResult(
@@ -47,14 +44,10 @@ private object Picking {
         }, arena)
     }
 
-    fun register(cb: (View.PickingQueryResult) -> Unit): MemorySegment {
-        val id = counter.getAndIncrement()
-        actions[id] = cb
-        return MemorySegment.ofAddress(id)
-    }
+    fun register(cb: (View.PickingQueryResult) -> Unit): MemorySegment = registry.register(cb)
 }
 
-actual class View internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class View @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual enum class Dithering { NONE, TEMPORAL }
     actual enum class BlendMode { OPAQUE, TRANSLUCENT }
     actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
@@ -275,7 +268,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         set(value) { FilamentC.FilaView_setViewport(nativeHandle, value.left, value.bottom, value.width, value.height) }
 
     actual var blendMode: BlendMode
-        get() = BlendMode.values()[FilamentC.FilaView_getBlendMode(nativeHandle)]
+        get() = BlendMode.entries[FilamentC.FilaView_getBlendMode(nativeHandle)]
         set(value) { FilamentC.FilaView_setBlendMode(nativeHandle, value.ordinal) }
 
     actual fun setVisibleLayers(select: Int, values: Int) { FilamentC.FilaView_setVisibleLayers(nativeHandle, select.toByte(), values.toByte()) }
@@ -283,14 +276,14 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         val mask = (1 shl layer).toByte()
         FilamentC.FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0)
     }
-    actual fun getVisibleLayers(): Int = FilamentC.FilaView_getVisibleLayers(nativeHandle).toInt()
+    actual val visibleLayers: Int get() = FilamentC.FilaView_getVisibleLayers(nativeHandle).toInt()
 
     actual var isPostProcessingEnabled: Boolean
         get() = FilamentC.FilaView_isPostProcessingEnabled(nativeHandle)
         set(value) { FilamentC.FilaView_setPostProcessingEnabled(nativeHandle, value) }
 
     actual var dithering: Dithering
-        get() = Dithering.values()[FilamentC.FilaView_getDithering(nativeHandle)]
+        get() = Dithering.entries[FilamentC.FilaView_getDithering(nativeHandle)]
         set(value) { FilamentC.FilaView_setDithering(nativeHandle, value.ordinal) }
 
     actual var dynamicResolutionOptions: DynamicResolutionOptions
@@ -325,7 +318,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
             }
         }
 
-    actual fun getLastDynamicResolutionScale(): FloatArray = confined { arena ->
+    actual val lastDynamicResolutionScale: FloatArray get() = confined { arena ->
         val out = arena.floatArr(2)
         FilamentC.FilaView_getLastDynamicResolutionScale(nativeHandle, out)
         out.toFloats()
@@ -791,8 +784,8 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
         FilamentC.FilaView_getMaterialGlobal(nativeHandle, index, out)
         out.toFloats()
     }
-    actual val fogEntity: Int get() = FilamentC.FilaView_getFogEntity(nativeHandle)
-    actual fun getVisibleRenderableCount(): Int = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
+    actual val fogEntity: Entity get() = FilamentC.FilaView_getFogEntity(nativeHandle)
+    actual val visibleRenderableCount: Int get() = FilamentC.FilaView_getVisibleRenderableCount(nativeHandle)
     actual fun clearFrameHistory(engine: Engine) { FilamentC.FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
 
     actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
@@ -800,7 +793,7 @@ actual class View internal constructor(internal var nativeHandle: MemorySegment?
     }
 
     actual var antiAliasing: AntiAliasing
-        get() = AntiAliasing.values()[FilamentC.FilaView_getAntiAliasing(nativeHandle)]
+        get() = AntiAliasing.entries[FilamentC.FilaView_getAntiAliasing(nativeHandle)]
         set(value) { FilamentC.FilaView_setAntiAliasing(nativeHandle, value.ordinal) }
 
     actual var colorGrading: ColorGrading?

@@ -12,7 +12,7 @@ import io.github.erkko68.filament.PlatformGap
  * can be loaded by Filament's Material system.
  *
  * **Initialization:**
- * Call Filamat.init() before using MaterialBuilder. Call shutdown() when finished.
+ * Call Filamat.init() before using MaterialBuilder, and Filamat.shutdown() when finished.
  *
  * **Compilation:**
  * Configure material properties using methods like name(), shading(), blendingMode(), etc.,
@@ -261,14 +261,6 @@ expect class MaterialBuilder() {
         SIZE,
         /** Optimize for runtime performance (default). */
         PERFORMANCE
-    }
-
-    companion object {
-        /** Initializes the material compiler's global state. Call once before building materials. */
-        fun init()
-
-        /** Releases the material compiler's global state. Call when done building materials. */
-        fun shutdown()
     }
 
     /** Compiles the material and returns the resulting package (check `isValid` before use). */

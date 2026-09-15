@@ -110,10 +110,14 @@ expect class SwapChain {
      * Use this callback to be notified when GPU rendering is finished, useful for synchronization
      * or performance monitoring.
      *
+     * Only the Metal backend supports this callback. Every other backend accepts it and never
+     * calls it. (This is not true of [setFrameScheduledCallback], which fires on all of them.)
+     *
      * @param callback The callback function to invoke when frame GPU rendering completes.
      *                 Pass null or a no-op function to unset the callback.
      */
-    fun setFrameCompletedCallback(callback: () -> Unit)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
+    fun setFrameCompletedCallback(callback: (() -> Unit)? = null)
 
     /**
      * Sets a callback to be invoked when a frame is scheduled for presentation.
@@ -133,7 +137,8 @@ expect class SwapChain {
      * @param callback The callback function to invoke when the frame is scheduled.
      *                 Pass null or a no-op function to unset the callback.
      */
-    fun setFrameScheduledCallback(callback: () -> Unit)
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js binds no frame-scheduled callback, so it never fires; isFrameScheduledCallbackSet reports what was set here.")
+    fun setFrameScheduledCallback(callback: (() -> Unit)? = null)
 
     /**
      * Returns whether this SwapChain supports the [setFrameRate] API.
@@ -144,7 +149,8 @@ expect class SwapChain {
      *
      * @return true if [setFrameRate] is definitively supported, false otherwise
      */
-    fun isFrameRateChangeSupported(): Boolean
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "returns false — display frame rate switching is not supported on web; pacing is browser-managed.")
+    val isFrameRateChangeSupported: Boolean
 
     /**
      * Sets the intended frame rate for this SwapChain.

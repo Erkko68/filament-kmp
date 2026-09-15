@@ -1,6 +1,6 @@
 package io.github.erkko68.filament
 
-actual class Scene internal constructor(val nativeScene: com.google.android.filament.Scene) {
+actual class Scene @InternalFilamentApi constructor(internal val nativeScene: com.google.android.filament.Scene) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 
@@ -30,8 +30,7 @@ actual class Scene internal constructor(val nativeScene: com.google.android.fila
     actual val lightCount: Int get() = nativeScene.lightCount
     actual fun hasEntity(entity: Entity): Boolean = nativeScene.hasEntity(entity)
 
-    actual fun getEntities(): IntArray = nativeScene.getEntities()
-    actual fun getEntities(outArray: IntArray?): IntArray = nativeScene.getEntities(outArray)
+    actual fun getEntities(out: IntArray?): IntArray = nativeScene.getEntities(out)
 
     actual fun forEach(block: (Entity) -> Unit) {
         nativeScene.getEntities(null).forEach(block)

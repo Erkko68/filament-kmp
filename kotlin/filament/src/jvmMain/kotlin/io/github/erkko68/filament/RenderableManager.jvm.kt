@@ -19,7 +19,7 @@ private fun RenderableManager.GeometryType.toNative(): Int = when (this) {
     RenderableManager.GeometryType.STATIC -> FilamentC.FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC()
 }
 
-actual class RenderableManager internal constructor(internal val nativeHandle: MemorySegment) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val nativeHandle: MemorySegment) {
     actual enum class PrimitiveType { POINTS, LINES, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP }
     actual enum class GeometryType { DYNAMIC, STATIC_BOUNDS, STATIC }
 
@@ -100,12 +100,12 @@ actual class RenderableManager internal constructor(internal val nativeHandle: M
             box.center[0], box.center[1], box.center[2],
             box.halfExtent[0], box.halfExtent[1], box.halfExtent[2])
     }
-    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box {
+    actual fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box?): Box {
         return confined { arena ->
             val center = arena.floatArr(3)
             val halfExtent = arena.floatArr(3)
             FilamentC.FilaRenderableManager_getAxisAlignedBoundingBox(nativeHandle, instance, center, halfExtent)
-            val result = outBox ?: Box()
+            val result = out ?: Box()
             val c = center.toFloats(); val h = halfExtent.toFloats()
             result.center[0] = c[0]; result.center[1] = c[1]; result.center[2] = c[2]
             result.halfExtent[0] = h[0]; result.halfExtent[1] = h[1]; result.halfExtent[2] = h[2]
@@ -118,12 +118,12 @@ actual class RenderableManager internal constructor(internal val nativeHandle: M
     actual fun getPriority(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getPriority(nativeHandle, instance).toInt()
     actual fun setChannel(instance: EntityInstance, channel: Int) = FilamentC.FilaRenderableManager_setChannel(nativeHandle, instance, channel.toByte())
     actual fun getChannel(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getChannel(nativeHandle, instance).toInt()
-    actual fun setCulling(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setCulling(nativeHandle, instance, enabled)
+    actual fun setCullingEnabled(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setCulling(nativeHandle, instance, enabled)
     actual fun isCullingEnabled(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isCullingEnabled(nativeHandle, instance)
     actual fun setFogEnabled(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setFogEnabled(nativeHandle, instance, enabled)
-    actual fun getFogEnabled(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_getFogEnabled(nativeHandle, instance)
-    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setCastShadows(nativeHandle, instance, enabled)
-    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setReceiveShadows(nativeHandle, instance, enabled)
+    actual fun isFogEnabled(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_getFogEnabled(nativeHandle, instance)
+    actual fun setShadowCaster(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setCastShadows(nativeHandle, instance, enabled)
+    actual fun setShadowReceiver(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setReceiveShadows(nativeHandle, instance, enabled)
     actual fun setScreenSpaceContactShadows(instance: EntityInstance, enabled: Boolean) = FilamentC.FilaRenderableManager_setScreenSpaceContactShadows(nativeHandle, instance, enabled)
     actual fun isShadowCaster(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isShadowCaster(nativeHandle, instance)
     actual fun isShadowReceiver(instance: EntityInstance): Boolean = FilamentC.FilaRenderableManager_isShadowReceiver(nativeHandle, instance)

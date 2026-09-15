@@ -97,7 +97,7 @@ fun PickingScene(onBack: () -> Unit) {
                     position = pos,
                     scale    = Scale(1f),
                     onCreate = {
-                        for (entity in instance.getEntities()) {
+                        for (entity in instance.entities) {
                             entityToIndex[entity] = idx
                         }
                     },

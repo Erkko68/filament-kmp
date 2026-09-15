@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.Skybox as AndroidSkybox
 
-actual class Skybox constructor(val nativeSkybox: AndroidSkybox) {
+actual class Skybox @InternalFilamentApi constructor(internal val nativeSkybox: AndroidSkybox) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidSkybox.Builder()
 

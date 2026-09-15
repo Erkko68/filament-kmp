@@ -999,7 +999,7 @@ expect class View {
     fun setLayerEnabled(layer: Int, enabled: Boolean)
 
     /** Returns the current visible-layer bitmask. */
-    fun getVisibleLayers(): Int
+    val visibleLayers: Int
 
     /**
      * Enables or disables the post-processing stage (tone mapping, bloom, color grading, FXAA,
@@ -1010,34 +1010,61 @@ expect class View {
     /** Dithering applied to the final render to hide banding. Default: [Dithering.TEMPORAL]. */
     var dithering: Dithering
 
-    /** Dynamic-resolution (render scaling) configuration for this View. */
+    /**
+     * Dynamic-resolution (render scaling) configuration for this View.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var dynamicResolutionOptions: DynamicResolutionOptions
 
     /** Returns the `[x, y]` scale factors dynamic resolution used on the last frame. */
-    fun getLastDynamicResolutionScale(): FloatArray
+    val lastDynamicResolutionScale: FloatArray
 
-    /** Global quality/performance trade-offs (e.g. color-buffer precision) for this View. */
+    /**
+     * Global quality/performance trade-offs (e.g. color-buffer precision) for this View.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var renderQuality: RenderQuality
 
-    /** Bloom post-processing configuration (requires post-processing enabled). */
+    /**
+     * Bloom post-processing configuration (requires post-processing enabled).
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var bloomOptions: BloomOptions
 
-    /** Large-scale atmospheric fog configuration. */
+    /**
+     * Large-scale atmospheric fog configuration.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var fogOptions: FogOptions
 
-    /** Depth-of-field post-processing configuration (needs a focused [camera]). */
+    /**
+     * Depth-of-field post-processing configuration (needs a focused [camera]).
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var depthOfFieldOptions: DepthOfFieldOptions
 
-    /** Vignette post-processing configuration. */
+    /**
+     * Vignette post-processing configuration.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var vignetteOptions: VignetteOptions
 
-    /** Screen-space ambient occlusion (SSAO) configuration. */
+    /**
+     * Screen-space ambient occlusion (SSAO) configuration.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var ambientOcclusionOptions: AmbientOcclusionOptions
 
-    /** Temporal anti-aliasing (TAA) configuration; effective when [antiAliasing] permits it. */
+    /**
+     * Temporal anti-aliasing (TAA) configuration; effective when [antiAliasing] permits it.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
 
-    /** Screen-space reflections configuration. */
+    /**
+     * Screen-space reflections configuration.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
 
     /**
@@ -1049,19 +1076,34 @@ expect class View {
     /** Shadow mapping technique for the whole View ([ShadowType.PCF], VSM, DPCF, PCSS). */
     var shadowType: ShadowType
 
-    /** Variance shadow mapping options; only applies when [shadowType] is [ShadowType.VSM]. */
+    /**
+     * Variance shadow mapping options; only applies when [shadowType] is [ShadowType.VSM].
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var vsmShadowOptions: VsmShadowOptions
 
-    /** Soft shadow options; only applies when [shadowType] is DPCF or PCSS. */
+    /**
+     * Soft shadow options; only applies when [shadowType] is DPCF or PCSS.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var softShadowOptions: SoftShadowOptions
 
-    /** Guard-band configuration, letting some effects sample outside the viewport. */
+    /**
+     * Guard-band configuration, letting some effects sample outside the viewport.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var guardBandOptions: GuardBandOptions
 
-    /** Stereoscopic (VR) rendering configuration; must be set before the first frame. */
+    /**
+     * Stereoscopic (VR) rendering configuration; must be set before the first frame.
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var stereoscopicOptions: StereoscopicOptions
 
-    /** Hardware MSAA configuration (independent of [antiAliasing]/TAA). */
+    /**
+     * Hardware MSAA configuration (independent of [antiAliasing]/TAA).
+     * The getter returns a snapshot — mutate it and assign back to apply.
+     */
     var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
 
     /** Culls renderables outside the camera frustum. Default: true (disable only for debugging). */
@@ -1113,7 +1155,7 @@ expect class View {
     fun setDynamicLightingOptions(zNear: Float, zFar: Float)
 
     /** Entity representing the large-scale fog object; can be transformed via TransformManager. */
-    val fogEntity: Int
+    val fogEntity: Entity
 
     /** Post-process anti-aliasing operator ([AntiAliasing.FXAA] by default). */
     var antiAliasing: AntiAliasing
@@ -1128,7 +1170,7 @@ expect class View {
      * @return the number of visible renderables, or -1 if no value is available (e.g. before the
      *         first render call, or if the scene was detached).
      */
-    fun getVisibleRenderableCount(): Int
+    val visibleRenderableCount: Int
 
     /**
      * Asynchronously picks the renderable at viewport coordinates ([x], [y]) — origin bottom-left —

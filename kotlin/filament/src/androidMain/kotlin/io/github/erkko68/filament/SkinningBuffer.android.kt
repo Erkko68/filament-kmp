@@ -5,7 +5,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import com.google.android.filament.SkinningBuffer as AndroidSkinningBuffer
 
-actual class SkinningBuffer internal constructor(val nativeSkinningBuffer: AndroidSkinningBuffer) {
+actual class SkinningBuffer @InternalFilamentApi constructor(internal val nativeSkinningBuffer: AndroidSkinningBuffer) {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidSkinningBuffer.Builder()
 

@@ -63,6 +63,29 @@ Android Java API (the canonical Kotlin-facing surface); JS externals must match 
 surface in upstream `web/filament-js/jsbindings.cpp`. The `scripts/dev/check-*.sh` scripts
 report gaps — run them when adding bindings or bumping `filaVersion`.
 
+### Kotlin idiom vs. upstream shape
+
+Mirroring the API is not the same as mirroring the Java. Two deliberate rules:
+
+- **Builders mirror upstream verbatim.** The seventeen `Builder` classes keep the fluent
+  `.width(64).height(64).build(engine)` chain, one method per upstream setter, in upstream's
+  order. This is what makes Filament's own C++ and Android docs readable against this library,
+  and `MaterialBuilder`'s fifty-odd setters would be an unusable constructor. Do not "modernize"
+  a builder into a DSL or a data class.
+- **Data classes only where nothing is nested in an `expect class`.** `Viewport` and
+  `MaterialKey` are `data class`es because they are plain common types. The option structs
+  (`View.BloomOptions`, `Renderer.ClearOptions`, `Engine.Config`, `LightManager.ShadowOptions`)
+  cannot be, and stay `class X()` with `var` fields configured through `apply { }`: an expect
+  constructor takes no `val`/`var` parameters, a nested `typealias` onto a top-level data class
+  is not actualized, and a nested classifier inherited from a supertype does not resolve through
+  the subclass name. The only shape that works is `interface` + internal per-platform impls; it
+  was built and rejected (an interface cannot be `sealed` across source sets, and Android's
+  wrapping actuals come out line-neutral). Re-verified on Kotlin 2.4.10 — don't re-litigate.
+- **Everything else is idiomatic Kotlin.** Outside a builder, a zero-argument `getX()` should be
+  a `val`, a `getX()`/`setX()` pair a `var`, a returned collection a `List`/`Set` rather than an
+  array, and an optional out-parameter `out: T? = null`. Raw backend handles are `internal`,
+  reachable only through the `@InternalFilamentApi` `nativeObject` accessors.
+
 ## Versioning & releases
 
 Versions are plain `X.Y.Z` (no pre-release suffixes since `0.2.0`), and all

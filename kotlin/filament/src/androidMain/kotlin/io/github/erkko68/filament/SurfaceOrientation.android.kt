@@ -27,7 +27,7 @@ private fun IntArray.toDirectIntBuffer(): IntBuffer =
         it.put(this); it.flip()
     }
 
-actual class SurfaceOrientation internal constructor(val nativeSurfaceOrientation: AndroidSurfaceOrientation) {
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeSurfaceOrientation: AndroidSurfaceOrientation) : AutoCloseable {
     actual class Builder actual constructor() {
         private val nativeBuilder = AndroidSurfaceOrientation.Builder()
 
@@ -101,6 +101,9 @@ actual class SurfaceOrientation internal constructor(val nativeSurfaceOrientatio
         nativeSurfaceOrientation.getQuatsAsShort(direct)
         direct.position(0); direct.get(buffer)
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         nativeSurfaceOrientation.destroy()

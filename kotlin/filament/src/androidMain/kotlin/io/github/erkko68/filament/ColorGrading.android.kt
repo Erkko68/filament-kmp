@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.ColorGrading as FilamentColorGrading
 
-actual class ColorGrading internal constructor(internal val nativeColorGrading: FilamentColorGrading) {
+actual class ColorGrading @InternalFilamentApi constructor(internal val nativeColorGrading: FilamentColorGrading) {
     actual class Builder actual constructor() {
         internal val nativeBuilder = FilamentColorGrading.Builder()
 

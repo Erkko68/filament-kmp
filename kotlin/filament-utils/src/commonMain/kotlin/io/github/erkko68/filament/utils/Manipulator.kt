@@ -1,5 +1,10 @@
 package io.github.erkko68.filament.utils
 
+import io.github.erkko68.filament.Camera
+
+/** The axis held constant when the viewport changes in MAP mode. */
+typealias Fov = Camera.Fov
+
 /**
  * Helper that enables camera interaction similar to sketchfab or Google Maps.
  *
@@ -31,7 +36,7 @@ package io.github.erkko68.filament.utils
  *
  * @see Bookmark
  */
-expect class Manipulator {
+expect class Manipulator : AutoCloseable {
     /** Camera manipulation mode. */
     enum class Mode {
         /** Rotates and dollies around a target point. */
@@ -40,12 +45,6 @@ expect class Manipulator {
         MAP,
         /** First-person free-flight camera. */
         FLIGHT
-    }
-
-    /** The axis held constant when the viewport changes in MAP mode. */
-    enum class Fov {
-        VERTICAL,
-        HORIZONTAL
     }
 
     /**
@@ -135,12 +134,15 @@ expect class Manipulator {
     /** Destroys the manipulator and releases all resources. */
     fun destroy()
 
+    /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
+    override fun close()
+
     /**
      * Gets the immutable mode of the manipulator.
      *
      * @return the [Mode] this manipulator was created with
      */
-    fun getMode(): Mode
+    val mode: Mode
 
     /**
      * Sets the viewport dimensions. The manipulator uses this to process grab events and raycasts.
@@ -241,7 +243,7 @@ expect class Manipulator {
      * @return a [Bookmark] representing the current camera state
      * @see jumpToBookmark
      */
-    fun getCurrentBookmark(): Bookmark
+    val currentBookmark: Bookmark
 
     /**
      * Gets a handle that can be used to reset the manipulator back to its home position.
@@ -249,7 +251,7 @@ expect class Manipulator {
      * @return a [Bookmark] representing the home camera state
      * @see jumpToBookmark
      */
-    fun getHomeBookmark(): Bookmark
+    val homeBookmark: Bookmark
 
     /**
      * Sets the manipulator position and orientation back to a previously stashed state.

@@ -28,7 +28,7 @@ expect class MaterialPackage {
      *
      * @return ByteArray containing the compiled material binary.
      */
-    fun getBuffer(): ByteArray
+    val buffer: ByteArray
 
     /**
      * Check if this package is valid.
@@ -38,5 +38,5 @@ expect class MaterialPackage {
      *
      * @return true if the package is valid and ready to use, false if compilation failed.
      */
-    fun isValid(): Boolean
+    val isValid: Boolean
 }

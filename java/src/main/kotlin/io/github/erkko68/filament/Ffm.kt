@@ -43,7 +43,19 @@ public fun MemorySegment.cString(): String = reinterpret(Long.MAX_VALUE).getStri
 public fun SegmentAllocator.ints(a: IntArray): MemorySegment = allocateFrom(ValueLayout.JAVA_INT, *a)
 public fun SegmentAllocator.floats(a: FloatArray): MemorySegment = allocateFrom(ValueLayout.JAVA_FLOAT, *a)
 public fun SegmentAllocator.shorts(a: ShortArray): MemorySegment = allocateFrom(ValueLayout.JAVA_SHORT, *a)
-public fun SegmentAllocator.bytes(a: ByteArray): MemorySegment = allocateFrom(ValueLayout.JAVA_BYTE, *a)
+public fun SegmentAllocator.bytes(a: ByteArray): MemorySegment =
+    byteBuffer(a.size).also { MemorySegment.copy(a, 0, it, ValueLayout.JAVA_BYTE, 0L, a.size) }
+
+/**
+ * Allocates [size] bytes for a payload the backend reads or writes element-wise — vertex/index
+ * data, a pixel buffer. `allocate(size)` and `allocateFrom(JAVA_BYTE, …)` promise only byte
+ * alignment; [BUFFER_ALIGNMENT] covers the natural alignment of every element type Filament
+ * puts in one of these.
+ */
+public fun SegmentAllocator.byteBuffer(size: Int): MemorySegment = allocate(size.toLong(), BUFFER_ALIGNMENT)
+
+/** Alignment [byteBuffer] and [bytes] guarantee. */
+public const val BUFFER_ALIGNMENT: Long = 8L
 public fun SegmentAllocator.booleans(a: BooleanArray): MemorySegment {
     // FFM has no allocateFrom(OfBoolean, boolean...) vararg overload; set elements individually.
     val seg = allocate(ValueLayout.JAVA_BOOLEAN, a.size.toLong())
@@ -74,6 +86,19 @@ public fun MemorySegment.toFloats(): FloatArray = toArray(ValueLayout.JAVA_FLOAT
 public fun MemorySegment.toShorts(): ShortArray = toArray(ValueLayout.JAVA_SHORT)
 public fun MemorySegment.toDoubles(): DoubleArray = toArray(ValueLayout.JAVA_DOUBLE)
 
+/**
+ * Runs [block] on a native callback thread. An exception escaping an FFM upcall terminates the
+ * VM, so anything the user's callback throws is reported as an uncaught exception instead.
+ */
+public inline fun upcall(block: () -> Unit) {
+    try {
+        block()
+    } catch (t: Throwable) {
+        val thread = Thread.currentThread()
+        thread.uncaughtExceptionHandler.uncaughtException(thread, t)
+    }
+}
+
 // ── One-shot completion callbacks ────────────────────────────────────────────
 //
 // FFM upcall stubs cannot be freed from inside their own invocation (unlike Kotlin/Native's
@@ -81,20 +106,39 @@ public fun MemorySegment.toDoubles(): DoubleArray = toArray(ValueLayout.JAVA_DOU
 // per C callback signature and pass the registry key as the `userData` pointer's address. When
 // the native side fires the stub, we look the action up by key, run it once, and drop it — no
 // stub is ever freed, and per-call buffers live in their own shared arena closed by the action.
-public object Completions {
-    private val arena: Arena = Arena.ofShared()
-    private val actions = ConcurrentHashMap<Long, () -> Unit>()
+
+/** Keys one-shot callbacks by a synthetic `userData` address for the scheme described above. */
+public class CallbackRegistry<T : Any> {
+    private val actions = ConcurrentHashMap<Long, T>()
     private val counter = AtomicLong(1L)
 
     /** Registers a one-shot [action] and returns the `userData` pointer encoding its key. */
-    fun register(action: () -> Unit): MemorySegment {
+    public fun register(action: T): MemorySegment {
         val id = counter.getAndIncrement()
         actions[id] = action
         return MemorySegment.ofAddress(id)
     }
 
+    /** Removes and returns the action [userData] keys, or null if it already fired. */
+    public fun take(userData: MemorySegment): T? = actions.remove(userData.address())
+
+    /** Actions registered but not yet fired. Returns to its baseline once the engine drains. */
+    public val pending: Int get() = actions.size
+}
+
+public object Completions {
+    private val arena: Arena = Arena.ofShared()
+    private val registry = CallbackRegistry<() -> Unit>()
+
+    /** Registers a one-shot [action] and returns the `userData` pointer encoding its key. */
+    fun register(action: () -> Unit): MemorySegment = registry.register(action)
+
+    /** Callbacks handed to Filament that have not fired yet. */
+    val pending: Int get() = registry.pending
+
     private fun fire(userData: MemorySegment) {
-        actions.remove(userData.address())?.invoke()
+        val action = registry.take(userData) ?: return
+        upcall(action)
     }
 
     /** Persistent stub for `FilaBufferCallback` (buffer uploads, readPixels, setImage). */

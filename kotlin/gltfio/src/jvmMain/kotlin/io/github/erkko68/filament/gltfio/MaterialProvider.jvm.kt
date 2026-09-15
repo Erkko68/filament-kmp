@@ -13,17 +13,20 @@ import java.lang.foreign.SegmentAllocator
 import java.lang.foreign.ValueLayout
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.VertexBuffer
 
-actual interface MaterialProvider {
+actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): MaterialInstance?
     actual fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): Material?
-    actual fun getMaterials(): Array<Material>
-    actual fun needsDummyData(attrib: Int): Boolean
+    actual val materials: List<Material>
+    actual fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
 
     /** The underlying FilaMaterialProvider* — used by AssetLoader. */
-    fun getNativeHandle(): MemorySegment?
+    @InternalFilamentApi fun nativeObject(): MemorySegment?
 }
 
 private fun SegmentAllocator.uvmap(uvmap: IntArray): MemorySegment {
@@ -35,7 +38,7 @@ private fun SegmentAllocator.uvmap(uvmap: IntArray): MemorySegment {
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     private var nativeHandle: MemorySegment? =
-        FilamentC.FilaMaterialProvider_createUbershaderProvider(engine.nativeHandle, NULL, 0L)
+        FilamentC.FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, NULL, 0L)
 
     actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): MaterialInstance? =
         confined { a ->
@@ -54,23 +57,25 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
             handle.takeUnless { it.isNullPtr() }?.let { Material(it) }
         }
 
-    actual override fun getMaterials(): Array<Material> {
+    actual override val materials: List<Material> get() {
         val count = FilamentC.FilaMaterialProvider_getMaterialsCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         return confined { a ->
             val out = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaMaterialProvider_getMaterials(nativeHandle, out)
-            Array(count) { Material(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
+            List(count) { Material(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
         }
     }
 
-    actual override fun needsDummyData(attrib: Int): Boolean = FilamentC.FilaMaterialProvider_needsDummyData(nativeHandle, attrib)
+    actual override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilamentC.FilaMaterialProvider_needsDummyData(nativeHandle, attrib.ordinal)
     actual override fun destroyMaterials() = FilamentC.FilaMaterialProvider_destroyMaterials(nativeHandle)
+
+    actual override fun close() = destroy()
 
     actual override fun destroy() {
         FilamentC.FilaMaterialProvider_destroy(nativeHandle)
         nativeHandle = null
     }
 
-    override fun getNativeHandle(): MemorySegment? = nativeHandle
+    @InternalFilamentApi override fun nativeObject(): MemorySegment? = nativeHandle
 }

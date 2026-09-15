@@ -9,21 +9,25 @@ import io.github.erkko68.filament.web.gltfio_ResourceLoader
 import io.github.erkko68.filament.web.gltfio_StbProvider
 import io.github.erkko68.filament.web.gltfio_WebpProvider
 import org.khronos.webgl.set
+import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
-    private val jsLoader = gltfio_ResourceLoader(engine.jsEngine, normalizeSkinningWeights)
-    private val stbProvider = gltfio_StbProvider(engine.jsEngine)
+actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) : AutoCloseable {
+    private val jsLoader = gltfio_ResourceLoader(engine.nativeObject, normalizeSkinningWeights)
+    private val stbProvider = gltfio_StbProvider(engine.nativeObject)
 
     init {
         // The same decoders extensions.js registers in its own loadResources helper; without
         // them the loader cannot decode embedded or external textures.
         jsLoader.addStbProvider("image/jpeg", stbProvider)
         jsLoader.addStbProvider("image/png", stbProvider)
-        jsLoader.addKtx2Provider("image/ktx2", gltfio_Ktx2Provider(engine.jsEngine))
+        jsLoader.addKtx2Provider("image/ktx2", gltfio_Ktx2Provider(engine.nativeObject))
         if (gltfio_WebpProvider.isWebpSupported()) {
-            jsLoader.addWebpProvider("image/webp", gltfio_WebpProvider(engine.jsEngine))
+            jsLoader.addWebpProvider("image/webp", gltfio_WebpProvider(engine.nativeObject))
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         jsLoader.delete()

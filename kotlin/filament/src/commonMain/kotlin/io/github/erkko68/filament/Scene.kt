@@ -99,17 +99,10 @@ expect class Scene {
     /**
      * Gets all entities in this scene.
      *
+     * @param out Optional array to fill with entity IDs; a new array is allocated if null.
      * @return Array of all entity IDs in the scene
      */
-    fun getEntities(): IntArray
-
-    /**
-     * Gets all entities in this scene, optionally reusing an output array.
-     *
-     * @param outArray Optional array to fill with entity IDs. If null, a new array is created.
-     * @return Array of all entity IDs in the scene
-     */
-    fun getEntities(outArray: IntArray?): IntArray
+    fun getEntities(out: IntArray? = null): IntArray
 
     /**
      * Iterates over all entities in this scene.

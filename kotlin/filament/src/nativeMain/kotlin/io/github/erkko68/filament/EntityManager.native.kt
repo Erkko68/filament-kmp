@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaEntityManager
 
-actual class EntityManager internal constructor(var nativeHandle: CPointer<FilaEntityManager>?) {
+actual class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaEntityManager>?) {
     actual companion object {
         private val instance = EntityManager(FilaEntityManager_get())
         actual fun get(): EntityManager = instance
@@ -42,5 +42,5 @@ actual class EntityManager internal constructor(var nativeHandle: CPointer<FilaE
         FilaEntityManager_advanceEpoch(nativeHandle)
     }
 
-    actual fun getMaxEntityCount(): Int = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
+    actual val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
 }

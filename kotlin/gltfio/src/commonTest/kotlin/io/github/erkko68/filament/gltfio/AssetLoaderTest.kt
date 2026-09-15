@@ -11,7 +11,7 @@ class AssetLoaderTest : GltfioTestFixture() {
     @Test
     fun testAssetLoaderLifecycle() {
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
         assertNotNull(loader)
 
         loader.enableDiagnostics(true)
@@ -38,12 +38,12 @@ class AssetLoaderTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
 
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
-        assertTrue(asset.getEntityCount() > 0)
-        assertTrue(asset.getRoot() != 0)
+        assertTrue(asset.entityCount > 0)
+        assertTrue(asset.root != 0)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
@@ -57,12 +57,12 @@ class AssetLoaderTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
 
         val instances = arrayOf(FilamentInstance(), FilamentInstance())
         val asset = loader.createInstancedAsset(bytes, instances)
         assertNotNull(asset)
-        assertTrue(asset.getAssetInstanceCount() >= 1)
+        assertTrue(asset.assetInstanceCount >= 1)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)
@@ -76,7 +76,7 @@ class AssetLoaderTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val loader = AssetLoader.create(engine, provider, engine.entityManager)
 
         val instances = arrayOf(FilamentInstance())
         val asset = loader.createInstancedAsset(bytes, instances)
@@ -84,7 +84,7 @@ class AssetLoaderTest : GltfioTestFixture() {
 
         val newInstance = loader.createInstance(asset)
         assertNotNull(newInstance)
-        assertTrue(newInstance.getEntityCount() > 0)
+        assertTrue(newInstance.entityCount > 0)
 
         loader.destroyAsset(asset)
         AssetLoader.destroy(loader)

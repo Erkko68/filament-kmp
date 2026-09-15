@@ -44,7 +44,7 @@ class LightLifecycleTest : ComposeTestFixture() {
             assertEquals(1, scene.lightCount, "$name should add exactly one light while composed")
             assertEquals(1, entities.size, "$name should add exactly one entity while composed")
             assertTrue(
-                entities.size == 1 && engine.getLightManager().hasComponent(entities[0]),
+                entities.size == 1 && engine.lightManager.hasComponent(entities[0]),
                 "$name should have a live light component while composed",
             )
 

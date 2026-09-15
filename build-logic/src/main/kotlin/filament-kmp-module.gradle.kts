@@ -25,6 +25,9 @@ fun catalogJvmTarget(alias: String): JvmTarget =
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
+        // Our own binding modules are peers of :kotlin:filament and have to pass raw
+        // backend handles between each other; consumers outside this build do not.
+        optIn.add("io.github.erkko68.filament.InternalFilamentApi")
     }
 
     // AGP 9 KMP android library (com.android.kotlin.multiplatform.library): the

@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import org.khronos.webgl.set
 import io.github.erkko68.filament.web.MorphTargetBuffer as JSMorphTargetBuffer
 
-actual class MorphTargetBuffer internal constructor(
+actual class MorphTargetBuffer @InternalFilamentApi constructor(
     internal val jsMorphTargetBuffer: JSMorphTargetBuffer,
 ) {
     actual val vertexCount: Int get() = jsMorphTargetBuffer.getVertexCount().toInt()

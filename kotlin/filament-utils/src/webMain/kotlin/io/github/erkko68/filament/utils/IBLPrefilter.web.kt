@@ -5,12 +5,16 @@ import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
 
-actual class IBLPrefilterContext actual constructor(engine: Engine) {
+actual class IBLPrefilterContext actual constructor(engine: Engine) : AutoCloseable {
+    actual override fun close() = destroy()
+
     actual fun destroy() {
     }
 }
 
-actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterContext) {
+actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterContext) : AutoCloseable {
+    actual override fun close() = destroy()
+
     actual fun destroy() {
     }
 
@@ -20,7 +24,9 @@ actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterCo
     }
 }
 
-actual class SpecularFilter actual constructor(context: IBLPrefilterContext) {
+actual class SpecularFilter actual constructor(context: IBLPrefilterContext) : AutoCloseable {
+    actual override fun close() = destroy()
+
     actual fun destroy() {
     }
 

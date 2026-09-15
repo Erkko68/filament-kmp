@@ -13,8 +13,8 @@ import io.github.erkko68.filament.web.LightManager_Type
 import io.github.erkko68.filament.web.Entity as JSEntity
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class LightManager(internal val jsLightManager: JSLightManager) {
-    actual fun getComponentCount(): Int = jsLightManager.getComponentCount().toInt()
+actual class LightManager @InternalFilamentApi constructor(internal val jsLightManager: JSLightManager) {
+    actual val componentCount: Int get() = jsLightManager.getComponentCount().toInt()
 
     // Upstream LightManager binding doesn't expose `destroy(Entity)` —
     // components are usually torn down via `engine.destroyEntity`, but we
@@ -50,8 +50,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         jsLightManager.setDirection(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
     }
 
-    actual fun getDirection(instance: EntityInstance, out: FloatArray): FloatArray {
-        val result = out
+    actual fun getDirection(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         (jsLightManager.getDirection(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
@@ -60,8 +60,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         jsLightManager.setPosition(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), jsNumbers(x, y, z))
     }
 
-    actual fun getPosition(instance: EntityInstance, out: FloatArray): FloatArray {
-        val result = out
+    actual fun getPosition(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         (jsLightManager.getPosition(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }
@@ -70,8 +70,8 @@ actual class LightManager(internal val jsLightManager: JSLightManager) {
         jsLightManager.setColor(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>(), jsNumbers(r, g, b))
     }
 
-    actual fun getColor(instance: EntityInstance, out: FloatArray): FloatArray {
-        val result = out
+    actual fun getColor(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
         (jsLightManager.getColor(InstanceRegistry.get(instance).unsafeCast<JSLightManagerInstance>()))?.readNumbersInto(result)
         return result
     }

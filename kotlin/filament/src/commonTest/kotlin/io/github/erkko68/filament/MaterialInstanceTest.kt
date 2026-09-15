@@ -20,7 +20,7 @@ class MaterialInstanceTest : FilamentTestFixture() {
 
         // val inst = mat.createInstance()
         // assertNotNull(inst)
-        // assertEquals(mat.getName(), inst.material.getName())
+        // assertEquals(mat.name, inst.material.name)
 
         // // Name
         // val name = inst.name

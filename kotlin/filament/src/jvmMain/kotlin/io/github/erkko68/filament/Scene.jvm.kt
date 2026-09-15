@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class Scene internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 
@@ -39,11 +39,9 @@ actual class Scene internal constructor(internal var nativeHandle: MemorySegment
     actual val lightCount: Int get() = FilamentC.FilaScene_getLightCount(nativeHandle).toInt()
     actual fun hasEntity(entity: Entity): Boolean = FilamentC.FilaScene_hasEntity(nativeHandle, entity)
 
-    actual fun getEntities(): IntArray = getEntities(null)
-
-    actual fun getEntities(outArray: IntArray?): IntArray {
+    actual fun getEntities(out: IntArray?): IntArray {
         val count = entityCount
-        val result = if (outArray != null && outArray.size >= count) outArray else IntArray(count)
+        val result = if (out != null && out.size >= count) out else IntArray(count)
         if (count > 0) {
             confined { arena ->
                 val seg = arena.intArr(count)

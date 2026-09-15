@@ -73,20 +73,20 @@ fun FilamentSceneScope.Group(
     val engine = LocalFilamentEngine.current ?: noFilamentEngine()
     val outerParent = LocalParentEntity.current
 
-    val groupEntity = remember(engine) { engine.getEntityManager().create() }
+    val groupEntity = remember(engine) { engine.entityManager.create() }
 
     DisposableEffect(groupEntity) {
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         tm.create(groupEntity)
         EntityScopeImpl(groupEntity, engine).onCreate()
         onDispose {
             tm.destroy(groupEntity)
-            engine.getEntityManager().destroy(groupEntity)
+            engine.entityManager.destroy(groupEntity)
         }
     }
 
     DisposableEffect(groupEntity, position, rotation, scale, pivot) {
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         tm.setTransform(tm.getInstance(groupEntity), transformMatrix(position, rotation, scale, pivot))
         onDispose {}
     }
@@ -94,7 +94,7 @@ fun FilamentSceneScope.Group(
     // Nested groups: this group is itself a child of the outer one.
     DisposableEffect(groupEntity, outerParent) {
         if (outerParent != null) {
-            val tm = engine.getTransformManager()
+            val tm = engine.transformManager
             tm.setParent(tm.getInstance(groupEntity), tm.getInstance(outerParent))
         }
         onDispose {}

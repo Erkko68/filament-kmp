@@ -46,7 +46,7 @@ open class TierBSceneFixture {
         // aborts on its driver thread there, which a try/catch can't recover.
         if (!TestEnv.gpuBackendAvailable) return
         val e = try {
-            Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid() }
+            Engine.create(Engine.Backend.DEFAULT).takeIf { it.isValid }
         } catch (t: Throwable) {
             null
         } ?: return
@@ -95,7 +95,7 @@ open class TierBSceneFixture {
         if (bytes.isEmpty()) return null
         Gltfio.init()
         val provider = UbershaderProvider(e).also { gltfProviders += it }
-        val loader = AssetLoader.create(e, provider, e.getEntityManager()).also { gltfLoaders += it }
+        val loader = AssetLoader.create(e, provider, e.entityManager).also { gltfLoaders += it }
         val filamentAsset = loader.createAsset(bytes)?.also { gltfAssets += it } ?: return null
 
         val resourceLoader = ResourceLoader(e, true)

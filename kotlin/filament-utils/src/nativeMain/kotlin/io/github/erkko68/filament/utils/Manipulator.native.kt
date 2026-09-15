@@ -5,15 +5,12 @@ import io.github.erkko68.filament.utils.cinterop.*
 import kotlinx.cinterop.*
 import cnames.structs.FilaManipulator
 import cnames.structs.FilaBookmark
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Manipulator internal constructor(internal val nativeHandle: CPointer<FilaManipulator>) {
+actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaManipulator>) : AutoCloseable {
 
     actual enum class Mode {
         ORBIT, MAP, FLIGHT
-    }
-
-    actual enum class Fov {
-        VERTICAL, HORIZONTAL
     }
 
     actual enum class Key {
@@ -125,11 +122,14 @@ actual class Manipulator internal constructor(internal val nativeHandle: CPointe
         }
     }
 
+    actual override fun close() = destroy()
+
+
     actual fun destroy() {
         FilaManipulator_destroy(nativeHandle)
     }
 
-    actual fun getMode(): Mode = Mode.entries[FilaManipulator_getMode(nativeHandle).toInt()]
+    actual val mode: Mode get() = Mode.entries[FilaManipulator_getMode(nativeHandle).toInt()]
 
     actual fun setViewport(width: Int, height: Int) {
         FilaManipulator_setViewport(nativeHandle, width, height)
@@ -187,13 +187,13 @@ actual class Manipulator internal constructor(internal val nativeHandle: CPointe
         FilaManipulator_update(nativeHandle, deltaTime)
     }
 
-    actual fun getCurrentBookmark(): Bookmark = Bookmark(FilaManipulator_getCurrentBookmark(nativeHandle)!!)
+    actual val currentBookmark: Bookmark get() = Bookmark(FilaManipulator_getCurrentBookmark(nativeHandle)!!)
 
-    actual fun getHomeBookmark(): Bookmark = Bookmark(FilaManipulator_getHomeBookmark(nativeHandle)!!)
+    actual val homeBookmark: Bookmark get() = Bookmark(FilaManipulator_getHomeBookmark(nativeHandle)!!)
 
     actual fun jumpToBookmark(bookmark: Bookmark) {
         FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
     }
 
-    actual class Bookmark internal constructor(internal val nativeHandle: CPointer<FilaBookmark>)
+    actual class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaBookmark>)
 }

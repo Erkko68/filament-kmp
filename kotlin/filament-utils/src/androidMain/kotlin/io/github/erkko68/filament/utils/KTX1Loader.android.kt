@@ -5,6 +5,7 @@ import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.Skybox
 import io.github.erkko68.filament.Texture
 import java.nio.ByteBuffer
+import io.github.erkko68.filament.nativeObject
 
 actual object KTX1Loader {
 
@@ -29,7 +30,7 @@ actual object KTX1Loader {
         javaOptions.srgb = options.srgb
         val byteBuffer = ByteBuffer.wrap(buffer)
         return Texture(com.google.android.filament.utils.KTX1Loader.createTexture(
-            engine.nativeEngine,
+            engine.nativeObject,
             byteBuffer,
             javaOptions
         ))
@@ -40,7 +41,7 @@ actual object KTX1Loader {
         javaOptions.srgb = options.srgb
         val byteBuffer = ByteBuffer.wrap(buffer)
         val javaBundle = com.google.android.filament.utils.KTX1Loader.createIndirectLight(
-            engine.nativeEngine,
+            engine.nativeObject,
             byteBuffer,
             javaOptions
         )
@@ -55,7 +56,7 @@ actual object KTX1Loader {
         javaOptions.srgb = options.srgb
         val byteBuffer = ByteBuffer.wrap(buffer)
         val javaBundle = com.google.android.filament.utils.KTX1Loader.createSkybox(
-            engine.nativeEngine,
+            engine.nativeObject,
             byteBuffer,
             javaOptions
         )

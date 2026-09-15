@@ -1,11 +1,7 @@
 package io.github.erkko68.filament.filamat
 
-actual class MaterialPackage(private val buffer: ByteArray = ByteArray(0)) {
-    actual fun getBuffer(): ByteArray {
-        return buffer
-    }
+actual class MaterialPackage internal constructor(private val bytes: ByteArray = ByteArray(0)) {
+    actual val buffer: ByteArray get() = bytes
 
-    actual fun isValid(): Boolean {
-        return buffer.isNotEmpty()
-    }
+    actual val isValid: Boolean get() = bytes.isNotEmpty()
 }

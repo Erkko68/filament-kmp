@@ -5,14 +5,16 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaAssetLoader
+import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class AssetLoader(public var nativeHandle: CPointer<FilaAssetLoader>?) {
+actual class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaAssetLoader>?) {
     actual companion object {
         actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
             val handle = FilaAssetLoader_create(
-                engine.nativeHandle,
-                materials.getNativeHandle(),
-                entities?.nativeHandle
+                engine.nativeObject,
+                materials.nativeObject(),
+                entities?.nativeObject
             )
             return AssetLoader(handle)
         }

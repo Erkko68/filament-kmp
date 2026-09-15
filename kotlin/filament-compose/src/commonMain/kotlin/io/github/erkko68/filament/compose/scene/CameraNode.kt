@@ -48,7 +48,7 @@ fun FilamentSceneScope.CameraNode(
 
     OnFrame {
         if (parent == null) return@OnFrame
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         if (tm.hasComponent(parent)) {
             tm.getWorldTransform(tm.getInstance(parent), world)
             cameraState.eye = world.transformPoint(eyeOffset)

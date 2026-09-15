@@ -68,7 +68,7 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
                 assertEquals(1, scene.entityCount, "$name should add exactly one entity while composed")
                 assertTrue(captured != 0, "$name should report its renderable entity via onCreate")
                 assertTrue(
-                    engine.getRenderableManager().hasComponent(captured),
+                    engine.renderableManager.hasComponent(captured),
                     "$name should have a live renderable component while composed",
                 )
 
@@ -77,7 +77,7 @@ class PrimitiveLifecycleTest : TierBSceneFixture() {
                 assertSceneEmpty(scene, "$name leaked after disposal")
                 assertEntitiesDestroyed(engine, intArrayOf(captured))
                 assertTrue(
-                    !engine.getRenderableManager().hasComponent(captured),
+                    !engine.renderableManager.hasComponent(captured),
                     "$name renderable component should be gone after disposal",
                 )
             }

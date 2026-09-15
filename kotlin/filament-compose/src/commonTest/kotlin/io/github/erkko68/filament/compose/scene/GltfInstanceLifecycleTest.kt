@@ -77,8 +77,8 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
                 GltfInstance(
                     asset = asset,
                     onCreate = {
-                        val rm = engine.getRenderableManager()
-                        morphTargets = instance.getEntities()
+                        val rm = engine.renderableManager
+                        morphTargets = instance.entities
                             .filter { rm.hasComponent(it) }
                             .maxOfOrNull { rm.getMorphTargetCount(rm.getInstance(it)) } ?: 0
                     },

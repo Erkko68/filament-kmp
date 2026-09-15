@@ -9,7 +9,7 @@ import io.github.erkko68.filament.web.interop.toJsNumbers
 
 import io.github.erkko68.filament.web.TransformManager as JSTransformManager
 
-actual class TransformManager(internal val jsTransformManager: JSTransformManager) {
+actual class TransformManager @InternalFilamentApi constructor(internal val jsTransformManager: JSTransformManager) {
     // `EntityInstance` is a typealias for `Int` in common code, but on JS the
     // The upstream binding returns an opaque `TransformManager$Instance` JS object with no
     // numeric ID, and a fresh wrapper each call. Cache the registered EntityInstance id per
@@ -89,11 +89,11 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
 
     actual fun getChildren(
         instance: EntityInstance,
-        outEntities: IntArray?
+        out: IntArray?
     ): IntArray {
         val vec = jsTransformManager.getChildren(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>())
         val count = vec.size().toInt()
-        val result = outEntities ?: IntArray(count)
+        val result = out ?: IntArray(count)
         for (i in 0 until minOf(count, result.size)) {
             val jsEntity = vec.get(i.toDouble())
             val id = jsEntity.getId().toInt()
@@ -113,36 +113,36 @@ actual class TransformManager(internal val jsTransformManager: JSTransformManage
 
     actual fun getTransform(
         instance: EntityInstance,
-        outLocalTransform: FloatArray?
+        out: FloatArray?
     ): FloatArray {
-        val result = outLocalTransform ?: FloatArray(16)
+        val result = out ?: FloatArray(16)
         (jsTransformManager.getTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
     actual fun getTransform(
         instance: EntityInstance,
-        outLocalTransform: DoubleArray?
+        out: DoubleArray?
     ): DoubleArray {
-        val result = outLocalTransform ?: DoubleArray(16)
+        val result = out ?: DoubleArray(16)
         (jsTransformManager.getTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
     actual fun getWorldTransform(
         instance: EntityInstance,
-        outWorldTransform: FloatArray?
+        out: FloatArray?
     ): FloatArray {
-        val result = outWorldTransform ?: FloatArray(16)
+        val result = out ?: FloatArray(16)
         (jsTransformManager.getWorldTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }
 
     actual fun getWorldTransform(
         instance: EntityInstance,
-        outWorldTransform: DoubleArray?
+        out: DoubleArray?
     ): DoubleArray {
-        val result = outWorldTransform ?: DoubleArray(16)
+        val result = out ?: DoubleArray(16)
         (jsTransformManager.getWorldTransform(InstanceRegistry.get(instance).unsafeCast<JSTransformManagerInstance>()))?.readNumbersInto(result)
         return result
     }

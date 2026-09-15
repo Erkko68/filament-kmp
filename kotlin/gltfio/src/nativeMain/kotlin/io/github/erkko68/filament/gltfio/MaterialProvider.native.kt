@@ -8,21 +8,24 @@ import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaMaterialProvider
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.nativeObject
+import io.github.erkko68.filament.VertexBuffer
 
-actual interface MaterialProvider {
+actual interface MaterialProvider : AutoCloseable {
     actual fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
     actual fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
-    actual fun getMaterials(): Array<io.github.erkko68.filament.Material>
-    actual fun needsDummyData(attrib: Int): Boolean
+    actual val materials: List<io.github.erkko68.filament.Material>
+    actual fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
     actual fun destroyMaterials()
     actual fun destroy()
     
-    fun getNativeHandle(): CPointer<FilaMaterialProvider>?
+    @InternalFilamentApi fun nativeObject(): CPointer<FilaMaterialProvider>?
 }
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeHandle, null, 0u)
+    public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, null, 0u)
 
     actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? {
         return memScoped {
@@ -54,28 +57,30 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         }
     }
 
-    actual override fun getMaterials(): Array<io.github.erkko68.filament.Material> {
+    actual override val materials: List<io.github.erkko68.filament.Material> get() {
         val count = FilaMaterialProvider_getMaterialsCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         memScoped {
             val materials = allocArray<CPointerVar<cnames.structs.FilaMaterial>>(count)
             FilaMaterialProvider_getMaterials(nativeHandle, materials)
-            return Array(count) { io.github.erkko68.filament.Material(materials[it]) }
+            return List(count) { io.github.erkko68.filament.Material(materials[it]) }
         }
     }
 
-    actual override fun needsDummyData(attrib: Int): Boolean {
-        return FilaMaterialProvider_needsDummyData(nativeHandle, attrib)
+    actual override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean {
+        return FilaMaterialProvider_needsDummyData(nativeHandle, attrib.ordinal)
     }
 
     actual override fun destroyMaterials() {
         FilaMaterialProvider_destroyMaterials(nativeHandle)
     }
 
+    actual override fun close() = destroy()
+
     actual override fun destroy() {
         FilaMaterialProvider_destroy(nativeHandle)
         nativeHandle = null
     }
 
-    override fun getNativeHandle(): CPointer<FilaMaterialProvider>? = nativeHandle
+    @InternalFilamentApi override fun nativeObject(): CPointer<FilaMaterialProvider>? = nativeHandle
 }

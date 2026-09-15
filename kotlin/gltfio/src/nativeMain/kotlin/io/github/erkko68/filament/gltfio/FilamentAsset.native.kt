@@ -9,9 +9,10 @@ import cnames.structs.FilaFilamentAsset
 import cnames.structs.FilaFilamentInstance
 import io.github.erkko68.filament.FilamentPlatform
 import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?) {
-    actual fun getRoot(): Entity = FilaFilamentAsset_getRoot(nativeHandle).toInt()
+actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaFilamentAsset>?) {
+    actual val root: Entity get() = FilaFilamentAsset_getRoot(nativeHandle).toInt()
 
     actual fun popRenderable(): Entity = FilaFilamentAsset_popRenderable(nativeHandle).toInt()
 
@@ -27,7 +28,7 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         }
     }
 
-    actual fun getEntities(): IntArray {
+    actual val entities: IntArray get() {
         val count = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
         if (count == 0) return IntArray(0)
         memScoped {
@@ -37,7 +38,7 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         }
     }
 
-    actual fun getLightEntities(): IntArray {
+    actual val lightEntities: IntArray get() {
         val count = FilaFilamentAsset_getLightEntityCount(nativeHandle).toInt()
         if (count == 0) return IntArray(0)
         memScoped {
@@ -47,7 +48,7 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         }
     }
 
-    actual fun getRenderableEntities(): IntArray {
+    actual val renderableEntities: IntArray get() {
         val count = FilaFilamentAsset_getRenderableEntityCount(nativeHandle).toInt()
         if (count == 0) return IntArray(0)
         memScoped {
@@ -57,7 +58,7 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         }
     }
 
-    actual fun getCameraEntities(): IntArray {
+    actual val cameraEntities: IntArray get() {
         val count = FilaFilamentAsset_getCameraEntityCount(nativeHandle).toInt()
         if (count == 0) return IntArray(0)
         memScoped {
@@ -89,23 +90,23 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
     
     actual fun getFirstEntityByName(name: String): Entity = FilaFilamentAsset_getFirstEntityByName(nativeHandle, name).toInt()
 
-    actual fun getEntityCount(): Int = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
+    actual val entityCount: Int get() = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getAssetInstanceCount(): Int = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
+    actual val assetInstanceCount: Int get() = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
 
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual fun getAssetInstances(): Array<FilamentInstance> {
+    actual val assetInstances: List<FilamentInstance> get() {
         val count = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         memScoped {
             val instances = allocArray<CPointerVar<FilaFilamentInstance>>(count)
             FilaFilamentAsset_getAssetInstances(nativeHandle, instances)
-            return Array(count) { FilamentInstance(instances[it]) }
+            return List(count) { FilamentInstance(instances[it]) }
         }
     }
 
-    actual fun getBoundingBox(): Box {
+    actual val boundingBox: Box get() {
         return FilaFilamentAsset_getBoundingBox(nativeHandle).useContents {
             Box(
                 centerX, centerY, centerZ,
@@ -118,21 +119,21 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
 
     actual fun getExtras(entity: Entity): String? = FilaFilamentAsset_getExtras(nativeHandle, entity.toUInt())?.toKString()
 
-    actual fun getMorphTargetNames(entity: Entity): Array<String> {
+    actual fun getMorphTargetNames(entity: Entity): List<String> {
         val count = FilaFilamentAsset_getMorphTargetCountAt(nativeHandle, entity.toUInt()).toInt()
-        if (count == 0) return emptyArray()
-        return Array(count) {
+        if (count == 0) return emptyList()
+        return List(count) {
             FilaFilamentAsset_getMorphTargetNameAt(nativeHandle, entity.toUInt(), it.toULong())?.toKString() ?: ""
         }
     }
 
-    actual fun getResourceUris(): Array<String> {
+    actual val resourceUris: List<String> get() {
         val count = FilaFilamentAsset_getResourceUriCount(nativeHandle).toInt()
-        if (count == 0) return emptyArray()
+        if (count == 0) return emptyList()
         memScoped {
             val uris = allocArray<CPointerVar<ByteVar>>(count)
             FilaFilamentAsset_getResourceUris(nativeHandle, uris)
-            return Array(count) { uris[it]?.toKString() ?: "" }
+            return List(count) { uris[it]?.toKString() ?: "" }
         }
     }
 
@@ -140,9 +141,9 @@ actual class FilamentAsset(public var nativeHandle: CPointer<FilaFilamentAsset>?
         FilaFilamentAsset_releaseSourceData(nativeHandle)
     }
 
-    actual fun getEngine(): io.github.erkko68.filament.Engine =
+    actual val engine: io.github.erkko68.filament.Engine get() =
         io.github.erkko68.filament.Engine(FilaFilamentAsset_getEngine(nativeHandle))
 
-    actual fun getInstance(): FilamentInstance =
+    actual val instance: FilamentInstance get() =
         FilamentInstance(FilaFilamentAsset_getInstance(nativeHandle))
 }

@@ -22,7 +22,7 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         assertNotNull(inst)
         // MaterialInstance.getMaterial is not bound in upstream jsbindings.cpp.
         if (TestEnv.target != TestTarget.JS) {
-            assertEquals(mat.getName(), inst.material.getName())
+            assertEquals(mat.name, inst.material.name)
         }
         assertNotNull(inst.name)
 

@@ -26,7 +26,7 @@ private fun IntArray.toUint32Array(): Uint32Array {
     return ua
 }
 
-actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrientation, actual val vertexCount: Int = 0) {
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val jsSurfaceOrientation: JSSurfaceOrientation, actual val vertexCount: Int = 0) : AutoCloseable {
     actual class Builder {
         private val jsBuilder = JSSurfaceOrientationBuilder()
         private var vertexCount: Int = 0
@@ -100,6 +100,9 @@ actual class SurfaceOrientation(internal val jsSurfaceOrientation: JSSurfaceOrie
         val n = minOf(count * 4, buffer.size)
         for (i in 0 until n) buffer[i] = quats[i]
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         jsSurfaceOrientation.delete()

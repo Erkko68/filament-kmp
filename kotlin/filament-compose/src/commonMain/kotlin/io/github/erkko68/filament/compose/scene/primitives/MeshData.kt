@@ -145,7 +145,7 @@ internal fun Mesh(
     }
 
     val entity = remember(handles, material, castShadows, receiveShadows) {
-        engine.getEntityManager().create().also { e ->
+        engine.entityManager.create().also { e ->
             RenderableManager.Builder(1)
                 .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, handles.vertexBuffer, handles.indexBuffer)
                 .material(0, material)
@@ -161,8 +161,8 @@ internal fun Mesh(
     DisposableEffect(entity) {
         EntityScopeImpl(entity, engine).onCreate()
         onDispose {
-            engine.getRenderableManager().destroy(entity)
-            engine.getEntityManager().destroy(entity)
+            engine.renderableManager.destroy(entity)
+            engine.entityManager.destroy(entity)
         }
     }
 
@@ -174,7 +174,7 @@ internal fun Mesh(
     }
 
     DisposableEffect(entity, position, rotation, scale, pivot) {
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         // Ensure the renderable entity has a transform component before we touch it. The
         // RenderableManager.Builder.build() above doesn't add one; parenting and setTransform
         // both need it.
@@ -187,7 +187,7 @@ internal fun Mesh(
     // (e.g. the user moves this composable into/out of a Group at runtime).
     DisposableEffect(entity, parent) {
         if (parent != null) {
-            val tm = engine.getTransformManager()
+            val tm = engine.transformManager
             if (!tm.hasComponent(entity)) tm.create(entity)
             tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
         }

@@ -33,7 +33,7 @@ class RenderTargetTest : FilamentTestFixture() {
         val retrieved = target.getTexture(RenderTarget.AttachmentPoint.COLOR)
         if (retrieved != null) {
             assertEquals(tex.getWidth(), retrieved.getWidth())
-            assertEquals(tex.getFormat(), retrieved.getFormat())
+            assertEquals(tex.format, retrieved.format)
         }
         assertEquals(0, target.getMipLevel(RenderTarget.AttachmentPoint.COLOR))
         assertEquals(Texture.CubemapFace.POSITIVE_X, target.getFace(RenderTarget.AttachmentPoint.COLOR))

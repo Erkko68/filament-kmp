@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaSurfaceOrientation
 import cnames.structs.FilaSurfaceOrientationBuilder
 
-actual class SurfaceOrientation internal constructor(internal val nativeHandle: CPointer<FilaSurfaceOrientation>) {
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: CPointer<FilaSurfaceOrientation>) : AutoCloseable {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaSurfaceOrientationBuilder_create()!!
 
@@ -92,6 +92,9 @@ actual class SurfaceOrientation internal constructor(internal val nativeHandle: 
             FilaSurfaceOrientation_getQuatsAsShort(nativeHandle, pinned.addressOf(0), count.toUInt())
         }
     }
+
+    actual override fun close() = destroy()
+
 
     actual fun destroy() {
         FilaSurfaceOrientation_destroy(nativeHandle)

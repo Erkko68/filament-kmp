@@ -2,7 +2,7 @@ package io.github.erkko68.filament
 
 import com.google.android.filament.BufferObject as AndroidBufferObject
 
-actual class BufferObject internal constructor(val nativeBufferObject: AndroidBufferObject) {
+actual class BufferObject @InternalFilamentApi constructor(internal val nativeBufferObject: AndroidBufferObject) {
     actual enum class BindingType {
         VERTEX,
         UNIFORM,

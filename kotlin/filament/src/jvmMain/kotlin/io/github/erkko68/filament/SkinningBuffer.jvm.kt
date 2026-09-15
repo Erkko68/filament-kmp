@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class SkinningBuffer internal constructor(internal var nativeHandle: MemorySegment?) {
+actual class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilamentC.FilaSkinningBufferBuilder_create()
 

@@ -13,7 +13,7 @@ import io.github.erkko68.filament.web.Renderer as JSRenderer
 import io.github.erkko68.filament.web.`Renderer_ClearOptions` as JSRendererClearOptions
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
+actual class Renderer @InternalFilamentApi constructor(internal val jsRenderer: JSRenderer, private val _engine: Engine? = null) {
     private var _displayInfo = DisplayInfo()
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setDisplayInfo is not bound in filament.js; frame pacing is managed by the browser.")
     actual var displayInfo: DisplayInfo
@@ -176,17 +176,9 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
 
     actual class FrameRateOptions {
         actual var interval: Float = 1.0f
-            get() = field
-            set(value) { field = value }
-        actual var headRoomRatio: Float = 1.0f
-            get() = field
-            set(value) { field = value }
-        actual var scaleRate: Float = 1.0f
-            get() = field
-            set(value) { field = value }
-        actual var history: Int = 1
-            get() = field
-            set(value) { field = value }
+        actual var headRoomRatio: Float = 0.0f
+        actual var scaleRate: Float = 1.0f / 15.0f
+        actual var history: Int = 15
     }
 
     actual class ClearOptions {
@@ -195,10 +187,10 @@ actual class Renderer(internal val jsRenderer: JSRenderer, private val _engine: 
         actual var discard: Boolean = true
     }
 
-    actual companion object {
-        actual val MIRROR_FRAME_FLAG_COMMIT: Int = 1
-        actual val MIRROR_FRAME_FLAG_SET_PRESENTATION_TIME: Int = 2
-        actual val MIRROR_FRAME_FLAG_CLEAR: Int = 4
+    actual object MirrorFrameFlag {
+        actual val COMMIT: Int = 1
+        actual val SET_PRESENTATION_TIME: Int = 2
+        actual val CLEAR: Int = 4
     }
 }
 

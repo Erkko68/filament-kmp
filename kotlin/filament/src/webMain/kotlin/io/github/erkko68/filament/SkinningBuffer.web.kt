@@ -6,7 +6,7 @@ import io.github.erkko68.filament.web.interop.toJsArray
 import io.github.erkko68.filament.web.SkinningBuffer as JSSkinningBuffer
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class SkinningBuffer internal constructor(
+actual class SkinningBuffer @InternalFilamentApi constructor(
     internal val jsSkinningBuffer: JSSkinningBuffer,
 ) {
     actual val boneCount: Int

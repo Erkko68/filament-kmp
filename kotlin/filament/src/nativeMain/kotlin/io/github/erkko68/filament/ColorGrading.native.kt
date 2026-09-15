@@ -6,7 +6,7 @@ import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaColorGrading
 import cnames.structs.FilaColorGradingBuilder
 
-actual class ColorGrading internal constructor(internal var nativeHandle: CPointer<FilaColorGrading>?) {
+actual class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaColorGrading>?) {
     actual class Builder actual constructor() {
         internal val nativeHandle: CPointer<FilaColorGradingBuilder>? = FilaColorGradingBuilder_create()
 

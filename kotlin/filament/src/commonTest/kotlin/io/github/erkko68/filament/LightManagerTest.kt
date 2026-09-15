@@ -97,13 +97,14 @@ class LightManagerTest : FilamentTestFixture() {
         assertEquals(2.0f, o.polygonOffsetSlope, 1e-6f)
         assertEquals(1f, o.penumbraScale, 1e-6f)
         assertEquals(1f, o.penumbraRatioScale, 1e-6f)
+        // 0 means "defer to the View-wide View.SoftShadowOptions" — Filament's own default.
         assertEquals(0f, o.maxPenumbraRatio, 1e-6f)
         assertEquals(0f, o.maxSearchRadius, 1e-6f)
     }
 
     @Test
     fun testSunLightLifecycle() {
-        val lm = engine.getLightManager()
+        val lm = engine.lightManager
         assertNotNull(lm)
 
         val entity = EntityManager.get().create()
@@ -164,7 +165,7 @@ class LightManagerTest : FilamentTestFixture() {
 
     @Test
     fun testSpotLightLifecycle() {
-        val lm = engine.getLightManager()
+        val lm = engine.lightManager
         val entity = EntityManager.get().create()
         
         LightManager.Builder(LightManager.Type.SPOT)

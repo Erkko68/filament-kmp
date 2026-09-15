@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaTexture
 
-actual class Texture public constructor(public var nativeHandle: CPointer<FilaTexture>?) {
+actual class Texture @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaTexture>?) {
 
     actual enum class Sampler {
         SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY;
@@ -199,20 +199,18 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
         }
     }
 
-    actual class Usage {
-        actual companion object {
-            actual val COLOR_ATTACHMENT: Int = FILA_TEXTURE_USAGE_COLOR_ATTACHMENT.toInt()
-            actual val DEPTH_ATTACHMENT: Int = FILA_TEXTURE_USAGE_DEPTH_ATTACHMENT.toInt()
-            actual val STENCIL_ATTACHMENT: Int = FILA_TEXTURE_USAGE_STENCIL_ATTACHMENT.toInt()
-            actual val UPLOADABLE: Int = FILA_TEXTURE_USAGE_UPLOADABLE.toInt()
-            actual val SAMPLEABLE: Int = FILA_TEXTURE_USAGE_SAMPLEABLE.toInt()
-            actual val SUBPASS_INPUT: Int = FILA_TEXTURE_USAGE_SUBPASS_INPUT.toInt()
-            actual val BLIT_SRC: Int = FILA_TEXTURE_USAGE_BLIT_SRC.toInt()
-            actual val BLIT_DST: Int = FILA_TEXTURE_USAGE_BLIT_DST.toInt()
-            actual val PROTECTED: Int = FILA_TEXTURE_USAGE_PROTECTED.toInt()
-            actual val GEN_MIPMAPPABLE: Int = FILA_TEXTURE_USAGE_GEN_MIPMAPPABLE.toInt()
-            actual val DEFAULT: Int = FILA_TEXTURE_USAGE_DEFAULT.toInt()
-        }
+    actual object Usage {
+        actual val COLOR_ATTACHMENT: Int = FILA_TEXTURE_USAGE_COLOR_ATTACHMENT.toInt()
+        actual val DEPTH_ATTACHMENT: Int = FILA_TEXTURE_USAGE_DEPTH_ATTACHMENT.toInt()
+        actual val STENCIL_ATTACHMENT: Int = FILA_TEXTURE_USAGE_STENCIL_ATTACHMENT.toInt()
+        actual val UPLOADABLE: Int = FILA_TEXTURE_USAGE_UPLOADABLE.toInt()
+        actual val SAMPLEABLE: Int = FILA_TEXTURE_USAGE_SAMPLEABLE.toInt()
+        actual val SUBPASS_INPUT: Int = FILA_TEXTURE_USAGE_SUBPASS_INPUT.toInt()
+        actual val BLIT_SRC: Int = FILA_TEXTURE_USAGE_BLIT_SRC.toInt()
+        actual val BLIT_DST: Int = FILA_TEXTURE_USAGE_BLIT_DST.toInt()
+        actual val PROTECTED: Int = FILA_TEXTURE_USAGE_PROTECTED.toInt()
+        actual val GEN_MIPMAPPABLE: Int = FILA_TEXTURE_USAGE_GEN_MIPMAPPABLE.toInt()
+        actual val DEFAULT: Int = FILA_TEXTURE_USAGE_DEFAULT.toInt()
     }
 
     actual class PixelBufferDescriptor actual constructor(
@@ -253,9 +251,9 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
     actual fun getWidth(level: Int): Int = FilaTexture_getWidth(nativeHandle, level.toULong()).toInt()
     actual fun getHeight(level: Int): Int = FilaTexture_getHeight(nativeHandle, level.toULong()).toInt()
     actual fun getDepth(level: Int): Int = FilaTexture_getDepth(nativeHandle, level.toULong()).toInt()
-    actual fun getLevels(): Int = FilaTexture_getLevels(nativeHandle).toInt()
-    actual fun getTarget(): Sampler = Sampler.fromNative(FilaTexture_getTarget(nativeHandle))
-    actual fun getFormat(): InternalFormat = InternalFormat.fromNative(FilaTexture_getFormat(nativeHandle))
+    actual val levels: Int get() = FilaTexture_getLevels(nativeHandle).toInt()
+    actual val target: Sampler get() = Sampler.fromNative(FilaTexture_getTarget(nativeHandle))
+    actual val format: InternalFormat get() = InternalFormat.fromNative(FilaTexture_getFormat(nativeHandle))
 
     private class PixelBufferPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 
@@ -276,7 +274,7 @@ actual class Texture public constructor(public var nativeHandle: CPointer<FilaTe
         val callbackWrapper = staticCFunction { _: COpaquePointer?, _: ULong, user: COpaquePointer? ->
             val ref = user!!.asStableRef<PixelBufferPinWrapper>()
             val wrap = ref.get()
-            wrap.callback?.invoke()
+            upcall { wrap.callback?.invoke() }
             wrap.pinned.unpin()
             ref.dispose()
         }

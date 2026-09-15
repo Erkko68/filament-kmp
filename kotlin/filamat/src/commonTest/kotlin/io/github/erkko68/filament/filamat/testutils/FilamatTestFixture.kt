@@ -9,11 +9,11 @@ open class FilamatTestFixture {
     @BeforeTest
     fun setUp() {
         Filamat.init()
-        MaterialBuilder.init()
+        Filamat.init()
     }
 
     @AfterTest
     fun tearDown() {
-        MaterialBuilder.shutdown()
+        Filamat.shutdown()
     }
 }

@@ -16,7 +16,7 @@ import io.github.erkko68.filament.web.`RenderableManager_Builder` as JSRenderabl
 import io.github.erkko68.filament.web.RenderableManager_PrimitiveType
 import io.github.erkko68.filament.web.Entity as JSEntity
 
-actual class RenderableManager(internal val jsRenderableManager: JSRenderableManager) {
+actual class RenderableManager @InternalFilamentApi constructor(internal val jsRenderableManager: JSRenderableManager) {
     actual fun hasComponent(entity: Entity): Boolean {
         return jsRenderableManager.hasComponent(EntityManager.jsEntityOf(entity))
     }
@@ -41,13 +41,13 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
 
     actual fun getAxisAlignedBoundingBox(
         instance: EntityInstance,
-        outBox: Box?
+        out: Box?
     ): Box {
         val jsBox = jsRenderableManager.getAxisAlignedBoundingBox(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>())
         val center = jsBox.center!!.toFloatArray(3)
         val halfExtent = jsBox.halfExtent!!.toFloatArray(3)
         
-        val result = outBox ?: Box()
+        val result = out ?: Box()
         for (i in 0 until 3) {
             result.center[i] = center[i]
             result.halfExtent[i] = halfExtent[i]
@@ -77,7 +77,7 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
     actual fun getChannel(instance: EntityInstance): Int =
         jsRenderableManager.getChannel(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>()).toInt()
 
-    actual fun setCulling(instance: EntityInstance, enabled: Boolean) {
+    actual fun setCullingEnabled(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setCulling(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
@@ -88,14 +88,14 @@ actual class RenderableManager(internal val jsRenderableManager: JSRenderableMan
         jsRenderableManager.setFogEnabled(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
-    actual fun getFogEnabled(instance: EntityInstance): Boolean =
+    actual fun isFogEnabled(instance: EntityInstance): Boolean =
         jsRenderableManager.getFogEnabled(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>())
 
-    actual fun setCastShadows(instance: EntityInstance, enabled: Boolean) {
+    actual fun setShadowCaster(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setCastShadows(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 
-    actual fun setReceiveShadows(instance: EntityInstance, enabled: Boolean) {
+    actual fun setShadowReceiver(instance: EntityInstance, enabled: Boolean) {
         jsRenderableManager.setReceiveShadows(InstanceRegistry.get(instance).unsafeCast<JSRenderableManagerInstance>(), enabled)
     }
 

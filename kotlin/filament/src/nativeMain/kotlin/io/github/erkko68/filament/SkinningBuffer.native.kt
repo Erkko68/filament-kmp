@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 import io.github.erkko68.filament.cinterop.*
 import cnames.structs.FilaSkinningBuffer
 
-actual class SkinningBuffer internal constructor(internal var nativeHandle: CPointer<FilaSkinningBuffer>?) {
+actual class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaSkinningBuffer>?) {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaSkinningBufferBuilder_create()
 

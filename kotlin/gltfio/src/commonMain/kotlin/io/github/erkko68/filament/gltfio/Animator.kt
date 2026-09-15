@@ -66,7 +66,7 @@ expect class Animator {
      *
      * @return Animation count.
      */
-    fun getAnimationCount(): Int
+    val animationCount: Int
 
     /**
      * Get the duration of a glTF animation.

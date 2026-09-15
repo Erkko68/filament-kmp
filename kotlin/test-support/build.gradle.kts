@@ -10,7 +10,7 @@ plugins {
 kotlin {
     androidLibrary {
         namespace = "io.github.erkko68.filament.testsupport"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 24
     }
     iosArm64()

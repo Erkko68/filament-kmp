@@ -3,7 +3,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
 
-actual class Camera internal constructor(
+actual class Camera @InternalFilamentApi constructor(
     internal var nativeHandle: MemorySegment?,
     actual val entity: Entity
 ) {

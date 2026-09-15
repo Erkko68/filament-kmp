@@ -37,7 +37,7 @@ class ResourceLoaderTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val assetLoader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val assetLoader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = assetLoader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -56,7 +56,7 @@ class ResourceLoaderTest : GltfioTestFixture() {
         if (bytes.isEmpty()) return
 
         val provider = UbershaderProvider(engine)
-        val assetLoader = AssetLoader.create(engine, provider, engine.getEntityManager())
+        val assetLoader = AssetLoader.create(engine, provider, engine.entityManager)
         val asset = assetLoader.createAsset(bytes)
         assertNotNull(asset)
 

@@ -89,11 +89,6 @@ actual class MaterialBuilder actual constructor() {
         NONE, PREPROCESSOR, SIZE, PERFORMANCE
     }
 
-    actual companion object {
-        actual fun init() = Filamat.init()
-        actual fun shutdown() = FilamentC.FilaMaterialBuilder_shutdown()
-    }
-
     actual fun build(): MaterialPackage {
         val pkg = FilamentC.FilaMaterialBuilder_build(nativeHandle)
             ?: throw IllegalStateException("Failed to build material")

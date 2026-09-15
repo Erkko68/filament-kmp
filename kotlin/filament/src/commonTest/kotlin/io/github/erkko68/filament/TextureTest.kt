@@ -59,9 +59,9 @@ class TextureTest : FilamentTestFixture() {
         assertEquals(64, tex.getWidth(0))
         assertEquals(64, tex.getHeight(0))
         assertEquals(1, tex.getDepth(0))
-        assertEquals(1, tex.getLevels())
-        assertEquals(Texture.Sampler.SAMPLER_2D, tex.getTarget())
-        assertEquals(Texture.InternalFormat.RGBA8, tex.getFormat())
+        assertEquals(1, tex.levels)
+        assertEquals(Texture.Sampler.SAMPLER_2D, tex.target)
+        assertEquals(Texture.InternalFormat.RGBA8, tex.format)
 
         val pbd = Texture.PixelBufferDescriptor(ByteArray(64 * 64 * 4), 64 * 64 * 4, Texture.Format.RGBA, Texture.Type.UBYTE)
         

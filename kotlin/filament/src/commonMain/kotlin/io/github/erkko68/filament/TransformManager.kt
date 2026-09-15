@@ -92,10 +92,10 @@ expect class TransformManager {
      * Gets the child entities of a transform.
      *
      * @param instance The transform instance
-     * @param outEntities Optional array to fill with child entity IDs
+     * @param out Optional array to fill with child entity IDs
      * @return Array of child entity IDs
      */
-    fun getChildren(instance: EntityInstance, outEntities: IntArray?): IntArray
+    fun getChildren(instance: EntityInstance, out: IntArray? = null): IntArray
 
     /**
      * Sets the local transform for a transform instance.
@@ -117,37 +117,37 @@ expect class TransformManager {
      * Gets the local transform for a transform instance.
      *
      * @param instance The transform instance
-     * @param outLocalTransform Optional array to fill with the local transform (or null)
+     * @param out Optional array to fill with the local transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getTransform(instance: EntityInstance, outLocalTransform: FloatArray?): FloatArray
+    fun getTransform(instance: EntityInstance, out: FloatArray? = null): FloatArray
 
     /**
      * Gets the local transform for a transform instance.
      *
      * @param instance The transform instance
-     * @param outLocalTransform Optional array to fill with the local transform (or null)
+     * @param out Optional array to fill with the local transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getTransform(instance: EntityInstance, outLocalTransform: DoubleArray?): DoubleArray
+    fun getTransform(instance: EntityInstance, out: DoubleArray? = null): DoubleArray
 
     /**
      * Gets the world transform for a transform instance (accounting for parent transforms).
      *
      * @param instance The transform instance
-     * @param outWorldTransform Optional array to fill with the world transform (or null)
+     * @param out Optional array to fill with the world transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getWorldTransform(instance: EntityInstance, outWorldTransform: FloatArray?): FloatArray
+    fun getWorldTransform(instance: EntityInstance, out: FloatArray? = null): FloatArray
 
     /**
      * Gets the world transform for a transform instance (accounting for parent transforms).
      *
      * @param instance The transform instance
-     * @param outWorldTransform Optional array to fill with the world transform (or null)
+     * @param out Optional array to fill with the world transform (or null)
      * @return A 4x4 matrix in row-major order
      */
-    fun getWorldTransform(instance: EntityInstance, outWorldTransform: DoubleArray?): DoubleArray
+    fun getWorldTransform(instance: EntityInstance, out: DoubleArray? = null): DoubleArray
 
     /**
      * Opens a local transform transaction.

@@ -115,7 +115,7 @@ internal data class LightSnapshot(
 
     // Cheap per-change setters for the dynamic subset (everything except shadow/castLight/type).
     fun applyRuntime(engine: Engine, entity: Entity) {
-        val lm = engine.getLightManager()
+        val lm = engine.lightManager
         val li = lm.getInstance(entity)
         lm.setColor(li, color.r, color.g, color.b)
         when (val i = intensity) {
@@ -134,7 +134,7 @@ internal data class LightSnapshot(
 
         // Position via transform so Group hierarchy works. Translation only — directional lights
         // derive their direction from `direction`, not the transform's rotation.
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         tm.setTransform(
             tm.getInstance(entity),
             floatArrayOf(
@@ -160,17 +160,17 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
 
-    val entity = remember(engine) { engine.getEntityManager().create() }
+    val entity = remember(engine) { engine.entityManager.create() }
 
     // Entity destruction is registered *first* so it runs *last* on dispose (Compose tears effects
     // down in reverse registration order), keeping the entity live while the cleanups below run.
     DisposableEffect(entity) {
-        onDispose { engine.getEntityManager().destroy(entity) }
+        onDispose { engine.entityManager.destroy(entity) }
     }
 
     // Transform component + scene membership, independent of light parameters.
     DisposableEffect(entity) {
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         if (!tm.hasComponent(entity)) tm.create(entity)
         scene.addEntity(entity)
         onDispose {
@@ -182,7 +182,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     // Build (and rebuild) the light component only when a build-time-only param changes.
     DisposableEffect(entity, snapshot.type, snapshot.shadow, snapshot.castLight) {
         snapshot.buildInto(engine, entity)
-        onDispose { engine.getLightManager().destroy(entity) }
+        onDispose { engine.lightManager.destroy(entity) }
     }
 
     // Push setters only when a parameter actually changes — LightSnapshot's value equality gates it.
@@ -193,7 +193,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
 
     DisposableEffect(entity, parent) {
         if (parent != null) {
-            val tm = engine.getTransformManager()
+            val tm = engine.transformManager
             tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
         }
         onDispose { }
@@ -205,7 +205,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
     val world = remember { FloatArray(16) }
     OnFrame {
         if (!snapshot.followGroupRotation || parent == null) return@OnFrame
-        val tm = engine.getTransformManager()
+        val tm = engine.transformManager
         if (!tm.hasComponent(parent)) return@OnFrame
         tm.getWorldTransform(tm.getInstance(parent), world)
         val d = snapshot.direction
@@ -214,7 +214,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
         val z = world[2] * d.x + world[6] * d.y + world[10] * d.z
         val len = sqrt(x * x + y * y + z * z)
         if (len > 0f) {
-            val lm = engine.getLightManager()
+            val lm = engine.lightManager
             lm.setDirection(lm.getInstance(entity), x / len, y / len, z / len)
         }
     }
@@ -421,13 +421,13 @@ fun FilamentSceneScope.Light(
     val scene  = LocalFilamentScene.current ?: noFilamentScene()
     val parent = LocalParentEntity.current
 
-    val entity = remember(engine) { engine.getEntityManager().create() }
+    val entity = remember(engine) { engine.entityManager.create() }
 
     DisposableEffect(entity) {
         onDispose {
-            val tm = engine.getTransformManager()
+            val tm = engine.transformManager
             if (tm.hasComponent(entity)) tm.destroy(entity)
-            engine.getEntityManager().destroy(entity)
+            engine.entityManager.destroy(entity)
         }
     }
 
@@ -438,14 +438,14 @@ fun FilamentSceneScope.Light(
 
     DisposableEffect(entity, type, *keys) {
         LightManager.Builder(type).apply(configure).build(engine, entity)
-        onDispose { engine.getLightManager().destroy(entity) }
+        onDispose { engine.lightManager.destroy(entity) }
     }
 
     // Only create a transform when parented — otherwise leave positioning to builder.position(),
     // which a transform component would override.
     DisposableEffect(entity, parent) {
         if (parent != null) {
-            val tm = engine.getTransformManager()
+            val tm = engine.transformManager
             if (!tm.hasComponent(entity)) tm.create(entity)
             tm.setParent(tm.getInstance(entity), tm.getInstance(parent))
         }

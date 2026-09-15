@@ -22,12 +22,12 @@ import io.github.erkko68.filament.Scene
  * ```kotlin
  * rememberFilamentScene {
  *     FilamentEffect {
- *         val entity = engine.getEntityManager().create()
+ *         val entity = engine.entityManager.create()
  *         scene.addEntity(entity)
  *         onFrame { frame -> /* drive a material parameter, transform, etc. */ }
  *         onDispose {
  *             scene.removeEntity(entity)
- *             engine.getEntityManager().destroy(entity)
+ *             engine.entityManager.destroy(entity)
  *         }
  *     }
  * }

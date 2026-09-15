@@ -480,12 +480,12 @@ expect class RenderableManager {
      * Gets the bounding box used for frustum culling.
      *
      * @param instance Instance of the component obtained from getInstance()
-     * @param outBox optional output Box; if null, a new Box is created
+     * @param out optional output Box; if null, a new Box is created
      * @return the axis-aligned bounding box
      * @see Builder.boundingBox()
      * @see RenderableManager.setAxisAlignedBoundingBox()
      */
-    fun getAxisAlignedBoundingBox(instance: EntityInstance, outBox: Box?): Box
+    fun getAxisAlignedBoundingBox(instance: EntityInstance, out: Box? = null): Box
 
     /**
      * Changes the visibility bits.
@@ -541,7 +541,7 @@ expect class RenderableManager {
      * @param enabled whether frustum culling is enabled
      * @see Builder.culling()
      */
-    fun setCulling(instance: EntityInstance, enabled: Boolean)
+    fun setCullingEnabled(instance: EntityInstance, enabled: Boolean)
 
     /**
      * Get whether or not frustum culling is on.
@@ -568,7 +568,7 @@ expect class RenderableManager {
      * @return whether fog is enabled
      * @see Builder.fog()
      */
-    fun getFogEnabled(instance: EntityInstance): Boolean
+    fun isFogEnabled(instance: EntityInstance): Boolean
 
     /**
      * Changes whether or not the renderable casts shadows.
@@ -577,7 +577,7 @@ expect class RenderableManager {
      * @param enabled whether shadow casting is enabled
      * @see Builder.castShadows()
      */
-    fun setCastShadows(instance: EntityInstance, enabled: Boolean)
+    fun setShadowCaster(instance: EntityInstance, enabled: Boolean)
 
     /**
      * Changes whether or not the renderable can receive shadows.
@@ -586,7 +586,7 @@ expect class RenderableManager {
      * @param enabled whether shadow receiving is enabled
      * @see Builder.receiveShadows()
      */
-    fun setReceiveShadows(instance: EntityInstance, enabled: Boolean)
+    fun setShadowReceiver(instance: EntityInstance, enabled: Boolean)
 
     /**
      * Changes whether or not the renderable can use screen-space contact shadows.

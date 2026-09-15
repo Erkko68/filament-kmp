@@ -12,7 +12,7 @@ package io.github.erkko68.filament
  * @param width Width of the viewport in pixels (default: 0)
  * @param height Height of the viewport in pixels (default: 0)
  */
-class Viewport(
+data class Viewport(
     var left: Int = 0,
     var bottom: Int = 0,
     var width: Int = 0,
