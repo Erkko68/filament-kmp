@@ -40,7 +40,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
@@ -82,7 +82,7 @@ jobs:
       contents: write   # gh release create
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Determine version
