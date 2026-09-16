@@ -39,6 +39,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      archive:
+        description: 'Also store these docs in docs-archive as libVersion (run from a release tag)'
+        type: boolean
+        default: false
 
 # Concurrency: per-ref so PR runs don't cancel a main deploy; within a ref the
 # latest run wins.
@@ -124,7 +129,7 @@ jobs:
       # Force-push a single orphan commit — the branch is a store, not a history, so
       # the repo doesn't grow a copy of the whole site per build.
       - name: Archive this version's docs
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || inputs.archive
         run: |
           version=$(grep '^libVersion=' gradle.properties | cut -d= -f2)
           rm -rf "build/previousDocs/$version"
