@@ -1,0 +1,753 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Half</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.utils/-half/index.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-utils/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-utils/commonMain" data-filter=":kotlin:filament-utils/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament-utils::io.github.erkko68.filament.utils/Half///PointingToDeclaration//-853202996">
+  <div class="breadcrumbs"><a href="../../index.html">filament-utils</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament.utils</a><span class="delimiter">/</span><span class="current">Half</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Half</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-inline/index.html"><span class="token annotation builtin">JvmInline</span></a></div></div><span class="token keyword">value </span><span class="token keyword">class </span><a href="index.html">Half</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>v<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-short/index.html">UShort</a></span></span><span class="token punctuation">)</span> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-comparable/index.html">Comparable</a><span class="token operator">&lt;</span><a href="index.html">Half</a><span class="token operator">&gt; </span></div><p class="paragraph">The <a href="index.html">Half</a> class is a wrapper and a utility class to manipulate half-precision 16-bit <a href="https://en.wikipedia.org/wiki/Half-precision_floating-point_format">IEEE 754</a> floating point data types (also called fp16 or binary16). A half-precision float can be created from or converted to single-precision floats, and is stored in a short data type.</p><p class="paragraph">The IEEE 754 standard specifies an fp16 as having the following format:</p><ul><li><p class="paragraph">Sign bit: 1 bit</p></li><li><p class="paragraph">Exponent width: 5 bits</p></li><li><p class="paragraph">Significand: 10 bits</p></li></ul><p class="paragraph">The format is laid out as follows:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">1   11111   1111111111<br>^   --^--   -----^----<br>sign  |          |_______ significand<br>      |<br>      -- exponent</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><p class="paragraph">Half-precision floating points can be useful to save memory and/or bandwidth at the expense of range and precision when compared to single-precision floating points (fp32).</p><p class="paragraph">To help you decide whether fp16 is the right storage type for you need, please refer to the table below that shows the available precision throughout the range of possible values. The <i>precision</i> column indicates the step size between two consecutive numbers in a specific part of the range.</p><div class="table--container"><table><thead><tr><th>Range start</th><th>Precision</th></tr></thead><tbody><tr><td>0</td><td>1 ⁄ 16,777,216</td></tr><tr><td>1 ⁄ 16,384</td><td>1 ⁄ 16,777,216</td></tr><tr><td>1 ⁄ 8,192</td><td>1 ⁄ 8,388,608</td></tr><tr><td>1 ⁄ 4,096</td><td>1 ⁄ 4,194,304</td></tr><tr><td>1 ⁄ 2,048</td><td>1 ⁄ 2,097,152</td></tr><tr><td>1 ⁄ 1,024</td><td>1 ⁄ 1,048,576</td></tr><tr><td>1 ⁄ 512</td><td>1 ⁄ 524,288</td></tr><tr><td>1 ⁄ 256</td><td>1 ⁄ 262,144</td></tr><tr><td>1 ⁄ 128</td><td>1 ⁄ 131,072</td></tr><tr><td>1 ⁄ 64</td><td>1 ⁄ 65,536</td></tr><tr><td>1 ⁄ 32</td><td>1 ⁄ 32,768</td></tr><tr><td>1 ⁄ 16</td><td>1 ⁄ 16,384</td></tr><tr><td>1 ⁄ 8</td><td>1 ⁄ 8,192</td></tr><tr><td>1 ⁄ 4</td><td>1 ⁄ 4,096</td></tr><tr><td>1 ⁄ 2</td><td>1 ⁄ 2,048</td></tr><tr><td>1</td><td>1 ⁄ 1,024</td></tr><tr><td>2</td><td>1 ⁄ 512</td></tr><tr><td>4</td><td>1 ⁄ 256</td></tr><tr><td>8</td><td>1 ⁄ 128</td></tr><tr><td>16</td><td>1 ⁄ 64</td></tr><tr><td>32</td><td>1 ⁄ 32</td></tr><tr><td>64</td><td>1 ⁄ 16</td></tr><tr><td>128</td><td>1 ⁄ 8</td></tr><tr><td>256</td><td>1 ⁄ 4</td></tr><tr><td>512</td><td>1 ⁄ 2</td></tr><tr><td>1,024</td><td>1</td></tr><tr><td>2,048</td><td>2</td></tr><tr><td>4,096</td><td>4</td></tr><tr><td>8,192</td><td>8</td></tr><tr><td>16,384</td><td>16</td></tr><tr><td>32,768</td><td>32</td></tr></tbody></table></div><p class="paragraph">This table shows that numbers higher than 1024 lose all fractional precision.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="115938519%2FConstructors%2F-853202996" anchor-label="Half" id="115938519%2FConstructors%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-half.html"><span><span>Half</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="115938519%2FConstructors%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-short/index.html">UShort</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Creates a new half-precision float with the specified bits.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="162869271%2FClasslikes%2F-853202996" anchor-label="Companion" id="162869271%2FClasslikes%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="162869271%2FClasslikes%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-45036458%2FProperties%2F-853202996" anchor-label="absoluteValue" id="-45036458%2FProperties%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="absolute-value.html"><span>absolute</span><wbr><span><span>Value</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-45036458%2FProperties%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="absolute-value.html">absoluteValue</a><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns the absolute value of this half-precision float. Special values are handled in the following ways:</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="105239163%2FProperties%2F-853202996" anchor-label="exponent" id="105239163%2FProperties%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="exponent.html"><span><span>exponent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="105239163%2FProperties%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="exponent.html">exponent</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the unbiased exponent used in the representation of this half-precision float value. if the value is NaN or infinite, this method returns <a href="-companion/-m-a-x_-e-x-p-o-n-e-n-t.html">MAX_EXPONENT</a> + 1. If the argument is 0 or a subnormal representation, this method returns <a href="-companion/-m-i-n_-e-x-p-o-n-e-n-t.html">MIN_EXPONENT</a> - 1.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1193530963%2FProperties%2F-853202996" anchor-label="sign" id="-1193530963%2FProperties%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sign.html"><span><span>sign</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1193530963%2FProperties%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="sign.html">sign</a><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns the sign of this half-precision float value:</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1206699085%2FProperties%2F-853202996" anchor-label="significand" id="1206699085%2FProperties%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="significand.html"><span><span>significand</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1206699085%2FProperties%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="significand.html">significand</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the significand, or mantissa, used in the representation of this half-precision float value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1739241079%2FProperties%2F-853202996" anchor-label="ulp" id="1739241079%2FProperties%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ulp.html"><span><span>ulp</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1739241079%2FProperties%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="ulp.html">ulp</a><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns the ulp of this value. An ulp is a positive distance between this value and the next nearest <a href="index.html">Half</a> value larger in magnitude.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-173116902%2FProperties%2F-853202996" anchor-label="v" id="-173116902%2FProperties%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="v.html"><span><span>v</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-173116902%2FProperties%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="v.html">v</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-u-short/index.html">UShort</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-1785482185%2FFunctions%2F-853202996" anchor-label="compareTo" id="-1785482185%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="compare-to.html"><span>compare</span><wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1785482185%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">operator override </span><span class="token keyword">fun </span><a href="compare-to.html"><span class="token function">compareTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1064793266%2FFunctions%2F-853202996" anchor-label="dec" id="-1064793266%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dec.html"><span><span>dec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1064793266%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="dec.html"><span class="token function">dec</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Decrements this half-precision float value by 1.0.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-823800696%2FFunctions%2F-853202996" anchor-label="div" id="-823800696%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="div.html"><span><span>div</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-823800696%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="div.html"><span class="token function">div</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Divides this half-precision float value by another.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1153985995%2FFunctions%2F-853202996" anchor-label="div" id="1153985995%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../div.html"><span><span>div</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1153985995%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../div.html"><span class="token function">div</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half3/index.html">Half3</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half3/index.html">Half3</a></div><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../div.html"><span class="token function">div</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half4/index.html">Half4</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half4/index.html">Half4</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2021082866%2FFunctions%2F-853202996" anchor-label="inc" id="2021082866%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="inc.html"><span><span>inc</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2021082866%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="inc.html"><span class="token function">inc</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Increments this half-precision float value by 1.0.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-505068047%2FFunctions%2F-853202996" anchor-label="isFinite" id="-505068047%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-finite.html"><span>is</span><wbr><span><span>Finite</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-505068047%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-finite.html"><span class="token function">isFinite</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this half-precision float value does not represent infinity nor NaN, false otherwise.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="253091692%2FFunctions%2F-853202996" anchor-label="isInfinite" id="253091692%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-infinite.html"><span>is</span><wbr><span><span>Infinite</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="253091692%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-infinite.html"><span class="token function">isInfinite</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this half-precision float value represents infinity, false otherwise.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1535912449%2FFunctions%2F-853202996" anchor-label="isNaN" id="-1535912449%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-na-n.html"><span>is</span><wbr><span>Na</span><wbr><span><span>N</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1535912449%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-na-n.html"><span class="token function">isNaN</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this half-precision float value represents a Not-a-Number, false otherwise.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1098495785%2FFunctions%2F-853202996" anchor-label="isNormalized" id="1098495785%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-normalized.html"><span>is</span><wbr><span><span>Normalized</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1098495785%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-normalized.html"><span class="token function">isNormalized</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this half-precision float value is normalized (does not have a subnormal representation). If this value is <a href="-companion/-p-o-s-i-t-i-v-e_-i-n-f-i-n-i-t-y.html">Half.POSITIVE_INFINITY</a>, <a href="-companion/-n-e-g-a-t-i-v-e_-i-n-f-i-n-i-t-y.html">Half.NEGATIVE_INFINITY</a>, <a href="-companion/-p-o-s-i-t-i-v-e_-z-e-r-o.html">Half.POSITIVE_ZERO</a>, <a href="-companion/-n-e-g-a-t-i-v-e_-z-e-r-o.html">Half.NEGATIVE_ZERO</a>, NaN or any subnormal number, this method returns false.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="40235736%2FFunctions%2F-853202996" anchor-label="isZero" id="40235736%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-zero.html"><span>is</span><wbr><span><span>Zero</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="40235736%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-zero.html"><span class="token function">isZero</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this half-precision float value represents zero, false otherwise.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-998230809%2FFunctions%2F-853202996" anchor-label="minus" id="-998230809%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="minus.html"><span><span>minus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-998230809%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="minus.html"><span class="token function">minus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Subtracts another half-precision float value from this one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2047224939%2FFunctions%2F-853202996" anchor-label="minus" id="2047224939%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../minus.html"><span><span>minus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2047224939%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../minus.html"><span class="token function">minus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half3/index.html">Half3</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half3/index.html">Half3</a></div><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../minus.html"><span class="token function">minus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half4/index.html">Half4</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half4/index.html">Half4</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1682129483%2FFunctions%2F-853202996" anchor-label="nextDown" id="-1682129483%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="next-down.html"><span>next</span><wbr><span><span>Down</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1682129483%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="next-down.html"><span class="token function">nextDown</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns the <a href="index.html">Half</a> value nearest to this value in direction of negative infinity.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1361122720%2FFunctions%2F-853202996" anchor-label="nextTowards" id="-1361122720%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="next-towards.html"><span>next</span><wbr><span><span>Towards</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1361122720%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="next-towards.html"><span class="token function">nextTowards</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">to<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns the <a href="index.html">Half</a> value nearest to this value in direction from this value towards the value <a href="next-towards.html">to</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-658039716%2FFunctions%2F-853202996" anchor-label="nextUp" id="-658039716%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="next-up.html"><span>next</span><wbr><span><span>Up</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-658039716%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="next-up.html"><span class="token function">nextUp</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns the <a href="index.html">Half</a> value nearest to this value in direction of positive infinity.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="23447639%2FFunctions%2F-853202996" anchor-label="plus" id="23447639%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="plus.html"><span><span>plus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="23447639%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="plus.html"><span class="token function">plus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Adds another half-precision float value to this one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-633656745%2FFunctions%2F-853202996" anchor-label="plus" id="-633656745%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../plus.html"><span><span>plus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-633656745%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../plus.html"><span class="token function">plus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half3/index.html">Half3</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half3/index.html">Half3</a></div><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../plus.html"><span class="token function">plus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half4/index.html">Half4</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half4/index.html">Half4</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-195908796%2FFunctions%2F-853202996" anchor-label="roundToInt" id="-195908796%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="round-to-int.html"><span>round</span><wbr><span>To</span><wbr><span><span>Int</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-195908796%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="round-to-int.html"><span class="token function">roundToInt</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Rounds this <a href="index.html">Half</a> value to the nearest integer and converts the result to <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a>. Ties are rounded towards positive infinity.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-234336533%2FFunctions%2F-853202996" anchor-label="roundToLong" id="-234336533%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="round-to-long.html"><span>round</span><wbr><span>To</span><wbr><span><span>Long</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-234336533%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="round-to-long.html"><span class="token function">roundToLong</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">Rounds this <a href="index.html">Half</a> value to the nearest integer and converts the result to <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a>. Ties are rounded towards positive infinity.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1829052099%2FFunctions%2F-853202996" anchor-label="times" id="-1829052099%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="times.html"><span><span>times</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1829052099%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="times.html"><span class="token function">times</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Multiplies this half-precision float value by another.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1573648427%2FFunctions%2F-853202996" anchor-label="times" id="1573648427%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../times.html"><span><span>times</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1573648427%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../times.html"><span class="token function">times</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half3/index.html">Half3</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half3/index.html">Half3</a></div><div class="symbol monospace"><span class="token keyword">inline operator </span><span class="token keyword">fun </span><a href="index.html">Half</a><span class="token punctuation">.</span><a href="../times.html"><span class="token function">times</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">v<span class="token operator">: </span><a href="../-half4/index.html">Half4</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-half4/index.html">Half4</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1132592777%2FFunctions%2F-853202996" anchor-label="toBits" id="1132592777%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-bits.html"><span>to</span><wbr><span><span>Bits</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1132592777%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-bits.html"><span class="token function">toBits</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns a bit representation of this half-precision floating point value as <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a> according to the IEEE 754 floating-point half-precision bit layout.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="917498055%2FFunctions%2F-853202996" anchor-label="toByte" id="917498055%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-byte.html"><span>to</span><wbr><span><span>Byte</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="917498055%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-byte.html"><span class="token function">toByte</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-byte/index.html">Byte</a></div><div class="brief "><p class="paragraph">Returns the value of this <a href="index.html">Half</a> as a <code class="lang-kotlin">byte</code> after a narrowing primitive conversion.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-996977250%2FFunctions%2F-853202996" anchor-label="toDouble" id="-996977250%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-double.html"><span>to</span><wbr><span><span>Double</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-996977250%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-double.html"><span class="token function">toDouble</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Returns the value of this <a href="index.html">Half</a> as a <code class="lang-kotlin">double</code> after a widening primitive conversion.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1322014223%2FFunctions%2F-853202996" anchor-label="toFloat" id="1322014223%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-float.html"><span>to</span><wbr><span><span>Float</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1322014223%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-float.html"><span class="token function">toFloat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Returns the value of this <a href="index.html">Half</a> as a <code class="lang-kotlin">float</code> after a widening primitive conversion.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1098057633%2FFunctions%2F-853202996" anchor-label="toHexString" id="-1098057633%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-hex-string.html"><span>to</span><wbr><span>Hex</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1098057633%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-hex-string.html"><span class="token function">toHexString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns a hexadecimal string representation of the specified half-precision float value. If the value is a NaN, the result is <code class="lang-kotlin">"NaN"</code>, otherwise the result follows this format:</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2115326116%2FFunctions%2F-853202996" anchor-label="toInt" id="-2115326116%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-int.html"><span>to</span><wbr><span><span>Int</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2115326116%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-int.html"><span class="token function">toInt</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the value of this <a href="index.html">Half</a> as a <code class="lang-kotlin">int</code> after a narrowing primitive conversion.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="393268691%2FFunctions%2F-853202996" anchor-label="toLong" id="393268691%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-long.html"><span>to</span><wbr><span><span>Long</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="393268691%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-long.html"><span class="token function">toLong</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a></div><div class="brief "><p class="paragraph">Returns the value of this <a href="index.html">Half</a> as a <code class="lang-kotlin">long</code> after a narrowing primitive conversion.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2135713809%2FFunctions%2F-853202996" anchor-label="toShort" id="-2135713809%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-short.html"><span>to</span><wbr><span><span>Short</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2135713809%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="to-short.html"><span class="token function">toShort</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-short/index.html">Short</a></div><div class="brief "><p class="paragraph">Returns the value of this <a href="index.html">Half</a> as a <code class="lang-kotlin">short</code> after a narrowing primitive conversion.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1850558114%2FFunctions%2F-853202996" anchor-label="toString" id="-1850558114%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-string.html"><span>to</span><wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1850558114%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1337461161%2FFunctions%2F-853202996" anchor-label="unaryMinus" id="1337461161%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unary-minus.html"><span>unary</span><wbr><span><span>Minus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1337461161%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="unary-minus.html"><span class="token function">unaryMinus</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Negates this half-precision float value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1188154247%2FFunctions%2F-853202996" anchor-label="unaryPlus" id="1188154247%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unary-plus.html"><span>unary</span><wbr><span><span>Plus</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1188154247%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">operator </span><span class="token keyword">fun </span><a href="unary-plus.html"><span class="token function">unaryPlus</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns this half-precision float value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1752616736%2FFunctions%2F-853202996" anchor-label="withSign" id="1752616736%2FFunctions%2F-853202996" data-filterable-set=":kotlin:filament-utils/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-sign.html"><span>with</span><wbr><span><span>Sign</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1752616736%2FFunctions%2F-853202996"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="with-sign.html"><span class="token function">withSign</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sign<span class="token operator">: </span><a href="index.html">Half</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Half</a></div><div class="brief "><p class="paragraph">Returns this value with the sign bit same as of the <a href="with-sign.html">sign</a> value. If <a href="with-sign.html">sign</a> is NaN the sign of the result is undefined.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MaterialKey</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.gltfio/-material-key/index.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":kotlin:gltfio/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:gltfio/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":kotlin:gltfio/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector native-like" data-active="" aria-pressed="true" data-filter=":kotlin:gltfio/nativeMain">native</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:gltfio/webMain">web</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:gltfio/androidMain" data-filter=":kotlin:gltfio/androidMain">
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:gltfio/commonMain" data-filter=":kotlin:gltfio/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:gltfio/jvmMain" data-filter=":kotlin:gltfio/jvmMain">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option native-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:gltfio/nativeMain" data-filter=":kotlin:gltfio/nativeMain">
+                                <span class="checkbox--icon"></span>
+                                native
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:gltfio/webMain" data-filter=":kotlin:gltfio/webMain">
+                                <span class="checkbox--icon"></span>
+                                web
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="gltfio::io.github.erkko68.filament.gltfio/MaterialKey///PointingToDeclaration//1682861519">
+  <div class="breadcrumbs"><a href="../../index.html">gltfio</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament.gltfio</a><span class="delimiter">/</span><span class="current">MaterialKey</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Material</span><wbr><span><span>Key</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">MaterialKey</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>doubleSided<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>unlit<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasVertexColors<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasBaseColorTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasNormalTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasOcclusionTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasEmissiveTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>useSpecularGlossiness<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>alphaMode<span class="token operator">: </span><a href="../-alpha-mode/index.html">AlphaMode</a><span class="token operator"> = </span>AlphaMode.OPAQUE<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>enableDiagnostics<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasMetallicRoughnessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>metallicRoughnessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>baseColorUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasClearCoatTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>clearCoatUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasClearCoatRoughnessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>clearCoatRoughnessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasClearCoatNormalTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>clearCoatNormalUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasClearCoat<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasTransmission<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasTextureTransforms<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>emissiveUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>aoUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>normalUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasTransmissionTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>transmissionUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasSheenColorTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>sheenColorUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasSheenRoughnessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>sheenRoughnessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasVolumeThicknessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>volumeThicknessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasSheen<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>hasIOR<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">MaterialKey encodes glTF material properties for material selection and creation.</p><p class="paragraph">MaterialKey holds a set of boolean flags and texture coordinates that describe the properties of a glTF material. MaterialProvider uses this to determine which material to create or select. Key properties include texture presence, shading model, alpha mode, and advanced features like clearcoat and transmission.</p><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-material-provider/index.html"><span>Material</span><wbr><span><span>Provider</span></span></a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="237060428%2FConstructors%2F1682861519" anchor-label="MaterialKey" id="237060428%2FConstructors%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-material-key.html"><span>Material</span><wbr><span><span>Key</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="237060428%2FConstructors%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">doubleSided<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">unlit<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasVertexColors<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasBaseColorTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasNormalTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasOcclusionTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasEmissiveTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">useSpecularGlossiness<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">alphaMode<span class="token operator">: </span><a href="../-alpha-mode/index.html">AlphaMode</a><span class="token operator"> = </span>AlphaMode.OPAQUE<span class="token punctuation">, </span></span><span class="parameter ">enableDiagnostics<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasMetallicRoughnessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">metallicRoughnessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">baseColorUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasClearCoatTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">clearCoatUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasClearCoatRoughnessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">clearCoatRoughnessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasClearCoatNormalTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">clearCoatNormalUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasClearCoat<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasTransmission<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasTextureTransforms<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">emissiveUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">aoUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">normalUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasTransmissionTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transmissionUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasSheenColorTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">sheenColorUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasSheenRoughnessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">sheenRoughnessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasVolumeThicknessTexture<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">volumeThicknessUV<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter ">hasSheen<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">hasIOR<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-2146294374%2FProperties%2F1682861519" anchor-label="alphaMode" id="-2146294374%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="alpha-mode.html"><span>alpha</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2146294374%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="alpha-mode.html">alphaMode</a><span class="token operator">: </span><a href="../-alpha-mode/index.html">AlphaMode</a></div><div class="brief "><p class="paragraph">Alpha mode: 0 = OPAQUE, 1 = MASK (alpha cutoff), 2 = BLEND.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1478309456%2FProperties%2F1682861519" anchor-label="aoUV" id="-1478309456%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ao-u-v.html"><span>ao</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1478309456%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="ao-u-v.html">aoUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the ambient-occlusion texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1720320696%2FProperties%2F1682861519" anchor-label="baseColorUV" id="-1720320696%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="base-color-u-v.html"><span>base</span><wbr><span>Color</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1720320696%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="base-color-u-v.html">baseColorUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the base color texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-385478745%2FProperties%2F1682861519" anchor-label="clearCoatNormalUV" id="-385478745%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-coat-normal-u-v.html"><span>clear</span><wbr><span>Coat</span><wbr><span>Normal</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-385478745%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="clear-coat-normal-u-v.html">clearCoatNormalUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the clearcoat normal map.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1693239878%2FProperties%2F1682861519" anchor-label="clearCoatRoughnessUV" id="-1693239878%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-coat-roughness-u-v.html"><span>clear</span><wbr><span>Coat</span><wbr><span>Roughness</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1693239878%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="clear-coat-roughness-u-v.html">clearCoatRoughnessUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the clearcoat roughness texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="873245326%2FProperties%2F1682861519" anchor-label="clearCoatUV" id="873245326%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-coat-u-v.html"><span>clear</span><wbr><span>Coat</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="873245326%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="clear-coat-u-v.html">clearCoatUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the clearcoat texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1678591489%2FProperties%2F1682861519" anchor-label="doubleSided" id="-1678591489%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="double-sided.html"><span>double</span><wbr><span><span>Sided</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1678591489%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="double-sided.html">doubleSided</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Renders both faces of each triangle (glTF <code class="lang-kotlin">doubleSided</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-204555161%2FProperties%2F1682861519" anchor-label="emissiveUV" id="-204555161%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="emissive-u-v.html"><span>emissive</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-204555161%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="emissive-u-v.html">emissiveUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the emissive texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="377185426%2FProperties%2F1682861519" anchor-label="enableDiagnostics" id="377185426%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enable-diagnostics.html"><span>enable</span><wbr><span><span>Diagnostics</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="377185426%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="enable-diagnostics.html">enableDiagnostics</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enables shader diagnostics (visualizes the material as a debug aid).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="979128856%2FProperties%2F1682861519" anchor-label="hasBaseColorTexture" id="979128856%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-base-color-texture.html"><span>has</span><wbr><span>Base</span><wbr><span>Color</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="979128856%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-base-color-texture.html">hasBaseColorTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A base color texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1812948915%2FProperties%2F1682861519" anchor-label="hasClearCoat" id="-1812948915%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-clear-coat.html"><span>has</span><wbr><span>Clear</span><wbr><span><span>Coat</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1812948915%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-clear-coat.html">hasClearCoat</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">The clearcoat layer is enabled (<code class="lang-kotlin">KHR_materials_clearcoat</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="206174617%2FProperties%2F1682861519" anchor-label="hasClearCoatNormalTexture" id="206174617%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-clear-coat-normal-texture.html"><span>has</span><wbr><span>Clear</span><wbr><span>Coat</span><wbr><span>Normal</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="206174617%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-clear-coat-normal-texture.html">hasClearCoatNormalTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A clearcoat normal map is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1262920226%2FProperties%2F1682861519" anchor-label="hasClearCoatRoughnessTexture" id="1262920226%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-clear-coat-roughness-texture.html"><span>has</span><wbr><span>Clear</span><wbr><span>Coat</span><wbr><span>Roughness</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1262920226%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-clear-coat-roughness-texture.html">hasClearCoatRoughnessTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A clearcoat roughness texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2069692562%2FProperties%2F1682861519" anchor-label="hasClearCoatTexture" id="2069692562%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-clear-coat-texture.html"><span>has</span><wbr><span>Clear</span><wbr><span>Coat</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2069692562%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-clear-coat-texture.html">hasClearCoatTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A clearcoat intensity texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="557495573%2FProperties%2F1682861519" anchor-label="hasEmissiveTexture" id="557495573%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-emissive-texture.html"><span>has</span><wbr><span>Emissive</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="557495573%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-emissive-texture.html">hasEmissiveTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">An emissive texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1090690355%2FProperties%2F1682861519" anchor-label="hasIOR" id="-1090690355%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-i-o-r.html"><span>has</span><wbr><span><span>IOR</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1090690355%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-i-o-r.html">hasIOR</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A custom index of refraction is set (<code class="lang-kotlin">KHR_materials_ior</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="507159095%2FProperties%2F1682861519" anchor-label="hasMetallicRoughnessTexture" id="507159095%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-metallic-roughness-texture.html"><span>has</span><wbr><span>Metallic</span><wbr><span>Roughness</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="507159095%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-metallic-roughness-texture.html">hasMetallicRoughnessTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A metallic-roughness texture is bound (specular-glossiness texture when <a href="../../../../kotlin/gltfio/io.github.erkko68.filament.gltfio/-material-key/--root--.html">useSpecularGlossiness</a>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2070557349%2FProperties%2F1682861519" anchor-label="hasNormalTexture" id="2070557349%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-normal-texture.html"><span>has</span><wbr><span>Normal</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2070557349%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-normal-texture.html">hasNormalTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A tangent-space normal map is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1580713837%2FProperties%2F1682861519" anchor-label="hasOcclusionTexture" id="-1580713837%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-occlusion-texture.html"><span>has</span><wbr><span>Occlusion</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1580713837%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-occlusion-texture.html">hasOcclusionTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">An ambient-occlusion texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1677116192%2FProperties%2F1682861519" anchor-label="hasSheen" id="1677116192%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-sheen.html"><span>has</span><wbr><span><span>Sheen</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1677116192%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-sheen.html">hasSheen</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">The sheen layer is enabled (<code class="lang-kotlin">KHR_materials_sheen</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="196726088%2FProperties%2F1682861519" anchor-label="hasSheenColorTexture" id="196726088%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-sheen-color-texture.html"><span>has</span><wbr><span>Sheen</span><wbr><span>Color</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="196726088%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-sheen-color-texture.html">hasSheenColorTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A sheen color texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1447377163%2FProperties%2F1682861519" anchor-label="hasSheenRoughnessTexture" id="-1447377163%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-sheen-roughness-texture.html"><span>has</span><wbr><span>Sheen</span><wbr><span>Roughness</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1447377163%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-sheen-roughness-texture.html">hasSheenRoughnessTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A sheen roughness texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1705093271%2FProperties%2F1682861519" anchor-label="hasTextureTransforms" id="1705093271%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-texture-transforms.html"><span>has</span><wbr><span>Texture</span><wbr><span><span>Transforms</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1705093271%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-texture-transforms.html">hasTextureTransforms</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">One or more textures use <code class="lang-kotlin">KHR_texture_transform</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1965796413%2FProperties%2F1682861519" anchor-label="hasTransmission" id="1965796413%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-transmission.html"><span>has</span><wbr><span><span>Transmission</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1965796413%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-transmission.html">hasTransmission</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Transmission is enabled (<code class="lang-kotlin">KHR_materials_transmission</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-349135198%2FProperties%2F1682861519" anchor-label="hasTransmissionTexture" id="-349135198%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-transmission-texture.html"><span>has</span><wbr><span>Transmission</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-349135198%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-transmission-texture.html">hasTransmissionTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A transmission texture is bound.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="207067117%2FProperties%2F1682861519" anchor-label="hasVertexColors" id="207067117%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-vertex-colors.html"><span>has</span><wbr><span>Vertex</span><wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="207067117%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-vertex-colors.html">hasVertexColors</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">The mesh provides per-vertex COLOR_0 data to be multiplied into base color.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="858911104%2FProperties%2F1682861519" anchor-label="hasVolumeThicknessTexture" id="858911104%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-volume-thickness-texture.html"><span>has</span><wbr><span>Volume</span><wbr><span>Thickness</span><wbr><span><span>Texture</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="858911104%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="has-volume-thickness-texture.html">hasVolumeThicknessTexture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">A volume thickness texture is bound (<code class="lang-kotlin">KHR_materials_volume</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1535970359%2FProperties%2F1682861519" anchor-label="metallicRoughnessUV" id="-1535970359%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="metallic-roughness-u-v.html"><span>metallic</span><wbr><span>Roughness</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1535970359%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="metallic-roughness-u-v.html">metallicRoughnessUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the metallic-roughness texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2036362327%2FProperties%2F1682861519" anchor-label="normalUV" id="2036362327%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="normal-u-v.html"><span>normal</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2036362327%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="normal-u-v.html">normalUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the normal map.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="589203668%2FProperties%2F1682861519" anchor-label="sheenColorUV" id="589203668%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sheen-color-u-v.html"><span>sheen</span><wbr><span>Color</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="589203668%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="sheen-color-u-v.html">sheenColorUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the sheen color texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-634779641%2FProperties%2F1682861519" anchor-label="sheenRoughnessUV" id="-634779641%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sheen-roughness-u-v.html"><span>sheen</span><wbr><span>Roughness</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-634779641%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="sheen-roughness-u-v.html">sheenRoughnessUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the sheen roughness texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-726196294%2FProperties%2F1682861519" anchor-label="transmissionUV" id="-726196294%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="transmission-u-v.html"><span>transmission</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-726196294%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="transmission-u-v.html">transmissionUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the transmission texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2074366461%2FProperties%2F1682861519" anchor-label="unlit" id="2074366461%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unlit.html"><span><span>unlit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2074366461%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="unlit.html">unlit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Uses the unlit shading model (<code class="lang-kotlin">KHR_materials_unlit</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1094534043%2FProperties%2F1682861519" anchor-label="useSpecularGlossiness" id="1094534043%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="use-specular-glossiness.html"><span>use</span><wbr><span>Specular</span><wbr><span><span>Glossiness</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1094534043%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="use-specular-glossiness.html">useSpecularGlossiness</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Uses the legacy specular-glossiness workflow (<code class="lang-kotlin">KHR_materials_pbrSpecularGlossiness</code>).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="706642784%2FProperties%2F1682861519" anchor-label="volumeThicknessUV" id="706642784%2FProperties%2F1682861519" data-filterable-set=":kotlin:gltfio/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="volume-thickness-u-v.html"><span>volume</span><wbr><span>Thickness</span><wbr><span><span>UV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="706642784%2FProperties%2F1682861519"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="volume-thickness-u-v.html">volumeThicknessUV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">glTF texcoord set index for the volume thickness texture.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="EXTENSION_FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1866550948%2FFunctions%2F-95539251" anchor-label="constrainMaterial" id="1866550948%2FFunctions%2F-95539251" data-filterable-set=":kotlin:gltfio/commonMain,:kotlin:gltfio/androidMain,:kotlin:gltfio/jvmMain,:kotlin:gltfio/nativeMain,:kotlin:gltfio/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:gltfio/commonMain,:kotlin:gltfio/androidMain,:kotlin:gltfio/jvmMain,:kotlin:gltfio/nativeMain,:kotlin:gltfio/webMain" data-filterable-set=":kotlin:gltfio/commonMain,:kotlin:gltfio/androidMain,:kotlin:gltfio/jvmMain,:kotlin:gltfio/nativeMain,:kotlin:gltfio/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../constrain-material.html"><span>constrain</span><wbr><span><span>Material</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1866550948%2FFunctions%2F-95539251"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:gltfio/androidMain" data-filterable-set=":kotlin:gltfio/androidMain" data-active="" data-toggle=":kotlin:gltfio/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:gltfio/commonMain" data-filterable-set=":kotlin:gltfio/commonMain" data-toggle=":kotlin:gltfio/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:gltfio/jvmMain" data-filterable-set=":kotlin:gltfio/jvmMain" data-toggle=":kotlin:gltfio/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:gltfio/nativeMain" data-filterable-set=":kotlin:gltfio/nativeMain" data-toggle=":kotlin:gltfio/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:gltfio/webMain" data-filterable-set=":kotlin:gltfio/webMain" data-toggle=":kotlin:gltfio/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:gltfio/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="index.html">MaterialKey</a><span class="token punctuation">.</span><a href="../constrain-material.html"><span class="token function">constrainMaterial</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uvmap<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutates this key to trim requested features down to what the provider supports, and fills <a href="../constrain-material.html">uvmap</a> with the resulting glTF-texcoord → Filament-UV-set mapping. Called by providers before material creation.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:gltfio/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">fun </span><a href="index.html">MaterialKey</a><span class="token punctuation">.</span><a href="../constrain-material.html"><span class="token function">constrainMaterial</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uvmap<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutates this key to trim requested features down to what the provider supports, and fills <a href="../constrain-material.html">uvmap</a> with the resulting glTF-texcoord → Filament-UV-set mapping. Called by providers before material creation.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:gltfio/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="index.html">MaterialKey</a><span class="token punctuation">.</span><a href="../constrain-material.html"><span class="token function">constrainMaterial</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uvmap<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutates this key to trim requested features down to what the provider supports, and fills <a href="../constrain-material.html">uvmap</a> with the resulting glTF-texcoord → Filament-UV-set mapping. Called by providers before material creation.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:gltfio/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="index.html">MaterialKey</a><span class="token punctuation">.</span><a href="../constrain-material.html"><span class="token function">constrainMaterial</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uvmap<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutates this key to trim requested features down to what the provider supports, and fills <a href="../constrain-material.html">uvmap</a> with the resulting glTF-texcoord → Filament-UV-set mapping. Called by providers before material creation.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:gltfio/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">fun </span><a href="index.html">MaterialKey</a><span class="token punctuation">.</span><a href="../constrain-material.html"><span class="token function">constrainMaterial</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uvmap<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int-array/index.html">IntArray</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutates this key to trim requested features down to what the provider supports, and fills <a href="../constrain-material.html">uvmap</a> with the resulting glTF-texcoord → Filament-UV-set mapping. Called by providers before material creation.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>AnimationState</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.compose.scene/-animation-state/index.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-compose/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-compose/commonMain" data-filter=":kotlin:filament-compose/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament-compose::io.github.erkko68.filament.compose.scene/AnimationState///PointingToDeclaration//-552819475">
+  <div class="breadcrumbs"><a href="../../index.html">filament-compose</a><span class="delimiter">/</span><a href="../index.html">io.github.erkko68.filament.compose.scene</a><span class="delimiter">/</span><span class="current">AnimationState</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Animation</span><wbr><span><span>State</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Stable.html"><span class="token annotation builtin">Stable</span></a></div></div><span class="token keyword">class </span><a href="index.html">AnimationState</a></div><p class="paragraph">Hoisted, observable playback state for a single glTF <a href="../../../../kotlin/gltfio/io.github.erkko68.filament.gltfio/-animator/index.html">Animator</a>, created with <a href="../remember-animation-state.html">rememberAnimationState</a> and passed to <a href="../-gltf-instance.html">GltfInstance</a>. It auto-advances on every frame and drives the animator each frame in one of two modes:</p><p class="paragraph"><strong>Single-track (the convenience path).</strong> Set <a href="animation-index.html">animationIndex</a> and the active clip plays, looping at its length; assigning a new index cross-fades from the outgoing clip over <a href="cross-fade-duration.html">crossFadeDuration</a>. This covers the common "play idle, blend into walk" case without touching the mixer.</p><p class="paragraph"><strong>Multi-track </strong><a href="mixer.html"><strong>mixer</strong></a><strong>.</strong> Add tracks with <a href="../remember-animation-track.html">rememberAnimationTrack</a> and the state blends them by <a href="../-animation-track/weight.html">AnimationTrack.weight</a> every frame — a blend tree (e.g. idle↔walk↔run driven by a speed parameter). While the <a href="mixer.html">mixer</a> has tracks it takes precedence and <a href="animation-index.html">animationIndex</a> is ignored. Filament blends two clips per call, but weighted cross-fades chain, so an arbitrary number of weighted clips compose into one pose.</p><p class="paragraph">For an imperative game loop (an animation state machine outside composition), use <a href="../-animation-mixer/index.html">AnimationMixer</a> directly instead of this hoisted state — see <a href="../remember-animation-mixer.html">rememberAnimationMixer</a>.</p><p class="paragraph">Per-bone masks and additive layers are <i>not</i> expressible — the native animator blends the whole skeleton. For that, or any fully manual control, use <a href="../-gltf-instance.html">GltfInstance</a>'s <code class="lang-kotlin">onUpdate</code> and call the <a href="../../../../kotlin/gltfio/io.github.erkko68.filament.gltfio/-animator/index.html">Animator</a> directly.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">// Single-track with auto cross-fade:<br>val anim = rememberAnimationState(initialAnimationIndex = idle, initialCrossFadeDuration = 0.25f)<br>GltfInstance(asset = character, animationState = anim)<br>anim.animationIndex = walk   // cross-fades<br><br>// Blend tree — hold both clips and drive the weight from a parameter:<br>val anim = rememberAnimationState(initialAnimationIndex = null)<br>rememberAnimationTrack(anim, walkIndex, weight = 1f - speed)<br>rememberAnimationTrack(anim, runIndex,  weight = speed)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1166038985%2FProperties%2F-552819475" anchor-label="animationIndex" id="-1166038985%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="animation-index.html"><span>animation</span><wbr><span><span>Index</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1166038985%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="animation-index.html">animationIndex</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The animation to play in single-track mode. Assigning cross-fades from the current one; null pauses. Ignored while the <a href="mixer.html">mixer</a> has tracks.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1264320571%2FProperties%2F-552819475" anchor-label="crossFadeDuration" id="-1264320571%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cross-fade-duration.html"><span>cross</span><wbr><span>Fade</span><wbr><span><span>Duration</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1264320571%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="cross-fade-duration.html">crossFadeDuration</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Cross-fade length in seconds applied when <a href="animation-index.html">animationIndex</a> changes. 0 = hard cut.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2043388461%2FProperties%2F-552819475" anchor-label="isPaused" id="2043388461%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-paused.html"><span>is</span><wbr><span><span>Paused</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2043388461%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-paused.html">isPaused</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Pauses advancement of every track and the single-track clock while true.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-498099118%2FProperties%2F-552819475" anchor-label="isTransitioning" id="-498099118%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-transitioning.html"><span>is</span><wbr><span><span>Transitioning</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-498099118%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-transitioning.html">isTransitioning</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">True while a single-track cross-fade transition is in progress. Read-only.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1838158849%2FProperties%2F-552819475" anchor-label="loop" id="1838158849%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="loop.html"><span><span>loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1838158849%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="loop.html">loop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the single-track animation wraps at its end (true) or holds the final frame (false).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1449190804%2FProperties%2F-552819475" anchor-label="mixer" id="-1449190804%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mixer.html"><span><span>mixer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1449190804%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="mixer.html">mixer</a><span class="token operator">: </span><a href="../-animation-mixer/index.html">AnimationMixer</a></div><div class="brief "><p class="paragraph">The weighted track mixer for the blend-tree path. Add tracks with <a href="../remember-animation-track.html">rememberAnimationTrack</a>; while it has tracks it drives playback and <a href="animation-index.html">animationIndex</a> is inert.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2054520680%2FProperties%2F-552819475" anchor-label="progress" id="-2054520680%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="progress.html"><span><span>progress</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2054520680%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="progress.html">progress</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Normalized progress (0..1) of the single-track animation. 0 when the clip has no duration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-713799698%2FProperties%2F-552819475" anchor-label="speed" id="-713799698%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="speed.html"><span><span>speed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-713799698%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="speed.html">speed</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Playback rate multiplier for the single-track path (1 = real time, negative = backwards).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1942988808%2FProperties%2F-552819475" anchor-label="time" id="-1942988808%2FProperties%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="time.html"><span><span>time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1942988808%2FProperties%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="time.html">time</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Current playback time of the single-track animation in seconds. Read-only, updates per frame.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="473826494%2FFunctions%2F-552819475" anchor-label="seek" id="473826494%2FFunctions%2F-552819475" data-filterable-set=":kotlin:filament-compose/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="seek.html"><span><span>seek</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="473826494%2FFunctions%2F-552819475"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="seek.html"><span class="token function">seek</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">time<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resets the single-track clock to <a href="seek.html">time</a> seconds.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

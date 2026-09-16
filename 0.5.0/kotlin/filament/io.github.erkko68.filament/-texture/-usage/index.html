@@ -1,0 +1,347 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Usage</title>
+<link href="../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament/-texture/-usage/index.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector native-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/nativeMain">native</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament/webMain">web</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/androidMain" data-filter=":kotlin:filament/androidMain">
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/commonMain" data-filter=":kotlin:filament/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/jvmMain" data-filter=":kotlin:filament/jvmMain">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option native-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/nativeMain" data-filter=":kotlin:filament/nativeMain">
+                                <span class="checkbox--icon"></span>
+                                native
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament/webMain" data-filter=":kotlin:filament/webMain">
+                                <span class="checkbox--icon"></span>
+                                web
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="filament::io.github.erkko68.filament/Texture.Usage///PointingToDeclaration//655330598">
+  <div class="breadcrumbs"><a href="../../../index.html">filament</a><span class="delimiter">/</span><a href="../../index.html">io.github.erkko68.filament</a><span class="delimiter">/</span><a href="../index.html">Texture</a><span class="delimiter">/</span><span class="current">Usage</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Usage</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="index.html">Usage</a></div><p class="paragraph">Texture usage flags affecting memory layout and capabilities.</p></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">object </span><a href="index.html">Usage</a></div><p class="paragraph">Texture usage flags affecting memory layout and capabilities.</p></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="index.html">Usage</a></div><p class="paragraph">Texture usage flags affecting memory layout and capabilities.</p></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="index.html">Usage</a></div><p class="paragraph">Texture usage flags affecting memory layout and capabilities.</p></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="index.html">Usage</a></div><p class="paragraph">Texture usage flags affecting memory layout and capabilities.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-1385801835%2FProperties%2F655330598" anchor-label="BLIT_DST" id="-1385801835%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-b-l-i-t_-d-s-t.html"><span>BLIT_</span><wbr><span>DST</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1385801835%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-d-s-t.html">BLIT_DST</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit destination.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-b-l-i-t_-d-s-t.html">BLIT_DST</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit destination.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-d-s-t.html">BLIT_DST</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit destination.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-d-s-t.html">BLIT_DST</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit destination.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-d-s-t.html">BLIT_DST</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">128</span></div><div class="brief "><p class="paragraph">Texture is usable as a blit destination.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1894133846%2FProperties%2F655330598" anchor-label="BLIT_SRC" id="1894133846%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-b-l-i-t_-s-r-c.html"><span>BLIT_</span><wbr><span>SRC</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1894133846%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-s-r-c.html">BLIT_SRC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit source.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-b-l-i-t_-s-r-c.html">BLIT_SRC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit source.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-s-r-c.html">BLIT_SRC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit source.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-s-r-c.html">BLIT_SRC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a blit source.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-b-l-i-t_-s-r-c.html">BLIT_SRC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">64</span></div><div class="brief "><p class="paragraph">Texture is usable as a blit source.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="821050065%2FProperties%2F655330598" anchor-label="COLOR_ATTACHMENT" id="821050065%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-o-l-o-r_-a-t-t-a-c-h-m-e-n-t.html"><span>COLOR_</span><wbr><span>ATTACHMENT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="821050065%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-c-o-l-o-r_-a-t-t-a-c-h-m-e-n-t.html">COLOR_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a color attachment.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-c-o-l-o-r_-a-t-t-a-c-h-m-e-n-t.html">COLOR_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a color attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-c-o-l-o-r_-a-t-t-a-c-h-m-e-n-t.html">COLOR_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a color attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-c-o-l-o-r_-a-t-t-a-c-h-m-e-n-t.html">COLOR_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a color attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-c-o-l-o-r_-a-t-t-a-c-h-m-e-n-t.html">COLOR_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">1</span></div><div class="brief "><p class="paragraph">Texture is usable as a color attachment.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1851495031%2FProperties%2F655330598" anchor-label="DEFAULT" id="-1851495031%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-d-e-f-a-u-l-t.html"><span><span>DEFAULT</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1851495031%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-f-a-u-l-t.html">DEFAULT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Default usage.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-d-e-f-a-u-l-t.html">DEFAULT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Default usage.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-f-a-u-l-t.html">DEFAULT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Default usage.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-f-a-u-l-t.html">DEFAULT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Default usage.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-f-a-u-l-t.html">DEFAULT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">24</span></div><div class="brief "><p class="paragraph">Default usage.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1669880271%2FProperties%2F655330598" anchor-label="DEPTH_ATTACHMENT" id="-1669880271%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-d-e-p-t-h_-a-t-t-a-c-h-m-e-n-t.html"><span>DEPTH_</span><wbr><span>ATTACHMENT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1669880271%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-p-t-h_-a-t-t-a-c-h-m-e-n-t.html">DEPTH_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a depth attachment.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-d-e-p-t-h_-a-t-t-a-c-h-m-e-n-t.html">DEPTH_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a depth attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-p-t-h_-a-t-t-a-c-h-m-e-n-t.html">DEPTH_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a depth attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-p-t-h_-a-t-t-a-c-h-m-e-n-t.html">DEPTH_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a depth attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-d-e-p-t-h_-a-t-t-a-c-h-m-e-n-t.html">DEPTH_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">2</span></div><div class="brief "><p class="paragraph">Texture is usable as a depth attachment.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1114401449%2FProperties%2F655330598" anchor-label="GEN_MIPMAPPABLE" id="-1114401449%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-e-n_-m-i-p-m-a-p-p-a-b-l-e.html"><span>GEN_</span><wbr><span><span>MIPMAPPABLE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1114401449%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-g-e-n_-m-i-p-m-a-p-p-a-b-l-e.html">GEN_MIPMAPPABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have mipmaps generated via generateMipmaps().</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-g-e-n_-m-i-p-m-a-p-p-a-b-l-e.html">GEN_MIPMAPPABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have mipmaps generated via generateMipmaps().</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-g-e-n_-m-i-p-m-a-p-p-a-b-l-e.html">GEN_MIPMAPPABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have mipmaps generated via generateMipmaps().</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-g-e-n_-m-i-p-m-a-p-p-a-b-l-e.html">GEN_MIPMAPPABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have mipmaps generated via generateMipmaps().</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-g-e-n_-m-i-p-m-a-p-p-a-b-l-e.html">GEN_MIPMAPPABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">512</span></div><div class="brief "><p class="paragraph">Texture can have mipmaps generated via generateMipmaps().</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-604120708%2FProperties%2F655330598" anchor-label="PROTECTED" id="-604120708%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-r-o-t-e-c-t-e-d.html"><span><span>PROTECTED</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-604120708%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-p-r-o-t-e-c-t-e-d.html">PROTECTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is protected (secure content).</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-p-r-o-t-e-c-t-e-d.html">PROTECTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is protected (secure content).</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-p-r-o-t-e-c-t-e-d.html">PROTECTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is protected (secure content).</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-p-r-o-t-e-c-t-e-d.html">PROTECTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is protected (secure content).</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-p-r-o-t-e-c-t-e-d.html">PROTECTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">256</span></div><div class="brief "><p class="paragraph">Texture is protected (secure content).</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="803707468%2FProperties%2F655330598" anchor-label="SAMPLEABLE" id="803707468%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-a-m-p-l-e-a-b-l-e.html"><span><span>SAMPLEABLE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="803707468%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-a-m-p-l-e-a-b-l-e.html">SAMPLEABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can be sampled in shaders.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-s-a-m-p-l-e-a-b-l-e.html">SAMPLEABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can be sampled in shaders.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-a-m-p-l-e-a-b-l-e.html">SAMPLEABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can be sampled in shaders.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-a-m-p-l-e-a-b-l-e.html">SAMPLEABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can be sampled in shaders.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-a-m-p-l-e-a-b-l-e.html">SAMPLEABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">16</span></div><div class="brief "><p class="paragraph">Texture can be sampled in shaders.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1344699370%2FProperties%2F655330598" anchor-label="STENCIL_ATTACHMENT" id="1344699370%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-e-n-c-i-l_-a-t-t-a-c-h-m-e-n-t.html"><span>STENCIL_</span><wbr><span>ATTACHMENT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1344699370%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-t-e-n-c-i-l_-a-t-t-a-c-h-m-e-n-t.html">STENCIL_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a stencil attachment.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-s-t-e-n-c-i-l_-a-t-t-a-c-h-m-e-n-t.html">STENCIL_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a stencil attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-t-e-n-c-i-l_-a-t-t-a-c-h-m-e-n-t.html">STENCIL_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a stencil attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-t-e-n-c-i-l_-a-t-t-a-c-h-m-e-n-t.html">STENCIL_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a stencil attachment.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-t-e-n-c-i-l_-a-t-t-a-c-h-m-e-n-t.html">STENCIL_ATTACHMENT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">4</span></div><div class="brief "><p class="paragraph">Texture is usable as a stencil attachment.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="694762030%2FProperties%2F655330598" anchor-label="SUBPASS_INPUT" id="694762030%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-u-b-p-a-s-s_-i-n-p-u-t.html"><span>SUBPASS_</span><wbr><span>INPUT</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="694762030%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-u-b-p-a-s-s_-i-n-p-u-t.html">SUBPASS_INPUT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a subpass input.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-s-u-b-p-a-s-s_-i-n-p-u-t.html">SUBPASS_INPUT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a subpass input.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-u-b-p-a-s-s_-i-n-p-u-t.html">SUBPASS_INPUT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a subpass input.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-u-b-p-a-s-s_-i-n-p-u-t.html">SUBPASS_INPUT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture is usable as a subpass input.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-s-u-b-p-a-s-s_-i-n-p-u-t.html">SUBPASS_INPUT</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">32</span></div><div class="brief "><p class="paragraph">Texture is usable as a subpass input.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1514121899%2FProperties%2F655330598" anchor-label="UPLOADABLE" id="-1514121899%2FProperties%2F655330598" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain" data-filterable-set=":kotlin:filament/commonMain,:kotlin:filament/androidMain,:kotlin:filament/jvmMain,:kotlin:filament/nativeMain,:kotlin:filament/webMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-u-p-l-o-a-d-a-b-l-e.html"><span><span>UPLOADABLE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1514121899%2FProperties%2F655330598"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlin:filament/androidMain" data-filterable-set=":kotlin:filament/androidMain" data-active="" data-toggle=":kotlin:filament/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/commonMain" data-filterable-set=":kotlin:filament/commonMain" data-toggle=":kotlin:filament/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/jvmMain" data-filterable-set=":kotlin:filament/jvmMain" data-toggle=":kotlin:filament/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/nativeMain" data-filterable-set=":kotlin:filament/nativeMain" data-toggle=":kotlin:filament/nativeMain">native</button><button class="platform-bookmark" data-filterable-current=":kotlin:filament/webMain" data-filterable-set=":kotlin:filament/webMain" data-toggle=":kotlin:filament/webMain">web</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-u-p-l-o-a-d-a-b-l-e.html">UPLOADABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have data uploaded via setImage().</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">val </span><a href="-u-p-l-o-a-d-a-b-l-e.html">UPLOADABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have data uploaded via setImage().</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-u-p-l-o-a-d-a-b-l-e.html">UPLOADABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have data uploaded via setImage().</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/nativeMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-u-p-l-o-a-d-a-b-l-e.html">UPLOADABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Texture can have data uploaded via setImage().</p></div></div><div class="content sourceset-dependent-content" data-togglable=":kotlin:filament/webMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">val </span><a href="-u-p-l-o-a-d-a-b-l-e.html">UPLOADABLE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">8</span></div><div class="brief "><p class="paragraph">Texture can have data uploaded via setImage().</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
