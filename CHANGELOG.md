@@ -13,6 +13,12 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+> [!WARNING]
+> **Recompile your materials** — `MATERIAL_VERSION` 76 → 77. Any `.filamat` you ship must be rebuilt with 1.77.1's `matc`; the built-in `StandardMaterial`s ship recompiled.
+
+### Changed
+- **Filament 1.77.1** upstream.
+
 ## [0.5.0] — 2026-09-15
 
 > [!WARNING]
