@@ -16,7 +16,7 @@ This page covers what's specific to `filament-compose`: where to put files, whic
 
 For the common cases — a solid colour, a texture, a glow — `filament-compose` ships precompiled
 materials so you don't author a `.mat`, run `matc`, or ship a `.filamat` at all. They work on every
-target, **including Web** (where runtime material compilation isn't available). Each helper returns a
+target, **including Web**, with nothing extra to download. Each helper returns a
 ready `MaterialInstance` you drop straight into a primitive:
 
 ```kotlin
@@ -48,7 +48,7 @@ built-ins are exactly that workflow, done for you.
 
 ## Workflow: precompiled `.filamat` (recommended for custom materials)
 
-Compile your `.mat` ahead of time with `matc` and load the resulting binary at runtime. This is the **default recommended path** for every target and the only path that works on Web.
+Compile your `.mat` ahead of time with `matc` and load the resulting binary at runtime. This is the **default recommended path** for every target.
 
 ### 1. Author the `.mat` source
 
@@ -150,8 +150,10 @@ val package = MaterialBuilder()
 val template = Material.Builder().payload(package.buffer).build(engine)
 ```
 
-> [!WARNING]
-> `filamat` is **not available on the Web target** — the underlying compiler isn't included in the Filament.js prebuilt. Calls to `MaterialBuilder` on JS throw `UnsupportedOperationException`. See [Platform Notes — Web](../platform-notes.md#web--wasm) for the JS-target API limitations.
+> [!NOTE]
+> On Web the compiler is a separate, optional `filamat-kmp.wasm` (~6.4 MB): serve it and call
+> `Filamat.initJs` first. It has a 4 MB stack and blocks the main thread — see
+> [Platform Notes — Web](../platform-notes.md#runtime-material-compilation-filamat).
 
 > [!TIP]
 > Runtime compilation also adds ~5–15 MB to the binary (the `filamat` library bundles the shader compiler), and the first build of each material costs a few hundred milliseconds of CPU time. Prefer precompiled `.filamat` for production builds.

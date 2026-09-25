@@ -180,7 +180,7 @@ fun main() {
 ### Web / WASM
 
 > [!WARNING]
-> The web target is **experimental**. Several `gltfio` and `filament-utils` APIs are unimplemented on JS (see [Platform Notes](platform-notes.md#web--wasm)). It's good enough for simple scenes.
+> The web target is **experimental**. The API matches the other platforms; the remaining limits come from WebGL and single-threaded wasm (see [Platform Notes](platform-notes.md#web--wasm)).
 
 Enable the experimental Compose JS canvas flag:
 
@@ -192,21 +192,21 @@ org.jetbrains.compose.experimental.jscanvas.enabled=true
 ```kotlin
 // webApp/build.gradle.kts
 kotlin {
-    js(IR) {
-        browser()
-        binaries.executable()
-    }
+    js { browser(); binaries.executable() }
+    wasmJs { browser(); binaries.executable() }
 }
 ```
 
-**Filament bundle.** `filament.js` and `filament.wasm` must be in your `src/jsMain/resources/` and served alongside your compiled JS. Download them from the [Filament release](https://github.com/google/filament/releases) that matches your `filaVersion`, or use the download task included in the repo:
+**Runtime files.** Download `filament-kmp.js` and `filament-kmp.wasm` from the [GitHub release](https://github.com/Erkko68/filament-kmp/releases) matching your filament-kmp version into `src/webMain/resources/`. Add `filamat-kmp.js` + `filamat-kmp.wasm` too if you compile materials at runtime with `MaterialBuilder`. They aren't pulled in by Gradle, because webpack never sees klib resources.
 
 ```bash
-./gradlew downloadPrebuilts_web
-# outputs to prebuilts/web/ — copy filament.js and filament.wasm to src/jsMain/resources/
+V=<filament-kmp version>
+for f in filament-kmp.js filament-kmp.wasm; do
+  curl -fLo src/webMain/resources/$f https://github.com/Erkko68/filament-kmp/releases/download/$V/$f
+done
 ```
 
-**`index.html`.** Load `filament.js` before your app script. The `FilamentApp` helper (used in the entry point below) automatically injects the root element, configures the stacking context (so Compose overlays like buttons layer correctly), and mounts the Canvas:
+**`index.html`.** Load `filament-kmp.js` before your app script. The `FilamentApp` helper (used in the entry point below) loads the wasm, injects the root element, sets up the stacking context (so Compose overlays like buttons layer correctly), and mounts the canvas:
 
 ```html
 <!DOCTYPE html>
@@ -218,7 +218,8 @@ kotlin {
     </style>
 </head>
 <body>
-    <script src="filament.js"></script>
+    <script src="filament-kmp.js"></script>
+    <!-- <script src="filamat-kmp.js"></script>  only for MaterialBuilder -->
     <script src="webApp.js"></script>
 </body>
 </html>
@@ -227,11 +228,13 @@ kotlin {
 Entry point:
 
 ```kotlin
-// webApp/src/jsMain/kotlin/Main.kt
+// webApp/src/webMain/kotlin/Main.kt
 import io.github.erkko68.filament.compose.FilamentApp
 
 fun main() = FilamentApp { App() }
 ```
+
+If you use `MaterialBuilder`, load the compiler before using it: `Filamat.initJs { Filamat.init() }`.
 
 ## 4. Your first scene
 

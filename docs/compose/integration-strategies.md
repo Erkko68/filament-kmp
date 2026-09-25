@@ -23,11 +23,11 @@ Filament renders into a `SwapChain` backed by a `CAMetalLayer` that is embedded 
 
 ## 2. Offscreen Canvas + Per-View Blit (Web)
 
-A Filament `Engine` is bound to a single WebGL context/canvas — `createSwapChain` takes no canvas argument, and `Renderer.readPixels` is not bound in the JS API — so each `FilamentView` cannot own its own GPU surface, and the JVM-style CPU readback (below) is unavailable.
+A Filament `Engine` is bound to a single WebGL context/canvas, so each `FilamentView` cannot own its own GPU surface. The JVM-style CPU readback (below) would stall on web, where `Renderer.readPixels` only completes after the browser runs more frames.
 
 Instead, all views of one engine share a `WebViewCompositor`:
 
-1. **One offscreen render buffer**: the engine's `HTMLCanvasElement` (`engine.jsCanvas`) stays off-screen and is sized to span every view's window rect.
+1. **One offscreen render buffer**: the engine's `HTMLCanvasElement` (`engine.canvas`) stays off-screen and is sized to span every view's window rect.
 2. **One frame, many viewports**: each registered view is rendered into its own region of that canvas via `View.viewport` (Compose top-left origin is flipped to Filament's bottom-left).
 3. **GPU-side blit**: each view's region is copied onto that view's own 2D `<canvas>` with `ctx.drawImage(engineCanvas, …)` — a canvas-to-canvas copy that reads straight from the WebGL canvas (no CPU readback). The blit runs in the same `requestAnimationFrame` tick as the render, before the browser clears the GL drawing buffer.
 4. **Display**: each per-view 2D canvas is injected into the DOM through a `WebElementView` container `<div>` and pushed behind the Compose canvas (`zIndex: -1`). A transparent hole punched in the Compose layer (`BlendMode.Clear`) reveals it. The interop path is required — a plain DOM sibling canvas is *not* revealed by the hole-punch.

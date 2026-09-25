@@ -15,24 +15,23 @@ API-surface enforcement) are done, and the focus shifts to tracking upstream and
   upstream Filament version. Until then, minor releases may still adjust public API (always
   listed in the [changelog](CHANGELOG.md)).
 - **Known gaps** — per-platform binding gaps are tracked via `@PlatformGap` and the coverage
-  table in [Platform Notes](docs/platform-notes.md); web-specific limits come from what
-  `filament.js` binds upstream.
+  table in [Platform Notes](docs/platform-notes.md); web-specific limits now come only from
+  WebGL and single-threaded wasm, since web calls our own C API.
 
 ## Upstream API consistency
 
 Filament's per-language bindings are hand-written and drift apart: Android's Java API misses
-parts of the C++ API, `filament.js` misses parts of both (and some of its methods lag behind their
-C++ versions), and each release reopens the gaps. Every missing upstream binding becomes a
-`@PlatformGap` here, however complete our common API is.
+parts of the C++ API, and each release reopens the gaps. JVM, iOS and web avoid this: all three
+call our own C wrapper (`c/`), so a binding added there reaches all of them. Only Android, which
+uses the official AAR, still depends on upstream's Java bindings.
 
 - **Upstream is moving to generated bindings.** Filament is annotating its public C++ headers so
   bindings can be generated from them automatically —
   [google/filament#10410](https://github.com/google/filament/pull/10410) (`APIGEN` annotations and
   `Slice` APIs) is the first step.
-- **What it means for us** — once Java and JS bindings come from one generated source, both
-  should cover the whole C++ API. We can then drop most `@PlatformGap`s and the hand-written web
-  stubs and offer one complete API on every platform. Until then we keep closing gaps per release
-  with `check-common-api.sh` and `check-js-bindings.sh`.
+- **What it means for us** — once the Android Java bindings are generated, they should cover the
+  whole C++ API and the remaining Android `@PlatformGap`s can go. Until then we keep closing gaps
+  per release with `check-common-api.sh`.
 
 ## Cross-platform GPU sharing & the Dawn convergence
 

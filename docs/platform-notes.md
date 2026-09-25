@@ -73,57 +73,43 @@ The FFM native runtime JAR (`io.github.erkko68.filament-ffm:filament-ffm:...`) b
 > [!WARNING]
 > The web target is **experimental** and not feature-complete.
 
-### Filament.js and WASM bundle
+### filament-kmp.js and WASM bundle
 
-`filament.js` and `filament.wasm` must be placed in your app's `src/jsMain/resources/` directory so webpack serves them alongside your compiled JS. They are not propagated automatically from the library because Kotlin/JS klib resources are not picked up by webpack in downstream Maven consumers.
+The web targets call the same C API as JVM and iOS (`c/`), compiled with Emscripten into
+`filament-kmp.wasm` (filament + gltfio + filament-utils). The `:web` module holds the generated
+Kotlin externals; it is a transitive dependency, nothing to add by hand.
 
-Download the files matching your `filaVersion` using the download task in the repo:
+Webpack doesn't pick up klib resources in downstream apps, so the runtime files ship as assets on
+each [GitHub release](https://github.com/Erkko68/filament-kmp/releases). Download the ones matching
+your filament-kmp version into your app's `src/webMain/resources/`:
 
-```bash
-./gradlew downloadPrebuilts_web
-# outputs prebuilts/web/filament.js, filament.wasm and filament.d.ts
-```
+| File | Needed for |
+| :--- | :--- |
+| `filament-kmp.js` + `filament-kmp.wasm` | Everything (always) |
+| `filamat-kmp.js` + `filamat-kmp.wasm` | Only runtime material compilation (`MaterialBuilder`) |
 
-Then copy `filament.js` and `filament.wasm` into your `src/jsMain/resources/`. (The
-`filament.d.ts` is build-time only — the `:js` module's Kotlin externals are generated
-against it by hand; see [`web/README.md`](../web/README.md).)
+Load the `.js` files with `<script>` tags before your app bundle. Each `.js` fetches its `.wasm`
+from the same directory. Always use the files from the same release as the library: the externals
+and the wasm exports must match.
 
-### Binding coverage
+### API coverage
 
-**Android, iOS, and Desktop/JVM expose the full common API.** Web is the only platform with
-gaps — almost all because upstream `filament.js` (embind, `jsbindings.cpp`) does not register
-the corresponding function. Every gap below is also marked in source with **`@PlatformGap`**
-(from the core `filament` module), so it shows up in the IDE and in the generated
-[API reference](https://erkko68.github.io/filament-kmp/api/) on the affected declaration itself.
+Web exposes the same common API as the other platforms, by construction: every `Fila*` function is
+exported from the wasm and has a generated external. What remains are limits of WebGL and
+single-threaded wasm, marked in source with **`@PlatformGap`** so they show up in the IDE and the
+[API reference](https://erkko68.github.io/filament-kmp/api/):
 
 | API | Behavior on web | Workaround |
 | :--- | :--- | :--- |
-| `gltfio.UbershaderProvider` (`createMaterialInstance`/`getMaterial`) | Throws | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
-| `gltfio.FilamentAsset.getAssetInstances` / `getAssetInstanceCount` | Throws (embind "unbound types") | Track instances returned by `AssetLoader.createInstance` yourself |
-| `gltfio.FilamentInstance.getMaterialInstances` | Throws (embind "unbound types") | — |
-| `filament-utils.HDRLoader.createTexture` | Throws | Convert HDRs to KTX1 offline with `cmgen` |
-| `filament-utils.IBLPrefilterContext` (`EquirectangularToCubemap`/`SpecularFilter`) | Silent no-op — `run` returns the input texture unchanged | Prefilter environments offline with `cmgen` and load the KTX |
-| `LightManager.Builder.shadowOptions` | Silent no-op (embind can't marshal the `mat4f` field) | Per-light shadow options stay at Filament defaults |
-| `View.AmbientOcclusionOptions.gtao` | Tracked locally only — `Options.h` marks the struct `%codegen_skip_javascript%`, so `filament.js` states outright that the binding does not exist | GTAO can be *selected* via `aoType`; it runs with Filament's default tuning |
-| `Renderer.readPixels` (both overloads) | Bound, but the completion callback only fires once the browser has run more frames (~12 in a headless Chrome probe) — a synchronous poll loop inside one task never sees it | Keep rendering and re-check the buffer from `requestAnimationFrame`, not from a busy loop |
-| `RenderableManager.Builder.geometryType` | Throws (embind "unbound types") | Omit it — geometry defaults to `DYNAMIC` |
-| `RenderableManager.getMorphTargetCount` | Always returns `0` | Not registered with embind (it exists in C++). Count morph targets from the glTF JSON |
-| `RenderableManager.setMorphWeights` | Only the first 4 weights apply; a non-zero `offset` is ignored | filament.js binds only the legacy 4-scalar form. 1–3 weights are zero-padded and animate correctly |
-| `RenderableManager.setMorphTargetBufferOffsetAt` | Silent no-op | **None.** Callable on a `gltfio`-loaded renderable, but the offset cannot be changed on web — author the glTF so each primitive reads from the offset it needs |
-| `Stream` | Throws on construction | External/native video streams have no web equivalent |
-| `Engine.isValidStream` | Throws | `Stream` itself has no web equivalent |
-| `Engine.isValid` | Returns `true` unconditionally — `filament.js` binds no engine-level validity check, only the `isValidX` family for resources | — |
-| `Engine.isPaused` | Tracked locally only; does not pause rendering | Stop your own frame loop instead |
-| `Fence.wait` | Non-blocking poll — WebGL cannot block the main thread, so the timeout is clamped to 0 | Poll across frames until `CONDITION_SATISFIED` |
-| `Renderer.displayInfo`, `Renderer.frameRateOptions` | Tracked locally only — `setDisplayInfo`/`setFrameRateOptions` are not bound in `filament.js`; frame pacing is managed by the browser | — |
-| `SwapChain.setFrameCompletedCallback` | Silent no-op — `filament.js` does not bind it, and binding it would not help: `OpenGLDriver::setFrameCompletedCallback` is an empty function, so it fires on Metal only (the same is true on Android and on Vulkan/GL desktop) | — |
-| `SwapChain.setFrameScheduledCallback` | Tracked locally only — `filament.js` binds no frame-scheduled callback, so it never fires; `isFrameScheduledCallbackSet` reports what you set | — |
-| `SwapChain.isFrameRateChangeSupported` | Returns false — display frame rate switching is not supported on web; pacing is browser-managed | — |
-| `SurfaceOrientation.Builder.tangents` | Silent no-op | Provide normals/uvs and let the builder derive the orientation |
+| `Renderer.readPixels` (both overloads) | Asynchronous: the pixels land when the browser has run more frames, then the callback fires. A synchronous poll loop inside one task never sees it | Keep rendering and check the buffer from the callback or `requestAnimationFrame` |
+| `Stream` | `setDimensions` throws: `FStream` waits on a fence internally, which single-threaded wasm rejects | External video streams have no WebGL source anyway |
+| `Engine.isPaused` | Tracked locally only; pausing needs threads | Stop your own frame loop instead |
+| `Fence.wait`, `Engine.flushAndWait` | The timeout is clamped to 0 (a non-blocking poll); a `FLUSH` has already executed every command | Poll across frames until `CONDITION_SATISFIED` |
+| `SwapChain.setFrameCompletedCallback` | Never fires: the OpenGL/WebGL backend implements it as a no-op (same on Android and GL desktop) | — |
+| `SwapChain.isFrameRateChangeSupported` | Returns false; pacing is managed by the browser | — |
 
-`TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.
-
-Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
+Engine-level WebGL issues (for example the spot-light shadow context loss on some GPUs) are
+upstream bugs in Filament's WebGL backend, not binding gaps.
 
 ### Runtime material compilation (filamat)
 
@@ -142,7 +128,9 @@ For big materials, or anything that must load fast, compile offline with `matc` 
 
 ### Bundle size
 
-The Filament.js + WASM blob adds **~2 MB compressed** to your web bundle. Lazy-load the `FilamentView`-containing screen if startup time matters.
+`filament-kmp.wasm` is ~2.8 MB (~1.1 MB gzipped), plus ~230 KB of JS glue. `filamat-kmp.wasm` adds
+~6.4 MB (~1.9 MB gzipped) only if you serve it. Lazy-load the `FilamentView` screen, or call
+`Filamat.initJs` only when you need it, if startup time matters.
 
 ## Threading model
 

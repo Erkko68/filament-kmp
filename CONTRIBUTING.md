@@ -25,7 +25,7 @@ label so we can track it (and patch our prebuilts if needed).
 | Path | What it is |
 |---|---|
 | `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`) — `commonMain` + per-target actuals. |
-| `web/` | Hand-maintained Kotlin externals over Filament.js (embind), vendored in `web/src/webMain` and shared by the `js` and `wasmJs` targets; carried engine patches live in `web/patches/upstream/` (`web/README.md`). |
+| `web/` | The `c/` wrapper compiled to wasm (`filament-kmp`, `filamat-kmp`) + Kotlin externals generated from the C headers, shared by the `js` and `wasmJs` targets (`web/README.md`). |
 | `c/`, `java/`, `build-logic/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |
@@ -46,22 +46,20 @@ Filament binaries automatically:
 If you intentionally change the public API of a `:kotlin:*` module, run `./gradlew apiDump`
 and commit the updated `<module>/api/` files with your change — `apiCheck` fails otherwise.
 
-- **Web** externals are hand-maintained Kotlin sources in `web/src/webMain`, shared by the
-  `js` and `wasmJs` targets — edit them directly and run `scripts/dev/check-js-bindings.sh`
-  to cross-check against upstream's embind surface (see `web/README.md`).
-- **Rebuilding the Filament prebuilts** (rarely needed — only to patch the engine) requires
-  the toolchains in Filament's `BUILDING.md` (emscripten is pinned). When we ship a local
-  engine patch ahead of an upstream release, it's recorded under `web/patches/upstream/`.
+- **Web** needs emsdk and the wasm Filament libraries, which upstream doesn't publish. Run
+  `scripts/dev/build-wasm-libs.sh` once per `filaVersion` (it installs emsdk into `.emsdk/` and
+  builds `prebuilts/wasm/`; the first run takes a while). The externals are generated from the
+  C headers — add a binding to `c/` and it appears on web too (see `web/README.md`).
 - **Bumping `filaVersion`** (in `gradle.properties`): delete `prebuilts/*` and `include/` so
-  they re-download, then run the cross-checks in `scripts/README.md`
-  (`check-js-bindings.sh`, `check-common-api.sh`) to catch binding drift.
+  they re-download (and rerun `build-wasm-libs.sh`), then run `check-common-api.sh` from
+  `scripts/README.md` to catch binding drift.
 
 ## API parity
 
 This wrapper mirrors Filament's public API. New `commonMain` surface should follow Filament's
-Android Java API (the canonical Kotlin-facing surface); JS externals must match the embind
-surface in upstream `web/filament-js/jsbindings.cpp`. The `scripts/dev/check-*.sh` scripts
-report gaps — run them when adding bindings or bumping `filaVersion`.
+Android Java API (the canonical Kotlin-facing surface). JVM, iOS and web all call the same `c/`
+wrapper, so a binding added there reaches every platform but Android. `scripts/dev/check-common-api.sh`
+reports gaps — run it when adding bindings or bumping `filaVersion`.
 
 ### Kotlin idiom vs. upstream shape
 

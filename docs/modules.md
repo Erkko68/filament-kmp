@@ -35,7 +35,7 @@ What differs is the extra platform setup around it:
 | **Android** | `io.github.erkko68.filament:filament` | Nothing. The official `com.google.android.filament:filament-android` AAR comes in transitively. `compileSdk 37`, `minSdk 24`. |
 | **JVM / Desktop** (macOS, Windows, Linux) | same | **JDK 22+** at build and run time. The native runtime `io.github.erkko68.filament-ffm:filament-ffm` is transitive — nothing to add by hand. See [narrowing the natives](#what-gradle-actually-downloads). |
 | **iOS** (`iosArm64`, `iosSimulatorArm64`) | same | Nothing. The Filament static libraries are inside the klib. Link your framework as `isStatic = true`. |
-| **Web** (`js`, `wasmJs`) | same | `filament.js` + `filament.wasm` copied into `src/jsMain/resources/` — they are **not** pulled in by Gradle. See [Platform Notes](platform-notes.md#filamentjs-and-wasm-bundle). |
+| **Web** (`js`, `wasmJs`) | same | `filament-kmp.js` + `.wasm` (and `filamat-kmp.*` for `MaterialBuilder`) from the GitHub release, copied into `src/webMain/resources/` — they are **not** pulled in by Gradle. See [Platform Notes](platform-notes.md#filament-kmpjs-and-wasm-bundle). |
 
 > [!NOTE]
 > Published Apple targets are **`iosArm64`** and **`iosSimulatorArm64`** only. There is no
@@ -121,9 +121,6 @@ implementation("io.github.erkko68.filament:gltfio:0.6.0")
 ```
 
 With `filament-compose`, you typically interact with this through `rememberGltfAsset { ... }` and `GltfInstance(...)`. The raw API is available for advanced cases — instancing, material swapping, morph targets.
-
-> [!WARNING]
-> On the **web target**, several `gltfio` factories (`MaterialProvider`, `TextureLoader`) currently return `null` stubs. Use simple glTF assets only, or render on a non-web platform. See [Platform Notes](platform-notes.md#web--wasm).
 
 Upstream reference: **[gltfio README](https://github.com/google/filament/tree/main/libs/gltfio)**.
 

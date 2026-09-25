@@ -93,11 +93,11 @@ objections intact (no baselines, rasterizer-invariant, wrapper-focused).
 
 ### Web caveat
 
-`Renderer.readPixels` is not registered in upstream `jsbindings.cpp`, so Tier C
-cannot run on web at all — even though two historical pixel-symptom bugs were
-web-only. When the engine-side prebuilt is next rebuilt (the UBO/instancing
-patch), adding the `readPixels` embind registration to the same build un-parks
-frame assertions on web too.
+`Renderer.readPixels` is bound on web, but its callback fires only after the browser
+runs more frames, and the synchronous Tier C harness (`FrameProbe`) never yields to
+it. So Tier C still skips on web, even though two historical pixel-symptom bugs were
+web-only. An async variant of the probe that awaits `requestAnimationFrame` would
+un-park it.
 
 ## CI reality
 
