@@ -13,11 +13,20 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-09-25
+
 > [!WARNING]
 > **Recompile your materials** — `MATERIAL_VERSION` 76 → 77. Any `.filamat` you ship must be rebuilt with 1.77.1's `matc`; the built-in `StandardMaterial`s ship recompiled.
 
 ### Changed
 - **Filament 1.77.1** upstream.
+
+### Fixed
+- **API docs didn't deploy on release** (0.5.0's never went live); the publish workflow now deploys and archives them.
+
+### Migration from `0.5.0`
+
+Rebuild your `.filamat` files with the 1.77.1 `matc`. No source changes.
 
 ## [0.5.0] — 2026-09-15
 
@@ -463,7 +472,8 @@ Published with a misspelled qualifier. Maven Central artifacts are immutable; re
 ## [0.1.0-alpha01] — 2026-05-19
 Initial public release. Targets: Android, iOS (arm64/sim-arm64/x64), JVM (macOS/Linux/Windows), legacy Kotlin/JS. Modules: `filament`, `filament-compose`, `filament-utils`, `gltfio`, `filamat`.
 
-[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.5.0...HEAD
+[Unreleased]: https://github.com/Erkko68/filament-kmp/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/Erkko68/filament-kmp/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/Erkko68/filament-kmp/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/Erkko68/filament-kmp/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/Erkko68/filament-kmp/compare/0.3.0...0.3.1
