@@ -35,7 +35,7 @@ kotlin {
             api(project(":java"))
         }
         webMain.dependencies {
-            implementation(project(":web"))
+            implementation(project(":wasm"))
         }
     }
 

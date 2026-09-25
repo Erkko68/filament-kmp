@@ -7,8 +7,6 @@ import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaFilamentAsset
 import cnames.structs.FilaFilamentInstance
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaFilamentAsset>?) {
@@ -92,10 +90,8 @@ actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeH
 
     actual val entityCount: Int get() = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstanceCount: Int get() = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstances: List<FilamentInstance> get() {
         val count = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
         if (count == 0) return emptyList()

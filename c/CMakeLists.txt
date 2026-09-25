@@ -495,9 +495,11 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
     )
     set_target_properties(filament-web PROPERTIES OUTPUT_NAME "filament-kmp")
 
+    # Build-generated wasm headers (uberarchive.h's baked archive size) shadow the desktop ones.
     target_include_directories(filament-web PRIVATE
         filament/c filament-utils/c gltfio/c
         filament/cpp filament-utils/cpp gltfio/cpp
+        ${FILAMENT_LIB_DIR}/../include
         ${FILAMENT_INCLUDE_DIR}
     )
 

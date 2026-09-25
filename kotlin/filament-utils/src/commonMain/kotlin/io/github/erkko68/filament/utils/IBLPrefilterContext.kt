@@ -1,8 +1,6 @@
 package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.Texture
 
 /**
@@ -60,7 +58,6 @@ expect class EquirectangularToCubemap(context: IBLPrefilterContext) : AutoClosea
      * @param equirect the equirectangular texture to convert; must be SAMPLEABLE, 2D, width == 2*height, all mips allocated
      * @return the resulting cubemap [Texture]
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the input texture unchanged; filament.js does not expose IBLPrefilterContext.")
     fun run(equirect: Texture): Texture
 }
 
@@ -91,6 +88,5 @@ expect class SpecularFilter(context: IBLPrefilterContext) : AutoCloseable {
      * @param skybox the environment cubemap to prefilter; must be SAMPLEABLE with all levels allocated
      * @return the prefiltered specular [Texture]
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the input texture unchanged; filament.js does not expose IBLPrefilterContext.")
     fun run(skybox: Texture): Texture
 }

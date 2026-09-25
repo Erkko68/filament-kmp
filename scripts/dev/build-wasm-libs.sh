@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 #
 # Build Filament's static libraries for wasm at the current filaVersion and copy them to
-# prebuilts/wasm/lib, the inputs for linking our C API into a wasm module
-# (docs/design/web-c-api-bindings.md). Upstream publishes no wasm .a files, so we build them.
+# prebuilts/wasm/lib (plus build-generated headers to prebuilts/wasm/include), the inputs for
+# linking our C API into a wasm module (docs/design/web-c-api-bindings.md). Upstream publishes
+# no wasm .a files, so we build them.
 #
 # Usage: scripts/dev/build-wasm-libs.sh [-f]      (-f rebuilds even if the stamp matches)
 #
@@ -14,6 +15,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CACHE_DIR="$ROOT/scripts/dev/.filament-src-cache"
 OUT_DIR="$ROOT/prebuilts/wasm/lib"
+INCLUDE_DIR="$ROOT/prebuilts/wasm/include"
 VERSION="$(sed -n 's/^filaVersion=//p' "$ROOT/gradle.properties")"
 TAG="v$VERSION"
 STAMP="$OUT_DIR/.prebuilt-source"
@@ -35,8 +37,10 @@ git -C "$CACHE_DIR" checkout --quiet --detach "$TAG"
 
 (cd "$CACHE_DIR" && ./build.sh -p wasm release)
 
-rm -rf "$OUT_DIR"
-mkdir -p "$OUT_DIR"
+rm -rf "$OUT_DIR" "$INCLUDE_DIR"
+mkdir -p "$OUT_DIR" "$INCLUDE_DIR/gltfio/materials"
 find "$CACHE_DIR/out/cmake-wasm-release" -name '*.a' -not -path '*/CMakeFiles/*' -exec cp {} "$OUT_DIR/" \;
+# resgen bakes the archive size into this header, so the wasm libuberarchive needs its own copy.
+cp "$CACHE_DIR/out/cmake-wasm-release/libs/gltfio/materials/uberarchive.h" "$INCLUDE_DIR/gltfio/materials/"
 echo "$VERSION|local" > "$STAMP"
 echo "Copied $(ls "$OUT_DIR"/*.a | wc -l | tr -d ' ') wasm libraries for $TAG to prebuilts/wasm/lib"

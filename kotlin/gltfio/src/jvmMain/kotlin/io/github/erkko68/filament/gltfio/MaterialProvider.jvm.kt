@@ -11,8 +11,6 @@ import io.github.erkko68.filament.isNullPtr
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.SegmentAllocator
 import java.lang.foreign.ValueLayout
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.VertexBuffer
@@ -35,7 +33,6 @@ private fun SegmentAllocator.uvmap(uvmap: IntArray): MemorySegment {
     return seg
 }
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     private var nativeHandle: MemorySegment? =
         FilamentC.FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, NULL, 0L)
