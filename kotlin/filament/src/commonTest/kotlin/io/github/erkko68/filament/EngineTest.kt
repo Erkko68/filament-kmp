@@ -157,8 +157,7 @@ class EngineTest {
     fun testEngineBuilderWithColorGrading() {
         Filament.init()
         // The config rides along here rather than in its own test: each engine costs a WebGL
-        // context in the browser, and the suite is already near Chrome's ceiling. On web it
-        // marshals into filament.js's Engine$Config value_object, which aborts if mistyped.
+        // context in the browser, and the suite is already near Chrome's ceiling.
         val engine = Engine.Builder()
             .backend(Engine.Backend.NOOP)
             .config(Engine.Config().apply { enableMultipleDirectionalLights = true })

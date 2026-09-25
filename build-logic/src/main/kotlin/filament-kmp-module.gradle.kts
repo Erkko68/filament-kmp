@@ -93,8 +93,8 @@ kotlin {
     // web test resources; each module's karma.config.d/filament-setup.js lists them.
     val stagedWebAssets = layout.buildDirectory.dir("filamentWebAssets")
     val stageFilamentWebAssets = tasks.register<Sync>("stageFilamentWebAssetsForJsTest") {
-        dependsOn(":wasm:stageFilamentWasm")
-        from(rootProject.layout.projectDirectory.dir("wasm/build/filamentWasm"))
+        dependsOn(":web:stageFilamentWasm")
+        from(rootProject.layout.projectDirectory.dir("web/build/filamentWasm"))
         from(rootProject.layout.projectDirectory.file("gradle/karma/filament-karma-bootstrap.js"))
         into(stagedWebAssets)
     }

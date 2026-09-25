@@ -9,8 +9,6 @@
 //                                     macosX64: upstream releases stopped
 //                                     shipping mac x86_64 libs.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
-//   • web                          — Filament.js + WASM for the :web module;
-//                                     output goes to prebuilts/web/ (no lib/ subdir).
 
 val filaVersion = project.property("filaVersion") as String
 val prebuiltsCacheDir = layout.projectDirectory.dir(".gradle/filament-prebuilts-cache")
@@ -22,7 +20,6 @@ val prebuiltTargets = listOf(
     "linuxX64",
     "linuxArm64",
     "mingwX64",
-    "web",
 )
 
 prebuiltTargets.forEach { targetName ->
@@ -31,11 +28,7 @@ prebuiltTargets.forEach { targetName ->
         description = "Downloads Filament $filaVersion prebuilt libraries for $targetName."
         filamentVersion.set(filaVersion)
         target.set(targetName)
-        // Web prebuilts land directly in prebuilts/web/; all others in prebuilts/<target>/lib/.
-        outputDir.set(
-            if (targetName == "web") layout.projectDirectory.dir("prebuilts/web")
-            else layout.projectDirectory.dir("prebuilts/$targetName/lib")
-        )
+        outputDir.set(layout.projectDirectory.dir("prebuilts/$targetName/lib"))
         cacheDir.set(prebuiltsCacheDir)
     }
 }

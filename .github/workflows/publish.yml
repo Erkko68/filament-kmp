@@ -110,6 +110,7 @@ jobs:
             downloadPrebuilts_iosArm64 \
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_macosArm64
+      - uses: ./.github/actions/setup-wasm
       - name: Download FFM natives
         uses: actions/download-artifact@v8
         with:
@@ -143,6 +144,11 @@ jobs:
             :web:publishAllPublicationsToMavenCentralRepository \
             --no-configuration-cache
 
+      # Web apps serve these next to their bundle (klib resources don't reach webpack), so
+      # each release carries them as assets; see docs/getting-started.md.
+      - name: Build web runtime assets
+        run: ./gradlew :web:stageFilamentWasm :web:stageFilamatWasm --no-configuration-cache
+
       # ── GitHub release ──────────────────────────────────────────────────────
       # Only after Maven Central succeeded, and only for a real tag push — a
       # dispatch run has no tag to hang a release off. Notes are the tag's own
@@ -165,6 +171,7 @@ jobs:
             echo "::warning::no CHANGELOG section for $VERSION — using generated notes"
             gh release create "$VERSION" --title "$VERSION" --generate-notes
           fi
+          gh release upload "$VERSION" web/build/filamentWasm/* web/build/filamatWasm/*
 
       # A release created with GITHUB_TOKEN doesn't fire `release: published` in other
       # workflows, so deploy and archive the docs explicitly; workflow_dispatch is exempt.

@@ -1,0 +1,39 @@
+name: Setup wasm toolchain
+description: |
+  emsdk (.emsdk/) + Filament's wasm static libraries (prebuilts/wasm/), both cached.
+  Upstream publishes no wasm .a files, so a cache miss builds them from the release tag
+  with scripts/dev/build-wasm-libs.sh (host tools + wasm: slow, once per filaVersion).
+
+runs:
+  using: composite
+  steps:
+    - id: ver
+      shell: bash
+      run: |
+        echo "fila=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+        echo "emsdk=$(sed -n 's/^EMSDK_VERSION="\${EMSDK_VERSION:-\(.*\)}"$/\1/p' scripts/dev/setup-emsdk.sh)" >> $GITHUB_OUTPUT
+    - uses: actions/cache@v6
+      with:
+        path: .emsdk
+        key: emsdk-${{ steps.ver.outputs.emsdk }}-${{ runner.os }}-${{ runner.arch }}
+    - id: libs
+      uses: actions/cache@v6
+      with:
+        path: prebuilts/wasm
+        key: filament-wasm-libs-${{ steps.ver.outputs.fila }}-${{ hashFiles('scripts/dev/build-wasm-libs.sh') }}
+    # Host prerequisites mirror upstream's linux-prereq action (clang + libc++, ninja).
+    - if: steps.libs.outputs.cache-hit != 'true' && runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang libc++-dev libc++abi-dev ninja-build mesa-common-dev libxi-dev libxxf86vm-dev
+        echo "CC=clang" >> $GITHUB_ENV
+        echo "CXX=clang++" >> $GITHUB_ENV
+    - if: steps.libs.outputs.cache-hit != 'true' && runner.os == 'macOS'
+      shell: bash
+      run: brew install ninja
+    - if: steps.libs.outputs.cache-hit != 'true'
+      shell: bash
+      run: scripts/dev/build-wasm-libs.sh
+    - shell: bash
+      run: scripts/dev/setup-emsdk.sh

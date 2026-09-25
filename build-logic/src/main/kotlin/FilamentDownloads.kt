@@ -40,14 +40,9 @@ object FilamentDownloads {
         "linuxArm64"        to ("arm-linux" to "filament/lib/aarch64"),
         // /MT (static CRT) variant — the JVM's own msvcp140.dll conflicts with /MD.
         "mingwX64"          to ("windows"   to "lib/x86_64/mt"),
-        // Filament.js + WASM bundle, extracted flat into prebuilts/web/.
-        "web"               to ("web"       to ""),
     )
 
     private val NATIVE_EXTS = listOf(".a", ".lib")
-    // filament.d.ts documents the JS surface (see :web); it lags jsbindings.cpp
-    // but we keep the upstream copy alongside the js/wasm bundle.
-    private val WEB_EXTS = listOf(".js", ".wasm", ".d.ts")
 
     fun releaseTarball(cacheDir: File, version: String, suffix: String, logger: Logger): File =
         downloadToCache(
@@ -100,7 +95,7 @@ object FilamentDownloads {
         }
     }
 
-    /** Extracts .a/.lib (native) or .js/.wasm/.d.ts (web) files found under [prefix], flat into [outDir]. */
+    /** Extracts the .a/.lib files found under [prefix], flat into [outDir]. */
     fun extractFlat(tarball: File, prefix: String, outDir: File): Int {
         outDir.mkdirs()
         val dirPrefix = if (prefix.isEmpty()) "" else prefix.trimEnd('/') + "/"
@@ -108,7 +103,7 @@ object FilamentDownloads {
         forEachTarFile(tarball) { entry, tar ->
             if (dirPrefix.isEmpty() || entry.name.startsWith(dirPrefix)) {
                 val base = entry.name.substringAfterLast('/')
-                if ((NATIVE_EXTS + WEB_EXTS).any { base.endsWith(it) }) {
+                if (NATIVE_EXTS.any { base.endsWith(it) }) {
                     outDir.resolve(base).outputStream().use { tar.copyTo(it) }
                     n++
                 }
@@ -167,8 +162,8 @@ object FilamentDownloads {
 }
 
 /**
- * Downloads and extracts the Filament prebuilt static libraries (or the web
- * js/wasm bundle) for one target into prebuilts/<target>/lib (web: prebuilts/web).
+ * Downloads and extracts the Filament prebuilt static libraries for one target
+ * into prebuilts/<target>/lib.
  *
  * A `.prebuilt-source` stamp ("version|prefix") inside the output directory
  * forces re-extraction when the version bumps OR the in-tarball prefix changes

@@ -2,8 +2,6 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
-import io.github.erkko68.filament.testsupport.TestEnv
-import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -20,10 +18,7 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         val mat = Material.Builder().payload(bytes).build(engine)
         val inst = mat.createInstance()
         assertNotNull(inst)
-        // MaterialInstance.getMaterial is not bound in upstream jsbindings.cpp.
-        if (TestEnv.target != TestTarget.JS) {
-            assertEquals(mat.name, inst.material.name)
-        }
+        assertEquals(mat.name, inst.material.name)
         assertNotNull(inst.name)
 
         if (mat.hasParameter("emissiveFactor")) {
@@ -72,14 +67,10 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
         inst.setStencilWriteMask(128, MaterialInstance.StencilFace.FRONT)
         inst.setStencilWriteMask(128)
 
-        // MaterialInstance.duplicate is a stub on web (filament.js has no duplicate);
-        // it returns the receiver unchanged, so the name assertion only holds elsewhere.
-        if (TestEnv.target != TestTarget.JS) {
-            val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
-            assertNotNull(dup)
-            assertEquals("duplicated_instance", dup.name)
-            engine.destroyMaterialInstance(dup)
-        }
+        val dup = MaterialInstance.duplicate(inst, "duplicated_instance")
+        assertNotNull(dup)
+        assertEquals("duplicated_instance", dup.name)
+        engine.destroyMaterialInstance(dup)
 
         engine.destroyMaterialInstance(inst)
         engine.destroyMaterial(mat)
@@ -88,8 +79,6 @@ class MaterialInstanceRenderingTest : RenderingTestFixture() {
     @Test
     fun testGetSpecializationConstants() {
         val engine = engine ?: return
-        // MaterialInstance.getConstant is not bound in filament.js.
-        if (TestEnv.target == TestTarget.JS) return
         val bytes = TestMaterials.getConstantsMaterialBytes()
         if (bytes.isEmpty()) return
 

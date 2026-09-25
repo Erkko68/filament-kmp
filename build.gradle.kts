@@ -17,7 +17,7 @@ plugins {
 apiValidation {
     ignoredProjects += listOf(
         "test-support", // internal test helpers, not published
-        "web",          // hand-maintained externals tracked against upstream jsbindings.cpp
+        "web",          // generated Fila* externals over filament-kmp.wasm, not a curated API
         "java",         // filament-ffm: jextract-generated FFM bindings, not a curated API
     )
 }

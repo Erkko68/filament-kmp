@@ -167,6 +167,7 @@ jobs:
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
+      - uses: ./.github/actions/setup-wasm
       - name: Build library
         run: ./gradlew compileKotlinJs --no-configuration-cache
       - name: Run JS tests
@@ -177,17 +178,8 @@ jobs:
             :kotlin:filament-utils:jsTest \
             :kotlin:gltfio:jsTest \
             :kotlin:filament-compose:jsTest \
+            :web:jsTest \
             --no-configuration-cache
-      - name: Web sample ships the bundled engine
-        # The sample commits filament.js/.wasm so it runs standalone; a Filament upgrade
-        # that misses them pairs a new .filamat with an old engine and crashes at runtime.
-        run: |
-          ./gradlew downloadPrebuilts_web --no-configuration-cache
-          for t in jsMain wasmJsMain; do
-            for f in filament.js filament.wasm; do
-              cmp prebuilts/web/$f samples/webApp/src/$t/resources/$f
-            done
-          done
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
@@ -211,6 +203,7 @@ jobs:
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
+      - uses: ./.github/actions/setup-wasm
       - name: Build library
         run: ./gradlew compileKotlinWasmJs --no-configuration-cache
       - name: Run Wasm tests
@@ -221,6 +214,7 @@ jobs:
             :kotlin:filament-utils:wasmJsTest \
             :kotlin:gltfio:wasmJsTest \
             :kotlin:filament-compose:wasmJsTest \
+            :web:wasmJsTest \
             --no-configuration-cache
       - name: Build web sample
         working-directory: samples

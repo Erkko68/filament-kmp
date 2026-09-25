@@ -288,8 +288,8 @@ expect class Material {
          * @param engine Engine to associate this Material with
          * @return The newly created Material
          * @throws IllegalArgumentException if the [payload] is not a valid compiled `.filamat`. Every
-         *   backend signals a bad payload the same way: the FFM/native wrapper traps Filament's native
-         *   parser panic and the JS embind backend's own throw, so callers can recover (e.g. return
+         *   backend signals a bad payload the same way: every C-API wrapper (FFM, native, wasm) validates
+         *   the payload before Filament's parser can panic, so callers can recover (e.g. return
          *   null + report an error) rather than crash the process.
          */
         fun build(engine: Engine): Material
