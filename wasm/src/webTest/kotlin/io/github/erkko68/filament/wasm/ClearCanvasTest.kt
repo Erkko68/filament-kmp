@@ -11,14 +11,14 @@ import kotlin.test.assertNotEquals
 /** Phase 0 exit check: a frame cleared to red, driven entirely through the Fila* C API. */
 class ClearCanvasTest {
     @Test
-    fun clearsCanvasThroughCApi(): Promise<JsAny?> = filamentModule.then { m ->
+    fun clearsCanvasThroughCApi(): Promise<JsAny?> = loadFilament().then { m ->
         val canvas = document.createElement("canvas") as HTMLCanvasElement
         canvas.width = 4
         canvas.height = 4
         m.createGlContext(canvas)
 
         val builder = m._FilaEngineBuilder_create()
-        m._FilaEngineBuilder_backend(builder, 1) // OPENGL
+        m._FilaEngineBuilder_backend(builder, FILA_ENGINE_BACKEND_OPENGL)
         val engine = m._FilaEngineBuilder_build(builder)
         m._FilaEngineBuilder_destroy(builder)
         assertNotEquals(0, engine, "engine")
@@ -37,14 +37,13 @@ class ClearCanvasTest {
         m._FilaView_setViewport(view, 0, 0, 4, 4)
         m._FilaView_setPostProcessingEnabled(view, 0)
 
-        // FilaRendererClearOptions { double clearColor[4]; bool clear; bool discard; } = 40 bytes.
-        val options = m._malloc(40)
+        val options = m._malloc(FilaRendererClearOptions.SIZE)
         val f64 = m.HEAPF64
-        val base = options / 8
-        f64[base] = 1.0; f64[base + 1] = 0.0; f64[base + 2] = 0.0; f64[base + 3] = 1.0
+        val color = (options + FilaRendererClearOptions.clearColor) / 8
+        f64[color] = 1.0; f64[color + 1] = 0.0; f64[color + 2] = 0.0; f64[color + 3] = 1.0
         val u8 = m.HEAPU8
-        u8[options + 32] = 1
-        u8[options + 33] = 1
+        u8[options + FilaRendererClearOptions.clear] = 1
+        u8[options + FilaRendererClearOptions.discard] = 1
         m._FilaRenderer_setClearOptions(renderer, options)
         m._free(options)
 
