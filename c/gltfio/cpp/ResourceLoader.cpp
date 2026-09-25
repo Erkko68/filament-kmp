@@ -11,9 +11,8 @@ using namespace filament::gltfio;
 extern "C" {
 
 FilaResourceLoader* FilaResourceLoader_create(FilaEngine* engine, bool normalizeSkinningWeights) {
-    ResourceConfiguration config;
+    ResourceConfiguration config{}; // value-init zeroes the deprecated gltfPath without naming it
     config.engine = (Engine*) engine;
-    config.gltfPath = nullptr;
     config.normalizeSkinningWeights = normalizeSkinningWeights;
     return (FilaResourceLoader*) new ResourceLoader(config);
 }
