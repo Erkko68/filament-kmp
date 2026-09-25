@@ -107,10 +107,6 @@ internal fun ShadowConfig.toShadowOptions(): LightManager.ShadowOptions {
  * only the tuning that algorithm actually uses — so there are no silently-ignored fields. Passing
  * `null` for the view's `shadows` disables shadowing entirely. See [ShadowConfig] for the per-light
  * counterpart that sets each caster's map quality.
- *
- * **Web caveat:** Filament's web build doesn't bind `View::setShadowType`, so the technique is locked
- * to [Pcf]; [Vsm]/[Dpcf]/[Pcss] are silently ignored on web (disabling via `null` still works). See
- * the Web "Current limitations" in docs/platform-notes.md.
  */
 @Immutable
 sealed interface Shadows {
