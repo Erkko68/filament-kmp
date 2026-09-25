@@ -14,4 +14,5 @@ sealed class Screen {
     data object KTXEnvironment : Screen()
     data object HDREnvironment : Screen()
     data object Transparent : Screen()
+    data object RuntimeMaterial : Screen()
 }

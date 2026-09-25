@@ -16,6 +16,25 @@ val FILAMAT_PREBUILT_LIBS = listOf(
     "libfilaflat.a",
 )
 
+// Web: filamat-kmp.wasm (built by :wasm) + its Fila* externals, generated like :wasm's.
+val generateFilamatExternals = tasks.register<GenerateWasmExternals>("generateFilamatExternals") {
+    dependsOn(":wasm:setupEmsdk")
+    modules.set(mapOf("FilamatC" to "filamat"))
+    headers.from(rootProject.fileTree("c/filamat/c") { include("*.h") })
+    packageName.set("io.github.erkko68.filament.filamat.wasm")
+    baseInterface.set("FilamentModule")
+    instance.set("io.github.erkko68.filament.filamat.filamatWasm")
+    cDir.set(rootProject.layout.projectDirectory.dir("c"))
+    emsdkDir.set(rootProject.layout.projectDirectory.dir(".emsdk"))
+    mainDir.set(layout.buildDirectory.dir("generated/filamatExternals/webMain"))
+    testDir.set(layout.buildDirectory.dir("generated/filamatExternals/webTest"))
+}
+val stageFilamatWasm = tasks.register<Sync>("stageFilamatWasm") {
+    dependsOn(":wasm:stageFilamatWasm")
+    from(rootProject.layout.projectDirectory.dir("wasm/build/filamatWasm"))
+    into(layout.buildDirectory.dir("filamatWasm"))
+}
+
 kotlin {
     sourceSets {
         commonMain.dependencies {
@@ -33,8 +52,15 @@ kotlin {
             // FilamentC already cover the filamat surface. Replaces the JNI :java:filamat dep.
             api(project(":java"))
         }
-        webMain.dependencies {
-            implementation(project(":web"))
+        webMain {
+            kotlin.srcDir(generateFilamatExternals.flatMap { it.mainDir })
+            resources.srcDir(stageFilamatWasm)
+            dependencies {
+                implementation(project(":wasm"))
+            }
+        }
+        webTest {
+            resources.srcDir(stageFilamatWasm)
         }
     }
 

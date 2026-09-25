@@ -29,6 +29,7 @@ private val ENTRIES = listOf(
     "Environment (KTX)" to Screen.KTXEnvironment,
     "Environment (HDR)" to Screen.HDREnvironment,
     "Transparency (GLB)" to Screen.Transparent,
+    "Runtime Material (filamat)" to Screen.RuntimeMaterial,
 )
 
 @Composable

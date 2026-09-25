@@ -36,10 +36,15 @@ git -C "$CACHE_DIR" rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null \
 git -C "$CACHE_DIR" checkout --quiet --detach "$TAG"
 
 (cd "$CACHE_DIR" && ./build.sh -p wasm release)
+# Upstream's wasm build skips filamat; turn it on in the same build dir for filamat-kmp.wasm.
+(cd "$CACHE_DIR/out/cmake-wasm-release" && . "$EMSDK/emsdk_env.sh" >/dev/null 2>&1 \
+    && cmake -DFILAMENT_BUILD_FILAMAT=ON . >/dev/null && ninja filamat)
 
 rm -rf "$OUT_DIR" "$INCLUDE_DIR"
 mkdir -p "$OUT_DIR" "$INCLUDE_DIR/gltfio/materials"
 find "$CACHE_DIR/out/cmake-wasm-release" -name '*.a' -not -path '*/CMakeFiles/*' -exec cp {} "$OUT_DIR/" \;
+# Like upstream's install step: libfilamat.a is the combined archive (glslang, SPIRV-Tools/Cross).
+cp "$CACHE_DIR/out/cmake-wasm-release/libs/filamat/libfilamat_combined.a" "$OUT_DIR/libfilamat.a"
 # resgen bakes the archive size into this header, so the wasm libuberarchive needs its own copy.
 cp "$CACHE_DIR/out/cmake-wasm-release/libs/gltfio/materials/uberarchive.h" "$INCLUDE_DIR/gltfio/materials/"
 echo "$VERSION|local" > "$STAMP"

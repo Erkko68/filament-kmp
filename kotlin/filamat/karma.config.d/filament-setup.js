@@ -12,6 +12,9 @@ config.files = [
     // WASM binary — served only; filament-kmp.js fetches it next to itself.
     // The `/base/` prefix is karma's served path for files in basePath.
     { pattern: 'kotlin/filament-kmp.wasm', watched: false, included: false, served: true, nocache: true },
+    // filamat-kmp.wasm, the runtime material compiler (staged by stageFilamatWasm).
+    { pattern: 'kotlin/filamat-kmp.js', watched: false, included: true, served: true, nocache: true },
+    { pattern: 'kotlin/filamat-kmp.wasm', watched: false, included: false, served: true, nocache: true },
     // Bootstrap: delays __karma__.loaded until Filament is ready.
     { pattern: 'kotlin/filament-karma-bootstrap.js', watched: false, included: true, served: true, nocache: true },
 ].concat(config.files || []);

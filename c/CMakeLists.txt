@@ -326,7 +326,7 @@ function(fila_scan_exports OUT_VAR)
     list(REMOVE_DUPLICATES _exports)
     list(SORT _exports)
     list(LENGTH _exports _count)
-    if (_count LESS 500)
+    if (_count LESS 50)
         message(FATAL_ERROR "Export scan found only ${_count} Fila* symbols — header scan is broken")
     endif()
     message(STATUS "Exporting ${_count} Fila* symbols")
@@ -477,8 +477,8 @@ endif()
 # ── wasm module for the web targets ─────────────────────────────────────────────
 #
 # Same idea as the JVM image: every C-wrapper source set in one module exporting exactly
-# the Fila* API, called from Kotlin through numeric externals (no embind). filamat is left
-# out: upstream's wasm build has no libfilamat.
+# the Fila* API, called from Kotlin through numeric externals (no embind). filamat is its own
+# module (filamat-kmp.wasm): it shares no pointers with the engine and is large.
 if (FILAMENT_PLATFORM STREQUAL "wasm")
     add_filament_library(meshoptimizer)
     add_filament_library(ibl)
@@ -512,26 +512,41 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
         imageio-lite iblprefilter
     )
 
-    fila_scan_exports(_fila_exports filament filament-utils gltfio)
-    list(TRANSFORM _fila_exports PREPEND "_")
-    list(APPEND _fila_exports _malloc _free)
-    list(JOIN _fila_exports "\n" _fila_exports_text)
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/exports.txt" "${_fila_exports_text}\n")
-
     # Flags follow upstream web/filament-js/CMakeLists.txt, minus embind (--bind).
-    target_link_options(filament-web PRIVATE
-        "-sEXPORTED_FUNCTIONS=@${CMAKE_CURRENT_BINARY_DIR}/exports.txt"
+    set(_web_link_options
         "-sEXPORTED_RUNTIME_METHODS=HEAP8,HEAP16,HEAP32,HEAPU8,HEAPU16,HEAPU32,HEAPF32,HEAPF64,GL,addFunction,removeFunction,stringToUTF8,lengthBytesUTF8,UTF8ToString"
         "-sALLOW_MEMORY_GROWTH=1"
         "-sALLOW_TABLE_GROWTH=1"
         "-sMODULARIZE=1"
-        "-sEXPORT_NAME=createFilamentModule"
-        "-sUSE_WEBGL2=1"
-        "-sFULL_ES3"
-        "-sMIN_WEBGL_VERSION=2"
-        "-sMAX_WEBGL_VERSION=2"
         # C++ exceptions escaping to JS (Filament panics) become Errors carrying the message.
         "-fexceptions"
         "-sEXCEPTION_STACK_TRACES=1"
     )
+
+    # Writes <name>-exports.txt (the modules' Fila* plus malloc/free) and links TARGET with it.
+    function(fila_web_exports TARGET NAME)
+        fila_scan_exports(_exports ${ARGN})
+        list(TRANSFORM _exports PREPEND "_")
+        list(APPEND _exports _malloc _free)
+        list(JOIN _exports "\n" _text)
+        set(_file "${CMAKE_CURRENT_BINARY_DIR}/${NAME}-exports.txt")
+        file(WRITE "${_file}" "${_text}\n")
+        target_link_options(${TARGET} PRIVATE "-sEXPORTED_FUNCTIONS=@${_file}" "-sEXPORT_NAME=${NAME}")
+    endfunction()
+
+    fila_web_exports(filament-web createFilamentModule filament filament-utils gltfio)
+    target_link_options(filament-web PRIVATE ${_web_link_options}
+        "-sUSE_WEBGL2=1"
+        "-sFULL_ES3"
+        "-sMIN_WEBGL_VERSION=2"
+        "-sMAX_WEBGL_VERSION=2"
+    )
+
+    add_executable(filamat-web ${FILAMAT_C_SOURCES})
+    set_target_properties(filamat-web PROPERTIES OUTPUT_NAME "filamat-kmp")
+    target_include_directories(filamat-web PRIVATE filamat/c filament/c filamat/cpp filament/cpp ${FILAMENT_INCLUDE_DIR})
+    target_link_libraries(filamat-web PRIVATE filamat shaders filabridge smol-v utils)
+    fila_web_exports(filamat-web createFilamatModule filamat)
+    # glslang's parser recurses deeply: the 64 KB default stack overflows (surfaces as OOB traps).
+    target_link_options(filamat-web PRIVATE ${_web_link_options} "-sSTACK_SIZE=4MB")
 endif()

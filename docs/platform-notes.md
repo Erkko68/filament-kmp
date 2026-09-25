@@ -98,7 +98,6 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 
 | API | Behavior on web | Workaround |
 | :--- | :--- | :--- |
-| `filamat.MaterialBuilder` | Throws on construction | Compile materials offline with `matc`, load the `.filamat` via `Material.Builder().payload(...)` |
 | `gltfio.UbershaderProvider` (`createMaterialInstance`/`getMaterial`) | Throws | Supply precompiled materials (e.g. the `filament-compose` standard materials) |
 | `gltfio.FilamentAsset.getAssetInstances` / `getAssetInstanceCount` | Throws (embind "unbound types") | Track instances returned by `AssetLoader.createInstance` yourself |
 | `gltfio.FilamentInstance.getMaterialInstances` | Throws (embind "unbound types") | — |
@@ -125,6 +124,21 @@ the corresponding function. Every gap below is also marked in source with **`@Pl
 `TextureLoader` works for PNG, JPEG, and KTX1; it returns `null` only on decode failure or empty input. `KTX1Loader` works fully, including `getSphericalHarmonics`. `Manipulator` works fully — `filament-utils` ships a pure-Kotlin implementation on JS; `rememberOrbitCameraController` from `filament-compose` is the recommended ergonomic wrapper.
 
 Suitable for simple scenes with custom materials. Not yet suitable for full glTF pipelines using the default ubershader, or image-based lighting via raw HDR files.
+
+### Runtime material compilation (filamat)
+
+`MaterialBuilder` works on web through a separate, optional `filamat-kmp.wasm` (~6.4 MB). Serve
+`filamat-kmp.js` + `.wasm` next to `filament-kmp.js`, then call `Filamat.initJs { Filamat.init() }`
+before building materials.
+
+Limits:
+- The compiler runs on a fixed **4 MB wasm stack**. A very large or deeply nested shader can overflow
+  it: the build fails with `memory access out of bounds` and `filamat-kmp.wasm` stays unusable until
+  the page reloads.
+- Compilation is synchronous and blocks the main thread (there are no worker threads).
+
+For big materials, or anything that must load fast, compile offline with `matc` and load the
+`.filamat` via `Material.Builder().payload(...)`.
 
 ### Bundle size
 

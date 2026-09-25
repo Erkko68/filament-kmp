@@ -42,7 +42,7 @@ val buildFilamentWasm = tasks.register<Exec>("buildFilamentWasm") {
         [ -f prebuilts/wasm/lib/.prebuilt-source ] || { echo "Missing prebuilts/wasm/lib — run scripts/dev/build-wasm-libs.sh" >&2; exit 1; }
         . .emsdk/emsdk_env.sh >/dev/null 2>&1
         emcmake cmake -S c -B ${wasmBuildDir.relativeTo(rootDir)} -DFILAMENT_PLATFORM=wasm -DCMAKE_BUILD_TYPE=Release >/dev/null
-        cmake --build ${wasmBuildDir.relativeTo(rootDir)} --target filament-web
+        cmake --build ${wasmBuildDir.relativeTo(rootDir)} --target filament-web filamat-web
         """.trimIndent(),
     )
 }
@@ -51,6 +51,13 @@ val stageFilamentWasm = tasks.register<Sync>("stageFilamentWasm") {
     dependsOn(buildFilamentWasm)
     from(wasmBuildDir) { include("filament-kmp.js", "filament-kmp.wasm") }
     into(layout.buildDirectory.dir("filamentWasm"))
+}
+
+// filamat-kmp.{js,wasm}: the optional runtime material compiler, shipped by :kotlin:filamat.
+val stageFilamatWasm = tasks.register<Sync>("stageFilamatWasm") {
+    dependsOn(buildFilamentWasm)
+    from(wasmBuildDir) { include("filamat-kmp.js", "filamat-kmp.wasm") }
+    into(layout.buildDirectory.dir("filamatWasm"))
 }
 
 kotlin {

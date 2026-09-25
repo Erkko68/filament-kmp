@@ -2,7 +2,6 @@ package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
 import io.github.erkko68.filament.filamat.testutils.FilamatTestFixture
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -73,7 +72,6 @@ class MaterialBuilderTest : FilamatTestFixture() {
     }
 
     @Test
-    @IgnoreJs // filamat is not supported in the web wrapper.
     fun testTargetApiBranches() {
         // Exercise every TargetApi -> native bitmask branch.
         for (api in MaterialBuilder.TargetApi.entries) {
@@ -83,7 +81,6 @@ class MaterialBuilderTest : FilamatTestFixture() {
     }
 
     @Test
-    @IgnoreJs // filamat compilation is not supported in the web wrapper.
     fun testMaterialBuilderChainingAndBuild() {
         val pkg = MaterialBuilder()
                 .name("TestMaterial")
