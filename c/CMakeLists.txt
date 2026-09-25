@@ -39,6 +39,9 @@ elseif (FILAMENT_PLATFORM STREQUAL "ios-simulator")
         set(CMAKE_OSX_ARCHITECTURES "arm64")
         set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosSimulatorArm64/lib")
     endif()
+elseif (FILAMENT_PLATFORM STREQUAL "wasm")
+    # Configure with emcmake; libs come from scripts/dev/build-wasm-libs.sh.
+    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/wasm/lib")
 elseif (FILAMENT_BUILD_SHARED)
     # JVM/Panama host build (macos, linux, windows). The prebuilt dir name combines the
     # platform (windows → mingw) with the capitalised arch, e.g. macosArm64, linuxX64, mingwX64.
@@ -300,6 +303,36 @@ target_include_directories(gltfio-c PRIVATE
     ${FILAMENT_INCLUDE_DIR}
 )
 
+# Scans the given modules' c/*.h for Fila* function declarations — the exact surface
+# jextract/cinterop bind. Feeds the Windows .def and the wasm export list.
+function(fila_scan_exports OUT_VAR)
+    set(_globs "")
+    foreach(_module IN LISTS ARGN)
+        list(APPEND _globs "${CMAKE_CURRENT_SOURCE_DIR}/${_module}/c/*.h")
+    endforeach()
+    file(GLOB _headers CONFIGURE_DEPENDS ${_globs})
+    set(_exports "")
+    foreach(_hdr IN LISTS _headers)
+        file(READ "${_hdr}" _hdr_text)
+        # Function declarations only: Fila<Type>_<method>( not preceded by an
+        # identifier char (skips typedefs/params — no '(' right after their name).
+        string(REGEX MATCHALL "[^A-Za-z0-9_]Fila[A-Za-z0-9]+_[A-Za-z0-9_]+[ \t\r\n]*\\(" _matches "${_hdr_text}")
+        foreach(_m IN LISTS _matches)
+            string(REGEX REPLACE "^[^A-Za-z0-9_]" "" _m "${_m}")
+            string(REGEX REPLACE "[ \t\r\n]*\\($" "" _m "${_m}")
+            list(APPEND _exports "${_m}")
+        endforeach()
+    endforeach()
+    list(REMOVE_DUPLICATES _exports)
+    list(SORT _exports)
+    list(LENGTH _exports _count)
+    if (_count LESS 500)
+        message(FATAL_ERROR "Export scan found only ${_count} Fila* symbols — header scan is broken")
+    endif()
+    message(STATUS "Exporting ${_count} Fila* symbols")
+    set(${OUT_VAR} ${_exports} PARENT_SCOPE)
+endfunction()
+
 if (FILAMENT_SUPPORTS_VULKAN)
     add_definitions(-DFILAMENT_SUPPORTS_VULKAN=1)
     # Add bluevk/smol-v if vulkan is enabled
@@ -382,30 +415,7 @@ if (FILAMENT_BUILD_SHARED)
         # Seal: a DLL exports nothing by default; generate a .def of the Fila* C API from
         # the wrapper headers (the exact surface jextract binds — matches the macOS/Linux
         # seal) instead of WINDOWS_EXPORT_ALL_SYMBOLS' full C++ export table.
-        file(GLOB _fila_api_headers CONFIGURE_DEPENDS
-            "${CMAKE_CURRENT_SOURCE_DIR}/filament/c/*.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/filamat/c/*.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/filament-utils/c/*.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/gltfio/c/*.h")
-        set(_fila_exports "")
-        foreach(_hdr IN LISTS _fila_api_headers)
-            file(READ "${_hdr}" _hdr_text)
-            # Function declarations only: Fila<Type>_<method>( not preceded by an
-            # identifier char (skips typedefs/params — no '(' right after their name).
-            string(REGEX MATCHALL "[^A-Za-z0-9_]Fila[A-Za-z0-9]+_[A-Za-z0-9_]+[ \t\r\n]*\\(" _matches "${_hdr_text}")
-            foreach(_m IN LISTS _matches)
-                string(REGEX REPLACE "^[^A-Za-z0-9_]" "" _m "${_m}")
-                string(REGEX REPLACE "[ \t\r\n]*\\($" "" _m "${_m}")
-                list(APPEND _fila_exports "${_m}")
-            endforeach()
-        endforeach()
-        list(REMOVE_DUPLICATES _fila_exports)
-        list(SORT _fila_exports)
-        list(LENGTH _fila_exports _fila_export_count)
-        if (_fila_export_count LESS 500)
-            message(FATAL_ERROR "filament-c.def generation found only ${_fila_export_count} Fila* symbols — header scan is broken")
-        endif()
-        message(STATUS "filament-c.def: exporting ${_fila_export_count} Fila* symbols")
+        fila_scan_exports(_fila_exports filament filamat filament-utils gltfio)
         list(JOIN _fila_exports "\n    " _fila_exports_text)
         file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/filament-c.def" "EXPORTS\n    ${_fila_exports_text}\n")
         target_sources(filament-c-jvm PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/filament-c.def")
@@ -462,4 +472,61 @@ if (FILAMENT_BUILD_SHARED)
                 COMMAND strip --strip-unneeded "$<TARGET_FILE:filament-c-jvm>")
         endif()
     endif()
+endif()
+
+# ── wasm module for the web targets ─────────────────────────────────────────────
+#
+# Same idea as the JVM image: every C-wrapper source set in one module exporting exactly
+# the Fila* API, called from Kotlin through numeric externals (no embind). filamat is left
+# out: upstream's wasm build has no libfilamat.
+if (FILAMENT_PLATFORM STREQUAL "wasm")
+    add_filament_library(meshoptimizer)
+    add_filament_library(ibl)
+    add_filament_library(filament-generatePrefilterMipmap)
+    add_filament_library(uberzlib)
+    add_filament_library(uberarchive)
+    add_filament_library(basis_transcoder)
+    add_filament_library(mikktspace)
+
+    add_executable(filament-web
+        ${FILAMENT_C_SOURCES}
+        ${FILAMENT_UTILS_C_SOURCES}
+        ${GLTFIO_C_SOURCES}
+    )
+    set_target_properties(filament-web PROPERTIES OUTPUT_NAME "filament-kmp")
+
+    target_include_directories(filament-web PRIVATE
+        filament/c filament-utils/c gltfio/c
+        filament/cpp filament-utils/cpp gltfio/cpp
+        ${FILAMENT_INCLUDE_DIR}
+    )
+
+    target_link_libraries(filament-web PRIVATE
+        filament backend utils
+        filaflat filabridge zstd smol-v
+        ibl image geometry mikktspace meshoptimizer
+        camutils ktxreader filament-generatePrefilterMipmap
+        gltfio_core uberzlib uberarchive dracodec stb basis_transcoder
+        imageio-lite iblprefilter
+    )
+
+    fila_scan_exports(_fila_exports filament filament-utils gltfio)
+    list(TRANSFORM _fila_exports PREPEND "_")
+    list(APPEND _fila_exports _malloc _free)
+    list(JOIN _fila_exports "\n" _fila_exports_text)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/exports.txt" "${_fila_exports_text}\n")
+
+    # Flags follow upstream web/filament-js/CMakeLists.txt, minus embind (--bind).
+    target_link_options(filament-web PRIVATE
+        "-sEXPORTED_FUNCTIONS=@${CMAKE_CURRENT_BINARY_DIR}/exports.txt"
+        "-sEXPORTED_RUNTIME_METHODS=HEAP8,HEAP16,HEAP32,HEAPU8,HEAPU16,HEAPU32,HEAPF32,HEAPF64,GL,addFunction,removeFunction,stringToUTF8,lengthBytesUTF8,UTF8ToString"
+        "-sALLOW_MEMORY_GROWTH=1"
+        "-sALLOW_TABLE_GROWTH=1"
+        "-sMODULARIZE=1"
+        "-sEXPORT_NAME=createFilamentModule"
+        "-sUSE_WEBGL2=1"
+        "-sFULL_ES3"
+        "-sMIN_WEBGL_VERSION=2"
+        "-sMAX_WEBGL_VERSION=2"
+    )
 endif()

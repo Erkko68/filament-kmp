@@ -50,3 +50,4 @@ include(":java:runtime-linux-arm64")
 include(":java:runtime-windows-x64")
 
 include(":web")
+include(":wasm")
