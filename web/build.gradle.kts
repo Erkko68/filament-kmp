@@ -31,8 +31,10 @@ val generateWasmExternals = tasks.register<GenerateWasmExternals>("generateWasmE
     instance.set("fila")
     cDir.set(rootProject.layout.projectDirectory.dir("c"))
     emsdkDir.set(rootProject.layout.projectDirectory.dir(".emsdk"))
-    mainDir.set(layout.buildDirectory.dir("generated/wasmExternals/webMain"))
-    testDir.set(layout.buildDirectory.dir("generated/wasmExternals/webTest"))
+    // Committed output (like the old hand-written externals): compiling needs no emsdk. The web CI
+    // job regenerates and fails on a diff, so a header change can't go unnoticed.
+    mainDir.set(layout.projectDirectory.dir("src/webMain/generated"))
+    testDir.set(layout.projectDirectory.dir("src/webTest/generated"))
 }
 
 val buildFilamentWasm = tasks.register<Exec>("buildFilamentWasm") {
@@ -40,7 +42,8 @@ val buildFilamentWasm = tasks.register<Exec>("buildFilamentWasm") {
     workingDir(rootDir)
     // ponytail: no declared inputs, so this always runs; cmake --build is a fast no-op when current.
     commandLine(
-        "sh", "-c",
+        // bash, not sh: emsdk_env.sh can't locate itself under dash (Ubuntu's /bin/sh).
+        "bash", "-c",
         """
         set -e
         [ -f prebuilts/wasm/lib/.prebuilt-source ] || { echo "Missing prebuilts/wasm/lib — run scripts/dev/build-wasm-libs.sh" >&2; exit 1; }
@@ -75,13 +78,13 @@ kotlin {
         webMain {
             // filament-kmp.{js,wasm} aren't packed: webpack never sees klib resources, so apps
             // take them from the GitHub release instead.
-            kotlin.srcDir(generateWasmExternals.flatMap { it.mainDir })
+            kotlin.srcDir("src/webMain/generated")
             dependencies {
                 api("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
             }
         }
         webTest {
-            kotlin.srcDir(generateWasmExternals.flatMap { it.testDir })
+            kotlin.srcDir("src/webTest/generated")
             resources.srcDir(stageFilamentWasm)
             dependencies {
                 implementation(kotlin("test"))

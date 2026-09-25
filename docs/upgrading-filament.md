@@ -169,8 +169,9 @@ which layers it reaches.
        FILA_CAST(ColorGrading::Builder, builder)->fastMath(fastMath);
    }
    ```
-   (jextract, cinterop and the web externals regenerate from these headers automatically — you
-   do **not** touch generated FFM/cinterop/wasm code.)
+   (jextract and cinterop regenerate from these headers automatically. The web externals are
+   committed: run `./gradlew :web:generateWasmExternals` and commit the result. You never edit
+   generated FFM/cinterop/wasm code by hand.)
 3. **`commonMain` expect** — `kotlin/<module>/src/commonMain/.../<Class>.kt`:
    ```kotlin
    fun fastMath(fastMath: Boolean): Builder
@@ -281,7 +282,7 @@ re-running `downloadPrebuilts` fixed it. This is the footgun in step 3.
 | C shim headers / impl | `c/<module>/c/*.h`, `c/<module>/cpp/*.cpp` |
 | `commonMain` expects | `kotlin/<module>/src/commonMain/kotlin/.../*.kt` |
 | Platform actuals | `kotlin/<module>/src/{android,jvm,native,web}Main/.../*.kt` |
-| Web externals (generated) | `web/build/generated/wasmExternals/` (from `c/*/c/*.h`) |
+| Web externals (generated, committed) | `web/src/webMain/generated/`, `kotlin/filamat/src/webMain/generated/` (from `c/*/c/*.h`) |
 | Wasm Filament libs | `prebuilts/wasm/` (built by `scripts/dev/build-wasm-libs.sh`) |
 | Downloaded prebuilt libs / headers | `prebuilts/<target>/lib/`, `include/` (gitignored) |
 | Version | `gradle.properties` → `filaVersion` |

@@ -16,7 +16,7 @@ val FILAMAT_PREBUILT_LIBS = listOf(
     "libfilaflat.a",
 )
 
-// Web: filamat-kmp.wasm (built by :wasm) + its Fila* externals, generated like :wasm's.
+// Web: filamat-kmp.wasm (built by :web) + its Fila* externals, generated like :web's.
 val generateFilamatExternals = tasks.register<GenerateWasmExternals>("generateFilamatExternals") {
     dependsOn(":web:setupEmsdk")
     modules.set(mapOf("FilamatC" to "filamat"))
@@ -26,8 +26,9 @@ val generateFilamatExternals = tasks.register<GenerateWasmExternals>("generateFi
     instance.set("io.github.erkko68.filament.filamat.filamatWasm")
     cDir.set(rootProject.layout.projectDirectory.dir("c"))
     emsdkDir.set(rootProject.layout.projectDirectory.dir(".emsdk"))
-    mainDir.set(layout.buildDirectory.dir("generated/filamatExternals/webMain"))
-    testDir.set(layout.buildDirectory.dir("generated/filamatExternals/webTest"))
+    // Committed, like :web's (see there).
+    mainDir.set(layout.projectDirectory.dir("src/webMain/generated"))
+    testDir.set(layout.buildDirectory.dir("generated/filamatExternals/webTest")) // arities: unused here
 }
 val stageFilamatWasm = tasks.register<Sync>("stageFilamatWasm") {
     dependsOn(":web:stageFilamatWasm")
@@ -53,7 +54,7 @@ kotlin {
             api(project(":java"))
         }
         webMain {
-            kotlin.srcDir(generateFilamatExternals.flatMap { it.mainDir })
+            kotlin.srcDir("src/webMain/generated")
             dependencies {
                 implementation(project(":web"))
             }

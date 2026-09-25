@@ -69,6 +69,7 @@ jobs:
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
+      - uses: ./.github/actions/setup-wasm
 
       - name: Build production webpack bundle
         working-directory: samples

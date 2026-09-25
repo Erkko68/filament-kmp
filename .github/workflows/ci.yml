@@ -168,6 +168,11 @@ jobs:
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - uses: ./.github/actions/setup-wasm
+      - name: Generated wasm externals are up to date
+        # Committed so compiling needs no emsdk; a C header change must come with a regen.
+        run: |
+          ./gradlew :web:generateWasmExternals :kotlin:filamat:generateFilamatExternals --no-configuration-cache
+          git diff --exit-code -- web/src kotlin/filamat/src
       - name: Build library
         run: ./gradlew compileKotlinJs --no-configuration-cache
       - name: Run JS tests

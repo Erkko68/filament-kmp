@@ -49,7 +49,8 @@ and commit the updated `<module>/api/` files with your change — `apiCheck` fai
 - **Web** needs emsdk and the wasm Filament libraries, which upstream doesn't publish. Run
   `scripts/dev/build-wasm-libs.sh` once per `filaVersion` (it installs emsdk into `.emsdk/` and
   builds `prebuilts/wasm/`; the first run takes a while). The externals are generated from the
-  C headers — add a binding to `c/` and it appears on web too (see `web/README.md`).
+  C headers — after adding a binding to `c/`, run `./gradlew :web:generateWasmExternals`
+  (or `:kotlin:filamat:generateFilamatExternals`) and commit the result (see `web/README.md`).
 - **Bumping `filaVersion`** (in `gradle.properties`): delete `prebuilts/*` and `include/` so
   they re-download (and rerun `build-wasm-libs.sh`), then run `check-common-api.sh` from
   `scripts/README.md` to catch binding drift.

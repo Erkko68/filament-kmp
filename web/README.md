@@ -24,7 +24,9 @@ inside the klib (webpack never sees klib resources); apps download them from the
    parses `c/*/c/*.h` with Emscripten's clang (AST + record layouts) and emits, per C module, an
    `external interface` of raw exports plus cinterop-named wrappers (`FilaEngine_createView(...)`),
    so `webMain` actuals read like `nativeMain` ones. Also enum constants and struct field offsets.
-   `:kotlin:filamat` runs the same task for its own module.
+   `:kotlin:filamat` runs the same task for its own module. The output is **committed**
+   (`src/webMain/generated`) so compiling needs no emsdk; rerun it after changing a `c/` header.
+   The web CI job regenerates and fails on a diff.
 3. **`buildFilamentWasm`** runs CMake with `-DFILAMENT_PLATFORM=wasm`, linking the wasm Filament
    libraries from `prebuilts/wasm/`. Upstream publishes none, so
    [`build-wasm-libs.sh`](../scripts/dev/build-wasm-libs.sh) builds them once per `filaVersion`.
