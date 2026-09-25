@@ -1,0 +1,117 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Half</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.utils/-half.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-utils/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-utils/commonMain" data-filter=":kotlin:filament-utils/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="member" id="content" pageids="filament-utils::io.github.erkko68.filament.utils//Half/#kotlin.Double/PointingToDeclaration//-853202996">
+  <div class="breadcrumbs"><a href="../index.html">filament-utils</a><span class="delimiter">/</span><a href="index.html">io.github.erkko68.filament.utils</a><span class="delimiter">/</span><span class="current">Half</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Half</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-utils/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-half.html"><span class="token function">Half</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-half/index.html">Half</a></div><p class="paragraph">Converts the specified double-precision float value into a half-precision float value. The following special cases are handled:</p><ul><li><p class="paragraph">If the input is NaN (see <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/index.html">Double.isNaN</a>), the returned value is <a href="-half/-companion/-na-n.html">Half.NaN</a></p></li><li><p class="paragraph">If the input is <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/-companion/-p-o-s-i-t-i-v-e_-i-n-f-i-n-i-t-y.html">Double.POSITIVE_INFINITY</a> or <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/-companion/-n-e-g-a-t-i-v-e_-i-n-f-i-n-i-t-y.html">Double.NEGATIVE_INFINITY</a>, the returned value is respectively <a href="-half/-companion/-p-o-s-i-t-i-v-e_-i-n-f-i-n-i-t-y.html">Half.POSITIVE_INFINITY</a> or <a href="-half/-companion/-n-e-g-a-t-i-v-e_-i-n-f-i-n-i-t-y.html">Half.NEGATIVE_INFINITY</a></p></li><li><p class="paragraph">If the input is 0 (positive or negative), the returned value is <a href="-half/-companion/-p-o-s-i-t-i-v-e_-z-e-r-o.html">Half.POSITIVE_ZERO</a> or <a href="-half/-companion/-n-e-g-a-t-i-v-e_-z-e-r-o.html">Half.NEGATIVE_ZERO</a></p></li><li><p class="paragraph">If the input is less than <a href="-half/-companion/-m-i-n_-v-a-l-u-e.html">Half.MIN_VALUE</a>, the returned value is flushed to <a href="-half/-companion/-p-o-s-i-t-i-v-e_-z-e-r-o.html">Half.POSITIVE_ZERO</a> or <a href="-half/-companion/-n-e-g-a-t-i-v-e_-z-e-r-o.html">Half.NEGATIVE_ZERO</a></p></li><li><p class="paragraph">If the input is less than <a href="-half/-companion/-m-i-n_-n-o-r-m-a-l.html">Half.MIN_NORMAL</a>, the returned value is a denormal half-precision float</p></li><li><p class="paragraph">Otherwise, the returned value is rounded to the nearest representable half-precision float value</p></li></ul><span class="kdoc-tag"><h4 class="">Return</h4><p class="paragraph">A half-precision float value</p></span><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>value</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The double-precision float value to convert to half-precision</p></div></div></div></div></div><hr><div class="symbol monospace"><span class="token keyword">fun </span><a href="-half.html"><span class="token function">Half</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-half/index.html">Half</a></div><p class="paragraph">Converts the specified single-precision float value into a half-precision float value. The following special cases are handled:</p><ul><li><p class="paragraph">If the input is NaN (see <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/index.html">Float.isNaN</a>), the returned value is <a href="-half/-companion/-na-n.html">Half.NaN</a></p></li><li><p class="paragraph">If the input is <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/-companion/-p-o-s-i-t-i-v-e_-i-n-f-i-n-i-t-y.html">Float.POSITIVE_INFINITY</a> or <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/-companion/-n-e-g-a-t-i-v-e_-i-n-f-i-n-i-t-y.html">Float.NEGATIVE_INFINITY</a>, the returned value is respectively <a href="-half/-companion/-p-o-s-i-t-i-v-e_-i-n-f-i-n-i-t-y.html">Half.POSITIVE_INFINITY</a> or <a href="-half/-companion/-n-e-g-a-t-i-v-e_-i-n-f-i-n-i-t-y.html">Half.NEGATIVE_INFINITY</a></p></li><li><p class="paragraph">If the input is 0 (positive or negative), the returned value is <a href="-half/-companion/-p-o-s-i-t-i-v-e_-z-e-r-o.html">Half.POSITIVE_ZERO</a> or <a href="-half/-companion/-n-e-g-a-t-i-v-e_-z-e-r-o.html">Half.NEGATIVE_ZERO</a></p></li><li><p class="paragraph">If the input is less than <a href="-half/-companion/-m-i-n_-v-a-l-u-e.html">Half.MIN_VALUE</a>, the returned value is flushed to <a href="-half/-companion/-p-o-s-i-t-i-v-e_-z-e-r-o.html">Half.POSITIVE_ZERO</a> or <a href="-half/-companion/-n-e-g-a-t-i-v-e_-z-e-r-o.html">Half.NEGATIVE_ZERO</a></p></li><li><p class="paragraph">If the input is less than <a href="-half/-companion/-m-i-n_-n-o-r-m-a-l.html">Half.MIN_NORMAL</a>, the returned value is a denormal half-precision float</p></li><li><p class="paragraph">Otherwise, the returned value is rounded to the nearest representable half-precision float value</p></li></ul><span class="kdoc-tag"><h4 class="">Return</h4><p class="paragraph">A half-precision float value</p></span><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>value</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The single-precision float value to convert to half-precision</p></div></div></div></div></div><hr><div class="symbol monospace"><span class="token keyword">fun </span><a href="-half.html"><span class="token function">Half</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-half/index.html">Half</a></div><p class="paragraph">Returns the half-precision float value represented by the specified string. The string is converted to a half-precision float value as if by the String.toFloat() method.</p><p></p><p class="paragraph">Calling this function is equivalent to calling:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">Half(value.toFloat())</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>value</span></span></u></div></span></div><div><div class="title"><p class="paragraph">A string to be converted to a {@code Half}</p></div></div></div></div></div><h4 class="tableheader">See also</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.text/index.html"><span>String.</span><wbr><span>toFloat</span></a></div></span></div><div></div></div></div></div><h4 class="tableheader">Throws</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-utils/commonMain" data-filterable-set=":kotlin:filament-utils/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-number-format-exception/index.html"><span>Number</span><wbr><span>Format</span><wbr><span><span>Exception</span></span></a></div></span></div><div><div class="title"><p class="paragraph">if the string does not contain a parsable number</p></div></div></div></div></div></div></div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

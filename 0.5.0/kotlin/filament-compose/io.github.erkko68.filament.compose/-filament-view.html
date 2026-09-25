@@ -1,0 +1,117 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>FilamentView</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    filament-umbrella
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;io.github.erkko68.filament.compose/-filament-view.html&quot;}">0.5.0</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true" data-filter=":kotlin:filament-compose/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlin:filament-compose/commonMain" data-filter=":kotlin:filament-compose/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    filament-umbrella
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="member" id="content" pageids="filament-compose::io.github.erkko68.filament.compose//FilamentView/#io.github.erkko68.filament.compose.FilamentScene#androidx.compose.ui.Modifier#io.github.erkko68.filament.compose.scene.CameraState#io.github.erkko68.filament.compose.FilamentViewState#io.github.erkko68.filament.compose.scene.PostProcessing#kotlin.Boolean#io.github.erkko68.filament.compose.scene.Shadows?#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration//-552819475">
+  <div class="breadcrumbs"><a href="../index.html">filament-compose</a><span class="delimiter">/</span><a href="index.html">io.github.erkko68.filament.compose</a><span class="delimiter">/</span><span class="current">FilamentView</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Filament</span><wbr><span><span>View</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlin:filament-compose/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-filament-view.html"><span class="token function">FilamentView</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">scene<span class="token operator">: </span><a href="-filament-scene/index.html">FilamentScene</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">cameraState<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-camera-state/index.html">CameraState</a><span class="token operator"> = </span>rememberCameraState()<span class="token punctuation">, </span></span><span class="parameter ">viewState<span class="token operator">: </span><a href="-filament-view-state/index.html">FilamentViewState</a><span class="token operator"> = </span>rememberFilamentViewState()<span class="token punctuation">, </span></span><span class="parameter ">postProcessing<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-post-processing/index.html">PostProcessing</a><span class="token operator"> = </span>PostProcessing()<span class="token punctuation">, </span></span><span class="parameter ">frustumCullingEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">shadows<span class="token operator">: </span><a href="../io.github.erkko68.filament.compose.scene/-shadows/index.html">Shadows</a><span class="token operator">?</span><span class="token operator"> = </span>Shadows.Pcf<span class="token punctuation">, </span></span><span class="parameter ">screenSpaceRefractionEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">stencilBufferEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">transparent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">A viewport onto a <a href="-filament-scene/index.html">FilamentScene</a>. Each <code class="lang-kotlin">FilamentView</code> owns one Filament <code class="lang-kotlin">View</code>, <code class="lang-kotlin">Camera</code>, <code class="lang-kotlin">Renderer</code>, and platform surface, and renders the given <a href="-filament-view.html">scene</a> through them. Place several <code class="lang-kotlin">FilamentView</code>s — anywhere in your layout — to render one scene through different cameras and post-processing setups.</p><p class="paragraph"><code class="lang-kotlin">FilamentView</code> is a leaf: the world is declared in <a href="remember-filament-scene.html">rememberFilamentScene</a> and the look of this viewport is configured by value (<a href="-filament-view.html">cameraState</a>, <a href="-filament-view.html">postProcessing</a>, the render flags). For imperative access (picking, raw <code class="lang-kotlin">View</code>/<code class="lang-kotlin">Renderer</code>) pass a <a href="remember-filament-view-state.html">rememberFilamentViewState</a>.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val scene = rememberFilamentScene { DirectionalLight(); GltfInstance(duck) }<br>Row {<br>    FilamentView(scene, Modifier.weight(1f), cameraState = cam1,<br>        postProcessing = PostProcessing(bloom = Bloom(strength = 0.2f)))<br>    FilamentView(scene, Modifier.weight(1f), cameraState = cam2)<br>}</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>scene</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The scene to render, from <a href="remember-filament-scene.html">rememberFilamentScene</a>. Supplies the shared engine.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>modifier</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Modifier for the view's layout node.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>camera</span><wbr><span><span>State</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Hoisted camera state. The default constructs a new state per view.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>view</span><wbr><span><span>State</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Hoisted handle exposing the live <code class="lang-kotlin">View</code>/<code class="lang-kotlin">Renderer</code> and <code class="lang-kotlin">pick()</code>.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>post</span><wbr><span><span>Processing</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Per-view post-processing and render-quality configuration.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>frustum</span><wbr><span>Culling</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Skip rendering of objects outside the camera frustum.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>shadows</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Shadow technique for the whole view (<a href="../io.github.erkko68.filament.compose.scene/-shadows/-pcf/index.html">Shadows.Pcf</a>/<a href="../io.github.erkko68.filament.compose.scene/-shadows/-pcfd/index.html">Shadows.Pcfd</a>/<a href="../io.github.erkko68.filament.compose.scene/-shadows/-vsm/index.html">Shadows.Vsm</a>/<a href="../io.github.erkko68.filament.compose.scene/-shadows/-dpcf/index.html">Shadows.Dpcf</a>/ <a href="../io.github.erkko68.filament.compose.scene/-shadows/-pcss/index.html">Shadows.Pcss</a>), or <code class="lang-kotlin">null</code> to disable shadowing entirely. Per-light shadow-map quality is set via each light's <code class="lang-kotlin">shadow</code> (<a href="../io.github.erkko68.filament.compose.scene/-shadow-config/index.html">io.github.erkko68.filament.compose.scene.ShadowConfig</a>).</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>screen</span><wbr><span>Space</span><wbr><span>Refraction</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Enable screen-space refraction for refractive materials.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>stencil</span><wbr><span>Buffer</span><wbr><span><span>Enabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Allocate a stencil buffer (required for stencil-based effects).</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":kotlin:filament-compose/commonMain" data-filterable-set=":kotlin:filament-compose/commonMain"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>transparent</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Enable alpha transparency blending for the view surface.</p></div></div></div></div></div></div></div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
