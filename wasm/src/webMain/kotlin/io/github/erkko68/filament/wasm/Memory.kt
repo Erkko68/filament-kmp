@@ -104,8 +104,9 @@ class HeapScope(val module: FilamentModule) {
     fun floats(values: FloatArray): Int = alloc(values.size * 4).also { module.writeFloats(it, values) }
     fun doubles(values: DoubleArray): Int = alloc(values.size * 8).also { module.writeDoubles(it, values) }
     fun ints(values: IntArray): Int = alloc(values.size * 4).also { module.writeInts(it, values) }
+    fun shorts(values: ShortArray): Int = alloc(values.size * 2).also { p -> values.forEachIndexed { i, v -> module.setU16(p + 2 * i, v.toInt()) } }
 
-    @PublishedApi internal fun freeAll() {
+    fun freeAll() {
         allocations.forEach { module._free(it) }
         allocations.clear()
     }

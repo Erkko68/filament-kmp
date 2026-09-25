@@ -8,6 +8,8 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
 
     actual class Builder actual constructor(count: Int) {
         private val nativeBuilder = FilaRenderableManagerBuilder_create(count)
+        // The C++ builder keeps the bones pointer until build(), so the heap copy lives until then.
+        private val heap = HeapScope(fila)
 
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
             FilaRenderableManagerBuilder_geometry(nativeBuilder, index, type.toNative(), vb.nativeHandle, ib.nativeHandle)
@@ -51,9 +53,7 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         actual fun screenSpaceContactShadows(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_screenSpaceContactShadows(nativeBuilder, enabled) }
         actual fun skinning(boneCount: Int): Builder = apply { FilaRenderableManagerBuilder_skinning(nativeBuilder, boneCount) }
         actual fun skinning(boneCount: Int, bones: FloatArray): Builder = apply {
-            bones.usePinned { pinned ->
-                FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount, pinned)
-            }
+            FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount, heap.floats(bones))
         }
         actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
             FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount, offset)
@@ -71,6 +71,7 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         actual fun build(engine: Engine, entity: Entity) {
             FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
             FilaRenderableManagerBuilder_destroy(nativeBuilder)
+            heap.freeAll()
         }
 
         private fun PrimitiveType.toNative(): Int = io.github.erkko68.filament.toNative(this)

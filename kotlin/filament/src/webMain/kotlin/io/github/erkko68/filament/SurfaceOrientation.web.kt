@@ -5,6 +5,8 @@ import io.github.erkko68.filament.wasm.*
 actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: Int) : AutoCloseable {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaSurfaceOrientationBuilder_create()
+        // The C++ builder keeps the array pointers until build(), so the heap copies live until then.
+        private val heap = HeapScope(fila)
 
         actual fun vertexCount(vertexCount: Int): Builder {
             FilaSurfaceOrientationBuilder_vertexCount(nativeBuilder, vertexCount)
@@ -12,30 +14,22 @@ actual class SurfaceOrientation @InternalFilamentApi constructor(internal val na
         }
 
         actual fun normals(buffer: FloatArray, stride: Int): Builder {
-            buffer.usePinned { pinned ->
-                FilaSurfaceOrientationBuilder_normals(nativeBuilder, pinned, stride)
-            }
+            FilaSurfaceOrientationBuilder_normals(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun tangents(buffer: FloatArray, stride: Int): Builder {
-            buffer.usePinned { pinned ->
-                FilaSurfaceOrientationBuilder_tangents(nativeBuilder, pinned, stride)
-            }
+            FilaSurfaceOrientationBuilder_tangents(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun uvs(buffer: FloatArray, stride: Int): Builder {
-            buffer.usePinned { pinned ->
-                FilaSurfaceOrientationBuilder_uvs(nativeBuilder, pinned, stride)
-            }
+            FilaSurfaceOrientationBuilder_uvs(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun positions(buffer: FloatArray, stride: Int): Builder {
-            buffer.usePinned { pinned ->
-                FilaSurfaceOrientationBuilder_positions(nativeBuilder, pinned, stride)
-            }
+            FilaSurfaceOrientationBuilder_positions(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
@@ -45,24 +39,19 @@ actual class SurfaceOrientation @InternalFilamentApi constructor(internal val na
         }
 
         actual fun triangles16(buffer: ShortArray): Builder {
-            buffer.usePinned { pinned ->
-                val ptr: Int = pinned
-                FilaSurfaceOrientationBuilder_triangles16(nativeBuilder, ptr)
-            }
+            FilaSurfaceOrientationBuilder_triangles16(nativeBuilder, heap.shorts(buffer))
             return this
         }
 
         actual fun triangles32(buffer: IntArray): Builder {
-            buffer.usePinned { pinned ->
-                val ptr: Int = pinned
-                FilaSurfaceOrientationBuilder_triangles32(nativeBuilder, ptr)
-            }
+            FilaSurfaceOrientationBuilder_triangles32(nativeBuilder, heap.ints(buffer))
             return this
         }
 
         actual fun build(): SurfaceOrientation {
             val handle = FilaSurfaceOrientationBuilder_build(nativeBuilder)
             FilaSurfaceOrientationBuilder_destroy(nativeBuilder)
+            heap.freeAll()
             return SurfaceOrientation(handle)
         }
     }

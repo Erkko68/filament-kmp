@@ -34,6 +34,23 @@ class SurfaceOrientationTest : FilamentTestFixture() {
         orientation.destroy()
     }
 
+    // Builder inputs are read at build(), so they must stay valid until then (web heap copies didn't).
+    @Test
+    fun flatQuadYieldsIdentityQuats() {
+        val orientation = SurfaceOrientation.Builder()
+            .vertexCount(4)
+            .positions(floatArrayOf(-1f, -1f, 0f, 1f, -1f, 0f, -1f, 1f, 0f, 1f, 1f, 0f), 0)
+            .normals(floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f, 0f, 0f, 1f), 0)
+            .uvs(floatArrayOf(0f, 0f, 1f, 0f, 0f, 1f, 1f, 1f), 0)
+            .triangleCount(2)
+            .triangles32(intArrayOf(0, 1, 2, 2, 1, 3))
+            .build()
+        val quats = FloatArray(16)
+        orientation.getQuatsAsFloat(quats, 4)
+        orientation.destroy()
+        for (v in 0 until 4) assertEquals(1f, kotlin.math.abs(quats[v * 4 + 3]), 1e-4f, "vertex $v: ${quats.toList()}")
+    }
+
     @Test
     fun testBuilderWithTriangles32() {
         val builder = SurfaceOrientation.Builder()
