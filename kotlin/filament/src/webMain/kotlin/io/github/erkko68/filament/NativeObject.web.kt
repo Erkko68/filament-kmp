@@ -1,59 +1,60 @@
 package io.github.erkko68.filament
 
-// Escape hatch: the underlying Filament.js object behind each wrapper, for interop with code
-// that talks to Filament directly. Read-only — the wrapper owns the object's lifetime.
+// Escape hatch: the wasm heap address behind each wrapper, for interop with code that calls
+// the Fila* externals (io.github.erkko68.filament.wasm) directly. Read-only — the wrapper owns
+// the object's lifetime.
 
 @InternalFilamentApi
-val BufferObject.nativeObject: io.github.erkko68.filament.web.BufferObject get() = jsBufferObject
+val BufferObject.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Camera.nativeObject: io.github.erkko68.filament.web.Camera get() = jsCamera
+val Camera.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val ColorGrading.nativeObject: io.github.erkko68.filament.web.ColorGrading get() = jsColorGrading
+val ColorGrading.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Engine.nativeObject: io.github.erkko68.filament.web.Engine get() = jsEngine
+val Engine.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val EntityManager.nativeObject: io.github.erkko68.filament.web.EntityManager get() = jsEntityManager
+val EntityManager.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Fence.nativeObject: io.github.erkko68.filament.web.Fence get() = jsFence
+val Fence.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val IndexBuffer.nativeObject: io.github.erkko68.filament.web.IndexBuffer get() = jsIndexBuffer
+val IndexBuffer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val IndirectLight.nativeObject: io.github.erkko68.filament.web.IndirectLight get() = jsIndirectLight
+val IndirectLight.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val LightManager.nativeObject: io.github.erkko68.filament.web.LightManager get() = jsLightManager
+val LightManager.nativeObject: Int get() = nativeLightManager
 @InternalFilamentApi
-val Material.nativeObject: io.github.erkko68.filament.web.Material get() = jsMaterial
+val Material.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val MaterialInstance.nativeObject: io.github.erkko68.filament.web.MaterialInstance get() = jsMaterialInstance
+val MaterialInstance.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val MorphTargetBuffer.nativeObject: io.github.erkko68.filament.web.MorphTargetBuffer get() = jsMorphTargetBuffer
+val MorphTargetBuffer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val RenderTarget.nativeObject: io.github.erkko68.filament.web.RenderTarget get() = jsRenderTarget
+val RenderTarget.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val RenderableManager.nativeObject: io.github.erkko68.filament.web.RenderableManager get() = jsRenderableManager
+val RenderableManager.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Renderer.nativeObject: io.github.erkko68.filament.web.Renderer get() = jsRenderer
+val Renderer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Scene.nativeObject: io.github.erkko68.filament.web.Scene get() = jsScene
+val Scene.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val SkinningBuffer.nativeObject: io.github.erkko68.filament.web.SkinningBuffer get() = jsSkinningBuffer
+val SkinningBuffer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Skybox.nativeObject: io.github.erkko68.filament.web.Skybox get() = jsSkybox
+val Skybox.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Stream.nativeObject: Any? get() = jsStream
+val Stream.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val SurfaceOrientation.nativeObject: io.github.erkko68.filament.web.SurfaceOrientation get() = jsSurfaceOrientation
+val SurfaceOrientation.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val SwapChain.nativeObject: io.github.erkko68.filament.web.SwapChain get() = jsSwapChain
+val SwapChain.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Texture.nativeObject: io.github.erkko68.filament.web.Texture get() = jsTexture
+val Texture.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val TransformManager.nativeObject: io.github.erkko68.filament.web.TransformManager get() = jsTransformManager
+val TransformManager.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val VertexBuffer.nativeObject: io.github.erkko68.filament.web.VertexBuffer get() = jsVertexBuffer
+val VertexBuffer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val View.nativeObject: io.github.erkko68.filament.web.View get() = jsView
+val View.nativeObject: Int get() = nativeHandle
 
-/** The canvas this engine renders into, when it owns one. */
+/** The canvas this engine renders into. */
 @InternalFilamentApi
 val Engine.canvas: org.w3c.dom.HTMLCanvasElement? get() = jsCanvas

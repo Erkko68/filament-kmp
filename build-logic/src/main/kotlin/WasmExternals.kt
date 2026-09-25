@@ -20,8 +20,9 @@ import java.io.File
  * clang (from .emsdk, targeting wasm32) parses the headers, so types and struct layouts are the
  * real wasm ABI ones. Per C module (`modules`: interface name → c/<dir>) it emits into [mainDir]:
  * an `external interface` of every function (all numeric: pointers/bool/enums `Int`, 64-bit
- * `JsBigInt`), the enum constants under their C names, and one offsets object per struct. Into
- * [testDir] it emits each function's wasm arity for the export parity test.
+ * `JsBigInt`), top-level wrappers named like the C functions (as cinterop names them) that take
+ * `Boolean`/`Long`/`String?` and call [instance], the enum constants under their C names, and one
+ * offsets object per struct. Into [testDir] it emits each function's wasm arity for the parity test.
  */
 @CacheableTask
 abstract class GenerateWasmExternals : DefaultTask() {
@@ -33,6 +34,8 @@ abstract class GenerateWasmExternals : DefaultTask() {
     @get:Input abstract val packageName: Property<String>
     /** Interface every generated one extends (the hand-written runtime surface). */
     @get:Input abstract val baseInterface: Property<String>
+    /** Expression the wrappers call through, e.g. `fila`. */
+    @get:Input abstract val instance: Property<String>
 
     @get:Internal abstract val cDir: DirectoryProperty
     @get:Internal abstract val emsdkDir: DirectoryProperty
@@ -73,22 +76,45 @@ abstract class GenerateWasmExternals : DefaultTask() {
             val declared = Regex("[^A-Za-z0-9_](Fila[A-Za-z0-9]+_[A-Za-z0-9_]+)\\s*\\(").findAll(text).map { it.groupValues[1] }.toSet()
             val out = StringBuilder(header(pkg, dir))
 
+            val functions = decls.filter { it["kind"] == "FunctionDecl" && it["name"] in declared }.sortedBy { it["name"] as String }
+                .map { toFunction(it, typedefs) }
             out.append("external interface $iface : ${baseInterface.get()} {\n")
-            decls.filter { it["kind"] == "FunctionDecl" && it["name"] in declared }.sortedBy { it["name"] as String }.forEach { fn ->
-                val name = fn["name"] as String
-                val params = (fn["inner"] as List<Map<String, Any?>>?).orEmpty().filter { it["kind"] == "ParmVarDecl" }
-                    .mapIndexed { i, p -> kotlinName(p["name"] as String? ?: "p$i") to kotlinType(desugar(p["type"] as Map<*, *>, typedefs), "$name param") }
-                    .toMutableList()
-                val cReturn = resolve(((fn["type"] as Map<*, *>)["qualType"] as String).substringBefore("(").trim(), typedefs)
-                // wasm C ABI: a struct returned by value becomes a leading result pointer (sret).
-                val ret = if (cReturn.startsWith("struct ")) { params.add(0, "result" to "Int"); "Unit" } else kotlinType(cReturn, "$name return")
-                val retSuffix = if (ret == "Unit") "" else ": $ret"
-                out.append("    fun _$name(${params.joinToString { "${it.first}: ${it.second}" }})$retSuffix\n")
-                arities.append("    \"_$name\" to ${params.size},\n")
+            functions.forEach { fn ->
+                val retSuffix = if (fn.ret.raw == "Unit") "" else ": ${fn.ret.raw}"
+                out.append("    fun _${fn.name}(${fn.params.joinToString { "${it.name}: ${it.raw}" }})$retSuffix\n")
+                arities.append("    \"_${fn.name}\" to ${fn.params.size},\n")
             }
             out.append("}\n\n")
 
+            val call = instance.get()
+            functions.forEach { fn ->
+                val args = fn.params.joinToString { p ->
+                    when (p.kind) {
+                        Kind.BOOL -> "if (${p.name}) 1 else 0"
+                        Kind.I64 -> "${p.name}.toI64()"
+                        Kind.STRING -> "cString(${p.name})"
+                        Kind.RAW -> p.name
+                    }
+                }
+                var body = "$call._${fn.name}($args)"
+                body = when (fn.ret.kind) {
+                    Kind.BOOL -> "$body != 0"
+                    Kind.I64 -> "$body.toKotlinLong()"
+                    Kind.STRING -> "$call.readString($body)"
+                    Kind.RAW -> body
+                }
+                // Kotlin/JS keeps Float as a double; see normalizeF32.
+                if (fn.ret.kotlin == "Float") body = "normalizeF32($body)"
+                if (fn.params.any { it.kind == Kind.STRING }) body = "$call.heapScoped { $body }"
+                val retSuffix = if (fn.ret.kotlin == "Unit") "" else ": ${fn.ret.kotlin}"
+                out.append("fun ${fn.name}(${fn.params.joinToString { "${it.name}: ${it.kotlin}" }})$retSuffix = $body\n")
+            }
+            out.append("\n")
+
             decls.filter { it["kind"] == "EnumDecl" }.forEach { enum ->
+                // C enum types are plain ints at the boundary; keep the names so ported code reads the same.
+                (enum["name"] as String?)?.takeIf { Regex("enum\\s+${Regex.escape(it)}\\s*\\{").containsMatchIn(text) }
+                    ?.let { out.append("typealias $it = Int\n") }
                 var next = 0L
                 (enum["inner"] as List<Map<String, Any?>>?).orEmpty().filter { it["kind"] == "EnumConstantDecl" }.forEach { k ->
                     val kName = k["name"] as String
@@ -99,10 +125,21 @@ abstract class GenerateWasmExternals : DefaultTask() {
             }
             out.append("\n")
 
-            records.filterKeys { Regex("struct\\s+${Regex.escape(it)}\\s*\\{").containsMatchIn(text) }.toSortedMap().forEach { (rec, layout) ->
-                out.append("object $rec {\n    const val SIZE = ${layout.size}\n")
-                layout.fields.forEach { (field, offset) -> out.append("    const val ${kotlinName(field)} = $offset\n") }
-                out.append("}\n\n")
+            // Scalar typedefs (e.g. FilaEntity = uint32_t, FilaTextureSampler = uint64_t) keep their names too.
+            decls.filter { it["kind"] == "TypedefDecl" && (it["name"] as String).startsWith("Fila") }.forEach { td ->
+                val tdName = td["name"] as String
+                val resolved = resolve(tdName, typedefs)
+                val scalar = !resolved.startsWith("struct ") && !resolved.startsWith("enum ") && '*' !in resolved && '(' !in resolved
+                if (scalar && Regex("typedef\\s+[^;{}]*\\b${Regex.escape(tdName)}\\s*;").containsMatchIn(text)) {
+                    out.append("typealias $tdName = ${type(resolved, resolved, tdName).kotlin}\n")
+                }
+            }
+            out.append("\n")
+
+            val call2 = instance.get()
+            records.filterKeys { "::" !in it && Regex("struct\\s+${Regex.escape(it)}\\s*\\{").containsMatchIn(text) }.toSortedMap().forEach { (rec, layout) ->
+                out.append(structView(rec, layout, typedefs, records, call2, ""))
+                out.append("\n")
             }
             mainOut.resolve("$iface.kt").writeText(out.toString())
         }
@@ -112,6 +149,40 @@ abstract class GenerateWasmExternals : DefaultTask() {
                 "/** wasm export name → parameter count, for the export parity test. */\n" +
                 "val WASM_ARITIES: List<Pair<String, Int>> = listOf(\n$arities)\n",
         )
+    }
+
+    private enum class Kind { RAW, BOOL, I64, STRING }
+    private class Type(val raw: String, val kotlin: String, val kind: Kind)
+    private class Param(val name: String, val raw: String, val kotlin: String, val kind: Kind)
+    private class Function(val name: String, val params: List<Param>, val ret: Type)
+
+    @Suppress("UNCHECKED_CAST")
+    private fun toFunction(fn: Map<String, Any?>, typedefs: Map<String, String>): Function {
+        val name = fn["name"] as String
+        val params = (fn["inner"] as List<Map<String, Any?>>?).orEmpty().filter { it["kind"] == "ParmVarDecl" }
+            .mapIndexed { i, p ->
+                val type = p["type"] as Map<*, *>
+                val t = type(desugar(type, typedefs), (type["qualType"] as String).trim(), "$name param")
+                Param(kotlinName(p["name"] as String? ?: "p$i"), t.raw, t.kotlin, t.kind)
+            }.toMutableList()
+        val cReturn = ((fn["type"] as Map<*, *>)["qualType"] as String).substringBefore("(").trim()
+        val resolved = resolve(cReturn, typedefs)
+        // wasm C ABI: a struct returned by value becomes a leading result pointer (sret).
+        val ret = if (resolved.startsWith("struct ")) {
+            params.add(0, Param("result", "Int", "Int", Kind.RAW))
+            Type("Unit", "Unit", Kind.RAW)
+        } else type(resolved, cReturn, "$name return")
+        return Function(name, params, ret)
+    }
+
+    private fun type(resolved: String, written: String, where: String): Type {
+        val raw = kotlinType(resolved, where)
+        return when {
+            resolved == "_Bool" || resolved == "bool" -> Type(raw, "Boolean", Kind.BOOL)
+            raw == "JsBigInt" -> Type(raw, "Long", Kind.I64)
+            written.replace(" ", "") == "constchar*" -> Type(raw, "String?", Kind.STRING)
+            else -> Type(raw, raw, Kind.RAW)
+        }
     }
 
     private fun emcc(work: File, output: String, args: List<String>): File {
@@ -125,14 +196,68 @@ abstract class GenerateWasmExternals : DefaultTask() {
         return out
     }
 
-    private class Layout(val size: Int, val fields: List<Pair<String, Int>>)
+    private class Field(val name: String, val offset: Int, val type: String)
+    private class Layout(val size: Int, val fields: List<Field>)
+
+    // A view over a struct at `ptr` in the heap, shaped like the cinterop struct type. Anonymous
+    // nested structs (`struct { ... } ssct;`) become nested classes named after their field.
+    private fun structView(name: String, layout: Layout, typedefs: Map<String, String>, records: Map<String, Layout>, call: String, indent: String): String {
+        val out = StringBuilder("${indent}class $name(val ptr: Int) {\n")
+        layout.fields.forEach { f ->
+            val anonymous = f.type.removePrefix("struct ").takeIf { "::(unnamed" in it }
+            if (anonymous != null && anonymous in records) {
+                val nested = f.name.replaceFirstChar { it.uppercase() }
+                out.append("$indent    val ${kotlinName(f.name)}: $nested get() = $nested(ptr + ${f.offset})\n")
+                out.append(structView(nested, records.getValue(anonymous), typedefs, records, call, "$indent    "))
+            } else {
+                fieldAccessor(f, typedefs, records, call)?.let { out.append("$indent    $it\n") }
+            }
+        }
+        out.append("$indent    companion object {\n$indent        const val SIZE = ${layout.size}\n")
+        layout.fields.forEach { f -> out.append("$indent        const val ${kotlinName(f.name)} = ${f.offset}\n") }
+        return out.append("$indent    }\n$indent}\n").toString()
+    }
+
+    // Typed property for one struct field, or null when the type has no view (left as an offset).
+    private fun fieldAccessor(f: Field, typedefs: Map<String, String>, records: Map<String, Layout>, call: String): String? {
+        val name = kotlinName(f.name)
+        val at = "ptr + ${f.offset}"
+        val array = Regex("^(.*)\\[(\\d+)]$").find(f.type)
+        val base = resolve((array?.groupValues?.get(1) ?: f.type).trim(), typedefs)
+        if (array != null) {
+            val view = when (base) {
+                "float" -> "F32Array"; "double" -> "F64Array"
+                "int", "unsigned int" -> "I32Array"; "unsigned char", "char", "signed char" -> "U8Array"
+                "_Bool", "bool" -> "BoolArray"
+                else -> return null
+            }
+            return "val $name: $view get() = $view($at)"
+        }
+        if (base.startsWith("struct ")) {
+            val nested = base.removePrefix("struct ").trim()
+            return if (nested in records) "val $name: $nested get() = $nested($at)" else null
+        }
+        val (type, get, set) = when {
+            '*' in base || '(' in base -> Triple("Int", "getI32", "setI32")
+            base == "float" -> Triple("Float", "getF32", "setF32")
+            base == "double" -> Triple("Double", "getF64", "setF64")
+            base == "_Bool" || base == "bool" -> Triple("Boolean", "getBool", "setBool")
+            base == "long long" || base == "unsigned long long" -> Triple("Long", "getI64", "setI64")
+            base == "unsigned char" || base == "char" || base == "signed char" -> Triple("Int", "getU8", "setU8")
+            base == "unsigned short" || base == "short" -> Triple("Int", "getU16", "setU16")
+            base.startsWith("enum ") || base in setOf("int", "unsigned int", "long", "unsigned long") -> Triple("Int", "getI32", "setI32")
+            else -> return null
+        }
+        return "var $name: $type get() = $call.$get($at); set(value) { $call.$set($at, value) }"
+    }
 
     // Parses clang's record-layout dump; keeps top-level fields ("|   type name") of named Fila* structs.
     private fun parseLayouts(dump: String): Map<String, Layout> = dump.split("*** Dumping AST Record Layout").mapNotNull { block ->
         val lines = block.lines()
-        val name = lines.firstNotNullOfOrNull { Regex("^\\s*0 \\| struct (Fila\\w+)$").find(it)?.groupValues?.get(1) } ?: return@mapNotNull null
+        val name = lines.firstNotNullOfOrNull { Regex("^\\s*0 \\| struct (Fila\\w+(::\\(unnamed at [^)]*\\))?)$").find(it)?.groupValues?.get(1) } ?: return@mapNotNull null
         val size = Regex("\\[sizeof=(\\d+)").find(block)!!.groupValues[1].toInt()
-        val fields = lines.mapNotNull { Regex("^\\s*(\\d+) \\|   (\\S.*) (\\w+)$").find(it) }.map { it.groupValues[3] to it.groupValues[1].toInt() }
+        val fields = lines.mapNotNull { Regex("^\\s*(\\d+) \\|   (\\S.*) (\\w+)$").find(it) }
+            .map { Field(it.groupValues[3], it.groupValues[1].toInt(), it.groupValues[2].replace("const ", "").trim()) }
         name to Layout(size, fields)
     }.toMap()
 

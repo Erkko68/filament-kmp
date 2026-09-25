@@ -44,18 +44,29 @@ external interface FilamentWasm : FilamentC, FilamentUtilsC, GltfioC
 external interface EmscriptenGL : JsAny {
     fun registerContext(context: JsAny, attributes: JsAny): Int
     fun makeContextCurrent(handle: Int): Boolean
+    fun deleteContext(handle: Int)
 }
 
-/** The loaded module. Only valid once [loadFilament] has resolved. */
-lateinit var fila: FilamentWasm
-    private set
+private var instance: FilamentWasm? = null
+
+/**
+ * The loaded filament-kmp.wasm instance. Only valid once [loadFilament] has resolved; an instance
+ * published on `globalThis.filamentKmp` (e.g. by the test bootstrap) is adopted instead of
+ * instantiating a second one.
+ */
+val fila: FilamentWasm
+    get() = instance ?: (published() ?: error("filament-kmp.wasm is not loaded: wait for loadFilament() / Filament.initJs")).also { instance = it }
 
 private val loading: Promise<FilamentWasm> by lazy {
-    createFilamentModule().then { module -> fila = module; module }
+    published()?.let { m -> Promise { resolve, _ -> resolve(m) } }
+        ?: createFilamentModule().then { m -> publish(m); m }
 }
 
-/** Instantiates filament-kmp.wasm (once) and sets [fila]. */
+/** Instantiates filament-kmp.wasm once; resolves with the instance behind [fila]. */
 fun loadFilament(): Promise<FilamentWasm> = loading
 
 /** Global factory defined by filament-kmp.js (`-sMODULARIZE -sEXPORT_NAME=createFilamentModule`). */
 private external fun createFilamentModule(): Promise<FilamentWasm>
+
+private fun published(): FilamentWasm? = js("globalThis.filamentKmp || null")
+private fun publish(module: FilamentWasm): Unit = js("globalThis.filamentKmp = module")

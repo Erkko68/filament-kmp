@@ -1,31 +1,40 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.ColorGrading_ToneMapping
+import io.github.erkko68.filament.wasm.*
 
-@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual open class ToneMapper(internal val jsToneMapping: ColorGrading_ToneMapping) {
-    actual class Linear : ToneMapper(ColorGrading_ToneMapping.LINEAR)
-    actual class ACES : ToneMapper(ColorGrading_ToneMapping.ACES)
-    actual class ACESLegacy : ToneMapper(ColorGrading_ToneMapping.ACES_LEGACY)
-    actual class Filmic : ToneMapper(ColorGrading_ToneMapping.FILMIC)
-    // PBR_NEUTRAL, GT7, AGX not in JS bindings — fall back to ACES
-    actual class PBRNeutralToneMapper : ToneMapper(ColorGrading_ToneMapping.ACES)
-    actual class GT7ToneMapper : ToneMapper(ColorGrading_ToneMapping.ACES)
-    actual class Agx actual constructor(look: AgxLook) : ToneMapper(ColorGrading_ToneMapping.ACES) {
+actual open class ToneMapper(internal val nativeHandle: Int) {
+    actual class Linear actual constructor() : ToneMapper(FilaToneMapper_Linear())
+    actual class ACES actual constructor() : ToneMapper(FilaToneMapper_ACES())
+    actual class ACESLegacy actual constructor() : ToneMapper(FilaToneMapper_ACESLegacy())
+    actual class Filmic actual constructor() : ToneMapper(FilaToneMapper_Filmic())
+    actual class PBRNeutralToneMapper actual constructor() : ToneMapper(FilaToneMapper_PBRNeutral())
+    actual class GT7ToneMapper actual constructor() : ToneMapper(FilaToneMapper_GT7())
+    
+    actual class Agx actual constructor(look: AgxLook) : ToneMapper(
+        FilaToneMapper_Agx(look.ordinal)
+    ) {
         actual enum class AgxLook { NONE, PUNCHY, GOLDEN }
     }
-
+    
     actual class Generic actual constructor(
         contrast: Float,
         midGrayIn: Float,
         midGrayOut: Float,
         hdrMax: Float
-    ) : ToneMapper(ColorGrading_ToneMapping.ACES) {
-        actual var contrast: Float = contrast
-        actual var midGrayIn: Float = midGrayIn
-        actual var midGrayOut: Float = midGrayOut
-        actual var hdrMax: Float = hdrMax
+    ) : ToneMapper(FilaToneMapper_Generic(contrast, midGrayIn, midGrayOut, hdrMax)) {
+        actual var contrast: Float
+            get() = FilaToneMapper_Generic_getContrast(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setContrast(nativeHandle, value) }
+        actual var midGrayIn: Float
+            get() = FilaToneMapper_Generic_getMidGrayIn(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setMidGrayIn(nativeHandle, value) }
+        actual var midGrayOut: Float
+            get() = FilaToneMapper_Generic_getMidGrayOut(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setMidGrayOut(nativeHandle, value) }
+        actual var hdrMax: Float
+            get() = FilaToneMapper_Generic_getHdrMax(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setHdrMax(nativeHandle, value) }
     }
-
-    actual class DisplayRange : ToneMapper(ColorGrading_ToneMapping.DISPLAY_RANGE)
+    
+    actual class DisplayRange actual constructor() : ToneMapper(FilaToneMapper_DisplayRange())
 }

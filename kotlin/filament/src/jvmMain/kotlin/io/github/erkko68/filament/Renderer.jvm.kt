@@ -117,7 +117,7 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
         return seg to userData
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (seg, userData) = readPixelsInto(buffer)
         FilamentC.FilaRenderer_readPixels(
@@ -130,7 +130,7 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
         )
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (seg, userData) = readPixelsInto(buffer)
         FilamentC.FilaRenderer_readPixelsRenderTarget(

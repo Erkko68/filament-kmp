@@ -1,68 +1,30 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.IndexBuffer as JSIndexBuffer
-import io.github.erkko68.filament.web.`IndexBuffer_Builder` as JSIndexBufferBuilder
-import io.github.erkko68.filament.web.IndexBuffer_IndexType
-import org.khronos.webgl.set
+import io.github.erkko68.filament.wasm.*
 
-@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class IndexBuffer @InternalFilamentApi constructor(internal val jsIndexBuffer: JSIndexBuffer, actual val indexCount: Int = 0) {
-
-    private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
-        val int8 = org.khronos.webgl.Int8Array(size)
-        forEachIndexed { i, b -> int8[i] = b }
-        return org.khronos.webgl.Uint8Array(int8.buffer)
-    }
-
-    actual fun setBuffer(engine: Engine, data: ByteArray) {
-        jsIndexBuffer.setBuffer(engine.jsEngine, data.toUint8Array())
-    }
-
-    actual fun setBuffer(
-        engine: Engine,
-        data: ByteArray,
-        destOffsetInBytes: Int,
-        count: Int
-    ) {
-        val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
-    }
-
-    actual fun setBuffer(
-        engine: Engine,
-        data: ByteArray,
-        destOffsetInBytes: Int,
-        count: Int,
-        callback: (() -> Unit)?
-    ) {
-        val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsIndexBuffer.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
-        callback?.invoke()
-    }
-
-    actual class Builder {
-        private val jsBuilder: JSIndexBufferBuilder = JSIndexBuffer.Builder()
-        private var indexCount: Int = 0
-
-        actual fun indexCount(indexCount: Int): Builder {
-            this.indexCount = indexCount
-            jsBuilder.indexCount(indexCount.toDouble())
-            return this
-        }
-
-        actual fun bufferType(indexType: IndexType): Builder {
-            val jsType = when (indexType) {
-                IndexType.USHORT -> IndexBuffer_IndexType.USHORT
-                IndexType.UINT -> IndexBuffer_IndexType.UINT
-            }
-            jsBuilder.bufferType(jsType)
-            return this
-        }
-
-        actual fun build(engine: Engine): IndexBuffer {
-            return IndexBuffer(jsBuilder.build(engine.jsEngine), indexCount)
-        }
-
+actual class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaIndexBufferBuilder_create()
         actual enum class IndexType { USHORT, UINT }
+        actual fun indexCount(indexCount: Int): Builder = apply { FilaIndexBufferBuilder_indexCount(nativeBuilder, indexCount) }
+        actual fun bufferType(indexType: IndexType): Builder = apply { 
+            FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.ordinal) 
+        }
+        actual fun build(engine: Engine): IndexBuffer = IndexBuffer(FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle))
+    }
+
+    actual val indexCount: Int get() = FilaIndexBuffer_getIndexCount(nativeHandle).toInt()
+    
+    actual fun setBuffer(engine: Engine, data: ByteArray) {
+        setBuffer(engine, data, 0, 0, null)
+    }
+
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int) {
+        setBuffer(engine, data, destOffsetInBytes, count, null)
+    }
+
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
+        val upload = fila.upload(data, if (count > 0) count else data.size, callback)
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, 0, upload.callback, upload.userData)
     }
 }

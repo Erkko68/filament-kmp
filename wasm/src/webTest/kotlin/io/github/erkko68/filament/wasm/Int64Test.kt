@@ -11,3 +11,14 @@ class Int64Test {
         }
     }
 }
+
+class F32Test {
+    @Test
+    fun floatsReadBackEqualTheirLiterals() = fila.heapScoped {
+        val ptr = alloc(4)
+        for (v in listOf(0.05f, 0.35f, 0.001f, -2.5e-8f, 123456.78f)) {
+            fila.setF32(ptr, v)
+            assertEquals(v, fila.getF32(ptr))
+        }
+    }
+}

@@ -29,7 +29,7 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     private val callbacks = FrameCallbacks()
     private var callbacksRef: StableRef<FrameCallbacks>? = StableRef.create(callbacks)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "never fires — OpenGLDriver (the WebGL backend) implements the frame-completed callback as a no-op.")
     actual fun setFrameCompletedCallback(callback: (() -> Unit)?) {
         callbacks.completed = callback
         val ref = callbacksRef

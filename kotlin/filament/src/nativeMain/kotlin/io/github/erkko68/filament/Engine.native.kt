@@ -296,7 +296,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout.toULong())
     actual fun flush() = FilaEngine_flush(nativeHandle)
     actual val hasUnrecoverableFailure: Boolean get() = FilaEngine_hasUnrecoverableFailure(nativeHandle)
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — Filament's pause needs threads, which the wasm build doesn't have, so it has no effect on rendering.")
     actual var isPaused: Boolean
         get() = FilaEngine_isPaused(nativeHandle)
         set(value) { FilaEngine_setPaused(nativeHandle, value) }

@@ -1,50 +1,18 @@
 package io.github.erkko68.filament
 
-actual object Filament {
-    private var initialized = false
+import io.github.erkko68.filament.wasm.loadFilament
 
+actual object Filament {
     actual fun init() {
-        // On the web the WASM module loads asynchronously.
-        // Use initJs(onReady) to wait for readiness.
+        // filament-kmp.wasm loads asynchronously; use initJs(onReady) to wait for it.
     }
 
     /**
-     * Initializes the Filament WASM module and exposes the `Filament`
-     * namespace members as globals so the external Kotlin declarations
-     * (which resolve against the global scope) can find them.
-     *
-     * [onReady] fires once the WASM module is fully loaded. All Filament
-     * API usage must happen inside (or after) this callback.
-     *
-     * Calling this more than once is safe — subsequent calls invoke
-     * [onReady] immediately.
+     * Loads filament-kmp.wasm (the page must include `filament-kmp.js`). [onReady] fires once the
+     * module is instantiated; all Filament API usage must happen inside or after it. Calling this
+     * again is safe — later calls resolve with the already-loaded module.
      */
     fun initJs(onReady: () -> Unit) {
-        if (initialized) {
-            onReady()
-            return
-        }
-        initWasm {
-            initialized = true
-            onReady()
-        }
+        loadFilament().then { onReady(); null }
     }
-}
-
-/**
- * Calls the JS-side `Filament.init()`, waits for WASM readiness, then exposes
- * the `Filament` namespace members as globals. Only missing names are added
- * (never overwrites, so e.g. `window.fetch` is untouched); `$`-separated names
- * (`Texture$Builder`) are declared as-is via `@JsName` on the externals, so no
- * `_`-alias copies are needed.
- */
-private fun initWasm(onReady: () -> Unit) {
-    js("""
-        Filament.init([], function() {
-            Object.getOwnPropertyNames(Filament).forEach(function(k) {
-                if (!(k in globalThis)) globalThis[k] = Filament[k];
-            });
-            onReady();
-        });
-    """)
 }

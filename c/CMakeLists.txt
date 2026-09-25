@@ -528,5 +528,8 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
         "-sFULL_ES3"
         "-sMIN_WEBGL_VERSION=2"
         "-sMAX_WEBGL_VERSION=2"
+        # C++ exceptions escaping to JS (Filament panics) become Errors carrying the message.
+        "-fexceptions"
+        "-sEXCEPTION_STACK_TRACES=1"
     )
 endif()

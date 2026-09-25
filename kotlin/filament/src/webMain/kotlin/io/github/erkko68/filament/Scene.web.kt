@@ -1,81 +1,59 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.interop.toJsArray
+import io.github.erkko68.filament.wasm.*
 
-import io.github.erkko68.filament.web.Scene as JSScene
-
-actual class Scene @InternalFilamentApi constructor(internal val jsScene: JSScene) {
-    // Cached for wrapper identity, as on the other platforms; the engine-side getters back
-    // the case where the scene was populated outside this wrapper.
+actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: Int) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 
-    // Scene has no getEntities() in C++ at all — only forEach(Invocable), which embind
-    // cannot bind — so membership is mirrored here to back getEntities()/forEach().
-    private val _entities = mutableSetOf<Int>()
-
     actual var skybox: Skybox?
-        get() = _skybox ?: jsScene.getSkybox()?.let { Skybox(it) }
+        get() = _skybox
         set(value) {
             _skybox = value
-            jsScene.setSkybox(value?.jsSkybox)
+            FilaScene_setSkybox(nativeHandle, value?.nativeHandle ?: 0)
         }
 
     actual var indirectLight: IndirectLight?
-        get() = _indirectLight ?: jsScene.getIndirectLight()?.let { IndirectLight(it) }
+        get() = _indirectLight
         set(value) {
             _indirectLight = value
-            jsScene.setIndirectLight(value?.jsIndirectLight)
+            FilaScene_setIndirectLight(nativeHandle, value?.nativeHandle ?: 0)
         }
 
-    actual fun addEntity(entity: Entity) {
-        if (_entities.add(entity)) {
-            jsScene.addEntity(EntityManager.jsEntityOf(entity))
-        }
-    }
+    actual fun addEntity(entity: Entity) = FilaScene_addEntity(nativeHandle, entity)
 
     actual fun addEntities(entities: IntArray) {
-        val toAdd = entities.filter { _entities.add(it) }
-            .map { EntityManager.jsEntityOf(it) }
-        if (toAdd.isNotEmpty()) jsScene.addEntities(toAdd.toJsArray())
-    }
-
-    actual fun removeEntity(entity: Entity) {
-        if (_entities.remove(entity)) {
-            jsScene.remove(EntityManager.jsEntityOf(entity))
+        entities.usePinned { pinned ->
+            FilaScene_addEntities(nativeHandle, pinned, entities.size)
         }
     }
 
-    actual fun remove(entity: Entity) {
-        removeEntity(entity)
-    }
+    actual fun removeEntity(entity: Entity) = FilaScene_remove(nativeHandle, entity)
+    actual fun remove(entity: Entity) = FilaScene_remove(nativeHandle, entity)
 
     actual fun removeEntities(entities: IntArray) {
-        val toRemove = entities.filter { _entities.remove(it) }
-            .map { EntityManager.jsEntityOf(it) }
-        if (toRemove.isNotEmpty()) jsScene.removeEntities(toRemove.toJsArray())
+        entities.usePinned { pinned ->
+            FilaScene_removeEntities(nativeHandle, pinned, entities.size)
+        }
     }
 
-    actual val entityCount: Int
-        get() = jsScene.getEntityCount().toInt()
-
-    actual val renderableCount: Int
-        get() = jsScene.getRenderableCount().toInt()
-
-    actual val lightCount: Int
-        get() = jsScene.getLightCount().toInt()
-
-    actual fun hasEntity(entity: Entity): Boolean {
-        return jsScene.hasEntity(EntityManager.jsEntityOf(entity))
-    }
+    actual val entityCount: Int get() = FilaScene_getEntityCount(nativeHandle).toInt()
+    actual val renderableCount: Int get() = FilaScene_getRenderableCount(nativeHandle).toInt()
+    actual val lightCount: Int get() = FilaScene_getLightCount(nativeHandle).toInt()
+    actual fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity)
 
     actual fun getEntities(out: IntArray?): IntArray {
-        val result = out ?: IntArray(_entities.size)
-        _entities.toIntArray().copyInto(result)
+        val count = entityCount
+        val result = if (out != null && out.size >= count) out else IntArray(count)
+        if (count > 0) {
+            result.usePinned { pinned ->
+                FilaScene_getEntities(nativeHandle, pinned, count)
+            }
+        }
         return result
     }
 
     actual fun forEach(block: (Entity) -> Unit) {
-        _entities.forEach(block)
+        getEntities().forEach(block)
     }
 }

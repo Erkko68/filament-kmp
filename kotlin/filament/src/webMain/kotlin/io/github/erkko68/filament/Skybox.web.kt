@@ -1,64 +1,48 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.interop.jsNumbers
-import io.github.erkko68.filament.web.interop.toJsNumbers
+import io.github.erkko68.filament.wasm.*
 
-import io.github.erkko68.filament.web.Skybox as JSSkybox
-import io.github.erkko68.filament.web.`Skybox_Builder` as JSSkyboxBuilder
-
-actual class Skybox @InternalFilamentApi constructor(internal val jsSkybox: JSSkybox, private val builderIntensity: Float? = null) {
-    actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
-        jsSkybox.setColor(jsNumbers(r, g, b, a))
-    }
-
-    // Skybox$Builder doesn't bind `intensity` (only priority/color/environment/
-    // showSun), and Skybox doesn't bind `setIntensity` — so the Builder's
-    // requested intensity can't reach native. Echo it back here when set;
-    // otherwise fall through to whatever Filament defaulted to.
-    actual val intensity: Float get() = builderIntensity ?: jsSkybox.getIntensity().toFloat()
-    actual val texture: Texture? get() = jsSkybox.getTexture()?.let { Texture(it) }
-    actual val layerMask: Int get() = jsSkybox.getLayerMask().toInt()
-
-    actual fun setLayerMask(select: Int, value: Int) {
-        jsSkybox.setLayerMask(select.toDouble(), value.toDouble())
-    }
-
-    actual class Builder {
-        private val jsBuilder = JSSkybox.Builder()
-        private var builderIntensity: Float? = null
+actual class Skybox @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaSkyboxBuilder_create()
 
         actual fun environment(cubemap: Texture): Builder {
-            jsBuilder.environment(cubemap.jsTexture)
+            FilaSkyboxBuilder_environment(nativeBuilder, cubemap.nativeHandle)
             return this
         }
-
+        
         actual fun showSun(show: Boolean): Builder {
-            jsBuilder.showSun(show)
+            FilaSkyboxBuilder_showSun(nativeBuilder, show)
             return this
         }
-
+        
         actual fun intensity(envIntensity: Float): Builder {
-            builderIntensity = envIntensity
+            FilaSkyboxBuilder_intensity(nativeBuilder, envIntensity)
+            return this
+        }
+        
+        actual fun color(r: Float, g: Float, b: Float, a: Float): Builder {
+            FilaSkyboxBuilder_color(nativeBuilder, r, g, b, a)
             return this
         }
 
         actual fun priority(priority: Int): Builder {
-            jsBuilder.priority(priority.toDouble())
-            return this
-        }
-
-        actual fun color(
-            r: Float,
-            g: Float,
-            b: Float,
-            a: Float
-        ): Builder {
-            jsBuilder.color(jsNumbers(r, g, b, a))
+            FilaSkyboxBuilder_priority(nativeBuilder, priority)
             return this
         }
 
         actual fun build(engine: Engine): Skybox {
-            return Skybox(jsBuilder.build(engine.jsEngine), builderIntensity)
+            val handle = FilaSkyboxBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaSkyboxBuilder_destroy(nativeBuilder)
+            return Skybox(handle)
         }
     }
+
+    actual fun setColor(r: Float, g: Float, b: Float, a: Float) {
+        FilaSkybox_setColor(nativeHandle, r, g, b, a)
+    }
+    actual val intensity: Float get() = FilaSkybox_getIntensity(nativeHandle)
+    actual val layerMask: Int get() = FilaSkybox_getLayerMask(nativeHandle).toInt()
+    actual val texture: Texture? get() = FilaSkybox_getTexture(nativeHandle).takeIf { it != 0 }?.let { Texture(it) }
+    actual fun setLayerMask(select: Int, value: Int) = FilaSkybox_setLayerMask(nativeHandle, select, value)
 }

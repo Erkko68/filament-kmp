@@ -1,103 +1,52 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.RenderTarget as JSRenderTarget
-import io.github.erkko68.filament.web.`RenderTarget_Builder` as JSRenderTargetBuilder
-import io.github.erkko68.filament.web.RenderTarget_AttachmentPoint
-import io.github.erkko68.filament.web.Texture_CubemapFace
+import io.github.erkko68.filament.wasm.*
 
-actual class RenderTarget @InternalFilamentApi constructor(
-    internal val jsRenderTarget: JSRenderTarget,
-    private val engine: Engine? = null,
-) {
-    actual fun getTexture(attachment: AttachmentPoint): Texture? {
-        return jsRenderTarget.getTexture(mapAttachment(attachment))
-            .let { Texture(it).also { t -> t.engine = engine } }
+actual class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: Int, private val textures: Array<Texture?>) {
+    actual enum class AttachmentPoint {
+        COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH
     }
 
-    actual fun getMipLevel(attachment: AttachmentPoint): Int {
-        return jsRenderTarget.getMipLevel(mapAttachment(attachment)).toInt()
-    }
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaRenderTargetBuilder_create()
+        private val textures = arrayOfNulls<Texture>(AttachmentPoint.entries.size)
 
-    actual fun getFace(attachment: AttachmentPoint): Texture.CubemapFace {
-        return when (jsRenderTarget.getFace(mapAttachment(attachment))) {
-            Texture_CubemapFace.POSITIVE_X -> Texture.CubemapFace.POSITIVE_X
-            Texture_CubemapFace.NEGATIVE_X -> Texture.CubemapFace.NEGATIVE_X
-            Texture_CubemapFace.POSITIVE_Y -> Texture.CubemapFace.POSITIVE_Y
-            Texture_CubemapFace.NEGATIVE_Y -> Texture.CubemapFace.NEGATIVE_Y
-            Texture_CubemapFace.POSITIVE_Z -> Texture.CubemapFace.POSITIVE_Z
-            Texture_CubemapFace.NEGATIVE_Z -> Texture.CubemapFace.NEGATIVE_Z
-            else -> error("unreachable")
-        }
-    }
-
-    actual fun getLayer(attachment: AttachmentPoint): Int {
-        return jsRenderTarget.getLayer(mapAttachment(attachment)).toInt()
-    }
-
-    private fun mapAttachment(attachment: AttachmentPoint): RenderTarget_AttachmentPoint {
-        return when (attachment) {
-            AttachmentPoint.COLOR -> RenderTarget_AttachmentPoint.COLOR
-            AttachmentPoint.DEPTH -> RenderTarget_AttachmentPoint.DEPTH
-            else -> RenderTarget_AttachmentPoint.COLOR
-        }
-    }
-
-    actual enum class AttachmentPoint { COLOR, COLOR1, COLOR2, COLOR3, COLOR4, COLOR5, COLOR6, COLOR7, DEPTH }
-    actual class Builder {
-        private val jsBuilder = JSRenderTarget.Builder()
-
-        actual fun texture(
-            attachment: AttachmentPoint,
-            texture: Texture?
-        ): Builder {
-            if (texture != null) {
-                jsBuilder.texture(mapAttachment(attachment), texture.jsTexture)
-            }
+        actual fun texture(attachment: AttachmentPoint, texture: Texture?): Builder {
+            textures[attachment.ordinal] = texture
+            FilaRenderTargetBuilder_texture(nativeBuilder, attachment.ordinal, texture?.nativeHandle ?: 0)
             return this
         }
 
-        actual fun mipLevel(
-            attachment: AttachmentPoint,
-            level: Int
-        ): Builder {
-            jsBuilder.mipLevel(mapAttachment(attachment), level.toDouble())
+        actual fun mipLevel(attachment: AttachmentPoint, level: Int): Builder {
+            FilaRenderTargetBuilder_mipLevel(nativeBuilder, attachment.ordinal, level)
             return this
         }
 
-        actual fun face(
-            attachment: AttachmentPoint,
-            face: Texture.CubemapFace
-        ): Builder {
-            val jsFace = when (face) {
-                Texture.CubemapFace.POSITIVE_X -> Texture_CubemapFace.POSITIVE_X
-                Texture.CubemapFace.NEGATIVE_X -> Texture_CubemapFace.NEGATIVE_X
-                Texture.CubemapFace.POSITIVE_Y -> Texture_CubemapFace.POSITIVE_Y
-                Texture.CubemapFace.NEGATIVE_Y -> Texture_CubemapFace.NEGATIVE_Y
-                Texture.CubemapFace.POSITIVE_Z -> Texture_CubemapFace.POSITIVE_Z
-                Texture.CubemapFace.NEGATIVE_Z -> Texture_CubemapFace.NEGATIVE_Z
-            }
-            jsBuilder.face(mapAttachment(attachment), jsFace)
+        actual fun face(attachment: AttachmentPoint, face: Texture.CubemapFace): Builder {
+            FilaRenderTargetBuilder_face(nativeBuilder, attachment.ordinal, face.ordinal)
             return this
         }
 
-        actual fun layer(
-            attachment: AttachmentPoint,
-            layer: Int
-        ): Builder {
-            jsBuilder.layer(mapAttachment(attachment), layer.toDouble())
+        actual fun layer(attachment: AttachmentPoint, layer: Int): Builder {
+            FilaRenderTargetBuilder_layer(nativeBuilder, attachment.ordinal, layer)
             return this
         }
 
         actual fun build(engine: Engine): RenderTarget {
-            return RenderTarget(jsBuilder.build(engine.jsEngine), engine)
-        }
-
-        private fun mapAttachment(attachment: AttachmentPoint): RenderTarget_AttachmentPoint {
-            return when (attachment) {
-                AttachmentPoint.COLOR -> RenderTarget_AttachmentPoint.COLOR
-                AttachmentPoint.COLOR1 -> RenderTarget_AttachmentPoint.COLOR // JS only has COLOR and DEPTH
-                else -> RenderTarget_AttachmentPoint.DEPTH
-            }
+            val handle = FilaRenderTargetBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaRenderTargetBuilder_destroy(nativeBuilder)
+            return RenderTarget(handle, textures.copyOf())
         }
     }
+
+    actual fun getTexture(attachment: AttachmentPoint): Texture? = textures[attachment.ordinal]
+
+    actual fun getMipLevel(attachment: AttachmentPoint): Int =
+        FilaRenderTarget_getMipLevel(nativeHandle, attachment.ordinal).toInt()
+
+    actual fun getFace(attachment: AttachmentPoint): Texture.CubemapFace =
+        Texture.CubemapFace.entries[FilaRenderTarget_getFace(nativeHandle, attachment.ordinal).toInt()]
+
+    actual fun getLayer(attachment: AttachmentPoint): Int =
+        FilaRenderTarget_getLayer(nativeHandle, attachment.ordinal).toInt()
 }

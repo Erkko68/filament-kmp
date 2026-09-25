@@ -24,6 +24,7 @@ val generateWasmExternals = tasks.register<GenerateWasmExternals>("generateWasmE
     headers.from(modules.values.map { rootProject.fileTree("c/$it/c") { include("*.h") } })
     packageName.set("io.github.erkko68.filament.wasm")
     baseInterface.set("FilamentModule")
+    instance.set("fila")
     cDir.set(rootProject.layout.projectDirectory.dir("c"))
     emsdkDir.set(rootProject.layout.projectDirectory.dir(".emsdk"))
     mainDir.set(layout.buildDirectory.dir("generated/wasmExternals/webMain"))

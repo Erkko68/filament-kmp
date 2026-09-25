@@ -1,70 +1,70 @@
 package io.github.erkko68.filament
 
-import org.khronos.webgl.set
-import io.github.erkko68.filament.web.MorphTargetBuffer as JSMorphTargetBuffer
+import io.github.erkko68.filament.wasm.*
 
-actual class MorphTargetBuffer @InternalFilamentApi constructor(
-    internal val jsMorphTargetBuffer: JSMorphTargetBuffer,
-) {
-    actual val vertexCount: Int get() = jsMorphTargetBuffer.getVertexCount().toInt()
-    actual val count: Int get() = jsMorphTargetBuffer.getCount().toInt()
-    actual val hasPositions: Boolean get() = jsMorphTargetBuffer.hasPositions()
-    actual val hasTangents: Boolean get() = jsMorphTargetBuffer.hasTangents()
-    actual val isCustomMorphingEnabled: Boolean get() = jsMorphTargetBuffer.isCustomMorphingEnabled()
-
-    actual fun setPositionsAt(
-        engine: Engine,
-        targetIndex: Int,
-        positions: FloatArray,
-        count: Int
-    ) {
-        val typed = org.khronos.webgl.Float32Array(positions.size).also { arr ->
-            positions.forEachIndexed { i, v -> arr[i] = v }
-        }
-        jsMorphTargetBuffer.setPositionsAt(engine.jsEngine, targetIndex.toDouble(), typed, count.toDouble(), 0.0)
-    }
-
-    actual fun setTangentsAt(
-        engine: Engine,
-        targetIndex: Int,
-        tangents: ShortArray,
-        count: Int
-    ) {
-        val typed = org.khronos.webgl.Int16Array(tangents.size).also { arr ->
-            tangents.forEachIndexed { i, v -> arr[i] = v }
-        }
-        jsMorphTargetBuffer.setTangentsAt(engine.jsEngine, targetIndex.toDouble(), typed, count.toDouble(), 0.0)
-    }
-
-    actual class Builder {
-        private val jsBuilder = JSMorphTargetBuffer.Builder()
+actual class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaMorphTargetBufferBuilder_create()
 
         actual fun vertexCount(vertexCount: Int): Builder {
-            jsBuilder.vertexCount(vertexCount.toDouble())
+            FilaMorphTargetBufferBuilder_vertexCount(nativeBuilder, vertexCount)
             return this
         }
 
         actual fun count(count: Int): Builder {
-            jsBuilder.count(count.toDouble())
+            FilaMorphTargetBufferBuilder_count(nativeBuilder, count)
             return this
         }
 
         actual fun withPositions(enabled: Boolean): Builder {
-            jsBuilder.withPositions(enabled)
+            FilaMorphTargetBufferBuilder_withPositions(nativeBuilder, enabled)
             return this
         }
 
         actual fun withTangents(enabled: Boolean): Builder {
-            jsBuilder.withTangents(enabled)
+            FilaMorphTargetBufferBuilder_withTangents(nativeBuilder, enabled)
             return this
         }
 
         actual fun enableCustomMorphing(enabled: Boolean): Builder {
-            jsBuilder.enableCustomMorphing(enabled)
+            FilaMorphTargetBufferBuilder_enableCustomMorphing(nativeBuilder, enabled)
             return this
         }
 
-        actual fun build(engine: Engine): MorphTargetBuffer =
-            MorphTargetBuffer(jsBuilder.build(engine.jsEngine))
+        actual fun build(engine: Engine): MorphTargetBuffer {
+            val handle = FilaMorphTargetBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaMorphTargetBufferBuilder_destroy(nativeBuilder)
+            return MorphTargetBuffer(handle)
+        }
+    }
+
+    actual val vertexCount: Int get() = FilaMorphTargetBuffer_getVertexCount(nativeHandle).toInt()
+    actual val count: Int get() = FilaMorphTargetBuffer_getCount(nativeHandle).toInt()
+    actual val hasPositions: Boolean get() = FilaMorphTargetBuffer_hasPositions(nativeHandle)
+    actual val hasTangents: Boolean get() = FilaMorphTargetBuffer_hasTangents(nativeHandle)
+    actual val isCustomMorphingEnabled: Boolean get() = FilaMorphTargetBuffer_isCustomMorphingEnabled(nativeHandle)
+
+    actual fun setPositionsAt(engine: Engine, targetIndex: Int, positions: FloatArray, count: Int) {
+        positions.usePinned { pinned ->
+            FilaMorphTargetBuffer_setPositionsAt(
+                nativeHandle,
+                engine.nativeHandle,
+                targetIndex,
+                pinned,
+                count
+            )
+        }
+    }
+
+    actual fun setTangentsAt(engine: Engine, targetIndex: Int, tangents: ShortArray, count: Int) {
+        tangents.usePinned { pinned ->
+            FilaMorphTargetBuffer_setTangentsAt(
+                nativeHandle,
+                engine.nativeHandle,
+                targetIndex,
+                pinned,
+                count
+            )
+        }
     }
 }

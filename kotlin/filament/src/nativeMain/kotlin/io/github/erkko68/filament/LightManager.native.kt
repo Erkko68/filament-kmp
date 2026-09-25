@@ -115,12 +115,10 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
             get() = FloatArray(4) { nativeOptions.transform[it] }
             set(value) { for (i in 0 until 4.coerceAtMost(value.size)) nativeOptions.transform[i] = value[i] }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetConstant: Float
             get() = nativeOptions.polygonOffsetConstant
             set(value) { nativeOptions.polygonOffsetConstant = value }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "unreachable — LightManager.Builder.shadowOptions is itself a no-op on web (embind cannot register the mat4f transform field).")
         actual var polygonOffsetSlope: Float
             get() = nativeOptions.polygonOffsetSlope
             set(value) { nativeOptions.polygonOffsetSlope = value }
@@ -168,7 +166,6 @@ actual class LightManager @InternalFilamentApi constructor(internal val nativeLi
         
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilaLightManagerBuilder_lightChannel(nativeBuilder, channel.toUInt(), enable) }
         actual fun castShadows(enable: Boolean): Builder = apply { FilaLightManagerBuilder_castShadows(nativeBuilder, enable) }
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — upstream embind registers ShadowOptions with an unregisterable mat4f field, so the binding is unreachable; per-light shadow options stay at Filament's defaults on web.")
         actual fun shadowOptions(options: ShadowOptions): Builder = apply { FilaLightManagerBuilder_shadowOptions(nativeBuilder, options.nativeOptions.ptr) }
         actual fun castLight(enabled: Boolean): Builder = apply { FilaLightManagerBuilder_castLight(nativeBuilder, enabled) }
         actual fun position(x: Float, y: Float, z: Float): Builder = apply { FilaLightManagerBuilder_position(nativeBuilder, x, y, z) }

@@ -1,152 +1,113 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.interop.jsNumbers
-import io.github.erkko68.filament.web.interop.toJsNumbers
+import io.github.erkko68.filament.wasm.*
 
-import io.github.erkko68.filament.web.ColorGrading as JSColorGrading
-import io.github.erkko68.filament.web.`ColorGrading_Builder` as JSColorGradingBuilder
-import io.github.erkko68.filament.web.ColorGrading_QualityLevel
-
-actual class ColorGrading @InternalFilamentApi constructor(internal val jsColorGrading: JSColorGrading) {
-    actual class Builder {
-        private val jsBuilder = JSColorGrading.Builder()
+actual class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual class Builder actual constructor() {
+        internal val nativeHandle: Int = FilaColorGradingBuilder_create()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
-            jsBuilder.quality(when (qualityLevel) {
-                QualityLevel.LOW -> ColorGrading_QualityLevel.LOW
-                QualityLevel.MEDIUM -> ColorGrading_QualityLevel.MEDIUM
-                QualityLevel.HIGH -> ColorGrading_QualityLevel.HIGH
-                QualityLevel.ULTRA -> ColorGrading_QualityLevel.ULTRA
-            })
+            FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal)
             return this
         }
 
         actual fun format(format: LutFormat): Builder {
-            val jsFormat = when (format) {
-                LutFormat.INTEGER -> io.github.erkko68.filament.web.ColorGrading_LutFormat.INTEGER
-                LutFormat.FLOAT -> io.github.erkko68.filament.web.ColorGrading_LutFormat.FLOAT
-            }
-            jsBuilder.format(jsFormat)
+            FilaColorGradingBuilder_format(nativeHandle, format.ordinal)
             return this
         }
 
         actual fun dimensions(dim: Int): Builder {
-            jsBuilder.dimensions(dim.toDouble())
+            FilaColorGradingBuilder_dimensions(nativeHandle, dim)
             return this
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            jsBuilder.toneMapping(toneMapper.jsToneMapping)
+            FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
             return this
         }
 
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
-            jsBuilder.luminanceScaling(luminanceScaling)
+            FilaColorGradingBuilder_luminanceScaling(nativeHandle, luminanceScaling)
             return this
         }
 
         actual fun gamutMapping(gamutMapping: Boolean): Builder {
-            jsBuilder.gamutMapping(gamutMapping)
+            FilaColorGradingBuilder_gamutMapping(nativeHandle, gamutMapping)
             return this
         }
 
         actual fun exposure(exposure: Float): Builder {
-            jsBuilder.exposure(exposure.toDouble())
+            FilaColorGradingBuilder_exposure(nativeHandle, exposure)
             return this
         }
 
         actual fun nightAdaptation(adaptation: Float): Builder {
-            jsBuilder.nightAdaptation(adaptation > 0.5f) // JS might take bool
+            FilaColorGradingBuilder_nightAdaptation(nativeHandle, adaptation)
             return this
         }
 
-        actual fun whiteBalance(
-            temperature: Float,
-            tint: Float
-        ): Builder {
-            jsBuilder.whiteBalance(temperature.toDouble(), tint.toDouble())
+        actual fun whiteBalance(temperature: Float, tint: Float): Builder {
+            FilaColorGradingBuilder_whiteBalance(nativeHandle, temperature, tint)
             return this
         }
 
-        actual fun channelMixer(
-            outRed: FloatArray,
-            outGreen: FloatArray,
-            outBlue: FloatArray
-        ): Builder {
-            jsBuilder.channelMixer(
-                outRed.toJsNumbers(),
-                outGreen.toJsNumbers(),
-                outBlue.toJsNumbers()
-            )
+        actual fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder {
+            fila.heapScoped {
+                FilaColorGradingBuilder_channelMixer(nativeHandle, floats(outRed), floats(outGreen), floats(outBlue))
+            }
             return this
         }
 
-        actual fun shadowsMidtonesHighlights(
-            shadows: FloatArray,
-            midtones: FloatArray,
-            highlights: FloatArray,
-            ranges: FloatArray
-        ): Builder {
-            jsBuilder.shadowsMidtonesHighlights(
-                shadows.toJsNumbers(),
-                midtones.toJsNumbers(),
-                highlights.toJsNumbers(),
-                ranges.toJsNumbers()
-            )
+        actual fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder {
+            fila.heapScoped {
+                FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, floats(shadows), floats(midtones), floats(highlights), floats(ranges))
+            }
             return this
         }
 
-        actual fun slopeOffsetPower(
-            slope: FloatArray,
-            offset: FloatArray,
-            power: FloatArray
-        ): Builder {
-            jsBuilder.slopeOffsetPower(
-                slope.toJsNumbers(),
-                offset.toJsNumbers(),
-                power.toJsNumbers()
-            )
+        actual fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder {
+            fila.heapScoped {
+                FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, floats(slope), floats(offset), floats(power))
+            }
             return this
         }
 
         actual fun contrast(contrast: Float): Builder {
-            jsBuilder.contrast(contrast.toDouble())
+            FilaColorGradingBuilder_contrast(nativeHandle, contrast)
             return this
         }
 
         actual fun vibrance(vibrance: Float): Builder {
-            jsBuilder.vibrance(vibrance.toDouble())
+            FilaColorGradingBuilder_vibrance(nativeHandle, vibrance)
             return this
         }
 
         actual fun saturation(saturation: Float): Builder {
-            jsBuilder.saturation(saturation.toDouble())
+            FilaColorGradingBuilder_saturation(nativeHandle, saturation)
             return this
         }
 
-        actual fun curves(
-            shadowGamma: FloatArray,
-            midPoint: FloatArray,
-            highlightScale: FloatArray
-        ): Builder {
-            jsBuilder.curves(
-                shadowGamma.toJsNumbers(),
-                midPoint.toJsNumbers(),
-                highlightScale.toJsNumbers()
-            )
+        actual fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
+            fila.heapScoped {
+                FilaColorGradingBuilder_curves(nativeHandle, floats(shadowGamma), floats(midPoint), floats(highlightScale))
+            }
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — customLut is not bound in filament.js.")
-        actual fun customLut(data: FloatArray, dimension: Int): Builder = jsUnsupported("ColorGrading.Builder.customLut")
+        actual fun customLut(data: FloatArray, dimension: Int): Builder {
+            data.usePinned { pinned ->
+                FilaColorGradingBuilder_customLut(nativeHandle, pinned, dimension)
+            }
+            return this
+        }
 
         actual fun fastMath(fastMath: Boolean): Builder {
-            jsBuilder.fastMath(fastMath)
+            FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
             return this
         }
 
         actual fun build(engine: Engine): ColorGrading {
-            return ColorGrading(jsBuilder.build(engine.jsEngine))
+            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
         }
     }
 

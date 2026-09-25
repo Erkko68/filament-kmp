@@ -26,3 +26,18 @@ private fun webGl2Context(canvas: HTMLCanvasElement, attributes: JsAny): JsAny? 
         .forEach(function (e) { gl.getExtension(e); });
     return gl;
 }""")
+
+/**
+ * Unregisters [handle] and loses [canvas]'s WebGL context right away, instead of waiting for GC:
+ * browsers cap live contexts (~16), so tests and apps creating many engines exhaust them otherwise.
+ */
+fun FilamentModule.releaseGlContext(canvas: HTMLCanvasElement, handle: Int) {
+    GL.deleteContext(handle)
+    loseContext(canvas)
+}
+
+private fun loseContext(canvas: HTMLCanvasElement): Unit = js("""{
+    const gl = canvas.getContext('webgl2');
+    const ext = gl && gl.getExtension('WEBGL_lose_context');
+    if (ext) ext.loseContext();
+}""")

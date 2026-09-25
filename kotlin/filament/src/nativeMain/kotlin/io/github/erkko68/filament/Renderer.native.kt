@@ -102,7 +102,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
 
     private class ReadPixelsPinWrapper(val pinned: Pinned<*>, val callback: (() -> Unit)?)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val size = buffer.sizeInBytes.toULong()
         val pinned = buffer.storage.pin()
@@ -127,7 +127,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
         )
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val size = buffer.sizeInBytes.toULong()
         val pinned = buffer.storage.pin()
