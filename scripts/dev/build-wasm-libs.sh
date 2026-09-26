@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Build Filament's static libraries for wasm at the current filaVersion and copy them to
-# prebuilts/wasm/lib (plus build-generated headers to prebuilts/wasm/include), the inputs for
+# prebuilts/wasm/lib (plus the public headers to prebuilts/wasm/include), the inputs for
 # linking our C API into a wasm module (docs/design/web-c-api-bindings.md). Upstream publishes
 # no wasm .a files, so we build them.
 #
@@ -20,7 +20,7 @@ VERSION="$(sed -n 's/^filaVersion=//p' "$ROOT/gradle.properties")"
 TAG="v$VERSION"
 STAMP="$OUT_DIR/.prebuilt-source"
 
-if [[ "${1:-}" != "-f" && -f "$STAMP" && "$(cat "$STAMP")" == "$VERSION|local" ]]; then
+if [[ "${1:-}" != "-f" && -f "$STAMP" && "$(cat "$STAMP")" == "$VERSION|local" && -f "$INCLUDE_DIR/filament/Engine.h" ]]; then
     echo "prebuilts/wasm/lib already built for $TAG (pass -f to rebuild)"
     exit 0
 fi
@@ -45,6 +45,10 @@ mkdir -p "$OUT_DIR" "$INCLUDE_DIR/gltfio/materials"
 find "$CACHE_DIR/out/cmake-wasm-release" -name '*.a' -not -path '*/CMakeFiles/*' -exec cp {} "$OUT_DIR/" \;
 # Like upstream's install step: libfilamat.a is the combined archive (glslang, SPIRV-Tools/Cross).
 cp "$CACHE_DIR/out/cmake-wasm-release/libs/filamat/libfilamat_combined.a" "$OUT_DIR/libfilamat.a"
+# Public headers from the same checkout, so the web build needs no desktop include/ (downloadIncludes).
+for d in filament filament/backend libs/{utils,filamat,camutils,filabridge,filaflat,gltfio,ibl,image,imageio-lite,ktxreader,mathio,uberz,geometry,math,iblprefilter,generatePrefilterMipmap} third_party/{robin-map,mikktspace}; do
+    cp -R "$CACHE_DIR/$d/include/." "$INCLUDE_DIR/"
+done
 # resgen bakes the archive size into this header, so the wasm libuberarchive needs its own copy.
 cp "$CACHE_DIR/out/cmake-wasm-release/libs/gltfio/materials/uberarchive.h" "$INCLUDE_DIR/gltfio/materials/"
 echo "$VERSION|local" > "$STAMP"

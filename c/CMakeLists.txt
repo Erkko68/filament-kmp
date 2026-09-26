@@ -40,8 +40,11 @@ elseif (FILAMENT_PLATFORM STREQUAL "ios-simulator")
         set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/iosSimulatorArm64/lib")
     endif()
 elseif (FILAMENT_PLATFORM STREQUAL "wasm")
-    # Configure with emcmake; libs come from scripts/dev/build-wasm-libs.sh.
+    # Configure with emcmake; libs and headers come from scripts/dev/build-wasm-libs.sh.
     set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/wasm/lib")
+    if (NOT FILAMENT_INCLUDE_DIR)
+        set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/wasm/include")
+    endif()
 elseif (FILAMENT_BUILD_SHARED)
     # JVM/Panama host build (macos, linux, windows). The prebuilt dir name combines the
     # platform (windows → mingw) with the capitalised arch, e.g. macosArm64, linuxX64, mingwX64.
@@ -495,11 +498,9 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
     )
     set_target_properties(filament-web PROPERTIES OUTPUT_NAME "filament-kmp")
 
-    # Build-generated wasm headers (uberarchive.h's baked archive size) shadow the desktop ones.
     target_include_directories(filament-web PRIVATE
         filament/c filament-utils/c gltfio/c
         filament/cpp filament-utils/cpp gltfio/cpp
-        ${FILAMENT_LIB_DIR}/../include
         ${FILAMENT_INCLUDE_DIR}
     )
 
