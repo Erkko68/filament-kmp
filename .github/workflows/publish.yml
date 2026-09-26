@@ -50,10 +50,11 @@ jobs:
         id: ver
         shell: bash
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v6
+      # Restore-only: caches saved from a tag ref are invisible to every other run. Keys match ci.yml's.
+      - uses: actions/cache/restore@v6
         with:
           path: prebuilts/${{ matrix.target }}
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
       - name: Download prebuilts
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
       # cmakeBuildFilamentCJvm only links the shared lib — no jextract needed here
@@ -97,13 +98,16 @@ jobs:
       - name: Read Filament version
         id: ver
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v6
+      - uses: actions/cache/restore@v6
         with:
           path: |
             prebuilts/iosArm64
             prebuilts/iosSimulatorArm64
-            prebuilts/macosArm64
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-ios-macos
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-ios
+      - uses: actions/cache/restore@v6
+        with:
+          path: prebuilts/macosArm64
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-macosArm64
       - name: Download iOS + macOS prebuilts
         run: |
           ./gradlew \

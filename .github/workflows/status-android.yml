@@ -1,7 +1,7 @@
 name: status-android
 
 # Per-platform badge for the README — reflects the Android job's conclusion from the latest CI run
-# on main. Skipped (verified-merge) counts as passing; only a real failure turns the badge red.
+# on main. Skipped (path filter) counts as passing; only a real failure turns the badge red.
 on:
   workflow_run:
     workflows: [CI]

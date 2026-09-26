@@ -1,7 +1,7 @@
 name: status-wasm
 
 # Per-platform badge for the README — reflects the Wasm job's conclusion from the latest CI run on
-# main. Skipped (verified-merge) counts as passing; only a real failure turns the badge red.
+# main. Skipped (path filter) counts as passing; only a real failure turns the badge red.
 on:
   workflow_run:
     workflows: [CI]

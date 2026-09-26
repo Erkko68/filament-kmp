@@ -6,19 +6,16 @@ name: CI
 # already produced earlier in the same job). Replaces the old build.yml/test.yml/samples.yml,
 # which each rebuilt the library from scratch per concern, per platform.
 #
-# The full platform matrix runs on EVERY PR and on push to main — no path filters (mirrors
-# google/filament's always-run presubmit). This means even a docs-only PR runs the matrix, so the
-# required `ci-gate` check always reports and a PR can never be stuck with no status. External
-# (fork) PRs are held until a maintainer clicks "Approve and run" — GitHub's native fork-PR approval
-# setting (Settings → Actions → General), not anything in this file. `workflow_dispatch` runs a
-# single platform manually from the Actions tab.
+# Path-filtered: the `changes` job maps the changed files to platforms (jvm / web / ios / android)
+# and only those jobs run; docs-only changes run nothing but `ci-gate`, which still reports, so a PR
+# is never stuck without a status. Unrecognized paths run everything. External (fork) PRs are held
+# until a maintainer clicks "Approve and run" (Settings → Actions → General). `workflow_dispatch`
+# runs one platform, or all of them, from the Actions tab.
 #
-# To avoid re-running the matrix on `main` for a commit that already passed as a PR, `check-verification`
-# skips the platform jobs on pushes to `main` whose commit is GitHub-verified (the signed merge commit
-# a UI merge produces). Direct/unverified pushes to `main` still run.
+# Pushes to main run the same filtered jobs. Besides post-merge signal, that is what makes caches
+# work: a PR can only restore caches saved by its own ref or by main, so main has to save them.
 #
-# `ci-gate` is the single required status check (enforced on PRs): it fails unless every platform job
-# SUCCEEDED, so a PR can't be merged until the matrix is green.
+# `ci-gate` is the single required status check: on PRs it fails unless every selected job succeeded.
 
 on:
   push:
@@ -32,7 +29,7 @@ on:
         description: 'Which platform job(s) to run'
         type: choice
         default: all
-        options: [all, jvm, js, wasm, ios, android]
+        options: [all, jvm, web, ios, android]
 
 # Cancel superseded runs for the same ref (a new push to a PR supersedes the old one).
 concurrency:
@@ -40,36 +37,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Decides whether the platform matrix should run. Always runs for PRs and manual dispatch; on a
-  # push to main it skips the matrix when the commit is GitHub-verified (a UI merge of a PR that
-  # already passed CI). Direct/unverified pushes to main still run.
-  check-verification:
+  changes:
     runs-on: ubuntu-latest
     outputs:
-      run: ${{ steps.check.outputs.run }}
+      jvm: ${{ steps.filter.outputs.jvm }}
+      web: ${{ steps.filter.outputs.web }}
+      ios: ${{ steps.filter.outputs.ios }}
+      android: ${{ steps.filter.outputs.android }}
     steps:
-      - id: check
+      - uses: actions/checkout@v7
+        with: { sparse-checkout: .github/scripts }
+      - id: filter
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          if [ "${{ github.event_name }}" != "push" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          verified=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}" -q '.commit.verification.verified')
-          if [ "$verified" = "true" ]; then
-            echo "Commit is GitHub-verified (already passed as a PR) — skipping the matrix on main."
-            echo "run=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Commit is not verified — running the matrix."
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          fi
+          EVENT: ${{ github.event_name }}
+          PR: ${{ github.event.pull_request.number }}
+          BEFORE: ${{ github.event.before }}
+          ONLY: ${{ inputs.jobs }}
+        run: .github/scripts/ci-changes.sh >> "$GITHUB_OUTPUT"
 
   jvm:
-    needs: check-verification
-    # Run when verification says so, AND (any non-dispatch event, or a dispatch selecting all|jvm).
-    if: >-
-      needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'jvm')
+    needs: changes
+    if: needs.changes.outputs.jvm == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -159,10 +148,8 @@ jobs:
   # The emsdk half of the web targets, done once: builds filament-kmp/filamat-kmp .{js,wasm}
   # (c/ compiled with emcc) and hands them to the js and wasm jobs as an artifact.
   web-runtime:
-    needs: check-verification
-    if: >-
-      needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'js' || inputs.jobs == 'wasm')
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -187,10 +174,7 @@ jobs:
           retention-days: 1
 
   js:
-    needs: [check-verification, web-runtime]
-    if: >-
-      needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'js')
+    needs: web-runtime
     runs-on: ubuntu-latest
     env:
       FILA_WASM_PREBUILT: '1'
@@ -226,10 +210,7 @@ jobs:
   # wasmJs shares the webMain actuals with js but runs a different compiler backend and
   # browser runtime, so it gets its own job (distinct signal, runs in parallel with js).
   wasm:
-    needs: [check-verification, web-runtime]
-    if: >-
-      needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'wasm')
+    needs: web-runtime
     runs-on: ubuntu-latest
     env:
       FILA_WASM_PREBUILT: '1'
@@ -263,13 +244,20 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   ios:
-    needs: check-verification
-    if: >-
-      needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'ios')
+    needs: changes
+    if: needs.changes.outputs.ios == 'true'
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
+      # Real-backend (Metal) tests need a booted simulator with a graphics context (K/N's
+      # default --standalone mode has none). Boot now; it comes up while the library builds.
+      - name: Boot iOS simulator
+        id: sim
+        run: |
+          DEV="$(xcrun simctl list devices available | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
+          echo "Booting simulator: $DEV"
+          xcrun simctl boot "$DEV" || true
+          echo "device=$DEV" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
@@ -290,18 +278,9 @@ jobs:
             compileKotlinIosArm64 \
             compileKotlinIosSimulatorArm64 \
             --no-configuration-cache
-      - name: Boot iOS simulator
-        id: sim
-        run: |
-          # Real-backend (Metal) tests need a booted simulator with a graphics
-          # context; Kotlin/Native's default --standalone mode has none.
-          DEV="$(xcrun simctl list devices available | grep -oE 'iPhone[^(]*' | head -1 | sed 's/ *$//')"
-          echo "Booting simulator: $DEV"
-          xcrun simctl boot "$DEV" || true
-          xcrun simctl bootstatus "$DEV" -b || true
-          echo "device=$DEV" >> "$GITHUB_OUTPUT"
       - name: Run iOS simulator tests
         run: |
+          xcrun simctl bootstatus "${{ steps.sim.outputs.device }}" -b || true
           ./gradlew \
             :kotlin:filament:iosSimulatorArm64Test \
             :kotlin:filamat:iosSimulatorArm64Test \
@@ -344,10 +323,8 @@ jobs:
           path: kotlin/*/build/reports/tests/
 
   android:
-    needs: check-verification
-    if: >-
-      needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'android')
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -367,8 +344,9 @@ jobs:
       # Cache the AVD + a warmed boot snapshot so the test run boots from a
       # snapshot instead of cold-booting every time — faster and far less flaky
       # for Filament's GPU driver, which is sensitive to first-boot timing.
+      # 2+ GB with a fixed key: only main saves it, PRs restore main's copy.
       - name: AVD cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         id: avd-cache
         with:
           path: |
@@ -386,6 +364,13 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-load
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
+      - if: steps.avd-cache.outputs.cache-hit != 'true' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ steps.avd-cache.outputs.cache-primary-key }}
       - name: Run instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -406,28 +391,15 @@ jobs:
           name: android-test-reports
           path: kotlin/*/build/reports/androidTests/
 
-  # Single required status check for branch protection. Enforced on PRs only — it fails unless
-  # every platform job succeeded, so a PR can't merge until the matrix is green. On push to main
-  # (where jobs may be intentionally skipped by check-verification) and on manual dispatch it only
-  # summarizes, so skipped jobs never fail the gate.
+  # Single required status check for branch protection. Jobs the path filter skipped count as
+  # passing; a failed or cancelled job (or a failed filter) fails it.
   ci-gate:
     if: always()
-    needs: [jvm, web-runtime, js, wasm, ios, android]
+    needs: [changes, jvm, web-runtime, js, wasm, ios, android]
     runs-on: ubuntu-latest
     steps:
-      - name: Require all platform jobs to have succeeded
-        if: github.event_name == 'pull_request'
-        run: |
-          results="${{ join(needs.*.result, ' ') }}"
-          echo "Platform job results: $results"
-          for r in $results; do
-            if [ "$r" != "success" ]; then
-              echo "::error::CI gate failed (a platform job result was '$r'). Ensure jvm/js/wasm/ios/android all pass before merging."
-              exit 1
-            fi
-          done
-          echo "All platform jobs succeeded — gate green."
-      - name: Summary (push / dispatch)
-        if: github.event_name != 'pull_request'
-        run: |
-          echo "Event '${{ github.event_name }}' — gate not enforced. Platform results = ${{ join(needs.*.result, ' ') }}"
+      - run: echo "Results = ${{ join(needs.*.result, ' ') }}"
+      - if: >-
+          needs.changes.result != 'success' ||
+          contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

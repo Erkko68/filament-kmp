@@ -2,7 +2,7 @@ name: status-jvm
 
 # Per-platform badge for the README. Mirrors the conclusion of the JVM job(s) from the most recent
 # CI run on main into this workflow's own conclusion, so `status-jvm.yml/badge.svg` reflects JVM
-# health. A job that was intentionally skipped (check-verification on a verified merge) counts as
+# health. A job that was skipped by the path filter counts as
 # passing — only a real failure/cancellation turns the badge red. See google/filament's status-*.yml.
 on:
   workflow_run:
