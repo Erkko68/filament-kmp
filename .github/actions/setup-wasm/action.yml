@@ -1,6 +1,6 @@
 name: Setup wasm toolchain
 description: |
-  emsdk (.emsdk/) + Filament's wasm static libraries (prebuilts/wasm/), both cached.
+  emsdk (.emsdk/) + Filament's wasm static libraries and headers (prebuilts/wasm/), both cached.
   Upstream publishes no wasm .a files, so a cache miss builds them from the release tag
   with scripts/dev/build-wasm-libs.sh (host tools + wasm: slow, once per filaVersion).
 
@@ -12,12 +12,14 @@ runs:
       run: |
         echo "fila=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
         echo "emsdk=$(sed -n 's/^EMSDK_VERSION="\${EMSDK_VERSION:-\(.*\)}"$/\1/p' scripts/dev/setup-emsdk.sh)" >> $GITHUB_OUTPUT
-    - uses: actions/cache@v6
+    # restore/save split: saving right after the build keeps it even if a later step fails.
+    - id: emsdk
+      uses: actions/cache/restore@v6
       with:
         path: .emsdk
         key: emsdk-${{ steps.ver.outputs.emsdk }}-${{ runner.os }}-${{ runner.arch }}
     - id: libs
-      uses: actions/cache@v6
+      uses: actions/cache/restore@v6
       with:
         path: prebuilts/wasm
         key: filament-wasm-libs-${{ steps.ver.outputs.fila }}-${{ hashFiles('scripts/dev/build-wasm-libs.sh') }}
@@ -35,5 +37,15 @@ runs:
     - if: steps.libs.outputs.cache-hit != 'true'
       shell: bash
       run: scripts/dev/build-wasm-libs.sh
+    - if: steps.libs.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: prebuilts/wasm
+        key: ${{ steps.libs.outputs.cache-primary-key }}
     - shell: bash
       run: scripts/dev/setup-emsdk.sh
+    - if: steps.emsdk.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: .emsdk
+        key: ${{ steps.emsdk.outputs.cache-primary-key }}
