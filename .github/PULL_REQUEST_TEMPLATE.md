@@ -26,5 +26,5 @@ js/patches/. Otherwise write "N/A". -->
 - [ ] Follows the API-parity / binding conventions (CONTRIBUTING.md); ran the relevant
       `scripts/dev/check-*.sh` if I touched bindings or bumped `filaVersion`.
 - [ ] Updated docs/samples if needed.
-- [x] I understand the full CI matrix runs only after a maintainer adds the **`ci:run`**
-      label, and that `ci-gate` must be green before merge.
+- [x] I understand CI runs only the platform jobs my changed paths touch, and that `ci-gate`
+      must be green before merge.

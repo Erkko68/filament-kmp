@@ -1,43 +1,30 @@
 name: Pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'samples/webApp/**'
-      - 'samples/shared/**'
-      - 'kotlin/**/src/**'
-      - 'web/**'
-      - 'c/**'
-      - 'scripts/dev/build-wasm-libs.sh'
-      - 'gradle/**'
-      - 'samples/gradle/**'
-      - 'samples/settings.gradle.kts'
-      - 'gradle.properties'
-      - 'build-logic/**'
-      - '.github/workflows/pages.yml'
-  # PRs build (web + docs) but never deploy — catches doc-generation breaks
-  # before they land on main. Keep paths in sync with `push` above.
+  # PRs build the site (web sample + docs) but never deploy, to catch site-build breaks before
+  # they land. Only build config can break it: Dokka doesn't fail on warnings and CI already
+  # compiles the web sample, so plain source changes don't run this. No `push` trigger: a main
+  # build would be a second copy of the PR's validation, since only releases deploy.
   pull_request:
     branches: [main]
     paths:
       - 'samples/webApp/**'
-      - 'samples/shared/**'
-      - 'kotlin/**/src/**'
-      - 'web/**'
-      - 'c/**'
-      - 'scripts/dev/build-wasm-libs.sh'
-      - 'gradle/**'
       - 'samples/gradle/**'
-      - 'samples/settings.gradle.kts'
+      - 'samples/*.gradle.kts'
+      - 'samples/gradle.properties'
+      - 'web/build.gradle.kts'
+      - 'kotlin/*/build.gradle.kts'
+      - '*.gradle.kts'
       - 'gradle.properties'
-      - 'buildSrc/**'
+      - 'gradle/**'
+      - 'build-logic/**'
+      - 'scripts/dev/build-wasm-libs.sh'
+      - '.github/actions/**'
       - '.github/workflows/pages.yml'
   # A published release is the only event that DEPLOYS, and the only one that writes
   # a version into the docs archive — the live site therefore always matches a
-  # release, never an in-flight main. (A `tags:` filter on `push` would be dead
-  # here: path filters never match a tag push.) publish.yml creates the release once
-  # Maven Central accepts.
+  # release, never an in-flight main. publish.yml creates the release once Maven
+  # Central accepts.
   release:
     types: [published]
   workflow_dispatch:
@@ -157,8 +144,8 @@ jobs:
           path: build/dokka/html
 
   deploy:
-    # Pushes to main and PRs are validation builds only — a release (or a manual
-    # dispatch, which publishes whatever the chosen ref holds) is what goes live.
+    # PRs are validation builds only — a release (or a manual dispatch, which
+    # publishes whatever the chosen ref holds) is what goes live.
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     needs: [web, docs]
     runs-on: ubuntu-latest
