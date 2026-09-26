@@ -1,62 +1,70 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.web.interop.toJsArray
-import org.khronos.webgl.set
-import io.github.erkko68.filament.web.gltfio_AssetLoader as JSAssetLoader
+import io.github.erkko68.filament.*
+import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.InternalFilamentApi
 
-private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
-    val int8 = org.khronos.webgl.Int8Array(size)
-    forEachIndexed { i, b -> int8[i] = b }
-    return org.khronos.webgl.Uint8Array(int8.buffer)
-}
-
-actual class AssetLoader @InternalFilamentApi constructor(internal val jsLoader: JSAssetLoader, private val engine: Engine) {
-    actual fun createAsset(buffer: ByteArray): FilamentAsset? {
-        val jsAsset = jsLoader.createAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>())
-        return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
-    }
-
-    actual fun createInstancedAsset(
-        buffer: ByteArray,
-        instances: Array<FilamentInstance>
-    ): FilamentAsset? {
-        val jsInstances = instances.map { it.jsInstance }.toJsArray()
-        val jsAsset = jsLoader.createInstancedAsset(buffer.toUint8Array().unsafeCast<org.khronos.webgl.ArrayBufferView>(), jsInstances)
-        return if (jsAsset != null) FilamentAsset(jsAsset, engine) else null
-    }
-
-    actual fun createInstance(asset: FilamentAsset): FilamentInstance? {
-        val jsInstance = jsLoader.createInstance(asset.jsAsset)
-        return if (jsInstance != null) FilamentInstance(jsInstance) else null
-    }
-
-    actual fun enableDiagnostics(enable: Boolean) {
-    }
-
-    actual fun destroyAsset(asset: FilamentAsset) {
-        jsLoader.destroyAsset(asset.jsAsset)
-    }
-
-    actual fun gc() {
-        jsLoader.gc()
-    }
-
+actual class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Int) {
     actual companion object {
-        actual fun create(
-            engine: Engine,
-            materials: MaterialProvider,
-            entities: EntityManager?
-        ): AssetLoader {
-            val jsLoader = engine.nativeObject.createAssetLoader()
-            return AssetLoader(jsLoader, engine)
+        actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
+            val handle = FilaAssetLoader_create(
+                engine.nativeObject,
+                materials.nativeObject(),
+                entities?.nativeObject ?: 0
+            )
+            return AssetLoader(handle)
         }
 
         actual fun destroy(loader: AssetLoader) {
-            loader.jsLoader.delete()
+            FilaAssetLoader_destroy(loader.nativeHandle)
+            loader.nativeHandle = 0
         }
+    }
+
+    actual fun createAsset(buffer: ByteArray): FilamentAsset? {
+        val handle = buffer.usePinned { pinned ->
+            FilaAssetLoader_createAsset(nativeHandle, pinned, buffer.size)
+        }
+        return handle.takeIf { it != 0 }?.let { FilamentAsset(it) }
+    }
+
+    actual fun createInstancedAsset(buffer: ByteArray, instances: Array<FilamentInstance>): FilamentAsset? {
+        return buffer.usePinned { pinned ->
+            fila.heapScoped {
+                val nativeInstances = I32Array(alloc((instances.size) * 4))
+                val handle = FilaAssetLoader_createInstancedAsset(
+                    nativeHandle,
+                    pinned,
+                    buffer.size,
+                    nativeInstances.ptr,
+                    instances.size
+                )
+                if (handle == 0) return@heapScoped null
+                val asset = FilamentAsset(handle)
+                for (i in instances.indices) {
+                    instances[i].nativeHandle = nativeInstances[i]
+                }
+                asset
+            }
+        }
+    }
+
+    actual fun createInstance(asset: FilamentAsset): FilamentInstance? {
+        val handle = FilaAssetLoader_createInstance(nativeHandle, asset.nativeHandle).takeIf { it != 0 } ?: return null
+        return FilamentInstance(handle)
+    }
+
+    actual fun enableDiagnostics(enable: Boolean) {
+        FilaAssetLoader_enableDiagnostics(nativeHandle, enable)
+    }
+
+    actual fun destroyAsset(asset: FilamentAsset) {
+        FilaAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
+        asset.nativeHandle = 0
+    }
+
+    actual fun gc() {
+        FilaAssetLoader_gc(nativeHandle)
     }
 }

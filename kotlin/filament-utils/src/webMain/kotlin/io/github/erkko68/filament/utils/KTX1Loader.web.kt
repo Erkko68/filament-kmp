@@ -4,99 +4,71 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.Skybox
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.web.Texture as JSTexture
-import io.github.erkko68.filament.web.IndirectLight as JSIndirectLight
-import io.github.erkko68.filament.web.Skybox as JSSkybox
-import org.khronos.webgl.ArrayBufferView
-import org.khronos.webgl.Int8Array
-import org.khronos.webgl.set
+import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.nativeObject
 
-private fun ByteArray.toArrayBufferView(): ArrayBufferView {
-    val int8 = Int8Array(size)
-    forEachIndexed { i, b -> int8[i] = b }
-    return int8.unsafeCast<ArrayBufferView>()
-}
-
-// SH extraction reads KTX1 metadata via Filament's Buffer + Ktx1Bundle globals. Declared as
-// external interfaces + top-level js() constructors so the same code compiles on wasmJs.
-private external interface FilamentBuffer : JsAny {
-    fun delete()
-}
-private external interface Ktx1Bundle : JsAny {
-    fun getMetadata(key: String): String
-    fun delete()
-}
-private fun filamentBuffer(view: ArrayBufferView): FilamentBuffer = js("Filament.Buffer(view)")
-private fun newKtx1Bundle(buf: FilamentBuffer): Ktx1Bundle = js("new Filament.Ktx1Bundle(buf)")
-
 actual object KTX1Loader {
-    actual class Options actual constructor() {
+    actual class Options {
         actual var srgb: Boolean = false
     }
 
     actual class IndirectLightBundle actual constructor(
-        indirectLight: IndirectLight?,
-        cubemap: Texture?
-    ) {
-        actual val indirectLight: IndirectLight? = indirectLight
-        actual val cubemap: Texture? = cubemap
-    }
+        actual val indirectLight: IndirectLight?,
+        actual val cubemap: Texture?
+    )
 
     actual class SkyboxBundle actual constructor(
-        skybox: Skybox?,
-        cubemap: Texture?
-    ) {
-        actual val skybox: Skybox? = skybox
-        actual val cubemap: Texture? = cubemap
-    }
+        actual val skybox: Skybox?,
+        actual val cubemap: Texture?
+    )
 
     actual fun createTexture(engine: Engine, buffer: ByteArray, options: Options): Texture? {
-        return try {
-            Texture(engine.nativeObject.createTextureFromKtx1(buffer.toArrayBufferView()))
-        } catch (e: Exception) {
-            null
+        val handle = buffer.usePinned { pinned ->
+            FilaKTX1Loader_createTexture(
+                engine.nativeObject,
+                pinned,
+                buffer.size,
+                options.srgb
+            )
         }
+        return handle.takeIf { it != 0 }?.let { Texture(it) }
     }
 
     actual fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle {
-        return try {
-            val jsIbl = engine.nativeObject.createIblFromKtx1(buffer.toArrayBufferView())
-            val indirectLight = IndirectLight(jsIbl)
-            val cubemap = indirectLight.reflectionsTexture
-            IndirectLightBundle(indirectLight, cubemap)
-        } catch (e: Exception) {
-            IndirectLightBundle(null, null)
+        val sh = getSphericalHarmonics(buffer) ?: return IndirectLightBundle(null, null)
+        val tex = createTexture(engine, buffer, options) ?: return IndirectLightBundle(null, null)
+        
+        val ilHandle = sh.usePinned { pinned ->
+            FilaKTX1Loader_createIndirectLight(
+                engine.nativeObject,
+                tex.nativeObject,
+                pinned
+            )
         }
+        return IndirectLightBundle(ilHandle.takeIf { it != 0 }?.let { IndirectLight(it) }, tex)
     }
 
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
-        return try {
-            val jsSky = engine.nativeObject.createSkyFromKtx1(buffer.toArrayBufferView())
-            val skybox = Skybox(jsSky)
-            val cubemap = skybox.texture
-            SkyboxBundle(skybox, cubemap)
-        } catch (e: Exception) {
-            SkyboxBundle(null, null)
-        }
+        val tex = createTexture(engine, buffer, options) ?: return SkyboxBundle(null, null)
+        
+        val skyboxHandle = FilaKTX1Loader_createSkybox(
+            engine.nativeObject,
+            tex.nativeObject
+        )
+        return SkyboxBundle(skyboxHandle.takeIf { it != 0 }?.let { Skybox(it) }, tex)
     }
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? {
-        return try {
-            val kbd = filamentBuffer(buffer.toArrayBufferView())
-            val ktx = newKtx1Bundle(kbd)
-            val shString = ktx.getMetadata("sh")
-            ktx.delete()
-            kbd.delete()
-            if (shString.isEmpty()) return null
-            val parts = shString.trim().split(Regex("\\s+"))
-            if (parts.size >= 27) {
-                FloatArray(27) { i -> parts[i].toFloat() }
-            } else {
-                null
+        val sh = FloatArray(9 * 3)
+        val success = buffer.usePinned { pinnedBuffer ->
+            sh.usePinned { pinnedSh ->
+                FilaKTX1Loader_getSphericalHarmonics(
+                    pinnedBuffer,
+                    buffer.size,
+                    pinnedSh
+                )
             }
-        } catch (e: Exception) {
-            null
         }
+        return if (success) sh else null
     }
 }

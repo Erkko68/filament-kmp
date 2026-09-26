@@ -100,12 +100,12 @@ actual class Renderer @InternalFilamentApi constructor(
             AndroidViewport(srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height), 
             flags)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     actual fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         nativeRenderer.readPixels(xoffset, yoffset, width, height, buffer.toNative())
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         nativeRenderer.readPixels(renderTarget.nativeRenderTarget, xoffset, yoffset, width, height, buffer.toNative())
     }

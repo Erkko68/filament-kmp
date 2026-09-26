@@ -24,3 +24,5 @@ filament-source/
 # Upstream Filament clone kept by scripts/dev/upgrade-diff.sh
 scripts/dev/.filament-src-cache/
 kotlin-js-store/
+# Emscripten SDK installed by scripts/dev/setup-emsdk.sh
+/.emsdk/

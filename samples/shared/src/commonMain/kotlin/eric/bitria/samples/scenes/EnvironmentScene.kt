@@ -56,8 +56,7 @@ fun KTXEnvironmentScene(onBack: () -> Unit) {
 @Composable
 fun HDREnvironmentScene(onBack: () -> Unit) {
     val engine = rememberFilamentEngine()
-    // Runtime HDR decoding isn't available on Web (filament.js has no Radiance/RGBE decoder), so the
-    // load fails there. Surface it via onError and show a notice instead of an empty scene.
+    // Surface a failed decode via onError and show a notice instead of an empty scene.
     var failed by remember { mutableStateOf(false) }
     val environment = rememberHDREnvironment(
         engine = engine,
@@ -67,7 +66,7 @@ fun HDREnvironmentScene(onBack: () -> Unit) {
     if (failed) {
         UnsupportedNotice(
             onBack = onBack,
-            message = "Runtime HDR decoding isn't supported on this platform (Web). " +
+            message = "Couldn't decode the HDR environment. " +
                 "See the KTX environment sample for a pre-baked equivalent.",
         )
     } else {

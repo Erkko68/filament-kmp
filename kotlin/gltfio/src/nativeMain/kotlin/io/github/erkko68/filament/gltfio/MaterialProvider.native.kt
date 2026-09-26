@@ -6,8 +6,6 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaMaterialProvider
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.VertexBuffer
@@ -23,7 +21,6 @@ actual interface MaterialProvider : AutoCloseable {
     @InternalFilamentApi fun nativeObject(): CPointer<FilaMaterialProvider>?
 }
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, null, 0u)
 

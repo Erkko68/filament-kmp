@@ -99,14 +99,12 @@ expect class Renderer {
      * Get/set display information for frame pacing and dynamic resolution.
      * The getter returns a snapshot — mutate it and assign back to apply.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setDisplayInfo is not bound in filament.js; frame pacing is managed by the browser.")
     var displayInfo: DisplayInfo
 
     /**
      * Get/set frame rate control and dynamic resolution options.
      * The getter returns a snapshot — mutate it and assign back to apply.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — setFrameRateOptions is not bound in filament.js; frame pacing is managed by the browser.")
     var frameRateOptions: FrameRateOptions
 
     /**
@@ -246,7 +244,7 @@ expect class Renderer {
      * @param height Height in pixels.
      * @param buffer Pixel buffer descriptor for the result.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
 
     /**
@@ -261,7 +259,7 @@ expect class Renderer {
      * @param height Height in pixels.
      * @param buffer Pixel buffer descriptor for the result.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — filament.js hands the pixels to an internal callback after the frame completes, so the buffer is filled some frames later rather than on return.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "delivers asynchronously — the pixels are copied into the buffer when the frame completes, before its callback runs, rather than on return.")
     fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor)
 
     /**

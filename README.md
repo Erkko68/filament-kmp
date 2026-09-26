@@ -53,7 +53,7 @@ See **[Using the Engine Without Compose](docs/engine.md)**.
 - **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
-- **Web (JS & Wasm)** — WebGL 2.0 via Filament.js (embind), through hand-maintained Kotlin externals shared by the `js` and `wasmJs` targets
+- **Web (JS & Wasm)** — WebGL 2.0 via the same C wrapper compiled to wasm with Emscripten, through generated Kotlin externals shared by the `js` and `wasmJs` targets
 
 **JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts require **JDK 22+** at build and run time — the FFM bindings call `java.lang.foreign`, finalized in JDK 22.
 

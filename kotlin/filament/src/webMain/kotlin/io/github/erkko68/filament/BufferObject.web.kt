@@ -1,64 +1,53 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.BufferObject_BindingType
-import io.github.erkko68.filament.web.BufferObject as JSBufferObject
-import org.khronos.webgl.set
+import io.github.erkko68.filament.wasm.*
 
-actual class BufferObject @InternalFilamentApi constructor(internal val jsBufferObject: JSBufferObject) {
-    actual val byteCount: Int get() = jsBufferObject.getByteCount().toInt()
-
-    private fun ByteArray.toUint8Array(): org.khronos.webgl.Uint8Array {
-        val int8 = org.khronos.webgl.Int8Array(size)
-        forEachIndexed { i, b -> int8[i] = b }
-        return org.khronos.webgl.Uint8Array(int8.buffer)
+actual class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual enum class BindingType {
+        VERTEX,
+        UNIFORM,
+        SHADER_STORAGE;
+        internal fun toNative(): FilaBufferObjectBindingType {
+            return when (this) {
+                VERTEX -> FILA_BUFFER_OBJECT_BINDING_TYPE_VERTEX
+                UNIFORM -> FILA_BUFFER_OBJECT_BINDING_TYPE_UNIFORM
+                SHADER_STORAGE -> FILA_BUFFER_OBJECT_BINDING_TYPE_SHADER_STORAGE
+            }
+        }
     }
 
-    actual fun setBuffer(engine: Engine, data: ByteArray) {
-        jsBufferObject.setBuffer(engine.jsEngine, data.toUint8Array())
-    }
-
-    actual fun setBuffer(
-        engine: Engine,
-        data: ByteArray,
-        destOffsetInBytes: Int,
-        count: Int
-    ) {
-        val clippedData = if (count < data.size) data.sliceArray(0 until count) else data
-        jsBufferObject.setBuffer(engine.jsEngine, clippedData.toUint8Array(), destOffsetInBytes.toDouble())
-    }
-
-    actual fun setBuffer(
-        engine: Engine,
-        data: ByteArray,
-        destOffsetInBytes: Int,
-        count: Int,
-        callback: (() -> Unit)?
-    ) {
-        setBuffer(engine, data, destOffsetInBytes, count)
-        callback?.invoke()
-    }
-
-    actual enum class BindingType { VERTEX, UNIFORM, SHADER_STORAGE }
-    actual class Builder {
-        private val jsBuilder = JSBufferObject.Builder()
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaBufferObjectBuilder_create()
 
         actual fun size(byteCount: Int): Builder {
-            jsBuilder.size(byteCount.toDouble())
+            FilaBufferObjectBuilder_size(nativeBuilder, byteCount)
             return this
         }
 
         actual fun bindingType(bindingType: BindingType): Builder {
-            // JS bindings only support VERTEX; UNIFORM and SHADER_STORAGE are unsupported
-            jsBuilder.bindingType(BufferObject_BindingType.VERTEX)
+            FilaBufferObjectBuilder_bindingType(nativeBuilder, bindingType.toNative())
             return this
         }
 
         actual fun build(engine: Engine): BufferObject {
-            // filament.js installs no `.build` wrapper on BufferObject$Builder, so call
-            // the raw embind `_build` and delete the builder ourselves.
-            val obj = jsBuilder._build(engine.jsEngine)
-            jsBuilder.delete()
-            return BufferObject(obj)
+            val handle = FilaBufferObjectBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaBufferObjectBuilder_destroy(nativeBuilder)
+            return BufferObject(handle)
         }
+    }
+
+    actual val byteCount: Int get() = FilaBufferObject_getByteCount(nativeHandle).toInt()
+
+    actual fun setBuffer(engine: Engine, data: ByteArray) {
+        setBuffer(engine, data, 0, 0, null)
+    }
+
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int) {
+        setBuffer(engine, data, destOffsetInBytes, count, null)
+    }
+
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
+        val upload = fila.upload(data, if (count > 0) count else data.size, callback)
+        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, 0, upload.callback, upload.userData)
     }
 }

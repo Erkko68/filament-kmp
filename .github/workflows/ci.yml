@@ -156,17 +156,51 @@ jobs:
           name: jvm-test-reports-${{ matrix.target }}
           path: kotlin/*/build/reports/tests/
 
-  js:
+  # The emsdk half of the web targets, done once: builds filament-kmp/filamat-kmp .{js,wasm}
+  # (c/ compiled with emcc) and hands them to the js and wasm jobs as an artifact.
+  web-runtime:
     needs: check-verification
     if: >-
       needs.check-verification.outputs.run == 'true' &&
-      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'js')
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'js' || inputs.jobs == 'wasm')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
+      - uses: ./.github/actions/setup-wasm
+      - name: Generated wasm externals are up to date
+        # Committed so compiling needs no emsdk; a C header change must come with a regen.
+        run: |
+          ./gradlew :web:generateWasmExternals :kotlin:filamat:generateFilamatExternals --no-configuration-cache
+          git diff --exit-code -- web/src kotlin/filamat/src
+      - name: Build wasm runtime
+        run: ./gradlew :web:buildFilamentWasm --no-configuration-cache
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wasm-runtime
+          path: |
+            c/build/wasm/*-kmp.js
+            c/build/wasm/*-kmp.wasm
+          if-no-files-found: error
+          retention-days: 1
+
+  js:
+    needs: [check-verification, web-runtime]
+    if: >-
+      needs.check-verification.outputs.run == 'true' &&
+      (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'js')
+    runs-on: ubuntu-latest
+    env:
+      FILA_WASM_PREBUILT: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with: { java-version: '25', distribution: 'temurin' }
+      - uses: ./.github/actions/setup-gradle-cached
+      - uses: actions/download-artifact@v8
+        with: { name: wasm-runtime, path: c/build/wasm }
       - name: Build library
         run: ./gradlew compileKotlinJs --no-configuration-cache
       - name: Run JS tests
@@ -177,17 +211,8 @@ jobs:
             :kotlin:filament-utils:jsTest \
             :kotlin:gltfio:jsTest \
             :kotlin:filament-compose:jsTest \
+            :web:jsTest \
             --no-configuration-cache
-      - name: Web sample ships the bundled engine
-        # The sample commits filament.js/.wasm so it runs standalone; a Filament upgrade
-        # that misses them pairs a new .filamat with an old engine and crashes at runtime.
-        run: |
-          ./gradlew downloadPrebuilts_web --no-configuration-cache
-          for t in jsMain wasmJsMain; do
-            for f in filament.js filament.wasm; do
-              cmp prebuilts/web/$f samples/webApp/src/$t/resources/$f
-            done
-          done
       - name: Build web sample
         working-directory: samples
         run: ./gradlew :webApp:compileKotlinJs --no-configuration-cache
@@ -201,16 +226,20 @@ jobs:
   # wasmJs shares the webMain actuals with js but runs a different compiler backend and
   # browser runtime, so it gets its own job (distinct signal, runs in parallel with js).
   wasm:
-    needs: check-verification
+    needs: [check-verification, web-runtime]
     if: >-
       needs.check-verification.outputs.run == 'true' &&
       (github.event_name != 'workflow_dispatch' || inputs.jobs == 'all' || inputs.jobs == 'wasm')
     runs-on: ubuntu-latest
+    env:
+      FILA_WASM_PREBUILT: '1'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
+      - uses: actions/download-artifact@v8
+        with: { name: wasm-runtime, path: c/build/wasm }
       - name: Build library
         run: ./gradlew compileKotlinWasmJs --no-configuration-cache
       - name: Run Wasm tests
@@ -221,6 +250,7 @@ jobs:
             :kotlin:filament-utils:wasmJsTest \
             :kotlin:gltfio:wasmJsTest \
             :kotlin:filament-compose:wasmJsTest \
+            :web:wasmJsTest \
             --no-configuration-cache
       - name: Build web sample
         working-directory: samples
@@ -382,7 +412,7 @@ jobs:
   # summarizes, so skipped jobs never fail the gate.
   ci-gate:
     if: always()
-    needs: [jvm, js, wasm, ios, android]
+    needs: [jvm, web-runtime, js, wasm, ios, android]
     runs-on: ubuntu-latest
     steps:
       - name: Require all platform jobs to have succeeded

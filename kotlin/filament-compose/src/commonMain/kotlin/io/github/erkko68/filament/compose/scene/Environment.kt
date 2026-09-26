@@ -218,13 +218,7 @@ private class PrefilteredHdr(val skybox: Texture, val reflections: Texture)
  * two returned textures are owned by the caller.
  */
 private fun prefilterHdr(engine: Engine, bytes: ByteArray, format: Texture.InternalFormat): PrefilteredHdr? {
-    // HDRLoader.createTexture throws on Web (no Radiance/RGBE decoder in filament.js). Return null
-    // so the caller reports it via onError instead of crashing composition.
-    val equirect = try {
-        HDRLoader.createTexture(engine, bytes, format)
-    } catch (e: UnsupportedOperationException) {
-        null
-    } ?: return null
+    val equirect = HDRLoader.createTexture(engine, bytes, format) ?: return null
     val context = IBLPrefilterContext(engine)
     val toCubemap = EquirectangularToCubemap(context)
     val specular = SpecularFilter(context)

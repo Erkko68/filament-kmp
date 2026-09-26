@@ -1,26 +1,39 @@
 package io.github.erkko68.filament
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — Stream is not bound in filament.js; external/native video streams have no web equivalent.")
-actual class Stream @InternalFilamentApi constructor(internal val jsStream: Any?) {
-    actual val streamType: StreamType get() = StreamType.NATIVE
+import io.github.erkko68.filament.wasm.*
 
-    actual fun setDimensions(width: Int, height: Int) {
-        // TODO(js): Stream not bound in jsbindings.cpp — no-op on web
+@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setDimensions throws — FStream waits on a fence internally, which single-threaded wasm rejects; external video streams have no WebGL source anyway.")
+actual class Stream @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual enum class StreamType {
+        NATIVE,
+        ACQUIRED
     }
 
-    actual val timestamp: Long get() = 0L
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaStreamBuilder_create()
 
-    actual enum class StreamType { NATIVE, ACQUIRED }
-    actual class Builder {
         actual fun width(width: Int): Builder {
+            FilaStreamBuilder_width(nativeBuilder, width)
             return this
         }
 
         actual fun height(height: Int): Builder {
+            FilaStreamBuilder_height(nativeBuilder, height)
             return this
         }
 
-        actual fun build(engine: Engine): Stream =
-            jsUnsupported("Stream", "External/native video streams have no web equivalent.")
+        actual fun build(engine: Engine): Stream {
+            val handle = FilaStreamBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaStreamBuilder_destroy(nativeBuilder)
+            return Stream(handle)
+        }
     }
+
+    actual val streamType: StreamType get() = StreamType.entries[FilaStream_getStreamType(nativeHandle).toInt()]
+
+    actual fun setDimensions(width: Int, height: Int) {
+        FilaStream_setDimensions(nativeHandle, width, height)
+    }
+
+    actual val timestamp: Long get() = FilaStream_getTimestamp(nativeHandle)
 }

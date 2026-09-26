@@ -1,112 +1,140 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.web.interop.toFloatArray
-
-import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.Entity
-import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.web.`gltfio_FilamentAsset` as JSFilamentAsset
-import io.github.erkko68.filament.web.Entity as JSEntity
-import io.github.erkko68.filament.web.Aabb
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
+import io.github.erkko68.filament.*
+import io.github.erkko68.filament.wasm.*
+import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentAsset @InternalFilamentApi constructor(
-    internal val jsAsset: JSFilamentAsset,
-    private val _engine: Engine? = null
-) {
-    private fun JSEntity.registerAndGetId(): Entity {
-        val id = getId().toInt()
-        EntityManager.register(id, this)
-        return id
+actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual val root: Entity get() = FilaFilamentAsset_getRoot(nativeHandle).toInt()
+
+    actual fun popRenderable(): Entity = FilaFilamentAsset_popRenderable(nativeHandle).toInt()
+
+    actual fun popRenderables(entities: IntArray): Int {
+        val count = entities.size
+        fila.heapScoped {
+            val filaEntities = I32Array(alloc((count) * 4))
+            val popped = FilaFilamentAsset_popRenderables(nativeHandle, filaEntities.ptr, count).toInt()
+            for (i in 0 until popped) {
+                entities[i] = filaEntities[i].toInt()
+            }
+            return popped
+        }
     }
 
-    private fun js.array.ReadonlyArray<JSEntity>.registerAndGetIds(): IntArray {
-        return IntArray(size) { i -> this[i]!!.registerAndGetId() }
+    actual val entities: IntArray get() {
+        val count = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
+        if (count == 0) return IntArray(0)
+        fila.heapScoped {
+            val entities = I32Array(alloc((count) * 4))
+            FilaFilamentAsset_getEntities(nativeHandle, entities.ptr)
+            return IntArray(count) { entities[it].toInt() }
+        }
     }
 
-    actual val root: Entity get() = jsAsset.getRoot().registerAndGetId()
+    actual val lightEntities: IntArray get() {
+        val count = FilaFilamentAsset_getLightEntityCount(nativeHandle).toInt()
+        if (count == 0) return IntArray(0)
+        fila.heapScoped {
+            val entities = I32Array(alloc((count) * 4))
+            FilaFilamentAsset_getLightEntities(nativeHandle, entities.ptr)
+            return IntArray(count) { entities[it].toInt() }
+        }
+    }
 
-    actual fun popRenderable(): Entity = jsAsset.popRenderable().registerAndGetId()
+    actual val renderableEntities: IntArray get() {
+        val count = FilaFilamentAsset_getRenderableEntityCount(nativeHandle).toInt()
+        if (count == 0) return IntArray(0)
+        fila.heapScoped {
+            val entities = I32Array(alloc((count) * 4))
+            FilaFilamentAsset_getRenderableEntities(nativeHandle, entities.ptr)
+            return IntArray(count) { entities[it].toInt() }
+        }
+    }
 
-    actual fun popRenderables(entities: IntArray): Int = 0
+    actual val cameraEntities: IntArray get() {
+        val count = FilaFilamentAsset_getCameraEntityCount(nativeHandle).toInt()
+        if (count == 0) return IntArray(0)
+        fila.heapScoped {
+            val entities = I32Array(alloc((count) * 4))
+            FilaFilamentAsset_getCameraEntities(nativeHandle, entities.ptr)
+            return IntArray(count) { entities[it].toInt() }
+        }
+    }
 
-    actual val entities: IntArray get() = jsAsset.getEntities().registerAndGetIds()
+    actual fun getEntitiesByName(name: String): IntArray {
+        fila.heapScoped {
+            val maxCount = FilaFilamentAsset_getEntityCount(nativeHandle)
+            if (maxCount == 0) return IntArray(0)
+            val entities = I32Array(alloc((maxCount.toInt()) * 4))
+            val actualCount = FilaFilamentAsset_getEntitiesByName(nativeHandle, name, entities.ptr, maxCount)
+            return IntArray(actualCount.toInt()) { entities[it].toInt() }
+        }
+    }
 
-    actual val lightEntities: IntArray get() = jsAsset.getLightEntities().registerAndGetIds()
+    actual fun getEntitiesByPrefix(prefix: String): IntArray {
+         fila.heapScoped {
+            val maxCount = FilaFilamentAsset_getEntityCount(nativeHandle)
+            if (maxCount == 0) return IntArray(0)
+            val entities = I32Array(alloc((maxCount.toInt()) * 4))
+            val actualCount = FilaFilamentAsset_getEntitiesByPrefix(nativeHandle, prefix, entities.ptr, maxCount)
+            return IntArray(actualCount.toInt()) { entities[it].toInt() }
+        }
+    }
+    
+    actual fun getFirstEntityByName(name: String): Entity = FilaFilamentAsset_getFirstEntityByName(nativeHandle, name).toInt()
 
-    actual val renderableEntities: IntArray get() = jsAsset.getRenderableEntities().registerAndGetIds()
+    actual val entityCount: Int get() = FilaFilamentAsset_getEntityCount(nativeHandle).toInt()
 
-    actual val cameraEntities: IntArray get() = jsAsset.getCameraEntities().registerAndGetIds()
+    actual val assetInstanceCount: Int get() = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
 
-    actual fun getEntitiesByName(name: String): IntArray = jsAsset.getEntitiesByName(name).registerAndGetIds()
-
-    actual fun getEntitiesByPrefix(prefix: String): IntArray = jsAsset.getEntitiesByPrefix(prefix).registerAndGetIds()
-
-    actual fun getFirstEntityByName(name: String): Entity = jsAsset.getFirstEntityByName(name).registerAndGetId()
-
-    // gltfio$FilamentAsset binds no getEntityCount/getAssetInstanceCount; count the arrays.
-    actual val entityCount: Int get() = jsAsset.getEntities().size
-
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual val assetInstanceCount: Int get() = jsAsset.getAssetInstances().size
-
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val assetInstances: List<FilamentInstance> get() {
-        val jsInstances = jsAsset.getAssetInstances()
-        return List(jsInstances.size) { i -> FilamentInstance(jsInstances[i]) }
+        val count = FilaFilamentAsset_getAssetInstanceCount(nativeHandle).toInt()
+        if (count == 0) return emptyList()
+        fila.heapScoped {
+            val instances = I32Array(alloc((count) * 4))
+            FilaFilamentAsset_getAssetInstances(nativeHandle, instances.ptr)
+            return List(count) { FilamentInstance(instances[it]) }
+        }
     }
 
     actual val boundingBox: Box get() {
-        val aabb = jsAsset.getBoundingBox()
-        val minArr = aabb.min!!.toFloatArray(3)
-        val maxArr = aabb.max!!.toFloatArray(3)
-        return Box(
-            (minArr[0] + maxArr[0]) / 2f,
-            (minArr[1] + maxArr[1]) / 2f,
-            (minArr[2] + maxArr[2]) / 2f,
-            (maxArr[0] - minArr[0]) / 2f,
-            (maxArr[1] - minArr[1]) / 2f,
-            (maxArr[2] - minArr[2]) / 2f
-        )
+        return fila.heapScoped {
+            val box = FilaBox(alloc(FilaBox.SIZE))
+            FilaFilamentAsset_getBoundingBox(box.ptr, nativeHandle)
+            Box(box.centerX, box.centerY, box.centerZ, box.halfExtentX, box.halfExtentY, box.halfExtentZ)
+        }
     }
 
-    actual fun getName(entity: Entity): String? {
-        // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
-        return jsAsset.getName(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
-    }
+    actual fun getName(entity: Entity): String? = FilaFilamentAsset_getName(nativeHandle, entity)
 
-    actual fun getExtras(entity: Entity): String? {
-        // JS binding expects Entity, but KMP API uses Int. Entity ID is passed directly via unsafeCast
-        return jsAsset.getExtras(EntityManager.jsEntityOf(entity)).let { if (it.isEmpty()) null else it }
-    }
+    actual fun getExtras(entity: Entity): String? = FilaFilamentAsset_getExtras(nativeHandle, entity)
 
     actual fun getMorphTargetNames(entity: Entity): List<String> {
-        val names = jsAsset.getMorphTargetNames(EntityManager.jsEntityOf(entity))
-        return List(names.size) { names[it].toString() }
+        val count = FilaFilamentAsset_getMorphTargetCountAt(nativeHandle, entity).toInt()
+        if (count == 0) return emptyList()
+        return List(count) {
+            FilaFilamentAsset_getMorphTargetNameAt(nativeHandle, entity, it) ?: ""
+        }
     }
 
     actual val resourceUris: List<String> get() {
-        val uris = jsAsset.getResourceUris()
-        return List(uris.size) { uris[it].toString() }
+        val count = FilaFilamentAsset_getResourceUriCount(nativeHandle).toInt()
+        if (count == 0) return emptyList()
+        fila.heapScoped {
+            val uris = I32Array(alloc((count) * 4))
+            FilaFilamentAsset_getResourceUris(nativeHandle, uris.ptr)
+            return List(count) { fila.readString(uris[it]) ?: "" }
+        }
     }
 
     actual fun releaseSourceData() {
-        jsAsset.releaseSourceData()
+        FilaFilamentAsset_releaseSourceData(nativeHandle)
     }
 
-    actual val engine: Engine get() {
-        return _engine ?: throw UnsupportedOperationException("Engine reference not available - FilamentAsset was not created with Engine context")
-    }
+    actual val engine: io.github.erkko68.filament.Engine get() =
+        io.github.erkko68.filament.Engine(FilaFilamentAsset_getEngine(nativeHandle))
 
-    actual val instance: FilamentInstance get() {
-        return FilamentInstance(jsAsset.getInstance())
-    }
-
-    fun getWireframe(): Int {
-        // Available in JS binding but not in expect definition
-        return jsAsset.getWireframe().getId().toInt()
-    }
+    actual val instance: FilamentInstance get() =
+        FilamentInstance(FilaFilamentAsset_getInstance(nativeHandle))
 }

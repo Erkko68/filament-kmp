@@ -89,8 +89,8 @@ pass its native handle. If you'd rather not, use the headless path below, or let
 
 The portable non-Compose path: no window at all. Create a sized swap chain with the
 `CONFIG_READABLE` flag, render, and read the pixels back. Works on Android, iOS,
-macOS/Windows/Linux JVM — everything except web, where `Renderer.readPixels` is a no-op
-(see [Platform Notes](platform-notes.md#web--wasm)).
+macOS/Windows/Linux JVM. On web `Renderer.readPixels` is asynchronous: the pixels arrive only after
+the browser runs more frames (see [Platform Notes](platform-notes.md#web--wasm)).
 
 ```kotlin
 // Filament's SwapChain::CONFIG_READABLE — not yet exposed as a Kotlin constant.

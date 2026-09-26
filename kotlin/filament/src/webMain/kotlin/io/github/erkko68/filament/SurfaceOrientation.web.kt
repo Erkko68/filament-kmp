@@ -1,110 +1,86 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.SurfaceOrientation as JSSurfaceOrientation
-import io.github.erkko68.filament.web.`SurfaceOrientation_Builder` as JSSurfaceOrientationBuilder
-import org.khronos.webgl.Float32Array
-import org.khronos.webgl.Uint16Array
-import org.khronos.webgl.Uint32Array
-import org.khronos.webgl.get
-import org.khronos.webgl.set
+import io.github.erkko68.filament.wasm.*
 
-private fun FloatArray.toFloat32Array(): Float32Array {
-    val fa = Float32Array(size)
-    forEachIndexed { i, v -> fa[i] = v }
-    return fa
-}
-
-private fun ShortArray.toUint16Array(): Uint16Array {
-    val ua = Uint16Array(size)
-    forEachIndexed { i, v -> ua[i] = v }
-    return ua
-}
-
-private fun IntArray.toUint32Array(): Uint32Array {
-    val ua = Uint32Array(size)
-    forEachIndexed { i, v -> ua[i] = v }
-    return ua
-}
-
-actual class SurfaceOrientation @InternalFilamentApi constructor(internal val jsSurfaceOrientation: JSSurfaceOrientation, actual val vertexCount: Int = 0) : AutoCloseable {
-    actual class Builder {
-        private val jsBuilder = JSSurfaceOrientationBuilder()
-        private var vertexCount: Int = 0
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: Int) : AutoCloseable {
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaSurfaceOrientationBuilder_create()
+        // The C++ builder keeps the array pointers until build(), so the heap copies live until then.
+        private val heap = HeapScope(fila)
 
         actual fun vertexCount(vertexCount: Int): Builder {
-            this.vertexCount = vertexCount
-            jsBuilder.vertexCount(vertexCount.toDouble())
+            FilaSurfaceOrientationBuilder_vertexCount(nativeBuilder, vertexCount)
             return this
         }
 
         actual fun normals(buffer: FloatArray, stride: Int): Builder {
-            jsBuilder.normals(buffer.toFloat32Array(), stride.toDouble())
+            FilaSurfaceOrientationBuilder_normals(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
-        @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js's extension wrapper exposes no tangents(buffer, stride) entry point.")
         actual fun tangents(buffer: FloatArray, stride: Int): Builder {
-            // jsbindings.cpp binds `_tangents(intptr_t, int stride)`, but extensions.js
-            // wraps only `_normals`, `_uvs`, `_positions` into user-facing builder
-            // calls — there's no JS-side `tangents(buffer, stride)` wrapper doing the
-            // malloc/HEAPU8 dance, so the function is unreachable without
-            // re-implementing that here. Stubbed no-op.
+            FilaSurfaceOrientationBuilder_tangents(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun uvs(buffer: FloatArray, stride: Int): Builder {
-            jsBuilder.uvs(buffer.toFloat32Array(), stride.toDouble())
+            FilaSurfaceOrientationBuilder_uvs(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun positions(buffer: FloatArray, stride: Int): Builder {
-            jsBuilder.positions(buffer.toFloat32Array(), stride.toDouble())
+            FilaSurfaceOrientationBuilder_positions(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun triangleCount(triangleCount: Int): Builder {
-            jsBuilder.triangleCount(triangleCount.toDouble())
+            FilaSurfaceOrientationBuilder_triangleCount(nativeBuilder, triangleCount)
             return this
         }
 
         actual fun triangles16(buffer: ShortArray): Builder {
-            jsBuilder.triangles16(buffer.toUint16Array())
+            FilaSurfaceOrientationBuilder_triangles16(nativeBuilder, heap.shorts(buffer))
             return this
         }
 
         actual fun triangles32(buffer: IntArray): Builder {
-            jsBuilder.triangles32(buffer.toUint32Array())
+            FilaSurfaceOrientationBuilder_triangles32(nativeBuilder, heap.ints(buffer))
             return this
         }
 
         actual fun build(): SurfaceOrientation {
-            return SurfaceOrientation(jsBuilder.build(), vertexCount)
+            val handle = FilaSurfaceOrientationBuilder_build(nativeBuilder)
+            FilaSurfaceOrientationBuilder_destroy(nativeBuilder)
+            heap.freeAll()
+            return SurfaceOrientation(handle)
         }
     }
 
+    actual val vertexCount: Int get() = FilaSurfaceOrientation_getVertexCount(nativeHandle).toInt()
 
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
-        val quats = jsSurfaceOrientation.getQuatsFloat4(count.toDouble())
-        val n = minOf(count * 4, buffer.size)
-        for (i in 0 until n) buffer[i] = quats[i]
+        buffer.usePinned { pinned ->
+            FilaSurfaceOrientation_getQuatsAsFloat(nativeHandle, pinned, count)
+        }
     }
 
     actual fun getQuatsAsHalf(buffer: ShortArray, count: Int) {
-        val quats = jsSurfaceOrientation.getQuatsHalf4(count.toDouble())
-        val n = minOf(count * 4, buffer.size)
-        for (i in 0 until n) buffer[i] = quats[i].toShort()
+        buffer.usePinned { pinned ->
+            val ptr: Int = pinned
+            FilaSurfaceOrientation_getQuatsAsHalf(nativeHandle, ptr, count)
+        }
     }
 
     actual fun getQuatsAsShort(buffer: ShortArray, count: Int) {
-        val quats = jsSurfaceOrientation.getQuats(count.toDouble())
-        val n = minOf(count * 4, buffer.size)
-        for (i in 0 until n) buffer[i] = quats[i]
+        buffer.usePinned { pinned ->
+            FilaSurfaceOrientation_getQuatsAsShort(nativeHandle, pinned, count)
+        }
     }
 
     actual override fun close() = destroy()
 
 
     actual fun destroy() {
-        jsSurfaceOrientation.delete()
+        FilaSurfaceOrientation_destroy(nativeHandle)
     }
 }

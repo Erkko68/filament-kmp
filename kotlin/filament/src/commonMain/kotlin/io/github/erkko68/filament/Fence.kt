@@ -36,6 +36,7 @@ expect class Fence {
      *         FenceStatus.TIMEOUT_EXPIRED if the time out expired, or
      *         FenceStatus.ERROR in other cases.
      */
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "the timeout is clamped to 0 — wasm is single-threaded, so wait() is a non-blocking poll (a FLUSH has already executed every command).")
     fun wait(mode: Mode, timeout: Long): FenceStatus
 
     val nativeObject: Long

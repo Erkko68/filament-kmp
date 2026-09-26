@@ -13,6 +13,22 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ## [Unreleased]
 
+> [!WARNING]
+> **Web setup changed** — `filament.js`/`filament.wasm` are replaced by `filament-kmp.js`/`.wasm` (plus optional `filamat-kmp.*`) from each GitHub release. See [Getting Started → Web](docs/getting-started.md#web--wasm).
+
+### Changed
+- **Web runs on our own C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` now holds the generated externals and runtime (package `io.github.erkko68.filament.wasm`).
+
+### Added
+- **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `Filamat.initJs`.
+- **Runtime Material sample** scene compiling shaders with filamat.
+
+### Fixed
+- **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph target count/weights, gltfio instance/material queries, shadow options, `customLut`, `geometryType` and more now work on web.
+
+### Removed
+- **The embind externals** in `io.github.erkko68.filament.web` and `downloadPrebuilts_web`.
+
 ## [0.6.0] — 2026-09-25
 
 > [!WARNING]

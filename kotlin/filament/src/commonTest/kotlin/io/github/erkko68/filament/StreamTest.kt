@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@IgnoreJs // Stream is not bound in the web wrapper; Builder.build throws there.
+@IgnoreJs // FStream waits on a fence internally (setDimensions), which panics on single-threaded wasm.
 class StreamTest : FilamentTestFixture() {
     @Test
     fun testStreamLifecycle() {

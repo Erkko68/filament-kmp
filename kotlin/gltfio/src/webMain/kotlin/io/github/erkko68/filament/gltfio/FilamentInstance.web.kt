@@ -1,104 +1,103 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.web.interop.emptyJsObject
-
-import io.github.erkko68.filament.Box
-import io.github.erkko68.filament.EntityManager
-import io.github.erkko68.filament.MaterialInstance
-import io.github.erkko68.filament.web.`gltfio_FilamentInstance` as JSFilamentInstance
-import io.github.erkko68.filament.web.Vector
+import io.github.erkko68.filament.*
+import io.github.erkko68.filament.wasm.*
+import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.Entity
-import io.github.erkko68.filament.web.MaterialInstance as JSMaterialInstance
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
-import io.github.erkko68.filament.InternalFilamentApi
 
-actual class FilamentInstance @InternalFilamentApi constructor(internal val jsInstance: JSFilamentInstance) {
-    actual val root: Entity get() {
-        val jsEntity = jsInstance.getRoot()
-        val id = jsEntity.getId().toInt()
-        EntityManager.register(id, jsEntity)
-        return id
+actual class FilamentInstance {
+    public var nativeHandle: Int = 0
+
+    actual constructor()
+
+    constructor(nativeHandle: Int) : this() {
+        this.nativeHandle = nativeHandle
     }
+
+    actual val root: Entity get() = FilaFilamentInstance_getRoot(nativeHandle).toInt()
 
     actual val entities: IntArray get() {
-        val vector = jsInstance.getEntities()
-        val result = IntArray(vector.size().toInt())
-        for (i in 0 until vector.size().toInt()) {
-            val jsEntity = vector.get(i.toDouble())
-            val id = jsEntity.getId().toInt()
-            EntityManager.register(id, jsEntity)
-            result[i] = id
+        val count = FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
+        if (count == 0) return IntArray(0)
+        fila.heapScoped {
+            val entities = I32Array(alloc((count) * 4))
+            FilaFilamentInstance_getEntities(nativeHandle, entities.ptr)
+            return IntArray(count) { entities[it].toInt() }
         }
-        return result
     }
 
-    actual val entityCount: Int get() = jsInstance.getEntities().size().toInt()
+    actual val entityCount: Int get() = FilaFilamentInstance_getEntityCount(nativeHandle).toInt()
 
     actual val animator: Animator get() {
         // Null until ResourceLoader has loaded the asset — gltfio creates the animator there.
-        return Animator(checkNotNull(jsInstance.getAnimator()) { ANIMATOR_NOT_LOADED })
+        val handle = FilaFilamentInstance_getAnimator(nativeHandle)
+        check(handle != 0) { ANIMATOR_NOT_LOADED }
+        return Animator(handle)
     }
 
     actual val boundingBox: Box get() {
-        return Box()
+        return fila.heapScoped {
+            val box = FilaBox(alloc(FilaBox.SIZE))
+            FilaFilamentInstance_getBoundingBox(box.ptr, nativeHandle)
+            Box(box.centerX, box.centerY, box.centerZ, box.halfExtentX, box.halfExtentY, box.halfExtentZ)
+        }
     }
 
-    actual val asset: FilamentAsset get() {
-        return FilamentAsset(jsInstance.getAsset())
-    }
+    actual val asset: FilamentAsset get() = FilamentAsset(FilaFilamentInstance_getAsset(nativeHandle))
 
-    actual val skinCount: Int get() = jsInstance.getSkinCount().toInt()
+    actual val skinCount: Int get() = FilaFilamentInstance_getSkinCount(nativeHandle).toInt()
 
     actual val skinNames: List<String> get() {
-        val vector = jsInstance.getSkinNames()
-        val result = Array(vector.size().toInt()) { "" }
-        for (i in 0 until vector.size().toInt()) {
-            result[i] = vector.get(i.toDouble()).toString()
+        val count = skinCount
+        if (count == 0) return emptyList()
+        fila.heapScoped {
+            val names = I32Array(alloc((count) * 4))
+            FilaFilamentInstance_getSkinNames(nativeHandle, names.ptr)
+            return List(count) { fila.readString(names[it]) ?: "" }
         }
-        return result.toList()
     }
 
     actual fun attachSkin(skinIndex: Int, target: Entity) {
-        jsInstance.attachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
+        FilaFilamentInstance_attachSkin(nativeHandle, skinIndex, target)
     }
 
     actual fun detachSkin(skinIndex: Int, target: Entity) {
-        jsInstance.detachSkin(skinIndex.toDouble(), EntityManager.jsEntityOf(target))
+        FilaFilamentInstance_detachSkin(nativeHandle, skinIndex, target)
     }
 
-    actual fun getJointCountAt(skinIndex: Int): Int =
-        jsInstance.getJointCountAt(skinIndex.toDouble()).toInt()
+    actual fun getJointCountAt(skinIndex: Int): Int = FilaFilamentInstance_getJointCountAt(nativeHandle, skinIndex).toInt()
 
     actual fun getJointsAt(skinIndex: Int): IntArray {
-        val joints = jsInstance.getJointsAt(skinIndex.toDouble())
-        return IntArray(joints.size) { i ->
-            val jsEntity = joints[i]
-            val id = jsEntity.getId().toInt()
-            EntityManager.register(id, jsEntity)
-            id
+        val count = getJointCountAt(skinIndex)
+        if (count == 0) return IntArray(0)
+        fila.heapScoped {
+            val joints = I32Array(alloc((count) * 4))
+            FilaFilamentInstance_getJointsAt(nativeHandle, skinIndex, joints.ptr)
+            return IntArray(count) { joints[it].toInt() }
         }
     }
 
     actual fun applyMaterialVariant(variantIndex: Int) {
-        jsInstance.applyMaterialVariant(variantIndex.toDouble())
+        FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
-    actual val materialInstances: List<MaterialInstance> get() {
-        val vector = jsInstance.getMaterialInstances()
-        return List(vector.size().toInt()) { i ->
-            MaterialInstance(vector.get(i.toDouble()))
+    actual val materialInstances: List<io.github.erkko68.filament.MaterialInstance> get() {
+        val count = FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
+        if (count == 0) return emptyList()
+        fila.heapScoped {
+            val instances = I32Array(alloc((count) * 4))
+            FilaFilamentInstance_getMaterialInstances(nativeHandle, instances.ptr)
+            return List(count) { io.github.erkko68.filament.MaterialInstance(instances[it]) }
         }
     }
 
     actual val materialVariantNames: List<String> get() {
-        val names = jsInstance.getMaterialVariantNames()
-        return List(names.size) { names[it].toString() }
-    }
-
-    actual constructor() : this(emptyJsObject().unsafeCast<JSFilamentInstance>()) {
-        // Warning: Default constructor creates empty FilamentInstance with no valid JS binding backing
-        // This is only safe if the instance is never actually used; normally instances should be created via AssetLoader
+        val count = FilaFilamentInstance_getMaterialVariantCount(nativeHandle).toInt()
+        if (count == 0) return emptyList()
+        fila.heapScoped {
+            val names = I32Array(alloc((count) * 4))
+            FilaFilamentInstance_getMaterialVariantNames(nativeHandle, names.ptr)
+            return List(count) { fila.readString(names[it]) ?: "" }
+        }
     }
 }

@@ -466,7 +466,7 @@ expect class Engine : AutoCloseable {
      */
     val hasUnrecoverableFailure: Boolean
     /** Whether rendering is currently paused. Set to pause or resume rendering. */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js does not bind pause, so it has no effect on rendering.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — Filament's pause needs threads, which the wasm build doesn't have, so it has no effect on rendering.")
     var isPaused: Boolean
     /** Deprecated no-op method. */
     fun unprotected()

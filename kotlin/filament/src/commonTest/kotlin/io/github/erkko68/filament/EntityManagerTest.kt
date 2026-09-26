@@ -34,16 +34,7 @@ class EntityManagerTest : FilamentTestFixture() {
             assertFalse(em.isAlive(e))
         }
 
-        try {
-            assertTrue(em.maxEntityCount > 0)
-        } catch (_: UnsupportedOperationException) {
-            // Expected on WEB: not bound in filament.js
-        }
-
-        try {
-            em.advanceEpoch()
-        } catch (_: UnsupportedOperationException) {
-            // Expected on WEB: not bound in filament.js
-        }
+        assertTrue(em.maxEntityCount > 0)
+        em.advanceEpoch()
     }
 }

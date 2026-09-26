@@ -1,8 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.VertexBuffer
 
@@ -17,7 +15,6 @@ actual interface MaterialProvider : AutoCloseable {
     fun getNativeProvider(): com.google.android.filament.gltfio.MaterialProvider
 }
 
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "createMaterialInstance/getMaterial throw — filament.js does not expose the ubershader material provider; use precompiled .filamat materials on web.")
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     private val nativeObject = com.google.android.filament.gltfio.UbershaderProvider(engine.nativeObject)
 

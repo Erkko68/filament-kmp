@@ -2,7 +2,6 @@ package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.gltfio.testutils.GltfioTestFixture
 import io.github.erkko68.filament.gltfio.testutils.TestGlb
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testsupport.TestEnv
 import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
@@ -82,7 +81,6 @@ class FilamentInstanceTest : GltfioTestFixture() {
     }
 
     @Test
-    @IgnoreJs // getMaterialInstances hits an unregistered vector return type (embind "unbound types") in the web prebuilt.
     fun testInstanceMaterials() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return

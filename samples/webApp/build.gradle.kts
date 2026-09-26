@@ -34,6 +34,14 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
             }
+            // filament-kmp/filamat-kmp.{js,wasm}: klib resources don't reach webpack, so serve the umbrella's build output.
+            resources.srcDir(rootDir.resolve("../web/build/filamentWasm"))
+            resources.srcDir(rootDir.resolve("../web/build/filamatWasm"))
         }
     }
+}
+
+tasks.matching { it.name.endsWith("ProcessResources") }.configureEach {
+    dependsOn(gradle.includedBuild("filament-umbrella").task(":web:stageFilamentWasm"))
+    dependsOn(gradle.includedBuild("filament-umbrella").task(":web:stageFilamatWasm"))
 }

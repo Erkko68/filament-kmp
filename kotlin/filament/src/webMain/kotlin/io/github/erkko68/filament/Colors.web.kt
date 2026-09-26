@@ -1,71 +1,81 @@
 package io.github.erkko68.filament
 
-import kotlin.math.pow
+import io.github.erkko68.filament.wasm.*
 
 actual object Colors {
-    actual fun toLinear(
-        type: RgbType,
-        r: Float,
-        g: Float,
-        b: Float
-    ): FloatArray {
-        return if (type == RgbType.SRGB) {
-            floatArrayOf(sRGBToLinear(r), sRGBToLinear(g), sRGBToLinear(b))
-        } else {
-            floatArrayOf(r, g, b)
-        }
+    actual enum class RgbType {
+        SRGB, LINEAR;
+        internal fun toNative(): Int = ordinal
+    }
+
+    actual enum class RgbaType {
+        SRGB, LINEAR, PREMULTIPLIED_SRGB, PREMULTIPLIED_LINEAR;
+        internal fun toNative(): Int = ordinal
+    }
+
+    actual enum class Conversion {
+        ACCURATE, FAST;
+        internal fun toNative(): Int = ordinal
+    }
+
+    actual fun toLinear(type: RgbType, r: Float, g: Float, b: Float): FloatArray {
+        return toLinear(type, floatArrayOf(r, g, b))
     }
 
     actual fun toLinear(type: RgbType, rgb: FloatArray): FloatArray {
-        return toLinear(type, rgb[0], rgb[1], rgb[2])
+        fila.heapScoped {
+            val inRgb = F32Array(alloc((3) * 4))
+            val outRgb = F32Array(alloc((3) * 4))
+            for (i in 0 until 3) inRgb[i] = rgb[i]
+            FilaColors_toLinearRgb(type.toNative(), inRgb.ptr, outRgb.ptr)
+            for (i in 0 until 3) rgb[i] = outRgb[i]
+        }
+        return rgb
     }
 
-    actual fun toLinear(
-        type: RgbaType,
-        r: Float,
-        g: Float,
-        b: Float,
-        a: Float
-    ): FloatArray {
-        return when (type) {
-            RgbaType.SRGB -> floatArrayOf(sRGBToLinear(r), sRGBToLinear(g), sRGBToLinear(b), a)
-            RgbaType.LINEAR -> floatArrayOf(r, g, b, a)
-            RgbaType.PREMULTIPLIED_SRGB -> {
-                val lr = sRGBToLinear(r)
-                val lg = sRGBToLinear(g)
-                val lb = sRGBToLinear(b)
-                floatArrayOf(lr * a, lg * a, lb * a, a)
-            }
-            RgbaType.PREMULTIPLIED_LINEAR -> floatArrayOf(r * a, g * a, b * a, a)
-        }
+    actual fun toLinear(type: RgbaType, r: Float, g: Float, b: Float, a: Float): FloatArray {
+        return toLinear(type, floatArrayOf(r, g, b, a))
     }
 
     actual fun toLinear(type: RgbaType, rgba: FloatArray): FloatArray {
-        return toLinear(type, rgba[0], rgba[1], rgba[2], rgba[3])
+        fila.heapScoped {
+            val inRgba = F32Array(alloc((4) * 4))
+            val outRgba = F32Array(alloc((4) * 4))
+            for (i in 0 until 4) inRgba[i] = rgba[i]
+            FilaColors_toLinearRgba(type.toNative(), inRgba.ptr, outRgba.ptr)
+            for (i in 0 until 4) rgba[i] = outRgba[i]
+        }
+        return rgba
     }
 
-    actual fun toLinear(
-        conversion: Conversion,
-        rgb: FloatArray
-    ): FloatArray {
-        return toLinear(RgbType.SRGB, rgb[0], rgb[1], rgb[2])
+    actual fun toLinear(conversion: Conversion, rgb: FloatArray): FloatArray {
+        fila.heapScoped {
+            val inRgb = F32Array(alloc((3) * 4))
+            val outRgb = F32Array(alloc((3) * 4))
+            for (i in 0 until 3) inRgb[i] = rgb[i]
+            FilaColors_toLinearConvert(conversion.toNative(), inRgb.ptr, outRgb.ptr)
+            for (i in 0 until 3) rgb[i] = outRgb[i]
+        }
+        return rgb
     }
 
     actual fun cct(temperature: Float): FloatArray {
-        // Simple approximation for CCT to RGB (Kass-Barten) or stub
-        // Standard Filament implementation is complex, we'll return white for now
-        return floatArrayOf(1.0f, 1.0f, 1.0f)
+        val color = FloatArray(3)
+        fila.heapScoped {
+            val outColor = F32Array(alloc((3) * 4))
+            FilaColors_cct(temperature, outColor.ptr)
+            for (i in 0 until 3) color[i] = outColor[i]
+        }
+        return color
     }
 
     actual fun illuminantD(temperature: Float): FloatArray {
-        return floatArrayOf(1.0f, 1.0f, 1.0f)
+        val color = FloatArray(3)
+        fila.heapScoped {
+            val outColor = F32Array(alloc((3) * 4))
+            FilaColors_illuminantD(temperature, outColor.ptr)
+            for (i in 0 until 3) color[i] = outColor[i]
+        }
+        return color
     }
-
-    private fun sRGBToLinear(x: Float): Float {
-        return if (x <= 0.04045f) x / 12.92f else ((x + 0.055f) / 1.055f).pow(2.4f)
-    }
-
-    actual enum class RgbType { SRGB, LINEAR }
-    actual enum class RgbaType { SRGB, LINEAR, PREMULTIPLIED_SRGB, PREMULTIPLIED_LINEAR }
-    actual enum class Conversion { ACCURATE, FAST }
 }

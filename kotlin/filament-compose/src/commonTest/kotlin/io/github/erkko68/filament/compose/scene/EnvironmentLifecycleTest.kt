@@ -4,7 +4,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.composeScene
 import io.github.erkko68.filament.compose.testutils.skippedComposeTest
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -24,16 +23,7 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
 
     // Gated tests must *return* the harness result (skippedComposeTest() on the skip branch) so the
     // async web `runComposeUiTest` is awaited — see skippedComposeTest's KDoc.
-    //
-    // @IgnoreJs: Skybox/IndirectLight built-then-set from any *async* context (a promise
-    // continuation — which is where the web compose harness runs everything) corrupts the
-    // filament.wasm heap and traps with "memory access out of bounds" in Scene.setSkybox; the same
-    // sequence run synchronously passes (see the setSkybox test in :kotlin:filament webTest). Wasm
-    // traps aren't catchable from Kotlin, so on wasmJs this hangs the whole suite. Engine-level
-    // prebuilt bug (suspected embind builder double-free via FinalizationRegistry) — regate when
-    // the prebuilt is fixed.
     @OptIn(ExperimentalTestApi::class)
-    @IgnoreJs
     @Test
     fun colorSkyboxAppliesAndClearsOnDisposal() = run {
         val engine = engine ?: return@run skippedComposeTest()
@@ -51,7 +41,6 @@ class EnvironmentLifecycleTest : TierBSceneFixture() {
     }
 
     @OptIn(ExperimentalTestApi::class)
-    @IgnoreJs // same engine-level async setSkybox/setIndirectLight crash — see above
     @Test
     fun shIndirectLightAppliesAndClearsOnDisposal() = run {
         val engine = engine ?: return@run skippedComposeTest()

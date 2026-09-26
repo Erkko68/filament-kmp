@@ -108,7 +108,7 @@ its constructor, but on Kotlin/JS skiko's WASM loads asynchronously under Karma 
 throws `org_jetbrains_skia_Surface__1nMakeRasterN32Premul is not defined`. `ComposeTestFixture` has a
 `@BeforeTest` returning `awaitGraphicsReady()` (skiko's `onWasmReady` promise on JS, `Unit` elsewhere);
 kotlin.test awaits a promise returned from `@BeforeTest`, so the WASM is ready before the first test.
-Karma also needs `kotlin/filament-compose/karma.config.d/filament-setup.js` (loads `filament.js` +
+Karma also needs `kotlin/filament-compose/karma.config.d/filament-setup.js` (loads `filament-kmp.js` +
 the WASM bootstrap, same as the core modules).
 
 `runComposeUiTest` is headless on JVM (skiko offscreen) and resolves on JVM/JS/iOS at Compose MP
@@ -180,9 +180,8 @@ resource, other targets return empty, so the suite skips off-JVM exactly like th
   fix**: a malformed `.filamat` made Filament's C++ parser panic (`utils::PostconditionPanic`), which
   *terminates the process* — the throw unwinds across the prebuilt's `-fno-exceptions` frames before any
   wrapper `try/catch` can run, so it can't be trapped after the fact. `Material.Builder` now sniffs the
-  `.filamat` magic (`isValidFilamatPayload`) in the FFM/native `payload()` and `build()` raises a catchable
-  `IllegalArgumentException` for a non-`.filamat` blob, matching the JS embind backend (which already
-  threw). `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
+  `.filamat` magic (`isValidFilamatPayload`) in the FFM/native/wasm `payload()` and `build()` raises a
+  catchable `IllegalArgumentException` for a non-`.filamat` blob. `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
   bytes (an uncatchable upstream crash, *not* a null-return) and the repo bundles no decodable test image
   for the happy path — that waits on an image asset.
 - **`EnvironmentLifecycleTest`** ✅ — `ApplySkybox` (a **color** skybox → `scene.skybox` set/cleared) and

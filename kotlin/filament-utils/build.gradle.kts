@@ -15,6 +15,7 @@ val FILAMENT_UTILS_PREBUILT_LIBS = listOf(
     "libimage.a",
     "libimageio-lite.a",
     "libktxreader.a",
+    "libstb.a",  // HDRLoader decodes RGBE with stb_image
 )
 
 kotlin {

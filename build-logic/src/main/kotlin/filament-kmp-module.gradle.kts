@@ -88,21 +88,14 @@ kotlin {
     }
 
     // ── JS test bootstrapping ────────────────────────────────────────────────
-    // Karma needs filament.js + filament.wasm loaded before any Kotlin test
-    // code references globals like `Engine` / `Renderer`. Stage the WASM
-    // loader, binary, and bootstrap script into every module's jsTest
-    // resources. Each module also keeps a karma.config.d/filament-setup.js
-    // committed alongside its build.gradle.kts (Karma reads that automatically
-    // from <projectDir>/karma.config.d).
+    // Karma needs filament-kmp.js + .wasm (built by :wasm) loaded, and the module instantiated,
+    // before any test touches Filament. Stage them with the bootstrap script into every module's
+    // web test resources; each module's karma.config.d/filament-setup.js lists them.
     val stagedWebAssets = layout.buildDirectory.dir("filamentWebAssets")
     val stageFilamentWebAssets = tasks.register<Sync>("stageFilamentWebAssetsForJsTest") {
-        dependsOn(rootProject.tasks.named("downloadPrebuilts_web"))
-        from(rootProject.layout.projectDirectory.dir("prebuilts/web")) {
-            include("filament.js", "filament.wasm")
-        }
-        from(rootProject.layout.projectDirectory.file(
-            "gradle/karma/filament-karma-bootstrap.js"
-        ))
+        dependsOn(":web:stageFilamentWasm")
+        from(rootProject.layout.projectDirectory.dir("web/build/filamentWasm"))
+        from(rootProject.layout.projectDirectory.file("gradle/karma/filament-karma-bootstrap.js"))
         into(stagedWebAssets)
     }
     sourceSets.named("jsTest") {

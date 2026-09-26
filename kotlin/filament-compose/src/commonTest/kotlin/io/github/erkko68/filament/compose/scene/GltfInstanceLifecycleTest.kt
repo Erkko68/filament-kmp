@@ -9,7 +9,6 @@ import io.github.erkko68.filament.compose.testutils.TierBSceneFixture
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.skippedComposeTest
 import io.github.erkko68.filament.compose.testutils.withFilamentScene
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -60,10 +59,6 @@ class GltfInstanceLifecycleTest : TierBSceneFixture() {
     }
 
     /** Guards the fixture: without morph targets on the asset, the weight tests would be vacuous. */
-    // @IgnoreJs: RenderableManager.getMorphTargetCount is a hardcoded `return 0` on web
-    // (RenderableManager.web.kt), so this can never report targets there. glTF loading and
-    // instancing themselves work fine on web — the other tests in this class run.
-    @IgnoreJs
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun assetActuallyHasMorphTargets() = run {

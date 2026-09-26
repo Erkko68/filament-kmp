@@ -1,34 +1,30 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.Fence_Mode
-import io.github.erkko68.filament.web.Fence as JSFence
-import io.github.erkko68.filament.web.FenceStatus as JSFenceStatus
+import io.github.erkko68.filament.wasm.*
 
-actual class Fence @InternalFilamentApi constructor(internal val jsFence: JSFence) {
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "WebGL cannot block the calling thread, so the timeout is clamped to 0 — wait() is a non-blocking poll of the fence state.")
-    actual fun wait(
-        mode: Mode,
-        timeout: Long
-    ): FenceStatus {
-        val jsMode = when (mode) {
-            Mode.FLUSH -> Fence_Mode.FLUSH
-            Mode.DONT_FLUSH -> Fence_Mode.DONT_FLUSH
-        }
-        return when (jsFence.wait(jsMode, 0.0)) {
-            JSFenceStatus.CONDITION_SATISFIED -> FenceStatus.CONDITION_SATISFIED
-            JSFenceStatus.TIMEOUT_EXPIRED -> FenceStatus.TIMEOUT_EXPIRED
-            else -> FenceStatus.ERROR
-        }
-    }
-
-    actual val nativeObject: Long get() = 1L
-
+// Single-threaded wasm: Filament rejects a non-zero wait timeout ("requires threads"), and a FLUSH
+// runs every command synchronously anyway, so waits are a timeout-0 poll.
+actual class Fence @InternalFilamentApi constructor(
+    internal var nativeHandle: Int,
+    private val engine: Int = 0,
+) {
     actual enum class Mode { FLUSH, DONT_FLUSH }
     actual enum class FenceStatus { ERROR, ALREADY_SIGNALED, TIMEOUT_EXPIRED, CONDITION_SATISFIED }
 
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "the timeout is clamped to 0 — wasm is single-threaded, so wait() is a non-blocking poll (a FLUSH has already executed every command).")
+    actual fun wait(mode: Mode, timeout: Long): FenceStatus {
+        val result = FilaFence_wait(nativeHandle, mode.ordinal, 0L)
+        return FenceStatus.entries[result + 1] // ERROR is -1, ordinal 0
+    }
+
+    actual val nativeObject: Long get() = nativeHandle.toLong()
+
     actual companion object {
         actual fun waitAndDestroy(fence: Fence, mode: Mode): FenceStatus {
-            return fence.wait(mode, 0L)
+            val status = fence.wait(mode, 0L)
+            FilaEngine_destroyFence(fence.engine, fence.nativeHandle)
+            fence.nativeHandle = 0
+            return status
         }
     }
 }

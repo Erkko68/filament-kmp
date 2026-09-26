@@ -17,6 +17,7 @@ import eric.bitria.samples.scenes.SolarScene
 import eric.bitria.samples.scenes.SplitViewScene
 import eric.bitria.samples.scenes.TextureScene
 import eric.bitria.samples.scenes.TransparentScene
+import eric.bitria.samples.scenes.RuntimeMaterialScene
 
 @Composable
 fun App() {
@@ -35,6 +36,7 @@ fun App() {
             Screen.KTXEnvironment -> KTXEnvironmentScene(onBack = { screen = Screen.Home })
             Screen.HDREnvironment -> HDREnvironmentScene(onBack = { screen = Screen.Home })
             Screen.Transparent -> TransparentScene(onBack = { screen = Screen.Home })
+            Screen.RuntimeMaterial -> RuntimeMaterialScene(onBack = { screen = Screen.Home })
         }
     }
 }

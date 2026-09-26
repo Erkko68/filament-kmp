@@ -78,8 +78,8 @@ internal fun rememberMaterial(
         try {
             Material.Builder().payload(bytes).build(engine)
         } catch (e: Throwable) {
-            // The JS/embind backend throws native (non-Kotlin-Exception) errors on a bad or
-            // unsupported payload; catch broadly so a failed build never crashes the app.
+            // The web backend surfaces wasm panics as JS errors, not Kotlin Exceptions; catch
+            // broadly so a failed build never crashes the app.
             null
         }
     }

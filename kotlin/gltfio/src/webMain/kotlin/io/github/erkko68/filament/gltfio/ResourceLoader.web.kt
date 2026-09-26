@@ -1,28 +1,31 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
-import io.github.erkko68.filament.web.driver_BufferDescriptor
-import io.github.erkko68.filament.web.gltfio_Ktx2Provider
-import io.github.erkko68.filament.web.gltfio_ResourceLoader
-import io.github.erkko68.filament.web.gltfio_StbProvider
-import io.github.erkko68.filament.web.gltfio_WebpProvider
-import org.khronos.webgl.set
+import io.github.erkko68.filament.*
+import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.nativeObject
 
-actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) : AutoCloseable {
-    private val jsLoader = gltfio_ResourceLoader(engine.nativeObject, normalizeSkinningWeights)
-    private val stbProvider = gltfio_StbProvider(engine.nativeObject)
+actual class ResourceLoader : AutoCloseable {
+    internal var nativeHandle: Int
+    private val providers = mutableListOf<Int>()
+    // gltfio keeps addResourceData buffers by pointer until they're evicted, so the heap copies live until then.
+    private val resourceCopies = mutableListOf<Int>()
 
-    init {
-        // The same decoders extensions.js registers in its own loadResources helper; without
-        // them the loader cannot decode embedded or external textures.
-        jsLoader.addStbProvider("image/jpeg", stbProvider)
-        jsLoader.addStbProvider("image/png", stbProvider)
-        jsLoader.addKtx2Provider("image/ktx2", gltfio_Ktx2Provider(engine.nativeObject))
-        if (gltfio_WebpProvider.isWebpSupported()) {
-            jsLoader.addWebpProvider("image/webp", gltfio_WebpProvider(engine.nativeObject))
+    actual constructor(engine: Engine, normalizeSkinningWeights: Boolean) {
+        val loader = FilaResourceLoader_create(engine.nativeObject, normalizeSkinningWeights)
+        nativeHandle = loader
+        
+        // Auto-initialize texture providers to match Android behavior
+        val stbProvider = FilaResourceLoader_createStbProvider(engine.nativeObject)
+        if (stbProvider != 0) {
+            FilaResourceLoader_addTextureProvider(loader, "image/jpeg", stbProvider)
+            FilaResourceLoader_addTextureProvider(loader, "image/png", stbProvider)
+            providers.add(stbProvider)
+        }
+        
+        val ktx2Provider = FilaResourceLoader_createKtx2Provider(engine.nativeObject)
+        if (ktx2Provider != 0) {
+            FilaResourceLoader_addTextureProvider(loader, "image/ktx2", ktx2Provider)
+            providers.add(ktx2Provider)
         }
     }
 
@@ -30,38 +33,46 @@ actual class ResourceLoader actual constructor(engine: Engine, normalizeSkinning
 
 
     actual fun destroy() {
-        jsLoader.delete()
+        if (nativeHandle != 0) FilaResourceLoader_destroy(nativeHandle)
+        nativeHandle = 0
+        providers.forEach { FilaResourceLoader_destroyTextureProvider(it) }
+        providers.clear()
+        freeResourceCopies()
     }
 
     actual fun addResourceData(url: String, data: ByteArray) {
-        jsLoader.addResourceData(url, data.toBufferDescriptor())
+        val copy = fila.allocZeroed(data.size).also { fila.writeBytes(it, data) }
+        resourceCopies.add(copy)
+        FilaResourceLoader_addResourceData(nativeHandle, url, copy, data.size)
     }
 
-    actual fun hasResourceData(url: String): Boolean = jsLoader.hasResourceData(url)
+    actual fun hasResourceData(url: String): Boolean = FilaResourceLoader_hasResourceData(nativeHandle, url)
 
-    actual fun loadResources(asset: FilamentAsset): Boolean = jsLoader.loadResources(asset.jsAsset)
+    actual fun loadResources(asset: FilamentAsset): Boolean {
+        return FilaResourceLoader_loadResources(nativeHandle, asset.nativeHandle)
+    }
 
-    actual fun asyncBeginLoad(asset: FilamentAsset): Boolean = jsLoader.asyncBeginLoad(asset.jsAsset)
+    actual fun asyncBeginLoad(asset: FilamentAsset): Boolean {
+        return FilaResourceLoader_asyncBeginLoad(nativeHandle, asset.nativeHandle)
+    }
 
-    actual fun asyncGetLoadProgress(): Float = jsLoader.asyncGetLoadProgress().toFloat()
+    actual fun asyncGetLoadProgress(): Float = FilaResourceLoader_asyncGetLoadProgress(nativeHandle)
 
     actual fun asyncUpdateLoad() {
-        jsLoader.asyncUpdateLoad()
+        FilaResourceLoader_asyncUpdateLoad(nativeHandle)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js binds no asyncCancelLoad; let the load finish instead.")
     actual fun asyncCancelLoad() {
+        FilaResourceLoader_asyncCancelLoad(nativeHandle)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — filament.js binds no evictResourceData; the loader frees its copies when destroyed.")
     actual fun evictResourceData() {
+        FilaResourceLoader_evictResourceData(nativeHandle)
+        freeResourceCopies()
     }
-}
 
-/** Copies into a wasm-heap BufferDescriptor, which addResourceData takes ownership of. */
-private fun ByteArray.toBufferDescriptor(): driver_BufferDescriptor {
-    val bd = driver_BufferDescriptor(size.toDouble())
-    val dst = org.khronos.webgl.Uint8Array(bd.getBytes())
-    forEachIndexed { i, b -> dst[i] = b }
-    return bd
+    private fun freeResourceCopies() {
+        resourceCopies.forEach { fila._free(it) }
+        resourceCopies.clear()
+    }
 }

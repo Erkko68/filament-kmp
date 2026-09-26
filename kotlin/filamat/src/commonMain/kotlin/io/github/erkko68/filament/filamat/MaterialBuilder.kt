@@ -1,8 +1,6 @@
 package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 
 /**
  * MaterialBuilder compiles Filament material source code into binary packages.
@@ -21,7 +19,6 @@ import io.github.erkko68.filament.PlatformGap
  * @see Filamat
  * @see MaterialPackage
  */
-@PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException on construction — runtime material compilation is not available on web; precompile .filamat assets instead.")
 expect class MaterialBuilder() {
     /**
      * Shading model determines how light interacts with the material surface.

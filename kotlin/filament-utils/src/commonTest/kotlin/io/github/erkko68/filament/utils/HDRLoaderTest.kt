@@ -3,6 +3,7 @@ package io.github.erkko68.filament.utils
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.utils.testutils.UtilsTestFixture
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class HDRLoaderTest : UtilsTestFixture() {
@@ -15,7 +16,14 @@ class HDRLoaderTest : UtilsTestFixture() {
         assertNotNull(Texture.InternalFormat.R11F_G11F_B10F)
     }
 
-    // NOTE: HDRLoader.createTexture cannot be safely exercised here — the native
-    // parser aborts on malformed input rather than returning null. Real coverage
-    // requires a valid .hdr asset bundled into jvmTest resources.
+    @Test
+    fun testDecodesMinimalRadianceImage() {
+        // 1x1 flat (non-RLE) Radiance file: header, blank line, resolution, then one RGBE pixel.
+        val header = "#?RADIANCE\nFORMAT=32-bit_rle_rgbe\n\n-Y 1 +X 1\n".encodeToByteArray()
+        val hdr = header + byteArrayOf(128.toByte(), 64, 32, 129.toByte())
+        val texture = HDRLoader.createTexture(engine, hdr, Texture.InternalFormat.RGB16F)
+        assertNotNull(texture)
+        assertEquals(1, texture.getWidth(0))
+        engine.destroyTexture(texture)
+    }
 }

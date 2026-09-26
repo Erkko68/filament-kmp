@@ -8,8 +8,9 @@ rootProject.name = "Samples"
 // 1. Remove this `includeBuild` block.
 // 2. The project will then resolve Filament dependencies from Maven Central.
 //    Ensure the desired version is specified in your `gradle/libs.versions.toml`.
-// 3. For the `webApp` sample, you will need to manually provide the
-//    `filament.js` and `filament.wasm` files in the execution directory.
+// 3. For the `webApp` sample, download `filament-kmp.{js,wasm}` and `filamat-kmp.{js,wasm}` from
+//    the matching GitHub release into webApp/src/webMain/resources, and drop the umbrella
+//    `resources.srcDir`/`dependsOn` lines from webApp/build.gradle.kts.
 includeBuild("../") {
     name = "filament-umbrella"
     dependencySubstitution {

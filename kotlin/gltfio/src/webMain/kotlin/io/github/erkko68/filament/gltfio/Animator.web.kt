@@ -1,34 +1,28 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.web.`gltfio_Animator` as JSAnimator
+import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.InternalFilamentApi
 
-actual class Animator @InternalFilamentApi constructor(internal val jsAnimator: JSAnimator) {
+actual class Animator @InternalFilamentApi constructor(internal var nativeHandle: Int) {
     actual fun applyAnimation(index: Int, time: Float) {
-        jsAnimator.applyAnimation(index.toDouble(), time.toDouble())
+        FilaAnimator_applyAnimation(nativeHandle, index, time)
     }
 
     actual fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float) {
-        jsAnimator.applyCrossFade(previousIndex.toDouble(), previousTime.toDouble(), alpha.toDouble())
+        FilaAnimator_applyCrossFade(nativeHandle, previousIndex, previousTime, alpha)
     }
 
     actual fun updateBoneMatrices() {
-        jsAnimator.updateBoneMatrices()
+        FilaAnimator_updateBoneMatrices(nativeHandle)
     }
 
     actual fun resetBoneMatrices() {
-        jsAnimator.resetBoneMatrices()
+        FilaAnimator_resetBoneMatrices(nativeHandle)
     }
 
-    actual val animationCount: Int get() {
-        return jsAnimator.getAnimationCount().toInt()
-    }
+    actual val animationCount: Int get() = FilaAnimator_getAnimationCount(nativeHandle).toInt()
 
-    actual fun getAnimationDuration(index: Int): Float {
-        return jsAnimator.getAnimationDuration(index.toDouble()).toFloat()
-    }
+    actual fun getAnimationDuration(index: Int): Float = FilaAnimator_getAnimationDuration(nativeHandle, index)
 
-    actual fun getAnimationName(index: Int): String? {
-        return jsAnimator.getAnimationName(index.toDouble()).let { if (it.isEmpty()) null else it }
-    }
+    actual fun getAnimationName(index: Int): String? = FilaAnimator_getAnimationName(nativeHandle, index)
 }

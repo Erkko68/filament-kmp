@@ -1,161 +1,213 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.Texture as JSTexture
-import io.github.erkko68.filament.web.Texture_InternalFormat as JSTextureInternalFormat
-import io.github.erkko68.filament.web.`driver_PixelBufferDescriptor` as JSPixelBufferDescriptor
-import io.github.erkko68.filament.web.PixelDataFormat
-import io.github.erkko68.filament.web.PixelDataType
-import io.github.erkko68.filament.web.Texture_Builder as JSTextureBuilder
-import org.khronos.webgl.set
+import io.github.erkko68.filament.wasm.*
 
-// The generated Texture external only binds setImage(engine, level, pbd); the deep/sub-region
-// overload exists in filament.js but isn't emitted, so re-type it here instead of `asDynamic()`.
-private external interface JsTextureExt : JsAny  {
-    fun setImage(
-        engine: io.github.erkko68.filament.web.Engine,
-        level: Int, xoffset: Int, yoffset: Int, zoffset: Int,
-        width: Int, height: Int, depth: Int,
-        pbd: JSPixelBufferDescriptor,
-    )
-}
+actual class Texture @InternalFilamentApi constructor(internal var nativeHandle: Int) {
 
-@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JSTexture) {
-    // Filament JS exposes dimensions only via `_getWidth(engine, level)` etc.
-    // (see jsbindings.cpp), so when an engine is known we delegate; otherwise
-    // we fall back to the dimensions captured when the Texture was built.
-    internal var engine: Engine? = null
-    private var _width = 0
-    private var _height = 0
-    private var _depth = 0
-    private var _levels = 1
-    private var _format = InternalFormat.RGBA8
-    private var _target = Sampler.SAMPLER_2D
-
-    internal constructor(jsTexture: JSTexture, engine: Engine, width: Int, height: Int, depth: Int, levels: Int, format: InternalFormat, target: Sampler) : this(jsTexture) {
-        this.engine = engine
-        _width = width
-        _height = height
-        _depth = depth
-        _levels = levels
-        _format = format
-        _target = target
-    }
-
-    actual class Builder actual constructor() {
-        private val jsBuilder: JSTextureBuilder = JSTexture.Builder()
-        private var _width = 1
-        private var _height = 1
-        private var _depth = 1
-        private var _levels = 1
-        private var _format = InternalFormat.RGBA8
-        private var _target = Sampler.SAMPLER_2D
-
-        actual fun width(width: Int): Builder {
-            _width = width
-            jsBuilder.width(width.toDouble())
-            return this
-        }
-
-        actual fun height(height: Int): Builder {
-            _height = height
-            jsBuilder.height(height.toDouble())
-            return this
-        }
-
-        actual fun depth(depth: Int): Builder {
-            _depth = depth
-            jsBuilder.depth(depth.toDouble())
-            return this
-        }
-
-        actual fun levels(levels: Int): Builder {
-            _levels = levels
-            jsBuilder.levels(levels.toDouble())
-            return this
-        }
-
-        actual fun samples(samples: Int): Builder {
-            // Not in JS?
-            return this
-        }
-
-        actual fun sampler(target: Sampler): Builder {
-            _target = target
-            // Upstream binds only SAMPLER_2D / SAMPLER_CUBEMAP / SAMPLER_EXTERNAL.
-            // Map common-API samplers to the closest JS-bound option so the
-            // native side knows e.g. that a texture is a cubemap (needed by
-            // Skybox/IndirectLight which assert isCubemap()).
-            val jsSampler = when (target) {
-                Sampler.SAMPLER_CUBEMAP, Sampler.SAMPLER_CUBEMAP_ARRAY ->
-                    io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_CUBEMAP
-                Sampler.SAMPLER_EXTERNAL ->
-                    io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_EXTERNAL
-                else -> io.github.erkko68.filament.web.Texture_Sampler.SAMPLER_2D
+    actual enum class Sampler {
+        SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY;
+        internal fun toNative(): FilaTextureSamplerType {
+            return when (this) {
+                SAMPLER_2D -> FILA_TEXTURE_SAMPLER_2D
+                SAMPLER_2D_ARRAY -> FILA_TEXTURE_SAMPLER_2D_ARRAY
+                SAMPLER_CUBEMAP -> FILA_TEXTURE_SAMPLER_CUBEMAP
+                SAMPLER_EXTERNAL -> FILA_TEXTURE_SAMPLER_EXTERNAL
+                SAMPLER_3D -> FILA_TEXTURE_SAMPLER_3D
+                SAMPLER_CUBEMAP_ARRAY -> FILA_TEXTURE_SAMPLER_CUBEMAP_ARRAY
             }
-            jsBuilder.sampler(jsSampler)
-            return this
         }
-
-        actual fun format(format: InternalFormat): Builder {
-            _format = format
-            jsBuilder.format(mapInternalFormat(format))
-            return this
-        }
-
-        actual fun usage(usage: Int): Builder {
-            jsBuilder.usage(usage.toDouble())
-            return this
-        }
-
-        actual fun swizzle(
-            r: Swizzle,
-            g: Swizzle,
-            b: Swizzle,
-            a: Swizzle
-        ): Builder {
-            return this
-        }
-
-        actual fun importTexture(id: Long): Builder {
-            return this
-        }
-
-        actual fun external(): Builder {
-            return this
-        }
-
-        actual fun build(engine: Engine): Texture {
-            return Texture(jsBuilder.build(engine.jsEngine), engine, _width, _height, _depth, _levels, _format, _target)
+        companion object {
+            internal fun fromNative(native: FilaTextureSamplerType): Sampler {
+                return when (native) {
+                    FILA_TEXTURE_SAMPLER_2D -> SAMPLER_2D
+                    FILA_TEXTURE_SAMPLER_2D_ARRAY -> SAMPLER_2D_ARRAY
+                    FILA_TEXTURE_SAMPLER_CUBEMAP -> SAMPLER_CUBEMAP
+                    FILA_TEXTURE_SAMPLER_EXTERNAL -> SAMPLER_EXTERNAL
+                    FILA_TEXTURE_SAMPLER_3D -> SAMPLER_3D
+                    FILA_TEXTURE_SAMPLER_CUBEMAP_ARRAY -> SAMPLER_CUBEMAP_ARRAY
+                    else -> SAMPLER_2D
+                }
+            }
         }
     }
-
-    actual enum class Sampler { SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D, SAMPLER_CUBEMAP_ARRAY }
 
     actual enum class InternalFormat {
-        R8, R8_SNORM, R8UI, R8I, STENCIL8, R16F, R16UI, R16I, RG8, RG8_SNORM, RG8UI, RG8I, RGB565, RGB9_E5, RGB5_A1, RGBA4, DEPTH16, RGB8, SRGB8, RGB8_SNORM, RGB8UI, RGB8I, DEPTH24, R32F, R32UI, R32I, RG16F, RG16UI, RG16I, R11F_G11F_B10F, RGBA8, SRGB8_A8, RGBA8_SNORM, UNUSED, RGB10_A2, RGBA8UI, RGBA8I, DEPTH32F, DEPTH24_STENCIL8, DEPTH32F_STENCIL8, RGB16F, RGB16UI, RGB16I, RG32F, RG32UI, RG32I, RGBA16F, RGBA16UI, RGBA16I, RGB32F, RGB32UI, RGB32I, RGBA32F, RGBA32UI, RGBA32I, EAC_R11, EAC_R11_SIGNED, EAC_RG11, EAC_RG11_SIGNED, ETC2_RGB8, ETC2_SRGB8, ETC2_RGB8_A1, ETC2_SRGB8_A1, ETC2_EAC_RGBA8, ETC2_EAC_SRGBA8, DXT1_RGB, DXT1_RGBA, DXT3_RGBA, DXT5_RGBA, DXT1_SRGB, DXT1_SRGBA, DXT3_SRGBA, DXT5_SRGBA, RGBA_ASTC_4x4, RGBA_ASTC_5x4, RGBA_ASTC_5x5, RGBA_ASTC_6x5, RGBA_ASTC_6x6, RGBA_ASTC_8x5, RGBA_ASTC_8x6, RGBA_ASTC_8x8, RGBA_ASTC_10x5, RGBA_ASTC_10x6, RGBA_ASTC_10x8, RGBA_ASTC_10x10, RGBA_ASTC_12x10, RGBA_ASTC_12x12, SRGB8_ALPHA8_ASTC_4x4, SRGB8_ALPHA8_ASTC_5x4, SRGB8_ALPHA8_ASTC_5x5, SRGB8_ALPHA8_ASTC_6x5, SRGB8_ALPHA8_ASTC_6x6, SRGB8_ALPHA8_ASTC_8x5, SRGB8_ALPHA8_ASTC_8x6, SRGB8_ALPHA8_ASTC_8x8, SRGB8_ALPHA8_ASTC_10x5, SRGB8_ALPHA8_ASTC_10x6, SRGB8_ALPHA8_ASTC_10x8, SRGB8_ALPHA8_ASTC_10x10, SRGB8_ALPHA8_ASTC_12x10, SRGB8_ALPHA8_ASTC_12x12, RED_RGTC1, SIGNED_RED_RGTC1, RED_GREEN_RGTC2, SIGNED_RED_GREEN_RGTC2, RGB_BPTC_SIGNED_FLOAT, RGB_BPTC_UNSIGNED_FLOAT, RGBA_BPTC_UNORM, SRGB_ALPHA_BPTC_UNORM
+        R8, R8_SNORM, R8UI, R8I, STENCIL8,
+        R16F, R16UI, R16I,
+        RG8, RG8_SNORM, RG8UI, RG8I,
+        RGB565, RGB9_E5, RGB5_A1,
+        RGBA4,
+        DEPTH16,
+        RGB8, SRGB8, RGB8_SNORM, RGB8UI, RGB8I,
+        DEPTH24,
+        R32F, R32UI, R32I,
+        RG16F, RG16UI, RG16I,
+        R11F_G11F_B10F,
+        RGBA8, SRGB8_A8, RGBA8_SNORM,
+        UNUSED,
+        RGB10_A2, RGBA8UI, RGBA8I,
+        DEPTH32F, DEPTH24_STENCIL8, DEPTH32F_STENCIL8,
+        RGB16F, RGB16UI, RGB16I,
+        RG32F, RG32UI, RG32I,
+        RGBA16F, RGBA16UI, RGBA16I,
+        RGB32F, RGB32UI, RGB32I,
+        RGBA32F, RGBA32UI, RGBA32I,
+        EAC_R11, EAC_R11_SIGNED, EAC_RG11, EAC_RG11_SIGNED,
+        ETC2_RGB8, ETC2_SRGB8,
+        ETC2_RGB8_A1, ETC2_SRGB8_A1,
+        ETC2_EAC_RGBA8, ETC2_EAC_SRGBA8,
+        DXT1_RGB, DXT1_RGBA, DXT3_RGBA, DXT5_RGBA,
+        DXT1_SRGB, DXT1_SRGBA, DXT3_SRGBA, DXT5_SRGBA,
+        RGBA_ASTC_4x4, RGBA_ASTC_5x4, RGBA_ASTC_5x5, RGBA_ASTC_6x5, RGBA_ASTC_6x6,
+        RGBA_ASTC_8x5, RGBA_ASTC_8x6, RGBA_ASTC_8x8,
+        RGBA_ASTC_10x5, RGBA_ASTC_10x6, RGBA_ASTC_10x8, RGBA_ASTC_10x10,
+        RGBA_ASTC_12x10, RGBA_ASTC_12x12,
+        SRGB8_ALPHA8_ASTC_4x4, SRGB8_ALPHA8_ASTC_5x4, SRGB8_ALPHA8_ASTC_5x5,
+        SRGB8_ALPHA8_ASTC_6x5, SRGB8_ALPHA8_ASTC_6x6,
+        SRGB8_ALPHA8_ASTC_8x5, SRGB8_ALPHA8_ASTC_8x6, SRGB8_ALPHA8_ASTC_8x8,
+        SRGB8_ALPHA8_ASTC_10x5, SRGB8_ALPHA8_ASTC_10x6, SRGB8_ALPHA8_ASTC_10x8,
+        SRGB8_ALPHA8_ASTC_10x10, SRGB8_ALPHA8_ASTC_12x10, SRGB8_ALPHA8_ASTC_12x12,
+        RED_RGTC1, SIGNED_RED_RGTC1, RED_GREEN_RGTC2, SIGNED_RED_GREEN_RGTC2,
+        RGB_BPTC_SIGNED_FLOAT, RGB_BPTC_UNSIGNED_FLOAT, RGBA_BPTC_UNORM, SRGB_ALPHA_BPTC_UNORM;
+
+        internal fun toNative(): FilaTextureInternalFormat {
+            return when (this) {
+                R8 -> FILA_TEXTURE_INTERNAL_FORMAT_R8
+                R8_SNORM -> FILA_TEXTURE_INTERNAL_FORMAT_R8_SNORM
+                R8UI -> FILA_TEXTURE_INTERNAL_FORMAT_R8UI
+                R8I -> FILA_TEXTURE_INTERNAL_FORMAT_R8I
+                STENCIL8 -> FILA_TEXTURE_INTERNAL_FORMAT_STENCIL8
+                R16F -> FILA_TEXTURE_INTERNAL_FORMAT_R16F
+                R16UI -> FILA_TEXTURE_INTERNAL_FORMAT_R16UI
+                R16I -> FILA_TEXTURE_INTERNAL_FORMAT_R16I
+                RG8 -> FILA_TEXTURE_INTERNAL_FORMAT_RG8
+                RG8_SNORM -> FILA_TEXTURE_INTERNAL_FORMAT_RG8_SNORM
+                RG8UI -> FILA_TEXTURE_INTERNAL_FORMAT_RG8UI
+                RG8I -> FILA_TEXTURE_INTERNAL_FORMAT_RG8I
+                RGB565 -> FILA_TEXTURE_INTERNAL_FORMAT_RGB565
+                RGB9_E5 -> FILA_TEXTURE_INTERNAL_FORMAT_RGB9_E5
+                RGB5_A1 -> FILA_TEXTURE_INTERNAL_FORMAT_RGB5_A1
+                RGBA4 -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA4
+                DEPTH16 -> FILA_TEXTURE_INTERNAL_FORMAT_DEPTH16
+                RGB8 -> FILA_TEXTURE_INTERNAL_FORMAT_RGB8
+                SRGB8 -> FILA_TEXTURE_INTERNAL_FORMAT_SRGB8
+                RGB8_SNORM -> FILA_TEXTURE_INTERNAL_FORMAT_RGB8_SNORM
+                RGB8UI -> FILA_TEXTURE_INTERNAL_FORMAT_RGB8UI
+                RGB8I -> FILA_TEXTURE_INTERNAL_FORMAT_RGB8I
+                DEPTH24 -> FILA_TEXTURE_INTERNAL_FORMAT_DEPTH24
+                R32F -> FILA_TEXTURE_INTERNAL_FORMAT_R32F
+                R32UI -> FILA_TEXTURE_INTERNAL_FORMAT_R32UI
+                R32I -> FILA_TEXTURE_INTERNAL_FORMAT_R32I
+                RG16F -> FILA_TEXTURE_INTERNAL_FORMAT_RG16F
+                RG16UI -> FILA_TEXTURE_INTERNAL_FORMAT_RG16UI
+                RG16I -> FILA_TEXTURE_INTERNAL_FORMAT_RG16I
+                R11F_G11F_B10F -> FILA_TEXTURE_INTERNAL_FORMAT_R11F_G11F_B10F
+                RGBA8 -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA8
+                SRGB8_A8 -> FILA_TEXTURE_INTERNAL_FORMAT_SRGB8_A8
+                RGBA8_SNORM -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA8_SNORM
+                UNUSED -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA8
+                RGB10_A2 -> FILA_TEXTURE_INTERNAL_FORMAT_RGB10_A2
+                RGBA8UI -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA8UI
+                RGBA8I -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA8I
+                DEPTH32F -> FILA_TEXTURE_INTERNAL_FORMAT_DEPTH32F
+                DEPTH24_STENCIL8 -> FILA_TEXTURE_INTERNAL_FORMAT_DEPTH24_STENCIL8
+                DEPTH32F_STENCIL8 -> FILA_TEXTURE_INTERNAL_FORMAT_DEPTH32F_STENCIL8
+                RGB16F -> FILA_TEXTURE_INTERNAL_FORMAT_RGB16F
+                RGB16UI -> FILA_TEXTURE_INTERNAL_FORMAT_RGB16UI
+                RGB16I -> FILA_TEXTURE_INTERNAL_FORMAT_RGB16I
+                RG32F -> FILA_TEXTURE_INTERNAL_FORMAT_RG32F
+                RG32UI -> FILA_TEXTURE_INTERNAL_FORMAT_RG32UI
+                RG32I -> FILA_TEXTURE_INTERNAL_FORMAT_RG32I
+                RGBA16F -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA16F
+                RGBA16UI -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA16UI
+                RGBA16I -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA16I
+                RGB32F -> FILA_TEXTURE_INTERNAL_FORMAT_RGB32F
+                RGB32UI -> FILA_TEXTURE_INTERNAL_FORMAT_RGB32UI
+                RGB32I -> FILA_TEXTURE_INTERNAL_FORMAT_RGB32I
+                RGBA32F -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA32F
+                RGBA32UI -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA32UI
+                RGBA32I -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA32I
+                else -> FILA_TEXTURE_INTERNAL_FORMAT_RGBA8
+            }
+        }
+
+        companion object {
+            internal fun fromNative(native: FilaTextureInternalFormat): InternalFormat {
+                return InternalFormat.entries.find { it.toNative() == native } ?: RGBA8
+            }
+        }
     }
 
-    actual enum class CubemapFace { POSITIVE_X, NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z }
+    actual enum class CubemapFace {
+        POSITIVE_X, NEGATIVE_X, POSITIVE_Y, NEGATIVE_Y, POSITIVE_Z, NEGATIVE_Z;
+        internal fun toNative(): Int = this.ordinal
+    }
 
-    actual enum class Format { R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, ALPHA }
+    actual enum class Format {
+        R, R_INTEGER, RG, RG_INTEGER, RGB, RGB_INTEGER, RGBA, RGBA_INTEGER, UNUSED, DEPTH_COMPONENT, DEPTH_STENCIL, ALPHA;
+        internal fun toNative(): FilaPixelDataFormat {
+            return when (this) {
+                R -> FILA_PIXEL_DATA_FORMAT_R
+                R_INTEGER -> FILA_PIXEL_DATA_FORMAT_R_INTEGER
+                RG -> FILA_PIXEL_DATA_FORMAT_RG
+                RG_INTEGER -> FILA_PIXEL_DATA_FORMAT_RG_INTEGER
+                RGB -> FILA_PIXEL_DATA_FORMAT_RGB
+                RGB_INTEGER -> FILA_PIXEL_DATA_FORMAT_RGB_INTEGER
+                RGBA -> FILA_PIXEL_DATA_FORMAT_RGBA
+                RGBA_INTEGER -> FILA_PIXEL_DATA_FORMAT_RGBA_INTEGER
+                UNUSED -> FILA_PIXEL_DATA_FORMAT_UNUSED
+                DEPTH_COMPONENT -> FILA_PIXEL_DATA_FORMAT_DEPTH_COMPONENT
+                DEPTH_STENCIL -> FILA_PIXEL_DATA_FORMAT_DEPTH_STENCIL
+                ALPHA -> FILA_PIXEL_DATA_FORMAT_ALPHA
+            }
+        }
+    }
 
-    actual enum class Type { UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565 }
+    actual enum class Type {
+        UBYTE, BYTE, USHORT, SHORT, UINT, INT, HALF, FLOAT, COMPRESSED, UINT_10F_11F_11F_REV, USHORT_565;
+        internal fun toNative(): FilaPixelDataType {
+            return when (this) {
+                UBYTE -> FILA_PIXEL_DATA_TYPE_UBYTE
+                BYTE -> FILA_PIXEL_DATA_TYPE_BYTE
+                USHORT -> FILA_PIXEL_DATA_TYPE_USHORT
+                SHORT -> FILA_PIXEL_DATA_TYPE_SHORT
+                UINT -> FILA_PIXEL_DATA_TYPE_UINT
+                INT -> FILA_PIXEL_DATA_TYPE_INT
+                HALF -> FILA_PIXEL_DATA_TYPE_HALF
+                FLOAT -> FILA_PIXEL_DATA_TYPE_FLOAT
+                COMPRESSED -> FILA_PIXEL_DATA_TYPE_COMPRESSED
+                UINT_10F_11F_11F_REV -> FILA_PIXEL_DATA_TYPE_UINT_10F_11F_11F_REV
+                USHORT_565 -> FILA_PIXEL_DATA_TYPE_USHORT_565
+            }
+        }
+    }
 
-    actual enum class Swizzle { SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3 }
+    actual enum class Swizzle {
+        SUBSTITUTE_ZERO, SUBSTITUTE_ONE, CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3;
+        internal fun toNative(): FilaTextureSwizzle {
+            return when (this) {
+                SUBSTITUTE_ZERO -> FILA_TEXTURE_SWIZZLE_SUBSTITUTE_ZERO
+                SUBSTITUTE_ONE -> FILA_TEXTURE_SWIZZLE_SUBSTITUTE_ONE
+                CHANNEL_0 -> FILA_TEXTURE_SWIZZLE_CHANNEL_0
+                CHANNEL_1 -> FILA_TEXTURE_SWIZZLE_CHANNEL_1
+                CHANNEL_2 -> FILA_TEXTURE_SWIZZLE_CHANNEL_2
+                CHANNEL_3 -> FILA_TEXTURE_SWIZZLE_CHANNEL_3
+            }
+        }
+    }
 
     actual object Usage {
-        actual val COLOR_ATTACHMENT: Int = 1
-        actual val DEPTH_ATTACHMENT: Int = 2
-        actual val STENCIL_ATTACHMENT: Int = 4
-        actual val UPLOADABLE: Int = 8
-        actual val SAMPLEABLE: Int = 16
-        actual val SUBPASS_INPUT: Int = 32
-        actual val BLIT_SRC: Int = 64
-        actual val BLIT_DST: Int = 128
-        actual val PROTECTED: Int = 256
-        actual val GEN_MIPMAPPABLE: Int = 512
-        actual val DEFAULT: Int = 24
+        actual val COLOR_ATTACHMENT: Int = FILA_TEXTURE_USAGE_COLOR_ATTACHMENT.toInt()
+        actual val DEPTH_ATTACHMENT: Int = FILA_TEXTURE_USAGE_DEPTH_ATTACHMENT.toInt()
+        actual val STENCIL_ATTACHMENT: Int = FILA_TEXTURE_USAGE_STENCIL_ATTACHMENT.toInt()
+        actual val UPLOADABLE: Int = FILA_TEXTURE_USAGE_UPLOADABLE.toInt()
+        actual val SAMPLEABLE: Int = FILA_TEXTURE_USAGE_SAMPLEABLE.toInt()
+        actual val SUBPASS_INPUT: Int = FILA_TEXTURE_USAGE_SUBPASS_INPUT.toInt()
+        actual val BLIT_SRC: Int = FILA_TEXTURE_USAGE_BLIT_SRC.toInt()
+        actual val BLIT_DST: Int = FILA_TEXTURE_USAGE_BLIT_DST.toInt()
+        actual val PROTECTED: Int = FILA_TEXTURE_USAGE_PROTECTED.toInt()
+        actual val GEN_MIPMAPPABLE: Int = FILA_TEXTURE_USAGE_GEN_MIPMAPPABLE.toInt()
+        actual val DEFAULT: Int = FILA_TEXTURE_USAGE_DEFAULT.toInt()
     }
 
     actual class PixelBufferDescriptor actual constructor(
@@ -168,195 +220,87 @@ actual class Texture @InternalFilamentApi constructor(internal val jsTexture: JS
         actual val top: Int,
         actual val stride: Int,
         actual val callback: (() -> Unit)?
-    ) {
-        internal val jsPbd: JSPixelBufferDescriptor = run {
-            // Upstream exposes `Filament.PixelBuffer(typedarray, format, datatype)` (a
-            // function, not a constructor) which copies the typed array into the WASM
-            // heap and returns a driver$PixelBufferDescriptor. The class itself is
-            // `Filament.driver$PixelBufferDescriptor`; there's no `Filament.PixelBufferDescriptor`.
-            val u8 = org.khronos.webgl.Int8Array(storage.size).also { arr ->
-                storage.forEachIndexed { i, b -> arr[i] = b }
-            }
-            val typed = org.khronos.webgl.Uint8Array(u8.buffer)
-            newPixelBuffer(typed, mapFormat(format), mapType(type))
+    )
+
+    actual class Builder actual constructor() {
+        private val nativeBuilder = FilaTextureBuilder_create()
+
+        actual fun width(width: Int): Builder = apply { FilaTextureBuilder_width(nativeBuilder, width) }
+        actual fun height(height: Int): Builder = apply { FilaTextureBuilder_height(nativeBuilder, height) }
+        actual fun depth(depth: Int): Builder = apply { FilaTextureBuilder_depth(nativeBuilder, depth) }
+        actual fun levels(levels: Int): Builder = apply { FilaTextureBuilder_levels(nativeBuilder, levels) }
+        actual fun samples(samples: Int): Builder = apply { FilaTextureBuilder_samples(nativeBuilder, samples) }
+        actual fun sampler(target: Sampler): Builder = apply { FilaTextureBuilder_sampler(nativeBuilder, target.toNative()) }
+        actual fun format(format: InternalFormat): Builder = apply { FilaTextureBuilder_format(nativeBuilder, format.toNative()) }
+        actual fun usage(usage: Int): Builder = apply { FilaTextureBuilder_usage(nativeBuilder, usage) }
+        actual fun swizzle(r: Swizzle, g: Swizzle, b: Swizzle, a: Swizzle): Builder = apply {
+            FilaTextureBuilder_swizzle(nativeBuilder, r.toNative(), g.toNative(), b.toNative(), a.toNative())
+        }
+        actual fun importTexture(id: Long): Builder = apply { FilaTextureBuilder_importTexture(nativeBuilder, id.toInt()) }
+        actual fun external(): Builder = apply { FilaTextureBuilder_external(nativeBuilder) }
+        actual fun build(engine: Engine): Texture {
+            val handle = FilaTextureBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaTextureBuilder_destroy(nativeBuilder)
+            return Texture(handle)
         }
     }
 
-    actual fun getWidth(level: Int): Int {
-        engine?.let { return jsTexture.getWidth(it.jsEngine, level.toDouble()).toInt() }
-        return if (level == 0) _width else (_width shr level).coerceAtLeast(1)
+    actual fun getWidth(level: Int): Int = FilaTexture_getWidth(nativeHandle, level).toInt()
+    actual fun getHeight(level: Int): Int = FilaTexture_getHeight(nativeHandle, level).toInt()
+    actual fun getDepth(level: Int): Int = FilaTexture_getDepth(nativeHandle, level).toInt()
+    actual val levels: Int get() = FilaTexture_getLevels(nativeHandle).toInt()
+    actual val target: Sampler get() = Sampler.fromNative(FilaTexture_getTarget(nativeHandle))
+    actual val format: InternalFormat get() = InternalFormat.fromNative(FilaTexture_getFormat(nativeHandle))
+
+    actual fun setImage(engine: Engine, level: Int, descriptor: PixelBufferDescriptor) {
+        setImage(engine, level, 0, 0, 0, getWidth(level), getHeight(level), getDepth(level), descriptor)
     }
 
-    actual fun getHeight(level: Int): Int {
-        engine?.let { return jsTexture.getHeight(it.jsEngine, level.toDouble()).toInt() }
-        return if (level == 0) _height else (_height shr level).coerceAtLeast(1)
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, descriptor: PixelBufferDescriptor) {
+        setImage(engine, level, xoffset, yoffset, 0, width, height, 1, descriptor)
     }
 
-    actual fun getDepth(level: Int): Int {
-        engine?.let { return jsTexture.getDepth(it.jsEngine, level.toDouble()).toInt() }
-        return if (level == 0) _depth else (_depth shr level).coerceAtLeast(1)
-    }
-
-    actual val levels: Int get() {
-        engine?.let { return jsTexture.getLevels(it.jsEngine).toInt() }
-        return _levels
-    }
-
-    actual val target: Sampler get() = _target
-
-    actual val format: InternalFormat get() = _format
-
-    actual fun setImage(
-        engine: Engine,
-        level: Int,
-        descriptor: PixelBufferDescriptor
-    ) {
-        // 1.73.0 removed the _setImageCube binding; setImage now uploads a full cubemap level
-        // (all six faces, tightly packed) just like the other targets.
-        jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
-    }
-
-    actual fun setImage(
-        engine: Engine,
-        level: Int,
-        xoffset: Int,
-        yoffset: Int,
-        width: Int,
-        height: Int,
-        descriptor: PixelBufferDescriptor
-    ) {
-        // JS bindings only support setImage(engine, level, pbd); sub-region upload not available
-        jsTexture.setImage(engine.jsEngine, level.toDouble(), descriptor.jsPbd)
-    }
-
-    actual fun setImage(
-        engine: Engine,
-        level: Int,
-        xoffset: Int,
-        yoffset: Int,
-        zoffset: Int,
-        width: Int,
-        height: Int,
-        depth: Int,
-        descriptor: PixelBufferDescriptor
-    ) {
-        // Deep setImage is for 3D textures or arrays
-        jsTexture.unsafeCast<JsTextureExt>().setImage(
-            engine.jsEngine, level, xoffset, yoffset, zoffset, width, height, depth, descriptor.jsPbd
+    actual fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
+        val upload = fila.upload(descriptor.storage, descriptor.sizeInBytes, descriptor.callback)
+        FilaTexture_setImage(
+            nativeHandle, engine.nativeHandle, level,
+            xoffset, yoffset, zoffset,
+            width, height, depth,
+            upload.ptr, upload.size,
+            descriptor.format.toNative(), descriptor.type.toNative(),
+            descriptor.alignment, descriptor.left, descriptor.top, descriptor.stride,
+            0, upload.callback, upload.userData
         )
     }
 
-    actual fun setExternalStream(
-        engine: Engine,
-        stream: Stream
-    ) {
+    actual fun generateMipmaps(engine: Engine) {
+        FilaTexture_generateMipmaps(nativeHandle, engine.nativeHandle)
     }
 
-    actual fun generateMipmaps(engine: Engine) {
-        jsTexture.generateMipmaps(engine.jsEngine)
+    actual fun setExternalStream(engine: Engine, stream: Stream) {
+        FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, stream.nativeHandle)
     }
 
     actual companion object {
-        actual fun isTextureFormatSupported(
-            engine: Engine,
-            format: InternalFormat
-        ): Boolean {
-            return true
-        }
+        actual fun isTextureFormatSupported(engine: Engine, format: InternalFormat): Boolean =
+            FilaTexture_isTextureFormatSupported(engine.nativeHandle, format.toNative())
 
-        actual fun isTextureFormatMipmappable(
-            engine: Engine,
-            format: InternalFormat
-        ): Boolean {
-            return JSTexture.isTextureFormatMipmappable(engine.jsEngine, mapInternalFormat(format))
-        }
+        actual fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
+            FilaTexture_isTextureFormatMipmappable(engine.nativeHandle, format.toNative())
 
         actual fun isTextureSwizzleSupported(engine: Engine): Boolean =
-            JSTexture.isTextureSwizzleSupported(engine.jsEngine)
+            FilaTexture_isTextureSwizzleSupported(engine.nativeHandle)
 
-        actual fun validatePixelFormatAndType(
-            internalFormat: InternalFormat,
-            pixelDataFormat: Format,
-            pixelDataType: Type
-        ): Boolean {
-            return JSTexture.validatePixelFormatAndType(
-                mapInternalFormat(internalFormat),
-                mapFormat(pixelDataFormat),
-                mapType(pixelDataType),
-            )
-        }
+        actual fun validatePixelFormatAndType(internalFormat: InternalFormat, pixelDataFormat: Format, pixelDataType: Type): Boolean =
+            FilaTexture_validatePixelFormatAndType(internalFormat.toNative(), pixelDataFormat.toNative(), pixelDataType.toNative())
 
-        actual fun getMaxTextureSize(
-            engine: Engine,
-            type: Sampler
-        ): Int {
-            return 8192
-        }
+        actual fun getMaxTextureSize(engine: Engine, type: Sampler): Int =
+            FilaTexture_getMaxTextureSize(engine.nativeHandle, type.toNative()).toInt()
 
-        actual fun getMaxArrayTextureLayers(engine: Engine): Int {
-            return 256
-        }
+        actual fun getMaxArrayTextureLayers(engine: Engine): Int =
+            FilaTexture_getMaxArrayTextureLayers(engine.nativeHandle).toInt()
 
-        actual fun computeDataSize(
-            format: Format,
-            type: Type,
-            stride: Int,
-            height: Int,
-            alignment: Int
-        ): Int {
-            val bytesPerPixel = when (type) {
-                Type.UBYTE, Type.BYTE -> 1
-                Type.USHORT, Type.SHORT, Type.HALF -> 2
-                Type.UINT, Type.INT, Type.FLOAT -> 4
-                else -> 1
-            }
-            val rowSize = stride * bytesPerPixel
-            val alignedRowSize = if (alignment > 1) ((rowSize + alignment - 1) / alignment) * alignment else rowSize
-            return alignedRowSize * height
-        }
+        actual fun computeDataSize(format: Format, type: Type, stride: Int, height: Int, alignment: Int): Int =
+            FilaTexture_computeDataSize(format.toNative(), type.toNative(), stride, height, alignment).toInt()
     }
 }
-
-// The JS enum registers Filament's TextureFormat in declaration order, the same order the
-// common enum follows, so the two map by ordinal — the old hand-written `when` covered 10 of
-// them and silently substituted RGBA8 for the rest (a DEPTH24_STENCIL8 texture came out as
-// colour).
-private const val JS_INTERNAL_FORMAT_COUNT = 101
-
-private fun mapInternalFormat(format: Texture.InternalFormat): JSTextureInternalFormat {
-    val ordinal = format.ordinal
-    if (ordinal >= JS_INTERNAL_FORMAT_COUNT) return JSTextureInternalFormat.RGBA8
-    return JSTextureInternalFormat.values
-        .unsafeCast<js.array.JsArray<JSTextureInternalFormat>>()[ordinal]!!
-}
-
-private fun mapFormat(format: Texture.Format): PixelDataFormat {
-    return when(format) {
-        Texture.Format.R -> PixelDataFormat.R
-        Texture.Format.RG -> PixelDataFormat.RG
-        Texture.Format.RGB -> PixelDataFormat.RGB
-        Texture.Format.RGBA -> PixelDataFormat.RGBA
-        Texture.Format.DEPTH_COMPONENT -> PixelDataFormat.DEPTH_COMPONENT
-        Texture.Format.DEPTH_STENCIL -> PixelDataFormat.DEPTH_STENCIL
-        Texture.Format.ALPHA -> PixelDataFormat.ALPHA
-        else -> PixelDataFormat.RGBA
-    }
-}
-
-private fun mapType(type: Texture.Type): PixelDataType {
-    return when(type) {
-        Texture.Type.UBYTE -> PixelDataType.UBYTE
-        Texture.Type.BYTE -> PixelDataType.BYTE
-        Texture.Type.USHORT -> PixelDataType.USHORT
-        Texture.Type.SHORT -> PixelDataType.SHORT
-        Texture.Type.UINT -> PixelDataType.UINT
-        Texture.Type.INT -> PixelDataType.INT
-        Texture.Type.HALF -> PixelDataType.HALF
-        Texture.Type.FLOAT -> PixelDataType.FLOAT
-        else -> PixelDataType.UBYTE
-    }
-}
-// Filament.PixelBuffer(typedarray, format, datatype) copies the typed array into the WASM
-// heap and returns a driver_PixelBufferDescriptor. Top-level so js() is legal on wasmJs.
-private fun newPixelBuffer(data: JsAny?, format: JsAny?, datatype: JsAny?): JSPixelBufferDescriptor =
-    js("Filament.PixelBuffer(data, format, datatype)")

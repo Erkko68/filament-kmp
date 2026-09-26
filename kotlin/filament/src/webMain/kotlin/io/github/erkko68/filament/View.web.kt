@@ -1,519 +1,13 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.interop.toFloatArray
+import io.github.erkko68.filament.wasm.*
 
-import io.github.erkko68.filament.web.interop.emptyJsObject
-
-import io.github.erkko68.filament.web.interop.jsNumbers
-import io.github.erkko68.filament.web.interop.toJsNumbers
-
-import io.github.erkko68.filament.web.View as JSView
-
-// Setters the generated externals don't cover. Declared as methods (not function-typed
-// properties) so they're invoked as `obj.method(...)` and keep their `this` binding — embind
-// throws BindingError if the bound function is detached from its receiver.
-private external interface JsViewExt : JsAny  {
-    fun setDithering(dithering: io.github.erkko68.filament.web.View_Dithering)
-    fun setDynamicResolutionOptions(options: io.github.erkko68.filament.web.View_DynamicResolutionOptions)
-    fun setRenderQuality(quality: io.github.erkko68.filament.web.View_RenderQuality)
-    fun setShadowType(type: io.github.erkko68.filament.web.View_ShadowType)
-    fun setVsmShadowOptions(options: io.github.erkko68.filament.web.View_VsmShadowOptions)
-    fun setSoftShadowOptions(options: io.github.erkko68.filament.web.View_SoftShadowOptions)
-    fun getColorGrading(): io.github.erkko68.filament.web.ColorGrading?
-}
-
-// Value-object fields not emitted into the generated option externals.
-private external interface BloomOptionsExt : JsAny  {
-    var highlight: Double
-    var dirt: io.github.erkko68.filament.web.Texture?
-    var dirtStrength: Double
-}
-private external interface AoOptionsExt : JsAny  {
-    var ssct: io.github.erkko68.filament.web.View_AmbientOcclusionOptions_Ssct
-}
-
-@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-actual class View @InternalFilamentApi constructor(internal val jsView: JSView) {
-    private val ext: JsViewExt get() = jsView.unsafeCast<JsViewExt>()
-    // Wrapper identity, as on the other platforms: the engine hands back a raw JS/native
-    // object, so the Kotlin wrapper the caller set is what the getter must return.
-    private var _scene: Scene? = null
-    private var _camera: Camera? = null
-    private var _viewport: Viewport = Viewport(0, 0, 0, 0)
-    private var _visibleLayersValues: Int = 0
-    private var _dithering: Dithering = Dithering.TEMPORAL
-    private var _antiAliasing: AntiAliasing = AntiAliasing.NONE
-    private var _dynamicResolutionOptions = DynamicResolutionOptions()
-    private var _renderQuality = RenderQuality()
-    private var _bloomOptions = BloomOptions()
-    private var _fogOptions = FogOptions()
-    private var _depthOfFieldOptions = DepthOfFieldOptions()
-    private var _vignetteOptions = VignetteOptions()
-    private var _ambientOcclusionOptions = AmbientOcclusionOptions()
-    private var _temporalAntiAliasingOptions = TemporalAntiAliasingOptions()
-    private var _screenSpaceReflectionsOptions = ScreenSpaceReflectionsOptions()
-    private var _vsmShadowOptions = VsmShadowOptions()
-    private var _softShadowOptions = SoftShadowOptions()
-    private var _guardBandOptions = GuardBandOptions()
-    private var _stereoscopicOptions = StereoscopicOptions()
-    private var _multiSampleAntiAliasingOptions = MultiSampleAntiAliasingOptions()
-    private var _shadowType = ShadowType.PCF
-    private var _renderTarget: RenderTarget? = null
-    private var _postProcessingEnabled = true
-
-    // View::getName/setName aren't bound in upstream jsbindings.cpp (v1.71.4) —
-    // track locally so the common getter/setter round-trip works.
-    private var _name: String? = null
-    actual var name: String?
-        get() = _name
-        set(value) { _name = value }
-
-    actual var scene: Scene?
-        get() = _scene
-        set(value) {
-            _scene = value
-            if (value != null) jsView.setScene(value.jsScene)
-        }
-
-    actual var camera: Camera?
-        get() = _camera
-        set(value) {
-            _camera = value
-            if (value != null) jsView.setCamera(value.jsCamera)
-        }
-
-    actual val hasCamera: Boolean get() = jsView.hasCamera()
-
-    actual var viewport: Viewport
-        get() {
-            val v = jsView.getViewport()?.toFloatArray(4) ?: return Viewport(0, 0, 0, 0)
-            return Viewport(v[0].toInt(), v[1].toInt(), v[2].toInt(), v[3].toInt())
-        }
-        set(value) {
-            jsView.setViewport(jsNumbers(value.left, value.bottom, value.width, value.height))
-        }
-
-    actual var blendMode: BlendMode
-        get() = when (jsView.getBlendMode()) {
-            io.github.erkko68.filament.web.View_BlendMode.OPAQUE -> View.BlendMode.OPAQUE
-            io.github.erkko68.filament.web.View_BlendMode.TRANSLUCENT -> View.BlendMode.TRANSLUCENT
-            else -> error("unreachable")
-        }
-        set(value) {
-            jsView.setBlendMode(when (value) {
-                View.BlendMode.OPAQUE -> io.github.erkko68.filament.web.View_BlendMode.OPAQUE
-                View.BlendMode.TRANSLUCENT -> io.github.erkko68.filament.web.View_BlendMode.TRANSLUCENT
-            })
-        }
-
-    actual fun setVisibleLayers(select: Int, values: Int) {
-        _visibleLayersValues = values
-        jsView.setVisibleLayers(select.toDouble(), values.toDouble())
-    }
-
-    actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
-        val select = 1 shl layer
-        val values = if (enabled) select else 0
-        setVisibleLayers(select, values)
-    }
-
-    // jsbindings.cpp binds setVisibleLayers but no getter; mirror what was set.
-    actual val visibleLayers: Int get() = _visibleLayersValues
-
-    // getView().isPostProcessingEnabled isn't bound upstream; the setter is, so mirror
-    // the value locally for a correct getter/setter round-trip (default: enabled).
-    actual var isPostProcessingEnabled: Boolean
-        get() = _postProcessingEnabled
-        set(value) {
-            _postProcessingEnabled = value
-            jsView.setPostProcessingEnabled(value)
-        }
-
-    actual var antiAliasing: AntiAliasing
-        get() = _antiAliasing
-        set(value) {
-            _antiAliasing = value
-            jsView.setAntiAliasing(when (value) {
-                AntiAliasing.NONE -> io.github.erkko68.filament.web.View_AntiAliasing.NONE
-                AntiAliasing.FXAA -> io.github.erkko68.filament.web.View_AntiAliasing.FXAA
-            })
-        }
-
-    actual var dithering: Dithering
-        get() = _dithering
-        set(value) {
-            _dithering = value
-            val jsDith = when(value) {
-                Dithering.NONE -> io.github.erkko68.filament.web.View_Dithering.NONE
-                Dithering.TEMPORAL -> io.github.erkko68.filament.web.View_Dithering.TEMPORAL
-            }
-            ext.setDithering(jsDith)
-        }
-
-    actual var dynamicResolutionOptions: DynamicResolutionOptions
-        get() = jsView.getDynamicResolutionOptions().let { o ->
-            DynamicResolutionOptions().apply {
-                enabled = o.enabled ?: false
-                homogeneousScaling = o.homogeneousScaling ?: false
-                minScale = (o.minScale?.toFloatArray(2) ?: FloatArray(2))[0]
-                maxScale = (o.maxScale?.toFloatArray(2) ?: FloatArray(2))[0]
-                sharpness = (o.sharpness ?: 0.0).toFloat()
-                quality = when (o.quality) {
-                    io.github.erkko68.filament.web.View_QualityLevel.MEDIUM -> View.Quality.MEDIUM
-                    io.github.erkko68.filament.web.View_QualityLevel.HIGH -> View.Quality.HIGH
-                    io.github.erkko68.filament.web.View_QualityLevel.ULTRA -> View.Quality.ULTRA
-                    else -> View.Quality.LOW
-                }
-            }
-        }
-        set(value) {
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_DynamicResolutionOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.homogeneousScaling = value.homogeneousScaling
-            jsOptions.minScale = jsNumbers(value.minScale, value.minScale)
-            jsOptions.maxScale = jsNumbers(value.maxScale, value.maxScale)
-            jsOptions.sharpness = value.sharpness.toDouble()
-            jsOptions.quality = when(value.quality) {
-                View.Quality.LOW -> io.github.erkko68.filament.web.View_QualityLevel.LOW
-                View.Quality.MEDIUM -> io.github.erkko68.filament.web.View_QualityLevel.MEDIUM
-                View.Quality.HIGH -> io.github.erkko68.filament.web.View_QualityLevel.HIGH
-                View.Quality.ULTRA -> io.github.erkko68.filament.web.View_QualityLevel.ULTRA
-            }
-            ext.setDynamicResolutionOptions(jsOptions)
-        }
-
-    actual var renderQuality: RenderQuality
-        get() = _renderQuality
-        set(value) {
-            _renderQuality = value
-            val jsQuality = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_RenderQuality`>()
-            jsQuality.hdrColorBuffer = when(value.hdrColorBuffer) {
-                View.Quality.LOW -> io.github.erkko68.filament.web.View_QualityLevel.LOW
-                View.Quality.MEDIUM -> io.github.erkko68.filament.web.View_QualityLevel.MEDIUM
-                View.Quality.HIGH -> io.github.erkko68.filament.web.View_QualityLevel.HIGH
-                View.Quality.ULTRA -> io.github.erkko68.filament.web.View_QualityLevel.ULTRA
-            }
-            // Push to the JS view — without this the setter was a silent no-op and the
-            // hdrColorBuffer quality stayed at whatever Filament.js defaults to.
-            ext.setRenderQuality(jsQuality)
-        }
-
-    actual var bloomOptions: BloomOptions
-        get() = _bloomOptions
-        set(value) {
-            _bloomOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_BloomOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.levels = value.levels.toDouble()
-            jsOptions.resolution = value.resolution.toDouble()
-            jsOptions.strength = value.strength.toDouble()
-            jsOptions.threshold = value.threshold
-            jsOptions.blendMode = when (value.blendMode) {
-                View.BloomOptions.BlendMode.ADD -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.ADD
-                View.BloomOptions.BlendMode.INTERPOLATE -> io.github.erkko68.filament.web.View_BloomOptions_BlendMode.INTERPOLATE
-            }
-            jsOptions.unsafeCast<BloomOptionsExt>().let {
-                it.highlight = value.highlight.toDouble()
-                it.dirt = value.dirt?.jsTexture
-                it.dirtStrength = value.dirtStrength.toDouble()
-            }
-            jsView.setBloomOptions(jsOptions)
-        }
-
-    actual var fogOptions: FogOptions
-        get() = _fogOptions
-        set(value) {
-            _fogOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_FogOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.distance = value.distance.toDouble()
-            jsOptions.density = value.density.toDouble()
-            jsOptions.height = value.height.toDouble()
-            jsOptions.heightFalloff = value.heightFalloff.toDouble()
-            jsOptions.color = jsNumbers(value.color[0], value.color[1], value.color[2])
-            jsOptions.cutOffDistance = value.cutOffDistance.toDouble()
-            jsOptions.maximumOpacity = value.maximumOpacity.toDouble()
-            jsOptions.inScatteringStart = value.inScatteringStart.toDouble()
-            jsOptions.inScatteringSize = value.inScatteringSize.toDouble()
-            jsOptions.fogColorFromIbl = value.fogColorFromIbl
-            jsView.setFogOptions(jsOptions)
-        }
-
-    actual var depthOfFieldOptions: DepthOfFieldOptions
-        get() = _depthOfFieldOptions
-        set(value) {
-            _depthOfFieldOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_DepthOfFieldOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.cocScale = value.cocScale.toDouble()
-            jsOptions.cocAspectRatio = value.cocAspectRatio.toDouble()
-            jsOptions.maxApertureDiameter = value.maxApertureDiameter.toDouble()
-            jsOptions.nativeResolution = value.nativeResolution
-            jsOptions.filter = when (value.filter) {
-                View.DepthOfFieldOptions.Filter.NONE   -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.NONE
-                View.DepthOfFieldOptions.Filter.UNUSED -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.UNUSED
-                View.DepthOfFieldOptions.Filter.MEDIAN -> io.github.erkko68.filament.web.View_DepthOfFieldOptions_Filter.MEDIAN
-            }
-            jsView.setDepthOfFieldOptions(jsOptions)
-        }
-
-    actual var vignetteOptions: VignetteOptions
-        get() = _vignetteOptions
-        set(value) {
-            _vignetteOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_VignetteOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.midPoint = value.midPoint.toDouble()
-            jsOptions.roundness = value.roundness.toDouble()
-            jsOptions.feather = value.feather.toDouble()
-            jsOptions.color = jsNumbers(value.color[0], value.color[1], value.color[2], value.color[3])
-            jsView.setVignetteOptions(jsOptions)
-        }
-
-    actual var ambientOcclusionOptions: AmbientOcclusionOptions
-        get() = _ambientOcclusionOptions
-        set(value) {
-            _ambientOcclusionOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_AmbientOcclusionOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.aoType = when (value.aoType) {
-                AmbientOcclusionOptions.AmbientOcclusionType.SAO -> io.github.erkko68.filament.web.View_AmbientOcclusionOptions_AmbientOcclusionType.SAO
-                AmbientOcclusionOptions.AmbientOcclusionType.GTAO -> io.github.erkko68.filament.web.View_AmbientOcclusionOptions_AmbientOcclusionType.GTAO
-            }
-            jsOptions.radius = value.radius.toDouble()
-            jsOptions.bias = value.bias.toDouble()
-            jsOptions.intensity = value.intensity.toDouble()
-            jsOptions.power = value.power.toDouble()
-            jsOptions.resolution = value.resolution.toDouble()
-            jsOptions.bilateralThreshold = value.bilateralThreshold.toDouble()
-            
-            val jsSsct = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_AmbientOcclusionOptions_Ssct`>()
-            jsSsct.enabled = value.ssct.enabled
-            jsSsct.lightConeRad = value.ssct.lightConeRad.toDouble()
-            jsSsct.shadowDistance = value.ssct.shadowDistance.toDouble()
-            jsSsct.contactDistanceMax = value.ssct.contactDistanceMax.toDouble()
-            jsOptions.unsafeCast<AoOptionsExt>().ssct = jsSsct
-            
-            jsView.setAmbientOcclusionOptions(jsOptions)
-        }
-
-    actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
-        get() = _temporalAntiAliasingOptions
-        set(value) {
-            _temporalAntiAliasingOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_TemporalAntiAliasingOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.feedback = value.feedback.toDouble()
-            jsOptions.lodBias = value.lodBias.toDouble()
-            jsOptions.sharpness = value.sharpness.toDouble()
-            jsOptions.upscaling = value.upscaling.toDouble()
-            jsOptions.filterHistory = value.filterHistory
-            jsOptions.filterInput = value.filterInput
-            jsOptions.useYCoCg = value.useYCoCg
-            jsOptions.hdr = value.hdr
-            jsOptions.boxType = when (value.boxType) {
-                TemporalAntiAliasingOptions.BoxType.AABB -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxType.AABB
-                TemporalAntiAliasingOptions.BoxType.AABB_VARIANCE -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxType.AABB_VARIANCE
-            }
-            jsOptions.boxClipping = when (value.boxClipping) {
-                TemporalAntiAliasingOptions.BoxClipping.ACCURATE -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.ACCURATE
-                TemporalAntiAliasingOptions.BoxClipping.CLAMP -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.CLAMP
-                TemporalAntiAliasingOptions.BoxClipping.NONE -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_BoxClipping.NONE
-            }
-            jsOptions.jitterPattern = when (value.jitterPattern) {
-                TemporalAntiAliasingOptions.JitterPattern.RGSS_X4 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.RGSS_X4
-                TemporalAntiAliasingOptions.JitterPattern.UNIFORM_HELIX_X4 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.UNIFORM_HELIX_X4
-                TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X8 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X8
-                TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X16 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X16
-                TemporalAntiAliasingOptions.JitterPattern.HALTON_23_X32 -> io.github.erkko68.filament.web.View_TemporalAntiAliasingOptions_JitterPattern.HALTON_23_X32
-            }
-            jsOptions.varianceGamma = value.varianceGamma.toDouble()
-            jsOptions.preventFlickering = value.preventFlickering
-            jsOptions.historyReprojection = value.historyReprojection
-            jsView.setTemporalAntiAliasingOptions(jsOptions)
-        }
-
-    actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
-        get() = _screenSpaceReflectionsOptions
-        set(value) {
-            _screenSpaceReflectionsOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_ScreenSpaceReflectionsOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.thickness = value.thickness.toDouble()
-            jsOptions.bias = value.bias.toDouble()
-            jsOptions.maxDistance = value.maxDistance.toDouble()
-            jsOptions.stride = value.stride.toDouble()
-            jsView.setScreenSpaceReflectionsOptions(jsOptions)
-        }
-
-    actual var gridSize: Double
-        get() = jsView.getGridSize()
-        set(value) { jsView.setGridSize(value) }
-
-    actual val effectiveGridSize: Double
-        get() = jsView.getEffectiveGridSize()
-
-    actual var renderTarget: RenderTarget?
-        get() = _renderTarget
-        set(value) {
-            _renderTarget = value
-            if (value != null) jsView.setRenderTarget(value.jsRenderTarget)
-        }
-
-    actual var shadowType: ShadowType
-        get() = when (jsView.getShadowType()) {
-            io.github.erkko68.filament.web.View_ShadowType.VSM -> ShadowType.VSM
-            io.github.erkko68.filament.web.View_ShadowType.DPCF -> ShadowType.DPCF
-            io.github.erkko68.filament.web.View_ShadowType.PCSS -> ShadowType.PCSS
-            io.github.erkko68.filament.web.View_ShadowType.PCFd -> ShadowType.PCFd
-            else -> ShadowType.PCF
-        }
-        set(value) {
-            val jsType = when(value) {
-                ShadowType.PCF -> io.github.erkko68.filament.web.View_ShadowType.PCF
-                ShadowType.VSM -> io.github.erkko68.filament.web.View_ShadowType.VSM
-                ShadowType.DPCF -> io.github.erkko68.filament.web.View_ShadowType.DPCF
-                ShadowType.PCSS -> io.github.erkko68.filament.web.View_ShadowType.PCSS
-                ShadowType.PCFd -> io.github.erkko68.filament.web.View_ShadowType.PCFd
-            }
-            ext.setShadowType(jsType)
-        }
-
-    actual var vsmShadowOptions: VsmShadowOptions
-        get() = jsView.getVsmShadowOptions().let { o ->
-            VsmShadowOptions().apply {
-                anisotropy = (o.anisotropy ?: 0.0).toInt()
-                mipmapping = o.mipmapping ?: false
-                msaaSamples = (o.msaaSamples ?: 1.0).toInt()
-                highPrecision = o.highPrecision ?: false
-                lightBleedReduction = (o.lightBleedReduction ?: 0.0).toFloat()
-            }
-        }
-        set(value) {
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_VsmShadowOptions`>()
-            jsOptions.anisotropy = value.anisotropy.toDouble()
-            jsOptions.mipmapping = value.mipmapping
-            jsOptions.msaaSamples = value.msaaSamples.toDouble()
-            jsOptions.highPrecision = value.highPrecision
-            jsOptions.lightBleedReduction = value.lightBleedReduction.toDouble()
-            ext.setVsmShadowOptions(jsOptions)
-        }
-
-    actual var softShadowOptions: SoftShadowOptions
-        get() = jsView.getSoftShadowOptions().let { o ->
-            SoftShadowOptions().apply {
-                penumbraScale = (o.penumbraScale ?: 1.0).toFloat()
-                penumbraRatioScale = (o.penumbraRatioScale ?: 1.0).toFloat()
-                maxPenumbraRatio = (o.maxPenumbraRatio ?: 1.0).toFloat()
-                maxSearchRadius = (o.maxSearchRadius ?: 0.0).toFloat()
-            }
-        }
-        set(value) {
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_SoftShadowOptions`>()
-            jsOptions.penumbraScale = value.penumbraScale.toDouble()
-            jsOptions.penumbraRatioScale = value.penumbraRatioScale.toDouble()
-            jsOptions.maxPenumbraRatio = value.maxPenumbraRatio.toDouble()
-            jsOptions.maxSearchRadius = value.maxSearchRadius.toDouble()
-            ext.setSoftShadowOptions(jsOptions)
-        }
-
-    actual var guardBandOptions: GuardBandOptions
-        get() = _guardBandOptions
-        set(value) {
-            _guardBandOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_GuardBandOptions`>()
-            jsOptions.enabled = value.enabled
-            jsView.setGuardBandOptions(jsOptions)
-        }
-
-    actual var stereoscopicOptions: StereoscopicOptions
-        get() = _stereoscopicOptions
-        set(value) {
-            _stereoscopicOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_StereoscopicOptions`>()
-            jsOptions.enabled = value.enabled
-            jsView.setStereoscopicOptions(jsOptions)
-        }
-
-    actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
-        get() = _multiSampleAntiAliasingOptions
-        set(value) {
-            _multiSampleAntiAliasingOptions = value
-            val jsOptions = emptyJsObject().unsafeCast<io.github.erkko68.filament.web.`View_MultiSampleAntiAliasingOptions`>()
-            jsOptions.enabled = value.enabled
-            jsOptions.sampleCount = value.sampleCount.toDouble()
-            jsOptions.customResolve = value.customResolve
-            jsView.setMultiSampleAntiAliasingOptions(jsOptions)
-        }
-
-    // Only setters are bound on JS for these three; the getters stay tracked locally.
-    private var _isFrustumCullingEnabled: Boolean = true
-    actual var isFrustumCullingEnabled: Boolean
-        get() = jsView.isFrustumCullingEnabled()
-        set(value) { jsView.setFrustumCullingEnabled(value) }
-    actual var isShadowingEnabled: Boolean
-        get() = jsView.isShadowingEnabled()
-        set(value) { jsView.setShadowingEnabled(value) }
-    actual var isScreenSpaceRefractionEnabled: Boolean
-        get() = true
-        set(value) {} // setScreenSpaceRefractionEnabled isn't bound in jsbindings.cpp
-
-    actual var isStencilBufferEnabled: Boolean
-        get() = jsView.isStencilBufferEnabled()
-        set(value) { jsView.setStencilBufferEnabled(value) }
-
-    actual var isFrontFaceWindingInverted: Boolean
-        get() = jsView.isFrontFaceWindingInverted()
-        set(value) { jsView.setFrontFaceWindingInverted(value) }
-
-    actual var isTransparentPickingEnabled: Boolean
-        get() = jsView.isTransparentPickingEnabled()
-        set(value) { jsView.setTransparentPickingEnabled(value) }
-
-    actual fun setMaterialGlobal(index: Int, value: FloatArray) {
-        require(value.size == 4) { "setMaterialGlobal expects a float4; got size ${value.size}" }
-        @Suppress("UNCHECKED_CAST")
-        jsView.setMaterialGlobal(index.toDouble(), value.toJsNumbers())
-    }
-
-    actual fun getMaterialGlobal(index: Int): FloatArray {
-        return jsView.getMaterialGlobal(index.toDouble())?.toFloatArray(4) ?: FloatArray(4)
-    }
-
-    actual val fogEntity: Entity
-        get() = jsView.getFogEntity().getId().toInt()
-
-    actual val visibleRenderableCount: Int get() = jsView.getVisibleRenderableCount().toInt()
-
-    actual fun clearFrameHistory(engine: Engine) {
-        jsView.clearFrameHistory(engine.jsEngine)
-    }
-
-    actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
-        jsView.setDynamicLightingOptions(zNear.toDouble(), zFar.toDouble())
-    }
-
-    actual var colorGrading: ColorGrading?
-        get() {
-            val jsColorGrading = ext.getColorGrading()
-            return if (jsColorGrading != null) ColorGrading(jsColorGrading) else null
-        }
-        set(value) {
-            if (value != null) jsView.setColorGrading(value.jsColorGrading)
-        }
-
-    actual val lastDynamicResolutionScale: FloatArray get() =
-        jsView.getLastDynamicResolutionScale()?.toFloatArray(2) ?: floatArrayOf(1.0f, 1.0f)
-
-    actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
-        jsView.pick(x.toDouble(), y.toDouble()) { result ->
-            callback(PickingQueryResult(
-                result.renderable.getId().toInt(),
-                result.depth.toFloat(),
-                (result.fragCoords?.toFloatArray(3) ?: FloatArray(3))
-            ))
-        }
-    }
+actual class View @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual enum class Dithering { NONE, TEMPORAL }
+    actual enum class BlendMode { OPAQUE, TRANSLUCENT }
+    actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
+    actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
+    actual enum class AntiAliasing { NONE, FXAA }
 
     actual class PickingQueryResult actual constructor(
         actual val renderable: Int,
@@ -521,12 +15,13 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual val fragCoords: FloatArray
     )
 
-    actual enum class Dithering { NONE, TEMPORAL }
-    actual enum class AntiAliasing { NONE, FXAA }
-    actual enum class BlendMode { OPAQUE, TRANSLUCENT }
-    actual enum class Quality { LOW, MEDIUM, HIGH, ULTRA }
-    actual enum class ShadowType { PCF, VSM, DPCF, PCSS, PCFd }
-    actual class DynamicResolutionOptions {
+    private var mScene: Scene? = null
+    private var mCamera: Camera? = null
+    private var mRenderTarget: RenderTarget? = null
+    private var mShadowType: ShadowType = ShadowType.PCF
+    private var mColorGrading: ColorGrading? = null
+
+    actual class DynamicResolutionOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var homogeneousScaling: Boolean = false
         actual var minScale: Float = 0.5f
@@ -534,17 +29,19 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var sharpness: Float = 0.9f
         actual var quality: Quality = Quality.LOW
     }
-    actual class RenderQuality {
+
+    actual class RenderQuality actual constructor() {
         actual var hdrColorBuffer: Quality = Quality.HIGH
     }
-    actual class BloomOptions {
+
+    actual class BloomOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var levels: Int = 6
         actual var resolution: Int = 384
         actual var strength: Float = 0.10f
         actual var threshold: Boolean = true
         actual var dirt: Texture? = null
-        actual var dirtStrength: Float = 0.20f
+        actual var dirtStrength: Float = 0.2f
         actual var quality: Quality = Quality.LOW
         actual var lensFlare: Boolean = false
         actual var starburst: Boolean = true
@@ -559,7 +56,8 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var blendMode: BlendMode = BlendMode.ADD
         actual enum class BlendMode { ADD, INTERPOLATE }
     }
-    actual class FogOptions {
+
+    actual class FogOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var distance: Float = 0.0f
         actual var density: Float = 0.1f
@@ -573,7 +71,8 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var fogColorFromIbl: Boolean = false
         actual var skyColor: Texture? = null
     }
-    actual class DepthOfFieldOptions {
+
+    actual class DepthOfFieldOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var cocScale: Float = 1.0f
         actual var cocAspectRatio: Float = 1.0f
@@ -587,14 +86,16 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var maxBackgroundCOC: Int = 0
         actual enum class Filter { NONE, UNUSED, MEDIAN }
     }
-    actual class VignetteOptions {
+
+    actual class VignetteOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var midPoint: Float = 0.5f
         actual var roundness: Float = 0.5f
         actual var feather: Float = 0.5f
         actual var color: FloatArray = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
     }
-    actual class AmbientOcclusionOptions {
+
+    actual class AmbientOcclusionOptions actual constructor() {
         actual enum class AmbientOcclusionType { SAO, GTAO }
         actual var aoType: AmbientOcclusionType = AmbientOcclusionType.SAO
         actual var radius: Float = 0.3f
@@ -611,22 +112,19 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var resolution: Float = 0.5f
         actual var ssct: Ssct = Ssct()
         actual var gtao: Gtao = Gtao()
-        actual class Ssct {
+        actual class Ssct actual constructor() {
             actual var enabled: Boolean = false
             actual var lightConeRad: Float = 1.0f
             actual var shadowDistance: Float = 0.3f
             actual var contactDistanceMax: Float = 1.0f
             actual var intensity: Float = 0.8f
-            actual var lightDirection: FloatArray = floatArrayOf(0.0f, -1.0f, 0.0f)
+            actual var lightDirection: FloatArray = floatArrayOf(0f, -1f, 0f)
             actual var depthBias: Float = 0.01f
             actual var depthSlopeBias: Float = 0.01f
             actual var sampleCount: Int = 4
             actual var rayCount: Int = 1
         }
-        // TODO(web-api-parity): filament.js says outright "JavaScript binding for gtao is not yet
-        // supported, must use default value" — the nested struct is %codegen_skip_javascript%, so
-        // these are tracked locally and the engine keeps its GTAO defaults.
-        actual class Gtao {
+        actual class Gtao actual constructor() {
             actual var sampleSliceCount: Int = 4
             actual var sampleStepsPerSlice: Int = 3
             actual var thicknessHeuristic: Float = 0.004f
@@ -635,14 +133,15 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
             actual var linearThickness: Boolean = false
         }
     }
-    actual class TemporalAntiAliasingOptions {
+
+    actual class TemporalAntiAliasingOptions actual constructor() {
         actual enum class BoxType { AABB, AABB_VARIANCE }
         actual enum class BoxClipping { ACCURATE, CLAMP, NONE }
         actual enum class JitterPattern { RGSS_X4, UNIFORM_HELIX_X4, HALTON_23_X8, HALTON_23_X16, HALTON_23_X32 }
         actual var feedback: Float = 0.12f
+        actual var enabled: Boolean = false
         actual var lodBias: Float = -1.0f
         actual var sharpness: Float = 0.0f
-        actual var enabled: Boolean = false
         actual var upscaling: Float = 1.0f
         actual var filterHistory: Boolean = true
         actual var filterInput: Boolean = true
@@ -655,37 +154,596 @@ actual class View @InternalFilamentApi constructor(internal val jsView: JSView) 
         actual var preventFlickering: Boolean = false
         actual var historyReprojection: Boolean = true
     }
-    actual class ScreenSpaceReflectionsOptions {
+
+    actual class ScreenSpaceReflectionsOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var thickness: Float = 0.1f
         actual var bias: Float = 0.01f
         actual var maxDistance: Float = 3.0f
         actual var stride: Float = 2.0f
     }
-    actual class VsmShadowOptions {
+
+    actual class VsmShadowOptions actual constructor() {
         actual var anisotropy: Int = 0
         actual var mipmapping: Boolean = false
         actual var msaaSamples: Int = 1
         actual var highPrecision: Boolean = false
         actual var lightBleedReduction: Float = 0.15f
     }
-    actual class SoftShadowOptions {
+
+    actual class SoftShadowOptions actual constructor() {
         actual var penumbraScale: Float = 1.0f
         actual var penumbraRatioScale: Float = 1.0f
-        // TODO(web-api-parity): the wasm registers both on the View$SoftShadowOptions value
-        // object, but the vendored externals (from upstream's filament.d.ts) don't declare them.
         actual var maxPenumbraRatio: Float = 10.0f
         actual var maxSearchRadius: Float = 1.0f
     }
-    actual class GuardBandOptions {
+
+    actual class GuardBandOptions actual constructor() {
         actual var enabled: Boolean = false
     }
-    actual class StereoscopicOptions {
+
+    actual class StereoscopicOptions actual constructor() {
         actual var enabled: Boolean = false
     }
-    actual class MultiSampleAntiAliasingOptions {
+
+    actual class MultiSampleAntiAliasingOptions actual constructor() {
         actual var enabled: Boolean = false
         actual var sampleCount: Int = 4
         actual var customResolve: Boolean = false
+    }
+
+    actual var name: String?
+        get() = FilaView_getName(nativeHandle)
+        set(value) { FilaView_setName(nativeHandle, value ?: "") }
+
+    actual var scene: Scene?
+        get() = mScene
+        set(value) {
+            mScene = value
+            FilaView_setScene(nativeHandle, value?.nativeHandle ?: 0)
+        }
+    
+    actual var camera: Camera?
+        get() = mCamera
+        set(value) {
+            mCamera = value
+            FilaView_setCamera(nativeHandle, value?.nativeHandle ?: 0)
+        }
+    actual val hasCamera: Boolean get() = FilaView_hasCamera(nativeHandle)
+
+    actual var viewport: Viewport
+        get() = fila.heapScoped {
+            val left   = IntVar(alloc(4))
+            val bottom = IntVar(alloc(4))
+            val width  = IntVar(alloc(4))
+            val height = IntVar(alloc(4))
+            FilaView_getViewport(nativeHandle, left.ptr, bottom.ptr, width.ptr, height.ptr)
+            Viewport(left.value, bottom.value, width.value.toInt(), height.value.toInt())
+        }
+        set(value) { FilaView_setViewport(nativeHandle, value.left, value.bottom, value.width, value.height) }
+
+    actual var blendMode: BlendMode
+        get() = BlendMode.entries[FilaView_getBlendMode(nativeHandle).toInt()]
+        set(value) { FilaView_setBlendMode(nativeHandle, value.ordinal) }
+
+    actual fun setVisibleLayers(select: Int, values: Int) { FilaView_setVisibleLayers(nativeHandle, select, values) }
+    actual fun setLayerEnabled(layer: Int, enabled: Boolean) {
+        val mask = (1 shl layer)
+        FilaView_setVisibleLayers(nativeHandle, mask, if (enabled) mask else 0)
+    }
+    actual val visibleLayers: Int get() = FilaView_getVisibleLayers(nativeHandle).toInt()
+
+    actual var isPostProcessingEnabled: Boolean
+        get() = FilaView_isPostProcessingEnabled(nativeHandle)
+        set(value) { FilaView_setPostProcessingEnabled(nativeHandle, value) }
+
+    actual var dithering: Dithering
+        get() = Dithering.entries[FilaView_getDithering(nativeHandle).toInt()]
+        set(value) { FilaView_setDithering(nativeHandle, value.ordinal) }
+
+    actual var dynamicResolutionOptions: DynamicResolutionOptions
+        get() = fila.heapScoped {
+            val out = FilaViewDynamicResolutionOptions(alloc(FilaViewDynamicResolutionOptions.SIZE))
+            FilaView_getDynamicResolutionOptions(nativeHandle, out.ptr)
+            DynamicResolutionOptions().apply {
+                enabled = out.enabled
+                homogeneousScaling = out.homogeneousScaling
+                minScale = out.minScale[0]
+                maxScale = out.maxScale[0]
+                sharpness = out.sharpness
+                quality = Quality.entries[out.quality.toInt()]
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewDynamicResolutionOptions(alloc(FilaViewDynamicResolutionOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.homogeneousScaling = value.homogeneousScaling
+                cOptions.minScale[0] = value.minScale
+                cOptions.minScale[1] = value.minScale
+                cOptions.maxScale[0] = value.maxScale
+                cOptions.maxScale[1] = value.maxScale
+                cOptions.sharpness = value.sharpness
+                cOptions.quality = value.quality.ordinal
+                FilaView_setDynamicResolutionOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual val lastDynamicResolutionScale: FloatArray get() = fila.heapScoped {
+        val out = F32Array(alloc((2) * 4))
+        FilaView_getLastDynamicResolutionScale(nativeHandle, out.ptr)
+        floatArrayOf(out[0], out[1])
+    }
+
+    actual var renderQuality: RenderQuality
+        get() = RenderQuality().apply {
+            hdrColorBuffer = Quality.entries[FilaView_getRenderQuality(nativeHandle).toInt()]
+        }
+        set(value) { FilaView_setRenderQuality(nativeHandle, value.hdrColorBuffer.ordinal) }
+    
+    actual var bloomOptions: BloomOptions
+        get() = fila.heapScoped {
+            val out = FilaViewBloomOptions(alloc(FilaViewBloomOptions.SIZE))
+            FilaView_getBloomOptions(nativeHandle, out.ptr)
+            BloomOptions().apply {
+                enabled = out.enabled
+                levels = out.levels.toInt()
+                resolution = out.resolution.toInt()
+                strength = out.strength
+                threshold = out.threshold
+                dirtStrength = out.dirtStrength
+                quality = Quality.entries[out.quality.toInt()]
+                lensFlare = out.lensFlare
+                starburst = out.starburst
+                chromaticAberration = out.chromaticAberration
+                ghostCount = out.ghostCount.toInt()
+                ghostSpacing = out.ghostSpacing
+                ghostThreshold = out.ghostThreshold
+                haloRadius = out.haloRadius
+                haloThickness = out.haloThickness
+                haloThreshold = out.haloThreshold
+                highlight = out.highlight
+                blendMode = BloomOptions.BlendMode.entries[out.blendMode]
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewBloomOptions(alloc(FilaViewBloomOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.levels = value.levels
+                cOptions.resolution = value.resolution
+                cOptions.strength = value.strength
+                cOptions.threshold = value.threshold
+                cOptions.dirt = value.dirt?.nativeHandle ?: 0
+                cOptions.dirtStrength = value.dirtStrength
+                cOptions.quality = value.quality.ordinal
+                cOptions.highlight = value.highlight
+                cOptions.blendMode = value.blendMode.ordinal
+                cOptions.chromaticAberration = value.chromaticAberration
+                cOptions.lensFlare = value.lensFlare
+                cOptions.starburst = value.starburst
+                cOptions.ghostCount = value.ghostCount
+                cOptions.ghostSpacing = value.ghostSpacing
+                cOptions.ghostThreshold = value.ghostThreshold
+                cOptions.haloRadius = value.haloRadius
+                cOptions.haloThickness = value.haloThickness
+                cOptions.haloThreshold = value.haloThreshold
+                FilaView_setBloomOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var fogOptions: FogOptions
+        get() = fila.heapScoped {
+            val out = FilaViewFogOptions(alloc(FilaViewFogOptions.SIZE))
+            FilaView_getFogOptions(nativeHandle, out.ptr)
+            FogOptions().apply {
+                enabled = out.enabled
+                distance = out.distance
+                density = out.density
+                height = out.height
+                heightFalloff = out.heightFalloff
+                color = floatArrayOf(out.color[0], out.color[1], out.color[2])
+                cutOffDistance = out.cutOffDistance
+                maximumOpacity = out.maximumOpacity
+                inScatteringStart = out.inScatteringStart
+                inScatteringSize = out.inScatteringSize
+                fogColorFromIbl = out.fogColorFromIbl
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewFogOptions(alloc(FilaViewFogOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.distance = value.distance
+                cOptions.density = value.density
+                cOptions.height = value.height
+                cOptions.heightFalloff = value.heightFalloff
+                cOptions.color[0] = value.color[0]; cOptions.color[1] = value.color[1]; cOptions.color[2] = value.color[2]
+                cOptions.cutOffDistance = value.cutOffDistance
+                cOptions.maximumOpacity = value.maximumOpacity
+                cOptions.inScatteringStart = value.inScatteringStart
+                cOptions.inScatteringSize = value.inScatteringSize
+                cOptions.fogColorFromIbl = value.fogColorFromIbl
+                cOptions.skyColor = value.skyColor?.nativeHandle ?: 0
+                FilaView_setFogOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var depthOfFieldOptions: DepthOfFieldOptions
+        get() = fila.heapScoped {
+            val out = FilaViewDepthOfFieldOptions(alloc(FilaViewDepthOfFieldOptions.SIZE))
+            FilaView_getDepthOfFieldOptions(nativeHandle, out.ptr)
+            DepthOfFieldOptions().apply {
+                enabled = out.enabled
+                cocScale = out.cocScale
+                cocAspectRatio = out.cocAspectRatio
+                maxApertureDiameter = out.maxApertureDiameter
+                filter = DepthOfFieldOptions.Filter.entries[out.filter]
+                nativeResolution = out.nativeResolution
+                foregroundRingCount = out.foregroundRingCount.toInt()
+                backgroundRingCount = out.backgroundRingCount.toInt()
+                fastGatherRingCount = out.fastGatherRingCount.toInt()
+                maxForegroundCOC = out.maxForegroundCOC.toInt()
+                maxBackgroundCOC = out.maxBackgroundCOC.toInt()
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewDepthOfFieldOptions(alloc(FilaViewDepthOfFieldOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.cocScale = value.cocScale
+                cOptions.cocAspectRatio = value.cocAspectRatio
+                cOptions.maxApertureDiameter = value.maxApertureDiameter
+                cOptions.filter = value.filter.ordinal
+                cOptions.nativeResolution = value.nativeResolution
+                cOptions.foregroundRingCount = value.foregroundRingCount
+                cOptions.backgroundRingCount = value.backgroundRingCount
+                cOptions.fastGatherRingCount = value.fastGatherRingCount
+                cOptions.maxForegroundCOC = value.maxForegroundCOC
+                cOptions.maxBackgroundCOC = value.maxBackgroundCOC
+                FilaView_setDepthOfFieldOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var vignetteOptions: VignetteOptions
+        get() = fila.heapScoped {
+            val out = FilaViewVignetteOptions(alloc(FilaViewVignetteOptions.SIZE))
+            FilaView_getVignetteOptions(nativeHandle, out.ptr)
+            VignetteOptions().apply {
+                enabled = out.enabled
+                midPoint = out.midPoint
+                roundness = out.roundness
+                feather = out.feather
+                color = floatArrayOf(out.color[0], out.color[1], out.color[2], out.color[3])
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewVignetteOptions(alloc(FilaViewVignetteOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.midPoint = value.midPoint
+                cOptions.roundness = value.roundness
+                cOptions.feather = value.feather
+                cOptions.color[0] = value.color[0]; cOptions.color[1] = value.color[1]; cOptions.color[2] = value.color[2]; cOptions.color[3] = value.color[3]
+                FilaView_setVignetteOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var ambientOcclusionOptions: AmbientOcclusionOptions
+        get() = fila.heapScoped {
+            val out = FilaViewAmbientOcclusionOptions(alloc(FilaViewAmbientOcclusionOptions.SIZE))
+            FilaView_getAmbientOcclusionOptions(nativeHandle, out.ptr)
+            AmbientOcclusionOptions().apply {
+                enabled = out.enabled
+                aoType = AmbientOcclusionOptions.AmbientOcclusionType.entries[out.aoType]
+                radius = out.radius
+                bias = out.bias
+                intensity = out.intensity
+                resolution = out.resolution
+                power = out.power
+                minHorizonAngleRad = out.minHorizonAngleRad
+                quality = Quality.entries[out.quality.toInt()]
+                lowPassFilter = Quality.entries[out.lowPassFilter.toInt()]
+                upsampling = Quality.entries[out.upsampling.toInt()]
+                bentNormals = out.bentNormals
+                bilateralThreshold = out.bilateralThreshold
+                ssct = AmbientOcclusionOptions.Ssct().apply {
+                    enabled = out.ssct.enabled
+                    lightConeRad = out.ssct.lightConeRad
+                    shadowDistance = out.ssct.shadowDistance
+                    contactDistanceMax = out.ssct.contactDistanceMax
+                    intensity = out.ssct.intensity
+                    lightDirection = floatArrayOf(out.ssct.lightDirection[0], out.ssct.lightDirection[1], out.ssct.lightDirection[2])
+                    depthBias = out.ssct.depthBias
+                    depthSlopeBias = out.ssct.depthSlopeBias
+                    sampleCount = out.ssct.sampleCount.toInt()
+                    rayCount = out.ssct.rayCount.toInt()
+                }
+                gtao = AmbientOcclusionOptions.Gtao().apply {
+                    sampleSliceCount = out.gtao.sampleSliceCount.toInt()
+                    sampleStepsPerSlice = out.gtao.sampleStepsPerSlice.toInt()
+                    thicknessHeuristic = out.gtao.thicknessHeuristic
+                    useVisibilityBitmasks = out.gtao.useVisibilityBitmasks
+                    constThickness = out.gtao.constThickness
+                    linearThickness = out.gtao.linearThickness
+                }
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewAmbientOcclusionOptions(alloc(FilaViewAmbientOcclusionOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.aoType = value.aoType.ordinal
+                cOptions.radius = value.radius
+                cOptions.bias = value.bias
+                cOptions.intensity = value.intensity
+                cOptions.resolution = value.resolution
+                cOptions.power = value.power
+                cOptions.minHorizonAngleRad = value.minHorizonAngleRad
+                cOptions.quality = value.quality.ordinal
+                cOptions.lowPassFilter = value.lowPassFilter.ordinal
+                cOptions.upsampling = value.upsampling.ordinal
+                cOptions.bentNormals = value.bentNormals
+                cOptions.bilateralThreshold = value.bilateralThreshold
+                cOptions.ssct.enabled = value.ssct.enabled
+                cOptions.ssct.lightConeRad = value.ssct.lightConeRad
+                cOptions.ssct.shadowDistance = value.ssct.shadowDistance
+                cOptions.ssct.contactDistanceMax = value.ssct.contactDistanceMax
+                cOptions.ssct.intensity = value.ssct.intensity
+                cOptions.ssct.lightDirection[0] = value.ssct.lightDirection[0]
+                cOptions.ssct.lightDirection[1] = value.ssct.lightDirection[1]
+                cOptions.ssct.lightDirection[2] = value.ssct.lightDirection[2]
+                cOptions.ssct.depthBias = value.ssct.depthBias
+                cOptions.ssct.depthSlopeBias = value.ssct.depthSlopeBias
+                cOptions.ssct.sampleCount = value.ssct.sampleCount
+                cOptions.ssct.rayCount = value.ssct.rayCount
+                cOptions.gtao.sampleSliceCount = value.gtao.sampleSliceCount
+                cOptions.gtao.sampleStepsPerSlice = value.gtao.sampleStepsPerSlice
+                cOptions.gtao.thicknessHeuristic = value.gtao.thicknessHeuristic
+                cOptions.gtao.useVisibilityBitmasks = value.gtao.useVisibilityBitmasks
+                cOptions.gtao.constThickness = value.gtao.constThickness
+                cOptions.gtao.linearThickness = value.gtao.linearThickness
+                FilaView_setAmbientOcclusionOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var temporalAntiAliasingOptions: TemporalAntiAliasingOptions
+        get() = fila.heapScoped {
+            val out = FilaViewTemporalAntiAliasingOptions(alloc(FilaViewTemporalAntiAliasingOptions.SIZE))
+            FilaView_getTemporalAntiAliasingOptions(nativeHandle, out.ptr)
+            TemporalAntiAliasingOptions().apply {
+                enabled = out.enabled
+                feedback = out.feedback
+                lodBias = out.lodBias
+                sharpness = out.sharpness
+                upscaling = out.upscaling
+                filterHistory = out.filterHistory
+                filterInput = out.filterInput
+                useYCoCg = out.useYCoCg
+                hdr = out.hdr
+                boxType = TemporalAntiAliasingOptions.BoxType.entries[out.boxType]
+                boxClipping = TemporalAntiAliasingOptions.BoxClipping.entries[out.boxClipping]
+                jitterPattern = TemporalAntiAliasingOptions.JitterPattern.entries[out.jitterPattern]
+                varianceGamma = out.varianceGamma
+                preventFlickering = out.preventFlickering
+                historyReprojection = out.historyReprojection
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewTemporalAntiAliasingOptions(alloc(FilaViewTemporalAntiAliasingOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.feedback = value.feedback
+                cOptions.lodBias = value.lodBias
+                cOptions.sharpness = value.sharpness
+                cOptions.upscaling = value.upscaling
+                cOptions.filterHistory = value.filterHistory
+                cOptions.filterInput = value.filterInput
+                cOptions.useYCoCg = value.useYCoCg
+                cOptions.hdr = value.hdr
+                cOptions.boxType = value.boxType.ordinal
+                cOptions.boxClipping = value.boxClipping.ordinal
+                cOptions.jitterPattern = value.jitterPattern.ordinal
+                cOptions.varianceGamma = value.varianceGamma
+                cOptions.preventFlickering = value.preventFlickering
+                cOptions.historyReprojection = value.historyReprojection
+                FilaView_setTemporalAntiAliasingOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var screenSpaceReflectionsOptions: ScreenSpaceReflectionsOptions
+        get() = fila.heapScoped {
+            val out = FilaViewScreenSpaceReflectionsOptions(alloc(FilaViewScreenSpaceReflectionsOptions.SIZE))
+            FilaView_getScreenSpaceReflectionsOptions(nativeHandle, out.ptr)
+            ScreenSpaceReflectionsOptions().apply {
+                enabled = out.enabled
+                thickness = out.thickness
+                bias = out.bias
+                maxDistance = out.maxDistance
+                stride = out.stride
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewScreenSpaceReflectionsOptions(alloc(FilaViewScreenSpaceReflectionsOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.thickness = value.thickness
+                cOptions.bias = value.bias
+                cOptions.maxDistance = value.maxDistance
+                cOptions.stride = value.stride
+                FilaView_setScreenSpaceReflectionsOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var renderTarget: RenderTarget?
+        get() = mRenderTarget
+        set(value) {
+            mRenderTarget = value
+            FilaView_setRenderTarget(nativeHandle, value?.nativeHandle ?: 0)
+        }
+
+    actual var shadowType: ShadowType
+        get() = mShadowType
+        set(value) {
+            mShadowType = value
+            FilaView_setShadowType(nativeHandle, value.ordinal)
+        }
+
+    actual var vsmShadowOptions: VsmShadowOptions
+        get() = fila.heapScoped {
+            val out = FilaViewVsmShadowOptions(alloc(FilaViewVsmShadowOptions.SIZE))
+            FilaView_getVsmShadowOptions(nativeHandle, out.ptr)
+            VsmShadowOptions().apply {
+                anisotropy = out.anisotropy.toInt()
+                mipmapping = out.mipmapping
+                msaaSamples = out.msaaSamples.toInt()
+                highPrecision = out.highPrecision
+                lightBleedReduction = out.lightBleedReduction
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewVsmShadowOptions(alloc(FilaViewVsmShadowOptions.SIZE))
+                cOptions.anisotropy = value.anisotropy
+                cOptions.mipmapping = value.mipmapping
+                cOptions.msaaSamples = value.msaaSamples
+                cOptions.highPrecision = value.highPrecision
+                cOptions.lightBleedReduction = value.lightBleedReduction
+                FilaView_setVsmShadowOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var softShadowOptions: SoftShadowOptions
+        get() = fila.heapScoped {
+            val out = FilaViewSoftShadowOptions(alloc(FilaViewSoftShadowOptions.SIZE))
+            FilaView_getSoftShadowOptions(nativeHandle, out.ptr)
+            SoftShadowOptions().apply {
+                penumbraScale = out.penumbraScale
+                penumbraRatioScale = out.penumbraRatioScale
+                maxPenumbraRatio = out.maxPenumbraRatio
+                maxSearchRadius = out.maxSearchRadius
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewSoftShadowOptions(alloc(FilaViewSoftShadowOptions.SIZE))
+                cOptions.penumbraScale = value.penumbraScale
+                cOptions.penumbraRatioScale = value.penumbraRatioScale
+                cOptions.maxPenumbraRatio = value.maxPenumbraRatio
+                cOptions.maxSearchRadius = value.maxSearchRadius
+                FilaView_setSoftShadowOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var guardBandOptions: GuardBandOptions
+        get() = fila.heapScoped {
+            val out = FilaViewGuardBandOptions(alloc(FilaViewGuardBandOptions.SIZE))
+            FilaView_getGuardBandOptions(nativeHandle, out.ptr)
+            GuardBandOptions().apply { enabled = out.enabled }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewGuardBandOptions(alloc(FilaViewGuardBandOptions.SIZE))
+                cOptions.enabled = value.enabled
+                FilaView_setGuardBandOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var stereoscopicOptions: StereoscopicOptions
+        get() = fila.heapScoped {
+            val out = FilaViewStereoscopicOptions(alloc(FilaViewStereoscopicOptions.SIZE))
+            FilaView_getStereoscopicOptions(nativeHandle, out.ptr)
+            StereoscopicOptions().apply { enabled = out.enabled }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewStereoscopicOptions(alloc(FilaViewStereoscopicOptions.SIZE))
+                cOptions.enabled = value.enabled
+                FilaView_setStereoscopicOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var multiSampleAntiAliasingOptions: MultiSampleAntiAliasingOptions
+        get() = fila.heapScoped {
+            val out = FilaViewMultiSampleAntiAliasingOptions(alloc(FilaViewMultiSampleAntiAliasingOptions.SIZE))
+            FilaView_getMultiSampleAntiAliasingOptions(nativeHandle, out.ptr)
+            MultiSampleAntiAliasingOptions().apply {
+                enabled = out.enabled
+                sampleCount = out.sampleCount.toInt()
+                customResolve = out.customResolve
+            }
+        }
+        set(value) {
+            fila.heapScoped {
+                val cOptions = FilaViewMultiSampleAntiAliasingOptions(alloc(FilaViewMultiSampleAntiAliasingOptions.SIZE))
+                cOptions.enabled = value.enabled
+                cOptions.sampleCount = value.sampleCount
+                cOptions.customResolve = value.customResolve
+                FilaView_setMultiSampleAntiAliasingOptions(nativeHandle, cOptions.ptr)
+            }
+        }
+
+    actual var isFrustumCullingEnabled: Boolean
+        get() = FilaView_isFrustumCullingEnabled(nativeHandle)
+        set(value) { FilaView_setFrustumCullingEnabled(nativeHandle, value) }
+    actual var isShadowingEnabled: Boolean
+        get() = FilaView_isShadowingEnabled(nativeHandle)
+        set(value) { FilaView_setShadowingEnabled(nativeHandle, value) }
+    actual var isScreenSpaceRefractionEnabled: Boolean
+        get() = FilaView_isScreenSpaceRefractionEnabled(nativeHandle)
+        set(value) { FilaView_setScreenSpaceRefractionEnabled(nativeHandle, value) }
+    actual var isStencilBufferEnabled: Boolean
+        get() = FilaView_isStencilBufferEnabled(nativeHandle)
+        set(value) { FilaView_setStencilBufferEnabled(nativeHandle, value) }
+    actual var isFrontFaceWindingInverted: Boolean
+        get() = FilaView_isFrontFaceWindingInverted(nativeHandle)
+        set(value) { FilaView_setFrontFaceWindingInverted(nativeHandle, value) }
+    actual var isTransparentPickingEnabled: Boolean
+        get() = FilaView_isTransparentPickingEnabled(nativeHandle)
+        set(value) { FilaView_setTransparentPickingEnabled(nativeHandle, value) }
+
+    actual var gridSize: Double
+        get() = FilaView_getGridSize(nativeHandle)
+        set(value) { FilaView_setGridSize(nativeHandle, value) }
+    actual val effectiveGridSize: Double
+        get() = FilaView_getEffectiveGridSize(nativeHandle)
+
+    actual fun setMaterialGlobal(index: Int, value: FloatArray) {
+        FilaView_setMaterialGlobal(nativeHandle, index, value[0], value[1], value[2], value[3])
+    }
+    actual fun getMaterialGlobal(index: Int): FloatArray {
+        val result = FloatArray(4)
+        fila.heapScoped {
+            val out = F32Array(alloc((4) * 4))
+            FilaView_getMaterialGlobal(nativeHandle, index, out.ptr)
+            result[0] = out[0]; result[1] = out[1]; result[2] = out[2]; result[3] = out[3]
+        }
+        return result
+    }
+    actual val fogEntity: Entity get() = FilaView_getFogEntity(nativeHandle).toInt()
+    actual val visibleRenderableCount: Int get() = FilaView_getVisibleRenderableCount(nativeHandle)
+    actual fun clearFrameHistory(engine: Engine) { FilaView_clearFrameHistory(nativeHandle, engine.nativeHandle) }
+
+    actual fun setDynamicLightingOptions(zNear: Float, zFar: Float) {
+        FilaView_setDynamicLightingOptions(nativeHandle, zNear, zFar)
+    }
+
+    actual var antiAliasing: AntiAliasing
+        get() = AntiAliasing.entries[FilaView_getAntiAliasing(nativeHandle).toInt()]
+        set(value) { FilaView_setAntiAliasing(nativeHandle, value.ordinal) }
+
+    actual var colorGrading: ColorGrading?
+        get() = mColorGrading
+        set(value) {
+            mColorGrading = value
+            FilaView_setColorGrading(nativeHandle, value?.nativeHandle ?: 0)
+        }
+
+    actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {
+        val userData = Callbacks.register(once = true) { result, _ ->
+            val r = FilaViewPickingQueryResult(result)
+            callback(PickingQueryResult(r.renderable, r.depth, floatArrayOf(r.fragCoords[0], r.fragCoords[1], r.fragCoords[2])))
+        }
+        FilaView_pick(nativeHandle, x, y, 0, Callbacks.argUser, userData)
     }
 }

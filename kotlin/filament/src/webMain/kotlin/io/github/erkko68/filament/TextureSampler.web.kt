@@ -1,123 +1,146 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.TextureSampler as JSTextureSampler
-import io.github.erkko68.filament.web.MinFilter as JSMinFilter
-import io.github.erkko68.filament.web.MagFilter as JSMagFilter
-import io.github.erkko68.filament.web.WrapMode as JSWrapMode
-import io.github.erkko68.filament.web.CompareMode as JSCompareMode
-import io.github.erkko68.filament.web.CompareFunc as JSCompareFunc
+import io.github.erkko68.filament.wasm.*
 
 actual class TextureSampler {
-    actual var minFilter: MinFilter = MinFilter.LINEAR
-    actual var magFilter: MagFilter = MagFilter.LINEAR
-    actual var wrapModeS: WrapMode = WrapMode.CLAMP_TO_EDGE
-    actual var wrapModeT: WrapMode = WrapMode.CLAMP_TO_EDGE
-    actual var wrapModeR: WrapMode = WrapMode.CLAMP_TO_EDGE
-    actual var anisotropy: Float = 0f
-    actual var compareMode: CompareMode = CompareMode.NONE
-    actual var compareFunction: CompareFunction = CompareFunction.LESS_EQUAL
+    internal var nativeHandle: FilaTextureSampler = 0L
 
-    internal val jsTextureSampler: JSTextureSampler
-        get() = buildJsSampler()
-
-    private fun mapMinFilter(f: MinFilter) = when (f) {
-        MinFilter.NEAREST -> JSMinFilter.NEAREST
-        MinFilter.LINEAR -> JSMinFilter.LINEAR
-        MinFilter.NEAREST_MIPMAP_NEAREST -> JSMinFilter.NEAREST_MIPMAP_NEAREST
-        MinFilter.LINEAR_MIPMAP_NEAREST -> JSMinFilter.LINEAR_MIPMAP_NEAREST
-        MinFilter.NEAREST_MIPMAP_LINEAR -> JSMinFilter.NEAREST_MIPMAP_LINEAR
-        MinFilter.LINEAR_MIPMAP_LINEAR -> JSMinFilter.LINEAR_MIPMAP_LINEAR
+    actual enum class WrapMode {
+        CLAMP_TO_EDGE,
+        REPEAT,
+        MIRRORED_REPEAT
     }
 
-    private fun mapMagFilter(f: MagFilter) = when (f) {
-        MagFilter.NEAREST -> JSMagFilter.NEAREST
-        MagFilter.LINEAR -> JSMagFilter.LINEAR
+    actual enum class MinFilter {
+        NEAREST,
+        LINEAR,
+        NEAREST_MIPMAP_NEAREST,
+        LINEAR_MIPMAP_NEAREST,
+        NEAREST_MIPMAP_LINEAR,
+        LINEAR_MIPMAP_LINEAR,
     }
 
-    private fun mapWrapMode(m: WrapMode) = when (m) {
-        WrapMode.CLAMP_TO_EDGE -> JSWrapMode.CLAMP_TO_EDGE
-        WrapMode.REPEAT -> JSWrapMode.REPEAT
-        WrapMode.MIRRORED_REPEAT -> JSWrapMode.MIRRORED_REPEAT
+    actual enum class MagFilter {
+        NEAREST,
+        LINEAR
     }
 
-    private fun mapCompareFunc(f: CompareFunction) = when (f) {
-        CompareFunction.LESS_EQUAL -> JSCompareFunc.LESS_EQUAL
-        CompareFunction.GREATER_EQUAL -> JSCompareFunc.GREATER_EQUAL
-        CompareFunction.LESS -> JSCompareFunc.LESS
-        CompareFunction.GREATER -> JSCompareFunc.GREATER
-        CompareFunction.EQUAL -> JSCompareFunc.EQUAL
-        CompareFunction.NOT_EQUAL -> JSCompareFunc.NOT_EQUAL
-        CompareFunction.ALWAYS -> JSCompareFunc.ALWAYS
-        CompareFunction.NEVER -> JSCompareFunc.NEVER
+    actual enum class CompareMode {
+        NONE,
+        COMPARE_TO_TEXTURE
     }
 
-    private fun mapCompareMode(m: CompareMode) = when (m) {
-        CompareMode.NONE -> JSCompareMode.NONE
-        CompareMode.COMPARE_TO_TEXTURE -> JSCompareMode.COMPARE_TO_TEXTURE
+    actual enum class CompareFunction {
+        LESS_EQUAL,
+        GREATER_EQUAL,
+        LESS,
+        GREATER,
+        EQUAL,
+        NOT_EQUAL,
+        ALWAYS,
+        NEVER
     }
 
-    // JS TextureSampler requires all 3 args; we always build from current state
-    private fun buildJsSampler(): JSTextureSampler {
-        val minJs = mapMinFilter(minFilter)
-        val magJs = mapMagFilter(magFilter)
-        val wrapJs = mapWrapMode(wrapModeS)
-        val ts = JSTextureSampler(minJs.unsafeCast<JSMinFilter>(), magJs, wrapJs)
-        ts.setAnisotropy(anisotropy.toDouble())
-        if (compareMode != CompareMode.NONE) {
-            ts.setCompareMode(mapCompareMode(compareMode), mapCompareFunc(compareFunction))
-        }
-        return ts
+    actual constructor() {
+        nativeHandle = FilaTextureSampler_create(
+            FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR,
+            FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT
+        )
     }
-
-    actual constructor()
 
     actual constructor(minMag: MagFilter) {
-        magFilter = minMag
-        minFilter = when (minMag) {
-            MagFilter.NEAREST -> MinFilter.NEAREST
-            MagFilter.LINEAR -> MinFilter.LINEAR
-        }
+        val min = if (minMag == MagFilter.NEAREST) FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST else FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR
+        nativeHandle = FilaTextureSampler_create(
+            min,
+            minMag.toFila(),
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE,
+            FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE
+        )
     }
 
     actual constructor(minMag: MagFilter, wrap: WrapMode) {
-        magFilter = minMag
-        minFilter = when (minMag) {
-            MagFilter.NEAREST -> MinFilter.NEAREST
-            MagFilter.LINEAR -> MinFilter.LINEAR
-        }
-        wrapModeS = wrap
-        wrapModeT = wrap
-        wrapModeR = wrap
+        val min = if (minMag == MagFilter.NEAREST) FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST else FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR
+        nativeHandle = FilaTextureSampler_create(
+            min,
+            minMag.toFila(),
+            wrap.toFila(),
+            wrap.toFila(),
+            wrap.toFila()
+        )
     }
 
     actual constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) {
-        minFilter = min
-        magFilter = mag
-        wrapModeS = wrap
-        wrapModeT = wrap
-        wrapModeR = wrap
+        nativeHandle = FilaTextureSampler_create(
+            min.toFila(),
+            mag.toFila(),
+            wrap.toFila(),
+            wrap.toFila(),
+            wrap.toFila()
+        )
     }
 
     actual constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) {
-        minFilter = min
-        magFilter = mag
-        wrapModeS = s
-        wrapModeT = t
-        wrapModeR = r
+        nativeHandle = FilaTextureSampler_create(
+            min.toFila(),
+            mag.toFila(),
+            s.toFila(),
+            t.toFila(),
+            r.toFila()
+        )
     }
 
     actual constructor(mode: CompareMode) {
-        compareMode = mode
+        nativeHandle = FilaTextureSampler_createCompare(mode.toFila(), FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE)
     }
 
     actual constructor(mode: CompareMode, function: CompareFunction) {
-        compareMode = mode
-        compareFunction = function
+        nativeHandle = FilaTextureSampler_createCompare(mode.toFila(), function.toFila())
     }
 
-    actual enum class WrapMode { CLAMP_TO_EDGE, REPEAT, MIRRORED_REPEAT }
-    actual enum class MinFilter { NEAREST, LINEAR, NEAREST_MIPMAP_NEAREST, LINEAR_MIPMAP_NEAREST, NEAREST_MIPMAP_LINEAR, LINEAR_MIPMAP_LINEAR }
-    actual enum class MagFilter { NEAREST, LINEAR }
-    actual enum class CompareMode { NONE, COMPARE_TO_TEXTURE }
-    actual enum class CompareFunction { LESS_EQUAL, GREATER_EQUAL, LESS, GREATER, EQUAL, NOT_EQUAL, ALWAYS, NEVER }
+    internal constructor(sampler: FilaTextureSampler) {
+        nativeHandle = sampler
+    }
+
+    actual var minFilter: MinFilter
+        get() = MinFilter.entries[FilaTextureSampler_getMinFilter(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setMinFilter(nativeHandle, value.toFila()) }
+
+    actual var magFilter: MagFilter
+        get() = MagFilter.entries[FilaTextureSampler_getMagFilter(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setMagFilter(nativeHandle, value.toFila()) }
+
+    actual var wrapModeS: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeS(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setWrapModeS(nativeHandle, value.toFila()) }
+
+    actual var wrapModeT: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeT(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setWrapModeT(nativeHandle, value.toFila()) }
+
+    actual var wrapModeR: WrapMode
+        get() = WrapMode.entries[FilaTextureSampler_getWrapModeR(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setWrapModeR(nativeHandle, value.toFila()) }
+
+    actual var anisotropy: Float
+        get() = FilaTextureSampler_getAnisotropy(nativeHandle)
+        set(value) { nativeHandle = FilaTextureSampler_setAnisotropy(nativeHandle, value) }
+
+    actual var compareMode: CompareMode
+        get() = CompareMode.entries[FilaTextureSampler_getCompareMode(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setCompareMode(nativeHandle, value.toFila()) }
+
+    actual var compareFunction: CompareFunction
+        get() = CompareFunction.entries[FilaTextureSampler_getCompareFunction(nativeHandle).toInt()]
+        set(value) { nativeHandle = FilaTextureSampler_setCompareFunction(nativeHandle, value.toFila()) }
+
+    private fun WrapMode.toFila(): FilaTextureSamplerWrapMode = this.ordinal
+    private fun MinFilter.toFila(): FilaTextureSamplerMinFilter = this.ordinal
+    private fun MagFilter.toFila(): FilaTextureSamplerMagFilter = this.ordinal
+    private fun CompareMode.toFila(): FilaTextureSamplerCompareMode = this.ordinal
+    private fun CompareFunction.toFila(): FilaTextureSamplerCompareFunc = this.ordinal
+
 }

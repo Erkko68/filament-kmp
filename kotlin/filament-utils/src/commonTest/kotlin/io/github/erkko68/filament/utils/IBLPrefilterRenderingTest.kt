@@ -1,7 +1,6 @@
 package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.utils.testutils.UtilsRenderingTestFixture
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -11,7 +10,6 @@ import kotlin.test.assertTrue
  * Real-backend coverage for IBLPrefilter run() bindings, driven by a synthetic
  * in-memory equirectangular texture (no external HDR asset needed).
  */
-@IgnoreJs // IBLPrefilter run() is not wired in the web wrapper.
 class IBLPrefilterRenderingTest : UtilsRenderingTestFixture() {
     @Test
     fun testEquirectangularToCubemapAndSpecularFilterRun() {

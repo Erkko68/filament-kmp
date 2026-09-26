@@ -51,8 +51,8 @@ class RendererRenderingTest : RenderingTestFixture() {
         var tries = 0
         while (!readbackDone.done && tries++ < 20) engine.flushAndWait()
 
-        // readPixels is a no-op on web (not bound in jsbindings.cpp); everywhere else
-        // the readback must actually land — a silent skip here verifies nothing.
+        // On web the readback lands only after the browser runs more frames, which this
+        // synchronous loop never yields to; everywhere else it must actually land.
         if (TestEnv.target != TestTarget.JS) {
             assertTrue(readbackDone.done, "readPixels callback never fired")
             assertTrue(pixels.any { it.toInt() != 0 }, "readPixels delivered an all-zero buffer")

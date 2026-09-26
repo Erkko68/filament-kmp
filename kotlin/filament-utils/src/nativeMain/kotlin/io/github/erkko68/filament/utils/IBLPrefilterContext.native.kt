@@ -5,8 +5,6 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.utils.cinterop.*
 import kotlinx.cinterop.*
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.nativeObject
 
 actual class IBLPrefilterContext actual constructor(engine: Engine) : AutoCloseable {
@@ -28,7 +26,6 @@ actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterCo
         FilaIBLPrefilterEquirectangularToCubemap_destroy(nativeHandle)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the input texture unchanged; filament.js does not expose IBLPrefilterContext.")
     actual fun run(equirect: Texture): Texture {
         val handle = FilaIBLPrefilterEquirectangularToCubemap_run(nativeHandle, equirect.nativeObject)
         return Texture(handle!!)
@@ -44,7 +41,6 @@ actual class SpecularFilter actual constructor(context: IBLPrefilterContext) : A
         FilaIBLPrefilterSpecularFilter_destroy(nativeHandle)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — returns the input texture unchanged; filament.js does not expose IBLPrefilterContext.")
     actual fun run(skybox: Texture): Texture {
         val handle = FilaIBLPrefilterSpecularFilter_run(nativeHandle, skybox.nativeObject)
         return Texture(handle!!)

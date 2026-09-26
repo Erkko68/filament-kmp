@@ -8,7 +8,8 @@ on:
       - 'samples/shared/**'
       - 'kotlin/**/src/**'
       - 'web/**'
-      - 'prebuilts/web/**'
+      - 'c/**'
+      - 'scripts/dev/build-wasm-libs.sh'
       - 'gradle/**'
       - 'samples/gradle/**'
       - 'samples/settings.gradle.kts'
@@ -24,7 +25,8 @@ on:
       - 'samples/shared/**'
       - 'kotlin/**/src/**'
       - 'web/**'
-      - 'prebuilts/web/**'
+      - 'c/**'
+      - 'scripts/dev/build-wasm-libs.sh'
       - 'gradle/**'
       - 'samples/gradle/**'
       - 'samples/settings.gradle.kts'
@@ -67,6 +69,7 @@ jobs:
       - uses: actions/setup-java@v6
         with: { java-version: '25', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
+      - uses: ./.github/actions/setup-wasm
 
       - name: Build production webpack bundle
         working-directory: samples

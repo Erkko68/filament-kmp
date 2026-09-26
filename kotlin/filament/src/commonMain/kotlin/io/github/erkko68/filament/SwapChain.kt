@@ -116,7 +116,7 @@ expect class SwapChain {
      * @param callback The callback function to invoke when frame GPU rendering completes.
      *                 Pass null or a no-op function to unset the callback.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "silent no-op — `filament.js` does not bind setFrameCompletedCallback, and OpenGLDriver implements it as an empty function, so it could not fire on WebGL either.")
+    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "never fires — OpenGLDriver (the WebGL backend) implements the frame-completed callback as a no-op.")
     fun setFrameCompletedCallback(callback: (() -> Unit)? = null)
 
     /**
@@ -137,7 +137,6 @@ expect class SwapChain {
      * @param callback The callback function to invoke when the frame is scheduled.
      *                 Pass null or a no-op function to unset the callback.
      */
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — filament.js binds no frame-scheduled callback, so it never fires; isFrameScheduledCallbackSet reports what was set here.")
     fun setFrameScheduledCallback(callback: (() -> Unit)? = null)
 
     /**

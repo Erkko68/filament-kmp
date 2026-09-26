@@ -1,61 +1,43 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.web.Entity as JSEntity
-import io.github.erkko68.filament.web.EntityManager as JSEntityManager
+import io.github.erkko68.filament.wasm.*
 
-actual class EntityManager @InternalFilamentApi constructor(internal val jsEntityManager: JSEntityManager) {
-    actual fun create(): Entity {
-        val jsEntity = jsEntityManager.create()
-        val id = jsEntity.getId().toInt()
-        registry[id] = jsEntity
-        return id
+actual class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: Int) {
+    actual companion object {
+        private val instance = EntityManager(FilaEntityManager_get())
+        actual fun get(): EntityManager = instance
     }
 
-    actual fun create(n: Int): IntArray = IntArray(n) { create() }
-
+    actual fun create(): Entity = FilaEntityManager_create(nativeHandle).toInt()
+    
+    actual fun create(n: Int): IntArray {
+        val result = IntArray(n)
+        result.usePinned { 
+            FilaEntityManager_createArray(nativeHandle, n, it)
+        }
+        return result
+    }
+    
     actual fun create(entities: IntArray): IntArray {
-        for (i in entities.indices) entities[i] = create()
+        entities.usePinned { 
+            FilaEntityManager_createArray(nativeHandle, entities.size, it)
+        }
         return entities
     }
 
-    actual fun destroy(entity: Entity) {
-        registry.remove(entity)
-    }
-
+    actual fun destroy(entity: Entity) = FilaEntityManager_destroy(nativeHandle, entity)
+    
     actual fun destroy(entities: IntArray) {
-        for (e in entities) registry.remove(e)
+        entities.usePinned { 
+            FilaEntityManager_destroyArray(nativeHandle, entities.size, it)
+        }
     }
 
-    actual fun isAlive(entity: Entity): Boolean = registry.containsKey(entity)
+    actual fun isAlive(entity: Entity): Boolean = FilaEntityManager_isAlive(nativeHandle, entity)
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — advanceEpoch is not bound in filament.js.")
     actual fun advanceEpoch() {
-        if (jsHasMember(jsEntityManager, "advanceEpoch")) {
-            jsEntityManager.advanceEpoch()
-        } else {
-            jsUnsupported("EntityManager.advanceEpoch")
-        }
+        FilaEntityManager_advanceEpoch(nativeHandle)
     }
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws UnsupportedOperationException — getMaxEntityCount is not bound in filament.js.")
-    actual val maxEntityCount: Int get() {
-        return if (jsHasMember(jsEntityManager, "getMaxEntityCount")) {
-            jsEntityManager.getMaxEntityCount().toInt()
-        } else {
-            jsUnsupported("EntityManager.getMaxEntityCount")
-        }
-    }
-
-    actual companion object {
-        private val registry = HashMap<Int, JSEntity>()
-
-        fun register(id: Int, jsEntity: JSEntity) {
-            registry[id] = jsEntity
-        }
-
-        fun jsEntityOf(id: Int): JSEntity =
-            registry[id] ?: error("No JS Entity wrapper for id $id — was it created through EntityManager?")
-
-        actual fun get(): EntityManager = EntityManager(JSEntityManager.get())
-    }
+    actual val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
 }

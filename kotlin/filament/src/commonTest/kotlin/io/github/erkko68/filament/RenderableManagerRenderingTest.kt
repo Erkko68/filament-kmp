@@ -2,8 +2,6 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.RenderingTestFixture
 import io.github.erkko68.filament.testutils.TestMaterials
-import io.github.erkko68.filament.testsupport.TestEnv
-import io.github.erkko68.filament.testsupport.TestTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -44,11 +42,8 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
             .castShadows(true)
             .receiveShadows(true)
             .screenSpaceContactShadows(true)
-        // Builder.geometryType is not bound in upstream jsbindings.cpp (unbound enum).
-        if (TestEnv.target != TestTarget.JS) {
-            // DYNAMIC (not STATIC): setAxisAlignedBoundingBox below requires non-static geometry.
-            builder.geometryType(RenderableManager.GeometryType.DYNAMIC)
-        }
+        // DYNAMIC (not STATIC): setAxisAlignedBoundingBox below requires non-static geometry.
+        builder.geometryType(RenderableManager.GeometryType.DYNAMIC)
         builder.build(engine, entity)
 
         val rm = engine.renderableManager
@@ -56,11 +51,9 @@ class RenderableManagerRenderingTest : RenderingTestFixture() {
         val inst = rm.getInstance(entity)
         assertTrue(inst != 0)
 
-        if (TestEnv.target != TestTarget.JS) {
-            rm.setAxisAlignedBoundingBox(inst, Box(0f, 0f, 0f, 2f, 2f, 2f))
-            val b = rm.getAxisAlignedBoundingBox(inst, Box())
-            assertEquals(2f, b.halfExtent[0])
-        }
+        rm.setAxisAlignedBoundingBox(inst, Box(0f, 0f, 0f, 2f, 2f, 2f))
+        val b = rm.getAxisAlignedBoundingBox(inst, Box())
+        assertEquals(2f, b.halfExtent[0])
 
         rm.setLayerMask(inst, 0xFF, 0x01)
         rm.setPriority(inst, 5)

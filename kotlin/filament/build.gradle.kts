@@ -38,7 +38,8 @@ kotlin {
             api(project(":java"))
         }
         webMain.dependencies {
-            implementation(project(":web"))
+            // filament-kmp.wasm + generated Fila* externals (see :wasm).
+            api(project(":web"))
         }
     }
 

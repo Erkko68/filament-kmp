@@ -10,8 +10,6 @@ import io.github.erkko68.filament.isNullPtr
 import io.github.erkko68.filament.toInts
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import io.github.erkko68.filament.FilamentPlatform
-import io.github.erkko68.filament.PlatformGap
 import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.Entity
 
@@ -76,7 +74,6 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal var nati
 
     actual fun applyMaterialVariant(variantIndex: Int) = FilamentC.FilaFilamentInstance_applyMaterialVariant(nativeHandle, variantIndex.toLong())
 
-    @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "throws at runtime with embind 'unbound types' — the vector return type is unregistered in the web prebuilt.")
     actual val materialInstances: List<MaterialInstance> get() {
         val count = FilamentC.FilaFilamentInstance_getMaterialInstanceCount(nativeHandle).toInt()
         if (count == 0) return emptyList()

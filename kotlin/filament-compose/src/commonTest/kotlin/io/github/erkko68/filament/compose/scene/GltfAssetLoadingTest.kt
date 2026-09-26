@@ -8,7 +8,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.erkko68.filament.compose.testutils.TestGlb
 import io.github.erkko68.filament.compose.testutils.assertSceneEmpty
 import io.github.erkko68.filament.compose.testutils.withUiThreadFilamentScene
-import io.github.erkko68.filament.testsupport.IgnoreJs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -26,14 +25,6 @@ import kotlin.test.assertTrue
  *
  * The frame clock is manual here, and the loader advances one step per `withFrameNanos` — so tests
  * pump frames via [pumpUntil] rather than assuming the asset is ready after `waitForIdle()`.
- *
- * ### Why the loading tests are `@IgnoreJs`
- * On web `ResourceLoader.asyncUpdateLoad` kicks off `FilamentAsset.loadResources(onDone = …)` and
- * only reports progress 1.0 from that **browser callback** (ResourceLoader.web.kt). Advancing
- * Compose's manual frame clock does not run the browser's task queue, so the callback never fires
- * within the pumped frames and the asset stays un-ready — a harness limitation, not a web gap:
- * `GltfInstanceLifecycleTest` shows glTF loading and instancing working on web via the synchronous
- * path. The error-path tests below need no completed load, so they run everywhere.
  */
 class GltfAssetLoadingTest {
 
@@ -56,7 +47,6 @@ class GltfAssetLoadingTest {
     }
 
     /** The whole arc: null while loading, then a ready asset whose instance populates the scene. */
-    @IgnoreJs
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun assetLoadsAsynchronouslyAndFeedsAnInstance() = withUiThreadFilamentScene { setContent, _, scene ->
@@ -124,7 +114,6 @@ class GltfAssetLoadingTest {
     }
 
     /** Two instances share one asset: both populate the scene, and disposal cleans up all of it. */
-    @IgnoreJs
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun oneAssetBacksMultipleInstances() = withUiThreadFilamentScene { setContent, _, scene ->
@@ -158,7 +147,6 @@ class GltfAssetLoadingTest {
      * identical asset), and it means the reload machinery only engages for a genuinely new array,
      * which is what a real file/network read produces each time.
      */
-    @IgnoreJs
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun changingKeyReloadsTheAsset() = withUiThreadFilamentScene { setContent, _, scene ->

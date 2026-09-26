@@ -12,7 +12,7 @@ import org.w3c.dom.HTMLElement
  * Entry point for Filament-powered Compose web apps.
  *
  * Handles the full lifecycle:
- * 1. Initializes the Filament WASM module and spreads globals
+ * 1. Loads filament-kmp.wasm (see [io.github.erkko68.filament.Filament.initJs])
  * 2. Creates a full-viewport root element in the DOM
  * 3. Mounts a [ComposeViewport] and renders [content]
  *
@@ -21,7 +21,7 @@ import org.w3c.dom.HTMLElement
  * fun main() = FilamentApp { App() }
  * ```
  *
- * The hosting `index.html` only needs to load `filament.js` before the
+ * The hosting `index.html` only needs to load `filament-kmp.js` before the
  * application script — no `<div id="root">` is required.
  */
 fun FilamentApp(content: @Composable () -> Unit) {
