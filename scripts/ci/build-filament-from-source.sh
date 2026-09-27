@@ -55,5 +55,10 @@ cmake --build "$work/cmake-$target" --target install --config Release --parallel
 rm -rf "$out"
 mkdir -p "$out"
 find "$work/install-$target/lib" -type f \( -name '*.a' -o -name '*.lib' \) -exec cp {} "$out/" \;
+# The shared include/ header hardcodes the *release* uberarchive size, which a source build
+# doesn't match; c/CMakeLists.txt overrides it from this file.
+sed -n 's/^#define UBERARCHIVE_DEFAULT_SIZE \([0-9]*\).*/\1/p' \
+    "$work/install-$target/include/gltfio/materials/uberarchive.h" > "$out/uberarchive-size.txt"
+[[ -s "$out/uberarchive-size.txt" ]] || { echo "UBERARCHIVE_DEFAULT_SIZE not found" >&2; exit 1; }
 echo "$version|source" > "$out/.prebuilt-source"
 echo "installed $(find "$out" -type f \( -name '*.a' -o -name '*.lib' \) | wc -l) libs -> $out"

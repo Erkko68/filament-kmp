@@ -397,7 +397,10 @@ abstract class DownloadFilamentIncludesTask : DefaultTask() {
             }
 
             #define UBERARCHIVE_DEFAULT_OFFSET 0
-            #if defined(__APPLE__) && TARGET_OS_IPHONE
+            #if defined(FILAMENT_UBERARCHIVE_SIZE)
+            // Source-built libs (scripts/ci/build-filament-from-source.sh), set by c/CMakeLists.txt.
+            #define UBERARCHIVE_DEFAULT_SIZE FILAMENT_UBERARCHIVE_SIZE
+            #elif defined(__APPLE__) && TARGET_OS_IPHONE
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["ios"]}
             #elif defined(__APPLE__)
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["mac"]}

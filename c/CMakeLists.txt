@@ -92,6 +92,13 @@ message(STATUS "Using Filament distribution at: ${FILAMENT_DIST_DIR}")
 message(STATUS "Using Filament headers at: ${FILAMENT_INCLUDE_DIR}")
 message(STATUS "Using Filament libraries at: ${FILAMENT_LIB_DIR}")
 
+# Source-built libs (scripts/ci/build-filament-from-source.sh) carry their own uberarchive
+# size; the shared include/ header only knows the upstream release sizes.
+if (EXISTS "${FILAMENT_LIB_DIR}/uberarchive-size.txt")
+    file(STRINGS "${FILAMENT_LIB_DIR}/uberarchive-size.txt" FILAMENT_UBERARCHIVE_SIZE LIMIT_COUNT 1)
+    add_compile_definitions(FILAMENT_UBERARCHIVE_SIZE=${FILAMENT_UBERARCHIVE_SIZE})
+endif()
+
 # Imported libraries helper. add_filament_library(NAME) maps target NAME to
 # lib<NAME>.a; add_filament_library_as(TARGET FILE) handles the cases where the
 # CMake target name differs from the archive filename (e.g. iblprefilter).
