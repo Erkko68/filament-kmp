@@ -17,8 +17,8 @@ classify() {
         *.md|docs/*|LICENSE*|.github/ISSUE_TEMPLATE/*|.github/dependabot.yml) ;;
         .github/workflows/pages.yml|.github/workflows/publish.yml|.github/workflows/status-*) ;;
         scripts/dev/build-wasm-libs.sh|scripts/dev/setup-emsdk.sh) web=true ;;
+        scripts/dev/build-host-libs.sh) jvm=true ;;
         scripts/dev/*) ;;
-        scripts/ci/build-filament-from-source.sh) jvm=true ;;
         # c/ is the C API every non-Android target binds to (FFM, cinterop, emcc).
         c/*) jvm=true web=true ios=true ;;
         java/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;

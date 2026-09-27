@@ -72,7 +72,7 @@ fun Project.applyFilamentJvmNative(
     val localPrebuilts = providers.environmentVariable("FILAMENT_PREBUILTS_DIR").orNull
 
     // Targets upstream doesn't ship (macosX64, mingwArm64) have no download task: their libs
-    // come from scripts/ci/build-filament-from-source.sh into prebuilts/<target>/lib.
+    // come from scripts/dev/build-host-libs.sh into prebuilts/<target>/lib.
     val downloadPrebuilts = "downloadPrebuilts_$prebuiltsTarget".takeIf { it in rootProject.tasks.names }
     val downloadIncludes = rootProject.tasks.named("downloadIncludes")
 
@@ -86,7 +86,7 @@ fun Project.applyFilamentJvmNative(
                 doFirst {
                     check(libDir.list()?.isNotEmpty() == true) {
                         "No Filament prebuilts for $prebuiltsTarget (upstream ships none). Build them: " +
-                            "scripts/ci/build-filament-from-source.sh $prebuiltsTarget"
+                            "scripts/dev/build-host-libs.sh $prebuiltsTarget"
                     }
                 }
             }

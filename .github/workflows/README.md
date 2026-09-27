@@ -58,8 +58,8 @@ The repo gets 10 GB of Actions cache; past that, GitHub evicts least-recently-us
 restore caches from its own ref and from `main` only, so the rules are:
 
 - **Gradle** (`setup-gradle-cached`): written only by `main`; transforms, JDKs and build-cache excluded.
-- **Prebuilts, emsdk, wasm libs**: saved on a miss by any ref. `macosX64` / `mingwArm64` prebuilts
-  are built from source on a miss (no upstream release), so the first run per `filaVersion` is slow.
+- **Prebuilts, emsdk, wasm libs**: saved on a miss by any ref. `macosX64` / `mingwArm64` libs
+  (`setup-host-libs`, no upstream release) are built from source on a miss, like the wasm libs.
   Once `main` has them, PRs hit and never save.
   The wasm libs (~50 min to build) are keyed on `filaVersion` + `build-wasm-libs.sh`.
 - **AVD** (2+ GB, fixed key): saved only by `main`.

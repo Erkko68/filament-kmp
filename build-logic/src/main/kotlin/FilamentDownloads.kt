@@ -34,7 +34,7 @@ object FilamentDownloads {
         "iosArm64"          to ("ios"       to "xcf:ios-arm64"),
         "iosSimulatorArm64" to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
         "iosX64"            to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
-        // No macosX64 / mingwArm64: upstream ships none; see scripts/ci/build-filament-from-source.sh.
+        // No macosX64 / mingwArm64: upstream ships none; see scripts/dev/build-host-libs.sh.
         "macosArm64"        to ("mac"       to "filament/lib/arm64"),
         "linuxX64"          to ("linux"     to "filament/lib/x86_64"),
         "linuxArm64"        to ("arm-linux" to "filament/lib/aarch64"),
@@ -397,10 +397,7 @@ abstract class DownloadFilamentIncludesTask : DefaultTask() {
             }
 
             #define UBERARCHIVE_DEFAULT_OFFSET 0
-            #if defined(FILAMENT_UBERARCHIVE_SIZE)
-            // Source-built libs (scripts/ci/build-filament-from-source.sh), set by c/CMakeLists.txt.
-            #define UBERARCHIVE_DEFAULT_SIZE FILAMENT_UBERARCHIVE_SIZE
-            #elif defined(__APPLE__) && TARGET_OS_IPHONE
+            #if defined(__APPLE__) && TARGET_OS_IPHONE
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["ios"]}
             #elif defined(__APPLE__)
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["mac"]}

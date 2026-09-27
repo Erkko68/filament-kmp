@@ -31,6 +31,7 @@ jobs:
           - os: macos-15-intel
             target: macosX64
             arch: macos-x64
+            from-source: true
           - os: ubuntu-latest
             target: linuxX64
             arch: linux-x64
@@ -43,6 +44,7 @@ jobs:
           - os: windows-11-arm
             target: mingwArm64
             arch: windows-arm64
+            from-source: true
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -59,18 +61,16 @@ jobs:
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
       # Restore-only: caches saved from a tag ref are invisible to every other run. Keys match ci.yml's.
       - uses: actions/cache/restore@v6
+        if: ${{ !matrix.from-source }}
         with:
           path: prebuilts/${{ matrix.target }}
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ startsWith(matrix.target, 'mingw') && '-mt' || '' }}
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
       - name: Download prebuilts
-        shell: bash
-        run: |
-          case "${{ matrix.target }}" in
-            macosX64|mingwArm64)
-              [ -n "$(ls prebuilts/${{ matrix.target }}/lib 2>/dev/null)" ] ||
-                scripts/ci/build-filament-from-source.sh ${{ matrix.target }} ;;
-            *) ./gradlew downloadPrebuilts_${{ matrix.target }} ;;
-          esac
+        if: ${{ !matrix.from-source }}
+        run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+      - uses: ./.github/actions/setup-host-libs
+        if: matrix.from-source
+        with: { target: '${{ matrix.target }}' }
       # cmakeBuildFilamentCJvm only links the shared lib — no jextract needed here
       # (the generated Java is produced by the publish job, where it's compiled).
       - name: Build combined FFM native

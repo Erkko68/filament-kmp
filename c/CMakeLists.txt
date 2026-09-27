@@ -92,11 +92,10 @@ message(STATUS "Using Filament distribution at: ${FILAMENT_DIST_DIR}")
 message(STATUS "Using Filament headers at: ${FILAMENT_INCLUDE_DIR}")
 message(STATUS "Using Filament libraries at: ${FILAMENT_LIB_DIR}")
 
-# Source-built libs (scripts/ci/build-filament-from-source.sh) carry their own uberarchive
-# size; the shared include/ header only knows the upstream release sizes.
-if (EXISTS "${FILAMENT_LIB_DIR}/uberarchive-size.txt")
-    file(STRINGS "${FILAMENT_LIB_DIR}/uberarchive-size.txt" FILAMENT_UBERARCHIVE_SIZE LIMIT_COUNT 1)
-    add_compile_definitions(FILAMENT_UBERARCHIVE_SIZE=${FILAMENT_UBERARCHIVE_SIZE})
+# Libs built by scripts/dev/build-host-libs.sh ship their own uberarchive.h next to them
+# (resgen bakes the archive size in); it must win over the shared include/ copy.
+if (EXISTS "${FILAMENT_LIB_DIR}/../include/gltfio/materials/uberarchive.h")
+    include_directories(BEFORE "${FILAMENT_LIB_DIR}/../include")
 endif()
 
 # Imported libraries helper. add_filament_library(NAME) maps target NAME to

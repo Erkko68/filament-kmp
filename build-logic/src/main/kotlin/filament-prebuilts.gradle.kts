@@ -7,7 +7,7 @@
 //   • macosArm64                   — JVM/Panama host (:java:*); macOS uses
 //                                     the JVM build, not Kotlin/Native.
 //   (macosX64 / mingwArm64 have no upstream release: built from source by
-//    scripts/ci/build-filament-from-source.sh.)
+//    scripts/dev/build-host-libs.sh.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
 
 val filaVersion = project.property("filaVersion") as String

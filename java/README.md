@@ -102,7 +102,7 @@ dependencies {
 the host; we default to all-platforms for zero-config and let packagers narrow.)
 
 Upstream Filament ships no prebuilts for macos-x64 and windows-arm64, so CI builds those
-from source with [`scripts/ci/build-filament-from-source.sh`](../scripts/ci/build-filament-from-source.sh). CI's
+from source with [`scripts/dev/build-host-libs.sh`](../scripts/dev/build-host-libs.sh). CI's
 [`publish.yml`](../.github/workflows/publish.yml) builds `libfilament-c` on each platform
 runner and publishes with `-PcArtifactsDir=<dir>` (one `<platform>-<arch>/` subdir per
 platform); `:java` stages the natives per platform and the `:java:runtime*` modules jar
