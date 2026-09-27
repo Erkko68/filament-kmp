@@ -63,7 +63,7 @@ The bindings and the natives are published separately (artifact ids pinned via
 | Artifact | Contents |
 |---|---|
 | `filament-ffm` | jextract bindings + loader + FFM helpers — **no natives**. By default its runtime metadata depends on **all** platform modules below; its Gradle-metadata variants (`OperatingSystemFamily` × `MachineArchitecture`) narrow that to exactly one |
-| `filament-ffm-runtime-{macos-arm64, linux-x64, linux-arm64, windows-x64}` | one platform's `libfilament-c` (+ `.sha256`) |
+| `filament-ffm-runtime-{macos-arm64, macos-x64, linux-x64, linux-arm64, windows-x64, windows-arm64}` | one platform's `libfilament-c` (+ `.sha256`) |
 
 The `:kotlin:*` JVM targets depend on `filament-ffm` alone, so plain consumers keep
 working with zero configuration — they pull every platform's natives, as before the
@@ -101,8 +101,8 @@ dependencies {
 (This is the skiko model: Compose's plugin injects `skiko-awt-runtime-<os>-<arch>` for
 the host; we default to all-platforms for zero-config and let packagers narrow.)
 
-The platform set mirrors upstream Filament's prebuilt releases (no windows-arm64: Google
-doesn't publish one; Windows-on-ARM works via the x64 JVM emulation path). CI's
+Upstream Filament ships no prebuilts for macos-x64 and windows-arm64, so CI builds those
+from source with [`scripts/ci/build-filament-from-source.sh`](../scripts/ci/build-filament-from-source.sh). CI's
 [`publish.yml`](../.github/workflows/publish.yml) builds `libfilament-c` on each platform
 runner and publishes with `-PcArtifactsDir=<dir>` (one `<platform>-<arch>/` subdir per
 platform); `:java` stages the natives per platform and the `:java:runtime*` modules jar

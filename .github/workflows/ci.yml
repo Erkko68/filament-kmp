@@ -65,12 +65,16 @@ jobs:
         include:
           - os: macos-latest
             target: macosArm64
+          - os: macos-15-intel
+            target: macosX64
           - os: ubuntu-latest
             target: linuxX64
           - os: ubuntu-24.04-arm
             target: linuxArm64
           - os: windows-latest
             target: mingwX64
+          - os: windows-11-arm
+            target: mingwArm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -98,10 +102,17 @@ jobs:
           # The mingw CRT variant (mt/md) is part of the key: switching it must
           # invalidate the cache, else the gradle task skips re-extraction (it only
           # checks the dir is non-empty) and links a mismatched CRT.
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ startsWith(matrix.target, 'mingw') && '-mt' || '' }}
       - name: Download prebuilts
         shell: bash
-        run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+        # Upstream ships no macosX64 / mingwArm64 libs: build them from source (cached above).
+        run: |
+          case "${{ matrix.target }}" in
+            macosX64|mingwArm64)
+              [ -n "$(ls prebuilts/${{ matrix.target }}/lib 2>/dev/null)" ] ||
+                scripts/ci/build-filament-from-source.sh ${{ matrix.target }} ;;
+            *) ./gradlew downloadPrebuilts_${{ matrix.target }} ;;
+          esac
       - name: Build library
         shell: bash
         run: ./gradlew compileKotlinJvm --no-configuration-cache

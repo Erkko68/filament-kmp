@@ -28,6 +28,9 @@ jobs:
           - os: macos-latest
             target: macosArm64
             arch: macos-arm64
+          - os: macos-15-intel
+            target: macosX64
+            arch: macos-x64
           - os: ubuntu-latest
             target: linuxX64
             arch: linux-x64
@@ -37,6 +40,9 @@ jobs:
           - os: windows-latest
             target: mingwX64
             arch: windows-x64
+          - os: windows-11-arm
+            target: mingwArm64
+            arch: windows-arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -54,9 +60,16 @@ jobs:
       - uses: actions/cache/restore@v6
         with:
           path: prebuilts/${{ matrix.target }}
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ startsWith(matrix.target, 'mingw') && '-mt' || '' }}
       - name: Download prebuilts
-        run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+        shell: bash
+        run: |
+          case "${{ matrix.target }}" in
+            macosX64|mingwArm64)
+              [ -n "$(ls prebuilts/${{ matrix.target }}/lib 2>/dev/null)" ] ||
+                scripts/ci/build-filament-from-source.sh ${{ matrix.target }} ;;
+            *) ./gradlew downloadPrebuilts_${{ matrix.target }} ;;
+          esac
       # cmakeBuildFilamentCJvm only links the shared lib — no jextract needed here
       # (the generated Java is produced by the publish job, where it's compiled).
       - name: Build combined FFM native
@@ -137,9 +150,11 @@ jobs:
             -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
             :java:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-macos-arm64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-macos-x64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-linux-x64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-linux-arm64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-windows-x64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-windows-arm64:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \

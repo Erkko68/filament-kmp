@@ -5,9 +5,9 @@
 // Targets correspond to:
 //   • iosArm64 / iosSimulatorArm64 — Kotlin/Native iOS targets.
 //   • macosArm64                   — JVM/Panama host (:java:*); macOS uses
-//                                     the JVM build, not Kotlin/Native. (No
-//                                     macosX64: upstream releases stopped
-//                                     shipping mac x86_64 libs.)
+//                                     the JVM build, not Kotlin/Native.
+//   (macosX64 / mingwArm64 have no upstream release: built from source by
+//    scripts/ci/build-filament-from-source.sh.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
 
 val filaVersion = project.property("filaVersion") as String

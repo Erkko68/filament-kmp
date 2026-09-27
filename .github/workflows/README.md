@@ -58,7 +58,9 @@ The repo gets 10 GB of Actions cache; past that, GitHub evicts least-recently-us
 restore caches from its own ref and from `main` only, so the rules are:
 
 - **Gradle** (`setup-gradle-cached`): written only by `main`; transforms, JDKs and build-cache excluded.
-- **Prebuilts, emsdk, wasm libs**: saved on a miss by any ref. Once `main` has them, PRs hit and never save.
+- **Prebuilts, emsdk, wasm libs**: saved on a miss by any ref. `macosX64` / `mingwArm64` prebuilts
+  are built from source on a miss (no upstream release), so the first run per `filaVersion` is slow.
+  Once `main` has them, PRs hit and never save.
   The wasm libs (~50 min to build) are keyed on `filaVersion` + `build-wasm-libs.sh`.
 - **AVD** (2+ GB, fixed key): saved only by `main`.
 - **publish.yml** only restores: a tag ref's caches are invisible to every other run.
@@ -69,7 +71,7 @@ Check usage with `gh cache list --sort size_in_bytes` and `gh api repos/{owner}/
 
 The publish workflow is a two-phase pipeline:
 
-1. **`build-natives`** — matrix job (macOS arm64, Linux x64, Linux arm64, Windows x64) that
+1. **`build-natives`** — matrix job (macOS arm64/x64, Linux x64/arm64, Windows x64/arm64) that
    runs `:java:cmakeBuildFilamentCJvm` to produce the combined `libfilament-c.{dylib,so,dll}`
    for each host. Outputs are uploaded as `c-<arch>` artifacts.
 2. **`publish`** — runs on `macos-latest` (needed for iOS framework signing / lipo).
