@@ -46,6 +46,9 @@ if [[ "$target" == mingwArm64 ]]; then
         "$src/libs/bluegl/CMakeLists.txt"
 fi
 
+# Filament rejects MSYS2 environments (Git Bash sets MSYSTEM); plain cmake+MSVC is fine.
+unset MSYSTEM
+
 cmake -S "$src" -B "$work/cmake-$target" "${args[@]}"
 cmake --build "$work/cmake-$target" --target install --config Release --parallel
 
