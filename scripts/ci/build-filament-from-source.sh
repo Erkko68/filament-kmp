@@ -44,10 +44,10 @@ if [[ "$target" == mingwArm64 ]]; then
     # (upstream ships it for 32-bit) on ARM64. Idempotent.
     sed -i 's/if(NOT IS_64_BIT)/if(NOT IS_64_BIT OR CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")/; s/if (WIN32 AND IS_64_BIT)/if (WIN32 AND IS_64_BIT AND NOT CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")/' \
         "$src/libs/bluegl/CMakeLists.txt"
+    # Filament rejects MSYS2 shells via $MSYSTEM, which Git Bash forwards to cmake even
+    # when unset. The guard targets MSYS toolchains; this build uses MSVC, so drop it.
+    sed -i 's/if(DEFINED ENV{MSYSTEM})/if(FALSE)/' "$src/CMakeLists.txt"
 fi
-
-# Filament rejects MSYS2 environments (Git Bash sets MSYSTEM); plain cmake+MSVC is fine.
-unset MSYSTEM
 
 cmake -S "$src" -B "$work/cmake-$target" "${args[@]}"
 cmake --build "$work/cmake-$target" --target install --config Release --parallel
