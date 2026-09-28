@@ -49,6 +49,7 @@ internal actual fun FilamentSurface(
     renderer: Renderer,
     view: View,
     transparent: Boolean,
+    renderingEnabled: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
     val compositor = remember(engine) { WebViewCompositor.of(engine) }
@@ -58,6 +59,8 @@ internal actual fun FilamentSurface(
     // Keep a mutable ref so the size callback always dispatches to the latest lambda.
     val onResizeRef = remember { Ref<(Double) -> Unit>() }
     SideEffect { onResizeRef.value = onResize }
+
+    SideEffect { entry.paused = !renderingEnabled }
 
     DisposableEffect(compositor, entry) {
         onDispose {

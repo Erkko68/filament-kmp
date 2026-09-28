@@ -20,6 +20,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Web runs on our own C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` now holds the generated externals and runtime (package `io.github.erkko68.filament.wasm`).
 
 ### Added
+- **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` stops the render loop and keeps the last frame on screen, so a static or hidden view no longer renders every display refresh.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `Filamat.initJs`.
 - **Runtime Material sample** scene compiling shaders with filamat.
 
