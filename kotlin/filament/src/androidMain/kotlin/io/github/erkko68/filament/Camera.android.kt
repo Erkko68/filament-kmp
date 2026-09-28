@@ -1,94 +1,180 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.Camera as AndroidCamera
+import io.github.erkko68.filament.jni.*
 
-actual class Camera @InternalFilamentApi constructor(internal val nativeCamera: AndroidCamera) {
-    actual enum class Projection {
-        PERSPECTIVE, ORTHO;
-        internal fun toAndroid() = AndroidCamera.Projection.entries[ordinal]
-    }
-    actual enum class Fov {
-        VERTICAL, HORIZONTAL;
-        internal fun toAndroid() = AndroidCamera.Fov.entries[ordinal]
-    }
+actual class Camera @InternalFilamentApi constructor(
+    internal var nativeHandle: Long,
+    actual val entity: Entity
+) {
+    actual enum class Projection { PERSPECTIVE, ORTHO }
+    actual enum class Fov { VERTICAL, HORIZONTAL }
  
     actual fun setProjection(projection: Projection, left: Double, right: Double, bottom: Double, top: Double, near: Double, far: Double) {
-        nativeCamera.setProjection(projection.toAndroid(), left, right, bottom, top, near, far)
+        FilaCamera_setProjection(nativeHandle, projection.ordinal, left, right, bottom, top, near, far)
     }
     actual fun setProjection(fovInDegrees: Double, aspect: Double, near: Double, far: Double, direction: Fov) {
-        nativeCamera.setProjection(fovInDegrees, aspect, near, far, direction.toAndroid())
+        FilaCamera_setProjectionFov(nativeHandle, fovInDegrees, aspect, near, far, direction.ordinal)
     }
     actual fun setLensProjection(focalLength: Double, aspect: Double, near: Double, far: Double) {
-        nativeCamera.setLensProjection(focalLength, aspect, near, far)
+        FilaCamera_setLensProjection(nativeHandle, focalLength, aspect, near, far)
     }
     actual fun setCustomProjection(matrix: DoubleArray, near: Double, far: Double) {
-        nativeCamera.setCustomProjection(matrix, near, far)
+        matrix.usePinned { pinned ->
+            FilaCamera_setCustomProjection(nativeHandle, pinned, pinned, near, far)
+        }
     }
     actual fun setCustomProjection(matrix: DoubleArray, matrixForCulling: DoubleArray, near: Double, far: Double) {
-        nativeCamera.setCustomProjection(matrix, matrixForCulling, near, far)
+        matrix.usePinned { pinned ->
+            matrixForCulling.usePinned { pinnedCulling ->
+                FilaCamera_setCustomProjection(nativeHandle, pinned, pinnedCulling, near, far)
+            }
+        }
+    }
+    
+    actual fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double) {
+        projection.usePinned { pinned ->
+            projectionForCulling.usePinned { pinnedCulling ->
+                FilaCamera_setCustomEyeProjection(nativeHandle, pinned, count.toLong(), pinnedCulling, near, far)
+            }
+        }
     }
 
-    actual fun setCustomEyeProjection(projection: DoubleArray, count: Int, projectionForCulling: DoubleArray, near: Double, far: Double) {
-        nativeCamera.setCustomEyeProjection(projection, count, projectionForCulling, near, far)
-    }
     actual fun setEyeModelMatrix(eyeId: Int, modelMatrix: DoubleArray) {
-        nativeCamera.setEyeModelMatrix(eyeId, modelMatrix)
+        modelMatrix.usePinned { pinned ->
+            FilaCamera_setEyeModelMatrix(nativeHandle, eyeId, pinned)
+        }
     }
-    
+
     actual fun setScaling(x: Double, y: Double) {
-        nativeCamera.setScaling(x, y)
+        FilaCamera_setScaling(nativeHandle, x, y)
     }
-    actual fun getScaling(out: DoubleArray?): DoubleArray = nativeCamera.getScaling(out)
+    actual fun getScaling(out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(4)
+        result.usePinned { pinned ->
+            FilaCamera_getScaling(nativeHandle, pinned)
+        }
+        return result
+    }
     actual fun setShift(x: Double, y: Double) {
-        nativeCamera.setShift(x, y)
+        FilaCamera_setShift(nativeHandle, x, y)
     }
-    actual fun getShift(out: DoubleArray?): DoubleArray = nativeCamera.getShift(out)
+    actual fun getShift(out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(2)
+        result.usePinned { pinned ->
+            FilaCamera_getShift(nativeHandle, pinned)
+        }
+        return result
+    }
     
     actual fun lookAt(eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double, upY: Double, upZ: Double) {
-        nativeCamera.lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ)
+        FilaCamera_lookAt(nativeHandle, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ)
     }
     
     actual fun setModelMatrix(modelMatrix: FloatArray) {
-        nativeCamera.setModelMatrix(modelMatrix)
+        modelMatrix.usePinned { pinned ->
+            FilaCamera_setModelMatrix(nativeHandle, pinned)
+        }
     }
     actual fun setModelMatrix(modelMatrix: DoubleArray) {
-        nativeCamera.setModelMatrix(modelMatrix)
+        modelMatrix.usePinned { pinned ->
+            FilaCamera_setModelMatrixFp64(nativeHandle, pinned)
+        }
     }
     
-    actual fun getProjectionMatrix(out: DoubleArray?): DoubleArray = nativeCamera.getProjectionMatrix(out)
-    actual fun getCullingProjectionMatrix(out: DoubleArray?): DoubleArray = nativeCamera.getCullingProjectionMatrix(out)
+    actual fun getProjectionMatrix(out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { pinned ->
+            FilaCamera_getProjectionMatrix(nativeHandle, pinned)
+        }
+        return result
+    }
+    actual fun getCullingProjectionMatrix(out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { pinned ->
+            FilaCamera_getCullingProjectionMatrix(nativeHandle, pinned)
+        }
+        return result
+    }
     
-    actual fun getModelMatrix(out: FloatArray?): FloatArray = nativeCamera.getModelMatrix(out)
-    actual fun getModelMatrix(out: DoubleArray?): DoubleArray = nativeCamera.getModelMatrix(out)
+    actual fun getModelMatrix(out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
+        result.usePinned { pinned ->
+            FilaCamera_getModelMatrix(nativeHandle, pinned)
+        }
+        return result
+    }
+    actual fun getModelMatrix(out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { pinned ->
+            FilaCamera_getModelMatrixFp64(nativeHandle, pinned)
+        }
+        return result
+    }
     
-    actual fun getViewMatrix(out: FloatArray?): FloatArray = nativeCamera.getViewMatrix(out)
-    actual fun getViewMatrix(out: DoubleArray?): DoubleArray = nativeCamera.getViewMatrix(out)
+    actual fun getViewMatrix(out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
+        result.usePinned { pinned ->
+            FilaCamera_getViewMatrix(nativeHandle, pinned)
+        }
+        return result
+    }
+    actual fun getViewMatrix(out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { pinned ->
+            FilaCamera_getViewMatrixFp64(nativeHandle, pinned)
+        }
+        return result
+    }
     
-    actual fun getPosition(out: FloatArray?): FloatArray = nativeCamera.getPosition(out)
+    actual fun getPosition(out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
+            FilaCamera_getPosition(nativeHandle, pinned)
+        }
+        return result
+    }
     
-    actual fun getLeftVector(out: FloatArray?): FloatArray = nativeCamera.getLeftVector(out)
-    actual fun getUpVector(out: FloatArray?): FloatArray = nativeCamera.getUpVector(out)
-    actual fun getForwardVector(out: FloatArray?): FloatArray = nativeCamera.getForwardVector(out)
+    actual fun getLeftVector(out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
+            FilaCamera_getLeftVector(nativeHandle, pinned)
+        }
+        return result
+    }
+    actual fun getUpVector(out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
+            FilaCamera_getUpVector(nativeHandle, pinned)
+        }
+        return result
+    }
+    actual fun getForwardVector(out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(3)
+        result.usePinned { pinned ->
+            FilaCamera_getForwardVector(nativeHandle, pinned)
+        }
+        return result
+    }
     
-    actual val near: Float get() = nativeCamera.near
-    actual val cullingFar: Float get() = nativeCamera.cullingFar
+    actual val near: Float get() = FilaCamera_getNear(nativeHandle).toFloat()
+    actual val cullingFar: Float get() = FilaCamera_getCullingFar(nativeHandle).toFloat()
     
     actual fun setExposure(aperture: Float, shutterSpeed: Float, sensitivity: Float) {
-        nativeCamera.setExposure(aperture, shutterSpeed, sensitivity)
+        FilaCamera_setExposure(nativeHandle, aperture, shutterSpeed, sensitivity)
     }
     actual fun setExposure(exposure: Float) {
-        nativeCamera.setExposure(exposure)
+        setExposure(1.0f, 1.2f, 100.0f * (1.0f / exposure))
     }
-    actual val aperture: Float get() = nativeCamera.aperture
-    actual val shutterSpeed: Float get() = nativeCamera.shutterSpeed
-    actual val sensitivity: Float get() = nativeCamera.sensitivity
-    actual val focalLength: Double get() = nativeCamera.focalLength
+    actual val aperture: Float get() = FilaCamera_getAperture(nativeHandle)
+    actual val shutterSpeed: Float get() = FilaCamera_getShutterSpeed(nativeHandle)
+    actual val sensitivity: Float get() = FilaCamera_getSensitivity(nativeHandle)
+    actual val focalLength: Double get() = FilaCamera_getFocalLength(nativeHandle)
     
     actual var focusDistance: Float
-        get() = nativeCamera.focusDistance
-        set(value) { nativeCamera.focusDistance = value }
+        get() = FilaCamera_getFocusDistance(nativeHandle)
+        set(value) { FilaCamera_setFocusDistance(nativeHandle, value) }
     
-    actual fun getFieldOfViewInDegrees(direction: Fov): Double = nativeCamera.getFieldOfViewInDegrees(direction.toAndroid())
+    actual fun getFieldOfViewInDegrees(direction: Fov): Double = FilaCamera_getFieldOfViewInDegrees(nativeHandle, direction.ordinal)
 
-    actual val entity: Entity get() = nativeCamera.entity
+
 }

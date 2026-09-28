@@ -1,55 +1,52 @@
 package io.github.erkko68.filament
 
-// Escape hatch: the underlying filament-android object behind each wrapper, for interop with code
-// that talks to Filament directly. Read-only — the wrapper owns the object's lifetime.
+// Escape hatch: the native address behind each wrapper, for interop with code that calls
+// the generated Fila* JNI functions (io.github.erkko68.filament.jni) directly. Read-only — the wrapper owns
+// the object's lifetime.
 
 @InternalFilamentApi
-val BufferObject.nativeObject: com.google.android.filament.BufferObject get() = nativeBufferObject
+val BufferObject.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Camera.nativeObject: com.google.android.filament.Camera get() = nativeCamera
+val Camera.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val ColorGrading.nativeObject: com.google.android.filament.ColorGrading get() = nativeColorGrading
+val ColorGrading.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Engine.nativeObject: com.google.android.filament.Engine get() = nativeEngine
+val Engine.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val EntityManager.nativeObject: com.google.android.filament.EntityManager get() = nativeEntityManager
+val EntityManager.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Fence.nativeObject: com.google.android.filament.Fence get() = nativeFence
+val IndexBuffer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val IndexBuffer.nativeObject: com.google.android.filament.IndexBuffer get() = nativeIndexBuffer
+val IndirectLight.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val IndirectLight.nativeObject: com.google.android.filament.IndirectLight get() = nativeIndirectLight
+val LightManager.nativeObject: Long get() = nativeLightManager
 @InternalFilamentApi
-val LightManager.nativeObject: com.google.android.filament.LightManager get() = nativeLightManager
+val Material.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Material.nativeObject: com.google.android.filament.Material get() = nativeMaterial
+val MaterialInstance.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val MaterialInstance.nativeObject: com.google.android.filament.MaterialInstance get() = nativeMaterialInstance
+val MorphTargetBuffer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val MorphTargetBuffer.nativeObject: com.google.android.filament.MorphTargetBuffer get() = nativeMorphTargetBuffer
+val RenderTarget.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val RenderTarget.nativeObject: com.google.android.filament.RenderTarget get() = nativeRenderTarget
+val RenderableManager.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val RenderableManager.nativeObject: com.google.android.filament.RenderableManager get() = nativeRenderableManager
+val Renderer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Renderer.nativeObject: com.google.android.filament.Renderer get() = nativeRenderer
+val Scene.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Scene.nativeObject: com.google.android.filament.Scene get() = nativeScene
+val SkinningBuffer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val SkinningBuffer.nativeObject: com.google.android.filament.SkinningBuffer get() = nativeSkinningBuffer
+val Skybox.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Skybox.nativeObject: com.google.android.filament.Skybox get() = nativeSkybox
+val Stream.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Stream.nativeObject: com.google.android.filament.Stream get() = nativeStream
+val SurfaceOrientation.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val SurfaceOrientation.nativeObject: com.google.android.filament.SurfaceOrientation get() = nativeSurfaceOrientation
+val Texture.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val SwapChain.nativeObject: com.google.android.filament.SwapChain get() = nativeSwapChain
+val TransformManager.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Texture.nativeObject: com.google.android.filament.Texture get() = nativeTexture
+val VertexBuffer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val TransformManager.nativeObject: com.google.android.filament.TransformManager get() = nativeTransformManager
-@InternalFilamentApi
-val VertexBuffer.nativeObject: com.google.android.filament.VertexBuffer get() = nativeVertexBuffer
-@InternalFilamentApi
-val View.nativeObject: com.google.android.filament.View get() = nativeView
+val View.nativeObject: Long get() = nativeHandle

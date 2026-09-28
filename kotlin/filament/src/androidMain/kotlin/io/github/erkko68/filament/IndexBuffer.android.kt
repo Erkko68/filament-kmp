@@ -1,43 +1,30 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.IndexBuffer as AndroidIndexBuffer
-import java.nio.Buffer
+import io.github.erkko68.filament.jni.*
 
-actual class IndexBuffer @InternalFilamentApi constructor(internal val nativeIndexBuffer: AndroidIndexBuffer) {
+actual class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidIndexBuffer.Builder()
+        private val nativeBuilder = FilaIndexBufferBuilder_create()
         actual enum class IndexType { USHORT, UINT }
-        actual fun indexCount(indexCount: Int): Builder = apply { nativeBuilder.indexCount(indexCount) }
+        actual fun indexCount(indexCount: Int): Builder = apply { FilaIndexBufferBuilder_indexCount(nativeBuilder, indexCount) }
         actual fun bufferType(indexType: IndexType): Builder = apply { 
-            nativeBuilder.bufferType(AndroidIndexBuffer.Builder.IndexType.entries[indexType.ordinal])
+            FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.ordinal) 
         }
-        actual fun build(engine: Engine): IndexBuffer = IndexBuffer(nativeBuilder.build(engine.nativeEngine))
+        actual fun build(engine: Engine): IndexBuffer = IndexBuffer(FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle))
     }
 
-    actual val indexCount: Int get() = nativeIndexBuffer.indexCount
+    actual val indexCount: Int get() = FilaIndexBuffer_getIndexCount(nativeHandle).toInt()
+    
     actual fun setBuffer(engine: Engine, data: ByteArray) {
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, byteBuffer)
+        setBuffer(engine, data, 0, 0, null)
     }
+
     actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int) {
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, byteBuffer, destOffsetInBytes, count)
+        setBuffer(engine, data, destOffsetInBytes, count, null)
     }
+
     actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
-        val runnable = if (callback != null) Runnable { callback() } else null
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeIndexBuffer.setBuffer(engine.nativeEngine, byteBuffer, destOffsetInBytes, count, Runnable::run, runnable)
+        val upload = upload(data, if (count > 0) count else data.size, callback)
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size.toLong(), destOffsetInBytes, 0, upload.callback, upload.userData)
     }
 }

@@ -1,37 +1,39 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.Stream as AndroidStream
+import io.github.erkko68.filament.jni.*
 
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setDimensions throws — FStream waits on a fence internally, which single-threaded wasm rejects; external video streams have no WebGL source anyway.")
-actual class Stream @InternalFilamentApi constructor(internal val nativeStream: AndroidStream) {
+actual class Stream @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual enum class StreamType {
         NATIVE,
         ACQUIRED
     }
 
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidStream.Builder()
+        private val nativeBuilder = FilaStreamBuilder_create()
 
         actual fun width(width: Int): Builder {
-            nativeBuilder.width(width)
+            FilaStreamBuilder_width(nativeBuilder, width)
             return this
         }
 
         actual fun height(height: Int): Builder {
-            nativeBuilder.height(height)
+            FilaStreamBuilder_height(nativeBuilder, height)
             return this
         }
 
         actual fun build(engine: Engine): Stream {
-            return Stream(nativeBuilder.build(engine.nativeEngine))
+            val handle = FilaStreamBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaStreamBuilder_destroy(nativeBuilder)
+            return Stream(handle)
         }
     }
 
-    actual val streamType: StreamType get() = StreamType.entries[nativeStream.getStreamType().ordinal]
+    actual val streamType: StreamType get() = StreamType.entries[FilaStream_getStreamType(nativeHandle)]
 
     actual fun setDimensions(width: Int, height: Int) {
-        nativeStream.setDimensions(width, height)
+        FilaStream_setDimensions(nativeHandle, width, height)
     }
 
-    actual val timestamp: Long get() = nativeStream.timestamp
+    actual val timestamp: Long get() = FilaStream_getTimestamp(nativeHandle)
 }

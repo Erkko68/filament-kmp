@@ -1,11 +1,8 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.Material as AndroidMaterial
-import java.nio.Buffer
-import java.util.BitSet
+import io.github.erkko68.filament.jni.*
 
-actual class Material @InternalFilamentApi constructor(internal val nativeMaterial: AndroidMaterial) {
-    private val mDefaultInstance: MaterialInstance by lazy { MaterialInstance(this, nativeMaterial.defaultInstance) }
+actual class Material @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
     actual enum class Interpolation { SMOOTH, FLAT }
     actual enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
@@ -17,17 +14,17 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
     actual enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class UboBatchingMode { DEFAULT, DISABLED }
-    
+
     actual object UserVariantFilterBit {
-        actual val DIRECTIONAL_LIGHTING = AndroidMaterial.UserVariantFilterBit.DIRECTIONAL_LIGHTING
-        actual val DYNAMIC_LIGHTING = AndroidMaterial.UserVariantFilterBit.DYNAMIC_LIGHTING
-        actual val SHADOW_RECEIVER = AndroidMaterial.UserVariantFilterBit.SHADOW_RECEIVER
-        actual val SKINNING = AndroidMaterial.UserVariantFilterBit.SKINNING
-        actual val FOG = AndroidMaterial.UserVariantFilterBit.FOG
-        actual val VSM = AndroidMaterial.UserVariantFilterBit.VSM
-        actual val SSR = AndroidMaterial.UserVariantFilterBit.SSR
-        actual val STE = AndroidMaterial.UserVariantFilterBit.STE
-        actual val ALL = AndroidMaterial.UserVariantFilterBit.ALL
+        actual val DIRECTIONAL_LIGHTING = 0x01
+        actual val DYNAMIC_LIGHTING = 0x02
+        actual val SHADOW_RECEIVER = 0x04
+        actual val SKINNING = 0x08
+        actual val FOG = 0x10
+        actual val VSM = 0x20
+        actual val SSR = 0x40
+        actual val STE = 0x80
+        actual val ALL = 0xFF
     }
 
     actual class Parameter actual constructor(
@@ -36,6 +33,7 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
         actual val precision: Precision,
         actual val count: Int
     ) {
+
         actual enum class Type {
             BOOL, BOOL2, BOOL3, BOOL4,
             FLOAT, FLOAT2, FLOAT3, FLOAT4,
@@ -45,116 +43,132 @@ actual class Material @InternalFilamentApi constructor(internal val nativeMateri
             SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D,
             SUBPASS_INPUT
         }
-
         actual enum class Precision { LOW, MEDIUM, HIGH, DEFAULT }
     }
 
     actual class Builder actual constructor() {
-        private val androidBuilder = AndroidMaterial.Builder()
+        private val nativeBuilder = FilaMaterial_Builder_create()
         // Set in payload(): a non-empty blob that isn't a compiled .filamat. build() rejects it before
         // calling Filament's parser, which would otherwise panic uncatchably (see isValidFilamatPayload).
         private var payloadInvalid = false
-
+        // Filament's Builder::package keeps the pointer (no copy) until build(), so the native copy lives until then.
+        private var payloadCopy = 0L
         actual enum class ShadowSamplingQuality { HARD, LOW }
 
-        actual fun payload(data: ByteArray): Builder {
-            payloadInvalid = data.isNotEmpty() && !isValidFilamatPayload(data)
-            val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-                order(java.nio.ByteOrder.nativeOrder())
-                put(data)
-                flip()
+        actual fun payload(data: ByteArray): Builder = apply {
+            if (data.isNotEmpty()) {
+                payloadInvalid = !isValidFilamatPayload(data)
+                releasePayload()
+                payloadCopy = allocZeroed(data.size).also { writeBytes(it, data) }
+                FilaMaterial_Builder_package(nativeBuilder, payloadCopy, data.size.toLong())
+            } else {
+                payloadInvalid = false
             }
-            androidBuilder.payload(byteBuffer, byteBuffer.remaining())
-            return this
         }
-
-        actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder {
-            androidBuilder.sphericalHarmonicsBandCount(shBandCount)
-            return this
+        actual fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
+            FilaMaterial_Builder_sphericalHarmonicsBandCount(nativeBuilder, shBandCount)
         }
-
-        actual fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder {
-            androidBuilder.shadowSamplingQuality(AndroidMaterial.Builder.ShadowSamplingQuality.entries[quality.ordinal])
-            return this
+        actual fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder = apply {
+            FilaMaterial_Builder_shadowSamplingQuality(nativeBuilder, quality.ordinal)
         }
-
-        actual fun uboBatching(mode: UboBatchingMode): Builder {
-            androidBuilder.uboBatching(AndroidMaterial.UboBatchingMode.entries[mode.ordinal])
-            return this
+        actual fun uboBatching(mode: UboBatchingMode): Builder = apply {
+            FilaMaterial_Builder_uboBatching(nativeBuilder, mode.ordinal)
+        }
+        private fun releasePayload() {
+            if (payloadCopy != 0L) FilaJni.free(payloadCopy)
+            payloadCopy = 0
         }
 
         actual fun build(engine: Engine): Material {
             if (payloadInvalid) {
-                throw IllegalArgumentException("Failed to build material — the payload is not a valid compiled .filamat")
+                releasePayload()
+                FilaMaterial_Builder_destroy(nativeBuilder)
+                throw IllegalArgumentException(
+                    "Failed to build material — the payload is not a valid compiled .filamat",
+                )
             }
-            return Material(androidBuilder.build(engine.nativeEngine))
+            val handle = FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
+            FilaMaterial_Builder_destroy(nativeBuilder)
+            releasePayload()
+            if (handle == 0L) {
+                throw IllegalArgumentException(
+                    "Failed to build material — the payload is not a valid compiled .filamat",
+                )
+            }
+            return Material(handle)
         }
     }
 
-    actual fun compile(
-        priority: CompilerPriorityQueue,
-        variants: Int,
-        callback: (() -> Unit)?
-    ) {
-        nativeMaterial.compile(
-            AndroidMaterial.CompilerPriorityQueue.entries[priority.ordinal],
-            variants,
-            null,
-            callback
-        )
+    actual fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)?) {
+        if (callback == null) {
+            FilaMaterial_compile(nativeHandle, priority.ordinal, variants, 0, 0, 0)
+        } else {
+            val userData = Callbacks.register(once = true) { _, _ -> callback() }
+            FilaMaterial_compile(nativeHandle, priority.ordinal, variants, 0, Callbacks.argUser, userData)
+        }
     }
 
-    actual fun createInstance(): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance())
-    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(this, nativeMaterial.createInstance(name))
-    actual val defaultInstance: MaterialInstance get() = mDefaultInstance
+    actual fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
+    actual fun createInstance(name: String): MaterialInstance = MaterialInstance(FilaMaterial_createInstanceWithName(nativeHandle, name))
+    actual val defaultInstance: MaterialInstance get() = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))
 
-    actual val name: String get() = nativeMaterial.name
-    actual val shading: Shading get() = Shading.entries[nativeMaterial.shading.ordinal]
-    actual val interpolation: Interpolation get() = Interpolation.entries[nativeMaterial.interpolation.ordinal]
-    actual val blendingMode: BlendingMode get() = BlendingMode.entries[nativeMaterial.blendingMode.ordinal]
-    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[nativeMaterial.transparencyMode.ordinal]
-    actual val refractionMode: RefractionMode get() = RefractionMode.entries[nativeMaterial.refractionMode.ordinal]
-    actual val refractionType: RefractionType get() = RefractionType.entries[nativeMaterial.refractionType.ordinal]
-    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[nativeMaterial.reflectionMode.ordinal]
-    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[nativeMaterial.vertexDomain.ordinal]
-    actual val cullingMode: CullingMode get() = CullingMode.entries[nativeMaterial.cullingMode.ordinal]
-    actual val isColorWriteEnabled: Boolean get() = nativeMaterial.isColorWriteEnabled
-    actual val isDepthWriteEnabled: Boolean get() = nativeMaterial.isDepthWriteEnabled
-    actual val isDepthCullingEnabled: Boolean get() = nativeMaterial.isDepthCullingEnabled
-    actual val isDoubleSided: Boolean get() = nativeMaterial.isDoubleSided
-    actual val isAlphaToCoverageEnabled: Boolean get() = nativeMaterial.isAlphaToCoverageEnabled
-    actual val maskThreshold: Float get() = nativeMaterial.maskThreshold
-    actual val specularAntiAliasingVariance: Float get() = nativeMaterial.specularAntiAliasingVariance
-    actual val specularAntiAliasingThreshold: Float get() = nativeMaterial.specularAntiAliasingThreshold
-    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[nativeMaterial.featureLevel.ordinal]
-    actual val parameterCount: Int get() = nativeMaterial.parameterCount
-    actual val parameters: List<Parameter> get() = nativeMaterial.parameters.map { p ->
-        Parameter(
-            p.name,
-            Parameter.Type.entries[p.type.ordinal],
-            Parameter.Precision.entries[p.precision.ordinal],
-            p.count
-        )
+    actual val name: String get() = FilaMaterial_getName(nativeHandle) ?: ""
+    actual val shading: Shading get() = Shading.entries[FilaMaterial_getShading(nativeHandle)]
+    actual val interpolation: Interpolation get() = Interpolation.entries[FilaMaterial_getInterpolation(nativeHandle)]
+    actual val blendingMode: BlendingMode get() = BlendingMode.entries[FilaMaterial_getBlendingMode(nativeHandle)]
+    actual val transparencyMode: TransparencyMode get() = TransparencyMode.entries[FilaMaterial_getTransparencyMode(nativeHandle)]
+    actual val refractionMode: RefractionMode get() = RefractionMode.entries[FilaMaterial_getRefractionMode(nativeHandle)]
+    actual val refractionType: RefractionType get() = RefractionType.entries[FilaMaterial_getRefractionType(nativeHandle)]
+    actual val reflectionMode: ReflectionMode get() = ReflectionMode.entries[FilaMaterial_getReflectionMode(nativeHandle)]
+    actual val vertexDomain: VertexDomain get() = VertexDomain.entries[FilaMaterial_getVertexDomain(nativeHandle)]
+    actual val cullingMode: CullingMode get() = CullingMode.entries[FilaMaterial_getCullingMode(nativeHandle)]
+    
+    actual val isColorWriteEnabled: Boolean get() = FilaMaterial_isColorWriteEnabled(nativeHandle)
+    actual val isDepthWriteEnabled: Boolean get() = FilaMaterial_isDepthWriteEnabled(nativeHandle)
+    actual val isDepthCullingEnabled: Boolean get() = FilaMaterial_isDepthCullingEnabled(nativeHandle)
+    actual val isDoubleSided: Boolean get() = FilaMaterial_isDoubleSided(nativeHandle)
+    actual val isAlphaToCoverageEnabled: Boolean get() = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
+    
+    actual val maskThreshold: Float get() = FilaMaterial_getMaskThreshold(nativeHandle)
+    actual val specularAntiAliasingVariance: Float get() = FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
+    actual val specularAntiAliasingThreshold: Float get() = FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
+    actual val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[FilaMaterial_getFeatureLevel(nativeHandle)]
+    
+    actual val parameterCount: Int get() = FilaMaterial_getParameterCount(nativeHandle)
+
+    actual val parameters: List<Parameter> get() = heapScoped {
+        val count = parameterCount
+        if (count == 0) return emptyList()
+        val infoArray = alloc(count * FilaMaterialParameterInfo.SIZE)
+        val actualCount = FilaMaterial_getParameters(nativeHandle, infoArray, count)
+        (0 until actualCount).map { i ->
+            val info = FilaMaterialParameterInfo(infoArray + i * FilaMaterialParameterInfo.SIZE)
+            Parameter(
+                readString(info.name) ?: "",
+                materialParameterType(info.type, info.isSampler != 0, info.isSubpass != 0),
+                Parameter.Precision.entries[info.precision],
+                info.count
+            )
+        }
     }
 
     actual val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
-        val attrSet = nativeMaterial.requiredAttributes
+        val bitset = FilaMaterial_getRequiredAttributes(nativeHandle)
         val result = mutableSetOf<VertexBuffer.VertexAttribute>()
-        // We iterate over our KMP enum entries and check if they exist in the Java set
         VertexBuffer.VertexAttribute.entries.forEach { attr ->
-            if (attrSet.any { it.name == attr.name }) {
+            if ((bitset and (1 shl attr.ordinal)) != 0) {
                 result.add(attr)
             }
         }
         return result
     }
 
-    actual fun hasParameter(name: String): Boolean = nativeMaterial.hasParameter(name)
-    actual fun getParameterTransformName(samplerName: String): String? = nativeMaterial.getParameterTransformName(samplerName)
-    actual fun setDefaultParameter(name: String, value: Boolean) = nativeMaterial.setDefaultParameter(name, value)
-    actual fun setDefaultParameter(name: String, value: Float) = nativeMaterial.setDefaultParameter(name, value)
-    actual fun setDefaultParameter(name: String, value: Int) = nativeMaterial.setDefaultParameter(name, value)
-    actual fun setDefaultParameter(name: String, x: Float, y: Float) = nativeMaterial.setDefaultParameter(name, x, y)
-    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) = nativeMaterial.setDefaultParameter(name, x, y, z)
-    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) = nativeMaterial.setDefaultParameter(name, x, y, z, w)
+    actual fun hasParameter(name: String): Boolean = FilaMaterial_hasParameter(nativeHandle, name)
+    actual fun getParameterTransformName(samplerName: String): String? = FilaMaterial_getParameterTransformName(nativeHandle, samplerName)
+    actual fun setDefaultParameter(name: String, value: Boolean) = FilaMaterial_setDefaultParameter_bool(nativeHandle, name, value)
+    actual fun setDefaultParameter(name: String, value: Float) = FilaMaterial_setDefaultParameter_float(nativeHandle, name, value)
+    actual fun setDefaultParameter(name: String, value: Int) = FilaMaterial_setDefaultParameter_int(nativeHandle, name, value)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float) = FilaMaterial_setDefaultParameter_float2(nativeHandle, name, x, y)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) = FilaMaterial_setDefaultParameter_float3(nativeHandle, name, x, y, z)
+    actual fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) = FilaMaterial_setDefaultParameter_float4(nativeHandle, name, x, y, z, w)
 }

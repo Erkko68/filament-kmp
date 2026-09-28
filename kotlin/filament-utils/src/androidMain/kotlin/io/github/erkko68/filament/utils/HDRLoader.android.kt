@@ -2,22 +2,19 @@ package io.github.erkko68.filament.utils
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import com.google.android.filament.utils.HDRLoader as AndroidHDRLoader
+import io.github.erkko68.filament.jni.*
 import io.github.erkko68.filament.nativeObject
 
 actual object HDRLoader {
-
-    init { com.google.android.filament.utils.Utils.init() }
-
     actual fun createTexture(engine: Engine, buffer: ByteArray, internalFormat: Texture.InternalFormat): Texture? {
-        val byteBuffer = ByteBuffer.allocateDirect(buffer.size).apply {
-            order(ByteOrder.nativeOrder())
-            put(buffer)
-            rewind()
+        val handle = buffer.usePinned { pinned ->
+            FilaHDRLoader_createTexture(
+                engine.nativeObject,
+                pinned,
+                buffer.size.toLong(),
+                internalFormat.ordinal
+            )
         }
-        val androidTexture = AndroidHDRLoader.createTexture(engine.nativeObject, byteBuffer)
-        return androidTexture?.let { Texture(it) }
+        return handle.takeIf { it != 0L }?.let { Texture(it) }
     }
 }

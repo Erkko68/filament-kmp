@@ -115,6 +115,12 @@ jobs:
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_macosArm64
       - uses: ./.github/actions/setup-wasm
+      # :android (filament-jni-android) builds libfilament-c.so per ABI with upstream's pinned NDK/CMake.
+      - name: Install NDK + CMake
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null
+          "$SDKM" "ndk;29.0.14206865" "cmake;3.22.1" > /dev/null
       - name: Download FFM natives
         uses: actions/download-artifact@v8
         with:
@@ -146,6 +152,8 @@ jobs:
             :kotlin:gltfio:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-compose:publishAllPublicationsToMavenCentralRepository \
             :web:publishAllPublicationsToMavenCentralRepository \
+            :jni:publishAllPublicationsToMavenCentralRepository \
+            :android:publishAllPublicationsToMavenCentralRepository \
             --no-configuration-cache
 
       # Web apps serve these next to their bundle (klib resources don't reach webpack), so

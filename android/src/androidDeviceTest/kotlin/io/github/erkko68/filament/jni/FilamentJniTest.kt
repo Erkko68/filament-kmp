@@ -1,0 +1,126 @@
+package io.github.erkko68.filament.jni
+
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
+import org.junit.runner.RunWith
+
+// One test per boundary kind the generator emits: pointers, ints/size_t, enums, bools, strings, structs, callbacks.
+@RunWith(AndroidJUnit4::class)
+class FilamentJniTest {
+    private var engine = 0L
+
+    @BeforeTest
+    fun setUp() {
+        val builder = FilaEngineBuilder_create()
+        FilaEngineBuilder_backend(builder, FILA_ENGINE_BACKEND_OPENGL)
+        engine = FilaEngineBuilder_build(builder)
+        FilaEngineBuilder_destroy(builder)
+        assertNotEquals(0L, engine)
+    }
+
+    @AfterTest
+    fun tearDown() = FilaEngine_destroy(engine)
+
+    @Test
+    fun engineReportsOpenGlBackend() {
+        assertEquals(FILA_ENGINE_BACKEND_OPENGL, FilaEngine_getBackend(engine))
+    }
+
+    @Test
+    fun textureRoundTripsSizeAndFormat() {
+        val texture = texture(64, 32)
+        assertEquals(64L, FilaTexture_getWidth(texture, 0))
+        assertEquals(FILA_TEXTURE_INTERNAL_FORMAT_RGBA8, FilaTexture_getFormat(texture))
+        assertTrue(FilaEngine_destroyTexture(engine, texture))
+    }
+
+    @Test
+    fun stringsCrossBothWays() {
+        val view = FilaEngine_createView(engine)
+        FilaView_setName(view, "jni-view")
+        assertEquals("jni-view", FilaView_getName(view))
+        FilaEngine_destroyView(engine, view)
+    }
+
+    @Test
+    fun structViewsRoundTripThroughTheCApi() {
+        val view = FilaEngine_createView(engine)
+        heapScoped {
+            val ao = FilaViewAmbientOcclusionOptions(alloc(FilaViewAmbientOcclusionOptions.SIZE))
+            FilaView_getAmbientOcclusionOptions(view, ao.ptr)
+            ao.enabled = true
+            ao.radius = 0.75f
+            ao.quality = FILA_VIEW_QUALITY_LEVEL_HIGH
+            ao.ssct.enabled = true
+            ao.ssct.sampleCount = 7
+            // Filament normalizes the direction; (1, 0, 0) survives it.
+            ao.ssct.lightDirection[0] = 1f
+            ao.ssct.lightDirection[1] = 0f
+            FilaView_setAmbientOcclusionOptions(view, ao.ptr)
+
+            val out = FilaViewAmbientOcclusionOptions(alloc(FilaViewAmbientOcclusionOptions.SIZE))
+            FilaView_getAmbientOcclusionOptions(view, out.ptr)
+            assertTrue(out.enabled)
+            assertEquals(0.75f, out.radius)
+            assertEquals(FILA_VIEW_QUALITY_LEVEL_HIGH, out.quality)
+            assertTrue(out.ssct.enabled)
+            assertEquals(7, out.ssct.sampleCount)
+            assertEquals(1f, out.ssct.lightDirection[0])
+        }
+        FilaEngine_destroyView(engine, view)
+    }
+
+    @Test
+    fun bufferCallbackFiresOnceUploadIsConsumed() {
+        val texture = texture(2, 2)
+        val released = CountDownLatch(1)
+        val pixels = upload(ByteArray(16) { 0x7f }) { released.countDown() }
+        FilaTexture_setImage(
+            texture, engine, 0, 0, 0, 0, 2, 2, 1,
+            pixels.ptr, pixels.size.toLong(), FILA_PIXEL_DATA_FORMAT_RGBA, FILA_PIXEL_DATA_TYPE_UBYTE, 1, 0, 0, 0,
+            0, pixels.callback, pixels.userData,
+        )
+        FilaEngine_flushAndWait(engine, Long.MAX_VALUE)
+        assertTrue(released.await(5, TimeUnit.SECONDS), "FilaBufferCallback never ran")
+        FilaEngine_destroyTexture(engine, texture)
+    }
+
+    // Frame callbacks are Metal-only, so persistence is exercised through one userData shared by two uploads.
+    @Test
+    fun persistentCallbackSurvivesCallsAndSeesItsArgument() {
+        val texture = texture(2, 2)
+        val seen = java.util.Collections.synchronizedList(mutableListOf<Long>())
+        val released = CountDownLatch(2)
+        val userData = Callbacks.register(once = false) { buffer, _ -> seen += buffer; released.countDown() }
+        val uploads = List(2) { allocZeroed(16) }
+        uploads.forEach { pixels ->
+            FilaTexture_setImage(
+                texture, engine, 0, 0, 0, 0, 2, 2, 1,
+                pixels, 16, FILA_PIXEL_DATA_FORMAT_RGBA, FILA_PIXEL_DATA_TYPE_UBYTE, 1, 0, 0, 0,
+                0, Callbacks.keepBuffer, userData,
+            )
+        }
+        FilaEngine_flushAndWait(engine, Long.MAX_VALUE)
+        assertTrue(released.await(5, TimeUnit.SECONDS), "persistent callback ran ${2 - released.count} of 2 times")
+        assertEquals(uploads.toSet(), seen.toSet())
+        Callbacks.release(userData)
+        uploads.forEach(FilaJni::free)
+        FilaEngine_destroyTexture(engine, texture)
+    }
+
+    private fun texture(width: Int, height: Int): Long {
+        val builder = FilaTextureBuilder_create()
+        FilaTextureBuilder_width(builder, width)
+        FilaTextureBuilder_height(builder, height)
+        FilaTextureBuilder_format(builder, FILA_TEXTURE_INTERNAL_FORMAT_RGBA8)
+        FilaTextureBuilder_usage(builder, FILA_TEXTURE_USAGE_DEFAULT)
+        return FilaTextureBuilder_build(builder, engine).also { FilaTextureBuilder_destroy(builder) }
+    }
+}

@@ -1,301 +1,340 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.Engine as AndroidEngine
+import android.opengl.EGLContext
+import io.github.erkko68.filament.jni.*
 
-actual class Engine @InternalFilamentApi constructor(internal val nativeEngine: AndroidEngine) : AutoCloseable {
-    private val mTransformManager by lazy { TransformManager(nativeEngine.transformManager) }
-    private val mLightManager by lazy { LightManager(nativeEngine.lightManager) }
-    private val mRenderableManager by lazy { RenderableManager(nativeEngine.renderableManager) }
-    private val mEntityManager by lazy { EntityManager(nativeEngine.entityManager) }
+actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: Long) : AutoCloseable {
+    private val mTransformManager by lazy { TransformManager(FilaEngine_getTransformManager(nativeHandle)) }
+    private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)) }
+    private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)) }
+    private val mEntityManager by lazy { EntityManager(FilaEngine_getEntityManager(nativeHandle)) }
+    // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
+    internal var mConfig: Config? = null
 
     actual enum class Backend {
         DEFAULT, OPENGL, VULKAN, METAL, WEBGPU, NOOP;
-        internal fun toAndroid() = AndroidEngine.Backend.entries[ordinal]
+        internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromAndroid(backend: AndroidEngine.Backend) = entries[backend.ordinal]
+            internal fun fromNative(backend: Int): Backend = entries[backend]
         }
     }
 
     actual enum class FeatureLevel {
         FEATURE_LEVEL_0, FEATURE_LEVEL_1, FEATURE_LEVEL_2, FEATURE_LEVEL_3;
-        internal fun toAndroid() = AndroidEngine.FeatureLevel.entries[ordinal]
+        internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromAndroid(level: AndroidEngine.FeatureLevel) = entries[level.ordinal]
+            internal fun fromNative(level: Int): FeatureLevel = entries[level]
         }
     }
 
     actual enum class StereoscopicType {
         NONE, INSTANCED, MULTIVIEW;
-        internal fun toAndroid() = AndroidEngine.StereoscopicType.entries[ordinal]
+        internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromAndroid(type: AndroidEngine.StereoscopicType) = entries[type.ordinal]
+            internal fun fromNative(type: Int): StereoscopicType = entries[type]
         }
     }
 
     actual enum class GpuContextPriority {
         DEFAULT, LOW, MEDIUM, HIGH, REALTIME;
-        internal fun toAndroid() = AndroidEngine.GpuContextPriority.entries[ordinal]
+        internal fun toNative(): Int = ordinal
         companion object {
-            internal fun fromAndroid(priority: AndroidEngine.GpuContextPriority) = entries[priority.ordinal]
+            internal fun fromNative(priority: Int): GpuContextPriority = entries[priority]
         }
     }
 
     actual class Config actual constructor() {
-        private val android = AndroidEngine.Config()
-
-        actual var commandBufferSizeMB: Long
-            get() = android.commandBufferSizeMB
-            set(value) { android.commandBufferSizeMB = value }
-        actual var perRenderPassArenaSizeMB: Long
-            get() = android.perRenderPassArenaSizeMB
-            set(value) { android.perRenderPassArenaSizeMB = value }
-        actual var driverHandleArenaSizeMB: Long
-            get() = android.driverHandleArenaSizeMB
-            set(value) { android.driverHandleArenaSizeMB = value }
-        actual var minCommandBufferSizeMB: Long
-            get() = android.minCommandBufferSizeMB
-            set(value) { android.minCommandBufferSizeMB = value }
-        actual var perFrameCommandsSizeMB: Long
-            get() = android.perFrameCommandsSizeMB
-            set(value) { android.perFrameCommandsSizeMB = value }
-        actual var jobSystemThreadCount: Long
-            get() = android.jobSystemThreadCount
-            set(value) { android.jobSystemThreadCount = value }
-
-        actual var disableParallelShaderCompile: Boolean
-            get() = android.disableParallelShaderCompile
-            set(value) { android.disableParallelShaderCompile = value }
-        actual var stereoscopicType: StereoscopicType
-            get() = StereoscopicType.fromAndroid(android.stereoscopicType)
-            set(value) { android.stereoscopicType = value.toAndroid() }
-        actual var stereoscopicEyeCount: Long
-            get() = android.stereoscopicEyeCount
-            set(value) { android.stereoscopicEyeCount = value }
-        actual var resourceAllocatorCacheSizeMB: Long
-            get() = android.resourceAllocatorCacheSizeMB
-            set(value) { android.resourceAllocatorCacheSizeMB = value }
-        actual var resourceAllocatorCacheMaxAge: Long
-            get() = android.resourceAllocatorCacheMaxAge
-            set(value) { android.resourceAllocatorCacheMaxAge = value }
-
-        actual var disableHandleUseAfterFreeCheck: Boolean
-            get() = android.disableHandleUseAfterFreeCheck
-            set(value) { android.disableHandleUseAfterFreeCheck = value }
+        actual var commandBufferSizeMB: Long = 3 * 1
+        actual var perRenderPassArenaSizeMB: Long = 3
+        actual var driverHandleArenaSizeMB: Long = 0
+        actual var minCommandBufferSizeMB: Long = 1
+        actual var perFrameCommandsSizeMB: Long = 2
+        actual var jobSystemThreadCount: Long = 0
+        actual var disableParallelShaderCompile: Boolean = false
+        actual var stereoscopicType: StereoscopicType = StereoscopicType.NONE
+        actual var stereoscopicEyeCount: Long = 2
+        actual var resourceAllocatorCacheSizeMB: Long = 64
+        actual var resourceAllocatorCacheMaxAge: Long = 1
+        actual var disableHandleUseAfterFreeCheck: Boolean = false
 
         actual enum class ShaderLanguage {
             DEFAULT, MSL, METAL_LIBRARY;
-            internal fun toAndroid() = AndroidEngine.Config.ShaderLanguage.entries[ordinal]
-            companion object {
-                internal fun fromAndroid(lang: AndroidEngine.Config.ShaderLanguage) = entries[lang.ordinal]
-            }
         }
-        actual var preferredShaderLanguage: ShaderLanguage
-            get() = ShaderLanguage.fromAndroid(android.preferredShaderLanguage)
-            set(value) { android.preferredShaderLanguage = value.toAndroid() }
-        actual var forceGLES2Context: Boolean
-            get() = android.forceGLES2Context
-            set(value) { android.forceGLES2Context = value }
+        actual var preferredShaderLanguage: ShaderLanguage = ShaderLanguage.DEFAULT
+        actual var forceGLES2Context: Boolean = false
+        actual var assertNativeWindowIsValid: Boolean = false
+        actual var gpuContextPriority: GpuContextPriority = GpuContextPriority.DEFAULT
+        actual var sharedUboInitialSizeInBytes: Long = 256 * 64
+        actual var enableMultipleDirectionalLights: Boolean = false
 
-        actual var assertNativeWindowIsValid: Boolean
-            get() = android.assertNativeWindowIsValid
-            set(value) { android.assertNativeWindowIsValid = value }
-        actual var gpuContextPriority: GpuContextPriority
-            get() = GpuContextPriority.fromAndroid(android.gpuContextPriority)
-            set(value) { android.gpuContextPriority = value.toAndroid() }
-        actual var sharedUboInitialSizeInBytes: Long
-            get() = android.sharedUboInitialSizeInBytes
-            set(value) { android.sharedUboInitialSizeInBytes = value }
-
-        actual var enableMultipleDirectionalLights: Boolean
-            get() = android.enableMultipleDirectionalLights
-            set(value) { android.enableMultipleDirectionalLights = value }
-
-        internal fun toAndroid() = android
+        internal fun toNative(native: FilaEngineConfig) {
+            native.commandBufferSizeMB = commandBufferSizeMB.toInt()
+            native.perRenderPassArenaSizeMB = perRenderPassArenaSizeMB.toInt()
+            native.driverHandleArenaSizeMB = driverHandleArenaSizeMB.toInt()
+            native.minCommandBufferSizeMB = minCommandBufferSizeMB.toInt()
+            native.perFrameCommandsSizeMB = perFrameCommandsSizeMB.toInt()
+            native.jobSystemThreadCount = jobSystemThreadCount.toInt()
+            native.disableParallelShaderCompile = disableParallelShaderCompile
+            native.stereoscopicType = stereoscopicType.toNative()
+            native.stereoscopicEyeCount = stereoscopicEyeCount.toInt()
+            native.resourceAllocatorCacheSizeMB = resourceAllocatorCacheSizeMB.toInt()
+            native.resourceAllocatorCacheMaxAge = resourceAllocatorCacheMaxAge.toInt()
+            native.disableHandleUseAfterFreeCheck = disableHandleUseAfterFreeCheck
+            native.preferredShaderLanguage = preferredShaderLanguage.ordinal
+            native.forceGLES2Context = forceGLES2Context
+            native.assertNativeWindowIsValid = assertNativeWindowIsValid
+            native.gpuContextPriority = gpuContextPriority.toNative()
+            native.sharedUboInitialSizeInBytes = sharedUboInitialSizeInBytes.toInt()
+            native.enableMultipleDirectionalLights = enableMultipleDirectionalLights
+        }
     }
 
     actual class Builder actual constructor() {
-        private val android = AndroidEngine.Builder()
+        private val nativeBuilder = FilaEngineBuilder_create()
+        private var mConfig: Config? = null
 
         actual fun backend(backend: Backend): Builder {
-            android.backend(backend.toAndroid())
+            FilaEngineBuilder_backend(nativeBuilder, backend.toNative())
             return this
         }
 
+        /** On Android the shared context is an [EGLContext] (or its native handle as a Long), as in filament-android. */
         actual fun sharedContext(sharedContext: Any): Builder {
-            android.sharedContext(sharedContext)
+            val handle = when (sharedContext) {
+                is EGLContext -> sharedContext.nativeHandle
+                is Long -> sharedContext
+                else -> throw IllegalArgumentException("sharedContext must be an EGLContext, got ${sharedContext::class}")
+            }
+            FilaEngineBuilder_sharedContext(nativeBuilder, handle)
             return this
         }
 
         actual fun config(config: Config): Builder {
-            android.config(config.toAndroid())
+            heapScoped {
+                val native = FilaEngineConfig(alloc(FilaEngineConfig.SIZE))
+                config.toNative(native)
+                FilaEngineBuilder_config(nativeBuilder, native.ptr)
+            }
+            mConfig = config
             return this
         }
 
         actual fun featureLevel(featureLevel: FeatureLevel): Builder {
-            android.featureLevel(featureLevel.toAndroid())
+            FilaEngineBuilder_featureLevel(nativeBuilder, featureLevel.toNative())
             return this
         }
 
         actual fun paused(paused: Boolean): Builder {
-            android.paused(paused)
+            FilaEngineBuilder_paused(nativeBuilder, paused)
             return this
         }
 
         actual fun feature(name: String, value: Boolean): Builder {
-            android.feature(name, value)
+            FilaEngineBuilder_feature(nativeBuilder, name, value)
             return this
         }
 
         actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
-            android.colorGrading(colorGrading.nativeBuilder)
+            FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle)
             return this
         }
 
-        actual fun build(): Engine = Engine(android.build())
+        actual fun build(): Engine {
+            val handle = FilaEngineBuilder_build(nativeBuilder)
+            FilaEngineBuilder_destroy(nativeBuilder)
+            check(handle != 0L) { "Failed to build Engine" }
+            return Engine(handle).apply { mConfig = this@Builder.mConfig }
+        }
     }
 
     actual companion object {
-        actual fun create(): Engine {
-            return Engine(AndroidEngine.create())
-        }
-
-        actual fun create(backend: Backend): Engine {
-            return Engine(AndroidEngine.create(backend.toAndroid()))
-        }
-
-        actual fun create(sharedContext: Any): Engine {
-            return Engine(AndroidEngine.create(sharedContext))
-        }
-
-        actual val steadyClockTimeNano: Long get() {
-            return AndroidEngine.getSteadyClockTimeNano()
-        }
+        actual fun create(): Engine = Builder().build()
+        actual fun create(backend: Backend): Engine = Builder().backend(backend).build()
+        actual fun create(sharedContext: Any): Engine = Builder().sharedContext(sharedContext).build()
+        actual val steadyClockTimeNano: Long get() = FilaEngine_getSteadyClockTimeNano()
     }
 
-    actual val isValid: Boolean get() = nativeEngine.isValid
+    actual val isValid: Boolean get() = nativeHandle != 0L
     actual override fun close() = destroy()
 
-    actual fun destroy() = nativeEngine.destroy()
-    actual val backend: Backend get() = Backend.fromAndroid(nativeEngine.backend)
-    actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromAndroid(nativeEngine.supportedFeatureLevel)
+    actual fun destroy() {
+        if (nativeHandle == 0L) return
+        FilaEngine_destroy(nativeHandle)
+        nativeHandle = 0
+    }
+
+    actual val backend: Backend get() = Backend.fromNative(FilaEngine_getBackend(nativeHandle))
+    actual val supportedFeatureLevel: FeatureLevel get() = FeatureLevel.fromNative(FilaEngine_getSupportedFeatureLevel(nativeHandle))
     actual var activeFeatureLevel: FeatureLevel
-        get() = FeatureLevel.fromAndroid(nativeEngine.activeFeatureLevel)
-        set(value) { nativeEngine.setActiveFeatureLevel(value.toAndroid()) }
+        get() = FeatureLevel.fromNative(FilaEngine_getActiveFeatureLevel(nativeHandle))
+        set(value) { FilaEngine_setActiveFeatureLevel(nativeHandle, value.toNative()) }
 
     actual var isAutomaticInstancingEnabled: Boolean
-        get() = nativeEngine.isAutomaticInstancingEnabled
-        set(value) { nativeEngine.setAutomaticInstancingEnabled(value) }
-    actual val config: Config get() {
-        val config = Config()
-        val androidConfig = nativeEngine.config
-        config.commandBufferSizeMB = androidConfig.commandBufferSizeMB
-        config.perRenderPassArenaSizeMB = androidConfig.perRenderPassArenaSizeMB
-        config.driverHandleArenaSizeMB = androidConfig.driverHandleArenaSizeMB
-        config.minCommandBufferSizeMB = androidConfig.minCommandBufferSizeMB
-        config.perFrameCommandsSizeMB = androidConfig.perFrameCommandsSizeMB
-        config.jobSystemThreadCount = androidConfig.jobSystemThreadCount
-        config.stereoscopicType = StereoscopicType.fromAndroid(androidConfig.stereoscopicType)
-        config.stereoscopicEyeCount = androidConfig.stereoscopicEyeCount
-        config.resourceAllocatorCacheSizeMB = androidConfig.resourceAllocatorCacheSizeMB
-        config.resourceAllocatorCacheMaxAge = androidConfig.resourceAllocatorCacheMaxAge
-        config.preferredShaderLanguage = Config.ShaderLanguage.fromAndroid(androidConfig.preferredShaderLanguage)
-        config.forceGLES2Context = androidConfig.forceGLES2Context
-        config.assertNativeWindowIsValid = androidConfig.assertNativeWindowIsValid
-        config.disableParallelShaderCompile = androidConfig.disableParallelShaderCompile
-        config.disableHandleUseAfterFreeCheck = androidConfig.disableHandleUseAfterFreeCheck
-        config.gpuContextPriority = GpuContextPriority.fromAndroid(androidConfig.gpuContextPriority)
-        config.sharedUboInitialSizeInBytes = androidConfig.sharedUboInitialSizeInBytes
-        config.enableMultipleDirectionalLights = androidConfig.enableMultipleDirectionalLights
-        return config
+        get() = FilaEngine_isAutomaticInstancingEnabled(nativeHandle)
+        set(value) { FilaEngine_setAutomaticInstancingEnabled(nativeHandle, value) }
+    actual val config: Config get() = mConfig ?: Config()
+    actual val maxStereoscopicEyes: Long get() = FilaEngine_getMaxStereoscopicEyes(nativeHandle)
+
+    actual fun isValidRenderer(renderer: Renderer): Boolean = FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
+    actual fun isValidView(view: View): Boolean = FilaEngine_isValidView(nativeHandle, view.nativeHandle)
+    actual fun isValidScene(scene: Scene): Boolean = FilaEngine_isValidScene(nativeHandle, scene.nativeHandle)
+    actual fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
+    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
+    actual fun isValidMaterial(material: Material): Boolean = FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    actual fun isValidSkybox(skybox: Skybox): Boolean = FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle)
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
+    actual fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle)
+    actual fun isValidStream(stream: Stream): Boolean = FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
+
+    actual fun createSwapChain(surface: NativeSurface): SwapChain = createSwapChain(surface, 0L)
+    // Holds an ANativeWindow reference until destroySwapChain; EGL takes its own when it builds the surface.
+    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain {
+        val androidSurface = requireNotNull(surface.surface as? android.view.Surface) {
+            "NativeSurface must wrap an android.view.Surface, got ${surface.surface::class}"
+        }
+        val window = FilaAndroid.windowFromSurface(androidSurface)
+        check(window != 0L) { "No ANativeWindow for $androidSurface (released?)" }
+        return SwapChain(FilaEngine_createSwapChain(nativeHandle, window, flags), window)
     }
-    actual val maxStereoscopicEyes: Long get() = nativeEngine.maxStereoscopicEyes
-    
-    actual fun isValidRenderer(renderer: Renderer): Boolean = nativeEngine.isValidRenderer(renderer.nativeRenderer)
-    actual fun isValidView(view: View): Boolean = nativeEngine.isValidView(view.nativeView)
-    actual fun isValidScene(scene: Scene): Boolean = nativeEngine.isValidScene(scene.nativeScene)
-    actual fun isValidFence(fence: Fence): Boolean = nativeEngine.isValidFence(fence.nativeFence)
-    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = nativeEngine.isValidIndexBuffer(indexBuffer.nativeIndexBuffer)
-    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = nativeEngine.isValidVertexBuffer(vertexBuffer.nativeVertexBuffer)
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = nativeEngine.isValidSkinningBuffer(skinningBuffer.nativeSkinningBuffer)
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = nativeEngine.isValidMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer)
-    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = nativeEngine.isValidIndirectLight(ibl.nativeIndirectLight)
-    actual fun isValidMaterial(material: Material): Boolean = nativeEngine.isValidMaterial(material.nativeMaterial)
-    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = nativeEngine.isValidMaterialInstance(material.nativeMaterial, materialInstance.nativeMaterialInstance)
-    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = nativeEngine.isValidExpensiveMaterialInstance(materialInstance.nativeMaterialInstance)
-    actual fun isValidSkybox(skybox: Skybox): Boolean = nativeEngine.isValidSkybox(skybox.nativeSkybox)
-    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = nativeEngine.isValidColorGrading(colorGrading.nativeColorGrading)
-    actual fun isValidTexture(texture: Texture): Boolean = nativeEngine.isValidTexture(texture.nativeTexture)
-    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = nativeEngine.isValidRenderTarget(renderTarget.nativeRenderTarget)
-    actual fun isValidStream(stream: Stream): Boolean = nativeEngine.isValidStream(stream.nativeStream)
-    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = nativeEngine.isValidSwapChain(swapChain.nativeSwapChain)
+    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilaEngine_createSwapChainHeadless(nativeHandle, width, height, flags))
+    actual fun destroySwapChain(swapChain: SwapChain) {
+        FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
+        swapChain.nativeHandle = 0
+        swapChain.releaseCallbackStubs()
+        swapChain.releaseWindow()
+    }
 
-    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.surface))
-    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(surface.surface, flags))
-    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(nativeEngine.createSwapChain(width, height, flags))
-    actual fun destroySwapChain(swapChain: SwapChain) { nativeEngine.destroySwapChain(swapChain.nativeSwapChain) }
+    actual fun createView(): View = View(FilaEngine_createView(nativeHandle))
+    actual fun destroyView(view: View) {
+        FilaEngine_destroyView(nativeHandle, view.nativeHandle)
+        view.nativeHandle = 0
+    }
 
-    actual fun createView(): View = View(nativeEngine.createView())
-    actual fun destroyView(view: View) { nativeEngine.destroyView(view.nativeView) }
-
-    actual fun createRenderer(): Renderer = Renderer(this, nativeEngine.createRenderer())
-    actual fun destroyRenderer(renderer: Renderer) { nativeEngine.destroyRenderer(renderer.nativeRenderer) }
+    actual fun createRenderer(): Renderer = Renderer(FilaEngine_createRenderer(nativeHandle)).setEngine(this)
+    actual fun destroyRenderer(renderer: Renderer) {
+        FilaEngine_destroyRenderer(nativeHandle, renderer.nativeHandle)
+        renderer.nativeHandle = 0
+    }
 
     actual fun createCamera(): Camera {
-        val entity = EntityManager.get().create()
-        return Camera(nativeEngine.createCamera(entity))
+        val handle = FilaEngine_createCameraAuto(nativeHandle)
+        val entity = FilaCamera_getEntity(handle)
+        return Camera(handle, entity)
     }
-    actual fun createCamera(entity: Entity): Camera = Camera(nativeEngine.createCamera(entity))
-    actual fun getCameraComponent(entity: Entity): Camera? = nativeEngine.getCameraComponent(entity)?.let { Camera(it) }
-    actual fun destroyCamera(camera: Camera) { nativeEngine.destroyCameraComponent(camera.nativeCamera.entity) }
-    actual fun destroyCameraComponent(entity: Entity) { nativeEngine.destroyCameraComponent(entity) }
+    actual fun createCamera(entity: Entity): Camera = Camera(FilaEngine_createCamera(nativeHandle, entity), entity)
+    actual fun getCameraComponent(entity: Entity): Camera? {
+        val handle = FilaEngine_getCameraComponent(nativeHandle, entity)
+        return if (handle != 0L) Camera(handle, entity) else null
+    }
+    actual fun destroyCamera(camera: Camera) {
+        FilaEngine_destroyCamera(nativeHandle, camera.nativeHandle)
+        camera.nativeHandle = 0
+    }
+    actual fun destroyCameraComponent(entity: Entity) = FilaEngine_destroyCameraComponent(nativeHandle, entity)
 
-    actual fun createScene(): Scene = Scene(nativeEngine.createScene())
-    actual fun destroyScene(scene: Scene) { nativeEngine.destroyScene(scene.nativeScene) }
+    actual fun createScene(): Scene = Scene(FilaEngine_createScene(nativeHandle))
+    actual fun destroyScene(scene: Scene) {
+        FilaEngine_destroyScene(nativeHandle, scene.nativeHandle)
+        scene.nativeHandle = 0
+    }
 
-    actual fun createFence(): Fence = Fence(nativeEngine.createFence())
-    actual fun destroyFence(fence: Fence) { nativeEngine.destroyFence(fence.nativeFence) }
+    actual fun createFence(): Fence = Fence(FilaEngine_createFence(nativeHandle))
+    actual fun destroyFence(fence: Fence) {
+        FilaEngine_destroyFence(nativeHandle, fence.nativeHandle)
+        fence.nativeHandle = 0
+    }
 
-    actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) { nativeEngine.destroyIndexBuffer(indexBuffer.nativeIndexBuffer) }
-    actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) { nativeEngine.destroyVertexBuffer(vertexBuffer.nativeVertexBuffer) }
-    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) { nativeEngine.destroySkinningBuffer(skinningBuffer.nativeSkinningBuffer) }
-    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) { nativeEngine.destroyMorphTargetBuffer(morphTargetBuffer.nativeMorphTargetBuffer) }
-    actual fun destroyIndirectLight(ibl: IndirectLight) { nativeEngine.destroyIndirectLight(ibl.nativeIndirectLight) }
-    actual fun destroyMaterial(material: Material) { nativeEngine.destroyMaterial(material.nativeMaterial) }
-    actual fun destroyMaterialInstance(materialInstance: MaterialInstance) { nativeEngine.destroyMaterialInstance(materialInstance.nativeMaterialInstance) }
-    actual fun destroySkybox(skybox: Skybox) { nativeEngine.destroySkybox(skybox.nativeSkybox) }
-    actual fun destroyColorGrading(colorGrading: ColorGrading) { nativeEngine.destroyColorGrading(colorGrading.nativeColorGrading) }
-    actual fun destroyTexture(texture: Texture) { nativeEngine.destroyTexture(texture.nativeTexture) }
-    actual fun destroyRenderTarget(target: RenderTarget) { nativeEngine.destroyRenderTarget(target.nativeRenderTarget) }
-    actual fun destroyStream(stream: Stream) { nativeEngine.destroyStream(stream.nativeStream) }
-    actual fun destroyEntity(entity: Entity) { nativeEngine.destroyEntity(entity) }
+    actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
+        FilaEngine_destroyIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
+        indexBuffer.nativeHandle = 0
+    }
+    actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
+        FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+        vertexBuffer.nativeHandle = 0
+    }
+    actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
+        FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
+        skinningBuffer.nativeHandle = 0
+    }
+    actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
+        FilaEngine_destroyMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
+        morphTargetBuffer.nativeHandle = 0
+    }
+    actual fun destroyIndirectLight(ibl: IndirectLight) {
+        FilaEngine_destroyIndirectLight(nativeHandle, ibl.nativeHandle)
+        ibl.nativeHandle = 0
+    }
+    actual fun destroyMaterial(material: Material) {
+        FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
+    }
+    actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
+        FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    }
+    actual fun destroySkybox(skybox: Skybox) {
+        FilaEngine_destroySkybox(nativeHandle, skybox.nativeHandle)
+        skybox.nativeHandle = 0
+    }
+    actual fun destroyColorGrading(colorGrading: ColorGrading) {
+        FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle)
+        colorGrading.nativeHandle = 0
+    }
+    actual fun destroyTexture(texture: Texture) {
+        FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
+    }
+    actual fun destroyRenderTarget(target: RenderTarget) {
+        FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle)
+    }
+    actual fun destroyStream(stream: Stream) {
+        FilaEngine_destroyStream(nativeHandle, stream.nativeHandle)
+        stream.nativeHandle = 0
+    }
+    actual fun destroyEntity(entity: Entity) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity)
 
     actual val transformManager: TransformManager get() = mTransformManager
     actual val lightManager: LightManager get() = mLightManager
     actual val renderableManager: RenderableManager get() = mRenderableManager
     actual val entityManager: EntityManager get() = mEntityManager
 
-    actual fun flushAndWait() = nativeEngine.flushAndWait()
-    actual fun flushAndWait(timeout: Long): Boolean = nativeEngine.flushAndWait(timeout)
-    actual fun flush() = nativeEngine.flush()
-    actual val hasUnrecoverableFailure: Boolean get() = nativeEngine.hasUnrecoverableFailure()
+    actual fun flushAndWait() { FilaEngine_flushAndWait(nativeHandle, 1_000_000_000L) }
+    actual fun flushAndWait(timeout: Long): Boolean = FilaEngine_flushAndWait(nativeHandle, timeout)
+    actual fun flush() = FilaEngine_flush(nativeHandle)
+    actual val hasUnrecoverableFailure: Boolean get() = FilaEngine_hasUnrecoverableFailure(nativeHandle)
     @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "state is only tracked locally — Filament's pause needs threads, which the wasm build doesn't have, so it has no effect on rendering.")
     actual var isPaused: Boolean
-        get() = nativeEngine.isPaused
-        set(value) { nativeEngine.isPaused = value }
-    actual fun unprotected() = nativeEngine.unprotected()
-    actual fun hasFeatureFlag(name: String): Boolean = nativeEngine.hasFeatureFlag(name)
-    actual fun setFeatureFlag(name: String, value: Boolean): Boolean = nativeEngine.setFeatureFlag(name, value)
-    actual fun getFeatureFlag(name: String): Boolean = nativeEngine.getFeatureFlag(name)
+        get() = FilaEngine_isPaused(nativeHandle)
+        set(value) { FilaEngine_setPaused(nativeHandle, value) }
+    actual fun unprotected() = FilaEngine_unprotected(nativeHandle)
+    actual fun hasFeatureFlag(name: String): Boolean = FilaEngine_hasFeatureFlag(nativeHandle, name)
+    actual fun setFeatureFlag(name: String, value: Boolean): Boolean {
+        FilaEngine_setFeatureFlag(nativeHandle, name, value)
+        return true
+    }
+    actual fun getFeatureFlag(name: String): Boolean = FilaEngine_getFeatureFlag(nativeHandle, name)
 
-    actual fun enableAccurateTranslations() = nativeEngine.enableAccurateTranslations()
+    actual fun enableAccurateTranslations() = FilaEngine_enableAccurateTranslations(nativeHandle)
 
     actual enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
     actual enum class FeatureState { FALSE, TRUE, INDETERMINATE }
 
     actual fun compile(priority: CompilerPriorityQueue, material: Material, view: View, shadowReceiver: FeatureState, skinning: FeatureState, callback: (() -> Unit)?) {
-        val androidPriority = com.google.android.filament.Material.CompilerPriorityQueue.entries[priority.ordinal]
-        val androidShadow = AndroidEngine.FeatureState.entries[shadowReceiver.ordinal]
-        val androidSkinning = AndroidEngine.FeatureState.entries[skinning.ordinal]
-        nativeEngine.compile(androidPriority, material.nativeMaterial, view.nativeView, androidShadow, androidSkinning, null, callback?.let { Runnable { it() } })
+        val userData = if (callback != null) Callbacks.register(once = true) { _, _ -> callback() } else 0
+        FilaEngine_compile(
+            nativeHandle,
+            priority.ordinal,
+            material.nativeHandle,
+            view.nativeHandle,
+            shadowReceiver.ordinal,
+            skinning.ordinal,
+            if (callback != null) Callbacks.userOnly else 0,
+            userData,
+        )
     }
 }

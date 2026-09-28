@@ -1,88 +1,96 @@
 package io.github.erkko68.filament.gltfio
 
-// The Android bindings model MaterialKey as a mutable upstream object, so the common data
-// class is marshalled across field by field.
+import io.github.erkko68.filament.jni.*
 
-internal fun MaterialKey.toAndroid(): com.google.android.filament.gltfio.MaterialProvider.MaterialKey {
-    val n = com.google.android.filament.gltfio.MaterialProvider.MaterialKey()
-    n.doubleSided = doubleSided
-    n.unlit = unlit
-    n.hasVertexColors = hasVertexColors
-    n.hasBaseColorTexture = hasBaseColorTexture
-    n.hasNormalTexture = hasNormalTexture
-    n.hasOcclusionTexture = hasOcclusionTexture
-    n.hasEmissiveTexture = hasEmissiveTexture
-    n.useSpecularGlossiness = useSpecularGlossiness
-    n.alphaMode = alphaMode.ordinal
-    n.enableDiagnostics = enableDiagnostics
-    n.hasMetallicRoughnessTexture = hasMetallicRoughnessTexture
-    n.metallicRoughnessUV = metallicRoughnessUV
-    n.baseColorUV = baseColorUV
-    n.hasClearCoatTexture = hasClearCoatTexture
-    n.clearCoatUV = clearCoatUV
-    n.hasClearCoatRoughnessTexture = hasClearCoatRoughnessTexture
-    n.clearCoatRoughnessUV = clearCoatRoughnessUV
-    n.hasClearCoatNormalTexture = hasClearCoatNormalTexture
-    n.clearCoatNormalUV = clearCoatNormalUV
-    n.hasClearCoat = hasClearCoat
-    n.hasTransmission = hasTransmission
-    n.hasTextureTransforms = hasTextureTransforms
-    n.emissiveUV = emissiveUV
-    n.aoUV = aoUV
-    n.normalUV = normalUV
-    n.hasTransmissionTexture = hasTransmissionTexture
-    n.transmissionUV = transmissionUV
-    n.hasSheenColorTexture = hasSheenColorTexture
-    n.sheenColorUV = sheenColorUV
-    n.hasSheenRoughnessTexture = hasSheenRoughnessTexture
-    n.sheenRoughnessUV = sheenRoughnessUV
-    n.hasVolumeThicknessTexture = hasVolumeThicknessTexture
-    n.volumeThicknessUV = volumeThicknessUV
-    n.hasSheen = hasSheen
-    n.hasIOR = hasIOR
-    return n
-}
-
-internal fun MaterialKey.copyFrom(n: com.google.android.filament.gltfio.MaterialProvider.MaterialKey) {
-    doubleSided = n.doubleSided
-    unlit = n.unlit
-    hasVertexColors = n.hasVertexColors
-    hasBaseColorTexture = n.hasBaseColorTexture
-    hasNormalTexture = n.hasNormalTexture
-    hasOcclusionTexture = n.hasOcclusionTexture
-    hasEmissiveTexture = n.hasEmissiveTexture
-    useSpecularGlossiness = n.useSpecularGlossiness
-    alphaMode = AlphaMode.entries[n.alphaMode]
-    enableDiagnostics = n.enableDiagnostics
-    hasMetallicRoughnessTexture = n.hasMetallicRoughnessTexture
-    metallicRoughnessUV = n.metallicRoughnessUV
-    baseColorUV = n.baseColorUV
-    hasClearCoatTexture = n.hasClearCoatTexture
-    clearCoatUV = n.clearCoatUV
-    hasClearCoatRoughnessTexture = n.hasClearCoatRoughnessTexture
-    clearCoatRoughnessUV = n.clearCoatRoughnessUV
-    hasClearCoatNormalTexture = n.hasClearCoatNormalTexture
-    clearCoatNormalUV = n.clearCoatNormalUV
-    hasClearCoat = n.hasClearCoat
-    hasTransmission = n.hasTransmission
-    hasTextureTransforms = n.hasTextureTransforms
-    emissiveUV = n.emissiveUV
-    aoUV = n.aoUV
-    normalUV = n.normalUV
-    hasTransmissionTexture = n.hasTransmissionTexture
-    transmissionUV = n.transmissionUV
-    hasSheenColorTexture = n.hasSheenColorTexture
-    sheenColorUV = n.sheenColorUV
-    hasSheenRoughnessTexture = n.hasSheenRoughnessTexture
-    sheenRoughnessUV = n.sheenRoughnessUV
-    hasVolumeThicknessTexture = n.hasVolumeThicknessTexture
-    volumeThicknessUV = n.volumeThicknessUV
-    hasSheen = n.hasSheen
-    hasIOR = n.hasIOR
+internal fun MaterialKey.toNative(native: FilaMaterialKey, fields: FilaMaterialKeyFields) {
+    fields.doubleSided = doubleSided
+    fields.unlit = unlit
+    fields.hasVertexColors = hasVertexColors
+    fields.hasBaseColorTexture = hasBaseColorTexture
+    fields.hasNormalTexture = hasNormalTexture
+    fields.hasOcclusionTexture = hasOcclusionTexture
+    fields.hasEmissiveTexture = hasEmissiveTexture
+    fields.useSpecularGlossiness = useSpecularGlossiness
+    fields.alphaMode = alphaMode.ordinal
+    fields.enableDiagnostics = (if (enableDiagnostics) 1 else 0)
+    fields.hasMetallicRoughnessTexture = hasMetallicRoughnessTexture
+    fields.metallicRoughnessUV = metallicRoughnessUV
+    fields.baseColorUV = baseColorUV
+    fields.hasClearCoatTexture = hasClearCoatTexture
+    fields.clearCoatUV = clearCoatUV
+    fields.hasClearCoatRoughnessTexture = hasClearCoatRoughnessTexture
+    fields.clearCoatRoughnessUV = clearCoatRoughnessUV
+    fields.hasClearCoatNormalTexture = hasClearCoatNormalTexture
+    fields.clearCoatNormalUV = clearCoatNormalUV
+    fields.hasClearCoat = hasClearCoat
+    fields.hasTransmission = hasTransmission
+    fields.hasTextureTransforms = (if (hasTextureTransforms) 1 else 0)
+    fields.emissiveUV = emissiveUV
+    fields.aoUV = aoUV
+    fields.normalUV = normalUV
+    fields.hasTransmissionTexture = hasTransmissionTexture
+    fields.transmissionUV = transmissionUV
+    fields.hasSheenColorTexture = hasSheenColorTexture
+    fields.sheenColorUV = sheenColorUV
+    fields.hasSheenRoughnessTexture = hasSheenRoughnessTexture
+    fields.sheenRoughnessUV = sheenRoughnessUV
+    fields.hasVolumeThicknessTexture = hasVolumeThicknessTexture
+    fields.volumeThicknessUV = volumeThicknessUV
+    fields.hasSheen = hasSheen
+    fields.hasIOR = hasIOR
+    FilaMaterialKey_pack(fields.ptr, native.ptr)
 }
 
 actual fun MaterialKey.constrainMaterial(uvmap: IntArray) {
-    val n = toAndroid()
-    n.constrainMaterial(uvmap)
-    copyFrom(n)
+    heapScoped {
+        val nativeKey = FilaMaterialKey(alloc(FilaMaterialKey.SIZE))
+        val fields = FilaMaterialKeyFields(alloc(FilaMaterialKeyFields.SIZE))
+        toNative(nativeKey, fields)
+        val byteUvMap = ByteArray(8) { uvmap.getOrElse(it) { 0 }.toByte() }
+        byteUvMap.usePinned { pinned ->
+            FilaMaterialKey_constrainMaterial(nativeKey.ptr, pinned)
+        }
+        // constrainMaterial rewrites both the uvmap and the key; copy both back.
+        for (i in 0 until minOf(8, uvmap.size)) uvmap[i] = byteUvMap[i].toInt()
+        FilaMaterialKey_unpack(nativeKey.ptr, fields.ptr)
+        fromNative(fields)
+    }
+}
+
+internal fun MaterialKey.fromNative(fields: FilaMaterialKeyFields) {
+    doubleSided = fields.doubleSided
+    unlit = fields.unlit
+    hasVertexColors = fields.hasVertexColors
+    hasBaseColorTexture = fields.hasBaseColorTexture
+    hasNormalTexture = fields.hasNormalTexture
+    hasOcclusionTexture = fields.hasOcclusionTexture
+    hasEmissiveTexture = fields.hasEmissiveTexture
+    useSpecularGlossiness = fields.useSpecularGlossiness
+    alphaMode = AlphaMode.entries[fields.alphaMode]
+    enableDiagnostics = fields.enableDiagnostics != 0
+    hasMetallicRoughnessTexture = fields.hasMetallicRoughnessTexture
+    metallicRoughnessUV = fields.metallicRoughnessUV
+    baseColorUV = fields.baseColorUV
+    hasClearCoatTexture = fields.hasClearCoatTexture
+    clearCoatUV = fields.clearCoatUV
+    hasClearCoatRoughnessTexture = fields.hasClearCoatRoughnessTexture
+    clearCoatRoughnessUV = fields.clearCoatRoughnessUV
+    hasClearCoatNormalTexture = fields.hasClearCoatNormalTexture
+    clearCoatNormalUV = fields.clearCoatNormalUV
+    hasClearCoat = fields.hasClearCoat
+    hasTransmission = fields.hasTransmission
+    hasTextureTransforms = fields.hasTextureTransforms != 0
+    emissiveUV = fields.emissiveUV
+    aoUV = fields.aoUV
+    normalUV = fields.normalUV
+    hasTransmissionTexture = fields.hasTransmissionTexture
+    transmissionUV = fields.transmissionUV
+    hasSheenColorTexture = fields.hasSheenColorTexture
+    sheenColorUV = fields.sheenColorUV
+    hasSheenRoughnessTexture = fields.hasSheenRoughnessTexture
+    sheenRoughnessUV = fields.sheenRoughnessUV
+    hasVolumeThicknessTexture = fields.hasVolumeThicknessTexture
+    volumeThicknessUV = fields.volumeThicknessUV
+    hasSheen = fields.hasSheen
+    hasIOR = fields.hasIOR
 }

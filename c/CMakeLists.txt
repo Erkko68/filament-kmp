@@ -45,6 +45,9 @@ elseif (FILAMENT_PLATFORM STREQUAL "wasm")
     if (NOT FILAMENT_INCLUDE_DIR)
         set(FILAMENT_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/wasm/include")
     endif()
+elseif (FILAMENT_PLATFORM STREQUAL "android")
+    # :android's buildJniLibs drives this build once per ABI with the NDK toolchain.
+    set(FILAMENT_LIB_DIR_DEFAULT "${CMAKE_CURRENT_SOURCE_DIR}/../prebuilts/android-${ANDROID_ABI}/lib")
 elseif (FILAMENT_BUILD_SHARED)
     # JVM/Panama host build (macos, linux, windows). The prebuilt dir name combines the
     # platform (windows → mingw) with the capitalised arch, e.g. macosArm64, linuxX64, mingwX64.
@@ -475,6 +478,65 @@ if (FILAMENT_BUILD_SHARED)
                 COMMAND strip --strip-unneeded "$<TARGET_FILE:filament-c-jvm>")
         endif()
     endif()
+endif()
+
+# ── Android JNI image ───────────────────────────────────────────────────────────
+#
+# The JVM image's recipe for Android: every C-wrapper source set plus the generated JNI
+# forwarders (jni/src/main/cpp) and the Android-only entry points (android/src/androidMain/cpp)
+# in one libfilament-c.so, linked like upstream filament-android.
+if (FILAMENT_PLATFORM STREQUAL "android")
+    add_filament_library(meshoptimizer)
+    add_filament_library(bluevk)
+    add_filament_library(ibl)
+    add_filament_library(filament-generatePrefilterMipmap)
+    add_filament_library(uberzlib)
+    add_filament_library(uberarchive)
+    add_filament_library(basis_transcoder)
+    add_filament_library(perfetto)
+    add_filament_library(abseil)
+
+    set(_jni_dir "${CMAKE_CURRENT_SOURCE_DIR}/../jni/src/main/cpp")
+    file(GLOB _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
+    add_library(filament-c-android SHARED
+        ${FILAMENT_C_SOURCES}
+        ${FILAMAT_C_SOURCES}
+        ${FILAMENT_UTILS_C_SOURCES}
+        ${GLTFIO_C_SOURCES}
+        ${_jni_dir}/FilaJni.cpp
+        ${_jni_generated}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../android/src/androidMain/cpp/FilaAndroid.cpp
+    )
+    set_target_properties(filament-c-android PROPERTIES OUTPUT_NAME "filament-c")
+
+    target_include_directories(filament-c-android PRIVATE
+        filament/c filamat/c filament-utils/c gltfio/c
+        filament/cpp filamat/cpp filament-utils/cpp gltfio/cpp
+        ${FILAMENT_INCLUDE_DIR}
+    )
+
+    target_link_libraries(filament-c-android PRIVATE
+        filament backend utils
+        filaflat filabridge zstd smol-v bluevk perfetto abseil
+        ibl image geometry meshoptimizer
+        camutils ktxreader filament-generatePrefilterMipmap
+        filamat shaders
+        gltfio_core uberzlib uberarchive dracodec stb basis_transcoder
+        imageio-lite iblprefilter
+        log GLESv3 EGL android jnigraphics
+    )
+
+    # Seal to the JNI entry points (same idea as the JVM image's Fila* seal), 16 KB pages
+    # for Android 15+, let gc-sections drop what the exports never reach, and strip (as AGP's
+    # packaging did; JNI lookup only needs .dynsym).
+    target_compile_options(filament-c-android PRIVATE -ffunction-sections -fdata-sections)
+    target_link_options(filament-c-android PRIVATE
+        "LINKER:--version-script=${_jni_dir}/filament-c-jni.map"
+        "LINKER:-z,max-page-size=16384"
+        "LINKER:--gc-sections"
+        "LINKER:--strip-all")
+    set_target_properties(filament-c-android PROPERTIES
+        LINK_DEPENDS "${_jni_dir}/filament-c-jni.map")
 endif()
 
 # ── wasm module for the web targets ─────────────────────────────────────────────
