@@ -209,9 +209,9 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaMaterial
     if (s_name) (*env)->ReleaseStringUTFChars(env, a_name, s_name);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaMaterialBuilder_1uniformParameterArray(JNIEnv* env, jclass cls, jlong a_builder, jint a_type, jlong a_size, jint a_precision, jstring a_name) {
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaMaterialBuilder_1uniformParameterArray(JNIEnv* env, jclass cls, jlong a_builder, jint a_type, jint a_size, jint a_precision, jstring a_name) {
     const char* s_name = a_name ? (*env)->GetStringUTFChars(env, a_name, NULL) : NULL;
-    FilaMaterialBuilder_uniformParameterArray((FilaMaterialBuilder *)(intptr_t) a_builder, (FilaMaterialBuilderUniformType) a_type, (size_t) a_size, (FilaMaterialBuilderParameterPrecision) a_precision, s_name);
+    FilaMaterialBuilder_uniformParameterArray((FilaMaterialBuilder *)(intptr_t) a_builder, (FilaMaterialBuilderUniformType) a_type, (uint32_t) a_size, (FilaMaterialBuilderParameterPrecision) a_precision, s_name);
     if (s_name) (*env)->ReleaseStringUTFChars(env, a_name, s_name);
 }
 
@@ -245,8 +245,8 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaPackage
     return (jlong)(intptr_t) FilaPackage_getData((const FilaPackage *)(intptr_t) a_package);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaPackage_1getSize(JNIEnv* env, jclass cls, jlong a_package) {
-    return (jlong) FilaPackage_getSize((const FilaPackage *)(intptr_t) a_package);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaPackage_1getSize(JNIEnv* env, jclass cls, jlong a_package) {
+    return (jint) FilaPackage_getSize((const FilaPackage *)(intptr_t) a_package);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamatC_FilaPackage_1isValid(JNIEnv* env, jclass cls, jlong a_package) {

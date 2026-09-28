@@ -222,6 +222,10 @@ on the module, and `fila-globals.js` wraps those globals (the conversions are no
 
 A 64-bit *result* can't be turned back into a Kotlin/JS `Long`, hence the out-pointer rule above.
 
+`filamat-kmp.wasm` is a separate module and installs its own globals the same way, but its heap is not
+`filament-kmp.wasm`'s: the common `interopScope`/`useCString` copies land in the wrong module. filamat's
+strings and package bytes go through its own `useFilamatCString`/`readFilamatBytes` instead.
+
 ## Testing a binding
 
 - Every common test runs on all five targets. When you test a `Boolean` result, assert it
@@ -238,7 +242,7 @@ A 64-bit *result* can't be turned back into a Kotlin/JS `Long`, hence the out-po
 
 ## Migration status
 
-Every `kotlin:filament` class is on this model; `filamat`, `filament-utils`, `gltfio` and
+`kotlin:filament` and `filamat` are fully on this model; `filament-utils`, `gltfio` and
 `filament-compose` still have per-platform `actual`s. Until they move, some transitional pieces remain:
 
 - Those `actual`s still use platform-typed handles (`MemorySegment` on the JVM, `CPointer` on

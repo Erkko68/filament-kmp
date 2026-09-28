@@ -1,5 +1,8 @@
 package io.github.erkko68.filament.filamat
 
+import io.github.erkko68.filament.Filament
+import io.github.erkko68.filament.interop.ExternalSymbolName
+
 /**
  * Filamat is the Filament Material Compiler.
  *
@@ -28,17 +31,27 @@ package io.github.erkko68.filament.filamat
  * @see MaterialBuilder
  * @see MaterialPackage
  */
-expect object Filamat {
+object Filamat {
     /**
      * Initialize the Filamat compiler.
      *
      * Must be called once before creating any MaterialBuilder instances. This initializes
      * internal compiler resources and shader compilation infrastructure.
      */
-    fun init()
+    fun init() {
+        // init()/shutdown() bracket glslang's process init; shutdown() tears it down whether or not init() ran.
+        Filament.init()
+        FilaMaterialBuilder_init()
+    }
 
     /**
      * Release the compiler's global state. Call when done building materials.
      */
-    fun shutdown()
+    fun shutdown() = FilaMaterialBuilder_shutdown()
 }
+
+@ExternalSymbolName("FilaMaterialBuilder_init")
+private external fun FilaMaterialBuilder_init()
+
+@ExternalSymbolName("FilaMaterialBuilder_shutdown")
+private external fun FilaMaterialBuilder_shutdown()

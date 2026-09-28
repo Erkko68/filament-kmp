@@ -19,7 +19,7 @@ package io.github.erkko68.filament.filamat
  * @see MaterialBuilder
  * @see Filamat
  */
-expect class MaterialPackage {
+class MaterialPackage internal constructor(
     /**
      * Get the binary package data as a byte array.
      *
@@ -28,7 +28,7 @@ expect class MaterialPackage {
      *
      * @return ByteArray containing the compiled material binary.
      */
-    val buffer: ByteArray
+    val buffer: ByteArray,
 
     /**
      * Check if this package is valid.
@@ -38,5 +38,5 @@ expect class MaterialPackage {
      *
      * @return true if the package is valid and ready to use, false if compilation failed.
      */
-    val isValid: Boolean
-}
+    val isValid: Boolean,
+)

@@ -54,7 +54,7 @@ external fun FilaMaterialBuilder_targetApi(builder: Long, targetApi: Int)
 external fun FilaMaterialBuilder_transparencyMode(builder: Long, mode: Int)
 external fun FilaMaterialBuilder_transparentShadow(builder: Long, enable: Boolean)
 external fun FilaMaterialBuilder_uniformParameter(builder: Long, type: Int, precision: Int, name: String?)
-external fun FilaMaterialBuilder_uniformParameterArray(builder: Long, type: Int, size: Long, precision: Int, name: String?)
+external fun FilaMaterialBuilder_uniformParameterArray(builder: Long, type: Int, size: Int, precision: Int, name: String?)
 external fun FilaMaterialBuilder_useDefaultDepthVariant(builder: Long)
 external fun FilaMaterialBuilder_useLegacyMorphing(builder: Long)
 external fun FilaMaterialBuilder_variable(builder: Long, variable: Int, name: String?)
@@ -62,7 +62,7 @@ external fun FilaMaterialBuilder_variantFilter(builder: Long, variantFilter: Int
 external fun FilaMaterialBuilder_vertexDomain(builder: Long, domain: Int)
 external fun FilaPackage_destroy(`package`: Long)
 external fun FilaPackage_getData(`package`: Long): Long
-external fun FilaPackage_getSize(`package`: Long): Long
+external fun FilaPackage_getSize(`package`: Long): Int
 external fun FilaPackage_isValid(`package`: Long): Boolean
 
 

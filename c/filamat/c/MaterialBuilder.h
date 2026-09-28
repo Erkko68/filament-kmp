@@ -192,7 +192,7 @@ void FilaMaterialBuilder_materialDomain(FilaMaterialBuilder* builder, FilaMateri
 void FilaMaterialBuilder_shading(FilaMaterialBuilder* builder, FilaMaterialBuilderShading shading);
 void FilaMaterialBuilder_interpolation(FilaMaterialBuilder* builder, FilaMaterialBuilderInterpolation interpolation);
 void FilaMaterialBuilder_uniformParameter(FilaMaterialBuilder* builder, FilaMaterialBuilderUniformType type, FilaMaterialBuilderParameterPrecision precision, const char* name);
-void FilaMaterialBuilder_uniformParameterArray(FilaMaterialBuilder* builder, FilaMaterialBuilderUniformType type, size_t size, FilaMaterialBuilderParameterPrecision precision, const char* name);
+void FilaMaterialBuilder_uniformParameterArray(FilaMaterialBuilder* builder, FilaMaterialBuilderUniformType type, uint32_t size, FilaMaterialBuilderParameterPrecision precision, const char* name);
 void FilaMaterialBuilder_samplerParameter(FilaMaterialBuilder* builder, FilaMaterialBuilderSamplerType type, FilaMaterialBuilderSamplerFormat format, FilaMaterialBuilderParameterPrecision precision, const char* name);
 void FilaMaterialBuilder_variable(FilaMaterialBuilder* builder, FilaMaterialBuilderVariable variable, const char* name);
 void FilaMaterialBuilder_require(FilaMaterialBuilder* builder, FilaVertexAttribute attribute);
@@ -242,7 +242,7 @@ void FilaMaterialBuilder_useDefaultDepthVariant(FilaMaterialBuilder* builder);
 void FilaPackage_destroy(FilaPackage* package);
 bool FilaPackage_isValid(const FilaPackage* package);
 const void* FilaPackage_getData(const FilaPackage* package);
-size_t FilaPackage_getSize(const FilaPackage* package);
+uint32_t FilaPackage_getSize(const FilaPackage* package);
 
 #ifdef __cplusplus
 }

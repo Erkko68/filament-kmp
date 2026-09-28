@@ -53,7 +53,7 @@ and commit the updated `<module>/api/` files with your change — `apiCheck` fai
 - **Adding a binding**: a `Fila*` shim in `c/` plus the Kotlin method and its `external fun` in
   `commonMain` — see [Native Bindings](docs/bindings.md). Classes not yet migrated still have
   per-platform actuals backed by the header-generated externals (`:web:generateWasmExternals`,
-  `:kotlin:filamat:generateFilamatExternals`, `:jni:generateJniBindings`; committed output).
+  `:jni:generateJniBindings`; committed output).
 - **Bumping `filaVersion`** (in `gradle.properties`): delete `prebuilts/*` and `include/` so
   they re-download (and rerun `build-wasm-libs.sh`), then run `check-common-api.sh` from
   `scripts/README.md` to catch binding drift.

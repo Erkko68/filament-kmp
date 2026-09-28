@@ -16,20 +16,7 @@ val FILAMAT_PREBUILT_LIBS = listOf(
     "libfilaflat.a",
 )
 
-// Web: filamat-kmp.wasm (built by :web) + its Fila* externals, generated like :web's.
-val generateFilamatExternals = tasks.register<GenerateWasmExternals>("generateFilamatExternals") {
-    dependsOn(":web:setupEmsdk")
-    modules.set(mapOf("FilamatC" to "filamat"))
-    headers.from(rootProject.fileTree("c/filamat/c") { include("*.h") })
-    packageName.set("io.github.erkko68.filament.filamat.wasm")
-    baseInterface.set("FilamentModule")
-    instance.set("io.github.erkko68.filament.filamat.filamatWasm")
-    cDir.set(rootProject.layout.projectDirectory.dir("c"))
-    emsdkDir.set(rootProject.layout.projectDirectory.dir(".emsdk"))
-    // Committed, like :web's (see there).
-    mainDir.set(layout.projectDirectory.dir("src/webMain/generated"))
-    testDir.set(layout.buildDirectory.dir("generated/filamatExternals/webTest")) // arities: unused here
-}
+// Web: filamat-kmp.wasm, built by :web; its exports are installed as globals like filament-kmp.wasm's.
 val stageFilamatWasm = tasks.register<Sync>("stageFilamatWasm") {
     dependsOn(":web:stageFilamatWasm")
     from(rootProject.layout.projectDirectory.dir("web/build/filamatWasm"))
@@ -45,20 +32,8 @@ kotlin {
             implementation(kotlin("test"))
             implementation(project(":kotlin:test-support"))
         }
-        androidMain.dependencies {
-            // Fila* C API via :android, which :kotlin:filament already brings in.
-            implementation(project(":android"))
-        }
-        jvmMain.dependencies {
-            // Project Panama (FFM): the combined libfilament-c image + jextract-generated
-            // FilamentC already cover the filamat surface. Replaces the JNI :java:filamat dep.
-            api(project(":java"))
-        }
-        webMain {
-            kotlin.srcDir("src/webMain/generated")
-            dependencies {
-                implementation(project(":web"))
-            }
+        webMain.dependencies {
+            implementation(project(":web"))
         }
         webTest {
             resources.srcDir(stageFilamatWasm)
