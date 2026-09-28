@@ -22,6 +22,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Desktop runs on JNI instead of Project Panama (FFM)**: `filament-ffm*` is replaced by `filament-jni-desktop` + `filament-jni-runtime-<os>-<arch>` (group `io.github.erkko68.filament`), `NativeSurface` takes the window as a `Long` address, and the JVM floor drops from 22 to **17**.
 
 ### Added
+- **`./gradlew apiGaps`** (build): reports the Filament C++ API `c/` doesn't call (clang's AST + linker symbols, inline methods included) and `Fila*` functions without a Kotlin external; replaces `check-common-api.sh`.
 - **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` stops the render loop and keeps the last frame on screen, so a static or hidden view no longer renders every display refresh.
 - **JVM runtime for Windows on ARM**: `filament-jni-runtime-windows-arm64`, with Filament built from source since upstream ships no prebuilts for it.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `Filamat.initJs`.

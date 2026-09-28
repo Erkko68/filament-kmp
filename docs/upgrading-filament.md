@@ -24,11 +24,11 @@ at build time, Native calls the C symbol directly, and web finds it in the wasm 
 
 ### Two sources of truth
 
-- **Android Java API → the public Kotlin surface.** If a method exists in the Filament Android
-  Java API, we add it. If it does **not** exist there (e.g. it's a C++‑only or Web‑only addition),
-  we **do not** add it. `scripts/dev/check-common-api.sh` audits this.
 - **Filament C++ API → our C API (`c/`).** The C shims follow the C++ headers; all platforms bind
   the same `Fila*` functions, so there is no separate per-platform surface to audit.
+- **Our C API → the Kotlin externals.** Every `Fila*` function gets a common `external fun`.
+
+`./gradlew apiGaps` audits both.
 
 ---
 
@@ -45,7 +45,7 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 ./gradlew prebuilts prebuilts_wasm                       # libs + headers at <new>; wasm is a source build (slow)
 
 # 4. Audit the surface
-scripts/dev/check-common-api.sh                          # Android API members missing from commonMain
+./gradlew apiGaps                                        # C++ API missing from c/, Fila* missing from Kotlin
 
 # 5. Apply changes (per-layer recipe below), update tests
 scripts/dev/rebuild-materials.sh                         # recompile every .filamat when MATERIAL_VERSION changed
@@ -116,32 +116,21 @@ per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and
 ### 4. Audit the public surface
 
 ```sh
-scripts/dev/check-common-api.sh     # Android Java members absent from commonMain expects
+./gradlew apiGaps    # writes build/reports/api-gaps.txt
 ```
 
-It is **diagnostic only** — it never edits anything. It prints the gaps; you decide what to
-act on, following the two-sources-of-truth rule above.
-
-`check-common-api.sh` checks five kinds of surface per module — whole classes, nested types,
-enum/`ALL_CAPS` constants, public methods, and non-private fields — with Kotlin comments
-stripped before matching (so a KDoc mention doesn't count as coverage). The field check exists
-because Filament's option structs (`ShadowOptions`, `FogOptions`, `Engine.Config`, …) expose
-their state as bare fields rather than accessors, so a method-only audit never looked inside
-them. Members `@Deprecated` upstream are flagged informationally and don't fail the run.
-Intentional gaps (Android-only plumbing, Java SAM interfaces replaced by Kotlin lambdas,
-deprecated API) are suppressed via
-[`scripts/dev/check-common-api-ignores.txt`](../scripts/dev/check-common-api-ignores.txt) —
-add `Class` or `Class.member` entries there with a comment saying why, rather than editing the
-script. The script exits non-zero when anything unsuppressed is missing, so it's CI-able.
-Matching is still token-level within a module, so occasional false "covered" results remain
-possible — verify a suspicious pass by grepping for the specific member name.
+The C++ side is compared by symbol, never by parsing names: the public methods of every `*_PUBLIC`
+class as clang's AST reports them (inline ones included), plus template instances only the
+libraries define, minus every symbol the `c/` objects mention when built at `-O0` (so inline calls
+stay calls). Struct fields and enum values aren't covered. The task runs on macOS and Linux hosts (it needs
+`clang++`, `nm` and `c++filt`).
 
 ### 5. Apply the changes
 
 #### Adding a method
 
-Use the Android Java diff as the worklist. For each new public method — e.g.
-`ColorGrading.Builder.fastMath(boolean)`:
+Use `build/reports/api-gaps.txt` as the worklist. For each new public method — e.g.
+`ColorGrading::Builder::fastMath(bool)`:
 
 1. **C header** — declare the shim in `c/<module>/c/<Class>.h`. Fixed-width types only (no
    `size_t`), no structs by value — see [Declaring a binding](bindings.md#declaring-a-binding):

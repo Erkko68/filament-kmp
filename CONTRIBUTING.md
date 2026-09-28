@@ -53,14 +53,14 @@ and commit the updated `<module>/api/` files with your change — `apiCheck` fai
   `commonMain` — see [Native Bindings](docs/bindings.md). The JNI forwarders and wasm export lists are
   generated from those declarations (`:generateBindings`).
 - **Bumping `filaVersion`** (in `gradle.properties`): the prebuilts and headers are version-stamped and
-  refetch on the next build; then run `check-common-api.sh` from `scripts/README.md` to catch binding drift.
+  refetch on the next build; then run `./gradlew apiGaps` to catch binding drift.
 
 ## API parity
 
-This wrapper mirrors Filament's public API. New `commonMain` surface should follow Filament's
-Android Java API (the canonical Kotlin-facing surface). Every platform calls the same `c/`
-wrapper, so a binding added there reaches all of them. `scripts/dev/check-common-api.sh`
-reports gaps — run it when adding bindings or bumping `filaVersion`.
+This wrapper mirrors Filament's public C++ API. Every platform calls the same `c/` wrapper, so a
+binding added there reaches all of them. `./gradlew apiGaps` diffs Filament's public C++ methods
+(headers and libraries, by symbol) against what `c/` calls, and the `Fila*` functions against the Kotlin externals,
+into `build/reports/api-gaps.txt`.
 
 ### Kotlin idiom vs. upstream shape
 

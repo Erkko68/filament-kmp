@@ -5,7 +5,9 @@
 //   setupEmsdk         the Emscripten SDK (.emsdk/) for the wasm builds
 //   generateBindings   JNI forwarders + wasm export tables from the common externals
 //   cmakeBuild_<id>    the C API's static libraries for an iOS target (packed into the klibs)
+//   apiGaps           the Filament API nothing binds yet (build/reports/api-gaps.txt)
 
+import buildlogic.apicheck.registerApiGapTasks
 import buildlogic.bindings.GenerateBindingsTask
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
@@ -83,3 +85,5 @@ if (hostPlatform() == "macos") {
         }
     }
 }
+
+registerApiGapTasks()
