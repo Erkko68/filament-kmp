@@ -17,6 +17,7 @@ and the `downloadPrebuilts*` / `downloadIncludes` / `downloadJextract` tasks. No
 | [`dev/run-tests.sh`](dev/run-tests.sh) | Runs the test suite across every KMP target this repo supports (JVM, JS, iOS simulator, Android). Mirrors what [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) does on CI. Auto-boots the first available AVD if no device is attached when running android tests. Pass `jvm`/`js`/`ios`/`android` (any combination) to scope; or `--no-<target>` to skip one. iOS is skipped automatically off macOS. |
 | [`dev/setup-emsdk.sh`](dev/setup-emsdk.sh) | Installs the Emscripten SDK into `.emsdk/` (gitignored), pinned to the version upstream Filament's `BUILDING.md` uses (5.0.4). Idempotent. Needed for the wasm build of the C API ([design](../docs/design/web-c-api-bindings.md)). Then `source .emsdk/emsdk_env.sh`. |
 | [`dev/build-wasm-libs.sh`](dev/build-wasm-libs.sh) | Builds Filament's static libraries for wasm at `filaVersion` (upstream publishes none) and copies them to `prebuilts/wasm/lib`. Checks out the tag in `upgrade-diff.sh`'s `.filament-src-cache` clone and runs upstream `./build.sh -p wasm release` with the `.emsdk` toolchain. Stamped; `-f` forces a rebuild. |
+| [`dev/build-host-libs.sh`](dev/build-host-libs.sh) | Builds Filament's static libraries at `filaVersion` for the JVM hosts upstream publishes none for (`mingwArm64`) into `prebuilts/<target>/lib`, plus that build's own `uberarchive.h` (resgen bakes the archive size in). Same model as `build-wasm-libs.sh`: reuses `.filament-src-cache`, stamped, `-f` forces a rebuild. Run natively on that host (Git Bash + MSVC on Windows) instead of `downloadPrebuilts`. |
 | [`dev/clean_all.sh`](dev/clean_all.sh) | Nukes every Gradle/CMake/Kotlin build directory in the repo. Last-resort cache reset. |
 
 ## First-time setup
@@ -24,6 +25,7 @@ and the `downloadPrebuilts*` / `downloadIncludes` / `downloadJextract` tasks. No
 ```sh
 ./gradlew downloadPrebuilts                    # fetch Filament natives + headers
 scripts/dev/build-wasm-libs.sh                 # web only: emsdk + wasm Filament libs (slow, once per filaVersion)
+scripts/dev/build-host-libs.sh mingwArm64     # Windows on ARM only: no upstream prebuilts (slow, once per filaVersion)
 ```
 
 jextract (for the JVM/FFM bindings) downloads automatically as a Gradle task dependency — no

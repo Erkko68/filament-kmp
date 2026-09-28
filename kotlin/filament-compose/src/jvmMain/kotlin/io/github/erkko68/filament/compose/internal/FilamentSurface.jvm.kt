@@ -151,6 +151,7 @@ internal actual fun FilamentSurface(
     renderer: Renderer,
     view: View,
     transparent: Boolean,
+    renderingEnabled: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
@@ -220,7 +221,7 @@ internal actual fun FilamentSurface(
         }
     }
 
-    FilamentRenderLoop { frameTime ->
+    FilamentRenderLoop(renderingEnabled) { frameTime ->
         val s = surface ?: return@FilamentRenderLoop
         // Adopt before rendering so the freed slot can take this frame's readback.
         s.readback.adoptPublished(display.slot)?.let { slot ->

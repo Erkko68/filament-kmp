@@ -42,6 +42,7 @@ internal actual fun FilamentSurface(
     renderer: Renderer,
     view: View,
     transparent: Boolean,
+    renderingEnabled: Boolean,
     onResize: (aspect: Double) -> Unit,
 ) {
     val swapChainRef = remember { Ref<SwapChain>() }
@@ -115,7 +116,7 @@ internal actual fun FilamentSurface(
         }
     }
 
-    FilamentRenderLoop { frameTime ->
+    FilamentRenderLoop(renderingEnabled) { frameTime ->
         val sc = swapChainRef.value ?: return@FilamentRenderLoop
         if (renderer.beginFrame(sc, frameTime)) {
             renderer.render(view)

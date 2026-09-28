@@ -48,6 +48,7 @@ include(":java:runtime-macos-arm64")
 include(":java:runtime-linux-x64")
 include(":java:runtime-linux-arm64")
 include(":java:runtime-windows-x64")
+include(":java:runtime-windows-arm64")
 
 include(":web") // Fila* C API compiled to wasm (filament-kmp/filamat-kmp) + generated externals
 include(":jni")     // generated JNI bindings over the Fila* C API (Kotlin + C forwarders)

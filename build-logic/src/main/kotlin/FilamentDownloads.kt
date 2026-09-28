@@ -35,6 +35,7 @@ object FilamentDownloads {
         "iosSimulatorArm64" to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
         "iosX64"            to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
         // No macosX64: upstream releases stopped shipping mac x86_64 libs.
+        // No mingwArm64: upstream ships none; see scripts/dev/build-host-libs.sh.
         "macosArm64"        to ("mac"       to "filament/lib/arm64"),
         "linuxX64"          to ("linux"     to "filament/lib/x86_64"),
         "linuxArm64"        to ("arm-linux" to "filament/lib/aarch64"),

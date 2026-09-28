@@ -46,6 +46,9 @@ import io.github.erkko68.filament.compose.scene.rememberCameraState
  * @param screenSpaceRefractionEnabled Enable screen-space refraction for refractive materials.
  * @param stencilBufferEnabled Allocate a stencil buffer (required for stencil-based effects).
  * @param transparent Enable alpha transparency blending for the view surface.
+ * @param renderingEnabled Render a frame on every display refresh. `false` stops rendering — no
+ *   GPU or CPU work per frame — and keeps the last frame on screen (it is not re-rendered on resize
+ *   either); set it back to `true` to resume. Use it to pause a static or off-screen view.
  * @param content Scene composables ([io.github.erkko68.filament.compose.scene.DirectionalLight],
  *   `GltfInstance`, `Group`, primitives, …).
  */
@@ -63,6 +66,7 @@ fun FilamentSceneView(
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
     transparent: Boolean = false,
+    renderingEnabled: Boolean = true,
     content: @Composable FilamentSceneScope.() -> Unit,
 ) {
     val scene = rememberFilamentScene(
@@ -82,6 +86,7 @@ fun FilamentSceneView(
         screenSpaceRefractionEnabled = screenSpaceRefractionEnabled,
         stencilBufferEnabled = stencilBufferEnabled,
         transparent = transparent,
+        renderingEnabled = renderingEnabled,
     )
 }
 
@@ -105,6 +110,7 @@ fun FilamentSceneView(
     screenSpaceRefractionEnabled: Boolean = false,
     stencilBufferEnabled: Boolean = false,
     transparent: Boolean = false,
+    renderingEnabled: Boolean = true,
     content: @Composable FilamentSceneScope.() -> Unit,
 ) = FilamentSceneView(
     modifier = modifier,
@@ -119,5 +125,6 @@ fun FilamentSceneView(
     screenSpaceRefractionEnabled = screenSpaceRefractionEnabled,
     stencilBufferEnabled = stencilBufferEnabled,
     transparent = transparent,
+    renderingEnabled = renderingEnabled,
     content = content,
 )
