@@ -37,6 +37,8 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
          * the disposal-effect ordering can't render or blit a view that's already been destroyed.
          */
         var disposed: Boolean = false
+        /** Rendering disabled by the owning view: skipped, so its 2D canvas keeps the last frame. */
+        var paused: Boolean = false
     }
 
     private val canvas: HTMLCanvasElement = engine.canvas
@@ -101,7 +103,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
     }
 
     private fun renderFrame() {
-        if (entries.isEmpty()) return
+        if (entries.none { !it.paused }) return
 
         val dpr = window.devicePixelRatio.coerceAtLeast(1.0)
 
@@ -124,7 +126,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         val sc = swapChain ?: engine.createSwapChain(NativeSurface(canvas)).also { swapChain = it }
         if (renderer.beginFrame(sc, Engine.steadyClockTimeNano)) {
             for (e in entries) {
-                if (e.disposed) continue
+                if (e.disposed || e.paused) continue
                 val r = e.rect
                 if (r.width <= 0 || r.height <= 0) continue
                 val physLeft = (r.left * dpr).roundToInt()
@@ -145,7 +147,7 @@ internal class WebViewCompositor private constructor(private val engine: Engine)
         // Blit each view's slice onto its own canvas, before the browser composites/clears the GL
         // drawing buffer. The GL canvas reads top-left origin as an image source, so srcY == physTop.
         for (e in entries) {
-            if (e.disposed) continue
+            if (e.disposed || e.paused) continue
             val r = e.rect
             val ctx = e.ctx ?: continue
             if (r.width <= 0 || r.height <= 0) continue
