@@ -31,7 +31,7 @@ uses the official AAR, still depends on upstream's Java bindings.
   `Slice` APIs) is the first step.
 - **What it means for us** — once the Android Java bindings are generated, they should cover the
   whole C++ API and the remaining Android `@PlatformGap`s can go. Until then we keep closing gaps
-  per release with `check-common-api.sh`.
+  per release with `./gradlew apiGaps`.
 
 ## Cross-platform GPU sharing & the Dawn convergence
 
