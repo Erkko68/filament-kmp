@@ -8,7 +8,7 @@ package io.github.erkko68.filament.jni
 private val loaded = FilaJni.load()
 
 external fun FilaBookmark_destroy(bookmark: Long)
-external fun FilaHDRLoader_createTexture(engine: Long, buffer: Long, size: Long, internalFormat: Int): Long
+external fun FilaHDRLoader_createTexture(engine: Long, buffer: Long, size: Int, internalFormat: Int): Long
 external fun FilaIBLPrefilterContext_create(engine: Long): Long
 external fun FilaIBLPrefilterContext_destroy(context: Long)
 external fun FilaIBLPrefilterEquirectangularToCubemap_create(context: Long): Long
@@ -19,8 +19,8 @@ external fun FilaIBLPrefilterSpecularFilter_destroy(helper: Long)
 external fun FilaIBLPrefilterSpecularFilter_run(helper: Long, skybox: Long): Long
 external fun FilaKTX1Loader_createIndirectLight(engine: Long, texture: Long, sh: Long): Long
 external fun FilaKTX1Loader_createSkybox(engine: Long, texture: Long): Long
-external fun FilaKTX1Loader_createTexture(engine: Long, buffer: Long, size: Long, srgb: Boolean): Long
-external fun FilaKTX1Loader_getSphericalHarmonics(buffer: Long, size: Long, outSh: Long): Boolean
+external fun FilaKTX1Loader_createTexture(engine: Long, buffer: Long, size: Int, srgb: Boolean): Long
+external fun FilaKTX1Loader_getSphericalHarmonics(buffer: Long, size: Int, outSh: Long): Boolean
 external fun FilaManipulatorBuilder_build(builder: Long, mode: Int): Long
 external fun FilaManipulatorBuilder_create(): Long
 external fun FilaManipulatorBuilder_destroy(builder: Long)
@@ -58,7 +58,7 @@ external fun FilaManipulator_raycast(manip: Long, x: Int, y: Int, outResult: Lon
 external fun FilaManipulator_scroll(manip: Long, x: Int, y: Int, delta: Float)
 external fun FilaManipulator_setViewport(manip: Long, width: Int, height: Int)
 external fun FilaManipulator_update(manip: Long, deltaTime: Float)
-external fun FilaTextureLoader_loadTexture(engine: Long, buffer: Long, size: Long, srgb: Boolean): Long
+external fun FilaTextureLoader_loadTexture(engine: Long, buffer: Long, size: Int, srgb: Boolean): Long
 
 
 typealias FilaManipulatorMode = Int

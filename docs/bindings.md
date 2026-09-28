@@ -242,7 +242,7 @@ strings and package bytes go through its own `useFilamatCString`/`readFilamatByt
 
 ## Migration status
 
-`kotlin:filament` and `filamat` are fully on this model; `filament-utils`, `gltfio` and
+`kotlin:filament`, `filamat` and `filament-utils` are fully on this model; `gltfio` and
 `filament-compose` still have per-platform `actual`s. Until they move, some transitional pieces remain:
 
 - Those `actual`s still use platform-typed handles (`MemorySegment` on the JVM, `CPointer` on

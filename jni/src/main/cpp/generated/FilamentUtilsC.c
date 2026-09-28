@@ -15,8 +15,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaBo
     FilaBookmark_destroy((FilaBookmark *)(intptr_t) a_bookmark);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaHDRLoader_1createTexture(JNIEnv* env, jclass cls, jlong a_engine, jlong a_buffer, jlong a_size, jint a_internalFormat) {
-    return (jlong)(intptr_t) FilaHDRLoader_createTexture((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_buffer, (size_t) a_size, (int32_t) a_internalFormat);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaHDRLoader_1createTexture(JNIEnv* env, jclass cls, jlong a_engine, jlong a_buffer, jint a_size, jint a_internalFormat) {
+    return (jlong)(intptr_t) FilaHDRLoader_createTexture((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_buffer, (uint32_t) a_size, (int32_t) a_internalFormat);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaIBLPrefilterContext_1create(JNIEnv* env, jclass cls, jlong a_engine) {
@@ -59,12 +59,12 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaK
     return (jlong)(intptr_t) FilaKTX1Loader_createSkybox((FilaEngine *)(intptr_t) a_engine, (FilaTexture *)(intptr_t) a_texture);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaKTX1Loader_1createTexture(JNIEnv* env, jclass cls, jlong a_engine, jlong a_buffer, jlong a_size, jboolean a_srgb) {
-    return (jlong)(intptr_t) FilaKTX1Loader_createTexture((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_buffer, (size_t) a_size, (_Bool) a_srgb);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaKTX1Loader_1createTexture(JNIEnv* env, jclass cls, jlong a_engine, jlong a_buffer, jint a_size, jboolean a_srgb) {
+    return (jlong)(intptr_t) FilaKTX1Loader_createTexture((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_buffer, (uint32_t) a_size, (_Bool) a_srgb);
 }
 
-JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaKTX1Loader_1getSphericalHarmonics(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_size, jlong a_outSh) {
-    return FilaKTX1Loader_getSphericalHarmonics((const void *)(intptr_t) a_buffer, (size_t) a_size, (FilaFloat3 *)(intptr_t) a_outSh) ? JNI_TRUE : JNI_FALSE;
+JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaKTX1Loader_1getSphericalHarmonics(JNIEnv* env, jclass cls, jlong a_buffer, jint a_size, jlong a_outSh) {
+    return FilaKTX1Loader_getSphericalHarmonics((const void *)(intptr_t) a_buffer, (uint32_t) a_size, (FilaFloat3 *)(intptr_t) a_outSh) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaManipulatorBuilder_1build(JNIEnv* env, jclass cls, jlong a_builder, jint a_mode) {
@@ -215,8 +215,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaMa
     FilaManipulator_update((FilaManipulator *)(intptr_t) a_manip, (float) a_deltaTime);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaTextureLoader_1loadTexture(JNIEnv* env, jclass cls, jlong a_engine, jlong a_buffer, jlong a_size, jboolean a_srgb) {
-    return (jlong)(intptr_t) FilaTextureLoader_loadTexture((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_buffer, (size_t) a_size, (_Bool) a_srgb);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentUtilsC_FilaTextureLoader_1loadTexture(JNIEnv* env, jclass cls, jlong a_engine, jlong a_buffer, jint a_size, jboolean a_srgb) {
+    return (jlong)(intptr_t) FilaTextureLoader_loadTexture((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_buffer, (uint32_t) a_size, (_Bool) a_srgb);
 }
 
 static inline jintArray filaLayout(JNIEnv* env, const jint* values, jsize count) {

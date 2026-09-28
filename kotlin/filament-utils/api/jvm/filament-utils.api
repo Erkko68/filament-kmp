@@ -1034,13 +1034,14 @@ public final class io/github/erkko68/filament/utils/KTX1Loader$SkyboxBundle {
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator : java/lang/AutoCloseable {
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
 	public fun close ()V
 	public final fun destroy ()V
 	public final fun getCurrentBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
 	public final fun getHomeBookmark ()Lio/github/erkko68/filament/utils/Manipulator$Bookmark;
 	public final fun getLookAt ([F[F[F)V
 	public final fun getMode ()Lio/github/erkko68/filament/utils/Manipulator$Mode;
+	public final fun getNativeObject ()J
 	public final fun grabBegin (IIZ)V
 	public final fun grabEnd ()V
 	public final fun grabUpdate (II)V
@@ -1054,7 +1055,8 @@ public final class io/github/erkko68/filament/utils/Manipulator : java/lang/Auto
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Bookmark {
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
+	public final fun getNativeObject ()J
 }
 
 public final class io/github/erkko68/filament/utils/Manipulator$Builder {
@@ -1342,11 +1344,6 @@ public final class io/github/erkko68/filament/utils/MatrixKt {
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat2;)Lio/github/erkko68/filament/utils/Mat2;
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat3;)Lio/github/erkko68/filament/utils/Mat3;
 	public static final fun transpose (Lio/github/erkko68/filament/utils/Mat4;)Lio/github/erkko68/filament/utils/Mat4;
-}
-
-public final class io/github/erkko68/filament/utils/NativeObject_jvmKt {
-	public static final fun getNativeObject (Lio/github/erkko68/filament/utils/Manipulator$Bookmark;)Ljava/lang/foreign/MemorySegment;
-	public static final fun getNativeObject (Lio/github/erkko68/filament/utils/Manipulator;)Ljava/lang/foreign/MemorySegment;
 }
 
 public final class io/github/erkko68/filament/utils/Quaternion {

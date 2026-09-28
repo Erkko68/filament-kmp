@@ -15,7 +15,7 @@ void stbi_image_free(void *retval_from_stbi_load);
 
 extern "C" {
 
-FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffer, size_t size, bool srgb) {
+FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffer, uint32_t size, bool srgb) {
     Engine* e = reinterpret_cast<Engine*>(engine);
 
     // Decode to 8-bit RGBA (forced 4 channels covers grayscale/palette/RGB/RGBA uniformly).
