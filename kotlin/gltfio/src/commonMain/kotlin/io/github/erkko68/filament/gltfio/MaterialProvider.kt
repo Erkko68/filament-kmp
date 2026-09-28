@@ -1,7 +1,9 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.InternalFilamentApi
 import io.github.erkko68.filament.VertexBuffer
+import io.github.erkko68.filament.interop.*
 
 /**
  * MaterialProvider supplies materials to glTF assets during loading.
@@ -13,7 +15,7 @@ import io.github.erkko68.filament.VertexBuffer
  * @see UbershaderProvider
  * @see AssetLoader
  */
-expect interface MaterialProvider : AutoCloseable {
+interface MaterialProvider : AutoCloseable {
     /**
      * Creates or fetches a compiled Filament material, then creates an instance from it.
      *
@@ -47,6 +49,10 @@ expect interface MaterialProvider : AutoCloseable {
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close()
+
+    /** The native provider, for interop with code calling the Fila* C API directly. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer
 }
 
 /**
@@ -58,19 +64,61 @@ expect interface MaterialProvider : AutoCloseable {
  *
  * @see MaterialProvider
  */
-expect class UbershaderProvider : MaterialProvider {
-    /**
-     * Create an UbershaderProvider.
-     *
-     * @param engine Filament Engine to use for material creation.
-     */
-    constructor(engine: Engine)
+class UbershaderProvider(engine: Engine) : MaterialProvider {
+    private var nativeHandle: NativePointer = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, NullPointer, 0)
 
-    override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance?
-    override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material?
+    @InternalFilamentApi
+    override val nativeObject: NativePointer get() = nativeHandle
+
+    override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? =
+        withKey(config, uvmap) { key, uv ->
+            label.useCString { l -> extras.useCString { e -> FilaMaterialProvider_createMaterialInstance(nativeHandle, key, uv, l, e) } }
+        }.takeIf { it != NullPointer }?.let { io.github.erkko68.filament.MaterialInstance(it) }
+
+    override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): io.github.erkko68.filament.Material? =
+        withKey(config, uvmap) { key, uv -> label.useCString { l -> FilaMaterialProvider_getMaterial(nativeHandle, key, uv, l) } }
+            .takeIf { it != NullPointer }?.let { io.github.erkko68.filament.Material(it) }
+
     override val materials: List<io.github.erkko68.filament.Material>
-    override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean
-    override fun destroyMaterials()
-    override fun destroy()
-    override fun close()
+        get() = List(FilaMaterialProvider_getMaterialsCount(nativeHandle)) { io.github.erkko68.filament.Material(FilaMaterialProvider_getMaterialAt(nativeHandle, it)) }
+
+    override fun needsDummyData(attrib: VertexBuffer.VertexAttribute): Boolean = FilaMaterialProvider_needsDummyData(nativeHandle, attrib.ordinal)
+
+    override fun destroyMaterials() = FilaMaterialProvider_destroyMaterials(nativeHandle)
+
+    override fun destroy() {
+        FilaMaterialProvider_destroy(nativeHandle)
+        nativeHandle = NullPointer
+    }
+
+    override fun close() = destroy()
 }
+
+private inline fun <R> withKey(config: MaterialKey, uvmap: IntArray, block: (key: NativePointer, uvmap: NativePointer) -> R): R {
+    val uv = ByteArray(8) { uvmap.getOrElse(it) { 0 }.toByte() }
+    return config.toInts().usePinned { k -> uv.usePinned { u -> block(k, u) } }
+}
+
+@ExternalSymbolName("FilaMaterialProvider_createUbershaderProvider")
+private external fun FilaMaterialProvider_createUbershaderProvider(engine: NativePointer, archive: NativePointer, archiveByteCount: Int): NativePointer
+
+@ExternalSymbolName("FilaMaterialProvider_createMaterialInstance")
+private external fun FilaMaterialProvider_createMaterialInstance(provider: NativePointer, key: NativePointer, uvmap: NativePointer, label: NativePointer, extras: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterialProvider_getMaterial")
+private external fun FilaMaterialProvider_getMaterial(provider: NativePointer, key: NativePointer, uvmap: NativePointer, label: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterialProvider_getMaterialsCount")
+private external fun FilaMaterialProvider_getMaterialsCount(provider: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterialProvider_getMaterialAt")
+private external fun FilaMaterialProvider_getMaterialAt(provider: NativePointer, index: Int): NativePointer
+
+@ExternalSymbolName("FilaMaterialProvider_needsDummyData")
+private external fun FilaMaterialProvider_needsDummyData(provider: NativePointer, attrib: Int): Boolean
+
+@ExternalSymbolName("FilaMaterialProvider_destroyMaterials")
+private external fun FilaMaterialProvider_destroyMaterials(provider: NativePointer)
+
+@ExternalSymbolName("FilaMaterialProvider_destroy")
+private external fun FilaMaterialProvider_destroy(provider: NativePointer)

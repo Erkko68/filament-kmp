@@ -10,7 +10,7 @@ extern "C" {
 FilaResourceLoader* FilaResourceLoader_create(FilaEngine* engine, bool normalizeSkinningWeights);
 void FilaResourceLoader_destroy(FilaResourceLoader* loader);
 
-void FilaResourceLoader_addResourceData(FilaResourceLoader* loader, const char* uri, const void* buffer, size_t bufferByteCount);
+void FilaResourceLoader_addResourceData(FilaResourceLoader* loader, const char* uri, const void* buffer, uint32_t bufferByteCount);
 bool FilaResourceLoader_loadResources(FilaResourceLoader* loader, FilaFilamentAsset* asset);
 
 bool FilaResourceLoader_asyncBeginLoad(FilaResourceLoader* loader, FilaFilamentAsset* asset);

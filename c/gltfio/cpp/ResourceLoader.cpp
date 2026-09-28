@@ -21,7 +21,7 @@ void FilaResourceLoader_destroy(FilaResourceLoader* loader) {
     delete (ResourceLoader*) loader;
 }
 
-void FilaResourceLoader_addResourceData(FilaResourceLoader* loader, const char* uri, const void* buffer, size_t bufferByteCount) {
+void FilaResourceLoader_addResourceData(FilaResourceLoader* loader, const char* uri, const void* buffer, uint32_t bufferByteCount) {
     ((ResourceLoader*) loader)->addResourceData(uri, {
         (const uint8_t*) buffer,
         (uint32_t) bufferByteCount

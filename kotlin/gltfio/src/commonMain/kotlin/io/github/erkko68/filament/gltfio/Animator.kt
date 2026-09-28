@@ -1,5 +1,8 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.interop.*
+import io.github.erkko68.filament.InternalFilamentApi
+
 /**
  * Animator updates matrices according to glTF animation and skin definitions.
  *
@@ -17,7 +20,11 @@ package io.github.erkko68.filament.gltfio
  * @see FilamentInstance
  * @see FilamentAsset
  */
-expect class Animator {
+class Animator @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Apply a glTF animation to the transform hierarchy.
      *
@@ -27,7 +34,9 @@ expect class Animator {
      * @param index Zero-based animation index.
      * @param time Elapsed time in seconds.
      */
-    fun applyAnimation(index: Int, time: Float)
+    fun applyAnimation(index: Int, time: Float) {
+        FilaAnimator_applyAnimation(nativeHandle, index, time)
+    }
 
     /**
      * Cross-fade from a previous animation with alpha blending.
@@ -44,7 +53,9 @@ expect class Animator {
      * @param previousTime Elapsed time for previous animation in seconds.
      * @param alpha Blend factor [0, 1]; 0 = previous, 1 = current.
      */
-    fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float)
+    fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float) {
+        FilaAnimator_applyCrossFade(nativeHandle, previousIndex, previousTime, alpha)
+    }
 
     /**
      * Compute root-to-node transforms for all bone nodes and push to RenderableManager.
@@ -52,21 +63,25 @@ expect class Animator {
      * Updates bone matrices based on the current transform hierarchy. Independent of animations—
      * call after applyAnimation() to propagate skeletal transforms to renderables.
      */
-    fun updateBoneMatrices()
+    fun updateBoneMatrices() {
+        FilaAnimator_updateBoneMatrices(nativeHandle)
+    }
 
     /**
      * Reset all bone matrices to identity (T-pose).
      *
      * Independent of animations; useful for returning to the rest pose.
      */
-    fun resetBoneMatrices()
+    fun resetBoneMatrices() {
+        FilaAnimator_resetBoneMatrices(nativeHandle)
+    }
 
     /**
      * Get the number of animations in the glTF asset.
      *
      * @return Animation count.
      */
-    val animationCount: Int
+    val animationCount: Int get() = FilaAnimator_getAnimationCount(nativeHandle)
 
     /**
      * Get the duration of a glTF animation.
@@ -74,7 +89,7 @@ expect class Animator {
      * @param index Zero-based animation index.
      * @return Duration in seconds.
      */
-    fun getAnimationDuration(index: Int): Float
+    fun getAnimationDuration(index: Int): Float = FilaAnimator_getAnimationDuration(nativeHandle, index)
 
     /**
      * Get the name of a glTF animation.
@@ -82,5 +97,26 @@ expect class Animator {
      * @param index Zero-based animation index.
      * @return Animation name, or null if unnamed.
      */
-    fun getAnimationName(index: Int): String?
+    fun getAnimationName(index: Int): String? = stringFromInterop(FilaAnimator_getAnimationName(nativeHandle, index))
 }
+
+@ExternalSymbolName("FilaAnimator_applyAnimation")
+private external fun FilaAnimator_applyAnimation(animator: NativePointer, animationIndex: Int, time: Float)
+
+@ExternalSymbolName("FilaAnimator_applyCrossFade")
+private external fun FilaAnimator_applyCrossFade(animator: NativePointer, previousAnimationIndex: Int, previousAnimationTime: Float, alpha: Float)
+
+@ExternalSymbolName("FilaAnimator_updateBoneMatrices")
+private external fun FilaAnimator_updateBoneMatrices(animator: NativePointer)
+
+@ExternalSymbolName("FilaAnimator_resetBoneMatrices")
+private external fun FilaAnimator_resetBoneMatrices(animator: NativePointer)
+
+@ExternalSymbolName("FilaAnimator_getAnimationCount")
+private external fun FilaAnimator_getAnimationCount(animator: NativePointer): Int
+
+@ExternalSymbolName("FilaAnimator_getAnimationDuration")
+private external fun FilaAnimator_getAnimationDuration(animator: NativePointer, animationIndex: Int): Float
+
+@ExternalSymbolName("FilaAnimator_getAnimationName")
+private external fun FilaAnimator_getAnimationName(animator: NativePointer, animationIndex: Int): NativePointer

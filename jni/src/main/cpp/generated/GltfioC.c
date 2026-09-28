@@ -12,24 +12,24 @@
 #include "MaterialProvider.h"
 #include "ResourceLoader.h"
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1applyAnimation(JNIEnv* env, jclass cls, jlong a_animator, jlong a_animationIndex, jfloat a_time) {
-    FilaAnimator_applyAnimation((FilaAnimator *)(intptr_t) a_animator, (size_t) a_animationIndex, (float) a_time);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1applyAnimation(JNIEnv* env, jclass cls, jlong a_animator, jint a_animationIndex, jfloat a_time) {
+    FilaAnimator_applyAnimation((FilaAnimator *)(intptr_t) a_animator, (uint32_t) a_animationIndex, (float) a_time);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1applyCrossFade(JNIEnv* env, jclass cls, jlong a_animator, jlong a_previousAnimationIndex, jfloat a_previousAnimationTime, jfloat a_alpha) {
-    FilaAnimator_applyCrossFade((FilaAnimator *)(intptr_t) a_animator, (size_t) a_previousAnimationIndex, (float) a_previousAnimationTime, (float) a_alpha);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1applyCrossFade(JNIEnv* env, jclass cls, jlong a_animator, jint a_previousAnimationIndex, jfloat a_previousAnimationTime, jfloat a_alpha) {
+    FilaAnimator_applyCrossFade((FilaAnimator *)(intptr_t) a_animator, (uint32_t) a_previousAnimationIndex, (float) a_previousAnimationTime, (float) a_alpha);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1getAnimationCount(JNIEnv* env, jclass cls, jlong a_animator) {
-    return (jlong) FilaAnimator_getAnimationCount((FilaAnimator *)(intptr_t) a_animator);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1getAnimationCount(JNIEnv* env, jclass cls, jlong a_animator) {
+    return (jint) FilaAnimator_getAnimationCount((FilaAnimator *)(intptr_t) a_animator);
 }
 
-JNIEXPORT jfloat JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1getAnimationDuration(JNIEnv* env, jclass cls, jlong a_animator, jlong a_animationIndex) {
-    return (jfloat) FilaAnimator_getAnimationDuration((FilaAnimator *)(intptr_t) a_animator, (size_t) a_animationIndex);
+JNIEXPORT jfloat JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1getAnimationDuration(JNIEnv* env, jclass cls, jlong a_animator, jint a_animationIndex) {
+    return (jfloat) FilaAnimator_getAnimationDuration((FilaAnimator *)(intptr_t) a_animator, (uint32_t) a_animationIndex);
 }
 
-JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1getAnimationName(JNIEnv* env, jclass cls, jlong a_animator, jlong a_animationIndex) {
-    return (*env)->NewStringUTF(env, FilaAnimator_getAnimationName((FilaAnimator *)(intptr_t) a_animator, (size_t) a_animationIndex));
+JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1getAnimationName(JNIEnv* env, jclass cls, jlong a_animator, jint a_animationIndex) {
+    return (*env)->NewStringUTF(env, FilaAnimator_getAnimationName((FilaAnimator *)(intptr_t) a_animator, (uint32_t) a_animationIndex));
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAnimator_1resetBoneMatrices(JNIEnv* env, jclass cls, jlong a_animator) {
@@ -44,16 +44,16 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoa
     return (jlong)(intptr_t) FilaAssetLoader_create((FilaEngine *)(intptr_t) a_engine, (FilaMaterialProvider *)(intptr_t) a_materialProvider, (FilaEntityManager *)(intptr_t) a_entityManager);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoader_1createAsset(JNIEnv* env, jclass cls, jlong a_loader, jlong a_buffer, jlong a_bufferByteCount) {
-    return (jlong)(intptr_t) FilaAssetLoader_createAsset((FilaAssetLoader *)(intptr_t) a_loader, (const void *)(intptr_t) a_buffer, (size_t) a_bufferByteCount);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoader_1createAsset(JNIEnv* env, jclass cls, jlong a_loader, jlong a_buffer, jint a_bufferByteCount) {
+    return (jlong)(intptr_t) FilaAssetLoader_createAsset((FilaAssetLoader *)(intptr_t) a_loader, (const void *)(intptr_t) a_buffer, (uint32_t) a_bufferByteCount);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoader_1createInstance(JNIEnv* env, jclass cls, jlong a_loader, jlong a_asset) {
     return (jlong)(intptr_t) FilaAssetLoader_createInstance((FilaAssetLoader *)(intptr_t) a_loader, (FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoader_1createInstancedAsset(JNIEnv* env, jclass cls, jlong a_loader, jlong a_buffer, jlong a_bufferByteCount, jlong a_instances, jlong a_instanceCount) {
-    return (jlong)(intptr_t) FilaAssetLoader_createInstancedAsset((FilaAssetLoader *)(intptr_t) a_loader, (const void *)(intptr_t) a_buffer, (size_t) a_bufferByteCount, (FilaFilamentInstance **)(intptr_t) a_instances, (size_t) a_instanceCount);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoader_1createInstancedAsset(JNIEnv* env, jclass cls, jlong a_loader, jlong a_buffer, jint a_bufferByteCount, jint a_instanceCount) {
+    return (jlong)(intptr_t) FilaAssetLoader_createInstancedAsset((FilaAssetLoader *)(intptr_t) a_loader, (const void *)(intptr_t) a_buffer, (uint32_t) a_bufferByteCount, (uint32_t) a_instanceCount);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoader_1destroy(JNIEnv* env, jclass cls, jlong a_loader) {
@@ -72,24 +72,24 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaAssetLoad
     FilaAssetLoader_gc((FilaAssetLoader *)(intptr_t) a_loader);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getAssetInstanceCount(JNIEnv* env, jclass cls, jlong a_asset) {
-    return (jlong) FilaFilamentAsset_getAssetInstanceCount((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getAssetInstanceAt(JNIEnv* env, jclass cls, jlong a_asset, jint a_index) {
+    return (jlong)(intptr_t) FilaFilamentAsset_getAssetInstanceAt((FilaFilamentAsset *)(intptr_t) a_asset, (uint32_t) a_index);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getAssetInstances(JNIEnv* env, jclass cls, jlong a_asset, jlong a_instances) {
-    FilaFilamentAsset_getAssetInstances((FilaFilamentAsset *)(intptr_t) a_asset, (FilaFilamentInstance **)(intptr_t) a_instances);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getAssetInstanceCount(JNIEnv* env, jclass cls, jlong a_asset) {
+    return (jint) FilaFilamentAsset_getAssetInstanceCount((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getBoundingBox(JNIEnv* env, jclass cls, jlong a_result, jlong a_asset) {
-    *(FilaBox *)(intptr_t) a_result = FilaFilamentAsset_getBoundingBox((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getBoundingBox(JNIEnv* env, jclass cls, jlong a_asset, jlong a_center, jlong a_halfExtent) {
+    FilaFilamentAsset_getBoundingBox((FilaFilamentAsset *)(intptr_t) a_asset, (float *)(intptr_t) a_center, (float *)(intptr_t) a_halfExtent);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getCameraEntities(JNIEnv* env, jclass cls, jlong a_asset, jlong a_entities) {
     FilaFilamentAsset_getCameraEntities((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity *)(intptr_t) a_entities);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getCameraEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
-    return (jlong) FilaFilamentAsset_getCameraEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getCameraEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
+    return (jint) FilaFilamentAsset_getCameraEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEngine(JNIEnv* env, jclass cls, jlong a_asset) {
@@ -100,22 +100,22 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentA
     FilaFilamentAsset_getEntities((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity *)(intptr_t) a_entities);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEntitiesByName(JNIEnv* env, jclass cls, jlong a_asset, jstring a_name, jlong a_entities, jlong a_maxCount) {
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEntitiesByName(JNIEnv* env, jclass cls, jlong a_asset, jstring a_name, jlong a_entities, jint a_maxCount) {
     const char* s_name = a_name ? (*env)->GetStringUTFChars(env, a_name, NULL) : NULL;
-    jlong r = (jlong) FilaFilamentAsset_getEntitiesByName((FilaFilamentAsset *)(intptr_t) a_asset, s_name, (FilaEntity *)(intptr_t) a_entities, (size_t) a_maxCount);
+    jint r = (jint) FilaFilamentAsset_getEntitiesByName((FilaFilamentAsset *)(intptr_t) a_asset, s_name, (FilaEntity *)(intptr_t) a_entities, (uint32_t) a_maxCount);
     if (s_name) (*env)->ReleaseStringUTFChars(env, a_name, s_name);
     return r;
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEntitiesByPrefix(JNIEnv* env, jclass cls, jlong a_asset, jstring a_prefix, jlong a_entities, jlong a_maxCount) {
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEntitiesByPrefix(JNIEnv* env, jclass cls, jlong a_asset, jstring a_prefix, jlong a_entities, jint a_maxCount) {
     const char* s_prefix = a_prefix ? (*env)->GetStringUTFChars(env, a_prefix, NULL) : NULL;
-    jlong r = (jlong) FilaFilamentAsset_getEntitiesByPrefix((FilaFilamentAsset *)(intptr_t) a_asset, s_prefix, (FilaEntity *)(intptr_t) a_entities, (size_t) a_maxCount);
+    jint r = (jint) FilaFilamentAsset_getEntitiesByPrefix((FilaFilamentAsset *)(intptr_t) a_asset, s_prefix, (FilaEntity *)(intptr_t) a_entities, (uint32_t) a_maxCount);
     if (s_prefix) (*env)->ReleaseStringUTFChars(env, a_prefix, s_prefix);
     return r;
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
-    return (jlong) FilaFilamentAsset_getEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
+    return (jint) FilaFilamentAsset_getEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getExtras(JNIEnv* env, jclass cls, jlong a_asset, jint a_entity) {
@@ -137,16 +137,16 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentA
     FilaFilamentAsset_getLightEntities((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity *)(intptr_t) a_entities);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getLightEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
-    return (jlong) FilaFilamentAsset_getLightEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getLightEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
+    return (jint) FilaFilamentAsset_getLightEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getMorphTargetCountAt(JNIEnv* env, jclass cls, jlong a_asset, jint a_entity) {
-    return (jlong) FilaFilamentAsset_getMorphTargetCountAt((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity) a_entity);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getMorphTargetCountAt(JNIEnv* env, jclass cls, jlong a_asset, jint a_entity) {
+    return (jint) FilaFilamentAsset_getMorphTargetCountAt((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity) a_entity);
 }
 
-JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getMorphTargetNameAt(JNIEnv* env, jclass cls, jlong a_asset, jint a_entity, jlong a_targetIndex) {
-    return (*env)->NewStringUTF(env, FilaFilamentAsset_getMorphTargetNameAt((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity) a_entity, (size_t) a_targetIndex));
+JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getMorphTargetNameAt(JNIEnv* env, jclass cls, jlong a_asset, jint a_entity, jint a_targetIndex) {
+    return (*env)->NewStringUTF(env, FilaFilamentAsset_getMorphTargetNameAt((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity) a_entity, (uint32_t) a_targetIndex));
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getName(JNIEnv* env, jclass cls, jlong a_asset, jint a_entity) {
@@ -157,16 +157,16 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentA
     FilaFilamentAsset_getRenderableEntities((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity *)(intptr_t) a_entities);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getRenderableEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
-    return (jlong) FilaFilamentAsset_getRenderableEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getRenderableEntityCount(JNIEnv* env, jclass cls, jlong a_asset) {
+    return (jint) FilaFilamentAsset_getRenderableEntityCount((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getResourceUriCount(JNIEnv* env, jclass cls, jlong a_asset) {
-    return (jlong) FilaFilamentAsset_getResourceUriCount((FilaFilamentAsset *)(intptr_t) a_asset);
+JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getResourceUriAt(JNIEnv* env, jclass cls, jlong a_asset, jint a_index) {
+    return (*env)->NewStringUTF(env, FilaFilamentAsset_getResourceUriAt((FilaFilamentAsset *)(intptr_t) a_asset, (uint32_t) a_index));
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getResourceUris(JNIEnv* env, jclass cls, jlong a_asset, jlong a_uris) {
-    FilaFilamentAsset_getResourceUris((FilaFilamentAsset *)(intptr_t) a_asset, (const char **)(intptr_t) a_uris);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getResourceUriCount(JNIEnv* env, jclass cls, jlong a_asset) {
+    return (jint) FilaFilamentAsset_getResourceUriCount((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1getRoot(JNIEnv* env, jclass cls, jlong a_asset) {
@@ -177,24 +177,24 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentA
     return (jint) FilaFilamentAsset_popRenderable((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1popRenderables(JNIEnv* env, jclass cls, jlong a_asset, jlong a_entities, jlong a_count) {
-    return (jlong) FilaFilamentAsset_popRenderables((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity *)(intptr_t) a_entities, (size_t) a_count);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1popRenderables(JNIEnv* env, jclass cls, jlong a_asset, jlong a_entities, jint a_count) {
+    return (jint) FilaFilamentAsset_popRenderables((FilaFilamentAsset *)(intptr_t) a_asset, (FilaEntity *)(intptr_t) a_entities, (uint32_t) a_count);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentAsset_1releaseSourceData(JNIEnv* env, jclass cls, jlong a_asset) {
     FilaFilamentAsset_releaseSourceData((FilaFilamentAsset *)(intptr_t) a_asset);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1applyMaterialVariant(JNIEnv* env, jclass cls, jlong a_instance, jlong a_variantIndex) {
-    FilaFilamentInstance_applyMaterialVariant((FilaFilamentInstance *)(intptr_t) a_instance, (size_t) a_variantIndex);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1applyMaterialVariant(JNIEnv* env, jclass cls, jlong a_instance, jint a_variantIndex) {
+    FilaFilamentInstance_applyMaterialVariant((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_variantIndex);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1attachSkin(JNIEnv* env, jclass cls, jlong a_instance, jlong a_skinIndex, jint a_entity) {
-    FilaFilamentInstance_attachSkin((FilaFilamentInstance *)(intptr_t) a_instance, (size_t) a_skinIndex, (FilaEntity) a_entity);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1attachSkin(JNIEnv* env, jclass cls, jlong a_instance, jint a_skinIndex, jint a_entity) {
+    FilaFilamentInstance_attachSkin((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_skinIndex, (FilaEntity) a_entity);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1detachSkin(JNIEnv* env, jclass cls, jlong a_instance, jlong a_skinIndex, jint a_entity) {
-    FilaFilamentInstance_detachSkin((FilaFilamentInstance *)(intptr_t) a_instance, (size_t) a_skinIndex, (FilaEntity) a_entity);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1detachSkin(JNIEnv* env, jclass cls, jlong a_instance, jint a_skinIndex, jint a_entity) {
+    FilaFilamentInstance_detachSkin((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_skinIndex, (FilaEntity) a_entity);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getAnimator(JNIEnv* env, jclass cls, jlong a_instance) {
@@ -205,40 +205,40 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilament
     return (jlong)(intptr_t) FilaFilamentInstance_getAsset((FilaFilamentInstance *)(intptr_t) a_instance);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getBoundingBox(JNIEnv* env, jclass cls, jlong a_result, jlong a_instance) {
-    *(FilaBox *)(intptr_t) a_result = FilaFilamentInstance_getBoundingBox((FilaFilamentInstance *)(intptr_t) a_instance);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getBoundingBox(JNIEnv* env, jclass cls, jlong a_instance, jlong a_center, jlong a_halfExtent) {
+    FilaFilamentInstance_getBoundingBox((FilaFilamentInstance *)(intptr_t) a_instance, (float *)(intptr_t) a_center, (float *)(intptr_t) a_halfExtent);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getEntities(JNIEnv* env, jclass cls, jlong a_instance, jlong a_entities) {
     FilaFilamentInstance_getEntities((FilaFilamentInstance *)(intptr_t) a_instance, (FilaEntity *)(intptr_t) a_entities);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getEntityCount(JNIEnv* env, jclass cls, jlong a_instance) {
-    return (jlong) FilaFilamentInstance_getEntityCount((FilaFilamentInstance *)(intptr_t) a_instance);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getEntityCount(JNIEnv* env, jclass cls, jlong a_instance) {
+    return (jint) FilaFilamentInstance_getEntityCount((FilaFilamentInstance *)(intptr_t) a_instance);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getJointCountAt(JNIEnv* env, jclass cls, jlong a_instance, jlong a_skinIndex) {
-    return (jlong) FilaFilamentInstance_getJointCountAt((FilaFilamentInstance *)(intptr_t) a_instance, (size_t) a_skinIndex);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getJointCountAt(JNIEnv* env, jclass cls, jlong a_instance, jint a_skinIndex) {
+    return (jint) FilaFilamentInstance_getJointCountAt((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_skinIndex);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getJointsAt(JNIEnv* env, jclass cls, jlong a_instance, jlong a_skinIndex, jlong a_joints) {
-    FilaFilamentInstance_getJointsAt((FilaFilamentInstance *)(intptr_t) a_instance, (size_t) a_skinIndex, (FilaEntity *)(intptr_t) a_joints);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getJointsAt(JNIEnv* env, jclass cls, jlong a_instance, jint a_skinIndex, jlong a_joints) {
+    FilaFilamentInstance_getJointsAt((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_skinIndex, (FilaEntity *)(intptr_t) a_joints);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialInstanceCount(JNIEnv* env, jclass cls, jlong a_instance) {
-    return (jlong) FilaFilamentInstance_getMaterialInstanceCount((FilaFilamentInstance *)(intptr_t) a_instance);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialInstanceAt(JNIEnv* env, jclass cls, jlong a_instance, jint a_index) {
+    return (jlong)(intptr_t) FilaFilamentInstance_getMaterialInstanceAt((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_index);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialInstances(JNIEnv* env, jclass cls, jlong a_instance, jlong a_instances) {
-    FilaFilamentInstance_getMaterialInstances((FilaFilamentInstance *)(intptr_t) a_instance, (FilaMaterialInstance **)(intptr_t) a_instances);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialInstanceCount(JNIEnv* env, jclass cls, jlong a_instance) {
+    return (jint) FilaFilamentInstance_getMaterialInstanceCount((FilaFilamentInstance *)(intptr_t) a_instance);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialVariantCount(JNIEnv* env, jclass cls, jlong a_instance) {
-    return (jlong) FilaFilamentInstance_getMaterialVariantCount((FilaFilamentInstance *)(intptr_t) a_instance);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialVariantCount(JNIEnv* env, jclass cls, jlong a_instance) {
+    return (jint) FilaFilamentInstance_getMaterialVariantCount((FilaFilamentInstance *)(intptr_t) a_instance);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialVariantNames(JNIEnv* env, jclass cls, jlong a_instance, jlong a_names) {
-    FilaFilamentInstance_getMaterialVariantNames((FilaFilamentInstance *)(intptr_t) a_instance, (const char **)(intptr_t) a_names);
+JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getMaterialVariantNameAt(JNIEnv* env, jclass cls, jlong a_instance, jint a_variantIndex) {
+    return (*env)->NewStringUTF(env, FilaFilamentInstance_getMaterialVariantNameAt((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_variantIndex));
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getName(JNIEnv* env, jclass cls, jlong a_instance, jint a_entity) {
@@ -249,37 +249,29 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentI
     return (jint) FilaFilamentInstance_getRoot((FilaFilamentInstance *)(intptr_t) a_instance);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getSkinCount(JNIEnv* env, jclass cls, jlong a_instance) {
-    return (jlong) FilaFilamentInstance_getSkinCount((FilaFilamentInstance *)(intptr_t) a_instance);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getSkinCount(JNIEnv* env, jclass cls, jlong a_instance) {
+    return (jint) FilaFilamentInstance_getSkinCount((FilaFilamentInstance *)(intptr_t) a_instance);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getSkinNames(JNIEnv* env, jclass cls, jlong a_instance, jlong a_names) {
-    FilaFilamentInstance_getSkinNames((FilaFilamentInstance *)(intptr_t) a_instance, (const char **)(intptr_t) a_names);
+JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaFilamentInstance_1getSkinNameAt(JNIEnv* env, jclass cls, jlong a_instance, jint a_skinIndex) {
+    return (*env)->NewStringUTF(env, FilaFilamentInstance_getSkinNameAt((FilaFilamentInstance *)(intptr_t) a_instance, (uint32_t) a_skinIndex));
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialKey_1constrainMaterial(JNIEnv* env, jclass cls, jlong a_key, jlong a_uvmap) {
-    FilaMaterialKey_constrainMaterial((FilaMaterialKey *)(intptr_t) a_key, (uint8_t *)(intptr_t) a_uvmap);
-}
-
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialKey_1pack(JNIEnv* env, jclass cls, jlong a_fields, jlong a_key) {
-    FilaMaterialKey_pack((const FilaMaterialKeyFields *)(intptr_t) a_fields, (FilaMaterialKey *)(intptr_t) a_key);
-}
-
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialKey_1unpack(JNIEnv* env, jclass cls, jlong a_key, jlong a_fields) {
-    FilaMaterialKey_unpack((const FilaMaterialKey *)(intptr_t) a_key, (FilaMaterialKeyFields *)(intptr_t) a_fields);
+    FilaMaterialKey_constrainMaterial((int32_t *)(intptr_t) a_key, (uint8_t *)(intptr_t) a_uvmap);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1createMaterialInstance(JNIEnv* env, jclass cls, jlong a_provider, jlong a_key, jlong a_uvmap, jstring a_label, jstring a_extras) {
     const char* s_label = a_label ? (*env)->GetStringUTFChars(env, a_label, NULL) : NULL;
     const char* s_extras = a_extras ? (*env)->GetStringUTFChars(env, a_extras, NULL) : NULL;
-    jlong r = (jlong)(intptr_t) FilaMaterialProvider_createMaterialInstance((FilaMaterialProvider *)(intptr_t) a_provider, (const FilaMaterialKey *)(intptr_t) a_key, (const uint8_t *)(intptr_t) a_uvmap, s_label, s_extras);
+    jlong r = (jlong)(intptr_t) FilaMaterialProvider_createMaterialInstance((FilaMaterialProvider *)(intptr_t) a_provider, (const int32_t *)(intptr_t) a_key, (const uint8_t *)(intptr_t) a_uvmap, s_label, s_extras);
     if (s_label) (*env)->ReleaseStringUTFChars(env, a_label, s_label);
     if (s_extras) (*env)->ReleaseStringUTFChars(env, a_extras, s_extras);
     return r;
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1createUbershaderProvider(JNIEnv* env, jclass cls, jlong a_engine, jlong a_archive, jlong a_archiveByteCount) {
-    return (jlong)(intptr_t) FilaMaterialProvider_createUbershaderProvider((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_archive, (size_t) a_archiveByteCount);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1createUbershaderProvider(JNIEnv* env, jclass cls, jlong a_engine, jlong a_archive, jint a_archiveByteCount) {
+    return (jlong)(intptr_t) FilaMaterialProvider_createUbershaderProvider((FilaEngine *)(intptr_t) a_engine, (const void *)(intptr_t) a_archive, (uint32_t) a_archiveByteCount);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1destroy(JNIEnv* env, jclass cls, jlong a_provider) {
@@ -292,26 +284,26 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialP
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1getMaterial(JNIEnv* env, jclass cls, jlong a_provider, jlong a_key, jlong a_uvmap, jstring a_label) {
     const char* s_label = a_label ? (*env)->GetStringUTFChars(env, a_label, NULL) : NULL;
-    jlong r = (jlong)(intptr_t) FilaMaterialProvider_getMaterial((FilaMaterialProvider *)(intptr_t) a_provider, (const FilaMaterialKey *)(intptr_t) a_key, (const uint8_t *)(intptr_t) a_uvmap, s_label);
+    jlong r = (jlong)(intptr_t) FilaMaterialProvider_getMaterial((FilaMaterialProvider *)(intptr_t) a_provider, (const int32_t *)(intptr_t) a_key, (const uint8_t *)(intptr_t) a_uvmap, s_label);
     if (s_label) (*env)->ReleaseStringUTFChars(env, a_label, s_label);
     return r;
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1getMaterials(JNIEnv* env, jclass cls, jlong a_provider, jlong a_materials) {
-    FilaMaterialProvider_getMaterials((FilaMaterialProvider *)(intptr_t) a_provider, (FilaMaterial **)(intptr_t) a_materials);
+JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1getMaterialAt(JNIEnv* env, jclass cls, jlong a_provider, jint a_index) {
+    return (jlong)(intptr_t) FilaMaterialProvider_getMaterialAt((FilaMaterialProvider *)(intptr_t) a_provider, (uint32_t) a_index);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1getMaterialsCount(JNIEnv* env, jclass cls, jlong a_provider) {
-    return (jlong) FilaMaterialProvider_getMaterialsCount((FilaMaterialProvider *)(intptr_t) a_provider);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1getMaterialsCount(JNIEnv* env, jclass cls, jlong a_provider) {
+    return (jint) FilaMaterialProvider_getMaterialsCount((FilaMaterialProvider *)(intptr_t) a_provider);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaMaterialProvider_1needsDummyData(JNIEnv* env, jclass cls, jlong a_provider, jint a_attrib) {
     return FilaMaterialProvider_needsDummyData((FilaMaterialProvider *)(intptr_t) a_provider, (int) a_attrib) ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaResourceLoader_1addResourceData(JNIEnv* env, jclass cls, jlong a_loader, jstring a_uri, jlong a_buffer, jlong a_bufferByteCount) {
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaResourceLoader_1addResourceData(JNIEnv* env, jclass cls, jlong a_loader, jstring a_uri, jlong a_buffer, jint a_bufferByteCount) {
     const char* s_uri = a_uri ? (*env)->GetStringUTFChars(env, a_uri, NULL) : NULL;
-    FilaResourceLoader_addResourceData((FilaResourceLoader *)(intptr_t) a_loader, s_uri, (const void *)(intptr_t) a_buffer, (size_t) a_bufferByteCount);
+    FilaResourceLoader_addResourceData((FilaResourceLoader *)(intptr_t) a_loader, s_uri, (const void *)(intptr_t) a_buffer, (uint32_t) a_bufferByteCount);
     if (s_uri) (*env)->ReleaseStringUTFChars(env, a_uri, s_uri);
 }
 
@@ -380,55 +372,5 @@ static inline jintArray filaLayout(JNIEnv* env, const jint* values, jsize count)
     jintArray out = (*env)->NewIntArray(env, count);
     (*env)->SetIntArrayRegion(env, out, 0, count, values);
     return out;
-}
-
-JNIEXPORT jintArray JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaLayout_1FilaMaterialKey(JNIEnv* env, jclass cls) {
-    const jint l[] = {
-        (jint) sizeof(struct FilaMaterialKey),
-        (jint) (offsetof(struct FilaMaterialKey, words) - 0), (jint) sizeof(((struct FilaMaterialKey*) 0)->words),
-    };
-    return filaLayout(env, l, sizeof(l) / sizeof(l[0]));
-}
-
-JNIEXPORT jintArray JNICALL Java_io_github_erkko68_filament_jni_GltfioC_FilaLayout_1FilaMaterialKeyFields(JNIEnv* env, jclass cls) {
-    const jint l[] = {
-        (jint) sizeof(struct FilaMaterialKeyFields),
-        (jint) (offsetof(struct FilaMaterialKeyFields, doubleSided) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->doubleSided),
-        (jint) (offsetof(struct FilaMaterialKeyFields, unlit) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->unlit),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasVertexColors) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasVertexColors),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasBaseColorTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasBaseColorTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasNormalTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasNormalTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasOcclusionTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasOcclusionTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasEmissiveTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasEmissiveTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, useSpecularGlossiness) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->useSpecularGlossiness),
-        (jint) (offsetof(struct FilaMaterialKeyFields, alphaMode) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->alphaMode),
-        (jint) (offsetof(struct FilaMaterialKeyFields, enableDiagnostics) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->enableDiagnostics),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasMetallicRoughnessTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasMetallicRoughnessTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, metallicRoughnessUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->metallicRoughnessUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, baseColorUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->baseColorUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasClearCoatTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasClearCoatTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, clearCoatUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->clearCoatUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasClearCoatRoughnessTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasClearCoatRoughnessTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, clearCoatRoughnessUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->clearCoatRoughnessUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasClearCoatNormalTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasClearCoatNormalTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, clearCoatNormalUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->clearCoatNormalUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasClearCoat) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasClearCoat),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasTransmission) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasTransmission),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasTextureTransforms) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasTextureTransforms),
-        (jint) (offsetof(struct FilaMaterialKeyFields, emissiveUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->emissiveUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, aoUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->aoUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, normalUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->normalUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasTransmissionTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasTransmissionTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, transmissionUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->transmissionUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasSheenColorTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasSheenColorTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, sheenColorUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->sheenColorUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasSheenRoughnessTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasSheenRoughnessTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, sheenRoughnessUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->sheenRoughnessUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasVolumeThicknessTexture) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasVolumeThicknessTexture),
-        (jint) (offsetof(struct FilaMaterialKeyFields, volumeThicknessUV) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->volumeThicknessUV),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasSheen) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasSheen),
-        (jint) (offsetof(struct FilaMaterialKeyFields, hasIOR) - 0), (jint) sizeof(((struct FilaMaterialKeyFields*) 0)->hasIOR),
-    };
-    return filaLayout(env, l, sizeof(l) / sizeof(l[0]));
 }
 

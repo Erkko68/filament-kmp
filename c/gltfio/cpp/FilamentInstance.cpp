@@ -15,7 +15,7 @@ FilaFilamentAsset* FilaFilamentInstance_getAsset(FilaFilamentInstance* instance)
     return (FilaFilamentAsset*) ((FilamentInstance*) instance)->getAsset();
 }
 
-size_t FilaFilamentInstance_getEntityCount(FilaFilamentInstance* instance) {
+uint32_t FilaFilamentInstance_getEntityCount(FilaFilamentInstance* instance) {
     return ((FilamentInstance*) instance)->getEntityCount();
 }
 
@@ -35,48 +35,39 @@ FilaAnimator* FilaFilamentInstance_getAnimator(FilaFilamentInstance* instance) {
     return (FilaAnimator*) ((FilamentInstance*) instance)->getAnimator();
 }
 
-FilaBox FilaFilamentInstance_getBoundingBox(FilaFilamentInstance* instance) {
+void FilaFilamentInstance_getBoundingBox(FilaFilamentInstance* instance, float center[3], float halfExtent[3]) {
     auto aabb = ((FilamentInstance*) instance)->getBoundingBox();
-    FilaBox box;
-    auto center = aabb.center();
-    auto extent = aabb.extent();
-    box.centerX = center.x;
-    box.centerY = center.y;
-    box.centerZ = center.z;
-    box.halfExtentX = extent.x;
-    box.halfExtentY = extent.y;
-    box.halfExtentZ = extent.z;
-    return box;
+    auto c = aabb.center();
+    auto e = aabb.extent();
+    center[0] = c.x; center[1] = c.y; center[2] = c.z;
+    halfExtent[0] = e.x; halfExtent[1] = e.y; halfExtent[2] = e.z;
 }
 
 const char* FilaFilamentInstance_getName(FilaFilamentInstance* instance, FilaEntity entity) {
     return ((FilamentInstance*) instance)->getAsset()->getName(utils::Entity::import(entity));
 }
 
-size_t FilaFilamentInstance_getSkinCount(FilaFilamentInstance* instance) {
+uint32_t FilaFilamentInstance_getSkinCount(FilaFilamentInstance* instance) {
     return ((FilamentInstance*) instance)->getSkinCount();
 }
 
-void FilaFilamentInstance_getSkinNames(FilaFilamentInstance* instance, const char** names) {
-    size_t count = ((FilamentInstance*) instance)->getSkinCount();
-    for (size_t i = 0; i < count; ++i) {
-        names[i] = ((FilamentInstance*) instance)->getSkinNameAt(i);
-    }
+const char* FilaFilamentInstance_getSkinNameAt(FilaFilamentInstance* instance, uint32_t skinIndex) {
+    return ((FilamentInstance*) instance)->getSkinNameAt(skinIndex);
 }
 
-void FilaFilamentInstance_attachSkin(FilaFilamentInstance* instance, size_t skinIndex, FilaEntity entity) {
+void FilaFilamentInstance_attachSkin(FilaFilamentInstance* instance, uint32_t skinIndex, FilaEntity entity) {
     ((FilamentInstance*) instance)->attachSkin(skinIndex, utils::Entity::import(entity));
 }
 
-void FilaFilamentInstance_detachSkin(FilaFilamentInstance* instance, size_t skinIndex, FilaEntity entity) {
+void FilaFilamentInstance_detachSkin(FilaFilamentInstance* instance, uint32_t skinIndex, FilaEntity entity) {
     ((FilamentInstance*) instance)->detachSkin(skinIndex, utils::Entity::import(entity));
 }
 
-size_t FilaFilamentInstance_getJointCountAt(FilaFilamentInstance* instance, size_t skinIndex) {
+uint32_t FilaFilamentInstance_getJointCountAt(FilaFilamentInstance* instance, uint32_t skinIndex) {
     return ((FilamentInstance*) instance)->getJointCountAt(skinIndex);
 }
 
-void FilaFilamentInstance_getJointsAt(FilaFilamentInstance* instance, size_t skinIndex, FilaEntity* joints) {
+void FilaFilamentInstance_getJointsAt(FilaFilamentInstance* instance, uint32_t skinIndex, FilaEntity* joints) {
     const utils::Entity* src = ((FilamentInstance*) instance)->getJointsAt(skinIndex);
     size_t count = ((FilamentInstance*) instance)->getJointCountAt(skinIndex);
     for (size_t i = 0; i < count; ++i) {
@@ -84,31 +75,24 @@ void FilaFilamentInstance_getJointsAt(FilaFilamentInstance* instance, size_t ski
     }
 }
 
-void FilaFilamentInstance_applyMaterialVariant(FilaFilamentInstance* instance, size_t variantIndex) {
+void FilaFilamentInstance_applyMaterialVariant(FilaFilamentInstance* instance, uint32_t variantIndex) {
     ((FilamentInstance*) instance)->applyMaterialVariant(variantIndex);
 }
 
-size_t FilaFilamentInstance_getMaterialInstanceCount(FilaFilamentInstance* instance) {
+uint32_t FilaFilamentInstance_getMaterialInstanceCount(FilaFilamentInstance* instance) {
     return ((FilamentInstance*) instance)->getMaterialInstanceCount();
 }
 
-void FilaFilamentInstance_getMaterialInstances(FilaFilamentInstance* instance, FilaMaterialInstance** instances) {
-    MaterialInstance* const* src = ((FilamentInstance*) instance)->getMaterialInstances();
-    size_t count = ((FilamentInstance*) instance)->getMaterialInstanceCount();
-    for (size_t i = 0; i < count; ++i) {
-        instances[i] = (FilaMaterialInstance*) src[i];
-    }
+FilaMaterialInstance* FilaFilamentInstance_getMaterialInstanceAt(FilaFilamentInstance* instance, uint32_t index) {
+    return (FilaMaterialInstance*) ((FilamentInstance*) instance)->getMaterialInstances()[index];
 }
 
-size_t FilaFilamentInstance_getMaterialVariantCount(FilaFilamentInstance* instance) {
+uint32_t FilaFilamentInstance_getMaterialVariantCount(FilaFilamentInstance* instance) {
     return ((FilamentInstance*) instance)->getMaterialVariantCount();
 }
 
-void FilaFilamentInstance_getMaterialVariantNames(FilaFilamentInstance* instance, const char** names) {
-    size_t count = ((FilamentInstance*) instance)->getMaterialVariantCount();
-    for (size_t i = 0; i < count; ++i) {
-        names[i] = ((FilamentInstance*) instance)->getMaterialVariantName(i);
-    }
+const char* FilaFilamentInstance_getMaterialVariantNameAt(FilaFilamentInstance* instance, uint32_t variantIndex) {
+    return ((FilamentInstance*) instance)->getMaterialVariantName(variantIndex);
 }
 
 }

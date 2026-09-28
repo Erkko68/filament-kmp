@@ -31,15 +31,6 @@ kotlin {
             implementation(kotlin("test"))
             implementation(project(":kotlin:test-support"))
         }
-        androidMain.dependencies {
-            // Fila* C API via :android, which :kotlin:filament already brings in.
-            implementation(project(":android"))
-        }
-        jvmMain.dependencies {
-            // Project Panama (FFM): the combined libfilament-c image + jextract-generated
-            // FilamentC already cover the gltfio surface. Replaces the JNI :java:gltfio dep.
-            api(project(":java"))
-        }
         webMain.dependencies {
             implementation(project(":web"))
         }
