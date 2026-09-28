@@ -136,7 +136,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
     actual val frameToSkipCount: Int get() = FilaRenderer_getFrameToSkipCount(nativeHandle)
 }
 
-// readPixels writes into a heap buffer; copy it into the caller's storage when Filament releases it.
+// readPixels writes into a native buffer; copy it into the caller's storage when Filament releases it.
 private fun pixelsInto(buffer: Texture.PixelBufferDescriptor): Long = Callbacks.register(once = true) { ptr, size ->
     readBytes(ptr, size.toInt()).copyInto(buffer.storage)
     FilaJni.free(ptr)

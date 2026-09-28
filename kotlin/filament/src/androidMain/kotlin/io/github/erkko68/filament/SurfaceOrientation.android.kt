@@ -5,7 +5,7 @@ import io.github.erkko68.filament.jni.*
 actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: Long) : AutoCloseable {
     actual class Builder actual constructor() {
         private val nativeBuilder = FilaSurfaceOrientationBuilder_create()
-        // The C++ builder keeps the array pointers until build(), so the heap copies live until then.
+        // The C++ builder keeps the array pointers until build(), so the native copies live until then.
         private val heap = HeapScope()
 
         actual fun vertexCount(vertexCount: Int): Builder {

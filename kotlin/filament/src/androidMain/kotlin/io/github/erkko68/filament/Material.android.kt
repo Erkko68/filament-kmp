@@ -51,7 +51,7 @@ actual class Material @InternalFilamentApi constructor(internal var nativeHandle
         // Set in payload(): a non-empty blob that isn't a compiled .filamat. build() rejects it before
         // calling Filament's parser, which would otherwise panic uncatchably (see isValidFilamatPayload).
         private var payloadInvalid = false
-        // Filament's Builder::package keeps the pointer (no copy) until build(), so the heap copy lives until then.
+        // Filament's Builder::package keeps the pointer (no copy) until build(), so the native copy lives until then.
         private var payloadCopy = 0L
         actual enum class ShadowSamplingQuality { HARD, LOW }
 

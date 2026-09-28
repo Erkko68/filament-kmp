@@ -8,7 +8,7 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
 
     actual class Builder actual constructor(count: Int) {
         private val nativeBuilder = FilaRenderableManagerBuilder_create(count.toLong())
-        // The C++ builder keeps the bones pointer until build(), so the heap copy lives until then.
+        // The C++ builder keeps the bones pointer until build(), so the native copy lives until then.
         private val heap = HeapScope()
 
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
