@@ -4,13 +4,10 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.Skybox
 import io.github.erkko68.filament.Texture
-import java.nio.ByteBuffer
+import io.github.erkko68.filament.jni.*
 import io.github.erkko68.filament.nativeObject
 
 actual object KTX1Loader {
-
-    init { com.google.android.filament.utils.Utils.init() }
-
     actual class Options {
         actual var srgb: Boolean = false
     }
@@ -26,48 +23,52 @@ actual object KTX1Loader {
     )
 
     actual fun createTexture(engine: Engine, buffer: ByteArray, options: Options): Texture? {
-        val javaOptions = com.google.android.filament.utils.KTX1Loader.Options()
-        javaOptions.srgb = options.srgb
-        val byteBuffer = ByteBuffer.wrap(buffer)
-        return Texture(com.google.android.filament.utils.KTX1Loader.createTexture(
-            engine.nativeObject,
-            byteBuffer,
-            javaOptions
-        ))
+        val handle = buffer.usePinned { pinned ->
+            FilaKTX1Loader_createTexture(
+                engine.nativeObject,
+                pinned,
+                buffer.size.toLong(),
+                options.srgb
+            )
+        }
+        return handle.takeIf { it != 0L }?.let { Texture(it) }
     }
 
     actual fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle {
-        val javaOptions = com.google.android.filament.utils.KTX1Loader.Options()
-        javaOptions.srgb = options.srgb
-        val byteBuffer = ByteBuffer.wrap(buffer)
-        val javaBundle = com.google.android.filament.utils.KTX1Loader.createIndirectLight(
-            engine.nativeObject,
-            byteBuffer,
-            javaOptions
-        )
-        return IndirectLightBundle(
-            javaBundle.indirectLight?.let { IndirectLight(it) },
-            javaBundle.cubemap?.let { Texture(it) }
-        )
+        val sh = getSphericalHarmonics(buffer) ?: return IndirectLightBundle(null, null)
+        val tex = createTexture(engine, buffer, options) ?: return IndirectLightBundle(null, null)
+        
+        val ilHandle = sh.usePinned { pinned ->
+            FilaKTX1Loader_createIndirectLight(
+                engine.nativeObject,
+                tex.nativeObject,
+                pinned
+            )
+        }
+        return IndirectLightBundle(ilHandle.takeIf { it != 0L }?.let { IndirectLight(it) }, tex)
     }
 
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
-        val javaOptions = com.google.android.filament.utils.KTX1Loader.Options()
-        javaOptions.srgb = options.srgb
-        val byteBuffer = ByteBuffer.wrap(buffer)
-        val javaBundle = com.google.android.filament.utils.KTX1Loader.createSkybox(
+        val tex = createTexture(engine, buffer, options) ?: return SkyboxBundle(null, null)
+        
+        val skyboxHandle = FilaKTX1Loader_createSkybox(
             engine.nativeObject,
-            byteBuffer,
-            javaOptions
+            tex.nativeObject
         )
-        return SkyboxBundle(
-            javaBundle.skybox?.let { Skybox(it) },
-            javaBundle.cubemap?.let { Texture(it) }
-        )
+        return SkyboxBundle(skyboxHandle.takeIf { it != 0L }?.let { Skybox(it) }, tex)
     }
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? {
-        val byteBuffer = ByteBuffer.wrap(buffer)
-        return com.google.android.filament.utils.KTX1Loader.getSphericalHarmonics(byteBuffer)
+        val sh = FloatArray(9 * 3)
+        val success = buffer.usePinned { pinnedBuffer ->
+            sh.usePinned { pinnedSh ->
+                FilaKTX1Loader_getSphericalHarmonics(
+                    pinnedBuffer,
+                    buffer.size.toLong(),
+                    pinnedSh
+                )
+            }
+        }
+        return if (success) sh else null
     }
 }

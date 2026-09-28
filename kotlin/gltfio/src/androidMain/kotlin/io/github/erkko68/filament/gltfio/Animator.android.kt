@@ -1,27 +1,28 @@
 package io.github.erkko68.filament.gltfio
+
+import io.github.erkko68.filament.jni.*
 import io.github.erkko68.filament.InternalFilamentApi
 
-
-actual class Animator @InternalFilamentApi constructor(internal val nativeObject: com.google.android.filament.gltfio.Animator) {
+actual class Animator @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual fun applyAnimation(index: Int, time: Float) {
-        nativeObject.applyAnimation(index, time)
+        FilaAnimator_applyAnimation(nativeHandle, index.toLong(), time)
     }
 
     actual fun applyCrossFade(previousIndex: Int, previousTime: Float, alpha: Float) {
-        nativeObject.applyCrossFade(previousIndex, previousTime, alpha)
+        FilaAnimator_applyCrossFade(nativeHandle, previousIndex.toLong(), previousTime, alpha)
     }
 
     actual fun updateBoneMatrices() {
-        nativeObject.updateBoneMatrices()
+        FilaAnimator_updateBoneMatrices(nativeHandle)
     }
 
     actual fun resetBoneMatrices() {
-        nativeObject.resetBoneMatrices()
+        FilaAnimator_resetBoneMatrices(nativeHandle)
     }
 
-    actual val animationCount: Int get() = nativeObject.animationCount
+    actual val animationCount: Int get() = FilaAnimator_getAnimationCount(nativeHandle).toInt()
 
-    actual fun getAnimationDuration(index: Int): Float = nativeObject.getAnimationDuration(index)
+    actual fun getAnimationDuration(index: Int): Float = FilaAnimator_getAnimationDuration(nativeHandle, index.toLong())
 
-    actual fun getAnimationName(index: Int): String? = nativeObject.getAnimationName(index)
+    actual fun getAnimationName(index: Int): String? = FilaAnimator_getAnimationName(nativeHandle, index.toLong())
 }

@@ -122,6 +122,8 @@ FILA_PEEK(I32, jint, int32_t)
 FILA_PEEK(I64, jlong, int64_t)
 FILA_PEEK(U8, jint, uint8_t)
 
+FILA_JNI(jint, pointerSize)(JNIEnv*, jclass) { return sizeof(void*); }
+
 FILA_JNI(jstring, readString)(JNIEnv* env, jclass, jlong ptr) {
     return ptr ? env->NewStringUTF(reinterpret_cast<const char*>(ptr)) : nullptr;
 }

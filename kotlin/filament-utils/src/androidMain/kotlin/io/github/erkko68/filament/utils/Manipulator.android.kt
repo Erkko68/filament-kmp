@@ -1,6 +1,9 @@
 package io.github.erkko68.filament.utils
 
-actual class Manipulator internal constructor(internal val androidHandle: com.google.android.filament.utils.Manipulator) : AutoCloseable {
+import io.github.erkko68.filament.jni.*
+import io.github.erkko68.filament.InternalFilamentApi
+
+actual class Manipulator @InternalFilamentApi constructor(internal val nativeHandle: Long) : AutoCloseable {
 
     actual enum class Mode {
         ORBIT, MAP, FLIGHT
@@ -11,171 +14,182 @@ actual class Manipulator internal constructor(internal val androidHandle: com.go
     }
 
     actual class Builder actual constructor() {
-        init { com.google.android.filament.utils.Utils.init() }
-        private val builder = com.google.android.filament.utils.Manipulator.Builder()
+        private val nativeBuilder = FilaManipulatorBuilder_create()
 
         actual fun viewport(width: Int, height: Int): Builder {
-            builder.viewport(width, height)
+            FilaManipulatorBuilder_viewport(nativeBuilder, width, height)
             return this
         }
 
         actual fun targetPosition(x: Float, y: Float, z: Float): Builder {
-            builder.targetPosition(x, y, z)
+            FilaManipulatorBuilder_targetPosition(nativeBuilder, x, y, z)
             return this
         }
 
         actual fun upVector(x: Float, y: Float, z: Float): Builder {
-            builder.upVector(x, y, z)
+            FilaManipulatorBuilder_upVector(nativeBuilder, x, y, z)
             return this
         }
 
         actual fun zoomSpeed(speed: Float): Builder {
-            builder.zoomSpeed(speed)
+            FilaManipulatorBuilder_zoomSpeed(nativeBuilder, speed)
             return this
         }
 
         actual fun orbitHomePosition(x: Float, y: Float, z: Float): Builder {
-            builder.orbitHomePosition(x, y, z)
+            FilaManipulatorBuilder_orbitHomePosition(nativeBuilder, x, y, z)
             return this
         }
 
         actual fun orbitSpeed(x: Float, y: Float): Builder {
-            builder.orbitSpeed(x, y)
+            FilaManipulatorBuilder_orbitSpeed(nativeBuilder, x, y)
             return this
         }
 
         actual fun fovDirection(fov: Fov): Builder {
-            builder.fovDirection(com.google.android.filament.utils.Manipulator.Fov.entries[fov.ordinal])
+            FilaManipulatorBuilder_fovDirection(nativeBuilder, fov.ordinal)
             return this
         }
 
         actual fun fovDegrees(degrees: Float): Builder {
-            builder.fovDegrees(degrees)
+            FilaManipulatorBuilder_fovDegrees(nativeBuilder, degrees)
             return this
         }
 
         actual fun farPlane(distance: Float): Builder {
-            builder.farPlane(distance)
+            FilaManipulatorBuilder_farPlane(nativeBuilder, distance)
             return this
         }
 
         actual fun mapExtent(width: Float, height: Float): Builder {
-            builder.mapExtent(width, height)
+            FilaManipulatorBuilder_mapExtent(nativeBuilder, width, height)
             return this
         }
 
         actual fun mapMinDistance(distance: Float): Builder {
-            builder.mapMinDistance(distance)
+            FilaManipulatorBuilder_mapMinDistance(nativeBuilder, distance)
             return this
         }
 
         actual fun flightStartPosition(x: Float, y: Float, z: Float): Builder {
-            builder.flightStartPosition(x, y, z)
+            FilaManipulatorBuilder_flightStartPosition(nativeBuilder, x, y, z)
             return this
         }
 
         actual fun flightStartOrientation(pitch: Float, yaw: Float): Builder {
-            builder.flightStartOrientation(pitch, yaw)
+            FilaManipulatorBuilder_flightStartOrientation(nativeBuilder, pitch, yaw)
             return this
         }
 
         actual fun flightMaxMoveSpeed(maxSpeed: Float): Builder {
-            builder.flightMaxMoveSpeed(maxSpeed)
+            FilaManipulatorBuilder_flightMaxMoveSpeed(nativeBuilder, maxSpeed)
             return this
         }
 
         actual fun flightSpeedSteps(steps: Int): Builder {
-            builder.flightSpeedSteps(steps)
+            FilaManipulatorBuilder_flightSpeedSteps(nativeBuilder, steps)
             return this
         }
 
         actual fun flightPanSpeed(x: Float, y: Float): Builder {
-            builder.flightPanSpeed(x, y)
+            FilaManipulatorBuilder_flightPanSpeed(nativeBuilder, x, y)
             return this
         }
 
         actual fun flightMoveDamping(damping: Float): Builder {
-            builder.flightMoveDamping(damping)
+            FilaManipulatorBuilder_flightMoveDamping(nativeBuilder, damping)
             return this
         }
 
         actual fun groundPlane(a: Float, b: Float, c: Float, d: Float): Builder {
-            builder.groundPlane(a, b, c, d)
+            FilaManipulatorBuilder_groundPlane(nativeBuilder, a, b, c, d)
             return this
         }
 
         actual fun panning(enabled: Boolean): Builder {
-            builder.panning(enabled)
+            FilaManipulatorBuilder_panning(nativeBuilder, enabled)
             return this
         }
 
         actual fun build(mode: Mode): Manipulator {
-            return Manipulator(builder.build(com.google.android.filament.utils.Manipulator.Mode.entries[mode.ordinal]))
+            val handle = FilaManipulatorBuilder_build(nativeBuilder, mode.ordinal)
+            FilaManipulatorBuilder_destroy(nativeBuilder)
+            return Manipulator(handle)
         }
     }
-
 
     actual override fun close() = destroy()
 
 
-
     actual fun destroy() {
-        // Android Manipulator doesn't have a destroy method in the public API (GC handles it)
+        FilaManipulator_destroy(nativeHandle)
     }
 
-    actual val mode: Mode get() = Mode.entries[androidHandle.mode.ordinal]
+    actual val mode: Mode get() = Mode.entries[FilaManipulator_getMode(nativeHandle)]
 
     actual fun setViewport(width: Int, height: Int) {
-        androidHandle.setViewport(width, height)
+        FilaManipulator_setViewport(nativeHandle, width, height)
     }
 
     actual fun getLookAt(outEye: FloatArray, outTarget: FloatArray, outUp: FloatArray) {
-        androidHandle.getLookAt(outEye, outTarget, outUp)
+        heapScoped {
+            val eye = F32Array(alloc((3) * 4))
+            val target = F32Array(alloc((3) * 4))
+            val up = F32Array(alloc((3) * 4))
+            FilaManipulator_getLookAt(nativeHandle, eye.ptr, target.ptr, up.ptr)
+            for (i in 0 until 3) {
+                outEye[i] = eye[i]
+                outTarget[i] = target[i]
+                outUp[i] = up[i]
+            }
+        }
     }
 
     actual fun raycast(x: Int, y: Int, outResult: FloatArray) {
-        val result = androidHandle.raycast(x, y)
-        if (result != null) {
-            result.copyInto(outResult)
+        heapScoped {
+            val result = F32Array(alloc((3) * 4))
+            FilaManipulator_raycast(nativeHandle, x, y, result.ptr)
+            for (i in 0 until 3) {
+                outResult[i] = result[i]
+            }
         }
     }
 
     actual fun grabBegin(x: Int, y: Int, strafe: Boolean) {
-        androidHandle.grabBegin(x, y, strafe)
+        FilaManipulator_grabBegin(nativeHandle, x, y, strafe)
     }
 
     actual fun grabUpdate(x: Int, y: Int) {
-        androidHandle.grabUpdate(x, y)
+        FilaManipulator_grabUpdate(nativeHandle, x, y)
     }
 
     actual fun grabEnd() {
-        androidHandle.grabEnd()
+        FilaManipulator_grabEnd(nativeHandle)
     }
 
     actual fun keyDown(key: Key) {
-        androidHandle.keyDown(com.google.android.filament.utils.Manipulator.Key.entries[key.ordinal])
+        FilaManipulator_keyDown(nativeHandle, key.ordinal)
     }
 
     actual fun keyUp(key: Key) {
-        androidHandle.keyUp(com.google.android.filament.utils.Manipulator.Key.entries[key.ordinal])
+        FilaManipulator_keyUp(nativeHandle, key.ordinal)
     }
 
     actual fun scroll(x: Int, y: Int, delta: Float) {
-        androidHandle.scroll(x, y, delta)
+        FilaManipulator_scroll(nativeHandle, x, y, delta)
     }
 
     actual fun update(deltaTime: Float) {
-        androidHandle.update(deltaTime)
+        FilaManipulator_update(nativeHandle, deltaTime)
     }
 
-    actual val currentBookmark: Bookmark get() = Bookmark(androidHandle.currentBookmark)
+    actual val currentBookmark: Bookmark get() = Bookmark(FilaManipulator_getCurrentBookmark(nativeHandle))
 
-    actual val homeBookmark: Bookmark get() = Bookmark(androidHandle.homeBookmark)
+    actual val homeBookmark: Bookmark get() = Bookmark(FilaManipulator_getHomeBookmark(nativeHandle))
 
     actual fun jumpToBookmark(bookmark: Bookmark) {
-        androidHandle.jumpToBookmark(bookmark.androidValue as com.google.android.filament.utils.Bookmark)
+        FilaManipulator_jumpToBookmark(nativeHandle, bookmark.nativeHandle)
     }
 
-    actual class Bookmark internal constructor(internal val androidValue: Any)
-
+    actual class Bookmark @InternalFilamentApi constructor(internal val nativeHandle: Long)
 }

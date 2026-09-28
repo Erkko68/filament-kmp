@@ -1,72 +1,70 @@
 package io.github.erkko68.filament.gltfio
 
-import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.EntityManager
-import java.nio.ByteBuffer
+import io.github.erkko68.filament.*
+import io.github.erkko68.filament.jni.*
 import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.InternalFilamentApi
 
-actual class AssetLoader @InternalFilamentApi constructor(
-    internal val nativeObject: com.google.android.filament.gltfio.AssetLoader
-) {
+actual class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual companion object {
         actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
-            val nativeLoader = com.google.android.filament.gltfio.AssetLoader(
+            val handle = FilaAssetLoader_create(
                 engine.nativeObject,
-                materials.getNativeProvider(),
-                (entities ?: EntityManager.get()).nativeObject
+                materials.nativeObject(),
+                entities?.nativeObject ?: 0
             )
-            return AssetLoader(nativeLoader)
+            return AssetLoader(handle)
         }
 
         actual fun destroy(loader: AssetLoader) {
-            loader.nativeObject.destroy()
+            FilaAssetLoader_destroy(loader.nativeHandle)
+            loader.nativeHandle = 0
         }
     }
 
     actual fun createAsset(buffer: ByteArray): FilamentAsset? {
-        val byteBuffer = ByteBuffer.allocateDirect(buffer.size)
-        byteBuffer.put(buffer)
-        byteBuffer.rewind()
-        val nativeAsset = nativeObject.createAsset(byteBuffer) ?: return null
-        return FilamentAsset(nativeAsset)
+        val handle = buffer.usePinned { pinned ->
+            FilaAssetLoader_createAsset(nativeHandle, pinned, buffer.size.toLong())
+        }
+        return handle.takeIf { it != 0L }?.let { FilamentAsset(it) }
     }
 
     actual fun createInstancedAsset(buffer: ByteArray, instances: Array<FilamentInstance>): FilamentAsset? {
-        val byteBuffer = ByteBuffer.allocateDirect(buffer.size)
-        byteBuffer.put(buffer)
-        byteBuffer.rewind()
-
-        val nativeInstances = arrayOfNulls<com.google.android.filament.gltfio.FilamentInstance>(instances.size)
-        val nativeAsset = nativeObject.createInstancedAsset(byteBuffer, nativeInstances) ?: return null
-
-        val asset = FilamentAsset(nativeAsset)
-        val wrappedInstances = Array(instances.size) { i ->
-            val nativeInstance = nativeInstances[i]
-                ?: throw IllegalStateException("Missing instance at index $i from createInstancedAsset")
-            FilamentInstance(nativeInstance, asset)
+        return buffer.usePinned { pinned ->
+            heapScoped {
+                val nativeInstances = PtrArray(alloc(instances.size * PtrArray.SIZE))
+                val handle = FilaAssetLoader_createInstancedAsset(
+                    nativeHandle,
+                    pinned,
+                    buffer.size.toLong(),
+                    nativeInstances.ptr,
+                    instances.size.toLong()
+                )
+                if (handle == 0L) return@heapScoped null
+                val asset = FilamentAsset(handle)
+                for (i in instances.indices) {
+                    instances[i].nativeHandle = nativeInstances[i]
+                }
+                asset
+            }
         }
-        for (i in instances.indices) {
-            instances[i] = wrappedInstances[i]
-        }
-        asset.setKnownInstances(wrappedInstances)
-        return asset
     }
 
     actual fun createInstance(asset: FilamentAsset): FilamentInstance? {
-        val nativeInstance = nativeObject.createInstance(asset.nativeObject) ?: return null
-        return FilamentInstance(nativeInstance, asset)
+        val handle = FilaAssetLoader_createInstance(nativeHandle, asset.nativeHandle).takeIf { it != 0L } ?: return null
+        return FilamentInstance(handle)
     }
 
     actual fun enableDiagnostics(enable: Boolean) {
-        nativeObject.enableDiagnostics(enable)
+        FilaAssetLoader_enableDiagnostics(nativeHandle, enable)
     }
 
     actual fun destroyAsset(asset: FilamentAsset) {
-        nativeObject.destroyAsset(asset.nativeObject)
+        FilaAssetLoader_destroyAsset(nativeHandle, asset.nativeHandle)
+        asset.nativeHandle = 0
     }
 
     actual fun gc() {
-        nativeObject.gc()
+        FilaAssetLoader_gc(nativeHandle)
     }
 }

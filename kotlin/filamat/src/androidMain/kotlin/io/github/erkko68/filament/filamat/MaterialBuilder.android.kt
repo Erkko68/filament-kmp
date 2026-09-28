@@ -1,10 +1,15 @@
 package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.VertexBuffer.VertexAttribute
-import com.google.android.filament.filamat.MaterialBuilder as AndroidMaterialBuilder
+import io.github.erkko68.filament.jni.*
+import io.github.erkko68.filament.jni.readBytes
 
 actual class MaterialBuilder actual constructor() {
-    private val builder = AndroidMaterialBuilder()
+    // Setters are recorded and replayed into a C builder that build() frees, so no native builder
+    // outlives a call (and none needs a finalizer).
+    // Replay is safe because filamat copies every string it's given.
+    private val ops = ArrayList<(Long) -> Unit>()
+    private fun op(block: (Long) -> Unit): MaterialBuilder = apply { ops.add(block) }
 
     actual enum class Shading {
         UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS
@@ -88,227 +93,200 @@ actual class MaterialBuilder actual constructor() {
     }
 
     actual fun build(): MaterialPackage {
-        val pkg = builder.build()
-        return MaterialPackage(pkg)
+        val builder = FilaMaterialBuilder_create()
+        check(builder != 0L) { "Failed to create MaterialBuilder" }
+        try {
+            ops.forEach { it(builder) }
+            val pkg = FilaMaterialBuilder_build(builder)
+            check(pkg != 0L) { "Failed to build material" }
+            try {
+                val size = FilaPackage_getSize(pkg)
+                val data = FilaPackage_getData(pkg)
+                val bytes = if (data == 0L || size <= 0) ByteArray(0) else readBytes(data, size.toInt())
+                return MaterialPackage(bytes, FilaPackage_isValid(pkg))
+            } finally {
+                FilaPackage_destroy(pkg)
+            }
+        } finally {
+            FilaMaterialBuilder_destroy(builder)
+        }
     }
 
     actual fun name(name: String): MaterialBuilder {
-        builder.name(name)
-        return this
+        return op { FilaMaterialBuilder_name(it, name) }
     }
 
     actual fun materialDomain(domain: MaterialDomain): MaterialBuilder {
-        builder.materialDomain(AndroidMaterialBuilder.MaterialDomain.entries[domain.ordinal])
-        return this
+        return op { FilaMaterialBuilder_materialDomain(it, domain.ordinal) }
     }
 
     actual fun shading(shading: Shading): MaterialBuilder {
-        builder.shading(AndroidMaterialBuilder.Shading.entries[shading.ordinal])
-        return this
+        return op { FilaMaterialBuilder_shading(it, shading.ordinal) }
     }
 
     actual fun interpolation(interpolation: Interpolation): MaterialBuilder {
-        builder.interpolation(AndroidMaterialBuilder.Interpolation.entries[interpolation.ordinal])
-        return this
+        return op { FilaMaterialBuilder_interpolation(it, interpolation.ordinal) }
     }
 
     actual fun uniformParameter(type: UniformType, name: String): MaterialBuilder {
-        builder.uniformParameter(AndroidMaterialBuilder.UniformType.entries[type.ordinal], name)
-        return this
+        return op { FilaMaterialBuilder_uniformParameter(it, type.ordinal, ParameterPrecision.DEFAULT.ordinal, name) }
     }
 
     actual fun uniformParameter(type: UniformType, precision: ParameterPrecision, name: String): MaterialBuilder {
-        builder.uniformParameter(AndroidMaterialBuilder.UniformType.entries[type.ordinal], AndroidMaterialBuilder.ParameterPrecision.entries[precision.ordinal], name)
-        return this
+        return op { FilaMaterialBuilder_uniformParameter(it, type.ordinal, precision.ordinal, name) }
     }
 
     actual fun uniformParameterArray(type: UniformType, size: Int, name: String): MaterialBuilder {
-        builder.uniformParameterArray(AndroidMaterialBuilder.UniformType.entries[type.ordinal], size, name)
-        return this
+        return op { FilaMaterialBuilder_uniformParameterArray(it, type.ordinal, size.toLong(), ParameterPrecision.DEFAULT.ordinal, name) }
     }
 
     actual fun uniformParameterArray(type: UniformType, size: Int, precision: ParameterPrecision, name: String): MaterialBuilder {
-        builder.uniformParameterArray(AndroidMaterialBuilder.UniformType.entries[type.ordinal], size, AndroidMaterialBuilder.ParameterPrecision.entries[precision.ordinal], name)
-        return this
+        return op { FilaMaterialBuilder_uniformParameterArray(it, type.ordinal, size.toLong(), precision.ordinal, name) }
     }
 
     actual fun samplerParameter(type: SamplerType, format: SamplerFormat, precision: ParameterPrecision, name: String): MaterialBuilder {
-        builder.samplerParameter(
-            AndroidMaterialBuilder.SamplerType.entries[type.ordinal],
-            AndroidMaterialBuilder.SamplerFormat.entries[format.ordinal],
-            AndroidMaterialBuilder.ParameterPrecision.entries[precision.ordinal],
-            name
-        )
-        return this
+        return op { FilaMaterialBuilder_samplerParameter(it, type.ordinal, format.ordinal, precision.ordinal, name) }
     }
 
     actual fun variable(variable: Variable, name: String): MaterialBuilder {
-        builder.variable(AndroidMaterialBuilder.Variable.entries[variable.ordinal], name)
-        return this
+        return op { FilaMaterialBuilder_variable(it, variable.ordinal, name) }
     }
 
-    actual fun require(attribute: VertexAttribute): MaterialBuilder {
-        builder.require(AndroidMaterialBuilder.VertexAttribute.entries[attribute.ordinal])
-        return this
+    actual fun require(attribute: io.github.erkko68.filament.VertexBuffer.VertexAttribute): MaterialBuilder {
+        return op { FilaMaterialBuilder_require(it, attribute.ordinal) }
     }
 
     actual fun material(code: String): MaterialBuilder {
-        builder.material(code)
-        return this
+        return op { FilaMaterialBuilder_material(it, code) }
     }
 
     actual fun materialVertex(code: String): MaterialBuilder {
-        builder.materialVertex(code)
-        return this
+        return op { FilaMaterialBuilder_materialVertex(it, code) }
     }
 
     actual fun blending(mode: BlendingMode): MaterialBuilder {
-        builder.blending(AndroidMaterialBuilder.BlendingMode.entries[mode.ordinal])
-        return this
+        return op { FilaMaterialBuilder_blending(it, mode.ordinal) }
     }
 
     actual fun postLightingBlending(mode: BlendingMode): MaterialBuilder {
-        builder.postLightingBlending(AndroidMaterialBuilder.BlendingMode.entries[mode.ordinal])
-        return this
+        return op { FilaMaterialBuilder_postLightingBlending(it, mode.ordinal) }
     }
 
     actual fun vertexDomain(vertexDomain: VertexDomain): MaterialBuilder {
-        builder.vertexDomain(AndroidMaterialBuilder.VertexDomain.entries[vertexDomain.ordinal])
-        return this
+        return op { FilaMaterialBuilder_vertexDomain(it, vertexDomain.ordinal) }
     }
 
     actual fun culling(mode: CullingMode): MaterialBuilder {
-        builder.culling(AndroidMaterialBuilder.CullingMode.entries[mode.ordinal])
-        return this
+        return op { FilaMaterialBuilder_culling(it, mode.ordinal) }
     }
 
     actual fun colorWrite(enable: Boolean): MaterialBuilder {
-        builder.colorWrite(enable)
-        return this
+        return op { FilaMaterialBuilder_colorWrite(it, enable) }
     }
 
     actual fun depthWrite(enable: Boolean): MaterialBuilder {
-        builder.depthWrite(enable)
-        return this
+        return op { FilaMaterialBuilder_depthWrite(it, enable) }
     }
 
     actual fun depthCulling(enable: Boolean): MaterialBuilder {
-        builder.depthCulling(enable)
-        return this
+        return op { FilaMaterialBuilder_depthCulling(it, enable) }
     }
 
     actual fun doubleSided(doubleSided: Boolean): MaterialBuilder {
-        builder.doubleSided(doubleSided)
-        return this
+        return op { FilaMaterialBuilder_doubleSided(it, doubleSided) }
     }
 
     actual fun maskThreshold(threshold: Float): MaterialBuilder {
-        builder.maskThreshold(threshold)
-        return this
+        return op { FilaMaterialBuilder_maskThreshold(it, threshold) }
     }
 
     actual fun alphaToCoverage(enable: Boolean): MaterialBuilder {
-        builder.alphaToCoverage(enable)
-        return this
+        return op { FilaMaterialBuilder_alphaToCoverage(it, enable) }
     }
 
     actual fun shadowMultiplier(shadowMultiplier: Boolean): MaterialBuilder {
-        builder.shadowMultiplier(shadowMultiplier)
-        return this
+        return op { FilaMaterialBuilder_shadowMultiplier(it, shadowMultiplier) }
     }
 
     actual fun transparentShadow(transparentShadow: Boolean): MaterialBuilder {
-        builder.transparentShadow(transparentShadow)
-        return this
+        return op { FilaMaterialBuilder_transparentShadow(it, transparentShadow) }
     }
 
     actual fun coloredPenumbra(coloredPenumbra: Boolean): MaterialBuilder {
-        builder.coloredPenumbra(coloredPenumbra)
-        return this
+        return op { FilaMaterialBuilder_coloredPenumbra(it, coloredPenumbra) }
     }
 
     actual fun specularAntiAliasing(specularAntiAliasing: Boolean): MaterialBuilder {
-        builder.specularAntiAliasing(specularAntiAliasing)
-        return this
+        return op { FilaMaterialBuilder_specularAntiAliasing(it, specularAntiAliasing) }
     }
 
     actual fun specularAntiAliasingVariance(variance: Float): MaterialBuilder {
-        builder.specularAntiAliasingVariance(variance)
-        return this
+        return op { FilaMaterialBuilder_specularAntiAliasingVariance(it, variance) }
     }
 
     actual fun specularAntiAliasingThreshold(threshold: Float): MaterialBuilder {
-        builder.specularAntiAliasingThreshold(threshold)
-        return this
+        return op { FilaMaterialBuilder_specularAntiAliasingThreshold(it, threshold) }
     }
 
     actual fun refractionMode(mode: RefractionMode): MaterialBuilder {
-        builder.refractionMode(AndroidMaterialBuilder.RefractionMode.entries[mode.ordinal])
-        return this
+        return op { FilaMaterialBuilder_refractionMode(it, mode.ordinal) }
     }
 
     actual fun reflectionMode(mode: ReflectionMode): MaterialBuilder {
-        builder.reflectionMode(AndroidMaterialBuilder.ReflectionMode.entries[mode.ordinal])
-        return this
+        return op { FilaMaterialBuilder_reflectionMode(it, mode.ordinal) }
     }
 
     actual fun refractionType(type: RefractionType): MaterialBuilder {
-        builder.refractionType(AndroidMaterialBuilder.RefractionType.entries[type.ordinal])
-        return this
+        return op { FilaMaterialBuilder_refractionType(it, type.ordinal) }
     }
 
     actual fun clearCoatIorChange(clearCoatIorChange: Boolean): MaterialBuilder {
-        builder.clearCoatIorChange(clearCoatIorChange)
-        return this
+        return op { FilaMaterialBuilder_clearCoatIorChange(it, clearCoatIorChange) }
     }
 
     actual fun flipUV(flipUV: Boolean): MaterialBuilder {
-        builder.flipUV(flipUV)
-        return this
+        return op { FilaMaterialBuilder_flipUV(it, flipUV) }
     }
 
     actual fun customSurfaceShading(customSurfaceShading: Boolean): MaterialBuilder {
-        builder.customSurfaceShading(customSurfaceShading)
-        return this
+        return op { FilaMaterialBuilder_customSurfaceShading(it, customSurfaceShading) }
     }
 
     actual fun multiBounceAmbientOcclusion(multiBounceAO: Boolean): MaterialBuilder {
-        builder.multiBounceAmbientOcclusion(multiBounceAO)
-        return this
+        return op { FilaMaterialBuilder_multiBounceAmbientOcclusion(it, multiBounceAO) }
     }
 
     actual fun specularAmbientOcclusion(specularAO: SpecularAmbientOcclusion): MaterialBuilder {
-        builder.specularAmbientOcclusion(AndroidMaterialBuilder.SpecularAmbientOcclusion.entries[specularAO.ordinal])
-        return this
+        return op { FilaMaterialBuilder_specularAmbientOcclusion(it, specularAO.ordinal) }
     }
 
     actual fun transparencyMode(mode: TransparencyMode): MaterialBuilder {
-        builder.transparencyMode(AndroidMaterialBuilder.TransparencyMode.entries[mode.ordinal])
-        return this
+        return op { FilaMaterialBuilder_transparencyMode(it, mode.ordinal) }
     }
 
     actual fun platform(platform: Platform): MaterialBuilder {
-        builder.platform(AndroidMaterialBuilder.Platform.entries[platform.ordinal])
-        return this
+        return op { FilaMaterialBuilder_platform(it, platform.ordinal) }
     }
 
     actual fun targetApi(api: TargetApi): MaterialBuilder {
-        builder.targetApi(AndroidMaterialBuilder.TargetApi.entries[api.ordinal])
-        return this
+        val apiNative = when (api) {
+            TargetApi.OPENGL -> 0x01
+            TargetApi.VULKAN -> 0x02
+            TargetApi.METAL -> 0x04
+            TargetApi.WEBGPU -> 0x08
+            TargetApi.ALL -> 0x07 // OpenGL | Vulkan | Metal
+        }
+        return op { FilaMaterialBuilder_targetApi(it, apiNative) }
     }
 
     actual fun optimization(optimization: Optimization): MaterialBuilder {
-        builder.optimization(AndroidMaterialBuilder.Optimization.entries[optimization.ordinal])
-        return this
+        return op { FilaMaterialBuilder_optimization(it, optimization.ordinal) }
     }
 
     actual fun variantFilter(variantFilter: Int): MaterialBuilder {
-        builder.variantFilter(variantFilter)
-        return this
+        return op { FilaMaterialBuilder_variantFilter(it, variantFilter) }
     }
 
-    actual fun useLegacyMorphing(): MaterialBuilder {
-        builder.useLegacyMorphing()
-        return this
-    }
+    actual fun useLegacyMorphing(): MaterialBuilder = op { FilaMaterialBuilder_useLegacyMorphing(it) }
+
 }

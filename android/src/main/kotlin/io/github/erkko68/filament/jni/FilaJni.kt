@@ -45,6 +45,9 @@ object FilaJni {
     @JvmStatic external fun getU8(ptr: Long): Int
     @JvmStatic external fun setU8(ptr: Long, value: Int)
 
+    /** `sizeof(void*)` for this ABI: 8 on arm64/x86_64, 4 on armeabi-v7a/x86. */
+    @JvmStatic external fun pointerSize(): Int
+
     @JvmStatic external fun newCallback(callback: FilaCallback, once: Boolean): Long
     @JvmStatic external fun releaseCallback(userData: Long)
     @JvmStatic external fun userOnly(): Long
@@ -212,6 +215,20 @@ class U8Array(val ptr: Long) {
 class BoolArray(val ptr: Long) {
     operator fun get(i: Int): Boolean = FilaJni.getU8(ptr + i) != 0
     operator fun set(i: Int, value: Boolean) = FilaJni.setU8(ptr + i, if (value) 1 else 0)
+}
+
+/** A C array of pointers (`T**`), whose element width follows the ABI; see [SIZE]. Values zero-extend to Long. */
+class PtrArray(val ptr: Long) {
+    operator fun get(i: Int): Long =
+        if (SIZE == 8) FilaJni.getI64(ptr + i * 8L) else FilaJni.getI32(ptr + i * 4L).toLong() and 0xffffffffL
+
+    operator fun set(i: Int, value: Long) {
+        if (SIZE == 8) FilaJni.setI64(ptr + i * 8L, value) else FilaJni.setI32(ptr + i * 4L, value.toInt())
+    }
+
+    companion object {
+        val SIZE: Int = FilaJni.pointerSize()
+    }
 }
 
 class IntVar(val ptr: Long) {

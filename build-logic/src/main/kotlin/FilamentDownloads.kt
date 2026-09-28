@@ -323,6 +323,7 @@ abstract class DownloadFilamentIncludesTask : DefaultTask() {
         "ios" to "filament/include/gltfio/materials/uberarchive.h",
         "linux" to "filament/include/gltfio/materials/uberarchive.h",
         "windows" to "include/gltfio/materials/uberarchive.h",
+        "android-native" to "filament/include/gltfio/materials/uberarchive.h",
     )
 
     @TaskAction
@@ -406,6 +407,8 @@ abstract class DownloadFilamentIncludesTask : DefaultTask() {
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["ios"]}
             #elif defined(__APPLE__)
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["mac"]}
+            #elif defined(__ANDROID__)
+            #define UBERARCHIVE_DEFAULT_SIZE ${sizes["android-native"]}
             #elif defined(_WIN32) || defined(_WIN64)
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["windows"]}
             #else

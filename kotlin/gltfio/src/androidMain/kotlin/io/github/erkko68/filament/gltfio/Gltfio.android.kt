@@ -2,6 +2,6 @@ package io.github.erkko68.filament.gltfio
 
 actual object Gltfio {
     actual fun init() {
-        com.google.android.filament.gltfio.Gltfio.init()
+        // gltfio lives in libfilament-c, which loads with the first Fila* call; nothing else to set up.
     }
 }

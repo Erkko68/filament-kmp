@@ -28,7 +28,8 @@ kotlin {
             implementation(project(":kotlin:test-support"))
         }
         androidMain.dependencies {
-            implementation("com.google.android.filament:filament-utils-android:$filaVersion")
+            // Fila* C API via :android, which :kotlin:filament already brings in.
+            implementation(project(":android"))
         }
         jvmMain.dependencies {
             // Project Panama (FFM): the combined libfilament-c image + jextract-generated
