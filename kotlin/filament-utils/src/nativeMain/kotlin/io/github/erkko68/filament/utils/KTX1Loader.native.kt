@@ -47,7 +47,7 @@ actual object KTX1Loader {
                 pinned.addressOf(0).reinterpret()
             )
         }
-        return IndirectLightBundle(ilHandle?.let { IndirectLight(it) }, tex)
+        return IndirectLightBundle(ilHandle?.let { IndirectLight(it.toLong()) }, tex)
     }
 
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
@@ -57,7 +57,7 @@ actual object KTX1Loader {
             engine.nativeObject,
             tex.nativeObject
         )
-        return SkyboxBundle(skyboxHandle?.let { Skybox(it) }, tex)
+        return SkyboxBundle(skyboxHandle?.let { Skybox(it.toLong()) }, tex)
     }
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? {

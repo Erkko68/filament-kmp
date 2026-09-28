@@ -68,13 +68,22 @@ private fun adopt(module: FilamentWasm) {
 }
 
 // Common code binds `external fun FilaX` by name: install the module's `_FilaX` exports as globals.
-// C bool comes back from wasm as 0/1; the ones listed by the build are turned into real booleans.
+// Fixups for the exports the build lists from the C headers: C bool comes back from wasm as 0/1 and
+// becomes a real boolean; a float result becomes the shortest decimal with the same f32 value (see
+// normalizeF32); a 64-bit argument arrives from js as a Kotlin Long object and becomes a BigInt
+// (wasmJs already passes a BigInt and a real f32, so those two are no-ops there).
 private fun exposeExports(module: FilamentModule): Unit = js("""{
-    const bools = new Set(module.filaBoolExports || []);
+    const bools = new Set(module.filaBoolExports || []), f32s = new Set(module.filaF32Exports || []);
+    const i64s = new Set(module.filaI64Exports || []);
+    const big = (x) => typeof x === 'object' && x !== null ? BigInt(x.toString()) : x;
+    const f32 = (v) => { for (let p = 1; p < 10; p++) { const d = Number(v.toPrecision(p)); if (Math.fround(d) === v) return d; } return v; };
     for (const k in module) {
         if (!k.startsWith('_Fila')) continue;
         const name = k.substring(1), f = module[k];
-        globalThis[name] = bools.has(name) ? (...a) => f(...a) !== 0 : f;
+        let g = i64s.has(name) ? (...a) => f(...a.map(big)) : f;
+        if (bools.has(name)) { const h = g; g = (...a) => h(...a) !== 0; }
+        if (f32s.has(name)) { const h = g; g = (...a) => f32(h(...a)); }
+        globalThis[name] = g;
     }
 }""")
 

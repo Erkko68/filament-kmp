@@ -4,7 +4,6 @@ import io.github.erkko68.filament.interop.ExternalSymbolName
 import io.github.erkko68.filament.interop.NativePointer
 import io.github.erkko68.filament.interop.NullPointer
 import io.github.erkko68.filament.interop.interopScope
-import io.github.erkko68.filament.interop.pointer
 
 /**
  * A Scene is a collection of Renderables and Lights to be rendered together.
@@ -16,6 +15,10 @@ import io.github.erkko68.filament.interop.pointer
  * @see View, Renderer, RenderableManager, LightManager
  */
 class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Sets the skybox for this scene.
      *
@@ -25,7 +28,7 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
     var skybox: Skybox? = null
         set(value) {
             field = value
-            FilaScene_setSkybox(nativeHandle, value?.pointer ?: NullPointer)
+            FilaScene_setSkybox(nativeHandle, value?.nativeHandle ?: NullPointer)
         }
 
     /**
@@ -38,7 +41,7 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
     var indirectLight: IndirectLight? = null
         set(value) {
             field = value
-            FilaScene_setIndirectLight(nativeHandle, value?.pointer ?: NullPointer)
+            FilaScene_setIndirectLight(nativeHandle, value?.nativeHandle ?: NullPointer)
         }
 
     /**
@@ -138,10 +141,6 @@ class Scene @InternalFilamentApi constructor(internal var nativeHandle: NativePo
      */
     fun forEach(block: (Entity) -> Unit) = getEntities().forEach(block)
 }
-
-/** The native `FilaScene*`, for interop with code calling the C API directly. Read-only: the wrapper owns it. */
-@InternalFilamentApi
-val Scene.nativeObject: NativePointer get() = nativeHandle
 
 @ExternalSymbolName("FilaScene_setSkybox")
 private external fun FilaScene_setSkybox(scene: NativePointer, skybox: NativePointer)

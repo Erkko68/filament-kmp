@@ -134,7 +134,7 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
     actual fun readPixels(renderTarget: RenderTarget, xoffset: Int, yoffset: Int, width: Int, height: Int, buffer: Texture.PixelBufferDescriptor) {
         val (seg, userData) = readPixelsInto(buffer)
         FilamentC.FilaRenderer_readPixelsRenderTarget(
-            nativeHandle, renderTarget.nativeHandle,
+            nativeHandle, MemorySegment.ofAddress(renderTarget.nativeHandle),
             xoffset, yoffset, width, height,
             seg, buffer.sizeInBytes.toLong(),
             buffer.format.toNative(), buffer.type.toNative(),

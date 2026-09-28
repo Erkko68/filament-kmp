@@ -16,7 +16,7 @@ actual class AssetLoader @InternalFilamentApi constructor(internal var nativeHan
     actual companion object {
         actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
             val handle = FilamentC.FilaAssetLoader_create(
-                engine.nativeObject, materials.nativeObject(), entities?.nativeObject ?: NULL,
+                engine.nativeObject, materials.nativeObject(), entities?.let { MemorySegment.ofAddress(it.nativeObject) } ?: NULL,
             )
             return AssetLoader(handle)
         }

@@ -6,10 +6,10 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 
 actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) : AutoCloseable {
-    private val mTransformManager by lazy { TransformManager(FilamentC.FilaEngine_getTransformManager(nativeHandle)) }
+    private val mTransformManager by lazy { TransformManager(FilamentC.FilaEngine_getTransformManager(nativeHandle).address()) }
     private val mLightManager by lazy { LightManager(FilamentC.FilaEngine_getLightManager(nativeHandle)) }
     private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle)) }
-    private val mEntityManager by lazy { EntityManager(FilamentC.FilaEngine_getEntityManager(nativeHandle)) }
+    private val mEntityManager by lazy { EntityManager(FilamentC.FilaEngine_getEntityManager(nativeHandle).address()) }
     // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
     internal var mConfig: Config? = null
 
@@ -178,20 +178,20 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilamentC.FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilamentC.FilaEngine_isValidView(nativeHandle, view.nativeHandle)
     actual fun isValidScene(scene: Scene): Boolean = FilamentC.FilaEngine_isValidScene(nativeHandle, MemorySegment.ofAddress(scene.nativeHandle))
-    actual fun isValidFence(fence: Fence): Boolean = FilamentC.FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
+    actual fun isValidFence(fence: Fence): Boolean = FilamentC.FilaEngine_isValidFence(nativeHandle, MemorySegment.ofAddress(fence.nativeHandle))
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilamentC.FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilamentC.FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
-    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilamentC.FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
-    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilamentC.FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
-    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilamentC.FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle)
+    actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilamentC.FilaEngine_isValidSkinningBuffer(nativeHandle, MemorySegment.ofAddress(skinningBuffer.nativeHandle))
+    actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilamentC.FilaEngine_isValidMorphTargetBuffer(nativeHandle, MemorySegment.ofAddress(morphTargetBuffer.nativeHandle))
+    actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilamentC.FilaEngine_isValidIndirectLight(nativeHandle, MemorySegment.ofAddress(ibl.nativeHandle))
     actual fun isValidMaterial(material: Material): Boolean = FilamentC.FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
     actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
     actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
-    actual fun isValidSkybox(skybox: Skybox): Boolean = FilamentC.FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle)
+    actual fun isValidSkybox(skybox: Skybox): Boolean = FilamentC.FilaEngine_isValidSkybox(nativeHandle, MemorySegment.ofAddress(skybox.nativeHandle))
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilamentC.FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
     actual fun isValidTexture(texture: Texture): Boolean = FilamentC.FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
-    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilamentC.FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle)
-    actual fun isValidStream(stream: Stream): Boolean = FilamentC.FilaEngine_isValidStream(nativeHandle, stream.nativeHandle)
+    actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilamentC.FilaEngine_isValidRenderTarget(nativeHandle, MemorySegment.ofAddress(renderTarget.nativeHandle))
+    actual fun isValidStream(stream: Stream): Boolean = FilamentC.FilaEngine_isValidStream(nativeHandle, MemorySegment.ofAddress(stream.nativeHandle))
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilamentC.FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
 
     actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, 0L))
@@ -218,16 +218,16 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun createCamera(): Camera {
         val handle = FilamentC.FilaEngine_createCameraAuto(nativeHandle)
         val entity = FilamentC.FilaCamera_getEntity(handle)
-        return Camera(handle, entity)
+        return Camera(handle.address(), entity)
     }
-    actual fun createCamera(entity: Entity): Camera = Camera(FilamentC.FilaEngine_createCamera(nativeHandle, entity), entity)
+    actual fun createCamera(entity: Entity): Camera = Camera(FilamentC.FilaEngine_createCamera(nativeHandle, entity).address(), entity)
     actual fun getCameraComponent(entity: Entity): Camera? {
         val handle = FilamentC.FilaEngine_getCameraComponent(nativeHandle, entity)
-        return if (!handle.isNullPtr()) Camera(handle, entity) else null
+        return if (!handle.isNullPtr()) Camera(handle.address(), entity) else null
     }
     actual fun destroyCamera(camera: Camera) {
-        FilamentC.FilaEngine_destroyCamera(nativeHandle, camera.nativeHandle)
-        camera.nativeHandle = null
+        FilamentC.FilaEngine_destroyCamera(nativeHandle, MemorySegment.ofAddress(camera.nativeHandle))
+        camera.nativeHandle = 0L
     }
     actual fun destroyCameraComponent(entity: Entity) = FilamentC.FilaEngine_destroyCameraComponent(nativeHandle, entity)
 
@@ -237,10 +237,10 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         scene.nativeHandle = 0L
     }
 
-    actual fun createFence(): Fence = Fence(FilamentC.FilaEngine_createFence(nativeHandle))
+    actual fun createFence(): Fence = Fence(FilamentC.FilaEngine_createFence(nativeHandle).address())
     actual fun destroyFence(fence: Fence) {
-        FilamentC.FilaEngine_destroyFence(nativeHandle, fence.nativeHandle)
-        fence.nativeHandle = null
+        FilamentC.FilaEngine_destroyFence(nativeHandle, MemorySegment.ofAddress(fence.nativeHandle))
+        fence.nativeHandle = 0L
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
@@ -252,16 +252,16 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         vertexBuffer.nativeHandle = null
     }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
-        FilamentC.FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle)
-        skinningBuffer.nativeHandle = null
+        FilamentC.FilaEngine_destroySkinningBuffer(nativeHandle, MemorySegment.ofAddress(skinningBuffer.nativeHandle))
+        skinningBuffer.nativeHandle = 0L
     }
     actual fun destroyMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer) {
-        FilamentC.FilaEngine_destroyMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle)
-        morphTargetBuffer.nativeHandle = null
+        FilamentC.FilaEngine_destroyMorphTargetBuffer(nativeHandle, MemorySegment.ofAddress(morphTargetBuffer.nativeHandle))
+        morphTargetBuffer.nativeHandle = 0L
     }
     actual fun destroyIndirectLight(ibl: IndirectLight) {
-        FilamentC.FilaEngine_destroyIndirectLight(nativeHandle, ibl.nativeHandle)
-        ibl.nativeHandle = null
+        FilamentC.FilaEngine_destroyIndirectLight(nativeHandle, MemorySegment.ofAddress(ibl.nativeHandle))
+        ibl.nativeHandle = 0L
     }
     actual fun destroyMaterial(material: Material) {
         FilamentC.FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
@@ -270,8 +270,8 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         FilamentC.FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
     }
     actual fun destroySkybox(skybox: Skybox) {
-        FilamentC.FilaEngine_destroySkybox(nativeHandle, skybox.nativeHandle)
-        skybox.nativeHandle = null
+        FilamentC.FilaEngine_destroySkybox(nativeHandle, MemorySegment.ofAddress(skybox.nativeHandle))
+        skybox.nativeHandle = 0L
     }
     actual fun destroyColorGrading(colorGrading: ColorGrading) {
         FilamentC.FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle)
@@ -281,11 +281,11 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         FilamentC.FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
     }
     actual fun destroyRenderTarget(target: RenderTarget) {
-        FilamentC.FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle)
+        FilamentC.FilaEngine_destroyRenderTarget(nativeHandle, MemorySegment.ofAddress(target.nativeHandle))
     }
     actual fun destroyStream(stream: Stream) {
-        FilamentC.FilaEngine_destroyStream(nativeHandle, stream.nativeHandle)
-        stream.nativeHandle = null
+        FilamentC.FilaEngine_destroyStream(nativeHandle, MemorySegment.ofAddress(stream.nativeHandle))
+        stream.nativeHandle = 0L
     }
     actual fun destroyEntity(entity: Entity) = FilamentC.FilaEntityManager_destroy(FilamentC.FilaEngine_getEntityManager(nativeHandle), entity)
 

@@ -505,7 +505,7 @@ external interface FilamentC : FilamentModule {
     fun _FilaStreamBuilder_stream(builder: Int, nativeStream: Int)
     fun _FilaStreamBuilder_width(builder: Int, width: Int)
     fun _FilaStream_getStreamType(stream: Int): Int
-    fun _FilaStream_getTimestamp(stream: Int): JsBigInt
+    fun _FilaStream_getTimestamp(stream: Int, out: Int)
     fun _FilaStream_setAcquiredImage(stream: Int, engine: Int, image: Int, handler: Int, callback: Int, userdata: Int, transform: Int)
     fun _FilaStream_setDimensions(stream: Int, width: Int, height: Int)
     fun _FilaSurfaceOrientationBuilder_build(builder: Int): Int
@@ -1204,7 +1204,7 @@ fun FilaStreamBuilder_height(builder: Int, height: Int) = fila._FilaStreamBuilde
 fun FilaStreamBuilder_stream(builder: Int, nativeStream: Int) = fila._FilaStreamBuilder_stream(builder, nativeStream)
 fun FilaStreamBuilder_width(builder: Int, width: Int) = fila._FilaStreamBuilder_width(builder, width)
 fun FilaStream_getStreamType(stream: Int): Int = fila._FilaStream_getStreamType(stream)
-fun FilaStream_getTimestamp(stream: Int): Long = fila._FilaStream_getTimestamp(stream).toKotlinLong()
+fun FilaStream_getTimestamp(stream: Int, out: Int) = fila._FilaStream_getTimestamp(stream, out)
 fun FilaStream_setAcquiredImage(stream: Int, engine: Int, image: Int, handler: Int, callback: Int, userdata: Int, transform: Int) = fila._FilaStream_setAcquiredImage(stream, engine, image, handler, callback, userdata, transform)
 fun FilaStream_setDimensions(stream: Int, width: Int, height: Int) = fila._FilaStream_setDimensions(stream, width, height)
 fun FilaSurfaceOrientationBuilder_build(builder: Int): Int = fila._FilaSurfaceOrientationBuilder_build(builder)

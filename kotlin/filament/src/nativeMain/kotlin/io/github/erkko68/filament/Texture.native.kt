@@ -294,7 +294,7 @@ actual class Texture @InternalFilamentApi constructor(internal var nativeHandle:
     }
 
     actual fun setExternalStream(engine: Engine, stream: Stream) {
-        FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, stream.nativeHandle)
+        FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, stream.nativeHandle.toCPointer())
     }
 
     actual companion object {

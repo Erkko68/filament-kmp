@@ -23,8 +23,8 @@ void FilaTransformManager_destroy(FilaTransformManager* tm, FilaEntity entity);
 void FilaTransformManager_setParent(FilaTransformManager* tm, FilaTransformManagerInstance instance, FilaTransformManagerInstance newParent);
 FilaEntity FilaTransformManager_getParent(const FilaTransformManager* tm, FilaTransformManagerInstance instance);
 
-size_t FilaTransformManager_getChildCount(const FilaTransformManager* tm, FilaTransformManagerInstance instance);
-void FilaTransformManager_getChildren(const FilaTransformManager* tm, FilaTransformManagerInstance instance, FilaEntity* outEntities, size_t count);
+uint32_t FilaTransformManager_getChildCount(const FilaTransformManager* tm, FilaTransformManagerInstance instance);
+void FilaTransformManager_getChildren(const FilaTransformManager* tm, FilaTransformManagerInstance instance, FilaEntity* outEntities, uint32_t count);
 
 void FilaTransformManager_setTransform(FilaTransformManager* tm, FilaTransformManagerInstance instance, const float matrix[16]);
 void FilaTransformManager_setTransformFp64(FilaTransformManager* tm, FilaTransformManagerInstance instance, const double matrix[16]);

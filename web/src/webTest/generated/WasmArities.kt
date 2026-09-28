@@ -506,7 +506,7 @@ val WASM_ARITIES: List<Pair<String, Int>> = listOf(
     "_FilaStreamBuilder_stream" to 2,
     "_FilaStreamBuilder_width" to 2,
     "_FilaStream_getStreamType" to 1,
-    "_FilaStream_getTimestamp" to 1,
+    "_FilaStream_getTimestamp" to 2,
     "_FilaStream_setAcquiredImage" to 7,
     "_FilaStream_setDimensions" to 3,
     "_FilaSurfaceOrientationBuilder_build" to 1,

@@ -60,14 +60,14 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
             }
         }
         actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
-            FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount.toUInt(), offset.toUInt())
+            FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle.toCPointer(), boneCount.toUInt(), offset.toUInt())
         }
         actual fun enableSkinningBuffers(enabled: Boolean): Builder = apply {
             FilaRenderableManagerBuilder_enableSkinningBuffers(nativeBuilder, enabled)
         }
         actual fun morphing(targetCount: Int): Builder = apply { FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount.toUInt()) }
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
+            FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle.toCPointer())
         }
         actual fun fog(enabled: Boolean): Builder = apply { FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel.toUInt(), enable) }
@@ -157,7 +157,7 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
     actual fun getMorphTargetCount(instance: EntityInstance): Int = FilaRenderableManager_getMorphTargetCount(nativeHandle, instance.toUInt()).toInt()
     
     actual fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
-        FilaRenderableManager_setSkinningBuffer(nativeHandle, instance.toUInt(), skinningBuffer.nativeHandle, count.toUInt(), offset.toUInt())
+        FilaRenderableManager_setSkinningBuffer(nativeHandle, instance.toUInt(), skinningBuffer.nativeHandle.toCPointer(), count.toUInt(), offset.toUInt())
     }
 
     actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {

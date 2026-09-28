@@ -143,7 +143,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
             ref.dispose()
         }
         FilaRenderer_readPixelsRenderTarget(
-            nativeHandle, renderTarget.nativeHandle,
+            nativeHandle, renderTarget.nativeHandle.toCPointer(),
             xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
             ptr, size,
             buffer.format.toNative(), buffer.type.toNative(),

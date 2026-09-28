@@ -57,6 +57,9 @@ private external fun FilaScene_addEntities(scene: NativePointer, entities: Nativ
 private external fun FilaScene_hasEntity(scene: NativePointer, entity: Int): Boolean
 ```
 
+Each class also exposes its handle as `@InternalFilamentApi val nativeObject: NativePointer`, for
+code that calls the C API directly.
+
 ## Declaring a binding
 
 1. **Put the declarations at the bottom of the class's file**, top-level and `private`.
@@ -69,7 +72,7 @@ private external fun FilaScene_hasEntity(scene: NativePointer, entity: Int): Boo
    | :--- | :--- |
    | any pointer (`FilaX*`, `const float*`, `void*`, callbacks) | `NativePointer` |
    | `int32_t`, `uint32_t`, enums, `FilaEntity` | `Int` |
-   | `int64_t`, `uint64_t` | `Long` (see [Limitations](#current-limitations)) |
+   | `int64_t`, `uint64_t` | `Long` — as a parameter only; return 64-bit values through an out-pointer |
    | `float` / `double` | `Float` / `Double` |
    | `bool` | `Boolean` |
 
@@ -85,7 +88,16 @@ exported).
 
 ### Arrays and native memory
 
-Pass Kotlin arrays through an `interopScope`. `toInterop(array)` returns a pointer valid until the
+The usual form is `usePinned`, available for every primitive array type. The block gets the array's
+address, and whatever C wrote there is back in the array afterwards:
+
+```kotlin
+val rotation: FloatArray get() = FloatArray(9).also { r -> r.usePinned { FilaIndirectLight_getRotation(nativeHandle, it) } }
+```
+
+When pointers must outlive one call (a C++ builder that reads them at `build()`), keep an
+`InteropScope` as a field and `release()` it after `build()`. For several arrays in one call, use an
+`interopScope`. `toInterop(array)` returns a pointer valid until the
 scope ends; `ptr.fromInterop(array)` copies back what C wrote into it:
 
 ```kotlin
@@ -111,6 +123,7 @@ part:
 | `NullPointer` | `expect val` | `0L` | `0L` | `0` |
 | `ExternalSymbolName` | `@OptionalExpectation` | absent | `kotlin.native.SymbolName` | absent |
 | `InteropScope` | `expect class` | copies via `FilaJni` | pins | copies into the wasm heap |
+| `singleThreaded` | `expect val` | `false` | `false` | `true` (wasm has no threads: no blocking waits) |
 
 `jniMain` is a source set shared by `jvm` and `android` (declared in the `filament-kmp-module`
 convention plugin); both reach the C API through the same JNI layer.
@@ -161,10 +174,16 @@ A top-level `external fun` with no `@JsModule` resolves to a global of the same 
 and wasmJs. When `filament-kmp.wasm` loads, `:web` copies every `_FilaX` export of the Emscripten
 module onto `globalThis.FilaX` ([`FilamentModule.kt`](../web/src/webMain/kotlin/io/github/erkko68/filament/wasm/FilamentModule.kt)).
 
-Wasm returns a C `bool` as the number `0`/`1`. wasmJs converts it, but js would hand Kotlin the
-number (`true == 1` is `false`). So the wasm link writes the list of `bool`-returning functions
-(scanned from the C headers) into `Module.filaBoolExports`, and those globals are wrapped with
-`!== 0`.
+The js target sees raw wasm values, so the wasm link scans the C headers and records three lists
+on the module, and `:web` wraps those globals (the conversions are no-ops on wasmJs):
+
+| List | Why | Wrapper |
+| :--- | :--- | :--- |
+| `filaBoolExports` (`bool` results) | wasm returns `0`/`1`; `true == 1` is `false` in Kotlin/JS | `!== 0` |
+| `filaF32Exports` (`float` results) | Kotlin/JS keeps a `Float` as a double (`0.35f` reads back as `0.3499999940395355`) | shortest decimal with the same f32 value |
+| `filaI64Exports` (64-bit parameters) | Kotlin/JS `Long` is an object, not a BigInt | `BigInt(x.toString())` |
+
+A 64-bit *result* can't be turned back into a Kotlin/JS `Long`, hence the out-pointer rule above.
 
 ## Testing a binding
 
@@ -182,9 +201,6 @@ number (`true == 1` is `false`). So the wasm link writes the list of `bool`-retu
 
 ## Current limitations
 
-- **`Long` on js.** Kotlin/JS doesn't represent `Long` as a BigInt, so a 64-bit parameter or
-  return value can't cross into wasm on the js target (wasmJs is fine). Keep 64-bit values out of
-  signatures that web reaches, or pass them through memory.
 - **Strings.** Not yet in `InteropScope`; `const char*` parameters need a `toInterop(String?)`
   there before they can be bound.
 

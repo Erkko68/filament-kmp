@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.NullPointer
+
 import io.github.erkko68.filament.testsupport.IgnoreJs
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
@@ -13,7 +15,7 @@ class FenceTest : FilamentTestFixture() {
         assertNotNull(fence)
         assertTrue(engine.isValidFence(fence))
 
-        assertTrue(fence.nativeObject != 0L)
+        assertTrue(fence.nativeObject != NullPointer)
 
         // Wait on the fence
         val status = fence.wait(Fence.Mode.FLUSH, 1000000L)

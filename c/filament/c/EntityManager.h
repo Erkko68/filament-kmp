@@ -11,14 +11,14 @@ extern "C" {
 FilaEntityManager* FilaEntityManager_get(void);
 
 FilaEntity FilaEntityManager_create(FilaEntityManager* em);
-void FilaEntityManager_createArray(FilaEntityManager* em, size_t n, FilaEntity* outEntities);
+void FilaEntityManager_createArray(FilaEntityManager* em, uint32_t n, FilaEntity* outEntities);
 
 void FilaEntityManager_destroy(FilaEntityManager* em, FilaEntity entity);
-void FilaEntityManager_destroyArray(FilaEntityManager* em, size_t n, const FilaEntity* entities);
+void FilaEntityManager_destroyArray(FilaEntityManager* em, uint32_t n, const FilaEntity* entities);
 
 bool FilaEntityManager_isAlive(FilaEntityManager* em, FilaEntity entity);
 void FilaEntityManager_advanceEpoch(FilaEntityManager* em);
-size_t FilaEntityManager_getMaxEntityCount(FilaEntityManager* em);
+uint32_t FilaEntityManager_getMaxEntityCount(FilaEntityManager* em);
 
 #ifdef __cplusplus
 }

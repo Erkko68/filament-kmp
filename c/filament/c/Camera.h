@@ -32,7 +32,7 @@ void FilaCamera_setCustomProjection(FilaCamera* camera, const double matrix[16],
         const double matrixForCulling[16], double nearPlane, double farPlane);
 
 void FilaCamera_setCustomEyeProjection(FilaCamera* camera, const double* projectionMatrices,
-        size_t count, const double matrixForCulling[16], double nearPlane, double farPlane);
+        uint32_t count, const double matrixForCulling[16], double nearPlane, double farPlane);
 
 void FilaCamera_setScaling(FilaCamera* camera, double x, double y);
 void FilaCamera_setShift(FilaCamera* camera, double x, double y);

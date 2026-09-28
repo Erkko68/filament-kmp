@@ -41,7 +41,7 @@ void FilaCamera_setCustomProjection(FilaCamera* camera, const double matrix[16],
 }
 
 void FilaCamera_setCustomEyeProjection(FilaCamera* camera, const double* projectionMatrices,
-        size_t count, const double matrixForCulling[16], double nearPlane, double farPlane) {
+        uint32_t count, const double matrixForCulling[16], double nearPlane, double farPlane) {
     FILA_CAST(Camera, camera)->setCustomEyeProjection(
             reinterpret_cast<const filament::math::mat4*>(projectionMatrices), count,
             *reinterpret_cast<const filament::math::mat4*>(matrixForCulling),

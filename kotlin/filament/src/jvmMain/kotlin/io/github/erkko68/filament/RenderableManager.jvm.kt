@@ -72,14 +72,14 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
             confined { arena -> FilamentC.FilaRenderableManagerBuilder_skinningBones(nativeBuilder, boneCount, arena.floats(bones)) }
         }
         actual fun skinning(skinningBuffer: SkinningBuffer, boneCount: Int, offset: Int): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, skinningBuffer.nativeHandle, boneCount, offset)
+            FilamentC.FilaRenderableManagerBuilder_skinningBuffer(nativeBuilder, MemorySegment.ofAddress(skinningBuffer.nativeHandle), boneCount, offset)
         }
         actual fun enableSkinningBuffers(enabled: Boolean): Builder = apply {
             FilamentC.FilaRenderableManagerBuilder_enableSkinningBuffers(nativeBuilder, enabled)
         }
         actual fun morphing(targetCount: Int): Builder = apply { FilamentC.FilaRenderableManagerBuilder_morphing(nativeBuilder, targetCount) }
         actual fun morphing(morphTargetBuffer: MorphTargetBuffer): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, morphTargetBuffer.nativeHandle)
+            FilamentC.FilaRenderableManagerBuilder_morphTargetBuffer(nativeBuilder, MemorySegment.ofAddress(morphTargetBuffer.nativeHandle))
         }
         actual fun fog(enabled: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_fog(nativeBuilder, enabled) }
         actual fun lightChannel(channel: Int, enable: Boolean): Builder = apply { FilamentC.FilaRenderableManagerBuilder_lightChannel(nativeBuilder, channel, enable) }
@@ -164,7 +164,7 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
     actual fun getMorphTargetCount(instance: EntityInstance): Int = FilamentC.FilaRenderableManager_getMorphTargetCount(nativeHandle, instance)
 
     actual fun setSkinningBuffer(instance: EntityInstance, skinningBuffer: SkinningBuffer, count: Int, offset: Int) {
-        FilamentC.FilaRenderableManager_setSkinningBuffer(nativeHandle, instance, skinningBuffer.nativeHandle, count, offset)
+        FilamentC.FilaRenderableManager_setSkinningBuffer(nativeHandle, instance, MemorySegment.ofAddress(skinningBuffer.nativeHandle), count, offset)
     }
 
     actual fun setMorphWeights(instance: EntityInstance, weights: FloatArray, offset: Int) {

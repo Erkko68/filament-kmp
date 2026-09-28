@@ -210,7 +210,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         get() = mCamera
         set(value) {
             mCamera = value
-            FilaView_setCamera(nativeHandle, value?.nativeHandle)
+            FilaView_setCamera(nativeHandle, value?.nativeHandle?.toCPointer())
         }
     actual val hasCamera: Boolean get() = FilaView_hasCamera(nativeHandle)
 
@@ -582,7 +582,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         get() = mRenderTarget
         set(value) {
             mRenderTarget = value
-            FilaView_setRenderTarget(nativeHandle, value?.nativeHandle)
+            FilaView_setRenderTarget(nativeHandle, value?.nativeHandle?.toCPointer())
         }
 
     actual var shadowType: ShadowType

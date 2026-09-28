@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.interop
 
 import io.github.erkko68.filament.jni.FilaJni
+import java.nio.ByteBuffer
 
 // JVM + Android: externals are JNI methods; the forwarders are generated from their declarations.
 
@@ -8,20 +9,37 @@ actual typealias NativePointer = Long
 
 actual val NullPointer: NativePointer = 0L
 
+actual val singleThreaded: Boolean = false
+
 actual class InteropScope actual constructor() {
     private val allocations = ArrayList<Long>(2)
 
-    actual fun toInterop(array: IntArray?): NativePointer {
-        if (array == null || array.isEmpty()) return NullPointer
-        val ptr = FilaJni.alloc(array.size * 4L)
+    private inline fun copyIn(count: Int, width: Int, put: (ByteBuffer) -> Unit): NativePointer {
+        if (count == 0) return NullPointer
+        val ptr = FilaJni.alloc(count.toLong() * width)
+        check(ptr != 0L) { "calloc(${count * width}) failed" }
         allocations += ptr
-        FilaJni.buffer(ptr, array.size * 4).asIntBuffer().put(array)
+        put(FilaJni.buffer(ptr, count * width))
         return ptr
     }
 
-    actual fun NativePointer.fromInterop(result: IntArray) {
-        if (this != NullPointer) FilaJni.buffer(this, result.size * 4).asIntBuffer().get(result)
+    actual fun toInterop(array: ByteArray?): NativePointer = copyIn(array?.size ?: 0, 1) { it.put(array!!) }
+    actual fun toInterop(array: ShortArray?): NativePointer = copyIn(array?.size ?: 0, 2) { it.asShortBuffer().put(array!!) }
+    actual fun toInterop(array: IntArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asIntBuffer().put(array!!) }
+    actual fun toInterop(array: LongArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asLongBuffer().put(array!!) }
+    actual fun toInterop(array: FloatArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asFloatBuffer().put(array!!) }
+    actual fun toInterop(array: DoubleArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asDoubleBuffer().put(array!!) }
+
+    private inline fun NativePointer.copyOut(count: Int, width: Int, get: (ByteBuffer) -> Unit) {
+        if (this != NullPointer && count > 0) get(FilaJni.buffer(this, count * width))
     }
+
+    actual fun NativePointer.fromInterop(result: ByteArray) = copyOut(result.size, 1) { it.get(result) }
+    actual fun NativePointer.fromInterop(result: ShortArray) = copyOut(result.size, 2) { it.asShortBuffer().get(result) }
+    actual fun NativePointer.fromInterop(result: IntArray) = copyOut(result.size, 4) { it.asIntBuffer().get(result) }
+    actual fun NativePointer.fromInterop(result: LongArray) = copyOut(result.size, 8) { it.asLongBuffer().get(result) }
+    actual fun NativePointer.fromInterop(result: FloatArray) = copyOut(result.size, 4) { it.asFloatBuffer().get(result) }
+    actual fun NativePointer.fromInterop(result: DoubleArray) = copyOut(result.size, 8) { it.asDoubleBuffer().get(result) }
 
     actual fun release() {
         allocations.forEach(FilaJni::free)

@@ -7,17 +7,11 @@ package io.github.erkko68.filament
 @InternalFilamentApi
 val BufferObject.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val Camera.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
 val ColorGrading.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
 val Engine.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val EntityManager.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
 val IndexBuffer.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
-val IndirectLight.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
 val LightManager.nativeObject: Long get() = nativeLightManager
 @InternalFilamentApi
@@ -25,25 +19,11 @@ val Material.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
 val MaterialInstance.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val MorphTargetBuffer.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
-val RenderTarget.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
 val RenderableManager.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
 val Renderer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
-val SkinningBuffer.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
-val Skybox.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
-val Stream.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
-val SurfaceOrientation.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
 val Texture.nativeObject: Long get() = nativeHandle
-@InternalFilamentApi
-val TransformManager.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi
 val VertexBuffer.nativeObject: Long get() = nativeHandle
 @InternalFilamentApi

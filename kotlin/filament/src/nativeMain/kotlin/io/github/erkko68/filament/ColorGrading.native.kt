@@ -26,7 +26,7 @@ actual class ColorGrading @InternalFilamentApi constructor(internal var nativeHa
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
+            FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle.toCPointer())
             return this
         }
 

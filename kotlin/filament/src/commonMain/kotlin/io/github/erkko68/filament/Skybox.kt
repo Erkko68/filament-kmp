@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * Skybox renders a background environment cube around the camera.
  *
@@ -25,7 +27,11 @@ package io.github.erkko68.filament
  * @see Scene.setSkybox
  * @see IndirectLight
  */
-expect class Skybox {
+class Skybox @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Builder for creating Skybox instances.
      *
@@ -33,6 +39,8 @@ expect class Skybox {
      * priority, along with optional sun disk rendering.
      */
     class Builder() {
+        private val nativeBuilder = FilaSkyboxBuilder_create()
+
         /**
          * Set the environment map (the skybox content).
          *
@@ -47,8 +55,11 @@ expect class Skybox {
          *
          * @see Texture
          */
-        fun environment(cubemap: Texture): Builder
-
+        fun environment(cubemap: Texture): Builder {
+            FilaSkyboxBuilder_environment(nativeBuilder, cubemap.pointer)
+            return this
+        }
+        
         /**
          * Indicates whether the sun disk should be rendered.
          *
@@ -58,8 +69,11 @@ expect class Skybox {
          * @param show true to render the sun disk, false to disable.
          * @return This Builder, for chaining calls.
          */
-        fun showSun(show: Boolean): Builder
-
+        fun showSun(show: Boolean): Builder {
+            FilaSkyboxBuilder_showSun(nativeBuilder, show)
+            return this
+        }
+        
         /**
          * Set the Skybox intensity when no IndirectLight is set on the Scene.
          *
@@ -72,8 +86,11 @@ expect class Skybox {
          *
          * @see IndirectLight.Builder.intensity
          */
-        fun intensity(envIntensity: Float): Builder
-
+        fun intensity(envIntensity: Float): Builder {
+            FilaSkyboxBuilder_intensity(nativeBuilder, envIntensity)
+            return this
+        }
+        
         /**
          * Set the Skybox to a constant color.
          *
@@ -85,7 +102,10 @@ expect class Skybox {
          * @param a Alpha channel [0, 1].
          * @return This Builder, for chaining calls.
          */
-        fun color(r: Float, g: Float, b: Float, a: Float): Builder
+        fun color(r: Float, g: Float, b: Float, a: Float): Builder {
+            FilaSkyboxBuilder_color(nativeBuilder, r, g, b, a)
+            return this
+        }
 
         /**
          * Set the rendering priority of the Skybox.
@@ -98,7 +118,10 @@ expect class Skybox {
          *
          * @see RenderableManager.Builder.priority
          */
-        fun priority(priority: Int): Builder
+        fun priority(priority: Int): Builder {
+            FilaSkyboxBuilder_priority(nativeBuilder, priority)
+            return this
+        }
 
         /**
          * Creates the Skybox object and associates it with the given Engine.
@@ -106,7 +129,11 @@ expect class Skybox {
          * @param engine Engine to associate this Skybox with.
          * @return The newly created Skybox.
          */
-        fun build(engine: Engine): Skybox
+        fun build(engine: Engine): Skybox {
+            val handle = FilaSkyboxBuilder_build(nativeBuilder, engine.pointer)
+            FilaSkyboxBuilder_destroy(nativeBuilder)
+            return Skybox(handle)
+        }
     }
 
     /**
@@ -117,15 +144,15 @@ expect class Skybox {
      * @param b Blue channel [0, 1].
      * @param a Alpha channel [0, 1].
      */
-    fun setColor(r: Float, g: Float, b: Float, a: Float)
-
+    fun setColor(r: Float, g: Float, b: Float, a: Float) {
+        FilaSkybox_setColor(nativeHandle, r, g, b, a)
+    }
     /**
      * Returns the Skybox's intensity in lux, or lumen/m².
      *
      * @return Intensity multiplier.
      */
-    val intensity: Float
-
+    val intensity: Float get() = FilaSkybox_getIntensity(nativeHandle)
     /**
      * Returns the visibility mask bits (layer mask).
      *
@@ -136,15 +163,13 @@ expect class Skybox {
      *
      * @see View.setVisibleLayers
      */
-    val layerMask: Int
-
+    val layerMask: Int get() = FilaSkybox_getLayerMask(nativeHandle)
     /**
      * Returns the associated environment cubemap Texture.
      *
      * @return The cubemap Texture, or null if using a constant color instead.
      */
-    val texture: Texture?
-
+    val texture: Texture? get() = FilaSkybox_getTexture(nativeHandle).takeIf { it != NullPointer }?.let { textureOf(it) }
     /**
      * Set bits in the visibility mask.
      *
@@ -158,5 +183,44 @@ expect class Skybox {
      *
      * @see View.setVisibleLayers
      */
-    fun setLayerMask(select: Int, value: Int)
+    fun setLayerMask(select: Int, value: Int) = FilaSkybox_setLayerMask(nativeHandle, select, value)
 }
+
+@ExternalSymbolName("FilaSkyboxBuilder_build")
+private external fun FilaSkyboxBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaSkyboxBuilder_color")
+private external fun FilaSkyboxBuilder_color(builder: NativePointer, r: Float, g: Float, b: Float, a: Float)
+
+@ExternalSymbolName("FilaSkyboxBuilder_create")
+private external fun FilaSkyboxBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaSkyboxBuilder_destroy")
+private external fun FilaSkyboxBuilder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaSkyboxBuilder_environment")
+private external fun FilaSkyboxBuilder_environment(builder: NativePointer, texture: NativePointer)
+
+@ExternalSymbolName("FilaSkyboxBuilder_intensity")
+private external fun FilaSkyboxBuilder_intensity(builder: NativePointer, intensity: Float)
+
+@ExternalSymbolName("FilaSkyboxBuilder_priority")
+private external fun FilaSkyboxBuilder_priority(builder: NativePointer, priority: Int)
+
+@ExternalSymbolName("FilaSkyboxBuilder_showSun")
+private external fun FilaSkyboxBuilder_showSun(builder: NativePointer, show: Boolean)
+
+@ExternalSymbolName("FilaSkybox_getIntensity")
+private external fun FilaSkybox_getIntensity(skybox: NativePointer): Float
+
+@ExternalSymbolName("FilaSkybox_getLayerMask")
+private external fun FilaSkybox_getLayerMask(skybox: NativePointer): Int
+
+@ExternalSymbolName("FilaSkybox_getTexture")
+private external fun FilaSkybox_getTexture(skybox: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaSkybox_setColor")
+private external fun FilaSkybox_setColor(skybox: NativePointer, r: Float, g: Float, b: Float, a: Float)
+
+@ExternalSymbolName("FilaSkybox_setLayerMask")
+private external fun FilaSkybox_setLayerMask(skybox: NativePointer, select: Int, value: Int)

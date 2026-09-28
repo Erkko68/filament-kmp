@@ -41,13 +41,13 @@ actual object KTX1Loader {
         val il = confined { a ->
             FilamentC.FilaKTX1Loader_createIndirectLight(engine.nativeObject, tex.nativeObject, a.floats(sh))
         }
-        return IndirectLightBundle(il?.let { IndirectLight(it) }, tex)
+        return IndirectLightBundle(il?.let { IndirectLight(it.address()) }, tex)
     }
 
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
         val tex = createTexture(engine, buffer, options) ?: return SkyboxBundle(null, null)
         val skybox = FilamentC.FilaKTX1Loader_createSkybox(engine.nativeObject, tex.nativeObject)
-        return SkyboxBundle(skybox?.let { Skybox(it) }, tex)
+        return SkyboxBundle(skybox?.let { Skybox(it.address()) }, tex)
     }
 
     actual fun getSphericalHarmonics(buffer: ByteArray): FloatArray? = confined { a ->

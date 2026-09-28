@@ -159,8 +159,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaCamera_
     FilaCamera_lookAt((FilaCamera *)(intptr_t) a_camera, (double) a_eyeX, (double) a_eyeY, (double) a_eyeZ, (double) a_centerX, (double) a_centerY, (double) a_centerZ, (double) a_upX, (double) a_upY, (double) a_upZ);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaCamera_1setCustomEyeProjection(JNIEnv* env, jclass cls, jlong a_camera, jlong a_projectionMatrices, jlong a_count, jlong a_matrixForCulling, jdouble a_nearPlane, jdouble a_farPlane) {
-    FilaCamera_setCustomEyeProjection((FilaCamera *)(intptr_t) a_camera, (const double *)(intptr_t) a_projectionMatrices, (size_t) a_count, (const double *)(intptr_t) a_matrixForCulling, (double) a_nearPlane, (double) a_farPlane);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaCamera_1setCustomEyeProjection(JNIEnv* env, jclass cls, jlong a_camera, jlong a_projectionMatrices, jint a_count, jlong a_matrixForCulling, jdouble a_nearPlane, jdouble a_farPlane) {
+    FilaCamera_setCustomEyeProjection((FilaCamera *)(intptr_t) a_camera, (const double *)(intptr_t) a_projectionMatrices, (uint32_t) a_count, (const double *)(intptr_t) a_matrixForCulling, (double) a_nearPlane, (double) a_farPlane);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaCamera_1setCustomProjection(JNIEnv* env, jclass cls, jlong a_camera, jlong a_matrix, jlong a_matrixForCulling, jdouble a_nearPlane, jdouble a_farPlane) {
@@ -661,24 +661,24 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityM
     return (jint) FilaEntityManager_create((FilaEntityManager *)(intptr_t) a_em);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1createArray(JNIEnv* env, jclass cls, jlong a_em, jlong a_n, jlong a_outEntities) {
-    FilaEntityManager_createArray((FilaEntityManager *)(intptr_t) a_em, (size_t) a_n, (FilaEntity *)(intptr_t) a_outEntities);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1createArray(JNIEnv* env, jclass cls, jlong a_em, jint a_n, jlong a_outEntities) {
+    FilaEntityManager_createArray((FilaEntityManager *)(intptr_t) a_em, (uint32_t) a_n, (FilaEntity *)(intptr_t) a_outEntities);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1destroy(JNIEnv* env, jclass cls, jlong a_em, jint a_entity) {
     FilaEntityManager_destroy((FilaEntityManager *)(intptr_t) a_em, (FilaEntity) a_entity);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1destroyArray(JNIEnv* env, jclass cls, jlong a_em, jlong a_n, jlong a_entities) {
-    FilaEntityManager_destroyArray((FilaEntityManager *)(intptr_t) a_em, (size_t) a_n, (const FilaEntity *)(intptr_t) a_entities);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1destroyArray(JNIEnv* env, jclass cls, jlong a_em, jint a_n, jlong a_entities) {
+    FilaEntityManager_destroyArray((FilaEntityManager *)(intptr_t) a_em, (uint32_t) a_n, (const FilaEntity *)(intptr_t) a_entities);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1get(JNIEnv* env, jclass cls) {
     return (jlong)(intptr_t) FilaEntityManager_get();
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1getMaxEntityCount(JNIEnv* env, jclass cls, jlong a_em) {
-    return (jlong) FilaEntityManager_getMaxEntityCount((FilaEntityManager *)(intptr_t) a_em);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1getMaxEntityCount(JNIEnv* env, jclass cls, jlong a_em) {
+    return (jint) FilaEntityManager_getMaxEntityCount((FilaEntityManager *)(intptr_t) a_em);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEntityManager_1isAlive(JNIEnv* env, jclass cls, jlong a_em, jint a_entity) {
@@ -1474,8 +1474,8 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphT
     return (jlong)(intptr_t) FilaMorphTargetBufferBuilder_build((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (FilaEngine *)(intptr_t) a_engine);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBufferBuilder_1count(JNIEnv* env, jclass cls, jlong a_builder, jlong a_count) {
-    FilaMorphTargetBufferBuilder_count((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (size_t) a_count);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBufferBuilder_1count(JNIEnv* env, jclass cls, jlong a_builder, jint a_count) {
+    FilaMorphTargetBufferBuilder_count((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (uint32_t) a_count);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBufferBuilder_1create(JNIEnv* env, jclass cls) {
@@ -1490,8 +1490,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTa
     FilaMorphTargetBufferBuilder_enableCustomMorphing((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (_Bool) a_enabled);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBufferBuilder_1vertexCount(JNIEnv* env, jclass cls, jlong a_builder, jlong a_vertexCount) {
-    FilaMorphTargetBufferBuilder_vertexCount((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (size_t) a_vertexCount);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBufferBuilder_1vertexCount(JNIEnv* env, jclass cls, jlong a_builder, jint a_vertexCount) {
+    FilaMorphTargetBufferBuilder_vertexCount((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (uint32_t) a_vertexCount);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBufferBuilder_1withPositions(JNIEnv* env, jclass cls, jlong a_builder, jboolean a_enabled) {
@@ -1502,12 +1502,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTa
     FilaMorphTargetBufferBuilder_withTangents((FilaMorphTargetBufferBuilder *)(intptr_t) a_builder, (_Bool) a_enabled);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1getCount(JNIEnv* env, jclass cls, jlong a_buffer) {
-    return (jlong) FilaMorphTargetBuffer_getCount((const FilaMorphTargetBuffer *)(intptr_t) a_buffer);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1getCount(JNIEnv* env, jclass cls, jlong a_buffer) {
+    return (jint) FilaMorphTargetBuffer_getCount((const FilaMorphTargetBuffer *)(intptr_t) a_buffer);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1getVertexCount(JNIEnv* env, jclass cls, jlong a_buffer) {
-    return (jlong) FilaMorphTargetBuffer_getVertexCount((const FilaMorphTargetBuffer *)(intptr_t) a_buffer);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1getVertexCount(JNIEnv* env, jclass cls, jlong a_buffer) {
+    return (jint) FilaMorphTargetBuffer_getVertexCount((const FilaMorphTargetBuffer *)(intptr_t) a_buffer);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1hasPositions(JNIEnv* env, jclass cls, jlong a_buffer) {
@@ -1522,12 +1522,12 @@ JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMor
     return FilaMorphTargetBuffer_isCustomMorphingEnabled((const FilaMorphTargetBuffer *)(intptr_t) a_buffer) ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1setPositionsAt(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jlong a_targetIndex, jlong a_positions, jlong a_count) {
-    FilaMorphTargetBuffer_setPositionsAt((FilaMorphTargetBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (size_t) a_targetIndex, (const float *)(intptr_t) a_positions, (size_t) a_count);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1setPositionsAt(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jint a_targetIndex, jlong a_positions, jint a_count) {
+    FilaMorphTargetBuffer_setPositionsAt((FilaMorphTargetBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_targetIndex, (const float *)(intptr_t) a_positions, (uint32_t) a_count);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1setTangentsAt(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jlong a_targetIndex, jlong a_tangents, jlong a_count) {
-    FilaMorphTargetBuffer_setTangentsAt((FilaMorphTargetBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (size_t) a_targetIndex, (const short *)(intptr_t) a_tangents, (size_t) a_count);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaMorphTargetBuffer_1setTangentsAt(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jint a_targetIndex, jlong a_tangents, jint a_count) {
+    FilaMorphTargetBuffer_setTangentsAt((FilaMorphTargetBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_targetIndex, (const short *)(intptr_t) a_tangents, (uint32_t) a_count);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderTargetBuilder_1build(JNIEnv* env, jclass cls, jlong a_builder, jlong a_engine) {
@@ -2022,16 +2022,16 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinnin
     FilaSkinningBufferBuilder_initialize((FilaSkinningBufferBuilder *)(intptr_t) a_builder, (_Bool) a_initialize);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinningBuffer_1getBoneCount(JNIEnv* env, jclass cls, jlong a_buffer) {
-    return (jlong) FilaSkinningBuffer_getBoneCount((const FilaSkinningBuffer *)(intptr_t) a_buffer);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinningBuffer_1getBoneCount(JNIEnv* env, jclass cls, jlong a_buffer) {
+    return (jint) FilaSkinningBuffer_getBoneCount((const FilaSkinningBuffer *)(intptr_t) a_buffer);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinningBuffer_1setBonesMat4f(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jlong a_matrices, jlong a_boneCount, jlong a_offset) {
-    FilaSkinningBuffer_setBonesMat4f((FilaSkinningBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (const float *)(intptr_t) a_matrices, (size_t) a_boneCount, (size_t) a_offset);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinningBuffer_1setBonesMat4f(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jlong a_matrices, jint a_boneCount, jint a_offset) {
+    FilaSkinningBuffer_setBonesMat4f((FilaSkinningBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (const float *)(intptr_t) a_matrices, (uint32_t) a_boneCount, (uint32_t) a_offset);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinningBuffer_1setBonesQuaternions(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jlong a_bones, jlong a_boneCount, jlong a_offset) {
-    FilaSkinningBuffer_setBonesQuaternions((FilaSkinningBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (const FilaBone *)(intptr_t) a_bones, (size_t) a_boneCount, (size_t) a_offset);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkinningBuffer_1setBonesQuaternions(JNIEnv* env, jclass cls, jlong a_buffer, jlong a_engine, jlong a_bones, jint a_boneCount, jint a_offset) {
+    FilaSkinningBuffer_setBonesQuaternions((FilaSkinningBuffer *)(intptr_t) a_buffer, (FilaEngine *)(intptr_t) a_engine, (const FilaBone *)(intptr_t) a_bones, (uint32_t) a_boneCount, (uint32_t) a_offset);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkyboxBuilder_1build(JNIEnv* env, jclass cls, jlong a_builder, jlong a_engine) {
@@ -2114,8 +2114,8 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaStream_
     return (jint) FilaStream_getStreamType((const FilaStream *)(intptr_t) a_stream);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaStream_1getTimestamp(JNIEnv* env, jclass cls, jlong a_stream) {
-    return (jlong) FilaStream_getTimestamp((const FilaStream *)(intptr_t) a_stream);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaStream_1getTimestamp(JNIEnv* env, jclass cls, jlong a_stream, jlong a_out) {
+    FilaStream_getTimestamp((const FilaStream *)(intptr_t) a_stream, (int64_t *)(intptr_t) a_out);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaStream_1setAcquiredImage(JNIEnv* env, jclass cls, jlong a_stream, jlong a_engine, jlong a_image, jlong a_handler, jlong a_callback, jlong a_userdata, jlong a_transform) {
@@ -2506,12 +2506,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransfo
     FilaTransformManager_destroy((FilaTransformManager *)(intptr_t) a_tm, (FilaEntity) a_entity);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransformManager_1getChildCount(JNIEnv* env, jclass cls, jlong a_tm, jint a_instance) {
-    return (jlong) FilaTransformManager_getChildCount((const FilaTransformManager *)(intptr_t) a_tm, (FilaTransformManagerInstance) a_instance);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransformManager_1getChildCount(JNIEnv* env, jclass cls, jlong a_tm, jint a_instance) {
+    return (jint) FilaTransformManager_getChildCount((const FilaTransformManager *)(intptr_t) a_tm, (FilaTransformManagerInstance) a_instance);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransformManager_1getChildren(JNIEnv* env, jclass cls, jlong a_tm, jint a_instance, jlong a_outEntities, jlong a_count) {
-    FilaTransformManager_getChildren((const FilaTransformManager *)(intptr_t) a_tm, (FilaTransformManagerInstance) a_instance, (FilaEntity *)(intptr_t) a_outEntities, (size_t) a_count);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransformManager_1getChildren(JNIEnv* env, jclass cls, jlong a_tm, jint a_instance, jlong a_outEntities, jint a_count) {
+    FilaTransformManager_getChildren((const FilaTransformManager *)(intptr_t) a_tm, (FilaTransformManagerInstance) a_instance, (FilaEntity *)(intptr_t) a_outEntities, (uint32_t) a_count);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransformManager_1getInstance(JNIEnv* env, jclass cls, jlong a_tm, jint a_entity) {

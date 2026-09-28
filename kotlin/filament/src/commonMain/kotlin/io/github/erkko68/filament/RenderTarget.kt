@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * An offscreen render target that can be associated with a View and contains weak references
  * to a set of attached Texture objects.
@@ -12,7 +14,11 @@ package io.github.erkko68.filament
  *
  * @see View
  */
-expect class RenderTarget {
+class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: NativePointer, private val textures: Array<Texture?>) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Attachment point identifiers for texture attachments in a render target.
      *
@@ -33,6 +39,9 @@ expect class RenderTarget {
      * then call build() to create the RenderTarget.
      */
     class Builder() {
+        private val nativeBuilder = FilaRenderTargetBuilder_create()
+        private val textures = arrayOfNulls<Texture>(AttachmentPoint.entries.size)
+
         /**
          * Sets a texture to a given attachment point.
          *
@@ -48,7 +57,11 @@ expect class RenderTarget {
          * @param texture The associated texture object (null to clear)
          * @return This Builder, for chaining calls
          */
-        fun texture(attachment: AttachmentPoint, texture: Texture?): Builder
+        fun texture(attachment: AttachmentPoint, texture: Texture?): Builder {
+            textures[attachment.ordinal] = texture
+            FilaRenderTargetBuilder_texture(nativeBuilder, attachment.ordinal, texture?.pointer ?: NullPointer)
+            return this
+        }
 
         /**
          * Sets the mipmap level for a given attachment point.
@@ -57,7 +70,10 @@ expect class RenderTarget {
          * @param level The associated mipmap level (default: 0)
          * @return This Builder, for chaining calls
          */
-        fun mipLevel(attachment: AttachmentPoint, level: Int): Builder
+        fun mipLevel(attachment: AttachmentPoint, level: Int): Builder {
+            FilaRenderTargetBuilder_mipLevel(nativeBuilder, attachment.ordinal, level)
+            return this
+        }
 
         /**
          * Sets the face for cubemap textures at the given attachment point.
@@ -66,7 +82,10 @@ expect class RenderTarget {
          * @param face The associated cubemap face
          * @return This Builder, for chaining calls
          */
-        fun face(attachment: AttachmentPoint, face: Texture.CubemapFace): Builder
+        fun face(attachment: AttachmentPoint, face: Texture.CubemapFace): Builder {
+            FilaRenderTargetBuilder_face(nativeBuilder, attachment.ordinal, face.ordinal)
+            return this
+        }
 
         /**
          * Sets an index of a single layer for 2D array, cubemap array, and 3D textures.
@@ -79,7 +98,10 @@ expect class RenderTarget {
          * @param layer The associated layer index
          * @return This Builder, for chaining calls
          */
-        fun layer(attachment: AttachmentPoint, layer: Int): Builder
+        fun layer(attachment: AttachmentPoint, layer: Int): Builder {
+            FilaRenderTargetBuilder_layer(nativeBuilder, attachment.ordinal, layer)
+            return this
+        }
 
         /**
          * Creates the RenderTarget object.
@@ -87,7 +109,11 @@ expect class RenderTarget {
          * @param engine Engine to associate this RenderTarget with
          * @return The newly created RenderTarget
          */
-        fun build(engine: Engine): RenderTarget
+        fun build(engine: Engine): RenderTarget {
+            val handle = FilaRenderTargetBuilder_build(nativeBuilder, engine.pointer)
+            FilaRenderTargetBuilder_destroy(nativeBuilder)
+            return RenderTarget(handle, textures.copyOf())
+        }
     }
 
     /**
@@ -96,7 +122,7 @@ expect class RenderTarget {
      * @param attachment The attachment point to query
      * @return The attached texture, or null if no texture is attached
      */
-    fun getTexture(attachment: AttachmentPoint): Texture?
+    fun getTexture(attachment: AttachmentPoint): Texture? = textures[attachment.ordinal]
 
     /**
      * Gets the mipmap level for a given attachment point.
@@ -104,7 +130,8 @@ expect class RenderTarget {
      * @param attachment The attachment point to query
      * @return The mipmap level (default: 0)
      */
-    fun getMipLevel(attachment: AttachmentPoint): Int
+    fun getMipLevel(attachment: AttachmentPoint): Int =
+        FilaRenderTarget_getMipLevel(nativeHandle, attachment.ordinal)
 
     /**
      * Gets the cubemap face for a given attachment point.
@@ -112,7 +139,8 @@ expect class RenderTarget {
      * @param attachment The attachment point to query
      * @return The cubemap face
      */
-    fun getFace(attachment: AttachmentPoint): Texture.CubemapFace
+    fun getFace(attachment: AttachmentPoint): Texture.CubemapFace =
+        Texture.CubemapFace.entries[FilaRenderTarget_getFace(nativeHandle, attachment.ordinal)]
 
     /**
      * Gets the layer index for a given attachment point.
@@ -120,5 +148,36 @@ expect class RenderTarget {
      * @param attachment The attachment point to query
      * @return The layer index
      */
-    fun getLayer(attachment: AttachmentPoint): Int
+    fun getLayer(attachment: AttachmentPoint): Int =
+        FilaRenderTarget_getLayer(nativeHandle, attachment.ordinal)
 }
+
+@ExternalSymbolName("FilaRenderTargetBuilder_build")
+private external fun FilaRenderTargetBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaRenderTargetBuilder_create")
+private external fun FilaRenderTargetBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaRenderTargetBuilder_destroy")
+private external fun FilaRenderTargetBuilder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaRenderTargetBuilder_face")
+private external fun FilaRenderTargetBuilder_face(builder: NativePointer, attachment: Int, face: Int)
+
+@ExternalSymbolName("FilaRenderTargetBuilder_layer")
+private external fun FilaRenderTargetBuilder_layer(builder: NativePointer, attachment: Int, layer: Int)
+
+@ExternalSymbolName("FilaRenderTargetBuilder_mipLevel")
+private external fun FilaRenderTargetBuilder_mipLevel(builder: NativePointer, attachment: Int, level: Int)
+
+@ExternalSymbolName("FilaRenderTargetBuilder_texture")
+private external fun FilaRenderTargetBuilder_texture(builder: NativePointer, attachment: Int, texture: NativePointer)
+
+@ExternalSymbolName("FilaRenderTarget_getFace")
+private external fun FilaRenderTarget_getFace(renderTarget: NativePointer, attachment: Int): Int
+
+@ExternalSymbolName("FilaRenderTarget_getLayer")
+private external fun FilaRenderTarget_getLayer(renderTarget: NativePointer, attachment: Int): Int
+
+@ExternalSymbolName("FilaRenderTarget_getMipLevel")
+private external fun FilaRenderTarget_getMipLevel(renderTarget: NativePointer, attachment: Int): Int

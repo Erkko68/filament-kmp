@@ -223,7 +223,7 @@ actual class Texture @InternalFilamentApi constructor(internal var nativeHandle:
     }
 
     actual fun setExternalStream(engine: Engine, stream: Stream) {
-        FilamentC.FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, stream.nativeHandle)
+        FilamentC.FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, MemorySegment.ofAddress(stream.nativeHandle))
     }
 
     actual companion object {

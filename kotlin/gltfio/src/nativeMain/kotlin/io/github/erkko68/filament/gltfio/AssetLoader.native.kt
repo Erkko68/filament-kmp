@@ -14,7 +14,7 @@ actual class AssetLoader @InternalFilamentApi constructor(internal var nativeHan
             val handle = FilaAssetLoader_create(
                 engine.nativeObject,
                 materials.nativeObject(),
-                entities?.nativeObject
+                entities?.nativeObject?.toCPointer()
             )
             return AssetLoader(handle)
         }

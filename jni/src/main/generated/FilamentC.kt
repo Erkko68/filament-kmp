@@ -38,7 +38,7 @@ external fun FilaCamera_getUpVector(camera: Long, out: Long)
 external fun FilaCamera_getViewMatrix(camera: Long, out: Long)
 external fun FilaCamera_getViewMatrixFp64(camera: Long, out: Long)
 external fun FilaCamera_lookAt(camera: Long, eyeX: Double, eyeY: Double, eyeZ: Double, centerX: Double, centerY: Double, centerZ: Double, upX: Double, upY: Double, upZ: Double)
-external fun FilaCamera_setCustomEyeProjection(camera: Long, projectionMatrices: Long, count: Long, matrixForCulling: Long, nearPlane: Double, farPlane: Double)
+external fun FilaCamera_setCustomEyeProjection(camera: Long, projectionMatrices: Long, count: Int, matrixForCulling: Long, nearPlane: Double, farPlane: Double)
 external fun FilaCamera_setCustomProjection(camera: Long, matrix: Long, matrixForCulling: Long, nearPlane: Double, farPlane: Double)
 external fun FilaCamera_setExposure(camera: Long, aperture: Float, shutterSpeed: Float, sensitivity: Float)
 external fun FilaCamera_setEyeModelMatrix(camera: Long, eyeId: Int, matrix: Long)
@@ -161,11 +161,11 @@ external fun FilaEngine_setPaused(engine: Long, paused: Boolean)
 external fun FilaEngine_unprotected(engine: Long)
 external fun FilaEntityManager_advanceEpoch(em: Long)
 external fun FilaEntityManager_create(em: Long): Int
-external fun FilaEntityManager_createArray(em: Long, n: Long, outEntities: Long)
+external fun FilaEntityManager_createArray(em: Long, n: Int, outEntities: Long)
 external fun FilaEntityManager_destroy(em: Long, entity: Int)
-external fun FilaEntityManager_destroyArray(em: Long, n: Long, entities: Long)
+external fun FilaEntityManager_destroyArray(em: Long, n: Int, entities: Long)
 external fun FilaEntityManager_get(): Long
-external fun FilaEntityManager_getMaxEntityCount(em: Long): Long
+external fun FilaEntityManager_getMaxEntityCount(em: Long): Int
 external fun FilaEntityManager_isAlive(em: Long, entity: Int): Boolean
 external fun FilaFence_wait(fence: Long, mode: Int, timeoutNanoSeconds: Long): Int
 external fun FilaFence_waitAndDestroy(fence: Long, mode: Int): Int
@@ -347,20 +347,20 @@ external fun FilaMaterial_setDefaultParameter_float4(material: Long, name: Strin
 external fun FilaMaterial_setDefaultParameter_int(material: Long, name: String?, value: Int)
 external fun FilaMathUtils_packTangentFrame(tangentX: Float, tangentY: Float, tangentZ: Float, bitangentX: Float, bitangentY: Float, bitangentZ: Float, normalX: Float, normalY: Float, normalZ: Float, outQuaternion: Long)
 external fun FilaMorphTargetBufferBuilder_build(builder: Long, engine: Long): Long
-external fun FilaMorphTargetBufferBuilder_count(builder: Long, count: Long)
+external fun FilaMorphTargetBufferBuilder_count(builder: Long, count: Int)
 external fun FilaMorphTargetBufferBuilder_create(): Long
 external fun FilaMorphTargetBufferBuilder_destroy(builder: Long)
 external fun FilaMorphTargetBufferBuilder_enableCustomMorphing(builder: Long, enabled: Boolean)
-external fun FilaMorphTargetBufferBuilder_vertexCount(builder: Long, vertexCount: Long)
+external fun FilaMorphTargetBufferBuilder_vertexCount(builder: Long, vertexCount: Int)
 external fun FilaMorphTargetBufferBuilder_withPositions(builder: Long, enabled: Boolean)
 external fun FilaMorphTargetBufferBuilder_withTangents(builder: Long, enabled: Boolean)
-external fun FilaMorphTargetBuffer_getCount(buffer: Long): Long
-external fun FilaMorphTargetBuffer_getVertexCount(buffer: Long): Long
+external fun FilaMorphTargetBuffer_getCount(buffer: Long): Int
+external fun FilaMorphTargetBuffer_getVertexCount(buffer: Long): Int
 external fun FilaMorphTargetBuffer_hasPositions(buffer: Long): Boolean
 external fun FilaMorphTargetBuffer_hasTangents(buffer: Long): Boolean
 external fun FilaMorphTargetBuffer_isCustomMorphingEnabled(buffer: Long): Boolean
-external fun FilaMorphTargetBuffer_setPositionsAt(buffer: Long, engine: Long, targetIndex: Long, positions: Long, count: Long)
-external fun FilaMorphTargetBuffer_setTangentsAt(buffer: Long, engine: Long, targetIndex: Long, tangents: Long, count: Long)
+external fun FilaMorphTargetBuffer_setPositionsAt(buffer: Long, engine: Long, targetIndex: Int, positions: Long, count: Int)
+external fun FilaMorphTargetBuffer_setTangentsAt(buffer: Long, engine: Long, targetIndex: Int, tangents: Long, count: Int)
 external fun FilaRenderTargetBuilder_build(builder: Long, engine: Long): Long
 external fun FilaRenderTargetBuilder_create(): Long
 external fun FilaRenderTargetBuilder_destroy(builder: Long)
@@ -484,9 +484,9 @@ external fun FilaSkinningBufferBuilder_build(builder: Long, engine: Long): Long
 external fun FilaSkinningBufferBuilder_create(): Long
 external fun FilaSkinningBufferBuilder_destroy(builder: Long)
 external fun FilaSkinningBufferBuilder_initialize(builder: Long, initialize: Boolean)
-external fun FilaSkinningBuffer_getBoneCount(buffer: Long): Long
-external fun FilaSkinningBuffer_setBonesMat4f(buffer: Long, engine: Long, matrices: Long, boneCount: Long, offset: Long)
-external fun FilaSkinningBuffer_setBonesQuaternions(buffer: Long, engine: Long, bones: Long, boneCount: Long, offset: Long)
+external fun FilaSkinningBuffer_getBoneCount(buffer: Long): Int
+external fun FilaSkinningBuffer_setBonesMat4f(buffer: Long, engine: Long, matrices: Long, boneCount: Int, offset: Int)
+external fun FilaSkinningBuffer_setBonesQuaternions(buffer: Long, engine: Long, bones: Long, boneCount: Int, offset: Int)
 external fun FilaSkyboxBuilder_build(builder: Long, engine: Long): Long
 external fun FilaSkyboxBuilder_color(builder: Long, r: Float, g: Float, b: Float, a: Float)
 external fun FilaSkyboxBuilder_create(): Long
@@ -507,7 +507,7 @@ external fun FilaStreamBuilder_height(builder: Long, height: Int)
 external fun FilaStreamBuilder_stream(builder: Long, nativeStream: Long)
 external fun FilaStreamBuilder_width(builder: Long, width: Int)
 external fun FilaStream_getStreamType(stream: Long): Int
-external fun FilaStream_getTimestamp(stream: Long): Long
+external fun FilaStream_getTimestamp(stream: Long, out: Long)
 external fun FilaStream_setAcquiredImage(stream: Long, engine: Long, image: Long, handler: Long, callback: Long, userdata: Long, transform: Long)
 external fun FilaStream_setDimensions(stream: Long, width: Int, height: Int)
 external fun FilaSurfaceOrientationBuilder_build(builder: Long): Long
@@ -605,8 +605,8 @@ external fun FilaTransformManager_create(tm: Long, entity: Int): Int
 external fun FilaTransformManager_createWithParent(tm: Long, entity: Int, parent: Int, localTransform: Long): Int
 external fun FilaTransformManager_createWithParentFp64(tm: Long, entity: Int, parent: Int, localTransform: Long): Int
 external fun FilaTransformManager_destroy(tm: Long, entity: Int)
-external fun FilaTransformManager_getChildCount(tm: Long, instance: Int): Long
-external fun FilaTransformManager_getChildren(tm: Long, instance: Int, outEntities: Long, count: Long)
+external fun FilaTransformManager_getChildCount(tm: Long, instance: Int): Int
+external fun FilaTransformManager_getChildren(tm: Long, instance: Int, outEntities: Long, count: Int)
 external fun FilaTransformManager_getInstance(tm: Long, entity: Int): Int
 external fun FilaTransformManager_getParent(tm: Long, instance: Int): Int
 external fun FilaTransformManager_getTransform(tm: Long, instance: Int, out: Long)
