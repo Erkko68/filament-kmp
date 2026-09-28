@@ -22,7 +22,7 @@ Override via `rememberFilamentEngine(backend = Engine.Backend.OPENGL)` or `Engin
 
 ## Android
 
-- Binds Filament through JNI over the same `c/` wrapper as JVM, iOS and web (`:android`, published as `filament-jni`), not the upstream `filament-android` AAR.
+- Binds Filament through JNI over the same `c/` wrapper as JVM, iOS and web (`:jni` bindings + `:android` runtime, published as `filament-jni` + `filament-jni-android`), not the upstream `filament-android` AAR.
 - `SurfaceView` is used for rendering; Compose overlays on top are limited (see [Integration Strategies](compose/integration-strategies.md)). For full overlay support, render into a `TextureView` (not currently exposed by `filament-compose`).
 - Minimum `compileSdk`: **37**. Minimum `minSdk`: **24**.
 

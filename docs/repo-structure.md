@@ -48,7 +48,9 @@ in table form.
 
 - **`web/`**: The web counterpart of `java/`, used by the **Web** targets (`js` + `wasmJs`). It builds `c/` with Emscripten into `filament-kmp.{js,wasm}` (+ `filamat-kmp.{js,wasm}`), generates Kotlin externals for every exported `Fila*` function from the C headers, and holds the small runtime (heap access, strings, callbacks, WebGL context). See [`web/README.md`](../web/README.md).
 
-- **`android/`**: The Android counterpart of `java/` and `web/`. AGP builds `c/` with the NDK into `libfilament-c.so` per ABI over upstream's `android-native` prebuilts, with JNI forwarders generated from the C headers plus a small hand-written runtime. See [`android/README.md`](../android/README.md).
+- **`jni/`**: The JNI counterpart of `java/` and `web/`: JNI forwarders and Kotlin externals generated from the C headers, plus a small hand-written runtime. Sources only; each JNI runtime compiles them. See [`jni/README.md`](../jni/README.md).
+
+- **`android/`**: The Android runtime for `jni/`: builds `c/` with the NDK into `libfilament-c.so` per ABI over upstream's `android-native` prebuilts. See [`android/README.md`](../android/README.md).
 
 - **`kotlin/`**: The core Kotlin Multiplatform wrapper. Contains five modules:
     - `filament` — Core engine components (Engine, Scene, View, Renderer, …).
@@ -74,7 +76,7 @@ in table form.
 
 The project uses **Gradle (Kotlin DSL)** for dependency management and build orchestration.
 
-- **Android** delegates entirely to the official Filament Gradle plugin / Maven artifact.
+- **Android** builds the `c/` wrapper plus the generated JNI forwarders with the NDK from the `:android` module (`buildJniLibs`), one `libfilament-c.so` per ABI (see [`android/README.md`](../android/README.md)).
 - **JVM** builds invoke **CMake** from the `:java` module build script to compile the combined `libfilament-c` shared image, then run **`jextract`** over the C headers to generate the FFM bindings.
 - **Native (iOS / macOS)** builds invoke **CMake** from the `:kotlin:*` module build scripts to compile the C wrapper, then run `cinterop` to generate Kotlin bindings.
 - **Web** builds the `c/` wrapper with Emscripten from the `:web` module (`buildFilamentWasm`), linking the wasm Filament libraries in `prebuilts/wasm/`, and generates the externals from the C headers (see [`web/README.md`](../web/README.md)).

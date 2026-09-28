@@ -200,7 +200,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         val androidSurface = requireNotNull(surface.surface as? android.view.Surface) {
             "NativeSurface must wrap an android.view.Surface, got ${surface.surface::class}"
         }
-        val window = FilaJni.windowFromSurface(androidSurface)
+        val window = FilaAndroid.windowFromSurface(androidSurface)
         check(window != 0L) { "No ANativeWindow for $androidSurface (released?)" }
         return SwapChain(FilaEngine_createSwapChain(nativeHandle, window, flags), window)
     }

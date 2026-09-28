@@ -2,11 +2,11 @@
 // Backs io.github.erkko68.filament.jni.FilaJni.
 
 #include <jni.h>
-#include <android/native_window_jni.h>
 
 #include <cstdint>
 #include <cstdlib>
 
+#ifdef __ANDROID__
 // Private upstream header (backend/include/private/backend/VirtualMachineEnv.h); only this entry is needed.
 namespace filament {
 class VirtualMachineEnv {
@@ -14,6 +14,7 @@ public:
     static jint JNI_OnLoad(JavaVM* vm);
 };
 } // namespace filament
+#endif
 
 static JavaVM* sVm = nullptr;
 static jmethodID sInvoke = nullptr; // FilaCallback.invoke(long, long)
@@ -22,8 +23,10 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env;
     if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) return -1;
     sVm = vm;
-    // Filament's Android backend (streams, EGL helpers) needs the VM, as in upstream filament-jni.
+#ifdef __ANDROID__
+    // Filament's Android backend (streams, EGL helpers) needs the VM, as in upstream filament-android.
     filament::VirtualMachineEnv::JNI_OnLoad(vm);
+#endif
     jclass callback = env->FindClass("io/github/erkko68/filament/jni/FilaCallback");
     sInvoke = env->GetMethodID(callback, "invoke", "(JJ)V");
     env->DeleteLocalRef(callback);
@@ -89,14 +92,6 @@ FILA_JNI(jlong, address)(JNIEnv* env, jclass, jobject buffer) {
 
 FILA_JNI(jobject, view)(JNIEnv* env, jclass, jlong ptr, jlong size) {
     return env->NewDirectByteBuffer(reinterpret_cast<void*>(ptr), size);
-}
-
-FILA_JNI(jlong, windowFromSurface)(JNIEnv* env, jclass, jobject surface) {
-    return reinterpret_cast<jlong>(ANativeWindow_fromSurface(env, surface));
-}
-
-FILA_JNI(void, releaseWindow)(JNIEnv*, jclass, jlong window) {
-    ANativeWindow_release(reinterpret_cast<ANativeWindow*>(window));
 }
 
 FILA_JNI(jlong, newCallback)(JNIEnv* env, jclass, jobject target, jboolean once) {

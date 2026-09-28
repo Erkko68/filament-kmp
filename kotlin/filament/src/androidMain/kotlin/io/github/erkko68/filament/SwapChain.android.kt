@@ -15,7 +15,7 @@ actual class SwapChain @InternalFilamentApi constructor(internal var nativeHandl
     actual val nativeWindow: Any? get() = window.takeIf { it != 0L }
 
     internal fun releaseWindow() {
-        if (window != 0L) FilaJni.releaseWindow(window)
+        if (window != 0L) FilaAndroid.releaseWindow(window)
         window = 0
     }
 

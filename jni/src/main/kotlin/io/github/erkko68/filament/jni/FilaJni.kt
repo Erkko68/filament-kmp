@@ -30,10 +30,6 @@ object FilaJni {
     /** Reads a NUL-terminated UTF-8 string, or null for a null pointer. */
     @JvmStatic external fun readString(ptr: Long): String?
 
-    /** `ANativeWindow*` for an `android.view.Surface`, for FilaEngine_createSwapChain; release with [releaseWindow]. */
-    @JvmStatic external fun windowFromSurface(surface: Any): Long
-    @JvmStatic external fun releaseWindow(window: Long)
-
     @JvmStatic external fun getF32(ptr: Long): Float
     @JvmStatic external fun setF32(ptr: Long, value: Float)
     @JvmStatic external fun getF64(ptr: Long): Double

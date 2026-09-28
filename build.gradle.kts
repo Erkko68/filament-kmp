@@ -19,7 +19,8 @@ apiValidation {
         "test-support", // internal test helpers, not published
         "web",          // generated Fila* externals over filament-kmp.wasm, not a curated API
         "java",         // filament-ffm: jextract-generated FFM bindings, not a curated API
-        "android",      // filament-jni: generated JNI bindings, not a curated API
+        "jni",          // filament-jni: generated JNI bindings, not a curated API
+        "android",      // filament-jni-android: libfilament-c.so per ABI for filament-jni
     )
 }
 

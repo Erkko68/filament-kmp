@@ -50,4 +50,5 @@ include(":java:runtime-linux-arm64")
 include(":java:runtime-windows-x64")
 
 include(":web") // Fila* C API compiled to wasm (filament-kmp/filamat-kmp) + generated externals
-include(":android") // Fila* C API as libfilament-c.so per ABI + generated JNI bindings
+include(":jni")     // generated JNI bindings over the Fila* C API (Kotlin + C forwarders)
+include(":android") // libfilament-c.so per ABI: the Android runtime for :jni

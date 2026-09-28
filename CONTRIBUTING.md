@@ -26,6 +26,7 @@ label so we can track it (and patch our prebuilts if needed).
 |---|---|
 | `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`) — `commonMain` + per-target actuals. |
 | `web/` | The `c/` wrapper compiled to wasm (`filament-kmp`, `filamat-kmp`) + Kotlin externals generated from the C headers, shared by the `js` and `wasmJs` targets (`web/README.md`). |
+| `jni/`, `android/` | JNI bindings generated from the C headers (`jni/README.md`) and their Android runtime, `libfilament-c.so` per ABI (`android/README.md`). |
 | `c/`, `java/`, `build-logic/` | Native glue, the JVM Panama/FFM runtime, and the convention plugins. |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |

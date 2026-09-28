@@ -23,7 +23,8 @@ classify() {
         java/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;
         web/*|kotlin/*/src/web*|kotlin/*/src/js*|kotlin/*/src/wasmJs*|samples/webApp/*|gradle/karma/*|kotlin-js-store/*|.github/actions/setup-wasm/*) web=true ;;
         kotlin/*/src/native*|kotlin/*/src/ios*|samples/iosApp/*|samples/shared/src/iosMain/*) ios=true ;;
-        android/*|kotlin/*/src/android*|samples/androidApp/*) android=true ;;
+        # jni/ is Android-only until a JVM JNI runtime reuses it.
+        jni/*|android/*|kotlin/*/src/android*|samples/androidApp/*) android=true ;;
         *) all ;;
     esac
 }

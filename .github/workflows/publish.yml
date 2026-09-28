@@ -115,7 +115,7 @@ jobs:
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_macosArm64
       - uses: ./.github/actions/setup-wasm
-      # :android (filament-jni) builds libfilament-c.so per ABI with upstream's pinned NDK/CMake.
+      # :android (filament-jni-android) builds libfilament-c.so per ABI with upstream's pinned NDK/CMake.
       - name: Install NDK + CMake
         run: |
           SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
@@ -152,6 +152,7 @@ jobs:
             :kotlin:gltfio:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-compose:publishAllPublicationsToMavenCentralRepository \
             :web:publishAllPublicationsToMavenCentralRepository \
+            :jni:publishAllPublicationsToMavenCentralRepository \
             :android:publishAllPublicationsToMavenCentralRepository \
             --no-configuration-cache
 

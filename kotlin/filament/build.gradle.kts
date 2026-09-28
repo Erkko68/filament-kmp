@@ -30,7 +30,7 @@ kotlin {
             implementation(project(":kotlin:test-support"))
         }
         androidMain.dependencies {
-            // libfilament-c.so per ABI + generated JNI bindings over the Fila* C API (see :android).
+            // libfilament-c.so per ABI (:android) + the generated JNI bindings over the Fila* C API it carries (:jni).
             api(project(":android"))
         }
         jvmMain.dependencies {
