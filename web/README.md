@@ -1,8 +1,8 @@
 # `:web` — Web runtime (the C API compiled to wasm)
 
-The web counterpart of [`:java`](../java/README.md). It builds the same C wrapper ([`c/`](../c))
-with Emscripten and exposes it to the `js` and `wasmJs` targets through Kotlin externals generated
-from the C headers. There is no embind and no upstream `filament.js`.
+The web runtime. It builds the same C wrapper ([`c/`](../c)) with Emscripten, loads it, and
+exposes its `Fila*` exports to the `js` and `wasmJs` targets. There is no embind and no upstream
+`filament.js`.
 
 Published as **`io.github.erkko68.filament:web`** and pulled in transitively by every
 `:kotlin:*` web target, so consumers never add it by hand. The `.js`/`.wasm` files are **not**
@@ -20,7 +20,7 @@ inside the klib (webpack never sees klib resources); apps download them from the
 
 1. **`setupEmsdk`** installs emsdk into `.emsdk/` ([`setup-emsdk.sh`](../scripts/dev/setup-emsdk.sh)),
    pinned to the version upstream Filament builds with.
-2. **`generateWasmExternals`** ([`WasmExternals.kt`](../build-logic/src/main/kotlin/WasmExternals.kt))
+2. **`generateWasmExternals`** (being retired, see below; [`WasmExternals.kt`](../build-logic/src/main/kotlin/WasmExternals.kt))
    parses `c/*/c/*.h` with Emscripten's clang (AST + record layouts) and emits, per C module, an
    `external interface` of raw exports plus cinterop-named wrappers (`FilaEngine_createView(...)`),
    so `webMain` actuals read like `nativeMain` ones. Also enum constants and struct field offsets.
@@ -33,7 +33,19 @@ inside the klib (webpack never sees klib resources); apps download them from the
 4. **`stageFilamentWasm` / `stageFilamatWasm`** copy the outputs to `build/filamentWasm` and
    `build/filamatWasm` for tests, the samples and the release assets.
 
-## Calling convention
+## How common code reaches the wasm
+
+The API classes in `commonMain` declare `external fun FilaX(...)` next to them (see
+[Native Bindings](../docs/bindings.md)). On js and wasmJs such a top-level external resolves to the
+global `FilaX`, so when the module loads, `FilamentModule.kt` copies every `_FilaX` export onto
+`globalThis.FilaX`. Wasm returns C `bool` as `0`/`1`; the link step writes the `bool`-returning
+functions (scanned from the C headers) into `Module.filaBoolExports`, and those globals are
+wrapped to return real booleans (js would otherwise see `1`, not `true`).
+
+## Calling convention (generated externals, being retired)
+
+The header-generated externals below still serve the web `actual`s that haven't moved to
+`commonMain` yet.
 
 - Pointers are wasm32 addresses (`Int`); C `bool` is `Int`; 64-bit integers are `JsBigInt`
   (use `toI64()`/`toKotlinLong()`: Kotlin/JS `Long.toJsBigInt()` is a no-op cast).

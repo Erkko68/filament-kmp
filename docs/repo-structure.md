@@ -4,55 +4,52 @@ The `filament-kmp` project is organized into several modules to handle the cross
 
 ## Architecture at a glance
 
-One shared `expect` surface in `commonMain` fans out into four platform `actual`
-implementations, each bound to the native engine by a different mechanism. Everything above
-the dashed line is Kotlin we maintain; everything below is the upstream Google Filament engine.
+The API is written once in `commonMain`: each class holds a native pointer and calls our C API
+(`c/`) through `external fun`s declared next to it, the model skiko uses for Skia. Only the way an
+`external fun` reaches its C symbol differs per platform, and none of that is hand-written. See
+[Native Bindings](bindings.md) for the details and the rules for adding one.
 
 ```mermaid
 flowchart TB
-    subgraph common["kotlin/ · commonMain — one expect surface"]
+    subgraph common["kotlin/ · commonMain — API classes + external fun declarations"]
         API["filament · filamat · gltfio · filament-utils<br/>filament-compose (Compose MP UI)"]
     end
 
-    API --> AND["androidMain<br/>(actual)"]
-    API --> JVM["jvmMain<br/>(actual)"]
-    API --> NAT["iosMain / macosMain<br/>(actual)"]
-    API --> WEB["webMain<br/>(actual)"]
+    API -->|"@SymbolName"| NAT["iOS · c/ static libs in the klib"]
+    API -->|"JNI + generated glue"| JVM["JVM desktop · libfilament-c per host"]
+    API -->|"JNI + generated glue"| AND["Android · android/ libfilament-c.so per ABI"]
+    API -->|"wasm exports as globals"| WEB["js + wasmJs · web/ filament-kmp.wasm"]
 
-    AND -->|generated JNI| JNI["android/ · libfilament-c.so<br/>(per ABI, built from c/)"]
-    JVM -->|jextract → FFM| FFM["java/ · libfilament-c<br/>(shared, built from c/)"]
-    NAT -->|cinterop| CIN["c/ wrapper<br/>(per-module static libs)"]
-    WEB -->|generated externals| JS["web/ · filament-kmp.wasm<br/>(built from c/ with emcc)"]
-
-    JNI --> CWRAP["c/ — C-ABI over Filament C++"]
-    FFM --> CWRAP
-    CIN --> CWRAP
-    JS --> CWRAP
+    NAT --> CWRAP["c/ — Fila* C API over Filament C++"]
+    JVM --> CWRAP
+    AND --> CWRAP
+    WEB --> CWRAP
 
     CWRAP -.-> ENGINE
-    MAVEN -.-> ENGINE
 
     subgraph upstream["Google Filament (upstream)"]
         ENGINE["Native engine + prebuilt binaries<br/>(prebuilts/ · include/ · downloaded per filaVersion)"]
     end
 ```
 
-See [Binding Strategy by Platform](#binding-strategy-by-platform) below for the same mapping
-in table form.
+> [!NOTE]
+> Migration in progress: classes are moving from per-platform `actual`s to `commonMain` one at a
+> time, and the JVM still runs the rest on Project Panama (`java/`). See
+> [Migration status](bindings.md#migration-status).
 
 ## Core Modules
 
-- **`c/`**: C++ wrapper that exposes a C-compatible ABI around the official Filament C++ API. Consumed four ways: **Kotlin Native** targets (iOS, macOS) via `cinterop` (one CMake library per sub-module — `libfilament-c.a`, `libfilamat-c.a`, `libfilament-utils-c.a`, `libgltfio-c.a`), the **JVM/Desktop** target via `jextract` (the `FILAMENT_BUILD_SHARED` path links all four into one `libfilament-c` shared image), the **Web** targets via Emscripten (`FILAMENT_PLATFORM=wasm` links `filament-kmp.wasm` and a separate `filamat-kmp.wasm`), and **Android** via JNI (`FILAMENT_PLATFORM=android` links one `libfilament-c.so` per ABI). Each module's C-ABI types live in its own `*Types.h` header (core types in `filament/c/FilaTypes.h`).
+- **`c/`**: C++ wrapper that exposes a C-compatible ABI (the `Fila*` functions) around the official Filament C++ API; every platform binds it. One CMake project builds it per target: static libraries for **Kotlin/Native** (one per sub-module — `libfilament-c.a`, `libfilamat-c.a`, `libfilament-utils-c.a`, `libgltfio-c.a`), one shared `libfilament-c` for the **JVM desktop** (`FILAMENT_BUILD_SHARED`, with the JNI glue compiled in), one `libfilament-c.so` per ABI for **Android** (`FILAMENT_PLATFORM=android`), and `filament-kmp.wasm` + `filamat-kmp.wasm` for **web** (`FILAMENT_PLATFORM=wasm`). Each module's C-ABI types live in its own `*Types.h` header (core types in `filament/c/FilaTypes.h`).
 
-- **`java/`**: The single Project Panama (FFM) JVM binding module used by the **JVM/Desktop** target only. It drives the combined `libfilament-c` shared build via CMake, runs `jextract` over the C headers to generate the low-level bindings, bundles the native image as a JAR resource, and loads it at runtime. Android has its own counterpart, `android/`. See [`java/README.md`](../java/README.md).
+- **`jni/`**: The JNI runtime shared by JVM desktop and Android: native memory and callbacks (`FilaJni`), the desktop library loader (`FilamentLoader`), and `generateJniGlue`, which writes the JNI forwarders for the common `external fun`s. See [`jni/README.md`](../jni/README.md).
 
-- **`web/`**: The web counterpart of `java/`, used by the **Web** targets (`js` + `wasmJs`). It builds `c/` with Emscripten into `filament-kmp.{js,wasm}` (+ `filamat-kmp.{js,wasm}`), generates Kotlin externals for every exported `Fila*` function from the C headers, and holds the small runtime (heap access, strings, callbacks, WebGL context). See [`web/README.md`](../web/README.md).
+- **`android/`**: The Android runtime: builds `c/` plus the JNI glue with the NDK into `libfilament-c.so` per ABI over upstream's `android-native` prebuilts. See [`android/README.md`](../android/README.md).
 
-- **`jni/`**: The JNI counterpart of `java/` and `web/`: JNI forwarders and Kotlin externals generated from the C headers, plus a small hand-written runtime. Sources only; each JNI runtime compiles them. See [`jni/README.md`](../jni/README.md).
+- **`web/`**: The web runtime (`js` + `wasmJs`): builds `c/` with Emscripten into `filament-kmp.{js,wasm}` (+ `filamat-kmp.{js,wasm}`), loads it and installs its exports as the globals the common `external fun`s bind to, and holds the heap/callback/WebGL helpers. See [`web/README.md`](../web/README.md).
 
-- **`android/`**: The Android runtime for `jni/`: builds `c/` with the NDK into `libfilament-c.so` per ABI over upstream's `android-native` prebuilts. See [`android/README.md`](../android/README.md).
+- **`java/`** *(being removed)*: The Project Panama (FFM) module the JVM target used before the move to JNI. It drives the desktop `libfilament-c` CMake build and runs `jextract` for the classes not yet in `commonMain`. See [`java/README.md`](../java/README.md).
 
-- **`kotlin/`**: The core Kotlin Multiplatform wrapper. Contains five modules:
+- **`kotlin/`**: The core Kotlin Multiplatform wrapper. API classes and their `external fun` declarations live in each module's `commonMain`; the small per-platform interop runtime (`NativePointer`, `InteropScope`) is in `kotlin/filament`'s `interop/` package. Contains five modules:
     - `filament` — Core engine components (Engine, Scene, View, Renderer, …).
     - `filamat` — Material compilation (MaterialBuilder).
     - `gltfio` — glTF asset loading (AssetLoader, FilamentAsset, Animator, …).
@@ -65,18 +62,19 @@ in table form.
 
 ## Binding Strategy by Platform
 
-| Platform | Filament binding | Source |
-| :--- | :--- | :--- |
-| **Android** | Generated JNI over the C wrapper | `android/` module + `c/` wrapper + `prebuilts/android-*` |
-| **JVM / Desktop** | Project Panama (FFM) over the C wrapper | `java/` module + `c/` wrapper |
-| **iOS / macOS** | C-interop (Kotlin Native) | `c/` wrapper + `prebuilts/` |
-| **Web / WASM** | Generated externals over our own wasm | `web/` module + `c/` wrapper + `prebuilts/wasm/` |
+| Platform | How a common `external fun` binds | Native library | Source |
+| :--- | :--- | :--- | :--- |
+| **Android** | JNI, forwarders generated from the Kotlin declarations | `libfilament-c.so` per ABI | `android/` + `jni/` + `c/` + `prebuilts/android-*` |
+| **JVM / Desktop** | JNI, same forwarders (Panama/FFM for classes not yet migrated) | `libfilament-c` per host | `java/` (CMake) + `jni/` + `c/` |
+| **iOS** | `@SymbolName`, a direct call to the C symbol | `c/` static libs in the klib | `c/` + `prebuilts/` |
+| **Web / WASM** | by name, against the wasm exports installed as globals | `filament-kmp.wasm` | `web/` + `c/` + `prebuilts/wasm/` |
 
 ## Build System
 
-The project uses **Gradle (Kotlin DSL)** for dependency management and build orchestration.
+The project uses **Gradle (Kotlin DSL)** for dependency management and build orchestration; the convention plugins and build tasks live in `build-logic/`.
 
-- **Android** builds the `c/` wrapper plus the generated JNI forwarders with the NDK from the `:android` module (`buildJniLibs`), one `libfilament-c.so` per ABI (see [`android/README.md`](../android/README.md)).
-- **JVM** builds invoke **CMake** from the `:java` module build script to compile the combined `libfilament-c` shared image, then run **`jextract`** over the C headers to generate the FFM bindings.
-- **Native (iOS / macOS)** builds invoke **CMake** from the `:kotlin:*` module build scripts to compile the C wrapper, then run `cinterop` to generate Kotlin bindings.
-- **Web** builds the `c/` wrapper with Emscripten from the `:web` module (`buildFilamentWasm`), linking the wasm Filament libraries in `prebuilts/wasm/`, and generates the externals from the C headers (see [`web/README.md`](../web/README.md)).
+- **Android** builds the `c/` wrapper plus the JNI runtime and glue with the NDK from the `:android` module (`buildJniLibs`), one `libfilament-c.so` per ABI (see [`android/README.md`](../android/README.md)).
+- **JVM** builds the desktop `libfilament-c` with **CMake** from the `:java` module (JNI runtime and glue included), then runs `jextract` for the classes still on FFM.
+- **Native (iOS)** builds invoke **CMake** from the `:kotlin:*` module build scripts to compile the C wrapper; `cinterop` packs the static libraries into the klib.
+- **Web** builds the `c/` wrapper with Emscripten from the `:web` module (`buildFilamentWasm`), linking the wasm Filament libraries in `prebuilts/wasm/` (see [`web/README.md`](../web/README.md)).
+- **JNI glue**: `:jni:generateJniGlue` writes the forwarders from the common `external fun` declarations; the Android and desktop builds depend on it.
