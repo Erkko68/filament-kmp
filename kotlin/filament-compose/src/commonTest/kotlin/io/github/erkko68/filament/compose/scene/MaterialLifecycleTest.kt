@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
  * NOOP driver panics on, so this gates on a DEFAULT backend via [TierBSceneFixture]. Verifies the happy
  * path (build → kept valid while composed → freed on disposal) and the contract that a bad payload never
  * throws inside composition — it returns null and invokes `onError`. The bad-payload path is the
- * regression guard for the FFM/native parser-panic fix (`Material.Builder.build` traps the native panic
+ * regression guard for the native parser-panic fix (`Material.Builder.build` traps the native panic
  * and throws a catchable error instead of aborting the process).
  *
  * `rememberTexture` is deliberately not covered here: the JVM image decoder calls `abort()` on

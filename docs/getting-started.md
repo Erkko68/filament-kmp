@@ -8,7 +8,7 @@ There are two ways to use the library. The platform setup in step 3 — JDK floo
 - **Without Compose** — depend on `filament` alone and drive `Engine` / `Renderer` / `SwapChain` yourself, against your own window or fully headless. That route is documented in **[Using the Engine Without Compose](engine.md)**.
 
 > [!NOTE]
-> Filament KMP requires **Kotlin 2.0+** and, for the Desktop/JVM target, **JDK 22+** (the floor for the Project Panama / FFM bindings). `filament-compose` needs **Compose Multiplatform 1.12+** and, on Android, **AGP 9.1+**.
+> Filament KMP requires **Kotlin 2.0+** and, for the Desktop/JVM target, **JDK 17+**. `filament-compose` needs **Compose Multiplatform 1.12+** and, on Android, **AGP 9.1+**.
 
 ## 1. Add the Maven Central repository
 
@@ -119,52 +119,10 @@ struct ContentView: View {
 
 ### JVM / Desktop
 
-The Compose Desktop plugin handles the rest. The native runtime — a Project Panama (FFM) module, `io.github.erkko68.filament-ffm:filament-ffm:...` — is pulled in automatically as a Gradle metadata dependency, so there's no manual classifier setup. It requires a **JDK 22+** runtime (the FFM API floor).
-
-```kotlin
-// desktopApp/build.gradle.kts
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
-plugins {
-    alias(libs.plugins.kotlinJvm) // or kotlin("jvm") if not using a version catalog
-    id("org.jetbrains.compose")
-    id("org.jetbrains.kotlin.plugin.compose")
-}
-
-kotlin {
-    // Pin the JDK toolchain — Gradle will download JDK 22 automatically if needed.
-    jvmToolchain(22)
-}
-```
-
-For a shared KMP module that also targets JVM, set the JVM compiler target explicitly:
-
-```kotlin
-// shared/build.gradle.kts
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
-kotlin {
-    jvmToolchain(22)
-
-    jvm {
-        // Ensure the bytecode target is compatible with FFM (Java 22+)
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_22
-        }
-    }
-
-    // Android uses a separate jvmTarget
-    androidTarget {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-        }
-    }
-}
-```
-
-> [!IMPORTANT]
-> Make sure your Gradle daemon also runs on JDK 22+
-> And verify with `./gradlew --version`. IntelliJ IDEA / Android Studio will prompt you to configure the Gradle JDK under **Settings → Build → Gradle → Gradle JDK**.
+The Compose Desktop plugin handles the rest. The native runtime (`io.github.erkko68.filament:filament-jni-desktop`
+plus a per-platform `filament-jni-runtime-<os>-<arch>` jar) comes in transitively, and any JDK 17+ runs it — no
+toolchain or bytecode-target setup beyond what Compose Desktop already needs. Before packaging per-platform
+installers, see [what Gradle actually downloads](modules.md#what-gradle-actually-downloads).
 
 Entry point:
 

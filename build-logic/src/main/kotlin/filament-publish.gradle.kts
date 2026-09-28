@@ -18,9 +18,7 @@ mavenPublishing {
 
     // Ship an empty -javadoc.jar for every module. API docs are hosted on GitHub Pages
     // (Dokka), and Maven Central only requires the artifact to exist — not have content. This
-    // avoids bundling duplicated Dokka HTML into the jars: ~80MB across the KMP targets, plus a
-    // ~5MB real javadoc jar the plain-JVM filament-ffm module would otherwise get from the
-    // plugin's Dokka default. Both branches must opt in explicitly — the vanniktech default is
+    // avoids bundling duplicated Dokka HTML into the jars: ~80MB across the KMP targets. Both branches must opt in explicitly — the vanniktech default is
     // JavadocJar.Dokka whenever the Dokka plugin is present.
     when {
         pluginManager.hasPlugin("com.android.library") ->
@@ -29,7 +27,7 @@ mavenPublishing {
             configure(KotlinMultiplatform(javadocJar = JavadocJar.Empty()))
         pluginManager.hasPlugin("org.jetbrains.kotlin.jvm") ->
             configure(KotlinJvm(javadocJar = JavadocJar.Empty(), sourcesJar = SourcesJar.Sources()))
-        // Plain resource jars (the :java:runtime* native-runtime modules).
+        // Plain jars (:desktop and its runtime-<os>-<arch> jars).
         pluginManager.hasPlugin("java-library") ->
             configure(JavaLibrary(javadocJar = JavadocJar.Empty(), sourcesJar = SourcesJar.Sources()))
     }

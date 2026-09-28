@@ -5,10 +5,11 @@ Filament KMP is split into five Kotlin Multiplatform modules, mirroring Filament
 Only **`filament-compose`** involves Compose. The other four are plain Kotlin bindings over the Filament API and work in any Kotlin code — a game loop, a headless renderer, an existing `SurfaceView` app. See **[Using the Engine Without Compose](engine.md)**.
 
 > [!NOTE]
-> All Kotlin modules are published under the group **`io.github.erkko68.filament`**.
-> The JVM/Desktop native runtime — a single Project Panama (FFM) module — is published as **`io.github.erkko68.filament-ffm:filament-ffm`** and pulled in transitively, so you never add it by hand.
+> Everything is published under the group **`io.github.erkko68.filament`**, native runtimes included
+> (`filament-jni`, `filament-jni-desktop`, `filament-jni-runtime-<os>-<arch>`, `filament-jni-android`, `web`);
+> they come in transitively, so you never add them by hand.
 >
-> Browse on Maven Central: [`io.github.erkko68.filament`](https://central.sonatype.com/namespace/io.github.erkko68.filament) · [`io.github.erkko68.filament-ffm`](https://central.sonatype.com/namespace/io.github.erkko68.filament-ffm)
+> Browse on Maven Central: [`io.github.erkko68.filament`](https://central.sonatype.com/namespace/io.github.erkko68.filament)
 > Direct repository: [`repo1.maven.org/.../io/github/erkko68/filament/`](https://repo1.maven.org/maven2/io/github/erkko68/filament/)
 
 ## Quick picker
@@ -33,7 +34,7 @@ What differs is the extra platform setup around it:
 | Target | Kotlin dependency | Also required |
 | :--- | :--- | :--- |
 | **Android** | `io.github.erkko68.filament:filament` | Nothing. The native runtime `io.github.erkko68.filament:filament-jni-android` (AAR, all four ABIs) comes in transitively. `compileSdk 37`, `minSdk 24`. |
-| **JVM / Desktop** (macOS, Windows, Linux) | same | **JDK 22+** at build and run time. The native runtime `io.github.erkko68.filament-ffm:filament-ffm` is transitive — nothing to add by hand. See [narrowing the natives](#what-gradle-actually-downloads). |
+| **JVM / Desktop** (macOS, Windows, Linux) | same | **JDK 17+**. The native runtime `io.github.erkko68.filament:filament-jni-desktop` is transitive — nothing to add by hand. See [narrowing the natives](#what-gradle-actually-downloads). |
 | **iOS** (`iosArm64`, `iosSimulatorArm64`) | same | Nothing. The Filament static libraries are inside the klib. Link your framework as `isStatic = true`. |
 | **Web** (`js`, `wasmJs`) | same | `filament-kmp.js` + `.wasm` (and `filamat-kmp.*` for `MaterialBuilder`) from the GitHub release, copied into `src/webMain/resources/` — they are **not** pulled in by Gradle. See [Platform Notes](platform-notes.md#filament-kmpjs-and-wasm-bundle). |
 
@@ -59,9 +60,9 @@ target and Gradle resolves only the ones your build declares: an Android-only ap
 downloads the iOS klibs or the web artifacts, a JS app never downloads the ~13 MB desktop
 natives. If your project declares three targets, you download three targets' artifacts.
 
-The one exception is the **JVM/Desktop native runtime**. `filament-ffm` defaults to depending
-on all four desktop platform modules (`macos-arm64`, `linux-x64`, `linux-arm64`,
-`windows-x64`, ~13 MB each), so that a plain `./gradlew run` works on any developer machine
+The one exception is the **JVM/Desktop native runtime**. `filament-jni-desktop` defaults to depending
+on all five desktop runtime jars (`macos-arm64`, `linux-x64`, `linux-arm64`, `windows-x64`,
+`windows-arm64`, ~13 MB each), so that a plain `./gradlew run` works on any developer machine
 with zero configuration. Two ways to narrow it to the one you need — worth doing before
 building an installer, since `jpackage` / Compose Desktop bundle the whole runtime classpath:
 
@@ -76,11 +77,11 @@ configurations.matching { it.isCanBeResolved }.configureEach {
 
 // Option B — depend on one platform runtime directly; it excludes its siblings.
 dependencies {
-    implementation("io.github.erkko68.filament-ffm:filament-ffm-runtime-macos-arm64:0.X.0")
+    implementation("io.github.erkko68.filament:filament-jni-runtime-macos-arm64:0.X.0")
 }
 ```
 
-Full details in [`java/README.md`](../java/README.md).
+Full details in [`desktop/README.md`](../desktop/README.md).
 
 ## Published artifacts
 

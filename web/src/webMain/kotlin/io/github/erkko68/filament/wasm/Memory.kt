@@ -1,27 +1,18 @@
 package io.github.erkko68.filament.wasm
 
-import org.khronos.webgl.Uint8Array
 import org.khronos.webgl.get
 import org.khronos.webgl.set
 
 // Typed access to the module's linear memory. Views are re-read on every access because any
 // allocating call can grow memory and detach the previous ones.
 
-fun FilamentModule.getI32(ptr: Int): Int = HEAP32[ptr ushr 2]
-fun FilamentModule.setI32(ptr: Int, value: Int) { HEAP32[ptr ushr 2] = value }
-fun FilamentModule.getU32(ptr: Int): Long = HEAPU32[ptr ushr 2].toLong() and 0xFFFFFFFFL
-fun FilamentModule.getF32(ptr: Int): Float = normalizeF32(HEAPF32[ptr ushr 2])
-fun FilamentModule.setF32(ptr: Int, value: Float) { HEAPF32[ptr ushr 2] = value }
-fun FilamentModule.getF64(ptr: Int): Double = HEAPF64[ptr ushr 3]
-fun FilamentModule.setF64(ptr: Int, value: Double) { HEAPF64[ptr ushr 3] = value }
-fun FilamentModule.getU8(ptr: Int): Int = HEAPU8[ptr].toInt() and 0xFF
-fun FilamentModule.setU8(ptr: Int, value: Int) { HEAPU8[ptr] = value.toByte() }
 fun FilamentModule.getU16(ptr: Int): Int = HEAPU16[ptr ushr 1].toInt() and 0xFFFF
 fun FilamentModule.setU16(ptr: Int, value: Int) { HEAPU16[ptr ushr 1] = value.toShort() }
-fun FilamentModule.getBool(ptr: Int): Boolean = HEAPU8[ptr].toInt() != 0
-fun FilamentModule.setBool(ptr: Int, value: Boolean) { HEAPU8[ptr] = if (value) 1 else 0 }
-fun FilamentModule.getI64(ptr: Int): Long = (getI32(ptr + 4).toLong() shl 32) or (getI32(ptr).toLong() and 0xFFFFFFFFL)
-fun FilamentModule.setI64(ptr: Int, value: Long) { setI32(ptr, value.toInt()); setI32(ptr + 4, (value ushr 32).toInt()) }
+fun FilamentModule.getI64(ptr: Int): Long = (HEAP32[(ptr + 4) ushr 2].toLong() shl 32) or (HEAP32[ptr ushr 2].toLong() and 0xFFFFFFFFL)
+fun FilamentModule.setI64(ptr: Int, value: Long) {
+    HEAP32[ptr ushr 2] = value.toInt()
+    HEAP32[(ptr + 4) ushr 2] = (value ushr 32).toInt()
+}
 
 fun FilamentModule.readFloats(ptr: Int, count: Int, out: FloatArray = FloatArray(count)): FloatArray {
     val heap = HEAPF32; val base = ptr ushr 2
@@ -64,53 +55,21 @@ expect fun FilamentModule.writeBytes(ptr: Int, bytes: ByteArray, offset: Int = 0
 /** Copies [count] bytes from the heap at [ptr] into a new ByteArray. */
 expect fun FilamentModule.readBytes(ptr: Int, count: Int): ByteArray
 
-fun FilamentModule.zero(ptr: Int, size: Int) = fill(HEAPU8, ptr, size)
-private fun fill(heap: Uint8Array, ptr: Int, size: Int): Unit = js("heap.fill(0, ptr, ptr + size)")
-
-/**
- * The web analogue of cinterop's `memScoped`: everything allocated in [block] is freed when it
- * returns. Allocations are zeroed, so structs only need the fields they actually set.
- */
-inline fun <R> FilamentModule.heapScoped(block: HeapScope.() -> R): R {
-    val scope = HeapScope(this)
-    try {
-        return scope.block()
-    } finally {
-        scope.freeAll()
-    }
-}
-
-class HeapScope(val module: FilamentModule) {
-    private val allocations = ArrayList<Int>(4)
-
-    fun alloc(size: Int): Int {
-        val ptr = module._malloc(maxOf(size, 1))
-        check(ptr != 0) { "wasm malloc($size) failed" }
-        module.zero(ptr, size)
-        allocations.add(ptr)
-        return ptr
-    }
-
-    /** NUL-terminated UTF-8 copy of [value]; returns 0 for null. */
-    fun cString(value: String?): Int {
-        if (value == null) return 0
-        val size = module.lengthBytesUTF8(value) + 1
-        val ptr = alloc(size)
-        module.stringToUTF8(value, ptr, size)
-        return ptr
-    }
-
-    fun bytes(values: ByteArray): Int = alloc(values.size).also { module.writeBytes(it, values) }
-    fun floats(values: FloatArray): Int = alloc(values.size * 4).also { module.writeFloats(it, values) }
-    fun doubles(values: DoubleArray): Int = alloc(values.size * 8).also { module.writeDoubles(it, values) }
-    fun ints(values: IntArray): Int = alloc(values.size * 4).also { module.writeInts(it, values) }
-    fun shorts(values: ShortArray): Int = alloc(values.size * 2).also { p -> values.forEachIndexed { i, v -> module.setU16(p + 2 * i, v.toInt()) } }
-
-    fun freeAll() {
-        allocations.forEach { module._free(it) }
-        allocations.clear()
-    }
-}
-
 /** Reads a NUL-terminated UTF-8 string, or null for a null pointer. */
 fun FilamentModule.readString(ptr: Int): String? = if (ptr == 0) null else UTF8ToString(ptr)
+
+/** A heap copy handed to an asynchronous Filament upload, released through [callback]. */
+class Upload(val ptr: Int, val size: Int, val callback: Int, val userData: Int)
+
+/**
+ * Copies [size] bytes of [data] into the heap for a `set*Buffer`/`setImage` call. Pass [Upload.callback]
+ * and [Upload.userData] as the C release callback: Filament frees the copy once consumed, then
+ * [onRelease] runs.
+ */
+fun FilamentModule.upload(data: ByteArray, size: Int = data.size, onRelease: (() -> Unit)? = null): Upload {
+    val ptr = _malloc(maxOf(size, 1))
+    check(ptr != 0) { "wasm malloc($size) failed" }
+    writeBytes(ptr, data, 0, size)
+    val userData = if (onRelease != null) Callbacks.register(once = true) { _, _ -> onRelease() } else 0
+    return Upload(ptr, size, Callbacks.freeBuffer, userData)
+}

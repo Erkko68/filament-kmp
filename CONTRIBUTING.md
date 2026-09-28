@@ -10,8 +10,8 @@ project is built, where a given problem belongs, and how to get changes merged.
 The single most useful thing you can do before filing an issue or PR is to figure out
 **whether the problem is in this wrapper or in Filament itself.**
 
-- **Wrapper bugs** live here: missing/incorrect Kotlin bindings (cinterop / JNI / FFM /
-  Kotlin-JS externals), Gradle/prebuilt plumbing, Compose integration, samples, packaging.
+- **Wrapper bugs** live here: missing/incorrect Kotlin bindings (Native / JNI /
+  wasm externals), Gradle/prebuilt plumbing, Compose integration, samples, packaging.
 - **Engine bugs** live in [google/filament](https://github.com/google/filament): rendering
   artifacts, backend (GL/Metal/Vulkan/WebGPU) errors, shader/material issues, crashes inside
   the native engine. These reproduce independently of Kotlin.
@@ -25,20 +25,19 @@ label so we can track it (and patch our prebuilts if needed).
 | Path | What it is |
 |---|---|
 | `kotlin/*` | The published library modules (`filament`, `filamat`, `gltfio`, `filament-utils`, `filament-compose`). API classes and their `external fun` bindings live in `commonMain` ([Native Bindings](docs/bindings.md)). |
-| `web/` | The web runtime: the `c/` wrapper compiled to wasm (`filament-kmp`, `filamat-kmp`), loaded and exposed to the `js` and `wasmJs` targets (`web/README.md`). |
-| `jni/`, `android/` | The JNI runtime shared by JVM desktop and Android, plus the generator for the JNI glue (`jni/README.md`), and the Android runtime, `libfilament-c.so` per ABI (`android/README.md`). |
-| `c/`, `java/`, `build-logic/` | The `Fila*` C API, the JVM desktop native build (plus the Panama/FFM bindings being retired), and the convention plugins. |
+| `c/` | The `Fila*` C API every platform builds, and the CMake entry point. |
+| `jni/`, `desktop/`, `android/`, `web/` | The native runtimes: the JNI runtime shared by desktop and Android, the desktop loader + per-platform runtime jars, `libfilament-c.so` per ABI, and the wasm runtimes (each has a README). |
+| `build-logic/` | Convention plugins and the `buildlogic.*` tooling: Filament targets, prebuilts, CMake, binding generation. |
 | `prebuilts/` | Filament binaries (downloaded per `filaVersion`; git-ignored). |
 | `samples/` | Sample apps (a composite `includeBuild`). |
 | `scripts/` | Dev cross-check + maintenance scripts (`scripts/README.md`). |
 
 ## Building
 
-You need JDK 22+ (the daemon runs on 25). Native targets download prebuilt
-Filament binaries automatically:
+You need JDK 17+. Native targets fetch Filament's binaries automatically:
 
 ```sh
-./gradlew downloadPrebuilts            # all targets + headers (or downloadPrebuilts_<target>)
+./gradlew prebuilts                    # pre-fetch every release target + headers (or prebuilts_<id>)
 ./gradlew compileKotlinJvm             # build a target (compileKotlinJs, compileReleaseKotlinAndroid, …)
 ./gradlew :kotlin:filament:jvmTest     # tests
 ./gradlew apiCheck                     # public-API surface check (CI-enforced; regen dumps with apiDump)
@@ -47,16 +46,14 @@ Filament binaries automatically:
 If you intentionally change the public API of a `:kotlin:*` module, run `./gradlew apiDump`
 and commit the updated `<module>/api/` files with your change — `apiCheck` fails otherwise.
 
-- **Web** needs emsdk and the wasm Filament libraries, which upstream doesn't publish. Run
-  `scripts/dev/build-wasm-libs.sh` once per `filaVersion` (it installs emsdk into `.emsdk/` and
-  builds `prebuilts/wasm/`; the first run takes a while).
+- **Web** needs the Emscripten SDK and Filament's wasm libraries, which upstream doesn't publish: the
+  build installs emsdk into `.emsdk/` and builds `prebuilts/wasm/` from source on first use
+  (`./gradlew prebuilts_wasm`; it takes a while, once per `filaVersion`).
 - **Adding a binding**: a `Fila*` shim in `c/` plus the Kotlin method and its `external fun` in
-  `commonMain` — see [Native Bindings](docs/bindings.md). Classes not yet migrated still have
-  per-platform actuals backed by the header-generated externals (`:web:generateWasmExternals`,
-  `:jni:generateJniBindings`; committed output).
-- **Bumping `filaVersion`** (in `gradle.properties`): delete `prebuilts/*` and `include/` so
-  they re-download (and rerun `build-wasm-libs.sh`), then run `check-common-api.sh` from
-  `scripts/README.md` to catch binding drift.
+  `commonMain` — see [Native Bindings](docs/bindings.md). The JNI forwarders and wasm export lists are
+  generated from those declarations (`:generateBindings`).
+- **Bumping `filaVersion`** (in `gradle.properties`): the prebuilts and headers are version-stamped and
+  refetch on the next build; then run `check-common-api.sh` from `scripts/README.md` to catch binding drift.
 
 ## API parity
 

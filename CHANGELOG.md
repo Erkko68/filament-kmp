@@ -18,11 +18,12 @@ Each entry is one line; click the version link at the bottom for the full diff.
 
 ### Changed
 - **Android runs on our own C API over JNI** (`filament-jni` + `filament-jni-android`, `libfilament-c.so` per ABI) instead of the upstream `filament-android`/`gltfio-android`/`filament-utils-android`/`filamat-android` artifacts; Android `nativeObject` is now the C handle as a `Long`.
-- **Web runs on our own C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` now holds the generated externals and runtime (package `io.github.erkko68.filament.wasm`).
+- **Web runs on our own C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` holds the wasm runtime (package `io.github.erkko68.filament.wasm`).
+- **Desktop runs on JNI instead of Project Panama (FFM)**: `filament-ffm*` is replaced by `filament-jni-desktop` + `filament-jni-runtime-<os>-<arch>` (group `io.github.erkko68.filament`), `NativeSurface` takes the window as a `Long` address, and the JVM floor drops from 22 to **17**.
 
 ### Added
 - **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` stops the render loop and keeps the last frame on screen, so a static or hidden view no longer renders every display refresh.
-- **JVM runtime for Windows on ARM**: `filament-ffm-runtime-windows-arm64`, with Filament built from source since upstream ships no prebuilts for it.
+- **JVM runtime for Windows on ARM**: `filament-jni-runtime-windows-arm64`, with Filament built from source since upstream ships no prebuilts for it.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `Filamat.initJs`.
 - **Runtime Material sample** scene compiling shaders with filamat.
 

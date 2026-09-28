@@ -52,10 +52,10 @@ See **[Using the Engine Without Compose](docs/engine.md)**.
 
 - **Android** — OpenGL ES / Vulkan via JNI bindings over the same C wrapper (`libfilament-c.so` per ABI)
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
-- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
-- **Web (JS & Wasm)** — WebGL 2.0 via the same C wrapper compiled to wasm with Emscripten, through generated Kotlin externals shared by the `js` and `wasmJs` targets
+- **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via JNI bindings over the same C wrapper
+- **Web (JS & Wasm)** — WebGL 2.0 via the same C wrapper compiled to wasm with Emscripten, bound by name from the `js` and `wasmJs` targets
 
-**JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts require **JDK 22+** at build and run time — the FFM bindings call `java.lang.foreign`, finalized in JDK 22.
+**JVM requirements:** the Android artifacts ship JVM 11 bytecode (minSdk 24) and work with the standard Android `jvmTarget = 11` setup. The Desktop/JVM artifacts need **JDK 17+**, like Compose Desktop.
 
 ## Quick start
 
@@ -83,9 +83,9 @@ kotlin {
 }
 ```
 
-The same coordinates work on every target — Gradle resolves one variant per target you declare, so you don't download the platforms you don't build for. (The one exception: the Desktop/JVM natives default to all four desktop platforms; one snippet narrows them — see [what Gradle actually downloads](docs/modules.md#what-gradle-actually-downloads).)
+The same coordinates work on every target — Gradle resolves one variant per target you declare, so you don't download the platforms you don't build for. (The one exception: the Desktop/JVM natives default to all five desktop platforms; one snippet narrows them — see [what Gradle actually downloads](docs/modules.md#what-gradle-actually-downloads).)
 
-For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**, and **[Modules](docs/modules.md#dependencies-by-target)** for the per-target dependency table.
+For the full setup (Compose Multiplatform plugin, native runtime for Desktop, iOS framework linking, Web prebuilts) see **[Getting Started](docs/getting-started.md)**, and **[Modules](docs/modules.md#dependencies-by-target)** for the per-target dependency table.
 
 ## Modules
 
@@ -97,7 +97,7 @@ For the full setup (Compose Multiplatform plugin, FFM native runtime for Desktop
 | `filamat` | Runtime material compilation — `MaterialBuilder`. |
 | `filament-utils` | Camera manipulators, HDR/KTX loaders, math helpers. |
 
-All published under `io.github.erkko68.filament`. The Desktop/JVM bindings (Project Panama / FFM) ship as `io.github.erkko68.filament-ffm:filament-ffm` and are pulled in automatically, with the natives in per-platform `filament-ffm-runtime-<os>-<arch>` jars — all of them by default, or only your platform's if your build declares os/arch attributes (see [java/README.md](java/README.md)). See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
+All published under `io.github.erkko68.filament`. The Desktop/JVM native runtime (`filament-jni-desktop`) is pulled in automatically, with the natives in per-platform `filament-jni-runtime-<os>-<arch>` jars — all of them by default, or only your platform's if your build declares os/arch attributes (see [desktop/README.md](desktop/README.md)). See **[Modules](docs/modules.md)** for full coordinates and dependency graph.
 
 ## Versioning & stability
 

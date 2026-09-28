@@ -18,7 +18,6 @@ on:
       - 'gradle.properties'
       - 'gradle/**'
       - 'build-logic/**'
-      - 'scripts/dev/build-wasm-libs.sh'
       - '.github/actions/**'
       - '.github/workflows/pages.yml'
   # A published release is the only event that DEPLOYS, and the only one that writes
@@ -46,17 +45,18 @@ permissions:
   id-token: write
 
 jobs:
-  # The web sample and the API docs are built in separate jobs because they need
-  # different JDKs (FFM/Panama wants 25, Dokka is incompatible with 25). Pages
-  # serves a single artifact, so both pieces are merged in `deploy` below.
+  # The web sample and the API docs are built in separate jobs (the web one needs the wasm
+  # toolchain, the docs one macOS). Pages serves a single artifact, so both pieces are merged in
+  # `deploy` below.
   web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
-      - uses: ./.github/actions/setup-wasm
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: wasm }
 
       - name: Build production webpack bundle
         working-directory: samples
@@ -74,19 +74,16 @@ jobs:
     permissions:
       contents: write
     # macOS: Dokka documents every platform, so it builds each one for its
-    # analysis classpath — iOS cinterop needs Xcode, plus JVM (:java/jextract),
-    # JS externals and Android. iOS native is only buildable on macOS.
+    # analysis classpath (the iOS klibs need Xcode). iOS native is only buildable on macOS.
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
 
-      # :java's FFM bindings (jvm source set) are jextract-generated; the C++
-      # toolchain (libc++) ships with Xcode on the runner. Android source sets
-      # need the SDK licenses accepted. jextract, native and web prebuilts all
-      # auto-download as task dependencies.
+      # Android source sets need the SDK licenses accepted. The iOS C API and its Filament
+      # libraries build and download as task dependencies.
       - name: Accept Android SDK licenses
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses || true
 
@@ -110,7 +107,7 @@ jobs:
       - name: Generate API docs
         # Aggregates :kotlin:filament, :kotlin:filamat, :kotlin:filament-utils,
         # :kotlin:gltfio, :kotlin:filament-compose into build/dokka/html (Dokka v2).
-        # :java and :web modules are excluded (FFM internals / generated externals).
+        # The native runtimes (:jni, :desktop, :android, :web) are interop plumbing, not documented.
         # The version label comes from libVersion in gradle.properties.
         run: ./gradlew dokkaGenerate --no-configuration-cache
 

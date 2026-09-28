@@ -22,10 +22,6 @@ functions), and the Kotlin API is written once in `commonMain` on top of it (see
 Everything between them is derived: the JNI forwarders are generated from the Kotlin declarations
 at build time, Native calls the C symbol directly, and web finds it in the wasm exports.
 
-> [!NOTE]
-> Classes are still moving to `commonMain` ([Migration status](bindings.md#migration-status)).
-> A class that still has per-platform `actual`s needs the method in each of them, as before.
-
 ### Two sources of truth
 
 - **Android Java API → the public Kotlin surface.** If a method exists in the Filament Android
@@ -45,9 +41,8 @@ scripts/dev/upgrade-diff.sh --summary                    # then re-run without -
 # 2. Bump the version
 #    edit gradle.properties -> filaVersion=<new>
 
-# 3. Refresh prebuilts (version-stamped: re-extracts automatically on a version bump)
-./gradlew downloadPrebuilts                              # re-fetches libs + headers at <new>
-scripts/dev/build-wasm-libs.sh                           # rebuilds prebuilts/wasm at <new> (slow; no upstream wasm libs)
+# 3. Refresh prebuilts (version-stamped: redone automatically on a version bump)
+./gradlew prebuilts prebuilts_wasm                       # libs + headers at <new>; wasm is a source build (slow)
 
 # 4. Audit the surface
 scripts/dev/check-common-api.sh                          # Android API members missing from commonMain
@@ -103,22 +98,20 @@ filaVersion=1.71.6
 
 ### 3. Refresh the prebuilts
 
-Both libraries and headers are version-stamped: each `downloadPrebuilts_<target>` task takes
-`filaVersion` as a Gradle input and additionally records a `version|prefix` stamp inside the
-output directory, wiping and re-extracting on any mismatch. Bumping `filaVersion` and running
-the task is enough — stale header/library mixes (the old `symbol(s) not found` linker-error
-class) can no longer happen silently.
+Both libraries and headers are version-stamped: each `prebuilts_<id>` task takes `filaVersion` as
+an input and records a stamp inside `prebuilts/<id>/lib`, redoing the work on any mismatch. Bumping
+`filaVersion` and building is enough — stale header/library mixes (the old `symbol(s) not found`
+linker-error class) can no longer happen silently.
 
 ```sh
-./gradlew downloadPrebuilts
-scripts/dev/build-wasm-libs.sh
+./gradlew prebuilts prebuilts_wasm
 ```
 
-`prebuilts/` is gitignored (downloaded artifacts), so deleting it is safe. Upstream publishes no
-wasm static libraries, so `build-wasm-libs.sh` builds them from the release tag (host tools +
-`./build.sh -p wasm release`, plus `libfilamat`); it is stamped with the version and skips when
-current. CI caches the result per `filaVersion`. Also check upstream `BUILDING.md` for a new
-emsdk version and bump `EMSDK_VERSION` in `scripts/dev/setup-emsdk.sh` to match.
+`prebuilts/` is gitignored, so deleting it is safe. Upstream publishes no wasm (or windows-arm64)
+static libraries, so those `prebuilts_<id>` tasks build them from the release's source tarball
+(`BuildFromSourceTask`: host tools, then the Emscripten build with `libfilamat`). CI caches the result
+per `filaVersion`. Also check upstream `BUILDING.md` for a new emsdk version and bump `emsdkVersion` in
+`gradle.properties` to match.
 
 ### 4. Audit the public surface
 
@@ -260,7 +253,7 @@ What was **not** added, per the source-of-truth rule:
 The first build failed at link time (`VertexBuffer::Builder::build` became `const` in 1.71.6 plus
 the three new symbols were all undefined) — because the prebuilt **libs were still 1.71.5** while
 the **headers had refreshed to 1.71.6**. Clearing `prebuilts/*/lib` and
-re-running `downloadPrebuilts` fixed it. This is the footgun in step 3.
+re-running the download fixed it. This is the footgun in step 3.
 
 ---
 
@@ -271,10 +264,9 @@ re-running `downloadPrebuilts` fixed it. This is the footgun in step 3.
 | C shim headers / impl | `c/<module>/c/*.h`, `c/<module>/cpp/*.cpp` |
 | API classes + `external fun` bindings | `kotlin/<module>/src/commonMain/kotlin/.../*.kt` |
 | Interop runtime (per platform) | `kotlin/filament/src/{common,jni,native,web}Main/.../interop/` |
-| JNI glue (generated at build time) | `jni/build/generated/jniGlue/` (from the `external fun`s) |
-| Not-yet-migrated actuals | `kotlin/<module>/src/{android,jvm,native,web}Main/.../*.kt` |
-| Wasm Filament libs | `prebuilts/wasm/` (built by `scripts/dev/build-wasm-libs.sh`) |
-| Downloaded prebuilt libs / headers | `prebuilts/<target>/lib/`, `include/` (gitignored) |
+| JNI forwarders, wasm export tables (generated at build time) | `build/generated/bindings/` (from the `external fun`s) |
+| Platform actuals (surfaces, loading) | `kotlin/<module>/src/{android,jvm,native,web}Main/.../*.kt` |
+| Filament libs / headers | `prebuilts/<id>/lib/` (downloaded, or source-built for `wasm`/`windows-arm64`), `include/` (gitignored) |
 | Version | `gradle.properties` → `filaVersion` |
 
 See also: [`scripts/README.md`](../scripts/README.md) (script reference),

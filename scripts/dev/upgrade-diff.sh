@@ -218,7 +218,7 @@ emit_highlights() {
   echo
   echo "  Follow-ups after applying the bump:"
   echo "    scripts/dev/check-common-api.sh --tag $NEW_TAG    # Android API vs commonMain"
-  echo "    scripts/dev/build-wasm-libs.sh                    # rebuild prebuilts/wasm at the new tag"
+  echo "    ./gradlew prebuilts_wasm                          # rebuild prebuilts/wasm at the new version"
 }
 
 emit_report() {

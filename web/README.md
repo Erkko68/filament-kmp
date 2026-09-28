@@ -1,71 +1,46 @@
 # `:web` — Web runtime (the C API compiled to wasm)
 
-The web runtime. It builds the same C wrapper ([`c/`](../c)) with Emscripten, loads it, and
-exposes its `Fila*` exports to the `js` and `wasmJs` targets. There is no embind and no upstream
-`filament.js`.
+Builds the C API ([`c/`](../c)) with Emscripten, loads it, and gives the `js` and `wasmJs` targets its
+`Fila*` exports. No embind, no upstream `filament.js`.
 
-Published as **`io.github.erkko68.filament:web`** and pulled in transitively by every
-`:kotlin:*` web target, so consumers never add it by hand. The `.js`/`.wasm` files are **not**
-inside the klib (webpack never sees klib resources); apps download them from the GitHub release
-(see [getting started](../docs/getting-started.md)).
-
-## Outputs
+Published as **`io.github.erkko68.filament:web`** and pulled in by every `:kotlin:*` web target. The
+`.js`/`.wasm` files are **not** in the klib (webpack never sees klib resources); apps take them from the
+GitHub release (see [getting started](../docs/getting-started.md)).
 
 | File | Contents |
 | :--- | :--- |
 | `filament-kmp.{js,wasm}` | filament + gltfio + filament-utils in one instance (they share `Engine` pointers). Loaded by `Filament.initJs`. |
 | `filamat-kmp.{js,wasm}` | The runtime material compiler, separate and optional (~6.4 MB). Loaded by `Filamat.initJs`. Linked with a 4 MB stack: glslang overflows the 64 KB default. |
 
-## What it does ([`build.gradle.kts`](build.gradle.kts))
+## Build
 
-1. **`setupEmsdk`** installs emsdk into `.emsdk/` ([`setup-emsdk.sh`](../scripts/dev/setup-emsdk.sh)),
-   pinned to the version upstream Filament builds with.
-2. **`generateWasmExternals`** (being retired, see below; [`WasmExternals.kt`](../build-logic/src/main/kotlin/WasmExternals.kt))
-   parses `c/*/c/*.h` with Emscripten's clang (AST + record layouts) and emits, per C module, an
-   `external interface` of raw exports plus cinterop-named wrappers (`FilaEngine_createView(...)`),
-   so `webMain` actuals read like `nativeMain` ones. Also enum constants and struct field offsets.
-   `:kotlin:filamat` runs the same task for its own module. The output is **committed**
-   (`src/webMain/generated`) so compiling needs no emsdk; rerun it after changing a `c/` header.
-   The web CI job regenerates and fails on a diff.
-3. **`buildFilamentWasm`** runs CMake with `-DFILAMENT_PLATFORM=wasm`, linking the wasm Filament
-   libraries from `prebuilts/wasm/`. Upstream publishes none, so
-   [`build-wasm-libs.sh`](../scripts/dev/build-wasm-libs.sh) builds them once per `filaVersion`.
-4. **`stageFilamentWasm` / `stageFilamatWasm`** copy the outputs to `build/filamentWasm` and
-   `build/filamatWasm` for tests, the samples and the release assets.
+- **`cmakeBuild`** builds [`CMakeLists.txt`](CMakeLists.txt) (added by `c/CMakeLists.txt` for `wasm`) with the
+  Emscripten SDK's toolchain file. Its inputs: `:setupEmsdk` (emsdk into `.emsdk/`, `emsdkVersion` in
+  `gradle.properties`), `:prebuilts_wasm` (Filament's wasm libraries, built from source once per
+  `filaVersion` since upstream ships none), and `:generateBindings` (each runtime's export list and type tables,
+  from the common externals).
+- **`stageFilamentWasm` / `stageFilamatWasm`** copy the outputs to `build/filamentWasm` and `build/filamatWasm`
+  for the tests, the samples and the release assets. `FILA_WASM_PREBUILT=<dir>` stages an already built
+  runtime instead (CI's js/wasm jobs).
 
 ## How common code reaches the wasm
 
 The API classes in `commonMain` declare `external fun FilaX(...)` next to them (see
-[Native Bindings](../docs/bindings.md)). On js and wasmJs such a top-level external resolves to the
-global `FilaX`, so when the module loads, `FilamentModule.kt` copies every `_FilaX` export onto
-`globalThis.FilaX`. Wasm returns C `bool` as `0`/`1`; the link step writes the `bool`-returning
-functions (scanned from the C headers) into `Module.filaBoolExports`, and those globals are
-wrapped to return real booleans (js would otherwise see `1`, not `true`).
+[Native Bindings](../docs/bindings.md)). On js and wasmJs such a top-level external resolves to the global
+`FilaX`: [`src/wasm/fila-globals.js`](src/wasm/fila-globals.js), linked in with `--post-js`, installs every
+`_FilaX` export there once the runtime is up, fixing up what js can't pass as-is (C `bool` → boolean, `float`
+→ shortest f32 decimal, 64-bit args → BigInt) from the generated type tables.
 
-## Calling convention (generated externals, being retired)
-
-The header-generated externals below still serve the web `actual`s that haven't moved to
-`commonMain` yet.
-
-- Pointers are wasm32 addresses (`Int`); C `bool` is `Int`; 64-bit integers are `JsBigInt`
-  (use `toI64()`/`toKotlinLong()`: Kotlin/JS `Long.toJsBigInt()` is a no-op cast).
-- Strings and arrays are copied into the wasm heap (`heapScoped`, `usePinned`). Heap views go
-  stale when memory grows, so they are re-read on every access.
-- If a C++ builder keeps a pointer until `build()` (Material `package`, `SurfaceOrientation`,
-  skinning bones), the copy must live until then; `usePinned` frees it too early.
-- Callbacks go through one `addFunction` trampoline per signature plus an id registry
-  (`Callbacks.kt`).
-- The wasm is single-threaded: fence and `flushAndWait` timeouts are clamped to 0, and anything
-  that waits on a fence internally (`Stream`) cannot work.
+The wasm is single-threaded: fence and `flushAndWait` timeouts are clamped to 0, and anything that waits on
+a fence internally (`Stream`) cannot work.
 
 ## Tests
 
-`ExportParityTest` checks that every declared `Fila*` function is exported with the right
-arity; `ClearCanvasTest` renders a frame. The Karma bootstrap
-([`gradle/karma/filament-karma-bootstrap.js`](../gradle/karma/filament-karma-bootstrap.js))
-instantiates the modules before any Kotlin test runs.
+`ExportParityTest` checks that every common external is exported with the arity Kotlin declares; `F32Test`
+covers the f32 round trip. The Karma bootstrap
+([`gradle/karma/filament-karma-bootstrap.js`](../gradle/karma/filament-karma-bootstrap.js)) instantiates the
+modules before any Kotlin test runs.
 
 ```sh
-scripts/dev/build-wasm-libs.sh          # once per filaVersion
 ./gradlew :web:jsTest :web:wasmJsTest
 ```

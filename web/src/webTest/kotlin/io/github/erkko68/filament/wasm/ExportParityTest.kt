@@ -4,7 +4,7 @@ import kotlin.js.Promise
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** Every generated external is exported by the wasm with the same arity (catches ABI drift like sret). */
+/** Every common external is exported by the wasm with the same arity (catches drift like sret). */
 class ExportParityTest {
     @Test
     fun everyExternalIsExportedWithMatchingArity(): Promise<JsAny?> = loadFilament().then { m ->

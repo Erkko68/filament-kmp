@@ -64,22 +64,22 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            target: macosArm64
+            target: macos-arm64
           - os: ubuntu-latest
-            target: linuxX64
+            target: linux-x64
           - os: ubuntu-24.04-arm
-            target: linuxArm64
+            target: linux-arm64
           - os: windows-latest
-            target: mingwX64
+            target: windows-x64
+          # Upstream ships no windows-arm64 libs: setup-filament-libs builds them from source (cached).
           - os: windows-11-arm
-            target: mingwArm64
-            from-source: true
+            target: windows-arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        # Temurin ships no Windows ARM64 JDK 25; Microsoft's build does.
-        with: { java-version: '25', distribution: "${{ matrix.target == 'mingwArm64' && 'microsoft' || 'temurin' }}" }
+        # Temurin ships no Windows ARM64 JDK 17; Microsoft's build does.
+        with: { java-version: '17', distribution: "${{ matrix.target == 'windows-arm64' && 'microsoft' || 'temurin' }}" }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
@@ -92,26 +92,8 @@ jobs:
             echo "apt attempt $i failed; retrying in 20s" && sleep 20
           done
           exit 1
-      - name: Read Filament version
-        id: ver
-        shell: bash
-        run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v6
-        if: ${{ !matrix.from-source }}
-        with:
-          path: prebuilts/${{ matrix.target }}
-          # The mingw CRT variant (mt/md) is part of the key: switching it must
-          # invalidate the cache, else the gradle task skips re-extraction (it only
-          # checks the dir is non-empty) and links a mismatched CRT.
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
-      - name: Download prebuilts
-        if: ${{ !matrix.from-source }}
-        shell: bash
-        run: ./gradlew downloadPrebuilts_${{ matrix.target }}
-      # No upstream release for these hosts: built from source, cached per filaVersion.
-      - uses: ./.github/actions/setup-host-libs
-        if: matrix.from-source
-        with: { target: '${{ matrix.target }}' }
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: '${{ matrix.target }}' }
       - name: Build library
         shell: bash
         run: ./gradlew compileKotlinJvm --no-configuration-cache
@@ -124,7 +106,7 @@ jobs:
         shell: bash
         run: |
           ./gradlew \
-            :java:test \
+            :desktop:test \
             :kotlin:filament:jvmTest \
             :kotlin:filamat:jvmTest \
             :kotlin:filament-utils:jvmTest \
@@ -135,11 +117,11 @@ jobs:
       # tests also run, for the highest-coverage snapshot. Report-only (non-blocking) — no
       # threshold is enforced. js/native actuals run on runtimes Kover can't instrument.
       - name: Coverage report
-        if: matrix.target == 'macosArm64'
+        if: matrix.target == 'macos-arm64'
         shell: bash
         run: ./gradlew koverXmlReport koverHtmlReport --no-configuration-cache
       - name: Upload coverage report
-        if: matrix.target == 'macosArm64'
+        if: matrix.target == 'macos-arm64'
         uses: actions/upload-artifact@v7
         with:
           name: kover-coverage
@@ -155,8 +137,8 @@ jobs:
           name: jvm-test-reports-${{ matrix.target }}
           path: kotlin/*/build/reports/tests/
 
-  # The emsdk half of the web targets, done once: builds filament-kmp/filamat-kmp .{js,wasm}
-  # (c/ compiled with emcc) and hands them to the js and wasm jobs as an artifact.
+  # The Emscripten half of the web targets, done once: builds filament-kmp/filamat-kmp .{js,wasm}
+  # and hands them to the js and wasm jobs as an artifact.
   web-runtime:
     needs: changes
     if: needs.changes.outputs.web == 'true'
@@ -164,22 +146,18 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
-      - uses: ./.github/actions/setup-wasm
-      - name: Generated wasm externals are up to date
-        # Committed so compiling needs no emsdk; a C header change must come with a regen.
-        run: |
-          ./gradlew :web:generateWasmExternals :kotlin:filamat:generateFilamatExternals --no-configuration-cache
-          git diff --exit-code -- web/src kotlin/filamat/src
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: wasm }
       - name: Build wasm runtime
-        run: ./gradlew :web:buildFilamentWasm --no-configuration-cache
+        run: ./gradlew :web:cmakeBuild --no-configuration-cache
       - uses: actions/upload-artifact@v7
         with:
           name: wasm-runtime
           path: |
-            c/build/wasm/*-kmp.js
-            c/build/wasm/*-kmp.wasm
+            web/build/filament-c/wasm/*-kmp.js
+            web/build/filament-c/wasm/*-kmp.wasm
           if-no-files-found: error
           retention-days: 1
 
@@ -187,14 +165,14 @@ jobs:
     needs: web-runtime
     runs-on: ubuntu-latest
     env:
-      FILA_WASM_PREBUILT: '1'
+      FILA_WASM_PREBUILT: ${{ github.workspace }}/wasm-runtime
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - uses: actions/download-artifact@v8
-        with: { name: wasm-runtime, path: c/build/wasm }
+        with: { name: wasm-runtime, path: wasm-runtime }
       - name: Build library
         run: ./gradlew compileKotlinJs --no-configuration-cache
       - name: Run JS tests
@@ -223,14 +201,14 @@ jobs:
     needs: web-runtime
     runs-on: ubuntu-latest
     env:
-      FILA_WASM_PREBUILT: '1'
+      FILA_WASM_PREBUILT: ${{ github.workspace }}/wasm-runtime
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - uses: actions/download-artifact@v8
-        with: { name: wasm-runtime, path: c/build/wasm }
+        with: { name: wasm-runtime, path: wasm-runtime }
       - name: Build library
         run: ./gradlew compileKotlinWasmJs --no-configuration-cache
       - name: Run Wasm tests
@@ -269,19 +247,10 @@ jobs:
           xcrun simctl boot "$DEV" || true
           echo "device=$DEV" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
-      - name: Read Filament version
-        id: ver
-        run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v6
-        with:
-          path: |
-            prebuilts/iosArm64
-            prebuilts/iosSimulatorArm64
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-ios
-      - name: Download prebuilts
-        run: ./gradlew downloadPrebuilts_iosArm64 downloadPrebuilts_iosSimulatorArm64
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: 'ios-arm64 ios-simulator-arm64' }
       - name: Build library
         run: |
           ./gradlew \
@@ -339,25 +308,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        with: { java-version: '17', distribution: 'temurin' }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-      # :android's pinned NDK/CMake (upstream's, see android/build.gradle.kts); buildJniLibs doesn't fetch them.
+      # :android's pinned NDK/CMake (upstream's, see android/build.gradle.kts); its CMake tasks don't fetch them.
       - name: Install NDK + CMake
         run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.14206865" "cmake;3.22.1" > /dev/null
-      - name: Read Filament version
-        id: ver
-        run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v6
-        with:
-          path: prebuilts/android-*
-          key: filament-prebuilts-${{ steps.ver.outputs.v }}-android
-      - name: Generated JNI bindings are up to date
-        # Committed like the wasm externals; a C header change must come with a regen.
-        run: |
-          ./gradlew :jni:generateJniBindings --no-configuration-cache
-          git diff --exit-code -- jni/src
+      - uses: ./.github/actions/setup-filament-libs
+        with: { targets: 'android-arm64-v8a android-armeabi-v7a android-x86_64 android-x86' }
       - name: Build library
         run: ./gradlew :android:assemble compileAndroidMain --no-configuration-cache
       - name: Enable KVM (for android emulator)
@@ -405,7 +364,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew :android:connectedAndroidDeviceTest :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
+          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples
@@ -414,9 +373,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: android-test-reports
-          path: |
-            android/build/reports/androidTests/
-            kotlin/*/build/reports/androidTests/
+          path: kotlin/*/build/reports/androidTests/
 
   # Single required status check for branch protection. Jobs the path filter skipped count as
   # passing; a failed or cancelled job (or a failed filter) fails it.

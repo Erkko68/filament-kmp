@@ -1,3 +1,6 @@
+import buildlogic.cmake.CMakeBuildTask
+import buildlogic.cmake.registerCApiBuild
+import buildlogic.platform.FilamentTarget
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,14 +9,12 @@ plugins {
     id("filament-publish")
 }
 
-group = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
-version = project.findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
+// Android runtime for :jni: libfilament-c.so per ABI (c/ + jni/, plus FilaAndroid's entry points), built with
+// the SDK's NDK and CMake pinned to upstream's (build/common/versions) so the prebuilts' libc++ matches.
+// Plain CMake tasks rather than AGP's externalNativeBuild: configuring the build never needs an SDK.
 
-// Android native runtime for :jni: libfilament-c.so per ABI (the Fila* C API + jni/'s forwarders + the
-// Android-only src/androidMain/cpp), over the upstream android-native prebuilts. NDK and CMake are pinned to
-// upstream's (build/common/versions) so the prebuilts' libc++ matches.
-
-val androidAbis = listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+val ndkVersion = "29.0.14206865"
+val cmakeVersion = "3.22.1"
 val minSdkVersion = libs.versions.android.minSdk.get().toInt()
 
 kotlin {
@@ -24,40 +25,32 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.fromTarget(libs.versions.android.jvmTarget.get()))
         }
-        withDeviceTest {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
     }
 
     sourceSets {
         androidMain.dependencies {
             api(project(":jni"))
         }
-        getByName("androidDeviceTest").dependencies {
-            implementation(libs.androidx.test.runner)
-            implementation(libs.androidx.test.ext.junit)
-            implementation(libs.kotlin.testJunit)
-        }
     }
 }
 
-val buildJniLibs = tasks.register<BuildAndroidJniLibs>("buildJniLibs") {
-    abis.set(androidAbis)
-    minSdk.set(minSdkVersion)
-    ndkVersion.set("29.0.14206865")
-    cmakeVersion.set("3.22.1")
-    sdkDirectory.set(androidComponents.sdkComponents.sdkDirectory)
-    cmakeSourceDir.set(rootProject.layout.projectDirectory.dir("c"))
-    cmakeBuildDir.set(layout.buildDirectory.dir("cmake"))
-    outputDir.set(layout.buildDirectory.dir("jniLibs"))
-    jniGlueDir.set(rootProject.layout.projectDirectory.dir("jni/build/generated/jniGlue"))
-    sources.from(
-        rootProject.fileTree("c") { include("**/CMakeLists.txt", "**/*.c", "**/*.cpp", "**/*.h"); exclude("build/**") },
-        project(":jni").fileTree("src/main/cpp"),
-        fileTree("src/androidMain/cpp"),
-        androidAbis.map { rootProject.layout.projectDirectory.dir("prebuilts/android-$it/lib") },
-    )
-    dependsOn(androidAbis.map { ":downloadPrebuilts_android-$it" }, ":downloadIncludes", ":jni:generateJniGlue")
+val sdk = androidComponents.sdkComponents.sdkDirectory
+FilamentTarget.android.forEach { target ->
+    val cmakeBuild = registerCApiBuild("cmakeBuild_${target.abi}", target) {
+        val cmakeBin = sdk.map { it.dir("cmake/$cmakeVersion/bin") }
+        val exe = if (System.getProperty("os.name").startsWith("Windows")) ".exe" else ""
+        cmake.set(cmakeBin.map { it.file("cmake$exe").asFile.path })
+        arguments.addAll("-G", "Ninja", "-DANDROID_ABI=${target.abi}", "-DANDROID_PLATFORM=android-$minSdkVersion", "-DANDROID_STL=c++_static")
+        arguments.add(cmakeBin.map { "-DCMAKE_MAKE_PROGRAM=${it.file("ninja$exe").asFile.invariantSeparatorsPath}" })
+        arguments.add(sdk.map { "-DCMAKE_TOOLCHAIN_FILE=${it.dir("ndk/$ndkVersion").file("build/cmake/android.toolchain.cmake").asFile.invariantSeparatorsPath}" })
+        // Always Release: a Debug libfilament-c against Release prebuilts buys nothing.
+        buildType.set("Release")
+        targets.add("filament-c-jni")
+        outputSubdir.set(target.abi)
+        val ndkDir = sdk.map { it.dir("ndk/$ndkVersion").asFile }
+        val cmakeDir = cmakeBin.map { it.asFile }
+        val missing = "Missing NDK/CMake: sdkmanager \"ndk;$ndkVersion\" \"cmake;$cmakeVersion\""
+        doFirst { check(ndkDir.get().isDirectory && cmakeDir.get().isDirectory) { missing } }
+    }
+    androidComponents.onVariants { it.sources.jniLibs?.addGeneratedSourceDirectory(cmakeBuild, CMakeBuildTask::outputDir) }
 }
-
-androidComponents.onVariants { it.sources.jniLibs?.addGeneratedSourceDirectory(buildJniLibs, BuildAndroidJniLibs::outputDir) }

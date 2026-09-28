@@ -3,9 +3,9 @@
 Maintenance-time helpers. Not part of consumer runtime — they exist to keep this
 repo's bindings in sync with upstream Filament releases and to support local dev workflows.
 
-All download logic (Filament prebuilts, headers, jextract) lives in pure-JVM Gradle tasks —
-see [build-logic/src/main/kotlin/FilamentDownloads.kt](../build-logic/src/main/kotlin/FilamentDownloads.kt)
-and the `downloadPrebuilts*` / `downloadIncludes` / `downloadJextract` tasks. No Python needed.
+Getting Filament itself (release downloads, source builds for `wasm`/`windows-arm64`, the Emscripten SDK,
+headers) is Gradle's job: the `prebuilts`, `prebuilts_<id>`, `setupEmsdk` and `downloadIncludes` tasks from
+[`build-logic/…/buildlogic/prebuilts`](../build-logic/src/main/kotlin/buildlogic/prebuilts).
 
 ## `dev/` — manual developer utilities
 
@@ -13,24 +13,20 @@ and the `downloadPrebuilts*` / `downloadIncludes` / `downloadJextract` tasks. No
 | :--- | :--- |
 | [`dev/upgrade-diff.sh`](dev/upgrade-diff.sh) | Diffs upstream Filament between two tags across every surface that drives this repo's bindings: public C++ headers, backend headers, Android Java sources, upstream's web build config, material/engine enums, feature-flag defaults, and `RELEASE_NOTES.md`. Opens with a **HIGHLIGHTS** section (MATERIAL_VERSION bump, `CONFIG_MAX_*` changes, feature-flag flips, added/removed Java classes). Tags optional: no args = `filaVersion` → latest upstream release; one arg = `filaVersion` → that tag. Run on every `filaVersion` bump. `--summary` for a file-level overview; omit for full unified diffs. Keeps a shallow clone in `scripts/dev/.filament-src-cache/`. |
 | [`dev/check-common-api.sh`](dev/check-common-api.sh) | Cross-checks the public Filament **Android** Java API against this repo's `commonMain` `expect` declarations. Filament's Android API is the canonical Kotlin public surface; KMP common should mirror it (modulo property accessors and Android-only types). Checks five kinds of surface per module (`filament` / `filamat` / `gltfio` / `filament-utils`): whole **classes**, **nested types**, **enum/ALL_CAPS constants**, **methods**, and **fields** — the last of these matters because Filament's option structs (`ShadowOptions`, `FogOptions`, `Engine.Config`, …) expose their state as bare fields rather than accessors — with Kotlin comments stripped, so KDoc mentions don't count as coverage. Property-bridged (`getFoo`/`setFoo`/`isFoo` ↔ `foo`/`isFoo`/`isFooEnabled`) and JNI plumbing are auto-skipped, as are Filament's `mFoo`/`sFoo` internal field conventions; upstream-`@Deprecated` members are flagged informationally. Intentional gaps go in [`dev/check-common-api-ignores.txt`](dev/check-common-api-ignores.txt) (`Class` or `Class.member` + a comment why). Exits non-zero on unsuppressed gaps (CI-able). Run on every `filaVersion` bump. |
-| [`dev/rebuild-materials.sh`](dev/rebuild-materials.sh) | Recompiles every committed `.filamat` with the `matc` of the current `filaVersion` (pulled from the release tarball cached by `downloadPrebuilts`), syncs the shared `emissive.filamat` copy, and refreshes the web sample's vendored engine. Run whenever `MATERIAL_VERSION` changes — the engine rejects blobs built by another version. |
+| [`dev/rebuild-materials.sh`](dev/rebuild-materials.sh) | Recompiles every committed `.filamat` with the `matc` of the current `filaVersion` (pulled from the release tarball cached by `./gradlew prebuilts`), syncs the shared `emissive.filamat` copy, and refreshes the web sample's vendored engine. Run whenever `MATERIAL_VERSION` changes — the engine rejects blobs built by another version. |
 | [`dev/run-tests.sh`](dev/run-tests.sh) | Runs the test suite across every KMP target this repo supports (JVM, JS, iOS simulator, Android). Mirrors what [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) does on CI. Auto-boots the first available AVD if no device is attached when running android tests. Pass `jvm`/`js`/`ios`/`android` (any combination) to scope; or `--no-<target>` to skip one. iOS is skipped automatically off macOS. |
-| [`dev/setup-emsdk.sh`](dev/setup-emsdk.sh) | Installs the Emscripten SDK into `.emsdk/` (gitignored), pinned to the version upstream Filament's `BUILDING.md` uses (5.0.4). Idempotent. Needed for the wasm build of the C API ([design](../docs/design/web-c-api-bindings.md)). Then `source .emsdk/emsdk_env.sh`. |
-| [`dev/build-wasm-libs.sh`](dev/build-wasm-libs.sh) | Builds Filament's static libraries for wasm at `filaVersion` (upstream publishes none) and copies them to `prebuilts/wasm/lib`. Checks out the tag in `upgrade-diff.sh`'s `.filament-src-cache` clone and runs upstream `./build.sh -p wasm release` with the `.emsdk` toolchain. Stamped; `-f` forces a rebuild. |
-| [`dev/build-host-libs.sh`](dev/build-host-libs.sh) | Builds Filament's static libraries at `filaVersion` for the JVM hosts upstream publishes none for (`mingwArm64`) into `prebuilts/<target>/lib`, plus that build's own `uberarchive.h` (resgen bakes the archive size in). Same model as `build-wasm-libs.sh`: reuses `.filament-src-cache`, stamped, `-f` forces a rebuild. Run natively on that host (Git Bash + MSVC on Windows) instead of `downloadPrebuilts`. |
 | [`dev/clean_all.sh`](dev/clean_all.sh) | Nukes every Gradle/CMake/Kotlin build directory in the repo. Last-resort cache reset. |
 
 ## First-time setup
 
+Nothing to run by hand: every build task fetches the Filament libraries it needs. To pre-fetch:
+
 ```sh
-./gradlew downloadPrebuilts                    # fetch Filament natives + headers
-scripts/dev/build-wasm-libs.sh                 # web only: emsdk + wasm Filament libs (slow, once per filaVersion)
-scripts/dev/build-host-libs.sh mingwArm64     # Windows on ARM only: no upstream prebuilts (slow, once per filaVersion)
+./gradlew prebuilts         # every release target + headers
+./gradlew prebuilts_wasm    # web: emsdk + Filament's wasm libs, built from source (slow, once per filaVersion)
 ```
 
-jextract (for the JVM/FFM bindings) downloads automatically as a Gradle task dependency — no
-manual step needed. To pre-fetch jextract explicitly (e.g. before
-going offline), run `./gradlew downloadJextract`.
+`windows-arm64` is built from source the same way on a Windows on ARM host (MSVC).
 
 ## Updating the Filament version
 
@@ -41,8 +37,7 @@ surface, and verification. The short version:
 ```sh
 scripts/dev/upgrade-diff.sh --summary                 # 1. scope: filaVersion → latest upstream (re-run without --summary on hot areas)
 #                                                       2. bump filaVersion in gradle.properties
-./gradlew downloadPrebuilts                           # 3. refresh prebuilts (version-stamped: re-extracts on bump)
-scripts/dev/build-wasm-libs.sh                        #    rebuild prebuilts/wasm at the new version
+./gradlew prebuilts prebuilts_wasm                    # 3. refresh prebuilts (version-stamped: redone on bump)
 scripts/dev/check-common-api.sh                       # 4. Android API members missing from commonMain
 scripts/dev/rebuild-materials.sh                      #    recompile .filamat when MATERIAL_VERSION changed
 #                                                       5. apply changes + update tests (see the doc)

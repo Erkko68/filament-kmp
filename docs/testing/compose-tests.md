@@ -180,7 +180,7 @@ resource, other targets return empty, so the suite skips off-JVM exactly like th
   fix**: a malformed `.filamat` made Filament's C++ parser panic (`utils::PostconditionPanic`), which
   *terminates the process* — the throw unwinds across the prebuilt's `-fno-exceptions` frames before any
   wrapper `try/catch` can run, so it can't be trapped after the fact. `Material.Builder` now sniffs the
-  `.filamat` magic (`isValidFilamatPayload`) in the FFM/native/wasm `payload()` and `build()` raises a
+  `.filamat` magic (`isValidFilamatPayload`) in the JNI/native/wasm `payload()` and `build()` raises a
   catchable `IllegalArgumentException` for a non-`.filamat` blob. `rememberTexture` is deliberately not covered: the JVM image decoder `abort()`s on undecodable
   bytes (an uncatchable upstream crash, *not* a null-return) and the repo bundles no decodable test image
   for the happy path — that waits on an image asset.

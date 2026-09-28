@@ -1,7 +1,6 @@
 package io.github.erkko68.filament
 
-import io.github.erkko68.filament.jni.FilaJni
-
 actual object Filament {
-    actual fun init() = FilaJni.load()
+    // libfilament-c.so ships in the APK, from :android's AAR.
+    actual fun init() = System.loadLibrary("filament-c")
 }
