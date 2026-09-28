@@ -52,11 +52,11 @@ void FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* builder, FilaVe
 }
 
 // VertexBuffer
-size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer) {
+uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer) {
     return FILA_CONST_CAST(VertexBuffer, vertexBuffer)->getVertexCount();
 }
 
-void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     auto wrapper = new BufferCallbackWrapper{callback, userData};
     BufferDescriptor desc(buffer, sizeInBytes, 
         reinterpret_cast<backend::CallbackHandler*>(handler),

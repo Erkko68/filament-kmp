@@ -12,8 +12,8 @@ external fun FilaBufferObjectBuilder_build(builder: Long, engine: Long): Long
 external fun FilaBufferObjectBuilder_create(): Long
 external fun FilaBufferObjectBuilder_destroy(builder: Long)
 external fun FilaBufferObjectBuilder_size(builder: Long, byteCount: Int)
-external fun FilaBufferObject_getByteCount(bufferObject: Long): Long
-external fun FilaBufferObject_setBuffer(bufferObject: Long, engine: Long, buffer: Long, sizeInBytes: Long, destOffsetInBytes: Int, handler: Long, callback: Long, userData: Long)
+external fun FilaBufferObject_getByteCount(bufferObject: Long): Int
+external fun FilaBufferObject_setBuffer(bufferObject: Long, engine: Long, buffer: Long, sizeInBytes: Int, destOffsetInBytes: Int, handler: Long, callback: Long, userData: Long)
 external fun FilaCamera_computeEffectiveFocalLength(focalLength: Double, focusDistance: Double): Double
 external fun FilaCamera_computeEffectiveFov(fovInDegrees: Double, focusDistance: Double): Double
 external fun FilaCamera_getAperture(camera: Long): Float
@@ -174,8 +174,8 @@ external fun FilaIndexBufferBuilder_build(builder: Long, engine: Long): Long
 external fun FilaIndexBufferBuilder_create(): Long
 external fun FilaIndexBufferBuilder_destroy(builder: Long)
 external fun FilaIndexBufferBuilder_indexCount(builder: Long, indexCount: Int)
-external fun FilaIndexBuffer_getIndexCount(indexBuffer: Long): Long
-external fun FilaIndexBuffer_setBuffer(indexBuffer: Long, engine: Long, buffer: Long, sizeInBytes: Long, destOffsetInBytes: Int, handler: Long, callback: Long, userData: Long)
+external fun FilaIndexBuffer_getIndexCount(indexBuffer: Long): Int
+external fun FilaIndexBuffer_setBuffer(indexBuffer: Long, engine: Long, buffer: Long, sizeInBytes: Int, destOffsetInBytes: Int, handler: Long, callback: Long, userData: Long)
 external fun FilaIndirectLightBuilder_build(builder: Long, engine: Long): Long
 external fun FilaIndirectLightBuilder_create(): Long
 external fun FilaIndirectLightBuilder_destroy(builder: Long)
@@ -566,21 +566,21 @@ external fun FilaTextureSampler_setMinFilter(sampler: Long, filter: Int): Long
 external fun FilaTextureSampler_setWrapModeR(sampler: Long, mode: Int): Long
 external fun FilaTextureSampler_setWrapModeS(sampler: Long, mode: Int): Long
 external fun FilaTextureSampler_setWrapModeT(sampler: Long, mode: Int): Long
-external fun FilaTexture_computeDataSize(format: Int, type: Int, stride: Long, height: Long, alignment: Long): Long
+external fun FilaTexture_computeDataSize(format: Int, type: Int, stride: Int, height: Int, alignment: Int): Int
 external fun FilaTexture_generateMipmaps(texture: Long, engine: Long)
-external fun FilaTexture_getDepth(texture: Long, level: Long): Long
+external fun FilaTexture_getDepth(texture: Long, level: Int): Int
 external fun FilaTexture_getFormat(texture: Long): Int
-external fun FilaTexture_getHeight(texture: Long, level: Long): Long
-external fun FilaTexture_getLevels(texture: Long): Long
-external fun FilaTexture_getMaxArrayTextureLayers(engine: Long): Long
-external fun FilaTexture_getMaxTextureSize(engine: Long, target: Int): Long
+external fun FilaTexture_getHeight(texture: Long, level: Int): Int
+external fun FilaTexture_getLevels(texture: Long): Int
+external fun FilaTexture_getMaxArrayTextureLayers(engine: Long): Int
+external fun FilaTexture_getMaxTextureSize(engine: Long, target: Int): Int
 external fun FilaTexture_getTarget(texture: Long): Int
-external fun FilaTexture_getWidth(texture: Long, level: Long): Long
+external fun FilaTexture_getWidth(texture: Long, level: Int): Int
 external fun FilaTexture_isTextureFormatMipmappable(engine: Long, format: Int): Boolean
 external fun FilaTexture_isTextureFormatSupported(engine: Long, format: Int): Boolean
 external fun FilaTexture_isTextureSwizzleSupported(engine: Long): Boolean
 external fun FilaTexture_setExternalStream(texture: Long, engine: Long, stream: Long)
-external fun FilaTexture_setImage(texture: Long, engine: Long, level: Long, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, buffer: Long, sizeInBytes: Long, format: Int, type: Int, alignment: Int, left: Int, top: Int, stride: Int, handler: Long, callback: Long, userData: Long)
+external fun FilaTexture_setImage(texture: Long, engine: Long, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, buffer: Long, sizeInBytes: Int, format: Int, type: Int, alignment: Int, left: Int, top: Int, stride: Int, handler: Long, callback: Long, userData: Long)
 external fun FilaTexture_validatePixelFormatAndType(internalFormat: Int, format: Int, type: Int): Boolean
 external fun FilaToneMapper_ACES(): Long
 external fun FilaToneMapper_ACESLegacy(): Long
@@ -628,8 +628,8 @@ external fun FilaVertexBufferBuilder_destroy(builder: Long)
 external fun FilaVertexBufferBuilder_enableBufferObjects(builder: Long, enabled: Boolean)
 external fun FilaVertexBufferBuilder_normalized(builder: Long, attribute: Int, normalized: Boolean)
 external fun FilaVertexBufferBuilder_vertexCount(builder: Long, vertexCount: Int)
-external fun FilaVertexBuffer_getVertexCount(vertexBuffer: Long): Long
-external fun FilaVertexBuffer_setBufferAt(vertexBuffer: Long, engine: Long, bufferIndex: Int, buffer: Long, sizeInBytes: Long, destOffsetInBytes: Int, handler: Long, callback: Long, userData: Long)
+external fun FilaVertexBuffer_getVertexCount(vertexBuffer: Long): Int
+external fun FilaVertexBuffer_setBufferAt(vertexBuffer: Long, engine: Long, bufferIndex: Int, buffer: Long, sizeInBytes: Int, destOffsetInBytes: Int, handler: Long, callback: Long, userData: Long)
 external fun FilaVertexBuffer_setBufferObjectAt(vertexBuffer: Long, engine: Long, bufferIndex: Int, bufferObject: Long)
 external fun FilaView_clearFrameHistory(view: Long, engine: Long)
 external fun FilaView_getAmbientOcclusionOptions(view: Long, out: Long)

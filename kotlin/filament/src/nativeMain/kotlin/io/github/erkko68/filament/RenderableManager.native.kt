@@ -14,19 +14,19 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         private val nativeBuilder = FilaRenderableManagerBuilder_create(count.toULong())!!
 
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_geometry(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle)
+            FilaRenderableManagerBuilder_geometry(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle.toCPointer(), ib.nativeHandle.toCPointer())
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toULong(), count.toULong())
+            FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle.toCPointer(), ib.nativeHandle.toCPointer(), offset.toULong(), count.toULong())
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toULong(), minIndex.toULong(), maxIndex.toULong(), count.toULong())
+            FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle.toCPointer(), ib.nativeHandle.toCPointer(), offset.toULong(), minIndex.toULong(), maxIndex.toULong(), count.toULong())
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder = apply {
-            FilaRenderableManagerBuilder_geometryNonIndexed(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle, offset.toULong(), count.toULong())
+            FilaRenderableManagerBuilder_geometryNonIndexed(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle.toCPointer(), offset.toULong(), count.toULong())
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder = apply {
-            FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle)
+            FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index.toULong(), type.toNative(), vb.nativeHandle.toCPointer())
         }
 
         actual fun geometryType(type: GeometryType): Builder = apply {
@@ -138,10 +138,10 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         attributeBitsetToSet(FilaRenderableManager_getEnabledAttributesAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong()).toInt())
     
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
-        FilaRenderableManager_setGeometryAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toULong(), count.toULong())
+        FilaRenderableManager_setGeometryAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), type.toNative(), vb.nativeHandle.toCPointer(), ib.nativeHandle.toCPointer(), offset.toULong(), count.toULong())
 
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
-        FilaRenderableManager_setGeometryAtNonIndexed(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), type.toNative(), vb.nativeHandle, offset.toULong(), count.toULong())
+        FilaRenderableManager_setGeometryAtNonIndexed(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), type.toNative(), vb.nativeHandle.toCPointer(), offset.toULong(), count.toULong())
     
     actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) = 
         FilaRenderableManager_setBlendOrderAt(nativeHandle, instance.toUInt(), primitiveIndex.toULong(), blendOrder.toUShort())

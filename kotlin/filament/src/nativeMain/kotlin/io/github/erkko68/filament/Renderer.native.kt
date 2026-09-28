@@ -121,7 +121,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
             nativeHandle, 
             xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
             ptr, size,
-            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
             buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
             null, callbackWrapper, stableRef.asCPointer()
         )
@@ -146,7 +146,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
             nativeHandle, renderTarget.nativeHandle.toCPointer(),
             xoffset.toUInt(), yoffset.toUInt(), width.toUInt(), height.toUInt(),
             ptr, size,
-            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.format.ordinal.toUInt(), buffer.type.ordinal.toUInt(),
             buffer.alignment.toUByte(), buffer.left.toUInt(), buffer.top.toUInt(), buffer.stride.toUInt(),
             null, callbackWrapper, stableRef.asCPointer()
         )

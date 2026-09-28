@@ -112,6 +112,20 @@ fun getEntities(out: IntArray): IntArray = interopScope {
 On Native the array is pinned (no copy, `fromInterop` is a no-op); on JVM/Android and web it is
 copied into native memory and freed when the scope ends.
 
+### Asynchronous uploads
+
+`set*Buffer` and `setImage` hand Filament data it reads later, on the driver thread, so no scope
+can own it. `upload(data, size, onRelease)` returns the pointer and size plus the C release callback
+and its userData; pass all four to the call:
+
+```kotlin
+val upload = upload(data, size, callback)
+FilaIndexBuffer_setBuffer(nativeHandle, engine.pointer, upload.ptr, upload.size, offset, NullPointer, upload.callback, upload.userData)
+```
+
+Native pins the array; JVM/Android and web copy it. Once Filament is done, the callback unpins or
+frees it, then runs `onRelease`.
+
 ## The interop runtime
 
 `kotlin/filament/src/*/kotlin/io/github/erkko68/filament/interop/` holds the whole per-platform

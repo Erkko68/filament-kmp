@@ -27,8 +27,8 @@ actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterCo
     }
 
     actual fun run(equirect: Texture): Texture {
-        val handle = FilaIBLPrefilterEquirectangularToCubemap_run(nativeHandle, equirect.nativeObject)
-        return Texture(handle!!)
+        val handle = FilaIBLPrefilterEquirectangularToCubemap_run(nativeHandle, equirect.nativeObject.toCPointer())
+        return Texture(handle!!.toLong())
     }
 }
 
@@ -42,7 +42,7 @@ actual class SpecularFilter actual constructor(context: IBLPrefilterContext) : A
     }
 
     actual fun run(skybox: Texture): Texture {
-        val handle = FilaIBLPrefilterSpecularFilter_run(nativeHandle, skybox.nativeObject)
-        return Texture(handle!!)
+        val handle = FilaIBLPrefilterSpecularFilter_run(nativeHandle, skybox.nativeObject.toCPointer())
+        return Texture(handle!!.toLong())
     }
 }

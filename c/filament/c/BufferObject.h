@@ -24,8 +24,8 @@ void FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* builder, uint32_t byt
 void FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* builder, FilaBufferObjectBindingType bindingType);
 
 // BufferObject
-size_t FilaBufferObject_getByteCount(const FilaBufferObject* bufferObject);
-void FilaBufferObject_setBuffer(FilaBufferObject* bufferObject, FilaEngine* engine, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
+uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* bufferObject);
+void FilaBufferObject_setBuffer(FilaBufferObject* bufferObject, FilaEngine* engine, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
 
 #ifdef __cplusplus
 }

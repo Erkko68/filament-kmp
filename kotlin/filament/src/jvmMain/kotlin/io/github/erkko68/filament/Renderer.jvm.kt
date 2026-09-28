@@ -124,7 +124,7 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
             nativeHandle,
             xoffset, yoffset, width, height,
             seg, buffer.sizeInBytes.toLong(),
-            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.format.ordinal, buffer.type.ordinal,
             buffer.alignment.toByte(), buffer.left, buffer.top, buffer.stride,
             NULL, Completions.bufferStub, userData
         )
@@ -137,7 +137,7 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
             nativeHandle, MemorySegment.ofAddress(renderTarget.nativeHandle),
             xoffset, yoffset, width, height,
             seg, buffer.sizeInBytes.toLong(),
-            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.format.ordinal, buffer.type.ordinal,
             buffer.alignment.toByte(), buffer.left, buffer.top, buffer.stride,
             NULL, Completions.bufferStub, userData
         )

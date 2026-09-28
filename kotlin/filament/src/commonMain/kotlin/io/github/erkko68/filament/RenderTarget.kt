@@ -59,7 +59,7 @@ class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: N
          */
         fun texture(attachment: AttachmentPoint, texture: Texture?): Builder {
             textures[attachment.ordinal] = texture
-            FilaRenderTargetBuilder_texture(nativeBuilder, attachment.ordinal, texture?.pointer ?: NullPointer)
+            FilaRenderTargetBuilder_texture(nativeBuilder, attachment.ordinal, texture?.nativeHandle ?: NullPointer)
             return this
         }
 

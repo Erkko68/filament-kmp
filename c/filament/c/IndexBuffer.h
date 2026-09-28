@@ -23,8 +23,8 @@ void FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* builder, uint32_t
 void FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* builder, FilaIndexBufferType indexType);
 
 // IndexBuffer
-size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer);
-void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
+uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer);
+void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
 
 #ifdef __cplusplus
 }

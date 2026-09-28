@@ -33,7 +33,7 @@ actual object KTX1Loader {
                 options.srgb
             )
         }
-        return handle?.let { Texture(it) }
+        return handle?.let { Texture(it.toLong()) }
     }
 
     actual fun createIndirectLight(engine: Engine, buffer: ByteArray, options: Options): IndirectLightBundle {
@@ -43,7 +43,7 @@ actual object KTX1Loader {
         val ilHandle = sh.usePinned { pinned ->
             FilaKTX1Loader_createIndirectLight(
                 engine.nativeObject,
-                tex.nativeObject,
+                tex.nativeObject.toCPointer(),
                 pinned.addressOf(0).reinterpret()
             )
         }
@@ -55,7 +55,7 @@ actual object KTX1Loader {
         
         val skyboxHandle = FilaKTX1Loader_createSkybox(
             engine.nativeObject,
-            tex.nativeObject
+            tex.nativeObject.toCPointer()
         )
         return SkyboxBundle(skyboxHandle?.let { Skybox(it.toLong()) }, tex)
     }

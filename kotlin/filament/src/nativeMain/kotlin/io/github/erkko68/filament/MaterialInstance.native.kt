@@ -41,7 +41,7 @@ actual class MaterialInstance @InternalFilamentApi constructor(
     actual fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) { FilaMaterialInstance_setParameterInt4(nativeHandle, name, x, y, z, w) }
     
     actual fun setParameter(name: String, texture: Texture, sampler: TextureSampler) {
-        FilaMaterialInstance_setParameterTexture(nativeHandle, name, texture.nativeHandle, sampler.nativeHandle)
+        FilaMaterialInstance_setParameterTexture(nativeHandle, name, texture.nativeHandle.toCPointer(), sampler.nativeHandle)
     }
     
     actual fun setParameter(name: String, type: BooleanElement, v: BooleanArray, offset: Int, count: Int) = memScoped {

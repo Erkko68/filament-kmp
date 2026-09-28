@@ -177,8 +177,8 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidView(view: View): Boolean = FilaEngine_isValidView(nativeHandle, view.nativeHandle)
     actual fun isValidScene(scene: Scene): Boolean = FilaEngine_isValidScene(nativeHandle, scene.nativeHandle.toCPointer())
     actual fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle.toCPointer())
-    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
-    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle.toCPointer())
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle.toCPointer())
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle.toCPointer())
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle.toCPointer())
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle.toCPointer())
@@ -187,7 +187,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
     actual fun isValidSkybox(skybox: Skybox): Boolean = FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle.toCPointer())
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
-    actual fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
+    actual fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle.toCPointer())
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle.toCPointer())
     actual fun isValidStream(stream: Stream): Boolean = FilaEngine_isValidStream(nativeHandle, stream.nativeHandle.toCPointer())
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
@@ -242,12 +242,12 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
-        FilaEngine_destroyIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
-        indexBuffer.nativeHandle = null
+        FilaEngine_destroyIndexBuffer(nativeHandle, indexBuffer.nativeHandle.toCPointer())
+        indexBuffer.nativeHandle = 0L
     }
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
-        FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
-        vertexBuffer.nativeHandle = null
+        FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle.toCPointer())
+        vertexBuffer.nativeHandle = 0L
     }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
         FilaEngine_destroySkinningBuffer(nativeHandle, skinningBuffer.nativeHandle.toCPointer())
@@ -276,7 +276,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         colorGrading.nativeHandle = null
     }
     actual fun destroyTexture(texture: Texture) {
-        FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
+        FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle.toCPointer())
     }
     actual fun destroyRenderTarget(target: RenderTarget) {
         FilaEngine_destroyRenderTarget(nativeHandle, target.nativeHandle.toCPointer())

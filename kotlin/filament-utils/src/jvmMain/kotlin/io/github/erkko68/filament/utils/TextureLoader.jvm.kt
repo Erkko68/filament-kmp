@@ -17,6 +17,6 @@ actual object TextureLoader {
         val handle = FilamentC.FilaTextureLoader_loadTexture(
             engine.nativeObject, a.bytes(buffer), buffer.size.toLong(), type == TextureType.COLOR,
         )
-        handle?.let { Texture(it) }
+        handle?.let { Texture(it.address()) }
     }
 }

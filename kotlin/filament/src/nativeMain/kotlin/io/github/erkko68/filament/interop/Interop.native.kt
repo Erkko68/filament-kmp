@@ -2,9 +2,14 @@
 
 package io.github.erkko68.filament.interop
 
+import io.github.erkko68.filament.upcall
+import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.Pinned
+import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.asStableRef
 import kotlinx.cinterop.pin
+import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toLong
 
 // Kotlin/Native: externals bind straight to the C symbols; arrays are pinned, not copied.
@@ -41,4 +46,21 @@ actual class InteropScope actual constructor() {
         pinned.forEach { it.unpin() }
         pinned.clear()
     }
+}
+
+private class PinnedUpload(val pinned: Pinned<ByteArray>, val onRelease: (() -> Unit)?)
+
+// FilaBufferCallback: Filament is done with the pinned array.
+private val unpinUpload = staticCFunction { _: COpaquePointer?, _: ULong, userData: COpaquePointer? ->
+    val ref = userData!!.asStableRef<PinnedUpload>()
+    val upload = ref.get()
+    upload.pinned.unpin()
+    ref.dispose()
+    upcall { upload.onRelease?.invoke() }
+}
+
+actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload {
+    val pinned = data.pin()
+    val ref = StableRef.create(PinnedUpload(pinned, onRelease))
+    return Upload(pinned.addressOf(0).toLong(), size, unpinUpload.toLong(), ref.asCPointer().toLong())
 }

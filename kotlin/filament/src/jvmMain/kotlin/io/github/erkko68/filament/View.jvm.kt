@@ -363,7 +363,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
                 FilaViewBloomOptions.resolution(c, value.resolution)
                 FilaViewBloomOptions.strength(c, value.strength)
                 FilaViewBloomOptions.threshold(c, value.threshold)
-                FilaViewBloomOptions.dirt(c, value.dirt?.nativeHandle ?: NULL)
+                FilaViewBloomOptions.dirt(c, value.dirt?.let { MemorySegment.ofAddress(it.nativeHandle) } ?: NULL)
                 FilaViewBloomOptions.dirtStrength(c, value.dirtStrength)
                 FilaViewBloomOptions.quality(c, value.quality.ordinal)
                 FilaViewBloomOptions.highlight(c, value.highlight)
@@ -417,7 +417,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
                 FilaViewFogOptions.inScatteringStart(c, value.inScatteringStart)
                 FilaViewFogOptions.inScatteringSize(c, value.inScatteringSize)
                 FilaViewFogOptions.fogColorFromIbl(c, value.fogColorFromIbl)
-                FilaViewFogOptions.skyColor(c, value.skyColor?.nativeHandle ?: NULL)
+                FilaViewFogOptions.skyColor(c, value.skyColor?.let { MemorySegment.ofAddress(it.nativeHandle) } ?: NULL)
                 FilamentC.FilaView_setFogOptions(nativeHandle, c)
             }
         }

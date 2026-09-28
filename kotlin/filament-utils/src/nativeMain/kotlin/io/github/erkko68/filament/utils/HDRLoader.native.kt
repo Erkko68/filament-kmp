@@ -17,6 +17,6 @@ actual object HDRLoader {
                 internalFormat.ordinal
             )
         }
-        return handle?.let { Texture(it) }
+        return handle?.let { Texture(it.toLong()) }
     }
 }

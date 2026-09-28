@@ -48,6 +48,16 @@ expect class InteropScope() {
     fun release()
 }
 
+/**
+ * [size] bytes of an array handed to an asynchronous `set*Buffer`/`setImage`: pass all four fields to the
+ * C call. Filament's release callback drops the copy (unpins on Native), then runs the upload's onRelease.
+ */
+@InternalFilamentApi
+class Upload(val ptr: NativePointer, val size: Int, val callback: NativePointer, val userData: NativePointer)
+
+@InternalFilamentApi
+expect fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload
+
 @InternalFilamentApi
 inline fun <T> interopScope(block: InteropScope.() -> T): T {
     val scope = InteropScope()

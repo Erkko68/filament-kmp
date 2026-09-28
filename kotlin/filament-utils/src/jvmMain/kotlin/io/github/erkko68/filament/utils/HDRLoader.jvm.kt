@@ -12,6 +12,6 @@ actual object HDRLoader {
         val handle = FilamentC.FilaHDRLoader_createTexture(
             engine.nativeObject, a.bytes(buffer), buffer.size.toLong(), internalFormat.ordinal,
         )
-        if (handle == null || handle.address() == 0L) null else Texture(handle)
+        if (handle == null || handle.address() == 0L) null else Texture(handle.address())
     }
 }

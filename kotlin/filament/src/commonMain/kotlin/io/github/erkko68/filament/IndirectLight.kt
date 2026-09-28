@@ -55,7 +55,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @param cubemap Mip-mapped cubemap (or null to clear)
          * @return This Builder, for chaining calls
          */
-        fun reflections(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_reflections(nativeBuilder, cubemap.pointer) }
+        fun reflections(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_reflections(nativeBuilder, cubemap.nativeHandle) }
         /**
          * Sets the irradiance from pre-convolved spherical harmonics coefficients.
          *
@@ -96,7 +96,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @param cubemap Cubemap texture for irradiance (or null to clear)
          * @return This Builder, for chaining calls
          */
-        fun irradiance(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_irradianceAsTexture(nativeBuilder, cubemap.pointer) }
+        fun irradiance(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_irradianceAsTexture(nativeBuilder, cubemap.nativeHandle) }
         /**
          * Sets the environment's overall intensity multiplier.
          *
@@ -155,12 +155,12 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
      * Gets the reflections cubemap texture (if set).
      * @return The reflections cubemap, or null if not provided
      */
-    val reflectionsTexture: Texture? get() = FilaIndirectLight_getReflectionsTexture(nativeHandle).takeIf { it != NullPointer }?.let { textureOf(it) }
+    val reflectionsTexture: Texture? get() = FilaIndirectLight_getReflectionsTexture(nativeHandle).takeIf { it != NullPointer }?.let(::Texture)
     /**
      * Gets the irradiance cubemap texture (if set).
      * @return The irradiance cubemap, or null if computed from reflections
      */
-    val irradianceTexture: Texture? get() = FilaIndirectLight_getIrradianceTexture(nativeHandle).takeIf { it != NullPointer }?.let { textureOf(it) }
+    val irradianceTexture: Texture? get() = FilaIndirectLight_getIrradianceTexture(nativeHandle).takeIf { it != NullPointer }?.let(::Texture)
 
     companion object {
         /**

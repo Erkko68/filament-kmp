@@ -56,7 +56,7 @@ class Skybox @InternalFilamentApi constructor(internal var nativeHandle: NativeP
          * @see Texture
          */
         fun environment(cubemap: Texture): Builder {
-            FilaSkyboxBuilder_environment(nativeBuilder, cubemap.pointer)
+            FilaSkyboxBuilder_environment(nativeBuilder, cubemap.nativeHandle)
             return this
         }
         
@@ -169,7 +169,7 @@ class Skybox @InternalFilamentApi constructor(internal var nativeHandle: NativeP
      *
      * @return The cubemap Texture, or null if using a constant color instead.
      */
-    val texture: Texture? get() = FilaSkybox_getTexture(nativeHandle).takeIf { it != NullPointer }?.let { textureOf(it) }
+    val texture: Texture? get() = FilaSkybox_getTexture(nativeHandle).takeIf { it != NullPointer }?.let(::Texture)
     /**
      * Set bits in the visibility mask.
      *

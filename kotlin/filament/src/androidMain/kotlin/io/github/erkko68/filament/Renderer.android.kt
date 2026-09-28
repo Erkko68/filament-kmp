@@ -106,7 +106,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
             nativeHandle, 
             xoffset, yoffset, width, height,
             ptr, size.toLong(),
-            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.format.ordinal, buffer.type.ordinal,
             buffer.alignment, buffer.left, buffer.top, buffer.stride,
             0, Callbacks.keepBuffer, userData
         )
@@ -121,7 +121,7 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
             nativeHandle, renderTarget.nativeHandle,
             xoffset, yoffset, width, height,
             ptr, size.toLong(),
-            buffer.format.toNative(), buffer.type.toNative(),
+            buffer.format.ordinal, buffer.type.ordinal,
             buffer.alignment, buffer.left, buffer.top, buffer.stride,
             0, Callbacks.keepBuffer, userData
         )

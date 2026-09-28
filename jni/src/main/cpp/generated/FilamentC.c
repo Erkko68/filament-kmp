@@ -55,12 +55,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaBufferO
     FilaBufferObjectBuilder_size((FilaBufferObjectBuilder *)(intptr_t) a_builder, (uint32_t) a_byteCount);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaBufferObject_1getByteCount(JNIEnv* env, jclass cls, jlong a_bufferObject) {
-    return (jlong) FilaBufferObject_getByteCount((const FilaBufferObject *)(intptr_t) a_bufferObject);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaBufferObject_1getByteCount(JNIEnv* env, jclass cls, jlong a_bufferObject) {
+    return (jint) FilaBufferObject_getByteCount((const FilaBufferObject *)(intptr_t) a_bufferObject);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaBufferObject_1setBuffer(JNIEnv* env, jclass cls, jlong a_bufferObject, jlong a_engine, jlong a_buffer, jlong a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaBufferObject_setBuffer((FilaBufferObject *)(intptr_t) a_bufferObject, (FilaEngine *)(intptr_t) a_engine, (void *)(intptr_t) a_buffer, (size_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaBufferObject_1setBuffer(JNIEnv* env, jclass cls, jlong a_bufferObject, jlong a_engine, jlong a_buffer, jint a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
+    FilaBufferObject_setBuffer((FilaBufferObject *)(intptr_t) a_bufferObject, (FilaEngine *)(intptr_t) a_engine, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT jdouble JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaCamera_1computeEffectiveFocalLength(JNIEnv* env, jclass cls, jdouble a_focalLength, jdouble a_focusDistance) {
@@ -713,12 +713,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndexBu
     FilaIndexBufferBuilder_indexCount((FilaIndexBufferBuilder *)(intptr_t) a_builder, (uint32_t) a_indexCount);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndexBuffer_1getIndexCount(JNIEnv* env, jclass cls, jlong a_indexBuffer) {
-    return (jlong) FilaIndexBuffer_getIndexCount((const FilaIndexBuffer *)(intptr_t) a_indexBuffer);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndexBuffer_1getIndexCount(JNIEnv* env, jclass cls, jlong a_indexBuffer) {
+    return (jint) FilaIndexBuffer_getIndexCount((const FilaIndexBuffer *)(intptr_t) a_indexBuffer);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndexBuffer_1setBuffer(JNIEnv* env, jclass cls, jlong a_indexBuffer, jlong a_engine, jlong a_buffer, jlong a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaIndexBuffer_setBuffer((FilaIndexBuffer *)(intptr_t) a_indexBuffer, (FilaEngine *)(intptr_t) a_engine, (void *)(intptr_t) a_buffer, (size_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndexBuffer_1setBuffer(JNIEnv* env, jclass cls, jlong a_indexBuffer, jlong a_engine, jlong a_buffer, jint a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
+    FilaIndexBuffer_setBuffer((FilaIndexBuffer *)(intptr_t) a_indexBuffer, (FilaEngine *)(intptr_t) a_engine, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirectLightBuilder_1build(JNIEnv* env, jclass cls, jlong a_builder, jlong a_engine) {
@@ -2251,7 +2251,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextureBuilder_1importTexture(JNIEnv* env, jclass cls, jlong a_builder, jlong a_id) {
-    FilaTextureBuilder_importTexture((FilaTextureBuilder *)(intptr_t) a_builder, (intptr_t) a_id);
+    FilaTextureBuilder_importTexture((FilaTextureBuilder *)(intptr_t) a_builder, (int64_t) a_id);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextureBuilder_1levels(JNIEnv* env, jclass cls, jlong a_builder, jint a_levels) {
@@ -2350,44 +2350,44 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextur
     return (jlong) FilaTextureSampler_setWrapModeT((FilaTextureSampler) a_sampler, (FilaTextureSamplerWrapMode) a_mode);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1computeDataSize(JNIEnv* env, jclass cls, jint a_format, jint a_type, jlong a_stride, jlong a_height, jlong a_alignment) {
-    return (jlong) FilaTexture_computeDataSize((FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (size_t) a_stride, (size_t) a_height, (size_t) a_alignment);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1computeDataSize(JNIEnv* env, jclass cls, jint a_format, jint a_type, jint a_stride, jint a_height, jint a_alignment) {
+    return (jint) FilaTexture_computeDataSize((FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint32_t) a_stride, (uint32_t) a_height, (uint32_t) a_alignment);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1generateMipmaps(JNIEnv* env, jclass cls, jlong a_texture, jlong a_engine) {
     FilaTexture_generateMipmaps((const FilaTexture *)(intptr_t) a_texture, (FilaEngine *)(intptr_t) a_engine);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getDepth(JNIEnv* env, jclass cls, jlong a_texture, jlong a_level) {
-    return (jlong) FilaTexture_getDepth((const FilaTexture *)(intptr_t) a_texture, (size_t) a_level);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getDepth(JNIEnv* env, jclass cls, jlong a_texture, jint a_level) {
+    return (jint) FilaTexture_getDepth((const FilaTexture *)(intptr_t) a_texture, (uint32_t) a_level);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getFormat(JNIEnv* env, jclass cls, jlong a_texture) {
     return (jint) FilaTexture_getFormat((const FilaTexture *)(intptr_t) a_texture);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getHeight(JNIEnv* env, jclass cls, jlong a_texture, jlong a_level) {
-    return (jlong) FilaTexture_getHeight((const FilaTexture *)(intptr_t) a_texture, (size_t) a_level);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getHeight(JNIEnv* env, jclass cls, jlong a_texture, jint a_level) {
+    return (jint) FilaTexture_getHeight((const FilaTexture *)(intptr_t) a_texture, (uint32_t) a_level);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getLevels(JNIEnv* env, jclass cls, jlong a_texture) {
-    return (jlong) FilaTexture_getLevels((const FilaTexture *)(intptr_t) a_texture);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getLevels(JNIEnv* env, jclass cls, jlong a_texture) {
+    return (jint) FilaTexture_getLevels((const FilaTexture *)(intptr_t) a_texture);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getMaxArrayTextureLayers(JNIEnv* env, jclass cls, jlong a_engine) {
-    return (jlong) FilaTexture_getMaxArrayTextureLayers((FilaEngine *)(intptr_t) a_engine);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getMaxArrayTextureLayers(JNIEnv* env, jclass cls, jlong a_engine) {
+    return (jint) FilaTexture_getMaxArrayTextureLayers((FilaEngine *)(intptr_t) a_engine);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getMaxTextureSize(JNIEnv* env, jclass cls, jlong a_engine, jint a_target) {
-    return (jlong) FilaTexture_getMaxTextureSize((FilaEngine *)(intptr_t) a_engine, (FilaTextureSamplerType) a_target);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getMaxTextureSize(JNIEnv* env, jclass cls, jlong a_engine, jint a_target) {
+    return (jint) FilaTexture_getMaxTextureSize((FilaEngine *)(intptr_t) a_engine, (FilaTextureSamplerType) a_target);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getTarget(JNIEnv* env, jclass cls, jlong a_texture) {
     return (jint) FilaTexture_getTarget((const FilaTexture *)(intptr_t) a_texture);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getWidth(JNIEnv* env, jclass cls, jlong a_texture, jlong a_level) {
-    return (jlong) FilaTexture_getWidth((const FilaTexture *)(intptr_t) a_texture, (size_t) a_level);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1getWidth(JNIEnv* env, jclass cls, jlong a_texture, jint a_level) {
+    return (jint) FilaTexture_getWidth((const FilaTexture *)(intptr_t) a_texture, (uint32_t) a_level);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1isTextureFormatMipmappable(JNIEnv* env, jclass cls, jlong a_engine, jint a_format) {
@@ -2406,8 +2406,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture
     FilaTexture_setExternalStream((FilaTexture *)(intptr_t) a_texture, (FilaEngine *)(intptr_t) a_engine, (FilaStream *)(intptr_t) a_stream);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1setImage(JNIEnv* env, jclass cls, jlong a_texture, jlong a_engine, jlong a_level, jint a_xoffset, jint a_yoffset, jint a_zoffset, jint a_width, jint a_height, jint a_depth, jlong a_buffer, jlong a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaTexture_setImage((FilaTexture *)(intptr_t) a_texture, (FilaEngine *)(intptr_t) a_engine, (size_t) a_level, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_zoffset, (uint32_t) a_width, (uint32_t) a_height, (uint32_t) a_depth, (void *)(intptr_t) a_buffer, (size_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint8_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1setImage(JNIEnv* env, jclass cls, jlong a_texture, jlong a_engine, jint a_level, jint a_xoffset, jint a_yoffset, jint a_zoffset, jint a_width, jint a_height, jint a_depth, jlong a_buffer, jint a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
+    FilaTexture_setImage((FilaTexture *)(intptr_t) a_texture, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_level, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_zoffset, (uint32_t) a_width, (uint32_t) a_height, (uint32_t) a_depth, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint8_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1validatePixelFormatAndType(JNIEnv* env, jclass cls, jint a_internalFormat, jint a_format, jint a_type) {
@@ -2598,12 +2598,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexB
     FilaVertexBufferBuilder_vertexCount((FilaVertexBufferBuilder *)(intptr_t) a_builder, (uint32_t) a_vertexCount);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1getVertexCount(JNIEnv* env, jclass cls, jlong a_vertexBuffer) {
-    return (jlong) FilaVertexBuffer_getVertexCount((const FilaVertexBuffer *)(intptr_t) a_vertexBuffer);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1getVertexCount(JNIEnv* env, jclass cls, jlong a_vertexBuffer) {
+    return (jint) FilaVertexBuffer_getVertexCount((const FilaVertexBuffer *)(intptr_t) a_vertexBuffer);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1setBufferAt(JNIEnv* env, jclass cls, jlong a_vertexBuffer, jlong a_engine, jint a_bufferIndex, jlong a_buffer, jlong a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaVertexBuffer_setBufferAt((FilaVertexBuffer *)(intptr_t) a_vertexBuffer, (FilaEngine *)(intptr_t) a_engine, (uint8_t) a_bufferIndex, (void *)(intptr_t) a_buffer, (size_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1setBufferAt(JNIEnv* env, jclass cls, jlong a_vertexBuffer, jlong a_engine, jint a_bufferIndex, jlong a_buffer, jint a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
+    FilaVertexBuffer_setBufferAt((FilaVertexBuffer *)(intptr_t) a_vertexBuffer, (FilaEngine *)(intptr_t) a_engine, (uint8_t) a_bufferIndex, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1setBufferObjectAt(JNIEnv* env, jclass cls, jlong a_vertexBuffer, jlong a_engine, jint a_bufferIndex, jlong a_bufferObject) {

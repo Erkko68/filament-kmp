@@ -27,20 +27,20 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         private val nativeBuilder = FilamentC.FilaRenderableManagerBuilder_create(count.toLong())
 
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_geometry(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle)
+            FilamentC.FilaRenderableManagerBuilder_geometry(nativeBuilder, index.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle), MemorySegment.ofAddress(ib.nativeHandle))
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), count.toLong())
+            FilamentC.FilaRenderableManagerBuilder_geometryAt(nativeBuilder, index.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle), MemorySegment.ofAddress(ib.nativeHandle), offset.toLong(), count.toLong())
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, minIndex: Int, maxIndex: Int, count: Int): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), minIndex.toLong(), maxIndex.toLong(), count.toLong())
+            FilamentC.FilaRenderableManagerBuilder_geometryWithIndices(nativeBuilder, index.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle), MemorySegment.ofAddress(ib.nativeHandle), offset.toLong(), minIndex.toLong(), maxIndex.toLong(), count.toLong())
         }
         // Filament 1.71.5: non-indexed geometry overloads (no index buffer).
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_geometryNonIndexed(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle, offset.toLong(), count.toLong())
+            FilamentC.FilaRenderableManagerBuilder_geometryNonIndexed(nativeBuilder, index.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle), offset.toLong(), count.toLong())
         }
         actual fun geometry(index: Int, type: PrimitiveType, vb: VertexBuffer): Builder = apply {
-            FilamentC.FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index.toLong(), type.toNative(), vb.nativeHandle)
+            FilamentC.FilaRenderableManagerBuilder_geometryNonIndexedNone(nativeBuilder, index.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle))
         }
 
         actual fun geometryType(type: GeometryType): Builder = apply {
@@ -144,11 +144,11 @@ actual class RenderableManager @InternalFilamentApi constructor(internal val nat
         attributeBitsetToSet(FilamentC.FilaRenderableManager_getEnabledAttributesAt(nativeHandle, instance, primitiveIndex.toLong()))
 
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, ib: IndexBuffer, offset: Int, count: Int) =
-        FilamentC.FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), vb.nativeHandle, ib.nativeHandle, offset.toLong(), count.toLong())
+        FilamentC.FilaRenderableManager_setGeometryAt(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle), MemorySegment.ofAddress(ib.nativeHandle), offset.toLong(), count.toLong())
 
     // Filament 1.71.5: non-indexed setGeometryAt (no index buffer).
     actual fun setGeometryAt(instance: EntityInstance, primitiveIndex: Int, type: PrimitiveType, vb: VertexBuffer, offset: Int, count: Int) =
-        FilamentC.FilaRenderableManager_setGeometryAtNonIndexed(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), vb.nativeHandle, offset.toLong(), count.toLong())
+        FilamentC.FilaRenderableManager_setGeometryAtNonIndexed(nativeHandle, instance, primitiveIndex.toLong(), type.toNative(), MemorySegment.ofAddress(vb.nativeHandle), offset.toLong(), count.toLong())
 
     actual fun setBlendOrderAt(instance: EntityInstance, primitiveIndex: Int, blendOrder: Int) =
         FilamentC.FilaRenderableManager_setBlendOrderAt(nativeHandle, instance, primitiveIndex.toLong(), blendOrder.toShort())

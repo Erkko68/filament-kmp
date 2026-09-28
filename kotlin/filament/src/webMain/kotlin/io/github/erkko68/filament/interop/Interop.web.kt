@@ -9,6 +9,7 @@ import io.github.erkko68.filament.wasm.readFloats
 import io.github.erkko68.filament.wasm.readInts
 import io.github.erkko68.filament.wasm.setI64
 import io.github.erkko68.filament.wasm.setU16
+import io.github.erkko68.filament.wasm.upload as wasmUpload
 import io.github.erkko68.filament.wasm.writeBytes
 import io.github.erkko68.filament.wasm.writeDoubles
 import io.github.erkko68.filament.wasm.writeFloats
@@ -54,3 +55,6 @@ actual class InteropScope actual constructor() {
         allocations.clear()
     }
 }
+
+actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload =
+    fila.wasmUpload(data, size, onRelease).let { Upload(it.ptr, it.size, it.callback, it.userData) }

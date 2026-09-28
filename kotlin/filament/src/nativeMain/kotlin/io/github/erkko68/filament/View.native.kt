@@ -317,7 +317,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
                 cOptions.resolution = value.resolution.toUInt()
                 cOptions.strength = value.strength
                 cOptions.threshold = value.threshold
-                cOptions.dirt = value.dirt?.nativeHandle
+                cOptions.dirt = value.dirt?.nativeHandle?.toCPointer()
                 cOptions.dirtStrength = value.dirtStrength
                 cOptions.quality = value.quality.ordinal.toUInt()
                 cOptions.highlight = value.highlight
@@ -367,7 +367,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
                 cOptions.inScatteringStart = value.inScatteringStart
                 cOptions.inScatteringSize = value.inScatteringSize
                 cOptions.fogColorFromIbl = value.fogColorFromIbl
-                cOptions.skyColor = value.skyColor?.nativeHandle
+                cOptions.skyColor = value.skyColor?.nativeHandle?.toCPointer()
                 FilaView_setFogOptions(nativeHandle, cOptions.ptr)
             }
         }

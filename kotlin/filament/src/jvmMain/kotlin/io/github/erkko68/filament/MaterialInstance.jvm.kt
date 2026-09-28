@@ -41,7 +41,7 @@ actual class MaterialInstance @InternalFilamentApi constructor(
     actual fun setParameter(name: String, x: Int, y: Int, z: Int, w: Int) = confined { arena -> FilamentC.FilaMaterialInstance_setParameterInt4(nativeHandle, arena.cstr(name), x, y, z, w) }
 
     actual fun setParameter(name: String, texture: Texture, sampler: TextureSampler) {
-        confined { arena -> FilamentC.FilaMaterialInstance_setParameterTexture(nativeHandle, arena.cstr(name), texture.nativeHandle, sampler.nativeHandle) }
+        confined { arena -> FilamentC.FilaMaterialInstance_setParameterTexture(nativeHandle, arena.cstr(name), MemorySegment.ofAddress(texture.nativeHandle), sampler.nativeHandle) }
     }
 
     actual fun setParameter(name: String, type: BooleanElement, v: BooleanArray, offset: Int, count: Int) {

@@ -19,7 +19,7 @@ actual class EquirectangularToCubemap actual constructor(context: IBLPrefilterCo
 
     actual fun destroy() = FilamentC.FilaIBLPrefilterEquirectangularToCubemap_destroy(nativeHandle)
     actual fun run(equirect: Texture): Texture =
-        Texture(FilamentC.FilaIBLPrefilterEquirectangularToCubemap_run(nativeHandle, equirect.nativeObject))
+        Texture(FilamentC.FilaIBLPrefilterEquirectangularToCubemap_run(nativeHandle, MemorySegment.ofAddress(equirect.nativeObject)).address())
 }
 
 actual class SpecularFilter actual constructor(context: IBLPrefilterContext) : AutoCloseable {
@@ -28,5 +28,5 @@ actual class SpecularFilter actual constructor(context: IBLPrefilterContext) : A
 
     actual fun destroy() = FilamentC.FilaIBLPrefilterSpecularFilter_destroy(nativeHandle)
     actual fun run(skybox: Texture): Texture =
-        Texture(FilamentC.FilaIBLPrefilterSpecularFilter_run(nativeHandle, skybox.nativeObject))
+        Texture(FilamentC.FilaIBLPrefilterSpecularFilter_run(nativeHandle, MemorySegment.ofAddress(skybox.nativeObject)).address())
 }

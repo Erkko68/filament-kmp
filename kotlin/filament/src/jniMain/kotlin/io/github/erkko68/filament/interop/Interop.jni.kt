@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.interop
 
 import io.github.erkko68.filament.jni.FilaJni
+import io.github.erkko68.filament.jni.upload as jniUpload
 import java.nio.ByteBuffer
 
 // JVM + Android: externals are JNI methods; the forwarders are generated from their declarations.
@@ -46,3 +47,6 @@ actual class InteropScope actual constructor() {
         allocations.clear()
     }
 }
+
+actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload =
+    jniUpload(data, size, onRelease).let { Upload(it.ptr, it.size, it.callback, it.userData) }

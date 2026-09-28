@@ -25,6 +25,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Runtime Material sample** scene compiling shaders with filamat.
 
 ### Fixed
+- **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform; they now reach Filament.
 - **Web API gaps closed**: `setShadowType`, HDR decoding, IBL prefiltering, morph target count/weights, gltfio instance/material queries, shadow options, `customLut`, `geometryType` and more now work on web.
 
 ### Removed

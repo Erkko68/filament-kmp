@@ -179,8 +179,8 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidView(view: View): Boolean = FilamentC.FilaEngine_isValidView(nativeHandle, view.nativeHandle)
     actual fun isValidScene(scene: Scene): Boolean = FilamentC.FilaEngine_isValidScene(nativeHandle, MemorySegment.ofAddress(scene.nativeHandle))
     actual fun isValidFence(fence: Fence): Boolean = FilamentC.FilaEngine_isValidFence(nativeHandle, MemorySegment.ofAddress(fence.nativeHandle))
-    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilamentC.FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
-    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilamentC.FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
+    actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilamentC.FilaEngine_isValidIndexBuffer(nativeHandle, MemorySegment.ofAddress(indexBuffer.nativeHandle))
+    actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilamentC.FilaEngine_isValidVertexBuffer(nativeHandle, MemorySegment.ofAddress(vertexBuffer.nativeHandle))
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilamentC.FilaEngine_isValidSkinningBuffer(nativeHandle, MemorySegment.ofAddress(skinningBuffer.nativeHandle))
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilamentC.FilaEngine_isValidMorphTargetBuffer(nativeHandle, MemorySegment.ofAddress(morphTargetBuffer.nativeHandle))
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilamentC.FilaEngine_isValidIndirectLight(nativeHandle, MemorySegment.ofAddress(ibl.nativeHandle))
@@ -189,7 +189,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
     actual fun isValidSkybox(skybox: Skybox): Boolean = FilamentC.FilaEngine_isValidSkybox(nativeHandle, MemorySegment.ofAddress(skybox.nativeHandle))
     actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilamentC.FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
-    actual fun isValidTexture(texture: Texture): Boolean = FilamentC.FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle)
+    actual fun isValidTexture(texture: Texture): Boolean = FilamentC.FilaEngine_isValidTexture(nativeHandle, MemorySegment.ofAddress(texture.nativeHandle))
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilamentC.FilaEngine_isValidRenderTarget(nativeHandle, MemorySegment.ofAddress(renderTarget.nativeHandle))
     actual fun isValidStream(stream: Stream): Boolean = FilamentC.FilaEngine_isValidStream(nativeHandle, MemorySegment.ofAddress(stream.nativeHandle))
     actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilamentC.FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
@@ -244,12 +244,12 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     }
 
     actual fun destroyIndexBuffer(indexBuffer: IndexBuffer) {
-        FilamentC.FilaEngine_destroyIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
-        indexBuffer.nativeHandle = null
+        FilamentC.FilaEngine_destroyIndexBuffer(nativeHandle, MemorySegment.ofAddress(indexBuffer.nativeHandle))
+        indexBuffer.nativeHandle = 0L
     }
     actual fun destroyVertexBuffer(vertexBuffer: VertexBuffer) {
-        FilamentC.FilaEngine_destroyVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
-        vertexBuffer.nativeHandle = null
+        FilamentC.FilaEngine_destroyVertexBuffer(nativeHandle, MemorySegment.ofAddress(vertexBuffer.nativeHandle))
+        vertexBuffer.nativeHandle = 0L
     }
     actual fun destroySkinningBuffer(skinningBuffer: SkinningBuffer) {
         FilamentC.FilaEngine_destroySkinningBuffer(nativeHandle, MemorySegment.ofAddress(skinningBuffer.nativeHandle))
@@ -278,7 +278,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         colorGrading.nativeHandle = null
     }
     actual fun destroyTexture(texture: Texture) {
-        FilamentC.FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle)
+        FilamentC.FilaEngine_destroyTexture(nativeHandle, MemorySegment.ofAddress(texture.nativeHandle))
     }
     actual fun destroyRenderTarget(target: RenderTarget) {
         FilamentC.FilaEngine_destroyRenderTarget(nativeHandle, MemorySegment.ofAddress(target.nativeHandle))

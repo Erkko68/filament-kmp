@@ -50,8 +50,8 @@ void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder, FilaVer
 void FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, bool normalized);
 
 // VertexBuffer
-size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer);
-void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
+uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer);
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
 void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferObject* bufferObject);
 
 #ifdef __cplusplus

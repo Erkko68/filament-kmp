@@ -23,6 +23,6 @@ actual object TextureLoader {
                 type == TextureType.COLOR // sRGB if COLOR
             )
         }
-        return handle?.let { Texture(it) }
+        return handle?.let { Texture(it.toLong()) }
     }
 }
