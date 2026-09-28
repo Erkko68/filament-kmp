@@ -4,11 +4,11 @@
  * publish them).
  *
  * `published` mirrors the CI publish matrix (.github/workflows/publish.yml build-natives).
- * A dev host outside that list still gets a staging config so the fat
+ * A dev host outside that list (e.g. macos-x64) still gets a staging config so the fat
  * :java:runtime jar works locally — it just has no dedicated runtime-<platform> module.
  */
 object FfmRuntimePlatforms {
-    val published = listOf("macos-arm64", "macos-x64", "linux-x64", "linux-arm64", "windows-x64", "windows-arm64")
+    val published = listOf("macos-arm64", "linux-x64", "linux-arm64", "windows-x64", "windows-arm64")
 
     /** "{platform}-{arch}" of the build host, matching FilamentJvmNative's resource layout. */
     fun host(): String {

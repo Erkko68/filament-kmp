@@ -65,9 +65,6 @@ jobs:
         include:
           - os: macos-latest
             target: macosArm64
-          - os: macos-15-intel
-            target: macosX64
-            from-source: true
           - os: ubuntu-latest
             target: linuxX64
           - os: ubuntu-24.04-arm

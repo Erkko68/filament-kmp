@@ -5,8 +5,10 @@
 // Targets correspond to:
 //   • iosArm64 / iosSimulatorArm64 — Kotlin/Native iOS targets.
 //   • macosArm64                   — JVM/Panama host (:java:*); macOS uses
-//                                     the JVM build, not Kotlin/Native.
-//   (macosX64 / mingwArm64 have no upstream release: built from source by
+//                                     the JVM build, not Kotlin/Native. (No
+//                                     macosX64: upstream releases stopped
+//                                     shipping mac x86_64 libs.)
+//   (mingwArm64 has no upstream release: built from source by
 //    scripts/dev/build-host-libs.sh.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
 

@@ -1,12 +1,12 @@
 name: Setup host Filament libs
 description: |
   Filament's static libraries (prebuilts/<target>/) for the JVM hosts upstream publishes no
-  release for (macosX64, mingwArm64), cached. A cache miss builds them from the release tag
+  release for (mingwArm64), cached. A cache miss builds them from the release tag
   with scripts/dev/build-host-libs.sh (full Filament build: slow, once per filaVersion).
 
 inputs:
   target:
-    description: 'macosX64 | mingwArm64'
+    description: 'mingwArm64'
     required: true
 
 runs:

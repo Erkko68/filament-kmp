@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
 # Build Filament's static libraries at the current filaVersion for the JVM hosts upstream
-# publishes no release for — macosX64 (Intel Mac) and mingwArm64 (Windows on ARM) — and copy
+# publishes no release for — mingwArm64 (Windows on ARM) — and copy
 # them to prebuilts/<target>/lib, where c/CMakeLists.txt links them like downloaded prebuilts.
 #
-# Usage: scripts/dev/build-host-libs.sh macosX64|mingwArm64 [-f]   (-f rebuilds even if the stamp matches)
+# Usage: scripts/dev/build-host-libs.sh mingwArm64 [-f]   (-f rebuilds even if the stamp matches)
 #
 # Runs natively on the target host (matc & co. execute during the build); on Windows from Git
 # Bash with MSVC. Reuses upgrade-diff.sh's clone (scripts/dev/.filament-src-cache), checking out
@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-TARGET="${1:?usage: $0 macosX64|mingwArm64 [-f]}"
+TARGET="${1:?usage: $0 mingwArm64 [-f]}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CACHE_DIR="$ROOT/scripts/dev/.filament-src-cache"
 OUT_DIR="$ROOT/prebuilts/$TARGET/lib"
@@ -31,11 +31,10 @@ ARGS=(
     -DFILAMENT_BUILD_TESTING=OFF
 )
 case "$TARGET" in
-    macosX64) ARGS+=(-DCMAKE_OSX_ARCHITECTURES=x86_64) ;;
     # Mirrors upstream's build/windows/build-github.bat /MT variant (hardcoded to x64 there,
     # hence plain cmake): the JVM's own msvcp140.dll conflicts with /MD.
     mingwArm64) ARGS+=(-A ARM64 -DUSE_STATIC_CRT=ON -DFILAMENT_WINDOWS_CI_BUILD=ON -DFILAMENT_SUPPORTS_VULKAN=ON) ;;
-    *) echo "unsupported target '$TARGET' (macosX64|mingwArm64)" >&2; exit 1 ;;
+    *) echo "unsupported target '$TARGET' (mingwArm64)" >&2; exit 1 ;;
 esac
 
 if [[ "${2:-}" != "-f" && -f "$STAMP" && "$(cat "$STAMP")" == "$VERSION|local" ]]; then

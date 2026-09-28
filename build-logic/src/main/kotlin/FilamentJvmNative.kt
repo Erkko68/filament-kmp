@@ -56,7 +56,13 @@ fun Project.applyFilamentJvmNative(
     val arch = hostArch()
     val resArch = if (arch == "Arm64") "arm64" else "x64"
     val platformArch = "$platform-$resArch"
-    val prebuiltsTarget = (if (platform == "windows") "mingw" else platform) + arch
+    val prebuiltsTarget = when (platform) {
+        // Upstream releases no longer ship mac x86_64 libs — Apple Silicon only.
+        "macos" -> if (arch == "Arm64") "macosArm64" else error("macOS x86_64 is not supported: Filament releases stopped shipping mac x86_64 prebuilts")
+        "linux" -> if (arch == "Arm64") "linuxArm64" else "linuxX64"
+        "windows" -> if (arch == "Arm64") "mingwArm64" else "mingwX64"
+        else -> error("Unsupported platform '$platform'")
+    }
 
     val cmakePath = resolveCmake()
 
@@ -71,7 +77,7 @@ fun Project.applyFilamentJvmNative(
     // prebuilts/: <target>/lib) and skips the download task for that target.
     val localPrebuilts = providers.environmentVariable("FILAMENT_PREBUILTS_DIR").orNull
 
-    // Targets upstream doesn't ship (macosX64, mingwArm64) have no download task: their libs
+    // Targets upstream doesn't ship (mingwArm64) have no download task: their libs
     // come from scripts/dev/build-host-libs.sh into prebuilts/<target>/lib.
     val downloadPrebuilts = "downloadPrebuilts_$prebuiltsTarget".takeIf { it in rootProject.tasks.names }
     val downloadIncludes = rootProject.tasks.named("downloadIncludes")

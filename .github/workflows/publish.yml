@@ -28,10 +28,6 @@ jobs:
           - os: macos-latest
             target: macosArm64
             arch: macos-arm64
-          - os: macos-15-intel
-            target: macosX64
-            arch: macos-x64
-            from-source: true
           - os: ubuntu-latest
             target: linuxX64
             arch: linux-x64
@@ -151,7 +147,6 @@ jobs:
             -PcArtifactsDir=${{ github.workspace }}/c-artifacts \
             :java:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-macos-arm64:publishAllPublicationsToMavenCentralRepository \
-            :java:runtime-macos-x64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-linux-x64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-linux-arm64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-windows-x64:publishAllPublicationsToMavenCentralRepository \
