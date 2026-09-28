@@ -17,6 +17,7 @@ classify() {
         *.md|docs/*|LICENSE*|.github/ISSUE_TEMPLATE/*|.github/dependabot.yml) ;;
         .github/workflows/pages.yml|.github/workflows/publish.yml|.github/workflows/status-*) ;;
         scripts/dev/build-wasm-libs.sh|scripts/dev/setup-emsdk.sh) web=true ;;
+        scripts/dev/build-host-libs.sh) jvm=true ;;
         scripts/dev/*) ;;
         # c/ is the C API every target binds to (FFM, cinterop, emcc, JNI).
         c/*) all ;;

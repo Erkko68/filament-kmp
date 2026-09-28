@@ -95,6 +95,12 @@ message(STATUS "Using Filament distribution at: ${FILAMENT_DIST_DIR}")
 message(STATUS "Using Filament headers at: ${FILAMENT_INCLUDE_DIR}")
 message(STATUS "Using Filament libraries at: ${FILAMENT_LIB_DIR}")
 
+# Libs built by scripts/dev/build-host-libs.sh ship their own uberarchive.h next to them
+# (resgen bakes the archive size in); it must win over the shared include/ copy.
+if (EXISTS "${FILAMENT_LIB_DIR}/../include/gltfio/materials/uberarchive.h")
+    include_directories(BEFORE "${FILAMENT_LIB_DIR}/../include")
+endif()
+
 # Imported libraries helper. add_filament_library(NAME) maps target NAME to
 # lib<NAME>.a; add_filament_library_as(TARGET FILE) handles the cases where the
 # CMake target name differs from the archive filename (e.g. iblprefilter).

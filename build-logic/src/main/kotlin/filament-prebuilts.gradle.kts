@@ -8,6 +8,8 @@
 //                                     the JVM build, not Kotlin/Native. (No
 //                                     macosX64: upstream releases stopped
 //                                     shipping mac x86_64 libs.)
+//   (mingwArm64 has no upstream release: built from source by
+//    scripts/dev/build-host-libs.sh.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
 //   • android-<abi>                — :android JNI layer (one per NDK ABI).
 

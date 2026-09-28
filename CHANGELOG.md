@@ -21,6 +21,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **Web runs on our own C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` now holds the generated externals and runtime (package `io.github.erkko68.filament.wasm`).
 
 ### Added
+- **JVM runtime for Windows on ARM**: `filament-ffm-runtime-windows-arm64`, with Filament built from source since upstream ships no prebuilts for it.
 - **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `Filamat.initJs`.
 - **Runtime Material sample** scene compiling shaders with filamat.
 

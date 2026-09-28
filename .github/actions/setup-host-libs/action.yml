@@ -1,0 +1,31 @@
+name: Setup host Filament libs
+description: |
+  Filament's static libraries (prebuilts/<target>/) for the JVM hosts upstream publishes no
+  release for (mingwArm64), cached. A cache miss builds them from the release tag
+  with scripts/dev/build-host-libs.sh (full Filament build: slow, once per filaVersion).
+
+inputs:
+  target:
+    description: 'mingwArm64'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: ver
+      shell: bash
+      run: echo "fila=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+    # restore/save split: saving right after the build keeps it even if a later step fails.
+    - id: libs
+      uses: actions/cache/restore@v6
+      with:
+        path: prebuilts/${{ inputs.target }}
+        key: filament-host-libs-${{ steps.ver.outputs.fila }}-${{ inputs.target }}-${{ hashFiles('scripts/dev/build-host-libs.sh') }}
+    - if: steps.libs.outputs.cache-hit != 'true'
+      shell: bash
+      run: scripts/dev/build-host-libs.sh ${{ inputs.target }}
+    - if: steps.libs.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: prebuilts/${{ inputs.target }}
+        key: ${{ steps.libs.outputs.cache-primary-key }}
