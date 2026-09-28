@@ -16,7 +16,7 @@ public:
 } // namespace filament
 
 static JavaVM* sVm = nullptr;
-static jmethodID sRun = nullptr; // java.lang.Runnable.run
+static jmethodID sInvoke = nullptr; // FilaCallback.invoke(long)
 
 extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env;
@@ -24,9 +24,9 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     sVm = vm;
     // Filament's Android backend (streams, EGL helpers) needs the VM, as in upstream filament-jni.
     filament::VirtualMachineEnv::JNI_OnLoad(vm);
-    jclass runnable = env->FindClass("java/lang/Runnable");
-    sRun = env->GetMethodID(runnable, "run", "()V");
-    env->DeleteLocalRef(runnable);
+    jclass callback = env->FindClass("io/github/erkko68/filament/jni/FilaCallback");
+    sInvoke = env->GetMethodID(callback, "invoke", "(J)V");
+    env->DeleteLocalRef(callback);
     return JNI_VERSION_1_6;
 }
 
@@ -39,25 +39,36 @@ static JNIEnv* attachedEnv() {
     return env;
 }
 
-// userData is a global ref to a Runnable from FilaJni.newCallback; it runs once and is released.
-static void runOnce(void* userData) {
+// The userData behind every trampoline (FilaJni.newCallback).
+struct Callback {
+    jobject target; // global ref to a FilaCallback
+    bool once;
+};
+
+static void release(JNIEnv* env, Callback* callback) {
+    env->DeleteGlobalRef(callback->target);
+    delete callback;
+}
+
+static void dispatch(void* arg, void* userData) {
     JNIEnv* env = attachedEnv();
-    auto runnable = static_cast<jobject>(userData);
-    env->CallVoidMethod(runnable, sRun);
+    auto callback = static_cast<Callback*>(userData);
+    env->CallVoidMethod(callback->target, sInvoke, reinterpret_cast<jlong>(arg));
     if (env->ExceptionCheck()) {
         env->ExceptionDescribe();
         env->ExceptionClear();
     }
-    env->DeleteGlobalRef(runnable);
+    if (callback->once) release(env, callback);
 }
 
-static void bufferTrampoline(void*, size_t, void* userData) { runOnce(userData); }
-static void userDataTrampoline(void* userData) { runOnce(userData); }
+static void bufferTrampoline(void* buffer, size_t, void* userData) { dispatch(buffer, userData); }
+static void userDataTrampoline(void* userData) { dispatch(nullptr, userData); }
+static void pointerTrampoline(void* arg, void* userData) { dispatch(arg, userData); }
 
 #define FILA_JNI(ret, name) extern "C" JNIEXPORT ret JNICALL Java_io_github_erkko68_filament_jni_FilaJni_##name
 
-FILA_JNI(jlong, malloc)(JNIEnv*, jclass, jlong size) {
-    return reinterpret_cast<jlong>(std::malloc(static_cast<size_t>(size)));
+FILA_JNI(jlong, alloc)(JNIEnv*, jclass, jlong size) {
+    return reinterpret_cast<jlong>(std::calloc(1, static_cast<size_t>(size)));
 }
 
 FILA_JNI(void, free)(JNIEnv*, jclass, jlong ptr) {
@@ -80,8 +91,12 @@ FILA_JNI(void, releaseWindow)(JNIEnv*, jclass, jlong window) {
     ANativeWindow_release(reinterpret_cast<ANativeWindow*>(window));
 }
 
-FILA_JNI(jlong, newCallback)(JNIEnv* env, jclass, jobject runnable) {
-    return reinterpret_cast<jlong>(env->NewGlobalRef(runnable));
+FILA_JNI(jlong, newCallback)(JNIEnv* env, jclass, jobject target, jboolean once) {
+    return reinterpret_cast<jlong>(new Callback { env->NewGlobalRef(target), once == JNI_TRUE });
+}
+
+FILA_JNI(void, releaseCallback)(JNIEnv* env, jclass, jlong userData) {
+    release(env, reinterpret_cast<Callback*>(userData));
 }
 
 FILA_JNI(jlong, bufferCallback)(JNIEnv*, jclass) {
@@ -90,4 +105,8 @@ FILA_JNI(jlong, bufferCallback)(JNIEnv*, jclass) {
 
 FILA_JNI(jlong, userDataCallback)(JNIEnv*, jclass) {
     return reinterpret_cast<jlong>(&userDataTrampoline);
+}
+
+FILA_JNI(jlong, pointerCallback)(JNIEnv*, jclass) {
+    return reinterpret_cast<jlong>(&pointerTrampoline);
 }

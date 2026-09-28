@@ -62,7 +62,7 @@ abstract class GenerateJniBindings : DefaultTask() {
         val jniPrefix = "Java_${pkg.replace('.', '_')}_${cls}_"
 
         val cOut = StringBuilder(banner("//"))
-        cOut.append("#include <jni.h>\n#include <stdint.h>\n\n")
+        cOut.append("#include <jni.h>\n#include <stddef.h>\n#include <stdint.h>\n\n")
         headerFiles.forEach { cOut.append("#include \"${it.name}\"\n") }
         cOut.append("\n")
 
@@ -107,6 +107,18 @@ abstract class GenerateJniBindings : DefaultTask() {
             val retSuffix = if (fn.ret == Kind.VOID) "" else ": ${fn.ret.kotlin}"
             kOut.append("    @JvmStatic external fun ${fn.name}(${fn.params.joinToString { "${kotlinName(it.name)}: ${it.kind.kotlin}" }})$retSuffix\n")
         }
+        // Struct views, shaped like the wasm ones, but layouts differ per ABI (pointer/size_t width,
+        // x86-32 alignment): each struct's C side reports [sizeof, offset0, size0, ...] as compiled.
+        cOut.append("static jintArray filaLayout(JNIEnv* env, const jint* values, jsize count) {\n")
+        cOut.append("    jintArray out = (*env)->NewIntArray(env, count);\n")
+        cOut.append("    (*env)->SetIntArrayRegion(env, out, 0, count, values);\n    return out;\n}\n\n")
+        val structOut = StringBuilder()
+        @Suppress("UNCHECKED_CAST")
+        decls.filter { it["kind"] == "RecordDecl" && it["completeDefinition"] == true }
+            .mapNotNull { r -> (r["name"] as String?)?.let { it to r } }
+            .filter { (name, _) -> Regex("struct\\s+${Regex.escape(name)}\\s*\\{").containsMatchIn(text) }
+            .sortedBy { it.first }
+            .forEach { (name, record) -> emitStruct(Struct(name, "struct $name", "", record, typedefs), jniPrefix, cOut, kOut, structOut, "") }
         kOut.append("}\n\n")
 
         // Enum constants under their C names, so code ported from the cinterop actuals reads the same.
@@ -122,6 +134,8 @@ abstract class GenerateJniBindings : DefaultTask() {
             }
         }
 
+        kOut.append("\n").append(structOut)
+
         cDir.get().asFile.apply { deleteRecursively(); mkdirs() }.resolve("FilaJniBindings.c").writeText(cOut.toString())
         kotlinDir.get().asFile.apply { deleteRecursively(); mkdirs() }.resolve("$cls.kt").writeText(kOut.toString())
     }
@@ -132,6 +146,98 @@ abstract class GenerateJniBindings : DefaultTask() {
     }
     private class Param(val name: String, val cType: String, val kind: Kind, val sret: Boolean = false)
     private class Function(val name: String, val params: List<Param>, val ret: Kind)
+
+    /** A struct view: [cType] + [path] address it in C (`path` non-empty for anonymous nested structs). */
+    private inner class Struct(val kotlinName: String, val cType: String, val path: String, record: Map<String, Any?>, typedefs: Map<String, String>) {
+        val fields = mutableListOf<Field>()
+        val nested = mutableListOf<Struct>()
+
+        init {
+            var anonymous: Map<String, Any?>? = null
+            @Suppress("UNCHECKED_CAST")
+            (record["inner"] as List<Map<String, Any?>>?).orEmpty().forEach { d ->
+                when (d["kind"]) {
+                    "RecordDecl" -> anonymous = d
+                    "FieldDecl" -> {
+                        val fname = d["name"] as String
+                        val written = ((d["type"] as Map<*, *>)["qualType"] as String).replace("const ", "").trim()
+                        if ("(unnamed" in written) {
+                            nested += Struct(fname.replaceFirstChar { it.uppercase() }, cType, "$path$fname.", anonymous!!, typedefs)
+                            fields += Field(fname, FieldKind.NESTED, nestedClass = nested.last().kotlinName)
+                        } else fields += field(fname, written, typedefs, "$kotlinName.$fname")
+                    }
+                }
+            }
+        }
+    }
+
+    private enum class FieldKind { FLOAT, DOUBLE, BOOL, INT, UINT, LONG, STRUCT, NESTED, F32_ARRAY, F64_ARRAY, I32_ARRAY }
+    private class Field(val name: String, val kind: FieldKind, val nestedClass: String? = null)
+
+    private fun field(name: String, written: String, typedefs: Map<String, String>, where: String): Field {
+        Regex("^(.*)\\[(\\d+)]$").find(written)?.let { m ->
+            val kind = when (resolve(m.groupValues[1], typedefs)) {
+                "float" -> FieldKind.F32_ARRAY
+                "double" -> FieldKind.F64_ARRAY
+                "int", "unsigned int" -> FieldKind.I32_ARRAY
+                else -> error("GenerateJniBindings: no array view for '$written' ($where)")
+            }
+            return Field(name, kind)
+        }
+        val c = resolve(written, typedefs)
+        val kind = when {
+            '*' in c || '(' in c -> FieldKind.LONG
+            c.startsWith("struct ") -> return Field(name, FieldKind.STRUCT, nestedClass = c.removePrefix("struct ").trim())
+            c == "float" -> FieldKind.FLOAT
+            c == "double" -> FieldKind.DOUBLE
+            c == "_Bool" || c == "bool" -> FieldKind.BOOL
+            c in setOf("long", "unsigned long", "long long", "unsigned long long") -> FieldKind.LONG
+            c.startsWith("unsigned") -> FieldKind.UINT
+            c.startsWith("enum ") || c in setOf("char", "signed char", "short", "int") -> FieldKind.INT
+            else -> error("GenerateJniBindings: no field mapping for C type '$c' ($where)")
+        }
+        return Field(name, kind)
+    }
+
+    private fun emitStruct(s: Struct, jniPrefix: String, cOut: StringBuilder, decls: StringBuilder, kOut: StringBuilder, indent: String) {
+        val layoutFn = "FilaLayout_${(s.cType.removePrefix("struct ") + "_" + s.path.replace('.', '_')).trimEnd('_')}"
+        val base = if (s.path.isEmpty()) "0" else "offsetof(${s.cType}, ${s.path.trimEnd('.')})"
+        val size = if (s.path.isEmpty()) "sizeof(${s.cType})" else "sizeof(((${s.cType}*) 0)->${s.path.trimEnd('.')})"
+        cOut.append("JNIEXPORT jintArray JNICALL $jniPrefix${layoutFn.replace("_", "_1")}(JNIEnv* env, jclass cls) {\n")
+        cOut.append("    const jint l[] = {\n        (jint) $size,\n")
+        s.fields.forEach { f ->
+            cOut.append("        (jint) (offsetof(${s.cType}, ${s.path}${f.name}) - $base), (jint) sizeof(((${s.cType}*) 0)->${s.path}${f.name}),\n")
+        }
+        cOut.append("    };\n    return filaLayout(env, l, sizeof(l) / sizeof(l[0]));\n}\n\n")
+        decls.append("    @JvmStatic external fun $layoutFn(): IntArray\n")
+
+        kOut.append("${indent}class ${s.kotlinName}(val ptr: Long) {\n")
+        kOut.append("$indent    private val b = FilaJni.buffer(ptr, SIZE)\n")
+        s.fields.forEachIndexed { i, f ->
+            val off = "L[${1 + 2 * i}]"
+            val sz = "L[${2 + 2 * i}]"
+            val n = kotlinName(f.name)
+            val line = when (f.kind) {
+                FieldKind.FLOAT -> "var $n: Float get() = b.getFloat($off); set(value) { b.putFloat($off, value) }"
+                FieldKind.DOUBLE -> "var $n: Double get() = b.getDouble($off); set(value) { b.putDouble($off, value) }"
+                FieldKind.BOOL -> "var $n: Boolean get() = b.get($off).toInt() != 0; set(value) { b.put($off, (if (value) 1 else 0).toByte()) }"
+                FieldKind.INT -> "var $n: Int get() = b.readInt($off, $sz, signed = true); set(value) { b.writeInt($off, $sz, value) }"
+                FieldKind.UINT -> "var $n: Int get() = b.readInt($off, $sz, signed = false); set(value) { b.writeInt($off, $sz, value) }"
+                FieldKind.LONG -> "var $n: Long get() = b.readLong($off, $sz); set(value) { b.writeLong($off, $sz, value) }"
+                FieldKind.STRUCT, FieldKind.NESTED -> "val $n: ${f.nestedClass} get() = ${f.nestedClass}(ptr + $off)"
+                FieldKind.F32_ARRAY -> "val $n: F32Array get() = F32Array(b, $off)"
+                FieldKind.F64_ARRAY -> "val $n: F64Array get() = F64Array(b, $off)"
+                FieldKind.I32_ARRAY -> "val $n: I32Array get() = I32Array(b, $off)"
+            }
+            kOut.append("$indent    $line\n")
+        }
+        s.nested.forEach { emitStruct(it, jniPrefix, cOut, decls, kOut, "$indent    ") }
+        kOut.append("$indent    companion object {\n")
+        kOut.append("$indent        private val L = FilamentJni.$layoutFn()\n")
+        kOut.append("$indent        val SIZE: Int get() = L[0]\n")
+        kOut.append("$indent    }\n$indent}\n")
+        if (indent.isEmpty()) kOut.append("\n")
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun toFunction(fn: Map<String, Any?>, typedefs: Map<String, String>): Function {

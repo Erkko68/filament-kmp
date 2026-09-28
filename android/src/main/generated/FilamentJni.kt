@@ -898,6 +898,35 @@ object FilamentJni {
     @JvmStatic external fun FilaView_setVignetteOptions(view: Long, options: Long)
     @JvmStatic external fun FilaView_setVisibleLayers(view: Long, select: Int, value: Int)
     @JvmStatic external fun FilaView_setVsmShadowOptions(view: Long, options: Long)
+    @JvmStatic external fun FilaLayout_FilaBone(): IntArray
+    @JvmStatic external fun FilaLayout_FilaBox(): IntArray
+    @JvmStatic external fun FilaLayout_FilaEngineConfig(): IntArray
+    @JvmStatic external fun FilaLayout_FilaFloat3(): IntArray
+    @JvmStatic external fun FilaLayout_FilaLightManagerShadowOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaLightManagerVsmShadowOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaMaterialKey(): IntArray
+    @JvmStatic external fun FilaLayout_FilaMaterialKeyFields(): IntArray
+    @JvmStatic external fun FilaLayout_FilaMaterialParameterInfo(): IntArray
+    @JvmStatic external fun FilaLayout_FilaQuat(): IntArray
+    @JvmStatic external fun FilaLayout_FilaRendererClearOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaRendererDisplayInfo(): IntArray
+    @JvmStatic external fun FilaLayout_FilaRendererFrameRateOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewAmbientOcclusionOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewAmbientOcclusionOptions_ssct(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewAmbientOcclusionOptions_gtao(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewBloomOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewDepthOfFieldOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewDynamicResolutionOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewFogOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewGuardBandOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewMultiSampleAntiAliasingOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewPickingQueryResult(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewScreenSpaceReflectionsOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewSoftShadowOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewStereoscopicOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewTemporalAntiAliasingOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewVignetteOptions(): IntArray
+    @JvmStatic external fun FilaLayout_FilaViewVsmShadowOptions(): IntArray
 }
 
 const val FILA_VERTEX_ATTRIBUTE_POSITION = 0
@@ -1324,3 +1353,465 @@ const val FILA_MANIPULATOR_KEY_BACKWARD = 2
 const val FILA_MANIPULATOR_KEY_RIGHT = 3
 const val FILA_MANIPULATOR_KEY_UP = 4
 const val FILA_MANIPULATOR_KEY_DOWN = 5
+
+class FilaBone(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    val unitQuaternion: FilaQuat get() = FilaQuat(ptr + L[1])
+    val translation: FilaFloat3 get() = FilaFloat3(ptr + L[3])
+    var reserved: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaBone()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaBox(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var centerX: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var centerY: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var centerZ: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var halfExtentX: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    var halfExtentY: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
+    var halfExtentZ: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaBox()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaEngineConfig(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var commandBufferSizeMB: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
+    var perRenderPassArenaSizeMB: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
+    var driverHandleArenaSizeMB: Int get() = b.readInt(L[5], L[6], signed = false); set(value) { b.writeInt(L[5], L[6], value) }
+    var minCommandBufferSizeMB: Int get() = b.readInt(L[7], L[8], signed = false); set(value) { b.writeInt(L[7], L[8], value) }
+    var perFrameCommandsSizeMB: Int get() = b.readInt(L[9], L[10], signed = false); set(value) { b.writeInt(L[9], L[10], value) }
+    var jobSystemThreadCount: Int get() = b.readInt(L[11], L[12], signed = false); set(value) { b.writeInt(L[11], L[12], value) }
+    var disableParallelShaderCompile: Boolean get() = b.get(L[13]).toInt() != 0; set(value) { b.put(L[13], (if (value) 1 else 0).toByte()) }
+    var stereoscopicType: Int get() = b.readInt(L[15], L[16], signed = true); set(value) { b.writeInt(L[15], L[16], value) }
+    var stereoscopicEyeCount: Int get() = b.readInt(L[17], L[18], signed = false); set(value) { b.writeInt(L[17], L[18], value) }
+    var resourceAllocatorCacheSizeMB: Int get() = b.readInt(L[19], L[20], signed = false); set(value) { b.writeInt(L[19], L[20], value) }
+    var resourceAllocatorCacheMaxAge: Int get() = b.readInt(L[21], L[22], signed = false); set(value) { b.writeInt(L[21], L[22], value) }
+    var disableHandleUseAfterFreeCheck: Boolean get() = b.get(L[23]).toInt() != 0; set(value) { b.put(L[23], (if (value) 1 else 0).toByte()) }
+    var preferredShaderLanguage: Int get() = b.readInt(L[25], L[26], signed = true); set(value) { b.writeInt(L[25], L[26], value) }
+    var forceGLES2Context: Boolean get() = b.get(L[27]).toInt() != 0; set(value) { b.put(L[27], (if (value) 1 else 0).toByte()) }
+    var assertNativeWindowIsValid: Boolean get() = b.get(L[29]).toInt() != 0; set(value) { b.put(L[29], (if (value) 1 else 0).toByte()) }
+    var gpuContextPriority: Int get() = b.readInt(L[31], L[32], signed = true); set(value) { b.writeInt(L[31], L[32], value) }
+    var sharedUboInitialSizeInBytes: Int get() = b.readInt(L[33], L[34], signed = false); set(value) { b.writeInt(L[33], L[34], value) }
+    var enableMultipleDirectionalLights: Boolean get() = b.get(L[35]).toInt() != 0; set(value) { b.put(L[35], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaEngineConfig()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaFloat3(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var x: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var y: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var z: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaFloat3()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaLightManagerShadowOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var mapSize: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
+    var shadowCascades: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
+    val cascadeSplitPositions: F32Array get() = F32Array(b, L[5])
+    var constantBias: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    var normalBias: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
+    var shadowFar: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
+    var shadowNearHint: Float get() = b.getFloat(L[13]); set(value) { b.putFloat(L[13], value) }
+    var shadowFarHint: Float get() = b.getFloat(L[15]); set(value) { b.putFloat(L[15], value) }
+    var stable: Boolean get() = b.get(L[17]).toInt() != 0; set(value) { b.put(L[17], (if (value) 1 else 0).toByte()) }
+    var lispsm: Boolean get() = b.get(L[19]).toInt() != 0; set(value) { b.put(L[19], (if (value) 1 else 0).toByte()) }
+    var polygonOffsetConstant: Float get() = b.getFloat(L[21]); set(value) { b.putFloat(L[21], value) }
+    var polygonOffsetSlope: Float get() = b.getFloat(L[23]); set(value) { b.putFloat(L[23], value) }
+    var screenSpaceContactShadows: Boolean get() = b.get(L[25]).toInt() != 0; set(value) { b.put(L[25], (if (value) 1 else 0).toByte()) }
+    var stepCount: Int get() = b.readInt(L[27], L[28], signed = false); set(value) { b.writeInt(L[27], L[28], value) }
+    var maxShadowDistance: Float get() = b.getFloat(L[29]); set(value) { b.putFloat(L[29], value) }
+    val vsm: FilaLightManagerVsmShadowOptions get() = FilaLightManagerVsmShadowOptions(ptr + L[31])
+    var shadowBulbRadius: Float get() = b.getFloat(L[33]); set(value) { b.putFloat(L[33], value) }
+    val transform: F32Array get() = F32Array(b, L[35])
+    var penumbraScale: Float get() = b.getFloat(L[37]); set(value) { b.putFloat(L[37], value) }
+    var penumbraRatioScale: Float get() = b.getFloat(L[39]); set(value) { b.putFloat(L[39], value) }
+    var maxPenumbraRatio: Float get() = b.getFloat(L[41]); set(value) { b.putFloat(L[41], value) }
+    var maxSearchRadius: Float get() = b.getFloat(L[43]); set(value) { b.putFloat(L[43], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaLightManagerShadowOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaLightManagerVsmShadowOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var elvsm: Boolean get() = b.get(L[1]).toInt() != 0; set(value) { b.put(L[1], (if (value) 1 else 0).toByte()) }
+    var blurWidth: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaLightManagerVsmShadowOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaMaterialKey(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    val words: I32Array get() = I32Array(b, L[1])
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaMaterialKey()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaMaterialKeyFields(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var doubleSided: Boolean get() = b.get(L[1]).toInt() != 0; set(value) { b.put(L[1], (if (value) 1 else 0).toByte()) }
+    var unlit: Boolean get() = b.get(L[3]).toInt() != 0; set(value) { b.put(L[3], (if (value) 1 else 0).toByte()) }
+    var hasVertexColors: Boolean get() = b.get(L[5]).toInt() != 0; set(value) { b.put(L[5], (if (value) 1 else 0).toByte()) }
+    var hasBaseColorTexture: Boolean get() = b.get(L[7]).toInt() != 0; set(value) { b.put(L[7], (if (value) 1 else 0).toByte()) }
+    var hasNormalTexture: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
+    var hasOcclusionTexture: Boolean get() = b.get(L[11]).toInt() != 0; set(value) { b.put(L[11], (if (value) 1 else 0).toByte()) }
+    var hasEmissiveTexture: Boolean get() = b.get(L[13]).toInt() != 0; set(value) { b.put(L[13], (if (value) 1 else 0).toByte()) }
+    var useSpecularGlossiness: Boolean get() = b.get(L[15]).toInt() != 0; set(value) { b.put(L[15], (if (value) 1 else 0).toByte()) }
+    var alphaMode: Int get() = b.readInt(L[17], L[18], signed = false); set(value) { b.writeInt(L[17], L[18], value) }
+    var enableDiagnostics: Int get() = b.readInt(L[19], L[20], signed = false); set(value) { b.writeInt(L[19], L[20], value) }
+    var hasMetallicRoughnessTexture: Boolean get() = b.get(L[21]).toInt() != 0; set(value) { b.put(L[21], (if (value) 1 else 0).toByte()) }
+    var metallicRoughnessUV: Int get() = b.readInt(L[23], L[24], signed = false); set(value) { b.writeInt(L[23], L[24], value) }
+    var baseColorUV: Int get() = b.readInt(L[25], L[26], signed = false); set(value) { b.writeInt(L[25], L[26], value) }
+    var hasClearCoatTexture: Boolean get() = b.get(L[27]).toInt() != 0; set(value) { b.put(L[27], (if (value) 1 else 0).toByte()) }
+    var clearCoatUV: Int get() = b.readInt(L[29], L[30], signed = false); set(value) { b.writeInt(L[29], L[30], value) }
+    var hasClearCoatRoughnessTexture: Boolean get() = b.get(L[31]).toInt() != 0; set(value) { b.put(L[31], (if (value) 1 else 0).toByte()) }
+    var clearCoatRoughnessUV: Int get() = b.readInt(L[33], L[34], signed = false); set(value) { b.writeInt(L[33], L[34], value) }
+    var hasClearCoatNormalTexture: Boolean get() = b.get(L[35]).toInt() != 0; set(value) { b.put(L[35], (if (value) 1 else 0).toByte()) }
+    var clearCoatNormalUV: Int get() = b.readInt(L[37], L[38], signed = false); set(value) { b.writeInt(L[37], L[38], value) }
+    var hasClearCoat: Boolean get() = b.get(L[39]).toInt() != 0; set(value) { b.put(L[39], (if (value) 1 else 0).toByte()) }
+    var hasTransmission: Boolean get() = b.get(L[41]).toInt() != 0; set(value) { b.put(L[41], (if (value) 1 else 0).toByte()) }
+    var hasTextureTransforms: Int get() = b.readInt(L[43], L[44], signed = false); set(value) { b.writeInt(L[43], L[44], value) }
+    var emissiveUV: Int get() = b.readInt(L[45], L[46], signed = false); set(value) { b.writeInt(L[45], L[46], value) }
+    var aoUV: Int get() = b.readInt(L[47], L[48], signed = false); set(value) { b.writeInt(L[47], L[48], value) }
+    var normalUV: Int get() = b.readInt(L[49], L[50], signed = false); set(value) { b.writeInt(L[49], L[50], value) }
+    var hasTransmissionTexture: Boolean get() = b.get(L[51]).toInt() != 0; set(value) { b.put(L[51], (if (value) 1 else 0).toByte()) }
+    var transmissionUV: Int get() = b.readInt(L[53], L[54], signed = false); set(value) { b.writeInt(L[53], L[54], value) }
+    var hasSheenColorTexture: Boolean get() = b.get(L[55]).toInt() != 0; set(value) { b.put(L[55], (if (value) 1 else 0).toByte()) }
+    var sheenColorUV: Int get() = b.readInt(L[57], L[58], signed = false); set(value) { b.writeInt(L[57], L[58], value) }
+    var hasSheenRoughnessTexture: Boolean get() = b.get(L[59]).toInt() != 0; set(value) { b.put(L[59], (if (value) 1 else 0).toByte()) }
+    var sheenRoughnessUV: Int get() = b.readInt(L[61], L[62], signed = false); set(value) { b.writeInt(L[61], L[62], value) }
+    var hasVolumeThicknessTexture: Boolean get() = b.get(L[63]).toInt() != 0; set(value) { b.put(L[63], (if (value) 1 else 0).toByte()) }
+    var volumeThicknessUV: Int get() = b.readInt(L[65], L[66], signed = false); set(value) { b.writeInt(L[65], L[66], value) }
+    var hasSheen: Boolean get() = b.get(L[67]).toInt() != 0; set(value) { b.put(L[67], (if (value) 1 else 0).toByte()) }
+    var hasIOR: Boolean get() = b.get(L[69]).toInt() != 0; set(value) { b.put(L[69], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaMaterialKeyFields()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaMaterialParameterInfo(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var name: Long get() = b.readLong(L[1], L[2]); set(value) { b.writeLong(L[1], L[2], value) }
+    var isSampler: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
+    var isSubpass: Int get() = b.readInt(L[5], L[6], signed = false); set(value) { b.writeInt(L[5], L[6], value) }
+    var type: Int get() = b.readInt(L[7], L[8], signed = false); set(value) { b.writeInt(L[7], L[8], value) }
+    var count: Int get() = b.readInt(L[9], L[10], signed = false); set(value) { b.writeInt(L[9], L[10], value) }
+    var precision: Int get() = b.readInt(L[11], L[12], signed = false); set(value) { b.writeInt(L[11], L[12], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaMaterialParameterInfo()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaQuat(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var x: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var y: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var z: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var w: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaQuat()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaRendererClearOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    val clearColor: F64Array get() = F64Array(b, L[1])
+    var clear: Boolean get() = b.get(L[3]).toInt() != 0; set(value) { b.put(L[3], (if (value) 1 else 0).toByte()) }
+    var discard: Boolean get() = b.get(L[5]).toInt() != 0; set(value) { b.put(L[5], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaRendererClearOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaRendererDisplayInfo(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var refreshRate: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaRendererDisplayInfo()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaRendererFrameRateOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var headRoomRatio: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var scaleRate: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var history: Int get() = b.readInt(L[5], L[6], signed = false); set(value) { b.writeInt(L[5], L[6], value) }
+    var interval: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaRendererFrameRateOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewAmbientOcclusionOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var radius: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var bias: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var power: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var resolution: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    var intensity: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
+    var bilateralThreshold: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
+    var quality: Int get() = b.readInt(L[13], L[14], signed = true); set(value) { b.writeInt(L[13], L[14], value) }
+    var lowPassFilter: Int get() = b.readInt(L[15], L[16], signed = true); set(value) { b.writeInt(L[15], L[16], value) }
+    var upsampling: Int get() = b.readInt(L[17], L[18], signed = true); set(value) { b.writeInt(L[17], L[18], value) }
+    var enabled: Boolean get() = b.get(L[19]).toInt() != 0; set(value) { b.put(L[19], (if (value) 1 else 0).toByte()) }
+    var bentNormals: Boolean get() = b.get(L[21]).toInt() != 0; set(value) { b.put(L[21], (if (value) 1 else 0).toByte()) }
+    var minHorizonAngleRad: Float get() = b.getFloat(L[23]); set(value) { b.putFloat(L[23], value) }
+    val ssct: Ssct get() = Ssct(ptr + L[25])
+    val gtao: Gtao get() = Gtao(ptr + L[27])
+    var aoType: Int get() = b.readInt(L[29], L[30], signed = true); set(value) { b.writeInt(L[29], L[30], value) }
+    class Ssct(val ptr: Long) {
+        private val b = FilaJni.buffer(ptr, SIZE)
+        var lightConeRad: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+        var shadowDistance: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+        var contactDistanceMax: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+        var intensity: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+        val lightDirection: F32Array get() = F32Array(b, L[9])
+        var depthBias: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
+        var depthSlopeBias: Float get() = b.getFloat(L[13]); set(value) { b.putFloat(L[13], value) }
+        var sampleCount: Int get() = b.readInt(L[15], L[16], signed = false); set(value) { b.writeInt(L[15], L[16], value) }
+        var rayCount: Int get() = b.readInt(L[17], L[18], signed = false); set(value) { b.writeInt(L[17], L[18], value) }
+        var enabled: Boolean get() = b.get(L[19]).toInt() != 0; set(value) { b.put(L[19], (if (value) 1 else 0).toByte()) }
+        companion object {
+            private val L = FilamentJni.FilaLayout_FilaViewAmbientOcclusionOptions_ssct()
+            val SIZE: Int get() = L[0]
+        }
+    }
+    class Gtao(val ptr: Long) {
+        private val b = FilaJni.buffer(ptr, SIZE)
+        var sampleSliceCount: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
+        var sampleStepsPerSlice: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
+        var thicknessHeuristic: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+        var useVisibilityBitmasks: Boolean get() = b.get(L[7]).toInt() != 0; set(value) { b.put(L[7], (if (value) 1 else 0).toByte()) }
+        var constThickness: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
+        var linearThickness: Boolean get() = b.get(L[11]).toInt() != 0; set(value) { b.put(L[11], (if (value) 1 else 0).toByte()) }
+        companion object {
+            private val L = FilamentJni.FilaLayout_FilaViewAmbientOcclusionOptions_gtao()
+            val SIZE: Int get() = L[0]
+        }
+    }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewAmbientOcclusionOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewBloomOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var dirt: Long get() = b.readLong(L[1], L[2]); set(value) { b.writeLong(L[1], L[2], value) }
+    var dirtStrength: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var strength: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var resolution: Int get() = b.readInt(L[7], L[8], signed = false); set(value) { b.writeInt(L[7], L[8], value) }
+    var levels: Int get() = b.readInt(L[9], L[10], signed = false); set(value) { b.writeInt(L[9], L[10], value) }
+    var blendMode: Int get() = b.readInt(L[11], L[12], signed = true); set(value) { b.writeInt(L[11], L[12], value) }
+    var threshold: Boolean get() = b.get(L[13]).toInt() != 0; set(value) { b.put(L[13], (if (value) 1 else 0).toByte()) }
+    var enabled: Boolean get() = b.get(L[15]).toInt() != 0; set(value) { b.put(L[15], (if (value) 1 else 0).toByte()) }
+    var highlight: Float get() = b.getFloat(L[17]); set(value) { b.putFloat(L[17], value) }
+    var quality: Int get() = b.readInt(L[19], L[20], signed = true); set(value) { b.writeInt(L[19], L[20], value) }
+    var lensFlare: Boolean get() = b.get(L[21]).toInt() != 0; set(value) { b.put(L[21], (if (value) 1 else 0).toByte()) }
+    var starburst: Boolean get() = b.get(L[23]).toInt() != 0; set(value) { b.put(L[23], (if (value) 1 else 0).toByte()) }
+    var chromaticAberration: Float get() = b.getFloat(L[25]); set(value) { b.putFloat(L[25], value) }
+    var ghostCount: Int get() = b.readInt(L[27], L[28], signed = false); set(value) { b.writeInt(L[27], L[28], value) }
+    var ghostSpacing: Float get() = b.getFloat(L[29]); set(value) { b.putFloat(L[29], value) }
+    var ghostThreshold: Float get() = b.getFloat(L[31]); set(value) { b.putFloat(L[31], value) }
+    var haloThickness: Float get() = b.getFloat(L[33]); set(value) { b.putFloat(L[33], value) }
+    var haloRadius: Float get() = b.getFloat(L[35]); set(value) { b.putFloat(L[35], value) }
+    var haloThreshold: Float get() = b.getFloat(L[37]); set(value) { b.putFloat(L[37], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewBloomOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewDepthOfFieldOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var cocScale: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var cocAspectRatio: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var maxApertureDiameter: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var enabled: Boolean get() = b.get(L[7]).toInt() != 0; set(value) { b.put(L[7], (if (value) 1 else 0).toByte()) }
+    var filter: Int get() = b.readInt(L[9], L[10], signed = true); set(value) { b.writeInt(L[9], L[10], value) }
+    var nativeResolution: Boolean get() = b.get(L[11]).toInt() != 0; set(value) { b.put(L[11], (if (value) 1 else 0).toByte()) }
+    var foregroundRingCount: Int get() = b.readInt(L[13], L[14], signed = false); set(value) { b.writeInt(L[13], L[14], value) }
+    var backgroundRingCount: Int get() = b.readInt(L[15], L[16], signed = false); set(value) { b.writeInt(L[15], L[16], value) }
+    var fastGatherRingCount: Int get() = b.readInt(L[17], L[18], signed = false); set(value) { b.writeInt(L[17], L[18], value) }
+    var maxForegroundCOC: Int get() = b.readInt(L[19], L[20], signed = false); set(value) { b.writeInt(L[19], L[20], value) }
+    var maxBackgroundCOC: Int get() = b.readInt(L[21], L[22], signed = false); set(value) { b.writeInt(L[21], L[22], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewDepthOfFieldOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewDynamicResolutionOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    val minScale: F32Array get() = F32Array(b, L[1])
+    val maxScale: F32Array get() = F32Array(b, L[3])
+    var sharpness: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var enabled: Boolean get() = b.get(L[7]).toInt() != 0; set(value) { b.put(L[7], (if (value) 1 else 0).toByte()) }
+    var homogeneousScaling: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
+    var quality: Int get() = b.readInt(L[11], L[12], signed = true); set(value) { b.writeInt(L[11], L[12], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewDynamicResolutionOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewFogOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var distance: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var cutOffDistance: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var maximumOpacity: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var height: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    var heightFalloff: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
+    val color: F32Array get() = F32Array(b, L[11])
+    var density: Float get() = b.getFloat(L[13]); set(value) { b.putFloat(L[13], value) }
+    var inScatteringStart: Float get() = b.getFloat(L[15]); set(value) { b.putFloat(L[15], value) }
+    var inScatteringSize: Float get() = b.getFloat(L[17]); set(value) { b.putFloat(L[17], value) }
+    var fogColorFromIbl: Boolean get() = b.get(L[19]).toInt() != 0; set(value) { b.put(L[19], (if (value) 1 else 0).toByte()) }
+    var skyColor: Long get() = b.readLong(L[21], L[22]); set(value) { b.writeLong(L[21], L[22], value) }
+    var enabled: Boolean get() = b.get(L[23]).toInt() != 0; set(value) { b.put(L[23], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewFogOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewGuardBandOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var enabled: Boolean get() = b.get(L[1]).toInt() != 0; set(value) { b.put(L[1], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewGuardBandOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewMultiSampleAntiAliasingOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var enabled: Boolean get() = b.get(L[1]).toInt() != 0; set(value) { b.put(L[1], (if (value) 1 else 0).toByte()) }
+    var sampleCount: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
+    var customResolve: Boolean get() = b.get(L[5]).toInt() != 0; set(value) { b.put(L[5], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewMultiSampleAntiAliasingOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewPickingQueryResult(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var renderable: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
+    var depth: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    val fragCoords: F32Array get() = F32Array(b, L[5])
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewPickingQueryResult()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewScreenSpaceReflectionsOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var thickness: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var bias: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var maxDistance: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var stride: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    var enabled: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewScreenSpaceReflectionsOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewSoftShadowOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var penumbraScale: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var penumbraRatioScale: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var maxPenumbraRatio: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var maxSearchRadius: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewSoftShadowOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewStereoscopicOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var enabled: Boolean get() = b.get(L[1]).toInt() != 0; set(value) { b.put(L[1], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewStereoscopicOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewTemporalAntiAliasingOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var filterWidth: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var feedback: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var lodBias: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    var sharpness: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
+    var enabled: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
+    var upscaling: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
+    var filterHistory: Boolean get() = b.get(L[13]).toInt() != 0; set(value) { b.put(L[13], (if (value) 1 else 0).toByte()) }
+    var filterInput: Boolean get() = b.get(L[15]).toInt() != 0; set(value) { b.put(L[15], (if (value) 1 else 0).toByte()) }
+    var useYCoCg: Boolean get() = b.get(L[17]).toInt() != 0; set(value) { b.put(L[17], (if (value) 1 else 0).toByte()) }
+    var hdr: Boolean get() = b.get(L[19]).toInt() != 0; set(value) { b.put(L[19], (if (value) 1 else 0).toByte()) }
+    var boxType: Int get() = b.readInt(L[21], L[22], signed = true); set(value) { b.writeInt(L[21], L[22], value) }
+    var boxClipping: Int get() = b.readInt(L[23], L[24], signed = true); set(value) { b.writeInt(L[23], L[24], value) }
+    var jitterPattern: Int get() = b.readInt(L[25], L[26], signed = true); set(value) { b.writeInt(L[25], L[26], value) }
+    var varianceGamma: Float get() = b.getFloat(L[27]); set(value) { b.putFloat(L[27], value) }
+    var preventFlickering: Boolean get() = b.get(L[29]).toInt() != 0; set(value) { b.put(L[29], (if (value) 1 else 0).toByte()) }
+    var historyReprojection: Boolean get() = b.get(L[31]).toInt() != 0; set(value) { b.put(L[31], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewTemporalAntiAliasingOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewVignetteOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var midPoint: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
+    var roundness: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
+    var feather: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
+    val color: F32Array get() = F32Array(b, L[7])
+    var enabled: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewVignetteOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
+class FilaViewVsmShadowOptions(val ptr: Long) {
+    private val b = FilaJni.buffer(ptr, SIZE)
+    var anisotropy: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
+    var mipmapping: Boolean get() = b.get(L[3]).toInt() != 0; set(value) { b.put(L[3], (if (value) 1 else 0).toByte()) }
+    var msaaSamples: Int get() = b.readInt(L[5], L[6], signed = false); set(value) { b.writeInt(L[5], L[6], value) }
+    var highPrecision: Boolean get() = b.get(L[7]).toInt() != 0; set(value) { b.put(L[7], (if (value) 1 else 0).toByte()) }
+    var minVarianceScale: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
+    var lightBleedReduction: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
+    companion object {
+        private val L = FilamentJni.FilaLayout_FilaViewVsmShadowOptions()
+        val SIZE: Int get() = L[0]
+    }
+}
+
