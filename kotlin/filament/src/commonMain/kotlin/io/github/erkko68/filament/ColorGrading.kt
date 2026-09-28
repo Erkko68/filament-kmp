@@ -312,7 +312,7 @@ class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return The newly created ColorGrading
          */
         fun build(engine: Engine): ColorGrading {
-            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.pointer))
+            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
         }
     }
 

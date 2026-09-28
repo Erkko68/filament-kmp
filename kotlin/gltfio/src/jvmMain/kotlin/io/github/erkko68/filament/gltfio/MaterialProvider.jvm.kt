@@ -12,7 +12,6 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.SegmentAllocator
 import java.lang.foreign.ValueLayout
 import io.github.erkko68.filament.InternalFilamentApi
-import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.VertexBuffer
 
 actual interface MaterialProvider : AutoCloseable {
@@ -35,7 +34,7 @@ private fun SegmentAllocator.uvmap(uvmap: IntArray): MemorySegment {
 
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
     private var nativeHandle: MemorySegment? =
-        FilamentC.FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, NULL, 0L)
+        FilamentC.FilaMaterialProvider_createUbershaderProvider(MemorySegment.ofAddress(engine.nativeObject), NULL, 0L)
 
     actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): MaterialInstance? =
         confined { a ->

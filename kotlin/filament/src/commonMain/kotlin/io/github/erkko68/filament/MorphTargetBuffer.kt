@@ -110,7 +110,7 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
          * @throws UnsupportedOperationException on JS — MorphTargetBuffer is unbound in the web wrapper.
          */
         fun build(engine: Engine): MorphTargetBuffer {
-            val handle = FilaMorphTargetBufferBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaMorphTargetBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaMorphTargetBufferBuilder_destroy(nativeBuilder)
             return MorphTargetBuffer(handle)
         }
@@ -161,7 +161,7 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
         positions.usePinned { pinned ->
             FilaMorphTargetBuffer_setPositionsAt(
                 nativeHandle,
-                engine.pointer,
+                engine.nativeHandle,
                 targetIndex,
                 pinned,
                 count
@@ -183,7 +183,7 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
         tangents.usePinned { pinned ->
             FilaMorphTargetBuffer_setTangentsAt(
                 nativeHandle,
-                engine.pointer,
+                engine.nativeHandle,
                 targetIndex,
                 pinned,
                 count

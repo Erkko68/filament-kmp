@@ -25,7 +25,7 @@ void FilaRenderTargetBuilder_texture(FilaRenderTargetBuilder* builder, FilaRende
     FILA_CAST(RenderTarget::Builder, builder)->texture(static_cast<RenderTarget::AttachmentPoint>(attachment), reinterpret_cast<Texture*>(texture));
 }
 
-void FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, uint8_t level) {
+void FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, uint32_t level) {
     FILA_CAST(RenderTarget::Builder, builder)->mipLevel(static_cast<RenderTarget::AttachmentPoint>(attachment), level);
 }
 
@@ -37,7 +37,7 @@ void FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* builder, FilaRenderT
     FILA_CAST(RenderTarget::Builder, builder)->layer(static_cast<RenderTarget::AttachmentPoint>(attachment), layer);
 }
 
-void FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* builder, uint8_t samples) {
+void FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* builder, uint32_t samples) {
     FILA_CAST(RenderTarget::Builder, builder)->samples(samples);
 }
 

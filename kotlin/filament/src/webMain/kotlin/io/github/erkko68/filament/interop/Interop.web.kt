@@ -1,6 +1,7 @@
 package io.github.erkko68.filament.interop
 
 import io.github.erkko68.filament.wasm.fila
+import io.github.erkko68.filament.wasm.normalizeF32
 import io.github.erkko68.filament.wasm.getI64
 import io.github.erkko68.filament.wasm.getU16
 import io.github.erkko68.filament.wasm.readBytes
@@ -68,4 +69,7 @@ actual object Callbacks {
     actual fun release(userData: NativePointer) = WasmCallbacks.release(userData)
     actual val userOnly: NativePointer get() = WasmCallbacks.userOnly
     actual val argUser: NativePointer get() = WasmCallbacks.argUser
+    actual val keepBuffer: NativePointer get() = WasmCallbacks.keepBuffer
 }
+
+actual fun FloatArray.readF32(index: Int): Float = normalizeF32(this[index])

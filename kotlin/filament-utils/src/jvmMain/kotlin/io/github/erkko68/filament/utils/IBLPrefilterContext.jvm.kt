@@ -4,10 +4,9 @@ import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.ffm.FilamentC
 import java.lang.foreign.MemorySegment
-import io.github.erkko68.filament.nativeObject
 
 actual class IBLPrefilterContext actual constructor(engine: Engine) : AutoCloseable {
-    internal val nativeHandle: MemorySegment = FilamentC.FilaIBLPrefilterContext_create(engine.nativeObject)
+    internal val nativeHandle: MemorySegment = FilamentC.FilaIBLPrefilterContext_create(MemorySegment.ofAddress(engine.nativeObject))
     actual override fun close() = destroy()
 
     actual fun destroy() = FilamentC.FilaIBLPrefilterContext_destroy(nativeHandle)

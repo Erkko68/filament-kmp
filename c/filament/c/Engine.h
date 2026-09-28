@@ -51,7 +51,7 @@ typedef struct FilaEngineBuilder FilaEngineBuilder;
 FilaEngineBuilder* FilaEngineBuilder_create(void);
 void FilaEngineBuilder_destroy(FilaEngineBuilder* builder);
 void FilaEngineBuilder_backend(FilaEngineBuilder* builder, FilaEngineBackend backend);
-void FilaEngineBuilder_config(FilaEngineBuilder* builder, const FilaEngineConfig* config);
+void FilaEngineBuilder_config(FilaEngineBuilder* builder, uint32_t commandBufferSizeMB, uint32_t perRenderPassArenaSizeMB, uint32_t driverHandleArenaSizeMB, uint32_t minCommandBufferSizeMB, uint32_t perFrameCommandsSizeMB, uint32_t jobSystemThreadCount, bool disableParallelShaderCompile, FilaEngineStereoscopicType stereoscopicType, uint32_t stereoscopicEyeCount, uint32_t resourceAllocatorCacheSizeMB, uint32_t resourceAllocatorCacheMaxAge, bool disableHandleUseAfterFreeCheck, int32_t preferredShaderLanguage, bool forceGLES2Context, bool assertNativeWindowIsValid, int32_t gpuContextPriority, uint32_t sharedUboInitialSizeInBytes, bool enableMultipleDirectionalLights);
 void FilaEngineBuilder_featureLevel(FilaEngineBuilder* builder, FilaEngineFeatureLevel featureLevel);
 void FilaEngineBuilder_sharedContext(FilaEngineBuilder* builder, void* sharedContext);
 void FilaEngineBuilder_paused(FilaEngineBuilder* builder, bool paused);
@@ -137,7 +137,7 @@ FilaEntityManager* FilaEngine_getEntityManager(FilaEngine* engine);
 void FilaEngine_setAutomaticInstancingEnabled(FilaEngine* engine, bool enable);
 bool FilaEngine_isAutomaticInstancingEnabled(FilaEngine* engine);
 
-size_t FilaEngine_getMaxStereoscopicEyes(FilaEngine* engine);
+uint32_t FilaEngine_getMaxStereoscopicEyes(FilaEngine* engine);
 
 FilaEngineFeatureLevel FilaEngine_getSupportedFeatureLevel(FilaEngine* engine);
 FilaEngineFeatureLevel FilaEngine_getActiveFeatureLevel(FilaEngine* engine);
@@ -147,14 +147,15 @@ bool FilaEngine_hasFeatureFlag(FilaEngine* engine, const char* name);
 void FilaEngine_setFeatureFlag(FilaEngine* engine, const char* name, bool value);
 bool FilaEngine_getFeatureFlag(FilaEngine* engine, const char* name);
 
-uint64_t FilaEngine_getSteadyClockTimeNano(void);
+// Through an out-pointer: a 64-bit result can't reach Kotlin/JS.
+void FilaEngine_getSteadyClockTimeNano(uint64_t* out);
 
 void FilaEngine_enableAccurateTranslations(FilaEngine* engine);
 
 // priority: 0=CRITICAL, 1=HIGH, 2=LOW
 // shadowReceiver/skinning: 0=FALSE, 1=TRUE, 2=INDETERMINATE
 typedef void (*FilaEngineCompileCallback)(void* userData);
-void FilaEngine_compile(FilaEngine* engine, uint8_t priority, FilaMaterial* material, FilaView* view, uint8_t shadowReceiver, uint8_t skinning, FilaEngineCompileCallback callback, void* userData);
+void FilaEngine_compile(FilaEngine* engine, uint32_t priority, FilaMaterial* material, FilaView* view, uint32_t shadowReceiver, uint32_t skinning, FilaEngineCompileCallback callback, void* userData);
 
 #ifdef __cplusplus
 }

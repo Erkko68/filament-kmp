@@ -1,11 +1,11 @@
 package io.github.erkko68.filament.utils
 
+import java.lang.foreign.MemorySegment
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.bytes
 import io.github.erkko68.filament.confined
 import io.github.erkko68.filament.ffm.FilamentC
-import io.github.erkko68.filament.nativeObject
 
 actual object TextureLoader {
     actual enum class TextureType {
@@ -15,7 +15,7 @@ actual object TextureLoader {
     actual fun loadTexture(engine: Engine, buffer: ByteArray, type: TextureType): Texture? = confined { a ->
         // The C wrapper takes an sRGB flag, sRGB only for COLOR (mirrors TextureLoader.native.kt).
         val handle = FilamentC.FilaTextureLoader_loadTexture(
-            engine.nativeObject, a.bytes(buffer), buffer.size.toLong(), type == TextureType.COLOR,
+            MemorySegment.ofAddress(engine.nativeObject), a.bytes(buffer), buffer.size.toLong(), type == TextureType.COLOR,
         )
         handle?.let { Texture(it.address()) }
     }

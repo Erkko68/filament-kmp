@@ -139,7 +139,7 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return The newly created VertexBuffer
          */
         fun build(engine: Engine): VertexBuffer {
-            val handle = FilaVertexBufferBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaVertexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaVertexBufferBuilder_destroy(nativeBuilder)
             return VertexBuffer(handle)
         }
@@ -184,7 +184,7 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
      */
     fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
-        FilaVertexBuffer_setBufferAt(nativeHandle, engine.pointer, bufferIndex, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
     }
 
     /**
@@ -198,7 +198,7 @@ class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: N
      * @param bufferObject The BufferObject to associate
      */
     fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
-        FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.pointer, bufferIndex, bufferObject.nativeHandle)
+        FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.nativeHandle, bufferIndex, bufferObject.nativeHandle)
     }
 }
 

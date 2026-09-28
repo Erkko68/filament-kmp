@@ -59,7 +59,7 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
          * @return The newly created IndexBuffer
          */
         fun build(engine: Engine): IndexBuffer {
-            val handle = FilaIndexBufferBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaIndexBufferBuilder_destroy(nativeBuilder)
             return IndexBuffer(handle)
         }
@@ -101,7 +101,7 @@ class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Na
      */
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
-        FilaIndexBuffer_setBuffer(nativeHandle, engine.pointer, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
     }
 }
 

@@ -110,7 +110,7 @@ class RenderTarget @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return The newly created RenderTarget
          */
         fun build(engine: Engine): RenderTarget {
-            val handle = FilaRenderTargetBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaRenderTargetBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaRenderTargetBuilder_destroy(nativeBuilder)
             return RenderTarget(handle, textures.copyOf())
         }

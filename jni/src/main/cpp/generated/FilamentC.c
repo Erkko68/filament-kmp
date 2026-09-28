@@ -228,7 +228,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaColorGr
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaColorGradingBuilder_1customLut(JNIEnv* env, jclass cls, jlong a_builder, jlong a_data, jint a_dimension) {
-    FilaColorGradingBuilder_customLut((FilaColorGradingBuilder *)(intptr_t) a_builder, (const float *)(intptr_t) a_data, (uint8_t) a_dimension);
+    FilaColorGradingBuilder_customLut((FilaColorGradingBuilder *)(intptr_t) a_builder, (const float *)(intptr_t) a_data, (uint32_t) a_dimension);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaColorGradingBuilder_1destroy(JNIEnv* env, jclass cls, jlong a_builder) {
@@ -236,7 +236,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaColorGr
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaColorGradingBuilder_1dimensions(JNIEnv* env, jclass cls, jlong a_builder, jint a_dim) {
-    FilaColorGradingBuilder_dimensions((FilaColorGradingBuilder *)(intptr_t) a_builder, (uint8_t) a_dim);
+    FilaColorGradingBuilder_dimensions((FilaColorGradingBuilder *)(intptr_t) a_builder, (uint32_t) a_dim);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaColorGradingBuilder_1exposure(JNIEnv* env, jclass cls, jlong a_builder, jfloat a_exposure) {
@@ -323,8 +323,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngineB
     FilaEngineBuilder_colorGrading((FilaEngineBuilder *)(intptr_t) a_builder, (const FilaColorGradingBuilder *)(intptr_t) a_colorGrading);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngineBuilder_1config(JNIEnv* env, jclass cls, jlong a_builder, jlong a_config) {
-    FilaEngineBuilder_config((FilaEngineBuilder *)(intptr_t) a_builder, (const FilaEngineConfig *)(intptr_t) a_config);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngineBuilder_1config(JNIEnv* env, jclass cls, jlong a_builder, jint a_commandBufferSizeMB, jint a_perRenderPassArenaSizeMB, jint a_driverHandleArenaSizeMB, jint a_minCommandBufferSizeMB, jint a_perFrameCommandsSizeMB, jint a_jobSystemThreadCount, jboolean a_disableParallelShaderCompile, jint a_stereoscopicType, jint a_stereoscopicEyeCount, jint a_resourceAllocatorCacheSizeMB, jint a_resourceAllocatorCacheMaxAge, jboolean a_disableHandleUseAfterFreeCheck, jint a_preferredShaderLanguage, jboolean a_forceGLES2Context, jboolean a_assertNativeWindowIsValid, jint a_gpuContextPriority, jint a_sharedUboInitialSizeInBytes, jboolean a_enableMultipleDirectionalLights) {
+    FilaEngineBuilder_config((FilaEngineBuilder *)(intptr_t) a_builder, (uint32_t) a_commandBufferSizeMB, (uint32_t) a_perRenderPassArenaSizeMB, (uint32_t) a_driverHandleArenaSizeMB, (uint32_t) a_minCommandBufferSizeMB, (uint32_t) a_perFrameCommandsSizeMB, (uint32_t) a_jobSystemThreadCount, (_Bool) a_disableParallelShaderCompile, (FilaEngineStereoscopicType) a_stereoscopicType, (uint32_t) a_stereoscopicEyeCount, (uint32_t) a_resourceAllocatorCacheSizeMB, (uint32_t) a_resourceAllocatorCacheMaxAge, (_Bool) a_disableHandleUseAfterFreeCheck, (int32_t) a_preferredShaderLanguage, (_Bool) a_forceGLES2Context, (_Bool) a_assertNativeWindowIsValid, (int32_t) a_gpuContextPriority, (uint32_t) a_sharedUboInitialSizeInBytes, (_Bool) a_enableMultipleDirectionalLights);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngineBuilder_1create(JNIEnv* env, jclass cls) {
@@ -354,7 +354,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngineB
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1compile(JNIEnv* env, jclass cls, jlong a_engine, jint a_priority, jlong a_material, jlong a_view, jint a_shadowReceiver, jint a_skinning, jlong a_callback, jlong a_userData) {
-    FilaEngine_compile((FilaEngine *)(intptr_t) a_engine, (uint8_t) a_priority, (FilaMaterial *)(intptr_t) a_material, (FilaView *)(intptr_t) a_view, (uint8_t) a_shadowReceiver, (uint8_t) a_skinning, (FilaEngineCompileCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+    FilaEngine_compile((FilaEngine *)(intptr_t) a_engine, (uint32_t) a_priority, (FilaMaterial *)(intptr_t) a_material, (FilaView *)(intptr_t) a_view, (uint32_t) a_shadowReceiver, (uint32_t) a_skinning, (FilaEngineCompileCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1createCamera(JNIEnv* env, jclass cls, jlong a_engine, jint a_entity) {
@@ -516,16 +516,16 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine
     return (jlong)(intptr_t) FilaEngine_getLightManager((FilaEngine *)(intptr_t) a_engine);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1getMaxStereoscopicEyes(JNIEnv* env, jclass cls, jlong a_engine) {
-    return (jlong) FilaEngine_getMaxStereoscopicEyes((FilaEngine *)(intptr_t) a_engine);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1getMaxStereoscopicEyes(JNIEnv* env, jclass cls, jlong a_engine) {
+    return (jint) FilaEngine_getMaxStereoscopicEyes((FilaEngine *)(intptr_t) a_engine);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1getRenderableManager(JNIEnv* env, jclass cls, jlong a_engine) {
     return (jlong)(intptr_t) FilaEngine_getRenderableManager((FilaEngine *)(intptr_t) a_engine);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1getSteadyClockTimeNano(JNIEnv* env, jclass cls) {
-    return (jlong) FilaEngine_getSteadyClockTimeNano();
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1getSteadyClockTimeNano(JNIEnv* env, jclass cls, jlong a_out) {
+    FilaEngine_getSteadyClockTimeNano((uint64_t *)(intptr_t) a_out);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaEngine_1getSupportedFeatureLevel(JNIEnv* env, jclass cls, jlong a_engine) {
@@ -738,7 +738,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirec
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirectLightBuilder_1irradiance(JNIEnv* env, jclass cls, jlong a_builder, jint a_bands, jlong a_sh) {
-    FilaIndirectLightBuilder_irradiance((FilaIndirectLightBuilder *)(intptr_t) a_builder, (uint8_t) a_bands, (const float *)(intptr_t) a_sh);
+    FilaIndirectLightBuilder_irradiance((FilaIndirectLightBuilder *)(intptr_t) a_builder, (uint32_t) a_bands, (const float *)(intptr_t) a_sh);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirectLightBuilder_1irradianceAsTexture(JNIEnv* env, jclass cls, jlong a_builder, jlong a_cubemap) {
@@ -746,7 +746,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirec
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirectLightBuilder_1radiance(JNIEnv* env, jclass cls, jlong a_builder, jint a_bands, jlong a_sh) {
-    FilaIndirectLightBuilder_radiance((FilaIndirectLightBuilder *)(intptr_t) a_builder, (uint8_t) a_bands, (const float *)(intptr_t) a_sh);
+    FilaIndirectLightBuilder_radiance((FilaIndirectLightBuilder *)(intptr_t) a_builder, (uint32_t) a_bands, (const float *)(intptr_t) a_sh);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaIndirectLightBuilder_1reflections(JNIEnv* env, jclass cls, jlong a_builder, jlong a_cubemap) {
@@ -849,8 +849,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightMa
     FilaLightManagerBuilder_position((FilaLightManagerBuilder *)(intptr_t) a_builder, (float) a_x, (float) a_y, (float) a_z);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManagerBuilder_1shadowOptions(JNIEnv* env, jclass cls, jlong a_builder, jlong a_options) {
-    FilaLightManagerBuilder_shadowOptions((FilaLightManagerBuilder *)(intptr_t) a_builder, (const FilaLightManagerShadowOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManagerBuilder_1shadowOptions(JNIEnv* env, jclass cls, jlong a_builder, jint a_mapSize, jint a_shadowCascades, jfloat a_cascadeSplitPositions_0, jfloat a_cascadeSplitPositions_1, jfloat a_cascadeSplitPositions_2, jfloat a_constantBias, jfloat a_normalBias, jfloat a_shadowFar, jfloat a_shadowNearHint, jfloat a_shadowFarHint, jboolean a_stable, jboolean a_lispsm, jfloat a_polygonOffsetConstant, jfloat a_polygonOffsetSlope, jboolean a_screenSpaceContactShadows, jint a_stepCount, jfloat a_maxShadowDistance, jboolean a_vsm_elvsm, jfloat a_vsm_blurWidth, jfloat a_shadowBulbRadius, jfloat a_transform_0, jfloat a_transform_1, jfloat a_transform_2, jfloat a_transform_3, jfloat a_penumbraScale, jfloat a_penumbraRatioScale, jfloat a_maxPenumbraRatio, jfloat a_maxSearchRadius) {
+    FilaLightManagerBuilder_shadowOptions((FilaLightManagerBuilder *)(intptr_t) a_builder, (uint32_t) a_mapSize, (uint32_t) a_shadowCascades, (float) a_cascadeSplitPositions_0, (float) a_cascadeSplitPositions_1, (float) a_cascadeSplitPositions_2, (float) a_constantBias, (float) a_normalBias, (float) a_shadowFar, (float) a_shadowNearHint, (float) a_shadowFarHint, (_Bool) a_stable, (_Bool) a_lispsm, (float) a_polygonOffsetConstant, (float) a_polygonOffsetSlope, (_Bool) a_screenSpaceContactShadows, (uint32_t) a_stepCount, (float) a_maxShadowDistance, (_Bool) a_vsm_elvsm, (float) a_vsm_blurWidth, (float) a_shadowBulbRadius, (float) a_transform_0, (float) a_transform_1, (float) a_transform_2, (float) a_transform_3, (float) a_penumbraScale, (float) a_penumbraRatioScale, (float) a_maxPenumbraRatio, (float) a_maxSearchRadius);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManagerBuilder_1spotLightCone(JNIEnv* env, jclass cls, jlong a_builder, jfloat a_inner, jfloat a_outer) {
@@ -870,15 +870,15 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightMa
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1computeLogSplits(JNIEnv* env, jclass cls, jlong a_splitPositions, jint a_cascades, jfloat a_nearPlane, jfloat a_farPlane) {
-    FilaLightManager_computeLogSplits((float *)(intptr_t) a_splitPositions, (uint8_t) a_cascades, (float) a_nearPlane, (float) a_farPlane);
+    FilaLightManager_computeLogSplits((float *)(intptr_t) a_splitPositions, (uint32_t) a_cascades, (float) a_nearPlane, (float) a_farPlane);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1computePracticalSplits(JNIEnv* env, jclass cls, jlong a_splitPositions, jint a_cascades, jfloat a_nearPlane, jfloat a_farPlane, jfloat a_lambda) {
-    FilaLightManager_computePracticalSplits((float *)(intptr_t) a_splitPositions, (uint8_t) a_cascades, (float) a_nearPlane, (float) a_farPlane, (float) a_lambda);
+    FilaLightManager_computePracticalSplits((float *)(intptr_t) a_splitPositions, (uint32_t) a_cascades, (float) a_nearPlane, (float) a_farPlane, (float) a_lambda);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1computeUniformSplits(JNIEnv* env, jclass cls, jlong a_splitPositions, jint a_cascades) {
-    FilaLightManager_computeUniformSplits((float *)(intptr_t) a_splitPositions, (uint8_t) a_cascades);
+    FilaLightManager_computeUniformSplits((float *)(intptr_t) a_splitPositions, (uint32_t) a_cascades);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1destroy(JNIEnv* env, jclass cls, jlong a_lm, jint a_entity) {
@@ -889,8 +889,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightMa
     FilaLightManager_getColor((const FilaLightManager *)(intptr_t) a_lm, (FilaLightManagerInstance) a_instance, (float *)(intptr_t) a_out);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1getComponentCount(JNIEnv* env, jclass cls, jlong a_lm) {
-    return (jlong) FilaLightManager_getComponentCount((const FilaLightManager *)(intptr_t) a_lm);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1getComponentCount(JNIEnv* env, jclass cls, jlong a_lm) {
+    return (jint) FilaLightManager_getComponentCount((const FilaLightManager *)(intptr_t) a_lm);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLightManager_1getDirection(JNIEnv* env, jclass cls, jlong a_lm, jint a_instance, jlong a_out) {
@@ -1555,11 +1555,11 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderT
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderTargetBuilder_1mipLevel(JNIEnv* env, jclass cls, jlong a_builder, jint a_attachment, jint a_level) {
-    FilaRenderTargetBuilder_mipLevel((FilaRenderTargetBuilder *)(intptr_t) a_builder, (FilaRenderTargetAttachmentPoint) a_attachment, (uint8_t) a_level);
+    FilaRenderTargetBuilder_mipLevel((FilaRenderTargetBuilder *)(intptr_t) a_builder, (FilaRenderTargetAttachmentPoint) a_attachment, (uint32_t) a_level);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderTargetBuilder_1samples(JNIEnv* env, jclass cls, jlong a_builder, jint a_samples) {
-    FilaRenderTargetBuilder_samples((FilaRenderTargetBuilder *)(intptr_t) a_builder, (uint8_t) a_samples);
+    FilaRenderTargetBuilder_samples((FilaRenderTargetBuilder *)(intptr_t) a_builder, (uint32_t) a_samples);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderTargetBuilder_1texture(JNIEnv* env, jclass cls, jlong a_builder, jint a_attachment, jlong a_texture) {
@@ -1587,7 +1587,7 @@ JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRender
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1blendOrder(JNIEnv* env, jclass cls, jlong a_builder, jint a_index, jint a_blendOrder) {
-    FilaRenderableManagerBuilder_blendOrder((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint32_t) a_index, (uint16_t) a_blendOrder);
+    FilaRenderableManagerBuilder_blendOrder((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint32_t) a_index, (uint32_t) a_blendOrder);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1boundingBox(JNIEnv* env, jclass cls, jlong a_builder, jfloat a_cx, jfloat a_cy, jfloat a_cz, jfloat a_hx, jfloat a_hy, jfloat a_hz) {
@@ -1603,7 +1603,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1channel(JNIEnv* env, jclass cls, jlong a_builder, jint a_channel) {
-    FilaRenderableManagerBuilder_channel((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint8_t) a_channel);
+    FilaRenderableManagerBuilder_channel((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint32_t) a_channel);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1create(JNIEnv* env, jclass cls, jint a_count) {
@@ -1659,7 +1659,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1layerMask(JNIEnv* env, jclass cls, jlong a_builder, jint a_select, jint a_value) {
-    FilaRenderableManagerBuilder_layerMask((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint8_t) a_select, (uint8_t) a_value);
+    FilaRenderableManagerBuilder_layerMask((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint32_t) a_select, (uint32_t) a_value);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1lightChannel(JNIEnv* env, jclass cls, jlong a_builder, jint a_channel, jboolean a_enable) {
@@ -1683,7 +1683,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1priority(JNIEnv* env, jclass cls, jlong a_builder, jint a_priority) {
-    FilaRenderableManagerBuilder_priority((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint8_t) a_priority);
+    FilaRenderableManagerBuilder_priority((FilaRenderableManagerBuilder *)(intptr_t) a_builder, (uint32_t) a_priority);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManagerBuilder_1receiveShadows(JNIEnv* env, jclass cls, jlong a_builder, jboolean a_enabled) {
@@ -1791,7 +1791,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setBlendOrderAt(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jint a_primitiveIndex, jint a_blendOrder) {
-    FilaRenderableManager_setBlendOrderAt((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint32_t) a_primitiveIndex, (uint16_t) a_blendOrder);
+    FilaRenderableManager_setBlendOrderAt((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint32_t) a_primitiveIndex, (uint32_t) a_blendOrder);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setBonesAsMatrices(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jlong a_matrices, jint a_boneCount, jint a_offset) {
@@ -1807,7 +1807,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setChannel(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jint a_channel) {
-    FilaRenderableManager_setChannel((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint8_t) a_channel);
+    FilaRenderableManager_setChannel((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint32_t) a_channel);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setCulling(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jboolean a_enabled) {
@@ -1831,7 +1831,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setLayerMask(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jint a_select, jint a_value) {
-    FilaRenderableManager_setLayerMask((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint8_t) a_select, (uint8_t) a_value);
+    FilaRenderableManager_setLayerMask((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint32_t) a_select, (uint32_t) a_value);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setLightChannel(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jint a_channel, jboolean a_enable) {
@@ -1843,7 +1843,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setMorphTargetBufferOffsetAt(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jint a_level, jint a_primitiveIndex, jint a_offset) {
-    FilaRenderableManager_setMorphTargetBufferOffsetAt((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint8_t) a_level, (uint32_t) a_primitiveIndex, (uint32_t) a_offset);
+    FilaRenderableManager_setMorphTargetBufferOffsetAt((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint32_t) a_level, (uint32_t) a_primitiveIndex, (uint32_t) a_offset);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setMorphWeights(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jlong a_weights, jint a_count, jint a_offset) {
@@ -1851,7 +1851,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendera
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setPriority(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jint a_priority) {
-    FilaRenderableManager_setPriority((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint8_t) a_priority);
+    FilaRenderableManager_setPriority((FilaRenderableManager *)(intptr_t) a_rm, (FilaRenderableManagerInstance) a_instance, (uint32_t) a_priority);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderableManager_1setReceiveShadows(JNIEnv* env, jclass cls, jlong a_rm, jint a_instance, jboolean a_enabled) {
@@ -1878,8 +1878,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendere
     FilaRenderer_endFrame((FilaRenderer *)(intptr_t) a_renderer);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1getClearOptions(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_out) {
-    FilaRenderer_getClearOptions((const FilaRenderer *)(intptr_t) a_renderer, (FilaRendererClearOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1getClearOptions(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_ints, jlong a_doubles) {
+    FilaRenderer_getClearOptions((const FilaRenderer *)(intptr_t) a_renderer, (int32_t *)(intptr_t) a_ints, (double *)(intptr_t) a_doubles);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1getFrameToSkipCount(JNIEnv* env, jclass cls, jlong a_renderer) {
@@ -1898,12 +1898,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendere
     FilaRenderer_pauseRenderThread((FilaRenderer *)(intptr_t) a_renderer, (uint64_t) a_timeNs);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1readPixels(JNIEnv* env, jclass cls, jlong a_renderer, jint a_xoffset, jint a_yoffset, jint a_width, jint a_height, jlong a_buffer, jlong a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaRenderer_readPixels((FilaRenderer *)(intptr_t) a_renderer, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_width, (uint32_t) a_height, (void *)(intptr_t) a_buffer, (size_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint8_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1readPixels(JNIEnv* env, jclass cls, jlong a_renderer, jint a_xoffset, jint a_yoffset, jint a_width, jint a_height, jlong a_buffer, jint a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
+    FilaRenderer_readPixels((FilaRenderer *)(intptr_t) a_renderer, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_width, (uint32_t) a_height, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint32_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1readPixelsRenderTarget(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_renderTarget, jint a_xoffset, jint a_yoffset, jint a_width, jint a_height, jlong a_buffer, jlong a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaRenderer_readPixelsRenderTarget((FilaRenderer *)(intptr_t) a_renderer, (FilaRenderTarget *)(intptr_t) a_renderTarget, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_width, (uint32_t) a_height, (void *)(intptr_t) a_buffer, (size_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint8_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1readPixelsRenderTarget(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_renderTarget, jint a_xoffset, jint a_yoffset, jint a_width, jint a_height, jlong a_buffer, jint a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
+    FilaRenderer_readPixelsRenderTarget((FilaRenderer *)(intptr_t) a_renderer, (FilaRenderTarget *)(intptr_t) a_renderTarget, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_width, (uint32_t) a_height, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint32_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1render(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_view) {
@@ -1918,20 +1918,20 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendere
     FilaRenderer_resetUserTime((FilaRenderer *)(intptr_t) a_renderer);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setClearOptions(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_options) {
-    FilaRenderer_setClearOptions((FilaRenderer *)(intptr_t) a_renderer, (const FilaRendererClearOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setClearOptions(JNIEnv* env, jclass cls, jlong a_renderer, jdouble a_clearColor_0, jdouble a_clearColor_1, jdouble a_clearColor_2, jdouble a_clearColor_3, jboolean a_clear, jboolean a_discard) {
+    FilaRenderer_setClearOptions((FilaRenderer *)(intptr_t) a_renderer, (double) a_clearColor_0, (double) a_clearColor_1, (double) a_clearColor_2, (double) a_clearColor_3, (_Bool) a_clear, (_Bool) a_discard);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setDesiredPresentationTime(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_monotonicClockNanos) {
     FilaRenderer_setDesiredPresentationTime((FilaRenderer *)(intptr_t) a_renderer, (int64_t) a_monotonicClockNanos);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setDisplayInfo(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_info) {
-    FilaRenderer_setDisplayInfo((FilaRenderer *)(intptr_t) a_renderer, (const FilaRendererDisplayInfo *)(intptr_t) a_info);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setDisplayInfo(JNIEnv* env, jclass cls, jlong a_renderer, jfloat a_refreshRate) {
+    FilaRenderer_setDisplayInfo((FilaRenderer *)(intptr_t) a_renderer, (float) a_refreshRate);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setFrameRateOptions(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_options) {
-    FilaRenderer_setFrameRateOptions((FilaRenderer *)(intptr_t) a_renderer, (const FilaRendererFrameRateOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setFrameRateOptions(JNIEnv* env, jclass cls, jlong a_renderer, jfloat a_headRoomRatio, jfloat a_scaleRate, jint a_history, jfloat a_interval) {
+    FilaRenderer_setFrameRateOptions((FilaRenderer *)(intptr_t) a_renderer, (float) a_headRoomRatio, (float) a_scaleRate, (uint32_t) a_history, (float) a_interval);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRenderer_1setMaterialTimeEpoch(JNIEnv* env, jclass cls, jlong a_renderer, jlong a_timeEpochInNs) {
@@ -2063,7 +2063,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkyboxB
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkyboxBuilder_1priority(JNIEnv* env, jclass cls, jlong a_builder, jint a_priority) {
-    FilaSkyboxBuilder_priority((FilaSkyboxBuilder *)(intptr_t) a_builder, (uint8_t) a_priority);
+    FilaSkyboxBuilder_priority((FilaSkyboxBuilder *)(intptr_t) a_builder, (uint32_t) a_priority);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkyboxBuilder_1showSun(JNIEnv* env, jclass cls, jlong a_builder, jboolean a_show) {
@@ -2087,7 +2087,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkybox_
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSkybox_1setLayerMask(JNIEnv* env, jclass cls, jlong a_skybox, jint a_select, jint a_value) {
-    FilaSkybox_setLayerMask((FilaSkybox *)(intptr_t) a_skybox, (uint8_t) a_select, (uint8_t) a_value);
+    FilaSkybox_setLayerMask((FilaSkybox *)(intptr_t) a_skybox, (uint32_t) a_select, (uint32_t) a_value);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaStreamBuilder_1build(JNIEnv* env, jclass cls, jlong a_builder, jlong a_engine) {
@@ -2219,7 +2219,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSwapCha
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSwapChain_1setFrameRate(JNIEnv* env, jclass cls, jlong a_swapChain, jfloat a_frameRate, jint a_compatibility, jint a_strategy) {
-    FilaSwapChain_setFrameRate((FilaSwapChain *)(intptr_t) a_swapChain, (float) a_frameRate, (uint8_t) a_compatibility, (uint8_t) a_strategy);
+    FilaSwapChain_setFrameRate((FilaSwapChain *)(intptr_t) a_swapChain, (float) a_frameRate, (uint32_t) a_compatibility, (uint32_t) a_strategy);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaSwapChain_1setFrameScheduledCallback(JNIEnv* env, jclass cls, jlong a_swapChain, jlong a_handler, jlong a_callback, jlong a_userData) {
@@ -2259,7 +2259,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextureBuilder_1levels(JNIEnv* env, jclass cls, jlong a_builder, jint a_levels) {
-    FilaTextureBuilder_levels((FilaTextureBuilder *)(intptr_t) a_builder, (uint8_t) a_levels);
+    FilaTextureBuilder_levels((FilaTextureBuilder *)(intptr_t) a_builder, (uint32_t) a_levels);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextureBuilder_1sampler(JNIEnv* env, jclass cls, jlong a_builder, jint a_target) {
@@ -2267,7 +2267,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextureBuilder_1samples(JNIEnv* env, jclass cls, jlong a_builder, jint a_samples) {
-    FilaTextureBuilder_samples((FilaTextureBuilder *)(intptr_t) a_builder, (uint8_t) a_samples);
+    FilaTextureBuilder_samples((FilaTextureBuilder *)(intptr_t) a_builder, (uint32_t) a_samples);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTextureBuilder_1swizzle(JNIEnv* env, jclass cls, jlong a_builder, jint a_r, jint a_g, jint a_b, jint a_a) {
@@ -2339,7 +2339,7 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1setImage(JNIEnv* env, jclass cls, jlong a_texture, jlong a_engine, jint a_level, jint a_xoffset, jint a_yoffset, jint a_zoffset, jint a_width, jint a_height, jint a_depth, jlong a_buffer, jint a_sizeInBytes, jint a_format, jint a_type, jint a_alignment, jint a_left, jint a_top, jint a_stride, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaTexture_setImage((FilaTexture *)(intptr_t) a_texture, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_level, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_zoffset, (uint32_t) a_width, (uint32_t) a_height, (uint32_t) a_depth, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint8_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+    FilaTexture_setImage((FilaTexture *)(intptr_t) a_texture, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_level, (uint32_t) a_xoffset, (uint32_t) a_yoffset, (uint32_t) a_zoffset, (uint32_t) a_width, (uint32_t) a_height, (uint32_t) a_depth, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (FilaPixelDataFormat) a_format, (FilaPixelDataType) a_type, (uint32_t) a_alignment, (uint32_t) a_left, (uint32_t) a_top, (uint32_t) a_stride, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTexture_1validatePixelFormatAndType(JNIEnv* env, jclass cls, jint a_internalFormat, jint a_format, jint a_type) {
@@ -2499,11 +2499,11 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaTransfo
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBufferBuilder_1attribute(JNIEnv* env, jclass cls, jlong a_builder, jint a_attribute, jint a_bufferIndex, jint a_attributeType, jint a_byteOffset, jint a_byteStride) {
-    FilaVertexBufferBuilder_attribute((FilaVertexBufferBuilder *)(intptr_t) a_builder, (FilaVertexAttribute) a_attribute, (uint8_t) a_bufferIndex, (FilaAttributeType) a_attributeType, (uint32_t) a_byteOffset, (uint8_t) a_byteStride);
+    FilaVertexBufferBuilder_attribute((FilaVertexBufferBuilder *)(intptr_t) a_builder, (FilaVertexAttribute) a_attribute, (uint32_t) a_bufferIndex, (FilaAttributeType) a_attributeType, (uint32_t) a_byteOffset, (uint32_t) a_byteStride);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBufferBuilder_1bufferCount(JNIEnv* env, jclass cls, jlong a_builder, jint a_bufferCount) {
-    FilaVertexBufferBuilder_bufferCount((FilaVertexBufferBuilder *)(intptr_t) a_builder, (uint8_t) a_bufferCount);
+    FilaVertexBufferBuilder_bufferCount((FilaVertexBufferBuilder *)(intptr_t) a_builder, (uint32_t) a_bufferCount);
 }
 
 JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBufferBuilder_1build(JNIEnv* env, jclass cls, jlong a_builder, jlong a_engine) {
@@ -2535,19 +2535,19 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexB
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1setBufferAt(JNIEnv* env, jclass cls, jlong a_vertexBuffer, jlong a_engine, jint a_bufferIndex, jlong a_buffer, jint a_sizeInBytes, jint a_destOffsetInBytes, jlong a_handler, jlong a_callback, jlong a_userData) {
-    FilaVertexBuffer_setBufferAt((FilaVertexBuffer *)(intptr_t) a_vertexBuffer, (FilaEngine *)(intptr_t) a_engine, (uint8_t) a_bufferIndex, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
+    FilaVertexBuffer_setBufferAt((FilaVertexBuffer *)(intptr_t) a_vertexBuffer, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_bufferIndex, (void *)(intptr_t) a_buffer, (uint32_t) a_sizeInBytes, (uint32_t) a_destOffsetInBytes, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaBufferCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVertexBuffer_1setBufferObjectAt(JNIEnv* env, jclass cls, jlong a_vertexBuffer, jlong a_engine, jint a_bufferIndex, jlong a_bufferObject) {
-    FilaVertexBuffer_setBufferObjectAt((FilaVertexBuffer *)(intptr_t) a_vertexBuffer, (FilaEngine *)(intptr_t) a_engine, (uint8_t) a_bufferIndex, (FilaBufferObject *)(intptr_t) a_bufferObject);
+    FilaVertexBuffer_setBufferObjectAt((FilaVertexBuffer *)(intptr_t) a_vertexBuffer, (FilaEngine *)(intptr_t) a_engine, (uint32_t) a_bufferIndex, (FilaBufferObject *)(intptr_t) a_bufferObject);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1clearFrameHistory(JNIEnv* env, jclass cls, jlong a_view, jlong a_engine) {
     FilaView_clearFrameHistory((FilaView *)(intptr_t) a_view, (FilaEngine *)(intptr_t) a_engine);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getAmbientOcclusionOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getAmbientOcclusionOptions((const FilaView *)(intptr_t) a_view, (FilaViewAmbientOcclusionOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getAmbientOcclusionOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getAmbientOcclusionOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getAntiAliasing(JNIEnv* env, jclass cls, jlong a_view) {
@@ -2558,20 +2558,20 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1g
     return (jint) FilaView_getBlendMode((const FilaView *)(intptr_t) a_view);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getBloomOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getBloomOptions((const FilaView *)(intptr_t) a_view, (FilaViewBloomOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getBloomOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getBloomOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getDepthOfFieldOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getDepthOfFieldOptions((const FilaView *)(intptr_t) a_view, (FilaViewDepthOfFieldOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getDepthOfFieldOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getDepthOfFieldOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getDithering(JNIEnv* env, jclass cls, jlong a_view) {
     return (jint) FilaView_getDithering((const FilaView *)(intptr_t) a_view);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getDynamicResolutionOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getDynamicResolutionOptions((const FilaView *)(intptr_t) a_view, (FilaViewDynamicResolutionOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getDynamicResolutionOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getDynamicResolutionOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jdouble JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getEffectiveGridSize(JNIEnv* env, jclass cls, jlong a_view) {
@@ -2582,16 +2582,16 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1g
     return (jint) FilaView_getFogEntity((const FilaView *)(intptr_t) a_view);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getFogOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getFogOptions((const FilaView *)(intptr_t) a_view, (FilaViewFogOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getFogOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getFogOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jdouble JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getGridSize(JNIEnv* env, jclass cls, jlong a_view) {
     return (jdouble) FilaView_getGridSize((const FilaView *)(intptr_t) a_view);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getGuardBandOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getGuardBandOptions((const FilaView *)(intptr_t) a_view, (FilaViewGuardBandOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getGuardBandOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_ints) {
+    FilaView_getGuardBandOptions((const FilaView *)(intptr_t) a_view, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getLastDynamicResolutionScale(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
@@ -2602,8 +2602,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1g
     FilaView_getMaterialGlobal((const FilaView *)(intptr_t) a_view, (uint32_t) a_index, (float *)(intptr_t) a_out);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getMultiSampleAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getMultiSampleAntiAliasingOptions((const FilaView *)(intptr_t) a_view, (FilaViewMultiSampleAntiAliasingOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getMultiSampleAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_ints) {
+    FilaView_getMultiSampleAntiAliasingOptions((const FilaView *)(intptr_t) a_view, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jstring JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getName(JNIEnv* env, jclass cls, jlong a_view) {
@@ -2614,28 +2614,28 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1g
     return (jint) FilaView_getRenderQuality((const FilaView *)(intptr_t) a_view);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getScreenSpaceReflectionsOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getScreenSpaceReflectionsOptions((const FilaView *)(intptr_t) a_view, (FilaViewScreenSpaceReflectionsOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getScreenSpaceReflectionsOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getScreenSpaceReflectionsOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getSoftShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getSoftShadowOptions((const FilaView *)(intptr_t) a_view, (FilaViewSoftShadowOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getSoftShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats) {
+    FilaView_getSoftShadowOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getStereoscopicOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getStereoscopicOptions((const FilaView *)(intptr_t) a_view, (FilaViewStereoscopicOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getStereoscopicOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_ints) {
+    FilaView_getStereoscopicOptions((const FilaView *)(intptr_t) a_view, (int32_t *)(intptr_t) a_ints);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getTemporalAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getTemporalAntiAliasingOptions((const FilaView *)(intptr_t) a_view, (FilaViewTemporalAntiAliasingOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getTemporalAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getTemporalAntiAliasingOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getViewport(JNIEnv* env, jclass cls, jlong a_view, jlong a_left, jlong a_bottom, jlong a_width, jlong a_height) {
     FilaView_getViewport((const FilaView *)(intptr_t) a_view, (int *)(intptr_t) a_left, (int *)(intptr_t) a_bottom, (uint32_t *)(intptr_t) a_width, (uint32_t *)(intptr_t) a_height);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getVignetteOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getVignetteOptions((const FilaView *)(intptr_t) a_view, (FilaViewVignetteOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getVignetteOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getVignetteOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getVisibleLayers(JNIEnv* env, jclass cls, jlong a_view) {
@@ -2646,8 +2646,8 @@ JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1g
     return (jint) FilaView_getVisibleRenderableCount((const FilaView *)(intptr_t) a_view);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getVsmShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_out) {
-    FilaView_getVsmShadowOptions((const FilaView *)(intptr_t) a_view, (FilaViewVsmShadowOptions *)(intptr_t) a_out);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1getVsmShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_floats, jlong a_ints) {
+    FilaView_getVsmShadowOptions((const FilaView *)(intptr_t) a_view, (float *)(intptr_t) a_floats, (int32_t *)(intptr_t) a_ints);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1hasCamera(JNIEnv* env, jclass cls, jlong a_view) {
@@ -2655,7 +2655,7 @@ JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaVie
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1isChannelDepthClearEnabled(JNIEnv* env, jclass cls, jlong a_view, jint a_channel) {
-    return FilaView_isChannelDepthClearEnabled((const FilaView *)(intptr_t) a_view, (uint8_t) a_channel) ? JNI_TRUE : JNI_FALSE;
+    return FilaView_isChannelDepthClearEnabled((const FilaView *)(intptr_t) a_view, (uint32_t) a_channel) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1isFrontFaceWindingInverted(JNIEnv* env, jclass cls, jlong a_view) {
@@ -2690,8 +2690,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1p
     FilaView_pick((FilaView *)(intptr_t) a_view, (uint32_t) a_x, (uint32_t) a_y, (FilaCallbackHandler *)(intptr_t) a_handler, (FilaViewPickingCallback)(intptr_t) a_callback, (void *)(intptr_t) a_userData);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setAmbientOcclusionOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setAmbientOcclusionOptions((FilaView *)(intptr_t) a_view, (const FilaViewAmbientOcclusionOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1readPickingResult(JNIEnv* env, jclass cls, jlong a_result, jlong a_renderable, jlong a_depthAndFragCoords) {
+    FilaView_readPickingResult((const FilaViewPickingQueryResult *)(intptr_t) a_result, (int32_t *)(intptr_t) a_renderable, (float *)(intptr_t) a_depthAndFragCoords);
+}
+
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setAmbientOcclusionOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_radius, jfloat a_bias, jfloat a_power, jfloat a_resolution, jfloat a_intensity, jfloat a_bilateralThreshold, jint a_quality, jint a_lowPassFilter, jint a_upsampling, jboolean a_enabled, jboolean a_bentNormals, jfloat a_minHorizonAngleRad, jfloat a_ssct_lightConeRad, jfloat a_ssct_shadowDistance, jfloat a_ssct_contactDistanceMax, jfloat a_ssct_intensity, jfloat a_ssct_lightDirection_0, jfloat a_ssct_lightDirection_1, jfloat a_ssct_lightDirection_2, jfloat a_ssct_depthBias, jfloat a_ssct_depthSlopeBias, jint a_ssct_sampleCount, jint a_ssct_rayCount, jboolean a_ssct_enabled, jint a_gtao_sampleSliceCount, jint a_gtao_sampleStepsPerSlice, jfloat a_gtao_thicknessHeuristic, jboolean a_gtao_useVisibilityBitmasks, jfloat a_gtao_constThickness, jboolean a_gtao_linearThickness, jint a_aoType) {
+    FilaView_setAmbientOcclusionOptions((FilaView *)(intptr_t) a_view, (float) a_radius, (float) a_bias, (float) a_power, (float) a_resolution, (float) a_intensity, (float) a_bilateralThreshold, (FilaViewQualityLevel) a_quality, (FilaViewQualityLevel) a_lowPassFilter, (FilaViewQualityLevel) a_upsampling, (_Bool) a_enabled, (_Bool) a_bentNormals, (float) a_minHorizonAngleRad, (float) a_ssct_lightConeRad, (float) a_ssct_shadowDistance, (float) a_ssct_contactDistanceMax, (float) a_ssct_intensity, (float) a_ssct_lightDirection_0, (float) a_ssct_lightDirection_1, (float) a_ssct_lightDirection_2, (float) a_ssct_depthBias, (float) a_ssct_depthSlopeBias, (uint32_t) a_ssct_sampleCount, (uint32_t) a_ssct_rayCount, (_Bool) a_ssct_enabled, (uint32_t) a_gtao_sampleSliceCount, (uint32_t) a_gtao_sampleStepsPerSlice, (float) a_gtao_thicknessHeuristic, (_Bool) a_gtao_useVisibilityBitmasks, (float) a_gtao_constThickness, (_Bool) a_gtao_linearThickness, (int) a_aoType);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setAntiAliasing(JNIEnv* env, jclass cls, jlong a_view, jint a_type) {
@@ -2702,8 +2706,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
     FilaView_setBlendMode((FilaView *)(intptr_t) a_view, (FilaViewBlendMode) a_blendMode);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setBloomOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setBloomOptions((FilaView *)(intptr_t) a_view, (const FilaViewBloomOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setBloomOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_dirt, jfloat a_dirtStrength, jfloat a_strength, jint a_resolution, jint a_levels, jint a_blendMode, jboolean a_threshold, jboolean a_enabled, jfloat a_highlight, jint a_quality, jboolean a_lensFlare, jboolean a_starburst, jfloat a_chromaticAberration, jint a_ghostCount, jfloat a_ghostSpacing, jfloat a_ghostThreshold, jfloat a_haloThickness, jfloat a_haloRadius, jfloat a_haloThreshold) {
+    FilaView_setBloomOptions((FilaView *)(intptr_t) a_view, (FilaTexture *)(intptr_t) a_dirt, (float) a_dirtStrength, (float) a_strength, (uint32_t) a_resolution, (uint32_t) a_levels, (int) a_blendMode, (_Bool) a_threshold, (_Bool) a_enabled, (float) a_highlight, (FilaViewQualityLevel) a_quality, (_Bool) a_lensFlare, (_Bool) a_starburst, (float) a_chromaticAberration, (uint32_t) a_ghostCount, (float) a_ghostSpacing, (float) a_ghostThreshold, (float) a_haloThickness, (float) a_haloRadius, (float) a_haloThreshold);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setCamera(JNIEnv* env, jclass cls, jlong a_view, jlong a_camera) {
@@ -2711,15 +2715,15 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setChannelDepthClearEnabled(JNIEnv* env, jclass cls, jlong a_view, jint a_channel, jboolean a_enabled) {
-    FilaView_setChannelDepthClearEnabled((FilaView *)(intptr_t) a_view, (uint8_t) a_channel, (_Bool) a_enabled);
+    FilaView_setChannelDepthClearEnabled((FilaView *)(intptr_t) a_view, (uint32_t) a_channel, (_Bool) a_enabled);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setColorGrading(JNIEnv* env, jclass cls, jlong a_view, jlong a_colorGrading) {
     FilaView_setColorGrading((FilaView *)(intptr_t) a_view, (FilaColorGrading *)(intptr_t) a_colorGrading);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setDepthOfFieldOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setDepthOfFieldOptions((FilaView *)(intptr_t) a_view, (const FilaViewDepthOfFieldOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setDepthOfFieldOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_cocScale, jfloat a_cocAspectRatio, jfloat a_maxApertureDiameter, jboolean a_enabled, jint a_filter, jboolean a_nativeResolution, jint a_foregroundRingCount, jint a_backgroundRingCount, jint a_fastGatherRingCount, jint a_maxForegroundCOC, jint a_maxBackgroundCOC) {
+    FilaView_setDepthOfFieldOptions((FilaView *)(intptr_t) a_view, (float) a_cocScale, (float) a_cocAspectRatio, (float) a_maxApertureDiameter, (_Bool) a_enabled, (int) a_filter, (_Bool) a_nativeResolution, (uint32_t) a_foregroundRingCount, (uint32_t) a_backgroundRingCount, (uint32_t) a_fastGatherRingCount, (uint32_t) a_maxForegroundCOC, (uint32_t) a_maxBackgroundCOC);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setDithering(JNIEnv* env, jclass cls, jlong a_view, jint a_dithering) {
@@ -2730,12 +2734,12 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
     FilaView_setDynamicLightingOptions((FilaView *)(intptr_t) a_view, (float) a_zLightNear, (float) a_zLightFar);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setDynamicResolutionOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setDynamicResolutionOptions((FilaView *)(intptr_t) a_view, (const FilaViewDynamicResolutionOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setDynamicResolutionOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_minScale_0, jfloat a_minScale_1, jfloat a_maxScale_0, jfloat a_maxScale_1, jfloat a_sharpness, jboolean a_enabled, jboolean a_homogeneousScaling, jint a_quality) {
+    FilaView_setDynamicResolutionOptions((FilaView *)(intptr_t) a_view, (float) a_minScale_0, (float) a_minScale_1, (float) a_maxScale_0, (float) a_maxScale_1, (float) a_sharpness, (_Bool) a_enabled, (_Bool) a_homogeneousScaling, (FilaViewQualityLevel) a_quality);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setFogOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setFogOptions((FilaView *)(intptr_t) a_view, (const FilaViewFogOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setFogOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_distance, jfloat a_cutOffDistance, jfloat a_maximumOpacity, jfloat a_height, jfloat a_heightFalloff, jfloat a_color_0, jfloat a_color_1, jfloat a_color_2, jfloat a_density, jfloat a_inScatteringStart, jfloat a_inScatteringSize, jboolean a_fogColorFromIbl, jlong a_skyColor, jboolean a_enabled) {
+    FilaView_setFogOptions((FilaView *)(intptr_t) a_view, (float) a_distance, (float) a_cutOffDistance, (float) a_maximumOpacity, (float) a_height, (float) a_heightFalloff, (float) a_color_0, (float) a_color_1, (float) a_color_2, (float) a_density, (float) a_inScatteringStart, (float) a_inScatteringSize, (_Bool) a_fogColorFromIbl, (FilaTexture *)(intptr_t) a_skyColor, (_Bool) a_enabled);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setFrontFaceWindingInverted(JNIEnv* env, jclass cls, jlong a_view, jboolean a_inverted) {
@@ -2750,16 +2754,16 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
     FilaView_setGridSize((FilaView *)(intptr_t) a_view, (double) a_size);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setGuardBandOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setGuardBandOptions((FilaView *)(intptr_t) a_view, (const FilaViewGuardBandOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setGuardBandOptions(JNIEnv* env, jclass cls, jlong a_view, jboolean a_enabled) {
+    FilaView_setGuardBandOptions((FilaView *)(intptr_t) a_view, (_Bool) a_enabled);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setMaterialGlobal(JNIEnv* env, jclass cls, jlong a_view, jint a_index, jfloat a_x, jfloat a_y, jfloat a_z, jfloat a_w) {
     FilaView_setMaterialGlobal((FilaView *)(intptr_t) a_view, (uint32_t) a_index, (float) a_x, (float) a_y, (float) a_z, (float) a_w);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setMultiSampleAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setMultiSampleAntiAliasingOptions((FilaView *)(intptr_t) a_view, (const FilaViewMultiSampleAntiAliasingOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setMultiSampleAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jboolean a_enabled, jint a_sampleCount, jboolean a_customResolve) {
+    FilaView_setMultiSampleAntiAliasingOptions((FilaView *)(intptr_t) a_view, (_Bool) a_enabled, (uint32_t) a_sampleCount, (_Bool) a_customResolve);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setName(JNIEnv* env, jclass cls, jlong a_view, jstring a_name) {
@@ -2784,8 +2788,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
     FilaView_setScene((FilaView *)(intptr_t) a_view, (FilaScene *)(intptr_t) a_scene);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setScreenSpaceReflectionsOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setScreenSpaceReflectionsOptions((FilaView *)(intptr_t) a_view, (const FilaViewScreenSpaceReflectionsOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setScreenSpaceReflectionsOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_thickness, jfloat a_bias, jfloat a_maxDistance, jfloat a_stride, jboolean a_enabled) {
+    FilaView_setScreenSpaceReflectionsOptions((FilaView *)(intptr_t) a_view, (float) a_thickness, (float) a_bias, (float) a_maxDistance, (float) a_stride, (_Bool) a_enabled);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setScreenSpaceRefractionEnabled(JNIEnv* env, jclass cls, jlong a_view, jboolean a_enabled) {
@@ -2800,20 +2804,20 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
     FilaView_setShadowingEnabled((FilaView *)(intptr_t) a_view, (_Bool) a_enabled);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setSoftShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setSoftShadowOptions((FilaView *)(intptr_t) a_view, (const FilaViewSoftShadowOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setSoftShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_penumbraScale, jfloat a_penumbraRatioScale, jfloat a_maxPenumbraRatio, jfloat a_maxSearchRadius) {
+    FilaView_setSoftShadowOptions((FilaView *)(intptr_t) a_view, (float) a_penumbraScale, (float) a_penumbraRatioScale, (float) a_maxPenumbraRatio, (float) a_maxSearchRadius);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setStencilBufferEnabled(JNIEnv* env, jclass cls, jlong a_view, jboolean a_enabled) {
     FilaView_setStencilBufferEnabled((FilaView *)(intptr_t) a_view, (_Bool) a_enabled);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setStereoscopicOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setStereoscopicOptions((FilaView *)(intptr_t) a_view, (const FilaViewStereoscopicOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setStereoscopicOptions(JNIEnv* env, jclass cls, jlong a_view, jboolean a_enabled) {
+    FilaView_setStereoscopicOptions((FilaView *)(intptr_t) a_view, (_Bool) a_enabled);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setTemporalAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setTemporalAntiAliasingOptions((FilaView *)(intptr_t) a_view, (const FilaViewTemporalAntiAliasingOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setTemporalAntiAliasingOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_feedback, jfloat a_lodBias, jfloat a_sharpness, jboolean a_enabled, jfloat a_upscaling, jboolean a_filterHistory, jboolean a_filterInput, jboolean a_useYCoCg, jboolean a_hdr, jint a_boxType, jint a_boxClipping, jint a_jitterPattern, jfloat a_varianceGamma, jboolean a_preventFlickering, jboolean a_historyReprojection) {
+    FilaView_setTemporalAntiAliasingOptions((FilaView *)(intptr_t) a_view, (float) a_feedback, (float) a_lodBias, (float) a_sharpness, (_Bool) a_enabled, (float) a_upscaling, (_Bool) a_filterHistory, (_Bool) a_filterInput, (_Bool) a_useYCoCg, (_Bool) a_hdr, (int) a_boxType, (int) a_boxClipping, (int) a_jitterPattern, (float) a_varianceGamma, (_Bool) a_preventFlickering, (_Bool) a_historyReprojection);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setTransparentPickingEnabled(JNIEnv* env, jclass cls, jlong a_view, jboolean a_enabled) {
@@ -2824,16 +2828,16 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1s
     FilaView_setViewport((FilaView *)(intptr_t) a_view, (int) a_left, (int) a_bottom, (uint32_t) a_width, (uint32_t) a_height);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setVignetteOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setVignetteOptions((FilaView *)(intptr_t) a_view, (const FilaViewVignetteOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setVignetteOptions(JNIEnv* env, jclass cls, jlong a_view, jfloat a_midPoint, jfloat a_roundness, jfloat a_feather, jfloat a_color_0, jfloat a_color_1, jfloat a_color_2, jfloat a_color_3, jboolean a_enabled) {
+    FilaView_setVignetteOptions((FilaView *)(intptr_t) a_view, (float) a_midPoint, (float) a_roundness, (float) a_feather, (float) a_color_0, (float) a_color_1, (float) a_color_2, (float) a_color_3, (_Bool) a_enabled);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setVisibleLayers(JNIEnv* env, jclass cls, jlong a_view, jint a_select, jint a_value) {
-    FilaView_setVisibleLayers((FilaView *)(intptr_t) a_view, (uint8_t) a_select, (uint8_t) a_value);
+    FilaView_setVisibleLayers((FilaView *)(intptr_t) a_view, (uint32_t) a_select, (uint32_t) a_value);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setVsmShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jlong a_options) {
-    FilaView_setVsmShadowOptions((FilaView *)(intptr_t) a_view, (const FilaViewVsmShadowOptions *)(intptr_t) a_options);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaView_1setVsmShadowOptions(JNIEnv* env, jclass cls, jlong a_view, jint a_anisotropy, jboolean a_mipmapping, jint a_msaaSamples, jboolean a_highPrecision, jfloat a_lightBleedReduction) {
+    FilaView_setVsmShadowOptions((FilaView *)(intptr_t) a_view, (uint32_t) a_anisotropy, (_Bool) a_mipmapping, (uint32_t) a_msaaSamples, (_Bool) a_highPrecision, (float) a_lightBleedReduction);
 }
 
 static inline jintArray filaLayout(JNIEnv* env, const jint* values, jsize count) {
@@ -3168,7 +3172,6 @@ JNIEXPORT jintArray JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLa
 JNIEXPORT jintArray JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLayout_1FilaViewTemporalAntiAliasingOptions(JNIEnv* env, jclass cls) {
     const jint l[] = {
         (jint) sizeof(struct FilaViewTemporalAntiAliasingOptions),
-        (jint) (offsetof(struct FilaViewTemporalAntiAliasingOptions, filterWidth) - 0), (jint) sizeof(((struct FilaViewTemporalAntiAliasingOptions*) 0)->filterWidth),
         (jint) (offsetof(struct FilaViewTemporalAntiAliasingOptions, feedback) - 0), (jint) sizeof(((struct FilaViewTemporalAntiAliasingOptions*) 0)->feedback),
         (jint) (offsetof(struct FilaViewTemporalAntiAliasingOptions, lodBias) - 0), (jint) sizeof(((struct FilaViewTemporalAntiAliasingOptions*) 0)->lodBias),
         (jint) (offsetof(struct FilaViewTemporalAntiAliasingOptions, sharpness) - 0), (jint) sizeof(((struct FilaViewTemporalAntiAliasingOptions*) 0)->sharpness),
@@ -3207,7 +3210,6 @@ JNIEXPORT jintArray JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaLa
         (jint) (offsetof(struct FilaViewVsmShadowOptions, mipmapping) - 0), (jint) sizeof(((struct FilaViewVsmShadowOptions*) 0)->mipmapping),
         (jint) (offsetof(struct FilaViewVsmShadowOptions, msaaSamples) - 0), (jint) sizeof(((struct FilaViewVsmShadowOptions*) 0)->msaaSamples),
         (jint) (offsetof(struct FilaViewVsmShadowOptions, highPrecision) - 0), (jint) sizeof(((struct FilaViewVsmShadowOptions*) 0)->highPrecision),
-        (jint) (offsetof(struct FilaViewVsmShadowOptions, minVarianceScale) - 0), (jint) sizeof(((struct FilaViewVsmShadowOptions*) 0)->minVarianceScale),
         (jint) (offsetof(struct FilaViewVsmShadowOptions, lightBleedReduction) - 0), (jint) sizeof(((struct FilaViewVsmShadowOptions*) 0)->lightBleedReduction),
     };
     return filaLayout(env, l, sizeof(l) / sizeof(l[0]));

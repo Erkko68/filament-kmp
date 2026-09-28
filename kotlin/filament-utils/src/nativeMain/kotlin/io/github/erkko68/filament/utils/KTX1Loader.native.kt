@@ -7,7 +7,6 @@ import io.github.erkko68.filament.Skybox
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.utils.cinterop.*
 import kotlinx.cinterop.*
-import io.github.erkko68.filament.nativeObject
 
 actual object KTX1Loader {
     actual class Options {
@@ -27,7 +26,7 @@ actual object KTX1Loader {
     actual fun createTexture(engine: Engine, buffer: ByteArray, options: Options): Texture? {
         val handle = buffer.usePinned { pinned ->
             FilaKTX1Loader_createTexture(
-                engine.nativeObject,
+                engine.nativeObject.toCPointer(),
                 pinned.addressOf(0),
                 buffer.size.toULong(),
                 options.srgb
@@ -42,7 +41,7 @@ actual object KTX1Loader {
         
         val ilHandle = sh.usePinned { pinned ->
             FilaKTX1Loader_createIndirectLight(
-                engine.nativeObject,
+                engine.nativeObject.toCPointer(),
                 tex.nativeObject.toCPointer(),
                 pinned.addressOf(0).reinterpret()
             )
@@ -54,7 +53,7 @@ actual object KTX1Loader {
         val tex = createTexture(engine, buffer, options) ?: return SkyboxBundle(null, null)
         
         val skyboxHandle = FilaKTX1Loader_createSkybox(
-            engine.nativeObject,
+            engine.nativeObject.toCPointer(),
             tex.nativeObject.toCPointer()
         )
         return SkyboxBundle(skyboxHandle?.let { Skybox(it.toLong()) }, tex)

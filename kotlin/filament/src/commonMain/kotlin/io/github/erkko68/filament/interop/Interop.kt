@@ -53,6 +53,13 @@ expect class InteropScope() {
 fun InteropScope.toInterop(string: String?): NativePointer =
     if (string == null) NullPointer else toInterop(string.encodeToByteArray() + 0)
 
+/**
+ * Element [index] of a float array C filled in. On js a FloatArray keeps the raw f32 value (0.7f reads back
+ * as 0.699999988), so this returns the shortest decimal with the same f32 value; elsewhere it's just `get`.
+ */
+@InternalFilamentApi
+expect fun FloatArray.readF32(index: Int): Float
+
 /** Calls [block] with a `const char*` copy of this string, valid for the call. */
 @InternalFilamentApi
 inline fun <R> String?.useCString(block: (NativePointer) -> R): R = interopScope { block(toInterop(this@useCString)) }
@@ -76,6 +83,9 @@ expect object Callbacks {
 
     /** `void (*)(T* arg, void* userData)`. */
     val argUser: NativePointer
+
+    /** FilaBufferCallback, `void (*)(void* buffer, size_t size, void* userData)`: the lambda gets the buffer. */
+    val keepBuffer: NativePointer
 }
 
 /**

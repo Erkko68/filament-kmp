@@ -50,7 +50,7 @@ void FilaEngineBuilder_backend(FilaEngineBuilder *builder,
   reinterpret_cast<FilaEngineBuilderWrapper *>(builder)->builder.backend(static_cast<Engine::Backend>(backend));
 }
 
-void FilaEngineBuilder_config(FilaEngineBuilder *builder,
+static void FilaEngineBuilder_config_struct(FilaEngineBuilder *builder,
                                const FilaEngineConfig *config) {
   if (!config)
     return;
@@ -423,7 +423,7 @@ bool FilaEngine_isAutomaticInstancingEnabled(FilaEngine *engine) {
   return FILA_CAST(Engine, engine)->isAutomaticInstancingEnabled();
 }
 
-size_t FilaEngine_getMaxStereoscopicEyes(FilaEngine *engine) {
+uint32_t FilaEngine_getMaxStereoscopicEyes(FilaEngine *engine) {
   return FILA_CAST(Engine, engine)->getMaxStereoscopicEyes();
 }
 
@@ -459,16 +459,16 @@ bool FilaEngine_getFeatureFlag(FilaEngine *engine, const char *name) {
   return FILA_CAST(Engine, engine)->getFeatureFlag(name).value_or(false);
 }
 
-uint64_t FilaEngine_getSteadyClockTimeNano() {
-  return Engine::getSteadyClockTimeNano();
+void FilaEngine_getSteadyClockTimeNano(uint64_t* out) {
+  *out = Engine::getSteadyClockTimeNano();
 }
 
 void FilaEngine_enableAccurateTranslations(FilaEngine* engine) {
     FILA_CAST(Engine, engine)->enableAccurateTranslations();
 }
 
-void FilaEngine_compile(FilaEngine* engine, uint8_t priority, FilaMaterial* material, FilaView* view,
-        uint8_t shadowReceiver, uint8_t skinning, FilaEngineCompileCallback callback, void* userData) {
+void FilaEngine_compile(FilaEngine* engine, uint32_t priority, FilaMaterial* material, FilaView* view,
+        uint32_t shadowReceiver, uint32_t skinning, FilaEngineCompileCallback callback, void* userData) {
     using CPQ = filament::backend::CompilerPriorityQueue;
     auto toTribool = [](uint8_t v) -> utils::tribool {
         if (v == 0) return utils::tribool(false);
@@ -487,6 +487,31 @@ void FilaEngine_compile(FilaEngine* engine, uint8_t priority, FilaMaterial* mate
         nullptr,
         std::move(cb)
     );
+}
+
+// Flattened entry points: the fields as arguments / out arrays, no structs across the boundary.
+
+void FilaEngineBuilder_config(FilaEngineBuilder* builder, uint32_t commandBufferSizeMB, uint32_t perRenderPassArenaSizeMB, uint32_t driverHandleArenaSizeMB, uint32_t minCommandBufferSizeMB, uint32_t perFrameCommandsSizeMB, uint32_t jobSystemThreadCount, bool disableParallelShaderCompile, FilaEngineStereoscopicType stereoscopicType, uint32_t stereoscopicEyeCount, uint32_t resourceAllocatorCacheSizeMB, uint32_t resourceAllocatorCacheMaxAge, bool disableHandleUseAfterFreeCheck, int32_t preferredShaderLanguage, bool forceGLES2Context, bool assertNativeWindowIsValid, int32_t gpuContextPriority, uint32_t sharedUboInitialSizeInBytes, bool enableMultipleDirectionalLights) {
+    FilaEngineConfig o{};
+    o.commandBufferSizeMB = commandBufferSizeMB;
+    o.perRenderPassArenaSizeMB = perRenderPassArenaSizeMB;
+    o.driverHandleArenaSizeMB = driverHandleArenaSizeMB;
+    o.minCommandBufferSizeMB = minCommandBufferSizeMB;
+    o.perFrameCommandsSizeMB = perFrameCommandsSizeMB;
+    o.jobSystemThreadCount = jobSystemThreadCount;
+    o.disableParallelShaderCompile = disableParallelShaderCompile;
+    o.stereoscopicType = stereoscopicType;
+    o.stereoscopicEyeCount = stereoscopicEyeCount;
+    o.resourceAllocatorCacheSizeMB = resourceAllocatorCacheSizeMB;
+    o.resourceAllocatorCacheMaxAge = resourceAllocatorCacheMaxAge;
+    o.disableHandleUseAfterFreeCheck = disableHandleUseAfterFreeCheck;
+    o.preferredShaderLanguage = preferredShaderLanguage;
+    o.forceGLES2Context = forceGLES2Context;
+    o.assertNativeWindowIsValid = assertNativeWindowIsValid;
+    o.gpuContextPriority = gpuContextPriority;
+    o.sharedUboInitialSizeInBytes = sharedUboInitialSizeInBytes;
+    o.enableMultipleDirectionalLights = enableMultipleDirectionalLights;
+    FilaEngineBuilder_config_struct(builder, &o);
 }
 
 } // extern "C"

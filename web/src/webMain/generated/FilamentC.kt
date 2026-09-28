@@ -77,7 +77,7 @@ external interface FilamentC : FilamentModule {
     fun _FilaEngineBuilder_backend(builder: Int, backend: Int)
     fun _FilaEngineBuilder_build(builder: Int): Int
     fun _FilaEngineBuilder_colorGrading(builder: Int, colorGrading: Int)
-    fun _FilaEngineBuilder_config(builder: Int, config: Int)
+    fun _FilaEngineBuilder_config(builder: Int, commandBufferSizeMB: Int, perRenderPassArenaSizeMB: Int, driverHandleArenaSizeMB: Int, minCommandBufferSizeMB: Int, perFrameCommandsSizeMB: Int, jobSystemThreadCount: Int, disableParallelShaderCompile: Int, stereoscopicType: Int, stereoscopicEyeCount: Int, resourceAllocatorCacheSizeMB: Int, resourceAllocatorCacheMaxAge: Int, disableHandleUseAfterFreeCheck: Int, preferredShaderLanguage: Int, forceGLES2Context: Int, assertNativeWindowIsValid: Int, gpuContextPriority: Int, sharedUboInitialSizeInBytes: Int, enableMultipleDirectionalLights: Int)
     fun _FilaEngineBuilder_create(): Int
     fun _FilaEngineBuilder_destroy(builder: Int)
     fun _FilaEngineBuilder_feature(builder: Int, name: Int, value: Int)
@@ -126,7 +126,7 @@ external interface FilamentC : FilamentModule {
     fun _FilaEngine_getLightManager(engine: Int): Int
     fun _FilaEngine_getMaxStereoscopicEyes(engine: Int): Int
     fun _FilaEngine_getRenderableManager(engine: Int): Int
-    fun _FilaEngine_getSteadyClockTimeNano(): JsBigInt
+    fun _FilaEngine_getSteadyClockTimeNano(out: Int)
     fun _FilaEngine_getSupportedFeatureLevel(engine: Int): Int
     fun _FilaEngine_getTransformManager(engine: Int): Int
     fun _FilaEngine_hasFeatureFlag(engine: Int, name: Int): Int
@@ -206,7 +206,7 @@ external interface FilamentC : FilamentModule {
     fun _FilaLightManagerBuilder_intensityEfficiency(builder: Int, watts: Float, efficiency: Float)
     fun _FilaLightManagerBuilder_lightChannel(builder: Int, channel: Int, enable: Int)
     fun _FilaLightManagerBuilder_position(builder: Int, x: Float, y: Float, z: Float)
-    fun _FilaLightManagerBuilder_shadowOptions(builder: Int, options: Int)
+    fun _FilaLightManagerBuilder_shadowOptions(builder: Int, mapSize: Int, shadowCascades: Int, cascadeSplitPositions_0: Float, cascadeSplitPositions_1: Float, cascadeSplitPositions_2: Float, constantBias: Float, normalBias: Float, shadowFar: Float, shadowNearHint: Float, shadowFarHint: Float, stable: Int, lispsm: Int, polygonOffsetConstant: Float, polygonOffsetSlope: Float, screenSpaceContactShadows: Int, stepCount: Int, maxShadowDistance: Float, vsm_elvsm: Int, vsm_blurWidth: Float, shadowBulbRadius: Float, transform_0: Float, transform_1: Float, transform_2: Float, transform_3: Float, penumbraScale: Float, penumbraRatioScale: Float, maxPenumbraRatio: Float, maxSearchRadius: Float)
     fun _FilaLightManagerBuilder_spotLightCone(builder: Int, inner: Float, outer: Float)
     fun _FilaLightManagerBuilder_sunAngularRadius(builder: Int, angularRadius: Float)
     fun _FilaLightManagerBuilder_sunHaloFalloff(builder: Int, haloFalloff: Float)
@@ -446,7 +446,7 @@ external interface FilamentC : FilamentModule {
     fun _FilaRenderer_beginFrame(renderer: Int, swapChain: Int, frameTimeNanos: JsBigInt): Int
     fun _FilaRenderer_copyFrame(renderer: Int, dstSwapChain: Int, dstLeft: Int, dstBottom: Int, dstWidth: Int, dstHeight: Int, srcLeft: Int, srcBottom: Int, srcWidth: Int, srcHeight: Int, flags: Int)
     fun _FilaRenderer_endFrame(renderer: Int)
-    fun _FilaRenderer_getClearOptions(renderer: Int, out: Int)
+    fun _FilaRenderer_getClearOptions(renderer: Int, ints: Int, doubles: Int)
     fun _FilaRenderer_getFrameToSkipCount(renderer: Int): Int
     fun _FilaRenderer_getMaterialTime(renderer: Int): Double
     fun _FilaRenderer_getUserTime(renderer: Int): Double
@@ -456,10 +456,10 @@ external interface FilamentC : FilamentModule {
     fun _FilaRenderer_render(renderer: Int, view: Int)
     fun _FilaRenderer_renderStandaloneView(renderer: Int, view: Int)
     fun _FilaRenderer_resetUserTime(renderer: Int)
-    fun _FilaRenderer_setClearOptions(renderer: Int, options: Int)
+    fun _FilaRenderer_setClearOptions(renderer: Int, clearColor_0: Double, clearColor_1: Double, clearColor_2: Double, clearColor_3: Double, clear: Int, discard: Int)
     fun _FilaRenderer_setDesiredPresentationTime(renderer: Int, monotonicClockNanos: JsBigInt)
-    fun _FilaRenderer_setDisplayInfo(renderer: Int, info: Int)
-    fun _FilaRenderer_setFrameRateOptions(renderer: Int, options: Int)
+    fun _FilaRenderer_setDisplayInfo(renderer: Int, refreshRate: Float)
+    fun _FilaRenderer_setFrameRateOptions(renderer: Int, headRoomRatio: Float, scaleRate: Float, history: Int, interval: Float)
     fun _FilaRenderer_setMaterialTimeEpoch(renderer: Int, timeEpochInNs: JsBigInt)
     fun _FilaRenderer_setPresentationTime(renderer: Int, monotonicClockNanos: JsBigInt)
     fun _FilaRenderer_setRenderingDeadline(renderer: Int, monotonicClockNanos: JsBigInt)
@@ -613,32 +613,32 @@ external interface FilamentC : FilamentModule {
     fun _FilaVertexBuffer_setBufferAt(vertexBuffer: Int, engine: Int, bufferIndex: Int, buffer: Int, sizeInBytes: Int, destOffsetInBytes: Int, handler: Int, callback: Int, userData: Int)
     fun _FilaVertexBuffer_setBufferObjectAt(vertexBuffer: Int, engine: Int, bufferIndex: Int, bufferObject: Int)
     fun _FilaView_clearFrameHistory(view: Int, engine: Int)
-    fun _FilaView_getAmbientOcclusionOptions(view: Int, out: Int)
+    fun _FilaView_getAmbientOcclusionOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_getAntiAliasing(view: Int): Int
     fun _FilaView_getBlendMode(view: Int): Int
-    fun _FilaView_getBloomOptions(view: Int, out: Int)
-    fun _FilaView_getDepthOfFieldOptions(view: Int, out: Int)
+    fun _FilaView_getBloomOptions(view: Int, floats: Int, ints: Int)
+    fun _FilaView_getDepthOfFieldOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_getDithering(view: Int): Int
-    fun _FilaView_getDynamicResolutionOptions(view: Int, out: Int)
+    fun _FilaView_getDynamicResolutionOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_getEffectiveGridSize(view: Int): Double
     fun _FilaView_getFogEntity(view: Int): Int
-    fun _FilaView_getFogOptions(view: Int, out: Int)
+    fun _FilaView_getFogOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_getGridSize(view: Int): Double
-    fun _FilaView_getGuardBandOptions(view: Int, out: Int)
+    fun _FilaView_getGuardBandOptions(view: Int, ints: Int)
     fun _FilaView_getLastDynamicResolutionScale(view: Int, out: Int)
     fun _FilaView_getMaterialGlobal(view: Int, index: Int, out: Int)
-    fun _FilaView_getMultiSampleAntiAliasingOptions(view: Int, out: Int)
+    fun _FilaView_getMultiSampleAntiAliasingOptions(view: Int, ints: Int)
     fun _FilaView_getName(view: Int): Int
     fun _FilaView_getRenderQuality(view: Int): Int
-    fun _FilaView_getScreenSpaceReflectionsOptions(view: Int, out: Int)
-    fun _FilaView_getSoftShadowOptions(view: Int, out: Int)
-    fun _FilaView_getStereoscopicOptions(view: Int, out: Int)
-    fun _FilaView_getTemporalAntiAliasingOptions(view: Int, out: Int)
+    fun _FilaView_getScreenSpaceReflectionsOptions(view: Int, floats: Int, ints: Int)
+    fun _FilaView_getSoftShadowOptions(view: Int, floats: Int)
+    fun _FilaView_getStereoscopicOptions(view: Int, ints: Int)
+    fun _FilaView_getTemporalAntiAliasingOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_getViewport(view: Int, left: Int, bottom: Int, width: Int, height: Int)
-    fun _FilaView_getVignetteOptions(view: Int, out: Int)
+    fun _FilaView_getVignetteOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_getVisibleLayers(view: Int): Int
     fun _FilaView_getVisibleRenderableCount(view: Int): Int
-    fun _FilaView_getVsmShadowOptions(view: Int, out: Int)
+    fun _FilaView_getVsmShadowOptions(view: Int, floats: Int, ints: Int)
     fun _FilaView_hasCamera(view: Int): Int
     fun _FilaView_isChannelDepthClearEnabled(view: Int, channel: Int): Int
     fun _FilaView_isFrontFaceWindingInverted(view: Int): Int
@@ -649,42 +649,43 @@ external interface FilamentC : FilamentModule {
     fun _FilaView_isStencilBufferEnabled(view: Int): Int
     fun _FilaView_isTransparentPickingEnabled(view: Int): Int
     fun _FilaView_pick(view: Int, x: Int, y: Int, handler: Int, callback: Int, userData: Int)
-    fun _FilaView_setAmbientOcclusionOptions(view: Int, options: Int)
+    fun _FilaView_readPickingResult(result: Int, renderable: Int, depthAndFragCoords: Int)
+    fun _FilaView_setAmbientOcclusionOptions(view: Int, radius: Float, bias: Float, power: Float, resolution: Float, intensity: Float, bilateralThreshold: Float, quality: Int, lowPassFilter: Int, upsampling: Int, enabled: Int, bentNormals: Int, minHorizonAngleRad: Float, ssct_lightConeRad: Float, ssct_shadowDistance: Float, ssct_contactDistanceMax: Float, ssct_intensity: Float, ssct_lightDirection_0: Float, ssct_lightDirection_1: Float, ssct_lightDirection_2: Float, ssct_depthBias: Float, ssct_depthSlopeBias: Float, ssct_sampleCount: Int, ssct_rayCount: Int, ssct_enabled: Int, gtao_sampleSliceCount: Int, gtao_sampleStepsPerSlice: Int, gtao_thicknessHeuristic: Float, gtao_useVisibilityBitmasks: Int, gtao_constThickness: Float, gtao_linearThickness: Int, aoType: Int)
     fun _FilaView_setAntiAliasing(view: Int, type: Int)
     fun _FilaView_setBlendMode(view: Int, blendMode: Int)
-    fun _FilaView_setBloomOptions(view: Int, options: Int)
+    fun _FilaView_setBloomOptions(view: Int, dirt: Int, dirtStrength: Float, strength: Float, resolution: Int, levels: Int, blendMode: Int, threshold: Int, enabled: Int, highlight: Float, quality: Int, lensFlare: Int, starburst: Int, chromaticAberration: Float, ghostCount: Int, ghostSpacing: Float, ghostThreshold: Float, haloThickness: Float, haloRadius: Float, haloThreshold: Float)
     fun _FilaView_setCamera(view: Int, camera: Int)
     fun _FilaView_setChannelDepthClearEnabled(view: Int, channel: Int, enabled: Int)
     fun _FilaView_setColorGrading(view: Int, colorGrading: Int)
-    fun _FilaView_setDepthOfFieldOptions(view: Int, options: Int)
+    fun _FilaView_setDepthOfFieldOptions(view: Int, cocScale: Float, cocAspectRatio: Float, maxApertureDiameter: Float, enabled: Int, filter: Int, nativeResolution: Int, foregroundRingCount: Int, backgroundRingCount: Int, fastGatherRingCount: Int, maxForegroundCOC: Int, maxBackgroundCOC: Int)
     fun _FilaView_setDithering(view: Int, dithering: Int)
     fun _FilaView_setDynamicLightingOptions(view: Int, zLightNear: Float, zLightFar: Float)
-    fun _FilaView_setDynamicResolutionOptions(view: Int, options: Int)
-    fun _FilaView_setFogOptions(view: Int, options: Int)
+    fun _FilaView_setDynamicResolutionOptions(view: Int, minScale_0: Float, minScale_1: Float, maxScale_0: Float, maxScale_1: Float, sharpness: Float, enabled: Int, homogeneousScaling: Int, quality: Int)
+    fun _FilaView_setFogOptions(view: Int, distance: Float, cutOffDistance: Float, maximumOpacity: Float, height: Float, heightFalloff: Float, color_0: Float, color_1: Float, color_2: Float, density: Float, inScatteringStart: Float, inScatteringSize: Float, fogColorFromIbl: Int, skyColor: Int, enabled: Int)
     fun _FilaView_setFrontFaceWindingInverted(view: Int, inverted: Int)
     fun _FilaView_setFrustumCullingEnabled(view: Int, enabled: Int)
     fun _FilaView_setGridSize(view: Int, size: Double)
-    fun _FilaView_setGuardBandOptions(view: Int, options: Int)
+    fun _FilaView_setGuardBandOptions(view: Int, enabled: Int)
     fun _FilaView_setMaterialGlobal(view: Int, index: Int, x: Float, y: Float, z: Float, w: Float)
-    fun _FilaView_setMultiSampleAntiAliasingOptions(view: Int, options: Int)
+    fun _FilaView_setMultiSampleAntiAliasingOptions(view: Int, enabled: Int, sampleCount: Int, customResolve: Int)
     fun _FilaView_setName(view: Int, name: Int)
     fun _FilaView_setPostProcessingEnabled(view: Int, enabled: Int)
     fun _FilaView_setRenderQuality(view: Int, hdrColorBufferQuality: Int)
     fun _FilaView_setRenderTarget(view: Int, renderTarget: Int)
     fun _FilaView_setScene(view: Int, scene: Int)
-    fun _FilaView_setScreenSpaceReflectionsOptions(view: Int, options: Int)
+    fun _FilaView_setScreenSpaceReflectionsOptions(view: Int, thickness: Float, bias: Float, maxDistance: Float, stride: Float, enabled: Int)
     fun _FilaView_setScreenSpaceRefractionEnabled(view: Int, enabled: Int)
     fun _FilaView_setShadowType(view: Int, type: Int)
     fun _FilaView_setShadowingEnabled(view: Int, enabled: Int)
-    fun _FilaView_setSoftShadowOptions(view: Int, options: Int)
+    fun _FilaView_setSoftShadowOptions(view: Int, penumbraScale: Float, penumbraRatioScale: Float, maxPenumbraRatio: Float, maxSearchRadius: Float)
     fun _FilaView_setStencilBufferEnabled(view: Int, enabled: Int)
-    fun _FilaView_setStereoscopicOptions(view: Int, options: Int)
-    fun _FilaView_setTemporalAntiAliasingOptions(view: Int, options: Int)
+    fun _FilaView_setStereoscopicOptions(view: Int, enabled: Int)
+    fun _FilaView_setTemporalAntiAliasingOptions(view: Int, feedback: Float, lodBias: Float, sharpness: Float, enabled: Int, upscaling: Float, filterHistory: Int, filterInput: Int, useYCoCg: Int, hdr: Int, boxType: Int, boxClipping: Int, jitterPattern: Int, varianceGamma: Float, preventFlickering: Int, historyReprojection: Int)
     fun _FilaView_setTransparentPickingEnabled(view: Int, enabled: Int)
     fun _FilaView_setViewport(view: Int, left: Int, bottom: Int, width: Int, height: Int)
-    fun _FilaView_setVignetteOptions(view: Int, options: Int)
+    fun _FilaView_setVignetteOptions(view: Int, midPoint: Float, roundness: Float, feather: Float, color_0: Float, color_1: Float, color_2: Float, color_3: Float, enabled: Int)
     fun _FilaView_setVisibleLayers(view: Int, select: Int, value: Int)
-    fun _FilaView_setVsmShadowOptions(view: Int, options: Int)
+    fun _FilaView_setVsmShadowOptions(view: Int, anisotropy: Int, mipmapping: Int, msaaSamples: Int, highPrecision: Int, lightBleedReduction: Float)
 }
 
 fun FilaBufferObjectBuilder_bindingType(builder: Int, bindingType: Int) = fila._FilaBufferObjectBuilder_bindingType(builder, bindingType)
@@ -759,7 +760,7 @@ fun FilaColors_toLinearRgba(type: Int, inRgba: Int, outRgba: Int) = fila._FilaCo
 fun FilaEngineBuilder_backend(builder: Int, backend: Int) = fila._FilaEngineBuilder_backend(builder, backend)
 fun FilaEngineBuilder_build(builder: Int): Int = fila._FilaEngineBuilder_build(builder)
 fun FilaEngineBuilder_colorGrading(builder: Int, colorGrading: Int) = fila._FilaEngineBuilder_colorGrading(builder, colorGrading)
-fun FilaEngineBuilder_config(builder: Int, config: Int) = fila._FilaEngineBuilder_config(builder, config)
+fun FilaEngineBuilder_config(builder: Int, commandBufferSizeMB: Int, perRenderPassArenaSizeMB: Int, driverHandleArenaSizeMB: Int, minCommandBufferSizeMB: Int, perFrameCommandsSizeMB: Int, jobSystemThreadCount: Int, disableParallelShaderCompile: Boolean, stereoscopicType: Int, stereoscopicEyeCount: Int, resourceAllocatorCacheSizeMB: Int, resourceAllocatorCacheMaxAge: Int, disableHandleUseAfterFreeCheck: Boolean, preferredShaderLanguage: Int, forceGLES2Context: Boolean, assertNativeWindowIsValid: Boolean, gpuContextPriority: Int, sharedUboInitialSizeInBytes: Int, enableMultipleDirectionalLights: Boolean) = fila._FilaEngineBuilder_config(builder, commandBufferSizeMB, perRenderPassArenaSizeMB, driverHandleArenaSizeMB, minCommandBufferSizeMB, perFrameCommandsSizeMB, jobSystemThreadCount, if (disableParallelShaderCompile) 1 else 0, stereoscopicType, stereoscopicEyeCount, resourceAllocatorCacheSizeMB, resourceAllocatorCacheMaxAge, if (disableHandleUseAfterFreeCheck) 1 else 0, preferredShaderLanguage, if (forceGLES2Context) 1 else 0, if (assertNativeWindowIsValid) 1 else 0, gpuContextPriority, sharedUboInitialSizeInBytes, if (enableMultipleDirectionalLights) 1 else 0)
 fun FilaEngineBuilder_create(): Int = fila._FilaEngineBuilder_create()
 fun FilaEngineBuilder_destroy(builder: Int) = fila._FilaEngineBuilder_destroy(builder)
 fun FilaEngineBuilder_feature(builder: Int, name: String?, value: Boolean) = fila.heapScoped { fila._FilaEngineBuilder_feature(builder, cString(name), if (value) 1 else 0) }
@@ -808,7 +809,7 @@ fun FilaEngine_getFeatureFlag(engine: Int, name: String?): Boolean = fila.heapSc
 fun FilaEngine_getLightManager(engine: Int): Int = fila._FilaEngine_getLightManager(engine)
 fun FilaEngine_getMaxStereoscopicEyes(engine: Int): Int = fila._FilaEngine_getMaxStereoscopicEyes(engine)
 fun FilaEngine_getRenderableManager(engine: Int): Int = fila._FilaEngine_getRenderableManager(engine)
-fun FilaEngine_getSteadyClockTimeNano(): Long = fila._FilaEngine_getSteadyClockTimeNano().toKotlinLong()
+fun FilaEngine_getSteadyClockTimeNano(out: Int) = fila._FilaEngine_getSteadyClockTimeNano(out)
 fun FilaEngine_getSupportedFeatureLevel(engine: Int): Int = fila._FilaEngine_getSupportedFeatureLevel(engine)
 fun FilaEngine_getTransformManager(engine: Int): Int = fila._FilaEngine_getTransformManager(engine)
 fun FilaEngine_hasFeatureFlag(engine: Int, name: String?): Boolean = fila.heapScoped { fila._FilaEngine_hasFeatureFlag(engine, cString(name)) != 0 }
@@ -888,7 +889,7 @@ fun FilaLightManagerBuilder_intensityCandela(builder: Int, intensity: Float) = f
 fun FilaLightManagerBuilder_intensityEfficiency(builder: Int, watts: Float, efficiency: Float) = fila._FilaLightManagerBuilder_intensityEfficiency(builder, watts, efficiency)
 fun FilaLightManagerBuilder_lightChannel(builder: Int, channel: Int, enable: Boolean) = fila._FilaLightManagerBuilder_lightChannel(builder, channel, if (enable) 1 else 0)
 fun FilaLightManagerBuilder_position(builder: Int, x: Float, y: Float, z: Float) = fila._FilaLightManagerBuilder_position(builder, x, y, z)
-fun FilaLightManagerBuilder_shadowOptions(builder: Int, options: Int) = fila._FilaLightManagerBuilder_shadowOptions(builder, options)
+fun FilaLightManagerBuilder_shadowOptions(builder: Int, mapSize: Int, shadowCascades: Int, cascadeSplitPositions_0: Float, cascadeSplitPositions_1: Float, cascadeSplitPositions_2: Float, constantBias: Float, normalBias: Float, shadowFar: Float, shadowNearHint: Float, shadowFarHint: Float, stable: Boolean, lispsm: Boolean, polygonOffsetConstant: Float, polygonOffsetSlope: Float, screenSpaceContactShadows: Boolean, stepCount: Int, maxShadowDistance: Float, vsm_elvsm: Boolean, vsm_blurWidth: Float, shadowBulbRadius: Float, transform_0: Float, transform_1: Float, transform_2: Float, transform_3: Float, penumbraScale: Float, penumbraRatioScale: Float, maxPenumbraRatio: Float, maxSearchRadius: Float) = fila._FilaLightManagerBuilder_shadowOptions(builder, mapSize, shadowCascades, cascadeSplitPositions_0, cascadeSplitPositions_1, cascadeSplitPositions_2, constantBias, normalBias, shadowFar, shadowNearHint, shadowFarHint, if (stable) 1 else 0, if (lispsm) 1 else 0, polygonOffsetConstant, polygonOffsetSlope, if (screenSpaceContactShadows) 1 else 0, stepCount, maxShadowDistance, if (vsm_elvsm) 1 else 0, vsm_blurWidth, shadowBulbRadius, transform_0, transform_1, transform_2, transform_3, penumbraScale, penumbraRatioScale, maxPenumbraRatio, maxSearchRadius)
 fun FilaLightManagerBuilder_spotLightCone(builder: Int, inner: Float, outer: Float) = fila._FilaLightManagerBuilder_spotLightCone(builder, inner, outer)
 fun FilaLightManagerBuilder_sunAngularRadius(builder: Int, angularRadius: Float) = fila._FilaLightManagerBuilder_sunAngularRadius(builder, angularRadius)
 fun FilaLightManagerBuilder_sunHaloFalloff(builder: Int, haloFalloff: Float) = fila._FilaLightManagerBuilder_sunHaloFalloff(builder, haloFalloff)
@@ -1128,7 +1129,7 @@ fun FilaRenderableManager_setSkinningBuffer(rm: Int, instance: Int, sb: Int, cou
 fun FilaRenderer_beginFrame(renderer: Int, swapChain: Int, frameTimeNanos: Long): Boolean = fila._FilaRenderer_beginFrame(renderer, swapChain, frameTimeNanos.toI64()) != 0
 fun FilaRenderer_copyFrame(renderer: Int, dstSwapChain: Int, dstLeft: Int, dstBottom: Int, dstWidth: Int, dstHeight: Int, srcLeft: Int, srcBottom: Int, srcWidth: Int, srcHeight: Int, flags: Int) = fila._FilaRenderer_copyFrame(renderer, dstSwapChain, dstLeft, dstBottom, dstWidth, dstHeight, srcLeft, srcBottom, srcWidth, srcHeight, flags)
 fun FilaRenderer_endFrame(renderer: Int) = fila._FilaRenderer_endFrame(renderer)
-fun FilaRenderer_getClearOptions(renderer: Int, out: Int) = fila._FilaRenderer_getClearOptions(renderer, out)
+fun FilaRenderer_getClearOptions(renderer: Int, ints: Int, doubles: Int) = fila._FilaRenderer_getClearOptions(renderer, ints, doubles)
 fun FilaRenderer_getFrameToSkipCount(renderer: Int): Int = fila._FilaRenderer_getFrameToSkipCount(renderer)
 fun FilaRenderer_getMaterialTime(renderer: Int): Double = fila._FilaRenderer_getMaterialTime(renderer)
 fun FilaRenderer_getUserTime(renderer: Int): Double = fila._FilaRenderer_getUserTime(renderer)
@@ -1138,10 +1139,10 @@ fun FilaRenderer_readPixelsRenderTarget(renderer: Int, renderTarget: Int, xoffse
 fun FilaRenderer_render(renderer: Int, view: Int) = fila._FilaRenderer_render(renderer, view)
 fun FilaRenderer_renderStandaloneView(renderer: Int, view: Int) = fila._FilaRenderer_renderStandaloneView(renderer, view)
 fun FilaRenderer_resetUserTime(renderer: Int) = fila._FilaRenderer_resetUserTime(renderer)
-fun FilaRenderer_setClearOptions(renderer: Int, options: Int) = fila._FilaRenderer_setClearOptions(renderer, options)
+fun FilaRenderer_setClearOptions(renderer: Int, clearColor_0: Double, clearColor_1: Double, clearColor_2: Double, clearColor_3: Double, clear: Boolean, discard: Boolean) = fila._FilaRenderer_setClearOptions(renderer, clearColor_0, clearColor_1, clearColor_2, clearColor_3, if (clear) 1 else 0, if (discard) 1 else 0)
 fun FilaRenderer_setDesiredPresentationTime(renderer: Int, monotonicClockNanos: Long) = fila._FilaRenderer_setDesiredPresentationTime(renderer, monotonicClockNanos.toI64())
-fun FilaRenderer_setDisplayInfo(renderer: Int, info: Int) = fila._FilaRenderer_setDisplayInfo(renderer, info)
-fun FilaRenderer_setFrameRateOptions(renderer: Int, options: Int) = fila._FilaRenderer_setFrameRateOptions(renderer, options)
+fun FilaRenderer_setDisplayInfo(renderer: Int, refreshRate: Float) = fila._FilaRenderer_setDisplayInfo(renderer, refreshRate)
+fun FilaRenderer_setFrameRateOptions(renderer: Int, headRoomRatio: Float, scaleRate: Float, history: Int, interval: Float) = fila._FilaRenderer_setFrameRateOptions(renderer, headRoomRatio, scaleRate, history, interval)
 fun FilaRenderer_setMaterialTimeEpoch(renderer: Int, timeEpochInNs: Long) = fila._FilaRenderer_setMaterialTimeEpoch(renderer, timeEpochInNs.toI64())
 fun FilaRenderer_setPresentationTime(renderer: Int, monotonicClockNanos: Long) = fila._FilaRenderer_setPresentationTime(renderer, monotonicClockNanos.toI64())
 fun FilaRenderer_setRenderingDeadline(renderer: Int, monotonicClockNanos: Long) = fila._FilaRenderer_setRenderingDeadline(renderer, monotonicClockNanos.toI64())
@@ -1295,32 +1296,32 @@ fun FilaVertexBuffer_getVertexCount(vertexBuffer: Int): Int = fila._FilaVertexBu
 fun FilaVertexBuffer_setBufferAt(vertexBuffer: Int, engine: Int, bufferIndex: Int, buffer: Int, sizeInBytes: Int, destOffsetInBytes: Int, handler: Int, callback: Int, userData: Int) = fila._FilaVertexBuffer_setBufferAt(vertexBuffer, engine, bufferIndex, buffer, sizeInBytes, destOffsetInBytes, handler, callback, userData)
 fun FilaVertexBuffer_setBufferObjectAt(vertexBuffer: Int, engine: Int, bufferIndex: Int, bufferObject: Int) = fila._FilaVertexBuffer_setBufferObjectAt(vertexBuffer, engine, bufferIndex, bufferObject)
 fun FilaView_clearFrameHistory(view: Int, engine: Int) = fila._FilaView_clearFrameHistory(view, engine)
-fun FilaView_getAmbientOcclusionOptions(view: Int, out: Int) = fila._FilaView_getAmbientOcclusionOptions(view, out)
+fun FilaView_getAmbientOcclusionOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getAmbientOcclusionOptions(view, floats, ints)
 fun FilaView_getAntiAliasing(view: Int): Int = fila._FilaView_getAntiAliasing(view)
 fun FilaView_getBlendMode(view: Int): Int = fila._FilaView_getBlendMode(view)
-fun FilaView_getBloomOptions(view: Int, out: Int) = fila._FilaView_getBloomOptions(view, out)
-fun FilaView_getDepthOfFieldOptions(view: Int, out: Int) = fila._FilaView_getDepthOfFieldOptions(view, out)
+fun FilaView_getBloomOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getBloomOptions(view, floats, ints)
+fun FilaView_getDepthOfFieldOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getDepthOfFieldOptions(view, floats, ints)
 fun FilaView_getDithering(view: Int): Int = fila._FilaView_getDithering(view)
-fun FilaView_getDynamicResolutionOptions(view: Int, out: Int) = fila._FilaView_getDynamicResolutionOptions(view, out)
+fun FilaView_getDynamicResolutionOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getDynamicResolutionOptions(view, floats, ints)
 fun FilaView_getEffectiveGridSize(view: Int): Double = fila._FilaView_getEffectiveGridSize(view)
 fun FilaView_getFogEntity(view: Int): Int = fila._FilaView_getFogEntity(view)
-fun FilaView_getFogOptions(view: Int, out: Int) = fila._FilaView_getFogOptions(view, out)
+fun FilaView_getFogOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getFogOptions(view, floats, ints)
 fun FilaView_getGridSize(view: Int): Double = fila._FilaView_getGridSize(view)
-fun FilaView_getGuardBandOptions(view: Int, out: Int) = fila._FilaView_getGuardBandOptions(view, out)
+fun FilaView_getGuardBandOptions(view: Int, ints: Int) = fila._FilaView_getGuardBandOptions(view, ints)
 fun FilaView_getLastDynamicResolutionScale(view: Int, out: Int) = fila._FilaView_getLastDynamicResolutionScale(view, out)
 fun FilaView_getMaterialGlobal(view: Int, index: Int, out: Int) = fila._FilaView_getMaterialGlobal(view, index, out)
-fun FilaView_getMultiSampleAntiAliasingOptions(view: Int, out: Int) = fila._FilaView_getMultiSampleAntiAliasingOptions(view, out)
+fun FilaView_getMultiSampleAntiAliasingOptions(view: Int, ints: Int) = fila._FilaView_getMultiSampleAntiAliasingOptions(view, ints)
 fun FilaView_getName(view: Int): String? = fila.readString(fila._FilaView_getName(view))
 fun FilaView_getRenderQuality(view: Int): Int = fila._FilaView_getRenderQuality(view)
-fun FilaView_getScreenSpaceReflectionsOptions(view: Int, out: Int) = fila._FilaView_getScreenSpaceReflectionsOptions(view, out)
-fun FilaView_getSoftShadowOptions(view: Int, out: Int) = fila._FilaView_getSoftShadowOptions(view, out)
-fun FilaView_getStereoscopicOptions(view: Int, out: Int) = fila._FilaView_getStereoscopicOptions(view, out)
-fun FilaView_getTemporalAntiAliasingOptions(view: Int, out: Int) = fila._FilaView_getTemporalAntiAliasingOptions(view, out)
+fun FilaView_getScreenSpaceReflectionsOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getScreenSpaceReflectionsOptions(view, floats, ints)
+fun FilaView_getSoftShadowOptions(view: Int, floats: Int) = fila._FilaView_getSoftShadowOptions(view, floats)
+fun FilaView_getStereoscopicOptions(view: Int, ints: Int) = fila._FilaView_getStereoscopicOptions(view, ints)
+fun FilaView_getTemporalAntiAliasingOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getTemporalAntiAliasingOptions(view, floats, ints)
 fun FilaView_getViewport(view: Int, left: Int, bottom: Int, width: Int, height: Int) = fila._FilaView_getViewport(view, left, bottom, width, height)
-fun FilaView_getVignetteOptions(view: Int, out: Int) = fila._FilaView_getVignetteOptions(view, out)
+fun FilaView_getVignetteOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getVignetteOptions(view, floats, ints)
 fun FilaView_getVisibleLayers(view: Int): Int = fila._FilaView_getVisibleLayers(view)
 fun FilaView_getVisibleRenderableCount(view: Int): Int = fila._FilaView_getVisibleRenderableCount(view)
-fun FilaView_getVsmShadowOptions(view: Int, out: Int) = fila._FilaView_getVsmShadowOptions(view, out)
+fun FilaView_getVsmShadowOptions(view: Int, floats: Int, ints: Int) = fila._FilaView_getVsmShadowOptions(view, floats, ints)
 fun FilaView_hasCamera(view: Int): Boolean = fila._FilaView_hasCamera(view) != 0
 fun FilaView_isChannelDepthClearEnabled(view: Int, channel: Int): Boolean = fila._FilaView_isChannelDepthClearEnabled(view, channel) != 0
 fun FilaView_isFrontFaceWindingInverted(view: Int): Boolean = fila._FilaView_isFrontFaceWindingInverted(view) != 0
@@ -1331,42 +1332,43 @@ fun FilaView_isShadowingEnabled(view: Int): Boolean = fila._FilaView_isShadowing
 fun FilaView_isStencilBufferEnabled(view: Int): Boolean = fila._FilaView_isStencilBufferEnabled(view) != 0
 fun FilaView_isTransparentPickingEnabled(view: Int): Boolean = fila._FilaView_isTransparentPickingEnabled(view) != 0
 fun FilaView_pick(view: Int, x: Int, y: Int, handler: Int, callback: Int, userData: Int) = fila._FilaView_pick(view, x, y, handler, callback, userData)
-fun FilaView_setAmbientOcclusionOptions(view: Int, options: Int) = fila._FilaView_setAmbientOcclusionOptions(view, options)
+fun FilaView_readPickingResult(result: Int, renderable: Int, depthAndFragCoords: Int) = fila._FilaView_readPickingResult(result, renderable, depthAndFragCoords)
+fun FilaView_setAmbientOcclusionOptions(view: Int, radius: Float, bias: Float, power: Float, resolution: Float, intensity: Float, bilateralThreshold: Float, quality: Int, lowPassFilter: Int, upsampling: Int, enabled: Boolean, bentNormals: Boolean, minHorizonAngleRad: Float, ssct_lightConeRad: Float, ssct_shadowDistance: Float, ssct_contactDistanceMax: Float, ssct_intensity: Float, ssct_lightDirection_0: Float, ssct_lightDirection_1: Float, ssct_lightDirection_2: Float, ssct_depthBias: Float, ssct_depthSlopeBias: Float, ssct_sampleCount: Int, ssct_rayCount: Int, ssct_enabled: Boolean, gtao_sampleSliceCount: Int, gtao_sampleStepsPerSlice: Int, gtao_thicknessHeuristic: Float, gtao_useVisibilityBitmasks: Boolean, gtao_constThickness: Float, gtao_linearThickness: Boolean, aoType: Int) = fila._FilaView_setAmbientOcclusionOptions(view, radius, bias, power, resolution, intensity, bilateralThreshold, quality, lowPassFilter, upsampling, if (enabled) 1 else 0, if (bentNormals) 1 else 0, minHorizonAngleRad, ssct_lightConeRad, ssct_shadowDistance, ssct_contactDistanceMax, ssct_intensity, ssct_lightDirection_0, ssct_lightDirection_1, ssct_lightDirection_2, ssct_depthBias, ssct_depthSlopeBias, ssct_sampleCount, ssct_rayCount, if (ssct_enabled) 1 else 0, gtao_sampleSliceCount, gtao_sampleStepsPerSlice, gtao_thicknessHeuristic, if (gtao_useVisibilityBitmasks) 1 else 0, gtao_constThickness, if (gtao_linearThickness) 1 else 0, aoType)
 fun FilaView_setAntiAliasing(view: Int, type: Int) = fila._FilaView_setAntiAliasing(view, type)
 fun FilaView_setBlendMode(view: Int, blendMode: Int) = fila._FilaView_setBlendMode(view, blendMode)
-fun FilaView_setBloomOptions(view: Int, options: Int) = fila._FilaView_setBloomOptions(view, options)
+fun FilaView_setBloomOptions(view: Int, dirt: Int, dirtStrength: Float, strength: Float, resolution: Int, levels: Int, blendMode: Int, threshold: Boolean, enabled: Boolean, highlight: Float, quality: Int, lensFlare: Boolean, starburst: Boolean, chromaticAberration: Float, ghostCount: Int, ghostSpacing: Float, ghostThreshold: Float, haloThickness: Float, haloRadius: Float, haloThreshold: Float) = fila._FilaView_setBloomOptions(view, dirt, dirtStrength, strength, resolution, levels, blendMode, if (threshold) 1 else 0, if (enabled) 1 else 0, highlight, quality, if (lensFlare) 1 else 0, if (starburst) 1 else 0, chromaticAberration, ghostCount, ghostSpacing, ghostThreshold, haloThickness, haloRadius, haloThreshold)
 fun FilaView_setCamera(view: Int, camera: Int) = fila._FilaView_setCamera(view, camera)
 fun FilaView_setChannelDepthClearEnabled(view: Int, channel: Int, enabled: Boolean) = fila._FilaView_setChannelDepthClearEnabled(view, channel, if (enabled) 1 else 0)
 fun FilaView_setColorGrading(view: Int, colorGrading: Int) = fila._FilaView_setColorGrading(view, colorGrading)
-fun FilaView_setDepthOfFieldOptions(view: Int, options: Int) = fila._FilaView_setDepthOfFieldOptions(view, options)
+fun FilaView_setDepthOfFieldOptions(view: Int, cocScale: Float, cocAspectRatio: Float, maxApertureDiameter: Float, enabled: Boolean, filter: Int, nativeResolution: Boolean, foregroundRingCount: Int, backgroundRingCount: Int, fastGatherRingCount: Int, maxForegroundCOC: Int, maxBackgroundCOC: Int) = fila._FilaView_setDepthOfFieldOptions(view, cocScale, cocAspectRatio, maxApertureDiameter, if (enabled) 1 else 0, filter, if (nativeResolution) 1 else 0, foregroundRingCount, backgroundRingCount, fastGatherRingCount, maxForegroundCOC, maxBackgroundCOC)
 fun FilaView_setDithering(view: Int, dithering: Int) = fila._FilaView_setDithering(view, dithering)
 fun FilaView_setDynamicLightingOptions(view: Int, zLightNear: Float, zLightFar: Float) = fila._FilaView_setDynamicLightingOptions(view, zLightNear, zLightFar)
-fun FilaView_setDynamicResolutionOptions(view: Int, options: Int) = fila._FilaView_setDynamicResolutionOptions(view, options)
-fun FilaView_setFogOptions(view: Int, options: Int) = fila._FilaView_setFogOptions(view, options)
+fun FilaView_setDynamicResolutionOptions(view: Int, minScale_0: Float, minScale_1: Float, maxScale_0: Float, maxScale_1: Float, sharpness: Float, enabled: Boolean, homogeneousScaling: Boolean, quality: Int) = fila._FilaView_setDynamicResolutionOptions(view, minScale_0, minScale_1, maxScale_0, maxScale_1, sharpness, if (enabled) 1 else 0, if (homogeneousScaling) 1 else 0, quality)
+fun FilaView_setFogOptions(view: Int, distance: Float, cutOffDistance: Float, maximumOpacity: Float, height: Float, heightFalloff: Float, color_0: Float, color_1: Float, color_2: Float, density: Float, inScatteringStart: Float, inScatteringSize: Float, fogColorFromIbl: Boolean, skyColor: Int, enabled: Boolean) = fila._FilaView_setFogOptions(view, distance, cutOffDistance, maximumOpacity, height, heightFalloff, color_0, color_1, color_2, density, inScatteringStart, inScatteringSize, if (fogColorFromIbl) 1 else 0, skyColor, if (enabled) 1 else 0)
 fun FilaView_setFrontFaceWindingInverted(view: Int, inverted: Boolean) = fila._FilaView_setFrontFaceWindingInverted(view, if (inverted) 1 else 0)
 fun FilaView_setFrustumCullingEnabled(view: Int, enabled: Boolean) = fila._FilaView_setFrustumCullingEnabled(view, if (enabled) 1 else 0)
 fun FilaView_setGridSize(view: Int, size: Double) = fila._FilaView_setGridSize(view, size)
-fun FilaView_setGuardBandOptions(view: Int, options: Int) = fila._FilaView_setGuardBandOptions(view, options)
+fun FilaView_setGuardBandOptions(view: Int, enabled: Boolean) = fila._FilaView_setGuardBandOptions(view, if (enabled) 1 else 0)
 fun FilaView_setMaterialGlobal(view: Int, index: Int, x: Float, y: Float, z: Float, w: Float) = fila._FilaView_setMaterialGlobal(view, index, x, y, z, w)
-fun FilaView_setMultiSampleAntiAliasingOptions(view: Int, options: Int) = fila._FilaView_setMultiSampleAntiAliasingOptions(view, options)
+fun FilaView_setMultiSampleAntiAliasingOptions(view: Int, enabled: Boolean, sampleCount: Int, customResolve: Boolean) = fila._FilaView_setMultiSampleAntiAliasingOptions(view, if (enabled) 1 else 0, sampleCount, if (customResolve) 1 else 0)
 fun FilaView_setName(view: Int, name: String?) = fila.heapScoped { fila._FilaView_setName(view, cString(name)) }
 fun FilaView_setPostProcessingEnabled(view: Int, enabled: Boolean) = fila._FilaView_setPostProcessingEnabled(view, if (enabled) 1 else 0)
 fun FilaView_setRenderQuality(view: Int, hdrColorBufferQuality: Int) = fila._FilaView_setRenderQuality(view, hdrColorBufferQuality)
 fun FilaView_setRenderTarget(view: Int, renderTarget: Int) = fila._FilaView_setRenderTarget(view, renderTarget)
 fun FilaView_setScene(view: Int, scene: Int) = fila._FilaView_setScene(view, scene)
-fun FilaView_setScreenSpaceReflectionsOptions(view: Int, options: Int) = fila._FilaView_setScreenSpaceReflectionsOptions(view, options)
+fun FilaView_setScreenSpaceReflectionsOptions(view: Int, thickness: Float, bias: Float, maxDistance: Float, stride: Float, enabled: Boolean) = fila._FilaView_setScreenSpaceReflectionsOptions(view, thickness, bias, maxDistance, stride, if (enabled) 1 else 0)
 fun FilaView_setScreenSpaceRefractionEnabled(view: Int, enabled: Boolean) = fila._FilaView_setScreenSpaceRefractionEnabled(view, if (enabled) 1 else 0)
 fun FilaView_setShadowType(view: Int, type: Int) = fila._FilaView_setShadowType(view, type)
 fun FilaView_setShadowingEnabled(view: Int, enabled: Boolean) = fila._FilaView_setShadowingEnabled(view, if (enabled) 1 else 0)
-fun FilaView_setSoftShadowOptions(view: Int, options: Int) = fila._FilaView_setSoftShadowOptions(view, options)
+fun FilaView_setSoftShadowOptions(view: Int, penumbraScale: Float, penumbraRatioScale: Float, maxPenumbraRatio: Float, maxSearchRadius: Float) = fila._FilaView_setSoftShadowOptions(view, penumbraScale, penumbraRatioScale, maxPenumbraRatio, maxSearchRadius)
 fun FilaView_setStencilBufferEnabled(view: Int, enabled: Boolean) = fila._FilaView_setStencilBufferEnabled(view, if (enabled) 1 else 0)
-fun FilaView_setStereoscopicOptions(view: Int, options: Int) = fila._FilaView_setStereoscopicOptions(view, options)
-fun FilaView_setTemporalAntiAliasingOptions(view: Int, options: Int) = fila._FilaView_setTemporalAntiAliasingOptions(view, options)
+fun FilaView_setStereoscopicOptions(view: Int, enabled: Boolean) = fila._FilaView_setStereoscopicOptions(view, if (enabled) 1 else 0)
+fun FilaView_setTemporalAntiAliasingOptions(view: Int, feedback: Float, lodBias: Float, sharpness: Float, enabled: Boolean, upscaling: Float, filterHistory: Boolean, filterInput: Boolean, useYCoCg: Boolean, hdr: Boolean, boxType: Int, boxClipping: Int, jitterPattern: Int, varianceGamma: Float, preventFlickering: Boolean, historyReprojection: Boolean) = fila._FilaView_setTemporalAntiAliasingOptions(view, feedback, lodBias, sharpness, if (enabled) 1 else 0, upscaling, if (filterHistory) 1 else 0, if (filterInput) 1 else 0, if (useYCoCg) 1 else 0, if (hdr) 1 else 0, boxType, boxClipping, jitterPattern, varianceGamma, if (preventFlickering) 1 else 0, if (historyReprojection) 1 else 0)
 fun FilaView_setTransparentPickingEnabled(view: Int, enabled: Boolean) = fila._FilaView_setTransparentPickingEnabled(view, if (enabled) 1 else 0)
 fun FilaView_setViewport(view: Int, left: Int, bottom: Int, width: Int, height: Int) = fila._FilaView_setViewport(view, left, bottom, width, height)
-fun FilaView_setVignetteOptions(view: Int, options: Int) = fila._FilaView_setVignetteOptions(view, options)
+fun FilaView_setVignetteOptions(view: Int, midPoint: Float, roundness: Float, feather: Float, color_0: Float, color_1: Float, color_2: Float, color_3: Float, enabled: Boolean) = fila._FilaView_setVignetteOptions(view, midPoint, roundness, feather, color_0, color_1, color_2, color_3, if (enabled) 1 else 0)
 fun FilaView_setVisibleLayers(view: Int, select: Int, value: Int) = fila._FilaView_setVisibleLayers(view, select, value)
-fun FilaView_setVsmShadowOptions(view: Int, options: Int) = fila._FilaView_setVsmShadowOptions(view, options)
+fun FilaView_setVsmShadowOptions(view: Int, anisotropy: Int, mipmapping: Boolean, msaaSamples: Int, highPrecision: Boolean, lightBleedReduction: Float) = fila._FilaView_setVsmShadowOptions(view, anisotropy, if (mipmapping) 1 else 0, msaaSamples, if (highPrecision) 1 else 0, lightBleedReduction)
 
 typealias FilaVertexAttribute = Int
 const val FILA_VERTEX_ATTRIBUTE_POSITION = 0
@@ -2212,40 +2214,38 @@ class FilaViewStereoscopicOptions(val ptr: Int) {
 }
 
 class FilaViewTemporalAntiAliasingOptions(val ptr: Int) {
-    var filterWidth: Float get() = fila.getF32(ptr + 0); set(value) { fila.setF32(ptr + 0, value) }
-    var feedback: Float get() = fila.getF32(ptr + 4); set(value) { fila.setF32(ptr + 4, value) }
-    var lodBias: Float get() = fila.getF32(ptr + 8); set(value) { fila.setF32(ptr + 8, value) }
-    var sharpness: Float get() = fila.getF32(ptr + 12); set(value) { fila.setF32(ptr + 12, value) }
-    var enabled: Boolean get() = fila.getBool(ptr + 16); set(value) { fila.setBool(ptr + 16, value) }
-    var upscaling: Float get() = fila.getF32(ptr + 20); set(value) { fila.setF32(ptr + 20, value) }
-    var filterHistory: Boolean get() = fila.getBool(ptr + 24); set(value) { fila.setBool(ptr + 24, value) }
-    var filterInput: Boolean get() = fila.getBool(ptr + 25); set(value) { fila.setBool(ptr + 25, value) }
-    var useYCoCg: Boolean get() = fila.getBool(ptr + 26); set(value) { fila.setBool(ptr + 26, value) }
-    var hdr: Boolean get() = fila.getBool(ptr + 27); set(value) { fila.setBool(ptr + 27, value) }
-    var boxType: Int get() = fila.getI32(ptr + 28); set(value) { fila.setI32(ptr + 28, value) }
-    var boxClipping: Int get() = fila.getI32(ptr + 32); set(value) { fila.setI32(ptr + 32, value) }
-    var jitterPattern: Int get() = fila.getI32(ptr + 36); set(value) { fila.setI32(ptr + 36, value) }
-    var varianceGamma: Float get() = fila.getF32(ptr + 40); set(value) { fila.setF32(ptr + 40, value) }
-    var preventFlickering: Boolean get() = fila.getBool(ptr + 44); set(value) { fila.setBool(ptr + 44, value) }
-    var historyReprojection: Boolean get() = fila.getBool(ptr + 45); set(value) { fila.setBool(ptr + 45, value) }
+    var feedback: Float get() = fila.getF32(ptr + 0); set(value) { fila.setF32(ptr + 0, value) }
+    var lodBias: Float get() = fila.getF32(ptr + 4); set(value) { fila.setF32(ptr + 4, value) }
+    var sharpness: Float get() = fila.getF32(ptr + 8); set(value) { fila.setF32(ptr + 8, value) }
+    var enabled: Boolean get() = fila.getBool(ptr + 12); set(value) { fila.setBool(ptr + 12, value) }
+    var upscaling: Float get() = fila.getF32(ptr + 16); set(value) { fila.setF32(ptr + 16, value) }
+    var filterHistory: Boolean get() = fila.getBool(ptr + 20); set(value) { fila.setBool(ptr + 20, value) }
+    var filterInput: Boolean get() = fila.getBool(ptr + 21); set(value) { fila.setBool(ptr + 21, value) }
+    var useYCoCg: Boolean get() = fila.getBool(ptr + 22); set(value) { fila.setBool(ptr + 22, value) }
+    var hdr: Boolean get() = fila.getBool(ptr + 23); set(value) { fila.setBool(ptr + 23, value) }
+    var boxType: Int get() = fila.getI32(ptr + 24); set(value) { fila.setI32(ptr + 24, value) }
+    var boxClipping: Int get() = fila.getI32(ptr + 28); set(value) { fila.setI32(ptr + 28, value) }
+    var jitterPattern: Int get() = fila.getI32(ptr + 32); set(value) { fila.setI32(ptr + 32, value) }
+    var varianceGamma: Float get() = fila.getF32(ptr + 36); set(value) { fila.setF32(ptr + 36, value) }
+    var preventFlickering: Boolean get() = fila.getBool(ptr + 40); set(value) { fila.setBool(ptr + 40, value) }
+    var historyReprojection: Boolean get() = fila.getBool(ptr + 41); set(value) { fila.setBool(ptr + 41, value) }
     companion object {
-        const val SIZE = 48
-        const val filterWidth = 0
-        const val feedback = 4
-        const val lodBias = 8
-        const val sharpness = 12
-        const val enabled = 16
-        const val upscaling = 20
-        const val filterHistory = 24
-        const val filterInput = 25
-        const val useYCoCg = 26
-        const val hdr = 27
-        const val boxType = 28
-        const val boxClipping = 32
-        const val jitterPattern = 36
-        const val varianceGamma = 40
-        const val preventFlickering = 44
-        const val historyReprojection = 45
+        const val SIZE = 44
+        const val feedback = 0
+        const val lodBias = 4
+        const val sharpness = 8
+        const val enabled = 12
+        const val upscaling = 16
+        const val filterHistory = 20
+        const val filterInput = 21
+        const val useYCoCg = 22
+        const val hdr = 23
+        const val boxType = 24
+        const val boxClipping = 28
+        const val jitterPattern = 32
+        const val varianceGamma = 36
+        const val preventFlickering = 40
+        const val historyReprojection = 41
     }
 }
 
@@ -2270,16 +2270,14 @@ class FilaViewVsmShadowOptions(val ptr: Int) {
     var mipmapping: Boolean get() = fila.getBool(ptr + 1); set(value) { fila.setBool(ptr + 1, value) }
     var msaaSamples: Int get() = fila.getU8(ptr + 2); set(value) { fila.setU8(ptr + 2, value) }
     var highPrecision: Boolean get() = fila.getBool(ptr + 3); set(value) { fila.setBool(ptr + 3, value) }
-    var minVarianceScale: Float get() = fila.getF32(ptr + 4); set(value) { fila.setF32(ptr + 4, value) }
-    var lightBleedReduction: Float get() = fila.getF32(ptr + 8); set(value) { fila.setF32(ptr + 8, value) }
+    var lightBleedReduction: Float get() = fila.getF32(ptr + 4); set(value) { fila.setF32(ptr + 4, value) }
     companion object {
-        const val SIZE = 12
+        const val SIZE = 8
         const val anisotropy = 0
         const val mipmapping = 1
         const val msaaSamples = 2
         const val highPrecision = 3
-        const val minVarianceScale = 4
-        const val lightBleedReduction = 8
+        const val lightBleedReduction = 4
     }
 }
 

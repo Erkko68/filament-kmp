@@ -43,16 +43,16 @@ FilaVertexBufferBuilder* FilaVertexBufferBuilder_create(void);
 void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* builder);
 FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder, FilaEngine* engine);
 
-void FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* builder, uint8_t bufferCount);
+void FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* builder, uint32_t bufferCount);
 void FilaVertexBufferBuilder_vertexCount(FilaVertexBufferBuilder* builder, uint32_t vertexCount);
 void FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* builder, bool enabled);
-void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, uint8_t bufferIndex, FilaAttributeType attributeType, uint32_t byteOffset, uint8_t byteStride);
+void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaAttributeType attributeType, uint32_t byteOffset, uint32_t byteStride);
 void FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, bool normalized);
 
 // VertexBuffer
 uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer);
-void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
-void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferObject* bufferObject);
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
+void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint32_t bufferIndex, FilaBufferObject* bufferObject);
 
 #ifdef __cplusplus
 }

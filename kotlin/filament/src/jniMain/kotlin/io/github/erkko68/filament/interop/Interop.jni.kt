@@ -59,4 +59,7 @@ actual object Callbacks {
     actual fun release(userData: NativePointer) = JniCallbacks.release(userData)
     actual val userOnly: NativePointer get() = JniCallbacks.userOnly
     actual val argUser: NativePointer get() = JniCallbacks.argUser
+    actual val keepBuffer: NativePointer get() = JniCallbacks.keepBuffer
 }
+
+actual fun FloatArray.readF32(index: Int): Float = this[index]

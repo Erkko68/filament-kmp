@@ -90,4 +90,7 @@ actual object Callbacks {
 
     actual val userOnly: NativePointer = staticCFunction { userData: COpaquePointer? -> dispatch(userData, NullPointer) }.toLong()
     actual val argUser: NativePointer = staticCFunction { arg: COpaquePointer?, userData: COpaquePointer? -> dispatch(userData, arg.toLong()) }.toLong()
+    actual val keepBuffer: NativePointer = staticCFunction { buffer: COpaquePointer?, _: ULong, userData: COpaquePointer? -> dispatch(userData, buffer.toLong()) }.toLong()
 }
+
+actual fun FloatArray.readF32(index: Int): Float = this[index]

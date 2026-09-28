@@ -299,7 +299,7 @@ class Material @InternalFilamentApi constructor(internal var nativeHandle: Nativ
                     "Failed to build material — the payload is not a valid compiled .filamat",
                 )
             }
-            val handle = FilaMaterial_Builder_build(nativeBuilder, engine.pointer)
+            val handle = FilaMaterial_Builder_build(nativeBuilder, engine.nativeHandle)
             FilaMaterial_Builder_destroy(nativeBuilder)
             releasePayload()
             if (handle == NullPointer) {

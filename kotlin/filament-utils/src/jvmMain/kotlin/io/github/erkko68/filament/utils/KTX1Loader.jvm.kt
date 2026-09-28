@@ -11,7 +11,6 @@ import io.github.erkko68.filament.floats
 import io.github.erkko68.filament.toFloats
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import io.github.erkko68.filament.nativeObject
 
 actual object KTX1Loader {
     actual class Options actual constructor() {
@@ -30,7 +29,7 @@ actual object KTX1Loader {
 
     actual fun createTexture(engine: Engine, buffer: ByteArray, options: Options): Texture? = confined { a ->
         val handle = FilamentC.FilaKTX1Loader_createTexture(
-            engine.nativeObject, a.bytes(buffer), buffer.size.toLong(), options.srgb,
+            MemorySegment.ofAddress(engine.nativeObject), a.bytes(buffer), buffer.size.toLong(), options.srgb,
         )
         handle?.let { Texture(it.address()) }
     }
@@ -40,14 +39,14 @@ actual object KTX1Loader {
         val sh = getSphericalHarmonics(buffer) ?: return IndirectLightBundle(null, null)
         val tex = createTexture(engine, buffer, options) ?: return IndirectLightBundle(null, null)
         val il = confined { a ->
-            FilamentC.FilaKTX1Loader_createIndirectLight(engine.nativeObject, MemorySegment.ofAddress(tex.nativeObject), a.floats(sh))
+            FilamentC.FilaKTX1Loader_createIndirectLight(MemorySegment.ofAddress(engine.nativeObject), MemorySegment.ofAddress(tex.nativeObject), a.floats(sh))
         }
         return IndirectLightBundle(il?.let { IndirectLight(it.address()) }, tex)
     }
 
     actual fun createSkybox(engine: Engine, buffer: ByteArray, options: Options): SkyboxBundle {
         val tex = createTexture(engine, buffer, options) ?: return SkyboxBundle(null, null)
-        val skybox = FilamentC.FilaKTX1Loader_createSkybox(engine.nativeObject, MemorySegment.ofAddress(tex.nativeObject))
+        val skybox = FilamentC.FilaKTX1Loader_createSkybox(MemorySegment.ofAddress(engine.nativeObject), MemorySegment.ofAddress(tex.nativeObject))
         return SkyboxBundle(skybox?.let { Skybox(it.address()) }, tex)
     }
 

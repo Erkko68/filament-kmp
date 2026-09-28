@@ -50,9 +50,9 @@ void FilaRenderer_copyFrame(FilaRenderer* renderer, FilaSwapChain* dstSwapChain,
 
 void FilaRenderer_readPixels(FilaRenderer* renderer,
         uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height,
-        void* buffer, size_t sizeInBytes,
+        void* buffer, uint32_t sizeInBytes,
         FilaPixelDataFormat format, FilaPixelDataType type,
-        uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+        uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     
     auto wrapper = new BufferCallbackWrapper{callback, userData};
@@ -64,9 +64,9 @@ void FilaRenderer_readPixels(FilaRenderer* renderer,
 
 void FilaRenderer_readPixelsRenderTarget(FilaRenderer* renderer, FilaRenderTarget* renderTarget,
         uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height,
-        void* buffer, size_t sizeInBytes,
+        void* buffer, uint32_t sizeInBytes,
         FilaPixelDataFormat format, FilaPixelDataType type,
-        uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+        uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     
     auto wrapper = new BufferCallbackWrapper{callback, userData};
@@ -96,11 +96,11 @@ void FilaRenderer_pauseRenderThread(FilaRenderer* renderer, uint64_t timeNs) {
     FILA_CAST(Renderer, renderer)->pauseRenderThread(timeNs);
 }
 
-void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info) {
+static void FilaRenderer_setDisplayInfo_struct(FilaRenderer* renderer, const FilaRendererDisplayInfo* info) {
     FILA_CAST(Renderer, renderer)->setDisplayInfo({ .refreshRate = info->refreshRate });
 }
 
-void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options) {
+static void FilaRenderer_setFrameRateOptions_struct(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options) {
     FILA_CAST(Renderer, renderer)->setFrameRateOptions({
         .headRoomRatio = options->headRoomRatio,
         .scaleRate = options->scaleRate,
@@ -109,7 +109,7 @@ void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRenderer
     });
 }
 
-void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClearOptions* options) {
+static void FilaRenderer_setClearOptions_struct(FilaRenderer* renderer, const FilaRendererClearOptions* options) {
     FILA_CAST(Renderer, renderer)->setClearOptions({
         .clearColor = {options->clearColor[0], options->clearColor[1], options->clearColor[2], options->clearColor[3]},
         .clear = options->clear,
@@ -117,7 +117,7 @@ void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClea
     });
 }
 
-void FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClearOptions* out) {
+static void FilaRenderer_getClearOptions_struct(const FilaRenderer* renderer, FilaRendererClearOptions* out) {
     const Renderer::ClearOptions& opts = FILA_CONST_CAST(Renderer, renderer)->getClearOptions();
     out->clearColor[0] = opts.clearColor.r; out->clearColor[1] = opts.clearColor.g;
     out->clearColor[2] = opts.clearColor.b; out->clearColor[3] = opts.clearColor.a;
@@ -147,6 +147,45 @@ void FilaRenderer_skipNextFrames(FilaRenderer* renderer, uint32_t frameCount) {
 
 uint32_t FilaRenderer_getFrameToSkipCount(const FilaRenderer* renderer) {
     return FILA_CONST_CAST(Renderer, renderer)->getFrameToSkipCount();
+}
+
+// Flattened entry points: the fields as arguments / out arrays, no structs across the boundary.
+
+void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, float refreshRate) {
+    FilaRendererDisplayInfo o{};
+    o.refreshRate = refreshRate;
+    FilaRenderer_setDisplayInfo_struct(renderer, &o);
+}
+
+void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, float headRoomRatio, float scaleRate, uint32_t history, float interval) {
+    FilaRendererFrameRateOptions o{};
+    o.headRoomRatio = headRoomRatio;
+    o.scaleRate = scaleRate;
+    o.history = history;
+    o.interval = interval;
+    FilaRenderer_setFrameRateOptions_struct(renderer, &o);
+}
+
+void FilaRenderer_setClearOptions(FilaRenderer* renderer, double clearColor_0, double clearColor_1, double clearColor_2, double clearColor_3, bool clear, bool discard) {
+    FilaRendererClearOptions o{};
+    o.clearColor[0] = clearColor_0;
+    o.clearColor[1] = clearColor_1;
+    o.clearColor[2] = clearColor_2;
+    o.clearColor[3] = clearColor_3;
+    o.clear = clear;
+    o.discard = discard;
+    FilaRenderer_setClearOptions_struct(renderer, &o);
+}
+
+void FilaRenderer_getClearOptions(const FilaRenderer* renderer, int32_t* ints, double* doubles) {
+    FilaRendererClearOptions o{};
+    FilaRenderer_getClearOptions_struct(renderer, &o);
+    doubles[0] = o.clearColor[0];
+    doubles[1] = o.clearColor[1];
+    doubles[2] = o.clearColor[2];
+    doubles[3] = o.clearColor[3];
+    ints[0] = (int32_t) o.clear;
+    ints[1] = (int32_t) o.discard;
 }
 
 } // extern "C"

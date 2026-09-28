@@ -69,7 +69,7 @@ void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder
     FILA_CAST(RenderableManager::Builder, builder)->material(index, FILA_CONST_CAST(MaterialInstance, materialInstance));
 }
 
-void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, uint32_t index, uint16_t blendOrder) {
+void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, uint32_t index, uint32_t blendOrder) {
     FILA_CAST(RenderableManager::Builder, builder)->blendOrder(index, blendOrder);
 }
 
@@ -81,15 +81,15 @@ void FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* buil
     FILA_CAST(RenderableManager::Builder, builder)->boundingBox({{cx, cy, cz}, {ex, ey, ez}});
 }
 
-void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint8_t select, uint8_t value) {
+void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint32_t select, uint32_t value) {
     FILA_CAST(RenderableManager::Builder, builder)->layerMask(select, value);
 }
 
-void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint8_t priority) {
+void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint32_t priority) {
     FILA_CAST(RenderableManager::Builder, builder)->priority(priority);
 }
 
-void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint8_t channel) {
+void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint32_t channel) {
     FILA_CAST(RenderableManager::Builder, builder)->channel(channel);
 }
 
@@ -180,7 +180,7 @@ void FilaRenderableManager_setMorphWeights(FilaRenderableManager* rm, FilaRender
     FILA_CAST(RenderableManager, rm)->setMorphWeights(RenderableManager::Instance(instance), weights, count, offset);
 }
 
-void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t level, uint32_t primitiveIndex, uint32_t offset) {
+void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t level, uint32_t primitiveIndex, uint32_t offset) {
     FILA_CAST(RenderableManager, rm)->setMorphTargetBufferOffsetAt(RenderableManager::Instance(instance), level, primitiveIndex, offset);
 }
 
@@ -198,11 +198,11 @@ void FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager
     halfExtent[0] = aabb.halfExtent.x; halfExtent[1] = aabb.halfExtent.y; halfExtent[2] = aabb.halfExtent.z;
 }
 
-void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t select, uint8_t value) {
+void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t select, uint32_t value) {
     FILA_CAST(RenderableManager, rm)->setLayerMask(RenderableManager::Instance(instance), select, value);
 }
 
-void FilaRenderableManager_setPriority(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t priority) {
+void FilaRenderableManager_setPriority(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t priority) {
     FILA_CAST(RenderableManager, rm)->setPriority(RenderableManager::Instance(instance), priority);
 }
 
@@ -210,7 +210,7 @@ uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* rm, FilaR
     return FILA_CONST_CAST(RenderableManager, rm)->getPriority(RenderableManager::Instance(instance));
 }
 
-void FilaRenderableManager_setChannel(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t channel) {
+void FilaRenderableManager_setChannel(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t channel) {
     FILA_CAST(RenderableManager, rm)->setChannel(RenderableManager::Instance(instance), channel);
 }
 
@@ -288,7 +288,7 @@ void FilaRenderableManager_setGeometryAtNonIndexed(FilaRenderableManager* rm, Fi
     FILA_CAST(RenderableManager, rm)->setGeometryAt(RenderableManager::Instance(instance), primitiveIndex, static_cast<RenderableManager::PrimitiveType>(type), FILA_CAST(VertexBuffer, vb), offset, count);
 }
 
-void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, uint16_t blendOrder) {
+void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, uint32_t blendOrder) {
     FILA_CAST(RenderableManager, rm)->setBlendOrderAt(RenderableManager::Instance(instance), primitiveIndex, blendOrder);
 }
 

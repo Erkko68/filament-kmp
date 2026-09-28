@@ -102,7 +102,7 @@ class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativeP
          * @throws UnsupportedOperationException on JS — Stream is unbound in the web wrapper.
          */
         fun build(engine: Engine): Stream {
-            val handle = FilaStreamBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaStreamBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaStreamBuilder_destroy(nativeBuilder)
             return Stream(handle)
         }

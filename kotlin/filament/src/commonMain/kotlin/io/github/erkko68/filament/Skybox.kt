@@ -130,7 +130,7 @@ class Skybox @InternalFilamentApi constructor(internal var nativeHandle: NativeP
          * @return The newly created Skybox.
          */
         fun build(engine: Engine): Skybox {
-            val handle = FilaSkyboxBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaSkyboxBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaSkyboxBuilder_destroy(nativeBuilder)
             return Skybox(handle)
         }

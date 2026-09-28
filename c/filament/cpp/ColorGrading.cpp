@@ -32,7 +32,7 @@ void FilaColorGradingBuilder_format(FilaColorGradingBuilder* builder, FilaColorG
     FILA_CAST(ColorGrading::Builder, builder)->format(static_cast<ColorGrading::LutFormat>(format));
 }
 
-void FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* builder, uint8_t dim) {
+void FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* builder, uint32_t dim) {
     FILA_CAST(ColorGrading::Builder, builder)->dimensions(dim);
 }
 
@@ -106,7 +106,7 @@ void FilaColorGradingBuilder_curves(FilaColorGradingBuilder* builder, const floa
     );
 }
 
-void FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* builder, const float* data, uint8_t dimension) {
+void FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* builder, const float* data, uint32_t dimension) {
     const size_t count = size_t(dimension) * dimension * dimension;
     utils::FixedCapacityVector<math::float3> lut(count);
     for (size_t i = 0; i < count; i++) {

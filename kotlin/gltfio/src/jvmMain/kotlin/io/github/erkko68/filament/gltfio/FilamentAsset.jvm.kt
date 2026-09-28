@@ -116,7 +116,7 @@ actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeH
 
     actual fun releaseSourceData() = FilamentC.FilaFilamentAsset_releaseSourceData(nativeHandle)
 
-    actual val engine: Engine get() = Engine(FilamentC.FilaFilamentAsset_getEngine(nativeHandle))
+    actual val engine: Engine get() = Engine(FilamentC.FilaFilamentAsset_getEngine(nativeHandle).address())
 
     actual val instance: FilamentInstance get() = FilamentInstance(FilamentC.FilaFilamentAsset_getInstance(nativeHandle))
 }

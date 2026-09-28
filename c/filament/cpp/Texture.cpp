@@ -37,11 +37,11 @@ void FilaTextureBuilder_depth(FilaTextureBuilder* builder, uint32_t depth) {
     FILA_CAST(Texture::Builder, builder)->depth(depth);
 }
 
-void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint8_t levels) {
+void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint32_t levels) {
     FILA_CAST(Texture::Builder, builder)->levels(levels);
 }
 
-void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint8_t samples) {
+void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint32_t samples) {
     FILA_CAST(Texture::Builder, builder)->samples(samples);
 }
 
@@ -128,7 +128,7 @@ FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture) {
     return static_cast<FilaTextureInternalFormat>(FILA_CONST_CAST(Texture, texture)->getFormat());
 }
 
-void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     auto wrapper = new BufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, 
         static_cast<backend::PixelDataFormat>(format),

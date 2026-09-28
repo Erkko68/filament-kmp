@@ -647,8 +647,11 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
         list(JOIN _f32s "," _f32s_text)
         set(_post "${CMAKE_CURRENT_BINARY_DIR}/${NAME}-types.js")
         file(WRITE "${_post}" "Module['filaBoolExports'] = [${_bools_text}];\nModule['filaI64Exports'] = [${_i64s_text}];\nModule['filaF32Exports'] = [${_f32s_text}];\n")
-        target_link_options(${TARGET} PRIVATE "-sEXPORTED_FUNCTIONS=@${_file}" "-sEXPORT_NAME=${NAME}" "--post-js=${_post}")
-        set_property(TARGET ${TARGET} APPEND PROPERTY LINK_DEPENDS "${_post}")
+        # fila-globals.js installs the exports as the globals common Kotlin binds to, once the runtime is up.
+        set(_globals "${CMAKE_CURRENT_SOURCE_DIR}/../web/src/wasm/fila-globals.js")
+        target_link_options(${TARGET} PRIVATE "-sEXPORTED_FUNCTIONS=@${_file}" "-sEXPORT_NAME=${NAME}"
+            "--post-js=${_post}" "--post-js=${_globals}")
+        set_property(TARGET ${TARGET} APPEND PROPERTY LINK_DEPENDS "${_post};${_globals}")
     endfunction()
 
     fila_web_exports(filament-web createFilamentModule filament filament-utils gltfio)

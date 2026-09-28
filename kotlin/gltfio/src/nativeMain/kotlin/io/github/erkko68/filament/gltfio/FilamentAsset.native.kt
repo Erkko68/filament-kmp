@@ -138,7 +138,7 @@ actual class FilamentAsset @InternalFilamentApi constructor(internal var nativeH
     }
 
     actual val engine: io.github.erkko68.filament.Engine get() =
-        io.github.erkko68.filament.Engine(FilaFilamentAsset_getEngine(nativeHandle))
+        io.github.erkko68.filament.Engine(FilaFilamentAsset_getEngine(nativeHandle).toLong())
 
     actual val instance: FilamentInstance get() =
         FilamentInstance(FilaFilamentAsset_getInstance(nativeHandle))

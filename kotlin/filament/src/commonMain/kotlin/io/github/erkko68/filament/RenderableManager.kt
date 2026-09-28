@@ -453,7 +453,7 @@ class RenderableManager @InternalFilamentApi constructor(internal val nativeHand
          * the existing component is unmodified.
          */
         fun build(engine: Engine, entity: Entity) {
-            FilaRenderableManagerBuilder_build(nativeBuilder, engine.pointer, entity)
+            FilaRenderableManagerBuilder_build(nativeBuilder, engine.nativeHandle, entity)
             FilaRenderableManagerBuilder_destroy(nativeBuilder)
             scope.release()
         }

@@ -179,7 +179,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return pointer to the newly created object.
          */
         fun build(engine: Engine): Texture {
-            val handle = FilaTextureBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaTextureBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaTextureBuilder_destroy(nativeBuilder)
             return Texture(handle)
         }
@@ -409,7 +409,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
     fun setImage(engine: Engine, level: Int, xoffset: Int, yoffset: Int, zoffset: Int, width: Int, height: Int, depth: Int, descriptor: PixelBufferDescriptor) {
         val upload = upload(descriptor.storage, descriptor.sizeInBytes, descriptor.callback)
         FilaTexture_setImage(
-            nativeHandle, engine.pointer, level,
+            nativeHandle, engine.nativeHandle, level,
             xoffset, yoffset, zoffset, width, height, depth,
             upload.ptr, upload.size,
             descriptor.format.ordinal, descriptor.type.ordinal,
@@ -435,7 +435,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      *
      * @see Stream
      */
-    fun setExternalStream(engine: Engine, stream: Stream) = FilaTexture_setExternalStream(nativeHandle, engine.pointer, stream.nativeHandle)
+    fun setExternalStream(engine: Engine, stream: Stream) = FilaTexture_setExternalStream(nativeHandle, engine.nativeHandle, stream.nativeHandle)
 
     /**
      * Generates all mipmap levels automatically.
@@ -447,7 +447,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
      *
      * @param engine Engine this texture is associated with
      */
-    fun generateMipmaps(engine: Engine) = FilaTexture_generateMipmaps(nativeHandle, engine.pointer)
+    fun generateMipmaps(engine: Engine) = FilaTexture_generateMipmaps(nativeHandle, engine.nativeHandle)
 
     companion object {
         /**
@@ -457,7 +457,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return true if the format is supported
          */
         fun isTextureFormatSupported(engine: Engine, format: InternalFormat): Boolean =
-            FilaTexture_isTextureFormatSupported(engine.pointer, format.ordinal)
+            FilaTexture_isTextureFormatSupported(engine.nativeHandle, format.ordinal)
 
         /**
          * Queries whether a backend supports mipmapping of a particular format.
@@ -466,7 +466,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return true if the format supports mipmapping
          */
         fun isTextureFormatMipmappable(engine: Engine, format: InternalFormat): Boolean =
-            FilaTexture_isTextureFormatMipmappable(engine.pointer, format.ordinal)
+            FilaTexture_isTextureFormatMipmappable(engine.nativeHandle, format.ordinal)
 
         /**
          * Queries whether the backend supports texture swizzling.
@@ -474,7 +474,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return true if texture swizzling is supported
          */
         fun isTextureSwizzleSupported(engine: Engine): Boolean =
-            FilaTexture_isTextureSwizzleSupported(engine.pointer)
+            FilaTexture_isTextureSwizzleSupported(engine.nativeHandle)
 
         /**
          * Validates whether a combination of internal format, pixel format, and pixel
@@ -495,7 +495,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return Maximum size in texels
          */
         fun getMaxTextureSize(engine: Engine, type: Sampler): Int =
-            FilaTexture_getMaxTextureSize(engine.pointer, type.ordinal)
+            FilaTexture_getMaxTextureSize(engine.nativeHandle, type.ordinal)
 
         /**
          * Returns the maximum number of layers supported by texture arrays.
@@ -504,7 +504,7 @@ class Texture @InternalFilamentApi constructor(internal var nativeHandle: Native
          * @return Maximum layer count
          */
         fun getMaxArrayTextureLayers(engine: Engine): Int =
-            FilaTexture_getMaxArrayTextureLayers(engine.pointer)
+            FilaTexture_getMaxArrayTextureLayers(engine.nativeHandle)
 
         /**
          * Computes the required buffer size for pixel data given format, type, stride,

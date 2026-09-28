@@ -80,6 +80,9 @@ code that calls the C API directly.
    signature. There is no per-platform glue on Native and web to adapt widths, so a Kotlin type
    has to match the C ABI on every target: `size_t` is 64-bit on JVM/Android-arm64/iOS but 32-bit
    on wasm32. Use `uint32_t` for counts and sizes.
+   No 8- or 16-bit integer *parameters* either (`bool` is fine): Apple arm64 packs stack arguments
+   by their natural size, so a Kotlin `Int` passed where C takes `uint8_t` shifts every later stack
+   argument on iOS. Widen them to `int32_t`/`uint32_t`.
 5. **No structs by value** across the boundary. Pass or return them through a pointer.
 
 Nothing else needs updating: the JNI glue is regenerated on the next build, Native links the
@@ -204,11 +207,12 @@ other threads until it returns. Skiko has the same trade-off.
 ### Web: exports as globals
 
 A top-level `external fun` with no `@JsModule` resolves to a global of the same name on both js
-and wasmJs. When `filament-kmp.wasm` loads, `:web` copies every `_FilaX` export of the Emscripten
-module onto `globalThis.FilaX` ([`FilamentModule.kt`](../web/src/webMain/kotlin/io/github/erkko68/filament/wasm/FilamentModule.kt)).
+and wasmJs. As soon as `filament-kmp.wasm`'s runtime is up, it copies every `_FilaX` export onto
+`globalThis.FilaX` itself ([`fila-globals.js`](../web/src/wasm/fila-globals.js), linked in with
+`--post-js`), so no Kotlin call has to come first.
 
 The js target sees raw wasm values, so the wasm link scans the C headers and records three lists
-on the module, and `:web` wraps those globals (the conversions are no-ops on wasmJs):
+on the module, and `fila-globals.js` wraps those globals (the conversions are no-ops on wasmJs):
 
 | List | Why | Wrapper |
 | :--- | :--- | :--- |
@@ -234,12 +238,14 @@ A 64-bit *result* can't be turned back into a Kotlin/JS `Long`, hence the out-po
 
 ## Migration status
 
-Classes are moving from per-platform `actual`s to this model one at a time; `Scene` was first.
-Until the move is complete, some transitional pieces remain:
+Every `kotlin:filament` class is on this model; `filamat`, `filament-utils`, `gltfio` and
+`filament-compose` still have per-platform `actual`s. Until they move, some transitional pieces remain:
 
-- `interop/Handles.kt` bridges to classes whose `actual`s still hold platform-typed handles
-  (`MemorySegment`, `CPointer`). Each entry goes away with its class.
-- The JVM still runs most classes on Project Panama (`:java`, jextract). Both paths load the same
+- Those `actual`s still use platform-typed handles (`MemorySegment` on the JVM, `CPointer` on
+  Native) and convert a common class's `nativeHandle` at the call site.
+- The JVM still runs them on Project Panama (`:java`, jextract). Both paths load the same
   `libfilament-c`, which carries the JNI glue alongside the FFM surface.
 - The header-driven generators (`:jni:generateJniBindings`, `:web:generateWasmExternals`) still
   serve the remaining `actual`s and are deleted once nothing uses them.
+- A few C structs stay in the headers as the flattened functions' implementation detail; they no
+  longer cross the boundary.

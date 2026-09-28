@@ -44,12 +44,12 @@ void FilaRenderableManagerBuilder_geometryNonIndexedNone(FilaRenderableManagerBu
 
 void FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* builder, FilaRenderableManagerGeometryType type);
 void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder, uint32_t index, const FilaMaterialInstance* materialInstance);
-void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, uint32_t index, uint16_t blendOrder);
+void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, uint32_t index, uint32_t blendOrder);
 void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, uint32_t index, bool enabled);
 void FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* builder, float cx, float cy, float cz, float hx, float hy, float hz);
-void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint8_t select, uint8_t value);
-void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint8_t priority);
-void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint8_t channel);
+void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint32_t select, uint32_t value);
+void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint32_t priority);
+void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint32_t channel);
 void FilaRenderableManagerBuilder_culling(FilaRenderableManagerBuilder* builder, bool enabled);
 void FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* builder, bool enabled);
 void FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* builder, bool enabled);
@@ -74,16 +74,16 @@ void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* rm, FilaRend
 void FilaRenderableManager_setBonesAsMatrices(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, const float* matrices, uint32_t boneCount, uint32_t offset);
 void FilaRenderableManager_setBonesAsQuaternions(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, const void* bones, uint32_t boneCount, uint32_t offset);
 void FilaRenderableManager_setMorphWeights(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, const float* weights, uint32_t count, uint32_t offset);
-void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t level, uint32_t primitiveIndex, uint32_t offset);
+void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t level, uint32_t primitiveIndex, uint32_t offset);
 uint32_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance);
 
 void FilaRenderableManager_setAxisAlignedBoundingBox(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, float cx, float cy, float cz, float hx, float hy, float hz);
 void FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, float center[3], float halfExtent[3]);
 
-void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t select, uint8_t value);
-void FilaRenderableManager_setPriority(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t priority);
+void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t select, uint32_t value);
+void FilaRenderableManager_setPriority(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t priority);
 uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance);
-void FilaRenderableManager_setChannel(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t channel);
+void FilaRenderableManager_setChannel(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t channel);
 uint8_t FilaRenderableManager_getChannel(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance);
 void FilaRenderableManager_setCulling(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, bool enabled);
 bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance);
@@ -106,7 +106,7 @@ FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRend
 void FilaRenderableManager_setGeometryAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, uint32_t offset, uint32_t count);
 void FilaRenderableManager_setGeometryAtNonIndexed(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, uint32_t offset, uint32_t count);
 
-void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, uint16_t blendOrder);
+void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, uint32_t blendOrder);
 uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex);
 void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, bool enabled);
 bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex);

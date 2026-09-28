@@ -68,7 +68,7 @@ class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: N
          * @return The newly created BufferObject
          */
         fun build(engine: Engine): BufferObject {
-            val handle = FilaBufferObjectBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaBufferObjectBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaBufferObjectBuilder_destroy(nativeBuilder)
             return BufferObject(handle)
         }
@@ -110,7 +110,7 @@ class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: N
      */
     fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
         val upload = upload(data, if (count > 0) count else data.size, callback)
-        FilaBufferObject_setBuffer(nativeHandle, engine.pointer, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
     }
 }
 

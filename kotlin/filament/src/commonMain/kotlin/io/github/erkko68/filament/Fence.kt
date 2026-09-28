@@ -79,4 +79,4 @@ private external fun FilaFence_wait(fence: NativePointer, mode: Int, timeoutNano
 private external fun FilaFence_waitAndDestroy(fence: NativePointer, mode: Int): Int
 
 @ExternalSymbolName("FilaEngine_destroyFence")
-private external fun FilaEngine_destroyFence(engine: NativePointer, fence: NativePointer): Boolean
+internal external fun FilaEngine_destroyFence(engine: NativePointer, fence: NativePointer): Boolean

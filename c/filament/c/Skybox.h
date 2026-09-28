@@ -18,10 +18,10 @@ void FilaSkyboxBuilder_environment(FilaSkyboxBuilder* builder, const FilaTexture
 void FilaSkyboxBuilder_showSun(FilaSkyboxBuilder* builder, bool show);
 void FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* builder, float intensity);
 void FilaSkyboxBuilder_color(FilaSkyboxBuilder* builder, float r, float g, float b, float a);
-void FilaSkyboxBuilder_priority(FilaSkyboxBuilder* builder, uint8_t priority);
+void FilaSkyboxBuilder_priority(FilaSkyboxBuilder* builder, uint32_t priority);
 
 // Skybox
-void FilaSkybox_setLayerMask(FilaSkybox* skybox, uint8_t select, uint8_t value);
+void FilaSkybox_setLayerMask(FilaSkybox* skybox, uint32_t select, uint32_t value);
 uint8_t FilaSkybox_getLayerMask(const FilaSkybox* skybox);
 float FilaSkybox_getIntensity(const FilaSkybox* skybox);
 void FilaSkybox_setColor(FilaSkybox* skybox, float r, float g, float b, float a);

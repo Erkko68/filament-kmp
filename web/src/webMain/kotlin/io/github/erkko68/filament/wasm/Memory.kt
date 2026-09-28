@@ -56,7 +56,7 @@ fun FilamentModule.writeInts(ptr: Int, values: IntArray, count: Int = values.siz
  * literal it was set from (0.05f). On js this returns the shortest decimal with the same f32 value;
  * on wasmJs Float is a real f32 and it's the identity.
  */
-internal expect fun normalizeF32(value: Float): Float
+expect fun normalizeF32(value: Float): Float
 
 /** Copies [count] bytes of [bytes] (from [offset]) into the heap at [ptr]. */
 expect fun FilamentModule.writeBytes(ptr: Int, bytes: ByteArray, offset: Int = 0, count: Int = bytes.size - offset)

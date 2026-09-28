@@ -66,7 +66,7 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
          * @throws UnsupportedOperationException on JS — SkinningBuffer is unbound in the web wrapper.
          */
         fun build(engine: Engine): SkinningBuffer {
-            val handle = FilaSkinningBufferBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaSkinningBufferBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaSkinningBufferBuilder_destroy(nativeBuilder)
             return SkinningBuffer(handle)
         }
@@ -92,7 +92,7 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
     fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
         matrices.usePinned { pinned ->
             FilaSkinningBuffer_setBonesMat4f(
-                nativeHandle, engine.pointer,
+                nativeHandle, engine.nativeHandle,
                 pinned,
                 boneCount, offset
             )
@@ -114,7 +114,7 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
         // Each bone is 8 floats: [qx,qy,qz,qw, tx,ty,tz,1] — matches FilaBone memory layout.
         bones.usePinned { pinned ->
             FilaSkinningBuffer_setBonesQuaternions(
-                nativeHandle, engine.pointer,
+                nativeHandle, engine.nativeHandle,
                 pinned,
                 boneCount, offset
             )

@@ -57,7 +57,7 @@ class SwapChain @InternalFilamentApi constructor(
          * @param engine The engine
          * @return true if protected content is supported, false otherwise
          */
-        fun isProtectedContentSupported(engine: Engine): Boolean = FilaSwapChain_isProtectedContentSupported(engine.pointer)
+        fun isProtectedContentSupported(engine: Engine): Boolean = FilaSwapChain_isProtectedContentSupported(engine.nativeHandle)
         /**
          * Checks if sRGB swap chain is supported on this platform.
          *
@@ -67,7 +67,7 @@ class SwapChain @InternalFilamentApi constructor(
          * @param engine The engine
          * @return true if sRGB swap chain is supported, false otherwise
          */
-        fun isSRGBSwapChainSupported(engine: Engine): Boolean = FilaSwapChain_isSRGBSwapChainSupported(engine.pointer)
+        fun isSRGBSwapChainSupported(engine: Engine): Boolean = FilaSwapChain_isSRGBSwapChainSupported(engine.nativeHandle)
         /**
          * Checks if Multi-Sample Anti-Aliasing (MSAA) swap chain is supported.
          *
@@ -79,7 +79,7 @@ class SwapChain @InternalFilamentApi constructor(
          * @param samples Number of samples (e.g., 2, 4, 8)
          * @return true if MSAA with the specified sample count is supported, false otherwise
          */
-        fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = FilaSwapChain_isMSAASwapChainSupported(engine.pointer, samples)
+        fun isMSAASwapChainSupported(engine: Engine, samples: Int): Boolean = FilaSwapChain_isMSAASwapChainSupported(engine.nativeHandle, samples)
     }
 
     /**

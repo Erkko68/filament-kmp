@@ -14,7 +14,7 @@ actual fun FilamentModule.readBytes(ptr: Int, count: Int): ByteArray =
 
 private fun Int8Array.slice(start: Int, end: Int): Int8Array = asDynamic().slice(start, end).unsafeCast<Int8Array>()
 
-internal actual fun normalizeF32(value: Float): Float = shortestF32(value)
+actual fun normalizeF32(value: Float): Float = shortestF32(value)
 
 private fun shortestF32(v: Float): Float = js("""{
     for (let p = 1; p < 10; p++) { const d = Number(v.toPrecision(p)); if (Math.fround(d) === v) return d; }

@@ -5,7 +5,6 @@ import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.Skybox
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.jni.*
-import io.github.erkko68.filament.nativeObject
 
 actual object KTX1Loader {
     actual class Options {

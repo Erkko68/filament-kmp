@@ -129,7 +129,7 @@ private external fun FilaEntityManager_create(em: NativePointer): Int
 private external fun FilaEntityManager_createArray(em: NativePointer, n: Int, outEntities: NativePointer)
 
 @ExternalSymbolName("FilaEntityManager_destroy")
-private external fun FilaEntityManager_destroy(em: NativePointer, entity: Int)
+internal external fun FilaEntityManager_destroy(em: NativePointer, entity: Int)
 
 @ExternalSymbolName("FilaEntityManager_destroyArray")
 private external fun FilaEntityManager_destroyArray(em: NativePointer, n: Int, entities: NativePointer)

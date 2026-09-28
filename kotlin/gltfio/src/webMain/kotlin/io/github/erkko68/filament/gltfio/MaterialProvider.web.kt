@@ -4,7 +4,6 @@ import io.github.erkko68.filament.*
 import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.wasm.*
 import io.github.erkko68.filament.InternalFilamentApi
-import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.VertexBuffer
 
 actual interface MaterialProvider : AutoCloseable {

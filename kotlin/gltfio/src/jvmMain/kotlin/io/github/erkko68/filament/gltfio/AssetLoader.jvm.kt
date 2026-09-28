@@ -9,14 +9,13 @@ import io.github.erkko68.filament.ffm.FilamentC
 import io.github.erkko68.filament.isNullPtr
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
-import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.InternalFilamentApi
 
 actual class AssetLoader @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) {
     actual companion object {
         actual fun create(engine: Engine, materials: MaterialProvider, entities: EntityManager?): AssetLoader {
             val handle = FilamentC.FilaAssetLoader_create(
-                engine.nativeObject, materials.nativeObject(), entities?.let { MemorySegment.ofAddress(it.nativeObject) } ?: NULL,
+                MemorySegment.ofAddress(engine.nativeObject), materials.nativeObject(), entities?.let { MemorySegment.ofAddress(it.nativeObject) } ?: NULL,
             )
             return AssetLoader(handle)
         }

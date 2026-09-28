@@ -127,7 +127,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @return The newly created IndirectLight
          */
         fun build(engine: Engine): IndirectLight {
-            val handle = FilaIndirectLightBuilder_build(nativeBuilder, engine.pointer)
+            val handle = FilaIndirectLightBuilder_build(nativeBuilder, engine.nativeHandle)
             FilaIndirectLightBuilder_destroy(nativeBuilder)
             return IndirectLight(handle)
         }

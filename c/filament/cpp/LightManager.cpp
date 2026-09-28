@@ -29,7 +29,7 @@ void FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* builder, bool 
     FILA_CAST(LightManager::Builder, builder)->castShadows(enable);
 }
 
-void FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* builder, const FilaLightManagerShadowOptions* options) {
+static void FilaLightManagerBuilder_shadowOptions_struct(FilaLightManagerBuilder* builder, const FilaLightManagerShadowOptions* options) {
     LightManager::ShadowOptions shadowOptions;
     shadowOptions.mapSize = options->mapSize;
     shadowOptions.shadowCascades = (uint8_t)options->shadowCascades;
@@ -111,20 +111,20 @@ void FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* builder, unsi
 }
 
 // Utils
-void FilaLightManager_computeUniformSplits(float* splitPositions, uint8_t cascades) {
+void FilaLightManager_computeUniformSplits(float* splitPositions, uint32_t cascades) {
     LightManager::ShadowCascades::computeUniformSplits(splitPositions, cascades);
 }
 
-void FilaLightManager_computeLogSplits(float* splitPositions, uint8_t cascades, float nearPlane, float farPlane) {
+void FilaLightManager_computeLogSplits(float* splitPositions, uint32_t cascades, float nearPlane, float farPlane) {
     LightManager::ShadowCascades::computeLogSplits(splitPositions, cascades, nearPlane, farPlane);
 }
 
-void FilaLightManager_computePracticalSplits(float* splitPositions, uint8_t cascades, float nearPlane, float farPlane, float lambda) {
+void FilaLightManager_computePracticalSplits(float* splitPositions, uint32_t cascades, float nearPlane, float farPlane, float lambda) {
     LightManager::ShadowCascades::computePracticalSplits(splitPositions, cascades, nearPlane, farPlane, lambda);
 }
 
 // LightManager
-size_t FilaLightManager_getComponentCount(const FilaLightManager* lm) {
+uint32_t FilaLightManager_getComponentCount(const FilaLightManager* lm) {
     return FILA_CONST_CAST(LightManager, lm)->getComponentCount();
 }
 
@@ -245,6 +245,41 @@ void FilaLightManager_setLightChannel(FilaLightManager* lm, FilaLightManagerInst
 
 bool FilaLightManager_getLightChannel(const FilaLightManager* lm, FilaLightManagerInstance instance, unsigned int channel) {
     return FILA_CONST_CAST(LightManager, lm)->getLightChannel(LightManager::Instance(instance), channel);
+}
+
+// Flattened entry points: the fields as arguments / out arrays, no structs across the boundary.
+
+void FilaLightManagerBuilder_shadowOptions(FilaLightManagerBuilder* builder, uint32_t mapSize, uint32_t shadowCascades, float cascadeSplitPositions_0, float cascadeSplitPositions_1, float cascadeSplitPositions_2, float constantBias, float normalBias, float shadowFar, float shadowNearHint, float shadowFarHint, bool stable, bool lispsm, float polygonOffsetConstant, float polygonOffsetSlope, bool screenSpaceContactShadows, uint32_t stepCount, float maxShadowDistance, bool vsm_elvsm, float vsm_blurWidth, float shadowBulbRadius, float transform_0, float transform_1, float transform_2, float transform_3, float penumbraScale, float penumbraRatioScale, float maxPenumbraRatio, float maxSearchRadius) {
+    FilaLightManagerShadowOptions o{};
+    o.mapSize = mapSize;
+    o.shadowCascades = shadowCascades;
+    o.cascadeSplitPositions[0] = cascadeSplitPositions_0;
+    o.cascadeSplitPositions[1] = cascadeSplitPositions_1;
+    o.cascadeSplitPositions[2] = cascadeSplitPositions_2;
+    o.constantBias = constantBias;
+    o.normalBias = normalBias;
+    o.shadowFar = shadowFar;
+    o.shadowNearHint = shadowNearHint;
+    o.shadowFarHint = shadowFarHint;
+    o.stable = stable;
+    o.lispsm = lispsm;
+    o.polygonOffsetConstant = polygonOffsetConstant;
+    o.polygonOffsetSlope = polygonOffsetSlope;
+    o.screenSpaceContactShadows = screenSpaceContactShadows;
+    o.stepCount = stepCount;
+    o.maxShadowDistance = maxShadowDistance;
+    o.vsm.elvsm = vsm_elvsm;
+    o.vsm.blurWidth = vsm_blurWidth;
+    o.shadowBulbRadius = shadowBulbRadius;
+    o.transform[0] = transform_0;
+    o.transform[1] = transform_1;
+    o.transform[2] = transform_2;
+    o.transform[3] = transform_3;
+    o.penumbraScale = penumbraScale;
+    o.penumbraRatioScale = penumbraRatioScale;
+    o.maxPenumbraRatio = maxPenumbraRatio;
+    o.maxSearchRadius = maxSearchRadius;
+    FilaLightManagerBuilder_shadowOptions_struct(builder, &o);
 }
 
 } // extern "C"

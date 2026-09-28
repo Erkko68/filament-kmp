@@ -7,7 +7,6 @@ import io.github.erkko68.filament.cinterop.*
 import io.github.erkko68.filament.gltfio.cinterop.*
 import cnames.structs.FilaMaterialProvider
 import io.github.erkko68.filament.InternalFilamentApi
-import io.github.erkko68.filament.nativeObject
 import io.github.erkko68.filament.VertexBuffer
 
 actual interface MaterialProvider : AutoCloseable {
@@ -22,7 +21,7 @@ actual interface MaterialProvider : AutoCloseable {
 }
 
 actual class UbershaderProvider actual constructor(engine: Engine) : MaterialProvider {
-    public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject, null, 0u)
+    public var nativeHandle: CPointer<FilaMaterialProvider>? = FilaMaterialProvider_createUbershaderProvider(engine.nativeObject.toCPointer(), null, 0u)
 
     actual override fun createMaterialInstance(config: MaterialKey, uvmap: IntArray, label: String?, extras: String?): io.github.erkko68.filament.MaterialInstance? {
         return memScoped {
