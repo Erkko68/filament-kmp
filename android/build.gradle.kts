@@ -50,13 +50,14 @@ val buildJniLibs = tasks.register<BuildAndroidJniLibs>("buildJniLibs") {
     cmakeSourceDir.set(rootProject.layout.projectDirectory.dir("c"))
     cmakeBuildDir.set(layout.buildDirectory.dir("cmake"))
     outputDir.set(layout.buildDirectory.dir("jniLibs"))
+    jniGlueDir.set(rootProject.layout.projectDirectory.dir("jni/build/generated/jniGlue"))
     sources.from(
         rootProject.fileTree("c") { include("**/CMakeLists.txt", "**/*.c", "**/*.cpp", "**/*.h"); exclude("build/**") },
         project(":jni").fileTree("src/main/cpp"),
         fileTree("src/androidMain/cpp"),
         androidAbis.map { rootProject.layout.projectDirectory.dir("prebuilts/android-$it/lib") },
     )
-    dependsOn(androidAbis.map { ":downloadPrebuilts_android-$it" }, ":downloadIncludes")
+    dependsOn(androidAbis.map { ":downloadPrebuilts_android-$it" }, ":downloadIncludes", ":jni:generateJniGlue")
 }
 
 androidComponents.onVariants { it.sources.jniLibs?.addGeneratedSourceDirectory(buildJniLibs, BuildAndroidJniLibs::outputDir) }

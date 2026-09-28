@@ -175,7 +175,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
 
     actual fun isValidRenderer(renderer: Renderer): Boolean = FilaEngine_isValidRenderer(nativeHandle, renderer.nativeHandle)
     actual fun isValidView(view: View): Boolean = FilaEngine_isValidView(nativeHandle, view.nativeHandle)
-    actual fun isValidScene(scene: Scene): Boolean = FilaEngine_isValidScene(nativeHandle, scene.nativeHandle)
+    actual fun isValidScene(scene: Scene): Boolean = FilaEngine_isValidScene(nativeHandle, scene.nativeHandle.toCPointer())
     actual fun isValidFence(fence: Fence): Boolean = FilaEngine_isValidFence(nativeHandle, fence.nativeHandle)
     actual fun isValidIndexBuffer(indexBuffer: IndexBuffer): Boolean = FilaEngine_isValidIndexBuffer(nativeHandle, indexBuffer.nativeHandle)
     actual fun isValidVertexBuffer(vertexBuffer: VertexBuffer): Boolean = FilaEngine_isValidVertexBuffer(nativeHandle, vertexBuffer.nativeHandle)
@@ -229,10 +229,10 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     }
     actual fun destroyCameraComponent(entity: Entity) = FilaEngine_destroyCameraComponent(nativeHandle, entity.toUInt())
 
-    actual fun createScene(): Scene = Scene(FilaEngine_createScene(nativeHandle))
+    actual fun createScene(): Scene = Scene(FilaEngine_createScene(nativeHandle).toLong())
     actual fun destroyScene(scene: Scene) {
-        FilaEngine_destroyScene(nativeHandle, scene.nativeHandle)
-        scene.nativeHandle = null
+        FilaEngine_destroyScene(nativeHandle, scene.nativeHandle.toCPointer())
+        scene.nativeHandle = 0L
     }
 
     actual fun createFence(): Fence = Fence(FilaEngine_createFence(nativeHandle))

@@ -18,7 +18,8 @@ val wasmBuildDir = rootProject.file("c/build/wasm")
 val wasmPrebuilt = providers.environmentVariable("FILA_WASM_PREBUILT").isPresent
 
 val setupEmsdk = tasks.register<Exec>("setupEmsdk") {
-    onlyIf { !wasmPrebuilt }
+    val prebuilt = wasmPrebuilt // a local, not the script object: configuration-cache safe
+    onlyIf { !prebuilt }
     workingDir(rootDir)
     commandLine("scripts/dev/setup-emsdk.sh")
 }
@@ -41,7 +42,8 @@ val generateWasmExternals = tasks.register<GenerateWasmExternals>("generateWasmE
 }
 
 val buildFilamentWasm = tasks.register<Exec>("buildFilamentWasm") {
-    onlyIf { !wasmPrebuilt }
+    val prebuilt = wasmPrebuilt // a local, not the script object: configuration-cache safe
+    onlyIf { !prebuilt }
     dependsOn(setupEmsdk)
     workingDir(rootDir)
     // ponytail: no declared inputs, so this always runs; cmake --build is a fast no-op when current.

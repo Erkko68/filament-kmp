@@ -23,6 +23,9 @@ class SceneTest : FilamentTestFixture() {
 
         scene.addEntity(entity)
         assertTrue(scene.hasEntity(entity))
+        // Strict: a C bool must come back as a real Boolean (web returns it as a JS number).
+        assertEquals(true, scene.hasEntity(entity))
+        assertEquals(false, scene.hasEntity(EntityManager.get().create()))
         assertEquals(1, scene.entityCount)
 
         var count = 0

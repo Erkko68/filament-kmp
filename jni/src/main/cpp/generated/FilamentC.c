@@ -1958,28 +1958,28 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaRendere
     FilaRenderer_skipNextFrames((FilaRenderer *)(intptr_t) a_renderer, (uint32_t) a_frameCount);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1addEntities(JNIEnv* env, jclass cls, jlong a_scene, jlong a_entities, jlong a_count) {
-    FilaScene_addEntities((FilaScene *)(intptr_t) a_scene, (const FilaEntity *)(intptr_t) a_entities, (size_t) a_count);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1addEntities(JNIEnv* env, jclass cls, jlong a_scene, jlong a_entities, jint a_count) {
+    FilaScene_addEntities((FilaScene *)(intptr_t) a_scene, (const FilaEntity *)(intptr_t) a_entities, (uint32_t) a_count);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1addEntity(JNIEnv* env, jclass cls, jlong a_scene, jint a_entity) {
     FilaScene_addEntity((FilaScene *)(intptr_t) a_scene, (FilaEntity) a_entity);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getEntities(JNIEnv* env, jclass cls, jlong a_scene, jlong a_out, jlong a_length) {
-    FilaScene_getEntities((const FilaScene *)(intptr_t) a_scene, (FilaEntity *)(intptr_t) a_out, (size_t) a_length);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getEntities(JNIEnv* env, jclass cls, jlong a_scene, jlong a_out, jint a_length) {
+    FilaScene_getEntities((const FilaScene *)(intptr_t) a_scene, (FilaEntity *)(intptr_t) a_out, (uint32_t) a_length);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getEntityCount(JNIEnv* env, jclass cls, jlong a_scene) {
-    return (jlong) FilaScene_getEntityCount((const FilaScene *)(intptr_t) a_scene);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getEntityCount(JNIEnv* env, jclass cls, jlong a_scene) {
+    return (jint) FilaScene_getEntityCount((const FilaScene *)(intptr_t) a_scene);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getLightCount(JNIEnv* env, jclass cls, jlong a_scene) {
-    return (jlong) FilaScene_getLightCount((const FilaScene *)(intptr_t) a_scene);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getLightCount(JNIEnv* env, jclass cls, jlong a_scene) {
+    return (jint) FilaScene_getLightCount((const FilaScene *)(intptr_t) a_scene);
 }
 
-JNIEXPORT jlong JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getRenderableCount(JNIEnv* env, jclass cls, jlong a_scene) {
-    return (jlong) FilaScene_getRenderableCount((const FilaScene *)(intptr_t) a_scene);
+JNIEXPORT jint JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1getRenderableCount(JNIEnv* env, jclass cls, jlong a_scene) {
+    return (jint) FilaScene_getRenderableCount((const FilaScene *)(intptr_t) a_scene);
 }
 
 JNIEXPORT jboolean JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1hasEntity(JNIEnv* env, jclass cls, jlong a_scene, jint a_entity) {
@@ -1990,8 +1990,8 @@ JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1
     FilaScene_remove((FilaScene *)(intptr_t) a_scene, (FilaEntity) a_entity);
 }
 
-JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1removeEntities(JNIEnv* env, jclass cls, jlong a_scene, jlong a_entities, jlong a_count) {
-    FilaScene_removeEntities((FilaScene *)(intptr_t) a_scene, (const FilaEntity *)(intptr_t) a_entities, (size_t) a_count);
+JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1removeEntities(JNIEnv* env, jclass cls, jlong a_scene, jlong a_entities, jint a_count) {
+    FilaScene_removeEntities((FilaScene *)(intptr_t) a_scene, (const FilaEntity *)(intptr_t) a_entities, (uint32_t) a_count);
 }
 
 JNIEXPORT void JNICALL Java_io_github_erkko68_filament_jni_FilamentC_FilaScene_1setIndirectLight(JNIEnv* env, jclass cls, jlong a_scene, jlong a_indirectLight) {

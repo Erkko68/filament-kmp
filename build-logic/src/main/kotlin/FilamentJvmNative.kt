@@ -83,7 +83,7 @@ fun Project.applyFilamentJvmNative(
     // ── CMake: configure + build the combined SHARED library ──────────────────
     val cmakeConfigure = tasks.register("cmakeConfigureFilamentCJvm", Exec::class.java) {
         if (localPrebuilts == null) dependsOn(downloadPrebuilts)
-        dependsOn(downloadIncludes)
+        dependsOn(downloadIncludes, ":jni:generateJniGlue")
         doFirst { cmakeBuildDir.mkdirs() }
         workingDir(cmakeBuildDir)
         val args = mutableListOf(
@@ -93,10 +93,12 @@ fun Project.applyFilamentJvmNative(
             "-DFILAMENT_ARCH=$arch",
             "-DCMAKE_BUILD_TYPE=$buildType",
             "-DJNI_HOME=${System.getProperty("java.home").replace('\\', '/')}",
+            "-DFILA_JNI_GLUE_DIR=${rootProject.file("jni/build/generated/jniGlue").absolutePath.replace('\\', '/')}",
         )
-        if (localPrebuilts != null) {
-            args += "-DFILAMENT_LIB_DIR=${File(localPrebuilts, "$prebuiltsTarget/lib").absolutePath.replace('\\', '/')}"
-        }
+        // Always explicit: a value left in CMakeCache by a manual run would otherwise stick.
+        val libDir = if (localPrebuilts != null) File(localPrebuilts, "$prebuiltsTarget/lib") else rootProject.file("prebuilts/$prebuiltsTarget/lib")
+        args += "-DFILAMENT_LIB_DIR=${libDir.absolutePath.replace('\\', '/')}"
+        args += "-DFILAMENT_INCLUDE_DIR=${rootProject.file("include").absolutePath.replace('\\', '/')}"
         if (platform == "macos") {
             args += "-DCMAKE_OSX_SYSROOT=macosx"
             args += "-DCMAKE_OSX_ARCHITECTURES=${if (arch == "Arm64") "arm64" else "x86_64"}"

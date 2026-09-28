@@ -1055,7 +1055,6 @@ public final class io/github/erkko68/filament/NativeObject_jvmKt {
 	public static final fun getNativeObject (Lio/github/erkko68/filament/RenderTarget;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/RenderableManager;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/Renderer;)Ljava/lang/foreign/MemorySegment;
-	public static final fun getNativeObject (Lio/github/erkko68/filament/Scene;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/SkinningBuffer;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/Skybox;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/Stream;)Ljava/lang/foreign/MemorySegment;
@@ -1273,7 +1272,7 @@ public final class io/github/erkko68/filament/Renderer$MirrorFrameFlag {
 }
 
 public final class io/github/erkko68/filament/Scene {
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
 	public final fun addEntities ([I)V
 	public final fun addEntity (I)V
 	public final fun forEach (Lkotlin/jvm/functions/Function1;)V
@@ -1290,6 +1289,10 @@ public final class io/github/erkko68/filament/Scene {
 	public final fun removeEntity (I)V
 	public final fun setIndirectLight (Lio/github/erkko68/filament/IndirectLight;)V
 	public final fun setSkybox (Lio/github/erkko68/filament/Skybox;)V
+}
+
+public final class io/github/erkko68/filament/SceneKt {
+	public static final fun getNativeObject (Lio/github/erkko68/filament/Scene;)J
 }
 
 public final class io/github/erkko68/filament/SkinningBuffer {
@@ -2431,5 +2434,20 @@ public final class io/github/erkko68/filament/Viewport {
 	public final fun setLeft (I)V
 	public final fun setWidth (I)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/interop/InteropKt {
+	public static final fun interopScope (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
+public final class io/github/erkko68/filament/interop/InteropScope {
+	public fun <init> ()V
+	public final fun fromInterop (J[I)V
+	public final fun release ()V
+	public final fun toInterop ([I)J
+}
+
+public final class io/github/erkko68/filament/interop/Interop_jniKt {
+	public static final fun getNullPointer ()J
 }
 

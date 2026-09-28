@@ -37,7 +37,11 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
 static JNIEnv* attachedEnv() {
     JNIEnv* env;
     if (sVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
-        sVm->AttachCurrentThreadAsDaemon(reinterpret_cast<void**>(&env), nullptr); // JNIEnv** on Android, void** on desktop
+#ifdef __ANDROID__
+        sVm->AttachCurrentThreadAsDaemon(&env, nullptr);
+#else
+        sVm->AttachCurrentThreadAsDaemon(reinterpret_cast<void**>(&env), nullptr); // desktop jni.h takes void**
+#endif
     }
     return env;
 }

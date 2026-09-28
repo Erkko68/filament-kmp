@@ -55,12 +55,28 @@ private var instance: FilamentWasm? = null
  * instantiating a second one.
  */
 val fila: FilamentWasm
-    get() = instance ?: (published() ?: error("filament-kmp.wasm is not loaded: wait for loadFilament() / Filament.initJs")).also { instance = it }
+    get() = instance ?: (published() ?: error("filament-kmp.wasm is not loaded: wait for loadFilament() / Filament.initJs")).also { adopt(it) }
 
 private val loading: Promise<FilamentWasm> by lazy {
-    published()?.let { m -> Promise { resolve, _ -> resolve(m) } }
-        ?: createFilamentModule().then { m -> publish(m); m }
+    published()?.let { m -> Promise { resolve, _ -> adopt(m); resolve(m) } }
+        ?: createFilamentModule().then { m -> publish(m); adopt(m); m }
 }
+
+private fun adopt(module: FilamentWasm) {
+    instance = module
+    exposeExports(module)
+}
+
+// Common code binds `external fun FilaX` by name: install the module's `_FilaX` exports as globals.
+// C bool comes back from wasm as 0/1; the ones listed by the build are turned into real booleans.
+private fun exposeExports(module: FilamentModule): Unit = js("""{
+    const bools = new Set(module.filaBoolExports || []);
+    for (const k in module) {
+        if (!k.startsWith('_Fila')) continue;
+        const name = k.substring(1), f = module[k];
+        globalThis[name] = bools.has(name) ? (...a) => f(...a) !== 0 : f;
+    }
+}""")
 
 /** Instantiates filament-kmp.wasm once; resolves with the instance behind [fila]. */
 fun loadFilament(): Promise<FilamentWasm> = loading

@@ -245,7 +245,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         get() = mScene
         set(value) {
             mScene = value
-            FilamentC.FilaView_setScene(nativeHandle, value?.nativeHandle ?: NULL)
+            FilamentC.FilaView_setScene(nativeHandle, value?.let { MemorySegment.ofAddress(it.nativeHandle) } ?: NULL)
         }
 
     actual var camera: Camera?

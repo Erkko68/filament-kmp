@@ -468,15 +468,15 @@ external fun FilaRenderer_setVsyncTime(renderer: Long, steadyClockTimeNano: Long
 external fun FilaRenderer_shouldRenderFrame(renderer: Long): Boolean
 external fun FilaRenderer_skipFrame(renderer: Long, vsyncSteadyClockTimeNano: Long)
 external fun FilaRenderer_skipNextFrames(renderer: Long, frameCount: Int)
-external fun FilaScene_addEntities(scene: Long, entities: Long, count: Long)
+external fun FilaScene_addEntities(scene: Long, entities: Long, count: Int)
 external fun FilaScene_addEntity(scene: Long, entity: Int)
-external fun FilaScene_getEntities(scene: Long, out: Long, length: Long)
-external fun FilaScene_getEntityCount(scene: Long): Long
-external fun FilaScene_getLightCount(scene: Long): Long
-external fun FilaScene_getRenderableCount(scene: Long): Long
+external fun FilaScene_getEntities(scene: Long, out: Long, length: Int)
+external fun FilaScene_getEntityCount(scene: Long): Int
+external fun FilaScene_getLightCount(scene: Long): Int
+external fun FilaScene_getRenderableCount(scene: Long): Int
 external fun FilaScene_hasEntity(scene: Long, entity: Int): Boolean
 external fun FilaScene_remove(scene: Long, entity: Int)
-external fun FilaScene_removeEntities(scene: Long, entities: Long, count: Long)
+external fun FilaScene_removeEntities(scene: Long, entities: Long, count: Int)
 external fun FilaScene_setIndirectLight(scene: Long, indirectLight: Long)
 external fun FilaScene_setSkybox(scene: Long, skybox: Long)
 external fun FilaSkinningBufferBuilder_boneCount(builder: Long, boneCount: Int)

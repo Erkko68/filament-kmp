@@ -203,7 +203,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         get() = mScene
         set(value) {
             mScene = value
-            FilaView_setScene(nativeHandle, value?.nativeHandle)
+            FilaView_setScene(nativeHandle, value?.nativeHandle?.toCPointer())
         }
     
     actual var camera: Camera?

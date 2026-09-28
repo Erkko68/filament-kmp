@@ -4,6 +4,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
@@ -27,6 +28,10 @@ abstract class BuildAndroidJniLibs @Inject constructor(private val exec: ExecOpe
     /** c/ sources, the JNI forwarders and the prebuilts: anything that changes the .so. */
     @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val sources: ConfigurableFileCollection
+
+    /** :jni:generateJniGlue's output, compiled in via FILA_JNI_GLUE_DIR. */
+    @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val jniGlueDir: DirectoryProperty
 
     @get:Internal abstract val sdkDirectory: DirectoryProperty
     @get:Internal abstract val cmakeSourceDir: DirectoryProperty
@@ -54,6 +59,7 @@ abstract class BuildAndroidJniLibs @Inject constructor(private val exec: ExecOpe
                     "-DANDROID_PLATFORM=android-${minSdk.get()}",
                     "-DANDROID_STL=c++_static",
                     "-DFILAMENT_PLATFORM=android",
+                    "-DFILA_JNI_GLUE_DIR=${jniGlueDir.get().asFile}",
                     // Always Release: a Debug libfilament-c against Release prebuilts buys nothing.
                     "-DCMAKE_BUILD_TYPE=Release",
                     "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${outputDir.get().dir(abi).asFile}",

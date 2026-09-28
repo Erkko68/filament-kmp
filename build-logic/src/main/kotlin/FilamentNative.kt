@@ -99,6 +99,8 @@ fun KotlinNativeTarget.applyFilamentNative(
             " -DFILAMENT_ARCH=${platform.cmakeArch}" +
             " -DCMAKE_BUILD_TYPE=$buildType" +
             " -DFILAMENT_LIB_DIR=${prebuiltDir.absolutePath}" +
+            // Always explicit: a value left in CMakeCache by a manual run would otherwise stick.
+            " -DFILAMENT_INCLUDE_DIR=${project.rootProject.file("include").absolutePath}" +
             " && $cmake --build . --target $cmakeTarget",
         )
         val targetName = name

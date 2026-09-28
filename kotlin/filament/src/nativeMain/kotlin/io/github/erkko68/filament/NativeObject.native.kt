@@ -35,8 +35,6 @@ val RenderableManager.nativeObject: kotlinx.cinterop.CPointer<cnames.structs.Fil
 @InternalFilamentApi
 val Renderer.nativeObject: kotlinx.cinterop.CPointer<cnames.structs.FilaRenderer>? get() = nativeHandle
 @InternalFilamentApi
-val Scene.nativeObject: kotlinx.cinterop.CPointer<cnames.structs.FilaScene>? get() = nativeHandle
-@InternalFilamentApi
 val SkinningBuffer.nativeObject: kotlinx.cinterop.CPointer<cnames.structs.FilaSkinningBuffer>? get() = nativeHandle
 @InternalFilamentApi
 val Skybox.nativeObject: kotlinx.cinterop.CPointer<cnames.structs.FilaSkybox>? get() = nativeHandle

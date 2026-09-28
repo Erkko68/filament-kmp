@@ -29,6 +29,9 @@ kotlin {
         // backend handles between each other; consumers outside this build do not.
         optIn.add("io.github.erkko68.filament.InternalFilamentApi")
     }
+    // Common `external fun`s bind to C through @SymbolName on Native (see interop/Interop.kt), which
+    // needs this opt-in at every use site, commonMain included (as in skiko; KT-46649).
+    sourceSets.all { languageSettings.optIn("kotlin.native.SymbolNameIsInternal") }
 
     // AGP 9 KMP android library (com.android.kotlin.multiplatform.library): the
     // android config lives on the `android` target block inside `kotlin {}`.
@@ -105,7 +108,15 @@ kotlin {
         resources.srcDir(stageFilamentWebAssets)
     }
 
-    applyDefaultHierarchyTemplate()
+    // jniMain: shared by jvm and android, which both reach the C API through JNI.
+    applyDefaultHierarchyTemplate {
+        common {
+            group("jni") {
+                withJvm()
+                withCompilations { it.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm }
+            }
+        }
+    }
 }
 
 // ── Real-backend (GPU) test gating, decided once here on the host ─────────────

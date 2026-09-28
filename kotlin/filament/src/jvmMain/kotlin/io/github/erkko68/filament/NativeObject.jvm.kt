@@ -34,8 +34,6 @@ val RenderableManager.nativeObject: java.lang.foreign.MemorySegment get() = nati
 @InternalFilamentApi
 val Renderer.nativeObject: java.lang.foreign.MemorySegment? get() = nativeHandle
 @InternalFilamentApi
-val Scene.nativeObject: java.lang.foreign.MemorySegment? get() = nativeHandle
-@InternalFilamentApi
 val SkinningBuffer.nativeObject: java.lang.foreign.MemorySegment? get() = nativeHandle
 @InternalFilamentApi
 val Skybox.nativeObject: java.lang.foreign.MemorySegment? get() = nativeHandle

@@ -35,8 +35,6 @@ val RenderableManager.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
 val Renderer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
-val Scene.nativeObject: Int get() = nativeHandle
-@InternalFilamentApi
 val SkinningBuffer.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
 val Skybox.nativeObject: Int get() = nativeHandle

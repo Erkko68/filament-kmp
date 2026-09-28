@@ -40,3 +40,11 @@ tasks.register<GenerateJniBindings>("generateJniBindings") {
     cDir.set(layout.projectDirectory.dir("src/main/cpp/generated"))
     kotlinDir.set(layout.projectDirectory.dir("src/main/generated"))
 }
+
+// JNI forwarders for the common `external fun`s (skiko-style bindings), generated from their
+// declarations at build time; both native builds (desktop, :android) compile them in.
+tasks.register<GenerateJniGlue>("generateJniGlue") {
+    sources.from(rootProject.fileTree("kotlin") { include("*/src/commonMain/**/*.kt") })
+    headers.from(rootProject.fileTree("c") { include("*/c/*.h") })
+    outputDir.set(layout.buildDirectory.dir("generated/jniGlue"))
+}

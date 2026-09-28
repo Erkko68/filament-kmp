@@ -29,6 +29,10 @@ kotlin {
             implementation(kotlin("test"))
             implementation(project(":kotlin:test-support"))
         }
+        getByName("jniMain").dependencies {
+            // FilaJni runtime (memory, callbacks, desktop loader) behind the JNI-bound externals.
+            api(project(":jni"))
+        }
         androidMain.dependencies {
             // libfilament-c.so per ABI (:android) + the generated JNI bindings over the Fila* C API it carries (:jni).
             api(project(":android"))

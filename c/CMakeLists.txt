@@ -369,7 +369,8 @@ if (FILAMENT_BUILD_SHARED)
 
     # JNI glue from jni/ (runtime + generated forwarders), the same sources the Android image compiles.
     set(_jni_dir "${CMAKE_CURRENT_SOURCE_DIR}/../jni/src/main/cpp")
-    file(GLOB_RECURSE _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
+    # FILA_JNI_GLUE_DIR: :jni:generateJniGlue's output, the forwarders for the common externals.
+    file(GLOB_RECURSE _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c" "${FILA_JNI_GLUE_DIR}/*.c")
     add_library(filament-c-jvm SHARED
         ${FILAMENT_C_SOURCES}
         ${FILAMAT_C_SOURCES}
@@ -513,7 +514,7 @@ if (FILAMENT_PLATFORM STREQUAL "android")
     add_filament_library(abseil)
 
     set(_jni_dir "${CMAKE_CURRENT_SOURCE_DIR}/../jni/src/main/cpp")
-    file(GLOB_RECURSE _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
+    file(GLOB_RECURSE _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c" "${FILA_JNI_GLUE_DIR}/*.c")
     add_library(filament-c-android SHARED
         ${FILAMENT_C_SOURCES}
         ${FILAMAT_C_SOURCES}
@@ -603,6 +604,8 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
     )
 
     # Writes <name>-exports.txt (the modules' Fila* plus malloc/free) and links TARGET with it.
+    # Also records which exports return C bool (Module.filaBoolExports): wasm hands those back as
+    # numbers, and the web runtime converts them when it exposes the exports to Kotlin.
     function(fila_web_exports TARGET NAME)
         fila_scan_exports(_exports ${ARGN})
         list(TRANSFORM _exports PREPEND "_")
@@ -610,7 +613,23 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
         list(JOIN _exports "\n" _text)
         set(_file "${CMAKE_CURRENT_BINARY_DIR}/${NAME}-exports.txt")
         file(WRITE "${_file}" "${_text}\n")
-        target_link_options(${TARGET} PRIVATE "-sEXPORTED_FUNCTIONS=@${_file}" "-sEXPORT_NAME=${NAME}")
+
+        set(_bools "")
+        foreach(_module IN LISTS ARGN)
+            file(GLOB _headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${_module}/c/*.h")
+            foreach(_hdr IN LISTS _headers)
+                file(STRINGS "${_hdr}" _lines REGEX "^bool[ \t]+Fila[A-Za-z0-9_]+[ \t]*\\(")
+                foreach(_l IN LISTS _lines)
+                    string(REGEX REPLACE "^bool[ \t]+(Fila[A-Za-z0-9_]+).*" "'\\1'" _l "${_l}")
+                    list(APPEND _bools "${_l}")
+                endforeach()
+            endforeach()
+        endforeach()
+        list(JOIN _bools "," _bools_text)
+        set(_post "${CMAKE_CURRENT_BINARY_DIR}/${NAME}-bools.js")
+        file(WRITE "${_post}" "Module['filaBoolExports'] = [${_bools_text}];\n")
+        target_link_options(${TARGET} PRIVATE "-sEXPORTED_FUNCTIONS=@${_file}" "-sEXPORT_NAME=${NAME}" "--post-js=${_post}")
+        set_property(TARGET ${TARGET} APPEND PROPERTY LINK_DEPENDS "${_post}")
     endfunction()
 
     fila_web_exports(filament-web createFilamentModule filament filament-utils gltfio)
