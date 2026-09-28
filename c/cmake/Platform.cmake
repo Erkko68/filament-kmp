@@ -4,8 +4,8 @@ if (MSVC)
     # Static CRT (/MT) like the prebuilts: the JVM's own msvcp140.dll conflicts with /MD.
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     # Upstream utils/algorithm.h uses memcpy in a template without including <cstring>, which MSVC's
-    # two-phase lookup rejects. TODO: drop once upstream includes it.
-    add_compile_options(/FIcstring)
+    # two-phase lookup rejects (C++ only: the JNI forwarders are C). TODO: drop once upstream includes it.
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/FIcstring>)
 elseif (FILAMENT_PLATFORM STREQUAL "linux")
     # The prebuilts are built with clang against libc++; mixing in libstdc++ won't link.
     add_compile_options(-stdlib=libc++)
