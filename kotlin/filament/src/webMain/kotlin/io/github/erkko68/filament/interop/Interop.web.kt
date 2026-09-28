@@ -10,6 +10,8 @@ import io.github.erkko68.filament.wasm.readInts
 import io.github.erkko68.filament.wasm.setI64
 import io.github.erkko68.filament.wasm.setU16
 import io.github.erkko68.filament.wasm.upload as wasmUpload
+import io.github.erkko68.filament.wasm.readString
+import io.github.erkko68.filament.wasm.Callbacks as WasmCallbacks
 import io.github.erkko68.filament.wasm.writeBytes
 import io.github.erkko68.filament.wasm.writeDoubles
 import io.github.erkko68.filament.wasm.writeFloats
@@ -58,3 +60,12 @@ actual class InteropScope actual constructor() {
 
 actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload =
     fila.wasmUpload(data, size, onRelease).let { Upload(it.ptr, it.size, it.callback, it.userData) }
+
+actual fun stringFromInterop(ptr: NativePointer): String? = fila.readString(ptr)
+
+actual object Callbacks {
+    actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer = WasmCallbacks.register(once) { a, _ -> fn(a) }
+    actual fun release(userData: NativePointer) = WasmCallbacks.release(userData)
+    actual val userOnly: NativePointer get() = WasmCallbacks.userOnly
+    actual val argUser: NativePointer get() = WasmCallbacks.argUser
+}

@@ -112,6 +112,25 @@ fun getEntities(out: IntArray): IntArray = interopScope {
 On Native the array is pinned (no copy, `fromInterop` is a no-op); on JVM/Android and web it is
 copied into native memory and freed when the scope ends.
 
+### Strings
+
+A `const char*` parameter takes `name.useCString { … }` (or `toInterop(string)` inside a scope): a
+NUL-terminated UTF-8 copy for the call. A returned `const char*` goes through
+`stringFromInterop(ptr)`, which returns null for a null pointer.
+
+```kotlin
+fun hasParameter(name: String): Boolean = name.useCString { FilaMaterial_hasParameter(nativeHandle, it) }
+val name: String get() = stringFromInterop(FilaMaterial_getName(nativeHandle)) ?: ""
+```
+
+### Callbacks
+
+`Callbacks.register(once) { arg -> … }` returns the `userData` for a C callback; pass
+`Callbacks.userOnly` (`void (*)(void*)`) or `Callbacks.argUser` (`void (*)(T*, void*)`) as the
+function pointer. A `once` callback frees itself after firing; `Callbacks.release(userData)` the
+others once C can no longer call them. The lambda runs on whichever thread C calls from (usually
+Filament's driver thread; on web, during the frame tick).
+
 ### Asynchronous uploads
 
 `set*Buffer` and `setImage` hand Filament data it reads later, on the driver thread, so no scope
@@ -212,11 +231,6 @@ A 64-bit *result* can't be turned back into a Kotlin/JS `Long`, hence the out-po
           :kotlin:filament:jsBrowserTest :kotlin:filament:wasmJsBrowserTest
 ./gradlew :kotlin:filament:connectedAndroidDeviceTest   # device or emulator
 ```
-
-## Current limitations
-
-- **Strings.** Not yet in `InteropScope`; `const char*` parameters need a `toInterop(String?)`
-  there before they can be bound.
 
 ## Migration status
 

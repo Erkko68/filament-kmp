@@ -121,13 +121,13 @@ class MorphTargetBuffer @InternalFilamentApi constructor(internal var nativeHand
      *
      * @return Vertex count capacity.
      */
-    val vertexCount: Int get() = FilaMorphTargetBuffer_getVertexCount(nativeHandle).toInt()
+    val vertexCount: Int get() = FilaMorphTargetBuffer_getVertexCount(nativeHandle)
     /**
      * Gets the number of morph targets (blend shapes) allocated.
      *
      * @return Number of morph targets.
      */
-    val count: Int get() = FilaMorphTargetBuffer_getCount(nativeHandle).toInt()
+    val count: Int get() = FilaMorphTargetBuffer_getCount(nativeHandle)
     /**
      * Indicates whether this buffer supports automatic position morphing.
      *

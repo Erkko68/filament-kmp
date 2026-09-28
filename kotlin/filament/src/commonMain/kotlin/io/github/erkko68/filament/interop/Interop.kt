@@ -48,6 +48,36 @@ expect class InteropScope() {
     fun release()
 }
 
+/** A NUL-terminated UTF-8 copy of [string] for a `const char*` parameter; null stays [NullPointer]. */
+@InternalFilamentApi
+fun InteropScope.toInterop(string: String?): NativePointer =
+    if (string == null) NullPointer else toInterop(string.encodeToByteArray() + 0)
+
+/** Calls [block] with a `const char*` copy of this string, valid for the call. */
+@InternalFilamentApi
+inline fun <R> String?.useCString(block: (NativePointer) -> R): R = interopScope { block(toInterop(this@useCString)) }
+
+/** Reads a NUL-terminated UTF-8 string returned by C, or null for [NullPointer]. */
+@InternalFilamentApi
+expect fun stringFromInterop(ptr: NativePointer): String?
+
+/**
+ * Kotlin lambdas behind C callbacks. Pass [register]'s result as the C `userData` and [userOnly] or
+ * [argUser] as the function pointer; the lambda receives the callback's leading pointer argument
+ * (or [NullPointer]). A `once` callback frees itself after firing; [release] the others.
+ */
+@InternalFilamentApi
+expect object Callbacks {
+    fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer
+    fun release(userData: NativePointer)
+
+    /** `void (*)(void* userData)`. */
+    val userOnly: NativePointer
+
+    /** `void (*)(T* arg, void* userData)`. */
+    val argUser: NativePointer
+}
+
 /**
  * [size] bytes of an array handed to an asynchronous `set*Buffer`/`setImage`: pass all four fields to the
  * C call. Filament's release callback drops the copy (unpins on Native), then runs the upload's onRelease.

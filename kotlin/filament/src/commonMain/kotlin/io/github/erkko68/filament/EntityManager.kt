@@ -116,7 +116,7 @@ class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: 
     /**
      * Get the maximum number of entities that can be created.
      */
-    val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
+    val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle)
 }
 
 @ExternalSymbolName("FilaEntityManager_advanceEpoch")

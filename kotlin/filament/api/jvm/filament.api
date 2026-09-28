@@ -116,7 +116,8 @@ public final class io/github/erkko68/filament/Camera$Projection : java/lang/Enum
 }
 
 public final class io/github/erkko68/filament/ColorGrading {
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
+	public final fun getNativeObject ()J
 }
 
 public final class io/github/erkko68/filament/ColorGrading$Builder {
@@ -673,7 +674,7 @@ public final class io/github/erkko68/filament/LightManager$Type : java/lang/Enum
 }
 
 public final class io/github/erkko68/filament/Material {
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
 	public final fun compile (Lio/github/erkko68/filament/Material$CompilerPriorityQueue;ILkotlin/jvm/functions/Function0;)V
 	public static synthetic fun compile$default (Lio/github/erkko68/filament/Material;Lio/github/erkko68/filament/Material$CompilerPriorityQueue;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun createInstance ()Lio/github/erkko68/filament/MaterialInstance;
@@ -685,6 +686,7 @@ public final class io/github/erkko68/filament/Material {
 	public final fun getInterpolation ()Lio/github/erkko68/filament/Material$Interpolation;
 	public final fun getMaskThreshold ()F
 	public final fun getName ()Ljava/lang/String;
+	public final fun getNativeObject ()J
 	public final fun getParameterCount ()I
 	public final fun getParameterTransformName (Ljava/lang/String;)Ljava/lang/String;
 	public final fun getParameters ()Ljava/util/List;
@@ -894,7 +896,7 @@ public final class io/github/erkko68/filament/Material$VertexDomain : java/lang/
 
 public final class io/github/erkko68/filament/MaterialInstance {
 	public static final field Companion Lio/github/erkko68/filament/MaterialInstance$Companion;
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
 	public final fun getConstantBoolean (Ljava/lang/String;)Z
 	public final fun getConstantFloat (Ljava/lang/String;)F
 	public final fun getConstantInt (Ljava/lang/String;)I
@@ -903,6 +905,7 @@ public final class io/github/erkko68/filament/MaterialInstance {
 	public final fun getMaskThreshold ()F
 	public final fun getMaterial ()Lio/github/erkko68/filament/Material;
 	public final fun getName ()Ljava/lang/String;
+	public final fun getNativeObject ()J
 	public final fun getShadowCullingMode ()Lio/github/erkko68/filament/Material$CullingMode;
 	public final fun getSpecularAntiAliasingThreshold ()F
 	public final fun getSpecularAntiAliasingVariance ()F
@@ -1047,14 +1050,9 @@ public final class io/github/erkko68/filament/MorphTargetBuffer$Builder {
 }
 
 public final class io/github/erkko68/filament/NativeObject_jvmKt {
-	public static final fun getNativeObject (Lio/github/erkko68/filament/ColorGrading;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/Engine;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/LightManager;)Ljava/lang/foreign/MemorySegment;
-	public static final fun getNativeObject (Lio/github/erkko68/filament/Material;)Ljava/lang/foreign/MemorySegment;
-	public static final fun getNativeObject (Lio/github/erkko68/filament/MaterialInstance;)Ljava/lang/foreign/MemorySegment;
-	public static final fun getNativeObject (Lio/github/erkko68/filament/RenderableManager;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/Renderer;)Ljava/lang/foreign/MemorySegment;
-	public static final fun getNativeObject (Lio/github/erkko68/filament/SwapChain;)Ljava/lang/foreign/MemorySegment;
 	public static final fun getNativeObject (Lio/github/erkko68/filament/View;)Ljava/lang/foreign/MemorySegment;
 }
 
@@ -1102,7 +1100,7 @@ public final class io/github/erkko68/filament/RenderTarget$Builder {
 }
 
 public final class io/github/erkko68/filament/RenderableManager {
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (J)V
 	public final fun clearMaterialInstanceAt (II)V
 	public final fun destroy (I)V
 	public final fun getAxisAlignedBoundingBox (ILio/github/erkko68/filament/Box;)Lio/github/erkko68/filament/Box;
@@ -1115,6 +1113,7 @@ public final class io/github/erkko68/filament/RenderableManager {
 	public final fun getLightChannel (II)Z
 	public final fun getMaterialInstanceAt (II)Lio/github/erkko68/filament/MaterialInstance;
 	public final fun getMorphTargetCount (I)I
+	public final fun getNativeObject ()J
 	public final fun getPrimitiveCount (I)I
 	public final fun getPriority (I)I
 	public final fun hasComponent (I)Z
@@ -1373,7 +1372,8 @@ public final class io/github/erkko68/filament/SurfaceOrientation$Builder {
 
 public final class io/github/erkko68/filament/SwapChain {
 	public static final field Companion Lio/github/erkko68/filament/SwapChain$Companion;
-	public fun <init> (Ljava/lang/foreign/MemorySegment;)V
+	public fun <init> (JJ)V
+	public synthetic fun <init> (JJILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getNativeObject ()J
 	public final fun getNativeWindow ()Ljava/lang/Object;
 	public final fun isFrameRateChangeSupported ()Z
@@ -2421,8 +2421,18 @@ public final class io/github/erkko68/filament/Viewport {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/github/erkko68/filament/interop/Callbacks {
+	public static final field INSTANCE Lio/github/erkko68/filament/interop/Callbacks;
+	public final fun getArgUser ()J
+	public final fun getUserOnly ()J
+	public final fun register (ZLkotlin/jvm/functions/Function1;)J
+	public final fun release (J)V
+}
+
 public final class io/github/erkko68/filament/interop/InteropKt {
 	public static final fun interopScope (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun toInterop (Lio/github/erkko68/filament/interop/InteropScope;Ljava/lang/String;)J
+	public static final fun useCString (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun usePinned ([BLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun usePinned ([DLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun usePinned ([FLkotlin/jvm/functions/Function1;)Ljava/lang/Object;
@@ -2451,6 +2461,7 @@ public final class io/github/erkko68/filament/interop/InteropScope {
 public final class io/github/erkko68/filament/interop/Interop_jniKt {
 	public static final fun getNullPointer ()J
 	public static final fun getSingleThreaded ()Z
+	public static final fun stringFromInterop (J)Ljava/lang/String;
 	public static final fun upload ([BILkotlin/jvm/functions/Function0;)Lio/github/erkko68/filament/interop/Upload;
 }
 

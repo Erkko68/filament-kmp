@@ -739,7 +739,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: CP
         get() = mColorGrading
         set(value) {
             mColorGrading = value
-            FilaView_setColorGrading(nativeHandle, value?.nativeHandle)
+            FilaView_setColorGrading(nativeHandle, value?.nativeHandle?.toCPointer())
         }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {

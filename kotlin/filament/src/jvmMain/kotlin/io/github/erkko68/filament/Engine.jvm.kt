@@ -8,7 +8,7 @@ import java.lang.foreign.MemorySegment
 actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: MemorySegment?) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(FilamentC.FilaEngine_getTransformManager(nativeHandle).address()) }
     private val mLightManager by lazy { LightManager(FilamentC.FilaEngine_getLightManager(nativeHandle)) }
-    private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle)) }
+    private val mRenderableManager by lazy { RenderableManager(FilamentC.FilaEngine_getRenderableManager(nativeHandle).address()) }
     private val mEntityManager by lazy { EntityManager(FilamentC.FilaEngine_getEntityManager(nativeHandle).address()) }
     // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
     internal var mConfig: Config? = null
@@ -133,7 +133,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         }
 
         actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
-            FilamentC.FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle)
+            FilamentC.FilaEngineBuilder_colorGrading(nativeBuilder, MemorySegment.ofAddress(colorGrading.nativeHandle))
             return this
         }
 
@@ -184,22 +184,22 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilamentC.FilaEngine_isValidSkinningBuffer(nativeHandle, MemorySegment.ofAddress(skinningBuffer.nativeHandle))
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilamentC.FilaEngine_isValidMorphTargetBuffer(nativeHandle, MemorySegment.ofAddress(morphTargetBuffer.nativeHandle))
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilamentC.FilaEngine_isValidIndirectLight(nativeHandle, MemorySegment.ofAddress(ibl.nativeHandle))
-    actual fun isValidMaterial(material: Material): Boolean = FilamentC.FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
-    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
-    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    actual fun isValidMaterial(material: Material): Boolean = FilamentC.FilaEngine_isValidMaterial(nativeHandle, MemorySegment.ofAddress(material.nativeHandle))
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidMaterialInstance(nativeHandle, MemorySegment.ofAddress(material.nativeHandle), MemorySegment.ofAddress(materialInstance.nativeHandle))
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilamentC.FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, MemorySegment.ofAddress(materialInstance.nativeHandle))
     actual fun isValidSkybox(skybox: Skybox): Boolean = FilamentC.FilaEngine_isValidSkybox(nativeHandle, MemorySegment.ofAddress(skybox.nativeHandle))
-    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilamentC.FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilamentC.FilaEngine_isValidColorGrading(nativeHandle, MemorySegment.ofAddress(colorGrading.nativeHandle))
     actual fun isValidTexture(texture: Texture): Boolean = FilamentC.FilaEngine_isValidTexture(nativeHandle, MemorySegment.ofAddress(texture.nativeHandle))
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilamentC.FilaEngine_isValidRenderTarget(nativeHandle, MemorySegment.ofAddress(renderTarget.nativeHandle))
     actual fun isValidStream(stream: Stream): Boolean = FilamentC.FilaEngine_isValidStream(nativeHandle, MemorySegment.ofAddress(stream.nativeHandle))
-    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilamentC.FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilamentC.FilaEngine_isValidSwapChain(nativeHandle, MemorySegment.ofAddress(swapChain.nativeHandle))
 
-    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, 0L))
-    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, flags))
-    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChainHeadless(nativeHandle, width, height, flags))
+    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, 0L).address())
+    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChain(nativeHandle, surface.handle, flags).address())
+    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilamentC.FilaEngine_createSwapChainHeadless(nativeHandle, width, height, flags).address())
     actual fun destroySwapChain(swapChain: SwapChain) {
-        FilamentC.FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
-        swapChain.nativeHandle = null
+        FilamentC.FilaEngine_destroySwapChain(nativeHandle, MemorySegment.ofAddress(swapChain.nativeHandle))
+        swapChain.nativeHandle = 0L
         swapChain.releaseCallbackStubs()
     }
 
@@ -264,18 +264,18 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         ibl.nativeHandle = 0L
     }
     actual fun destroyMaterial(material: Material) {
-        FilamentC.FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
+        FilamentC.FilaEngine_destroyMaterial(nativeHandle, MemorySegment.ofAddress(material.nativeHandle))
     }
     actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
-        FilamentC.FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+        FilamentC.FilaEngine_destroyMaterialInstance(nativeHandle, MemorySegment.ofAddress(materialInstance.nativeHandle))
     }
     actual fun destroySkybox(skybox: Skybox) {
         FilamentC.FilaEngine_destroySkybox(nativeHandle, MemorySegment.ofAddress(skybox.nativeHandle))
         skybox.nativeHandle = 0L
     }
     actual fun destroyColorGrading(colorGrading: ColorGrading) {
-        FilamentC.FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle)
-        colorGrading.nativeHandle = null
+        FilamentC.FilaEngine_destroyColorGrading(nativeHandle, MemorySegment.ofAddress(colorGrading.nativeHandle))
+        colorGrading.nativeHandle = 0L
     }
     actual fun destroyTexture(texture: Texture) {
         FilamentC.FilaEngine_destroyTexture(nativeHandle, MemorySegment.ofAddress(texture.nativeHandle))
@@ -328,7 +328,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         FilamentC.FilaEngine_compile(
             nativeHandle,
             priority.ordinal.toByte(),
-            material.nativeHandle,
+            MemorySegment.ofAddress(material.nativeHandle),
             view.nativeHandle,
             shadowReceiver.ordinal.toByte(),
             skinning.ordinal.toByte(),

@@ -43,28 +43,6 @@ typedef enum FilaTextureSamplerCompareFunc {
     FILA_TEXTURE_SAMPLER_COMPARE_FUNC_N = 7,
 } FilaTextureSamplerCompareFunc;
 
-// Sampler creation
-FilaTextureSampler FilaTextureSampler_create(FilaTextureSamplerMinFilter min, FilaTextureSamplerMagFilter mag, FilaTextureSamplerWrapMode s, FilaTextureSamplerWrapMode t, FilaTextureSamplerWrapMode r);
-FilaTextureSampler FilaTextureSampler_createCompare(FilaTextureSamplerCompareMode mode, FilaTextureSamplerCompareFunc func);
-
-// Getters/Setters
-FilaTextureSamplerMinFilter FilaTextureSampler_getMinFilter(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setMinFilter(FilaTextureSampler sampler, FilaTextureSamplerMinFilter filter);
-FilaTextureSamplerMagFilter FilaTextureSampler_getMagFilter(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setMagFilter(FilaTextureSampler sampler, FilaTextureSamplerMagFilter filter);
-FilaTextureSamplerWrapMode FilaTextureSampler_getWrapModeS(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setWrapModeS(FilaTextureSampler sampler, FilaTextureSamplerWrapMode mode);
-FilaTextureSamplerWrapMode FilaTextureSampler_getWrapModeT(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setWrapModeT(FilaTextureSampler sampler, FilaTextureSamplerWrapMode mode);
-FilaTextureSamplerWrapMode FilaTextureSampler_getWrapModeR(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setWrapModeR(FilaTextureSampler sampler, FilaTextureSamplerWrapMode mode);
-FilaTextureSamplerCompareMode FilaTextureSampler_getCompareMode(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setCompareMode(FilaTextureSampler sampler, FilaTextureSamplerCompareMode mode);
-FilaTextureSamplerCompareFunc FilaTextureSampler_getCompareFunction(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setCompareFunction(FilaTextureSampler sampler, FilaTextureSamplerCompareFunc func);
-float FilaTextureSampler_getAnisotropy(FilaTextureSampler sampler);
-FilaTextureSampler FilaTextureSampler_setAnisotropy(FilaTextureSampler sampler, float anisotropy);
-
 #ifdef __cplusplus
 }
 #endif

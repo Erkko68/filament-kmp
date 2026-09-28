@@ -24,7 +24,7 @@ void FilaMaterial_Builder_destroy(FilaMaterial_Builder* builder) {
     delete reinterpret_cast<Material::Builder*>(builder);
 }
 
-void FilaMaterial_Builder_package(FilaMaterial_Builder* builder, const void* payload, size_t size) {
+void FilaMaterial_Builder_package(FilaMaterial_Builder* builder, const void* payload, uint32_t size) {
     reinterpret_cast<Material::Builder*>(builder)->package(payload, size);
 }
 
@@ -142,21 +142,25 @@ uint32_t FilaMaterial_getParameterCount(const FilaMaterial* material) {
     return static_cast<uint32_t>(FILA_CONST_CAST(Material, material)->getParameterCount());
 }
 
-uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* out, uint32_t count) {
-    auto m = FILA_CONST_CAST(Material, material);
-    // Field-by-field copy (not a reinterpret_cast) so FilaMaterialParameterInfo's
-    // layout is independent of filament::Material::ParameterInfo.
+uint32_t FilaMaterial_getParameters(const FilaMaterial* material, int32_t* info, uint32_t count) {
     std::vector<Material::ParameterInfo> tmp(count);
-    uint32_t n = static_cast<uint32_t>(m->getParameters(tmp.data(), count));
+    uint32_t n = static_cast<uint32_t>(FILA_CONST_CAST(Material, material)->getParameters(tmp.data(), count));
     for (uint32_t i = 0; i < n; i++) {
-        out[i].name      = tmp[i].name;
-        out[i].isSampler = tmp[i].isSampler;
-        out[i].isSubpass = tmp[i].isSubpass;
-        out[i].type      = static_cast<uint8_t>(tmp[i].type);
-        out[i].count     = tmp[i].count;
-        out[i].precision = static_cast<uint8_t>(tmp[i].precision);
+        int32_t* out = info + i * 5;
+        out[0] = tmp[i].isSampler;
+        out[1] = tmp[i].isSubpass;
+        out[2] = tmp[i].isSampler ? static_cast<int32_t>(tmp[i].samplerType) : static_cast<int32_t>(tmp[i].type);
+        out[3] = static_cast<int32_t>(tmp[i].count);
+        out[4] = static_cast<int32_t>(tmp[i].precision);
     }
     return n;
+}
+
+const char* FilaMaterial_getParameterName(const FilaMaterial* material, uint32_t index) {
+    auto m = FILA_CONST_CAST(Material, material);
+    std::vector<Material::ParameterInfo> tmp(m->getParameterCount());
+    size_t n = m->getParameters(tmp.data(), tmp.size());
+    return index < n ? tmp[index].name : nullptr;
 }
 
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material) {

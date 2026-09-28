@@ -77,7 +77,7 @@ class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle:
      *
      * @return The bone count (adjusted to nearest multiple of 256)
      */
-    val boneCount: Int get() = FilaSkinningBuffer_getBoneCount(nativeHandle).toInt()
+    val boneCount: Int get() = FilaSkinningBuffer_getBoneCount(nativeHandle)
 
     /**
      * Updates bone transforms in the range [offset, offset + boneCount).

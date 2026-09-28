@@ -209,7 +209,8 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
         swapChain.nativeHandle = 0
         swapChain.releaseCallbackStubs()
-        swapChain.releaseWindow()
+        if (swapChain.window != 0L) FilaAndroid.releaseWindow(swapChain.window)
+        swapChain.window = 0L
     }
 
     actual fun createView(): View = View(FilaEngine_createView(nativeHandle))

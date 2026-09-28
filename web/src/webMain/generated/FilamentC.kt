@@ -287,7 +287,7 @@ external interface FilamentC : FilamentModule {
     fun _FilaMaterialInstance_setParameterInt4(instance: Int, name: Int, x: Int, y: Int, z: Int, w: Int)
     fun _FilaMaterialInstance_setParameterMat3(instance: Int, name: Int, v: Int)
     fun _FilaMaterialInstance_setParameterMat4(instance: Int, name: Int, v: Int)
-    fun _FilaMaterialInstance_setParameterTexture(instance: Int, name: Int, texture: Int, samplerParams: JsBigInt)
+    fun _FilaMaterialInstance_setParameterTexture(instance: Int, name: Int, texture: Int, minFilter: Int, magFilter: Int, wrapS: Int, wrapT: Int, wrapR: Int, anisotropy: Float, compareMode: Int, compareFunc: Int)
     fun _FilaMaterialInstance_setPolygonOffset(instance: Int, scale: Float, constant: Float)
     fun _FilaMaterialInstance_setScissor(instance: Int, left: Int, bottom: Int, width: Int, height: Int)
     fun _FilaMaterialInstance_setSpecularAntiAliasingThreshold(instance: Int, threshold: Float)
@@ -320,8 +320,9 @@ external interface FilamentC : FilamentModule {
     fun _FilaMaterial_getMaskThreshold(material: Int): Float
     fun _FilaMaterial_getName(material: Int): Int
     fun _FilaMaterial_getParameterCount(material: Int): Int
+    fun _FilaMaterial_getParameterName(material: Int, index: Int): Int
     fun _FilaMaterial_getParameterTransformName(material: Int, samplerName: Int): Int
-    fun _FilaMaterial_getParameters(material: Int, parameters: Int, count: Int): Int
+    fun _FilaMaterial_getParameters(material: Int, info: Int, count: Int): Int
     fun _FilaMaterial_getReflectionMode(material: Int): Int
     fun _FilaMaterial_getRefractionMode(material: Int): Int
     fun _FilaMaterial_getRefractionType(material: Int): Int
@@ -539,31 +540,13 @@ external interface FilamentC : FilamentModule {
     fun _FilaTextureBuilder_external(builder: Int)
     fun _FilaTextureBuilder_format(builder: Int, format: Int)
     fun _FilaTextureBuilder_height(builder: Int, height: Int)
-    fun _FilaTextureBuilder_importTexture(builder: Int, id: Int)
+    fun _FilaTextureBuilder_importTexture(builder: Int, id: JsBigInt)
     fun _FilaTextureBuilder_levels(builder: Int, levels: Int)
     fun _FilaTextureBuilder_sampler(builder: Int, target: Int)
     fun _FilaTextureBuilder_samples(builder: Int, samples: Int)
     fun _FilaTextureBuilder_swizzle(builder: Int, r: Int, g: Int, b: Int, a: Int)
     fun _FilaTextureBuilder_usage(builder: Int, usage: Int)
     fun _FilaTextureBuilder_width(builder: Int, width: Int)
-    fun _FilaTextureSampler_create(min: Int, mag: Int, s: Int, t: Int, r: Int): JsBigInt
-    fun _FilaTextureSampler_createCompare(mode: Int, func: Int): JsBigInt
-    fun _FilaTextureSampler_getAnisotropy(sampler: JsBigInt): Float
-    fun _FilaTextureSampler_getCompareFunction(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_getCompareMode(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_getMagFilter(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_getMinFilter(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_getWrapModeR(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_getWrapModeS(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_getWrapModeT(sampler: JsBigInt): Int
-    fun _FilaTextureSampler_setAnisotropy(sampler: JsBigInt, anisotropy: Float): JsBigInt
-    fun _FilaTextureSampler_setCompareFunction(sampler: JsBigInt, func: Int): JsBigInt
-    fun _FilaTextureSampler_setCompareMode(sampler: JsBigInt, mode: Int): JsBigInt
-    fun _FilaTextureSampler_setMagFilter(sampler: JsBigInt, filter: Int): JsBigInt
-    fun _FilaTextureSampler_setMinFilter(sampler: JsBigInt, filter: Int): JsBigInt
-    fun _FilaTextureSampler_setWrapModeR(sampler: JsBigInt, mode: Int): JsBigInt
-    fun _FilaTextureSampler_setWrapModeS(sampler: JsBigInt, mode: Int): JsBigInt
-    fun _FilaTextureSampler_setWrapModeT(sampler: JsBigInt, mode: Int): JsBigInt
     fun _FilaTexture_computeDataSize(format: Int, type: Int, stride: Int, height: Int, alignment: Int): Int
     fun _FilaTexture_generateMipmaps(texture: Int, engine: Int)
     fun _FilaTexture_getDepth(texture: Int, level: Int): Int
@@ -986,7 +969,7 @@ fun FilaMaterialInstance_setParameterInt3(instance: Int, name: String?, x: Int, 
 fun FilaMaterialInstance_setParameterInt4(instance: Int, name: String?, x: Int, y: Int, z: Int, w: Int) = fila.heapScoped { fila._FilaMaterialInstance_setParameterInt4(instance, cString(name), x, y, z, w) }
 fun FilaMaterialInstance_setParameterMat3(instance: Int, name: String?, v: Int) = fila.heapScoped { fila._FilaMaterialInstance_setParameterMat3(instance, cString(name), v) }
 fun FilaMaterialInstance_setParameterMat4(instance: Int, name: String?, v: Int) = fila.heapScoped { fila._FilaMaterialInstance_setParameterMat4(instance, cString(name), v) }
-fun FilaMaterialInstance_setParameterTexture(instance: Int, name: String?, texture: Int, samplerParams: Long) = fila.heapScoped { fila._FilaMaterialInstance_setParameterTexture(instance, cString(name), texture, samplerParams.toI64()) }
+fun FilaMaterialInstance_setParameterTexture(instance: Int, name: String?, texture: Int, minFilter: Int, magFilter: Int, wrapS: Int, wrapT: Int, wrapR: Int, anisotropy: Float, compareMode: Int, compareFunc: Int) = fila.heapScoped { fila._FilaMaterialInstance_setParameterTexture(instance, cString(name), texture, minFilter, magFilter, wrapS, wrapT, wrapR, anisotropy, compareMode, compareFunc) }
 fun FilaMaterialInstance_setPolygonOffset(instance: Int, scale: Float, constant: Float) = fila._FilaMaterialInstance_setPolygonOffset(instance, scale, constant)
 fun FilaMaterialInstance_setScissor(instance: Int, left: Int, bottom: Int, width: Int, height: Int) = fila._FilaMaterialInstance_setScissor(instance, left, bottom, width, height)
 fun FilaMaterialInstance_setSpecularAntiAliasingThreshold(instance: Int, threshold: Float) = fila._FilaMaterialInstance_setSpecularAntiAliasingThreshold(instance, threshold)
@@ -1019,8 +1002,9 @@ fun FilaMaterial_getInterpolation(material: Int): Int = fila._FilaMaterial_getIn
 fun FilaMaterial_getMaskThreshold(material: Int): Float = normalizeF32(fila._FilaMaterial_getMaskThreshold(material))
 fun FilaMaterial_getName(material: Int): String? = fila.readString(fila._FilaMaterial_getName(material))
 fun FilaMaterial_getParameterCount(material: Int): Int = fila._FilaMaterial_getParameterCount(material)
+fun FilaMaterial_getParameterName(material: Int, index: Int): String? = fila.readString(fila._FilaMaterial_getParameterName(material, index))
 fun FilaMaterial_getParameterTransformName(material: Int, samplerName: String?): String? = fila.heapScoped { fila.readString(fila._FilaMaterial_getParameterTransformName(material, cString(samplerName))) }
-fun FilaMaterial_getParameters(material: Int, parameters: Int, count: Int): Int = fila._FilaMaterial_getParameters(material, parameters, count)
+fun FilaMaterial_getParameters(material: Int, info: Int, count: Int): Int = fila._FilaMaterial_getParameters(material, info, count)
 fun FilaMaterial_getReflectionMode(material: Int): Int = fila._FilaMaterial_getReflectionMode(material)
 fun FilaMaterial_getRefractionMode(material: Int): Int = fila._FilaMaterial_getRefractionMode(material)
 fun FilaMaterial_getRefractionType(material: Int): Int = fila._FilaMaterial_getRefractionType(material)
@@ -1238,31 +1222,13 @@ fun FilaTextureBuilder_destroy(builder: Int) = fila._FilaTextureBuilder_destroy(
 fun FilaTextureBuilder_external(builder: Int) = fila._FilaTextureBuilder_external(builder)
 fun FilaTextureBuilder_format(builder: Int, format: Int) = fila._FilaTextureBuilder_format(builder, format)
 fun FilaTextureBuilder_height(builder: Int, height: Int) = fila._FilaTextureBuilder_height(builder, height)
-fun FilaTextureBuilder_importTexture(builder: Int, id: Int) = fila._FilaTextureBuilder_importTexture(builder, id)
+fun FilaTextureBuilder_importTexture(builder: Int, id: Long) = fila._FilaTextureBuilder_importTexture(builder, id.toI64())
 fun FilaTextureBuilder_levels(builder: Int, levels: Int) = fila._FilaTextureBuilder_levels(builder, levels)
 fun FilaTextureBuilder_sampler(builder: Int, target: Int) = fila._FilaTextureBuilder_sampler(builder, target)
 fun FilaTextureBuilder_samples(builder: Int, samples: Int) = fila._FilaTextureBuilder_samples(builder, samples)
 fun FilaTextureBuilder_swizzle(builder: Int, r: Int, g: Int, b: Int, a: Int) = fila._FilaTextureBuilder_swizzle(builder, r, g, b, a)
 fun FilaTextureBuilder_usage(builder: Int, usage: Int) = fila._FilaTextureBuilder_usage(builder, usage)
 fun FilaTextureBuilder_width(builder: Int, width: Int) = fila._FilaTextureBuilder_width(builder, width)
-fun FilaTextureSampler_create(min: Int, mag: Int, s: Int, t: Int, r: Int): Long = fila._FilaTextureSampler_create(min, mag, s, t, r).toKotlinLong()
-fun FilaTextureSampler_createCompare(mode: Int, func: Int): Long = fila._FilaTextureSampler_createCompare(mode, func).toKotlinLong()
-fun FilaTextureSampler_getAnisotropy(sampler: Long): Float = normalizeF32(fila._FilaTextureSampler_getAnisotropy(sampler.toI64()))
-fun FilaTextureSampler_getCompareFunction(sampler: Long): Int = fila._FilaTextureSampler_getCompareFunction(sampler.toI64())
-fun FilaTextureSampler_getCompareMode(sampler: Long): Int = fila._FilaTextureSampler_getCompareMode(sampler.toI64())
-fun FilaTextureSampler_getMagFilter(sampler: Long): Int = fila._FilaTextureSampler_getMagFilter(sampler.toI64())
-fun FilaTextureSampler_getMinFilter(sampler: Long): Int = fila._FilaTextureSampler_getMinFilter(sampler.toI64())
-fun FilaTextureSampler_getWrapModeR(sampler: Long): Int = fila._FilaTextureSampler_getWrapModeR(sampler.toI64())
-fun FilaTextureSampler_getWrapModeS(sampler: Long): Int = fila._FilaTextureSampler_getWrapModeS(sampler.toI64())
-fun FilaTextureSampler_getWrapModeT(sampler: Long): Int = fila._FilaTextureSampler_getWrapModeT(sampler.toI64())
-fun FilaTextureSampler_setAnisotropy(sampler: Long, anisotropy: Float): Long = fila._FilaTextureSampler_setAnisotropy(sampler.toI64(), anisotropy).toKotlinLong()
-fun FilaTextureSampler_setCompareFunction(sampler: Long, func: Int): Long = fila._FilaTextureSampler_setCompareFunction(sampler.toI64(), func).toKotlinLong()
-fun FilaTextureSampler_setCompareMode(sampler: Long, mode: Int): Long = fila._FilaTextureSampler_setCompareMode(sampler.toI64(), mode).toKotlinLong()
-fun FilaTextureSampler_setMagFilter(sampler: Long, filter: Int): Long = fila._FilaTextureSampler_setMagFilter(sampler.toI64(), filter).toKotlinLong()
-fun FilaTextureSampler_setMinFilter(sampler: Long, filter: Int): Long = fila._FilaTextureSampler_setMinFilter(sampler.toI64(), filter).toKotlinLong()
-fun FilaTextureSampler_setWrapModeR(sampler: Long, mode: Int): Long = fila._FilaTextureSampler_setWrapModeR(sampler.toI64(), mode).toKotlinLong()
-fun FilaTextureSampler_setWrapModeS(sampler: Long, mode: Int): Long = fila._FilaTextureSampler_setWrapModeS(sampler.toI64(), mode).toKotlinLong()
-fun FilaTextureSampler_setWrapModeT(sampler: Long, mode: Int): Long = fila._FilaTextureSampler_setWrapModeT(sampler.toI64(), mode).toKotlinLong()
 fun FilaTexture_computeDataSize(format: Int, type: Int, stride: Int, height: Int, alignment: Int): Int = fila._FilaTexture_computeDataSize(format, type, stride, height, alignment)
 fun FilaTexture_generateMipmaps(texture: Int, engine: Int) = fila._FilaTexture_generateMipmaps(texture, engine)
 fun FilaTexture_getDepth(texture: Int, level: Int): Int = fila._FilaTexture_getDepth(texture, level)
@@ -1557,6 +1523,32 @@ typealias FilaMaterialCompilerPriorityQueue = Int
 const val FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_CRITICAL = 0
 const val FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_HIGH = 1
 const val FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_LOW = 2
+typealias FilaTextureSamplerMinFilter = Int
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST = 0
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR = 1
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_NEAREST = 2
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_NEAREST = 3
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_LINEAR = 4
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR = 5
+typealias FilaTextureSamplerMagFilter = Int
+const val FILA_TEXTURE_SAMPLER_MAG_FILTER_NEAREST = 0
+const val FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR = 1
+typealias FilaTextureSamplerWrapMode = Int
+const val FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE = 0
+const val FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT = 1
+const val FILA_TEXTURE_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2
+typealias FilaTextureSamplerCompareMode = Int
+const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_NONE = 0
+const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_COMPARE_TO_TEXTURE = 1
+typealias FilaTextureSamplerCompareFunc = Int
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE = 0
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_GE = 1
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_L = 2
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_G = 3
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_E = 4
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_NE = 5
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_A = 6
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_N = 7
 typealias FilaMaterialInstanceCullingMode = Int
 const val FILA_MATERIAL_INSTANCE_CULLING_NONE = 0
 const val FILA_MATERIAL_INSTANCE_CULLING_FRONT = 1
@@ -1709,32 +1701,6 @@ const val FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC = 2
 typealias FilaStreamType = Int
 const val FILA_STREAM_TYPE_NATIVE = 0
 const val FILA_STREAM_TYPE_ACQUIRED = 1
-typealias FilaTextureSamplerMinFilter = Int
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST = 0
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR = 1
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_NEAREST = 2
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_NEAREST = 3
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_LINEAR = 4
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR = 5
-typealias FilaTextureSamplerMagFilter = Int
-const val FILA_TEXTURE_SAMPLER_MAG_FILTER_NEAREST = 0
-const val FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR = 1
-typealias FilaTextureSamplerWrapMode = Int
-const val FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE = 0
-const val FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT = 1
-const val FILA_TEXTURE_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2
-typealias FilaTextureSamplerCompareMode = Int
-const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_NONE = 0
-const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_COMPARE_TO_TEXTURE = 1
-typealias FilaTextureSamplerCompareFunc = Int
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE = 0
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_GE = 1
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_L = 2
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_G = 3
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_E = 4
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_NE = 5
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_A = 6
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_N = 7
 typealias FilaAttributeType = Int
 const val FILA_ATTRIBUTE_TYPE_BYTE = 0
 const val FILA_ATTRIBUTE_TYPE_BYTE2 = 1
@@ -1780,7 +1746,6 @@ const val FILA_VIEW_QUALITY_LEVEL_MEDIUM = 1
 const val FILA_VIEW_QUALITY_LEVEL_HIGH = 2
 const val FILA_VIEW_QUALITY_LEVEL_ULTRA = 3
 
-typealias FilaTextureSampler = Long
 typealias FilaEntity = Int
 typealias FilaLightManagerInstance = Int
 typealias FilaRenderableManagerInstance = Int
@@ -1927,24 +1892,6 @@ class FilaLightManagerVsmShadowOptions(val ptr: Int) {
         const val SIZE = 8
         const val elvsm = 0
         const val blurWidth = 4
-    }
-}
-
-class FilaMaterialParameterInfo(val ptr: Int) {
-    var name: Int get() = fila.getI32(ptr + 0); set(value) { fila.setI32(ptr + 0, value) }
-    var isSampler: Int get() = fila.getU8(ptr + 4); set(value) { fila.setU8(ptr + 4, value) }
-    var isSubpass: Int get() = fila.getU8(ptr + 5); set(value) { fila.setU8(ptr + 5, value) }
-    var type: Int get() = fila.getU8(ptr + 6); set(value) { fila.setU8(ptr + 6, value) }
-    var count: Int get() = fila.getI32(ptr + 8); set(value) { fila.setI32(ptr + 8, value) }
-    var precision: Int get() = fila.getU8(ptr + 12); set(value) { fila.setU8(ptr + 12, value) }
-    companion object {
-        const val SIZE = 16
-        const val name = 0
-        const val isSampler = 4
-        const val isSubpass = 5
-        const val type = 6
-        const val count = 8
-        const val precision = 12
     }
 }
 

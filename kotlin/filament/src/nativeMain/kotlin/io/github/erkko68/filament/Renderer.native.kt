@@ -89,12 +89,12 @@ actual class Renderer @InternalFilamentApi constructor(internal var nativeHandle
     actual fun setVsyncTime(steadyClockTimeNano: Long) = FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano.toULong())
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano.toULong())
     actual fun shouldRenderFrame(): Boolean = FilaRenderer_shouldRenderFrame(nativeHandle)
-    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos.toULong())
+    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle.toCPointer(), frameTimeNanos.toULong())
     actual fun endFrame() = FilaRenderer_endFrame(nativeHandle)
     actual fun render(view: View) = FilaRenderer_render(nativeHandle, view.nativeHandle)
     actual fun renderStandaloneView(view: View) = FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
-        FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle, 
+        FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle.toCPointer(), 
             dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
             srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
             flags.toUInt())

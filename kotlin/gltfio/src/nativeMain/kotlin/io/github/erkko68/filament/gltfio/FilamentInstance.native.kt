@@ -91,7 +91,7 @@ actual class FilamentInstance {
         memScoped {
             val instances = allocArray<CPointerVar<cnames.structs.FilaMaterialInstance>>(count)
             FilaFilamentInstance_getMaterialInstances(nativeHandle, instances)
-            return List(count) { io.github.erkko68.filament.MaterialInstance(instances[it]) }
+            return List(count) { io.github.erkko68.filament.MaterialInstance(instances[it].toLong()) }
         }
     }
 

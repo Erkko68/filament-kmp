@@ -90,12 +90,12 @@ actual class Renderer @InternalFilamentApi constructor(private val engineRef: En
     actual fun setVsyncTime(steadyClockTimeNano: Long) = FilamentC.FilaRenderer_setVsyncTime(nativeHandle, steadyClockTimeNano)
     actual fun skipFrame(vsyncSteadyClockTimeNano: Long) = FilamentC.FilaRenderer_skipFrame(nativeHandle, vsyncSteadyClockTimeNano)
     actual fun shouldRenderFrame(): Boolean = FilamentC.FilaRenderer_shouldRenderFrame(nativeHandle)
-    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilamentC.FilaRenderer_beginFrame(nativeHandle, swapChain.nativeHandle, frameTimeNanos)
+    actual fun beginFrame(swapChain: SwapChain, frameTimeNanos: Long): Boolean = FilamentC.FilaRenderer_beginFrame(nativeHandle, MemorySegment.ofAddress(swapChain.nativeHandle), frameTimeNanos)
     actual fun endFrame() = FilamentC.FilaRenderer_endFrame(nativeHandle)
     actual fun render(view: View) = FilamentC.FilaRenderer_render(nativeHandle, view.nativeHandle)
     actual fun renderStandaloneView(view: View) = FilamentC.FilaRenderer_renderStandaloneView(nativeHandle, view.nativeHandle)
     actual fun copyFrame(dstSwapChain: SwapChain, dstViewport: Viewport, srcViewport: Viewport, flags: Int) {
-        FilamentC.FilaRenderer_copyFrame(nativeHandle, dstSwapChain.nativeHandle,
+        FilamentC.FilaRenderer_copyFrame(nativeHandle, MemorySegment.ofAddress(dstSwapChain.nativeHandle),
             dstViewport.left, dstViewport.bottom, dstViewport.width, dstViewport.height,
             srcViewport.left, srcViewport.bottom, srcViewport.width, srcViewport.height,
             flags)

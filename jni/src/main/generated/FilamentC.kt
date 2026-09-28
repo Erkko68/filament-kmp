@@ -264,7 +264,7 @@ external fun FilaMaterialInstance_isDepthCullingEnabled(instance: Long): Boolean
 external fun FilaMaterialInstance_isDepthWriteEnabled(instance: Long): Boolean
 external fun FilaMaterialInstance_isDoubleSided(instance: Long): Boolean
 external fun FilaMaterialInstance_isStencilWriteEnabled(instance: Long): Boolean
-external fun FilaMaterialInstance_setBooleanParameterArray(instance: Long, name: String?, elementSize: Int, v: Long, count: Long)
+external fun FilaMaterialInstance_setBooleanParameterArray(instance: Long, name: String?, elementSize: Int, v: Long, count: Int)
 external fun FilaMaterialInstance_setColorWrite(instance: Long, enable: Boolean)
 external fun FilaMaterialInstance_setCullingMode(instance: Long, cullingMode: Int)
 external fun FilaMaterialInstance_setCullingModeSeparate(instance: Long, colorPassCullingMode: Int, shadowPassCullingMode: Int)
@@ -272,8 +272,8 @@ external fun FilaMaterialInstance_setDepthCulling(instance: Long, enable: Boolea
 external fun FilaMaterialInstance_setDepthFunc(instance: Long, func: Int)
 external fun FilaMaterialInstance_setDepthWrite(instance: Long, enable: Boolean)
 external fun FilaMaterialInstance_setDoubleSided(instance: Long, doubleSided: Boolean)
-external fun FilaMaterialInstance_setFloatParameterArray(instance: Long, name: String?, elementSize: Int, v: Long, count: Long)
-external fun FilaMaterialInstance_setIntParameterArray(instance: Long, name: String?, elementSize: Int, v: Long, count: Long)
+external fun FilaMaterialInstance_setFloatParameterArray(instance: Long, name: String?, elementSize: Int, v: Long, count: Int)
+external fun FilaMaterialInstance_setIntParameterArray(instance: Long, name: String?, elementSize: Int, v: Long, count: Int)
 external fun FilaMaterialInstance_setMaskThreshold(instance: Long, threshold: Float)
 external fun FilaMaterialInstance_setParameterBool(instance: Long, name: String?, x: Boolean)
 external fun FilaMaterialInstance_setParameterBool2(instance: Long, name: String?, x: Boolean, y: Boolean)
@@ -289,7 +289,7 @@ external fun FilaMaterialInstance_setParameterInt3(instance: Long, name: String?
 external fun FilaMaterialInstance_setParameterInt4(instance: Long, name: String?, x: Int, y: Int, z: Int, w: Int)
 external fun FilaMaterialInstance_setParameterMat3(instance: Long, name: String?, v: Long)
 external fun FilaMaterialInstance_setParameterMat4(instance: Long, name: String?, v: Long)
-external fun FilaMaterialInstance_setParameterTexture(instance: Long, name: String?, texture: Long, samplerParams: Long)
+external fun FilaMaterialInstance_setParameterTexture(instance: Long, name: String?, texture: Long, minFilter: Int, magFilter: Int, wrapS: Int, wrapT: Int, wrapR: Int, anisotropy: Float, compareMode: Int, compareFunc: Int)
 external fun FilaMaterialInstance_setPolygonOffset(instance: Long, scale: Float, constant: Float)
 external fun FilaMaterialInstance_setScissor(instance: Long, left: Int, bottom: Int, width: Int, height: Int)
 external fun FilaMaterialInstance_setSpecularAntiAliasingThreshold(instance: Long, threshold: Float)
@@ -307,7 +307,7 @@ external fun FilaMaterialInstance_unsetScissor(instance: Long)
 external fun FilaMaterial_Builder_build(builder: Long, engine: Long): Long
 external fun FilaMaterial_Builder_create(): Long
 external fun FilaMaterial_Builder_destroy(builder: Long)
-external fun FilaMaterial_Builder_package(builder: Long, payload: Long, size: Long)
+external fun FilaMaterial_Builder_package(builder: Long, payload: Long, size: Int)
 external fun FilaMaterial_Builder_shadowSamplingQuality(builder: Long, quality: Int)
 external fun FilaMaterial_Builder_sphericalHarmonicsBandCount(builder: Long, count: Int)
 external fun FilaMaterial_Builder_uboBatching(builder: Long, mode: Int)
@@ -322,8 +322,9 @@ external fun FilaMaterial_getInterpolation(material: Long): Int
 external fun FilaMaterial_getMaskThreshold(material: Long): Float
 external fun FilaMaterial_getName(material: Long): String?
 external fun FilaMaterial_getParameterCount(material: Long): Int
+external fun FilaMaterial_getParameterName(material: Long, index: Int): String?
 external fun FilaMaterial_getParameterTransformName(material: Long, samplerName: String?): String?
-external fun FilaMaterial_getParameters(material: Long, parameters: Long, count: Int): Int
+external fun FilaMaterial_getParameters(material: Long, info: Long, count: Int): Int
 external fun FilaMaterial_getReflectionMode(material: Long): Int
 external fun FilaMaterial_getRefractionMode(material: Long): Int
 external fun FilaMaterial_getRefractionType(material: Long): Int
@@ -374,27 +375,27 @@ external fun FilaRenderTarget_getLayer(renderTarget: Long, attachment: Int): Int
 external fun FilaRenderTarget_getMipLevel(renderTarget: Long, attachment: Int): Int
 external fun FilaRenderTarget_getSupportedColorAttachmentsCount(renderTarget: Long): Int
 external fun FilaRenderTarget_getTexture(renderTarget: Long, attachment: Int): Long
-external fun FilaRenderableManagerBuilder_blendOrder(builder: Long, index: Long, blendOrder: Int)
+external fun FilaRenderableManagerBuilder_blendOrder(builder: Long, index: Int, blendOrder: Int)
 external fun FilaRenderableManagerBuilder_boundingBox(builder: Long, cx: Float, cy: Float, cz: Float, hx: Float, hy: Float, hz: Float)
 external fun FilaRenderableManagerBuilder_build(builder: Long, engine: Long, entity: Int): Boolean
 external fun FilaRenderableManagerBuilder_castShadows(builder: Long, enabled: Boolean)
 external fun FilaRenderableManagerBuilder_channel(builder: Long, channel: Int)
-external fun FilaRenderableManagerBuilder_create(count: Long): Long
+external fun FilaRenderableManagerBuilder_create(count: Int): Long
 external fun FilaRenderableManagerBuilder_culling(builder: Long, enabled: Boolean)
 external fun FilaRenderableManagerBuilder_destroy(builder: Long)
 external fun FilaRenderableManagerBuilder_enableSkinningBuffers(builder: Long, enabled: Boolean)
 external fun FilaRenderableManagerBuilder_fog(builder: Long, enabled: Boolean)
-external fun FilaRenderableManagerBuilder_geometry(builder: Long, index: Long, type: Int, vb: Long, ib: Long)
-external fun FilaRenderableManagerBuilder_geometryAt(builder: Long, index: Long, type: Int, vb: Long, ib: Long, offset: Long, count: Long)
-external fun FilaRenderableManagerBuilder_geometryNonIndexed(builder: Long, index: Long, type: Int, vb: Long, offset: Long, count: Long)
-external fun FilaRenderableManagerBuilder_geometryNonIndexedNone(builder: Long, index: Long, type: Int, vb: Long)
+external fun FilaRenderableManagerBuilder_geometry(builder: Long, index: Int, type: Int, vb: Long, ib: Long)
+external fun FilaRenderableManagerBuilder_geometryAt(builder: Long, index: Int, type: Int, vb: Long, ib: Long, offset: Int, count: Int)
+external fun FilaRenderableManagerBuilder_geometryNonIndexed(builder: Long, index: Int, type: Int, vb: Long, offset: Int, count: Int)
+external fun FilaRenderableManagerBuilder_geometryNonIndexedNone(builder: Long, index: Int, type: Int, vb: Long)
 external fun FilaRenderableManagerBuilder_geometryType(builder: Long, type: Int)
-external fun FilaRenderableManagerBuilder_geometryWithIndices(builder: Long, index: Long, type: Int, vb: Long, ib: Long, offset: Long, minIndex: Long, maxIndex: Long, count: Long)
-external fun FilaRenderableManagerBuilder_globalBlendOrderEnabled(builder: Long, index: Long, enabled: Boolean)
-external fun FilaRenderableManagerBuilder_instances(builder: Long, instanceCount: Long)
+external fun FilaRenderableManagerBuilder_geometryWithIndices(builder: Long, index: Int, type: Int, vb: Long, ib: Long, offset: Int, minIndex: Int, maxIndex: Int, count: Int)
+external fun FilaRenderableManagerBuilder_globalBlendOrderEnabled(builder: Long, index: Int, enabled: Boolean)
+external fun FilaRenderableManagerBuilder_instances(builder: Long, instanceCount: Int)
 external fun FilaRenderableManagerBuilder_layerMask(builder: Long, select: Int, value: Int)
 external fun FilaRenderableManagerBuilder_lightChannel(builder: Long, channel: Int, enable: Boolean)
-external fun FilaRenderableManagerBuilder_material(builder: Long, index: Long, materialInstance: Long)
+external fun FilaRenderableManagerBuilder_material(builder: Long, index: Int, materialInstance: Long)
 external fun FilaRenderableManagerBuilder_morphTargetBuffer(builder: Long, mtb: Long)
 external fun FilaRenderableManagerBuilder_morphTargetBufferOffsetAt(builder: Long, level: Int, primitiveIndex: Int, offset: Int)
 external fun FilaRenderableManagerBuilder_morphing(builder: Long, targetCount: Int)
@@ -404,41 +405,41 @@ external fun FilaRenderableManagerBuilder_screenSpaceContactShadows(builder: Lon
 external fun FilaRenderableManagerBuilder_skinning(builder: Long, boneCount: Int)
 external fun FilaRenderableManagerBuilder_skinningBones(builder: Long, boneCount: Int, bones: Long)
 external fun FilaRenderableManagerBuilder_skinningBuffer(builder: Long, sb: Long, boneCount: Int, offset: Int)
-external fun FilaRenderableManager_clearMaterialInstanceAt(rm: Long, instance: Int, primitiveIndex: Long)
+external fun FilaRenderableManager_clearMaterialInstanceAt(rm: Long, instance: Int, primitiveIndex: Int)
 external fun FilaRenderableManager_destroy(rm: Long, entity: Int)
 external fun FilaRenderableManager_getAxisAlignedBoundingBox(rm: Long, instance: Int, center: Long, halfExtent: Long)
-external fun FilaRenderableManager_getBlendOrderAt(rm: Long, instance: Int, primitiveIndex: Long): Int
+external fun FilaRenderableManager_getBlendOrderAt(rm: Long, instance: Int, primitiveIndex: Int): Int
 external fun FilaRenderableManager_getChannel(rm: Long, instance: Int): Int
-external fun FilaRenderableManager_getEnabledAttributesAt(rm: Long, instance: Int, primitiveIndex: Long): Int
+external fun FilaRenderableManager_getEnabledAttributesAt(rm: Long, instance: Int, primitiveIndex: Int): Int
 external fun FilaRenderableManager_getFogEnabled(rm: Long, instance: Int): Boolean
 external fun FilaRenderableManager_getInstance(rm: Long, entity: Int): Int
 external fun FilaRenderableManager_getInstanceCount(rm: Long, instance: Int): Int
 external fun FilaRenderableManager_getLightChannel(rm: Long, instance: Int, channel: Int): Boolean
-external fun FilaRenderableManager_getMaterialInstanceAt(rm: Long, instance: Int, primitiveIndex: Long): Long
+external fun FilaRenderableManager_getMaterialInstanceAt(rm: Long, instance: Int, primitiveIndex: Int): Long
 external fun FilaRenderableManager_getMorphTargetCount(rm: Long, instance: Int): Int
 external fun FilaRenderableManager_getPrimitiveCount(rm: Long, instance: Int): Int
 external fun FilaRenderableManager_getPriority(rm: Long, instance: Int): Int
 external fun FilaRenderableManager_hasComponent(rm: Long, entity: Int): Boolean
 external fun FilaRenderableManager_isCullingEnabled(rm: Long, instance: Int): Boolean
-external fun FilaRenderableManager_isGlobalBlendOrderEnabledAt(rm: Long, instance: Int, primitiveIndex: Long): Boolean
+external fun FilaRenderableManager_isGlobalBlendOrderEnabledAt(rm: Long, instance: Int, primitiveIndex: Int): Boolean
 external fun FilaRenderableManager_isScreenSpaceContactShadowsEnabled(rm: Long, instance: Int): Boolean
 external fun FilaRenderableManager_isShadowCaster(rm: Long, instance: Int): Boolean
 external fun FilaRenderableManager_isShadowReceiver(rm: Long, instance: Int): Boolean
 external fun FilaRenderableManager_setAxisAlignedBoundingBox(rm: Long, instance: Int, cx: Float, cy: Float, cz: Float, hx: Float, hy: Float, hz: Float)
-external fun FilaRenderableManager_setBlendOrderAt(rm: Long, instance: Int, primitiveIndex: Long, blendOrder: Int)
+external fun FilaRenderableManager_setBlendOrderAt(rm: Long, instance: Int, primitiveIndex: Int, blendOrder: Int)
 external fun FilaRenderableManager_setBonesAsMatrices(rm: Long, instance: Int, matrices: Long, boneCount: Int, offset: Int)
 external fun FilaRenderableManager_setBonesAsQuaternions(rm: Long, instance: Int, bones: Long, boneCount: Int, offset: Int)
 external fun FilaRenderableManager_setCastShadows(rm: Long, instance: Int, enabled: Boolean)
 external fun FilaRenderableManager_setChannel(rm: Long, instance: Int, channel: Int)
 external fun FilaRenderableManager_setCulling(rm: Long, instance: Int, enabled: Boolean)
 external fun FilaRenderableManager_setFogEnabled(rm: Long, instance: Int, enabled: Boolean)
-external fun FilaRenderableManager_setGeometryAt(rm: Long, instance: Int, primitiveIndex: Long, type: Int, vb: Long, ib: Long, offset: Long, count: Long)
-external fun FilaRenderableManager_setGeometryAtNonIndexed(rm: Long, instance: Int, primitiveIndex: Long, type: Int, vb: Long, offset: Long, count: Long)
-external fun FilaRenderableManager_setGlobalBlendOrderEnabledAt(rm: Long, instance: Int, primitiveIndex: Long, enabled: Boolean)
+external fun FilaRenderableManager_setGeometryAt(rm: Long, instance: Int, primitiveIndex: Int, type: Int, vb: Long, ib: Long, offset: Int, count: Int)
+external fun FilaRenderableManager_setGeometryAtNonIndexed(rm: Long, instance: Int, primitiveIndex: Int, type: Int, vb: Long, offset: Int, count: Int)
+external fun FilaRenderableManager_setGlobalBlendOrderEnabledAt(rm: Long, instance: Int, primitiveIndex: Int, enabled: Boolean)
 external fun FilaRenderableManager_setLayerMask(rm: Long, instance: Int, select: Int, value: Int)
 external fun FilaRenderableManager_setLightChannel(rm: Long, instance: Int, channel: Int, enable: Boolean)
-external fun FilaRenderableManager_setMaterialInstanceAt(rm: Long, instance: Int, primitiveIndex: Long, materialInstance: Long)
-external fun FilaRenderableManager_setMorphTargetBufferOffsetAt(rm: Long, instance: Int, level: Int, primitiveIndex: Long, offset: Long)
+external fun FilaRenderableManager_setMaterialInstanceAt(rm: Long, instance: Int, primitiveIndex: Int, materialInstance: Long)
+external fun FilaRenderableManager_setMorphTargetBufferOffsetAt(rm: Long, instance: Int, level: Int, primitiveIndex: Int, offset: Int)
 external fun FilaRenderableManager_setMorphWeights(rm: Long, instance: Int, weights: Long, count: Int, offset: Int)
 external fun FilaRenderableManager_setPriority(rm: Long, instance: Int, priority: Int)
 external fun FilaRenderableManager_setReceiveShadows(rm: Long, instance: Int, enabled: Boolean)
@@ -548,24 +549,6 @@ external fun FilaTextureBuilder_samples(builder: Long, samples: Int)
 external fun FilaTextureBuilder_swizzle(builder: Long, r: Int, g: Int, b: Int, a: Int)
 external fun FilaTextureBuilder_usage(builder: Long, usage: Int)
 external fun FilaTextureBuilder_width(builder: Long, width: Int)
-external fun FilaTextureSampler_create(min: Int, mag: Int, s: Int, t: Int, r: Int): Long
-external fun FilaTextureSampler_createCompare(mode: Int, func: Int): Long
-external fun FilaTextureSampler_getAnisotropy(sampler: Long): Float
-external fun FilaTextureSampler_getCompareFunction(sampler: Long): Int
-external fun FilaTextureSampler_getCompareMode(sampler: Long): Int
-external fun FilaTextureSampler_getMagFilter(sampler: Long): Int
-external fun FilaTextureSampler_getMinFilter(sampler: Long): Int
-external fun FilaTextureSampler_getWrapModeR(sampler: Long): Int
-external fun FilaTextureSampler_getWrapModeS(sampler: Long): Int
-external fun FilaTextureSampler_getWrapModeT(sampler: Long): Int
-external fun FilaTextureSampler_setAnisotropy(sampler: Long, anisotropy: Float): Long
-external fun FilaTextureSampler_setCompareFunction(sampler: Long, func: Int): Long
-external fun FilaTextureSampler_setCompareMode(sampler: Long, mode: Int): Long
-external fun FilaTextureSampler_setMagFilter(sampler: Long, filter: Int): Long
-external fun FilaTextureSampler_setMinFilter(sampler: Long, filter: Int): Long
-external fun FilaTextureSampler_setWrapModeR(sampler: Long, mode: Int): Long
-external fun FilaTextureSampler_setWrapModeS(sampler: Long, mode: Int): Long
-external fun FilaTextureSampler_setWrapModeT(sampler: Long, mode: Int): Long
 external fun FilaTexture_computeDataSize(format: Int, type: Int, stride: Int, height: Int, alignment: Int): Int
 external fun FilaTexture_generateMipmaps(texture: Long, engine: Long)
 external fun FilaTexture_getDepth(texture: Long, level: Int): Int
@@ -711,7 +694,6 @@ external fun FilaLayout_FilaEngineConfig(): IntArray
 external fun FilaLayout_FilaFloat3(): IntArray
 external fun FilaLayout_FilaLightManagerShadowOptions(): IntArray
 external fun FilaLayout_FilaLightManagerVsmShadowOptions(): IntArray
-external fun FilaLayout_FilaMaterialParameterInfo(): IntArray
 external fun FilaLayout_FilaQuat(): IntArray
 external fun FilaLayout_FilaRendererClearOptions(): IntArray
 external fun FilaLayout_FilaRendererDisplayInfo(): IntArray
@@ -888,6 +870,32 @@ typealias FilaMaterialCompilerPriorityQueue = Int
 const val FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_CRITICAL = 0
 const val FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_HIGH = 1
 const val FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_LOW = 2
+typealias FilaTextureSamplerMinFilter = Int
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST = 0
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR = 1
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_NEAREST = 2
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_NEAREST = 3
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_LINEAR = 4
+const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR = 5
+typealias FilaTextureSamplerMagFilter = Int
+const val FILA_TEXTURE_SAMPLER_MAG_FILTER_NEAREST = 0
+const val FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR = 1
+typealias FilaTextureSamplerWrapMode = Int
+const val FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE = 0
+const val FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT = 1
+const val FILA_TEXTURE_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2
+typealias FilaTextureSamplerCompareMode = Int
+const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_NONE = 0
+const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_COMPARE_TO_TEXTURE = 1
+typealias FilaTextureSamplerCompareFunc = Int
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE = 0
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_GE = 1
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_L = 2
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_G = 3
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_E = 4
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_NE = 5
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_A = 6
+const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_N = 7
 typealias FilaMaterialInstanceCullingMode = Int
 const val FILA_MATERIAL_INSTANCE_CULLING_NONE = 0
 const val FILA_MATERIAL_INSTANCE_CULLING_FRONT = 1
@@ -1040,32 +1048,6 @@ const val FILA_RENDERABLE_MANAGER_GEOMETRY_TYPE_STATIC = 2
 typealias FilaStreamType = Int
 const val FILA_STREAM_TYPE_NATIVE = 0
 const val FILA_STREAM_TYPE_ACQUIRED = 1
-typealias FilaTextureSamplerMinFilter = Int
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST = 0
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR = 1
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_NEAREST = 2
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_NEAREST = 3
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_NEAREST_MIPMAP_LINEAR = 4
-const val FILA_TEXTURE_SAMPLER_MIN_FILTER_LINEAR_MIPMAP_LINEAR = 5
-typealias FilaTextureSamplerMagFilter = Int
-const val FILA_TEXTURE_SAMPLER_MAG_FILTER_NEAREST = 0
-const val FILA_TEXTURE_SAMPLER_MAG_FILTER_LINEAR = 1
-typealias FilaTextureSamplerWrapMode = Int
-const val FILA_TEXTURE_SAMPLER_WRAP_MODE_CLAMP_TO_EDGE = 0
-const val FILA_TEXTURE_SAMPLER_WRAP_MODE_REPEAT = 1
-const val FILA_TEXTURE_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2
-typealias FilaTextureSamplerCompareMode = Int
-const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_NONE = 0
-const val FILA_TEXTURE_SAMPLER_COMPARE_MODE_COMPARE_TO_TEXTURE = 1
-typealias FilaTextureSamplerCompareFunc = Int
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_LE = 0
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_GE = 1
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_L = 2
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_G = 3
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_E = 4
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_NE = 5
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_A = 6
-const val FILA_TEXTURE_SAMPLER_COMPARE_FUNC_N = 7
 typealias FilaAttributeType = Int
 const val FILA_ATTRIBUTE_TYPE_BYTE = 0
 const val FILA_ATTRIBUTE_TYPE_BYTE2 = 1
@@ -1111,7 +1093,6 @@ const val FILA_VIEW_QUALITY_LEVEL_MEDIUM = 1
 const val FILA_VIEW_QUALITY_LEVEL_HIGH = 2
 const val FILA_VIEW_QUALITY_LEVEL_ULTRA = 3
 
-typealias FilaTextureSampler = Long
 typealias FilaEntity = Int
 typealias FilaLightManagerInstance = Int
 typealias FilaRenderableManagerInstance = Int
@@ -1215,20 +1196,6 @@ class FilaLightManagerVsmShadowOptions(val ptr: Long) {
     var blurWidth: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
     companion object {
         private val L = FilaLayout_FilaLightManagerVsmShadowOptions()
-        val SIZE: Int get() = L[0]
-    }
-}
-
-class FilaMaterialParameterInfo(val ptr: Long) {
-    private val b = FilaJni.buffer(ptr, SIZE)
-    var name: Long get() = b.readLong(L[1], L[2]); set(value) { b.writeLong(L[1], L[2], value) }
-    var isSampler: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
-    var isSubpass: Int get() = b.readInt(L[5], L[6], signed = false); set(value) { b.writeInt(L[5], L[6], value) }
-    var type: Int get() = b.readInt(L[7], L[8], signed = false); set(value) { b.writeInt(L[7], L[8], value) }
-    var count: Int get() = b.readInt(L[9], L[10], signed = false); set(value) { b.writeInt(L[9], L[10], value) }
-    var precision: Int get() = b.readInt(L[11], L[12], signed = false); set(value) { b.writeInt(L[11], L[12], value) }
-    companion object {
-        private val L = FilaLayout_FilaMaterialParameterInfo()
         val SIZE: Int get() = L[0]
     }
 }

@@ -800,7 +800,7 @@ actual class View @InternalFilamentApi constructor(internal var nativeHandle: Me
         get() = mColorGrading
         set(value) {
             mColorGrading = value
-            FilamentC.FilaView_setColorGrading(nativeHandle, value?.nativeHandle ?: NULL)
+            FilamentC.FilaView_setColorGrading(nativeHandle, value?.let { MemorySegment.ofAddress(it.nativeHandle) } ?: NULL)
         }
 
     actual fun pick(x: Int, y: Int, callback: (PickingQueryResult) -> Unit) {

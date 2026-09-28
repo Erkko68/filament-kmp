@@ -108,7 +108,7 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
      * @param instance The transform instance
      * @return The number of direct children
      */
-    fun getChildCount(instance: EntityInstance): Int = FilaTransformManager_getChildCount(nativeHandle, instance).toInt()
+    fun getChildCount(instance: EntityInstance): Int = FilaTransformManager_getChildCount(nativeHandle, instance)
     
     /**
      * Gets the child entities of a transform.

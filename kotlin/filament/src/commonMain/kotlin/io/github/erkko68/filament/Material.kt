@@ -1,16 +1,6 @@
 package io.github.erkko68.filament
 
-// Every compiled .filamat begins with the MaterialVersion chunk, whose 8-byte type token is
-// "MAT_VERSION" stored little-endian — i.e. the bytes "SREV_TAM" on disk. The FFM/native actuals
-// check this before handing the payload to Filament's parser, which panics on a non-.filamat blob;
-// that panic unwinds across the prebuilt's -fno-exceptions frames and terminates the process, so it
-// can't be trapped after the fact. Bailing here turns the common bad-asset case (a PNG, a truncated
-// download, the wrong file) into a catchable IllegalArgumentException, matching the JS backend.
-private val FILAMAT_MAGIC = "SREV_TAM".encodeToByteArray()
-
-/** True if [data] starts with the compiled-`.filamat` magic. Cheap structural sniff, not a full parse. */
-internal fun isValidFilamatPayload(data: ByteArray): Boolean =
-    data.size >= FILAMAT_MAGIC.size && FILAMAT_MAGIC.indices.all { data[it] == FILAMAT_MAGIC[it] }
+import io.github.erkko68.filament.interop.*
 
 /**
  * Material defines the visual appearance of a surface.
@@ -34,7 +24,11 @@ internal fun isValidFilamatPayload(data: ByteArray): Boolean =
  * These include shading model, blending mode, transparency mode, and other rendering settings.
  * To override parameters per-instance, use MaterialInstance.
  */
-expect class Material {
+class Material @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Shading model determines how light interacts with the material surface.
      *
@@ -45,7 +39,6 @@ expect class Material {
      * - SPECULAR_GLOSSINESS: Legacy shading model (use LIT for new materials)
      */
     enum class Shading { UNLIT, LIT, SUBSURFACE, CLOTH, SPECULAR_GLOSSINESS }
-
     /**
      * Attribute interpolation type in the fragment shader.
      *
@@ -53,7 +46,6 @@ expect class Material {
      * - FLAT: Flat interpolation; values are constant per primitive (no interpolation)
      */
     enum class Interpolation { SMOOTH, FLAT }
-
     /**
      * Blending mode determines how a material's color is combined with the background.
      *
@@ -66,7 +58,6 @@ expect class Material {
      * - SCREEN: Brightens what's behind it
      */
     enum class BlendingMode { OPAQUE, TRANSPARENT, ADD, MASKED, FADE, MULTIPLY, SCREEN }
-
     /**
      * How transparent objects are rendered.
      *
@@ -75,7 +66,6 @@ expect class Material {
      * - TWO_PASSES_TWO_SIDES: Object drawn twice in color buffer (back faces, then front faces); culling ignored
      */
     enum class TransparencyMode { DEFAULT, TWO_PASSES_ONE_SIDE, TWO_PASSES_TWO_SIDES }
-
     /**
      * Refraction rendering mode.
      *
@@ -84,7 +74,6 @@ expect class Material {
      * - SCREEN_SPACE: Real-time screen-space refraction (can be expensive)
      */
     enum class RefractionMode { NONE, CUBEMAP, SCREEN_SPACE }
-
     /**
      * Type of refracted surface.
      *
@@ -92,7 +81,6 @@ expect class Material {
      * - THIN: Thin material like glass (refraction assumes thin surface)
      */
     enum class RefractionType { SOLID, THIN }
-
     /**
      * Reflection rendering mode.
      *
@@ -100,7 +88,6 @@ expect class Material {
      * - SCREEN_SPACE: Real-time screen-space reflections (can be expensive)
      */
     enum class ReflectionMode { DEFAULT, SCREEN_SPACE }
-
     /**
      * Vertex domain specifies which coordinate space vertices are defined in.
      *
@@ -110,7 +97,6 @@ expect class Material {
      * - DEVICE: Vertices in normalized device coordinates ([-1, 1])
      */
     enum class VertexDomain { OBJECT, WORLD, VIEW, DEVICE }
-
     /**
      * Culling mode determines which faces are rendered.
      *
@@ -120,7 +106,6 @@ expect class Material {
      * - FRONT_AND_BACK: Cull all faces (usually used for testing or special effects)
      */
     enum class CullingMode { NONE, FRONT, BACK, FRONT_AND_BACK }
-
     /**
      * Priority queue for asynchronous material compilation.
      *
@@ -131,7 +116,6 @@ expect class Material {
      * @see compile
      */
     enum class CompilerPriorityQueue { CRITICAL, HIGH, LOW }
-
     /**
      * UBO batching mode controls whether material instances share uniform buffers.
      *
@@ -149,27 +133,27 @@ expect class Material {
      */
     object UserVariantFilterBit {
         /** Variant for directional lighting */
-        val DIRECTIONAL_LIGHTING: Int
+        val DIRECTIONAL_LIGHTING: Int = 0x01
         /**
          * Variant for dynamic (local) lighting. Since 1.76.0 dynamic lighting is a
          * specialization constant, so this no longer shrinks offline `.filamat` blobs —
          * it only prunes runtime pipeline compilations.
          */
-        val DYNAMIC_LIGHTING: Int
+        val DYNAMIC_LIGHTING: Int = 0x02
         /** Variant for shadow-receiving objects */
-        val SHADOW_RECEIVER: Int
+        val SHADOW_RECEIVER: Int = 0x04
         /** Variant for skinned/skeletal animation */
-        val SKINNING: Int
+        val SKINNING: Int = 0x08
         /** Variant for fog effects */
-        val FOG: Int
+        val FOG: Int = 0x10
         /** Variant for Variance Shadow Maps */
-        val VSM: Int
+        val VSM: Int = 0x20
         /** Variant for Screen-Space Reflections */
-        val SSR: Int
+        val SSR: Int = 0x40
         /** Variant for stereoscopic rendering */
-        val STE: Int
+        val STE: Int = 0x80
         /** All variants combined */
-        val ALL: Int
+        val ALL: Int = 0xFF
     }
 
     /**
@@ -179,19 +163,15 @@ expect class Material {
      * like textures, colors, or numeric values that can be set per instance.
      */
     class Parameter(
-        name: String,
-        type: Type,
-        precision: Precision,
-        count: Int
-    ) {
         /** Name of the parameter as defined in the material */
-        val name: String
+        val name: String,
         /** Data type of the parameter */
-        val type: Type
+        val type: Type,
         /** Precision (if a numeric type) */
-        val precision: Precision
+        val precision: Precision,
         /** Array count (1 if not an array) */
         val count: Int
+    ) {
 
         /**
          * Parameter data types.
@@ -213,7 +193,6 @@ expect class Material {
             SAMPLER_2D, SAMPLER_2D_ARRAY, SAMPLER_CUBEMAP, SAMPLER_EXTERNAL, SAMPLER_3D,
             SUBPASS_INPUT
         }
-
         /**
          * Precision level for numeric parameters.
          *
@@ -232,6 +211,12 @@ expect class Material {
      * configures rendering quality and batching options before building the final Material.
      */
     class Builder() {
+        private val nativeBuilder = FilaMaterial_Builder_create()
+        // Set in payload(): a non-empty blob that isn't a compiled .filamat. build() rejects it before
+        // calling Filament's parser, which would otherwise panic uncatchably (see isValidFilamatPayload).
+        private var payloadInvalid = false
+        // Filament's Builder::package keeps the pointer (no copy) until build(), so the payload lives until then.
+        private var payloadScope: InteropScope? = null
         /**
          * Shadow sampling quality affects how soft shadows are rendered.
          *
@@ -248,8 +233,15 @@ expect class Material {
          * @param data Pointer to the material data; must stay valid until build() is called
          * @return This Builder, for chaining calls
          */
-        fun payload(data: ByteArray): Builder
-
+        fun payload(data: ByteArray): Builder = apply {
+            if (data.isNotEmpty()) {
+                payloadInvalid = !isValidFilamatPayload(data)
+                releasePayload()
+                payloadScope = InteropScope().also { FilaMaterial_Builder_package(nativeBuilder, it.toInterop(data), data.size) }
+            } else {
+                payloadInvalid = false
+            }
+        }
         /**
          * Sets the quality of the indirect light computations.
          *
@@ -262,8 +254,9 @@ expect class Material {
          *
          * @see IndirectLight
          */
-        fun sphericalHarmonicsBandCount(shBandCount: Int): Builder
-
+        fun sphericalHarmonicsBandCount(shBandCount: Int): Builder = apply {
+            FilaMaterial_Builder_sphericalHarmonicsBandCount(nativeBuilder, shBandCount)
+        }
         /**
          * Set the quality of shadow sampling.
          *
@@ -272,27 +265,50 @@ expect class Material {
          * @param quality Shadow sampling quality
          * @return This Builder, for chaining calls.
          */
-        fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder
-
+        fun shadowSamplingQuality(quality: ShadowSamplingQuality): Builder = apply {
+            FilaMaterial_Builder_shadowSamplingQuality(nativeBuilder, quality.ordinal)
+        }
         /**
          * Set the batching mode of the instances created from this material.
          *
          * @param mode Batching mode to use
          * @return This Builder, for chaining calls.
          */
-        fun uboBatching(mode: UboBatchingMode): Builder
+        fun uboBatching(mode: UboBatchingMode): Builder = apply {
+            FilaMaterial_Builder_uboBatching(nativeBuilder, mode.ordinal)
+        }
+        private fun releasePayload() {
+            payloadScope?.release()
+            payloadScope = null
+        }
 
         /**
          * Creates the Material and returns it.
          *
          * @param engine Engine to associate this Material with
          * @return The newly created Material
-         * @throws IllegalArgumentException if the [payload] is not a valid compiled `.filamat`. Every
-         *   backend signals a bad payload the same way: every C-API wrapper (FFM, native, wasm) validates
-         *   the payload before Filament's parser can panic, so callers can recover (e.g. return
+         * @throws IllegalArgumentException if the [payload] is not a valid compiled `.filamat`. The
+         *   payload is checked before Filament's parser can panic, so callers can recover (e.g. return
          *   null + report an error) rather than crash the process.
          */
-        fun build(engine: Engine): Material
+        fun build(engine: Engine): Material {
+            if (payloadInvalid) {
+                releasePayload()
+                FilaMaterial_Builder_destroy(nativeBuilder)
+                throw IllegalArgumentException(
+                    "Failed to build material — the payload is not a valid compiled .filamat",
+                )
+            }
+            val handle = FilaMaterial_Builder_build(nativeBuilder, engine.pointer)
+            FilaMaterial_Builder_destroy(nativeBuilder)
+            releasePayload()
+            if (handle == NullPointer) {
+                throw IllegalArgumentException(
+                    "Failed to build material — the payload is not a valid compiled .filamat",
+                )
+            }
+            return Material(handle)
+        }
     }
 
     /**
@@ -317,7 +333,14 @@ expect class Material {
      * @param variants Variants to compile (bitmask of UserVariantFilterBit values, or UserVariantFilterBit.ALL).
      * @param callback Optional callback invoked on main thread when compilation completes.
      */
-    fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)? = null)
+    fun compile(priority: CompilerPriorityQueue, variants: Int, callback: (() -> Unit)? = null) {
+        if (callback == null) {
+            FilaMaterial_compile(nativeHandle, priority.ordinal, variants, NullPointer, NullPointer, NullPointer)
+        } else {
+            val userData = Callbacks.register(once = true) { _ -> callback() }
+            FilaMaterial_compile(nativeHandle, priority.ordinal, variants, NullPointer, Callbacks.argUser, userData)
+        }
+    }
 
     /**
      * Create a new MaterialInstance from this material.
@@ -328,8 +351,7 @@ expect class Material {
      *
      * @return A new MaterialInstance with default parameters.
      */
-    fun createInstance(): MaterialInstance
-
+    fun createInstance(): MaterialInstance = MaterialInstance(FilaMaterial_createInstance(nativeHandle))
     /**
      * Create a new MaterialInstance with an optional debug name.
      *
@@ -338,8 +360,7 @@ expect class Material {
      * @param name Debug name for this instance (if empty, inherits material name).
      * @return A new MaterialInstance with the given name.
      */
-    fun createInstance(name: String): MaterialInstance
-
+    fun createInstance(name: String): MaterialInstance = MaterialInstance(name.useCString { FilaMaterial_createInstanceWithName(nativeHandle, it) })
     /**
      * Get this material's default instance.
      *
@@ -349,62 +370,49 @@ expect class Material {
      *
      * @return The default MaterialInstance.
      */
-    val defaultInstance: MaterialInstance
+    val defaultInstance: MaterialInstance get() = MaterialInstance(FilaMaterial_getDefaultInstance(nativeHandle))
 
     /**
      * Get the name of this material.
      *
      * @return Material name string (from the matc-compiled blob).
      */
-    val name: String
-
+    val name: String get() = stringFromInterop(FilaMaterial_getName(nativeHandle)) ?: ""
     /** Get the shading model. */
-    val shading: Shading
-
+    val shading: Shading get() = Shading.entries[FilaMaterial_getShading(nativeHandle)]
     /** Get the vertex attribute interpolation mode. */
-    val interpolation: Interpolation
-
+    val interpolation: Interpolation get() = Interpolation.entries[FilaMaterial_getInterpolation(nativeHandle)]
     /** Get the blending mode. */
-    val blendingMode: BlendingMode
-
+    val blendingMode: BlendingMode get() = BlendingMode.entries[FilaMaterial_getBlendingMode(nativeHandle)]
     /** Get the transparency rendering mode (only relevant for TRANSPARENT/FADE blending). */
-    val transparencyMode: TransparencyMode
-
+    val transparencyMode: TransparencyMode get() = TransparencyMode.entries[FilaMaterial_getTransparencyMode(nativeHandle)]
     /** Get the refraction mode. */
-    val refractionMode: RefractionMode
-
+    val refractionMode: RefractionMode get() = RefractionMode.entries[FilaMaterial_getRefractionMode(nativeHandle)]
     /** Get the refraction surface type. */
-    val refractionType: RefractionType
-
+    val refractionType: RefractionType get() = RefractionType.entries[FilaMaterial_getRefractionType(nativeHandle)]
     /** Get the reflection mode. */
-    val reflectionMode: ReflectionMode
-
+    val reflectionMode: ReflectionMode get() = ReflectionMode.entries[FilaMaterial_getReflectionMode(nativeHandle)]
     /** Get the vertex coordinate space domain. */
-    val vertexDomain: VertexDomain
-
+    val vertexDomain: VertexDomain get() = VertexDomain.entries[FilaMaterial_getVertexDomain(nativeHandle)]
     /** Get the face culling mode. */
-    val cullingMode: CullingMode
-
+    val cullingMode: CullingMode get() = CullingMode.entries[FilaMaterial_getCullingMode(nativeHandle)]
+    
     /** Check if color writes are enabled. Default is true. */
-    val isColorWriteEnabled: Boolean
-
+    val isColorWriteEnabled: Boolean get() = FilaMaterial_isColorWriteEnabled(nativeHandle)
     /** Check if depth writes are enabled. Default is true. */
-    val isDepthWriteEnabled: Boolean
-
+    val isDepthWriteEnabled: Boolean get() = FilaMaterial_isDepthWriteEnabled(nativeHandle)
     /** Check if depth testing is enabled. Default is true. */
-    val isDepthCullingEnabled: Boolean
-
+    val isDepthCullingEnabled: Boolean get() = FilaMaterial_isDepthCullingEnabled(nativeHandle)
     /** Check if this material renders both front and back faces (double-sided). Default is false (back culling). */
-    val isDoubleSided: Boolean
-
+    val isDoubleSided: Boolean get() = FilaMaterial_isDoubleSided(nativeHandle)
     /**
      * Check if alpha-to-coverage is enabled.
      *
      * Alpha-to-coverage converts alpha values to a coverage mask for MSAA, improving
      * transparency rendering quality with MSAA.
      */
-    val isAlphaToCoverageEnabled: Boolean
-
+    val isAlphaToCoverageEnabled: Boolean get() = FilaMaterial_isAlphaToCoverageEnabled(nativeHandle)
+    
     /**
      * Get the alpha threshold for MASKED blending mode.
      *
@@ -412,8 +420,7 @@ expect class Material {
      *
      * @return Threshold value in [0, 1].
      */
-    val maskThreshold: Float
-
+    val maskThreshold: Float get() = FilaMaterial_getMaskThreshold(nativeHandle)
     /**
      * Get the specular anti-aliasing variance.
      *
@@ -421,8 +428,7 @@ expect class Material {
      *
      * @return Variance in [0, 1].
      */
-    val specularAntiAliasingVariance: Float
-
+    val specularAntiAliasingVariance: Float get() = FilaMaterial_getSpecularAntiAliasingVariance(nativeHandle)
     /**
      * Get the specular anti-aliasing threshold.
      *
@@ -430,24 +436,57 @@ expect class Material {
      *
      * @return Threshold in [0, 1].
      */
-    val specularAntiAliasingThreshold: Float
-
+    val specularAntiAliasingThreshold: Float get() = FilaMaterial_getSpecularAntiAliasingThreshold(nativeHandle)
     /** Get the minimum required feature level for this material. */
-    val featureLevel: Engine.FeatureLevel
-
+    val featureLevel: Engine.FeatureLevel get() = Engine.FeatureLevel.entries[FilaMaterial_getFeatureLevel(nativeHandle)]
+    
     /**
      * Get the number of parameters declared by this material.
      *
      * @return Parameter count (0 if the material has no parameters).
      */
-    val parameterCount: Int
+    val parameterCount: Int get() = FilaMaterial_getParameterCount(nativeHandle)
 
     /**
      * Get metadata about all parameters declared by this material.
      *
      * @return List of Parameter objects describing each parameter.
      */
-    val parameters: List<Parameter>
+    val parameters: List<Parameter> get() {
+        val count = parameterCount
+        if (count == 0) return emptyList()
+        // Five ints per parameter: isSampler, isSubpass, type, count, precision.
+        val info = IntArray(count * 5)
+        val n = info.usePinned { FilaMaterial_getParameters(nativeHandle, it, count) }
+        return (0 until n).map { i ->
+            val o = i * 5
+            Parameter(
+                stringFromInterop(FilaMaterial_getParameterName(nativeHandle, i)) ?: "",
+                materialParameterType(info[o + 2], info[o] != 0, info[o + 1] != 0),
+                Parameter.Precision.entries[info[o + 4]],
+                info[o + 3],
+            )
+        }
+    }
+
+    /**
+     * Get the set of vertex attributes required by this material.
+     *
+     * Use this to determine which attributes your vertex buffers must provide. If a required
+     * attribute is missing, rendering will fail or produce incorrect results.
+     *
+     * @return Set of required VertexAttribute values (e.g., POSITION, TANGENTS, UV0, COLOR, etc.).
+     */
+    val requiredAttributes: Set<VertexBuffer.VertexAttribute> get() {
+        val bitset = FilaMaterial_getRequiredAttributes(nativeHandle)
+        val result = mutableSetOf<VertexBuffer.VertexAttribute>()
+        VertexBuffer.VertexAttribute.entries.forEach { attr ->
+            if ((bitset and (1 shl attr.ordinal)) != 0) {
+                result.add(attr)
+            }
+        }
+        return result
+    }
 
     /**
      * Check whether a parameter with the given name exists.
@@ -455,8 +494,7 @@ expect class Material {
      * @param name Parameter name.
      * @return true if the parameter exists, false otherwise.
      */
-    fun hasParameter(name: String): Boolean
-
+    fun hasParameter(name: String): Boolean = name.useCString { FilaMaterial_hasParameter(nativeHandle, it) }
     /**
      * Get the transform parameter name associated with a sampler.
      *
@@ -465,8 +503,7 @@ expect class Material {
      * @param samplerName Name of a sampler parameter.
      * @return Transform parameter name if it exists, or null if not.
      */
-    fun getParameterTransformName(samplerName: String): String?
-
+    fun getParameterTransformName(samplerName: String): String? = samplerName.useCString { stringFromInterop(FilaMaterial_getParameterTransformName(nativeHandle, it)) }
     /**
      * Set a boolean parameter on this material's default instance.
      *
@@ -477,8 +514,7 @@ expect class Material {
      *
      * @see getDefaultInstance
      */
-    fun setDefaultParameter(name: String, value: Boolean)
-
+    fun setDefaultParameter(name: String, value: Boolean) = name.useCString { FilaMaterial_setDefaultParameter_bool(nativeHandle, it, value) }
     /**
      * Set a float parameter on this material's default instance.
      *
@@ -487,8 +523,7 @@ expect class Material {
      *
      * @see getDefaultInstance
      */
-    fun setDefaultParameter(name: String, value: Float)
-
+    fun setDefaultParameter(name: String, value: Float) = name.useCString { FilaMaterial_setDefaultParameter_float(nativeHandle, it, value) }
     /**
      * Set an integer parameter on this material's default instance.
      *
@@ -497,8 +532,7 @@ expect class Material {
      *
      * @see getDefaultInstance
      */
-    fun setDefaultParameter(name: String, value: Int)
-
+    fun setDefaultParameter(name: String, value: Int) = name.useCString { FilaMaterial_setDefaultParameter_int(nativeHandle, it, value) }
     /**
      * Set a 2D vector parameter on this material's default instance.
      *
@@ -508,8 +542,7 @@ expect class Material {
      *
      * @see getDefaultInstance
      */
-    fun setDefaultParameter(name: String, x: Float, y: Float)
-
+    fun setDefaultParameter(name: String, x: Float, y: Float) = name.useCString { FilaMaterial_setDefaultParameter_float2(nativeHandle, it, x, y) }
     /**
      * Set a 3D vector parameter on this material's default instance.
      *
@@ -520,8 +553,7 @@ expect class Material {
      *
      * @see getDefaultInstance
      */
-    fun setDefaultParameter(name: String, x: Float, y: Float, z: Float)
-
+    fun setDefaultParameter(name: String, x: Float, y: Float, z: Float) = name.useCString { FilaMaterial_setDefaultParameter_float3(nativeHandle, it, x, y, z) }
     /**
      * Set a 4D vector parameter on this material's default instance.
      *
@@ -533,18 +565,19 @@ expect class Material {
      *
      * @see getDefaultInstance
      */
-    fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float)
-
-    /**
-     * Get the set of vertex attributes required by this material.
-     *
-     * Use this to determine which attributes your vertex buffers must provide. If a required
-     * attribute is missing, rendering will fail or produce incorrect results.
-     *
-     * @return Set of required VertexAttribute values (e.g., POSITION, TANGENTS, UV0, COLOR, etc.).
-     */
-    val requiredAttributes: Set<VertexBuffer.VertexAttribute>
+    fun setDefaultParameter(name: String, x: Float, y: Float, z: Float, w: Float) = name.useCString { FilaMaterial_setDefaultParameter_float4(nativeHandle, it, x, y, z, w) }
 }
+
+// Every compiled .filamat begins with the MaterialVersion chunk, whose 8-byte type token is
+// "MAT_VERSION" stored little-endian — i.e. the bytes "SREV_TAM" on disk. Builder.build() checks
+// this before handing the payload to Filament's parser, which panics on a non-.filamat blob; that
+// panic unwinds across the prebuilt's -fno-exceptions frames and terminates the process. Bailing
+// here turns the common bad-asset case (a PNG, a truncated download) into an IllegalArgumentException.
+private val FILAMAT_MAGIC = "SREV_TAM".encodeToByteArray()
+
+/** True if [data] starts with the compiled-`.filamat` magic. Cheap structural sniff, not a full parse. */
+internal fun isValidFilamatPayload(data: ByteArray): Boolean =
+    data.size >= FILAMAT_MAGIC.size && FILAMAT_MAGIC.indices.all { data[it] == FILAMAT_MAGIC[it] }
 
 // ParameterInfo packs a union: `type` holds a UniformType, a SamplerType or a SubpassType,
 // selected by isSampler/isSubpass. Parameter.Type flattens the three enums in that order, so
@@ -560,3 +593,129 @@ internal fun materialParameterType(raw: Int, isSampler: Boolean, isSubpass: Bool
         else -> entries[raw.coerceIn(0, Material.Parameter.Type.MAT4.ordinal)]
     }
 }
+
+@ExternalSymbolName("FilaMaterial_Builder_build")
+private external fun FilaMaterial_Builder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterial_Builder_create")
+private external fun FilaMaterial_Builder_create(): NativePointer
+
+@ExternalSymbolName("FilaMaterial_Builder_destroy")
+private external fun FilaMaterial_Builder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaMaterial_Builder_package")
+private external fun FilaMaterial_Builder_package(builder: NativePointer, payload: NativePointer, size: Int)
+
+@ExternalSymbolName("FilaMaterial_Builder_shadowSamplingQuality")
+private external fun FilaMaterial_Builder_shadowSamplingQuality(builder: NativePointer, quality: Int)
+
+@ExternalSymbolName("FilaMaterial_Builder_sphericalHarmonicsBandCount")
+private external fun FilaMaterial_Builder_sphericalHarmonicsBandCount(builder: NativePointer, count: Int)
+
+@ExternalSymbolName("FilaMaterial_Builder_uboBatching")
+private external fun FilaMaterial_Builder_uboBatching(builder: NativePointer, mode: Int)
+
+@ExternalSymbolName("FilaMaterial_compile")
+private external fun FilaMaterial_compile(material: NativePointer, priority: Int, variants: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)
+
+@ExternalSymbolName("FilaMaterial_createInstance")
+private external fun FilaMaterial_createInstance(material: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterial_createInstanceWithName")
+private external fun FilaMaterial_createInstanceWithName(material: NativePointer, name: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterial_getBlendingMode")
+private external fun FilaMaterial_getBlendingMode(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getCullingMode")
+private external fun FilaMaterial_getCullingMode(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getDefaultInstance")
+private external fun FilaMaterial_getDefaultInstance(material: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterial_getFeatureLevel")
+private external fun FilaMaterial_getFeatureLevel(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getInterpolation")
+private external fun FilaMaterial_getInterpolation(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getMaskThreshold")
+private external fun FilaMaterial_getMaskThreshold(material: NativePointer): Float
+
+@ExternalSymbolName("FilaMaterial_getName")
+private external fun FilaMaterial_getName(material: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterial_getParameterCount")
+private external fun FilaMaterial_getParameterCount(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getParameterName")
+private external fun FilaMaterial_getParameterName(material: NativePointer, index: Int): NativePointer
+
+@ExternalSymbolName("FilaMaterial_getParameterTransformName")
+private external fun FilaMaterial_getParameterTransformName(material: NativePointer, samplerName: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaMaterial_getParameters")
+private external fun FilaMaterial_getParameters(material: NativePointer, info: NativePointer, count: Int): Int
+
+@ExternalSymbolName("FilaMaterial_getReflectionMode")
+private external fun FilaMaterial_getReflectionMode(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getRefractionMode")
+private external fun FilaMaterial_getRefractionMode(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getRefractionType")
+private external fun FilaMaterial_getRefractionType(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getRequiredAttributes")
+private external fun FilaMaterial_getRequiredAttributes(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getShading")
+private external fun FilaMaterial_getShading(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getSpecularAntiAliasingThreshold")
+private external fun FilaMaterial_getSpecularAntiAliasingThreshold(material: NativePointer): Float
+
+@ExternalSymbolName("FilaMaterial_getSpecularAntiAliasingVariance")
+private external fun FilaMaterial_getSpecularAntiAliasingVariance(material: NativePointer): Float
+
+@ExternalSymbolName("FilaMaterial_getTransparencyMode")
+private external fun FilaMaterial_getTransparencyMode(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_getVertexDomain")
+private external fun FilaMaterial_getVertexDomain(material: NativePointer): Int
+
+@ExternalSymbolName("FilaMaterial_hasParameter")
+private external fun FilaMaterial_hasParameter(material: NativePointer, name: NativePointer): Boolean
+
+@ExternalSymbolName("FilaMaterial_isAlphaToCoverageEnabled")
+private external fun FilaMaterial_isAlphaToCoverageEnabled(material: NativePointer): Boolean
+
+@ExternalSymbolName("FilaMaterial_isColorWriteEnabled")
+private external fun FilaMaterial_isColorWriteEnabled(material: NativePointer): Boolean
+
+@ExternalSymbolName("FilaMaterial_isDepthCullingEnabled")
+private external fun FilaMaterial_isDepthCullingEnabled(material: NativePointer): Boolean
+
+@ExternalSymbolName("FilaMaterial_isDepthWriteEnabled")
+private external fun FilaMaterial_isDepthWriteEnabled(material: NativePointer): Boolean
+
+@ExternalSymbolName("FilaMaterial_isDoubleSided")
+private external fun FilaMaterial_isDoubleSided(material: NativePointer): Boolean
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_bool")
+private external fun FilaMaterial_setDefaultParameter_bool(material: NativePointer, name: NativePointer, value: Boolean)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float")
+private external fun FilaMaterial_setDefaultParameter_float(material: NativePointer, name: NativePointer, value: Float)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float2")
+private external fun FilaMaterial_setDefaultParameter_float2(material: NativePointer, name: NativePointer, x: Float, y: Float)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float3")
+private external fun FilaMaterial_setDefaultParameter_float3(material: NativePointer, name: NativePointer, x: Float, y: Float, z: Float)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_float4")
+private external fun FilaMaterial_setDefaultParameter_float4(material: NativePointer, name: NativePointer, x: Float, y: Float, z: Float, w: Float)
+
+@ExternalSymbolName("FilaMaterial_setDefaultParameter_int")
+private external fun FilaMaterial_setDefaultParameter_int(material: NativePointer, name: NativePointer, value: Int)

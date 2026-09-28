@@ -9,7 +9,7 @@ import cnames.structs.FilaEngineBuilder
 actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: CPointer<FilaEngine>?) : AutoCloseable {
     private val mTransformManager by lazy { TransformManager(FilaEngine_getTransformManager(nativeHandle)!!.toLong()) }
     private val mLightManager by lazy { LightManager(FilaEngine_getLightManager(nativeHandle)!!) }
-    private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!) }
+    private val mRenderableManager by lazy { RenderableManager(FilaEngine_getRenderableManager(nativeHandle)!!.toLong()) }
     private val mEntityManager by lazy { EntityManager(FilaEngine_getEntityManager(nativeHandle)!!.toLong()) }
     // The C wrapper has no getConfig, so Builder.build() hands us the Config it was given.
     internal var mConfig: Config? = null
@@ -134,7 +134,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         }
 
         actual fun colorGrading(colorGrading: ColorGrading.Builder): Builder {
-            FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle)
+            FilaEngineBuilder_colorGrading(nativeBuilder, colorGrading.nativeHandle.toCPointer())
             return this
         }
 
@@ -182,22 +182,22 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
     actual fun isValidSkinningBuffer(skinningBuffer: SkinningBuffer): Boolean = FilaEngine_isValidSkinningBuffer(nativeHandle, skinningBuffer.nativeHandle.toCPointer())
     actual fun isValidMorphTargetBuffer(morphTargetBuffer: MorphTargetBuffer): Boolean = FilaEngine_isValidMorphTargetBuffer(nativeHandle, morphTargetBuffer.nativeHandle.toCPointer())
     actual fun isValidIndirectLight(ibl: IndirectLight): Boolean = FilaEngine_isValidIndirectLight(nativeHandle, ibl.nativeHandle.toCPointer())
-    actual fun isValidMaterial(material: Material): Boolean = FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle)
-    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle, materialInstance.nativeHandle)
-    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+    actual fun isValidMaterial(material: Material): Boolean = FilaEngine_isValidMaterial(nativeHandle, material.nativeHandle.toCPointer())
+    actual fun isValidMaterialInstance(material: Material, materialInstance: MaterialInstance): Boolean = FilaEngine_isValidMaterialInstance(nativeHandle, material.nativeHandle.toCPointer(), materialInstance.nativeHandle.toCPointer())
+    actual fun isValidExpensiveMaterialInstance(materialInstance: MaterialInstance): Boolean = FilaEngine_isValidExpensiveMaterialInstance(nativeHandle, materialInstance.nativeHandle.toCPointer())
     actual fun isValidSkybox(skybox: Skybox): Boolean = FilaEngine_isValidSkybox(nativeHandle, skybox.nativeHandle.toCPointer())
-    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle)
+    actual fun isValidColorGrading(colorGrading: ColorGrading): Boolean = FilaEngine_isValidColorGrading(nativeHandle, colorGrading.nativeHandle.toCPointer())
     actual fun isValidTexture(texture: Texture): Boolean = FilaEngine_isValidTexture(nativeHandle, texture.nativeHandle.toCPointer())
     actual fun isValidRenderTarget(renderTarget: RenderTarget): Boolean = FilaEngine_isValidRenderTarget(nativeHandle, renderTarget.nativeHandle.toCPointer())
     actual fun isValidStream(stream: Stream): Boolean = FilaEngine_isValidStream(nativeHandle, stream.nativeHandle.toCPointer())
-    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle)
+    actual fun isValidSwapChain(swapChain: SwapChain): Boolean = FilaEngine_isValidSwapChain(nativeHandle, swapChain.nativeHandle.toCPointer())
 
-    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(FilaEngine_createSwapChain(nativeHandle, surface.handler, 0UL))
-    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(FilaEngine_createSwapChain(nativeHandle, surface.handler, flags.toULong()))
-    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilaEngine_createSwapChainHeadless(nativeHandle, width.toUInt(), height.toUInt(), flags.toULong()))
+    actual fun createSwapChain(surface: NativeSurface): SwapChain = SwapChain(FilaEngine_createSwapChain(nativeHandle, surface.handler, 0UL).toLong())
+    actual fun createSwapChain(surface: NativeSurface, flags: Long): SwapChain = SwapChain(FilaEngine_createSwapChain(nativeHandle, surface.handler, flags.toULong()).toLong())
+    actual fun createSwapChain(width: Int, height: Int, flags: Long): SwapChain = SwapChain(FilaEngine_createSwapChainHeadless(nativeHandle, width.toUInt(), height.toUInt(), flags.toULong()).toLong())
     actual fun destroySwapChain(swapChain: SwapChain) {
-        FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle)
-        swapChain.nativeHandle = null
+        FilaEngine_destroySwapChain(nativeHandle, swapChain.nativeHandle.toCPointer())
+        swapChain.nativeHandle = 0L
         swapChain.releaseCallbackStubs()
     }
 
@@ -262,18 +262,18 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         ibl.nativeHandle = 0L
     }
     actual fun destroyMaterial(material: Material) {
-        FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle)
+        FilaEngine_destroyMaterial(nativeHandle, material.nativeHandle.toCPointer())
     }
     actual fun destroyMaterialInstance(materialInstance: MaterialInstance) {
-        FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle)
+        FilaEngine_destroyMaterialInstance(nativeHandle, materialInstance.nativeHandle.toCPointer())
     }
     actual fun destroySkybox(skybox: Skybox) {
         FilaEngine_destroySkybox(nativeHandle, skybox.nativeHandle.toCPointer())
         skybox.nativeHandle = 0L
     }
     actual fun destroyColorGrading(colorGrading: ColorGrading) {
-        FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle)
-        colorGrading.nativeHandle = null
+        FilaEngine_destroyColorGrading(nativeHandle, colorGrading.nativeHandle.toCPointer())
+        colorGrading.nativeHandle = 0L
     }
     actual fun destroyTexture(texture: Texture) {
         FilaEngine_destroyTexture(nativeHandle, texture.nativeHandle.toCPointer())
@@ -325,7 +325,7 @@ actual class Engine @InternalFilamentApi constructor(internal var nativeHandle: 
         FilaEngine_compile(
             nativeHandle,
             priority.ordinal.toUByte(),
-            material.nativeHandle,
+            material.nativeHandle.toCPointer(),
             view.nativeHandle,
             shadowReceiver.ordinal.toUByte(),
             skinning.ordinal.toUByte(),

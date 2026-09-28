@@ -5,21 +5,11 @@ package io.github.erkko68.filament
 // the object's lifetime.
 
 @InternalFilamentApi
-val ColorGrading.nativeObject: Int get() = nativeHandle
-@InternalFilamentApi
 val Engine.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
 val LightManager.nativeObject: Int get() = nativeLightManager
 @InternalFilamentApi
-val Material.nativeObject: Int get() = nativeHandle
-@InternalFilamentApi
-val MaterialInstance.nativeObject: Int get() = nativeHandle
-@InternalFilamentApi
-val RenderableManager.nativeObject: Int get() = nativeHandle
-@InternalFilamentApi
 val Renderer.nativeObject: Int get() = nativeHandle
-@InternalFilamentApi
-val SwapChain.nativeObject: Int get() = nativeHandle
 @InternalFilamentApi
 val View.nativeObject: Int get() = nativeHandle
 

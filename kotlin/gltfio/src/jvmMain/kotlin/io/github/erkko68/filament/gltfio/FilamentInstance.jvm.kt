@@ -80,7 +80,7 @@ actual class FilamentInstance @InternalFilamentApi constructor(internal var nati
         return confined { a ->
             val out = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaFilamentInstance_getMaterialInstances(nativeHandle, out)
-            List(count) { MaterialInstance(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
+            List(count) { MaterialInstance(out.getAtIndex(ValueLayout.ADDRESS, it.toLong()).address()) }
         }
     }
 

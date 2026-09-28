@@ -42,9 +42,6 @@ typedef struct FilaSkinningBuffer FilaSkinningBuffer;
 typedef struct FilaMorphTargetBuffer FilaMorphTargetBuffer;
 typedef struct FilaToneMapper FilaToneMapper;
 
-// Packed texture sampler parameters (matches JNI long)
-typedef uint64_t FilaTextureSampler;
-
 typedef struct FilaCallbackHandler FilaCallbackHandler;
 
 typedef enum FilaVertexAttribute {

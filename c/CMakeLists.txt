@@ -160,7 +160,6 @@ set(FILAMENT_C_SOURCES
     filament/cpp/MaterialInstance.cpp
     filament/cpp/MathUtils.cpp
     filament/cpp/EntityManager.cpp
-    filament/cpp/TextureSampler.cpp
     filament/cpp/Colors.cpp
     filament/cpp/SurfaceOrientation.cpp
 )
@@ -635,7 +634,7 @@ if (FILAMENT_PLATFORM STREQUAL "wasm")
                 file(READ "${_hdr}" _text)
                 string(REGEX MATCHALL "Fila[A-Za-z0-9_]+[ \t\r\n]*\\([^;{]*\\)" _protos "${_text}")
                 foreach(_p IN LISTS _protos)
-                    if (_p MATCHES "int64_t|FilaTextureSampler")
+                    if (_p MATCHES "int64_t")
                         string(REGEX MATCH "^Fila[A-Za-z0-9_]+" _name "${_p}")
                         list(APPEND _i64s "'${_name}'")
                     endif()

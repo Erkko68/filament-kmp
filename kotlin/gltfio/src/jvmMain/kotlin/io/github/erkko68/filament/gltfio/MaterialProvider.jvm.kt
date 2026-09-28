@@ -43,7 +43,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
                 nativeHandle, config.toNative(a), a.uvmap(uvmap),
                 label?.let { a.cstr(it) } ?: NULL, extras?.let { a.cstr(it) } ?: NULL,
             )
-            handle.takeUnless { it.isNullPtr() }?.let { MaterialInstance(it) }
+            handle.takeUnless { it.isNullPtr() }?.let { MaterialInstance(it.address()) }
         }
 
     actual override fun getMaterial(config: MaterialKey, uvmap: IntArray, label: String?): Material? =
@@ -51,7 +51,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
             val handle = FilamentC.FilaMaterialProvider_getMaterial(
                 nativeHandle, config.toNative(a), a.uvmap(uvmap), label?.let { a.cstr(it) } ?: NULL,
             )
-            handle.takeUnless { it.isNullPtr() }?.let { Material(it) }
+            handle.takeUnless { it.isNullPtr() }?.let { Material(it.address()) }
         }
 
     actual override val materials: List<Material> get() {
@@ -60,7 +60,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         return confined { a ->
             val out = a.allocate(ValueLayout.ADDRESS, count.toLong())
             FilamentC.FilaMaterialProvider_getMaterials(nativeHandle, out)
-            List(count) { Material(out.getAtIndex(ValueLayout.ADDRESS, it.toLong())) }
+            List(count) { Material(out.getAtIndex(ValueLayout.ADDRESS, it.toLong()).address()) }
         }
     }
 

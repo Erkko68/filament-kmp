@@ -34,7 +34,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
                 val handle = FilaMaterialProvider_createMaterialInstance(
                     nativeHandle, nativeKey.ptr, pinned.addressOf(0).reinterpret<UByteVar>(), label, extras
                 )
-                handle?.let { io.github.erkko68.filament.MaterialInstance(it) }
+                handle?.let { io.github.erkko68.filament.MaterialInstance(it.toLong()) }
             }
         }
     }
@@ -49,7 +49,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
                 val handle = FilaMaterialProvider_getMaterial(
                     nativeHandle, nativeKey.ptr, pinned.addressOf(0).reinterpret<UByteVar>(), label
                 )
-                handle?.let { io.github.erkko68.filament.Material(it) }
+                handle?.let { io.github.erkko68.filament.Material(it.toLong()) }
             }
         }
     }
@@ -60,7 +60,7 @@ actual class UbershaderProvider actual constructor(engine: Engine) : MaterialPro
         memScoped {
             val materials = allocArray<CPointerVar<cnames.structs.FilaMaterial>>(count)
             FilaMaterialProvider_getMaterials(nativeHandle, materials)
-            return List(count) { io.github.erkko68.filament.Material(materials[it]) }
+            return List(count) { io.github.erkko68.filament.Material(materials[it].toLong()) }
         }
     }
 
