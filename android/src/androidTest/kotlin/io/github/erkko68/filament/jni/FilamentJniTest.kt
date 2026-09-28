@@ -52,7 +52,7 @@ class FilamentJniTest {
     @Test
     fun structViewsRoundTripThroughTheCApi() {
         val view = FilaEngine_createView(engine)
-        nativeScoped {
+        heapScoped {
             val ao = FilaViewAmbientOcclusionOptions(alloc(FilaViewAmbientOcclusionOptions.SIZE))
             FilaView_getAmbientOcclusionOptions(view, ao.ptr)
             ao.enabled = true
@@ -80,17 +80,15 @@ class FilamentJniTest {
     @Test
     fun bufferCallbackFiresOnceUploadIsConsumed() {
         val texture = texture(2, 2)
-        val pixels = FilaJni.buffer(FilaJni.alloc(16), 16)
-        repeat(16) { pixels.put(it, 0x7f) }
         val released = CountDownLatch(1)
+        val pixels = upload(ByteArray(16) { 0x7f }) { released.countDown() }
         FilaTexture_setImage(
             texture, engine, 0, 0, 0, 0, 2, 2, 1,
-            FilaJni.address(pixels), 16, FILA_PIXEL_DATA_FORMAT_RGBA, FILA_PIXEL_DATA_TYPE_UBYTE, 1, 0, 0, 0,
-            0, FilaJni.bufferCallback(), FilaJni.newCallback({ released.countDown() }, once = true),
+            pixels.ptr, pixels.size.toLong(), FILA_PIXEL_DATA_FORMAT_RGBA, FILA_PIXEL_DATA_TYPE_UBYTE, 1, 0, 0, 0,
+            0, pixels.callback, pixels.userData,
         )
         FilaEngine_flushAndWait(engine, Long.MAX_VALUE)
         assertTrue(released.await(5, TimeUnit.SECONDS), "FilaBufferCallback never ran")
-        FilaJni.free(FilaJni.address(pixels))
         FilaEngine_destroyTexture(engine, texture)
     }
 
@@ -100,19 +98,19 @@ class FilamentJniTest {
         val texture = texture(2, 2)
         val seen = java.util.Collections.synchronizedList(mutableListOf<Long>())
         val released = CountDownLatch(2)
-        val userData = FilaJni.newCallback({ seen += it; released.countDown() }, once = false)
-        val uploads = List(2) { FilaJni.alloc(16) }
+        val userData = Callbacks.register(once = false) { buffer, _ -> seen += buffer; released.countDown() }
+        val uploads = List(2) { allocZeroed(16) }
         uploads.forEach { pixels ->
             FilaTexture_setImage(
                 texture, engine, 0, 0, 0, 0, 2, 2, 1,
                 pixels, 16, FILA_PIXEL_DATA_FORMAT_RGBA, FILA_PIXEL_DATA_TYPE_UBYTE, 1, 0, 0, 0,
-                0, FilaJni.bufferCallback(), userData,
+                0, Callbacks.keepBuffer, userData,
             )
         }
         FilaEngine_flushAndWait(engine, Long.MAX_VALUE)
         assertTrue(released.await(5, TimeUnit.SECONDS), "persistent callback ran ${2 - released.count} of 2 times")
         assertEquals(uploads.toSet(), seen.toSet())
-        FilaJni.releaseCallback(userData)
+        Callbacks.release(userData)
         uploads.forEach(FilaJni::free)
         FilaEngine_destroyTexture(engine, texture)
     }

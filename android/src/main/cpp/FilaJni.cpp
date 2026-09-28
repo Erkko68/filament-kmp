@@ -16,7 +16,7 @@ public:
 } // namespace filament
 
 static JavaVM* sVm = nullptr;
-static jmethodID sInvoke = nullptr; // FilaCallback.invoke(long)
+static jmethodID sInvoke = nullptr; // FilaCallback.invoke(long, long)
 
 extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env;
@@ -25,7 +25,7 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
     // Filament's Android backend (streams, EGL helpers) needs the VM, as in upstream filament-jni.
     filament::VirtualMachineEnv::JNI_OnLoad(vm);
     jclass callback = env->FindClass("io/github/erkko68/filament/jni/FilaCallback");
-    sInvoke = env->GetMethodID(callback, "invoke", "(J)V");
+    sInvoke = env->GetMethodID(callback, "invoke", "(JJ)V");
     env->DeleteLocalRef(callback);
     return JNI_VERSION_1_6;
 }
@@ -50,10 +50,10 @@ static void release(JNIEnv* env, Callback* callback) {
     delete callback;
 }
 
-static void dispatch(void* arg, void* userData) {
+static void dispatch(void* userData, jlong a, jlong b) {
     JNIEnv* env = attachedEnv();
     auto callback = static_cast<Callback*>(userData);
-    env->CallVoidMethod(callback->target, sInvoke, reinterpret_cast<jlong>(arg));
+    env->CallVoidMethod(callback->target, sInvoke, a, b);
     if (env->ExceptionCheck()) {
         env->ExceptionDescribe();
         env->ExceptionClear();
@@ -61,9 +61,17 @@ static void dispatch(void* arg, void* userData) {
     if (callback->once) release(env, callback);
 }
 
-static void bufferTrampoline(void* buffer, size_t, void* userData) { dispatch(buffer, userData); }
-static void userDataTrampoline(void* userData) { dispatch(nullptr, userData); }
-static void pointerTrampoline(void* arg, void* userData) { dispatch(arg, userData); }
+// One trampoline per C callback shape, matching web's Callbacks (userOnly, argUser, keepBuffer, freeBuffer).
+static void userOnly(void* userData) { dispatch(userData, 0, 0); }
+static void argUser(void* arg, void* userData) { dispatch(userData, reinterpret_cast<jlong>(arg), 0); }
+static void keepBuffer(void* buffer, size_t size, void* userData) {
+    dispatch(userData, reinterpret_cast<jlong>(buffer), static_cast<jlong>(size));
+}
+// For uploads copied into native memory: frees the copy once Filament has consumed it.
+static void freeBuffer(void* buffer, size_t size, void* userData) {
+    std::free(buffer);
+    if (userData) dispatch(userData, reinterpret_cast<jlong>(buffer), static_cast<jlong>(size));
+}
 
 #define FILA_JNI(ret, name) extern "C" JNIEXPORT ret JNICALL Java_io_github_erkko68_filament_jni_FilaJni_##name
 
@@ -99,14 +107,11 @@ FILA_JNI(void, releaseCallback)(JNIEnv* env, jclass, jlong userData) {
     release(env, reinterpret_cast<Callback*>(userData));
 }
 
-FILA_JNI(jlong, bufferCallback)(JNIEnv*, jclass) {
-    return reinterpret_cast<jlong>(&bufferTrampoline);
-}
+FILA_JNI(jlong, userOnly)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&userOnly); }
+FILA_JNI(jlong, argUser)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&argUser); }
+FILA_JNI(jlong, keepBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&keepBuffer); }
+FILA_JNI(jlong, freeBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&freeBuffer); }
 
-FILA_JNI(jlong, userDataCallback)(JNIEnv*, jclass) {
-    return reinterpret_cast<jlong>(&userDataTrampoline);
-}
-
-FILA_JNI(jlong, pointerCallback)(JNIEnv*, jclass) {
-    return reinterpret_cast<jlong>(&pointerTrampoline);
+FILA_JNI(jstring, readString)(JNIEnv* env, jclass, jlong ptr) {
+    return ptr ? env->NewStringUTF(reinterpret_cast<const char*>(ptr)) : nullptr;
 }

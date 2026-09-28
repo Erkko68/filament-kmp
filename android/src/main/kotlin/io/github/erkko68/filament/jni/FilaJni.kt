@@ -6,6 +6,7 @@ import java.nio.ByteOrder
 /**
  * Hand-written half of the JNI layer (native side: src/main/cpp/FilaJni.cpp). The generated FilamentC.kt & co.
  * hold the Fila* functions and struct views; this object loads libfilament-c and covers what they can't express.
+ * The helpers below mirror :web's (heapScoped, usePinned, upload, Callbacks) so actuals port between them as-is.
  */
 object FilaJni {
     init { System.loadLibrary("filament-c") }
@@ -26,48 +27,132 @@ object FilaJni {
     /** [view] in native byte order, which struct views and C arrays need. */
     fun buffer(ptr: Long, size: Int): ByteBuffer = view(ptr, size.toLong()).order(ByteOrder.nativeOrder())
 
+    /** Reads a NUL-terminated UTF-8 string, or null for a null pointer. */
+    @JvmStatic external fun readString(ptr: Long): String?
+
     /** `ANativeWindow*` for an `android.view.Surface`, for FilaEngine_createSwapChain; release with [releaseWindow]. */
     @JvmStatic external fun windowFromSurface(surface: Any): Long
     @JvmStatic external fun releaseWindow(window: Long)
 
-    /**
-     * userData for a C callback built by [bufferCallback], [userDataCallback] or [pointerCallback]. A [once]
-     * callback frees itself after its first call; otherwise free it with [releaseCallback] once C can't call it.
-     */
     @JvmStatic external fun newCallback(callback: FilaCallback, once: Boolean): Long
     @JvmStatic external fun releaseCallback(userData: Long)
-
-    /** `void (*)(void* buffer, size_t size, void* userData)` (FilaBufferCallback); `arg` is `buffer`. */
-    @JvmStatic external fun bufferCallback(): Long
-
-    /** `void (*)(void* userData)` (engine compile, frame scheduled); `arg` is 0. */
-    @JvmStatic external fun userDataCallback(): Long
-
-    /** `void (*)(T* arg, void* userData)` (material compile, stream, frame completed, picking). */
-    @JvmStatic external fun pointerCallback(): Long
+    @JvmStatic external fun userOnly(): Long
+    @JvmStatic external fun argUser(): Long
+    @JvmStatic external fun keepBuffer(): Long
+    @JvmStatic external fun freeBuffer(): Long
 }
 
-/** A C callback's Kotlin side; [arg] is the callback's first pointer argument, or 0. Runs on the calling native thread. */
+/** JNI target behind [Callbacks.register]; `a`/`b` are the callback's leading C arguments (or 0). */
 fun interface FilaCallback {
-    fun invoke(arg: Long)
+    fun invoke(a: Long, b: Long)
 }
 
-/** Scratch native memory freed when [nativeScoped] returns, like web's `heapScoped`. */
-class NativeScope {
-    private val allocations = ArrayList<Long>()
+/**
+ * Kotlin lambdas behind C callbacks, shaped like :web's. Pass [register]'s result as the C `userData` and
+ * one of the trampolines as the function pointer. Callbacks run on the calling native thread (usually
+ * Filament's driver thread); an exception is reported and swallowed rather than unwinding through C++.
+ */
+object Callbacks {
+    /** Registers [fn] and returns its userData. A [once] callback frees itself after its first call; release others. */
+    fun register(once: Boolean, fn: (a: Long, b: Long) -> Unit): Long = FilaJni.newCallback(FilaCallback(fn), once)
 
-    fun alloc(size: Int): Long = FilaJni.alloc(size.toLong()).also { allocations += it }
+    fun release(userData: Long) = FilaJni.releaseCallback(userData)
 
-    @PublishedApi internal fun freeAll() = allocations.forEach(FilaJni::free)
+    /** `void (*)(void* userData)` — e.g. FilaEngineCompileCallback, frame-scheduled. */
+    val userOnly: Long by lazy { FilaJni.userOnly() }
+
+    /** `void (*)(T* arg, void* userData)` — e.g. picking, frame-completed, material compile. */
+    val argUser: Long by lazy { FilaJni.argUser() }
+
+    /** FilaBufferCallback that frees an [upload] copy, then runs the registered lambda if userData isn't 0. */
+    val freeBuffer: Long by lazy { FilaJni.freeBuffer() }
+
+    /** FilaBufferCallback that leaves the buffer alone (e.g. readPixels, which reads it in the lambda). */
+    val keepBuffer: Long by lazy { FilaJni.keepBuffer() }
 }
 
-inline fun <R> nativeScoped(block: NativeScope.() -> R): R {
-    val scope = NativeScope()
+/**
+ * The analogue of cinterop's `memScoped` (and :web's `heapScoped`): everything allocated in [block] is freed
+ * when it returns. Allocations are zeroed, so structs only need the fields they actually set.
+ */
+inline fun <R> heapScoped(block: HeapScope.() -> R): R {
+    val scope = HeapScope()
     try {
         return scope.block()
     } finally {
         scope.freeAll()
     }
+}
+
+class HeapScope {
+    private val allocations = ArrayList<Long>(4)
+
+    fun alloc(size: Int): Long = allocZeroed(size).also { allocations += it }
+
+    fun bytes(values: ByteArray): Long = alloc(values.size).also { writeBytes(it, values) }
+    fun floats(values: FloatArray): Long = alloc(values.size * 4).also { FilaJni.buffer(it, values.size * 4).asFloatBuffer().put(values) }
+    fun doubles(values: DoubleArray): Long = alloc(values.size * 8).also { FilaJni.buffer(it, values.size * 8).asDoubleBuffer().put(values) }
+    fun ints(values: IntArray): Long = alloc(values.size * 4).also { FilaJni.buffer(it, values.size * 4).asIntBuffer().put(values) }
+    fun shorts(values: ShortArray): Long = alloc(values.size * 2).also { FilaJni.buffer(it, values.size * 2).asShortBuffer().put(values) }
+
+    @PublishedApi internal fun freeAll() {
+        allocations.forEach(FilaJni::free)
+        allocations.clear()
+    }
+}
+
+fun allocZeroed(size: Int): Long = FilaJni.alloc(maxOf(size, 1).toLong()).also { check(it != 0L) { "calloc($size) failed" } }
+
+/** Copies [count] bytes of [bytes] (from [offset]) into native memory at [ptr]. */
+fun writeBytes(ptr: Long, bytes: ByteArray, offset: Int = 0, count: Int = bytes.size - offset) {
+    if (count > 0) FilaJni.buffer(ptr, count).put(bytes, offset, count)
+}
+
+/** Copies [count] bytes from native memory at [ptr] into a new ByteArray. */
+fun readBytes(ptr: Long, count: Int): ByteArray = ByteArray(count).also { if (count > 0) FilaJni.buffer(ptr, count).get(it) }
+
+fun readString(ptr: Long): String? = FilaJni.readString(ptr)
+
+// Stand-ins for cinterop's usePinned: the array is copied in, [block] gets its native address, and the
+// contents are copied back (C may have written to it) before the copy is freed.
+
+inline fun <R> FloatArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
+    val ptr = floats(this@usePinned)
+    block(ptr).also { FilaJni.buffer(ptr, size * 4).asFloatBuffer().get(this@usePinned) }
+}
+
+inline fun <R> DoubleArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
+    val ptr = doubles(this@usePinned)
+    block(ptr).also { FilaJni.buffer(ptr, size * 8).asDoubleBuffer().get(this@usePinned) }
+}
+
+inline fun <R> IntArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
+    val ptr = ints(this@usePinned)
+    block(ptr).also { FilaJni.buffer(ptr, size * 4).asIntBuffer().get(this@usePinned) }
+}
+
+inline fun <R> ShortArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
+    val ptr = shorts(this@usePinned)
+    block(ptr).also { FilaJni.buffer(ptr, size * 2).asShortBuffer().get(this@usePinned) }
+}
+
+inline fun <R> ByteArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
+    val ptr = bytes(this@usePinned)
+    block(ptr).also { if (size > 0) FilaJni.buffer(ptr, size).get(this@usePinned) }
+}
+
+/** A native copy handed to an asynchronous Filament upload, released through [callback]. */
+class Upload(val ptr: Long, val size: Int, val callback: Long, val userData: Long)
+
+/**
+ * Copies [size] bytes of [data] into native memory for a `set*Buffer`/`setImage` call. Pass [Upload.callback]
+ * and [Upload.userData] as the C release callback: Filament frees the copy once consumed, then [onRelease] runs.
+ */
+fun upload(data: ByteArray, size: Int = data.size, onRelease: (() -> Unit)? = null): Upload {
+    val ptr = allocZeroed(size)
+    writeBytes(ptr, data, 0, size)
+    val userData = if (onRelease != null) Callbacks.register(once = true) { _, _ -> onRelease() } else 0L
+    return Upload(ptr, size, Callbacks.freeBuffer, userData)
 }
 
 // Struct field access by the field's compiled size (1/2/4/8 bytes differ per ABI for size_t and pointers).
