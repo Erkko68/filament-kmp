@@ -3,9 +3,11 @@
 # Added by c/CMakeLists.txt.
 
 file(GLOB forwarders CONFIGURE_DEPENDS "${FILA_BINDINGS_DIR}/jni/*.c")
+# Own C-only target: Visual Studio evaluates $<COMPILE_LANGUAGE> per target, so C next to C++ gets C++ flags.
+add_library(fila-jni-forwarders OBJECT ${forwarders})
 add_library(filament-c-jni SHARED
     src/main/cpp/FilaJni.cpp
-    ${forwarders}
+    $<TARGET_OBJECTS:fila-jni-forwarders>
     $<TARGET_OBJECTS:fila-filament>
     $<TARGET_OBJECTS:fila-filamat>
     $<TARGET_OBJECTS:fila-filament-utils>
@@ -43,7 +45,9 @@ elseif (WIN32)
 else()
     set(jni_os linux)
 endif()
-target_include_directories(filament-c-jni PRIVATE "${JNI_HOME}/include" "${JNI_HOME}/include/${jni_os}")
+foreach(target filament-c-jni fila-jni-forwarders)
+    target_include_directories(${target} PRIVATE "${JNI_HOME}/include" "${JNI_HOME}/include/${jni_os}")
+endforeach()
 
 if (APPLE)
     target_link_libraries(filament-c-jni PRIVATE
