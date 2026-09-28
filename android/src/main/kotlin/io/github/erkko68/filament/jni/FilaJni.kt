@@ -4,13 +4,13 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * Hand-written half of the JNI layer (native side: src/main/cpp/FilaJni.cpp). [FilamentJni] holds the
- * generated Fila* functions and struct views; this object loads libfilament-c and covers what they can't express.
+ * Hand-written half of the JNI layer (native side: src/main/cpp/FilaJni.cpp). The generated FilamentC.kt & co.
+ * hold the Fila* functions and struct views; this object loads libfilament-c and covers what they can't express.
  */
 object FilaJni {
     init { System.loadLibrary("filament-c") }
 
-    /** Forces the library load; [FilamentJni] calls it from its initializer. */
+    /** Forces the library load; each generated file calls it from its initializer. */
     fun load() {}
 
     /** Zero-filled native memory (calloc): hand-built C structs must start fully initialised. */

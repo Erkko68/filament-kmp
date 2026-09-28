@@ -496,13 +496,14 @@ if (FILAMENT_PLATFORM STREQUAL "android")
     add_filament_library(abseil)
 
     set(_jni_dir "${CMAKE_CURRENT_SOURCE_DIR}/../android/src/main/cpp")
+    file(GLOB _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
     add_library(filament-c-android SHARED
         ${FILAMENT_C_SOURCES}
         ${FILAMAT_C_SOURCES}
         ${FILAMENT_UTILS_C_SOURCES}
         ${GLTFIO_C_SOURCES}
         ${_jni_dir}/FilaJni.cpp
-        ${_jni_dir}/generated/FilaJniBindings.c
+        ${_jni_generated}
     )
     set_target_properties(filament-c-android PROPERTIES OUTPUT_NAME "filament-c")
 

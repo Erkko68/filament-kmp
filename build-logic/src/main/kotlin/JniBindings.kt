@@ -2,7 +2,7 @@ import groovy.json.JsonSlurper
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -17,8 +17,8 @@ import java.io.File
 /**
  * Generates JNI bindings for the Fila* C API (the Android counterpart of [GenerateWasmExternals]).
  *
- * clang parses the headers; per function it emits a C forwarder into [cDir] and an
- * `@JvmStatic external fun` into [kotlinDir]. The boundary is all primitives: pointers and callbacks
+ * clang parses the headers; per C module (`modules`, as on wasm) it emits a C file of JNI forwarders into
+ * [cDir] and a Kotlin file of top-level `external fun`s named like the C functions into [kotlinDir]. The boundary is all primitives: pointers and callbacks
  * are `Long`, enums and ≤32-bit ints `Int`, 64-bit/size_t `Long`, `const char*` `String?`. Casts use
  * the declared C type, so one output serves every ABI. A struct returned by value gets a leading
  * `result` pointer, as on wasm.
@@ -28,10 +28,9 @@ abstract class GenerateJniBindings : DefaultTask() {
     @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val headers: ConfigurableFileCollection
 
-    /** Header dirs under c/, e.g. filament, gltfio. */
-    @get:Input abstract val modules: ListProperty<String>
+    /** Generated file/class name → header dir under c/, e.g. FilamentC → filament (as on wasm). */
+    @get:Input abstract val modules: MapProperty<String, String>
     @get:Input abstract val packageName: Property<String>
-    @get:Input abstract val className: Property<String>
 
     @get:Internal abstract val cSourceDir: DirectoryProperty
     @get:OutputDirectory abstract val cDir: DirectoryProperty
@@ -40,12 +39,11 @@ abstract class GenerateJniBindings : DefaultTask() {
     @TaskAction
     fun generate() {
         val c = cSourceDir.get().asFile
-        val headerFiles = modules.get().flatMap { dir -> c.resolve("$dir/c").listFiles { f -> f.extension == "h" }!!.sorted() }
-        val text = headerFiles.joinToString("\n") { it.readText() }
+        val moduleHeaders = modules.get().mapValues { (_, dir) -> c.resolve("$dir/c").listFiles { f -> f.extension == "h" }!!.sorted() }
         val umbrella = temporaryDir.resolve("umbrella.c").apply {
-            writeText(headerFiles.joinToString("\n") { "#include \"${it.absolutePath}\"" } + "\n")
+            writeText(moduleHeaders.values.flatten().joinToString("\n") { "#include \"${it.absolutePath}\"" } + "\n")
         }
-        val ast = clang(temporaryDir.resolve("ast.json"), modules.get().map { "-I${c.resolve("$it/c").absolutePath}" } + umbrella.absolutePath)
+        val ast = clang(temporaryDir.resolve("ast.json"), modules.get().values.map { "-I${c.resolve("$it/c").absolutePath}" } + umbrella.absolutePath)
 
         @Suppress("UNCHECKED_CAST")
         val decls = (JsonSlurper().parse(ast) as Map<String, Any?>)["inner"] as List<Map<String, Any?>>
@@ -53,91 +51,114 @@ abstract class GenerateJniBindings : DefaultTask() {
             val type = it["type"] as Map<*, *>
             it["name"] as String to (type["desugaredQualType"] ?: type["qualType"]) as String
         }
-        val declared = Regex("[^A-Za-z0-9_](Fila[A-Za-z0-9]+_[A-Za-z0-9_]+)\\s*\\(").findAll(text).map { it.groupValues[1] }.toSet()
-        val functions = decls.filter { it["kind"] == "FunctionDecl" && it["name"] in declared }
-            .sortedBy { it["name"] as String }.map { toFunction(it, typedefs) }
 
         val pkg = packageName.get()
-        val cls = className.get()
-        val jniPrefix = "Java_${pkg.replace('.', '_')}_${cls}_"
+        val cOutDir = cDir.get().asFile.apply { deleteRecursively(); mkdirs() }
+        val kOutDir = kotlinDir.get().asFile.apply { deleteRecursively(); mkdirs() }
 
-        val cOut = StringBuilder(banner("//"))
-        cOut.append("#include <jni.h>\n#include <stddef.h>\n#include <stdint.h>\n\n")
-        headerFiles.forEach { cOut.append("#include \"${it.name}\"\n") }
-        cOut.append("\n")
+        for ((file, headerFiles) in moduleHeaders) {
+            val text = headerFiles.joinToString("\n") { it.readText() }
+            val declared = Regex("[^A-Za-z0-9_](Fila[A-Za-z0-9]+_[A-Za-z0-9_]+)\\s*\\(").findAll(text).map { it.groupValues[1] }.toSet()
+            val functions = decls.filter { it["kind"] == "FunctionDecl" && it["name"] in declared }
+                .sortedBy { it["name"] as String }.map { toFunction(it, typedefs) }
+            val jniPrefix = "Java_${pkg.replace('.', '_')}_${file}_"
 
-        val kOut = StringBuilder(banner("//"))
-        kOut.append("@file:Suppress(\"FunctionName\", \"unused\")\n\npackage $pkg\n\n")
-        kOut.append("object $cls {\n    init { FilaJni.load() }\n\n")
+            val cOut = StringBuilder(banner(modules.get().getValue(file)))
+            cOut.append("#include <jni.h>\n#include <stddef.h>\n#include <stdint.h>\n\n")
+            headerFiles.forEach { cOut.append("#include \"${it.name}\"\n") }
+            cOut.append("\n")
 
-        functions.forEach { fn ->
-            val jniParams = fn.params.joinToString("") { ", ${it.kind.jni} a_${it.name}" }
-            cOut.append("JNIEXPORT ${fn.ret.jni} JNICALL $jniPrefix${fn.name.replace("_", "_1")}(JNIEnv* env, jclass cls$jniParams) {\n")
-            fn.params.filter { it.kind == Kind.STRING }.forEach {
-                cOut.append("    const char* s_${it.name} = a_${it.name} ? (*env)->GetStringUTFChars(env, a_${it.name}, NULL) : NULL;\n")
-            }
-            val args = fn.params.filter { !it.sret }.joinToString { p ->
-                when (p.kind) {
-                    Kind.STRING -> "s_${p.name}"
-                    Kind.PTR -> "(${p.cType})(intptr_t) a_${p.name}"
-                    else -> "(${p.cType}) a_${p.name}"
-                }
-            }
-            val call = "${fn.name}($args)"
-            val releases = fn.params.filter { it.kind == Kind.STRING }.joinToString("") {
-                "    if (s_${it.name}) (*env)->ReleaseStringUTFChars(env, a_${it.name}, s_${it.name});\n"
-            }
-            val sret = fn.params.firstOrNull { it.sret }
-            when {
-                sret != null -> cOut.append("    *(${sret.cType})(intptr_t) a_${sret.name} = $call;\n$releases")
-                fn.ret == Kind.VOID -> cOut.append("    $call;\n$releases")
-                else -> {
-                    val wrap = when (fn.ret) {
-                        Kind.BOOL -> "$call ? JNI_TRUE : JNI_FALSE"
-                        Kind.PTR -> "(jlong)(intptr_t) $call"
-                        Kind.STRING -> "(*env)->NewStringUTF(env, $call)"
-                        else -> "(${fn.ret.jni}) $call"
-                    }
-                    if (releases.isEmpty()) cOut.append("    return $wrap;\n")
-                    else cOut.append("    ${fn.ret.jni} r = $wrap;\n$releases    return r;\n")
-                }
-            }
-            cOut.append("}\n\n")
+            // Top-level functions named like the C ones (as cinterop and the wasm wrappers name them). Calling one
+            // initializes this file class first, and that runs `loaded`, so libfilament-c is always in by then.
+            val kOut = StringBuilder(banner(modules.get().getValue(file)))
+            kOut.append("@file:JvmName(\"$file\")\n@file:Suppress(\"FunctionName\", \"unused\")\n\npackage $pkg\n\n")
+            kOut.append("private val loaded = FilaJni.load()\n\n")
 
-            val retSuffix = if (fn.ret == Kind.VOID) "" else ": ${fn.ret.kotlin}"
-            kOut.append("    @JvmStatic external fun ${fn.name}(${fn.params.joinToString { "${kotlinName(it.name)}: ${it.kind.kotlin}" }})$retSuffix\n")
-        }
-        // Struct views, shaped like the wasm ones, but layouts differ per ABI (pointer/size_t width,
-        // x86-32 alignment): each struct's C side reports [sizeof, offset0, size0, ...] as compiled.
-        cOut.append("static jintArray filaLayout(JNIEnv* env, const jint* values, jsize count) {\n")
-        cOut.append("    jintArray out = (*env)->NewIntArray(env, count);\n")
-        cOut.append("    (*env)->SetIntArrayRegion(env, out, 0, count, values);\n    return out;\n}\n\n")
-        val structOut = StringBuilder()
-        @Suppress("UNCHECKED_CAST")
-        decls.filter { it["kind"] == "RecordDecl" && it["completeDefinition"] == true }
-            .mapNotNull { r -> (r["name"] as String?)?.let { it to r } }
-            .filter { (name, _) -> Regex("struct\\s+${Regex.escape(name)}\\s*\\{").containsMatchIn(text) }
-            .sortedBy { it.first }
-            .forEach { (name, record) -> emitStruct(Struct(name, "struct $name", "", record, typedefs), jniPrefix, cOut, kOut, structOut, "") }
-        kOut.append("}\n\n")
+            functions.forEach { fn -> emitFunction(fn, jniPrefix, cOut, kOut) }
+            kOut.append("\n")
 
-        // Enum constants under their C names, so code ported from the cinterop actuals reads the same.
-        decls.filter { it["kind"] == "EnumDecl" }.forEach { enum ->
-            var next = 0L
+            // Struct views, shaped like the wasm ones, but layouts differ per ABI (pointer/size_t width,
+            // x86-32 alignment): each struct's C side reports [sizeof, offset0, size0, ...] as compiled.
+            cOut.append("static inline jintArray filaLayout(JNIEnv* env, const jint* values, jsize count) {\n")
+            cOut.append("    jintArray out = (*env)->NewIntArray(env, count);\n")
+            cOut.append("    (*env)->SetIntArrayRegion(env, out, 0, count, values);\n    return out;\n}\n\n")
+            val structOut = StringBuilder()
             @Suppress("UNCHECKED_CAST")
-            (enum["inner"] as List<Map<String, Any?>>?).orEmpty().filter { it["kind"] == "EnumConstantDecl" }.forEach { k ->
-                val kName = k["name"] as String
+            decls.filter { it["kind"] == "RecordDecl" && it["completeDefinition"] == true }
+                .mapNotNull { r -> (r["name"] as String?)?.let { it to r } }
+                .filter { (name, _) -> Regex("struct\\s+${Regex.escape(name)}\\s*\\{").containsMatchIn(text) }
+                .sortedBy { it.first }
+                .forEach { (name, record) -> emitStruct(Struct(name, "struct $name", "", record, typedefs), jniPrefix, cOut, kOut, structOut, "") }
+            kOut.append("\n")
+
+            // Enum types and constants under their C names, so code ported from the cinterop actuals reads the same.
+            decls.filter { it["kind"] == "EnumDecl" }.forEach { enum ->
+                (enum["name"] as String?)?.takeIf { Regex("enum\\s+${Regex.escape(it)}\\s*\\{").containsMatchIn(text) }
+                    ?.let { kOut.append("typealias $it = Int\n") }
+                var next = 0L
                 @Suppress("UNCHECKED_CAST")
-                val value = (k["inner"] as List<Map<String, Any?>>?)?.firstNotNullOfOrNull { it["value"] as String? }?.toLong() ?: next
-                next = value + 1
-                if (Regex("\\b${Regex.escape(kName)}\\b").containsMatchIn(text)) kOut.append("const val $kName = $value\n")
+                (enum["inner"] as List<Map<String, Any?>>?).orEmpty().filter { it["kind"] == "EnumConstantDecl" }.forEach { k ->
+                    val kName = k["name"] as String
+                    @Suppress("UNCHECKED_CAST")
+                    val value = (k["inner"] as List<Map<String, Any?>>?)?.firstNotNullOfOrNull { it["value"] as String? }?.toLong() ?: next
+                    next = value + 1
+                    if (Regex("\\b${Regex.escape(kName)}\\b").containsMatchIn(text)) kOut.append("const val $kName = $value\n")
+                }
+            }
+            kOut.append("\n")
+
+            // Scalar typedefs (FilaEntity = uint32_t, FilaTextureSampler = uint64_t) keep their names too.
+            decls.filter { it["kind"] == "TypedefDecl" && (it["name"] as String).startsWith("Fila") }.forEach { td ->
+                val tdName = td["name"] as String
+                val resolved = resolve(tdName, typedefs)
+                val scalar = !resolved.startsWith("struct ") && !resolved.startsWith("enum ") && '*' !in resolved && '(' !in resolved
+                if (scalar && Regex("typedef\\s+[^;{}]*\\b${Regex.escape(tdName)}\\s*;").containsMatchIn(text)) {
+                    kOut.append("typealias $tdName = ${kind(resolved, resolved, tdName).kotlin}\n")
+                }
+            }
+            kOut.append("\n").append(structOut)
+
+            cOutDir.resolve("$file.c").writeText(cOut.toString())
+            kOutDir.resolve("$file.kt").writeText(kOut.toString())
+        }
+    }
+
+    private fun emitFunction(fn: Function, jniPrefix: String, cOut: StringBuilder, kOut: StringBuilder) {
+        val jniParams = fn.params.joinToString("") { ", ${it.kind.jni} a_${it.name}" }
+        cOut.append("JNIEXPORT ${fn.ret.jni} JNICALL $jniPrefix${fn.name.replace("_", "_1")}(JNIEnv* env, jclass cls$jniParams) {\n")
+        fn.params.filter { it.kind == Kind.STRING }.forEach {
+            cOut.append("    const char* s_${it.name} = a_${it.name} ? (*env)->GetStringUTFChars(env, a_${it.name}, NULL) : NULL;\n")
+        }
+        val args = fn.params.filter { !it.sret }.joinToString { p ->
+            when (p.kind) {
+                Kind.STRING -> "s_${p.name}"
+                Kind.PTR -> "(${p.cType})(intptr_t) a_${p.name}"
+                else -> "(${p.cType}) a_${p.name}"
             }
         }
+        val call = "${fn.name}($args)"
+        val releases = fn.params.filter { it.kind == Kind.STRING }.joinToString("") {
+            "    if (s_${it.name}) (*env)->ReleaseStringUTFChars(env, a_${it.name}, s_${it.name});\n"
+        }
+        val sret = fn.params.firstOrNull { it.sret }
+        when {
+            sret != null -> cOut.append("    *(${sret.cType})(intptr_t) a_${sret.name} = $call;\n$releases")
+            fn.ret == Kind.VOID -> cOut.append("    $call;\n$releases")
+            else -> {
+                val wrap = when (fn.ret) {
+                    Kind.BOOL -> "$call ? JNI_TRUE : JNI_FALSE"
+                    Kind.PTR -> "(jlong)(intptr_t) $call"
+                    Kind.STRING -> "(*env)->NewStringUTF(env, $call)"
+                    else -> "(${fn.ret.jni}) $call"
+                }
+                if (releases.isEmpty()) cOut.append("    return $wrap;\n")
+                else cOut.append("    ${fn.ret.jni} r = $wrap;\n$releases    return r;\n")
+            }
+        }
+        cOut.append("}\n\n")
 
-        kOut.append("\n").append(structOut)
-
-        cDir.get().asFile.apply { deleteRecursively(); mkdirs() }.resolve("FilaJniBindings.c").writeText(cOut.toString())
-        kotlinDir.get().asFile.apply { deleteRecursively(); mkdirs() }.resolve("$cls.kt").writeText(kOut.toString())
+        val retSuffix = if (fn.ret == Kind.VOID) "" else ": ${fn.ret.kotlin}"
+        kOut.append("external fun ${fn.name}(${fn.params.joinToString { "${kotlinName(it.name)}: ${it.kind.kotlin}" }})$retSuffix\n")
     }
 
     private enum class Kind(val jni: String, val kotlin: String) {
@@ -209,7 +230,7 @@ abstract class GenerateJniBindings : DefaultTask() {
             cOut.append("        (jint) (offsetof(${s.cType}, ${s.path}${f.name}) - $base), (jint) sizeof(((${s.cType}*) 0)->${s.path}${f.name}),\n")
         }
         cOut.append("    };\n    return filaLayout(env, l, sizeof(l) / sizeof(l[0]));\n}\n\n")
-        decls.append("    @JvmStatic external fun $layoutFn(): IntArray\n")
+        decls.append("external fun $layoutFn(): IntArray\n")
 
         kOut.append("${indent}class ${s.kotlinName}(val ptr: Long) {\n")
         kOut.append("$indent    private val b = FilaJni.buffer(ptr, SIZE)\n")
@@ -233,7 +254,7 @@ abstract class GenerateJniBindings : DefaultTask() {
         }
         s.nested.forEach { emitStruct(it, jniPrefix, cOut, decls, kOut, "$indent    ") }
         kOut.append("$indent    companion object {\n")
-        kOut.append("$indent        private val L = FilamentJni.$layoutFn()\n")
+        kOut.append("$indent        private val L = $layoutFn()\n")
         kOut.append("$indent        val SIZE: Int get() = L[0]\n")
         kOut.append("$indent    }\n$indent}\n")
         if (indent.isEmpty()) kOut.append("\n")
@@ -287,9 +308,9 @@ abstract class GenerateJniBindings : DefaultTask() {
 
     private fun kotlinName(name: String) = if (name in KOTLIN_KEYWORDS) "`$name`" else name
 
-    private fun banner(comment: String) =
-        "$comment Generated by GenerateJniBindings from the c/ headers. Do not edit.\n" +
-            "$comment Committed so building needs no header parse; regenerate with :android:generateJniBindings.\n"
+    private fun banner(source: String) =
+        "// Generated by GenerateJniBindings from c/$source headers. Do not edit.\n" +
+            "// Committed so building needs no header parse; regenerate with :android:generateJniBindings.\n"
 
     private companion object {
         val KOTLIN_KEYWORDS = setOf("as", "break", "class", "continue", "do", "else", "false", "for", "fun", "if", "in",

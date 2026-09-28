@@ -7,7 +7,7 @@ plugins {
 // Android JNI bindings module, the Android counterpart of :java (FFM) and :web (wasm). AGP builds
 // c/CMakeLists.txt (FILAMENT_PLATFORM=android) per ABI into one libfilament-c.so: the Fila* C API
 // plus generated JNI forwarders, over the upstream android-native prebuilts. Kotlin sees the C API
-// through the generated FilamentJni object (all primitives, like the wasm externals).
+// through generated top-level functions per C module (FilamentC.kt & co., all primitives, like the wasm externals).
 
 val abis = listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
 
@@ -59,11 +59,10 @@ tasks.matching { it.name.startsWith("configureCMake") || it.name.startsWith("bui
 
 // Committed output (like :web's externals): regenerate after a C header change.
 tasks.register<GenerateJniBindings>("generateJniBindings") {
-    val cModules = listOf("filament", "filamat", "filament-utils", "gltfio")
+    val cModules = mapOf("FilamentC" to "filament", "FilamatC" to "filamat", "FilamentUtilsC" to "filament-utils", "GltfioC" to "gltfio")
     modules.set(cModules)
-    headers.from(cModules.map { rootProject.fileTree("c/$it/c") { include("*.h") } })
+    headers.from(cModules.values.map { rootProject.fileTree("c/$it/c") { include("*.h") } })
     packageName.set("io.github.erkko68.filament.jni")
-    className.set("FilamentJni")
     cSourceDir.set(rootProject.layout.projectDirectory.dir("c"))
     cDir.set(layout.projectDirectory.dir("src/main/cpp/generated"))
     kotlinDir.set(layout.projectDirectory.dir("src/main/generated"))
