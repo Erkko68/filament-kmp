@@ -246,9 +246,9 @@ abstract class GenerateJniBindings : DefaultTask() {
                 FieldKind.UINT -> "var $n: Int get() = b.readInt($off, $sz, signed = false); set(value) { b.writeInt($off, $sz, value) }"
                 FieldKind.LONG -> "var $n: Long get() = b.readLong($off, $sz); set(value) { b.writeLong($off, $sz, value) }"
                 FieldKind.STRUCT, FieldKind.NESTED -> "val $n: ${f.nestedClass} get() = ${f.nestedClass}(ptr + $off)"
-                FieldKind.F32_ARRAY -> "val $n: F32Array get() = F32Array(b, $off)"
-                FieldKind.F64_ARRAY -> "val $n: F64Array get() = F64Array(b, $off)"
-                FieldKind.I32_ARRAY -> "val $n: I32Array get() = I32Array(b, $off)"
+                FieldKind.F32_ARRAY -> "val $n: F32Array get() = F32Array(ptr + $off)"
+                FieldKind.F64_ARRAY -> "val $n: F64Array get() = F64Array(ptr + $off)"
+                FieldKind.I32_ARRAY -> "val $n: I32Array get() = I32Array(ptr + $off)"
             }
             kOut.append("$indent    $line\n")
         }

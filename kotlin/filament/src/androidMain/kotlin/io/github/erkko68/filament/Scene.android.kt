@@ -1,6 +1,8 @@
 package io.github.erkko68.filament
 
-actual class Scene @InternalFilamentApi constructor(internal val nativeScene: com.google.android.filament.Scene) {
+import io.github.erkko68.filament.jni.*
+
+actual class Scene @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     private var _skybox: Skybox? = null
     private var _indirectLight: IndirectLight? = null
 
@@ -8,31 +10,50 @@ actual class Scene @InternalFilamentApi constructor(internal val nativeScene: co
         get() = _skybox
         set(value) {
             _skybox = value
-            nativeScene.skybox = value?.nativeSkybox
+            FilaScene_setSkybox(nativeHandle, value?.nativeHandle ?: 0)
         }
 
     actual var indirectLight: IndirectLight?
         get() = _indirectLight
         set(value) {
             _indirectLight = value
-            nativeScene.indirectLight = value?.nativeIndirectLight
+            FilaScene_setIndirectLight(nativeHandle, value?.nativeHandle ?: 0)
         }
 
-    actual fun addEntity(entity: Entity) = nativeScene.addEntity(entity)
-    actual fun addEntities(entities: IntArray) = nativeScene.addEntities(entities)
+    actual fun addEntity(entity: Entity) = FilaScene_addEntity(nativeHandle, entity)
 
-    actual fun removeEntity(entity: Entity) = nativeScene.removeEntity(entity)
-    actual fun remove(entity: Entity) = nativeScene.removeEntity(entity)
-    actual fun removeEntities(entities: IntArray) = nativeScene.removeEntities(entities)
+    actual fun addEntities(entities: IntArray) {
+        entities.usePinned { pinned ->
+            FilaScene_addEntities(nativeHandle, pinned, entities.size.toLong())
+        }
+    }
 
-    actual val entityCount: Int get() = nativeScene.entityCount
-    actual val renderableCount: Int get() = nativeScene.renderableCount
-    actual val lightCount: Int get() = nativeScene.lightCount
-    actual fun hasEntity(entity: Entity): Boolean = nativeScene.hasEntity(entity)
+    actual fun removeEntity(entity: Entity) = FilaScene_remove(nativeHandle, entity)
+    actual fun remove(entity: Entity) = FilaScene_remove(nativeHandle, entity)
 
-    actual fun getEntities(out: IntArray?): IntArray = nativeScene.getEntities(out)
+    actual fun removeEntities(entities: IntArray) {
+        entities.usePinned { pinned ->
+            FilaScene_removeEntities(nativeHandle, pinned, entities.size.toLong())
+        }
+    }
+
+    actual val entityCount: Int get() = FilaScene_getEntityCount(nativeHandle).toInt()
+    actual val renderableCount: Int get() = FilaScene_getRenderableCount(nativeHandle).toInt()
+    actual val lightCount: Int get() = FilaScene_getLightCount(nativeHandle).toInt()
+    actual fun hasEntity(entity: Entity): Boolean = FilaScene_hasEntity(nativeHandle, entity)
+
+    actual fun getEntities(out: IntArray?): IntArray {
+        val count = entityCount
+        val result = if (out != null && out.size >= count) out else IntArray(count)
+        if (count > 0) {
+            result.usePinned { pinned ->
+                FilaScene_getEntities(nativeHandle, pinned, count.toLong())
+            }
+        }
+        return result
+    }
 
     actual fun forEach(block: (Entity) -> Unit) {
-        nativeScene.getEntities(null).forEach(block)
+        getEntities().forEach(block)
     }
 }

@@ -1,17 +1,17 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.ToneMapper as FilamentToneMapper
+import io.github.erkko68.filament.jni.*
 
-actual open class ToneMapper(internal val nativeToneMapper: FilamentToneMapper) {
-    actual class Linear actual constructor() : ToneMapper(FilamentToneMapper.Linear())
-    actual class ACES actual constructor() : ToneMapper(FilamentToneMapper.ACES())
-    actual class ACESLegacy actual constructor() : ToneMapper(FilamentToneMapper.ACESLegacy())
-    actual class Filmic actual constructor() : ToneMapper(FilamentToneMapper.Filmic())
-    actual class PBRNeutralToneMapper actual constructor() : ToneMapper(FilamentToneMapper.PBRNeutralToneMapper())
-    actual class GT7ToneMapper actual constructor() : ToneMapper(FilamentToneMapper.GT7ToneMapper())
+actual open class ToneMapper(internal val nativeHandle: Long) {
+    actual class Linear actual constructor() : ToneMapper(FilaToneMapper_Linear())
+    actual class ACES actual constructor() : ToneMapper(FilaToneMapper_ACES())
+    actual class ACESLegacy actual constructor() : ToneMapper(FilaToneMapper_ACESLegacy())
+    actual class Filmic actual constructor() : ToneMapper(FilaToneMapper_Filmic())
+    actual class PBRNeutralToneMapper actual constructor() : ToneMapper(FilaToneMapper_PBRNeutral())
+    actual class GT7ToneMapper actual constructor() : ToneMapper(FilaToneMapper_GT7())
     
     actual class Agx actual constructor(look: AgxLook) : ToneMapper(
-        FilamentToneMapper.Agx(FilamentToneMapper.Agx.AgxLook.entries[look.ordinal])
+        FilaToneMapper_Agx(look.ordinal)
     ) {
         actual enum class AgxLook { NONE, PUNCHY, GOLDEN }
     }
@@ -21,13 +21,20 @@ actual open class ToneMapper(internal val nativeToneMapper: FilamentToneMapper) 
         midGrayIn: Float,
         midGrayOut: Float,
         hdrMax: Float
-    ) : ToneMapper(FilamentToneMapper.Generic(contrast, midGrayIn, midGrayOut, hdrMax)) {
-        private val genericNative get() = nativeToneMapper as FilamentToneMapper.Generic
-        actual var contrast: Float get() = genericNative.contrast; set(v) { genericNative.contrast = v }
-        actual var midGrayIn: Float get() = genericNative.midGrayIn; set(v) { genericNative.midGrayIn = v }
-        actual var midGrayOut: Float get() = genericNative.midGrayOut; set(v) { genericNative.midGrayOut = v }
-        actual var hdrMax: Float get() = genericNative.hdrMax; set(v) { genericNative.hdrMax = v }
+    ) : ToneMapper(FilaToneMapper_Generic(contrast, midGrayIn, midGrayOut, hdrMax)) {
+        actual var contrast: Float
+            get() = FilaToneMapper_Generic_getContrast(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setContrast(nativeHandle, value) }
+        actual var midGrayIn: Float
+            get() = FilaToneMapper_Generic_getMidGrayIn(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setMidGrayIn(nativeHandle, value) }
+        actual var midGrayOut: Float
+            get() = FilaToneMapper_Generic_getMidGrayOut(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setMidGrayOut(nativeHandle, value) }
+        actual var hdrMax: Float
+            get() = FilaToneMapper_Generic_getHdrMax(nativeHandle)
+            set(value) { FilaToneMapper_Generic_setHdrMax(nativeHandle, value) }
     }
     
-    actual class DisplayRange actual constructor() : ToneMapper(FilamentToneMapper.Linear())
+    actual class DisplayRange actual constructor() : ToneMapper(FilaToneMapper_DisplayRange())
 }

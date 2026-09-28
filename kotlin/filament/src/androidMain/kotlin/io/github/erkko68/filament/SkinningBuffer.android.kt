@@ -1,46 +1,48 @@
 package io.github.erkko68.filament
 
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
-import com.google.android.filament.SkinningBuffer as AndroidSkinningBuffer
+import io.github.erkko68.filament.jni.*
 
-actual class SkinningBuffer @InternalFilamentApi constructor(internal val nativeSkinningBuffer: AndroidSkinningBuffer) {
+actual class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidSkinningBuffer.Builder()
+        private val nativeBuilder = FilaSkinningBufferBuilder_create()
 
         actual fun boneCount(boneCount: Int): Builder {
-            nativeBuilder.boneCount(boneCount)
+            FilaSkinningBufferBuilder_boneCount(nativeBuilder, boneCount)
             return this
         }
 
         actual fun initialize(initialize: Boolean): Builder {
-            nativeBuilder.initialize(initialize)
+            FilaSkinningBufferBuilder_initialize(nativeBuilder, initialize)
             return this
         }
 
         actual fun build(engine: Engine): SkinningBuffer {
-            return SkinningBuffer(nativeBuilder.build(engine.nativeEngine))
+            val handle = FilaSkinningBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaSkinningBufferBuilder_destroy(nativeBuilder)
+            return SkinningBuffer(handle)
         }
     }
 
-    actual val boneCount: Int get() = nativeSkinningBuffer.boneCount
+    actual val boneCount: Int get() = FilaSkinningBuffer_getBoneCount(nativeHandle).toInt()
 
     actual fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
-        val buffer = ByteBuffer.allocateDirect(matrices.size * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-        buffer.put(matrices)
-        buffer.flip()
-        nativeSkinningBuffer.setBonesAsMatrices(engine.nativeEngine, buffer, boneCount, offset)
+        matrices.usePinned { pinned ->
+            FilaSkinningBuffer_setBonesMat4f(
+                nativeHandle, engine.nativeHandle,
+                pinned,
+                boneCount.toLong(), offset.toLong()
+            )
+        }
     }
 
     actual fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int) {
-        val buffer = ByteBuffer.allocateDirect(bones.size * 4)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-        buffer.put(bones)
-        buffer.flip()
-        nativeSkinningBuffer.setBonesAsQuaternions(engine.nativeEngine, buffer, boneCount, offset)
+        // Each bone is 8 floats: [qx,qy,qz,qw, tx,ty,tz,1] — matches FilaBone memory layout.
+        bones.usePinned { pinned ->
+            FilaSkinningBuffer_setBonesQuaternions(
+                nativeHandle, engine.nativeHandle,
+                pinned,
+                boneCount.toLong(), offset.toLong()
+            )
+        }
     }
 }

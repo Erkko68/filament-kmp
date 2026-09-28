@@ -30,7 +30,8 @@ kotlin {
             implementation(project(":kotlin:test-support"))
         }
         androidMain.dependencies {
-            implementation("com.google.android.filament:filament-android:$filaVersion")
+            // libfilament-c.so per ABI + generated JNI bindings over the Fila* C API (see :android).
+            api(project(":android"))
         }
         jvmMain.dependencies {
             // Project Panama (FFM) bindings: combined libfilament-c + jextract-generated

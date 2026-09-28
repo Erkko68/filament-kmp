@@ -1,27 +1,43 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.EntityManager as AndroidEntityManager
+import io.github.erkko68.filament.jni.*
 
-actual class EntityManager @InternalFilamentApi constructor(internal val nativeEntityManager: AndroidEntityManager) {
+actual class EntityManager @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual companion object {
-        actual fun get(): EntityManager = EntityManager(AndroidEntityManager.get())
+        private val instance = EntityManager(FilaEntityManager_get())
+        actual fun get(): EntityManager = instance
     }
 
-    actual fun create(): Entity = nativeEntityManager.create()
+    actual fun create(): Entity = FilaEntityManager_create(nativeHandle)
     
-    actual fun create(n: Int): IntArray = nativeEntityManager.create(n)
+    actual fun create(n: Int): IntArray {
+        val result = IntArray(n)
+        result.usePinned { 
+            FilaEntityManager_createArray(nativeHandle, n.toLong(), it)
+        }
+        return result
+    }
     
-    actual fun create(entities: IntArray): IntArray = nativeEntityManager.create(entities)
+    actual fun create(entities: IntArray): IntArray {
+        entities.usePinned { 
+            FilaEntityManager_createArray(nativeHandle, entities.size.toLong(), it)
+        }
+        return entities
+    }
 
-    actual fun destroy(entity: Entity) = nativeEntityManager.destroy(entity)
+    actual fun destroy(entity: Entity) = FilaEntityManager_destroy(nativeHandle, entity)
     
-    actual fun destroy(entities: IntArray) = nativeEntityManager.destroy(entities)
+    actual fun destroy(entities: IntArray) {
+        entities.usePinned { 
+            FilaEntityManager_destroyArray(nativeHandle, entities.size.toLong(), it)
+        }
+    }
 
-    actual fun isAlive(entity: Entity): Boolean = nativeEntityManager.isAlive(entity)
+    actual fun isAlive(entity: Entity): Boolean = FilaEntityManager_isAlive(nativeHandle, entity)
 
     actual fun advanceEpoch() {
-        nativeEntityManager.advanceEpoch()
+        FilaEntityManager_advanceEpoch(nativeHandle)
     }
 
-    actual val maxEntityCount: Int get() = nativeEntityManager.maxEntityCount
+    actual val maxEntityCount: Int get() = FilaEntityManager_getMaxEntityCount(nativeHandle).toInt()
 }

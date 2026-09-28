@@ -34,6 +34,17 @@ object FilaJni {
     @JvmStatic external fun windowFromSurface(surface: Any): Long
     @JvmStatic external fun releaseWindow(window: Long)
 
+    @JvmStatic external fun getF32(ptr: Long): Float
+    @JvmStatic external fun setF32(ptr: Long, value: Float)
+    @JvmStatic external fun getF64(ptr: Long): Double
+    @JvmStatic external fun setF64(ptr: Long, value: Double)
+    @JvmStatic external fun getI32(ptr: Long): Int
+    @JvmStatic external fun setI32(ptr: Long, value: Int)
+    @JvmStatic external fun getI64(ptr: Long): Long
+    @JvmStatic external fun setI64(ptr: Long, value: Long)
+    @JvmStatic external fun getU8(ptr: Long): Int
+    @JvmStatic external fun setU8(ptr: Long, value: Int)
+
     @JvmStatic external fun newCallback(callback: FilaCallback, once: Boolean): Long
     @JvmStatic external fun releaseCallback(userData: Long)
     @JvmStatic external fun userOnly(): Long
@@ -56,7 +67,7 @@ object Callbacks {
     /** Registers [fn] and returns its userData. A [once] callback frees itself after its first call; release others. */
     fun register(once: Boolean, fn: (a: Long, b: Long) -> Unit): Long = FilaJni.newCallback(FilaCallback(fn), once)
 
-    fun release(userData: Long) = FilaJni.releaseCallback(userData)
+    fun release(userData: Long) { if (userData != 0L) FilaJni.releaseCallback(userData) }
 
     /** `void (*)(void* userData)` — e.g. FilaEngineCompileCallback, frame-scheduled. */
     val userOnly: Long by lazy { FilaJni.userOnly() }
@@ -95,7 +106,7 @@ class HeapScope {
     fun ints(values: IntArray): Long = alloc(values.size * 4).also { FilaJni.buffer(it, values.size * 4).asIntBuffer().put(values) }
     fun shorts(values: ShortArray): Long = alloc(values.size * 2).also { FilaJni.buffer(it, values.size * 2).asShortBuffer().put(values) }
 
-    @PublishedApi internal fun freeAll() {
+    fun freeAll() {
         allocations.forEach(FilaJni::free)
         allocations.clear()
     }
@@ -177,18 +188,48 @@ fun ByteBuffer.writeLong(at: Int, size: Int, value: Long) {
     if (size == 8) putLong(at, value) else putInt(at, value.toInt())
 }
 
-/** Views over fixed-size C array fields, like the wasm F32Array & co. */
-class F32Array(private val b: ByteBuffer, private val at: Int) {
-    operator fun get(i: Int): Float = b.getFloat(at + i * 4)
-    operator fun set(i: Int, value: Float) { b.putFloat(at + i * 4, value) }
+/** Pointer-based views over native memory, like the wasm F32Array & co. (for arrays and out-params). */
+class F32Array(val ptr: Long) {
+    operator fun get(i: Int): Float = FilaJni.getF32(ptr + i * 4)
+    operator fun set(i: Int, value: Float) = FilaJni.setF32(ptr + i * 4, value)
 }
 
-class F64Array(private val b: ByteBuffer, private val at: Int) {
-    operator fun get(i: Int): Double = b.getDouble(at + i * 8)
-    operator fun set(i: Int, value: Double) { b.putDouble(at + i * 8, value) }
+class F64Array(val ptr: Long) {
+    operator fun get(i: Int): Double = FilaJni.getF64(ptr + i * 8)
+    operator fun set(i: Int, value: Double) = FilaJni.setF64(ptr + i * 8, value)
 }
 
-class I32Array(private val b: ByteBuffer, private val at: Int) {
-    operator fun get(i: Int): Int = b.getInt(at + i * 4)
-    operator fun set(i: Int, value: Int) { b.putInt(at + i * 4, value) }
+class I32Array(val ptr: Long) {
+    operator fun get(i: Int): Int = FilaJni.getI32(ptr + i * 4)
+    operator fun set(i: Int, value: Int) = FilaJni.setI32(ptr + i * 4, value)
+}
+
+class U8Array(val ptr: Long) {
+    operator fun get(i: Int): Int = FilaJni.getU8(ptr + i)
+    operator fun set(i: Int, value: Int) = FilaJni.setU8(ptr + i, value)
+}
+
+class BoolArray(val ptr: Long) {
+    operator fun get(i: Int): Boolean = FilaJni.getU8(ptr + i) != 0
+    operator fun set(i: Int, value: Boolean) = FilaJni.setU8(ptr + i, if (value) 1 else 0)
+}
+
+class IntVar(val ptr: Long) {
+    var value: Int get() = FilaJni.getI32(ptr); set(v) = FilaJni.setI32(ptr, v)
+}
+
+class FloatVar(val ptr: Long) {
+    var value: Float get() = FilaJni.getF32(ptr); set(v) = FilaJni.setF32(ptr, v)
+}
+
+class DoubleVar(val ptr: Long) {
+    var value: Double get() = FilaJni.getF64(ptr); set(v) = FilaJni.setF64(ptr, v)
+}
+
+class BooleanVar(val ptr: Long) {
+    var value: Boolean get() = FilaJni.getU8(ptr) != 0; set(v) = FilaJni.setU8(ptr, if (v) 1 else 0)
+}
+
+class LongVar(val ptr: Long) {
+    var value: Long get() = FilaJni.getI64(ptr); set(v) = FilaJni.setI64(ptr, v)
 }

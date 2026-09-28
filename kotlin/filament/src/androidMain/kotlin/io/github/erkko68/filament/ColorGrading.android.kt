@@ -1,106 +1,113 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.ColorGrading as FilamentColorGrading
+import io.github.erkko68.filament.jni.*
 
-actual class ColorGrading @InternalFilamentApi constructor(internal val nativeColorGrading: FilamentColorGrading) {
+actual class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual class Builder actual constructor() {
-        internal val nativeBuilder = FilamentColorGrading.Builder()
+        internal val nativeHandle: Long = FilaColorGradingBuilder_create()
 
         actual fun quality(qualityLevel: QualityLevel): Builder {
-            nativeBuilder.quality(FilamentColorGrading.QualityLevel.entries[qualityLevel.ordinal])
+            FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal)
             return this
         }
 
         actual fun format(format: LutFormat): Builder {
-            nativeBuilder.format(FilamentColorGrading.LutFormat.entries[format.ordinal])
+            FilaColorGradingBuilder_format(nativeHandle, format.ordinal)
             return this
         }
 
         actual fun dimensions(dim: Int): Builder {
-            nativeBuilder.dimensions(dim)
+            FilaColorGradingBuilder_dimensions(nativeHandle, dim)
             return this
         }
 
         actual fun toneMapper(toneMapper: ToneMapper): Builder {
-            nativeBuilder.toneMapper(toneMapper.nativeToneMapper)
+            FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
             return this
         }
 
         actual fun luminanceScaling(luminanceScaling: Boolean): Builder {
-            nativeBuilder.luminanceScaling(luminanceScaling)
+            FilaColorGradingBuilder_luminanceScaling(nativeHandle, luminanceScaling)
             return this
         }
 
         actual fun gamutMapping(gamutMapping: Boolean): Builder {
-            nativeBuilder.gamutMapping(gamutMapping)
+            FilaColorGradingBuilder_gamutMapping(nativeHandle, gamutMapping)
             return this
         }
 
         actual fun exposure(exposure: Float): Builder {
-            nativeBuilder.exposure(exposure)
+            FilaColorGradingBuilder_exposure(nativeHandle, exposure)
             return this
         }
 
         actual fun nightAdaptation(adaptation: Float): Builder {
-            nativeBuilder.nightAdaptation(adaptation)
+            FilaColorGradingBuilder_nightAdaptation(nativeHandle, adaptation)
             return this
         }
 
         actual fun whiteBalance(temperature: Float, tint: Float): Builder {
-            nativeBuilder.whiteBalance(temperature, tint)
+            FilaColorGradingBuilder_whiteBalance(nativeHandle, temperature, tint)
             return this
         }
 
         actual fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder {
-            nativeBuilder.channelMixer(outRed, outGreen, outBlue)
+            heapScoped {
+                FilaColorGradingBuilder_channelMixer(nativeHandle, floats(outRed), floats(outGreen), floats(outBlue))
+            }
             return this
         }
 
         actual fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder {
-            nativeBuilder.shadowsMidtonesHighlights(shadows, midtones, highlights, ranges)
+            heapScoped {
+                FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, floats(shadows), floats(midtones), floats(highlights), floats(ranges))
+            }
             return this
         }
 
         actual fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder {
-            nativeBuilder.slopeOffsetPower(slope, offset, power)
+            heapScoped {
+                FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, floats(slope), floats(offset), floats(power))
+            }
             return this
         }
 
         actual fun contrast(contrast: Float): Builder {
-            nativeBuilder.contrast(contrast)
+            FilaColorGradingBuilder_contrast(nativeHandle, contrast)
             return this
         }
 
         actual fun vibrance(vibrance: Float): Builder {
-            nativeBuilder.vibrance(vibrance)
+            FilaColorGradingBuilder_vibrance(nativeHandle, vibrance)
             return this
         }
 
         actual fun saturation(saturation: Float): Builder {
-            nativeBuilder.saturation(saturation)
+            FilaColorGradingBuilder_saturation(nativeHandle, saturation)
             return this
         }
 
         actual fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
-            nativeBuilder.curves(shadowGamma, midPoint, highlightScale)
+            heapScoped {
+                FilaColorGradingBuilder_curves(nativeHandle, floats(shadowGamma), floats(midPoint), floats(highlightScale))
+            }
             return this
         }
 
         actual fun customLut(data: FloatArray, dimension: Int): Builder {
-            val buffer = java.nio.ByteBuffer.allocateDirect(data.size * 4)
-                .order(java.nio.ByteOrder.nativeOrder())
-            buffer.asFloatBuffer().put(data)
-            nativeBuilder.customLut(buffer, dimension)
+            data.usePinned { pinned ->
+                FilaColorGradingBuilder_customLut(nativeHandle, pinned, dimension)
+            }
             return this
         }
 
         actual fun fastMath(fastMath: Boolean): Builder {
-            nativeBuilder.fastMath(fastMath)
+            FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
             return this
         }
 
         actual fun build(engine: Engine): ColorGrading {
-            return ColorGrading(nativeBuilder.build(engine.nativeEngine))
+            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
         }
     }
 

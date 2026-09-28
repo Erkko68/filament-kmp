@@ -1,78 +1,53 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.BufferObject as AndroidBufferObject
+import io.github.erkko68.filament.jni.*
 
-actual class BufferObject @InternalFilamentApi constructor(internal val nativeBufferObject: AndroidBufferObject) {
+actual class BufferObject @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual enum class BindingType {
         VERTEX,
         UNIFORM,
         SHADER_STORAGE;
-        internal fun toNative(): AndroidBufferObject.Builder.BindingType {
+        internal fun toNative(): FilaBufferObjectBindingType {
             return when (this) {
-                VERTEX -> AndroidBufferObject.Builder.BindingType.VERTEX
-                else -> AndroidBufferObject.Builder.BindingType.VERTEX // Android only supports VERTEX for now
+                VERTEX -> FILA_BUFFER_OBJECT_BINDING_TYPE_VERTEX
+                UNIFORM -> FILA_BUFFER_OBJECT_BINDING_TYPE_UNIFORM
+                SHADER_STORAGE -> FILA_BUFFER_OBJECT_BINDING_TYPE_SHADER_STORAGE
             }
         }
     }
 
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidBufferObject.Builder()
+        private val nativeBuilder = FilaBufferObjectBuilder_create()
 
         actual fun size(byteCount: Int): Builder {
-            nativeBuilder.size(byteCount)
+            FilaBufferObjectBuilder_size(nativeBuilder, byteCount)
             return this
         }
 
         actual fun bindingType(bindingType: BindingType): Builder {
-            nativeBuilder.bindingType(bindingType.toNative())
+            FilaBufferObjectBuilder_bindingType(nativeBuilder, bindingType.toNative())
             return this
         }
 
         actual fun build(engine: Engine): BufferObject {
-            return BufferObject(nativeBuilder.build(engine.nativeEngine))
+            val handle = FilaBufferObjectBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaBufferObjectBuilder_destroy(nativeBuilder)
+            return BufferObject(handle)
         }
     }
 
-    actual val byteCount: Int get() = nativeBufferObject.byteCount
+    actual val byteCount: Int get() = FilaBufferObject_getByteCount(nativeHandle).toInt()
 
     actual fun setBuffer(engine: Engine, data: ByteArray) {
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeBufferObject.setBuffer(engine.nativeEngine, byteBuffer)
+        setBuffer(engine, data, 0, 0, null)
     }
 
     actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int) {
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeBufferObject.setBuffer(engine.nativeEngine, byteBuffer, destOffsetInBytes, count)
+        setBuffer(engine, data, destOffsetInBytes, count, null)
     }
 
-    actual fun setBuffer(
-        engine: Engine,
-        data: ByteArray,
-        destOffsetInBytes: Int,
-        count: Int,
-        callback: (() -> Unit)?
-    ) {
-        val runnable = if (callback != null) Runnable { callback() } else null
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeBufferObject.setBuffer(
-            engine.nativeEngine,
-            byteBuffer,
-            destOffsetInBytes,
-            count,
-            Runnable::run,
-            runnable
-        )
+    actual fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
+        val upload = upload(data, if (count > 0) count else data.size, callback)
+        FilaBufferObject_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size.toLong(), destOffsetInBytes, 0, upload.callback, upload.userData)
     }
 }

@@ -1183,7 +1183,7 @@ class FilaLightManagerShadowOptions(val ptr: Long) {
     private val b = FilaJni.buffer(ptr, SIZE)
     var mapSize: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
     var shadowCascades: Int get() = b.readInt(L[3], L[4], signed = false); set(value) { b.writeInt(L[3], L[4], value) }
-    val cascadeSplitPositions: F32Array get() = F32Array(b, L[5])
+    val cascadeSplitPositions: F32Array get() = F32Array(ptr + L[5])
     var constantBias: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
     var normalBias: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
     var shadowFar: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
@@ -1198,7 +1198,7 @@ class FilaLightManagerShadowOptions(val ptr: Long) {
     var maxShadowDistance: Float get() = b.getFloat(L[29]); set(value) { b.putFloat(L[29], value) }
     val vsm: FilaLightManagerVsmShadowOptions get() = FilaLightManagerVsmShadowOptions(ptr + L[31])
     var shadowBulbRadius: Float get() = b.getFloat(L[33]); set(value) { b.putFloat(L[33], value) }
-    val transform: F32Array get() = F32Array(b, L[35])
+    val transform: F32Array get() = F32Array(ptr + L[35])
     var penumbraScale: Float get() = b.getFloat(L[37]); set(value) { b.putFloat(L[37], value) }
     var penumbraRatioScale: Float get() = b.getFloat(L[39]); set(value) { b.putFloat(L[39], value) }
     var maxPenumbraRatio: Float get() = b.getFloat(L[41]); set(value) { b.putFloat(L[41], value) }
@@ -1247,7 +1247,7 @@ class FilaQuat(val ptr: Long) {
 
 class FilaRendererClearOptions(val ptr: Long) {
     private val b = FilaJni.buffer(ptr, SIZE)
-    val clearColor: F64Array get() = F64Array(b, L[1])
+    val clearColor: F64Array get() = F64Array(ptr + L[1])
     var clear: Boolean get() = b.get(L[3]).toInt() != 0; set(value) { b.put(L[3], (if (value) 1 else 0).toByte()) }
     var discard: Boolean get() = b.get(L[5]).toInt() != 0; set(value) { b.put(L[5], (if (value) 1 else 0).toByte()) }
     companion object {
@@ -1300,7 +1300,7 @@ class FilaViewAmbientOcclusionOptions(val ptr: Long) {
         var shadowDistance: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
         var contactDistanceMax: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
         var intensity: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
-        val lightDirection: F32Array get() = F32Array(b, L[9])
+        val lightDirection: F32Array get() = F32Array(ptr + L[9])
         var depthBias: Float get() = b.getFloat(L[11]); set(value) { b.putFloat(L[11], value) }
         var depthSlopeBias: Float get() = b.getFloat(L[13]); set(value) { b.putFloat(L[13], value) }
         var sampleCount: Int get() = b.readInt(L[15], L[16], signed = false); set(value) { b.writeInt(L[15], L[16], value) }
@@ -1378,8 +1378,8 @@ class FilaViewDepthOfFieldOptions(val ptr: Long) {
 
 class FilaViewDynamicResolutionOptions(val ptr: Long) {
     private val b = FilaJni.buffer(ptr, SIZE)
-    val minScale: F32Array get() = F32Array(b, L[1])
-    val maxScale: F32Array get() = F32Array(b, L[3])
+    val minScale: F32Array get() = F32Array(ptr + L[1])
+    val maxScale: F32Array get() = F32Array(ptr + L[3])
     var sharpness: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
     var enabled: Boolean get() = b.get(L[7]).toInt() != 0; set(value) { b.put(L[7], (if (value) 1 else 0).toByte()) }
     var homogeneousScaling: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
@@ -1397,7 +1397,7 @@ class FilaViewFogOptions(val ptr: Long) {
     var maximumOpacity: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
     var height: Float get() = b.getFloat(L[7]); set(value) { b.putFloat(L[7], value) }
     var heightFalloff: Float get() = b.getFloat(L[9]); set(value) { b.putFloat(L[9], value) }
-    val color: F32Array get() = F32Array(b, L[11])
+    val color: F32Array get() = F32Array(ptr + L[11])
     var density: Float get() = b.getFloat(L[13]); set(value) { b.putFloat(L[13], value) }
     var inScatteringStart: Float get() = b.getFloat(L[15]); set(value) { b.putFloat(L[15], value) }
     var inScatteringSize: Float get() = b.getFloat(L[17]); set(value) { b.putFloat(L[17], value) }
@@ -1434,7 +1434,7 @@ class FilaViewPickingQueryResult(val ptr: Long) {
     private val b = FilaJni.buffer(ptr, SIZE)
     var renderable: Int get() = b.readInt(L[1], L[2], signed = false); set(value) { b.writeInt(L[1], L[2], value) }
     var depth: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
-    val fragCoords: F32Array get() = F32Array(b, L[5])
+    val fragCoords: F32Array get() = F32Array(ptr + L[5])
     companion object {
         private val L = FilaLayout_FilaViewPickingQueryResult()
         val SIZE: Int get() = L[0]
@@ -1504,7 +1504,7 @@ class FilaViewVignetteOptions(val ptr: Long) {
     var midPoint: Float get() = b.getFloat(L[1]); set(value) { b.putFloat(L[1], value) }
     var roundness: Float get() = b.getFloat(L[3]); set(value) { b.putFloat(L[3], value) }
     var feather: Float get() = b.getFloat(L[5]); set(value) { b.putFloat(L[5], value) }
-    val color: F32Array get() = F32Array(b, L[7])
+    val color: F32Array get() = F32Array(ptr + L[7])
     var enabled: Boolean get() = b.get(L[9]).toInt() != 0; set(value) { b.put(L[9], (if (value) 1 else 0).toByte()) }
     companion object {
         private val L = FilaLayout_FilaViewVignetteOptions()

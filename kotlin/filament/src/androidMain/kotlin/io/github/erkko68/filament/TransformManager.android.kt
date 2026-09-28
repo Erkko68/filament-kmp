@@ -1,53 +1,101 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.TransformManager as AndroidTransformManager
+import io.github.erkko68.filament.jni.*
 
-actual class TransformManager @InternalFilamentApi constructor(internal val nativeTransformManager: AndroidTransformManager) {
-    actual fun hasComponent(entity: Entity): Boolean = nativeTransformManager.hasComponent(entity)
-    actual fun getInstance(entity: Entity): EntityInstance = nativeTransformManager.getInstance(entity)
+actual class TransformManager @InternalFilamentApi constructor(internal var nativeHandle: Long) {
+    actual fun hasComponent(entity: Entity): Boolean = FilaTransformManager_hasComponent(nativeHandle, entity)
+    actual fun getInstance(entity: Entity): EntityInstance = FilaTransformManager_getInstance(nativeHandle, entity)
     
-    actual fun create(entity: Entity): EntityInstance = nativeTransformManager.create(entity)
+    actual fun create(entity: Entity): EntityInstance = FilaTransformManager_create(nativeHandle, entity)
     
-    actual fun create(entity: Entity, parent: EntityInstance, localTransform: FloatArray?): EntityInstance =
-        nativeTransformManager.create(entity, parent, localTransform)
+    actual fun create(entity: Entity, parent: EntityInstance, localTransform: FloatArray?): EntityInstance {
+        return if (localTransform != null) {
+            localTransform.usePinned { 
+                FilaTransformManager_createWithParent(nativeHandle, entity, parent, it)
+            }
+        } else {
+            FilaTransformManager_createWithParent(nativeHandle, entity, parent, 0)
+        }
+    }
         
-    actual fun create(entity: Entity, parent: EntityInstance, localTransform: DoubleArray?): EntityInstance =
-        nativeTransformManager.create(entity, parent, localTransform)
+    actual fun create(entity: Entity, parent: EntityInstance, localTransform: DoubleArray?): EntityInstance {
+        return if (localTransform != null) {
+            localTransform.usePinned { 
+                FilaTransformManager_createWithParentFp64(nativeHandle, entity, parent, it)
+            }
+        } else {
+            FilaTransformManager_createWithParentFp64(nativeHandle, entity, parent, 0)
+        }
+    }
     
-    actual fun destroy(entity: Entity) = nativeTransformManager.destroy(entity)
+    actual fun destroy(entity: Entity) = FilaTransformManager_destroy(nativeHandle, entity)
     
     actual fun setParent(instance: EntityInstance, newParent: EntityInstance) = 
-        nativeTransformManager.setParent(instance, newParent)
+        FilaTransformManager_setParent(nativeHandle, instance, newParent)
         
-    actual fun getParent(instance: EntityInstance): Entity = nativeTransformManager.getParent(instance)
+    actual fun getParent(instance: EntityInstance): Entity = FilaTransformManager_getParent(nativeHandle, instance)
     
-    actual fun getChildCount(instance: EntityInstance): Int = nativeTransformManager.getChildCount(instance)
+    actual fun getChildCount(instance: EntityInstance): Int = FilaTransformManager_getChildCount(nativeHandle, instance).toInt()
     
-    actual fun getChildren(instance: EntityInstance, out: IntArray?): IntArray = 
-        nativeTransformManager.getChildren(instance, out)
+    actual fun getChildren(instance: EntityInstance, out: IntArray?): IntArray {
+        val count = getChildCount(instance)
+        val result = out ?: IntArray(count)
+        if (count > 0) {
+            result.usePinned { 
+                FilaTransformManager_getChildren(nativeHandle, instance, it, count.toLong())
+            }
+        }
+        return result
+    }
     
-    actual fun setTransform(instance: EntityInstance, localTransform: FloatArray) = 
-        nativeTransformManager.setTransform(instance, localTransform)
+    actual fun setTransform(instance: EntityInstance, localTransform: FloatArray) {
+        localTransform.usePinned { 
+            FilaTransformManager_setTransform(nativeHandle, instance, it)
+        }
+    }
         
-    actual fun setTransform(instance: EntityInstance, localTransform: DoubleArray) = 
-        nativeTransformManager.setTransform(instance, localTransform)
+    actual fun setTransform(instance: EntityInstance, localTransform: DoubleArray) {
+        localTransform.usePinned { 
+            FilaTransformManager_setTransformFp64(nativeHandle, instance, it)
+        }
+    }
     
-    actual fun getTransform(instance: EntityInstance, out: FloatArray?): FloatArray = 
-        nativeTransformManager.getTransform(instance, out)
+    actual fun getTransform(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
+        result.usePinned { 
+            FilaTransformManager_getTransform(nativeHandle, instance, it)
+        }
+        return result
+    }
         
-    actual fun getTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray = 
-        nativeTransformManager.getTransform(instance, out)
+    actual fun getTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { 
+            FilaTransformManager_getTransformFp64(nativeHandle, instance, it)
+        }
+        return result
+    }
     
-    actual fun getWorldTransform(instance: EntityInstance, out: FloatArray?): FloatArray = 
-        nativeTransformManager.getWorldTransform(instance, out)
+    actual fun getWorldTransform(instance: EntityInstance, out: FloatArray?): FloatArray {
+        val result = out ?: FloatArray(16)
+        result.usePinned { 
+            FilaTransformManager_getWorldTransform(nativeHandle, instance, it)
+        }
+        return result
+    }
         
-    actual fun getWorldTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray = 
-        nativeTransformManager.getWorldTransform(instance, out)
+    actual fun getWorldTransform(instance: EntityInstance, out: DoubleArray?): DoubleArray {
+        val result = out ?: DoubleArray(16)
+        result.usePinned { 
+            FilaTransformManager_getWorldTransformFp64(nativeHandle, instance, it)
+        }
+        return result
+    }
     
-    actual fun openLocalTransformTransaction() = nativeTransformManager.openLocalTransformTransaction()
-    actual fun commitLocalTransformTransaction() = nativeTransformManager.commitLocalTransformTransaction()
+    actual fun openLocalTransformTransaction() = FilaTransformManager_openLocalTransformTransaction(nativeHandle)
+    actual fun commitLocalTransformTransaction() = FilaTransformManager_commitLocalTransformTransaction(nativeHandle)
     
     actual var isAccurateTranslationsEnabled: Boolean
-        get() = nativeTransformManager.isAccurateTranslationsEnabled()
-        set(value) { nativeTransformManager.setAccurateTranslationsEnabled(value) }
+        get() = FilaTransformManager_isAccurateTranslationsEnabled(nativeHandle)
+        set(value) { FilaTransformManager_setAccurateTranslationsEnabled(nativeHandle, value) }
 }

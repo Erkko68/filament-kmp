@@ -100,7 +100,7 @@ external fun FilaLayout_FilaMaterialKeyFields(): IntArray
 
 class FilaMaterialKey(val ptr: Long) {
     private val b = FilaJni.buffer(ptr, SIZE)
-    val words: I32Array get() = I32Array(b, L[1])
+    val words: I32Array get() = I32Array(ptr + L[1])
     companion object {
         private val L = FilaLayout_FilaMaterialKey()
         val SIZE: Int get() = L[0]

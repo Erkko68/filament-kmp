@@ -1,110 +1,86 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.SurfaceOrientation as AndroidSurfaceOrientation
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
-import java.nio.IntBuffer
-import java.nio.ShortBuffer
+import io.github.erkko68.filament.jni.*
 
-// The native SurfaceOrientation builder reads through `GetDirectBufferAddress`, which only
-// works on direct NIO buffers. `FloatBuffer.wrap(FloatArray)` produces a heap buffer; on
-// Android the JNI side silently reads zeros and returned tangent quaternions are bogus —
-// every LIT primitive ends up looking flat-unlit. Copy into direct, native-order buffers.
-
-private fun FloatArray.toDirectFloatBuffer(): FloatBuffer =
-    ByteBuffer.allocateDirect(size * 4).order(ByteOrder.nativeOrder()).asFloatBuffer().also {
-        it.put(this); it.flip()
-    }
-
-private fun ShortArray.toDirectShortBuffer(): ShortBuffer =
-    ByteBuffer.allocateDirect(size * 2).order(ByteOrder.nativeOrder()).asShortBuffer().also {
-        it.put(this); it.flip()
-    }
-
-private fun IntArray.toDirectIntBuffer(): IntBuffer =
-    ByteBuffer.allocateDirect(size * 4).order(ByteOrder.nativeOrder()).asIntBuffer().also {
-        it.put(this); it.flip()
-    }
-
-actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeSurfaceOrientation: AndroidSurfaceOrientation) : AutoCloseable {
+actual class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHandle: Long) : AutoCloseable {
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidSurfaceOrientation.Builder()
+        private val nativeBuilder = FilaSurfaceOrientationBuilder_create()
+        // The C++ builder keeps the array pointers until build(), so the heap copies live until then.
+        private val heap = HeapScope()
 
         actual fun vertexCount(vertexCount: Int): Builder {
-            nativeBuilder.vertexCount(vertexCount)
+            FilaSurfaceOrientationBuilder_vertexCount(nativeBuilder, vertexCount)
             return this
         }
 
         actual fun normals(buffer: FloatArray, stride: Int): Builder {
-            nativeBuilder.normals(buffer.toDirectFloatBuffer())
+            FilaSurfaceOrientationBuilder_normals(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun tangents(buffer: FloatArray, stride: Int): Builder {
-            nativeBuilder.tangents(buffer.toDirectFloatBuffer())
+            FilaSurfaceOrientationBuilder_tangents(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun uvs(buffer: FloatArray, stride: Int): Builder {
-            nativeBuilder.uvs(buffer.toDirectFloatBuffer())
+            FilaSurfaceOrientationBuilder_uvs(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun positions(buffer: FloatArray, stride: Int): Builder {
-            nativeBuilder.positions(buffer.toDirectFloatBuffer())
+            FilaSurfaceOrientationBuilder_positions(nativeBuilder, heap.floats(buffer), stride)
             return this
         }
 
         actual fun triangleCount(triangleCount: Int): Builder {
-            nativeBuilder.triangleCount(triangleCount)
+            FilaSurfaceOrientationBuilder_triangleCount(nativeBuilder, triangleCount)
             return this
         }
 
         actual fun triangles16(buffer: ShortArray): Builder {
-            nativeBuilder.triangles_uint16(buffer.toDirectShortBuffer())
+            FilaSurfaceOrientationBuilder_triangles16(nativeBuilder, heap.shorts(buffer))
             return this
         }
 
         actual fun triangles32(buffer: IntArray): Builder {
-            nativeBuilder.triangles_uint32(buffer.toDirectIntBuffer())
+            FilaSurfaceOrientationBuilder_triangles32(nativeBuilder, heap.ints(buffer))
             return this
         }
 
         actual fun build(): SurfaceOrientation {
-            return SurfaceOrientation(nativeBuilder.build())
+            val handle = FilaSurfaceOrientationBuilder_build(nativeBuilder)
+            FilaSurfaceOrientationBuilder_destroy(nativeBuilder)
+            heap.freeAll()
+            return SurfaceOrientation(handle)
         }
     }
 
-    actual val vertexCount: Int get() = nativeSurfaceOrientation.vertexCount
+    actual val vertexCount: Int get() = FilaSurfaceOrientation_getVertexCount(nativeHandle)
 
-    // Output buffers: allocate direct, hand to the native side, then copy back into the
-    // caller's array after the JNI call returns.
     actual fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
-        val direct = ByteBuffer.allocateDirect(buffer.size * 4)
-            .order(ByteOrder.nativeOrder()).asFloatBuffer()
-        nativeSurfaceOrientation.getQuatsAsFloat(direct)
-        direct.position(0); direct.get(buffer)
+        buffer.usePinned { pinned ->
+            FilaSurfaceOrientation_getQuatsAsFloat(nativeHandle, pinned, count)
+        }
     }
 
     actual fun getQuatsAsHalf(buffer: ShortArray, count: Int) {
-        val direct = ByteBuffer.allocateDirect(buffer.size * 2)
-            .order(ByteOrder.nativeOrder()).asShortBuffer()
-        nativeSurfaceOrientation.getQuatsAsHalf(direct)
-        direct.position(0); direct.get(buffer)
+        buffer.usePinned { pinned ->
+            val ptr: Long = pinned
+            FilaSurfaceOrientation_getQuatsAsHalf(nativeHandle, ptr, count)
+        }
     }
 
     actual fun getQuatsAsShort(buffer: ShortArray, count: Int) {
-        val direct = ByteBuffer.allocateDirect(buffer.size * 2)
-            .order(ByteOrder.nativeOrder()).asShortBuffer()
-        nativeSurfaceOrientation.getQuatsAsShort(direct)
-        direct.position(0); direct.get(buffer)
+        buffer.usePinned { pinned ->
+            FilaSurfaceOrientation_getQuatsAsShort(nativeHandle, pinned, count)
+        }
     }
 
     actual override fun close() = destroy()
 
 
     actual fun destroy() {
-        nativeSurfaceOrientation.destroy()
+        FilaSurfaceOrientation_destroy(nativeHandle)
     }
 }

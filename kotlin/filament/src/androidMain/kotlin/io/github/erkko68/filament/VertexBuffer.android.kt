@@ -1,9 +1,8 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.VertexBuffer as AndroidVertexBuffer
-import java.nio.Buffer
+import io.github.erkko68.filament.jni.*
 
-actual class VertexBuffer @InternalFilamentApi constructor(internal val nativeVertexBuffer: AndroidVertexBuffer) {
+actual class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual enum class VertexAttribute {
         POSITION, TANGENTS, COLOR, UV0, UV1, BONE_INDICES, BONE_WEIGHTS, UNUSED,
         CUSTOM0, CUSTOM1, CUSTOM2, CUSTOM3, CUSTOM4, CUSTOM5, CUSTOM6, CUSTOM7
@@ -20,67 +19,58 @@ actual class VertexBuffer @InternalFilamentApi constructor(internal val nativeVe
     }
 
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidVertexBuffer.Builder()
+        private val nativeBuilder = FilaVertexBufferBuilder_create()
 
         actual fun vertexCount(vertexCount: Int): Builder {
-            nativeBuilder.vertexCount(vertexCount)
+            FilaVertexBufferBuilder_vertexCount(nativeBuilder, vertexCount)
             return this
         }
         actual fun bufferCount(bufferCount: Int): Builder {
-            nativeBuilder.bufferCount(bufferCount)
+            FilaVertexBufferBuilder_bufferCount(nativeBuilder, bufferCount)
             return this
         }
         actual fun enableBufferObjects(enabled: Boolean): Builder {
-            nativeBuilder.enableBufferObjects(enabled)
+            FilaVertexBufferBuilder_enableBufferObjects(nativeBuilder, enabled)
             return this
         }
         actual fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int, byteStride: Int): Builder {
-            nativeBuilder.attribute(
-                AndroidVertexBuffer.VertexAttribute.entries[attribute.ordinal],
+            FilaVertexBufferBuilder_attribute(
+                nativeBuilder,
+                attribute.ordinal,
                 bufferIndex,
-                AndroidVertexBuffer.AttributeType.entries[attributeType.ordinal],
-                byteOffset, byteStride
+                attributeType.ordinal,
+                byteOffset,
+                byteStride
             )
             return this
         }
         actual fun normalized(attribute: VertexAttribute, enabled: Boolean): Builder {
-            nativeBuilder.normalized(AndroidVertexBuffer.VertexAttribute.entries[attribute.ordinal], enabled)
+            FilaVertexBufferBuilder_normalized(nativeBuilder, attribute.ordinal, enabled)
             return this
         }
-        actual fun build(engine: Engine): VertexBuffer = VertexBuffer(nativeBuilder.build(engine.nativeEngine))
+        actual fun build(engine: Engine): VertexBuffer {
+            val handle = FilaVertexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaVertexBufferBuilder_destroy(nativeBuilder)
+            return VertexBuffer(handle)
+        }
     }
 
-    actual val vertexCount: Int get() = nativeVertexBuffer.vertexCount
-
+    actual val vertexCount: Int get() = FilaVertexBuffer_getVertexCount(nativeHandle).toInt()
+    
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) {
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, byteBuffer)
+        setBufferAt(engine, bufferIndex, data, 0, 0, null)
     }
 
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int) {
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, byteBuffer, destOffsetInBytes, count)
+        setBufferAt(engine, bufferIndex, data, destOffsetInBytes, count, null)
     }
 
     actual fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)?) {
-        val runnable = if (callback != null) Runnable { callback() } else null
-        val byteBuffer = java.nio.ByteBuffer.allocateDirect(data.size).apply {
-            order(java.nio.ByteOrder.nativeOrder())
-            put(data)
-            flip()
-        }
-        nativeVertexBuffer.setBufferAt(engine.nativeEngine, bufferIndex, byteBuffer, destOffsetInBytes, count, Runnable::run, runnable)
+        val upload = upload(data, if (count > 0) count else data.size, callback)
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex, upload.ptr, upload.size.toLong(), destOffsetInBytes, 0, upload.callback, upload.userData)
     }
 
     actual fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
-        nativeVertexBuffer.setBufferObjectAt(engine.nativeEngine, bufferIndex, bufferObject.nativeBufferObject)
+        FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.nativeHandle, bufferIndex, bufferObject.nativeHandle)
     }
 }
