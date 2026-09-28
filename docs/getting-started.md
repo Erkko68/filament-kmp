@@ -57,7 +57,7 @@ See **[Modules](modules.md)** for the full coordinates list, the per-target depe
 
 ### Android
 
-No extra configuration. Android uses the official `com.google.android.filament` Maven artifact, which is pulled in transitively. The minimum supported `compileSdk` is **37** (required by Filament 1.76.0).
+No extra configuration. The native runtime (`io.github.erkko68.filament:filament-jni-android`, `libfilament-c.so` for arm64-v8a, armeabi-v7a, x86_64 and x86) is pulled in transitively. The minimum supported `compileSdk` is **37** (required by Filament 1.76.0).
 
 ```kotlin
 // androidApp/build.gradle.kts

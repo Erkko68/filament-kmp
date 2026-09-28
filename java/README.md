@@ -2,8 +2,8 @@
 
 This is the single module that binds Filament on the **JVM/Desktop** target. It uses
 **Project Panama** (the Foreign Function & Memory API, finalised in JDK 22) to call the
-combined C wrapper directly — no JNI. Android does **not** use this module; it depends on
-the official `com.google.android.filament` Maven library instead.
+combined C wrapper directly — no JNI. Android binds the same C wrapper through JNI instead,
+in [`android/`](../android/README.md).
 
 Published as **`io.github.erkko68.filament-ffm:filament-ffm`** and pulled in transitively
 by every `:kotlin:*` JVM target (each declares `api(project(":java"))` in its `jvmMain`),
@@ -63,7 +63,7 @@ The bindings and the natives are published separately (artifact ids pinned via
 | Artifact | Contents |
 |---|---|
 | `filament-ffm` | jextract bindings + loader + FFM helpers — **no natives**. By default its runtime metadata depends on **all** platform modules below; its Gradle-metadata variants (`OperatingSystemFamily` × `MachineArchitecture`) narrow that to exactly one |
-| `filament-ffm-runtime-{macos-arm64, linux-x64, linux-arm64, windows-x64}` | one platform's `libfilament-c` (+ `.sha256`) |
+| `filament-ffm-runtime-{macos-arm64, linux-x64, linux-arm64, windows-x64, windows-arm64}` | one platform's `libfilament-c` (+ `.sha256`) |
 
 The `:kotlin:*` JVM targets depend on `filament-ffm` alone, so plain consumers keep
 working with zero configuration — they pull every platform's natives, as before the
@@ -101,8 +101,8 @@ dependencies {
 (This is the skiko model: Compose's plugin injects `skiko-awt-runtime-<os>-<arch>` for
 the host; we default to all-platforms for zero-config and let packagers narrow.)
 
-The platform set mirrors upstream Filament's prebuilt releases (no windows-arm64: Google
-doesn't publish one; Windows-on-ARM works via the x64 JVM emulation path). CI's
+Upstream Filament ships no prebuilts for windows-arm64, so CI builds it
+from source with [`scripts/dev/build-host-libs.sh`](../scripts/dev/build-host-libs.sh). CI's
 [`publish.yml`](../.github/workflows/publish.yml) builds `libfilament-c` on each platform
 runner and publishes with `-PcArtifactsDir=<dir>` (one `<platform>-<arch>/` subdir per
 platform); `:java` stages the natives per platform and the `:java:runtime*` modules jar

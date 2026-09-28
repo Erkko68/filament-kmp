@@ -1,9 +1,11 @@
 package io.github.erkko68.filament.filamat
 
-actual object Filamat {
-    actual fun init() {
-        com.google.android.filament.filamat.MaterialBuilder.init()
-    }
+import io.github.erkko68.filament.jni.FilaMaterialBuilder_init
+import io.github.erkko68.filament.jni.FilaMaterialBuilder_shutdown
 
-    actual fun shutdown() = com.google.android.filament.filamat.MaterialBuilder.shutdown()
+actual object Filamat {
+    // init()/shutdown() bracket glslang's process init; see Filamat.native.kt.
+    actual fun init() = FilaMaterialBuilder_init()
+
+    actual fun shutdown() = FilaMaterialBuilder_shutdown()
 }

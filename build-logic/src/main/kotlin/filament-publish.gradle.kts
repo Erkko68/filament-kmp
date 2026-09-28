@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.JavaLibrary
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
@@ -22,6 +23,8 @@ mavenPublishing {
     // plugin's Dokka default. Both branches must opt in explicitly — the vanniktech default is
     // JavadocJar.Dokka whenever the Dokka plugin is present.
     when {
+        pluginManager.hasPlugin("com.android.library") ->
+            configure(AndroidSingleVariantLibrary(JavadocJar.Empty(), SourcesJar.Sources(), "release"))
         pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform") ->
             configure(KotlinMultiplatform(javadocJar = JavadocJar.Empty()))
         pluginManager.hasPlugin("org.jetbrains.kotlin.jvm") ->

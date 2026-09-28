@@ -35,11 +35,17 @@ object FilamentDownloads {
         "iosSimulatorArm64" to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
         "iosX64"            to ("ios"       to "xcf:ios-arm64_x86_64-simulator"),
         // No macosX64: upstream releases stopped shipping mac x86_64 libs.
+        // No mingwArm64: upstream ships none; see scripts/dev/build-host-libs.sh.
         "macosArm64"        to ("mac"       to "filament/lib/arm64"),
         "linuxX64"          to ("linux"     to "filament/lib/x86_64"),
         "linuxArm64"        to ("arm-linux" to "filament/lib/aarch64"),
         // /MT (static CRT) variant — the JVM's own msvcp140.dll conflicts with /MD.
         "mingwX64"          to ("windows"   to "lib/x86_64/mt"),
+        // Android ABIs for the :android JNI layer (prebuilts/android-<abi>/lib).
+        "android-arm64-v8a"   to ("android-native" to "filament/lib/arm64-v8a"),
+        "android-armeabi-v7a" to ("android-native" to "filament/lib/armeabi-v7a"),
+        "android-x86_64"      to ("android-native" to "filament/lib/x86_64"),
+        "android-x86"         to ("android-native" to "filament/lib/x86"),
     )
 
     private val NATIVE_EXTS = listOf(".a", ".lib")
@@ -318,6 +324,7 @@ abstract class DownloadFilamentIncludesTask : DefaultTask() {
         "ios" to "filament/include/gltfio/materials/uberarchive.h",
         "linux" to "filament/include/gltfio/materials/uberarchive.h",
         "windows" to "include/gltfio/materials/uberarchive.h",
+        "android-native" to "filament/include/gltfio/materials/uberarchive.h",
     )
 
     @TaskAction
@@ -401,6 +408,8 @@ abstract class DownloadFilamentIncludesTask : DefaultTask() {
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["ios"]}
             #elif defined(__APPLE__)
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["mac"]}
+            #elif defined(__ANDROID__)
+            #define UBERARCHIVE_DEFAULT_SIZE ${sizes["android-native"]}
             #elif defined(_WIN32) || defined(_WIN64)
             #define UBERARCHIVE_DEFAULT_SIZE ${sizes["windows"]}
             #else

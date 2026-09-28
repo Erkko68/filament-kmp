@@ -71,11 +71,15 @@ jobs:
             target: linuxArm64
           - os: windows-latest
             target: mingwX64
+          - os: windows-11-arm
+            target: mingwArm64
+            from-source: true
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        # Temurin ships no Windows ARM64 JDK 25; Microsoft's build does.
+        with: { java-version: '25', distribution: "${{ matrix.target == 'mingwArm64' && 'microsoft' || 'temurin' }}" }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
@@ -93,6 +97,7 @@ jobs:
         shell: bash
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v6
+        if: ${{ !matrix.from-source }}
         with:
           path: prebuilts/${{ matrix.target }}
           # The mingw CRT variant (mt/md) is part of the key: switching it must
@@ -100,8 +105,13 @@ jobs:
           # checks the dir is non-empty) and links a mismatched CRT.
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
       - name: Download prebuilts
+        if: ${{ !matrix.from-source }}
         shell: bash
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+      # No upstream release for these hosts: built from source, cached per filaVersion.
+      - uses: ./.github/actions/setup-host-libs
+        if: matrix.from-source
+        with: { target: '${{ matrix.target }}' }
       - name: Build library
         shell: bash
         run: ./gradlew compileKotlinJvm --no-configuration-cache
@@ -333,8 +343,23 @@ jobs:
       - uses: ./.github/actions/setup-gradle-cached
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+      # :android's pinned NDK/CMake (upstream's, see android/build.gradle.kts); buildJniLibs doesn't fetch them.
+      - name: Install NDK + CMake
+        run: $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.14206865" "cmake;3.22.1" > /dev/null
+      - name: Read Filament version
+        id: ver
+        run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: prebuilts/android-*
+          key: filament-prebuilts-${{ steps.ver.outputs.v }}-android
+      - name: Generated JNI bindings are up to date
+        # Committed like the wasm externals; a C header change must come with a regen.
+        run: |
+          ./gradlew :jni:generateJniBindings --no-configuration-cache
+          git diff --exit-code -- jni/src
       - name: Build library
-        run: ./gradlew compileAndroidMain --no-configuration-cache
+        run: ./gradlew :android:assemble compileAndroidMain --no-configuration-cache
       - name: Enable KVM (for android emulator)
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
@@ -380,7 +405,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
+          script: ./gradlew :android:connectedAndroidDeviceTest :kotlin:filament:connectedAndroidDeviceTest :kotlin:filamat:connectedAndroidDeviceTest :kotlin:filament-utils:connectedAndroidDeviceTest :kotlin:gltfio:connectedAndroidDeviceTest :kotlin:filament-compose:connectedAndroidDeviceTest --no-configuration-cache
       - name: Build Android sample
         run: ./gradlew :androidApp:assembleDebug --no-configuration-cache
         working-directory: samples
@@ -389,7 +414,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: android-test-reports
-          path: kotlin/*/build/reports/androidTests/
+          path: |
+            android/build/reports/androidTests/
+            kotlin/*/build/reports/androidTests/
 
   # Single required status check for branch protection. Jobs the path filter skipped count as
   # passing; a failed or cancelled job (or a failed filter) fails it.

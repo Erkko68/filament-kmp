@@ -1,15 +1,11 @@
 package io.github.erkko68.filament.utils
 
-import com.google.android.filament.utils.TextureType as GoogleTextureType
-import com.google.android.filament.utils.loadTexture as googleLoadTexture
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Texture
+import io.github.erkko68.filament.jni.*
 import io.github.erkko68.filament.nativeObject
 
 actual object TextureLoader {
-
-    init { com.google.android.filament.utils.Utils.init() }
-
     actual enum class TextureType {
         COLOR,
         NORMAL,
@@ -17,11 +13,14 @@ actual object TextureLoader {
     }
 
     actual fun loadTexture(engine: Engine, buffer: ByteArray, type: TextureType): Texture? {
-        val googleType = GoogleTextureType.entries[type.ordinal]
-        return Texture(googleLoadTexture(
-            engine.nativeObject,
-            buffer,
-            googleType
-        ))
+        val handle = buffer.usePinned { pinned ->
+            FilaTextureLoader_loadTexture(
+                engine.nativeObject,
+                pinned,
+                buffer.size.toLong(),
+                type == TextureType.COLOR // sRGB if COLOR
+            )
+        }
+        return handle.takeIf { it != 0L }?.let { Texture(it) }
     }
 }

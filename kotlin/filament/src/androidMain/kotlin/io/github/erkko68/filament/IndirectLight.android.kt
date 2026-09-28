@@ -1,36 +1,66 @@
 package io.github.erkko68.filament
 
-import com.google.android.filament.IndirectLight as AndroidIndirectLight
+import io.github.erkko68.filament.jni.*
 
-actual class IndirectLight @InternalFilamentApi constructor(internal val nativeIndirectLight: AndroidIndirectLight) {
+actual class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: Long) {
     actual class Builder actual constructor() {
-        private val nativeBuilder = AndroidIndirectLight.Builder()
+        private val nativeBuilder = FilaIndirectLightBuilder_create()
 
-        actual fun reflections(cubemap: Texture): Builder = apply { nativeBuilder.reflections(cubemap.nativeTexture) }
-        actual fun irradiance(bands: Int, sh: FloatArray): Builder = apply { nativeBuilder.irradiance(bands, sh) }
-        actual fun radiance(bands: Int, sh: FloatArray): Builder = apply { nativeBuilder.radiance(bands, sh) }
-        actual fun irradiance(cubemap: Texture): Builder = apply { nativeBuilder.irradiance(cubemap.nativeTexture) }
-        actual fun intensity(envIntensity: Float): Builder = apply { nativeBuilder.intensity(envIntensity) }
-        actual fun rotation(rotation: FloatArray): Builder = apply { nativeBuilder.rotation(rotation) }
-        actual fun build(engine: Engine): IndirectLight = IndirectLight(nativeBuilder.build(engine.nativeEngine))
+        actual fun reflections(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_reflections(nativeBuilder, cubemap.nativeHandle) }
+        actual fun irradiance(bands: Int, sh: FloatArray): Builder = apply {
+            sh.usePinned { pinned ->
+                FilaIndirectLightBuilder_irradiance(nativeBuilder, bands, pinned)
+            }
+        }
+        actual fun radiance(bands: Int, sh: FloatArray): Builder = apply {
+            sh.usePinned { pinned ->
+                FilaIndirectLightBuilder_radiance(nativeBuilder, bands, pinned)
+            }
+        }
+        actual fun irradiance(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_irradianceAsTexture(nativeBuilder, cubemap.nativeHandle) }
+        actual fun intensity(envIntensity: Float): Builder = apply { FilaIndirectLightBuilder_intensity(nativeBuilder, envIntensity) }
+        actual fun rotation(rotation: FloatArray): Builder = apply {
+            rotation.usePinned { pinned ->
+                FilaIndirectLightBuilder_rotation(nativeBuilder, pinned)
+            }
+        }
+        actual fun build(engine: Engine): IndirectLight {
+            val handle = FilaIndirectLightBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaIndirectLightBuilder_destroy(nativeBuilder)
+            return IndirectLight(handle)
+        }
     }
 
     actual var intensity: Float
-        get() = nativeIndirectLight.intensity
-        set(value) { nativeIndirectLight.intensity = value }
+        get() = FilaIndirectLight_getIntensity(nativeHandle)
+        set(value) { FilaIndirectLight_setIntensity(nativeHandle, value) }
 
     actual var rotation: FloatArray
-        get() = nativeIndirectLight.getRotation(FloatArray(9))
-        set(value) { nativeIndirectLight.setRotation(value) }
+        get() = FloatArray(9).also { result -> result.usePinned { FilaIndirectLight_getRotation(nativeHandle, it) } }
+        set(value) { value.usePinned { FilaIndirectLight_setRotation(nativeHandle, it) } }
 
-    actual val reflectionsTexture: Texture? get() = nativeIndirectLight.reflectionsTexture?.let { Texture(it) }
-    actual val irradianceTexture: Texture? get() = nativeIndirectLight.irradianceTexture?.let { Texture(it) }
+    actual val reflectionsTexture: Texture? get() = FilaIndirectLight_getReflectionsTexture(nativeHandle).takeIf { it != 0L }?.let { Texture(it) }
+    actual val irradianceTexture: Texture? get() = FilaIndirectLight_getIrradianceTexture(nativeHandle).takeIf { it != 0L }?.let { Texture(it) }
 
     actual companion object {
-        actual fun getDirectionEstimate(sh: FloatArray, out: FloatArray?): FloatArray =
-            AndroidIndirectLight.getDirectionEstimate(sh, out)
+        actual fun getDirectionEstimate(sh: FloatArray, out: FloatArray?): FloatArray {
+            val result = out ?: FloatArray(3)
+            sh.usePinned { pSh ->
+                result.usePinned { pOut ->
+                    FilaIndirectLight_getDirectionEstimateStatic(pSh, pOut)
+                }
+            }
+            return result
+        }
 
-        actual fun getColorEstimate(sh: FloatArray, x: Double, y: Double, z: Double, out: FloatArray?): FloatArray =
-            AndroidIndirectLight.getColorEstimate(out, sh, x.toFloat(), y.toFloat(), z.toFloat())
+        actual fun getColorEstimate(sh: FloatArray, x: Double, y: Double, z: Double, out: FloatArray?): FloatArray {
+            val result = out ?: FloatArray(4)
+            sh.usePinned { pSh ->
+                result.usePinned { pOut ->
+                    FilaIndirectLight_getColorEstimateStatic(pSh, x.toFloat(), y.toFloat(), z.toFloat(), pOut)
+                }
+            }
+            return result
+        }
     }
 }

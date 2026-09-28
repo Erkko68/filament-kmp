@@ -37,11 +37,16 @@ jobs:
           - os: windows-latest
             target: mingwX64
             arch: windows-x64
+          - os: windows-11-arm
+            target: mingwArm64
+            arch: windows-arm64
+            from-source: true
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
-        with: { java-version: '25', distribution: 'temurin' }
+        # Temurin ships no Windows ARM64 JDK 25; Microsoft's build does.
+        with: { java-version: '25', distribution: "${{ matrix.target == 'mingwArm64' && 'microsoft' || 'temurin' }}" }
       - uses: ./.github/actions/setup-gradle-cached
       - name: Install C++ deps (Linux)
         if: runner.os == 'Linux'
@@ -52,11 +57,16 @@ jobs:
         run: echo "v=$(grep '^filaVersion=' gradle.properties | cut -d= -f2)" >> $GITHUB_OUTPUT
       # Restore-only: caches saved from a tag ref are invisible to every other run. Keys match ci.yml's.
       - uses: actions/cache/restore@v6
+        if: ${{ !matrix.from-source }}
         with:
           path: prebuilts/${{ matrix.target }}
           key: filament-prebuilts-${{ steps.ver.outputs.v }}-${{ matrix.target }}${{ matrix.target == 'mingwX64' && '-mt' || '' }}
       - name: Download prebuilts
+        if: ${{ !matrix.from-source }}
         run: ./gradlew downloadPrebuilts_${{ matrix.target }}
+      - uses: ./.github/actions/setup-host-libs
+        if: matrix.from-source
+        with: { target: '${{ matrix.target }}' }
       # cmakeBuildFilamentCJvm only links the shared lib — no jextract needed here
       # (the generated Java is produced by the publish job, where it's compiled).
       - name: Build combined FFM native
@@ -115,6 +125,12 @@ jobs:
             downloadPrebuilts_iosSimulatorArm64 \
             downloadPrebuilts_macosArm64
       - uses: ./.github/actions/setup-wasm
+      # :android (filament-jni-android) builds libfilament-c.so per ABI with upstream's pinned NDK/CMake.
+      - name: Install NDK + CMake
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null
+          "$SDKM" "ndk;29.0.14206865" "cmake;3.22.1" > /dev/null
       - name: Download FFM natives
         uses: actions/download-artifact@v8
         with:
@@ -140,12 +156,15 @@ jobs:
             :java:runtime-linux-x64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-linux-arm64:publishAllPublicationsToMavenCentralRepository \
             :java:runtime-windows-x64:publishAllPublicationsToMavenCentralRepository \
+            :java:runtime-windows-arm64:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filamat:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-utils:publishAllPublicationsToMavenCentralRepository \
             :kotlin:gltfio:publishAllPublicationsToMavenCentralRepository \
             :kotlin:filament-compose:publishAllPublicationsToMavenCentralRepository \
             :web:publishAllPublicationsToMavenCentralRepository \
+            :jni:publishAllPublicationsToMavenCentralRepository \
+            :android:publishAllPublicationsToMavenCentralRepository \
             --no-configuration-cache
 
       # Web apps serve these next to their bundle (klib resources don't reach webpack), so

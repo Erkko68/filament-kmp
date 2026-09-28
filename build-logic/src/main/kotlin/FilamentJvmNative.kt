@@ -60,7 +60,7 @@ fun Project.applyFilamentJvmNative(
         // Upstream releases no longer ship mac x86_64 libs — Apple Silicon only.
         "macos" -> if (arch == "Arm64") "macosArm64" else error("macOS x86_64 is not supported: Filament releases stopped shipping mac x86_64 prebuilts")
         "linux" -> if (arch == "Arm64") "linuxArm64" else "linuxX64"
-        "windows" -> "mingwX64"
+        "windows" -> if (arch == "Arm64") "mingwArm64" else "mingwX64"
         else -> error("Unsupported platform '$platform'")
     }
 
@@ -77,12 +77,26 @@ fun Project.applyFilamentJvmNative(
     // prebuilts/: <target>/lib) and skips the download task for that target.
     val localPrebuilts = providers.environmentVariable("FILAMENT_PREBUILTS_DIR").orNull
 
-    val downloadPrebuilts = rootProject.tasks.named("downloadPrebuilts_$prebuiltsTarget")
+    // Targets upstream doesn't ship (mingwArm64) have no download task: their libs
+    // come from scripts/dev/build-host-libs.sh into prebuilts/<target>/lib.
+    val downloadPrebuilts = "downloadPrebuilts_$prebuiltsTarget".takeIf { it in rootProject.tasks.names }
     val downloadIncludes = rootProject.tasks.named("downloadIncludes")
 
     // ── CMake: configure + build the combined SHARED library ──────────────────
     val cmakeConfigure = tasks.register("cmakeConfigureFilamentCJvm", Exec::class.java) {
-        if (localPrebuilts == null) dependsOn(downloadPrebuilts)
+        if (localPrebuilts == null) {
+            if (downloadPrebuilts != null) {
+                dependsOn(rootProject.tasks.named(downloadPrebuilts))
+            } else {
+                val libDir = rootProject.file("prebuilts/$prebuiltsTarget/lib")
+                doFirst {
+                    check(libDir.list()?.isNotEmpty() == true) {
+                        "No Filament prebuilts for $prebuiltsTarget (upstream ships none). Build them: " +
+                            "scripts/dev/build-host-libs.sh $prebuiltsTarget"
+                    }
+                }
+            }
+        }
         dependsOn(downloadIncludes)
         doFirst { cmakeBuildDir.mkdirs() }
         workingDir(cmakeBuildDir)
