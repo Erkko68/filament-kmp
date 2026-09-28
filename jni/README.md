@@ -1,25 +1,24 @@
-# `:jni` — JNI bindings over the `Fila*` C API
+# `:jni` — JNI runtime over the `Fila*` C API
 
-The JNI counterpart of [`java/`](../java/README.md) (FFM) and [`web/`](../web/README.md) (wasm): binds the `Fila*`
-C API in [`c/`](../c) through JNI. Published as **`io.github.erkko68.filament:filament-jni`**, a plain Kotlin/JVM jar
-at the Android bytecode floor (Java 11), so nothing in it needs a recent JDK.
+The JNI layer shared by **desktop** and **Android**: the common API classes' `external fun`s compile to
+JNI methods, and this module supplies what they need at runtime. Published as
+**`io.github.erkko68.filament:filament-jni`**, a Kotlin/JVM jar at the Android bytecode floor (Java 11).
+See [Native Bindings](../docs/bindings.md) for the overall model.
 
-It holds sources only, no native library. Each JNI runtime compiles `src/main/cpp` into its `libfilament-c`:
+It holds no native library; each native runtime links one from these sources:
 
-| Runtime | Module | Artifact |
+| Runtime | Built by | Artifact |
 |---|---|---|
-| Android (arm64-v8a, armeabi-v7a, x86_64, x86) | [`android/`](../android/README.md) | `filament-jni-android` |
-| JVM desktop | not yet (JVM uses FFM, [`java/`](../java/README.md)) | — |
+| Desktop (macOS, Linux, Windows) | [`desktop/`](../desktop/README.md) (`cmakeBuild`) | `filament-jni-runtime-<os>-<arch>` |
+| Android (arm64-v8a, armeabi-v7a, x86_64, x86) | [`android/`](../android/README.md) (`cmakeBuild_<abi>`) | `filament-jni-android` |
 
-- **Generated bindings:** `./gradlew :jni:generateJniBindings` parses the C headers with clang and writes, per C
-  module, `src/main/cpp/generated/<Module>C.c` (JNI forwarders) and `src/main/generated/<Module>C.kt` (top-level
-  `external fun`s named like the C functions, enum/typedef aliases, struct views). Both are committed; CI fails if
-  they drift from the headers.
-- **Runtime:** `src/main/cpp/FilaJni.cpp` + `FilaJni.kt` hold what can't be generated: `JNI_OnLoad`, native
-  memory, and callbacks. Its helpers (`heapScoped`, `usePinned`, `upload`, `Callbacks`, `F32Array`, `PtrArray`…)
-  mirror `:web`'s, so actuals port between the two. Platform-only entry points live in the runtime module
-  (e.g. Android's `FilaAndroid`).
-- **Exports:** `src/main/cpp/filament-c-jni.map` seals the library to `JNI_OnLoad` and `Java_*`.
-
-Struct layouts differ per ABI (pointer and `size_t` width, x86-32 alignment), so struct views ask the C side for
-`sizeof`/`offsetof` at runtime instead of baking offsets in.
+- [`CMakeLists.txt`](CMakeLists.txt): the `filament-c-jni` image (`libfilament-c`), added by `c/CMakeLists.txt`
+  for the desktop and Android platforms: the C API objects, `src/main/cpp/FilaJni.cpp`, and the forwarders.
+- **Forwarders:** `./gradlew :generateBindings` writes one `Java_…` function per common external into
+  `build/generated/bindings/jni/` (see [`buildlogic.bindings`](../build-logic/src/main/kotlin/buildlogic/bindings)).
+  A build artifact, not committed.
+- **Runtime:** `FilaJni.cpp` + `FilaJni.kt` hold what can't be generated: `JNI_OnLoad`, native memory and
+  callbacks. Platform-only entry points live in the runtime module (Android's `FilaAndroid`).
+- **Seal:** [`filament-c-jni.map`](src/main/cpp/filament-c-jni.map) exports only `JNI_OnLoad` and `Java_*`.
+- **Loading** is `Filament.init()`'s job on each platform: `System.loadLibrary` on Android, the desktop
+  loader on the JVM.

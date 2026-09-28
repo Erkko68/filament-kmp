@@ -9,7 +9,7 @@ extern "C" {
 
 // Decodes KTX1 bytes into a Filament Texture.
 // Returns a FilaTexture* handle, or NULL on failure.
-FilaTexture* FilaKTX1Loader_createTexture(FilaEngine* engine, const void* buffer, size_t size, bool srgb);
+FilaTexture* FilaKTX1Loader_createTexture(FilaEngine* engine, const void* buffer, uint32_t size, bool srgb);
 
 // Creates a FilaIndirectLight from a cubemap texture and spherical harmonics.
 // sh must be an array of 9 FilaFloat3 values.
@@ -20,7 +20,7 @@ FilaSkybox* FilaKTX1Loader_createSkybox(FilaEngine* engine, FilaTexture* texture
 
 // Extracts spherical harmonics from KTX1 bytes.
 // outSh must be an array of 9 FilaFloat3 values.
-bool FilaKTX1Loader_getSphericalHarmonics(const void* buffer, size_t size, FilaFloat3* outSh);
+bool FilaKTX1Loader_getSphericalHarmonics(const void* buffer, uint32_t size, FilaFloat3* outSh);
 
 #ifdef __cplusplus
 }

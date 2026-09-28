@@ -16,11 +16,10 @@ See [`docs/modules.md`](../docs/modules.md) for the full coordinates list, depen
 
 Each module publishes the following Kotlin Multiplatform targets:
 
-- `androidTarget`
+- `android`
 - `iosArm64`, `iosSimulatorArm64`
-- `macosArm64`
 - `jvm` (Desktop — Windows, Linux, macOS)
-- `js(IR)` (Web — experimental)
+- `js`, `wasmJs` (Web)
 
 ## Building locally
 
@@ -33,8 +32,8 @@ From the repository root:
 ./gradlew build
 ```
 
-The first build downloads Filament prebuilts via the `downloadPrebuilts_<target>` Gradle tasks — expect a few minutes.
+The first build downloads Filament prebuilts via the `prebuilts_<id>` Gradle tasks — expect a few minutes.
 
 ## Contributing
 
-See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`), the Project Panama (FFM) JVM bindings (`java/`), and the committed JS externals (`web/`).
+See [`docs/repo-structure.md`](../docs/repo-structure.md) for how the Kotlin modules tie into the C wrapper (`c/`) and the native runtimes (`jni/`, `desktop/`, `android/`, `web/`).

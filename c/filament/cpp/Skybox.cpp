@@ -38,12 +38,12 @@ void FilaSkyboxBuilder_color(FilaSkyboxBuilder* builder, float r, float g, float
     FILA_CAST(Skybox::Builder, builder)->color({r, g, b, a});
 }
 
-void FilaSkyboxBuilder_priority(FilaSkyboxBuilder* builder, uint8_t priority) {
+void FilaSkyboxBuilder_priority(FilaSkyboxBuilder* builder, uint32_t priority) {
     FILA_CAST(Skybox::Builder, builder)->priority(priority);
 }
 
 // Skybox instance methods
-void FilaSkybox_setLayerMask(FilaSkybox* skybox, uint8_t select, uint8_t value) {
+void FilaSkybox_setLayerMask(FilaSkybox* skybox, uint32_t select, uint32_t value) {
     FILA_CAST(Skybox, skybox)->setLayerMask(select, value);
 }
 

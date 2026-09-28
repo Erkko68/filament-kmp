@@ -111,34 +111,34 @@ FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* builder, FilaEngine* e
 void FilaTextureBuilder_width(FilaTextureBuilder* builder, uint32_t width);
 void FilaTextureBuilder_height(FilaTextureBuilder* builder, uint32_t height);
 void FilaTextureBuilder_depth(FilaTextureBuilder* builder, uint32_t depth);
-void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint8_t levels);
-void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint8_t samples);
+void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint32_t levels);
+void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint32_t samples);
 void FilaTextureBuilder_sampler(FilaTextureBuilder* builder, FilaTextureSamplerType target);
 void FilaTextureBuilder_format(FilaTextureBuilder* builder, FilaTextureInternalFormat format);
 void FilaTextureBuilder_usage(FilaTextureBuilder* builder, FilaTextureUsage usage);
 void FilaTextureBuilder_swizzle(FilaTextureBuilder* builder, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a);
-void FilaTextureBuilder_importTexture(FilaTextureBuilder* builder, intptr_t id);
+void FilaTextureBuilder_importTexture(FilaTextureBuilder* builder, int64_t id);
 void FilaTextureBuilder_external(FilaTextureBuilder* builder);
 
 // Texture
 bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureInternalFormat format);
 bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureInternalFormat format);
 bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine);
-size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSamplerType target);
-size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine);
+uint32_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSamplerType target);
+uint32_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine);
 bool FilaTexture_validatePixelFormatAndType(FilaTextureInternalFormat internalFormat, FilaPixelDataFormat format, FilaPixelDataType type);
 
-size_t FilaTexture_getWidth(const FilaTexture* texture, size_t level);
-size_t FilaTexture_getHeight(const FilaTexture* texture, size_t level);
-size_t FilaTexture_getDepth(const FilaTexture* texture, size_t level);
-size_t FilaTexture_getLevels(const FilaTexture* texture);
+uint32_t FilaTexture_getWidth(const FilaTexture* texture, uint32_t level);
+uint32_t FilaTexture_getHeight(const FilaTexture* texture, uint32_t level);
+uint32_t FilaTexture_getDepth(const FilaTexture* texture, uint32_t level);
+uint32_t FilaTexture_getLevels(const FilaTexture* texture);
 FilaTextureSamplerType FilaTexture_getTarget(const FilaTexture* texture);
 FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture);
 
-void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
+void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
 void FilaTexture_setExternalStream(FilaTexture* texture, FilaEngine* engine, FilaStream* stream);
 void FilaTexture_generateMipmaps(const FilaTexture* texture, FilaEngine* engine);
-size_t FilaTexture_computeDataSize(FilaPixelDataFormat format, FilaPixelDataType type, size_t stride, size_t height, size_t alignment);
+uint32_t FilaTexture_computeDataSize(FilaPixelDataFormat format, FilaPixelDataType type, uint32_t stride, uint32_t height, uint32_t alignment);
 
 #ifdef __cplusplus
 }

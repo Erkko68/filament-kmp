@@ -25,7 +25,8 @@ layer** on top (`filament-compose`). Both are first-class — pick whichever fit
 
 ## For contributors
 
-- **[Repository Structure](repo-structure.md)** — How the C++ wrapper, JVM (Panama/FFM), Kotlin, JS externals (`web/`) and prebuilt layers fit together.
+- **[Repository Structure](repo-structure.md)** — How the C API, the Kotlin modules, the per-platform runtimes (`jni/`, `android/`, `web/`) and the prebuilt layers fit together.
+- **[Native Bindings](bindings.md)** — How the common Kotlin API calls the C API on every platform, and how to add a binding.
 - **[Upgrading the Filament Version](upgrading-filament.md)** — End-to-end workflow for bumping `filaVersion`: scoping the diff, refreshing prebuilts, adding/removing binding surface across all platforms, and verifying.
 - **[Testing](testing/test-support.md)** — Environment gating (`TestEnv`, `@IgnoreJs`) and the [real-backend rendering tests](testing/rendering-backend-tests.md).
 - **[Automation & Scripts](../scripts/README.md)** — Internal tooling for prebuilts and Filament-version upgrade diffs.

@@ -27,7 +27,8 @@ void FilaStreamBuilder_height(FilaStreamBuilder* builder, uint32_t height);
 FilaStreamType FilaStream_getStreamType(const FilaStream* stream);
 void FilaStream_setAcquiredImage(FilaStream* stream, FilaEngine* engine, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const float* transform);
 void FilaStream_setDimensions(FilaStream* stream, uint32_t width, uint32_t height);
-int64_t FilaStream_getTimestamp(const FilaStream* stream);
+// Out-pointer, not a return: a 64-bit return can't reach Kotlin on the js target.
+void FilaStream_getTimestamp(const FilaStream* stream, int64_t* out);
 
 #ifdef __cplusplus
 }

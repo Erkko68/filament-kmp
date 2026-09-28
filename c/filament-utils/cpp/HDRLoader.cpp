@@ -18,7 +18,7 @@ void stbi_image_free(void *retval_from_stbi_load);
 extern "C" {
 
 FilaTexture *FilaHDRLoader_createTexture(FilaEngine *engine, const void *buffer,
-                                         size_t size, int32_t internalFormat) {
+                                         uint32_t size, int32_t internalFormat) {
   Engine *e = FILA_CAST(Engine, engine);
 
   int width = 0, height = 0, channels = 0;

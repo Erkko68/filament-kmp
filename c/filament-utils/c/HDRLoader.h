@@ -9,7 +9,7 @@ extern "C" {
 
 // Decodes HDR bytes into a Filament Texture.
 // Returns a FilaTexture* handle, or NULL on failure.
-FilaTexture* FilaHDRLoader_createTexture(FilaEngine* engine, const void* buffer, size_t size, int32_t internalFormat);
+FilaTexture* FilaHDRLoader_createTexture(FilaEngine* engine, const void* buffer, uint32_t size, int32_t internalFormat);
 
 #ifdef __cplusplus
 }

@@ -7,7 +7,7 @@
 #include <math/mat4.h>
 
 #include "FilaCommon.h"
-#include "SamplerUtils.h"
+#include <filament/TextureSampler.h>
 #include "../c/MaterialInstance.h"
 
 using namespace filament;
@@ -84,12 +84,19 @@ void FilaMaterialInstance_setParameterMat4(FilaMaterialInstance* instance, const
     FILA_CAST(MaterialInstance, instance)->setParameter(name, *reinterpret_cast<const mat4f*>(v));
 }
 
-void FilaMaterialInstance_setParameterTexture(FilaMaterialInstance* instance, const char* name, const FilaTexture* texture, uint64_t samplerParams) {
-    FILA_CAST(MaterialInstance, instance)->setParameter(name, reinterpret_cast<const Texture*>(texture), SamplerUtils::from_c(samplerParams));
+void FilaMaterialInstance_setParameterTexture(FilaMaterialInstance* instance, const char* name, const FilaTexture* texture,
+        FilaTextureSamplerMinFilter minFilter, FilaTextureSamplerMagFilter magFilter,
+        FilaTextureSamplerWrapMode wrapS, FilaTextureSamplerWrapMode wrapT, FilaTextureSamplerWrapMode wrapR,
+        float anisotropy, FilaTextureSamplerCompareMode compareMode, FilaTextureSamplerCompareFunc compareFunc) {
+    TextureSampler sampler(static_cast<TextureSampler::MinFilter>(minFilter), static_cast<TextureSampler::MagFilter>(magFilter),
+            static_cast<TextureSampler::WrapMode>(wrapS), static_cast<TextureSampler::WrapMode>(wrapT), static_cast<TextureSampler::WrapMode>(wrapR));
+    sampler.setAnisotropy(anisotropy);
+    sampler.setCompareMode(static_cast<TextureSampler::CompareMode>(compareMode), static_cast<TextureSampler::CompareFunc>(compareFunc));
+    FILA_CAST(MaterialInstance, instance)->setParameter(name, reinterpret_cast<const Texture*>(texture), sampler);
 }
 
 // SetParameter Arrays
-void FilaMaterialInstance_setBooleanParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const bool* v, size_t count) {
+void FilaMaterialInstance_setBooleanParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const bool* v, uint32_t count) {
     switch (elementSize) {
         case 1: FILA_CAST(MaterialInstance, instance)->setParameter(name, v, count); break;
         case 2: FILA_CAST(MaterialInstance, instance)->setParameter(name, reinterpret_cast<const bool2*>(v), count); break;
@@ -98,7 +105,7 @@ void FilaMaterialInstance_setBooleanParameterArray(FilaMaterialInstance* instanc
     }
 }
 
-void FilaMaterialInstance_setIntParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const int32_t* v, size_t count) {
+void FilaMaterialInstance_setIntParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const int32_t* v, uint32_t count) {
     switch (elementSize) {
         case 1: FILA_CAST(MaterialInstance, instance)->setParameter(name, v, count); break;
         case 2: FILA_CAST(MaterialInstance, instance)->setParameter(name, reinterpret_cast<const int2*>(v), count); break;
@@ -107,7 +114,7 @@ void FilaMaterialInstance_setIntParameterArray(FilaMaterialInstance* instance, c
     }
 }
 
-void FilaMaterialInstance_setFloatParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const float* v, size_t count) {
+void FilaMaterialInstance_setFloatParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const float* v, uint32_t count) {
     switch (elementSize) {
         case 1: FILA_CAST(MaterialInstance, instance)->setParameter(name, v, count); break;
         case 2: FILA_CAST(MaterialInstance, instance)->setParameter(name, reinterpret_cast<const float2*>(v), count); break;

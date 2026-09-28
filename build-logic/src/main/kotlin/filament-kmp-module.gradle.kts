@@ -1,3 +1,5 @@
+import buildlogic.cmake.linkFilamentCApi
+import buildlogic.platform.hostPlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -12,10 +14,6 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
 }
 
-// ── Project coordinates (previously in root allprojects {}) ───────────────────
-group   = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
-version = project.findProperty("libVersion")   as? String ?: "0.1.0-SNAPSHOT"
-
 val libs = the<org.gradle.api.artifacts.VersionCatalogsExtension>().named("libs")
 
 fun catalogJvmTarget(alias: String): JvmTarget =
@@ -29,6 +27,9 @@ kotlin {
         // backend handles between each other; consumers outside this build do not.
         optIn.add("io.github.erkko68.filament.InternalFilamentApi")
     }
+    // Common `external fun`s bind to C through @SymbolName on Native (see interop/Interop.kt), which
+    // needs this opt-in at every use site, commonMain included (as in skiko; KT-46649).
+    sourceSets.all { languageSettings.optIn("kotlin.native.SymbolNameIsInternal") }
 
     // AGP 9 KMP android library (com.android.kotlin.multiplatform.library): the
     // android config lives on the `android` target block inside `kotlin {}`.
@@ -67,11 +68,7 @@ kotlin {
         iosSimulatorArm64()
     }
 
-    // JVM/Panama floor: jvmMain actuals call java.lang.foreign (finalized in JDK 22)
-    // and depend on :java. The Gradle daemon runs on JDK 25
-    // (gradle/gradle-daemon-jvm.properties), so no per-module toolchain is needed —
-    // just pin the bytecode floor so the artifact stays usable on any JDK 22+.
-    // Scoped to this target only; Android above stays at its own lower target.
+    // Desktop bytecode floor; Android above keeps its own lower target.
     jvm {
         compilerOptions {
             jvmTarget.set(catalogJvmTarget("jvm-target"))
@@ -105,7 +102,25 @@ kotlin {
         resources.srcDir(stageFilamentWebAssets)
     }
 
-    applyDefaultHierarchyTemplate()
+    // jniMain: shared by jvm and android, which both reach the C API through JNI.
+    applyDefaultHierarchyTemplate {
+        common {
+            group("jni") {
+                withJvm()
+                withCompilations { it.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm }
+            }
+        }
+    }
+
+    sourceSets.named("commonTest").configure {
+        dependencies {
+            implementation(kotlin("test"))
+            implementation(project(":kotlin:test-support"))
+        }
+    }
+
+    // A binding module's C API static library + Filament archives ride in its klib (no-op elsewhere).
+    targets.withType<KotlinNativeTarget>().configureEach { linkFilamentCApi(project, project.name) }
 }
 
 // ── Real-backend (GPU) test gating, decided once here on the host ─────────────
@@ -133,10 +148,7 @@ val jvmGpu: String = forcedGpu ?: when {
 // with -PfilamentTestGpu=true to test whether a given runner's sim can render.
 val simGpu: String = forcedGpu ?: (System.getenv("CI") == null).toString()
 
-// jvmTest runs FFM downcalls into libfilament-c; silence the JDK 22+ restricted-native-access
-// warning. Downstream app launchers need the same flag.
 tasks.withType<Test>().configureEach {
-    jvmArgs("--enable-native-access=ALL-UNNAMED")
     environment("FILAMENT_TEST_GPU", jvmGpu)
     // Full exception output for failed tests — the default summary truncates the message,
     // hiding causes like a native "undefined symbol".
@@ -162,8 +174,8 @@ kotlin.sourceSets.named("androidDeviceTest").configure {
 // ── XCFramework + iOS native config (macOS only) ─────────────────────────────
 // iOS targets, XCFrameworks, and related native config are macOS-only: the K/N
 // compiler can't run on non-macOS hosts, and the HostManager throws on unsupported
-// hosts like linux-arm64.  Use the safe hostPlatform() helper (NativeSupport.kt)
-// which reads os.name and never touches HostManager.
+// hosts like linux-arm64.  Use the safe hostPlatform() helper, which reads os.name
+// and never touches HostManager.
 if (hostPlatform() == "macos") {
     val xcfName = project.name.split("-").joinToString("") { part ->
         part.replaceFirstChar { it.uppercaseChar() }

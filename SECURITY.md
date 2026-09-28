@@ -31,8 +31,8 @@ from C++/JS using Filament directly, it is an engine issue.*
   independently of Kotlin. We track such issues with the `upstream-filament` label and refresh
   our prebuilts once a fix lands upstream.
 - **Wrapper vulnerabilities** belong here. These are the parts we actually own:
-  - the hand-written native glue (C wrapper, JNI, Project-Panama/FFM bindings) and the
-    Kotlin/JS externals — e.g. incorrect buffer sizing in out-parameters, marshalling bugs,
+  - the native glue (C wrapper, JNI runtime and generated forwarders) and the
+    web runtime — e.g. incorrect buffer sizing in out-parameters, marshalling bugs,
     or type-unsafe JS interop;
   - the build/prebuilt plumbing — integrity of the Filament binaries downloaded per
     `filaVersion`, and the download scripts under `scripts/`;

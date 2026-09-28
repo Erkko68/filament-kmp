@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.kover)
     alias(libs.plugins.binaryCompatibilityValidator)
-    id("filament-prebuilts")
+    id("filament-root")
 }
 
 // ── Public-API surface guard (binary-compatibility-validator) ─────────────────
@@ -17,10 +17,9 @@ plugins {
 apiValidation {
     ignoredProjects += listOf(
         "test-support", // internal test helpers, not published
-        "web",          // generated Fila* externals over filament-kmp.wasm, not a curated API
-        "java",         // filament-ffm: jextract-generated FFM bindings, not a curated API
-        "jni",          // filament-jni: generated JNI bindings, not a curated API
-        "android",      // filament-jni-android: libfilament-c.so per ABI for filament-jni
+        // Native runtimes: interop plumbing, not a curated API.
+        "web", "jni", "android", "desktop",
+        "runtime-macos-arm64", "runtime-linux-x64", "runtime-linux-arm64", "runtime-windows-x64", "runtime-windows-arm64",
     )
 }
 
@@ -31,7 +30,7 @@ apiValidation {
 // ── API docs aggregation ──────────────────────────────────────────────────────
 // Dokka V2 no longer auto-collects subprojects; the root gathers the documented
 // modules explicitly. `dokkaGenerate` renders the multi-module site to
-// build/dokka/html. :java and :web are excluded (FFM internals / generated externals).
+// build/dokka/html. The native runtimes (:jni, :desktop, :android, :web) are interop plumbing, not documented.
 dependencies {
     dokka(project(":kotlin:filament"))
     dokka(project(":kotlin:filamat"))
@@ -57,7 +56,7 @@ dokka {
 // Each :kotlin:* module applies the Kover plugin (via the filament-kmp-module convention
 // plugin) so its test runs are instrumented; the root merges them into one report.
 // Kover measures the JVM-executed tests (the `jvm` target + Android unit tests) — that's the
-// common `expect` surface plus the JVM/FFM actuals. The js/native actuals run on their own
+// common `expect` surface plus the JNI actuals. The js/native actuals run on their own
 // runtimes Kover can't instrument, so they're out of these numbers by construction.
 // Generate with `./gradlew koverHtmlReport` (build/reports/kover/html) or `koverXmlReport`.
 dependencies {
@@ -68,29 +67,12 @@ dependencies {
     kover(project(":kotlin:filament-compose"))
 }
 
-// Ensure every project — including the implicit :kotlin and :java parent
-// projects created by `include(":kotlin:filament")` — carries valid coordinates,
-// so nothing accidentally publishes with group = rootProject.name.
+// Every project (including the implicit :kotlin parent) carries valid coordinates, so nothing publishes
+// with group = rootProject.name.
 allprojects {
-    val baseGroup = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
-    group = if (path.startsWith(":java")) {
-        // The :java module carries the JVM native runtime (Project Panama/FFM),
-        // published as the `filament-ffm` artifact under a matching `-ffm` group.
-        "$baseGroup-ffm"
-    } else {
-        baseGroup
-    }
+    group = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
     version = project.findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
-
-    // Module declarations live under java/*. The "erkko68" component triggers a JLS §6.1
-    // advisory warning about terminal digits in module names; harmless but noisy in CI.
-    if (path.startsWith(":java")) {
-        tasks.withType<JavaCompile>().configureEach {
-            options.compilerArgs.add("-Xlint:-module")
-        }
-    }
 }
 
-// The Filament prebuilt/header download tasks (downloadPrebuilts, downloadPrebuilts_<target>,
-// downloadIncludes) are registered by the `filament-prebuilts` convention plugin applied above
-// (build-logic/src/main/kotlin/filament-prebuilts.gradle.kts).
+// Shared tasks (prebuilts_<id>, downloadIncludes, setupEmsdk, generateBindings, cmakeBuild_<ios id>) come
+// from the `filament-root` plugin applied above (build-logic/src/main/kotlin/filament-root.gradle.kts).

@@ -27,11 +27,11 @@ void FilaIndirectLightBuilder_reflections(FilaIndirectLightBuilder* builder, con
     FILA_CAST(IndirectLight::Builder, builder)->reflections(reinterpret_cast<const Texture*>(cubemap));
 }
 
-void FilaIndirectLightBuilder_irradiance(FilaIndirectLightBuilder* builder, uint8_t bands, const float* sh) {
+void FilaIndirectLightBuilder_irradiance(FilaIndirectLightBuilder* builder, uint32_t bands, const float* sh) {
     FILA_CAST(IndirectLight::Builder, builder)->irradiance(bands, reinterpret_cast<const math::float3*>(sh));
 }
 
-void FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* builder, uint8_t bands, const float* sh) {
+void FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* builder, uint32_t bands, const float* sh) {
     FILA_CAST(IndirectLight::Builder, builder)->radiance(bands, reinterpret_cast<const math::float3*>(sh));
 }
 

@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * SkinningBuffer is used to hold skinning data (bones) for skeletal animation.
  *
@@ -14,7 +16,11 @@ package io.github.erkko68.filament
  *
  * @see RenderableManager.setSkinningBuffer
  */
-expect class SkinningBuffer {
+class SkinningBuffer @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Builder for creating SkinningBuffer instances.
      *
@@ -22,6 +28,8 @@ expect class SkinningBuffer {
      * the SkinningBuffer.
      */
     class Builder() {
+        private val nativeBuilder = FilaSkinningBufferBuilder_create()
+
         /**
          * Sets the number of bones in this buffer.
          *
@@ -31,7 +39,10 @@ expect class SkinningBuffer {
          * @param boneCount Number of bones to allocate
          * @return This Builder, for chaining calls
          */
-        fun boneCount(boneCount: Int): Builder
+        fun boneCount(boneCount: Int): Builder {
+            FilaSkinningBufferBuilder_boneCount(nativeBuilder, boneCount)
+            return this
+        }
 
         /**
          * Sets whether to initialize the buffer with identity bones.
@@ -42,7 +53,10 @@ expect class SkinningBuffer {
          * @param initialize true to initialize with identity bones, false to leave uninitialized
          * @return This Builder, for chaining calls
          */
-        fun initialize(initialize: Boolean): Builder
+        fun initialize(initialize: Boolean): Builder {
+            FilaSkinningBufferBuilder_initialize(nativeBuilder, initialize)
+            return this
+        }
 
         /**
          * Creates the SkinningBuffer object.
@@ -51,7 +65,11 @@ expect class SkinningBuffer {
          * @return The newly created SkinningBuffer
          * @throws UnsupportedOperationException on JS — SkinningBuffer is unbound in the web wrapper.
          */
-        fun build(engine: Engine): SkinningBuffer
+        fun build(engine: Engine): SkinningBuffer {
+            val handle = FilaSkinningBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaSkinningBufferBuilder_destroy(nativeBuilder)
+            return SkinningBuffer(handle)
+        }
     }
 
     /**
@@ -59,7 +77,7 @@ expect class SkinningBuffer {
      *
      * @return The bone count (adjusted to nearest multiple of 256)
      */
-    val boneCount: Int
+    val boneCount: Int get() = FilaSkinningBuffer_getBoneCount(nativeHandle)
 
     /**
      * Updates bone transforms in the range [offset, offset + boneCount).
@@ -71,7 +89,15 @@ expect class SkinningBuffer {
      * @param boneCount Number of bones to set
      * @param offset Offset in elements (not bytes) in the SkinningBuffer (default: 0)
      */
-    fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int)
+    fun setBonesAsMatrices(engine: Engine, matrices: FloatArray, boneCount: Int, offset: Int) {
+        matrices.usePinned { pinned ->
+            FilaSkinningBuffer_setBonesMat4f(
+                nativeHandle, engine.nativeHandle,
+                pinned,
+                boneCount, offset
+            )
+        }
+    }
 
     /**
      * Updates bone transforms in the range [offset, offset + boneCount) using quaternion+translation format.
@@ -84,5 +110,38 @@ expect class SkinningBuffer {
      * @param boneCount Number of bones to set
      * @param offset Offset in elements (not bytes) in the SkinningBuffer (default: 0)
      */
-    fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int)
+    fun setBonesAsQuaternions(engine: Engine, bones: FloatArray, boneCount: Int, offset: Int) {
+        // Each bone is 8 floats: [qx,qy,qz,qw, tx,ty,tz,1] — matches FilaBone memory layout.
+        bones.usePinned { pinned ->
+            FilaSkinningBuffer_setBonesQuaternions(
+                nativeHandle, engine.nativeHandle,
+                pinned,
+                boneCount, offset
+            )
+        }
+    }
 }
+
+@ExternalSymbolName("FilaSkinningBufferBuilder_boneCount")
+private external fun FilaSkinningBufferBuilder_boneCount(builder: NativePointer, boneCount: Int)
+
+@ExternalSymbolName("FilaSkinningBufferBuilder_build")
+private external fun FilaSkinningBufferBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaSkinningBufferBuilder_create")
+private external fun FilaSkinningBufferBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaSkinningBufferBuilder_destroy")
+private external fun FilaSkinningBufferBuilder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaSkinningBufferBuilder_initialize")
+private external fun FilaSkinningBufferBuilder_initialize(builder: NativePointer, initialize: Boolean)
+
+@ExternalSymbolName("FilaSkinningBuffer_getBoneCount")
+private external fun FilaSkinningBuffer_getBoneCount(buffer: NativePointer): Int
+
+@ExternalSymbolName("FilaSkinningBuffer_setBonesMat4f")
+private external fun FilaSkinningBuffer_setBonesMat4f(buffer: NativePointer, engine: NativePointer, matrices: NativePointer, boneCount: Int, offset: Int)
+
+@ExternalSymbolName("FilaSkinningBuffer_setBonesQuaternions")
+private external fun FilaSkinningBuffer_setBonesQuaternions(buffer: NativePointer, engine: NativePointer, bones: NativePointer, boneCount: Int, offset: Int)

@@ -15,7 +15,7 @@ FilaEntity FilaFilamentAsset_getRoot(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getRoot().getId();
 }
 
-size_t FilaFilamentAsset_getEntityCount(FilaFilamentAsset* asset) {
+uint32_t FilaFilamentAsset_getEntityCount(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getEntityCount();
 }
 
@@ -27,7 +27,7 @@ void FilaFilamentAsset_getEntities(FilaFilamentAsset* asset, FilaEntity* entitie
     }
 }
 
-size_t FilaFilamentAsset_getLightEntityCount(FilaFilamentAsset* asset) {
+uint32_t FilaFilamentAsset_getLightEntityCount(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getLightEntityCount();
 }
 
@@ -39,7 +39,7 @@ void FilaFilamentAsset_getLightEntities(FilaFilamentAsset* asset, FilaEntity* en
     }
 }
 
-size_t FilaFilamentAsset_getRenderableEntityCount(FilaFilamentAsset* asset) {
+uint32_t FilaFilamentAsset_getRenderableEntityCount(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getRenderableEntityCount();
 }
 
@@ -51,7 +51,7 @@ void FilaFilamentAsset_getRenderableEntities(FilaFilamentAsset* asset, FilaEntit
     }
 }
 
-size_t FilaFilamentAsset_getCameraEntityCount(FilaFilamentAsset* asset) {
+uint32_t FilaFilamentAsset_getCameraEntityCount(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getCameraEntityCount();
 }
 
@@ -67,22 +67,16 @@ FilaEntity FilaFilamentAsset_popRenderable(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->popRenderable().getId();
 }
 
-size_t FilaFilamentAsset_popRenderables(FilaFilamentAsset* asset, FilaEntity* entities, size_t count) {
+uint32_t FilaFilamentAsset_popRenderables(FilaFilamentAsset* asset, FilaEntity* entities, uint32_t count) {
     return ((FilamentAsset*) asset)->popRenderables((utils::Entity*) entities, count);
 }
 
-FilaBox FilaFilamentAsset_getBoundingBox(FilaFilamentAsset* asset) {
+void FilaFilamentAsset_getBoundingBox(FilaFilamentAsset* asset, float center[3], float halfExtent[3]) {
     auto aabb = ((FilamentAsset*) asset)->getBoundingBox();
-    FilaBox box;
-    auto center = aabb.center();
-    auto extent = aabb.extent();
-    box.centerX = center.x;
-    box.centerY = center.y;
-    box.centerZ = center.z;
-    box.halfExtentX = extent.x;
-    box.halfExtentY = extent.y;
-    box.halfExtentZ = extent.z;
-    return box;
+    auto c = aabb.center();
+    auto e = aabb.extent();
+    center[0] = c.x; center[1] = c.y; center[2] = c.z;
+    halfExtent[0] = e.x; halfExtent[1] = e.y; halfExtent[2] = e.z;
 }
 
 const char* FilaFilamentAsset_getName(FilaFilamentAsset* asset, FilaEntity entity) {
@@ -93,11 +87,11 @@ FilaEntity FilaFilamentAsset_getFirstEntityByName(FilaFilamentAsset* asset, cons
     return ((FilamentAsset*) asset)->getFirstEntityByName(name).getId();
 }
 
-size_t FilaFilamentAsset_getEntitiesByName(FilaFilamentAsset* asset, const char* name, FilaEntity* entities, size_t maxCount) {
+uint32_t FilaFilamentAsset_getEntitiesByName(FilaFilamentAsset* asset, const char* name, FilaEntity* entities, uint32_t maxCount) {
     return ((FilamentAsset*) asset)->getEntitiesByName(name, (utils::Entity*) entities, maxCount);
 }
 
-size_t FilaFilamentAsset_getEntitiesByPrefix(FilaFilamentAsset* asset, const char* prefix, FilaEntity* entities, size_t maxCount) {
+uint32_t FilaFilamentAsset_getEntitiesByPrefix(FilaFilamentAsset* asset, const char* prefix, FilaEntity* entities, uint32_t maxCount) {
     return ((FilamentAsset*) asset)->getEntitiesByPrefix(prefix, (utils::Entity*) entities, maxCount);
 }
 
@@ -105,36 +99,28 @@ const char* FilaFilamentAsset_getExtras(FilaFilamentAsset* asset, FilaEntity ent
     return ((FilamentAsset*) asset)->getExtras(utils::Entity::import(entity));
 }
 
-size_t FilaFilamentAsset_getMorphTargetCountAt(FilaFilamentAsset* asset, FilaEntity entity) {
+uint32_t FilaFilamentAsset_getMorphTargetCountAt(FilaFilamentAsset* asset, FilaEntity entity) {
     return ((FilamentAsset*) asset)->getMorphTargetCountAt(utils::Entity::import(entity));
 }
 
-const char* FilaFilamentAsset_getMorphTargetNameAt(FilaFilamentAsset* asset, FilaEntity entity, size_t targetIndex) {
+const char* FilaFilamentAsset_getMorphTargetNameAt(FilaFilamentAsset* asset, FilaEntity entity, uint32_t targetIndex) {
     return ((FilamentAsset*) asset)->getMorphTargetNameAt(utils::Entity::import(entity), targetIndex);
 }
 
-size_t FilaFilamentAsset_getResourceUriCount(FilaFilamentAsset* asset) {
+uint32_t FilaFilamentAsset_getResourceUriCount(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getResourceUriCount();
 }
 
-void FilaFilamentAsset_getResourceUris(FilaFilamentAsset* asset, const char** uris) {
-    const char* const* src = ((FilamentAsset*) asset)->getResourceUris();
-    size_t count = ((FilamentAsset*) asset)->getResourceUriCount();
-    for (size_t i = 0; i < count; ++i) {
-        uris[i] = src[i];
-    }
+const char* FilaFilamentAsset_getResourceUriAt(FilaFilamentAsset* asset, uint32_t index) {
+    return ((FilamentAsset*) asset)->getResourceUris()[index];
 }
 
-size_t FilaFilamentAsset_getAssetInstanceCount(FilaFilamentAsset* asset) {
+uint32_t FilaFilamentAsset_getAssetInstanceCount(FilaFilamentAsset* asset) {
     return ((FilamentAsset*) asset)->getAssetInstanceCount();
 }
 
-void FilaFilamentAsset_getAssetInstances(FilaFilamentAsset* asset, FilaFilamentInstance** instances) {
-    FilamentInstance** src = ((FilamentAsset*) asset)->getAssetInstances();
-    size_t count = ((FilamentAsset*) asset)->getAssetInstanceCount();
-    for (size_t i = 0; i < count; ++i) {
-        instances[i] = (FilaFilamentInstance*) src[i];
-    }
+FilaFilamentInstance* FilaFilamentAsset_getAssetInstanceAt(FilaFilamentAsset* asset, uint32_t index) {
+    return (FilaFilamentInstance*) ((FilamentAsset*) asset)->getAssetInstances()[index];
 }
 
 void FilaFilamentAsset_releaseSourceData(FilaFilamentAsset* asset) {

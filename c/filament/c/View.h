@@ -141,7 +141,6 @@ typedef struct FilaViewAmbientOcclusionOptions {
 } FilaViewAmbientOcclusionOptions;
 
 typedef struct FilaViewTemporalAntiAliasingOptions {
-    float filterWidth;
     float feedback;
     float lodBias;
     float sharpness;
@@ -178,7 +177,6 @@ typedef struct FilaViewVsmShadowOptions {
     bool mipmapping;
     uint8_t msaaSamples;
     bool highPrecision;
-    float minVarianceScale;
     float lightBleedReduction;
 } FilaViewVsmShadowOptions;
 
@@ -215,7 +213,7 @@ bool FilaView_hasCamera(const FilaView* view);
 void FilaView_setColorGrading(FilaView* view, FilaColorGrading* colorGrading);
 void FilaView_setViewport(FilaView* view, int left, int bottom, uint32_t width, uint32_t height);
 void FilaView_getViewport(const FilaView* view, int* left, int* bottom, uint32_t* width, uint32_t* height);
-void FilaView_setVisibleLayers(FilaView* view, uint8_t select, uint8_t value);
+void FilaView_setVisibleLayers(FilaView* view, uint32_t select, uint32_t value);
 uint8_t FilaView_getVisibleLayers(const FilaView* view);
 
 void FilaView_setRenderTarget(FilaView* view, FilaRenderTarget* renderTarget);
@@ -226,15 +224,15 @@ FilaViewAntiAliasing FilaView_getAntiAliasing(const FilaView* view);
 void FilaView_setDithering(FilaView* view, FilaViewDithering dithering);
 FilaViewDithering FilaView_getDithering(const FilaView* view);
 
-void FilaView_setDynamicResolutionOptions(FilaView* view, const FilaViewDynamicResolutionOptions* options);
-void FilaView_getDynamicResolutionOptions(const FilaView* view, FilaViewDynamicResolutionOptions* out);
+void FilaView_setDynamicResolutionOptions(FilaView* view, float minScale_0, float minScale_1, float maxScale_0, float maxScale_1, float sharpness, bool enabled, bool homogeneousScaling, FilaViewQualityLevel quality);
+void FilaView_getDynamicResolutionOptions(const FilaView* view, float* floats, int32_t* ints);
 void FilaView_getLastDynamicResolutionScale(const FilaView* view, float out[2]);
 
 void FilaView_setShadowType(FilaView* view, FilaViewShadowType type);
-void FilaView_setVsmShadowOptions(FilaView* view, const FilaViewVsmShadowOptions* options);
-void FilaView_getVsmShadowOptions(const FilaView* view, FilaViewVsmShadowOptions* out);
-void FilaView_setSoftShadowOptions(FilaView* view, const FilaViewSoftShadowOptions* options);
-void FilaView_getSoftShadowOptions(const FilaView* view, FilaViewSoftShadowOptions* out);
+void FilaView_setVsmShadowOptions(FilaView* view, uint32_t anisotropy, bool mipmapping, uint32_t msaaSamples, bool highPrecision, float lightBleedReduction);
+void FilaView_getVsmShadowOptions(const FilaView* view, float* floats, int32_t* ints);
+void FilaView_setSoftShadowOptions(FilaView* view, float penumbraScale, float penumbraRatioScale, float maxPenumbraRatio, float maxSearchRadius);
+void FilaView_getSoftShadowOptions(const FilaView* view, float* floats);
 
 void FilaView_setRenderQuality(FilaView* view, FilaViewQualityLevel hdrColorBufferQuality);
 FilaViewQualityLevel FilaView_getRenderQuality(const FilaView* view);
@@ -252,30 +250,30 @@ bool FilaView_isFrontFaceWindingInverted(const FilaView* view);
 void FilaView_setTransparentPickingEnabled(FilaView* view, bool enabled);
 bool FilaView_isTransparentPickingEnabled(const FilaView* view);
 
-void FilaView_setAmbientOcclusionOptions(FilaView* view, const FilaViewAmbientOcclusionOptions* options);
-void FilaView_getAmbientOcclusionOptions(const FilaView* view, FilaViewAmbientOcclusionOptions* out);
-void FilaView_setBloomOptions(FilaView* view, const FilaViewBloomOptions* options);
-void FilaView_getBloomOptions(const FilaView* view, FilaViewBloomOptions* out);
-void FilaView_setFogOptions(FilaView* view, const FilaViewFogOptions* options);
-void FilaView_getFogOptions(const FilaView* view, FilaViewFogOptions* out);
+void FilaView_setAmbientOcclusionOptions(FilaView* view, float radius, float bias, float power, float resolution, float intensity, float bilateralThreshold, FilaViewQualityLevel quality, FilaViewQualityLevel lowPassFilter, FilaViewQualityLevel upsampling, bool enabled, bool bentNormals, float minHorizonAngleRad, float ssct_lightConeRad, float ssct_shadowDistance, float ssct_contactDistanceMax, float ssct_intensity, float ssct_lightDirection_0, float ssct_lightDirection_1, float ssct_lightDirection_2, float ssct_depthBias, float ssct_depthSlopeBias, uint32_t ssct_sampleCount, uint32_t ssct_rayCount, bool ssct_enabled, uint32_t gtao_sampleSliceCount, uint32_t gtao_sampleStepsPerSlice, float gtao_thicknessHeuristic, bool gtao_useVisibilityBitmasks, float gtao_constThickness, bool gtao_linearThickness, int aoType);
+void FilaView_getAmbientOcclusionOptions(const FilaView* view, float* floats, int32_t* ints);
+void FilaView_setBloomOptions(FilaView* view, FilaTexture* dirt, float dirtStrength, float strength, uint32_t resolution, uint32_t levels, int blendMode, bool threshold, bool enabled, float highlight, FilaViewQualityLevel quality, bool lensFlare, bool starburst, float chromaticAberration, uint32_t ghostCount, float ghostSpacing, float ghostThreshold, float haloThickness, float haloRadius, float haloThreshold);
+void FilaView_getBloomOptions(const FilaView* view, float* floats, int32_t* ints);
+void FilaView_setFogOptions(FilaView* view, float distance, float cutOffDistance, float maximumOpacity, float height, float heightFalloff, float color_0, float color_1, float color_2, float density, float inScatteringStart, float inScatteringSize, bool fogColorFromIbl, FilaTexture* skyColor, bool enabled);
+void FilaView_getFogOptions(const FilaView* view, float* floats, int32_t* ints);
 void FilaView_setBlendMode(FilaView* view, FilaViewBlendMode blendMode);
 FilaViewBlendMode FilaView_getBlendMode(const FilaView* view);
-void FilaView_setDepthOfFieldOptions(FilaView* view, const FilaViewDepthOfFieldOptions* options);
-void FilaView_getDepthOfFieldOptions(const FilaView* view, FilaViewDepthOfFieldOptions* out);
-void FilaView_setVignetteOptions(FilaView* view, const FilaViewVignetteOptions* options);
-void FilaView_getVignetteOptions(const FilaView* view, FilaViewVignetteOptions* out);
-void FilaView_setTemporalAntiAliasingOptions(FilaView* view, const FilaViewTemporalAntiAliasingOptions* options);
-void FilaView_getTemporalAntiAliasingOptions(const FilaView* view, FilaViewTemporalAntiAliasingOptions* out);
-void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, const FilaViewMultiSampleAntiAliasingOptions* options);
-void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, FilaViewMultiSampleAntiAliasingOptions* out);
-void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, const FilaViewScreenSpaceReflectionsOptions* options);
-void FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, FilaViewScreenSpaceReflectionsOptions* out);
+void FilaView_setDepthOfFieldOptions(FilaView* view, float cocScale, float cocAspectRatio, float maxApertureDiameter, bool enabled, int filter, bool nativeResolution, uint32_t foregroundRingCount, uint32_t backgroundRingCount, uint32_t fastGatherRingCount, uint32_t maxForegroundCOC, uint32_t maxBackgroundCOC);
+void FilaView_getDepthOfFieldOptions(const FilaView* view, float* floats, int32_t* ints);
+void FilaView_setVignetteOptions(FilaView* view, float midPoint, float roundness, float feather, float color_0, float color_1, float color_2, float color_3, bool enabled);
+void FilaView_getVignetteOptions(const FilaView* view, float* floats, int32_t* ints);
+void FilaView_setTemporalAntiAliasingOptions(FilaView* view, float feedback, float lodBias, float sharpness, bool enabled, float upscaling, bool filterHistory, bool filterInput, bool useYCoCg, bool hdr, int boxType, int boxClipping, int jitterPattern, float varianceGamma, bool preventFlickering, bool historyReprojection);
+void FilaView_getTemporalAntiAliasingOptions(const FilaView* view, float* floats, int32_t* ints);
+void FilaView_setMultiSampleAntiAliasingOptions(FilaView* view, bool enabled, uint32_t sampleCount, bool customResolve);
+void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* view, int32_t* ints);
+void FilaView_setScreenSpaceReflectionsOptions(FilaView* view, float thickness, float bias, float maxDistance, float stride, bool enabled);
+void FilaView_getScreenSpaceReflectionsOptions(const FilaView* view, float* floats, int32_t* ints);
 
-void FilaView_setStereoscopicOptions(FilaView* view, const FilaViewStereoscopicOptions* options);
-void FilaView_getStereoscopicOptions(const FilaView* view, FilaViewStereoscopicOptions* out);
+void FilaView_setStereoscopicOptions(FilaView* view, bool enabled);
+void FilaView_getStereoscopicOptions(const FilaView* view, int32_t* ints);
 
-void FilaView_setGuardBandOptions(FilaView* view, const FilaViewGuardBandOptions* options);
-void FilaView_getGuardBandOptions(const FilaView* view, FilaViewGuardBandOptions* out);
+void FilaView_setGuardBandOptions(FilaView* view, bool enabled);
+void FilaView_getGuardBandOptions(const FilaView* view, int32_t* ints);
 
 void FilaView_setFrustumCullingEnabled(FilaView* view, bool enabled);
 bool FilaView_isFrustumCullingEnabled(const FilaView* view);
@@ -283,6 +281,8 @@ bool FilaView_isFrustumCullingEnabled(const FilaView* view);
 void FilaView_setScreenSpaceRefractionEnabled(FilaView* view, bool enabled);
 bool FilaView_isScreenSpaceRefractionEnabled(const FilaView* view);
 
+// Copies a picking callback's result out: renderable entity, then depth and fragCoords[3].
+void FilaView_readPickingResult(const FilaViewPickingQueryResult* result, int32_t* renderable, float* depthAndFragCoords);
 void FilaView_pick(FilaView* view, uint32_t x, uint32_t y, FilaCallbackHandler* handler, FilaViewPickingCallback callback, void* userData);
 
 void FilaView_setStencilBufferEnabled(FilaView* view, bool enabled);
@@ -298,8 +298,8 @@ FilaEntity FilaView_getFogEntity(const FilaView* view);
 int32_t FilaView_getVisibleRenderableCount(const FilaView* view);
 void FilaView_clearFrameHistory(FilaView* view, FilaEngine* engine);
 
-void FilaView_setChannelDepthClearEnabled(FilaView* view, uint8_t channel, bool enabled);
-bool FilaView_isChannelDepthClearEnabled(const FilaView* view, uint8_t channel);
+void FilaView_setChannelDepthClearEnabled(FilaView* view, uint32_t channel, bool enabled);
+bool FilaView_isChannelDepthClearEnabled(const FilaView* view, uint32_t channel);
 
 #ifdef __cplusplus
 }

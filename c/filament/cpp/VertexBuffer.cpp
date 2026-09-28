@@ -25,7 +25,7 @@ FilaVertexBuffer* FilaVertexBufferBuilder_build(FilaVertexBufferBuilder* builder
     return reinterpret_cast<FilaVertexBuffer*>(FILA_CAST(VertexBuffer::Builder, builder)->build(*FILA_CAST(Engine, engine)));
 }
 
-void FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* builder, uint8_t bufferCount) {
+void FilaVertexBufferBuilder_bufferCount(FilaVertexBufferBuilder* builder, uint32_t bufferCount) {
     FILA_CAST(VertexBuffer::Builder, builder)->bufferCount(bufferCount);
 }
 
@@ -37,7 +37,7 @@ void FilaVertexBufferBuilder_enableBufferObjects(FilaVertexBufferBuilder* builde
     FILA_CAST(VertexBuffer::Builder, builder)->enableBufferObjects(enabled);
 }
 
-void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, uint8_t bufferIndex, FilaAttributeType attributeType, uint32_t byteOffset, uint8_t byteStride) {
+void FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* builder, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaAttributeType attributeType, uint32_t byteOffset, uint32_t byteStride) {
     FILA_CAST(VertexBuffer::Builder, builder)->attribute(
         static_cast<VertexAttribute>(attribute), 
         bufferIndex, 
@@ -52,11 +52,11 @@ void FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* builder, FilaVe
 }
 
 // VertexBuffer
-size_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer) {
+uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* vertexBuffer) {
     return FILA_CONST_CAST(VertexBuffer, vertexBuffer)->getVertexCount();
 }
 
-void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     auto wrapper = new BufferCallbackWrapper{callback, userData};
     BufferDescriptor desc(buffer, sizeInBytes, 
         reinterpret_cast<backend::CallbackHandler*>(handler),
@@ -64,7 +64,7 @@ void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* vertexBuffer, FilaEngine* en
     FILA_CAST(VertexBuffer, vertexBuffer)->setBufferAt(*FILA_CAST(Engine, engine), bufferIndex, std::move(desc), destOffsetInBytes);
 }
 
-void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint8_t bufferIndex, FilaBufferObject* bufferObject) {
+void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* vertexBuffer, FilaEngine* engine, uint32_t bufferIndex, FilaBufferObject* bufferObject) {
     FILA_CAST(VertexBuffer, vertexBuffer)->setBufferObjectAt(*FILA_CAST(Engine, engine), bufferIndex, reinterpret_cast<BufferObject*>(bufferObject));
 }
 

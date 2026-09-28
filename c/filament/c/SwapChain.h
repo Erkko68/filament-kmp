@@ -21,7 +21,7 @@ void FilaSwapChain_setFrameScheduledCallback(FilaSwapChain* swapChain, FilaCallb
 bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* swapChain);
 
 bool FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* swapChain);
-void FilaSwapChain_setFrameRate(FilaSwapChain* swapChain, float frameRate, uint8_t compatibility, uint8_t strategy);
+void FilaSwapChain_setFrameRate(FilaSwapChain* swapChain, float frameRate, uint32_t compatibility, uint32_t strategy);
 
 #ifdef __cplusplus
 }

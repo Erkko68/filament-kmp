@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * ColorGrading is used to transform (modify or correct) the colors of the HDR buffer.
  *
@@ -31,28 +33,10 @@ package io.github.erkko68.filament
  *
  * @see View
  */
-expect class ColorGrading {
-    /**
-     * Quality level for color grading affects 3D LUT resolution and bit depth.
-     *
-     * - LOW: 16x16x16 10-bit LUT
-     * - MEDIUM: 32x32x32 10-bit LUT (default)
-     * - HIGH: 32x32x32 16-bit LUT
-     * - ULTRA: 64x64x64 16-bit LUT
-     *
-     * This setting has no effect if generating a 1D LUT.
-     */
-    enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
-
-    /**
-     * Format for the color grading 3D LUT (lookup table).
-     *
-     * - INTEGER: 10 bits per component (default)
-     * - FLOAT: 16 bits per component (10 bits mantissa precision)
-     *
-     * This setting has no effect if generating a 1D LUT.
-     */
-    enum class LutFormat { INTEGER, FLOAT }
+class ColorGrading @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
 
     /**
      * Builder for creating ColorGrading instances.
@@ -61,13 +45,18 @@ expect class ColorGrading {
      * then call build() to create the ColorGrading object.
      */
     class Builder() {
+        internal val nativeHandle: NativePointer = FilaColorGradingBuilder_create()
+
         /**
          * Sets the quality level of the color grading LUT.
          *
          * @param qualityLevel The quality level (default: MEDIUM)
          * @return This Builder, for chaining calls
          */
-        fun quality(qualityLevel: QualityLevel): Builder
+        fun quality(qualityLevel: QualityLevel): Builder {
+            FilaColorGradingBuilder_quality(nativeHandle, qualityLevel.ordinal)
+            return this
+        }
 
         /**
          * Sets the format of the color grading LUT.
@@ -75,7 +64,10 @@ expect class ColorGrading {
          * @param format The LUT format (default: FLOAT)
          * @return This Builder, for chaining calls
          */
-        fun format(format: LutFormat): Builder
+        fun format(format: LutFormat): Builder {
+            FilaColorGradingBuilder_format(nativeHandle, format.ordinal)
+            return this
+        }
 
         /**
          * Sets the dimensions of the color grading LUT (3D cube side length).
@@ -83,7 +75,10 @@ expect class ColorGrading {
          * @param dim The side length of the LUT cube (default: 32)
          * @return This Builder, for chaining calls
          */
-        fun dimensions(dim: Int): Builder
+        fun dimensions(dim: Int): Builder {
+            FilaColorGradingBuilder_dimensions(nativeHandle, dim)
+            return this
+        }
 
         /**
          * Sets the tone mapper to use for tone mapping.
@@ -91,7 +86,10 @@ expect class ColorGrading {
          * @param toneMapper The tone mapper object
          * @return This Builder, for chaining calls
          */
-        fun toneMapper(toneMapper: ToneMapper): Builder
+        fun toneMapper(toneMapper: ToneMapper): Builder {
+            FilaColorGradingBuilder_toneMapper(nativeHandle, toneMapper.nativeHandle)
+            return this
+        }
 
         /**
          * Enables or disables luminance scaling.
@@ -101,7 +99,10 @@ expect class ColorGrading {
          * @param luminanceScaling true to enable, false to disable (default: false)
          * @return This Builder, for chaining calls
          */
-        fun luminanceScaling(luminanceScaling: Boolean): Builder
+        fun luminanceScaling(luminanceScaling: Boolean): Builder {
+            FilaColorGradingBuilder_luminanceScaling(nativeHandle, luminanceScaling)
+            return this
+        }
 
         /**
          * Enables or disables gamut mapping.
@@ -111,7 +112,10 @@ expect class ColorGrading {
          * @param gamutMapping true to enable, false to disable (default: false)
          * @return This Builder, for chaining calls
          */
-        fun gamutMapping(gamutMapping: Boolean): Builder
+        fun gamutMapping(gamutMapping: Boolean): Builder {
+            FilaColorGradingBuilder_gamutMapping(nativeHandle, gamutMapping)
+            return this
+        }
 
         /**
          * Adjusts the exposure of the image in exposure value (EV) stops.
@@ -128,7 +132,10 @@ expect class ColorGrading {
          * @param exposure Value in EV stops (can be negative, zero, or positive)
          * @return This Builder, for chaining calls
          */
-        fun exposure(exposure: Float): Builder
+        fun exposure(exposure: Float): Builder {
+            FilaColorGradingBuilder_exposure(nativeHandle, exposure)
+            return this
+        }
 
         /**
          * Controls the amount of night adaptation to replicate low-light vision.
@@ -142,7 +149,10 @@ expect class ColorGrading {
          * @param adaptation Amount of adaptation, between 0 (no adaptation) and 1 (full adaptation)
          * @return This Builder, for chaining calls
          */
-        fun nightAdaptation(adaptation: Float): Builder
+        fun nightAdaptation(adaptation: Float): Builder {
+            FilaColorGradingBuilder_nightAdaptation(nativeHandle, adaptation)
+            return this
+        }
 
         /**
          * Adjusts the white balance of the image to remove color casts or for artistic purposes.
@@ -161,7 +171,10 @@ expect class ColorGrading {
          * @param tint Modification on the green/magenta axis [-1.0, +1.0]
          * @return This Builder, for chaining calls
          */
-        fun whiteBalance(temperature: Float, tint: Float): Builder
+        fun whiteBalance(temperature: Float, tint: Float): Builder {
+            FilaColorGradingBuilder_whiteBalance(nativeHandle, temperature, tint)
+            return this
+        }
 
         /**
          * Sets the channel mixer to adjust individual color channels.
@@ -173,7 +186,12 @@ expect class ColorGrading {
          * @param outBlue Output blue channel mix [R, G, B]
          * @return This Builder, for chaining calls
          */
-        fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder
+        fun channelMixer(outRed: FloatArray, outGreen: FloatArray, outBlue: FloatArray): Builder {
+            interopScope {
+                FilaColorGradingBuilder_channelMixer(nativeHandle, toInterop(outRed), toInterop(outGreen), toInterop(outBlue))
+            }
+            return this
+        }
 
         /**
          * Sets shadows, midtones, and highlights adjustments.
@@ -186,7 +204,12 @@ expect class ColorGrading {
          * @param ranges Ranges for tone separation (optional)
          * @return This Builder, for chaining calls
          */
-        fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder
+        fun shadowsMidtonesHighlights(shadows: FloatArray, midtones: FloatArray, highlights: FloatArray, ranges: FloatArray): Builder {
+            interopScope {
+                FilaColorGradingBuilder_shadowsMidtonesHighlights(nativeHandle, toInterop(shadows), toInterop(midtones), toInterop(highlights), toInterop(ranges))
+            }
+            return this
+        }
 
         /**
          * Sets slope, offset, and power adjustments (ASC CDL).
@@ -198,7 +221,12 @@ expect class ColorGrading {
          * @param power Power values [R, G, B]
          * @return This Builder, for chaining calls
          */
-        fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder
+        fun slopeOffsetPower(slope: FloatArray, offset: FloatArray, power: FloatArray): Builder {
+            interopScope {
+                FilaColorGradingBuilder_slopeOffsetPower(nativeHandle, toInterop(slope), toInterop(offset), toInterop(power))
+            }
+            return this
+        }
 
         /**
          * Sets the contrast adjustment.
@@ -206,7 +234,10 @@ expect class ColorGrading {
          * @param contrast Contrast value (default: 1.0, <1.0 reduces, >1.0 increases)
          * @return This Builder, for chaining calls
          */
-        fun contrast(contrast: Float): Builder
+        fun contrast(contrast: Float): Builder {
+            FilaColorGradingBuilder_contrast(nativeHandle, contrast)
+            return this
+        }
 
         /**
          * Sets the vibrance adjustment (selective saturation).
@@ -214,7 +245,10 @@ expect class ColorGrading {
          * @param vibrance Vibrance value (default: 0.0, positive increases vibrant colors)
          * @return This Builder, for chaining calls
          */
-        fun vibrance(vibrance: Float): Builder
+        fun vibrance(vibrance: Float): Builder {
+            FilaColorGradingBuilder_vibrance(nativeHandle, vibrance)
+            return this
+        }
 
         /**
          * Sets the saturation adjustment.
@@ -222,7 +256,10 @@ expect class ColorGrading {
          * @param saturation Saturation value (default: 1.0, <1.0 desaturates, >1.0 saturates)
          * @return This Builder, for chaining calls
          */
-        fun saturation(saturation: Float): Builder
+        fun saturation(saturation: Float): Builder {
+            FilaColorGradingBuilder_saturation(nativeHandle, saturation)
+            return this
+        }
 
         /**
          * Sets curve adjustments for shadows, midtones, and highlights.
@@ -232,7 +269,12 @@ expect class ColorGrading {
          * @param highlightScale Highlight curve adjustment
          * @return This Builder, for chaining calls
          */
-        fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder
+        fun curves(shadowGamma: FloatArray, midPoint: FloatArray, highlightScale: FloatArray): Builder {
+            interopScope {
+                FilaColorGradingBuilder_curves(nativeHandle, toInterop(shadowGamma), toInterop(midPoint), toInterop(highlightScale))
+            }
+            return this
+        }
 
         /**
          * Specifies a custom 3D color grading LUT to map the final sRGB color, applied after
@@ -243,7 +285,12 @@ expect class ColorGrading {
          * @param dimension Dimension of the custom LUT (e.g. 16, 32, 64)
          * @return This Builder, for chaining calls
          */
-        fun customLut(data: FloatArray, dimension: Int): Builder
+        fun customLut(data: FloatArray, dimension: Int): Builder {
+            data.usePinned { pinned ->
+                FilaColorGradingBuilder_customLut(nativeHandle, pinned, dimension)
+            }
+            return this
+        }
 
         /**
          * Enables or disables fast math approximations.
@@ -253,7 +300,10 @@ expect class ColorGrading {
          * @param fastMath true to enable fast math (default: true)
          * @return This Builder, for chaining calls
          */
-        fun fastMath(fastMath: Boolean): Builder
+        fun fastMath(fastMath: Boolean): Builder {
+            FilaColorGradingBuilder_fastMath(nativeHandle, fastMath)
+            return this
+        }
 
         /**
          * Creates the ColorGrading object.
@@ -261,6 +311,89 @@ expect class ColorGrading {
          * @param engine Engine to associate this ColorGrading with
          * @return The newly created ColorGrading
          */
-        fun build(engine: Engine): ColorGrading
+        fun build(engine: Engine): ColorGrading {
+            return ColorGrading(FilaColorGradingBuilder_build(nativeHandle, engine.nativeHandle))
+        }
     }
+
+    /**
+     * Quality level for color grading affects 3D LUT resolution and bit depth.
+     *
+     * - LOW: 16x16x16 10-bit LUT
+     * - MEDIUM: 32x32x32 10-bit LUT (default)
+     * - HIGH: 32x32x32 16-bit LUT
+     * - ULTRA: 64x64x64 16-bit LUT
+     *
+     * This setting has no effect if generating a 1D LUT.
+     */
+    enum class QualityLevel { LOW, MEDIUM, HIGH, ULTRA }
+    /**
+     * Format for the color grading 3D LUT (lookup table).
+     *
+     * - INTEGER: 10 bits per component (default)
+     * - FLOAT: 16 bits per component (10 bits mantissa precision)
+     *
+     * This setting has no effect if generating a 1D LUT.
+     */
+    enum class LutFormat { INTEGER, FLOAT }
 }
+
+@ExternalSymbolName("FilaColorGradingBuilder_build")
+private external fun FilaColorGradingBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaColorGradingBuilder_channelMixer")
+private external fun FilaColorGradingBuilder_channelMixer(builder: NativePointer, outRed: NativePointer, outGreen: NativePointer, outBlue: NativePointer)
+
+@ExternalSymbolName("FilaColorGradingBuilder_contrast")
+private external fun FilaColorGradingBuilder_contrast(builder: NativePointer, contrast: Float)
+
+@ExternalSymbolName("FilaColorGradingBuilder_create")
+private external fun FilaColorGradingBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaColorGradingBuilder_curves")
+private external fun FilaColorGradingBuilder_curves(builder: NativePointer, shadowGamma: NativePointer, midPoint: NativePointer, highlightScale: NativePointer)
+
+@ExternalSymbolName("FilaColorGradingBuilder_customLut")
+private external fun FilaColorGradingBuilder_customLut(builder: NativePointer, data: NativePointer, dimension: Int)
+
+@ExternalSymbolName("FilaColorGradingBuilder_dimensions")
+private external fun FilaColorGradingBuilder_dimensions(builder: NativePointer, dim: Int)
+
+@ExternalSymbolName("FilaColorGradingBuilder_exposure")
+private external fun FilaColorGradingBuilder_exposure(builder: NativePointer, exposure: Float)
+
+@ExternalSymbolName("FilaColorGradingBuilder_fastMath")
+private external fun FilaColorGradingBuilder_fastMath(builder: NativePointer, fastMath: Boolean)
+
+@ExternalSymbolName("FilaColorGradingBuilder_format")
+private external fun FilaColorGradingBuilder_format(builder: NativePointer, format: Int)
+
+@ExternalSymbolName("FilaColorGradingBuilder_gamutMapping")
+private external fun FilaColorGradingBuilder_gamutMapping(builder: NativePointer, gamutMapping: Boolean)
+
+@ExternalSymbolName("FilaColorGradingBuilder_luminanceScaling")
+private external fun FilaColorGradingBuilder_luminanceScaling(builder: NativePointer, luminanceScaling: Boolean)
+
+@ExternalSymbolName("FilaColorGradingBuilder_nightAdaptation")
+private external fun FilaColorGradingBuilder_nightAdaptation(builder: NativePointer, adaptation: Float)
+
+@ExternalSymbolName("FilaColorGradingBuilder_quality")
+private external fun FilaColorGradingBuilder_quality(builder: NativePointer, quality: Int)
+
+@ExternalSymbolName("FilaColorGradingBuilder_saturation")
+private external fun FilaColorGradingBuilder_saturation(builder: NativePointer, saturation: Float)
+
+@ExternalSymbolName("FilaColorGradingBuilder_shadowsMidtonesHighlights")
+private external fun FilaColorGradingBuilder_shadowsMidtonesHighlights(builder: NativePointer, shadows: NativePointer, midtones: NativePointer, highlights: NativePointer, ranges: NativePointer)
+
+@ExternalSymbolName("FilaColorGradingBuilder_slopeOffsetPower")
+private external fun FilaColorGradingBuilder_slopeOffsetPower(builder: NativePointer, slope: NativePointer, offset: NativePointer, power: NativePointer)
+
+@ExternalSymbolName("FilaColorGradingBuilder_toneMapper")
+private external fun FilaColorGradingBuilder_toneMapper(builder: NativePointer, toneMapper: NativePointer)
+
+@ExternalSymbolName("FilaColorGradingBuilder_vibrance")
+private external fun FilaColorGradingBuilder_vibrance(builder: NativePointer, vibrance: Float)
+
+@ExternalSymbolName("FilaColorGradingBuilder_whiteBalance")
+private external fun FilaColorGradingBuilder_whiteBalance(builder: NativePointer, temperature: Float, tint: Float)

@@ -56,7 +56,7 @@ void FilaMaterialBuilder_uniformParameter(FilaMaterialBuilder* builder, FilaMate
     reinterpret_cast<MaterialBuilder*>(builder)->parameter(name, static_cast<MaterialBuilder::UniformType>(type), static_cast<MaterialBuilder::ParameterPrecision>(precision));
 }
 
-void FilaMaterialBuilder_uniformParameterArray(FilaMaterialBuilder* builder, FilaMaterialBuilderUniformType type, size_t size, FilaMaterialBuilderParameterPrecision precision, const char* name) {
+void FilaMaterialBuilder_uniformParameterArray(FilaMaterialBuilder* builder, FilaMaterialBuilderUniformType type, uint32_t size, FilaMaterialBuilderParameterPrecision precision, const char* name) {
     reinterpret_cast<MaterialBuilder*>(builder)->parameter(name, size, static_cast<MaterialBuilder::UniformType>(type), static_cast<MaterialBuilder::ParameterPrecision>(precision));
 }
 
@@ -243,8 +243,8 @@ const void* FilaPackage_getData(const FilaPackage* package) {
     return reinterpret_cast<const Package*>(package)->getData();
 }
 
-size_t FilaPackage_getSize(const FilaPackage* package) {
-    return reinterpret_cast<const Package*>(package)->getSize();
+uint32_t FilaPackage_getSize(const FilaPackage* package) {
+    return uint32_t(reinterpret_cast<const Package*>(package)->getSize());
 }
 
 } // extern "C"

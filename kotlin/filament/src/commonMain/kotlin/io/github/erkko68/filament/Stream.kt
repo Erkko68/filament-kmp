@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * Stream is used to attach a video stream to a Filament Texture.
  *
@@ -40,7 +42,11 @@ package io.github.erkko68.filament
  * @see TextureSampler
  */
 @PlatformGap(platforms = [FilamentPlatform.WEB], behavior = "setDimensions throws — FStream waits on a fence internally, which single-threaded wasm rejects; external video streams have no WebGL source anyway.")
-expect class Stream {
+class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Indicates the type of stream source.
      */
@@ -58,6 +64,8 @@ expect class Stream {
      * To create a NATIVE stream, call the deprecated stream() method on the builder.
      */
     class Builder() {
+        private val nativeBuilder = FilaStreamBuilder_create()
+
         /**
          * Sets the initial width of the incoming stream in pixels.
          *
@@ -67,7 +75,10 @@ expect class Stream {
          * @param width Stream width in pixels.
          * @return This Builder, for chaining calls.
          */
-        fun width(width: Int): Builder
+        fun width(width: Int): Builder {
+            FilaStreamBuilder_width(nativeBuilder, width)
+            return this
+        }
 
         /**
          * Sets the initial height of the incoming stream in pixels.
@@ -78,7 +89,10 @@ expect class Stream {
          * @param height Stream height in pixels.
          * @return This Builder, for chaining calls.
          */
-        fun height(height: Int): Builder
+        fun height(height: Int): Builder {
+            FilaStreamBuilder_height(nativeBuilder, height)
+            return this
+        }
 
         /**
          * Creates the Stream object and associates it with the given Engine.
@@ -87,7 +101,11 @@ expect class Stream {
          * @return The newly created Stream.
          * @throws UnsupportedOperationException on JS — Stream is unbound in the web wrapper.
          */
-        fun build(engine: Engine): Stream
+        fun build(engine: Engine): Stream {
+            val handle = FilaStreamBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaStreamBuilder_destroy(nativeBuilder)
+            return Stream(handle)
+        }
     }
 
     /**
@@ -95,17 +113,7 @@ expect class Stream {
      *
      * @return The StreamType of this stream.
      */
-    val streamType: StreamType
-
-    /**
-     * Returns the presentation timestamp of the currently displayed frame in nanoseconds.
-     *
-     * This value can change at any time and represents the time when the current frame
-     * was acquired or presented.
-     *
-     * @return Timestamp in nanoseconds (monotonically increasing).
-     */
-    val timestamp: Long
+    val streamType: StreamType get() = StreamType.entries[FilaStream_getStreamType(nativeHandle)]
 
     /**
      * Updates the size of the incoming stream.
@@ -116,5 +124,41 @@ expect class Stream {
      * @param width New width in pixels.
      * @param height New height in pixels.
      */
-    fun setDimensions(width: Int, height: Int)
+    fun setDimensions(width: Int, height: Int) {
+        FilaStream_setDimensions(nativeHandle, width, height)
+    }
+
+    /**
+     * Returns the presentation timestamp of the currently displayed frame in nanoseconds.
+     *
+     * This value can change at any time and represents the time when the current frame
+     * was acquired or presented.
+     *
+     * @return Timestamp in nanoseconds (monotonically increasing).
+     */
+    val timestamp: Long get() = LongArray(1).also { t -> t.usePinned { FilaStream_getTimestamp(nativeHandle, it) } }[0]
 }
+
+@ExternalSymbolName("FilaStreamBuilder_build")
+private external fun FilaStreamBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaStreamBuilder_create")
+private external fun FilaStreamBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaStreamBuilder_destroy")
+private external fun FilaStreamBuilder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaStreamBuilder_height")
+private external fun FilaStreamBuilder_height(builder: NativePointer, height: Int)
+
+@ExternalSymbolName("FilaStreamBuilder_width")
+private external fun FilaStreamBuilder_width(builder: NativePointer, width: Int)
+
+@ExternalSymbolName("FilaStream_getStreamType")
+private external fun FilaStream_getStreamType(stream: NativePointer): Int
+
+@ExternalSymbolName("FilaStream_getTimestamp")
+private external fun FilaStream_getTimestamp(stream: NativePointer, out: NativePointer)
+
+@ExternalSymbolName("FilaStream_setDimensions")
+private external fun FilaStream_setDimensions(stream: NativePointer, width: Int, height: Int)

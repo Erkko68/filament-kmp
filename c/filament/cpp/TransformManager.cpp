@@ -56,11 +56,11 @@ FilaEntity FilaTransformManager_getParent(const FilaTransformManager* tm, FilaTr
     return FILA_CONST_CAST(TransformManager, tm)->getParent(TransformManager::Instance(instance)).getId();
 }
 
-size_t FilaTransformManager_getChildCount(const FilaTransformManager* tm, FilaTransformManagerInstance instance) {
+uint32_t FilaTransformManager_getChildCount(const FilaTransformManager* tm, FilaTransformManagerInstance instance) {
     return FILA_CONST_CAST(TransformManager, tm)->getChildCount(TransformManager::Instance(instance));
 }
 
-void FilaTransformManager_getChildren(const FilaTransformManager* tm, FilaTransformManagerInstance instance, FilaEntity* outEntities, size_t count) {
+void FilaTransformManager_getChildren(const FilaTransformManager* tm, FilaTransformManagerInstance instance, FilaEntity* outEntities, uint32_t count) {
     FILA_CONST_CAST(TransformManager, tm)->getChildren(TransformManager::Instance(instance),
             reinterpret_cast<Entity *>(outEntities), count);
 }

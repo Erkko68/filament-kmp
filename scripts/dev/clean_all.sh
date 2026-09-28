@@ -5,12 +5,11 @@
 # What it removes:
 #   - Gradle caches & daemon state for this project (./.gradle, build/)
 #   - All build/ dirs under kotlin/, java/, samples/, js/, build-logic/
-#   - CMake out-of-tree build dirs under c/build/
 #   - Kotlin Native compilation caches local to the project
 #   - IDE convergence files that often hold stale paths (.kotlin/)
 #
 # What it does NOT touch:
-#   - prebuilts/ (download is slow — run ./gradlew downloadPrebuilts if you want fresh)
+#   - prebuilts/ (download is slow — run ./gradlew prebuilts if you want fresh)
 #   - ~/.gradle/caches (global; rarely the cause; nuking it slows down every other project)
 #   - .idea/ (your IDE settings)
 #
@@ -49,7 +48,6 @@ find kotlin java samples js build-logic -type d -name .gradle -prune -exec rm -r
 find . -type d -name .kotlin -not -path "./prebuilts/*" -prune -exec rm -rf {} + 2>/dev/null || true
 
 # CMake out-of-tree build dirs used by the C-wrapper / KMP native builds
-rm -rf c/build
 
 # IntelliJ / generated bin dirs left behind by older runs
 find java -type d -name bin -prune -exec rm -rf {} + 2>/dev/null || true
@@ -60,4 +58,4 @@ if [ "$HARD" -eq 1 ]; then
     rm -rf "$HOME/.gradle/caches/transforms-"* 2>/dev/null || true
 fi
 
-echo "✓ Done. prebuilts/ kept — run ./gradlew downloadPrebuilts if you need to refresh those too."
+echo "✓ Done. prebuilts/ kept — run ./gradlew prebuilts if you need to refresh those too."

@@ -18,7 +18,7 @@ using namespace utils;
 
 extern "C" {
 
-FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t count) {
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count) {
     return reinterpret_cast<FilaRenderableManagerBuilder*>(new RenderableManager::Builder(count));
 }
 
@@ -31,31 +31,31 @@ bool FilaRenderableManagerBuilder_build(FilaRenderableManagerBuilder* builder, F
            == RenderableManager::Builder::Success;
 }
 
-void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder, size_t index,
+void FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* builder, uint32_t index,
         FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib) {
     FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
             FILA_CAST(VertexBuffer, vb), FILA_CAST(IndexBuffer, ib));
 }
 
-void FilaRenderableManagerBuilder_geometryAt(FilaRenderableManagerBuilder* builder, size_t index,
-        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t count) {
+void FilaRenderableManagerBuilder_geometryAt(FilaRenderableManagerBuilder* builder, uint32_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, uint32_t offset, uint32_t count) {
     FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
             FILA_CAST(VertexBuffer, vb), FILA_CAST(IndexBuffer, ib), offset, count);
 }
 
-void FilaRenderableManagerBuilder_geometryWithIndices(FilaRenderableManagerBuilder* builder, size_t index,
-        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t minIndex, size_t maxIndex, size_t count) {
+void FilaRenderableManagerBuilder_geometryWithIndices(FilaRenderableManagerBuilder* builder, uint32_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, uint32_t offset, uint32_t minIndex, uint32_t maxIndex, uint32_t count) {
     FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
             FILA_CAST(VertexBuffer, vb), FILA_CAST(IndexBuffer, ib), offset, minIndex, maxIndex, count);
 }
 
-void FilaRenderableManagerBuilder_geometryNonIndexed(FilaRenderableManagerBuilder* builder, size_t index,
-        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, size_t offset, size_t count) {
+void FilaRenderableManagerBuilder_geometryNonIndexed(FilaRenderableManagerBuilder* builder, uint32_t index,
+        FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, uint32_t offset, uint32_t count) {
     FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
             FILA_CAST(VertexBuffer, vb), offset, count);
 }
 
-void FilaRenderableManagerBuilder_geometryNonIndexedNone(FilaRenderableManagerBuilder* builder, size_t index,
+void FilaRenderableManagerBuilder_geometryNonIndexedNone(FilaRenderableManagerBuilder* builder, uint32_t index,
         FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb) {
     FILA_CAST(RenderableManager::Builder, builder)->geometry(index, static_cast<RenderableManager::PrimitiveType>(type),
             FILA_CAST(VertexBuffer, vb));
@@ -65,15 +65,15 @@ void FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* bui
     FILA_CAST(RenderableManager::Builder, builder)->geometryType(static_cast<RenderableManager::Builder::GeometryType>(type));
 }
 
-void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder, size_t index, const FilaMaterialInstance* materialInstance) {
+void FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* builder, uint32_t index, const FilaMaterialInstance* materialInstance) {
     FILA_CAST(RenderableManager::Builder, builder)->material(index, FILA_CONST_CAST(MaterialInstance, materialInstance));
 }
 
-void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, size_t index, uint16_t blendOrder) {
+void FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* builder, uint32_t index, uint32_t blendOrder) {
     FILA_CAST(RenderableManager::Builder, builder)->blendOrder(index, blendOrder);
 }
 
-void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, size_t index, bool enabled) {
+void FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* builder, uint32_t index, bool enabled) {
     FILA_CAST(RenderableManager::Builder, builder)->globalBlendOrderEnabled(index, enabled);
 }
 
@@ -81,15 +81,15 @@ void FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* buil
     FILA_CAST(RenderableManager::Builder, builder)->boundingBox({{cx, cy, cz}, {ex, ey, ez}});
 }
 
-void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint8_t select, uint8_t value) {
+void FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* builder, uint32_t select, uint32_t value) {
     FILA_CAST(RenderableManager::Builder, builder)->layerMask(select, value);
 }
 
-void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint8_t priority) {
+void FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* builder, uint32_t priority) {
     FILA_CAST(RenderableManager::Builder, builder)->priority(priority);
 }
 
-void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint8_t channel) {
+void FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* builder, uint32_t channel) {
     FILA_CAST(RenderableManager::Builder, builder)->channel(channel);
 }
 
@@ -145,7 +145,7 @@ void FilaRenderableManagerBuilder_lightChannel(FilaRenderableManagerBuilder* bui
     FILA_CAST(RenderableManager::Builder, builder)->lightChannel(channel, enable);
 }
 
-void FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* builder, size_t instanceCount) {
+void FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* builder, uint32_t instanceCount) {
     FILA_CAST(RenderableManager::Builder, builder)->instances(instanceCount);
 }
 
@@ -168,19 +168,19 @@ void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* rm, FilaRend
 
 void FilaRenderableManager_setBonesAsMatrices(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, const float* matrices, uint32_t boneCount, uint32_t offset) {
     FILA_CAST(RenderableManager, rm)->setBones(RenderableManager::Instance(instance),
-            reinterpret_cast<filament::math::mat4f const *>(matrices), (size_t)boneCount, (size_t)offset);
+            reinterpret_cast<filament::math::mat4f const *>(matrices), (uint32_t)boneCount, (uint32_t)offset);
 }
 
 void FilaRenderableManager_setBonesAsQuaternions(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, const void* bones, uint32_t boneCount, uint32_t offset) {
     FILA_CAST(RenderableManager, rm)->setBones(RenderableManager::Instance(instance),
-            static_cast<RenderableManager::Bone const *>(bones), (size_t)boneCount, (size_t)offset);
+            static_cast<RenderableManager::Bone const *>(bones), (uint32_t)boneCount, (uint32_t)offset);
 }
 
 void FilaRenderableManager_setMorphWeights(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, const float* weights, uint32_t count, uint32_t offset) {
     FILA_CAST(RenderableManager, rm)->setMorphWeights(RenderableManager::Instance(instance), weights, count, offset);
 }
 
-void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t level, size_t primitiveIndex, size_t offset) {
+void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t level, uint32_t primitiveIndex, uint32_t offset) {
     FILA_CAST(RenderableManager, rm)->setMorphTargetBufferOffsetAt(RenderableManager::Instance(instance), level, primitiveIndex, offset);
 }
 
@@ -198,11 +198,11 @@ void FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager
     halfExtent[0] = aabb.halfExtent.x; halfExtent[1] = aabb.halfExtent.y; halfExtent[2] = aabb.halfExtent.z;
 }
 
-void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t select, uint8_t value) {
+void FilaRenderableManager_setLayerMask(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t select, uint32_t value) {
     FILA_CAST(RenderableManager, rm)->setLayerMask(RenderableManager::Instance(instance), select, value);
 }
 
-void FilaRenderableManager_setPriority(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t priority) {
+void FilaRenderableManager_setPriority(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t priority) {
     FILA_CAST(RenderableManager, rm)->setPriority(RenderableManager::Instance(instance), priority);
 }
 
@@ -210,7 +210,7 @@ uint8_t FilaRenderableManager_getPriority(const FilaRenderableManager* rm, FilaR
     return FILA_CONST_CAST(RenderableManager, rm)->getPriority(RenderableManager::Instance(instance));
 }
 
-void FilaRenderableManager_setChannel(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint8_t channel) {
+void FilaRenderableManager_setChannel(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t channel) {
     FILA_CAST(RenderableManager, rm)->setChannel(RenderableManager::Instance(instance), channel);
 }
 
@@ -266,45 +266,45 @@ uint32_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* rm,
     return FILA_CONST_CAST(RenderableManager, rm)->getInstanceCount(RenderableManager::Instance(instance));
 }
 
-void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, const FilaMaterialInstance* materialInstance) {
+void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, const FilaMaterialInstance* materialInstance) {
     FILA_CAST(RenderableManager, rm)->setMaterialInstanceAt(RenderableManager::Instance(instance), primitiveIndex, FILA_CONST_CAST(MaterialInstance, materialInstance));
 }
 
-void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex) {
+void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex) {
     FILA_CAST(RenderableManager, rm)->clearMaterialInstanceAt(RenderableManager::Instance(instance), primitiveIndex);
 }
 
-FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex) {
+FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex) {
     return reinterpret_cast<FilaMaterialInstance*>(
         const_cast<MaterialInstance*>(FILA_CONST_CAST(RenderableManager, rm)->getMaterialInstanceAt(RenderableManager::Instance(instance), primitiveIndex))
     );
 }
 
-void FilaRenderableManager_setGeometryAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, size_t offset, size_t count) {
+void FilaRenderableManager_setGeometryAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, FilaIndexBuffer* ib, uint32_t offset, uint32_t count) {
     FILA_CAST(RenderableManager, rm)->setGeometryAt(RenderableManager::Instance(instance), primitiveIndex, static_cast<RenderableManager::PrimitiveType>(type), FILA_CAST(VertexBuffer, vb), FILA_CAST(IndexBuffer, ib), offset, count);
 }
 
-void FilaRenderableManager_setGeometryAtNonIndexed(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, size_t offset, size_t count) {
+void FilaRenderableManager_setGeometryAtNonIndexed(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, FilaRenderableManagerPrimitiveType type, FilaVertexBuffer* vb, uint32_t offset, uint32_t count) {
     FILA_CAST(RenderableManager, rm)->setGeometryAt(RenderableManager::Instance(instance), primitiveIndex, static_cast<RenderableManager::PrimitiveType>(type), FILA_CAST(VertexBuffer, vb), offset, count);
 }
 
-void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, uint16_t blendOrder) {
+void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, uint32_t blendOrder) {
     FILA_CAST(RenderableManager, rm)->setBlendOrderAt(RenderableManager::Instance(instance), primitiveIndex, blendOrder);
 }
 
-uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex) {
+uint16_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex) {
     return FILA_CONST_CAST(RenderableManager, rm)->getBlendOrderAt(RenderableManager::Instance(instance), primitiveIndex);
 }
 
-void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex, bool enabled) {
+void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex, bool enabled) {
     FILA_CAST(RenderableManager, rm)->setGlobalBlendOrderEnabledAt(RenderableManager::Instance(instance), primitiveIndex, enabled);
 }
 
-bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex) {
+bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex) {
     return FILA_CONST_CAST(RenderableManager, rm)->isGlobalBlendOrderEnabledAt(RenderableManager::Instance(instance), primitiveIndex);
 }
 
-uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, size_t primitiveIndex) {
+uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* rm, FilaRenderableManagerInstance instance, uint32_t primitiveIndex) {
     return FILA_CONST_CAST(RenderableManager, rm)->getEnabledAttributesAt(RenderableManager::Instance(instance), primitiveIndex).getValue();
 }
 

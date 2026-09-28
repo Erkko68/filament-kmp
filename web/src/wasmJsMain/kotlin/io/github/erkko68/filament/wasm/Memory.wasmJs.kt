@@ -17,4 +17,4 @@ actual fun FilamentModule.readBytes(ptr: Int, count: Int): ByteArray {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual inline fun normalizeF32(value: Float): Float = value
+actual inline fun normalizeF32(value: Float): Float = value

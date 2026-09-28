@@ -37,7 +37,11 @@ extern "C" JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void*) {
 static JNIEnv* attachedEnv() {
     JNIEnv* env;
     if (sVm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+#ifdef __ANDROID__
         sVm->AttachCurrentThreadAsDaemon(&env, nullptr);
+#else
+        sVm->AttachCurrentThreadAsDaemon(reinterpret_cast<void**>(&env), nullptr); // desktop jni.h takes void**
+#endif
     }
     return env;
 }
@@ -86,10 +90,6 @@ FILA_JNI(void, free)(JNIEnv*, jclass, jlong ptr) {
     std::free(reinterpret_cast<void*>(ptr));
 }
 
-FILA_JNI(jlong, address)(JNIEnv* env, jclass, jobject buffer) {
-    return reinterpret_cast<jlong>(env->GetDirectBufferAddress(buffer));
-}
-
 FILA_JNI(jobject, view)(JNIEnv* env, jclass, jlong ptr, jlong size) {
     return env->NewDirectByteBuffer(reinterpret_cast<void*>(ptr), size);
 }
@@ -106,18 +106,6 @@ FILA_JNI(jlong, userOnly)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&use
 FILA_JNI(jlong, argUser)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&argUser); }
 FILA_JNI(jlong, keepBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&keepBuffer); }
 FILA_JNI(jlong, freeBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&freeBuffer); }
-
-// Peek/poke for the pointer-based views (F32Array, IntVar, ...), matching :web's fila.getF32 & co.
-#define FILA_PEEK(name, jtype, ctype) \
-    FILA_JNI(jtype, get##name)(JNIEnv*, jclass, jlong ptr) { return static_cast<jtype>(*reinterpret_cast<const ctype*>(ptr)); } \
-    FILA_JNI(void, set##name)(JNIEnv*, jclass, jlong ptr, jtype value) { *reinterpret_cast<ctype*>(ptr) = static_cast<ctype>(value); }
-FILA_PEEK(F32, jfloat, float)
-FILA_PEEK(F64, jdouble, double)
-FILA_PEEK(I32, jint, int32_t)
-FILA_PEEK(I64, jlong, int64_t)
-FILA_PEEK(U8, jint, uint8_t)
-
-FILA_JNI(jint, pointerSize)(JNIEnv*, jclass) { return sizeof(void*); }
 
 FILA_JNI(jstring, readString)(JNIEnv* env, jclass, jlong ptr) {
     return ptr ? env->NewStringUTF(reinterpret_cast<const char*>(ptr)) : nullptr;

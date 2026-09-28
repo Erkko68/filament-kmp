@@ -73,24 +73,12 @@ typedef enum FilaMaterialCompilerPriorityQueue {
     FILA_MATERIAL_COMPILER_PRIORITY_QUEUE_LOW = 2,
 } FilaMaterialCompilerPriorityQueue;
 
-// ABI struct read by the FFM/cinterop bindings. The bridge copies it field-by-field
-// from filament::Material::ParameterInfo, so this layout is independent of upstream.
-// type/precision mirror the uint8_t enums (ParameterType / backend::Precision).
-typedef struct FilaMaterialParameterInfo {
-    const char* name;
-    uint8_t isSampler;
-    uint8_t isSubpass;
-    uint8_t type;
-    uint32_t count;
-    uint8_t precision;
-} FilaMaterialParameterInfo;
-
 typedef void (*FilaMaterialCompileCallback)(FilaMaterial* material, void* userData);
 
 // Persistent Builder
 FilaMaterial_Builder* FilaMaterial_Builder_create(void);
 void FilaMaterial_Builder_destroy(FilaMaterial_Builder* builder);
-void FilaMaterial_Builder_package(FilaMaterial_Builder* builder, const void* payload, size_t size);
+void FilaMaterial_Builder_package(FilaMaterial_Builder* builder, const void* payload, uint32_t size);
 void FilaMaterial_Builder_sphericalHarmonicsBandCount(FilaMaterial_Builder* builder, int count);
 void FilaMaterial_Builder_shadowSamplingQuality(FilaMaterial_Builder* builder, FilaMaterialShadowSamplingQuality quality);
 void FilaMaterial_Builder_uboBatching(FilaMaterial_Builder* builder, FilaMaterialUboBatchingMode mode);
@@ -124,7 +112,10 @@ float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* material
 FilaEngineFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* material);
 
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* material);
-uint32_t FilaMaterial_getParameters(const FilaMaterial* material, FilaMaterialParameterInfo* parameters, uint32_t count);
+// Five int32_t per parameter: isSampler, isSubpass, type (ParameterType, or SamplerType for samplers), count, precision.
+uint32_t FilaMaterial_getParameters(const FilaMaterial* material, int32_t* info, uint32_t count);
+// Name of parameter [index] in getParameters' order; owned by the material.
+const char* FilaMaterial_getParameterName(const FilaMaterial* material, uint32_t index);
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* material);
 
 void FilaMaterial_compile(FilaMaterial* material, FilaMaterialCompilerPriorityQueue priority, uint32_t variants, void* handler, FilaMaterialCompileCallback callback, void* userData);

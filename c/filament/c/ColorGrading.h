@@ -30,7 +30,7 @@ FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* builder
 
 void FilaColorGradingBuilder_quality(FilaColorGradingBuilder* builder, FilaColorGradingQualityLevel quality);
 void FilaColorGradingBuilder_format(FilaColorGradingBuilder* builder, FilaColorGradingLutFormat format);
-void FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* builder, uint8_t dim);
+void FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* builder, uint32_t dim);
 void FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* builder, const FilaToneMapper* toneMapper);
 void FilaColorGradingBuilder_luminanceScaling(FilaColorGradingBuilder* builder, bool luminanceScaling);
 void FilaColorGradingBuilder_gamutMapping(FilaColorGradingBuilder* builder, bool gamutMapping);
@@ -44,7 +44,7 @@ void FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* builder, float co
 void FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* builder, float vibrance);
 void FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* builder, float saturation);
 void FilaColorGradingBuilder_curves(FilaColorGradingBuilder* builder, const float* shadowGamma, const float* midPoint, const float* highlightScale);
-void FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* builder, const float* data, uint8_t dimension);
+void FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* builder, const float* data, uint32_t dimension);
 void FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* builder, bool fastMath);
 
 #ifdef __cplusplus

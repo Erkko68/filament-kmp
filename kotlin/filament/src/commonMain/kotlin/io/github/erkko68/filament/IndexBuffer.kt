@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * A buffer containing vertex indices into a VertexBuffer.
  *
@@ -9,7 +11,11 @@ package io.github.erkko68.filament
  *
  * @see VertexBuffer, RenderableManager
  */
-expect class IndexBuffer {
+class IndexBuffer @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Builder for creating IndexBuffer instances.
      *
@@ -17,6 +23,8 @@ expect class IndexBuffer {
      * the IndexBuffer.
      */
     class Builder() {
+        private val nativeBuilder = FilaIndexBufferBuilder_create()
+
         /**
          * Index data type options.
          *
@@ -34,7 +42,7 @@ expect class IndexBuffer {
          * @param indexCount Number of indices
          * @return This Builder, for chaining calls
          */
-        fun indexCount(indexCount: Int): Builder
+        fun indexCount(indexCount: Int): Builder = apply { FilaIndexBufferBuilder_indexCount(nativeBuilder, indexCount) }
 
         /**
          * Sets the index data type (USHORT for 16-bit or UINT for 32-bit).
@@ -42,7 +50,7 @@ expect class IndexBuffer {
          * @param indexType The index data type (default: USHORT)
          * @return This Builder, for chaining calls
          */
-        fun bufferType(indexType: IndexType): Builder
+        fun bufferType(indexType: IndexType): Builder = apply { FilaIndexBufferBuilder_bufferType(nativeBuilder, indexType.ordinal) }
 
         /**
          * Creates the IndexBuffer object.
@@ -50,7 +58,11 @@ expect class IndexBuffer {
          * @param engine Engine to associate this IndexBuffer with
          * @return The newly created IndexBuffer
          */
-        fun build(engine: Engine): IndexBuffer
+        fun build(engine: Engine): IndexBuffer {
+            val handle = FilaIndexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaIndexBufferBuilder_destroy(nativeBuilder)
+            return IndexBuffer(handle)
+        }
     }
 
     /**
@@ -58,7 +70,7 @@ expect class IndexBuffer {
      *
      * @return The index count
      */
-    val indexCount: Int
+    val indexCount: Int get() = FilaIndexBuffer_getIndexCount(nativeHandle)
 
     /**
      * Sets the index data for this buffer.
@@ -66,7 +78,7 @@ expect class IndexBuffer {
      * @param engine The engine
      * @param data The index data as a ByteArray
      */
-    fun setBuffer(engine: Engine, data: ByteArray)
+    fun setBuffer(engine: Engine, data: ByteArray) = setBuffer(engine, data, 0, 0, null)
 
     /**
      * Sets the index data with offset and count.
@@ -76,7 +88,7 @@ expect class IndexBuffer {
      * @param destOffsetInBytes Destination offset in bytes
      * @param count Number of bytes to copy
      */
-    fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int)
+    fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int) = setBuffer(engine, data, destOffsetInBytes, count, null)
 
     /**
      * Sets the index data with offset, count, and optional completion callback.
@@ -87,5 +99,29 @@ expect class IndexBuffer {
      * @param count Number of bytes to copy
      * @param callback Optional callback that executes when the data upload is complete
      */
-    fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null)
+    fun setBuffer(engine: Engine, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
+        val upload = upload(data, if (count > 0) count else data.size, callback)
+        FilaIndexBuffer_setBuffer(nativeHandle, engine.nativeHandle, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+    }
 }
+
+@ExternalSymbolName("FilaIndexBufferBuilder_create")
+private external fun FilaIndexBufferBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaIndexBufferBuilder_destroy")
+private external fun FilaIndexBufferBuilder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaIndexBufferBuilder_build")
+private external fun FilaIndexBufferBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaIndexBufferBuilder_indexCount")
+private external fun FilaIndexBufferBuilder_indexCount(builder: NativePointer, indexCount: Int)
+
+@ExternalSymbolName("FilaIndexBufferBuilder_bufferType")
+private external fun FilaIndexBufferBuilder_bufferType(builder: NativePointer, indexType: Int)
+
+@ExternalSymbolName("FilaIndexBuffer_getIndexCount")
+private external fun FilaIndexBuffer_getIndexCount(indexBuffer: NativePointer): Int
+
+@ExternalSymbolName("FilaIndexBuffer_setBuffer")
+private external fun FilaIndexBuffer_setBuffer(indexBuffer: NativePointer, engine: NativePointer, buffer: NativePointer, sizeInBytes: Int, destOffsetInBytes: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)

@@ -40,16 +40,16 @@ void FilaRenderer_copyFrame(FilaRenderer* renderer, FilaSwapChain* dstSwapChain,
 
 void FilaRenderer_readPixels(FilaRenderer* renderer,
         uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height,
-        void* buffer, size_t sizeInBytes,
+        void* buffer, uint32_t sizeInBytes,
         FilaPixelDataFormat format, FilaPixelDataType type,
-        uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+        uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
 
 void FilaRenderer_readPixelsRenderTarget(FilaRenderer* renderer, FilaRenderTarget* renderTarget,
         uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height,
-        void* buffer, size_t sizeInBytes,
+        void* buffer, uint32_t sizeInBytes,
         FilaPixelDataFormat format, FilaPixelDataType type,
-        uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride,
+        uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride,
         FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData);
 
 double FilaRenderer_getUserTime(const FilaRenderer* renderer);
@@ -59,10 +59,10 @@ double FilaRenderer_getMaterialTime(const FilaRenderer* renderer);
 void FilaRenderer_setMaterialTimeEpoch(FilaRenderer* renderer, int64_t timeEpochInNs);
 void FilaRenderer_pauseRenderThread(FilaRenderer* renderer, uint64_t timeNs);
 
-void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, const FilaRendererDisplayInfo* info);
-void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, const FilaRendererFrameRateOptions* options);
-void FilaRenderer_setClearOptions(FilaRenderer* renderer, const FilaRendererClearOptions* options);
-void FilaRenderer_getClearOptions(const FilaRenderer* renderer, FilaRendererClearOptions* out);
+void FilaRenderer_setDisplayInfo(FilaRenderer* renderer, float refreshRate);
+void FilaRenderer_setFrameRateOptions(FilaRenderer* renderer, float headRoomRatio, float scaleRate, uint32_t history, float interval);
+void FilaRenderer_setClearOptions(FilaRenderer* renderer, double clearColor_0, double clearColor_1, double clearColor_2, double clearColor_3, bool clear, bool discard);
+void FilaRenderer_getClearOptions(const FilaRenderer* renderer, int32_t* ints, double* doubles);
 
 void FilaRenderer_setPresentationTime(FilaRenderer* renderer, uint64_t monotonicClockNanos);
 void FilaRenderer_setDesiredPresentationTime(FilaRenderer* renderer, int64_t monotonicClockNanos);

@@ -32,11 +32,11 @@ void FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* builder, FilaB
 }
 
 // BufferObject
-size_t FilaBufferObject_getByteCount(const FilaBufferObject* bufferObject) {
+uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* bufferObject) {
     return FILA_CONST_CAST(BufferObject, bufferObject)->getByteCount();
 }
 
-void FilaBufferObject_setBuffer(FilaBufferObject* bufferObject, FilaEngine* engine, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+void FilaBufferObject_setBuffer(FilaBufferObject* bufferObject, FilaEngine* engine, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     auto wrapper = new BufferCallbackWrapper{callback, userData};
     BufferDescriptor desc(buffer, sizeInBytes, 
         reinterpret_cast<backend::CallbackHandler*>(handler),

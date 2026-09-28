@@ -45,7 +45,7 @@ This is standard practice for graphics, video, and game apps on Android. The `Su
 
 - Renders via `CAMetalLayer` embedded in a `UIKitView`.
 - Use static frameworks (`isStatic = true`) — keeps the Filament symbols inside your app binary and avoids dynamic-library loader issues.
-- Published Apple targets are **`iosArm64`** and **`iosSimulatorArm64`**; there is no `iosX64` and no standalone macOS Kotlin/Native target. Desktop macOS is served by the **JVM** target, which binds the same C wrapper through Project Panama (FFM) rather than `cinterop` — a different code path with the same API.
+- Published Apple targets are **`iosArm64`** and **`iosSimulatorArm64`**; there is no `iosX64` and no standalone macOS Kotlin/Native target. Desktop macOS is served by the **JVM** target, which reaches the same C wrapper through JNI rather than `@SymbolName` — a different code path with the same API.
 
 ### iOS Simulator: shadows render black
 
@@ -65,7 +65,7 @@ This is unavoidable with Compose Desktop today: there is no public API to embed 
 
 ### Native library loading
 
-The FFM native runtime JAR (`io.github.erkko68.filament-ffm:filament-ffm:...`) bundles the combined `libfilament-c` shared library per platform (`.dll`, `.dylib`, `.so`) as JAR resources and extracts it to a temp directory on first use. No system installation of Filament is needed. Requires a **JDK 22+** runtime.
+Each platform's `libfilament-c` (`.dll`, `.dylib`, `.so`) ships in its `filament-jni-runtime-<os>-<arch>` jar. `Filament.init()` extracts it once into a content-hash-keyed cache dir (`~/.filament-kmp/`) and loads it; no system installation of Filament is needed. Runs on any **JDK 17+**. See [`desktop/README.md`](../desktop/README.md) for the loader's knobs.
 
 ## Web / WASM
 

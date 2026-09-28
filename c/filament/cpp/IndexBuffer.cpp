@@ -34,11 +34,11 @@ void FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* builder, FilaInde
 }
 
 // IndexBuffer
-size_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer) {
+uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* indexBuffer) {
     return FILA_CONST_CAST(IndexBuffer, indexBuffer)->getIndexCount();
 }
 
-void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, void* buffer, size_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+void FilaIndexBuffer_setBuffer(FilaIndexBuffer* indexBuffer, FilaEngine* engine, void* buffer, uint32_t sizeInBytes, uint32_t destOffsetInBytes, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     auto wrapper = new BufferCallbackWrapper{callback, userData};
     BufferDescriptor desc(buffer, sizeInBytes, 
         reinterpret_cast<backend::CallbackHandler*>(handler),

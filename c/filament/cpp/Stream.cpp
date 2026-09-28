@@ -54,8 +54,8 @@ void FilaStream_setDimensions(FilaStream* stream, uint32_t width, uint32_t heigh
     FILA_CAST(Stream, stream)->setDimensions(width, height);
 }
 
-int64_t FilaStream_getTimestamp(const FilaStream* stream) {
-    return FILA_CONST_CAST(Stream, stream)->getTimestamp();
+void FilaStream_getTimestamp(const FilaStream* stream, int64_t* out) {
+    *out = FILA_CONST_CAST(Stream, stream)->getTimestamp();
 }
 
 } // extern "C"

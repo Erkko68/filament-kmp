@@ -1,5 +1,7 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.interop.*
+
 /**
  * Holds a set of buffers that define the geometry of a Renderable.
  *
@@ -15,7 +17,11 @@ package io.github.erkko68.filament
  *
  * @see IndexBuffer, RenderableManager
  */
-expect class VertexBuffer {
+class VertexBuffer @InternalFilamentApi constructor(internal var nativeHandle: NativePointer) {
+    /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
+    @InternalFilamentApi
+    val nativeObject: NativePointer get() = nativeHandle
+
     /**
      * Vertex attribute types that can be defined in a VertexBuffer.
      *
@@ -62,6 +68,8 @@ expect class VertexBuffer {
      * the VertexBuffer.
      */
     class Builder() {
+        private val nativeBuilder = FilaVertexBufferBuilder_create()
+
         /**
          * Defines how many buffers will be created in this vertex buffer set.
          *
@@ -71,7 +79,7 @@ expect class VertexBuffer {
          * @param bufferCount Number of buffers in this vertex buffer set
          * @return This Builder, for chaining calls
          */
-        fun bufferCount(bufferCount: Int): Builder
+        fun bufferCount(bufferCount: Int): Builder = apply { FilaVertexBufferBuilder_bufferCount(nativeBuilder, bufferCount) }
 
         /**
          * Sets the size of each buffer in the set in vertices.
@@ -79,7 +87,7 @@ expect class VertexBuffer {
          * @param vertexCount Number of vertices in each buffer in this set
          * @return This Builder, for chaining calls
          */
-        fun vertexCount(vertexCount: Int): Builder
+        fun vertexCount(vertexCount: Int): Builder = apply { FilaVertexBufferBuilder_vertexCount(nativeBuilder, vertexCount) }
 
         /**
          * Allows buffers to be swapped out and shared using BufferObject.
@@ -91,7 +99,7 @@ expect class VertexBuffer {
          * @param enabled If true, enables buffer object mode (default: false)
          * @return This Builder, for chaining calls
          */
-        fun enableBufferObjects(enabled: Boolean): Builder
+        fun enableBufferObjects(enabled: Boolean): Builder = apply { FilaVertexBufferBuilder_enableBufferObjects(nativeBuilder, enabled) }
 
         /**
          * Sets up an attribute for this vertex buffer set.
@@ -108,7 +116,9 @@ expect class VertexBuffer {
          * @param byteStride Stride in bytes to the next element. When 0, uses the attribute size
          * @return This Builder, for chaining calls
          */
-        fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int = 0, byteStride: Int = 0): Builder
+        fun attribute(attribute: VertexAttribute, bufferIndex: Int, attributeType: AttributeType, byteOffset: Int = 0, byteStride: Int = 0): Builder = apply {
+            FilaVertexBufferBuilder_attribute(nativeBuilder, attribute.ordinal, bufferIndex, attributeType.ordinal, byteOffset, byteStride)
+        }
 
         /**
          * Sets whether a given attribute should be normalized.
@@ -120,7 +130,7 @@ expect class VertexBuffer {
          * @param enabled If true, automatically normalize the attribute (default: true)
          * @return This Builder, for chaining calls
          */
-        fun normalized(attribute: VertexAttribute, enabled: Boolean = true): Builder
+        fun normalized(attribute: VertexAttribute, enabled: Boolean = true): Builder = apply { FilaVertexBufferBuilder_normalized(nativeBuilder, attribute.ordinal, enabled) }
 
         /**
          * Creates the VertexBuffer object.
@@ -128,7 +138,11 @@ expect class VertexBuffer {
          * @param engine Engine to associate this VertexBuffer with
          * @return The newly created VertexBuffer
          */
-        fun build(engine: Engine): VertexBuffer
+        fun build(engine: Engine): VertexBuffer {
+            val handle = FilaVertexBufferBuilder_build(nativeBuilder, engine.nativeHandle)
+            FilaVertexBufferBuilder_destroy(nativeBuilder)
+            return VertexBuffer(handle)
+        }
     }
 
     /**
@@ -136,7 +150,7 @@ expect class VertexBuffer {
      *
      * @return The vertex count
      */
-    val vertexCount: Int
+    val vertexCount: Int get() = FilaVertexBuffer_getVertexCount(nativeHandle)
 
     /**
      * Sets the data for a given buffer in this vertex buffer set.
@@ -145,7 +159,7 @@ expect class VertexBuffer {
      * @param bufferIndex The index of the buffer to set (0 to bufferCount - 1)
      * @param data The vertex data as a ByteArray
      */
-    fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray) = setBufferAt(engine, bufferIndex, data, 0, 0, null)
 
     /**
      * Sets the data for a given buffer with offset and count.
@@ -156,7 +170,7 @@ expect class VertexBuffer {
      * @param destOffsetInBytes Destination offset in bytes
      * @param count Number of bytes to copy
      */
-    fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int) = setBufferAt(engine, bufferIndex, data, destOffsetInBytes, count, null)
 
     /**
      * Sets the data for a given buffer with offset, count, and optional completion callback.
@@ -168,7 +182,10 @@ expect class VertexBuffer {
      * @param count Number of bytes to copy
      * @param callback Optional callback that executes when the data upload is complete
      */
-    fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null)
+    fun setBufferAt(engine: Engine, bufferIndex: Int, data: ByteArray, destOffsetInBytes: Int, count: Int, callback: (() -> Unit)? = null) {
+        val upload = upload(data, if (count > 0) count else data.size, callback)
+        FilaVertexBuffer_setBufferAt(nativeHandle, engine.nativeHandle, bufferIndex, upload.ptr, upload.size, destOffsetInBytes, NullPointer, upload.callback, upload.userData)
+    }
 
     /**
      * Associates a BufferObject with a buffer in this vertex buffer set.
@@ -180,5 +197,40 @@ expect class VertexBuffer {
      * @param bufferIndex The index of the buffer to set (0 to bufferCount - 1)
      * @param bufferObject The BufferObject to associate
      */
-    fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject)
+    fun setBufferObjectAt(engine: Engine, bufferIndex: Int, bufferObject: BufferObject) {
+        FilaVertexBuffer_setBufferObjectAt(nativeHandle, engine.nativeHandle, bufferIndex, bufferObject.nativeHandle)
+    }
 }
+
+@ExternalSymbolName("FilaVertexBufferBuilder_create")
+private external fun FilaVertexBufferBuilder_create(): NativePointer
+
+@ExternalSymbolName("FilaVertexBufferBuilder_destroy")
+private external fun FilaVertexBufferBuilder_destroy(builder: NativePointer)
+
+@ExternalSymbolName("FilaVertexBufferBuilder_build")
+private external fun FilaVertexBufferBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
+
+@ExternalSymbolName("FilaVertexBufferBuilder_bufferCount")
+private external fun FilaVertexBufferBuilder_bufferCount(builder: NativePointer, bufferCount: Int)
+
+@ExternalSymbolName("FilaVertexBufferBuilder_vertexCount")
+private external fun FilaVertexBufferBuilder_vertexCount(builder: NativePointer, vertexCount: Int)
+
+@ExternalSymbolName("FilaVertexBufferBuilder_enableBufferObjects")
+private external fun FilaVertexBufferBuilder_enableBufferObjects(builder: NativePointer, enabled: Boolean)
+
+@ExternalSymbolName("FilaVertexBufferBuilder_attribute")
+private external fun FilaVertexBufferBuilder_attribute(builder: NativePointer, attribute: Int, bufferIndex: Int, attributeType: Int, byteOffset: Int, byteStride: Int)
+
+@ExternalSymbolName("FilaVertexBufferBuilder_normalized")
+private external fun FilaVertexBufferBuilder_normalized(builder: NativePointer, attribute: Int, normalized: Boolean)
+
+@ExternalSymbolName("FilaVertexBuffer_getVertexCount")
+private external fun FilaVertexBuffer_getVertexCount(vertexBuffer: NativePointer): Int
+
+@ExternalSymbolName("FilaVertexBuffer_setBufferAt")
+private external fun FilaVertexBuffer_setBufferAt(vertexBuffer: NativePointer, engine: NativePointer, bufferIndex: Int, buffer: NativePointer, sizeInBytes: Int, destOffsetInBytes: Int, handler: NativePointer, callback: NativePointer, userData: NativePointer)
+
+@ExternalSymbolName("FilaVertexBuffer_setBufferObjectAt")
+private external fun FilaVertexBuffer_setBufferObjectAt(vertexBuffer: NativePointer, engine: NativePointer, bufferIndex: Int, bufferObject: NativePointer)

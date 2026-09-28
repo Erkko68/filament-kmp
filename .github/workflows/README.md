@@ -1,8 +1,9 @@
 # .github/workflows/
 
-CI pipelines. All workflows fetch Filament prebuilts via `./gradlew downloadPrebuilts_*` —
-the matching `prebuilts/*` directories are cached per-target keyed on `filaVersion`, so
-repeat runs skip the download. See [Caches](#caches) for what is cached where.
+CI pipelines. Every job gets Filament's static libraries through the
+[`setup-filament-libs`](../actions/setup-filament-libs/action.yml) action: it runs the `prebuilts_<id>`
+tasks (a release download, or a source build for `wasm`/`windows-arm64`) and caches `prebuilts/` per
+`filaVersion`. See [Caches](#caches) for what is cached where.
 
 | Workflow | Triggers | What it does |
 | :--- | :--- | :--- |
@@ -19,11 +20,12 @@ The `changes` job maps the PR's (or push's) changed files to platforms with
 | Changed | Runs |
 | :--- | :--- |
 | `*.md`, `docs/`, other workflows, `scripts/dev/*` | nothing (only `ci-gate`, so the PR still gets a status) |
-| `c/` | jvm, web, ios |
-| `java/`, `kotlin/*/src/jvm*`, `kotlin/*/api/`, `samples/desktopApp/` | jvm |
-| `web/`, `kotlin/*/src/{web,js,wasmJs}*`, `samples/webApp/`, emsdk/wasm-lib scripts | web-runtime → js + wasm |
+| `c/`, `build-logic/` | everything |
+| `desktop/`, `kotlin/*/src/jvm*`, `kotlin/*/api/`, `samples/desktopApp/` | jvm |
+| `jni/`, `kotlin/*/src/jniMain/` | jvm, android |
+| `web/`, `kotlin/*/src/{web,js,wasmJs}*`, `samples/webApp/` | web-runtime → js + wasm |
 | `kotlin/*/src/{native,ios}*`, `samples/iosApp/` | ios |
-| `kotlin/*/src/android*`, `samples/androidApp/` | android |
+| `android/`, `kotlin/*/src/android*`, `samples/androidApp/` | android |
 | anything else (`commonMain`, Gradle files, `ci.yml`, …) | everything |
 
 Try it locally: `printf '%s\n' c/foo.cpp | .github/scripts/ci-changes.sh -`.
@@ -58,10 +60,9 @@ The repo gets 10 GB of Actions cache; past that, GitHub evicts least-recently-us
 restore caches from its own ref and from `main` only, so the rules are:
 
 - **Gradle** (`setup-gradle-cached`): written only by `main`; transforms, JDKs and build-cache excluded.
-- **Prebuilts, emsdk, wasm libs**: saved on a miss by any ref. `mingwArm64` libs
-  (`setup-host-libs`, no upstream release) are built from source on a miss, like the wasm libs.
-  Once `main` has them, PRs hit and never save.
-  The wasm libs (~50 min to build) are keyed on `filaVersion` + `build-wasm-libs.sh`.
+- **Filament libs + emsdk** (`setup-filament-libs`): saved on a miss by any ref, keyed on `filaVersion`,
+  the job's targets and `build-logic/…/prebuilts/`. `wasm` and `windows-arm64` have no upstream release
+  and are built from source on a miss (~50 min). Once `main` has them, PRs hit and never save.
 - **AVD** (2+ GB, fixed key): saved only by `main`.
 - **publish.yml** only restores: a tag ref's caches are invisible to every other run.
 
@@ -72,13 +73,12 @@ Check usage with `gh cache list --sort size_in_bytes` and `gh api repos/{owner}/
 The publish workflow is a two-phase pipeline:
 
 1. **`build-natives`** — matrix job (macOS arm64, Linux x64/arm64, Windows x64/arm64) that
-   runs `:java:cmakeBuildFilamentCJvm` to produce the combined `libfilament-c.{dylib,so,dll}`
-   for each host. Outputs are uploaded as `c-<arch>` artifacts.
-2. **`publish`** — runs on `macos-latest` (needed for iOS framework signing / lipo).
-   Downloads all `c-*` artifacts via `merge-multiple: true` into one flat `c-artifacts/`
-   directory, then invokes `publishAllPublicationsToMavenCentralRepository` for every module
-   with `-PcArtifactsDir=...` so the `:java` module bundles every platform's native into its
-   resources (the `:kotlin:*` jvm artifacts pick it up transitively).
+   runs `:desktop:cmakeBuild` to produce `libfilament-c.{dylib,so,dll}` for each host, uploaded
+   as `c-<id>` artifacts.
+2. **`publish`** — runs on `macos-latest` (needed for the iOS klibs). Downloads all `c-*`
+   artifacts via `merge-multiple: true` into `c-artifacts/<id>/`, then runs
+   `publishAllPublicationsToMavenCentralRepository` with `-PcArtifactsDir=...`, so each
+   `:desktop:runtime-<id>` jar ships its platform's library.
 
 ### Versioned API docs
 

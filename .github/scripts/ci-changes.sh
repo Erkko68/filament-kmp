@@ -16,16 +16,15 @@ classify() {
         # Nothing to build.
         *.md|docs/*|LICENSE*|.github/ISSUE_TEMPLATE/*|.github/dependabot.yml) ;;
         .github/workflows/pages.yml|.github/workflows/publish.yml|.github/workflows/status-*) ;;
-        scripts/dev/build-wasm-libs.sh|scripts/dev/setup-emsdk.sh) web=true ;;
-        scripts/dev/build-host-libs.sh) jvm=true ;;
         scripts/dev/*) ;;
-        # c/ is the C API every target binds to (FFM, cinterop, emcc, JNI).
-        c/*) all ;;
-        java/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;
-        web/*|kotlin/*/src/web*|kotlin/*/src/js*|kotlin/*/src/wasmJs*|samples/webApp/*|gradle/karma/*|kotlin-js-store/*|.github/actions/setup-wasm/*) web=true ;;
+        # c/ is the C API every target builds; build-logic drives all of them.
+        c/*|build-logic/*) all ;;
+        desktop/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;
+        web/*|kotlin/*/src/web*|kotlin/*/src/js*|kotlin/*/src/wasmJs*|samples/webApp/*|gradle/karma/*|kotlin-js-store/*) web=true ;;
         kotlin/*/src/native*|kotlin/*/src/ios*|samples/iosApp/*|samples/shared/src/iosMain/*) ios=true ;;
-        # jni/ is Android-only until a JVM JNI runtime reuses it.
-        jni/*|android/*|kotlin/*/src/android*|samples/androidApp/*) android=true ;;
+        # jni/ is the JNI runtime both desktop and Android build in.
+        jni/*|kotlin/*/src/jniMain/*) jvm=true android=true ;;
+        android/*|kotlin/*/src/android*|samples/androidApp/*) android=true ;;
         *) all ;;
     esac
 }

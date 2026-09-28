@@ -10,7 +10,7 @@ extern "C" {
 // Decodes image bytes (PNG, JPG, etc) into a Filament Texture.
 // srgb: if true, uses sRGB internal format.
 // Returns a FilaTexture* handle, or NULL on failure.
-FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffer, size_t size, bool srgb);
+FilaTexture* FilaTextureLoader_loadTexture(FilaEngine* engine, const void* buffer, uint32_t size, bool srgb);
 
 #ifdef __cplusplus
 }

@@ -37,11 +37,11 @@ void FilaTextureBuilder_depth(FilaTextureBuilder* builder, uint32_t depth) {
     FILA_CAST(Texture::Builder, builder)->depth(depth);
 }
 
-void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint8_t levels) {
+void FilaTextureBuilder_levels(FilaTextureBuilder* builder, uint32_t levels) {
     FILA_CAST(Texture::Builder, builder)->levels(levels);
 }
 
-void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint8_t samples) {
+void FilaTextureBuilder_samples(FilaTextureBuilder* builder, uint32_t samples) {
     FILA_CAST(Texture::Builder, builder)->samples(samples);
 }
 
@@ -66,8 +66,8 @@ void FilaTextureBuilder_swizzle(FilaTextureBuilder* builder, FilaTextureSwizzle 
     );
 }
 
-void FilaTextureBuilder_importTexture(FilaTextureBuilder* builder, intptr_t id) {
-    FILA_CAST(Texture::Builder, builder)->import(id);
+void FilaTextureBuilder_importTexture(FilaTextureBuilder* builder, int64_t id) {
+    FILA_CAST(Texture::Builder, builder)->import(static_cast<intptr_t>(id));
 }
 
 void FilaTextureBuilder_external(FilaTextureBuilder* builder) {
@@ -87,11 +87,11 @@ bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine) {
     return Texture::isTextureSwizzleSupported(*FILA_CAST(Engine, engine));
 }
 
-size_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSamplerType sampler) {
+uint32_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaTextureSamplerType sampler) {
     return Texture::getMaxTextureSize(*FILA_CAST(Engine, engine), static_cast<Texture::Sampler>(sampler));
 }
 
-size_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
+uint32_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
     return Texture::getMaxArrayTextureLayers(*FILA_CAST(Engine, engine));
 }
 
@@ -104,19 +104,19 @@ bool FilaTexture_validatePixelFormatAndType(FilaTextureInternalFormat internalFo
 }
 
 // Texture instance methods
-size_t FilaTexture_getWidth(const FilaTexture* texture, size_t level) {
+uint32_t FilaTexture_getWidth(const FilaTexture* texture, uint32_t level) {
     return FILA_CONST_CAST(Texture, texture)->getWidth(level);
 }
 
-size_t FilaTexture_getHeight(const FilaTexture* texture, size_t level) {
+uint32_t FilaTexture_getHeight(const FilaTexture* texture, uint32_t level) {
     return FILA_CONST_CAST(Texture, texture)->getHeight(level);
 }
 
-size_t FilaTexture_getDepth(const FilaTexture* texture, size_t level) {
+uint32_t FilaTexture_getDepth(const FilaTexture* texture, uint32_t level) {
     return FILA_CONST_CAST(Texture, texture)->getDepth(level);
 }
 
-size_t FilaTexture_getLevels(const FilaTexture* texture) {
+uint32_t FilaTexture_getLevels(const FilaTexture* texture) {
     return FILA_CONST_CAST(Texture, texture)->getLevels();
 }
 
@@ -128,7 +128,7 @@ FilaTextureInternalFormat FilaTexture_getFormat(const FilaTexture* texture) {
     return static_cast<FilaTextureInternalFormat>(FILA_CONST_CAST(Texture, texture)->getFormat());
 }
 
-void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, size_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, size_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint8_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
+void FilaTexture_setImage(FilaTexture* texture, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t sizeInBytes, FilaPixelDataFormat format, FilaPixelDataType type, uint32_t alignment, uint32_t left, uint32_t top, uint32_t stride, FilaCallbackHandler* handler, FilaBufferCallback callback, void* userData) {
     auto wrapper = new BufferCallbackWrapper{callback, userData};
     PixelBufferDescriptor desc(buffer, sizeInBytes, 
         static_cast<backend::PixelDataFormat>(format),
@@ -147,7 +147,7 @@ void FilaTexture_generateMipmaps(const FilaTexture* texture, FilaEngine* engine)
     FILA_CONST_CAST(Texture, texture)->generateMipmaps(*FILA_CAST(Engine, engine));
 }
 
-size_t FilaTexture_computeDataSize(FilaPixelDataFormat format, FilaPixelDataType type, size_t stride, size_t height, size_t alignment) {
+uint32_t FilaTexture_computeDataSize(FilaPixelDataFormat format, FilaPixelDataType type, uint32_t stride, uint32_t height, uint32_t alignment) {
     return filament::backend::PixelBufferDescriptor::computeDataSize(
         static_cast<filament::backend::PixelDataFormat>(format),
         static_cast<filament::backend::PixelDataType>(type),

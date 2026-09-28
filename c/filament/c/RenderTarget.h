@@ -37,10 +37,10 @@ void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* builder);
 FilaRenderTarget* FilaRenderTargetBuilder_build(FilaRenderTargetBuilder* builder, FilaEngine* engine);
 
 void FilaRenderTargetBuilder_texture(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, FilaTexture* texture);
-void FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, uint8_t level);
+void FilaRenderTargetBuilder_mipLevel(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, uint32_t level);
 void FilaRenderTargetBuilder_face(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, FilaRenderTargetCubemapFace face);
 void FilaRenderTargetBuilder_layer(FilaRenderTargetBuilder* builder, FilaRenderTargetAttachmentPoint attachment, uint32_t layer);
-void FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* builder, uint8_t samples);
+void FilaRenderTargetBuilder_samples(FilaRenderTargetBuilder* builder, uint32_t samples);
 
 // RenderTarget
 FilaTexture* FilaRenderTarget_getTexture(const FilaRenderTarget* renderTarget, FilaRenderTargetAttachmentPoint attachment);

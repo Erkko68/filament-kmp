@@ -4,45 +4,22 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * Hand-written half of the JNI layer (native side: src/main/cpp/FilaJni.cpp). The generated FilamentC.kt & co.
- * hold the Fila* functions and struct views; this object loads libfilament-c and covers what they can't express.
- * The helpers below mirror :web's (heapScoped, usePinned, upload, Callbacks) so actuals port between them as-is.
+ * Hand-written half of the JNI layer (native side: src/main/cpp/FilaJni.cpp): native memory and callbacks,
+ * what the generated forwarders can't express. libfilament-c is loaded by `Filament.init()` on each platform.
  */
 object FilaJni {
-    init { System.loadLibrary("filament-c") }
-
-    /** Forces the library load; each generated file calls it from its initializer. */
-    fun load() {}
-
     /** Zero-filled native memory (calloc): hand-built C structs must start fully initialised. */
     @JvmStatic external fun alloc(size: Long): Long
     @JvmStatic external fun free(ptr: Long)
 
-    /** Native address of a direct [buffer], to pass where the C API takes a pointer. */
-    @JvmStatic external fun address(buffer: ByteBuffer): Long
-
     /** A direct ByteBuffer over [size] bytes of native memory at [ptr], in big-endian (JNI's default). */
     @JvmStatic external fun view(ptr: Long, size: Long): ByteBuffer
 
-    /** [view] in native byte order, which struct views and C arrays need. */
+    /** [view] in native byte order, as C arrays need. */
     fun buffer(ptr: Long, size: Int): ByteBuffer = view(ptr, size.toLong()).order(ByteOrder.nativeOrder())
 
     /** Reads a NUL-terminated UTF-8 string, or null for a null pointer. */
     @JvmStatic external fun readString(ptr: Long): String?
-
-    @JvmStatic external fun getF32(ptr: Long): Float
-    @JvmStatic external fun setF32(ptr: Long, value: Float)
-    @JvmStatic external fun getF64(ptr: Long): Double
-    @JvmStatic external fun setF64(ptr: Long, value: Double)
-    @JvmStatic external fun getI32(ptr: Long): Int
-    @JvmStatic external fun setI32(ptr: Long, value: Int)
-    @JvmStatic external fun getI64(ptr: Long): Long
-    @JvmStatic external fun setI64(ptr: Long, value: Long)
-    @JvmStatic external fun getU8(ptr: Long): Int
-    @JvmStatic external fun setU8(ptr: Long, value: Int)
-
-    /** `sizeof(void*)` for this ABI: 8 on arm64/x86_64, 4 on armeabi-v7a/x86. */
-    @JvmStatic external fun pointerSize(): Int
 
     @JvmStatic external fun newCallback(callback: FilaCallback, once: Boolean): Long
     @JvmStatic external fun releaseCallback(userData: Long)
@@ -81,75 +58,7 @@ object Callbacks {
     val keepBuffer: Long by lazy { FilaJni.keepBuffer() }
 }
 
-/**
- * The analogue of cinterop's `memScoped` (and :web's `heapScoped`): everything allocated in [block] is freed
- * when it returns. Allocations are zeroed, so structs only need the fields they actually set.
- */
-inline fun <R> heapScoped(block: HeapScope.() -> R): R {
-    val scope = HeapScope()
-    try {
-        return scope.block()
-    } finally {
-        scope.freeAll()
-    }
-}
-
-class HeapScope {
-    private val allocations = ArrayList<Long>(4)
-
-    fun alloc(size: Int): Long = allocZeroed(size).also { allocations += it }
-
-    fun bytes(values: ByteArray): Long = alloc(values.size).also { writeBytes(it, values) }
-    fun floats(values: FloatArray): Long = alloc(values.size * 4).also { FilaJni.buffer(it, values.size * 4).asFloatBuffer().put(values) }
-    fun doubles(values: DoubleArray): Long = alloc(values.size * 8).also { FilaJni.buffer(it, values.size * 8).asDoubleBuffer().put(values) }
-    fun ints(values: IntArray): Long = alloc(values.size * 4).also { FilaJni.buffer(it, values.size * 4).asIntBuffer().put(values) }
-    fun shorts(values: ShortArray): Long = alloc(values.size * 2).also { FilaJni.buffer(it, values.size * 2).asShortBuffer().put(values) }
-
-    fun freeAll() {
-        allocations.forEach(FilaJni::free)
-        allocations.clear()
-    }
-}
-
-fun allocZeroed(size: Int): Long = FilaJni.alloc(maxOf(size, 1).toLong()).also { check(it != 0L) { "calloc($size) failed" } }
-
-/** Copies [count] bytes of [bytes] (from [offset]) into native memory at [ptr]. */
-fun writeBytes(ptr: Long, bytes: ByteArray, offset: Int = 0, count: Int = bytes.size - offset) {
-    if (count > 0) FilaJni.buffer(ptr, count).put(bytes, offset, count)
-}
-
-/** Copies [count] bytes from native memory at [ptr] into a new ByteArray. */
-fun readBytes(ptr: Long, count: Int): ByteArray = ByteArray(count).also { if (count > 0) FilaJni.buffer(ptr, count).get(it) }
-
-fun readString(ptr: Long): String? = FilaJni.readString(ptr)
-
-// Stand-ins for cinterop's usePinned: the array is copied in, [block] gets its native address, and the
-// contents are copied back (C may have written to it) before the copy is freed.
-
-inline fun <R> FloatArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
-    val ptr = floats(this@usePinned)
-    block(ptr).also { FilaJni.buffer(ptr, size * 4).asFloatBuffer().get(this@usePinned) }
-}
-
-inline fun <R> DoubleArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
-    val ptr = doubles(this@usePinned)
-    block(ptr).also { FilaJni.buffer(ptr, size * 8).asDoubleBuffer().get(this@usePinned) }
-}
-
-inline fun <R> IntArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
-    val ptr = ints(this@usePinned)
-    block(ptr).also { FilaJni.buffer(ptr, size * 4).asIntBuffer().get(this@usePinned) }
-}
-
-inline fun <R> ShortArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
-    val ptr = shorts(this@usePinned)
-    block(ptr).also { FilaJni.buffer(ptr, size * 2).asShortBuffer().get(this@usePinned) }
-}
-
-inline fun <R> ByteArray.usePinned(block: (ptr: Long) -> R): R = heapScoped {
-    val ptr = bytes(this@usePinned)
-    block(ptr).also { if (size > 0) FilaJni.buffer(ptr, size).get(this@usePinned) }
-}
+private fun allocZeroed(size: Int): Long = FilaJni.alloc(maxOf(size, 1).toLong()).also { check(it != 0L) { "calloc($size) failed" } }
 
 /** A native copy handed to an asynchronous Filament upload, released through [callback]. */
 class Upload(val ptr: Long, val size: Int, val callback: Long, val userData: Long)
@@ -160,89 +69,7 @@ class Upload(val ptr: Long, val size: Int, val callback: Long, val userData: Lon
  */
 fun upload(data: ByteArray, size: Int = data.size, onRelease: (() -> Unit)? = null): Upload {
     val ptr = allocZeroed(size)
-    writeBytes(ptr, data, 0, size)
+    if (size > 0) FilaJni.buffer(ptr, size).put(data, 0, size)
     val userData = if (onRelease != null) Callbacks.register(once = true) { _, _ -> onRelease() } else 0L
     return Upload(ptr, size, Callbacks.freeBuffer, userData)
-}
-
-// Struct field access by the field's compiled size (1/2/4/8 bytes differ per ABI for size_t and pointers).
-fun ByteBuffer.readInt(at: Int, size: Int, signed: Boolean): Int = when (size) {
-    1 -> get(at).toInt().let { if (signed) it else it and 0xff }
-    2 -> getShort(at).toInt().let { if (signed) it else it and 0xffff }
-    else -> getInt(at)
-}
-
-fun ByteBuffer.writeInt(at: Int, size: Int, value: Int) {
-    when (size) {
-        1 -> put(at, value.toByte())
-        2 -> putShort(at, value.toShort())
-        else -> putInt(at, value)
-    }
-}
-
-// ponytail: 4-byte reads zero-extend (pointers, size_t on 32-bit ABIs); no struct has a signed 32-bit `long`.
-fun ByteBuffer.readLong(at: Int, size: Int): Long = if (size == 8) getLong(at) else getInt(at).toLong() and 0xffffffffL
-
-fun ByteBuffer.writeLong(at: Int, size: Int, value: Long) {
-    if (size == 8) putLong(at, value) else putInt(at, value.toInt())
-}
-
-/** Pointer-based views over native memory, like the wasm F32Array & co. (for arrays and out-params). */
-class F32Array(val ptr: Long) {
-    operator fun get(i: Int): Float = FilaJni.getF32(ptr + i * 4)
-    operator fun set(i: Int, value: Float) = FilaJni.setF32(ptr + i * 4, value)
-}
-
-class F64Array(val ptr: Long) {
-    operator fun get(i: Int): Double = FilaJni.getF64(ptr + i * 8)
-    operator fun set(i: Int, value: Double) = FilaJni.setF64(ptr + i * 8, value)
-}
-
-class I32Array(val ptr: Long) {
-    operator fun get(i: Int): Int = FilaJni.getI32(ptr + i * 4)
-    operator fun set(i: Int, value: Int) = FilaJni.setI32(ptr + i * 4, value)
-}
-
-class U8Array(val ptr: Long) {
-    operator fun get(i: Int): Int = FilaJni.getU8(ptr + i)
-    operator fun set(i: Int, value: Int) = FilaJni.setU8(ptr + i, value)
-}
-
-class BoolArray(val ptr: Long) {
-    operator fun get(i: Int): Boolean = FilaJni.getU8(ptr + i) != 0
-    operator fun set(i: Int, value: Boolean) = FilaJni.setU8(ptr + i, if (value) 1 else 0)
-}
-
-/** A C array of pointers (`T**`), whose element width follows the ABI; see [SIZE]. Values zero-extend to Long. */
-class PtrArray(val ptr: Long) {
-    operator fun get(i: Int): Long =
-        if (SIZE == 8) FilaJni.getI64(ptr + i * 8L) else FilaJni.getI32(ptr + i * 4L).toLong() and 0xffffffffL
-
-    operator fun set(i: Int, value: Long) {
-        if (SIZE == 8) FilaJni.setI64(ptr + i * 8L, value) else FilaJni.setI32(ptr + i * 4L, value.toInt())
-    }
-
-    companion object {
-        val SIZE: Int = FilaJni.pointerSize()
-    }
-}
-
-class IntVar(val ptr: Long) {
-    var value: Int get() = FilaJni.getI32(ptr); set(v) = FilaJni.setI32(ptr, v)
-}
-
-class FloatVar(val ptr: Long) {
-    var value: Float get() = FilaJni.getF32(ptr); set(v) = FilaJni.setF32(ptr, v)
-}
-
-class DoubleVar(val ptr: Long) {
-    var value: Double get() = FilaJni.getF64(ptr); set(v) = FilaJni.setF64(ptr, v)
-}
-
-class BooleanVar(val ptr: Long) {
-    var value: Boolean get() = FilaJni.getU8(ptr) != 0; set(v) = FilaJni.setU8(ptr, if (v) 1 else 0)
-}
-
-class LongVar(val ptr: Long) {
-    var value: Long get() = FilaJni.getI64(ptr); set(v) = FilaJni.setI64(ptr, v)
 }

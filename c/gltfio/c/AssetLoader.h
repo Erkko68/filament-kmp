@@ -10,8 +10,9 @@ extern "C" {
 FilaAssetLoader* FilaAssetLoader_create(FilaEngine* engine, FilaMaterialProvider* materialProvider, FilaEntityManager* entityManager);
 void FilaAssetLoader_destroy(FilaAssetLoader* loader);
 
-FilaFilamentAsset* FilaAssetLoader_createAsset(FilaAssetLoader* loader, const void* buffer, size_t bufferByteCount);
-FilaFilamentAsset* FilaAssetLoader_createInstancedAsset(FilaAssetLoader* loader, const void* buffer, size_t bufferByteCount, FilaFilamentInstance** instances, size_t instanceCount);
+FilaFilamentAsset* FilaAssetLoader_createAsset(FilaAssetLoader* loader, const void* buffer, uint32_t bufferByteCount);
+// The new instances are the asset's first instanceCount instances (FilaFilamentAsset_getAssetInstanceAt).
+FilaFilamentAsset* FilaAssetLoader_createInstancedAsset(FilaAssetLoader* loader, const void* buffer, uint32_t bufferByteCount, uint32_t instanceCount);
 
 FilaFilamentInstance* FilaAssetLoader_createInstance(FilaAssetLoader* loader, FilaFilamentAsset* asset);
 void FilaAssetLoader_enableDiagnostics(FilaAssetLoader* loader, bool enable);

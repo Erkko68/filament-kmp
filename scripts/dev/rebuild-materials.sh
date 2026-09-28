@@ -6,7 +6,7 @@
 #
 # Usage: scripts/dev/rebuild-materials.sh
 #
-# matc comes from the release tarball already cached by ./gradlew downloadPrebuilts.
+# matc comes from the release tarball already cached by ./gradlew prebuilts.
 
 set -euo pipefail
 
@@ -21,7 +21,7 @@ case "$(uname -s)" in
 esac
 TARBALL=".gradle/filament-prebuilts-cache/filament-v${VERSION}-${SUFFIX}.tgz"
 
-[[ -f "$TARBALL" ]] || ./gradlew downloadPrebuilts
+[[ -f "$TARBALL" ]] || ./gradlew prebuilts
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT

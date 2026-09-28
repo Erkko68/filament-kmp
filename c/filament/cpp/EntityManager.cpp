@@ -16,7 +16,7 @@ FilaEntity FilaEntityManager_create(FilaEntityManager* em) {
     return UTILS_CAST(EntityManager, em)->create().getId();
 }
 
-void FilaEntityManager_createArray(FilaEntityManager* em, size_t n, FilaEntity* outEntities) {
+void FilaEntityManager_createArray(FilaEntityManager* em, uint32_t n, FilaEntity* outEntities) {
     // Entities are just uint32_t IDs. We can safely cast the pointer.
     Entity* entities = reinterpret_cast<Entity*>(outEntities);
     UTILS_CAST(EntityManager, em)->create(n, entities);
@@ -27,7 +27,7 @@ void FilaEntityManager_destroy(FilaEntityManager* em, FilaEntity entityId) {
     UTILS_CAST(EntityManager, em)->destroy(entity);
 }
 
-void FilaEntityManager_destroyArray(FilaEntityManager* em, size_t n, const FilaEntity* entities) {
+void FilaEntityManager_destroyArray(FilaEntityManager* em, uint32_t n, const FilaEntity* entities) {
     UTILS_CAST(EntityManager, em)->destroy(n, reinterpret_cast<Entity*>(const_cast<FilaEntity*>(entities)));
 }
 
@@ -40,7 +40,7 @@ void FilaEntityManager_advanceEpoch(FilaEntityManager* em) {
     UTILS_CAST(EntityManager, em)->advanceEpoch();
 }
 
-size_t FilaEntityManager_getMaxEntityCount(FilaEntityManager* em) {
+uint32_t FilaEntityManager_getMaxEntityCount(FilaEntityManager* em) {
     return UTILS_CAST(EntityManager, em)->getMaxEntityCount();
 }
 

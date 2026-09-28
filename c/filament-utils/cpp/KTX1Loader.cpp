@@ -14,7 +14,7 @@ using namespace filament::math;
 
 extern "C" {
 
-FilaTexture* FilaKTX1Loader_createTexture(FilaEngine* engine, const void* buffer, size_t size, bool srgb) {
+FilaTexture* FilaKTX1Loader_createTexture(FilaEngine* engine, const void* buffer, uint32_t size, bool srgb) {
     Engine* nativeEngine = reinterpret_cast<Engine*>(engine);
     Ktx1Bundle* bundle = new Ktx1Bundle(reinterpret_cast<const uint8_t*>(buffer), size);
 
@@ -50,7 +50,7 @@ FilaSkybox* FilaKTX1Loader_createSkybox(FilaEngine* engine, FilaTexture* texture
     return reinterpret_cast<FilaSkybox*>(skybox);
 }
 
-bool FilaKTX1Loader_getSphericalHarmonics(const void* buffer, size_t size, FilaFloat3* outSh) {
+bool FilaKTX1Loader_getSphericalHarmonics(const void* buffer, uint32_t size, FilaFloat3* outSh) {
     Ktx1Bundle bundle(reinterpret_cast<const uint8_t*>(buffer), size);
     return bundle.getSphericalHarmonics(reinterpret_cast<float3*>(outSh));
 }

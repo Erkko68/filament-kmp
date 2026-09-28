@@ -7,6 +7,8 @@
 
 #include "../c/AssetLoader.h"
 
+#include <vector>
+
 using namespace filament;
 using namespace filament::gltfio;
 
@@ -24,12 +26,13 @@ void FilaAssetLoader_destroy(FilaAssetLoader* loader) {
     AssetLoader::destroy((AssetLoader**) &loader);
 }
 
-FilaFilamentAsset* FilaAssetLoader_createAsset(FilaAssetLoader* loader, const void* buffer, size_t bufferByteCount) {
+FilaFilamentAsset* FilaAssetLoader_createAsset(FilaAssetLoader* loader, const void* buffer, uint32_t bufferByteCount) {
     return (FilaFilamentAsset*) ((AssetLoader*) loader)->createAsset((const uint8_t*) buffer, (uint32_t) bufferByteCount);
 }
 
-FilaFilamentAsset* FilaAssetLoader_createInstancedAsset(FilaAssetLoader* loader, const void* buffer, size_t bufferByteCount, FilaFilamentInstance** instances, size_t instanceCount) {
-    return (FilaFilamentAsset*) ((AssetLoader*) loader)->createInstancedAsset((const uint8_t*) buffer, (uint32_t) bufferByteCount, (FilamentInstance**) instances, instanceCount);
+FilaFilamentAsset* FilaAssetLoader_createInstancedAsset(FilaAssetLoader* loader, const void* buffer, uint32_t bufferByteCount, uint32_t instanceCount) {
+    std::vector<FilamentInstance*> instances(instanceCount);
+    return (FilaFilamentAsset*) ((AssetLoader*) loader)->createInstancedAsset((const uint8_t*) buffer, bufferByteCount, instances.data(), instanceCount);
 }
 
 FilaFilamentInstance* FilaAssetLoader_createInstance(FilaAssetLoader* loader, FilaFilamentAsset* asset) {

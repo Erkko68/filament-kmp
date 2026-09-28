@@ -2,6 +2,7 @@
 #define FILAMENT_C_MATERIAL_INSTANCE_H
 
 #include "FilaTypes.h"
+#include "TextureSampler.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,12 +91,15 @@ void FilaMaterialInstance_setParameterMat3(FilaMaterialInstance* instance, const
 void FilaMaterialInstance_setParameterMat4(FilaMaterialInstance* instance, const char* name, const float* v);
 
 // SetParameter Texture
-void FilaMaterialInstance_setParameterTexture(FilaMaterialInstance* instance, const char* name, const FilaTexture* texture, uint64_t samplerParams);
+void FilaMaterialInstance_setParameterTexture(FilaMaterialInstance* instance, const char* name, const FilaTexture* texture,
+        FilaTextureSamplerMinFilter minFilter, FilaTextureSamplerMagFilter magFilter,
+        FilaTextureSamplerWrapMode wrapS, FilaTextureSamplerWrapMode wrapT, FilaTextureSamplerWrapMode wrapR,
+        float anisotropy, FilaTextureSamplerCompareMode compareMode, FilaTextureSamplerCompareFunc compareFunc);
 
 // SetParameter Arrays
-void FilaMaterialInstance_setBooleanParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const bool* v, size_t count);
-void FilaMaterialInstance_setIntParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const int32_t* v, size_t count);
-void FilaMaterialInstance_setFloatParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const float* v, size_t count);
+void FilaMaterialInstance_setBooleanParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const bool* v, uint32_t count);
+void FilaMaterialInstance_setIntParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const int32_t* v, uint32_t count);
+void FilaMaterialInstance_setFloatParameterArray(FilaMaterialInstance* instance, const char* name, uint32_t elementSize, const float* v, uint32_t count);
 
 // State management
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* instance, int32_t left, int32_t bottom, uint32_t width, uint32_t height);

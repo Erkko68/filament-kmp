@@ -3,8 +3,8 @@
 # Run the Kotlin Multiplatform test suites across every target this repo
 # supports. Mirrors what `.github/workflows/test.yml` does on CI, with two
 # exceptions:
-#   * The CI `jvm` matrix runs on 4 host OSes (macosArm64 / linuxX64 /
-#     linuxArm64 / mingwX64). Locally we just run `jvmTest` on the current
+#   * The CI `jvm` matrix runs on 4 host OSes (macos-arm64 / linux-x64 /
+#     linux-arm64 / windows-x64 / windows-arm64). Locally we just run `jvmTest` on the current
 #     host — whichever prebuilt happens to be cached under prebuilts/.
 #   * Android tests need a running emulator (or physical device); we try to
 #     boot the first AVD that `emulator -list-avds` knows about if `adb

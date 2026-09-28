@@ -1,5 +1,9 @@
 package io.github.erkko68.filament
 
+import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.math.log2
+
 /**
  * TextureSampler defines how a texture is accessed during rendering.
  *
@@ -7,7 +11,15 @@ package io.github.erkko68.filament
  * texture sampling. TextureSampler objects are immutable after construction and are
  * used by MaterialInstance to configure how textures are sampled.
  */
-expect class TextureSampler {
+class TextureSampler private constructor(
+    minFilter: MinFilter,
+    magFilter: MagFilter,
+    wrapModeS: WrapMode,
+    wrapModeT: WrapMode,
+    wrapModeR: WrapMode,
+    compareMode: CompareMode,
+    compareFunction: CompareFunction,
+) {
     /**
      * Texture wrapping mode for texture coordinates outside the [0..1] range.
      */
@@ -93,7 +105,7 @@ expect class TextureSampler {
      * - compareFunction: LESS_EQUAL
      * - anisotropy: 1.0 (disabled)
      */
-    constructor()
+    constructor() : this(MinFilter.LINEAR_MIPMAP_LINEAR, MagFilter.LINEAR, WrapMode.REPEAT)
 
     /**
      * Creates a TextureSampler with default parameters but setting both minification and
@@ -101,7 +113,7 @@ expect class TextureSampler {
      *
      * @param minMag Filtering for both minification and magnification.
      */
-    constructor(minMag: MagFilter)
+    constructor(minMag: MagFilter) : this(minMag, WrapMode.CLAMP_TO_EDGE)
 
     /**
      * Creates a TextureSampler with filtering and wrap mode applied to all axes.
@@ -109,7 +121,7 @@ expect class TextureSampler {
      * @param minMag Filtering for both minification and magnification.
      * @param wrap Wrapping mode applied to all three axes (S, T, R).
      */
-    constructor(minMag: MagFilter, wrap: WrapMode)
+    constructor(minMag: MagFilter, wrap: WrapMode) : this(if (minMag == MagFilter.NEAREST) MinFilter.NEAREST else MinFilter.LINEAR, minMag, wrap)
 
     /**
      * Creates a TextureSampler with separate minification and magnification filters,
@@ -119,7 +131,7 @@ expect class TextureSampler {
      * @param mag Magnification filter.
      * @param wrap Wrapping mode applied to all three axes (S, T, R).
      */
-    constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode)
+    constructor(min: MinFilter, mag: MagFilter, wrap: WrapMode) : this(min, mag, wrap, wrap, wrap)
 
     /**
      * Creates a TextureSampler with separate filters and wrap modes for each axis.
@@ -130,14 +142,14 @@ expect class TextureSampler {
      * @param t Wrap mode for the T (vertical) texture coordinate.
      * @param r Wrap mode for the R (depth) texture coordinate.
      */
-    constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode)
+    constructor(min: MinFilter, mag: MagFilter, s: WrapMode, t: WrapMode, r: WrapMode) : this(min, mag, s, t, r, CompareMode.NONE, CompareFunction.LESS_EQUAL)
 
     /**
      * Creates a TextureSampler configured for comparison mode (shadow mapping).
      *
      * @param mode Compare mode to use.
      */
-    constructor(mode: CompareMode)
+    constructor(mode: CompareMode) : this(mode, CompareFunction.LESS_EQUAL)
 
     /**
      * Creates a TextureSampler configured for comparison mode with a specific comparison function.
@@ -145,32 +157,43 @@ expect class TextureSampler {
      * @param mode Compare mode to use.
      * @param function Comparison function.
      */
-    constructor(mode: CompareMode, function: CompareFunction)
+    constructor(mode: CompareMode, function: CompareFunction) : this(MinFilter.NEAREST, MagFilter.NEAREST, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, mode, function)
+
 
     /** Minification filter. */
-    var minFilter: MinFilter
+    var minFilter: MinFilter = minFilter
 
     /** Magnification filter. */
-    var magFilter: MagFilter
+    var magFilter: MagFilter = magFilter
 
     /** Wrap mode for S (horizontal) texture coordinate. */
-    var wrapModeS: WrapMode
+    var wrapModeS: WrapMode = wrapModeS
 
     /** Wrap mode for T (vertical) texture coordinate. */
-    var wrapModeT: WrapMode
+    var wrapModeT: WrapMode = wrapModeT
 
     /** Wrap mode for R (depth) texture coordinate. */
-    var wrapModeR: WrapMode
+    var wrapModeR: WrapMode = wrapModeR
 
     /**
      * Anisotropic filtering amount. Should be a power-of-two. Default is 1.0 (disabled).
      * The maximum permissible value is 128.
      */
     var anisotropy: Float
+        get() = (1 shl anisotropyLog2).toFloat()
+        set(value) {
+            // As TextureSampler::setAnisotropy: ilogb(|value|) clamped to 7, stored in a 3-bit field.
+            val log2 = if (value == 0f) Int.MIN_VALUE else floor(log2(abs(value))).toInt()
+            anisotropyLog2 = (if (log2 < 7) log2 else 7) and 7
+        }
+
+    private var anisotropyLog2 = 0
 
     /** Comparison mode. */
-    var compareMode: CompareMode
+    var compareMode: CompareMode = compareMode
 
     /** Comparison function for depth comparisons. */
-    var compareFunction: CompareFunction
+    var compareFunction: CompareFunction = compareFunction
+
 }
+
