@@ -18,12 +18,12 @@ classify() {
         .github/workflows/pages.yml|.github/workflows/publish.yml|.github/workflows/status-*) ;;
         scripts/dev/build-wasm-libs.sh|scripts/dev/setup-emsdk.sh) web=true ;;
         scripts/dev/*) ;;
-        # c/ is the C API every non-Android target binds to (FFM, cinterop, emcc).
-        c/*) jvm=true web=true ios=true ;;
+        # c/ is the C API every target binds to (FFM, cinterop, emcc, JNI).
+        c/*) all ;;
         java/*|kotlin/*/src/jvm*|kotlin/*/api/*|samples/desktopApp/*) jvm=true ;;
         web/*|kotlin/*/src/web*|kotlin/*/src/js*|kotlin/*/src/wasmJs*|samples/webApp/*|gradle/karma/*|kotlin-js-store/*|.github/actions/setup-wasm/*) web=true ;;
         kotlin/*/src/native*|kotlin/*/src/ios*|samples/iosApp/*|samples/shared/src/iosMain/*) ios=true ;;
-        kotlin/*/src/android*|samples/androidApp/*) android=true ;;
+        android/*|kotlin/*/src/android*|samples/androidApp/*) android=true ;;
         *) all ;;
     esac
 }

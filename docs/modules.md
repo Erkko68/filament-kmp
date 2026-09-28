@@ -32,7 +32,7 @@ What differs is the extra platform setup around it:
 
 | Target | Kotlin dependency | Also required |
 | :--- | :--- | :--- |
-| **Android** | `io.github.erkko68.filament:filament` | Nothing. The official `com.google.android.filament:filament-android` AAR comes in transitively. `compileSdk 37`, `minSdk 24`. |
+| **Android** | `io.github.erkko68.filament:filament` | Nothing. The native runtime `io.github.erkko68.filament:filament-jni` (AAR, all four ABIs) comes in transitively. `compileSdk 37`, `minSdk 24`. |
 | **JVM / Desktop** (macOS, Windows, Linux) | same | **JDK 22+** at build and run time. The native runtime `io.github.erkko68.filament-ffm:filament-ffm` is transitive — nothing to add by hand. See [narrowing the natives](#what-gradle-actually-downloads). |
 | **iOS** (`iosArm64`, `iosSimulatorArm64`) | same | Nothing. The Filament static libraries are inside the klib. Link your framework as `isStatic = true`. |
 | **Web** (`js`, `wasmJs`) | same | `filament-kmp.js` + `.wasm` (and `filamat-kmp.*` for `MaterialBuilder`) from the GitHub release, copied into `src/webMain/resources/` — they are **not** pulled in by Gradle. See [Platform Notes](platform-notes.md#filament-kmpjs-and-wasm-bundle). |

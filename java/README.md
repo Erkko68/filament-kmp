@@ -2,8 +2,8 @@
 
 This is the single module that binds Filament on the **JVM/Desktop** target. It uses
 **Project Panama** (the Foreign Function & Memory API, finalised in JDK 22) to call the
-combined C wrapper directly — no JNI. Android does **not** use this module; it depends on
-the official `com.google.android.filament` Maven library instead.
+combined C wrapper directly — no JNI. Android binds the same C wrapper through JNI instead,
+in [`android/`](../android/README.md).
 
 Published as **`io.github.erkko68.filament-ffm:filament-ffm`** and pulled in transitively
 by every `:kotlin:*` JVM target (each declares `api(project(":java"))` in its `jvmMain`),

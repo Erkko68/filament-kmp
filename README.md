@@ -50,7 +50,7 @@ See **[Using the Engine Without Compose](docs/engine.md)**.
 
 ## Platform support
 
-- **Android** — OpenGL ES / Vulkan via the official `com.google.android.filament` library
+- **Android** — OpenGL ES / Vulkan via JNI bindings over the same C wrapper (`libfilament-c.so` per ABI)
 - **iOS** — Metal via C wrapper + Kotlin/Native cinterop
 - **Desktop / JVM** (macOS, Windows, Linux) — Metal / Vulkan / OpenGL via Project Panama (FFM) bindings over a combined C wrapper
 - **Web (JS & Wasm)** — WebGL 2.0 via the same C wrapper compiled to wasm with Emscripten, through generated Kotlin externals shared by the `js` and `wasmJs` targets

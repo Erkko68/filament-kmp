@@ -2,7 +2,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.library")
+    id("filament-publish")
 }
+
+group = project.findProperty("projectGroup") as? String ?: "io.github.erkko68.filament"
+version = project.findProperty("libVersion") as? String ?: "0.1.0-SNAPSHOT"
 
 // Android JNI bindings module, the Android counterpart of :java (FFM) and :web (wasm). AGP builds
 // c/CMakeLists.txt (FILAMENT_PLATFORM=android) per ABI into one libfilament-c.so: the Fila* C API
