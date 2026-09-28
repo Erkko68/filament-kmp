@@ -40,6 +40,11 @@ object FilamentDownloads {
         "linuxArm64"        to ("arm-linux" to "filament/lib/aarch64"),
         // /MT (static CRT) variant — the JVM's own msvcp140.dll conflicts with /MD.
         "mingwX64"          to ("windows"   to "lib/x86_64/mt"),
+        // Android ABIs for the :android JNI layer (prebuilts/android-<abi>/lib).
+        "android-arm64-v8a"   to ("android-native" to "filament/lib/arm64-v8a"),
+        "android-armeabi-v7a" to ("android-native" to "filament/lib/armeabi-v7a"),
+        "android-x86_64"      to ("android-native" to "filament/lib/x86_64"),
+        "android-x86"         to ("android-native" to "filament/lib/x86"),
     )
 
     private val NATIVE_EXTS = listOf(".a", ".lib")

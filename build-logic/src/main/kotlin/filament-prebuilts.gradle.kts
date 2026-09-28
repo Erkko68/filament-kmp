@@ -9,6 +9,7 @@
 //                                     macosX64: upstream releases stopped
 //                                     shipping mac x86_64 libs.)
 //   • linuxX64 / linuxArm64 / mingwX64 — JVM/Panama host on Linux/Windows.
+//   • android-<abi>                — :android JNI layer (one per NDK ABI).
 
 val filaVersion = project.property("filaVersion") as String
 val prebuiltsCacheDir = layout.projectDirectory.dir(".gradle/filament-prebuilts-cache")
@@ -20,6 +21,10 @@ val prebuiltTargets = listOf(
     "linuxX64",
     "linuxArm64",
     "mingwX64",
+    "android-arm64-v8a",
+    "android-armeabi-v7a",
+    "android-x86_64",
+    "android-x86",
 )
 
 prebuiltTargets.forEach { targetName ->
