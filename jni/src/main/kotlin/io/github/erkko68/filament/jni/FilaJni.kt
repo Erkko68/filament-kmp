@@ -9,7 +9,10 @@ import java.nio.ByteOrder
  * The helpers below mirror :web's (heapScoped, usePinned, upload, Callbacks) so actuals port between them as-is.
  */
 object FilaJni {
-    init { System.loadLibrary("filament-c") }
+    init {
+        // Android ships libfilament-c in the APK; desktop extracts it from the runtime jar.
+        if (System.getProperty("java.vm.name") == "Dalvik") System.loadLibrary("filament-c") else FilamentLoader.load()
+    }
 
     /** Forces the library load; each generated file calls it from its initializer. */
     fun load() {}

@@ -367,12 +367,26 @@ if (FILAMENT_BUILD_SHARED)
     add_filament_library(uberarchive)
     add_filament_library(basis_transcoder)
 
+    # JNI glue from jni/ (runtime + generated forwarders), the same sources the Android image compiles.
+    set(_jni_dir "${CMAKE_CURRENT_SOURCE_DIR}/../jni/src/main/cpp")
+    file(GLOB_RECURSE _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
     add_library(filament-c-jvm SHARED
         ${FILAMENT_C_SOURCES}
         ${FILAMAT_C_SOURCES}
         ${FILAMENT_UTILS_C_SOURCES}
         ${GLTFIO_C_SOURCES}
+        ${_jni_dir}/FilaJni.cpp
+        ${_jni_generated}
     )
+    # jni.h + jni_md.h from the JDK running the build (-DJNI_HOME=<java.home>).
+    if (APPLE)
+        set(_jni_os darwin)
+    elseif (WIN32)
+        set(_jni_os win32)
+    else()
+        set(_jni_os linux)
+    endif()
+    target_include_directories(filament-c-jvm PRIVATE "${JNI_HOME}/include" "${JNI_HOME}/include/${_jni_os}")
 
     set_target_properties(filament-c-jvm PROPERTIES OUTPUT_NAME "filament-c")
 
@@ -416,6 +430,8 @@ if (FILAMENT_BUILD_SHARED)
         # With the seal in place, dead-strip drops code unreachable from the exports.
         target_link_options(filament-c-jvm PRIVATE
             "LINKER:-exported_symbol,_Fila*"
+            "LINKER:-exported_symbol,_Java_*"
+            "LINKER:-exported_symbol,_JNI_OnLoad"
             "LINKER:-dead_strip")
     elseif (WIN32)
         # Seal: a DLL exports nothing by default; generate a .def of the Fila* C API from
@@ -497,7 +513,7 @@ if (FILAMENT_PLATFORM STREQUAL "android")
     add_filament_library(abseil)
 
     set(_jni_dir "${CMAKE_CURRENT_SOURCE_DIR}/../jni/src/main/cpp")
-    file(GLOB _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
+    file(GLOB_RECURSE _jni_generated CONFIGURE_DEPENDS "${_jni_dir}/generated/*.c")
     add_library(filament-c-android SHARED
         ${FILAMENT_C_SOURCES}
         ${FILAMAT_C_SOURCES}

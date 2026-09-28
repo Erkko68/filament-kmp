@@ -92,6 +92,7 @@ fun Project.applyFilamentJvmNative(
             "-DFILAMENT_PLATFORM=$platform",
             "-DFILAMENT_ARCH=$arch",
             "-DCMAKE_BUILD_TYPE=$buildType",
+            "-DJNI_HOME=${System.getProperty("java.home").replace('\\', '/')}",
         )
         if (localPrebuilts != null) {
             args += "-DFILAMENT_LIB_DIR=${File(localPrebuilts, "$prebuiltsTarget/lib").absolutePath.replace('\\', '/')}"

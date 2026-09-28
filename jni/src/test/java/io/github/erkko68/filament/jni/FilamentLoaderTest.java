@@ -1,4 +1,4 @@
-package io.github.erkko68.filament.ffm;
+package io.github.erkko68.filament.jni;
 
 import org.junit.Rule;
 import org.junit.Test;

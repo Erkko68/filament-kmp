@@ -229,10 +229,7 @@ publishing {
     }
 }
 
-// ── Loader unit tests (extraction cache + stale-dir cleanup) ──────────────────
+// The desktop loader and the JNI runtime live in :jni; the same libfilament-c serves both.
 dependencies {
-    testImplementation(libs.junit)
-}
-tasks.named<Test>("test") {
-    useJUnit()
+    api(project(":jni"))
 }

@@ -1,4 +1,4 @@
-package io.github.erkko68.filament.ffm;
+package io.github.erkko68.filament.jni;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,6 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
-import java.util.HexFormat;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -28,12 +27,10 @@ import java.util.function.Supplier;
  *   <li>{@code System.loadLibrary} — dev fallback for a lib on {@code java.library.path}.</li>
  * </ol>
  *
- * <p>The jextract-generated {@link FilamentC} class resolves symbols through
- * {@code SymbolLookup.loaderLookup()}, which finds symbols in native libraries loaded by
- * the classloader of the generated class. Because this loader lives in the same module
- * (hence the same classloader) as the generated bindings, loading the image here makes
- * every {@code Fila*} symbol resolvable. A single loaded image also keeps Filament's
- * process-global singletons (e.g. EntityManager) to one instance.
+ * <p>Desktop only: Android loads the library from the APK with {@code System.loadLibrary}.
+ * JNI binds {@code native} methods against libraries loaded by the caller's classloader, so
+ * this must be on the same classpath as the bindings. A single loaded image also keeps
+ * Filament's process-global singletons (e.g. EntityManager) to one instance.
  */
 public final class FilamentLoader {
 
@@ -135,7 +132,9 @@ public final class FilamentLoader {
             int n;
             while ((n = is.read(buf)) >= 0) md.update(buf, 0, n);
         }
-        return HexFormat.of().formatHex(md.digest()).substring(0, 16);
+        StringBuilder hex = new StringBuilder();
+        for (byte b : md.digest()) hex.append(String.format("%02x", b));
+        return hex.substring(0, 16);
     }
 
     private static final Object EXTRACT_LOCK = new Object();

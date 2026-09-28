@@ -24,6 +24,12 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEa
 
 sourceSets.main { kotlin.srcDir("src/main/generated") }
 
+// Desktop loader unit tests (extraction cache + stale-dir cleanup).
+dependencies {
+    testImplementation(libs.junit)
+}
+tasks.named<Test>("test") { useJUnit() }
+
 // Committed output (like :web's externals): regenerate after a C header change.
 tasks.register<GenerateJniBindings>("generateJniBindings") {
     val cModules = mapOf("FilamentC" to "filament", "FilamatC" to "filamat", "FilamentUtilsC" to "filament-utils", "GltfioC" to "gltfio")

@@ -5,7 +5,7 @@ package io.github.erkko68.filament
 import io.github.erkko68.filament.ffm.FilaBufferCallback
 import io.github.erkko68.filament.ffm.FilaEngineCompileCallback
 import io.github.erkko68.filament.ffm.FilaMaterialCompileCallback
-import io.github.erkko68.filament.ffm.FilamentLoader
+import io.github.erkko68.filament.jni.FilamentLoader
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.SegmentAllocator
