@@ -16,15 +16,12 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
-import io.github.erkko68.filament.Completions
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.Viewport
-import io.github.erkko68.filament.ffm.FilamentC
-import java.lang.foreign.MemorySegment
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.delay
 import org.jetbrains.skia.Bitmap
@@ -51,8 +48,7 @@ private const val SLOT_DISPLAYED = 3
  * each slot's Skia [Data] memory, which is then wrapped without copying in an [Image]
  * (the [Data] overload of [Image.makeRaster] shares the pixels; the ByteArray one copies).
  * One slot backs the image on screen while the other's GPU→CPU copy is in flight, so
- * readbacks pipeline with rendering. Calls FilamentC directly to keep the segment-based
- * readPixels fast path private to this file instead of widening the public bindings.
+ * readbacks pipeline with rendering.
  */
 private class Readback(val width: Int, val height: Int, transparent: Boolean = false) {
     val imageInfo = ImageInfo(
@@ -65,8 +61,7 @@ private class Readback(val width: Int, val height: Int, transparent: Boolean = f
     class Slot(sizeInBytes: Int) {
         val data: Data = Data.makeUninitialized(sizeInBytes)
 
-        // Zero-length segment is fine: FilaRenderer_readPixels takes the size separately.
-        val address: MemorySegment = MemorySegment.ofAddress(data.writableData())
+        val address: Long = data.writableData()
 
         /** The readback callback may fire on the backend thread; this atomic publishes [image]. */
         val state = AtomicInteger(SLOT_FREE)
@@ -79,25 +74,15 @@ private class Readback(val width: Int, val height: Int, transparent: Boolean = f
 
     /** UI thread. Starts an async GPU→CPU copy of the current frame into a free slot, if any. */
     fun issueReadPixels(renderer: Renderer) {
-        val rendererHandle = renderer.nativeObject.takeIf { it != 0L }?.let(MemorySegment::ofAddress) ?: return
         val slot = slots.firstOrNull { it.state.get() == SLOT_FREE } ?: return
         slot.seq = ++issueSeq
         slot.state.set(SLOT_IN_FLIGHT)
-        FilamentC.FilaRenderer_readPixels(
-            rendererHandle,
-            0, 0, width, height,
-            slot.address, width * height * 4,
-            // The jvm actuals map these enums to native by ordinal (see Texture.jvm.kt).
-            Texture.Format.RGBA.ordinal, Texture.Type.UBYTE.ordinal,
-            1, 0, 0, width,
-            MemorySegment.NULL, Completions.bufferStub,
-            Completions.register {
-                // Possibly the backend thread: wrap the slot's pixels zero-copy; the
-                // state store publishes image to the UI thread. No Compose state here.
-                slot.image = Image.makeRaster(imageInfo, slot.data, width * 4)
-                slot.state.set(SLOT_PUBLISHED)
-            },
-        )
+        renderer.readPixels(0, 0, width, height, slot.address, width * height * 4, Texture.Format.RGBA, Texture.Type.UBYTE, width) {
+            // Possibly the backend thread: wrap the slot's pixels zero-copy; the
+            // state store publishes image to the UI thread. No Compose state here.
+            slot.image = Image.makeRaster(imageInfo, slot.data, width * 4)
+            slot.state.set(SLOT_PUBLISHED)
+        }
     }
 
     /** UI thread. Adopts the newest published slot (retiring stale ones), or null to keep current. */

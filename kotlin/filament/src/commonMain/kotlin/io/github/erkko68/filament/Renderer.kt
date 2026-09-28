@@ -289,6 +289,22 @@ class Renderer @InternalFilamentApi constructor(internal var nativeHandle: Nativ
     }
 
     /**
+     * [readPixels] straight into native memory the caller owns, without a copy (e.g. a Skia bitmap's
+     * pixels). [onDone] runs once [address] holds the frame, possibly on Filament's driver thread.
+     */
+    @InternalFilamentApi
+    fun readPixels(xoffset: Int, yoffset: Int, width: Int, height: Int, address: NativePointer, sizeInBytes: Int, format: Texture.Format, type: Texture.Type, stride: Int, onDone: () -> Unit) {
+        FilaRenderer_readPixels(
+            nativeHandle,
+            xoffset, yoffset, width, height,
+            address, sizeInBytes,
+            format.ordinal, type.ordinal,
+            1, 0, 0, stride,
+            NullPointer, Callbacks.keepBuffer, Callbacks.register(once = true) { onDone() },
+        )
+    }
+
+    /**
      * Read back RenderTarget pixels asynchronously.
      *
      * Similar to readPixels(SwapChain), but reads from a RenderTarget instead.
