@@ -119,11 +119,12 @@ val forcedGpu: String? = providers.gradleProperty("filamentTestGpu").orNull
     ?: System.getenv("FILAMENT_TEST_GPU")
 val osName = System.getProperty("os.name").orEmpty().lowercase()
 
-// JVM host backend — CI-independent: macOS Actions runners are Apple-silicon with a
-// real GPU, so Metal runs on CI too. Windows DEFAULT=Vulkan aborts uncatchably with
+// JVM host backend: Apple-silicon macOS Actions runners have a real GPU, so Metal runs
+// on CI too; Intel ones (macos-15-intel) are VMs whose paravirtual Metal device aborts on
+// real draw, so off there under CI. Windows DEFAULT=Vulkan aborts uncatchably with
 // no usable driver; headless Linux has no display (CI Linux opts in via lavapipe).
 val jvmGpu: String = forcedGpu ?: when {
-    osName.contains("mac") -> "true"
+    osName.contains("mac") -> (hostArch() == "Arm64" || System.getenv("CI") == null).toString()
     osName.contains("win") -> "false"
     else -> (!GraphicsEnvironment.isHeadless()).toString()
 }
