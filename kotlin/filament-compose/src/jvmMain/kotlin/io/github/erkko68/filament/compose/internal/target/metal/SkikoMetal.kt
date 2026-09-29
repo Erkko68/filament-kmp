@@ -1,9 +1,9 @@
 package io.github.erkko68.filament.compose.internal.target.metal
 
-import java.awt.Container
+import io.github.erkko68.filament.compose.internal.target.field
+import io.github.erkko68.filament.compose.internal.target.skikoRedrawer
 import java.awt.Window
 import org.jetbrains.skia.DirectContext
-import org.jetbrains.skiko.SkiaLayer
 
 /**
  * skiko's Metal state for one window. Skia GPU images only draw on the context that made them,
@@ -25,29 +25,9 @@ internal class SkikoMetal private constructor(private val redrawer: Any) {
 
     companion object {
         fun find(window: Window?): SkikoMetal? {
-            val layer = window?.findSkiaLayer() ?: return null
-            val redrawer = layer.field("redrawerManager")!!.field("redrawer") ?: return null
+            val redrawer = skikoRedrawer(window) ?: return null
             if (redrawer.javaClass.simpleName != "MetalRedrawer") return null
             return SkikoMetal(redrawer)
-        }
-
-        private fun Container.findSkiaLayer(): SkiaLayer? {
-            if (this is SkiaLayer) return this
-            for (child in components) (child as? Container)?.findSkiaLayer()?.let { return it }
-            return null
-        }
-
-        private fun Any.field(name: String): Any? {
-            var cls: Class<*>? = javaClass
-            while (cls != null) {
-                val f = cls.declaredFields.firstOrNull { it.name == name }
-                if (f != null) {
-                    f.isAccessible = true
-                    return f.get(this)
-                }
-                cls = cls.superclass
-            }
-            throw NoSuchFieldException("${javaClass.name}.$name — skiko internals changed")
         }
     }
 }

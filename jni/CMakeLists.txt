@@ -62,7 +62,8 @@ elseif (WIN32)
     # PlatformWGL / BlueGL need OpenGL + GDI; utils::Path needs shlwapi.
     target_link_libraries(filament-c-jni PRIVATE opengl32 gdi32 user32 shlwapi)
 else()
-    target_link_libraries(filament-c-jni PRIVATE GL)
+    target_sources(filament-c-jni PRIVATE src/main/cpp/GlxHelper.cpp)
+    target_link_libraries(filament-c-jni PRIVATE GL ${CMAKE_DL_LIBS})
     target_link_options(filament-c-jni PRIVATE
         "LINKER:--version-script=${seal}"
         "LINKER:--gc-sections"
