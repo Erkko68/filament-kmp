@@ -35,15 +35,7 @@ class SceneTest : FilamentTestFixture() {
         }
         assertEquals(1, count)
 
-        val entities = scene.getEntities()
-        assertEquals(1, entities.size)
-        assertEquals(entity, entities[0])
-
-        val entitiesBuffer = IntArray(5)
-        val entitiesFilled = scene.getEntities(entitiesBuffer)
-        assertEquals(entity, entitiesFilled[0])
-
-        scene.removeEntity(entity)
+        scene.remove(entity)
         assertFalse(scene.hasEntity(entity))
         assertEquals(0, scene.entityCount)
 
@@ -61,6 +53,10 @@ class SceneTest : FilamentTestFixture() {
 
         scene.removeEntities(intArrayOf(e2))
         assertFalse(scene.hasEntity(e2))
+        assertEquals(0, scene.entityCount)
+
+        scene.addEntities(intArrayOf(e1, e2))
+        scene.removeAllEntities()
         assertEquals(0, scene.entityCount)
 
         EntityManager.get().destroy(entity)

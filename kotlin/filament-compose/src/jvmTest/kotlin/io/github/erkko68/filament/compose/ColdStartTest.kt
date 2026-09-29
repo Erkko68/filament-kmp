@@ -19,11 +19,11 @@ private val coldStarts: Map<String, () -> Unit> = mapOf(
     "EntityManager.get" to { EntityManager.get().create() },
     "Manipulator.Builder" to { Manipulator.Builder().viewport(1, 1).build(Mode.ORBIT).destroy() },
     "SurfaceOrientation.Builder" to {
-        SurfaceOrientation.Builder().vertexCount(1).normals(floatArrayOf(0f, 0f, 1f)).build().destroy()
+        SurfaceOrientation.Builder().vertexCount(1).normals(floatArrayOf(0f, 0f, 1f)).build()!!.destroy()
     },
     "IndirectLight statics" to { IndirectLight.getDirectionEstimate(FloatArray(27)) },
     "Texture statics" to {
-        Texture.computeDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 4, 4, 1)
+        Texture.computeTextureDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 4, 4, 1)
         Texture.validatePixelFormatAndType(Texture.InternalFormat.RGBA8, Texture.Format.RGBA, Texture.Type.UBYTE)
     },
     "MaterialBuilder.init" to {

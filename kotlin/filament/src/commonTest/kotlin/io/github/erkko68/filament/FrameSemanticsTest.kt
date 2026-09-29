@@ -111,7 +111,7 @@ class FrameSemanticsTest : RenderingTestFixture() {
         val sun = litScene(engine, probe)
         val lit = assertNotNull(probe.renderAndRead(), "readback did not complete")
 
-        probe.scene.removeEntity(sun)
+        probe.scene.remove(sun)
         val unlit = assertNotNull(probe.renderAndRead(), "readback did not complete")
 
         val diff = meanAbsoluteDifference(lit, unlit)

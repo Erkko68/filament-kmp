@@ -145,7 +145,7 @@ class FrameProbe(private val engine: Engine, val width: Int = 64, val height: In
     fun destroy() {
         val em = EntityManager.get()
         entities.forEach {
-            scene.removeEntity(it)
+            scene.remove(it)
             engine.destroyEntity(it)
             em.destroy(it)
         }

@@ -25,7 +25,7 @@ class GroupLifecycleTest : ComposeTestFixture() {
         composeScene(
             engine, scene,
             whileComposed = {
-                lightEntity = scene.getEntities().single()
+                lightEntity = buildList { scene.forEach(::add) }.single()
                 val tm = engine.transformManager
                 val lightParent = tm.getParent(tm.getInstance(lightEntity))
                 assertTrue(groupEntity >= 0, "Group should have created a transform entity")

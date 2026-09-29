@@ -577,7 +577,7 @@ class Engine internal constructor(
         stream.nativeHandle = NullPointer
     }
     /** Destroy an Entity. */
-    fun destroyEntity(entity: Entity) = FilaEntityManager_destroy(FilaEngine_getEntityManager(nativeHandle), entity)
+    fun destroyEntity(entity: Entity) = FilaUtilsEntityManager_destroy_Entity(FilaEngine_getEntityManager(nativeHandle), entity)
 
     /** Get the TransformManager for managing entity transforms. */
     val transformManager: TransformManager get() = mTransformManager

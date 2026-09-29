@@ -94,7 +94,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         val constructors = ArrayList<List<CppParam>>()
         if (!abstract && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true) constructors += emptyList<CppParam>()
         var destructible = true
-        var virtualDestructor = false
+        var declaredDestructor = false
         // A declared move constructor deletes the implicit copy.
         var copyable = !abstract && ((dd?.get("moveCtor") as? Map<*, *>)?.get("userDeclared") != true ||
             (dd?.get("copyCtor") as? Map<*, *>)?.get("userDeclared") == true)
@@ -120,7 +120,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                 "FunctionTemplateDecl" -> template(child, qualified, isPublic, free = false)?.let { methods += it }
                 "CXXDestructorDecl" -> {
                     destructible = isPublic && child["explicitlyDeleted"] != true
-                    virtualDestructor = destructible && child["virtual"] == true
+                    declaredDestructor = destructible && child["isImplicit"] != true
                 }
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
@@ -138,7 +138,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             }
         }
         records[qualified] = CppRecord(
-            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, virtualDestructor,
+            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, declaredDestructor,
         )
     }
 

@@ -48,6 +48,10 @@ FilaGeometrySurfaceOrientation* FilaGeometrySurfaceOrientationBuilder_build(Fila
     return fila::c(fila::cpp(self)->build());
 }
 
+void FilaGeometrySurfaceOrientation_destroy(FilaGeometrySurfaceOrientation* self) {
+    delete fila::cpp(self);
+}
+
 uint32_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getVertexCount());
 }

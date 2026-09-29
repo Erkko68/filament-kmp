@@ -174,7 +174,7 @@ internal fun FilamentSceneScope.LightNode(snapshot: LightSnapshot) {
         if (!tm.hasComponent(entity)) tm.create(entity)
         scene.addEntity(entity)
         onDispose {
-            scene.removeEntity(entity)
+            scene.remove(entity)
             tm.destroy(entity)
         }
     }
@@ -433,7 +433,7 @@ fun FilamentSceneScope.Light(
 
     DisposableEffect(entity) {
         scene.addEntity(entity)
-        onDispose { scene.removeEntity(entity) }
+        onDispose { scene.remove(entity) }
     }
 
     DisposableEffect(entity, type, *keys) {

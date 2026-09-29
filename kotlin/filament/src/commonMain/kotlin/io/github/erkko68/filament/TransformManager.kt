@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -10,7 +11,7 @@ import io.github.erkko68.filament.interop.*
  * allowing relative transformations.
  *
  * The TransformManager maintains the transform hierarchy and automatically computes world
- * transforms from local transforms and parent transforms.
+ * transforms from local transforms and parent transforms. Matrices are 16 values in column-major order.
  *
  * @see EntityManager, Scene
  */
@@ -20,279 +21,150 @@ class TransformManager @InternalFilamentApi constructor(internal var nativeHandl
     val nativeObject: NativePointer get() = nativeHandle
 
     /**
-     * Checks if an entity has a transform component.
+     * Returns whether a particular Entity is associated with a component of this TransformManager.
      *
-     * @param entity The entity to check
-     * @return true if the entity has a transform component, false otherwise
+     * @param e An Entity.
+     * @return true if this Entity has a component associated with this manager.
      */
-    fun hasComponent(entity: Entity): Boolean = FilaTransformManager_hasComponent(nativeHandle, entity)
+    fun hasComponent(e: Entity): Boolean = FilaTransformManager_hasComponent(nativeHandle, e)
+
     /**
-     * Gets the transform instance for an entity.
+     * Gets an Instance representing the transform component associated with the given Entity.
      *
-     * @param entity The entity
-     * @return The transform instance for this entity
+     * @param e An Entity.
+     * @return The component's Instance, or 0 if it has none.
      */
-    fun getInstance(entity: Entity): EntityInstance = FilaTransformManager_getInstance(nativeHandle, entity)
-    
+    fun getInstance(e: Entity): EntityInstance = FilaTransformManager_getInstance(nativeHandle, e)
+
+    /** The number of components in this manager. */
+    val componentCount: Int get() = FilaTransformManager_getComponentCount(nativeHandle)
+
+    /** Whether this manager has no components. */
+    fun empty(): Boolean = FilaTransformManager_empty(nativeHandle)
+
+    /** Retrieves the Entity of the component from its Instance [i]. */
+    fun getEntity(i: EntityInstance): Entity = FilaTransformManager_getEntity(nativeHandle, i)
+
+    /** All the entities managed by this manager, in no particular order. */
+    val entities: IntArray get() = readInts(FilaTransformManager_getEntities(nativeHandle), componentCount)
+
     /**
-     * Creates a transform component for an entity with identity transform.
+     * Enables or disables the accurate translation mode (disabled by default).
      *
-     * @param entity The entity to add a transform to
-     * @return The newly created transform instance
-     */
-    fun create(entity: Entity): EntityInstance = FilaTransformManager_create(nativeHandle, entity)
-    
-    /**
-     * Creates a transform component for an entity with a local transform and parent.
-     *
-     * @param entity The entity to add a transform to
-     * @param parent The parent transform instance (use NULL_ENTITY for root)
-     * @param localTransform The local transform as a 4x4 matrix in row-major order (or null)
-     * @return The newly created transform instance
-     */
-    fun create(entity: Entity, parent: EntityInstance, localTransform: FloatArray?): EntityInstance {
-        return if (localTransform != null) {
-            localTransform.usePinned { 
-                FilaTransformManager_createWithParent(nativeHandle, entity, parent, it)
-            }
-        } else {
-            FilaTransformManager_createWithParent(nativeHandle, entity, parent, NullPointer)
-        }
-    }
-        
-    /**
-     * Creates a transform component for an entity with a local transform and parent.
-     *
-     * @param entity The entity to add a transform to
-     * @param parent The parent transform instance (use NULL_ENTITY for root)
-     * @param localTransform The local transform as a 4x4 matrix in row-major order (or null)
-     * @return The newly created transform instance
-     */
-    fun create(entity: Entity, parent: EntityInstance, localTransform: DoubleArray?): EntityInstance {
-        return if (localTransform != null) {
-            localTransform.usePinned { 
-                FilaTransformManager_createWithParentFp64(nativeHandle, entity, parent, it)
-            }
-        } else {
-            FilaTransformManager_createWithParentFp64(nativeHandle, entity, parent, NullPointer)
-        }
-    }
-    
-    /**
-     * Destroys the transform component for an entity.
-     *
-     * @param entity The entity whose transform to destroy
-     */
-    fun destroy(entity: Entity) = FilaTransformManager_destroy(nativeHandle, entity)
-    
-    /**
-     * Sets the parent of a transform.
-     *
-     * @param instance The transform instance
-     * @param newParent The new parent transform instance
-     */
-    fun setParent(instance: EntityInstance, newParent: EntityInstance) = 
-        FilaTransformManager_setParent(nativeHandle, instance, newParent)
-        
-    /**
-     * Gets the parent entity of a transform.
-     *
-     * @param instance The transform instance
-     * @return The parent entity (or NULL_ENTITY if this is a root transform)
-     */
-    fun getParent(instance: EntityInstance): Entity = FilaTransformManager_getParent(nativeHandle, instance)
-    
-    /**
-     * Gets the number of child transforms.
-     *
-     * @param instance The transform instance
-     * @return The number of direct children
-     */
-    fun getChildCount(instance: EntityInstance): Int = FilaTransformManager_getChildCount(nativeHandle, instance)
-    
-    /**
-     * Gets the child entities of a transform.
-     *
-     * @param instance The transform instance
-     * @param out Optional array to fill with child entity IDs
-     * @return Array of child entity IDs
-     */
-    fun getChildren(instance: EntityInstance, out: IntArray? = null): IntArray {
-        val count = getChildCount(instance)
-        val result = out ?: IntArray(count)
-        if (count > 0) {
-            result.usePinned { 
-                FilaTransformManager_getChildren(nativeHandle, instance, it, count)
-            }
-        }
-        return result
-    }
-    
-    /**
-     * Sets the local transform for a transform instance.
-     *
-     * @param instance The transform instance
-     * @param localTransform A 4x4 matrix in row-major order
-     */
-    fun setTransform(instance: EntityInstance, localTransform: FloatArray) {
-        localTransform.usePinned { 
-            FilaTransformManager_setTransform(nativeHandle, instance, it)
-        }
-    }
-        
-    /**
-     * Sets the local transform for a transform instance.
-     *
-     * @param instance The transform instance
-     * @param localTransform A 4x4 matrix in row-major order
-     */
-    fun setTransform(instance: EntityInstance, localTransform: DoubleArray) {
-        localTransform.usePinned { 
-            FilaTransformManager_setTransformFp64(nativeHandle, instance, it)
-        }
-    }
-    
-    /**
-     * Gets the local transform for a transform instance.
-     *
-     * @param instance The transform instance
-     * @param out Optional array to fill with the local transform (or null)
-     * @return A 4x4 matrix in row-major order
-     */
-    fun getTransform(instance: EntityInstance, out: FloatArray? = null): FloatArray {
-        val result = out ?: FloatArray(16)
-        result.usePinned { 
-            FilaTransformManager_getTransform(nativeHandle, instance, it)
-        }
-        return result
-    }
-        
-    /**
-     * Gets the local transform for a transform instance.
-     *
-     * @param instance The transform instance
-     * @param out Optional array to fill with the local transform (or null)
-     * @return A 4x4 matrix in row-major order
-     */
-    fun getTransform(instance: EntityInstance, out: DoubleArray? = null): DoubleArray {
-        val result = out ?: DoubleArray(16)
-        result.usePinned { 
-            FilaTransformManager_getTransformFp64(nativeHandle, instance, it)
-        }
-        return result
-    }
-    
-    /**
-     * Gets the world transform for a transform instance (accounting for parent transforms).
-     *
-     * @param instance The transform instance
-     * @param out Optional array to fill with the world transform (or null)
-     * @return A 4x4 matrix in row-major order
-     */
-    fun getWorldTransform(instance: EntityInstance, out: FloatArray? = null): FloatArray {
-        val result = out ?: FloatArray(16)
-        result.usePinned { 
-            FilaTransformManager_getWorldTransform(nativeHandle, instance, it)
-        }
-        return result
-    }
-        
-    /**
-     * Gets the world transform for a transform instance (accounting for parent transforms).
-     *
-     * @param instance The transform instance
-     * @param out Optional array to fill with the world transform (or null)
-     * @return A 4x4 matrix in row-major order
-     */
-    fun getWorldTransform(instance: EntityInstance, out: DoubleArray? = null): DoubleArray {
-        val result = out ?: DoubleArray(16)
-        result.usePinned { 
-            FilaTransformManager_getWorldTransformFp64(nativeHandle, instance, it)
-        }
-        return result
-    }
-    
-    /**
-     * Opens a local transform transaction.
-     *
-     * Allows multiple transform updates to be batched together for efficiency. Call
-     * commitLocalTransformTransaction() to commit the changes.
-     */
-    fun openLocalTransformTransaction() = FilaTransformManager_openLocalTransformTransaction(nativeHandle)
-    /**
-     * Commits a local transform transaction.
-     *
-     * Must be called after openLocalTransformTransaction() to apply batched changes.
-     */
-    fun commitLocalTransformTransaction() = FilaTransformManager_commitLocalTransformTransaction(nativeHandle)
-    
-    /**
-     * Enables or disables accurate translations (high precision translation for large worlds).
-     *
-     * When enabled, allows for more precise transforms for entities far from the origin.
-     * This may have a small performance cost. Default: false.
+     * The translation component of all transforms is then kept at double precision. This is only
+     * useful with the DoubleArray [setTransform] and [getTransformAccurate].
      */
     var isAccurateTranslationsEnabled: Boolean
         get() = FilaTransformManager_isAccurateTranslationsEnabled(nativeHandle)
         set(value) { FilaTransformManager_setAccurateTranslationsEnabled(nativeHandle, value) }
+
+    /**
+     * Creates a transform component and associates it with the given entity. If this component
+     * already exists on the entity, it is first destroyed as if [destroy] was called.
+     *
+     * @param entity An Entity to associate a transform component to.
+     * @param parent The Instance of the parent transform, or 0 if no parent.
+     */
+    fun create(entity: Entity, parent: EntityInstance = 0) = FilaTransformManager_create(nativeHandle, entity, parent)
+
+    /**
+     * Creates a transform component, initialized with [localTransform] (relative to the parent).
+     *
+     * @param entity An Entity to associate a transform component to.
+     * @param parent The Instance of the parent transform, or 0 if no parent.
+     * @param localTransform The transform to initialize the transform component with.
+     */
+    fun create(entity: Entity, parent: EntityInstance, localTransform: FloatArray) =
+        localTransform.usePinned { FilaTransformManager_create_mat4f(nativeHandle, entity, parent, it) }
+
+    /** Double-precision [create]. */
+    fun create(entity: Entity, parent: EntityInstance, localTransform: DoubleArray) =
+        localTransform.usePinned { FilaTransformManager_create_mat4(nativeHandle, entity, parent, it) }
+
+    /**
+     * Destroys this component from the given entity; its children are orphaned.
+     *
+     * @param e An entity.
+     */
+    fun destroy(e: Entity) = FilaTransformManager_destroy(nativeHandle, e)
+
+    /**
+     * Re-parents an entity to a new one. Re-parenting to a descendant is undefined behaviour.
+     *
+     * @param i The instance of the transform component to re-parent
+     * @param newParent The instance of the new parent transform
+     */
+    fun setParent(i: EntityInstance, newParent: EntityInstance) = FilaTransformManager_setParent(nativeHandle, i, newParent)
+
+    /**
+     * Returns the parent of a transform component, or NULL_ENTITY if it has none.
+     *
+     * @param i The instance of the transform component to query.
+     */
+    fun getParent(i: EntityInstance): Entity = FilaTransformManager_getParent(nativeHandle, i)
+
+    /**
+     * Returns the number of children of a transform component.
+     *
+     * @param i The instance of the transform component to query.
+     */
+    fun getChildCount(i: EntityInstance): Int = FilaTransformManager_getChildCount(nativeHandle, i)
+
+    /**
+     * Gets up to `children.size` children of a transform component.
+     *
+     * @param i The instance of the transform component to query.
+     * @param children Receives the children.
+     * @return The number of children written.
+     */
+    fun getChildren(i: EntityInstance, children: IntArray): Int =
+        children.usePinned { FilaTransformManager_getChildren(nativeHandle, i, it, children.size) }
+
+    /**
+     * Sets a local transform of a transform component (relative to the parent).
+     *
+     * @param ci The instance of the transform component to set the local transform to.
+     * @param localTransform The local transform.
+     */
+    fun setTransform(ci: EntityInstance, localTransform: FloatArray) =
+        localTransform.usePinned { FilaTransformManager_setTransform_mat4f(nativeHandle, ci, it) }
+
+    /** Double-precision [setTransform]. */
+    fun setTransform(ci: EntityInstance, localTransform: DoubleArray) =
+        localTransform.usePinned { FilaTransformManager_setTransform_mat4(nativeHandle, ci, it) }
+
+    /**
+     * Returns the local transform of a transform component (relative to the parent).
+     *
+     * @param ci The instance of the transform component to query.
+     * @param out Receives the transform; a new array by default.
+     */
+    fun getTransform(ci: EntityInstance, out: FloatArray = FloatArray(16)): FloatArray =
+        out.also { o -> o.usePinned { FilaTransformManager_getTransform(nativeHandle, ci, it) } }
+
+    /** Double-precision [getTransform]. */
+    fun getTransformAccurate(ci: EntityInstance, out: DoubleArray = DoubleArray(16)): DoubleArray =
+        out.also { o -> o.usePinned { FilaTransformManager_getTransformAccurate(nativeHandle, ci, it) } }
+
+    /**
+     * Returns the world transform of a transform component.
+     *
+     * @param ci The instance of the transform component to query.
+     * @param out Receives the transform; a new array by default.
+     */
+    fun getWorldTransform(ci: EntityInstance, out: FloatArray = FloatArray(16)): FloatArray =
+        out.also { o -> o.usePinned { FilaTransformManager_getWorldTransform(nativeHandle, ci, it) } }
+
+    /** Double-precision [getWorldTransform]. */
+    fun getWorldTransformAccurate(ci: EntityInstance, out: DoubleArray = DoubleArray(16)): DoubleArray =
+        out.also { o -> o.usePinned { FilaTransformManager_getWorldTransformAccurate(nativeHandle, ci, it) } }
+
+    /**
+     * Opens a local transform transaction: [setTransform] then doesn't update world transforms
+     * until [commitLocalTransformTransaction], which is faster when setting many of them.
+     */
+    fun openLocalTransformTransaction() = FilaTransformManager_openLocalTransformTransaction(nativeHandle)
+
+    /** Commits the local transform transaction and updates all world transforms. */
+    fun commitLocalTransformTransaction() = FilaTransformManager_commitLocalTransformTransaction(nativeHandle)
 }
-
-@ExternalSymbolName("FilaTransformManager_commitLocalTransformTransaction")
-private external fun FilaTransformManager_commitLocalTransformTransaction(tm: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_create")
-private external fun FilaTransformManager_create(tm: NativePointer, entity: Int): Int
-
-@ExternalSymbolName("FilaTransformManager_createWithParent")
-private external fun FilaTransformManager_createWithParent(tm: NativePointer, entity: Int, parent: Int, localTransform: NativePointer): Int
-
-@ExternalSymbolName("FilaTransformManager_createWithParentFp64")
-private external fun FilaTransformManager_createWithParentFp64(tm: NativePointer, entity: Int, parent: Int, localTransform: NativePointer): Int
-
-@ExternalSymbolName("FilaTransformManager_destroy")
-private external fun FilaTransformManager_destroy(tm: NativePointer, entity: Int)
-
-@ExternalSymbolName("FilaTransformManager_getChildCount")
-private external fun FilaTransformManager_getChildCount(tm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaTransformManager_getChildren")
-private external fun FilaTransformManager_getChildren(tm: NativePointer, instance: Int, outEntities: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaTransformManager_getInstance")
-private external fun FilaTransformManager_getInstance(tm: NativePointer, entity: Int): Int
-
-@ExternalSymbolName("FilaTransformManager_getParent")
-private external fun FilaTransformManager_getParent(tm: NativePointer, instance: Int): Int
-
-@ExternalSymbolName("FilaTransformManager_getTransform")
-private external fun FilaTransformManager_getTransform(tm: NativePointer, instance: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_getTransformFp64")
-private external fun FilaTransformManager_getTransformFp64(tm: NativePointer, instance: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_getWorldTransform")
-private external fun FilaTransformManager_getWorldTransform(tm: NativePointer, instance: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_getWorldTransformFp64")
-private external fun FilaTransformManager_getWorldTransformFp64(tm: NativePointer, instance: Int, out: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_hasComponent")
-private external fun FilaTransformManager_hasComponent(tm: NativePointer, entity: Int): Boolean
-
-@ExternalSymbolName("FilaTransformManager_isAccurateTranslationsEnabled")
-private external fun FilaTransformManager_isAccurateTranslationsEnabled(tm: NativePointer): Boolean
-
-@ExternalSymbolName("FilaTransformManager_openLocalTransformTransaction")
-private external fun FilaTransformManager_openLocalTransformTransaction(tm: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_setAccurateTranslationsEnabled")
-private external fun FilaTransformManager_setAccurateTranslationsEnabled(tm: NativePointer, enable: Boolean)
-
-@ExternalSymbolName("FilaTransformManager_setParent")
-private external fun FilaTransformManager_setParent(tm: NativePointer, instance: Int, newParent: Int)
-
-@ExternalSymbolName("FilaTransformManager_setTransform")
-private external fun FilaTransformManager_setTransform(tm: NativePointer, instance: Int, matrix: NativePointer)
-
-@ExternalSymbolName("FilaTransformManager_setTransformFp64")
-private external fun FilaTransformManager_setTransformFp64(tm: NativePointer, instance: Int, matrix: NativePointer)

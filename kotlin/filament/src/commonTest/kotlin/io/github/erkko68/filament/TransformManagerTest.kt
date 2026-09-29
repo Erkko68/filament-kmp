@@ -16,9 +16,14 @@ class TransformManagerTest : FilamentTestFixture() {
         val entity = EntityManager.get().create()
         assertFalse(tm.hasComponent(entity))
 
-        val inst = tm.create(entity)
+        tm.create(entity)
         assertTrue(tm.hasComponent(entity))
-        assertEquals(inst, tm.getInstance(entity))
+        val inst = tm.getInstance(entity)
+        assertTrue(inst != 0)
+        assertEquals(entity, tm.getEntity(inst))
+        assertFalse(tm.empty())
+        assertTrue(entity in tm.entities)
+        assertEquals(tm.componentCount, tm.entities.size)
 
         // Set & Get Local transforms (both float and double overloads)
         val testFloat = floatArrayOf(
@@ -40,24 +45,26 @@ class TransformManagerTest : FilamentTestFixture() {
             5.0, 6.0, 7.0, 1.0
         )
         tm.setTransform(inst, testDouble)
-        val readDouble = tm.getTransform(inst, DoubleArray(16))
+        val readDouble = tm.getTransformAccurate(inst)
         assertEquals(5.0, readDouble[12])
 
         // World transform checks
         val worldFloat = tm.getWorldTransform(inst, FloatArray(16))
         assertEquals(5f, worldFloat[12])
 
-        val worldDouble = tm.getWorldTransform(inst, DoubleArray(16))
+        val worldDouble = tm.getWorldTransformAccurate(inst)
         assertEquals(5.0, worldDouble[12])
 
         // Parent / Child
         val childEntity = EntityManager.get().create()
-        val childInst = tm.create(childEntity, inst, testFloat)
+        tm.create(childEntity, inst, testFloat)
+        val childInst = tm.getInstance(childEntity)
         
         assertEquals(inst, tm.getInstance(entity))
         assertEquals(1, tm.getChildCount(inst))
         
-        val children = tm.getChildren(inst, IntArray(5))
+        val children = IntArray(5)
+        assertEquals(1, tm.getChildren(inst, children))
         assertEquals(childEntity, children[0])
 
         assertEquals(entity, tm.getParent(childInst))

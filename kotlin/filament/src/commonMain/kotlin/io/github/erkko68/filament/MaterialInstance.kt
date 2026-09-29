@@ -300,8 +300,8 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param g Green channel [0, 1]
      * @param b Blue channel [0, 1]
      */
-    fun setParameter(name: String, type: Colors.RgbType, r: Float, g: Float, b: Float) {
-        val linear = Colors.toLinear(type, r, g, b)
+    fun setParameter(name: String, type: RgbType, r: Float, g: Float, b: Float) {
+        val linear = Color.toLinear(type, floatArrayOf(r, g, b))
         name.useCString { FilaMaterialInstance_setParameterFloat3(nativeHandle, it, linear[0], linear[1], linear[2]) }
     }
     /**
@@ -316,8 +316,8 @@ class MaterialInstance @InternalFilamentApi constructor(internal val nativeHandl
      * @param b Blue channel [0, 1]
      * @param a Alpha channel [0, 1]
      */
-    fun setParameter(name: String, type: Colors.RgbaType, r: Float, g: Float, b: Float, a: Float) {
-        val linear = Colors.toLinear(type, r, g, b, a)
+    fun setParameter(name: String, type: RgbaType, r: Float, g: Float, b: Float, a: Float) {
+        val linear = Color.toLinear(type, floatArrayOf(r, g, b, a))
         name.useCString { FilaMaterialInstance_setParameterFloat4(nativeHandle, it, linear[0], linear[1], linear[2], linear[3]) }
     }
 

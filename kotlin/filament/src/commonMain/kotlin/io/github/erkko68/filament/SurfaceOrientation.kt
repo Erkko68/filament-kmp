@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -36,8 +37,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
      */
     class Builder() {
         init { Filament.init() } // CPU-only, usable before any Engine exists
-        private val nativeBuilder = FilaSurfaceOrientationBuilder_create()
-        // The C++ builder keeps the array pointers until build(), so the native copies live until then.
+        private val nativeBuilder = FilaGeometrySurfaceOrientationBuilder_create()
         private val heap = InteropScope() // the C++ builder keeps the pointers until build()
 
         /**
@@ -47,7 +47,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun vertexCount(vertexCount: Int): Builder {
-            FilaSurfaceOrientationBuilder_vertexCount(nativeBuilder, vertexCount)
+            FilaGeometrySurfaceOrientationBuilder_vertexCount(nativeBuilder, vertexCount)
             return this
         }
 
@@ -59,7 +59,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun normals(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaSurfaceOrientationBuilder_normals(nativeBuilder, heap.toInterop(buffer), stride)
+            FilaGeometrySurfaceOrientationBuilder_normals(nativeBuilder, heap.toInterop(buffer), stride)
             return this
         }
 
@@ -71,7 +71,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun tangents(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaSurfaceOrientationBuilder_tangents(nativeBuilder, heap.toInterop(buffer), stride)
+            FilaGeometrySurfaceOrientationBuilder_tangents(nativeBuilder, heap.toInterop(buffer), stride)
             return this
         }
 
@@ -83,7 +83,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun uvs(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaSurfaceOrientationBuilder_uvs(nativeBuilder, heap.toInterop(buffer), stride)
+            FilaGeometrySurfaceOrientationBuilder_uvs(nativeBuilder, heap.toInterop(buffer), stride)
             return this
         }
 
@@ -95,7 +95,7 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun positions(buffer: FloatArray, stride: Int = 0): Builder {
-            FilaSurfaceOrientationBuilder_positions(nativeBuilder, heap.toInterop(buffer), stride)
+            FilaGeometrySurfaceOrientationBuilder_positions(nativeBuilder, heap.toInterop(buffer), stride)
             return this
         }
 
@@ -106,29 +106,27 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          * @return This Builder instance for method chaining.
          */
         fun triangleCount(triangleCount: Int): Builder {
-            FilaSurfaceOrientationBuilder_triangleCount(nativeBuilder, triangleCount)
+            FilaGeometrySurfaceOrientationBuilder_triangleCount(nativeBuilder, triangleCount)
             return this
         }
 
         /**
-         * Specifies 16-bit triangle indices.
+         * Specifies 32-bit triangle indices, 3 per triangle.
          *
-         * @param buffer An array of 16-bit unsigned indices, grouped into sets of 3 (one triangle per set).
          * @return This Builder instance for method chaining.
          */
-        fun triangles16(buffer: ShortArray): Builder {
-            FilaSurfaceOrientationBuilder_triangles16(nativeBuilder, heap.toInterop(buffer))
+        fun triangles(buffer: IntArray): Builder {
+            FilaGeometrySurfaceOrientationBuilder_triangles_uint3(nativeBuilder, heap.toInterop(buffer))
             return this
         }
 
         /**
-         * Specifies 32-bit triangle indices.
+         * Specifies 16-bit triangle indices, 3 per triangle.
          *
-         * @param buffer An array of 32-bit unsigned indices, grouped into sets of 3 (one triangle per set).
          * @return This Builder instance for method chaining.
          */
-        fun triangles32(buffer: IntArray): Builder {
-            FilaSurfaceOrientationBuilder_triangles32(nativeBuilder, heap.toInterop(buffer))
+        fun triangles(buffer: ShortArray): Builder {
+            FilaGeometrySurfaceOrientationBuilder_triangles_ushort3(nativeBuilder, heap.toInterop(buffer))
             return this
         }
 
@@ -137,117 +135,36 @@ class SurfaceOrientation @InternalFilamentApi constructor(internal val nativeHan
          *
          * @return A SurfaceOrientation instance, or null if the data combination is incomplete.
          */
-        fun build(): SurfaceOrientation {
-            val handle = FilaSurfaceOrientationBuilder_build(nativeBuilder)
-            FilaSurfaceOrientationBuilder_destroy(nativeBuilder)
+        fun build(): SurfaceOrientation? {
+            val handle = FilaGeometrySurfaceOrientationBuilder_build(nativeBuilder)
+            FilaGeometrySurfaceOrientationBuilder_destroy(nativeBuilder)
             heap.release()
-            return SurfaceOrientation(handle)
+            return handle.takeIf { it != NullPointer }?.let(::SurfaceOrientation)
         }
     }
 
-    /**
-     * Returns the vertex count.
-     *
-     * @return The number of vertices for which quaternions were generated.
-     */
-    val vertexCount: Int get() = FilaSurfaceOrientation_getVertexCount(nativeHandle)
+    /** The number of vertices for which quaternions were generated. */
+    val vertexCount: Int get() = FilaGeometrySurfaceOrientation_getVertexCount(nativeHandle)
 
     /**
-     * Converts quaternions into float format and writes up to the specified count
-     * to the given output buffer. Normally the count should be equal to the vertex count.
+     * Writes [quatCount] quaternions (4 floats each) to [out]; normally quatCount is the vertex count.
      *
-     * @param buffer Output buffer where quaternions will be written as floats.
-     * @param count The number of quaternions to write. Should equal vertex count in most cases.
+     * @param stride Byte offset between consecutive quaternions; 0 means tightly packed.
      */
-    fun getQuatsAsFloat(buffer: FloatArray, count: Int) {
-        buffer.usePinned { pinned ->
-            FilaSurfaceOrientation_getQuatsAsFloat(nativeHandle, pinned, count)
-        }
-    }
+    fun getQuats(out: FloatArray, quatCount: Int, stride: Int = 0) =
+        out.usePinned { FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(nativeHandle, it, quatCount, stride) }
 
-    /**
-     * Converts quaternions into half-precision format and writes up to the specified count
-     * to the given output buffer.
-     *
-     * @param buffer Output buffer where quaternions will be written as half-precision floats.
-     * @param count The number of quaternions to write.
-     */
-    fun getQuatsAsHalf(buffer: ShortArray, count: Int) {
-        buffer.usePinned { pinned ->
-            val ptr: NativePointer = pinned
-            FilaSurfaceOrientation_getQuatsAsHalf(nativeHandle, ptr, count)
-        }
-    }
+    /** [getQuats] as normalized shorts (short4). */
+    fun getQuats(out: ShortArray, quatCount: Int, stride: Int = 0) =
+        out.usePinned { FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(nativeHandle, it, quatCount, stride) }
 
-    /**
-     * Converts quaternions into short format and writes up to the specified count
-     * to the given output buffer.
-     *
-     * @param buffer Output buffer where quaternions will be written as shorts.
-     * @param count The number of quaternions to write.
-     */
-    fun getQuatsAsShort(buffer: ShortArray, count: Int) {
-        buffer.usePinned { pinned ->
-            FilaSurfaceOrientation_getQuatsAsShort(nativeHandle, pinned, count)
-        }
-    }
+    /** [getQuats] as half floats (quath). */
+    fun getHalfQuats(out: ShortArray, quatCount: Int, stride: Int = 0) =
+        out.usePinned { FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(nativeHandle, it, quatCount, stride) }
+
+    /** Destroys this SurfaceOrientation. */
+    fun destroy() = FilaGeometrySurfaceOrientation_destroy(nativeHandle)
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
     override fun close() = destroy()
-
-
-    /**
-     * Destroys this SurfaceOrientation instance and releases associated resources.
-     */
-    fun destroy() {
-        FilaSurfaceOrientation_destroy(nativeHandle)
-    }
 }
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_build")
-private external fun FilaSurfaceOrientationBuilder_build(builder: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_create")
-private external fun FilaSurfaceOrientationBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_destroy")
-private external fun FilaSurfaceOrientationBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_normals")
-private external fun FilaSurfaceOrientationBuilder_normals(builder: NativePointer, buffer: NativePointer, stride: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_positions")
-private external fun FilaSurfaceOrientationBuilder_positions(builder: NativePointer, buffer: NativePointer, stride: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_tangents")
-private external fun FilaSurfaceOrientationBuilder_tangents(builder: NativePointer, buffer: NativePointer, stride: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_triangleCount")
-private external fun FilaSurfaceOrientationBuilder_triangleCount(builder: NativePointer, triangleCount: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_triangles16")
-private external fun FilaSurfaceOrientationBuilder_triangles16(builder: NativePointer, buffer: NativePointer)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_triangles32")
-private external fun FilaSurfaceOrientationBuilder_triangles32(builder: NativePointer, buffer: NativePointer)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_uvs")
-private external fun FilaSurfaceOrientationBuilder_uvs(builder: NativePointer, buffer: NativePointer, stride: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientationBuilder_vertexCount")
-private external fun FilaSurfaceOrientationBuilder_vertexCount(builder: NativePointer, vertexCount: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientation_destroy")
-private external fun FilaSurfaceOrientation_destroy(orientation: NativePointer)
-
-@ExternalSymbolName("FilaSurfaceOrientation_getQuatsAsFloat")
-private external fun FilaSurfaceOrientation_getQuatsAsFloat(orientation: NativePointer, buffer: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientation_getQuatsAsHalf")
-private external fun FilaSurfaceOrientation_getQuatsAsHalf(orientation: NativePointer, buffer: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientation_getQuatsAsShort")
-private external fun FilaSurfaceOrientation_getQuatsAsShort(orientation: NativePointer, buffer: NativePointer, count: Int)
-
-@ExternalSymbolName("FilaSurfaceOrientation_getVertexCount")
-private external fun FilaSurfaceOrientation_getVertexCount(orientation: NativePointer): Int

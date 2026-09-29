@@ -77,10 +77,9 @@ private fun MeshData.upload(engine: Engine): MeshHandles {
         .normals(normals)
         .uvs(uvs)
         .triangleCount(triangleCount)
-        .triangles32(indices)
-        .build()
-    orientation.getQuatsAsFloat(tangents, vertexCount)
-    orientation.destroy()
+        .triangles(indices)
+        .build()!!
+    orientation.use { it.getQuats(tangents, vertexCount) }
 
     val vb = VertexBuffer.Builder()
         .vertexCount(vertexCount)
@@ -170,7 +169,7 @@ internal fun Mesh(
     // destroying it, so toggling visibility is cheap and keeps entity identity stable.
     DisposableEffect(entity, effectiveVisible) {
         if (effectiveVisible) scene.addEntity(entity)
-        onDispose { if (effectiveVisible) scene.removeEntity(entity) }
+        onDispose { if (effectiveVisible) scene.remove(entity) }
     }
 
     DisposableEffect(entity, position, rotation, scale, pivot) {

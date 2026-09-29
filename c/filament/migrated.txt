@@ -21,3 +21,9 @@ FilaCamera
 FilaColorGrading
 FilaSwapChain
 FilaRenderTarget
+FilaScene
+FilaUtilsEntityManager
+FilaTransformManager
+FilaTexture
+FilaColor
+FilaGeometrySurfaceOrientation

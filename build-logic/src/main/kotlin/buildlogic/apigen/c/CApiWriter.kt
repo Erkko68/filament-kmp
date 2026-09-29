@@ -78,7 +78,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                     "$self* $name(${cParams(null, bridged)})" to "return fila::c(new $cpp(${args(bridged)}));"
                 }
             }
-            if ((record.constructors.isNotEmpty() || record.virtualDestructor) && record.destructible) {
+            if ((record.constructors.isNotEmpty() || record.declaredDestructor) && record.destructible) {
                 emit("${self}_destroy", "~${record.name}()", section) {
                     "void ${self}_destroy($self* self)" to "delete fila::cpp(self);"
                 }
