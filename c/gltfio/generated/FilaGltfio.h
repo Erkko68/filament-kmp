@@ -9,20 +9,12 @@ extern "C" {
 #endif
 
 // filament::gltfio
-uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
-// TODO(handwritten) FilaGltfio_constrainMaterial: static void filament::gltfio::constrainMaterial(MaterialKey * key, UvMap * uvmap)
-//     std::array<UvSet, UvMapSize>: by non-const reference
-// TODO(handwritten) FilaGltfio_processShaderString: static void filament::gltfio::processShaderString(std::string * shader, const UvMap & uvmap, const MaterialKey & config)
-//     std::string by pointer
 FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount);
 FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount);
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine);
 FilaGltfioTextureProvider* FilaGltfio_createKtx2Provider(FilaEngine* engine);
 FilaGltfioTextureProvider* FilaGltfio_createWebpProvider(FilaEngine* engine);
 bool FilaGltfio_isWebpSupported(void);
-void FilaGltfio_decomposeMatrix(const FilaMat4f* mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale);
-void FilaGltfio_composeMatrix(const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale, FilaMat4f* out);
-void FilaGltfio_matrixFromUvTransform(const float* offset, float rotation, const float* scale, FilaMat3f* out);
 
 
 #ifdef __cplusplus

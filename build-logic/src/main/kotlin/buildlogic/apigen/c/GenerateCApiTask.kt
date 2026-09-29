@@ -50,8 +50,10 @@ abstract class GenerateCApiTask @Inject constructor(private val exec: ExecOperat
     fun generate() {
         val include = includeDir.get().asFile
         val headers = relativeHeaders(publicHeaders.files, include)
-        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers)
-        val files = CApiWriter(api, ApiHeaders.parse(apiHeadersFile.get().asFile.readText()), headers).write()
+        val apiHeaders = ApiHeaders.parse(apiHeadersFile.get().asFile.readText())
+        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers).skipping(apiHeaders.skipped)
+        api.unknownSkips().takeIf { it.isNotEmpty() }?.let { throw GradleException("api-headers.txt skips unknown declarations: $it") }
+        val files = CApiWriter(api, apiHeaders, headers).write()
         val c = cDir.get().asFile
         modules.get().forEach { c.resolve("$it/generated").deleteRecursively() }
         files.forEach { (path, text) -> c.resolve(path).apply { parentFile.mkdirs() }.writeText(text) }

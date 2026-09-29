@@ -23,7 +23,6 @@ typedef struct FilaMat4 { double v[16]; } FilaMat4;
 typedef struct FilaMat4f { float v[16]; } FilaMat4f;
 typedef struct FilaQuatf { float v[4]; } FilaQuatf;
 typedef struct FilaShort4 { int16_t v[4]; } FilaShort4;
-typedef struct FilaUint2 { uint32_t v[2]; } FilaUint2;
 typedef struct FilaUint3 { uint32_t v[3]; } FilaUint3;
 typedef struct FilaUshort3 { uint16_t v[3]; } FilaUshort3;
 
@@ -44,9 +43,6 @@ typedef struct FilaCamera FilaCamera;
 typedef struct FilaColor FilaColor;
 typedef struct FilaColorGrading FilaColorGrading;
 typedef struct FilaColorGradingBuilder FilaColorGradingBuilder;
-typedef struct FilaDebugRegistry FilaDebugRegistry;
-typedef struct FilaDebugRegistryDataSource FilaDebugRegistryDataSource;
-typedef struct FilaDebugRegistryFrameHistory FilaDebugRegistryFrameHistory;
 typedef struct FilaDepthOfFieldOptions FilaDepthOfFieldOptions;
 typedef struct FilaDisplayRangeToneMapper FilaDisplayRangeToneMapper;
 typedef struct FilaDynamicResolutionOptions FilaDynamicResolutionOptions;
@@ -70,7 +66,6 @@ typedef struct FilaFramePacerVsyncTick FilaFramePacerVsyncTick;
 typedef struct FilaFramePipelineEstimator FilaFramePipelineEstimator;
 typedef struct FilaFramePipelineEstimatorPacingSizing FilaFramePipelineEstimatorPacingSizing;
 typedef struct FilaFramePipelineEstimatorWorkload FilaFramePipelineEstimatorWorkload;
-typedef struct FilaFrustum FilaFrustum;
 typedef struct FilaGT7ToneMapper FilaGT7ToneMapper;
 typedef struct FilaGenericToneMapper FilaGenericToneMapper;
 typedef struct FilaGuardBandOptions FilaGuardBandOptions;
@@ -132,8 +127,6 @@ typedef struct FilaTransformManagerChildren_sentinel FilaTransformManagerChildre
 typedef struct FilaVertexBuffer FilaVertexBuffer;
 typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
 typedef struct FilaView FilaView;
-typedef struct FilaViewFroxelConfigurationInfo FilaViewFroxelConfigurationInfo;
-typedef struct FilaViewFroxelConfigurationInfoWithAge FilaViewFroxelConfigurationInfoWithAge;
 typedef struct FilaViewPickingQuery FilaViewPickingQuery;
 typedef struct FilaViewPickingQueryResult FilaViewPickingQueryResult;
 typedef struct FilaViewport FilaViewport;
@@ -276,16 +269,6 @@ typedef enum FilaFramePipelineEstimatorTargetPercentile {
     FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P90 = 1,
     FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P95 = 2,
 } FilaFramePipelineEstimatorTargetPercentile;
-
-// filament::Frustum::Plane
-typedef enum FilaFrustumPlane {
-    FILA_FRUSTUM_PLANE_LEFT = 0,
-    FILA_FRUSTUM_PLANE_RIGHT = 1,
-    FILA_FRUSTUM_PLANE_BOTTOM = 2,
-    FILA_FRUSTUM_PLANE_TOP = 3,
-    FILA_FRUSTUM_PLANE_FAR = 4,
-    FILA_FRUSTUM_PLANE_NEAR = 5,
-} FilaFrustumPlane;
 
 // filament::IndexBuffer::IndexType
 typedef enum FilaIndexBufferIndexType {

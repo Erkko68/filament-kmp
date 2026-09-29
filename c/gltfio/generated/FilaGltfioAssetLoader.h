@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // filament::gltfio::AssetLoader
+// skipped NodeManager & filament::gltfio::AssetLoader::getNodeManager(): uses filament::gltfio::NodeManager
 FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config);
 // TODO(handwritten) FilaGltfioAssetLoader_destroy: static void filament::gltfio::AssetLoader::destroy(AssetLoader ** loader)
 //     AssetLoader **: pointer to pointer
@@ -24,7 +25,6 @@ void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self);
 uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self);
 // TODO(handwritten) FilaGltfioAssetLoader_getNames: utils::NameComponentManager * filament::gltfio::AssetLoader::getNames() const
 //     utils::NameComponentManager *: utils::NameComponentManager
-FilaGltfioNodeManager* FilaGltfioAssetLoader_getNodeManager(FilaGltfioAssetLoader* self);
 FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* self);
 
 

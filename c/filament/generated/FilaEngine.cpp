@@ -672,14 +672,6 @@ FilaBackend FilaEngine_getBackend(const FilaEngine* self) {
     return static_cast<FilaBackend>(fila::cpp(self)->getBackend());
 }
 
-FilaPlatform* FilaEngine_getPlatform(const FilaEngine* self) {
-    return fila::c(fila::cpp(self)->getPlatform());
-}
-
-void* FilaEngine_streamAlloc(FilaEngine* self, uint32_t size, uint32_t alignment) {
-    return fila::cpp(self)->streamAlloc(static_cast<size_t>(size), static_cast<size_t>(alignment));
-}
-
 void FilaEngine_execute(FilaEngine* self) {
     fila::cpp(self)->execute();
 }
@@ -688,20 +680,12 @@ void FilaEngine_getSteadyClockTimeNano(uint64_t* out) {
     *out = filament::Engine::getSteadyClockTimeNano();
 }
 
-FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* self) {
-    return fila::c(&fila::cpp(self)->getDebugRegistry());
-}
-
 bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name) {
     return fila::cpp(self)->hasFeatureFlag(name);
 }
 
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value) {
     return fila::cpp(self)->setFeatureFlag(name, value);
-}
-
-bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* self, const char* name) {
-    return fila::cpp(self)->getFeatureFlagPtr(name);
 }
 
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {

@@ -4,118 +4,6 @@
 
 extern "C" {
 
-FilaViewFroxelConfigurationInfo* FilaViewFroxelConfigurationInfo_create(void) {
-    return fila::c(new filament::View::FroxelConfigurationInfo());
-}
-
-void FilaViewFroxelConfigurationInfo_destroy(FilaViewFroxelConfigurationInfo* self) {
-    delete fila::cpp(self);
-}
-
-uint32_t FilaViewFroxelConfigurationInfo_getWidth(const FilaViewFroxelConfigurationInfo* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->width);
-}
-
-void FilaViewFroxelConfigurationInfo_setWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    fila::cpp(self)->width = static_cast<uint16_t>(value);
-}
-
-uint32_t FilaViewFroxelConfigurationInfo_getHeight(const FilaViewFroxelConfigurationInfo* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->height);
-}
-
-void FilaViewFroxelConfigurationInfo_setHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    fila::cpp(self)->height = static_cast<uint16_t>(value);
-}
-
-uint32_t FilaViewFroxelConfigurationInfo_getDepth(const FilaViewFroxelConfigurationInfo* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->depth);
-}
-
-void FilaViewFroxelConfigurationInfo_setDepth(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    fila::cpp(self)->depth = static_cast<uint16_t>(value);
-}
-
-uint32_t FilaViewFroxelConfigurationInfo_getViewportWidth(const FilaViewFroxelConfigurationInfo* self) {
-    return fila::cpp(self)->viewportWidth;
-}
-
-void FilaViewFroxelConfigurationInfo_setViewportWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    fila::cpp(self)->viewportWidth = value;
-}
-
-uint32_t FilaViewFroxelConfigurationInfo_getViewportHeight(const FilaViewFroxelConfigurationInfo* self) {
-    return fila::cpp(self)->viewportHeight;
-}
-
-void FilaViewFroxelConfigurationInfo_setViewportHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    fila::cpp(self)->viewportHeight = value;
-}
-
-void FilaViewFroxelConfigurationInfo_getFroxelDimension(const FilaViewFroxelConfigurationInfo* self, FilaUint2* out) {
-    *out = std::bit_cast<FilaUint2>(fila::cpp(self)->froxelDimension);
-}
-
-void FilaViewFroxelConfigurationInfo_setFroxelDimension(FilaViewFroxelConfigurationInfo* self, const FilaUint2* value) {
-    fila::cpp(self)->froxelDimension = std::bit_cast<filament::math::uint2>(*value);
-}
-
-float FilaViewFroxelConfigurationInfo_getZLightFar(const FilaViewFroxelConfigurationInfo* self) {
-    return fila::cpp(self)->zLightFar;
-}
-
-void FilaViewFroxelConfigurationInfo_setZLightFar(FilaViewFroxelConfigurationInfo* self, float value) {
-    fila::cpp(self)->zLightFar = value;
-}
-
-float FilaViewFroxelConfigurationInfo_getLinearizer(const FilaViewFroxelConfigurationInfo* self) {
-    return fila::cpp(self)->linearizer;
-}
-
-void FilaViewFroxelConfigurationInfo_setLinearizer(FilaViewFroxelConfigurationInfo* self, float value) {
-    fila::cpp(self)->linearizer = value;
-}
-
-void FilaViewFroxelConfigurationInfo_getP(const FilaViewFroxelConfigurationInfo* self, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->p);
-}
-
-void FilaViewFroxelConfigurationInfo_setP(FilaViewFroxelConfigurationInfo* self, const FilaMat4f* value) {
-    fila::cpp(self)->p = std::bit_cast<filament::math::mat4f>(*value);
-}
-
-void FilaViewFroxelConfigurationInfo_getClipTransform(const FilaViewFroxelConfigurationInfo* self, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->clipTransform);
-}
-
-void FilaViewFroxelConfigurationInfo_setClipTransform(FilaViewFroxelConfigurationInfo* self, const FilaFloat4* value) {
-    fila::cpp(self)->clipTransform = std::bit_cast<filament::math::float4>(*value);
-}
-
-FilaViewFroxelConfigurationInfoWithAge* FilaViewFroxelConfigurationInfoWithAge_create(void) {
-    return fila::c(new filament::View::FroxelConfigurationInfoWithAge());
-}
-
-void FilaViewFroxelConfigurationInfoWithAge_destroy(FilaViewFroxelConfigurationInfoWithAge* self) {
-    delete fila::cpp(self);
-}
-
-void FilaViewFroxelConfigurationInfoWithAge_getInfo(const FilaViewFroxelConfigurationInfoWithAge* self, FilaViewFroxelConfigurationInfo* out) {
-    *fila::cpp(out) = fila::cpp(self)->info;
-}
-
-void FilaViewFroxelConfigurationInfoWithAge_setInfo(FilaViewFroxelConfigurationInfoWithAge* self, const FilaViewFroxelConfigurationInfo* value) {
-    fila::cpp(self)->info = *fila::cpp(value);
-}
-
-uint32_t FilaViewFroxelConfigurationInfoWithAge_getAge(const FilaViewFroxelConfigurationInfoWithAge* self) {
-    return fila::cpp(self)->age;
-}
-
-void FilaViewFroxelConfigurationInfoWithAge_setAge(FilaViewFroxelConfigurationInfoWithAge* self, uint32_t value) {
-    fila::cpp(self)->age = value;
-}
-
 FilaViewPickingQueryResult* FilaViewPickingQueryResult_create(void) {
     return fila::c(new filament::View::PickingQueryResult());
 }
@@ -138,22 +26,6 @@ float FilaViewPickingQueryResult_getDepth(const FilaViewPickingQueryResult* self
 
 void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float value) {
     fila::cpp(self)->depth = value;
-}
-
-uint32_t FilaViewPickingQueryResult_getReserved1(const FilaViewPickingQueryResult* self) {
-    return fila::cpp(self)->reserved1;
-}
-
-void FilaViewPickingQueryResult_setReserved1(FilaViewPickingQueryResult* self, uint32_t value) {
-    fila::cpp(self)->reserved1 = value;
-}
-
-uint32_t FilaViewPickingQueryResult_getReserved2(const FilaViewPickingQueryResult* self) {
-    return fila::cpp(self)->reserved2;
-}
-
-void FilaViewPickingQueryResult_setReserved2(FilaViewPickingQueryResult* self, uint32_t value) {
-    fila::cpp(self)->reserved2 = value;
 }
 
 void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out) {
@@ -466,22 +338,6 @@ void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling) {
 
 bool FilaView_isFrustumCullingEnabled(const FilaView* self) {
     return fila::cpp(self)->isFrustumCullingEnabled();
-}
-
-void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera) {
-    fila::cpp(self)->setDebugCamera(fila::cpp(camera));
-}
-
-uint32_t FilaView_getDirectionalShadowCameras(const FilaView* self, const FilaCamera** out, uint32_t outCapacity) {
-    return fila::copy(fila::cpp(self)->getDirectionalShadowCameras(), outCapacity, [&](auto& x, uint32_t i) { out[i] = fila::c(x); });
-}
-
-void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled) {
-    fila::cpp(self)->setFroxelVizEnabled(enabled);
-}
-
-void FilaView_getFroxelConfigurationInfo(const FilaView* self, FilaViewFroxelConfigurationInfoWithAge* out) {
-    *fila::cpp(out) = fila::cpp(self)->getFroxelConfigurationInfo();
 }
 
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value) {

@@ -26,7 +26,6 @@ FILA_TYPE(FilaGeometryTangentSpaceMeshBuilder, filament::geometry::TangentSpaceM
 FILA_TYPE(FilaGeometryTranscoder, filament::geometry::Transcoder)
 FILA_TYPE(FilaGeometryTranscoderConfig, filament::geometry::Transcoder::Config)
 FILA_TYPE(FilaImageKtx1Bundle, image::Ktx1Bundle)
-FILA_TYPE(FilaImageKtxBlobIndex, image::KtxBlobIndex)
 FILA_TYPE(FilaImageKtxInfo, image::KtxInfo)
 FILA_TYPE(FilaKtxreaderKtx2Reader, ktxreader::Ktx2Reader)
 FILA_TYPE(FilaKtxreaderKtx2ReaderAsync, ktxreader::Ktx2Reader::Async)

@@ -6,8 +6,11 @@ import org.gradle.api.file.RegularFile
 import java.nio.file.FileSystems
 import java.nio.file.Paths
 
-/** `c/api-headers.txt`: globs under Filament's include dir, grouped by the C module their API is generated into. */
-internal class ApiHeaders(val modules: Map<String, List<String>>) {
+/**
+ * `c/api-headers.txt`: globs under Filament's include dir, grouped by the C module their API is generated into, and
+ * the `-name` declarations left out of it ([skipped]).
+ */
+internal class ApiHeaders(val modules: Map<String, List<String>>, val skipped: Set<String> = emptySet()) {
     val globs get() = modules.values.flatten().filterNot { it.startsWith("!") }
 
     /** `!glob` lines: headers a section's globs match that declare no API. */
@@ -24,12 +27,14 @@ internal class ApiHeaders(val modules: Map<String, List<String>>) {
 
         fun parse(text: String): ApiHeaders {
             val modules = LinkedHashMap<String, MutableList<String>>()
+            val skipped = LinkedHashSet<String>()
             var module: String? = null
             text.lineSequence().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }.forEach { line ->
+                if (line.startsWith("-")) { skipped += line.drop(1); return@forEach }
                 SECTION.matchEntire(line)?.let { module = it.groupValues[1]; modules[module!!] = ArrayList() }
                     ?: modules.getValue(checkNotNull(module) { "api-headers.txt: '$line' is outside a [module] section" }).add(line)
             }
-            return ApiHeaders(modules)
+            return ApiHeaders(modules, skipped)
         }
     }
 }

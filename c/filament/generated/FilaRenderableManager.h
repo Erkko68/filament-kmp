@@ -15,8 +15,7 @@ void FilaRenderableManagerBone_getUnitQuaternion(const FilaRenderableManagerBone
 void FilaRenderableManagerBone_setUnitQuaternion(FilaRenderableManagerBone* self, const FilaQuatf* value);
 void FilaRenderableManagerBone_getTranslation(const FilaRenderableManagerBone* self, FilaFloat3* out);
 void FilaRenderableManagerBone_setTranslation(FilaRenderableManagerBone* self, const FilaFloat3* value);
-float FilaRenderableManagerBone_getReserved(const FilaRenderableManagerBone* self);
-void FilaRenderableManagerBone_setReserved(FilaRenderableManagerBone* self, float value);
+// skipped filament::RenderableManager::Bone::reserved
 
 // filament::RenderableManager::Builder
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count);

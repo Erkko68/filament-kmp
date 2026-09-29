@@ -28,14 +28,6 @@ void FilaRenderableManagerBone_setTranslation(FilaRenderableManagerBone* self, c
     fila::cpp(self)->translation = std::bit_cast<filament::math::float3>(*value);
 }
 
-float FilaRenderableManagerBone_getReserved(const FilaRenderableManagerBone* self) {
-    return fila::cpp(self)->reserved;
-}
-
-void FilaRenderableManagerBone_setReserved(FilaRenderableManagerBone* self, float value) {
-    fila::cpp(self)->reserved = value;
-}
-
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count) {
     return fila::c(new filament::RenderableManager::Builder(static_cast<size_t>(count)));
 }

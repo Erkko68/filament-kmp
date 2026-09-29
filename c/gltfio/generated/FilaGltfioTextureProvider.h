@@ -9,16 +9,16 @@ extern "C" {
 #endif
 
 // filament::gltfio::TextureProvider
-FilaTexture* FilaGltfioTextureProvider_pushTexture(FilaGltfioTextureProvider* self, const uint8_t* data, uint32_t byteCount, const char* mimeType, FilaGltfioTextureProviderTextureFlags flags);
-FilaTexture* FilaGltfioTextureProvider_popTexture(FilaGltfioTextureProvider* self);
-void FilaGltfioTextureProvider_updateQueue(FilaGltfioTextureProvider* self);
-const char* FilaGltfioTextureProvider_getPushMessage(const FilaGltfioTextureProvider* self);
-const char* FilaGltfioTextureProvider_getPopMessage(const FilaGltfioTextureProvider* self);
-void FilaGltfioTextureProvider_waitForCompletion(FilaGltfioTextureProvider* self);
-void FilaGltfioTextureProvider_cancelDecoding(FilaGltfioTextureProvider* self);
-uint32_t FilaGltfioTextureProvider_getPushedCount(const FilaGltfioTextureProvider* self);
-uint32_t FilaGltfioTextureProvider_getPoppedCount(const FilaGltfioTextureProvider* self);
-uint32_t FilaGltfioTextureProvider_getDecodedCount(const FilaGltfioTextureProvider* self);
+// skipped Texture * filament::gltfio::TextureProvider::pushTexture(const uint8_t * data, size_t byteCount, const char * mimeType, TextureFlags flags): filament::gltfio::TextureProvider::*
+// skipped Texture * filament::gltfio::TextureProvider::popTexture(): filament::gltfio::TextureProvider::*
+// skipped void filament::gltfio::TextureProvider::updateQueue(): filament::gltfio::TextureProvider::*
+// skipped const char * filament::gltfio::TextureProvider::getPushMessage() const: filament::gltfio::TextureProvider::*
+// skipped const char * filament::gltfio::TextureProvider::getPopMessage() const: filament::gltfio::TextureProvider::*
+// skipped void filament::gltfio::TextureProvider::waitForCompletion(): filament::gltfio::TextureProvider::*
+// skipped void filament::gltfio::TextureProvider::cancelDecoding(): filament::gltfio::TextureProvider::*
+// skipped size_t filament::gltfio::TextureProvider::getPushedCount() const: filament::gltfio::TextureProvider::*
+// skipped size_t filament::gltfio::TextureProvider::getPoppedCount() const: filament::gltfio::TextureProvider::*
+// skipped size_t filament::gltfio::TextureProvider::getDecodedCount() const: filament::gltfio::TextureProvider::*
 
 
 #ifdef __cplusplus

@@ -2,15 +2,41 @@
 # Globs relative to include/, grouped by the C module (c/<module>) their declarations are generated into.
 #
 # Every public class and free function these headers declare gets C functions. Types they use from other
-# headers (backend/, math/, utils/) are bridged as C types only, into the first module. `!glob` excludes a header
-# that declares nothing (the generator fails on listed headers it finds no declarations in).
+# headers (backend/, math/, utils/) are bridged as C types only, into the first module. `!glob` excludes headers
+# (the generator fails on listed headers it finds no declarations in).
+#
+# `-name` leaves a C++ declaration out: a record (with everything nested), a member, or a function. `-Record::*` keeps
+# the record's handle but none of its members. Methods and fields whose types use a skipped record go too. The
+# generated headers note each skipped member; an entry naming nothing fails the generator.
 
 [filament]
 filament/*.h
 utils/EntityManager.h
+# Debugging aids (upstream marks them so) and raw pointers into the engine's internals.
+-filament::DebugRegistry
+-filament::Engine::getFeatureFlagPtr
+-filament::Engine::getPlatform
+-filament::Engine::streamAlloc
+-filament::View::setDebugCamera
+-filament::View::getDirectionalShadowCameras
+-filament::View::setFroxelVizEnabled
+-filament::View::FroxelConfigurationInfo
+-filament::View::FroxelConfigurationInfoWithAge
+-filament::RenderableManager::Bone::reserved
+-filament::View::PickingQueryResult::reserved1
+-filament::View::PickingQueryResult::reserved2
+# Culling math; kotlin-math covers it.
+-filament::Frustum
 
 [gltfio]
 gltfio/*.h
+!gltfio/math.h
+# Driven by ResourceLoader and AssetLoader, or only for writing a C++ MaterialProvider.
+-filament::gltfio::TextureProvider::*
+-filament::gltfio::MaterialKey
+-filament::gltfio::getNumUvSets
+-filament::gltfio::NodeManager
+-filament::gltfio::TrsTransformManager
 
 [filamat]
 filamat/*.h
@@ -23,3 +49,6 @@ filament-iblprefilter/*.h
 ktxreader/*.h
 # Ktx1Reader builds textures from bundles.
 image/Ktx1Bundle.h
+# KTX container internals; Ktx1Reader turns a bundle into a texture.
+-image::KtxInfo
+-image::KtxBlobIndex

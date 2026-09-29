@@ -66,7 +66,6 @@
 #include <gltfio/ResourceLoader.h>
 #include <gltfio/TextureProvider.h>
 #include <gltfio/TrsTransformManager.h>
-#include <gltfio/math.h>
 #include <image/Ktx1Bundle.h>
 #include <ktxreader/Ktx1Reader.h>
 #include <ktxreader/Ktx2Reader.h>
@@ -148,7 +147,6 @@ FILA_TYPE(FilaMat4, filament::math::mat4)
 FILA_TYPE(FilaMat4f, filament::math::mat4f)
 FILA_TYPE(FilaQuatf, filament::math::quatf)
 FILA_TYPE(FilaShort4, filament::math::short4)
-FILA_TYPE(FilaUint2, filament::math::uint2)
 FILA_TYPE(FilaUint3, filament::math::uint3)
 FILA_TYPE(FilaUshort3, filament::math::ushort3)
 FILA_TYPE(FilaACESLegacyToneMapper, filament::ACESLegacyToneMapper)
@@ -167,9 +165,6 @@ FILA_TYPE(FilaCamera, filament::Camera)
 FILA_TYPE(FilaColor, filament::Color)
 FILA_TYPE(FilaColorGrading, filament::ColorGrading)
 FILA_TYPE(FilaColorGradingBuilder, filament::ColorGrading::Builder)
-FILA_TYPE(FilaDebugRegistry, filament::DebugRegistry)
-FILA_TYPE(FilaDebugRegistryDataSource, filament::DebugRegistry::DataSource)
-FILA_TYPE(FilaDebugRegistryFrameHistory, filament::DebugRegistry::FrameHistory)
 FILA_TYPE(FilaDepthOfFieldOptions, filament::DepthOfFieldOptions)
 FILA_TYPE(FilaDisplayRangeToneMapper, filament::DisplayRangeToneMapper)
 FILA_TYPE(FilaDynamicResolutionOptions, filament::DynamicResolutionOptions)
@@ -193,7 +188,6 @@ FILA_TYPE(FilaFramePacerVsyncTick, filament::FramePacer::VsyncTick)
 FILA_TYPE(FilaFramePipelineEstimator, filament::FramePipelineEstimator)
 FILA_TYPE(FilaFramePipelineEstimatorPacingSizing, filament::FramePipelineEstimator::PacingSizing)
 FILA_TYPE(FilaFramePipelineEstimatorWorkload, filament::FramePipelineEstimator::Workload)
-FILA_TYPE(FilaFrustum, filament::Frustum)
 FILA_TYPE(FilaGT7ToneMapper, filament::GT7ToneMapper)
 FILA_TYPE(FilaGenericToneMapper, filament::GenericToneMapper)
 FILA_TYPE(FilaGuardBandOptions, filament::GuardBandOptions)
@@ -252,8 +246,6 @@ FILA_TYPE(FilaTransformManagerChildren_sentinel, filament::TransformManager::chi
 FILA_TYPE(FilaVertexBuffer, filament::VertexBuffer)
 FILA_TYPE(FilaVertexBufferBuilder, filament::VertexBuffer::Builder)
 FILA_TYPE(FilaView, filament::View)
-FILA_TYPE(FilaViewFroxelConfigurationInfo, filament::View::FroxelConfigurationInfo)
-FILA_TYPE(FilaViewFroxelConfigurationInfoWithAge, filament::View::FroxelConfigurationInfoWithAge)
 FILA_TYPE(FilaViewPickingQuery, filament::View::PickingQuery)
 FILA_TYPE(FilaViewPickingQueryResult, filament::View::PickingQueryResult)
 FILA_TYPE(FilaViewport, filament::Viewport)

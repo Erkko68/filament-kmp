@@ -89,17 +89,24 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             }
         }
         // Deprecated API isn't bound at all, nor overloads only literals can call.
-        val methods = (record.methods + bridges.twins(record).flatMap { it.methods }).filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
+        val (skipped, methods) = (record.methods + bridges.twins(record).flatMap { it.methods }).filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
             // A const overload and its non-const twin take the same C arguments; the non-const one covers both.
             .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
+            .partition { api.skipReason(it, record.name) != null }
+        skipped.forEach { section.declarations.appendLine("// skipped ${signature(it)}" + reason(api.skipReason(it, record.name), "${record.name}::${it.name}")) }
         overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
         if (bridges.isValue(record.name) && !bridges.uninstantiated(record)) {
-            (bridges.twins(record).flatMap { it.fields } + record.fields).filter { it.isPublic && !it.isDeprecated }.forEach { field(record, it, section) }
+            (bridges.twins(record).flatMap { it.fields } + record.fields).filter { it.isPublic && !it.isDeprecated }.forEach { f ->
+                api.skipReason(f, record.name)?.let { section.declarations.appendLine("// skipped ${record.name}::${f.name}" + reason(it, "${record.name}::${f.name}")) } ?: field(record, f, section)
+            }
         }
         if (section.declarations.isEmpty()) return
         file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
         file.definitions.append(section.definitions)
     }
+
+    /** A skip note's reason, unless it's the member's own entry. */
+    private fun reason(reason: String?, member: String) = reason?.takeIf { it != member }?.let { ": $it" } ?: ""
 
     /** Emits [functions], suffixing overloads of one name with the types that tell them apart. */
     private fun overloads(functions: List<CppMethod>, section: Section, baseName: (CppMethod) -> String) {

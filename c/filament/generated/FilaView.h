@@ -8,38 +8,6 @@
 extern "C" {
 #endif
 
-// filament::View::FroxelConfigurationInfo
-FilaViewFroxelConfigurationInfo* FilaViewFroxelConfigurationInfo_create(void);
-void FilaViewFroxelConfigurationInfo_destroy(FilaViewFroxelConfigurationInfo* self);
-uint32_t FilaViewFroxelConfigurationInfo_getWidth(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value);
-uint32_t FilaViewFroxelConfigurationInfo_getHeight(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value);
-uint32_t FilaViewFroxelConfigurationInfo_getDepth(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setDepth(FilaViewFroxelConfigurationInfo* self, uint32_t value);
-uint32_t FilaViewFroxelConfigurationInfo_getViewportWidth(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setViewportWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value);
-uint32_t FilaViewFroxelConfigurationInfo_getViewportHeight(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setViewportHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value);
-void FilaViewFroxelConfigurationInfo_getFroxelDimension(const FilaViewFroxelConfigurationInfo* self, FilaUint2* out);
-void FilaViewFroxelConfigurationInfo_setFroxelDimension(FilaViewFroxelConfigurationInfo* self, const FilaUint2* value);
-float FilaViewFroxelConfigurationInfo_getZLightFar(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setZLightFar(FilaViewFroxelConfigurationInfo* self, float value);
-float FilaViewFroxelConfigurationInfo_getLinearizer(const FilaViewFroxelConfigurationInfo* self);
-void FilaViewFroxelConfigurationInfo_setLinearizer(FilaViewFroxelConfigurationInfo* self, float value);
-void FilaViewFroxelConfigurationInfo_getP(const FilaViewFroxelConfigurationInfo* self, FilaMat4f* out);
-void FilaViewFroxelConfigurationInfo_setP(FilaViewFroxelConfigurationInfo* self, const FilaMat4f* value);
-void FilaViewFroxelConfigurationInfo_getClipTransform(const FilaViewFroxelConfigurationInfo* self, FilaFloat4* out);
-void FilaViewFroxelConfigurationInfo_setClipTransform(FilaViewFroxelConfigurationInfo* self, const FilaFloat4* value);
-
-// filament::View::FroxelConfigurationInfoWithAge
-FilaViewFroxelConfigurationInfoWithAge* FilaViewFroxelConfigurationInfoWithAge_create(void);
-void FilaViewFroxelConfigurationInfoWithAge_destroy(FilaViewFroxelConfigurationInfoWithAge* self);
-void FilaViewFroxelConfigurationInfoWithAge_getInfo(const FilaViewFroxelConfigurationInfoWithAge* self, FilaViewFroxelConfigurationInfo* out);
-void FilaViewFroxelConfigurationInfoWithAge_setInfo(FilaViewFroxelConfigurationInfoWithAge* self, const FilaViewFroxelConfigurationInfo* value);
-uint32_t FilaViewFroxelConfigurationInfoWithAge_getAge(const FilaViewFroxelConfigurationInfoWithAge* self);
-void FilaViewFroxelConfigurationInfoWithAge_setAge(FilaViewFroxelConfigurationInfoWithAge* self, uint32_t value);
-
 // filament::View::PickingQueryResult
 FilaViewPickingQueryResult* FilaViewPickingQueryResult_create(void);
 void FilaViewPickingQueryResult_destroy(FilaViewPickingQueryResult* self);
@@ -47,10 +15,8 @@ FilaEntity FilaViewPickingQueryResult_getRenderable(const FilaViewPickingQueryRe
 void FilaViewPickingQueryResult_setRenderable(FilaViewPickingQueryResult* self, FilaEntity value);
 float FilaViewPickingQueryResult_getDepth(const FilaViewPickingQueryResult* self);
 void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float value);
-uint32_t FilaViewPickingQueryResult_getReserved1(const FilaViewPickingQueryResult* self);
-void FilaViewPickingQueryResult_setReserved1(FilaViewPickingQueryResult* self, uint32_t value);
-uint32_t FilaViewPickingQueryResult_getReserved2(const FilaViewPickingQueryResult* self);
-void FilaViewPickingQueryResult_setReserved2(FilaViewPickingQueryResult* self, uint32_t value);
+// skipped filament::View::PickingQueryResult::reserved1
+// skipped filament::View::PickingQueryResult::reserved2
 void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out);
 void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, const FilaFloat3* value);
 
@@ -62,6 +28,10 @@ uint32_t FilaViewPickingQuery_getStorage(const FilaViewPickingQuery* self, void*
 //     void * _Nullable[4]: the struct would keep the caller's pointer
 
 // filament::View
+// skipped void filament::View::setDebugCamera(Camera * _Nullable camera)
+// skipped utils::FixedCapacityVector<const Camera *> filament::View::getDirectionalShadowCameras() const
+// skipped void filament::View::setFroxelVizEnabled(bool enabled)
+// skipped FroxelConfigurationInfoWithAge filament::View::getFroxelConfigurationInfo() const: uses filament::View::FroxelConfigurationInfoWithAge
 void FilaView_setName(FilaView* self, const char* name);
 const char* FilaView_getName(const FilaView* self);
 void FilaView_setScene(FilaView* self, FilaScene* scene);
@@ -135,10 +105,6 @@ void FilaView_setStereoscopicOptions(FilaView* self, const FilaStereoscopicOptio
 void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptions* out);
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling);
 bool FilaView_isFrustumCullingEnabled(const FilaView* self);
-void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera);
-uint32_t FilaView_getDirectionalShadowCameras(const FilaView* self, const FilaCamera** out, uint32_t outCapacity);
-void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled);
-void FilaView_getFroxelConfigurationInfo(const FilaView* self, FilaViewFroxelConfigurationInfoWithAge* out);
 // TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
 //     void (*)(const PickingQueryResult &, PickingQuery * _Nonnull): takes C++ types
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);

@@ -9,10 +9,8 @@ extern "C" {
 #endif
 
 // filament::gltfio::MaterialProvider
-// TODO(handwritten) FilaGltfioMaterialProvider_createMaterialInstance: MaterialInstance * filament::gltfio::MaterialProvider::createMaterialInstance(MaterialKey * config, UvMap * uvmap, const char * label, const char * extras)
-//     std::array<UvSet, UvMapSize>: by non-const reference
-// TODO(handwritten) FilaGltfioMaterialProvider_getMaterial: Material * filament::gltfio::MaterialProvider::getMaterial(MaterialKey * config, UvMap * uvmap, const char * label)
-//     std::array<UvSet, UvMapSize>: by non-const reference
+// skipped MaterialInstance * filament::gltfio::MaterialProvider::createMaterialInstance(MaterialKey * config, UvMap * uvmap, const char * label, const char * extras): uses filament::gltfio::MaterialKey
+// skipped Material * filament::gltfio::MaterialProvider::getMaterial(MaterialKey * config, UvMap * uvmap, const char * label): uses filament::gltfio::MaterialKey
 // TODO(handwritten) FilaGltfioMaterialProvider_getMaterials: const Material *const * filament::gltfio::MaterialProvider::getMaterials() const
 //     const Material *const *: pointer to pointer
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self);

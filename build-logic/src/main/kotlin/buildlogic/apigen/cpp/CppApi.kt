@@ -14,11 +14,37 @@ class CppApi(
     val constants: Map<String, CppValue>,
     /** Namespace-level functions. */
     val functions: List<CppMethod>,
+    /** Qualified names left out of the API; `Record::*` keeps the record but none of its members. */
+    val skipped: Set<String> = emptySet(),
 ) {
-    /** The records API [headers] declare that code outside can name: what gets bound. */
-    fun apiRecords(headers: Set<String>) = records.values.filter { it.accessible && it.header in headers }
+    fun skipping(names: Set<String>) = CppApi(records, enums, aliases, constants, functions, names)
 
-    fun apiFunctions(headers: Set<String>) = functions.filter { it.header in headers && it.isApi && !it.isDeprecated }
+    /** The [skipped] entry that leaves out [name] (a record, member or function), or null. */
+    fun skipReason(name: String): String? = generateSequence(name) { it.substringBeforeLast("::", "").ifEmpty { null } }
+        .firstNotNullOfOrNull { n -> n.takeIf { it in skipped } ?: "$n::*".takeIf { n != name && it in skipped } }
+
+    /** Why [method] of [owner] is left out: it's skipped, or its signature uses a skipped record. */
+    fun skipReason(method: CppMethod, owner: String = method.owner): String? =
+        skipReason("$owner::${method.name}") ?: usesSkipped(method.params.map { it.type } + method.returns)
+
+    fun skipReason(field: CppField, owner: String): String? = skipReason("$owner::${field.name}") ?: usesSkipped(listOf(field.type))
+
+    private fun usesSkipped(types: List<CppType>) = types.flatMap { it.withArgs() }.mapNotNull { it.decl }
+        .firstNotNullOfOrNull { decl -> decl.takeIf { it in records }?.let(::skipReason)?.let { "uses $decl" } }
+
+    /** [skipped] entries that name nothing, stale after an upstream rename or removal. */
+    fun unknownSkips() = skipped.filterNot { entry ->
+        val name = entry.removeSuffix("::*")
+        val owner = name.substringBeforeLast("::")
+        val member = name.substringAfterLast("::")
+        name in records || records[owner]?.let { r -> r.methods.any { it.name == member } || r.fields.any { it.name == member } } == true ||
+            functions.any { it.owner == owner && it.name == member }
+    }
+
+    /** The records API [headers] declare that code outside can name: what gets bound. */
+    fun apiRecords(headers: Set<String>) = records.values.filter { it.accessible && it.header in headers && skipReason(it.name) == null }
+
+    fun apiFunctions(headers: Set<String>) = functions.filter { it.header in headers && it.isApi && !it.isDeprecated && skipReason(it) == null }
 
     /** [apiRecords] and [apiFunctions], plus every type their public members reach. */
     fun surface(headers: Set<String>): Set<String> {
@@ -29,8 +55,9 @@ class CppApi(
             val name = queue.removeFirst()
             if (!seen.add(name)) continue
             records[name]?.let { record ->
-                val methods = record.methods.filter { it.isPublic && it.isApi && !it.isDeprecated }
-                (methods.flatMap { m -> m.params.map { it.type } + m.returns } + record.fields.filter { it.isPublic }.map { it.type })
+                val methods = record.methods.filter { it.isPublic && it.isApi && !it.isDeprecated && skipReason(it, name) == null }
+                val fields = record.fields.filter { it.isPublic && skipReason(it, name) == null }
+                (methods.flatMap { m -> m.params.map { it.type } + m.returns } + fields.map { it.type })
                     .flatMap { it.withArgs() }.mapNotNullTo(queue) { it.decl }
             }
             aliases[name]?.withArgs()?.mapNotNullTo(queue) { it.decl }

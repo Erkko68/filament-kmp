@@ -4,44 +4,4 @@
 
 extern "C" {
 
-FilaTexture* FilaGltfioTextureProvider_pushTexture(FilaGltfioTextureProvider* self, const uint8_t* data, uint32_t byteCount, const char* mimeType, FilaGltfioTextureProviderTextureFlags flags) {
-    return fila::c(fila::cpp(self)->pushTexture(data, static_cast<size_t>(byteCount), mimeType, static_cast<filament::gltfio::TextureProvider::TextureFlags>(flags)));
-}
-
-FilaTexture* FilaGltfioTextureProvider_popTexture(FilaGltfioTextureProvider* self) {
-    return fila::c(fila::cpp(self)->popTexture());
-}
-
-void FilaGltfioTextureProvider_updateQueue(FilaGltfioTextureProvider* self) {
-    fila::cpp(self)->updateQueue();
-}
-
-const char* FilaGltfioTextureProvider_getPushMessage(const FilaGltfioTextureProvider* self) {
-    return fila::cpp(self)->getPushMessage();
-}
-
-const char* FilaGltfioTextureProvider_getPopMessage(const FilaGltfioTextureProvider* self) {
-    return fila::cpp(self)->getPopMessage();
-}
-
-void FilaGltfioTextureProvider_waitForCompletion(FilaGltfioTextureProvider* self) {
-    fila::cpp(self)->waitForCompletion();
-}
-
-void FilaGltfioTextureProvider_cancelDecoding(FilaGltfioTextureProvider* self) {
-    fila::cpp(self)->cancelDecoding();
-}
-
-uint32_t FilaGltfioTextureProvider_getPushedCount(const FilaGltfioTextureProvider* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getPushedCount());
-}
-
-uint32_t FilaGltfioTextureProvider_getPoppedCount(const FilaGltfioTextureProvider* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getPoppedCount());
-}
-
-uint32_t FilaGltfioTextureProvider_getDecodedCount(const FilaGltfioTextureProvider* self) {
-    return static_cast<uint32_t>(fila::cpp(self)->getDecodedCount());
-}
-
 } // extern "C"

@@ -32,10 +32,6 @@ uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* se
     return static_cast<uint32_t>(fila::cpp(self)->getMaterialsCount());
 }
 
-FilaGltfioNodeManager* FilaGltfioAssetLoader_getNodeManager(FilaGltfioAssetLoader* self) {
-    return fila::c(&fila::cpp(self)->getNodeManager());
-}
-
 FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* self) {
     return fila::c(&fila::cpp(self)->getMaterialProvider());
 }

@@ -14,33 +14,10 @@ typedef struct FilaGltfioAssetConfigurationExtended FilaGltfioAssetConfiguration
 typedef struct FilaGltfioAssetLoader FilaGltfioAssetLoader;
 typedef struct FilaGltfioFilamentAsset FilaGltfioFilamentAsset;
 typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;
-typedef struct FilaGltfioMaterialKey FilaGltfioMaterialKey;
 typedef struct FilaGltfioMaterialProvider FilaGltfioMaterialProvider;
-typedef struct FilaGltfioNodeManager FilaGltfioNodeManager;
 typedef struct FilaGltfioResourceConfiguration FilaGltfioResourceConfiguration;
 typedef struct FilaGltfioResourceLoader FilaGltfioResourceLoader;
 typedef struct FilaGltfioTextureProvider FilaGltfioTextureProvider;
-typedef struct FilaGltfioTrsTransformManager FilaGltfioTrsTransformManager;
-
-// filament::gltfio::AlphaMode
-typedef enum FilaGltfioAlphaMode {
-    FILA_GLTFIO_ALPHA_MODE_OPAQUE = 0,
-    FILA_GLTFIO_ALPHA_MODE_MASK = 1,
-    FILA_GLTFIO_ALPHA_MODE_BLEND = 2,
-} FilaGltfioAlphaMode;
-
-// filament::gltfio::TextureProvider::TextureFlags
-typedef enum FilaGltfioTextureProviderTextureFlags {
-    FILA_GLTFIO_TEXTURE_PROVIDER_TEXTURE_FLAGS_NONE = 0,
-    FILA_GLTFIO_TEXTURE_PROVIDER_TEXTURE_FLAGS_S_RGB = 1,
-} FilaGltfioTextureProviderTextureFlags;
-
-// filament::gltfio::UvSet
-typedef enum FilaGltfioUvSet {
-    FILA_GLTFIO_UV_SET_UNUSED = 0,
-    FILA_GLTFIO_UV_SET_UV0 = 1,
-    FILA_GLTFIO_UV_SET_UV1 = 2,
-} FilaGltfioUvSet;
 
 #ifdef __cplusplus
 }

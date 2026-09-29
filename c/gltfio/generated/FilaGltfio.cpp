@@ -4,10 +4,6 @@
 
 extern "C" {
 
-uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount) {
-    return static_cast<uint32_t>(filament::gltfio::getNumUvSets(fila::items(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); })));
-}
-
 FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount) {
     return fila::c(filament::gltfio::createJitShaderProvider(fila::cpp(engine), optimizeShaders, fila::items(variantFiltersCount, [&](uint32_t i) { return variantFilters[i]; })));
 }
@@ -30,18 +26,6 @@ FilaGltfioTextureProvider* FilaGltfio_createWebpProvider(FilaEngine* engine) {
 
 bool FilaGltfio_isWebpSupported(void) {
     return filament::gltfio::isWebpSupported();
-}
-
-void FilaGltfio_decomposeMatrix(const FilaMat4f* mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale) {
-    filament::gltfio::decomposeMatrix(std::bit_cast<filament::math::mat4f>(*mat), fila::cpp(translation), fila::cpp(rotation), fila::cpp(scale));
-}
-
-void FilaGltfio_composeMatrix(const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(filament::gltfio::composeMatrix(std::bit_cast<filament::math::float3>(*translation), std::bit_cast<filament::math::quatf>(*rotation), std::bit_cast<filament::math::float3>(*scale)));
-}
-
-void FilaGltfio_matrixFromUvTransform(const float* offset, float rotation, const float* scale, FilaMat3f* out) {
-    *out = std::bit_cast<FilaMat3f>(filament::gltfio::matrixFromUvTransform(offset, rotation, scale));
 }
 
 } // extern "C"

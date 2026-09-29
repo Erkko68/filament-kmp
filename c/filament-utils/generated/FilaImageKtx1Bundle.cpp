@@ -24,14 +24,6 @@ uint32_t FilaImageKtx1Bundle_getSerializedLength(const FilaImageKtx1Bundle* self
     return fila::cpp(self)->getSerializedLength();
 }
 
-void FilaImageKtx1Bundle_getInfo(const FilaImageKtx1Bundle* self, FilaImageKtxInfo* out) {
-    *fila::cpp(out) = fila::cpp(self)->getInfo();
-}
-
-FilaImageKtxInfo* FilaImageKtx1Bundle_info(FilaImageKtx1Bundle* self) {
-    return fila::c(&fila::cpp(self)->info());
-}
-
 void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key, const char* value) {
     fila::cpp(self)->setMetadata(key, value);
 }
@@ -46,14 +38,6 @@ uint32_t FilaImageKtx1Bundle_getArrayLength(const FilaImageKtx1Bundle* self) {
 
 bool FilaImageKtx1Bundle_isCubemap(const FilaImageKtx1Bundle* self) {
     return fila::cpp(self)->isCubemap();
-}
-
-bool FilaImageKtx1Bundle_setBlob(FilaImageKtx1Bundle* self, const FilaImageKtxBlobIndex* index, const uint8_t* data, uint32_t size) {
-    return fila::cpp(self)->setBlob(*fila::cpp(index), data, size);
-}
-
-bool FilaImageKtx1Bundle_allocateBlob(FilaImageKtx1Bundle* self, const FilaImageKtxBlobIndex* index, uint32_t size) {
-    return fila::cpp(self)->allocateBlob(*fila::cpp(index), size);
 }
 
 } // extern "C"

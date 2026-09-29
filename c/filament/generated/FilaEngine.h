@@ -90,6 +90,10 @@ void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCal
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 
 // filament::Engine
+// skipped Platform * _Nullable filament::Engine::getPlatform() const
+// skipped void * _Nullable filament::Engine::streamAlloc(size_t size, size_t alignment)
+// skipped DebugRegistry & filament::Engine::getDebugRegistry(): uses filament::DebugRegistry
+// skipped bool * _Nullable filament::Engine::getFeatureFlagPtr(const char * _Nonnull name) const
 uint32_t FilaEngine_getFeatureFlags(const FilaEngine* self, FilaEngineFeatureFlag* const* out, uint32_t outCapacity);
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
 // TODO(handwritten) FilaEngine_createAsync: static void filament::Engine::createAsync(CreateCallback * callback, void * _Nullable user, Backend backend, Platform * _Nullable platform, void * _Nullable sharedContext, const Config * _Nullable config)
@@ -196,18 +200,14 @@ void FilaEngine_pumpMessageQueues(FilaEngine* self);
 void FilaEngine_unprotected(FilaEngine* self);
 const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* self);
 FilaBackend FilaEngine_getBackend(const FilaEngine* self);
-FilaPlatform* FilaEngine_getPlatform(const FilaEngine* self);
-void* FilaEngine_streamAlloc(FilaEngine* self, uint32_t size, uint32_t alignment);
 void FilaEngine_execute(FilaEngine* self);
 // TODO(handwritten) FilaEngine_getJobSystem: utils::JobSystem & filament::Engine::getJobSystem()
 //     utils::JobSystem &: utils::JobSystem
 void FilaEngine_getSteadyClockTimeNano(uint64_t* out);
-FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* self);
 bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name);
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);
 // TODO(handwritten) FilaEngine_getFeatureFlag: std::optional<bool> filament::Engine::getFeatureFlag(const char * _Nonnull name) const
 //     std::optional<bool>: std::optional
-bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* self, const char* name);
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 
 

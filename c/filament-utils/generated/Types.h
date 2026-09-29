@@ -28,7 +28,6 @@ typedef struct FilaGeometryTangentSpaceMeshBuilder FilaGeometryTangentSpaceMeshB
 typedef struct FilaGeometryTranscoder FilaGeometryTranscoder;
 typedef struct FilaGeometryTranscoderConfig FilaGeometryTranscoderConfig;
 typedef struct FilaImageKtx1Bundle FilaImageKtx1Bundle;
-typedef struct FilaImageKtxBlobIndex FilaImageKtxBlobIndex;
 typedef struct FilaImageKtxInfo FilaImageKtxInfo;
 typedef struct FilaKtxreaderKtx2Reader FilaKtxreaderKtx2Reader;
 typedef struct FilaKtxreaderKtx2ReaderAsync FilaKtxreaderKtx2ReaderAsync;
