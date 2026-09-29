@@ -97,10 +97,8 @@ void FilaRenderer_setRenderingDeadline_int64_t(FilaRenderer* self, int64_t monot
 void FilaRenderer_setRenderingDeadline_time_point(FilaRenderer* self, int64_t monotonic_clock);
 void FilaRenderer_render(FilaRenderer* self, const FilaView* view);
 void FilaRenderer_copyFrame(FilaRenderer* self, FilaSwapChain* dstSwapChain, const FilaViewport* dstViewport, const FilaViewport* srcViewport, uint32_t flags);
-// TODO(handwritten) FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor: void filament::Renderer::readPixels(uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, backend::PixelBufferDescriptor && buffer)
-//     backend::PixelBufferDescriptor &&: rvalue reference
-// TODO(handwritten) FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor: void filament::Renderer::readPixels(RenderTarget * _Nonnull renderTarget, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, backend::PixelBufferDescriptor && buffer)
-//     backend::PixelBufferDescriptor &&: rvalue reference
+void FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
+void FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, FilaRenderTarget* renderTarget, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser);
 void FilaRenderer_endFrame(FilaRenderer* self);
 void FilaRenderer_renderStandaloneView(FilaRenderer* self, const FilaView* view);
 double FilaRenderer_getMaterialTime(const FilaRenderer* self);

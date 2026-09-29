@@ -9,10 +9,10 @@ extern "C" {
 #endif
 
 // filament::camutils::Bookmark
-// TODO(handwritten) FilaCamutilsBookmark_interpolate: static Bookmark<FLOAT> filament::camutils::Bookmark::interpolate(Bookmark<FLOAT> a, Bookmark<FLOAT> b, double t)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsBookmark_duration: static double filament::camutils::Bookmark::duration(Bookmark<FLOAT> a, Bookmark<FLOAT> b)
-//     member of a class template
+FilaCamutilsBookmark* FilaCamutilsBookmark_create(void);
+void FilaCamutilsBookmark_destroy(FilaCamutilsBookmark* self);
+void FilaCamutilsBookmark_interpolate(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b, double t, FilaCamutilsBookmark* out);
+double FilaCamutilsBookmark_duration(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b);
 
 
 #ifdef __cplusplus

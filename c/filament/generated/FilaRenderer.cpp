@@ -316,6 +316,14 @@ void FilaRenderer_copyFrame(FilaRenderer* self, FilaSwapChain* dstSwapChain, con
     reinterpret_cast<filament::Renderer*>(self)->copyFrame(reinterpret_cast<filament::SwapChain*>(dstSwapChain), *reinterpret_cast<const filament::Viewport*>(dstViewport), *reinterpret_cast<const filament::Viewport*>(srcViewport), flags);
 }
 
+void FilaRenderer_readPixels_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
+    reinterpret_cast<filament::Renderer*>(self)->readPixels(xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+}
+
+void FilaRenderer_readPixels_RenderTarget_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(FilaRenderer* self, FilaRenderTarget* renderTarget, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
+    reinterpret_cast<filament::Renderer*>(self)->readPixels(reinterpret_cast<filament::RenderTarget*>(renderTarget), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+}
+
 void FilaRenderer_endFrame(FilaRenderer* self) {
     reinterpret_cast<filament::Renderer*>(self)->endFrame();
 }

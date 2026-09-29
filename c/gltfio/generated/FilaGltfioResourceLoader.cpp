@@ -16,6 +16,10 @@ void FilaGltfioResourceLoader_setConfiguration(FilaGltfioResourceLoader* self, c
     reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->setConfiguration(*reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(config));
 }
 
+void FilaGltfioResourceLoader_addResourceData(FilaGltfioResourceLoader* self, const char* uri, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
+    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->addResourceData(uri, filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser));
+}
+
 void FilaGltfioResourceLoader_addTextureProvider(FilaGltfioResourceLoader* self, const char* mimeType, FilaGltfioTextureProvider* provider) {
     reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->addTextureProvider(mimeType, reinterpret_cast<filament::gltfio::TextureProvider*>(provider));
 }

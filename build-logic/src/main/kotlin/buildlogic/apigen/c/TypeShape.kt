@@ -22,4 +22,4 @@ internal fun shape(spelling: String): Shape {
 }
 
 private val TRAILING_CONST = Regex("""(^|\W)const$""")
-private val NULLABILITY = Regex("""\b_(Nonnull|Nullable|Null_unspecified)\b""")
+internal val NULLABILITY = Regex("""\b_(Nonnull|Nullable|Null_unspecified)\b""")

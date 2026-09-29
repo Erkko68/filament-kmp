@@ -40,6 +40,18 @@ void FilaMaterialInstance_setParameter_char_RgbaType_float4(FilaMaterialInstance
     reinterpret_cast<filament::MaterialInstance*>(self)->setParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
 }
 
+void FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
+void FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
+void FilaMaterialInstance_compile_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::MaterialInstance*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* self, uint32_t left, uint32_t bottom, uint32_t width, uint32_t height) {
     reinterpret_cast<filament::MaterialInstance*>(self)->setScissor(left, bottom, width, height);
 }

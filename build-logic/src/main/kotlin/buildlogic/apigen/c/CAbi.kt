@@ -20,6 +20,8 @@ internal object CAbi {
         if (cpp in TARGET_WIDTH) throw Unsupported("$cpp*: its width differs across targets")
     }
 
+    fun isBuiltin(cpp: String) = cpp in FIXED
+
     fun returnsThroughPointer(c: String) = c == "int64_t" || c == "uint64_t"
 
     private val TARGET_WIDTH = setOf(

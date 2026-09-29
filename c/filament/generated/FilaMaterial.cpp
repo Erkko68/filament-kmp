@@ -76,6 +76,18 @@ FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEng
     return reinterpret_cast<FilaMaterial*>(reinterpret_cast<const filament::Material::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
+void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::Material*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
+void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::Material*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
+void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::Material*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* self, const char* name) {
     return reinterpret_cast<FilaMaterialInstance*>(reinterpret_cast<const filament::Material*>(self)->createInstance(name));
 }

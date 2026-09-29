@@ -86,8 +86,7 @@ FilaEngineBuilder* FilaEngineBuilder_feature(FilaEngineBuilder* self, const char
 // TODO(handwritten) FilaEngineBuilder_features: Builder & filament::Engine::Builder::features(std::initializer_list<const char *> list)
 //     std::initializer_list<const char *>: std::initializer_list
 FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const FilaColorGradingBuilder* colorGrading);
-// TODO(handwritten) FilaEngineBuilder_build_Invocable: void filament::Engine::Builder::build(utils::Invocable<void (void * _Nonnull)> && callback) const
-//     utils::Invocable<void (void * _Nonnull)> &&: rvalue reference
+void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCallback callback, void* callbackUser);
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 
 // filament::Engine
@@ -188,13 +187,12 @@ uint32_t FilaEngine_getSkyboxeCount(const FilaEngine* self);
 uint32_t FilaEngine_getColorGradingCount(const FilaEngine* self);
 uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self);
 // TODO(handwritten) FilaEngine_runCommandAsync: AsyncCallId filament::Engine::runCommandAsync(utils::Invocable<void ()> && command, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback onComplete, void * _Nullable user)
-//     utils::Invocable<void ()> &&: rvalue reference
+//     AsyncCompletionCallback: std::function
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id);
 void FilaEngine_flushAndWait(FilaEngine* self);
 bool FilaEngine_flushAndWait_uint64_t(FilaEngine* self, uint64_t timeout);
 void FilaEngine_flush(FilaEngine* self);
-// TODO(handwritten) FilaEngine_isPaused: bool () const noexcept filament::Engine::isPaused()
-//     bool () const noexcept: function type
+bool FilaEngine_isPaused(const FilaEngine* self);
 void FilaEngine_setPaused(FilaEngine* self, bool paused);
 void FilaEngine_pumpMessageQueues(FilaEngine* self);
 void FilaEngine_unprotected(FilaEngine* self);
@@ -212,8 +210,7 @@ bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);
 // TODO(handwritten) FilaEngine_getFeatureFlag: std::optional<bool> filament::Engine::getFeatureFlag(const char * _Nonnull name) const
 //     std::optional<bool>: std::optional
 bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* self, const char* name);
-// TODO(handwritten) FilaEngine_compile: void filament::Engine::compile(backend::CompilerPriorityQueue priority, const Material * _Nonnull material, const View * _Nonnull view, utils::tribool shadowReceiver, utils::tribool skinning, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback)
-//     utils::Invocable<void (Material * _Nonnull)> &&: rvalue reference
+void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 
 
 #ifdef __cplusplus

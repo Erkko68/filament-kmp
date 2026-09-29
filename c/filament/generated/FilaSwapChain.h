@@ -16,10 +16,9 @@ int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self);
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy);
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* self);
 // TODO(handwritten) FilaSwapChain_setFrameScheduledCallback: void filament::SwapChain::setFrameScheduledCallback(backend::CallbackHandler * _Nullable handler, FrameScheduledCallback && callback, uint64_t flags)
-//     FrameScheduledCallback &&: rvalue reference
+//     utils::Invocable<void (PresentCallable)>: C callbacks take at most one pointer
 bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* self);
-// TODO(handwritten) FilaSwapChain_setFrameCompletedCallback: void filament::SwapChain::setFrameCompletedCallback(backend::CallbackHandler * _Nullable handler, FrameCompletedCallback && callback)
-//     FrameCompletedCallback &&: rvalue reference
+void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* self, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 
 
 #ifdef __cplusplus

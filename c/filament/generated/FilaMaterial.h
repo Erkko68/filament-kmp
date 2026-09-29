@@ -33,12 +33,9 @@ FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, 
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEngine* engine);
 
 // filament::Material
-// TODO(handwritten) FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable: void filament::Material::compile(CompilerPriorityQueue priority, UserVariantFilterMask variants, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback)
-//     utils::Invocable<void (Material * _Nonnull)> &&: rvalue reference
-// TODO(handwritten) FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable: void filament::Material::compile(CompilerPriorityQueue priority, UserVariantFilterBit variants, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback)
-//     utils::Invocable<void (Material * _Nonnull)> &&: rvalue reference
-// TODO(handwritten) FilaMaterial_compile_CallbackHandler_Invocable: void filament::Material::compile(CompilerPriorityQueue priority, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (Material * _Nonnull)> && callback)
-//     utils::Invocable<void (Material * _Nonnull)> &&: rvalue reference
+void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
+void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
+void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* self, const char* name);
 const char* FilaMaterial_getName(const FilaMaterial* self);
 FilaShading FilaMaterial_getShading(const FilaMaterial* self);

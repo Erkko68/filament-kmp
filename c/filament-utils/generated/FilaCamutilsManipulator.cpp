@@ -4,4 +4,324 @@
 
 extern "C" {
 
+FilaCamutilsManipulatorConfig* FilaCamutilsManipulatorConfig_create(void) {
+    return reinterpret_cast<FilaCamutilsManipulatorConfig*>(new filament::camutils::Manipulator<float>::Config());
+}
+
+void FilaCamutilsManipulatorConfig_destroy(FilaCamutilsManipulatorConfig* self) {
+    delete reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self);
+}
+
+void FilaCamutilsManipulatorConfig_getTargetPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->targetPosition);
+}
+
+void FilaCamutilsManipulatorConfig_setTargetPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->targetPosition = std::bit_cast<filament::math::float3>(*value);
+}
+
+void FilaCamutilsManipulatorConfig_getUpVector(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->upVector);
+}
+
+void FilaCamutilsManipulatorConfig_setUpVector(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->upVector = std::bit_cast<filament::math::float3>(*value);
+}
+
+float FilaCamutilsManipulatorConfig_getZoomSpeed(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->zoomSpeed;
+}
+
+void FilaCamutilsManipulatorConfig_setZoomSpeed(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->zoomSpeed = value;
+}
+
+void FilaCamutilsManipulatorConfig_getOrbitHomePosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->orbitHomePosition);
+}
+
+void FilaCamutilsManipulatorConfig_setOrbitHomePosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->orbitHomePosition = std::bit_cast<filament::math::float3>(*value);
+}
+
+void FilaCamutilsManipulatorConfig_getOrbitSpeed(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out) {
+    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->orbitSpeed);
+}
+
+void FilaCamutilsManipulatorConfig_setOrbitSpeed(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->orbitSpeed = std::bit_cast<filament::math::float2>(*value);
+}
+
+FilaCamutilsFov FilaCamutilsManipulatorConfig_getFovDirection(const FilaCamutilsManipulatorConfig* self) {
+    return static_cast<FilaCamutilsFov>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->fovDirection);
+}
+
+void FilaCamutilsManipulatorConfig_setFovDirection(FilaCamutilsManipulatorConfig* self, FilaCamutilsFov value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->fovDirection = static_cast<filament::camutils::Fov>(value);
+}
+
+float FilaCamutilsManipulatorConfig_getFovDegrees(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->fovDegrees;
+}
+
+void FilaCamutilsManipulatorConfig_setFovDegrees(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->fovDegrees = value;
+}
+
+float FilaCamutilsManipulatorConfig_getFarPlane(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->farPlane;
+}
+
+void FilaCamutilsManipulatorConfig_setFarPlane(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->farPlane = value;
+}
+
+void FilaCamutilsManipulatorConfig_getMapExtent(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out) {
+    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->mapExtent);
+}
+
+void FilaCamutilsManipulatorConfig_setMapExtent(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->mapExtent = std::bit_cast<filament::math::float2>(*value);
+}
+
+float FilaCamutilsManipulatorConfig_getMapMinDistance(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->mapMinDistance;
+}
+
+void FilaCamutilsManipulatorConfig_setMapMinDistance(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->mapMinDistance = value;
+}
+
+void FilaCamutilsManipulatorConfig_getFlightStartPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out) {
+    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightStartPosition);
+}
+
+void FilaCamutilsManipulatorConfig_setFlightStartPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightStartPosition = std::bit_cast<filament::math::float3>(*value);
+}
+
+float FilaCamutilsManipulatorConfig_getFlightStartPitch(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightStartPitch;
+}
+
+void FilaCamutilsManipulatorConfig_setFlightStartPitch(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightStartPitch = value;
+}
+
+float FilaCamutilsManipulatorConfig_getFlightStartYaw(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightStartYaw;
+}
+
+void FilaCamutilsManipulatorConfig_setFlightStartYaw(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightStartYaw = value;
+}
+
+float FilaCamutilsManipulatorConfig_getFlightMaxSpeed(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightMaxSpeed;
+}
+
+void FilaCamutilsManipulatorConfig_setFlightMaxSpeed(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightMaxSpeed = value;
+}
+
+float FilaCamutilsManipulatorConfig_getFlightSpeedSteps(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightSpeedSteps;
+}
+
+void FilaCamutilsManipulatorConfig_setFlightSpeedSteps(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightSpeedSteps = value;
+}
+
+void FilaCamutilsManipulatorConfig_getFlightPanSpeed(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out) {
+    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightPanSpeed);
+}
+
+void FilaCamutilsManipulatorConfig_setFlightPanSpeed(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightPanSpeed = std::bit_cast<filament::math::float2>(*value);
+}
+
+float FilaCamutilsManipulatorConfig_getFlightMoveDamping(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->flightMoveDamping;
+}
+
+void FilaCamutilsManipulatorConfig_setFlightMoveDamping(FilaCamutilsManipulatorConfig* self, float value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->flightMoveDamping = value;
+}
+
+void FilaCamutilsManipulatorConfig_getGroundPlane(const FilaCamutilsManipulatorConfig* self, FilaFloat4* out) {
+    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->groundPlane);
+}
+
+void FilaCamutilsManipulatorConfig_setGroundPlane(FilaCamutilsManipulatorConfig* self, const FilaFloat4* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->groundPlane = std::bit_cast<filament::math::float4>(*value);
+}
+
+void* FilaCamutilsManipulatorConfig_getRaycastUserdata(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->raycastUserdata;
+}
+
+bool FilaCamutilsManipulatorConfig_getPanning(const FilaCamutilsManipulatorConfig* self) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(self)->panning;
+}
+
+void FilaCamutilsManipulatorConfig_setPanning(FilaCamutilsManipulatorConfig* self, bool value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(self)->panning = value;
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_create(void) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(new filament::camutils::Manipulator<float>::Builder());
+}
+
+void FilaCamutilsManipulatorBuilder_destroy(FilaCamutilsManipulatorBuilder* self) {
+    delete reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self);
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_viewport(FilaCamutilsManipulatorBuilder* self, int32_t width, int32_t height) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->viewport(static_cast<int>(width), static_cast<int>(height)));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_targetPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->targetPosition(x, y, z));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_upVector(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->upVector(x, y, z));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_zoomSpeed(FilaCamutilsManipulatorBuilder* self, float val) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->zoomSpeed(val));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitHomePosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->orbitHomePosition(x, y, z));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->orbitSpeed(x, y));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDirection(FilaCamutilsManipulatorBuilder* self, FilaCamutilsFov fov) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->fovDirection(static_cast<filament::camutils::Fov>(fov)));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDegrees(FilaCamutilsManipulatorBuilder* self, float degrees) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->fovDegrees(degrees));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_farPlane(FilaCamutilsManipulatorBuilder* self, float distance) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->farPlane(distance));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapExtent(FilaCamutilsManipulatorBuilder* self, float worldWidth, float worldHeight) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->mapExtent(worldWidth, worldHeight));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapMinDistance(FilaCamutilsManipulatorBuilder* self, float mindist) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->mapMinDistance(mindist));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->flightStartPosition(x, y, z));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartOrientation(FilaCamutilsManipulatorBuilder* self, float pitch, float yaw) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->flightStartOrientation(pitch, yaw));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed(FilaCamutilsManipulatorBuilder* self, float maxSpeed) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->flightMaxMoveSpeed(maxSpeed));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightSpeedSteps(FilaCamutilsManipulatorBuilder* self, int32_t steps) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->flightSpeedSteps(static_cast<int>(steps)));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightPanSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->flightPanSpeed(x, y));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMoveDamping(FilaCamutilsManipulatorBuilder* self, float damping) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->flightMoveDamping(damping));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_groundPlane(FilaCamutilsManipulatorBuilder* self, float a, float b, float c, float d) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->groundPlane(a, b, c, d));
+}
+
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_panning(FilaCamutilsManipulatorBuilder* self, bool enabled) {
+    return reinterpret_cast<FilaCamutilsManipulatorBuilder*>(&reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->panning(enabled));
+}
+
+FilaCamutilsManipulator* FilaCamutilsManipulatorBuilder_build(FilaCamutilsManipulatorBuilder* self, FilaCamutilsMode mode) {
+    return reinterpret_cast<FilaCamutilsManipulator*>(reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->build(static_cast<filament::camutils::Mode>(mode)));
+}
+
+void FilaCamutilsManipulatorBuilder_getDetails(const FilaCamutilsManipulatorBuilder* self, FilaCamutilsManipulatorConfig* out) {
+    *reinterpret_cast<filament::camutils::Manipulator<float>::Config*>(out) = reinterpret_cast<const filament::camutils::Manipulator<float>::Builder*>(self)->details;
+}
+
+void FilaCamutilsManipulatorBuilder_setDetails(FilaCamutilsManipulatorBuilder* self, const FilaCamutilsManipulatorConfig* value) {
+    reinterpret_cast<filament::camutils::Manipulator<float>::Builder*>(self)->details = *reinterpret_cast<const filament::camutils::Manipulator<float>::Config*>(value);
+}
+
+FilaCamutilsMode FilaCamutilsManipulator_getMode(const FilaCamutilsManipulator* self) {
+    return static_cast<FilaCamutilsMode>(reinterpret_cast<const filament::camutils::Manipulator<float>*>(self)->getMode());
+}
+
+void FilaCamutilsManipulator_setViewport(FilaCamutilsManipulator* self, int32_t width, int32_t height) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->setViewport(static_cast<int>(width), static_cast<int>(height));
+}
+
+void FilaCamutilsManipulator_getLookAt(const FilaCamutilsManipulator* self, FilaFloat3* eyePosition, FilaFloat3* targetPosition, FilaFloat3* upward) {
+    reinterpret_cast<const filament::camutils::Manipulator<float>*>(self)->getLookAt(reinterpret_cast<filament::math::float3*>(eyePosition), reinterpret_cast<filament::math::float3*>(targetPosition), reinterpret_cast<filament::math::float3*>(upward));
+}
+
+bool FilaCamutilsManipulator_raycast(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* result) {
+    return reinterpret_cast<const filament::camutils::Manipulator<float>*>(self)->raycast(static_cast<int>(x), static_cast<int>(y), reinterpret_cast<filament::math::float3*>(result));
+}
+
+void FilaCamutilsManipulator_getRay(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* origin, FilaFloat3* dir) {
+    reinterpret_cast<const filament::camutils::Manipulator<float>*>(self)->getRay(static_cast<int>(x), static_cast<int>(y), reinterpret_cast<filament::math::float3*>(origin), reinterpret_cast<filament::math::float3*>(dir));
+}
+
+void FilaCamutilsManipulator_grabBegin(FilaCamutilsManipulator* self, int32_t x, int32_t y, bool strafe) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->grabBegin(static_cast<int>(x), static_cast<int>(y), strafe);
+}
+
+void FilaCamutilsManipulator_grabUpdate(FilaCamutilsManipulator* self, int32_t x, int32_t y) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->grabUpdate(static_cast<int>(x), static_cast<int>(y));
+}
+
+void FilaCamutilsManipulator_grabEnd(FilaCamutilsManipulator* self) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->grabEnd();
+}
+
+void FilaCamutilsManipulator_keyDown(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->keyDown(static_cast<filament::camutils::Manipulator<float>::Key>(key));
+}
+
+void FilaCamutilsManipulator_keyUp(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->keyUp(static_cast<filament::camutils::Manipulator<float>::Key>(key));
+}
+
+void FilaCamutilsManipulator_scroll(FilaCamutilsManipulator* self, int32_t x, int32_t y, float scrolldelta) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->scroll(static_cast<int>(x), static_cast<int>(y), scrolldelta);
+}
+
+void FilaCamutilsManipulator_update(FilaCamutilsManipulator* self, float deltaTime) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->update(deltaTime);
+}
+
+void FilaCamutilsManipulator_getCurrentBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out) {
+    *reinterpret_cast<filament::camutils::Bookmark<float>*>(out) = reinterpret_cast<const filament::camutils::Manipulator<float>*>(self)->getCurrentBookmark();
+}
+
+void FilaCamutilsManipulator_getHomeBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out) {
+    *reinterpret_cast<filament::camutils::Bookmark<float>*>(out) = reinterpret_cast<const filament::camutils::Manipulator<float>*>(self)->getHomeBookmark();
+}
+
+void FilaCamutilsManipulator_jumpToBookmark(FilaCamutilsManipulator* self, const FilaCamutilsBookmark* bookmark) {
+    reinterpret_cast<filament::camutils::Manipulator<float>*>(self)->jumpToBookmark(*reinterpret_cast<const filament::camutils::Bookmark<float>*>(bookmark));
+}
+
 } // extern "C"

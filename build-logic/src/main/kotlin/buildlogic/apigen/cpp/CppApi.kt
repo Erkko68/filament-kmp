@@ -55,7 +55,8 @@ class CppType(val spelling: String, val decl: String?, val kind: Kind) {
  * [header]: relative to the include dir, null outside it. [exported]: `*_PUBLIC`, or publicly nested in an exported
  * class. [accessible]: nameable from outside the class. [template]: a class template or nested in one, named without the arguments.
  * [constructors]: the public ones' parameters, copies and moves aside. [destructible]: publicly. [allocatable]: no
- * base deletes `operator new` (Filament's handle classes do: only the Engine creates them).
+ * base deletes `operator new` (Filament's handle classes do: only the Engine creates them). [copyable]: no copy
+ * constructor is deleted or hidden, nor implicitly deleted by a declared move (deletion by members goes unseen).
  */
 class CppRecord(
     val name: String,
@@ -69,6 +70,7 @@ class CppRecord(
     val constructors: List<List<CppParam>>,
     val destructible: Boolean,
     val allocatable: Boolean,
+    val copyable: Boolean,
 ) {
     val defaultConstructible get() = constructors.any { ctor -> ctor.all { it.default != null } }
 }

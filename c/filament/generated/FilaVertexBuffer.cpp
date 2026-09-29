@@ -44,6 +44,10 @@ uint32_t FilaVertexBuffer_getVertexCount(const FilaVertexBuffer* self) {
     return static_cast<uint32_t>(reinterpret_cast<const filament::VertexBuffer*>(self)->getVertexCount());
 }
 
+void FilaVertexBuffer_setBufferAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
+    reinterpret_cast<filament::VertexBuffer*>(self)->setBufferAt(*reinterpret_cast<filament::Engine*>(engine), static_cast<uint8_t>(bufferIndex), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+}
+
 void FilaVertexBuffer_setBufferObjectAt(FilaVertexBuffer* self, FilaEngine* engine, uint32_t bufferIndex, const FilaBufferObject* bufferObject) {
     reinterpret_cast<filament::VertexBuffer*>(self)->setBufferObjectAt(*reinterpret_cast<filament::Engine*>(engine), static_cast<uint8_t>(bufferIndex), reinterpret_cast<const filament::BufferObject*>(bufferObject));
 }

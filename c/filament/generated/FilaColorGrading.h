@@ -31,7 +31,7 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder*
 //     utils::FixedCapacityVector<math::float3>: utils::FixedCapacityVector
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace);
 // TODO(handwritten) FilaColorGradingBuilder_exportLut: Builder & filament::ColorGrading::Builder::exportLut(ExportCallback _Nullable callback, void * _Nullable user)
-//     ExportCallback _Nullable: function type
+//     void (*)(const void * _Nonnull, size_t, backend::PixelDataFormat, backend::PixelDataType, uint32_t, uint32_t, uint32_t, void * _Nullable): takes C++ types
 FilaColorGradingBuilder* FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* self, bool fastMath);
 FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* self, FilaEngine* engine);
 

@@ -19,10 +19,8 @@ FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine)
 
 // filament::Stream
 FilaStreamType FilaStream_getStreamType(const FilaStream* self);
-// TODO(handwritten) FilaStream_setAcquiredImage_Callback_void_mat3f: void filament::Stream::setAcquiredImage(void * _Nonnull image, Callback _Nonnull callback, void * _Nullable userdata, const math::mat3f & transform)
-//     Callback _Nonnull: function type
-// TODO(handwritten) FilaStream_setAcquiredImage_CallbackHandler_Callback_void_mat3f: void filament::Stream::setAcquiredImage(void * _Nonnull image, backend::CallbackHandler * _Nullable handler, Callback _Nonnull callback, void * _Nullable userdata, const math::mat3f & transform)
-//     Callback _Nonnull: function type
+void FilaStream_setAcquiredImage_Callback_void_mat3f(FilaStream* self, void* image, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform);
+void FilaStream_setAcquiredImage_CallbackHandler_Callback_void_mat3f(FilaStream* self, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform);
 void FilaStream_setDimensions(FilaStream* self, uint32_t width, uint32_t height);
 void FilaStream_getTimestamp(const FilaStream* self, int64_t* out);
 

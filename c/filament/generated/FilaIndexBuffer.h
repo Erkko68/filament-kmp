@@ -20,10 +20,9 @@ FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine);
 
 // filament::IndexBuffer
-// TODO(handwritten) FilaIndexBuffer_setBuffer: void filament::IndexBuffer::setBuffer(Engine & engine, BufferDescriptor && buffer, uint32_t byteOffset)
-//     BufferDescriptor &&: rvalue reference
+void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
 // TODO(handwritten) FilaIndexBuffer_setBufferAsync: AsyncCallId filament::IndexBuffer::setBufferAsync(Engine & engine, BufferDescriptor && buffer, uint32_t byteOffset, backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
-//     BufferDescriptor &&: rvalue reference
+//     AsyncCompletionCallback: std::function
 uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self);
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self);
 

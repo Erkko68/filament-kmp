@@ -24,6 +24,10 @@ FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, F
     return reinterpret_cast<FilaBufferObject*>(reinterpret_cast<filament::BufferObject::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }
 
+void FilaBufferObject_setBuffer(FilaBufferObject* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
+    reinterpret_cast<filament::BufferObject*>(self)->setBuffer(*reinterpret_cast<filament::Engine*>(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+}
+
 uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self) {
     return static_cast<uint32_t>(reinterpret_cast<const filament::BufferObject*>(self)->getByteCount());
 }

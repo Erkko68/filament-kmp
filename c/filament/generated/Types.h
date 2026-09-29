@@ -12,6 +12,12 @@ extern "C" {
 
 typedef int32_t FilaEntity;
 
+typedef void (*FilaArgCallback)(void* arg, void* user);
+typedef void (*FilaBufferDescriptorCallback)(void* buffer, size_t size, void* user);
+typedef void (*FilaCallback)(void* user);
+typedef void (*FilaKtxreaderKtx1ReaderCallback)(void *);
+typedef void (*FilaStreamCallback)(void *, void *);
+
 typedef struct FilaDouble2 { double v[2]; } FilaDouble2;
 typedef struct FilaDouble3 { double v[3]; } FilaDouble3;
 typedef struct FilaDouble4 { double v[4]; } FilaDouble4;

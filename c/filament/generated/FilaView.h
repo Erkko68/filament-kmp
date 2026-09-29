@@ -142,7 +142,7 @@ void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera);
 void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled);
 void FilaView_getFroxelConfigurationInfo(const FilaView* self, FilaViewFroxelConfigurationInfoWithAge* out);
 // TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
-//     PickingQueryResultCallback _Nonnull: function type
+//     void (*)(const PickingQueryResult &, PickingQuery * _Nonnull): takes C++ types
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out);
 FilaEntity FilaView_getFogEntity(const FilaView* self);

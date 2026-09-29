@@ -8,81 +8,103 @@
 extern "C" {
 #endif
 
+// filament::camutils::Manipulator::Config
+FilaCamutilsManipulatorConfig* FilaCamutilsManipulatorConfig_create(void);
+void FilaCamutilsManipulatorConfig_destroy(FilaCamutilsManipulatorConfig* self);
+// TODO(handwritten) FilaCamutilsManipulatorConfig_getViewport: int[2] filament::camutils::Manipulator::Config::viewport
+//     int[2]: array
+// TODO(handwritten) FilaCamutilsManipulatorConfig_setViewport: int[2] filament::camutils::Manipulator::Config::viewport
+//     int[2]: array
+void FilaCamutilsManipulatorConfig_getTargetPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
+void FilaCamutilsManipulatorConfig_setTargetPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
+void FilaCamutilsManipulatorConfig_getUpVector(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
+void FilaCamutilsManipulatorConfig_setUpVector(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
+float FilaCamutilsManipulatorConfig_getZoomSpeed(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setZoomSpeed(FilaCamutilsManipulatorConfig* self, float value);
+void FilaCamutilsManipulatorConfig_getOrbitHomePosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
+void FilaCamutilsManipulatorConfig_setOrbitHomePosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
+void FilaCamutilsManipulatorConfig_getOrbitSpeed(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out);
+void FilaCamutilsManipulatorConfig_setOrbitSpeed(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value);
+FilaCamutilsFov FilaCamutilsManipulatorConfig_getFovDirection(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFovDirection(FilaCamutilsManipulatorConfig* self, FilaCamutilsFov value);
+float FilaCamutilsManipulatorConfig_getFovDegrees(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFovDegrees(FilaCamutilsManipulatorConfig* self, float value);
+float FilaCamutilsManipulatorConfig_getFarPlane(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFarPlane(FilaCamutilsManipulatorConfig* self, float value);
+void FilaCamutilsManipulatorConfig_getMapExtent(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out);
+void FilaCamutilsManipulatorConfig_setMapExtent(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value);
+float FilaCamutilsManipulatorConfig_getMapMinDistance(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setMapMinDistance(FilaCamutilsManipulatorConfig* self, float value);
+void FilaCamutilsManipulatorConfig_getFlightStartPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
+void FilaCamutilsManipulatorConfig_setFlightStartPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
+float FilaCamutilsManipulatorConfig_getFlightStartPitch(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFlightStartPitch(FilaCamutilsManipulatorConfig* self, float value);
+float FilaCamutilsManipulatorConfig_getFlightStartYaw(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFlightStartYaw(FilaCamutilsManipulatorConfig* self, float value);
+float FilaCamutilsManipulatorConfig_getFlightMaxSpeed(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFlightMaxSpeed(FilaCamutilsManipulatorConfig* self, float value);
+float FilaCamutilsManipulatorConfig_getFlightSpeedSteps(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFlightSpeedSteps(FilaCamutilsManipulatorConfig* self, float value);
+void FilaCamutilsManipulatorConfig_getFlightPanSpeed(const FilaCamutilsManipulatorConfig* self, FilaFloat2* out);
+void FilaCamutilsManipulatorConfig_setFlightPanSpeed(FilaCamutilsManipulatorConfig* self, const FilaFloat2* value);
+float FilaCamutilsManipulatorConfig_getFlightMoveDamping(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setFlightMoveDamping(FilaCamutilsManipulatorConfig* self, float value);
+void FilaCamutilsManipulatorConfig_getGroundPlane(const FilaCamutilsManipulatorConfig* self, FilaFloat4* out);
+void FilaCamutilsManipulatorConfig_setGroundPlane(FilaCamutilsManipulatorConfig* self, const FilaFloat4* value);
+// TODO(handwritten) FilaCamutilsManipulatorConfig_getRaycastCallback: RayCallback filament::camutils::Manipulator::Config::raycastCallback
+//     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
+// TODO(handwritten) FilaCamutilsManipulatorConfig_setRaycastCallback: RayCallback filament::camutils::Manipulator::Config::raycastCallback
+//     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
+void* FilaCamutilsManipulatorConfig_getRaycastUserdata(const FilaCamutilsManipulatorConfig* self);
+// TODO(handwritten) FilaCamutilsManipulatorConfig_setRaycastUserdata: void * filament::camutils::Manipulator::Config::raycastUserdata
+//     void *: the struct would keep the caller's pointer
+bool FilaCamutilsManipulatorConfig_getPanning(const FilaCamutilsManipulatorConfig* self);
+void FilaCamutilsManipulatorConfig_setPanning(FilaCamutilsManipulatorConfig* self, bool value);
+
 // filament::camutils::Manipulator::Builder
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_viewport: Builder & filament::camutils::Manipulator::Builder::viewport(int width, int height)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_targetPosition: Builder & filament::camutils::Manipulator::Builder::targetPosition(FLOAT x, FLOAT y, FLOAT z)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_upVector: Builder & filament::camutils::Manipulator::Builder::upVector(FLOAT x, FLOAT y, FLOAT z)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_zoomSpeed: Builder & filament::camutils::Manipulator::Builder::zoomSpeed(FLOAT val)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_orbitHomePosition: Builder & filament::camutils::Manipulator::Builder::orbitHomePosition(FLOAT x, FLOAT y, FLOAT z)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_orbitSpeed: Builder & filament::camutils::Manipulator::Builder::orbitSpeed(FLOAT x, FLOAT y)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_fovDirection: Builder & filament::camutils::Manipulator::Builder::fovDirection(Fov fov)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_fovDegrees: Builder & filament::camutils::Manipulator::Builder::fovDegrees(FLOAT degrees)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_farPlane: Builder & filament::camutils::Manipulator::Builder::farPlane(FLOAT distance)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_mapExtent: Builder & filament::camutils::Manipulator::Builder::mapExtent(FLOAT worldWidth, FLOAT worldHeight)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_mapMinDistance: Builder & filament::camutils::Manipulator::Builder::mapMinDistance(FLOAT mindist)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_flightStartPosition: Builder & filament::camutils::Manipulator::Builder::flightStartPosition(FLOAT x, FLOAT y, FLOAT z)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_flightStartOrientation: Builder & filament::camutils::Manipulator::Builder::flightStartOrientation(FLOAT pitch, FLOAT yaw)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed: Builder & filament::camutils::Manipulator::Builder::flightMaxMoveSpeed(FLOAT maxSpeed)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_flightSpeedSteps: Builder & filament::camutils::Manipulator::Builder::flightSpeedSteps(int steps)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_flightPanSpeed: Builder & filament::camutils::Manipulator::Builder::flightPanSpeed(FLOAT x, FLOAT y)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_flightMoveDamping: Builder & filament::camutils::Manipulator::Builder::flightMoveDamping(FLOAT damping)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_groundPlane: Builder & filament::camutils::Manipulator::Builder::groundPlane(FLOAT a, FLOAT b, FLOAT c, FLOAT d)
-//     member of a class template
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_create(void);
+void FilaCamutilsManipulatorBuilder_destroy(FilaCamutilsManipulatorBuilder* self);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_viewport(FilaCamutilsManipulatorBuilder* self, int32_t width, int32_t height);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_targetPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_upVector(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_zoomSpeed(FilaCamutilsManipulatorBuilder* self, float val);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitHomePosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_orbitSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDirection(FilaCamutilsManipulatorBuilder* self, FilaCamutilsFov fov);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_fovDegrees(FilaCamutilsManipulatorBuilder* self, float degrees);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_farPlane(FilaCamutilsManipulatorBuilder* self, float distance);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapExtent(FilaCamutilsManipulatorBuilder* self, float worldWidth, float worldHeight);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_mapMinDistance(FilaCamutilsManipulatorBuilder* self, float mindist);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartPosition(FilaCamutilsManipulatorBuilder* self, float x, float y, float z);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightStartOrientation(FilaCamutilsManipulatorBuilder* self, float pitch, float yaw);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMaxMoveSpeed(FilaCamutilsManipulatorBuilder* self, float maxSpeed);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightSpeedSteps(FilaCamutilsManipulatorBuilder* self, int32_t steps);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightPanSpeed(FilaCamutilsManipulatorBuilder* self, float x, float y);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_flightMoveDamping(FilaCamutilsManipulatorBuilder* self, float damping);
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_groundPlane(FilaCamutilsManipulatorBuilder* self, float a, float b, float c, float d);
 // TODO(handwritten) FilaCamutilsManipulatorBuilder_raycastCallback: Builder & filament::camutils::Manipulator::Builder::raycastCallback(RayCallback cb, void * userdata)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_panning: Builder & filament::camutils::Manipulator::Builder::panning(bool enabled)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulatorBuilder_build: Manipulator<FLOAT> * filament::camutils::Manipulator::Builder::build(Mode mode)
-//     member of a class template
+//     bool (*)(const vec3 &, const vec3 &, FLOAT *, void *): takes C++ types
+FilaCamutilsManipulatorBuilder* FilaCamutilsManipulatorBuilder_panning(FilaCamutilsManipulatorBuilder* self, bool enabled);
+FilaCamutilsManipulator* FilaCamutilsManipulatorBuilder_build(FilaCamutilsManipulatorBuilder* self, FilaCamutilsMode mode);
+void FilaCamutilsManipulatorBuilder_getDetails(const FilaCamutilsManipulatorBuilder* self, FilaCamutilsManipulatorConfig* out);
+void FilaCamutilsManipulatorBuilder_setDetails(FilaCamutilsManipulatorBuilder* self, const FilaCamutilsManipulatorConfig* value);
 
 // filament::camutils::Manipulator
-// TODO(handwritten) FilaCamutilsManipulator_getMode: Mode filament::camutils::Manipulator::getMode() const
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_setViewport: void filament::camutils::Manipulator::setViewport(int width, int height)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_getLookAt: void filament::camutils::Manipulator::getLookAt(vec3 * eyePosition, vec3 * targetPosition, vec3 * upward) const
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_raycast: bool filament::camutils::Manipulator::raycast(int x, int y, vec3 * result) const
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_getRay: void filament::camutils::Manipulator::getRay(int x, int y, vec3 * origin, vec3 * dir) const
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_grabBegin: void filament::camutils::Manipulator::grabBegin(int x, int y, bool strafe)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_grabUpdate: void filament::camutils::Manipulator::grabUpdate(int x, int y)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_grabEnd: void filament::camutils::Manipulator::grabEnd()
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_keyDown: void filament::camutils::Manipulator::keyDown(Key key)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_keyUp: void filament::camutils::Manipulator::keyUp(Key key)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_scroll: void filament::camutils::Manipulator::scroll(int x, int y, FLOAT scrolldelta)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_update: void filament::camutils::Manipulator::update(FLOAT deltaTime)
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_getCurrentBookmark: Bookmark filament::camutils::Manipulator::getCurrentBookmark() const
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_getHomeBookmark: Bookmark filament::camutils::Manipulator::getHomeBookmark() const
-//     member of a class template
-// TODO(handwritten) FilaCamutilsManipulator_jumpToBookmark: void filament::camutils::Manipulator::jumpToBookmark(const Bookmark & bookmark)
-//     member of a class template
+FilaCamutilsMode FilaCamutilsManipulator_getMode(const FilaCamutilsManipulator* self);
+void FilaCamutilsManipulator_setViewport(FilaCamutilsManipulator* self, int32_t width, int32_t height);
+void FilaCamutilsManipulator_getLookAt(const FilaCamutilsManipulator* self, FilaFloat3* eyePosition, FilaFloat3* targetPosition, FilaFloat3* upward);
+bool FilaCamutilsManipulator_raycast(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* result);
+void FilaCamutilsManipulator_getRay(const FilaCamutilsManipulator* self, int32_t x, int32_t y, FilaFloat3* origin, FilaFloat3* dir);
+void FilaCamutilsManipulator_grabBegin(FilaCamutilsManipulator* self, int32_t x, int32_t y, bool strafe);
+void FilaCamutilsManipulator_grabUpdate(FilaCamutilsManipulator* self, int32_t x, int32_t y);
+void FilaCamutilsManipulator_grabEnd(FilaCamutilsManipulator* self);
+void FilaCamutilsManipulator_keyDown(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key);
+void FilaCamutilsManipulator_keyUp(FilaCamutilsManipulator* self, FilaCamutilsManipulatorKey key);
+void FilaCamutilsManipulator_scroll(FilaCamutilsManipulator* self, int32_t x, int32_t y, float scrolldelta);
+void FilaCamutilsManipulator_update(FilaCamutilsManipulator* self, float deltaTime);
+void FilaCamutilsManipulator_getCurrentBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out);
+void FilaCamutilsManipulator_getHomeBookmark(const FilaCamutilsManipulator* self, FilaCamutilsBookmark* out);
+void FilaCamutilsManipulator_jumpToBookmark(FilaCamutilsManipulator* self, const FilaCamutilsBookmark* bookmark);
 
 
 #ifdef __cplusplus

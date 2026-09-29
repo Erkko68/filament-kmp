@@ -32,4 +32,8 @@ bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* self) {
     return reinterpret_cast<const filament::SwapChain*>(self)->isFrameScheduledCallbackSet();
 }
 
+void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* self, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
+    reinterpret_cast<filament::SwapChain*>(self)->setFrameCompletedCallback(reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+}
+
 } // extern "C"

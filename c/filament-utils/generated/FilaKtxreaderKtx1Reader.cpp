@@ -24,6 +24,10 @@ FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo
     return static_cast<FilaTextureFormat>(ktxreader::Ktx1Reader::toTextureFormat(*reinterpret_cast<const image::KtxInfo*>(info)));
 }
 
+FilaTexture* FilaKtxreaderKtx1Reader_createTexture_Callback_void(FilaEngine* engine, const FilaImageKtx1Bundle* ktx, bool srgb, FilaKtxreaderKtx1ReaderCallback callback, void* userdata) {
+    return reinterpret_cast<FilaTexture*>(ktxreader::Ktx1Reader::createTexture(reinterpret_cast<filament::Engine*>(engine), *reinterpret_cast<const image::Ktx1Bundle*>(ktx), srgb, callback, userdata));
+}
+
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb) {
     return reinterpret_cast<FilaTexture*>(ktxreader::Ktx1Reader::createTexture(reinterpret_cast<filament::Engine*>(engine), reinterpret_cast<image::Ktx1Bundle*>(ktx), srgb));
 }

@@ -18,8 +18,7 @@ FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBui
 FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine);
 
 // filament::BufferObject
-// TODO(handwritten) FilaBufferObject_setBuffer: void filament::BufferObject::setBuffer(Engine & engine, BufferDescriptor && buffer, uint32_t byteOffset)
-//     BufferDescriptor &&: rvalue reference
+void FilaBufferObject_setBuffer(FilaBufferObject* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset);
 uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self);
 
 

@@ -89,6 +89,9 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         val constructors = ArrayList<List<CppParam>>()
         if (!abstract && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true) constructors += emptyList<CppParam>()
         var destructible = true
+        // A declared move constructor deletes the implicit copy.
+        var copyable = !abstract && ((dd?.get("moveCtor") as? Map<*, *>)?.get("userDeclared") != true ||
+            (dd?.get("copyCtor") as? Map<*, *>)?.get("userDeclared") == true)
         var allocatable = publicBases.all { records[it]?.allocatable != false }
         var access = if (node["tagUsed"] == "class") "private" else "public"
         for (child in children) {
@@ -99,11 +102,14 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     methods += method(child, qualified, isPublic)
                     if (child["name"] == "operator new" && (child["explicitlyDeleted"] == true || !isPublic)) allocatable = false
                 }
-                "CXXConstructorDecl" -> if (!abstract && isPublic && child["explicitlyDeleted"] != true) {
+                "CXXConstructorDecl" -> {
                     val params = method(child, qualified, isPublic).params
+                    val usable = isPublic && child["explicitlyDeleted"] != true
+                    val self = params.singleOrNull()?.type?.takeIf { it.decl == qualified }
+                    if (self != null && "&&" !in self.spelling && !usable) copyable = false
                     // Copies and moves take the record itself; C holds handles, never copies. Implicit ones count: an
                     // aggregate's default constructor is declared once a header uses it.
-                    if (params.singleOrNull()?.type?.decl != qualified) constructors += params
+                    if (!abstract && usable && self == null) constructors += params
                 }
                 "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
@@ -116,7 +122,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             }
         }
         records[qualified] = CppRecord(
-            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable,
+            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable,
         )
     }
 
@@ -169,9 +175,11 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         // Math templates are huge and declare no API of their own.
         val SKIPPED = setOf("math")
         val NOT_EXPRESSIONS = listOf("Comment", "Attr", "Decl")
+        val NOEXCEPT_EXPR = Regex("""noexcept\([^()]*\)\s*$""")
 
         /** Splits a method type like `Mode (int) const noexcept` into its return type and trailing qualifiers. */
-        fun splitSignature(type: String): Pair<String, String> {
+        fun splitSignature(spelled: String): Pair<String, String> {
+            val type = NOEXCEPT_EXPR.replace(spelled, "noexcept")
             val close = type.lastIndexOf(')')
             var depth = 0
             for (i in close downTo 0) {

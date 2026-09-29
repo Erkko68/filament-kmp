@@ -28,6 +28,14 @@ FilaStreamType FilaStream_getStreamType(const FilaStream* self) {
     return static_cast<FilaStreamType>(reinterpret_cast<const filament::Stream*>(self)->getStreamType());
 }
 
+void FilaStream_setAcquiredImage_Callback_void_mat3f(FilaStream* self, void* image, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform) {
+    reinterpret_cast<filament::Stream*>(self)->setAcquiredImage(image, callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
+}
+
+void FilaStream_setAcquiredImage_CallbackHandler_Callback_void_mat3f(FilaStream* self, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform) {
+    reinterpret_cast<filament::Stream*>(self)->setAcquiredImage(image, reinterpret_cast<filament::backend::CallbackHandler*>(handler), callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
+}
+
 void FilaStream_setDimensions(FilaStream* self, uint32_t width, uint32_t height) {
     reinterpret_cast<filament::Stream*>(self)->setDimensions(width, height);
 }

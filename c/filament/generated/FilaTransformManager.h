@@ -42,7 +42,7 @@ uint32_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint
 // TODO(handwritten) FilaTransformManager_getChildrenEnd: children_iterator filament::TransformManager::getChildrenEnd(Instance parent) const
 //     filament::TransformManager::children_iterator by value
 // TODO(handwritten) FilaTransformManager_getChildrenRange: children_range filament::TransformManager::getChildrenRange(const Instance parent) const
-//     filament::TransformManager::children_range by value
+//     filament::TransformManager::children_range result: C can't create one to copy it into
 void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, const FilaMat4f* localTransform);
 void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, const FilaMat4* localTransform);
 void FilaTransformManager_getTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out);

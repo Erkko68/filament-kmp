@@ -10,7 +10,7 @@ extern "C" {
 
 // filament::Sync
 // TODO(handwritten) FilaSync_getExternalHandle: void filament::Sync::getExternalHandle(CallbackHandler * handler, Callback callback, void * userData)
-//     Callback: function type
+//     void (*)(Sync * _Nonnull, void * _Nullable): takes C++ types
 
 
 #ifdef __cplusplus

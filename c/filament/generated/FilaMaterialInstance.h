@@ -24,12 +24,9 @@ void FilaMaterialInstance_setParameter_char_size_t_RgbaType_float4(FilaMaterialI
 // TODO(handwritten) FilaMaterialInstance_setParameter_StringLiteral_RgbaType_float4: void filament::MaterialInstance::setParameter(const StringLiteral name, const RgbaType type, const math::float4 color)
 //     const StringLiteral: not accessible
 void FilaMaterialInstance_setParameter_char_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
-// TODO(handwritten) FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable: void filament::MaterialInstance::compile(CompilerPriorityQueue priority, UserVariantFilterMask variants, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (MaterialInstance * _Nonnull)> && callback)
-//     utils::Invocable<void (MaterialInstance * _Nonnull)> &&: rvalue reference
-// TODO(handwritten) FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable: void filament::MaterialInstance::compile(CompilerPriorityQueue priority, UserVariantFilterBit variants, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (MaterialInstance * _Nonnull)> && callback)
-//     utils::Invocable<void (MaterialInstance * _Nonnull)> &&: rvalue reference
-// TODO(handwritten) FilaMaterialInstance_compile_CallbackHandler_Invocable: void filament::MaterialInstance::compile(CompilerPriorityQueue priority, backend::CallbackHandler * _Nullable handler, utils::Invocable<void (MaterialInstance * _Nonnull)> && callback)
-//     utils::Invocable<void (MaterialInstance * _Nonnull)> &&: rvalue reference
+void FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
+void FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
+void FilaMaterialInstance_compile_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* self, uint32_t left, uint32_t bottom, uint32_t width, uint32_t height);
 void FilaMaterialInstance_unsetScissor(FilaMaterialInstance* self);
 void FilaMaterialInstance_setPolygonOffset(FilaMaterialInstance* self, float scale, float constant);
