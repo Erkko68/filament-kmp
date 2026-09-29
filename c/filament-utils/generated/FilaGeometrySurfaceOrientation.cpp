@@ -60,4 +60,8 @@ void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeom
     fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
 }
 
+void FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuath* out_, uint32_t quatCount, uint32_t stride) {
+    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(quatCount), static_cast<size_t>(stride));
+}
+
 } // extern "C"

@@ -280,8 +280,16 @@ FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void*
     return fila::c(filament::Engine::create(static_cast<filament::backend::Backend>(backend), fila::cpp(platform), sharedContext, fila::cpp(config)));
 }
 
+void FilaEngine_createAsync(FilaEngineCreateCallback callback, void* user, FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config) {
+    filament::Engine::createAsync(callback, user, static_cast<filament::backend::Backend>(backend), fila::cpp(platform), sharedContext, fila::cpp(config));
+}
+
 FilaEngine* FilaEngine_getEngine(void* token) {
     return fila::c(filament::Engine::getEngine(token));
+}
+
+void FilaEngine_destroy_EnginePtr(FilaEngine** engine) {
+    filament::Engine::destroy(reinterpret_cast<filament::Engine**>(engine));
 }
 
 void FilaEngine_destroy_Engine(FilaEngine* engine) {
@@ -686,6 +694,10 @@ bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name) {
 
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value) {
     return fila::cpp(self)->setFeatureFlag(name, value);
+}
+
+bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* out) {
+    return fila::present(fila::cpp(self)->getFeatureFlag(name), [&](auto& v) { *out = v; });
 }
 
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {

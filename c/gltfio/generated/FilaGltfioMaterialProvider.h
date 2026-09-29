@@ -11,8 +11,7 @@ extern "C" {
 // filament::gltfio::MaterialProvider
 // skipped MaterialInstance * filament::gltfio::MaterialProvider::createMaterialInstance(MaterialKey * config, UvMap * uvmap, const char * label, const char * extras): uses filament::gltfio::MaterialKey
 // skipped Material * filament::gltfio::MaterialProvider::getMaterial(MaterialKey * config, UvMap * uvmap, const char * label): uses filament::gltfio::MaterialKey
-// TODO(handwritten) FilaGltfioMaterialProvider_getMaterials: const Material *const * filament::gltfio::MaterialProvider::getMaterials() const
-//     const Material *const *: pointer to pointer
+const FilaMaterial* const* FilaGltfioMaterialProvider_getMaterials(const FilaGltfioMaterialProvider* self);
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self);
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self);
 bool FilaGltfioMaterialProvider_needsDummyData(const FilaGltfioMaterialProvider* self, FilaVertexAttribute attrib);

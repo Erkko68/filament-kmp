@@ -76,6 +76,7 @@ void FilaEngineFeatureFlag_setConstant(FilaEngineFeatureFlag* self, bool value);
 // filament::Engine::Builder
 FilaEngineBuilder* FilaEngineBuilder_create(void);
 void FilaEngineBuilder_destroy(FilaEngineBuilder* self);
+// skipped Builder & filament::Engine::Builder::features(std::initializer_list<const char *> list)
 FilaEngineBuilder* FilaEngineBuilder_backend(FilaEngineBuilder* self, FilaBackend backend);
 FilaEngineBuilder* FilaEngineBuilder_platform(FilaEngineBuilder* self, FilaPlatform* platform);
 FilaEngineBuilder* FilaEngineBuilder_config(FilaEngineBuilder* self, const FilaEngineConfig* config);
@@ -83,26 +84,22 @@ FilaEngineBuilder* FilaEngineBuilder_sharedContext(FilaEngineBuilder* self, void
 FilaEngineBuilder* FilaEngineBuilder_featureLevel(FilaEngineBuilder* self, FilaFeatureLevel featureLevel);
 FilaEngineBuilder* FilaEngineBuilder_paused(FilaEngineBuilder* self, bool paused);
 FilaEngineBuilder* FilaEngineBuilder_feature(FilaEngineBuilder* self, const char* name, bool value);
-// TODO(handwritten) FilaEngineBuilder_features: Builder & filament::Engine::Builder::features(std::initializer_list<const char *> list)
-//     std::initializer_list<const char *>: std::initializer_list
 FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const FilaColorGradingBuilder* colorGrading);
 void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCallback callback, void* callbackUser);
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 
 // filament::Engine
+// skipped const backend::Driver * _Nonnull filament::Engine::getDriver() const
 // skipped Platform * _Nullable filament::Engine::getPlatform() const
 // skipped void * _Nullable filament::Engine::streamAlloc(size_t size, size_t alignment)
+// skipped utils::JobSystem & filament::Engine::getJobSystem()
 // skipped DebugRegistry & filament::Engine::getDebugRegistry(): uses filament::DebugRegistry
 // skipped bool * _Nullable filament::Engine::getFeatureFlagPtr(const char * _Nonnull name) const
 uint32_t FilaEngine_getFeatureFlags(const FilaEngine* self, FilaEngineFeatureFlag* const* out, uint32_t outCapacity);
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
-// TODO(handwritten) FilaEngine_createAsync: static void filament::Engine::createAsync(CreateCallback * callback, void * _Nullable user, Backend backend, Platform * _Nullable platform, void * _Nullable sharedContext, const Config * _Nullable config)
-//     CreateCallback *: function type
+void FilaEngine_createAsync(FilaEngineCreateCallback callback, void* user, FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
 FilaEngine* FilaEngine_getEngine(void* token);
-// TODO(handwritten) FilaEngine_getDriver: const backend::Driver * _Nonnull filament::Engine::getDriver() const
-//     const backend::Driver * _Nonnull: filament::backend::Driver
-// TODO(handwritten) FilaEngine_destroy_EnginePtr: static void filament::Engine::destroy(Engine * _Nullable * _Nullable engine)
-//     Engine * _Nullable * _Nullable: pointer to pointer
+void FilaEngine_destroy_EnginePtr(FilaEngine** engine);
 void FilaEngine_destroy_Engine(FilaEngine* engine);
 bool FilaEngine_destroy_BufferObject(FilaEngine* self, const FilaBufferObject* p);
 bool FilaEngine_destroy_VertexBuffer(FilaEngine* self, const FilaVertexBuffer* p);
@@ -201,13 +198,10 @@ void FilaEngine_unprotected(FilaEngine* self);
 const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* self);
 FilaBackend FilaEngine_getBackend(const FilaEngine* self);
 void FilaEngine_execute(FilaEngine* self);
-// TODO(handwritten) FilaEngine_getJobSystem: utils::JobSystem & filament::Engine::getJobSystem()
-//     utils::JobSystem &: utils::JobSystem
 void FilaEngine_getSteadyClockTimeNano(uint64_t* out);
 bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name);
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value);
-// TODO(handwritten) FilaEngine_getFeatureFlag: std::optional<bool> filament::Engine::getFeatureFlag(const char * _Nonnull name) const
-//     std::optional<bool>: std::optional
+bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* out);
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 
 

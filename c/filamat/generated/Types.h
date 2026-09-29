@@ -18,7 +18,6 @@ typedef struct FilaFilamatMaterialBuilderParameter FilaFilamatMaterialBuilderPar
 typedef struct FilaFilamatMaterialBuilderPreprocessorDefine FilaFilamatMaterialBuilderPreprocessorDefine;
 typedef struct FilaFilamatMaterialBuilderPushConstant FilaFilamatMaterialBuilderPushConstant;
 typedef struct FilaFilamatMaterialBuilderBase FilaFilamatMaterialBuilderBase;
-typedef struct FilaFilamatMaterialBuilderBaseCodeGenParams FilaFilamatMaterialBuilderBaseCodeGenParams;
 typedef struct FilaFilamatPackage FilaFilamatPackage;
 
 // filamat::MaterialBuilder::OutputTarget
@@ -80,12 +79,6 @@ typedef enum FilaFilamatMaterialBuilderBaseTargetApi {
     FILA_FILAMAT_MATERIAL_BUILDER_BASE_TARGET_API_WEBGPU = 8,
     FILA_FILAMAT_MATERIAL_BUILDER_BASE_TARGET_API_ALL = 7,
 } FilaFilamatMaterialBuilderBaseTargetApi;
-
-// filamat::MaterialBuilderBase::TargetLanguage
-typedef enum FilaFilamatMaterialBuilderBaseTargetLanguage {
-    FILA_FILAMAT_MATERIAL_BUILDER_BASE_TARGET_LANGUAGE_GLSL = 0,
-    FILA_FILAMAT_MATERIAL_BUILDER_BASE_TARGET_LANGUAGE_SPIRV = 1,
-} FilaFilamatMaterialBuilderBaseTargetLanguage;
 
 // filamat::MaterialBuilderBase::Workarounds
 typedef uint64_t FilaFilamatMaterialBuilderBaseWorkarounds;

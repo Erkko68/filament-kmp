@@ -28,6 +28,10 @@ void FilaImageKtx1Bundle_setMetadata(FilaImageKtx1Bundle* self, const char* key,
     fila::cpp(self)->setMetadata(key, value);
 }
 
+bool FilaImageKtx1Bundle_getSphericalHarmonics(FilaImageKtx1Bundle* self, FilaFloat3* result) {
+    return fila::cpp(self)->getSphericalHarmonics(fila::cpp(result));
+}
+
 uint32_t FilaImageKtx1Bundle_getNumMipLevels(const FilaImageKtx1Bundle* self) {
     return fila::cpp(self)->getNumMipLevels();
 }

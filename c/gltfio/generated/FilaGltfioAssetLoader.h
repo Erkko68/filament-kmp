@@ -9,22 +9,18 @@ extern "C" {
 #endif
 
 // filament::gltfio::AssetLoader
+// skipped utils::NameComponentManager * filament::gltfio::AssetLoader::getNames() const
 // skipped NodeManager & filament::gltfio::AssetLoader::getNodeManager(): uses filament::gltfio::NodeManager
 FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config);
-// TODO(handwritten) FilaGltfioAssetLoader_destroy: static void filament::gltfio::AssetLoader::destroy(AssetLoader ** loader)
-//     AssetLoader **: pointer to pointer
+void FilaGltfioAssetLoader_destroy(FilaGltfioAssetLoader** loader);
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes);
-// TODO(handwritten) FilaGltfioAssetLoader_createInstancedAsset: FilamentAsset * filament::gltfio::AssetLoader::createInstancedAsset(const uint8_t * bytes, uint32_t numBytes, FilamentInstance ** instances, size_t numInstances)
-//     FilamentInstance **: pointer to pointer
+FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createInstancedAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes, FilaGltfioFilamentInstance** instances, uint32_t numInstances);
 FilaGltfioFilamentInstance* FilaGltfioAssetLoader_createInstance(FilaGltfioAssetLoader* self, FilaGltfioFilamentAsset* asset);
 void FilaGltfioAssetLoader_enableDiagnostics(FilaGltfioAssetLoader* self, bool enable);
 void FilaGltfioAssetLoader_destroyAsset(FilaGltfioAssetLoader* self, const FilaGltfioFilamentAsset* asset);
 void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self);
-// TODO(handwritten) FilaGltfioAssetLoader_getMaterials: const filament::Material *const * filament::gltfio::AssetLoader::getMaterials() const
-//     const filament::Material *const *: pointer to pointer
+const FilaMaterial* const* FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* self);
 uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self);
-// TODO(handwritten) FilaGltfioAssetLoader_getNames: utils::NameComponentManager * filament::gltfio::AssetLoader::getNames() const
-//     utils::NameComponentManager *: utils::NameComponentManager
 FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* self);
 
 

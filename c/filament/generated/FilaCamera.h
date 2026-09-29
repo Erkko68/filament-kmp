@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // filament::Camera
+// skipped class Frustum filament::Camera::getFrustum() const: uses filament::Frustum
 void FilaCamera_projection_Fov_double_double_double_double(FilaCameraFov direction, double fovInDegrees, double aspect, double near, double far, FilaMat4* out);
 void FilaCamera_projection_double_double_double_double(double focalLengthInMillimeters, double aspect, double near, double far, FilaMat4* out);
 void FilaCamera_setProjection_Projection_double_double_double_double_double_double(FilaCamera* self, FilaCameraProjection projection, double left, double right, double bottom, double top, double near, double far);
@@ -37,8 +38,6 @@ void FilaCamera_getLeftVector(const FilaCamera* self, FilaFloat3* out);
 void FilaCamera_getUpVector(const FilaCamera* self, FilaFloat3* out);
 void FilaCamera_getForwardVector(const FilaCamera* self, FilaFloat3* out);
 float FilaCamera_getFieldOfViewInDegrees(const FilaCamera* self, FilaCameraFov direction);
-// TODO(handwritten) FilaCamera_getFrustum: class Frustum filament::Camera::getFrustum() const
-//     class Frustum: filament::Camera::Frustum
 FilaEntity FilaCamera_getEntity(const FilaCamera* self);
 void FilaCamera_setExposure_float_float(FilaCamera* self, float aperture, float shutterSpeed, float sensitivity);
 void FilaCamera_setExposure(FilaCamera* self, float exposure);

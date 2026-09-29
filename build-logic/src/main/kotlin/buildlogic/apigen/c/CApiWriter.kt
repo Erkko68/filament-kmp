@@ -62,7 +62,9 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val instanceMethods = record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated }
         val cpp = bridges.cpp(record.name)
         if (!bridges.uninstantiated(record) && record.allocatable && (instanceMethods || bridges.isValue(record.name))) {
-            record.constructors.zip(suffixes(record.constructors)).forEach { (params, suffix) ->
+            val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
+            skipped.forEach { section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), "")) }
+            constructors.zip(suffixes(constructors)).forEach { (params, suffix) ->
                 val name = CNames.function(record.name, "create", suffix)
                 emit(name, "$cpp(${spelled(params)})", section) {
                     val bridged = bridge(params)
@@ -209,7 +211,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     /** The C++ headers, and the `fila::cpp`/`fila::c` overloads between the module's C types and C++'s. */
     private fun includes(module: String): String {
         val text = StringBuilder("$BANNER\n#pragma once\n\n")
-        if (module == baseModule) text.append("#include <array>\n#include <bit>\n#include <iterator>\n#include <memory>\n#include <string_view>\n\n").append(headers.joinToString("") { "#include <$it>\n" })
+        if (module == baseModule) text.append("#include <array>\n#include <bit>\n#include <iterator>\n#include <memory>\n#include <optional>\n#include <string_view>\n#include <vector>\n\n").append(headers.joinToString("") { "#include <$it>\n" })
         else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("#include \"Types.h\"\n\nnamespace fila {\n\n")
         if (module == baseModule) {
@@ -263,7 +265,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             |    inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
             |    inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
             |
-            |// C's array as the FixedCapacityVector<T>, Slice<T> or std::array<T, N> the callee takes; element(i) makes each T. A Slice's
+            |// C's array as the FixedCapacityVector<T>, std::vector<T>, Slice<T> or std::array<T, N> the callee takes; element(i) makes each T. A Slice's
             |// elements live as long as the Items, until the end of the call.
             |template<typename F>
             |struct Items {
@@ -280,6 +282,14 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             |
             |    template<typename T>
             |    operator utils::FixedCapacityVector<T>() const { return vector<T>(); }
+            |
+            |    template<typename T>
+            |    operator std::vector<T>() const {
+            |        std::vector<T> v;
+            |        v.reserve(count);
+            |        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
+            |        return v;
+            |    }
             |
             |    template<typename T, size_t N>
             |    operator std::array<T, N>() const {
@@ -310,6 +320,20 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             |uint32_t copy(const V& items, uint32_t capacity, F store) {
             |    for (uint32_t i = 0; i < capacity && i < std::size(items); i++) store(items[i], i);
             |    return uint32_t(std::size(items));
+            |}
+            |
+            |// C's nullable pointer as the std::optional the callee takes; convert(*p) makes its value.
+            |template<typename T, typename F>
+            |auto optional(const T* p, F convert) -> std::optional<decltype(convert(*p))> {
+            |    if (!p) return std::nullopt;
+            |    return convert(*p);
+            |}
+            |
+            |// Stores an optional's value, if it has one; returns whether it did.
+            |template<typename T, typename F>
+            |bool present(const std::optional<T>& o, F store) {
+            |    if (o) store(*o);
+            |    return o.has_value();
             |}
             |
             |// StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).

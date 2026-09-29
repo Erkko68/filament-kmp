@@ -12,10 +12,6 @@ FilaUtilsEntityManager* FilaUtilsEntityManager_get(void) {
     return fila::c(&utils::EntityManager::get());
 }
 
-void FilaUtilsEntityManager_unregisterChangeCallback(FilaUtilsEntityManager* self, const void* token) {
-    fila::cpp(self)->unregisterChangeCallback(token);
-}
-
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self) {
     fila::cpp(self)->flushNotifications();
 }
@@ -66,6 +62,10 @@ void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self) {
 
 void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out) {
     *out = fila::cpp(self)->getLatestEpochID();
+}
+
+uint32_t FilaUtilsEntityManager_getIndex(FilaEntity e) {
+    return utils::EntityManager::getIndex(utils::Entity::import(e));
 }
 
 } // extern "C"

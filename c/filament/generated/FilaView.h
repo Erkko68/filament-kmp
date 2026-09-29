@@ -23,9 +23,7 @@ void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, 
 // filament::View::PickingQuery
 FilaViewPickingQuery* FilaViewPickingQuery_create(void);
 void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self);
-uint32_t FilaViewPickingQuery_getStorage(const FilaViewPickingQuery* self, void** out, uint32_t outCapacity);
-// TODO(handwritten) FilaViewPickingQuery_setStorage: void * _Nullable[4] filament::View::PickingQuery::storage
-//     void * _Nullable[4]: the struct would keep the caller's pointer
+// skipped filament::View::PickingQuery::storage
 
 // filament::View
 // skipped void filament::View::setDebugCamera(Camera * _Nullable camera)

@@ -16,6 +16,10 @@ void FilaColorColorSpace_getPrimaries(const FilaColorColorSpace* self, FilaColor
     *fila::cpp(out) = fila::cpp(self)->getPrimaries();
 }
 
+const FilaColorTransferFunction* FilaColorColorSpace_getTransferFunction(const FilaColorColorSpace* self) {
+    return fila::c(&fila::cpp(self)->getTransferFunction());
+}
+
 void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out) {
     *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getWhitePoint());
 }

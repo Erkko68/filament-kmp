@@ -15,10 +15,7 @@ FilaEngine* FilaGltfioAssetConfiguration_getEngine(const FilaGltfioAssetConfigur
 void FilaGltfioAssetConfiguration_setEngine(FilaGltfioAssetConfiguration* self, FilaEngine* value);
 FilaGltfioMaterialProvider* FilaGltfioAssetConfiguration_getMaterials(const FilaGltfioAssetConfiguration* self);
 void FilaGltfioAssetConfiguration_setMaterials(FilaGltfioAssetConfiguration* self, FilaGltfioMaterialProvider* value);
-// TODO(handwritten) FilaGltfioAssetConfiguration_getNames: utils::NameComponentManager * filament::gltfio::AssetConfiguration::names
-//     utils::NameComponentManager *: utils::NameComponentManager
-// TODO(handwritten) FilaGltfioAssetConfiguration_setNames: utils::NameComponentManager * filament::gltfio::AssetConfiguration::names
-//     utils::NameComponentManager *: utils::NameComponentManager
+// skipped filament::gltfio::AssetConfiguration::names
 FilaUtilsEntityManager* FilaGltfioAssetConfiguration_getEntities(const FilaGltfioAssetConfiguration* self);
 void FilaGltfioAssetConfiguration_setEntities(FilaGltfioAssetConfiguration* self, FilaUtilsEntityManager* value);
 char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfiguration* self);

@@ -40,4 +40,8 @@ FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderK
     return fila::c(fila::cpp(self)->asyncCreate(data, static_cast<size_t>(size), static_cast<ktxreader::Ktx2Reader::TransferFunction>(transfer)));
 }
 
+void FilaKtxreaderKtx2Reader_asyncDestroy(FilaKtxreaderKtx2Reader* self, FilaKtxreaderKtx2ReaderAsync** async) {
+    fila::cpp(self)->asyncDestroy(reinterpret_cast<ktxreader::Ktx2Reader::Async**>(async));
+}
+
 } // extern "C"

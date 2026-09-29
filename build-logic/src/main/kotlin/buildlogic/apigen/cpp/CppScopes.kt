@@ -39,7 +39,8 @@ internal class CppScopes {
         }
         val base = baseName(spelling) ?: return CppType(spelling, null, Kind.FUNCTION, functionTypes(spelling).map { resolve(it, scope) })
         if (isBuiltin(base)) return CppType(spelling, null, Kind.BUILTIN)
-        val decl = lookup(base, scope) ?: return CppType(spelling, null, Kind.UNRESOLVED)
+        val decl = (if (ELABORATED.containsMatchIn(spelling)) elaborated(base, scope) else lookup(base, scope))
+            ?: return CppType(spelling, null, Kind.UNRESOLVED)
         val kind = when (names[decl]) {
             null -> Kind.EXTERNAL
             Decl.TEMPLATE_PARAMETER -> Kind.TEMPLATE_PARAMETER
@@ -66,6 +67,16 @@ internal class CppScopes {
         return partial.maxByOrNull { shared(it, scope) }?.let { qualify(it, spelled) }
     }
 
+    /**
+     * `class X` names X, or declares it in the nearest enclosing namespace (Camera's `class Frustum getFrustum()`,
+     * read before Frustum.h).
+     */
+    private fun elaborated(spelled: String, scope: String): String? {
+        if ("::" in spelled) return lookup(spelled, scope)
+        enclosing(scope).map { qualify(it, spelled) }.firstOrNull { it in names }?.let { return it }
+        return qualify(enclosing(scope).first { it.isEmpty() || names[it] == Decl.NAMESPACE }, spelled)
+    }
+
     private fun shared(a: String, b: String) = a.split("::").zip(b.split("::")).takeWhile { (x, y) -> x == y }.size
 
     private fun inherited(record: String): List<String> = bases[record].orEmpty().flatMap { listOf(it) + inherited(it) }
@@ -83,6 +94,7 @@ internal class CppScopes {
     private companion object {
         val QUALIFIERS = Regex("""\b(const|volatile|struct|class|enum|typename|_Nonnull|_Nullable|_Null_unspecified)\b|[*&]|\[\d*]""")
         val TEMPLATE_ARGS = Regex("<[^<>]*>")
+        val ELABORATED = Regex("""^(const\s+)?(class|struct)\s""")
         val BUILTIN_WORDS = setOf("void", "bool", "char", "short", "int", "long", "float", "double", "signed", "unsigned")
         val BUILTIN_TYPEDEFS = Regex("""u?int(8|16|32|64|ptr)_t|s?size_t|ptrdiff_t|nullptr_t|std::(size_t|nullptr_t|ptrdiff_t)""")
 

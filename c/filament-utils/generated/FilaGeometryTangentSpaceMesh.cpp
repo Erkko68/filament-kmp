@@ -76,6 +76,10 @@ void FilaGeometryTangentSpaceMesh_getQuats_short4_size_t(const FilaGeometryTange
     fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
+void FilaGeometryTangentSpaceMesh_getQuats_quath_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuath* out_, uint32_t stride) {
+    fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
+}
+
 uint32_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getTriangleCount());
 }

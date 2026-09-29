@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // filament::gltfio::Animator
+// skipped void filament::gltfio::Animator::addInstance(FFilamentInstance * instance)
 void FilaGltfioAnimator_applyAnimation(const FilaGltfioAnimator* self, uint32_t animationIndex, float time);
 void FilaGltfioAnimator_updateBoneMatrices(FilaGltfioAnimator* self);
 void FilaGltfioAnimator_applyCrossFade(FilaGltfioAnimator* self, uint32_t previousAnimIndex, float previousAnimTime, float alpha);
@@ -16,8 +17,6 @@ void FilaGltfioAnimator_resetBoneMatrices(FilaGltfioAnimator* self);
 uint32_t FilaGltfioAnimator_getAnimationCount(const FilaGltfioAnimator* self);
 float FilaGltfioAnimator_getAnimationDuration(const FilaGltfioAnimator* self, uint32_t animationIndex);
 const char* FilaGltfioAnimator_getAnimationName(const FilaGltfioAnimator* self, uint32_t animationIndex);
-// TODO(handwritten) FilaGltfioAnimator_addInstance: void filament::gltfio::Animator::addInstance(FFilamentInstance * instance)
-//     FFilamentInstance *: filament::gltfio::FFilamentInstance
 
 
 #ifdef __cplusplus

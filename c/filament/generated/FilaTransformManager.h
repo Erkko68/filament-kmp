@@ -8,19 +8,10 @@
 extern "C" {
 #endif
 
-// filament::TransformManager::children_iterator
-bool FilaTransformManagerChildren_iterator_isAtEnd(const FilaTransformManagerChildren_iterator* self);
-
-// filament::TransformManager::children_range
-// TODO(handwritten) FilaTransformManagerChildren_range_create: filament::TransformManager::children_range(const children_iterator begin)
-//     filament::TransformManager::children_iterator by value
-void FilaTransformManagerChildren_range_destroy(FilaTransformManagerChildren_range* self);
-// TODO(handwritten) FilaTransformManagerChildren_range_begin: children_iterator filament::TransformManager::children_range::begin() const
-//     filament::TransformManager::children_iterator by value
-// TODO(handwritten) FilaTransformManagerChildren_range_end: children_sentinel filament::TransformManager::children_range::end() const
-//     filament::TransformManager::children_sentinel by value
-
 // filament::TransformManager
+// skipped children_iterator filament::TransformManager::getChildrenBegin(Instance parent) const: uses filament::TransformManager::children_iterator
+// skipped children_iterator filament::TransformManager::getChildrenEnd(Instance parent) const: uses filament::TransformManager::children_iterator
+// skipped children_range filament::TransformManager::getChildrenRange(const Instance parent) const: uses filament::TransformManager::children_range
 bool FilaTransformManager_hasComponent(const FilaTransformManager* self, FilaEntity e);
 uint32_t FilaTransformManager_getInstance(const FilaTransformManager* self, FilaEntity e);
 uint32_t FilaTransformManager_getComponentCount(const FilaTransformManager* self);
@@ -37,12 +28,6 @@ void FilaTransformManager_setParent(FilaTransformManager* self, uint32_t i, uint
 FilaEntity FilaTransformManager_getParent(const FilaTransformManager* self, uint32_t i);
 uint32_t FilaTransformManager_getChildCount(const FilaTransformManager* self, uint32_t i);
 uint32_t FilaTransformManager_getChildren(const FilaTransformManager* self, uint32_t i, FilaEntity* children, uint32_t count);
-// TODO(handwritten) FilaTransformManager_getChildrenBegin: children_iterator filament::TransformManager::getChildrenBegin(Instance parent) const
-//     filament::TransformManager::children_iterator by value
-// TODO(handwritten) FilaTransformManager_getChildrenEnd: children_iterator filament::TransformManager::getChildrenEnd(Instance parent) const
-//     filament::TransformManager::children_iterator by value
-// TODO(handwritten) FilaTransformManager_getChildrenRange: children_range filament::TransformManager::getChildrenRange(const Instance parent) const
-//     filament::TransformManager::children_range result: C can't create one to copy it into
 void FilaTransformManager_setTransform_mat4f(FilaTransformManager* self, uint32_t ci, const FilaMat4f* localTransform);
 void FilaTransformManager_setTransform_mat4(FilaTransformManager* self, uint32_t ci, const FilaMat4* localTransform);
 void FilaTransformManager_getTransform(const FilaTransformManager* self, uint32_t ci, FilaMat4f* out);

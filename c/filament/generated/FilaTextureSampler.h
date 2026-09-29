@@ -9,13 +9,14 @@ extern "C" {
 #endif
 
 // filament::TextureSampler
+// skipped filament::TextureSampler(backend::SamplerParams params): uses filament::backend::SamplerParams
 FilaTextureSampler* FilaTextureSampler_create(void);
-FilaTextureSampler* FilaTextureSampler_create_SamplerParams(const FilaSamplerParams* params);
 FilaTextureSampler* FilaTextureSampler_create_MagFilter_WrapMode(FilaSamplerMagFilter minMag, FilaSamplerWrapMode str);
 FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode str);
 FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapMode_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode s, FilaSamplerWrapMode t, FilaSamplerWrapMode r);
 FilaTextureSampler* FilaTextureSampler_create_CompareMode_CompareFunc(FilaSamplerCompareMode mode, FilaSamplerCompareFunc func);
 void FilaTextureSampler_destroy(FilaTextureSampler* self);
+// skipped backend::SamplerParams filament::TextureSampler::getSamplerParams() const: uses filament::backend::SamplerParams
 void FilaTextureSampler_setMinFilter(FilaTextureSampler* self, FilaSamplerMinFilter v);
 void FilaTextureSampler_setMagFilter(FilaTextureSampler* self, FilaSamplerMagFilter v);
 void FilaTextureSampler_setWrapModeS(FilaTextureSampler* self, FilaSamplerWrapMode v);
@@ -31,8 +32,6 @@ FilaSamplerWrapMode FilaTextureSampler_getWrapModeR(const FilaTextureSampler* se
 float FilaTextureSampler_getAnisotropy(const FilaTextureSampler* self);
 FilaSamplerCompareMode FilaTextureSampler_getCompareMode(const FilaTextureSampler* self);
 FilaSamplerCompareFunc FilaTextureSampler_getCompareFunc(const FilaTextureSampler* self);
-// TODO(handwritten) FilaTextureSampler_getSamplerParams: backend::SamplerParams filament::TextureSampler::getSamplerParams() const
-//     filament::backend::SamplerParams result: C can't create one to copy it into
 
 
 #ifdef __cplusplus

@@ -8,8 +8,16 @@ FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfigu
     return fila::c(filament::gltfio::AssetLoader::create(*fila::cpp(config)));
 }
 
+void FilaGltfioAssetLoader_destroy(FilaGltfioAssetLoader** loader) {
+    filament::gltfio::AssetLoader::destroy(reinterpret_cast<filament::gltfio::AssetLoader**>(loader));
+}
+
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes) {
     return fila::c(fila::cpp(self)->createAsset(bytes, numBytes));
+}
+
+FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createInstancedAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes, FilaGltfioFilamentInstance** instances, uint32_t numInstances) {
+    return fila::c(fila::cpp(self)->createInstancedAsset(bytes, numBytes, reinterpret_cast<filament::gltfio::FilamentInstance**>(instances), static_cast<size_t>(numInstances)));
 }
 
 FilaGltfioFilamentInstance* FilaGltfioAssetLoader_createInstance(FilaGltfioAssetLoader* self, FilaGltfioFilamentAsset* asset) {
@@ -26,6 +34,10 @@ void FilaGltfioAssetLoader_destroyAsset(FilaGltfioAssetLoader* self, const FilaG
 
 void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self) {
     fila::cpp(self)->gc();
+}
+
+const FilaMaterial* const* FilaGltfioAssetLoader_getMaterials(const FilaGltfioAssetLoader* self) {
+    return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(self)->getMaterials());
 }
 
 uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self) {

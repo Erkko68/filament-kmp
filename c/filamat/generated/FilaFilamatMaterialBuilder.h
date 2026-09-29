@@ -18,8 +18,7 @@ void FilaFilamatMaterialBuilderPreprocessorDefine_setValue(FilaFilamatMaterialBu
 
 // filamat::MaterialBuilder::Parameter
 FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create(void);
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_create_char_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional: filamat::MaterialBuilder::Parameter(const char * paramName, SamplerType t, SamplerFormat f, ParameterPrecision p, bool filterable, bool ms, const char * tn, std::optional<ShaderStageFlags> s)
-//     std::optional<ShaderStageFlags>: std::optional
+FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create_char_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional(const char* paramName, FilaSamplerType t, FilaSamplerFormat f, FilaPrecision p, bool filterable, bool ms, const char* tn, const FilaShaderStageFlags* s);
 FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create_char_UniformType_size_t_ParameterPrecision(const char* paramName, FilaUniformType t, uint32_t typeSize, FilaPrecision p);
 FilaFilamatMaterialBuilderParameter* FilaFilamatMaterialBuilderParameter_create_char_SubpassType_SamplerFormat_ParameterPrecision(const char* paramName, FilaSubpassType t, FilaSamplerFormat f, FilaPrecision p);
 void FilaFilamatMaterialBuilderParameter_destroy(FilaFilamatMaterialBuilderParameter* self);
@@ -46,14 +45,9 @@ bool FilaFilamatMaterialBuilderParameter_getMultisample(const FilaFilamatMateria
 void FilaFilamatMaterialBuilderParameter_setMultisample(FilaFilamatMaterialBuilderParameter* self, bool value);
 const char* FilaFilamatMaterialBuilderParameter_getTransformName(const FilaFilamatMaterialBuilderParameter* self);
 void FilaFilamatMaterialBuilderParameter_setTransformName(FilaFilamatMaterialBuilderParameter* self, const char* value);
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_getStages: std::optional<ShaderStageFlags> filamat::MaterialBuilder::Parameter::stages
-//     std::optional<ShaderStageFlags>: std::optional
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_setStages: std::optional<ShaderStageFlags> filamat::MaterialBuilder::Parameter::stages
-//     std::optional<ShaderStageFlags>: std::optional
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_getParameterType: enum (unnamed enum at /Users/eric/IdeaProjects/filament-kmp/include/filamat/MaterialBuilder.h:751:9) filamat::MaterialBuilder::Parameter::parameterType
-//     enum (unnamed enum at /Users/eric/IdeaProjects/filament-kmp/include/filamat/MaterialBuilder.h:751:9): function type
-// TODO(handwritten) FilaFilamatMaterialBuilderParameter_setParameterType: enum (unnamed enum at /Users/eric/IdeaProjects/filament-kmp/include/filamat/MaterialBuilder.h:751:9) filamat::MaterialBuilder::Parameter::parameterType
-//     enum (unnamed enum at /Users/eric/IdeaProjects/filament-kmp/include/filamat/MaterialBuilder.h:751:9): function type
+bool FilaFilamatMaterialBuilderParameter_getStages(const FilaFilamatMaterialBuilderParameter* self, FilaShaderStageFlags* out);
+void FilaFilamatMaterialBuilderParameter_setStages(FilaFilamatMaterialBuilderParameter* self, const FilaShaderStageFlags* value);
+// skipped filamat::MaterialBuilder::Parameter::parameterType
 
 // filamat::MaterialBuilder::Output
 FilaFilamatMaterialBuilderOutput* FilaFilamatMaterialBuilderOutput_create(void);
@@ -105,10 +99,8 @@ void FilaFilamatMaterialBuilderCustomVariable_setHasPrecision(FilaFilamatMateria
 // filamat::MaterialBuilder::Attribute
 FilaFilamatMaterialBuilderAttribute* FilaFilamatMaterialBuilderAttribute_create(void);
 void FilaFilamatMaterialBuilderAttribute_destroy(FilaFilamatMaterialBuilderAttribute* self);
-// TODO(handwritten) FilaFilamatMaterialBuilderAttribute_getAttributeName: std::string filamat::MaterialBuilder::Attribute::getAttributeName() const
-//     std::string result: C would point into a destroyed temporary
-// TODO(handwritten) FilaFilamatMaterialBuilderAttribute_getDefineName: std::string filamat::MaterialBuilder::Attribute::getDefineName() const
-//     std::string result: C would point into a destroyed temporary
+uint32_t FilaFilamatMaterialBuilderAttribute_getAttributeName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity);
+uint32_t FilaFilamatMaterialBuilderAttribute_getDefineName(const FilaFilamatMaterialBuilderAttribute* self, char* out, uint32_t outCapacity);
 const char* FilaFilamatMaterialBuilderAttribute_getName(const FilaFilamatMaterialBuilderAttribute* self);
 // TODO(handwritten) FilaFilamatMaterialBuilderAttribute_setName: std::string_view filamat::MaterialBuilder::Attribute::name
 //     std::string_view: the struct would keep the caller's pointer
@@ -121,6 +113,8 @@ void FilaFilamatMaterialBuilderAttribute_setLocation(FilaFilamatMaterialBuilderA
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_create(void);
 void FilaFilamatMaterialBuilder_destroy(FilaFilamatMaterialBuilder* self);
 FilaFilamatMaterialBuilderBase* FilaFilamatMaterialBuilder_asFilamatMaterialBuilderBase(FilaFilamatMaterialBuilder* self);
+// skipped MaterialBuilder & filamat::MaterialBuilder::buffer(filament::BufferInterfaceBlock bib)
+// skipped std::string filamat::MaterialBuilder::peek(filament::backend::ShaderStage stage, const CodeGenParams & params, const PropertyList & properties)
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_noSamplerValidation(FilaFilamatMaterialBuilder* self, bool enabled);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_includeEssl1(FilaFilamatMaterialBuilder* self, bool enabled);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_name(FilaFilamatMaterialBuilder* self, const char* name);
@@ -129,10 +123,7 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_shading(FilaFilamatMateri
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_interpolation(FilaFilamatMaterialBuilder* self, FilaInterpolation interpolation);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, FilaUniformType type, FilaPrecision precision);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, uint32_t size, FilaUniformType type, FilaPrecision precision);
-// TODO(handwritten) FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional: MaterialBuilder & filamat::MaterialBuilder::parameter(const char * name, SamplerType samplerType, SamplerFormat format, ParameterPrecision precision, bool filterable, bool multisample, const char * transformName, std::optional<ShaderStageFlags> stages)
-//     std::optional<ShaderStageFlags>: std::optional
-// TODO(handwritten) FilaFilamatMaterialBuilder_buffer: MaterialBuilder & filamat::MaterialBuilder::buffer(filament::BufferInterfaceBlock bib)
-//     filament::BufferInterfaceBlock: filament::BufferInterfaceBlock
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional(FilaFilamatMaterialBuilder* self, const char* name, FilaSamplerType samplerType, FilaSamplerFormat format, FilaPrecision precision, bool filterable, bool multisample, const char* transformName, const FilaShaderStageFlags* stages);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable_ParameterPrecision(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name, FilaPrecision precision);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_require(FilaFilamatMaterialBuilder* self, FilaVertexAttribute attribute);
@@ -195,12 +186,9 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_SamplerFormat_Par
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_SamplerFormat_char(FilaFilamatMaterialBuilder* self, FilaSubpassType subpassType, FilaSamplerFormat format, const char* name);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_ParameterPrecision_char(FilaFilamatMaterialBuilder* self, FilaSubpassType subpassType, FilaPrecision precision, const char* name);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_subpass_char(FilaFilamatMaterialBuilder* self, FilaSubpassType subpassType, const char* name);
-// TODO(handwritten) FilaFilamatMaterialBuilder_peek: std::string filamat::MaterialBuilder::peek(filament::backend::ShaderStage stage, const CodeGenParams & params, const PropertyList & properties)
-//     std::string result: C would point into a destroyed temporary
 bool FilaFilamatMaterialBuilder_hasSamplerType(const FilaFilamatMaterialBuilder* self, FilaSamplerType samplerType);
 uint32_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialBuilder* self);
-// TODO(handwritten) FilaFilamatMaterialBuilder_getParameters: const ParameterList & filamat::MaterialBuilder::getParameters() const
-//     const ParameterList &: std::vector
+uint32_t FilaFilamatMaterialBuilder_getParameters(const FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderParameter* const* out, uint32_t outCapacity);
 uint32_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBuilder* self);
 uint32_t FilaFilamatMaterialBuilder_getSubPasses(const FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderParameter* const* out, uint32_t outCapacity);
 uint32_t FilaFilamatMaterialBuilder_getVariantFilter(const FilaFilamatMaterialBuilder* self);

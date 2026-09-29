@@ -4,14 +4,6 @@
 
 extern "C" {
 
-bool FilaTransformManagerChildren_iterator_isAtEnd(const FilaTransformManagerChildren_iterator* self) {
-    return fila::cpp(self)->isAtEnd();
-}
-
-void FilaTransformManagerChildren_range_destroy(FilaTransformManagerChildren_range* self) {
-    delete fila::cpp(self);
-}
-
 bool FilaTransformManager_hasComponent(const FilaTransformManager* self, FilaEntity e) {
     return fila::cpp(self)->hasComponent(utils::Entity::import(e));
 }

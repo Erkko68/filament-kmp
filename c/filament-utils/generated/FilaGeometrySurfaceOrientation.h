@@ -25,8 +25,7 @@ FilaGeometrySurfaceOrientation* FilaGeometrySurfaceOrientationBuilder_build(Fila
 uint32_t FilaGeometrySurfaceOrientation_getVertexCount(const FilaGeometrySurfaceOrientation* self);
 void FilaGeometrySurfaceOrientation_getQuats_quatf_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuatf* out_, uint32_t quatCount, uint32_t stride);
 void FilaGeometrySurfaceOrientation_getQuats_short4_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaShort4* out_, uint32_t quatCount, uint32_t stride);
-// TODO(handwritten) FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t: void filament::geometry::SurfaceOrientation::getQuats(filament::math::quath * out, size_t quatCount, size_t stride) const
-//     filament::math::quath *: filament::math::quath
+void FilaGeometrySurfaceOrientation_getQuats_quath_size_t_size_t(const FilaGeometrySurfaceOrientation* self, FilaQuath* out_, uint32_t quatCount, uint32_t stride);
 
 
 #ifdef __cplusplus

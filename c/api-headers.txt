@@ -25,6 +25,27 @@ utils/EntityManager.h
 -filament::RenderableManager::Bone::reserved
 -filament::View::PickingQueryResult::reserved1
 -filament::View::PickingQueryResult::reserved2
+-filament::View::PickingQuery::storage
+-filament::Engine::getDriver
+-filament::Engine::getJobSystem
+# The driver's packed sampler bits; TextureSampler's setters and getters cover them.
+-filament::backend::SamplerParams
+-filament::builderMakeName
+# Builders redeclare name(); the engine reads the rest.
+-filament::BuilderNameMixin
+# Entity recycling across threads, for Filament's own component managers.
+-utils::EntityManager::getAliveEntities
+-utils::EntityManager::getMissedGarbage
+-utils::EntityManager::registerWatermark
+-utils::EntityManager::rebindWatermark
+-utils::EntityManager::unregisterWatermark
+-utils::EntityManager::registerChangeCallback
+-utils::EntityManager::unregisterChangeCallback
+# Covered by feature(name, value) and getChildren().
+-filament::Engine::Builder::features
+-filament::TransformManager::children_iterator
+-filament::TransformManager::children_range
+-filament::TransformManager::children_sentinel
 # Culling math; kotlin-math covers it.
 -filament::Frustum
 
@@ -37,9 +58,18 @@ gltfio/*.h
 -filament::gltfio::getNumUvSets
 -filament::gltfio::NodeManager
 -filament::gltfio::TrsTransformManager
+# Internal instance type, and utils' name component manager (not part of the C API).
+-filament::gltfio::Animator::addInstance
+-filament::gltfio::AssetConfiguration::names
+-filament::gltfio::AssetLoader::getNames
 
 [filamat]
 filamat/*.h
+# Takes filament's private BufferInterfaceBlock; isSampler/isUniform/isSubpass read the unnamed enum.
+-filamat::MaterialBuilder::buffer
+-filamat::MaterialBuilder::Parameter::parameterType
+# matinfo's shader dump; takes the private CodeGenParams.
+-filamat::MaterialBuilder::peek
 
 [filament-utils]
 camutils/*.h

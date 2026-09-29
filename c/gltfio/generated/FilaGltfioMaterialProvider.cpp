@@ -4,6 +4,10 @@
 
 extern "C" {
 
+const FilaMaterial* const* FilaGltfioMaterialProvider_getMaterials(const FilaGltfioMaterialProvider* self) {
+    return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(self)->getMaterials());
+}
+
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getMaterialsCount());
 }

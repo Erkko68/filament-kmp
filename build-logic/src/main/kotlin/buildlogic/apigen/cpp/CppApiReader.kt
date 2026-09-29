@@ -20,11 +20,15 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         val unit = workDir.resolve("headers.cpp")
         unit.writeText(headers.sorted().joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
-        // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
+        // Every filter's namespace up front: image's bundles name filament::math before the filament:: dump runs.
         FILTERS.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             if (filter.endsWith("::")) scopes.namespace(namespace) else if (namespace.isNotEmpty()) scopes.partialNamespace(namespace)
             SKIPPED.forEach { scopes.partialNamespace(qualify(namespace, it)) }
+        }
+        // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
+        FILTERS.forEach { filter ->
+            val namespace = filter.substringBeforeLast("::", "")
             ast.forEachDeclaration(unit, includeDir, filter, SKIPPED) { document ->
                 headerOf = DeclarationFiles.of(document, includeDir)
                 visit(document, namespace, exported = false, accessible = true)
@@ -117,7 +121,8 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     val deprecated = child.children().any { it["kind"] == "DeprecatedAttr" }
                     fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated)
                 }
-                "CXXRecordDecl", "ClassTemplateDecl" ->
+                // `class Frustum getFrustum()` declares Frustum in the namespace, though clang lists it here.
+                "CXXRecordDecl", "ClassTemplateDecl" -> if (child["parentDeclContextId"] == null)
                     visit(child, qualified, exported = public && isPublic, accessible = accessible && isPublic, template = template)
                 else -> visit(child, qualified, exported = false, accessible = accessible && isPublic)
             }

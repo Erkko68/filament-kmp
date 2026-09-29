@@ -20,8 +20,7 @@ FilaKtxreaderKtx2ReaderResult FilaKtxreaderKtx2Reader_requestFormat(FilaKtxreade
 void FilaKtxreaderKtx2Reader_unrequestFormat(FilaKtxreaderKtx2Reader* self, FilaTextureFormat format);
 FilaTexture* FilaKtxreaderKtx2Reader_load(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
 FilaKtxreaderKtx2ReaderAsync* FilaKtxreaderKtx2Reader_asyncCreate(FilaKtxreaderKtx2Reader* self, const void* data, uint32_t size, FilaKtxreaderKtx2ReaderTransferFunction transfer);
-// TODO(handwritten) FilaKtxreaderKtx2Reader_asyncDestroy: void ktxreader::Ktx2Reader::asyncDestroy(Async ** async)
-//     Async **: pointer to pointer
+void FilaKtxreaderKtx2Reader_asyncDestroy(FilaKtxreaderKtx2Reader* self, FilaKtxreaderKtx2ReaderAsync** async);
 
 
 #ifdef __cplusplus

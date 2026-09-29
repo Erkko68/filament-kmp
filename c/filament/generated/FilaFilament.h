@@ -10,8 +10,6 @@ extern "C" {
 
 // filament
 const char* Fila_to_string(FilaVertexAttribute attr);
-// TODO(handwritten) Fila_builderMakeName: static void filament::builderMakeName(utils::ImmutableCString & outName, const char * name, size_t len)
-//     utils::ImmutableCString by pointer
 
 
 #ifdef __cplusplus

@@ -48,6 +48,10 @@ uint32_t FilaGltfioFilamentAsset_popRenderables(FilaGltfioFilamentAsset* self, F
     return static_cast<uint32_t>(fila::cpp(self)->popRenderables(reinterpret_cast<utils::Entity*>(entities), static_cast<size_t>(count)));
 }
 
+const char* const* FilaGltfioFilamentAsset_getResourceUris(const FilaGltfioFilamentAsset* self) {
+    return fila::cpp(self)->getResourceUris();
+}
+
 uint32_t FilaGltfioFilamentAsset_getResourceUriCount(const FilaGltfioFilamentAsset* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getResourceUriCount());
 }
@@ -122,6 +126,10 @@ bool FilaGltfioFilamentAsset_areFilamentComponentsDetached(const FilaGltfioFilam
 
 FilaGltfioFilamentInstance* FilaGltfioFilamentAsset_getInstance(FilaGltfioFilamentAsset* self) {
     return fila::c(fila::cpp(self)->getInstance());
+}
+
+FilaGltfioFilamentInstance** FilaGltfioFilamentAsset_getAssetInstances(FilaGltfioFilamentAsset* self) {
+    return reinterpret_cast<FilaGltfioFilamentInstance**>(fila::cpp(self)->getAssetInstances());
 }
 
 uint32_t FilaGltfioFilamentAsset_getAssetInstanceCount(const FilaGltfioFilamentAsset* self) {

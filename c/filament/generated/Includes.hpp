@@ -5,7 +5,9 @@
 #include <bit>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <string_view>
+#include <vector>
 
 #include <camutils/Bookmark.h>
 #include <camutils/Manipulator.h>
@@ -81,7 +83,7 @@ namespace fila {
     inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
     inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
 
-// C's array as the FixedCapacityVector<T>, Slice<T> or std::array<T, N> the callee takes; element(i) makes each T. A Slice's
+// C's array as the FixedCapacityVector<T>, std::vector<T>, Slice<T> or std::array<T, N> the callee takes; element(i) makes each T. A Slice's
 // elements live as long as the Items, until the end of the call.
 template<typename F>
 struct Items {
@@ -98,6 +100,14 @@ struct Items {
 
     template<typename T>
     operator utils::FixedCapacityVector<T>() const { return vector<T>(); }
+
+    template<typename T>
+    operator std::vector<T>() const {
+        std::vector<T> v;
+        v.reserve(count);
+        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
+        return v;
+    }
 
     template<typename T, size_t N>
     operator std::array<T, N>() const {
@@ -130,6 +140,20 @@ uint32_t copy(const V& items, uint32_t capacity, F store) {
     return uint32_t(std::size(items));
 }
 
+// C's nullable pointer as the std::optional the callee takes; convert(*p) makes its value.
+template<typename T, typename F>
+auto optional(const T* p, F convert) -> std::optional<decltype(convert(*p))> {
+    if (!p) return std::nullopt;
+    return convert(*p);
+}
+
+// Stores an optional's value, if it has one; returns whether it did.
+template<typename T, typename F>
+bool present(const std::optional<T>& o, F store) {
+    if (o) store(*o);
+    return o.has_value();
+}
+
 // StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).
 inline utils::StaticString staticString(const char* s) {
     static_assert(sizeof(utils::StaticString) == sizeof(std::string_view));
@@ -146,6 +170,7 @@ FILA_TYPE(FilaMat3f, filament::math::mat3f)
 FILA_TYPE(FilaMat4, filament::math::mat4)
 FILA_TYPE(FilaMat4f, filament::math::mat4f)
 FILA_TYPE(FilaQuatf, filament::math::quatf)
+FILA_TYPE(FilaQuath, filament::math::quath)
 FILA_TYPE(FilaShort4, filament::math::short4)
 FILA_TYPE(FilaUint3, filament::math::uint3)
 FILA_TYPE(FilaUshort3, filament::math::ushort3)
@@ -240,9 +265,6 @@ FILA_TYPE(FilaTextureBuilder, filament::Texture::Builder)
 FILA_TYPE(FilaTextureSampler, filament::TextureSampler)
 FILA_TYPE(FilaToneMapper, filament::ToneMapper)
 FILA_TYPE(FilaTransformManager, filament::TransformManager)
-FILA_TYPE(FilaTransformManagerChildren_iterator, filament::TransformManager::children_iterator)
-FILA_TYPE(FilaTransformManagerChildren_range, filament::TransformManager::children_range)
-FILA_TYPE(FilaTransformManagerChildren_sentinel, filament::TransformManager::children_sentinel)
 FILA_TYPE(FilaVertexBuffer, filament::VertexBuffer)
 FILA_TYPE(FilaVertexBufferBuilder, filament::VertexBuffer::Builder)
 FILA_TYPE(FilaView, filament::View)
@@ -264,7 +286,6 @@ FILA_TYPE(FilaPlatformFrameTimestamps, filament::backend::Platform::FrameTimesta
 FILA_TYPE(FilaPlatformSwapChain, filament::backend::Platform::SwapChain)
 FILA_TYPE(FilaPlatformSync, filament::backend::Platform::Sync)
 FILA_TYPE(FilaPresentCallable, filament::backend::PresentCallable)
-FILA_TYPE(FilaSamplerParams, filament::backend::SamplerParams)
 FILA_TYPE(FilaColorColorSpace, filament::color::ColorSpace)
 FILA_TYPE(FilaColorGamut, filament::color::Gamut)
 FILA_TYPE(FilaColorPartialColorSpace, filament::color::PartialColorSpace)

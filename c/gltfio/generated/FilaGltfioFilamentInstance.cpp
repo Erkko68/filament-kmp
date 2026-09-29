@@ -80,6 +80,10 @@ void FilaGltfioFilamentInstance_getBoundingBox(const FilaGltfioFilamentInstance*
     *fila::cpp(out) = fila::cpp(self)->getBoundingBox();
 }
 
+FilaMaterialInstance* const* FilaGltfioFilamentInstance_getMaterialInstances(FilaGltfioFilamentInstance* self) {
+    return reinterpret_cast<FilaMaterialInstance* const*>(fila::cpp(self)->getMaterialInstances());
+}
+
 uint32_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getMaterialInstanceCount());
 }

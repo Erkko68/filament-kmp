@@ -22,6 +22,7 @@ typedef struct FilaMat3f { float v[9]; } FilaMat3f;
 typedef struct FilaMat4 { double v[16]; } FilaMat4;
 typedef struct FilaMat4f { float v[16]; } FilaMat4f;
 typedef struct FilaQuatf { float v[4]; } FilaQuatf;
+typedef struct FilaQuath { uint16_t v[4]; } FilaQuath;
 typedef struct FilaShort4 { int16_t v[4]; } FilaShort4;
 typedef struct FilaUint3 { uint32_t v[3]; } FilaUint3;
 typedef struct FilaUshort3 { uint16_t v[3]; } FilaUshort3;
@@ -38,7 +39,6 @@ typedef struct FilaBloomOptions FilaBloomOptions;
 typedef struct FilaBox FilaBox;
 typedef struct FilaBufferObject FilaBufferObject;
 typedef struct FilaBufferObjectBuilder FilaBufferObjectBuilder;
-typedef struct FilaBuilderNameMixin FilaBuilderNameMixin;
 typedef struct FilaCamera FilaCamera;
 typedef struct FilaColor FilaColor;
 typedef struct FilaColorGrading FilaColorGrading;
@@ -121,9 +121,6 @@ typedef struct FilaTextureBuilder FilaTextureBuilder;
 typedef struct FilaTextureSampler FilaTextureSampler;
 typedef struct FilaToneMapper FilaToneMapper;
 typedef struct FilaTransformManager FilaTransformManager;
-typedef struct FilaTransformManagerChildren_iterator FilaTransformManagerChildren_iterator;
-typedef struct FilaTransformManagerChildren_range FilaTransformManagerChildren_range;
-typedef struct FilaTransformManagerChildren_sentinel FilaTransformManagerChildren_sentinel;
 typedef struct FilaVertexBuffer FilaVertexBuffer;
 typedef struct FilaVertexBufferBuilder FilaVertexBufferBuilder;
 typedef struct FilaView FilaView;
@@ -145,7 +142,6 @@ typedef struct FilaPlatformFrameTimestamps FilaPlatformFrameTimestamps;
 typedef struct FilaPlatformSwapChain FilaPlatformSwapChain;
 typedef struct FilaPlatformSync FilaPlatformSync;
 typedef struct FilaPresentCallable FilaPresentCallable;
-typedef struct FilaSamplerParams FilaSamplerParams;
 typedef struct FilaColorColorSpace FilaColorColorSpace;
 typedef struct FilaColorGamut FilaColorGamut;
 typedef struct FilaColorPartialColorSpace FilaColorPartialColorSpace;
@@ -810,12 +806,6 @@ typedef enum FilaSamplerWrapMode {
     FILA_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2,
 } FilaSamplerWrapMode;
 
-// filament::backend::ShaderModel
-typedef enum FilaShaderModel {
-    FILA_SHADER_MODEL_MOBILE = 1,
-    FILA_SHADER_MODEL_DESKTOP = 2,
-} FilaShaderModel;
-
 // filament::backend::ShaderStage
 typedef enum FilaShaderStage {
     FILA_SHADER_STAGE_VERTEX = 0,
@@ -1039,6 +1029,7 @@ typedef void (*FilaArgCallback)(void* arg, void* user);
 typedef void (*FilaBufferDescriptorCallback)(void* buffer, size_t size, void* user);
 typedef void (*FilaCallback)(void* user);
 typedef void (*FilaEngineAsyncCompletionCallback)(void*, FilaAsyncCallStatus);
+typedef void (*FilaEngineCreateCallback)(void * , void * );
 typedef void (*FilaIndexBufferAsyncCompletionCallback)(FilaIndexBuffer*, void*, FilaAsyncCallStatus);
 typedef void (*FilaKtxreaderKtx1ReaderCallback)(void *);
 typedef void (*FilaStreamCallback)(void *, void *);

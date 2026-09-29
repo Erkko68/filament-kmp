@@ -20,8 +20,7 @@ uint32_t FilaGltfioFilamentAsset_getCameraEntityCount(const FilaGltfioFilamentAs
 FilaEntity FilaGltfioFilamentAsset_getRoot(const FilaGltfioFilamentAsset* self);
 FilaEntity FilaGltfioFilamentAsset_popRenderable(FilaGltfioFilamentAsset* self);
 uint32_t FilaGltfioFilamentAsset_popRenderables(FilaGltfioFilamentAsset* self, FilaEntity* entities, uint32_t count);
-// TODO(handwritten) FilaGltfioFilamentAsset_getResourceUris: const char *const * filament::gltfio::FilamentAsset::getResourceUris() const
-//     const char *const *: pointer to pointer
+const char* const* FilaGltfioFilamentAsset_getResourceUris(const FilaGltfioFilamentAsset* self);
 uint32_t FilaGltfioFilamentAsset_getResourceUriCount(const FilaGltfioFilamentAsset* self);
 void FilaGltfioFilamentAsset_getBoundingBox(const FilaGltfioFilamentAsset* self, FilaAabb* out);
 const char* FilaGltfioFilamentAsset_getName(const FilaGltfioFilamentAsset* self, FilaEntity arg0);
@@ -41,8 +40,7 @@ void FilaGltfioFilamentAsset_addEntitiesToScene(const FilaGltfioFilamentAsset* s
 void FilaGltfioFilamentAsset_detachFilamentComponents(FilaGltfioFilamentAsset* self);
 bool FilaGltfioFilamentAsset_areFilamentComponentsDetached(const FilaGltfioFilamentAsset* self);
 FilaGltfioFilamentInstance* FilaGltfioFilamentAsset_getInstance(FilaGltfioFilamentAsset* self);
-// TODO(handwritten) FilaGltfioFilamentAsset_getAssetInstances: FilamentInstance ** filament::gltfio::FilamentAsset::getAssetInstances()
-//     FilamentInstance **: pointer to pointer
+FilaGltfioFilamentInstance** FilaGltfioFilamentAsset_getAssetInstances(FilaGltfioFilamentAsset* self);
 uint32_t FilaGltfioFilamentAsset_getAssetInstanceCount(const FilaGltfioFilamentAsset* self);
 
 

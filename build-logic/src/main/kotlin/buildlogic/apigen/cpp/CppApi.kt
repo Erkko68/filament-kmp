@@ -29,6 +29,9 @@ class CppApi(
 
     fun skipReason(field: CppField, owner: String): String? = skipReason("$owner::${field.name}") ?: usesSkipped(listOf(field.type))
 
+    /** Why a constructor taking [params] is left out: its parameters use a skipped record. */
+    fun skipReason(params: List<CppParam>): String? = usesSkipped(params.map { it.type })
+
     private fun usesSkipped(types: List<CppType>) = types.flatMap { it.withArgs() }.mapNotNull { it.decl }
         .firstNotNullOfOrNull { decl -> decl.takeIf { it in records }?.let(::skipReason)?.let { "uses $decl" } }
 
