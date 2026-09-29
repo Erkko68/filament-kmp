@@ -2,7 +2,6 @@
 #define FILAMENT_C_COLOR_GRADING_H
 
 #include "FilaTypes.h"
-#include "ToneMapper.h"
 
 #ifdef __cplusplus
 extern "C" {

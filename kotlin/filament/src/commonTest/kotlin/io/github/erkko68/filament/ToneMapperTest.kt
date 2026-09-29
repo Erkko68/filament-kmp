@@ -2,8 +2,10 @@ package io.github.erkko68.filament
 
 import io.github.erkko68.filament.testutils.FilamentTestFixture
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class ToneMapperTest : FilamentTestFixture() {
     @Test
@@ -46,5 +48,25 @@ class ToneMapperTest : FilamentTestFixture() {
 
         val t9 = ToneMapper.DisplayRange()
         assertNotNull(t9)
+
+        listOf(t1, t2, t3, t4, t5, t6, t7, t8, t9).forEach { it.close() }
+    }
+
+    @Test
+    fun testToneMapperBaseApiAndDefaults() {
+        ToneMapper.Linear().use { linear ->
+            assertContentEquals(floatArrayOf(0.5f, 1f, 0f), linear(floatArrayOf(0.5f, 2f, -1f)))
+            assertTrue(linear.isOneDimensional)
+            assertTrue(linear.isLDR)
+        }
+        ToneMapper.Agx().use { agx ->
+            assertEquals(ToneMapper.Agx.AgxLook.NONE, agx.look)
+            agx.look = ToneMapper.Agx.AgxLook.GOLDEN
+            assertEquals(ToneMapper.Agx.AgxLook.GOLDEN, agx.look)
+        }
+        ToneMapper.Generic().use { generic ->
+            assertEquals(1.55f, generic.contrast)
+            assertEquals(10f, generic.hdrMax)
+        }
     }
 }

@@ -45,6 +45,9 @@ class IndirectLightTest : FilamentTestFixture() {
         assertEquals(9, light.rotation.size)
         assertEquals(1f, light.rotation[8])
 
+        assertEquals(3, light.getDirectionEstimate().size)
+        assertEquals(4, light.getColorEstimate(0f, 1f, 0f).size)
+
         assertNull(light.reflectionsTexture)
         assertNull(light.irradianceTexture)
 
@@ -59,7 +62,7 @@ class IndirectLightTest : FilamentTestFixture() {
         val dir = IndirectLight.getDirectionEstimate(sh)
         assertEquals(3, dir.size)
 
-        val col = IndirectLight.getColorEstimate(sh, 0.0, 1.0, 0.0)
+        val col = IndirectLight.getColorEstimate(sh, 0f, 1f, 0f)
         assertEquals(4, col.size)
     }
 

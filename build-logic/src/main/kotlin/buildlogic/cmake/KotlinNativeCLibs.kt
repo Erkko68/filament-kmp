@@ -50,7 +50,11 @@ fun KotlinNativeTarget.linkFilamentCApi(project: Project, module: String) {
     }
     compilations.getByName("main").cinterops.create("filament") {
         definitionFile.set(defFile)
-        project.tasks.named(interopProcessingTaskName) { dependsOn(writeDef, ":cmakeBuild_${target.id}") }
+        project.tasks.named(interopProcessingTaskName) {
+            dependsOn(writeDef, ":cmakeBuild_${target.id}")
+            // The klib embeds the archive, so a rebuilt C API must re-run cinterop.
+            inputs.file(cLibDir.map { it.file("lib$module-c.a") }).withPropertyName("cApiArchive")
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -95,6 +96,16 @@ class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativeP
         }
 
         /**
+         * Associates an optional name with this Stream for debugging purposes.
+         *
+         * The name will show in error messages and should be kept as short as possible.
+         *
+         * @param name A string to identify this Stream.
+         * @return This Builder, for chaining calls.
+         */
+        fun name(name: String): Builder = apply { interopScope { FilaStreamBuilder_name(nativeBuilder, toInterop(name)) } }
+
+        /**
          * Creates the Stream object and associates it with the given Engine.
          *
          * @param engine Engine to associate this Stream with.
@@ -114,6 +125,24 @@ class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativeP
      * @return The StreamType of this stream.
      */
     val streamType: StreamType get() = StreamType.entries[FilaStream_getStreamType(nativeHandle)]
+
+    /**
+     * Updates an ACQUIRED stream with an image that is guaranteed to be used in the next frame.
+     *
+     * Filament immediately "acquires" the image and calls [release] when it is done with it. Call
+     * this outside of beginFrame / endFrame, once per frame: if several images are pushed in one
+     * frame, only the last is used, but every callback fires.
+     *
+     * Call it on the thread that calls Renderer.beginFrame, which is also where [release] runs.
+     *
+     * @param image Platform image (e.g. an AHardwareBuffer on Android).
+     * @param transform Transform matrix applied to the image, as 9 floats (column-major 3x3); identity by default.
+     * @param release Called with [image] when Filament releases it.
+     */
+    fun setAcquiredImage(image: NativePointer, transform: FloatArray = IDENTITY, release: (image: NativePointer) -> Unit) {
+        val userData = Callbacks.register(once = true, release)
+        transform.usePinned { FilaStream_setAcquiredImage_Callback_void_mat3f(nativeHandle, image, Callbacks.argUser, userData, it) }
+    }
 
     /**
      * Updates the size of the incoming stream.
@@ -137,28 +166,8 @@ class Stream @InternalFilamentApi constructor(internal var nativeHandle: NativeP
      * @return Timestamp in nanoseconds (monotonically increasing).
      */
     val timestamp: Long get() = LongArray(1).also { t -> t.usePinned { FilaStream_getTimestamp(nativeHandle, it) } }[0]
+
+    private companion object {
+        val IDENTITY = floatArrayOf(1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+    }
 }
-
-@ExternalSymbolName("FilaStreamBuilder_build")
-private external fun FilaStreamBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaStreamBuilder_create")
-private external fun FilaStreamBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaStreamBuilder_destroy")
-private external fun FilaStreamBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaStreamBuilder_height")
-private external fun FilaStreamBuilder_height(builder: NativePointer, height: Int)
-
-@ExternalSymbolName("FilaStreamBuilder_width")
-private external fun FilaStreamBuilder_width(builder: NativePointer, width: Int)
-
-@ExternalSymbolName("FilaStream_getStreamType")
-private external fun FilaStream_getStreamType(stream: NativePointer): Int
-
-@ExternalSymbolName("FilaStream_getTimestamp")
-private external fun FilaStream_getTimestamp(stream: NativePointer, out: NativePointer)
-
-@ExternalSymbolName("FilaStream_setDimensions")
-private external fun FilaStream_setDimensions(stream: NativePointer, width: Int, height: Int)

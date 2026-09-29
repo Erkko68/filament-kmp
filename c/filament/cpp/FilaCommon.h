@@ -53,19 +53,6 @@ namespace filament_c {
         }
         delete wrapper;
     }
-
-    struct StreamCallbackWrapper {
-        FilaStreamCallback callback;
-        void* userData;
-    };
-
-    inline void streamCallback(void* image, void* user) {
-        auto wrapper = reinterpret_cast<StreamCallbackWrapper*>(user);
-        if (wrapper->callback) {
-            wrapper->callback(image, wrapper->userData);
-        }
-        delete wrapper;
-    }
 }
 
 #endif // FILAMENT_CPP_COMMON_H

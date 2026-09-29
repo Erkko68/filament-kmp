@@ -4,3 +4,16 @@ FilaIndexBuffer
 FilaVertexBuffer
 FilaSkinningBuffer
 FilaMorphTargetBuffer
+FilaStream
+FilaSkybox
+FilaIndirectLight
+FilaToneMapper
+FilaLinearToneMapper
+FilaACESToneMapper
+FilaACESLegacyToneMapper
+FilaFilmicToneMapper
+FilaPBRNeutralToneMapper
+FilaGT7ToneMapper
+FilaAgxToneMapper
+FilaGenericToneMapper
+FilaDisplayRangeToneMapper

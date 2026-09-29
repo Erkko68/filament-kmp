@@ -13,6 +13,7 @@ class StreamTest : FilamentTestFixture() {
         val stream = Stream.Builder()
             .width(640)
             .height(480)
+            .name("stream")
             .build(engine)
         
         assertNotNull(stream)

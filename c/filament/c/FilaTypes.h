@@ -142,7 +142,6 @@ typedef enum FilaColorConversion {
 
 // Callback types
 typedef void (*FilaBufferCallback)(void* buffer, size_t size, void* userData);
-typedef void (*FilaStreamCallback)(void* image, void* userData);
 
 #ifdef __cplusplus
 }

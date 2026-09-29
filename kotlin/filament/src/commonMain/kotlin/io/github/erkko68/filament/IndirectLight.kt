@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -55,7 +56,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @param cubemap Mip-mapped cubemap (or null to clear)
          * @return This Builder, for chaining calls
          */
-        fun reflections(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_reflections(nativeBuilder, cubemap.nativeHandle) }
+        fun reflections(cubemap: Texture?): Builder = apply { FilaIndirectLightBuilder_reflections(nativeBuilder, cubemap?.nativeHandle ?: NullPointer) }
         /**
          * Sets the irradiance from pre-convolved spherical harmonics coefficients.
          *
@@ -70,7 +71,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          */
         fun irradiance(bands: Int, sh: FloatArray): Builder = apply {
             sh.usePinned { pinned ->
-                FilaIndirectLightBuilder_irradiance(nativeBuilder, bands, pinned)
+                FilaIndirectLightBuilder_irradiance_uint8_t_float3(nativeBuilder, bands, pinned)
             }
         }
         /**
@@ -96,7 +97,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @param cubemap Cubemap texture for irradiance (or null to clear)
          * @return This Builder, for chaining calls
          */
-        fun irradiance(cubemap: Texture): Builder = apply { FilaIndirectLightBuilder_irradianceAsTexture(nativeBuilder, cubemap.nativeHandle) }
+        fun irradiance(cubemap: Texture?): Builder = apply { FilaIndirectLightBuilder_irradiance_Texture(nativeBuilder, cubemap?.nativeHandle ?: NullPointer) }
         /**
          * Sets the environment's overall intensity multiplier.
          *
@@ -162,6 +163,50 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
      */
     val irradianceTexture: Texture? get() = FilaIndirectLight_getIrradianceTexture(nativeHandle).takeIf { it != NullPointer }?.let(::Texture)
 
+    /**
+     * Helper to estimate the direction of the dominant light in the environment.
+     *
+     * This assumes that there is only a single dominant light (such as the sun in outdoors
+     * environments), if it's not the case the direction returned will be an average of the
+     * various lights based on their intensity.
+     *
+     * If there are no clear dominant light, as is often the case with low dynamic range (LDR)
+     * environments, this method may return a wrong or unexpected direction.
+     *
+     * The dominant light direction can be used to set a directional light's direction,
+     * for instance to produce shadows that match the environment.
+     *
+     * @param out Optional FloatArray for result; created if null
+     * @return A unit vector representing the direction of the dominant light
+     *
+     * @see LightManager.Builder.direction
+     * @see getColorEstimate
+     */
+    fun getDirectionEstimate(out: FloatArray? = null): FloatArray =
+        (out ?: FloatArray(3)).also { result -> result.usePinned { FilaIndirectLight_getDirectionEstimate(nativeHandle, it) } }
+
+    /**
+     * Helper to estimate the color and relative intensity of the environment in a given direction.
+     *
+     * This can be used to set the color and intensity of a directional light. In this case
+     * make sure to multiply the returned intensity by the intensity of this indirect light.
+     *
+     * @param x Direction X component (should form a unit vector with y and z)
+     * @param y Direction Y component (should form a unit vector with x and z)
+     * @param z Direction Z component (should form a unit vector with x and y)
+     * @param out Optional FloatArray for result; created if null
+     * @return A vector of 4 floats: first 3 components are the linear color, 4th is the intensity
+     *
+     * @see getDirectionEstimate
+     */
+    fun getColorEstimate(x: Float, y: Float, z: Float, out: FloatArray? = null): FloatArray {
+        val result = out ?: FloatArray(4)
+        floatArrayOf(x, y, z).usePinned { pDir ->
+            result.usePinned { pOut -> FilaIndirectLight_getColorEstimate(nativeHandle, pDir, pOut) }
+        }
+        return result
+    }
+
     companion object {
         init { Filament.init() } // statics are callable before any Engine exists
         /**
@@ -188,7 +233,7 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
             val result = out ?: FloatArray(3)
             sh.usePinned { pSh ->
                 result.usePinned { pOut ->
-                    FilaIndirectLight_getDirectionEstimateStatic(pSh, pOut)
+                    FilaIndirectLight_getDirectionEstimate_float3(pSh, pOut)
                 }
             }
             return result
@@ -212,65 +257,14 @@ class IndirectLight @InternalFilamentApi constructor(internal var nativeHandle: 
          * @see LightManager.Builder.color
          * @see LightManager.Builder.intensity
          */
-        fun getColorEstimate(sh: FloatArray, x: Double, y: Double, z: Double, out: FloatArray? = null): FloatArray {
+        fun getColorEstimate(sh: FloatArray, x: Float, y: Float, z: Float, out: FloatArray? = null): FloatArray {
             val result = out ?: FloatArray(4)
             sh.usePinned { pSh ->
-                result.usePinned { pOut ->
-                    FilaIndirectLight_getColorEstimateStatic(pSh, x.toFloat(), y.toFloat(), z.toFloat(), pOut)
+                floatArrayOf(x, y, z).usePinned { pDir ->
+                    result.usePinned { pOut -> FilaIndirectLight_getColorEstimate_float3(pSh, pDir, pOut) }
                 }
             }
             return result
         }
     }
 }
-
-@ExternalSymbolName("FilaIndirectLightBuilder_build")
-private external fun FilaIndirectLightBuilder_build(builder: NativePointer, engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaIndirectLightBuilder_create")
-private external fun FilaIndirectLightBuilder_create(): NativePointer
-
-@ExternalSymbolName("FilaIndirectLightBuilder_destroy")
-private external fun FilaIndirectLightBuilder_destroy(builder: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLightBuilder_intensity")
-private external fun FilaIndirectLightBuilder_intensity(builder: NativePointer, envIntensity: Float)
-
-@ExternalSymbolName("FilaIndirectLightBuilder_irradiance")
-private external fun FilaIndirectLightBuilder_irradiance(builder: NativePointer, bands: Int, sh: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLightBuilder_irradianceAsTexture")
-private external fun FilaIndirectLightBuilder_irradianceAsTexture(builder: NativePointer, cubemap: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLightBuilder_radiance")
-private external fun FilaIndirectLightBuilder_radiance(builder: NativePointer, bands: Int, sh: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLightBuilder_reflections")
-private external fun FilaIndirectLightBuilder_reflections(builder: NativePointer, cubemap: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLightBuilder_rotation")
-private external fun FilaIndirectLightBuilder_rotation(builder: NativePointer, rotation: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLight_getColorEstimateStatic")
-private external fun FilaIndirectLight_getColorEstimateStatic(sh: NativePointer, x: Float, y: Float, z: Float, outColor: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLight_getDirectionEstimateStatic")
-private external fun FilaIndirectLight_getDirectionEstimateStatic(sh: NativePointer, outDirection: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLight_getIntensity")
-private external fun FilaIndirectLight_getIntensity(indirectLight: NativePointer): Float
-
-@ExternalSymbolName("FilaIndirectLight_getIrradianceTexture")
-private external fun FilaIndirectLight_getIrradianceTexture(indirectLight: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaIndirectLight_getReflectionsTexture")
-private external fun FilaIndirectLight_getReflectionsTexture(indirectLight: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaIndirectLight_getRotation")
-private external fun FilaIndirectLight_getRotation(indirectLight: NativePointer, outRotation: NativePointer)
-
-@ExternalSymbolName("FilaIndirectLight_setIntensity")
-private external fun FilaIndirectLight_setIntensity(indirectLight: NativePointer, intensity: Float)
-
-@ExternalSymbolName("FilaIndirectLight_setRotation")
-private external fun FilaIndirectLight_setRotation(indirectLight: NativePointer, rotation: NativePointer)

@@ -319,15 +319,16 @@ internal fun PostProcessing.applyTo(view: View, engine: Engine): ColorGrading? {
     }
 
     return colorGrade?.let { c ->
-        ColorGrading.Builder()
-            .exposure(c.exposure)
-            .contrast(c.contrast)
-            .vibrance(c.vibrance)
-            .saturation(c.saturation)
-            .whiteBalance(c.whiteBalanceTemperature, c.whiteBalanceTint)
-            .toneMapper(c.toneMapping.toToneMapper())
-            .build(engine)
-            .also { view.colorGrading = it }
+        c.toneMapping.toToneMapper().use { toneMapper ->
+            ColorGrading.Builder()
+                .exposure(c.exposure)
+                .contrast(c.contrast)
+                .vibrance(c.vibrance)
+                .saturation(c.saturation)
+                .whiteBalance(c.whiteBalanceTemperature, c.whiteBalanceTint)
+                .toneMapper(toneMapper)
+                .build(engine)
+        }.also { view.colorGrading = it }
     } ?: run {
         view.colorGrading = null
         null
