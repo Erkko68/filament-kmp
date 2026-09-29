@@ -56,8 +56,9 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_interpolation(FilaFilamat
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, FilaUniformType type, FilaPrecision precision);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_size_t_UniformType_ParameterPrecision(FilaFilamatMaterialBuilder* self, const char* name, uint32_t size, FilaUniformType type, FilaPrecision precision);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional(FilaFilamatMaterialBuilder* self, const char* name, FilaSamplerType samplerType, FilaSamplerFormat format, FilaPrecision precision, bool filterable, bool multisample, const char* transformName, const FilaShaderStageFlags* stages);
-// TODO(handwritten) FilaFilamatMaterialBuilder_constant: template MaterialBuilder & filamat::MaterialBuilder::constant(const char * name, ConstantType type, T defaultValue)
-//     function template: C binds its instantiations
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_int32_t(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, int32_t defaultValue);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_float(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, float defaultValue);
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_bool(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, bool defaultValue);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable_ParameterPrecision(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name, FilaPrecision precision);
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_require(FilaFilamatMaterialBuilder* self, FilaVertexAttribute attribute);

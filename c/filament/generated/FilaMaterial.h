@@ -27,10 +27,12 @@ void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, Fil
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
-// TODO(handwritten) FilaMaterialBuilder_constant: template Builder & filament::Material::Builder::constant(const char * _Nonnull name, size_t nameLength, T value)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialBuilder_constant: template Builder & filament::Material::Builder::constant(const char * _Nonnull name, T value)
-//     function template: C binds its instantiations
+FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_int32_t(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, int32_t value);
+FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_float(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, float value);
+FilaMaterialBuilder* FilaMaterialBuilder_constant_size_t_bool(FilaMaterialBuilder* self, const char* name, uint32_t nameLength, bool value);
+FilaMaterialBuilder* FilaMaterialBuilder_constant_int32_t(FilaMaterialBuilder* self, const char* name, int32_t value);
+FilaMaterialBuilder* FilaMaterialBuilder_constant_float(FilaMaterialBuilder* self, const char* name, float value);
+FilaMaterialBuilder* FilaMaterialBuilder_constant_bool(FilaMaterialBuilder* self, const char* name, bool value);
 FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount);
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality);
 FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, FilaMaterialUboBatchingMode uboBatchingMode);
@@ -75,8 +77,24 @@ const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, con
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color);
 void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
-// TODO(handwritten) FilaMaterial_setDefaultParameter: template void filament::Material::setDefaultParameter(const char * _Nonnull name, T value)
-//     function template: C binds its instantiations
+void FilaMaterial_setDefaultParameter_float(FilaMaterial* self, const char* name, float value);
+void FilaMaterial_setDefaultParameter_int32_t(FilaMaterial* self, const char* name, int32_t value);
+void FilaMaterial_setDefaultParameter_uint32_t(FilaMaterial* self, const char* name, uint32_t value);
+void FilaMaterial_setDefaultParameter_int2(FilaMaterial* self, const char* name, const FilaInt2* value);
+void FilaMaterial_setDefaultParameter_int3(FilaMaterial* self, const char* name, const FilaInt3* value);
+void FilaMaterial_setDefaultParameter_int4(FilaMaterial* self, const char* name, const FilaInt4* value);
+void FilaMaterial_setDefaultParameter_uint2(FilaMaterial* self, const char* name, const FilaUint2* value);
+void FilaMaterial_setDefaultParameter_uint3(FilaMaterial* self, const char* name, const FilaUint3* value);
+void FilaMaterial_setDefaultParameter_uint4(FilaMaterial* self, const char* name, const FilaUint4* value);
+void FilaMaterial_setDefaultParameter_float2(FilaMaterial* self, const char* name, const FilaFloat2* value);
+void FilaMaterial_setDefaultParameter_float3(FilaMaterial* self, const char* name, const FilaFloat3* value);
+void FilaMaterial_setDefaultParameter_float4(FilaMaterial* self, const char* name, const FilaFloat4* value);
+void FilaMaterial_setDefaultParameter_mat3f(FilaMaterial* self, const char* name, const FilaMat3f* value);
+void FilaMaterial_setDefaultParameter_mat4f(FilaMaterial* self, const char* name, const FilaMat4f* value);
+void FilaMaterial_setDefaultParameter_bool(FilaMaterial* self, const char* name, bool value);
+void FilaMaterial_setDefaultParameter_bool2(FilaMaterial* self, const char* name, const FilaBool2* value);
+void FilaMaterial_setDefaultParameter_bool3(FilaMaterial* self, const char* name, const FilaBool3* value);
+void FilaMaterial_setDefaultParameter_bool4(FilaMaterial* self, const char* name, const FilaBool4* value);
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self);
 
 

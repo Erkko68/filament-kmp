@@ -344,4 +344,36 @@ uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManage
     return (fila::cpp(self)->getEnabledAttributesAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex))).getValue();
 }
 
+void FilaRenderableManager_computeAABB_float4_uint16_t_size_t_size_t(const FilaFloat4* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::float4, uint16_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_float4_uint32_t_size_t_size_t(const FilaFloat4* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::float4, uint32_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_half4_uint16_t_size_t_size_t(const FilaHalf4* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::half4, uint16_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_half4_uint32_t_size_t_size_t(const FilaHalf4* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::half4, uint32_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_float3_uint16_t_size_t_size_t(const FilaFloat3* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::float3, uint16_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_float3_uint32_t_size_t_size_t(const FilaFloat3* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::float3, uint32_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_half3_uint16_t_size_t_size_t(const FilaHalf3* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::half3, uint16_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
+void FilaRenderableManager_computeAABB_half3_uint32_t_size_t_size_t(const FilaHalf3* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out) {
+    *fila::cpp(out) = filament::RenderableManager::computeAABB<filament::math::half3, uint32_t>(fila::cpp(vertices), indices, static_cast<size_t>(count), static_cast<size_t>(stride));
+}
+
 } // extern "C"

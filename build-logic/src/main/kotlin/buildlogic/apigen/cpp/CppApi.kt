@@ -127,9 +127,21 @@ class CppMethod(
     val isPublic: Boolean,
     val isDeprecated: Boolean,
     val isApi: Boolean,
-    /** A function template: C binds its instantiations, which only a hand can list. */
-    val isTemplate: Boolean = false,
+    /** A function template's named parameters, in order; null for a plain function. */
+    val templateParameters: List<String>? = null,
 ) {
+    val isTemplate get() = templateParameters != null
+
+    /** This template with [arguments] (by parameter name) in place of its parameters. */
+    fun instantiate(arguments: Map<String, CppType>): CppMethod {
+        val substitute = { t: CppType ->
+            arguments[t.decl?.removePrefix("$owner::$name::")]?.takeIf { t.kind == CppType.Kind.TEMPLATE_PARAMETER }
+                ?.let { a -> CppType(t.spelling.replace(Regex("\\b${t.decl!!.substringAfterLast("::")}\\b"), a.spelling), a.decl, a.kind, a.args) } ?: t
+        }
+        return CppMethod(owner, name, header, mangled, substitute(returns), params.map { CppParam(it.name, substitute(it.type), it.default) },
+            isStatic, isConst, isPublic, isDeprecated, isApi)
+    }
+
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +
         (if (isConst) " const" else "")
 }

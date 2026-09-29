@@ -32,8 +32,11 @@ void FilaGeometryTangentSpaceMesh_getUVs(const FilaGeometryTangentSpaceMesh* sel
 void FilaGeometryTangentSpaceMesh_getQuats_quatf_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuatf* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getQuats_short4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaShort4* out_, uint32_t stride);
 void FilaGeometryTangentSpaceMesh_getQuats_quath_size_t(const FilaGeometryTangentSpaceMesh* self, FilaQuath* out_, uint32_t stride);
-// TODO(handwritten) FilaGeometryTangentSpaceMesh_getAux: template void filament::geometry::TangentSpaceMesh::getAux(AuxAttribute attribute, T * out, size_t stride) const
-//     function template: C binds its instantiations
+void FilaGeometryTangentSpaceMesh_getAux_float2_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat2* out_, uint32_t stride);
+void FilaGeometryTangentSpaceMesh_getAux_float3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat3* out_, uint32_t stride);
+void FilaGeometryTangentSpaceMesh_getAux_float4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat4* out_, uint32_t stride);
+void FilaGeometryTangentSpaceMesh_getAux_ushort3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort3* out_, uint32_t stride);
+void FilaGeometryTangentSpaceMesh_getAux_ushort4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort4* out_, uint32_t stride);
 uint32_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self);
 void FilaGeometryTangentSpaceMesh_getTriangles_uint3(const FilaGeometryTangentSpaceMesh* self, FilaUint3* out_);
 void FilaGeometryTangentSpaceMesh_getTriangles_ushort3(const FilaGeometryTangentSpaceMesh* self, FilaUshort3* out_);

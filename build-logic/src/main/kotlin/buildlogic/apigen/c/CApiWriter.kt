@@ -7,6 +7,7 @@ import buildlogic.apigen.cpp.CppField
 import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppParam
 import buildlogic.apigen.cpp.CppRecord
+import buildlogic.apigen.cpp.CppType
 
 /**
  * Writes the C API for what [headers] declare: per module a `Types.h` (handles, enums, math mirrors) and an
@@ -39,6 +40,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             overloads(functions, section) { CNames.function(namespace, it.name, suffix = "") }
             section.declarations.appendLine()
         }
+        check(bridges.unusedFunctionInstantiations.isEmpty()) { "FUNCTION_INSTANTIATIONS lists unknown templates: ${bridges.unusedFunctionInstantiations}" }
         val out = LinkedHashMap<String, String>()
         files.filterValues { it.declarations.isNotBlank() }.forEach { (name, section) ->
             val dir = "${section.module}/generated"
@@ -65,7 +67,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         if (!bridges.uninstantiated(record) && record.allocatable && (instanceMethods || bridges.isValue(record.name))) {
             val (skipped, constructors) = record.constructors.partition { api.skipReason(it) != null }
             skipped.forEach { section.declarations.appendLine("// skipped ${record.name}(${spelled(it)})" + reason(api.skipReason(it), "")) }
-            constructors.zip(suffixes(constructors)).forEach { (params, suffix) ->
+            constructors.zip(suffixes(constructors.map { ctor -> ctor.map { it.type.spelling } })).forEach { (params, suffix) ->
                 val name = CNames.function(record.name, "create", suffix)
                 emit(name, "$cpp(${spelled(params)})", section) {
                     val bridged = bridge(params)
@@ -111,26 +113,37 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     /** A skip note's reason, unless it's the member's own entry. */
     private fun reason(reason: String?, member: String) = reason?.takeIf { it != member }?.let { ": $it" } ?: ""
 
+    /** A function, or a template's instantiation with the [templateArguments] its call spells. */
+    private class Overload(val method: CppMethod, val template: CppMethod?, val templateArguments: List<String> = emptyList()) {
+        /** The types telling it apart: its parameters', and a template's result when only that depends on the arguments. */
+        val types = method.params.map { it.type.spelling } +
+            listOfNotNull(method.returns.spelling.takeIf { template?.returns?.kind == CppType.Kind.TEMPLATE_PARAMETER })
+    }
+
     /** Emits [functions], suffixing overloads of one name with the types that tell them apart. */
     private fun overloads(functions: List<CppMethod>, section: Section, baseName: (CppMethod) -> String) {
         functions.groupBy { it.name }.values.forEach { all ->
-            val (templates, group) = all.partition { it.isTemplate }
-            group.zip(suffixes(group.map { it.params })).forEach { (function, suffix) ->
-                val name = baseName(function) + if (suffix.isEmpty()) "" else "_$suffix"
-                emit(name, signature(function), section) { forwarder(function, name) }
+            val (templates, plain) = all.partition { it.isTemplate }
+            val (listed, unlisted) = templates.partition { bridges.functionInstantiations(it) != null }
+            val group = plain.map { Overload(it, null) } +
+                listed.flatMap { t -> bridges.functionInstantiations(t)!!.map { (m, arguments) -> Overload(m, t, arguments) } }
+            group.zip(suffixes(group.map { it.types })).forEach { (overload, suffix) ->
+                val name = baseName(overload.method) + if (suffix.isEmpty()) "" else "_$suffix"
+                emit(name, signature(overload.method), section) { forwarder(overload.method, name, overload.templateArguments) }
             }
-            templates.forEach { section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: C binds its instantiations") }
+            unlisted.forEach { section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations") }
         }
     }
 
-    private fun forwarder(method: CppMethod, name: String): Pair<String, String> {
-        if (method.mangled == null && !bridges.instantiated(method.owner)) throw Unsupported("member of a class template")
+    private fun forwarder(method: CppMethod, name: String, templateArguments: List<String> = emptyList()): Pair<String, String> {
+        if (api.records[method.owner]?.let(bridges::uninstantiated) == true) throw Unsupported("member of a class template")
         val returns = bridges.result(method.returns)
         val params = bridge(method.params)
         val const = if (method.isConst) "const " else ""
         val self = if (method.isStatic) null else "$const${CNames.type(method.owner)}* self"
         val target = if (method.isStatic) "${bridges.cpp(method.owner)}::" else "fila::cpp(self)->"
-        val call = "$target${method.name}(${args(params)})"
+        val explicit = if (templateArguments.isEmpty()) "" else templateArguments.joinToString(prefix = "<", postfix = ">")
+        val call = "$target${method.name}$explicit(${args(params)})"
         return when {
             returns.out -> "void $name(${cParams(self, params, out = "${returns.c}* out")})" to returns.store(call, "out")
             returns.c == "void" -> "void $name(${cParams(self, params)})" to "$call;"
@@ -182,9 +195,9 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private fun args(params: List<Pair<String, CBridge>>) = params.joinToString { (n, b) -> b.convert(n) }
 
     /** Overloads take the short type names of the parameters after the ones they all share. */
-    private fun suffixes(overloads: List<List<CppParam>>): List<String> {
+    private fun suffixes(overloads: List<List<String>>): List<String> {
         if (overloads.size <= 1) return overloads.map { "" }
-        val names = overloads.map { params -> params.map { shortName(it.type.spelling) } }
+        val names = overloads.map { types -> types.map(::shortName) }
         val shared = (0 until names.minOf { it.size }).takeWhile { i -> names.all { it[i] == names[0][i] } }.size
         val tails = names.map { it.drop(shared).joinToString("_") }
         return if (tails.toSet().size == tails.size) tails else names.map { it.joinToString("_") }

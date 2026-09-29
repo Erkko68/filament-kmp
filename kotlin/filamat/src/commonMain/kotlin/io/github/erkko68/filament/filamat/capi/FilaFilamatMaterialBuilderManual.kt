@@ -6,12 +6,3 @@ import io.github.erkko68.filament.interop.NativePointer
 
 @ExternalSymbolName("FilaFilamatMaterialBuilder_build")
 internal external fun FilaFilamatMaterialBuilder_build(self: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaFilamatMaterialBuilder_constant_int")
-internal external fun FilaFilamatMaterialBuilder_constant_int(self: NativePointer, name: NativePointer, type: Int, defaultValue: Int): NativePointer
-
-@ExternalSymbolName("FilaFilamatMaterialBuilder_constant_float")
-internal external fun FilaFilamatMaterialBuilder_constant_float(self: NativePointer, name: NativePointer, type: Int, defaultValue: Float): NativePointer
-
-@ExternalSymbolName("FilaFilamatMaterialBuilder_constant_bool")
-internal external fun FilaFilamatMaterialBuilder_constant_bool(self: NativePointer, name: NativePointer, type: Int, defaultValue: Boolean): NativePointer

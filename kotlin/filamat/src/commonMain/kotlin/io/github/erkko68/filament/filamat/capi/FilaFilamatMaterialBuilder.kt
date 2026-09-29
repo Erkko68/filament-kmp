@@ -85,6 +85,15 @@ internal external fun FilaFilamatMaterialBuilder_parameter_size_t_UniformType_Pa
 @ExternalSymbolName("FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional")
 internal external fun FilaFilamatMaterialBuilder_parameter_SamplerType_SamplerFormat_ParameterPrecision_bool_bool_char_optional(self: NativePointer, name: NativePointer, samplerType: Int, format: Int, precision: Int, filterable: Boolean, multisample: Boolean, transformName: NativePointer, stages: NativePointer): NativePointer
 
+@ExternalSymbolName("FilaFilamatMaterialBuilder_constant_int32_t")
+internal external fun FilaFilamatMaterialBuilder_constant_int32_t(self: NativePointer, name: NativePointer, type: Int, defaultValue: Int): NativePointer
+
+@ExternalSymbolName("FilaFilamatMaterialBuilder_constant_float")
+internal external fun FilaFilamatMaterialBuilder_constant_float(self: NativePointer, name: NativePointer, type: Int, defaultValue: Float): NativePointer
+
+@ExternalSymbolName("FilaFilamatMaterialBuilder_constant_bool")
+internal external fun FilaFilamatMaterialBuilder_constant_bool(self: NativePointer, name: NativePointer, type: Int, defaultValue: Boolean): NativePointer
+
 @ExternalSymbolName("FilaFilamatMaterialBuilder_variable")
 internal external fun FilaFilamatMaterialBuilder_variable(self: NativePointer, v: Int, name: NativePointer): NativePointer
 

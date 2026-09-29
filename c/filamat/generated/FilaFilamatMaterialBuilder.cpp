@@ -112,6 +112,18 @@ FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_parameter_SamplerType_Sam
     return fila::c(&fila::cpp(self)->parameter(name, static_cast<filament::backend::SamplerType>(samplerType), static_cast<filament::backend::SamplerFormat>(format), static_cast<filament::backend::Precision>(precision), filterable, multisample, transformName, fila::optional(stages, [&](auto v) { return static_cast<filament::backend::ShaderStageFlags>(v); })));
 }
 
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_int32_t(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, int32_t defaultValue) {
+    return fila::c(&fila::cpp(self)->constant<int32_t>(name, static_cast<filament::backend::ConstantType>(type), defaultValue));
+}
+
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_float(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, float defaultValue) {
+    return fila::c(&fila::cpp(self)->constant<float>(name, static_cast<filament::backend::ConstantType>(type), defaultValue));
+}
+
+FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_constant_bool(FilaFilamatMaterialBuilder* self, const char* name, FilaConstantType type, bool defaultValue) {
+    return fila::c(&fila::cpp(self)->constant<bool>(name, static_cast<filament::backend::ConstantType>(type), defaultValue));
+}
+
 FilaFilamatMaterialBuilder* FilaFilamatMaterialBuilder_variable(FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderVariable v, const char* name) {
     return fila::c(&fila::cpp(self)->variable(static_cast<filamat::MaterialBuilder::Variable>(v), name));
 }

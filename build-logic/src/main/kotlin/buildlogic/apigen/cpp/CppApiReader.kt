@@ -65,9 +65,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             }
             // A redeclaration repeats one already read.
             "FunctionDecl" -> if (node["previousDecl"] == null) functions += method(node, scope, isPublic = true, free = true)
-            "FunctionTemplateDecl" -> node.children().firstOrNull { it["kind"] == "FunctionDecl" }?.let {
-                functions += method(it, scope, isPublic = true, free = true, template = true)
-            }
+            "FunctionTemplateDecl" -> template(node, scope, isPublic = true, free = true)?.let { functions += it }
             "EnumDecl" -> visitEnum(node, qualified)
             "TypeAliasDecl", "TypedefDecl" -> {
                 val target = scopes.resolve(spelledType(node), scope)
@@ -118,9 +116,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     // aggregate's default constructor is declared once a header uses it.
                     if (!abstract && usable && self == null) constructors += params
                 }
-                "FunctionTemplateDecl" -> child.children().firstOrNull { it["kind"] == "CXXMethodDecl" }?.let {
-                    methods += method(it, qualified, isPublic, template = true)
-                }
+                "FunctionTemplateDecl" -> template(child, qualified, isPublic, free = false)?.let { methods += it }
                 "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
@@ -138,25 +134,34 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         )
     }
 
+    /** A function template's function, its parameters declared in a scope of its own (`owner::name::T`). */
+    private fun template(node: Map<*, *>, owner: String, isPublic: Boolean, free: Boolean): CppMethod? {
+        val function = node.children().firstOrNull { it["kind"] == if (free) "FunctionDecl" else "CXXMethodDecl" } ?: return null
+        val parameters = node.children().filter { it["kind"] in TEMPLATE_PARAMETERS }.mapNotNull { it["name"] as? String }
+        parameters.forEach { scopes.templateParameter("$owner::${function["name"]}::$it") }
+        return method(function, owner, isPublic, free, parameters)
+    }
+
     /** A method, or with [free] a function in namespace [owner]. */
-    private fun method(node: Map<*, *>, owner: String, isPublic: Boolean, free: Boolean = false, template: Boolean = false): CppMethod {
+    private fun method(node: Map<*, *>, owner: String, isPublic: Boolean, free: Boolean = false, templateParameters: List<String>? = null): CppMethod {
         val name = node["name"] as String
+        val scope = if (templateParameters != null) "$owner::$name" else owner
         val (returns, qualifiers) = splitSignature(spelledType(node))
         val params = node.children().filter { it["kind"] == "ParmVarDecl" }.map { param ->
             CppParam(
                 param["name"] as? String ?: "",
-                scopes.resolve(spelledType(param), owner),
+                scopes.resolve(spelledType(param), scope),
                 initializer(param)?.let { values.of(it, owner) },
             )
         }
         return CppMethod(
-            owner, name, headerOf[node], node["mangledName"] as? String, scopes.resolve(returns, owner), params,
+            owner, name, headerOf[node], node["mangledName"] as? String, scopes.resolve(returns, scope), params,
             isStatic = free || node["storageClass"] == "static",
             isConst = qualifiers.split(' ').contains("const"),
             isPublic = isPublic,
             isDeprecated = node.children().any { it["kind"] == "DeprecatedAttr" },
             isApi = node["isImplicit"] != true && node["explicitlyDeleted"] != true && !name.startsWith("operator"),
-            isTemplate = template,
+            templateParameters = templateParameters,
         )
     }
 
@@ -187,6 +192,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         val FILTERS = listOf("utils::EntityManager", "image::Ktx", "filament::", "filamat::", "ktxreader::", "IBLPrefilterContext")
         // Math templates are huge and declare no API of their own.
         val SKIPPED = setOf("math")
+        val TEMPLATE_PARAMETERS = setOf("TemplateTypeParmDecl", "NonTypeTemplateParmDecl", "TemplateTemplateParmDecl")
         val NOT_EXPRESSIONS = listOf("Comment", "Attr", "Decl")
         val NOEXCEPT_EXPR = Regex("""noexcept\([^()]*\)\s*$""")
 

@@ -18,26 +18,118 @@ void FilaMaterialInstance_setParameter_size_t_RgbType_float3(FilaMaterialInstanc
 void FilaMaterialInstance_setParameter_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color);
 void FilaMaterialInstance_setParameter_size_t_RgbaType_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbaType type, const FilaFloat4* color);
 void FilaMaterialInstance_setParameter_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
-// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, size_t nameLength, const T & value)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, const T & value)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, size_t nameLength, const T * _Nonnull values, size_t count)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, const T * _Nonnull values, const size_t count)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_getParameter: template T filament::MaterialInstance::getParameter(const char * _Nonnull name, size_t nameLength) const
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_getParameter: template T filament::MaterialInstance::getParameter(const char * _Nonnull name) const
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_setConstant: template void filament::MaterialInstance::setConstant(const char * _Nonnull name, size_t nameLength, T value)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_setConstant: template void filament::MaterialInstance::setConstant(const char * _Nonnull name, T value)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_getConstant: template T filament::MaterialInstance::getConstant(const char * _Nonnull name, size_t nameLength) const
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaMaterialInstance_getConstant: template T filament::MaterialInstance::getConstant(const char * _Nonnull name) const
-//     function template: C binds its instantiations
+void FilaMaterialInstance_setParameter_size_t_float(FilaMaterialInstance* self, const char* name, uint32_t nameLength, float value);
+void FilaMaterialInstance_setParameter_size_t_int32_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, int32_t value);
+void FilaMaterialInstance_setParameter_size_t_uint32_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, uint32_t value);
+void FilaMaterialInstance_setParameter_size_t_int2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt2* value);
+void FilaMaterialInstance_setParameter_size_t_int3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt3* value);
+void FilaMaterialInstance_setParameter_size_t_int4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt4* value);
+void FilaMaterialInstance_setParameter_size_t_uint2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint2* value);
+void FilaMaterialInstance_setParameter_size_t_uint3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint3* value);
+void FilaMaterialInstance_setParameter_size_t_uint4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint4* value);
+void FilaMaterialInstance_setParameter_size_t_float2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat2* value);
+void FilaMaterialInstance_setParameter_size_t_float3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat3* value);
+void FilaMaterialInstance_setParameter_size_t_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat4* value);
+void FilaMaterialInstance_setParameter_size_t_mat3f(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat3f* value);
+void FilaMaterialInstance_setParameter_size_t_mat4f(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat4f* value);
+void FilaMaterialInstance_setParameter_size_t_bool(FilaMaterialInstance* self, const char* name, uint32_t nameLength, bool value);
+void FilaMaterialInstance_setParameter_size_t_bool2(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool2* value);
+void FilaMaterialInstance_setParameter_size_t_bool3(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool3* value);
+void FilaMaterialInstance_setParameter_size_t_bool4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool4* value);
+void FilaMaterialInstance_setParameter_float(FilaMaterialInstance* self, const char* name, float value);
+void FilaMaterialInstance_setParameter_int32_t(FilaMaterialInstance* self, const char* name, int32_t value);
+void FilaMaterialInstance_setParameter_uint32_t(FilaMaterialInstance* self, const char* name, uint32_t value);
+void FilaMaterialInstance_setParameter_int2(FilaMaterialInstance* self, const char* name, const FilaInt2* value);
+void FilaMaterialInstance_setParameter_int3(FilaMaterialInstance* self, const char* name, const FilaInt3* value);
+void FilaMaterialInstance_setParameter_int4(FilaMaterialInstance* self, const char* name, const FilaInt4* value);
+void FilaMaterialInstance_setParameter_uint2(FilaMaterialInstance* self, const char* name, const FilaUint2* value);
+void FilaMaterialInstance_setParameter_uint3(FilaMaterialInstance* self, const char* name, const FilaUint3* value);
+void FilaMaterialInstance_setParameter_uint4(FilaMaterialInstance* self, const char* name, const FilaUint4* value);
+void FilaMaterialInstance_setParameter_float2(FilaMaterialInstance* self, const char* name, const FilaFloat2* value);
+void FilaMaterialInstance_setParameter_float3(FilaMaterialInstance* self, const char* name, const FilaFloat3* value);
+void FilaMaterialInstance_setParameter_float4(FilaMaterialInstance* self, const char* name, const FilaFloat4* value);
+void FilaMaterialInstance_setParameter_mat3f(FilaMaterialInstance* self, const char* name, const FilaMat3f* value);
+void FilaMaterialInstance_setParameter_mat4f(FilaMaterialInstance* self, const char* name, const FilaMat4f* value);
+void FilaMaterialInstance_setParameter_bool(FilaMaterialInstance* self, const char* name, bool value);
+void FilaMaterialInstance_setParameter_bool2(FilaMaterialInstance* self, const char* name, const FilaBool2* value);
+void FilaMaterialInstance_setParameter_bool3(FilaMaterialInstance* self, const char* name, const FilaBool3* value);
+void FilaMaterialInstance_setParameter_bool4(FilaMaterialInstance* self, const char* name, const FilaBool4* value);
+void FilaMaterialInstance_setParameter_size_t_float_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const float* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_int32_t_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const int32_t* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_uint32_t_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const uint32_t* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_int2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_int3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_int4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaInt4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_uint2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_uint3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_uint4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaUint4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_float2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_float3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_float4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaFloat4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_mat3f_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat3f* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_mat4f_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaMat4f* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_bool_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const bool* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_bool2_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_bool3_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_size_t_bool4_size_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, const FilaBool4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_float_size_t(FilaMaterialInstance* self, const char* name, const float* values, uint32_t count);
+void FilaMaterialInstance_setParameter_int32_t_size_t(FilaMaterialInstance* self, const char* name, const int32_t* values, uint32_t count);
+void FilaMaterialInstance_setParameter_uint32_t_size_t(FilaMaterialInstance* self, const char* name, const uint32_t* values, uint32_t count);
+void FilaMaterialInstance_setParameter_int2_size_t(FilaMaterialInstance* self, const char* name, const FilaInt2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_int3_size_t(FilaMaterialInstance* self, const char* name, const FilaInt3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_int4_size_t(FilaMaterialInstance* self, const char* name, const FilaInt4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_uint2_size_t(FilaMaterialInstance* self, const char* name, const FilaUint2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_uint3_size_t(FilaMaterialInstance* self, const char* name, const FilaUint3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_uint4_size_t(FilaMaterialInstance* self, const char* name, const FilaUint4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_float2_size_t(FilaMaterialInstance* self, const char* name, const FilaFloat2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_float3_size_t(FilaMaterialInstance* self, const char* name, const FilaFloat3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_float4_size_t(FilaMaterialInstance* self, const char* name, const FilaFloat4* values, uint32_t count);
+void FilaMaterialInstance_setParameter_mat3f_size_t(FilaMaterialInstance* self, const char* name, const FilaMat3f* values, uint32_t count);
+void FilaMaterialInstance_setParameter_mat4f_size_t(FilaMaterialInstance* self, const char* name, const FilaMat4f* values, uint32_t count);
+void FilaMaterialInstance_setParameter_bool_size_t(FilaMaterialInstance* self, const char* name, const bool* values, uint32_t count);
+void FilaMaterialInstance_setParameter_bool2_size_t(FilaMaterialInstance* self, const char* name, const FilaBool2* values, uint32_t count);
+void FilaMaterialInstance_setParameter_bool3_size_t(FilaMaterialInstance* self, const char* name, const FilaBool3* values, uint32_t count);
+void FilaMaterialInstance_setParameter_bool4_size_t(FilaMaterialInstance* self, const char* name, const FilaBool4* values, uint32_t count);
+float FilaMaterialInstance_getParameter_size_t_float(const FilaMaterialInstance* self, const char* name, uint32_t nameLength);
+int32_t FilaMaterialInstance_getParameter_size_t_int32_t(const FilaMaterialInstance* self, const char* name, uint32_t nameLength);
+uint32_t FilaMaterialInstance_getParameter_size_t_uint32_t(const FilaMaterialInstance* self, const char* name, uint32_t nameLength);
+void FilaMaterialInstance_getParameter_size_t_int2(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaInt2* out);
+void FilaMaterialInstance_getParameter_size_t_int3(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaInt3* out);
+void FilaMaterialInstance_getParameter_size_t_int4(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaInt4* out);
+void FilaMaterialInstance_getParameter_size_t_uint2(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaUint2* out);
+void FilaMaterialInstance_getParameter_size_t_uint3(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaUint3* out);
+void FilaMaterialInstance_getParameter_size_t_uint4(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaUint4* out);
+void FilaMaterialInstance_getParameter_size_t_float2(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaFloat2* out);
+void FilaMaterialInstance_getParameter_size_t_float3(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaFloat3* out);
+void FilaMaterialInstance_getParameter_size_t_float4(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaFloat4* out);
+void FilaMaterialInstance_getParameter_size_t_mat3f(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaMat3f* out);
+void FilaMaterialInstance_getParameter_size_t_mat4f(const FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaMat4f* out);
+float FilaMaterialInstance_getParameter_float(const FilaMaterialInstance* self, const char* name);
+int32_t FilaMaterialInstance_getParameter_int32_t(const FilaMaterialInstance* self, const char* name);
+uint32_t FilaMaterialInstance_getParameter_uint32_t(const FilaMaterialInstance* self, const char* name);
+void FilaMaterialInstance_getParameter_int2(const FilaMaterialInstance* self, const char* name, FilaInt2* out);
+void FilaMaterialInstance_getParameter_int3(const FilaMaterialInstance* self, const char* name, FilaInt3* out);
+void FilaMaterialInstance_getParameter_int4(const FilaMaterialInstance* self, const char* name, FilaInt4* out);
+void FilaMaterialInstance_getParameter_uint2(const FilaMaterialInstance* self, const char* name, FilaUint2* out);
+void FilaMaterialInstance_getParameter_uint3(const FilaMaterialInstance* self, const char* name, FilaUint3* out);
+void FilaMaterialInstance_getParameter_uint4(const FilaMaterialInstance* self, const char* name, FilaUint4* out);
+void FilaMaterialInstance_getParameter_float2(const FilaMaterialInstance* self, const char* name, FilaFloat2* out);
+void FilaMaterialInstance_getParameter_float3(const FilaMaterialInstance* self, const char* name, FilaFloat3* out);
+void FilaMaterialInstance_getParameter_float4(const FilaMaterialInstance* self, const char* name, FilaFloat4* out);
+void FilaMaterialInstance_getParameter_mat3f(const FilaMaterialInstance* self, const char* name, FilaMat3f* out);
+void FilaMaterialInstance_getParameter_mat4f(const FilaMaterialInstance* self, const char* name, FilaMat4f* out);
+void FilaMaterialInstance_setConstant_size_t_int32_t(FilaMaterialInstance* self, const char* name, uint32_t nameLength, int32_t value);
+void FilaMaterialInstance_setConstant_size_t_float(FilaMaterialInstance* self, const char* name, uint32_t nameLength, float value);
+void FilaMaterialInstance_setConstant_size_t_bool(FilaMaterialInstance* self, const char* name, uint32_t nameLength, bool value);
+void FilaMaterialInstance_setConstant_int32_t(FilaMaterialInstance* self, const char* name, int32_t value);
+void FilaMaterialInstance_setConstant_float(FilaMaterialInstance* self, const char* name, float value);
+void FilaMaterialInstance_setConstant_bool(FilaMaterialInstance* self, const char* name, bool value);
+int32_t FilaMaterialInstance_getConstant_size_t_int32_t(const FilaMaterialInstance* self, const char* name, uint32_t nameLength);
+float FilaMaterialInstance_getConstant_size_t_float(const FilaMaterialInstance* self, const char* name, uint32_t nameLength);
+bool FilaMaterialInstance_getConstant_size_t_bool(const FilaMaterialInstance* self, const char* name, uint32_t nameLength);
+int32_t FilaMaterialInstance_getConstant_int32_t(const FilaMaterialInstance* self, const char* name);
+float FilaMaterialInstance_getConstant_float(const FilaMaterialInstance* self, const char* name);
+bool FilaMaterialInstance_getConstant_bool(const FilaMaterialInstance* self, const char* name);
 void FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_compile_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);

@@ -403,7 +403,7 @@ class MaterialBuilder() {
 
     /** Declares a specialization constant with its default value, settable per material instance. */
     fun constant(name: String, type: ConstantType, defaultValue: Int): MaterialBuilder =
-        string(name) { b, p -> FilaFilamatMaterialBuilder_constant_int(b, p, type.ordinal, defaultValue) }
+        string(name) { b, p -> FilaFilamatMaterialBuilder_constant_int32_t(b, p, type.ordinal, defaultValue) }
 
     /** Declares a specialization constant with its default value, settable per material instance. */
     fun constant(name: String, type: ConstantType, defaultValue: Float): MaterialBuilder =

@@ -80,6 +80,26 @@ void FilaGeometryTangentSpaceMesh_getQuats_quath_size_t(const FilaGeometryTangen
     fila::cpp(self)->getQuats(fila::cpp(out_), static_cast<size_t>(stride));
 }
 
+void FilaGeometryTangentSpaceMesh_getAux_float2_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat2* out_, uint32_t stride) {
+    fila::cpp(self)->getAux<filament::math::float2>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+}
+
+void FilaGeometryTangentSpaceMesh_getAux_float3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat3* out_, uint32_t stride) {
+    fila::cpp(self)->getAux<filament::math::float3>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+}
+
+void FilaGeometryTangentSpaceMesh_getAux_float4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaFloat4* out_, uint32_t stride) {
+    fila::cpp(self)->getAux<filament::math::float4>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+}
+
+void FilaGeometryTangentSpaceMesh_getAux_ushort3_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort3* out_, uint32_t stride) {
+    fila::cpp(self)->getAux<filament::math::ushort3>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+}
+
+void FilaGeometryTangentSpaceMesh_getAux_ushort4_size_t(const FilaGeometryTangentSpaceMesh* self, FilaGeometryTangentSpaceMeshAuxAttribute attribute, FilaUshort4* out_, uint32_t stride) {
+    fila::cpp(self)->getAux<filament::math::ushort4>(static_cast<filament::geometry::TangentSpaceMesh::AuxAttribute>(attribute), fila::cpp(out_), static_cast<size_t>(stride));
+}
+
 uint32_t FilaGeometryTangentSpaceMesh_getTriangleCount(const FilaGeometryTangentSpaceMesh* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getTriangleCount());
 }

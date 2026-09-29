@@ -12,20 +12,31 @@ extern "C" {
 
 typedef int32_t FilaEntity;
 
+typedef struct FilaBool2 { bool v[2]; } FilaBool2;
+typedef struct FilaBool3 { bool v[3]; } FilaBool3;
+typedef struct FilaBool4 { bool v[4]; } FilaBool4;
 typedef struct FilaDouble2 { double v[2]; } FilaDouble2;
 typedef struct FilaDouble3 { double v[3]; } FilaDouble3;
 typedef struct FilaDouble4 { double v[4]; } FilaDouble4;
 typedef struct FilaFloat2 { float v[2]; } FilaFloat2;
 typedef struct FilaFloat3 { float v[3]; } FilaFloat3;
 typedef struct FilaFloat4 { float v[4]; } FilaFloat4;
+typedef struct FilaHalf3 { uint16_t v[3]; } FilaHalf3;
+typedef struct FilaHalf4 { uint16_t v[4]; } FilaHalf4;
+typedef struct FilaInt2 { int32_t v[2]; } FilaInt2;
+typedef struct FilaInt3 { int32_t v[3]; } FilaInt3;
+typedef struct FilaInt4 { int32_t v[4]; } FilaInt4;
 typedef struct FilaMat3f { float v[9]; } FilaMat3f;
 typedef struct FilaMat4 { double v[16]; } FilaMat4;
 typedef struct FilaMat4f { float v[16]; } FilaMat4f;
 typedef struct FilaQuatf { float v[4]; } FilaQuatf;
 typedef struct FilaQuath { uint16_t v[4]; } FilaQuath;
 typedef struct FilaShort4 { int16_t v[4]; } FilaShort4;
+typedef struct FilaUint2 { uint32_t v[2]; } FilaUint2;
 typedef struct FilaUint3 { uint32_t v[3]; } FilaUint3;
+typedef struct FilaUint4 { uint32_t v[4]; } FilaUint4;
 typedef struct FilaUshort3 { uint16_t v[3]; } FilaUshort3;
+typedef struct FilaUshort4 { uint16_t v[4]; } FilaUshort4;
 
 typedef struct FilaACESLegacyToneMapper FilaACESLegacyToneMapper;
 typedef struct FilaACESToneMapper FilaACESToneMapper;

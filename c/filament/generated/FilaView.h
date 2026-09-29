@@ -106,9 +106,9 @@ bool FilaView_isFrustumCullingEnabled(const FilaView* self);
 // TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)
 //     void (*)(const PickingQueryResult &, PickingQuery * _Nonnull): takes C++ types
 // TODO(handwritten) FilaView_pick: template void filament::View::pick(uint32_t x, uint32_t y, T * _Nonnull instance, backend::CallbackHandler * _Nullable handler)
-//     function template: C binds its instantiations
+//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations
 // TODO(handwritten) FilaView_pick: template void filament::View::pick(uint32_t x, uint32_t y, T instance, backend::CallbackHandler * _Nullable handler)
-//     function template: C binds its instantiations
+//     function template: CBridges.FUNCTION_INSTANTIATIONS lists no instantiations
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value);
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out);
 FilaEntity FilaView_getFogEntity(const FilaView* self);

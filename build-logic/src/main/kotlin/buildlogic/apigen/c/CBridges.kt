@@ -2,6 +2,7 @@ package buildlogic.apigen.c
 
 import buildlogic.apigen.cpp.CppApi
 import buildlogic.apigen.cpp.CppEnum
+import buildlogic.apigen.cpp.CppMethod
 import buildlogic.apigen.cpp.CppRecord
 import buildlogic.apigen.cpp.CppType
 import buildlogic.apigen.cpp.CppType.Kind
@@ -51,6 +52,36 @@ private val INSTANTIATIONS = mapOf(
     "filament::camutils::Manipulator" to mapOf("FLOAT" to "float"),
     "filament::camutils::Bookmark" to mapOf("FLOAT" to "float"),
 )
+private fun math(vararg names: String) = names.map { "filament::math::$it" }
+private val CONSTANT_TYPES = listOf("int32_t", "float", "bool")
+// MaterialInstance's is_supported_parameter_t; the library exports getParameter for all but the bools.
+private val READABLE_PARAMETER_TYPES = listOf("float", "int32_t", "uint32_t") +
+    math("int2", "int3", "int4", "uint2", "uint3", "uint4", "float2", "float3", "float4", "mat3f", "mat4f")
+private val PARAMETER_TYPES = READABLE_PARAMETER_TYPES + listOf("bool") + math("bool2", "bool3", "bool4")
+
+private fun each(parameter: String, types: List<String>) = types.map { mapOf(parameter to it) }
+
+/**
+ * The function templates' instantiations C binds, by template: each maps template parameters to arguments; ones
+ * left out take their defaults. C names them by the types that tell them apart, like overloads.
+ */
+private val FUNCTION_INSTANTIATIONS = mapOf(
+    "filamat::MaterialBuilder::constant" to each("T", CONSTANT_TYPES),
+    "filament::Material::Builder::constant" to each("T", CONSTANT_TYPES),
+    "filament::Material::setDefaultParameter" to each("T", PARAMETER_TYPES),
+    "filament::MaterialInstance::setParameter" to each("T", PARAMETER_TYPES),
+    "filament::MaterialInstance::getParameter" to each("T", READABLE_PARAMETER_TYPES),
+    "filament::MaterialInstance::setConstant" to each("T", CONSTANT_TYPES),
+    "filament::MaterialInstance::getConstant" to each("T", CONSTANT_TYPES),
+    "filament::RenderableManager::computeAABB" to math("float4", "half4", "float3", "half3")
+        .flatMap { v -> listOf("uint16_t", "uint32_t").map { mapOf("VECTOR" to v, "INDEX" to it) } },
+    "filament::geometry::TangentSpaceMesh::getAux" to each("T", math("float2", "float3", "float4", "ushort3", "ushort4")),
+    "ktxreader::Ktx1Reader::toCompressedFilamentEnum" to each("T", listOf("filament::backend::CompressedPixelDataType")),
+    // ColorConversion::ACCURATE, the default.
+    "filament::Color::toLinear" to listOf(emptyMap()),
+    "filament::Color::toSRGB" to listOf(emptyMap()),
+)
+
 private val MATH_VECTOR = Regex("filament::math::vec([234])")
 
 private const val BACKEND = "filament::backend"
@@ -108,6 +139,31 @@ internal class CBridges(private val api: CppApi) {
 
     /** A template [record] C doesn't bind. */
     fun uninstantiated(record: CppRecord) = record.template && !instantiated(record.name)
+
+    /** [FUNCTION_INSTANTIATIONS] entries no template matched: stale after an upstream rename. */
+    val unusedFunctionInstantiations = FUNCTION_INSTANTIATIONS.keys.toMutableSet()
+
+    /**
+     * The instantiations of the function template [method] C binds, each with the template arguments its call spells;
+     * null when the table lists none.
+     */
+    fun functionInstantiations(method: CppMethod): List<Pair<CppMethod, List<String>>>? {
+        val key = "${method.owner}::${method.name}"
+        val instantiations = FUNCTION_INSTANTIATIONS[key] ?: return null
+        unusedFunctionInstantiations -= key
+        val parameters = method.templateParameters!!
+        return instantiations.map { arguments ->
+            check(parameters.containsAll(arguments.keys)) { "$key has no template parameter ${arguments.keys - parameters.toSet()}" }
+            method.instantiate(arguments.mapValues { (_, a) -> argumentType(a) }) to parameters.takeWhile { it in arguments }.map { arguments.getValue(it) }
+        }
+    }
+
+    /** A template argument as the model would resolve it; math types are external, as the dump skips them. */
+    private fun argumentType(spelling: String) = when {
+        CAbi.isBuiltin(spelling) -> CppType(spelling, null, Kind.BUILTIN)
+        spelling in api.records || spelling in api.enums -> CppType(spelling, spelling, Kind.DECLARED)
+        else -> CppType(spelling, spelling, Kind.EXTERNAL)
+    }
 
     /** [decl] as C++ spells it: an instantiated template takes its arguments. */
     fun cpp(decl: String): String {

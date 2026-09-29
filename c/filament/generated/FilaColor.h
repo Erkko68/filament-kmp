@@ -11,14 +11,10 @@ extern "C" {
 // filament::Color
 void FilaColor_toLinear_RgbType_float3(FilaRgbType type, const FilaFloat3* color, FilaFloat3* out);
 void FilaColor_toLinear_RgbaType_float4(FilaRgbaType type, const FilaFloat4* color, FilaFloat4* out);
-// TODO(handwritten) FilaColor_toLinear: template static LinearColor filament::Color::toLinear(const sRGBColor & color)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaColor_toLinear: template static LinearColorA filament::Color::toLinear(const sRGBColorA & color)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaColor_toSRGB: template static sRGBColor filament::Color::toSRGB(const LinearColor & color)
-//     function template: C binds its instantiations
-// TODO(handwritten) FilaColor_toSRGB: template static sRGBColorA filament::Color::toSRGB(const LinearColorA & color)
-//     function template: C binds its instantiations
+void FilaColor_toLinear_sRGBColor(const FilaFloat3* color, FilaFloat3* out);
+void FilaColor_toLinear_sRGBColorA(const FilaFloat4* color, FilaFloat4* out);
+void FilaColor_toSRGB_LinearColor(const FilaFloat3* color, FilaFloat3* out);
+void FilaColor_toSRGB_LinearColorA(const FilaFloat4* color, FilaFloat4* out);
 void FilaColor_cct(float K, FilaFloat3* out);
 void FilaColor_illuminantD(float K, FilaFloat3* out);
 void FilaColor_absorptionAtDistance(const FilaFloat3* color, float distance, FilaFloat3* out);

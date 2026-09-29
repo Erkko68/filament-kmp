@@ -101,8 +101,14 @@ uint32_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* self
 void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, bool enabled);
 bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
 uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
-// TODO(handwritten) FilaRenderableManager_computeAABB: template static Box filament::RenderableManager::computeAABB(const VECTOR * _Nonnull vertices, const INDEX * _Nonnull indices, size_t count, size_t stride)
-//     function template: C binds its instantiations
+void FilaRenderableManager_computeAABB_float4_uint16_t_size_t_size_t(const FilaFloat4* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_float4_uint32_t_size_t_size_t(const FilaFloat4* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_half4_uint16_t_size_t_size_t(const FilaHalf4* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_half4_uint32_t_size_t_size_t(const FilaHalf4* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_float3_uint16_t_size_t_size_t(const FilaFloat3* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_float3_uint32_t_size_t_size_t(const FilaFloat3* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_half3_uint16_t_size_t_size_t(const FilaHalf3* vertices, const uint16_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
+void FilaRenderableManager_computeAABB_half3_uint32_t_size_t_size_t(const FilaHalf3* vertices, const uint32_t* indices, uint32_t count, uint32_t stride, FilaBox* out);
 
 
 #ifdef __cplusplus

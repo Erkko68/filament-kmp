@@ -24,6 +24,10 @@ FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo
     return static_cast<FilaTextureFormat>(ktxreader::Ktx1Reader::toTextureFormat(*fila::cpp(info)));
 }
 
+FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedFilamentEnum(uint32_t format) {
+    return static_cast<FilaCompressedPixelDataType>(ktxreader::Ktx1Reader::toCompressedFilamentEnum<filament::backend::CompressedPixelDataType>(format));
+}
+
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture_Callback_void(FilaEngine* engine, const FilaImageKtx1Bundle* ktx, bool srgb, FilaKtxreaderKtx1ReaderCallback callback, void* userdata) {
     return fila::c(ktxreader::Ktx1Reader::createTexture(fila::cpp(engine), *fila::cpp(ktx), srgb, callback, userdata));
 }
