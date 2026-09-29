@@ -16,7 +16,10 @@ private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "c
 private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
 
 /** C modules on the generated API, by the Kotlin package of their externals; the rest still use c/<module>/{c,cpp}. */
-private val GENERATED_MODULES = mapOf("filamat" to "io.github.erkko68.filament.filamat.capi")
+private val GENERATED_MODULES = mapOf(
+    "filamat" to "io.github.erkko68.filament.filamat.capi",
+    "gltfio" to "io.github.erkko68.filament.gltfio.capi",
+)
 
 /**
  * Registers the API generator, C++ headers → Fila* C → Kotlin, one package per stage:
@@ -56,6 +59,8 @@ fun Project.registerApiGenTasks() {
         cDir.set(root.dir("c"))
         kotlinDir.set(root.dir("kotlin"))
         packages.set(GENERATED_MODULES)
+        // Reads the headers generateCApi writes.
+        mustRunAfter("generateCApi")
     }
 
     tasks.register<GenerateBindingsTask>("generateBindings") {

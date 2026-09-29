@@ -850,6 +850,11 @@ typedef enum FilaStreamType {
     FILA_STREAM_TYPE_ACQUIRED = 1,
 } FilaStreamType;
 
+// filament::backend::SubpassType
+typedef enum FilaSubpassType {
+    FILA_SUBPASS_TYPE_SUBPASS_INPUT = 0,
+} FilaSubpassType;
+
 // filament::backend::TextureCubemapFace
 typedef enum FilaTextureCubemapFace {
     FILA_TEXTURE_CUBEMAP_FACE_POSITIVE_X = 0,

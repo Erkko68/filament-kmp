@@ -4,6 +4,18 @@
 
 extern "C" {
 
+void FilaGltfioMaterialProvider_destroy(FilaGltfioMaterialProvider* self) {
+    delete fila::cpp(self);
+}
+
+FilaMaterialInstance* FilaGltfioMaterialProvider_createMaterialInstance(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label, const char* extras) {
+    return fila::c(fila::cpp(self)->createMaterialInstance(fila::cpp(config), fila::updated(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); }, [&](auto x, uint32_t i) { uvmap[i] = static_cast<FilaGltfioUvSet>(x); }), label, extras));
+}
+
+FilaMaterial* FilaGltfioMaterialProvider_getMaterial(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label) {
+    return fila::c(fila::cpp(self)->getMaterial(fila::cpp(config), fila::updated(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); }, [&](auto x, uint32_t i) { uvmap[i] = static_cast<FilaGltfioUvSet>(x); }), label));
+}
+
 const FilaMaterial* const* FilaGltfioMaterialProvider_getMaterials(const FilaGltfioMaterialProvider* self) {
     return reinterpret_cast<const FilaMaterial* const*>(fila::cpp(self)->getMaterials());
 }

@@ -37,6 +37,9 @@ expect class InteropScope() {
     fun toInterop(array: FloatArray?): NativePointer
     fun toInterop(array: DoubleArray?): NativePointer
 
+    /** An array of pointers (`T* const*`, or a `T**` C writes through), as wide as the platform's; read it back with [readPointers]. */
+    fun toInterop(pointers: List<NativePointer>): NativePointer
+
     /** Copies what C wrote at this pointer back into [result] (a no-op where the array was pinned). */
     fun NativePointer.fromInterop(result: ByteArray)
     fun NativePointer.fromInterop(result: ShortArray)
@@ -59,6 +62,18 @@ fun InteropScope.toInterop(string: String?): NativePointer =
  */
 @InternalFilamentApi
 expect fun FloatArray.readF32(index: Int): Float
+
+/** A copy of [count] ints of an array C owns (a borrowed `const FilaEntity*`). */
+@InternalFilamentApi
+expect fun readInts(ptr: NativePointer, count: Int): IntArray
+
+/** A copy of [count] floats of an array C owns (math mirrors: a `const FilaMat4f*` is 16 per matrix). */
+@InternalFilamentApi
+expect fun readFloats(ptr: NativePointer, count: Int): FloatArray
+
+/** A copy of [count] pointers of an array C owns (`T* const*`, `const char* const*`). */
+@InternalFilamentApi
+expect fun readPointers(ptr: NativePointer, count: Int): List<NativePointer>
 
 /** Calls [block] with a `const char*` copy of this string, valid for the call. */
 @InternalFilamentApi

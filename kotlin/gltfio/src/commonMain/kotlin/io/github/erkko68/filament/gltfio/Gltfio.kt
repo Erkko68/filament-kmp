@@ -14,10 +14,13 @@ import io.github.erkko68.filament.Filament
  * ```
  * Gltfio.init()  // Initialize once at startup
  *
- * val loader = AssetLoader.create(engine, materialProvider)
+ * val materials = createUbershaderProvider(engine)
+ * val loader = AssetLoader.create(AssetConfiguration(engine, materials))
  * val asset = loader.createAsset(gltfData)
  *
- * val resourceLoader = ResourceLoader(engine)
+ * val stb = createStbProvider(engine)
+ * val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
+ * resourceLoader.addTextureProvider("image/png", stb)
  * resourceLoader.loadResources(asset)  // Load textures and data
  *
  * val instance = asset.instance
@@ -25,6 +28,10 @@ import io.github.erkko68.filament.Filament
  *
  * loader.destroyAsset(asset)
  * AssetLoader.destroy(loader)
+ * resourceLoader.destroy()
+ * stb.destroy()
+ * materials.destroyMaterials()
+ * materials.destroy()
  * ```
  *
  * **Key classes:**
@@ -32,7 +39,7 @@ import io.github.erkko68.filament.Filament
  * - FilamentAsset: Owns loaded entities, materials, and resources
  * - FilamentInstance: A single instance of an asset with animations and skins
  * - Animator: Applies skeletal animations
- * - MaterialProvider: Supplies materials (ubershader or JIT-compiled)
+ * - MaterialProvider: Supplies materials ([createUbershaderProvider])
  * - ResourceLoader: Loads textures and vertex/index buffer data
  *
  * @see AssetLoader

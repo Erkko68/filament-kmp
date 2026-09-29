@@ -2433,6 +2433,7 @@ public final class io/github/erkko68/filament/interop/InteropScope {
 	public final fun fromInterop (J[J)V
 	public final fun fromInterop (J[S)V
 	public final fun release ()V
+	public final fun toInterop (Ljava/util/List;)J
 	public final fun toInterop ([B)J
 	public final fun toInterop ([D)J
 	public final fun toInterop ([F)J
@@ -2445,6 +2446,9 @@ public final class io/github/erkko68/filament/interop/Interop_jniKt {
 	public static final fun getNullPointer ()J
 	public static final fun getSingleThreaded ()Z
 	public static final fun readF32 ([FI)F
+	public static final fun readFloats (JI)[F
+	public static final fun readInts (JI)[I
+	public static final fun readPointers (JI)Ljava/util/List;
 	public static final fun stringFromInterop (J)Ljava/lang/String;
 	public static final fun upload ([BILkotlin/jvm/functions/Function0;)Lio/github/erkko68/filament/interop/Upload;
 }

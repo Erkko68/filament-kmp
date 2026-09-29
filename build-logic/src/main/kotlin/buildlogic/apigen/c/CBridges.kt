@@ -249,6 +249,7 @@ internal class CBridges(private val api: CppApi) {
      * contiguous mirrors; value records, the handles C created to copy into.
      */
     private fun sequence(type: CppType, bridge: Bridge): CBridge {
+        if (!bridge.byValue && !bridge.result && !bridge.const && type.decl == "std::array") return updated(type)
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
         // std::array's second argument is its size.
         val element = type.args.first()
@@ -272,6 +273,16 @@ internal class CBridges(private val api: CppApi) {
             { call -> "fila::copy($call, outCapacity, [&](auto& x, uint32_t i) { $store })" },
             extra = listOf((if (handles) "${e.c}* const*" else "${e.c}*") to "out", "uint32_t" to "outCapacity"),
         )
+    }
+
+    /** A std::array the callee changes (by pointer or reference): C's array goes in, and gets the changes back. */
+    private fun updated(type: CppType): CBridge {
+        val element = type.args.first()
+        val (p, r) = param(element) to result(element)
+        if (listOf(p, r).any { it.out || it.extra.isNotEmpty() || it.c.endsWith("*") }) throw Unsupported("${type.spelling}: elements C passes by pointer")
+        return CBridge("${p.c}*", { n ->
+            "fila::updated(${n}Count, [&](uint32_t i) { return ${p.convert("$n[i]")}; }, [&](auto x, uint32_t i) { $n[i] = ${r.convert("x")}; })"
+        }, extra = listOf("uint32_t" to "Count"))
     }
 
     /**

@@ -9,8 +9,8 @@ import kotlin.test.assertTrue
 class AssetLoaderTest : GltfioTestFixture() {
     @Test
     fun testAssetLoaderLifecycle() {
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         assertNotNull(loader)
 
         loader.enableDiagnostics(true)
@@ -23,8 +23,8 @@ class AssetLoaderTest : GltfioTestFixture() {
     @Test
     fun testCreateWithDefaultEntityManager() {
         // Omitting the EntityManager exercises the null/default branch.
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider))
         assertNotNull(loader)
 
         AssetLoader.destroy(loader)
@@ -36,8 +36,8 @@ class AssetLoaderTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
 
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
@@ -54,8 +54,8 @@ class AssetLoaderTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
 
         val instances = arrayOf(FilamentInstance(), FilamentInstance())
         val asset = loader.createInstancedAsset(bytes, instances)
@@ -72,8 +72,8 @@ class AssetLoaderTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
 
         val instances = arrayOf(FilamentInstance())
         val asset = loader.createInstancedAsset(bytes, instances)

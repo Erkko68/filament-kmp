@@ -9,9 +9,8 @@
 extern "C" {
 #endif
 
-// Core filament opaque handles. Per-module handles live in that module's own
-// types header (filamat/c/FilamatTypes.h, filament-utils/c/FilamentUtilsTypes.h,
-// gltfio/c/GltfioTypes.h), each of which includes this one for the shared core.
+// Core filament opaque handles. filament-utils/c/FilamentUtilsTypes.h adds its own
+// and includes this one for the shared core.
 typedef struct FilaEngine FilaEngine;
 typedef struct FilaCamera FilaCamera;
 typedef struct FilaRenderer FilaRenderer;

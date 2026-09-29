@@ -93,6 +93,7 @@ class CppType(val spelling: String, val decl: String?, val kind: Kind, val args:
  * [constructors]: the public ones' parameters, copies and moves aside. [destructible]: publicly. [allocatable]: no
  * base deletes `operator new` (Filament's handle classes do: only the Engine creates them). [copyable]: no copy
  * constructor is deleted or hidden, nor implicitly deleted by a declared move (deletion by members goes unseen).
+ * [virtualDestructor]: declares a public virtual one, so factory-made instances are deleted through it (MaterialProvider).
  */
 class CppRecord(
     val name: String,
@@ -107,6 +108,7 @@ class CppRecord(
     val destructible: Boolean,
     val allocatable: Boolean,
     val copyable: Boolean,
+    val virtualDestructor: Boolean = false,
 ) {
     val defaultConstructible get() = constructors.any { ctor -> ctor.all { it.default != null } }
 }

@@ -2,6 +2,7 @@
 package io.github.erkko68.filament.filamat
 
 import io.github.erkko68.filament.interop.NativePointer
+import io.github.erkko68.filament.interop.interopScope
 import io.github.erkko68.filament.interop.stringFromInterop
 import io.github.erkko68.filament.interop.useCString
 import io.github.erkko68.filament.interop.usePinned
@@ -17,6 +18,6 @@ internal actual fun <R> ByteArray.useFilamatPinned(block: (NativePointer) -> R):
 
 internal actual fun <R> IntArray.useFilamatPinned(block: (NativePointer) -> R): R = usePinned(block)
 
-internal actual fun <R> List<NativePointer>.useFilamatPointers(block: (NativePointer) -> R): R = toLongArray().usePinned(block)
+internal actual fun <R> List<NativePointer>.useFilamatPointers(block: (NativePointer) -> R): R = interopScope { block(toInterop(this@useFilamatPointers)) }
 
 internal actual fun filamatString(ptr: NativePointer): String? = stringFromInterop(ptr)

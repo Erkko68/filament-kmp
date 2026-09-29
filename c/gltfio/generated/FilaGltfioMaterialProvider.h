@@ -9,8 +9,9 @@ extern "C" {
 #endif
 
 // filament::gltfio::MaterialProvider
-// skipped MaterialInstance * filament::gltfio::MaterialProvider::createMaterialInstance(MaterialKey * config, UvMap * uvmap, const char * label, const char * extras): uses filament::gltfio::MaterialKey
-// skipped Material * filament::gltfio::MaterialProvider::getMaterial(MaterialKey * config, UvMap * uvmap, const char * label): uses filament::gltfio::MaterialKey
+void FilaGltfioMaterialProvider_destroy(FilaGltfioMaterialProvider* self);
+FilaMaterialInstance* FilaGltfioMaterialProvider_createMaterialInstance(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label, const char* extras);
+FilaMaterial* FilaGltfioMaterialProvider_getMaterial(FilaGltfioMaterialProvider* self, FilaGltfioMaterialKey* config, FilaGltfioUvSet* uvmap, uint32_t uvmapCount, const char* label);
 const FilaMaterial* const* FilaGltfioMaterialProvider_getMaterials(const FilaGltfioMaterialProvider* self);
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self);
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self);

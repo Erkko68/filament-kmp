@@ -1,8 +1,21 @@
 package io.github.erkko68.filament.gltfio
 
 import io.github.erkko68.filament.Engine
-import io.github.erkko68.filament.*
+import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.gltfio.capi.*
 import io.github.erkko68.filament.interop.*
+
+/**
+ * Construction parameters for a [ResourceLoader].
+ *
+ * @property engine The engine the loader passes to builder objects (e.g. Texture.Builder).
+ * @property normalizeSkinningWeights Adjusts skinning weights to sum to 1. Well-formed glTF files
+ * don't need this, but it's useful for robustness.
+ */
+class ResourceConfiguration(
+    var engine: Engine,
+    var normalizeSkinningWeights: Boolean = false,
+)
 
 /**
  * ResourceLoader loads external resources referenced by glTF assets.
@@ -15,9 +28,13 @@ import io.github.erkko68.filament.interop.*
  *
  * **Typical usage:**
  * ```
- * val resourceLoader = ResourceLoader(engine)
+ * val stb = createStbProvider(engine)
+ * val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
+ * resourceLoader.addTextureProvider("image/png", stb)
+ * resourceLoader.addTextureProvider("image/jpeg", stb)
  * resourceLoader.loadResources(asset)  // Synchronously load all resources
  * resourceLoader.destroy()
+ * stb.destroy()
  * ```
  *
  * **Async usage:**
@@ -31,40 +48,15 @@ import io.github.erkko68.filament.interop.*
  * @see FilamentAsset
  * @see AssetLoader
  */
-class ResourceLoader : AutoCloseable {
-    internal var nativeHandle: NativePointer
-    private val providers = mutableListOf<NativePointer>()
-    // gltfio keeps addResourceData buffers by pointer until they're evicted, so the copies live in this scope until then.
-    private val resources = InteropScope()
+class ResourceLoader(config: ResourceConfiguration) : AutoCloseable {
+    internal var nativeHandle: NativePointer = config.useNative { FilaGltfioResourceLoader_create(it) }
 
     /** The native object, for interop with code calling the Fila* C API directly. Read-only: this wrapper owns it. */
     @InternalFilamentApi
     val nativeObject: NativePointer get() = nativeHandle
 
-    /**
-     * Create a ResourceLoader.
-     *
-     * @param engine Filament Engine to use for loading resources.
-     * @param normalizeSkinningWeights Whether to normalize skinning weights to [0, 1] range.
-     */
-    constructor(engine: Engine, normalizeSkinningWeights: Boolean = false) {
-        val loader = FilaResourceLoader_create(engine.nativeObject, normalizeSkinningWeights)
-        nativeHandle = loader
-
-        // Register the stb/ktx2 texture providers up front, as filament-android's ResourceLoader does.
-        val stbProvider = FilaResourceLoader_createStbProvider(engine.nativeObject)
-        if (stbProvider != NullPointer) {
-            "image/jpeg".useCString { FilaResourceLoader_addTextureProvider(loader, it, stbProvider) }
-            "image/png".useCString { FilaResourceLoader_addTextureProvider(loader, it, stbProvider) }
-            providers.add(stbProvider)
-        }
-
-        val ktx2Provider = FilaResourceLoader_createKtx2Provider(engine.nativeObject)
-        if (ktx2Provider != NullPointer) {
-            "image/ktx2".useCString { FilaResourceLoader_addTextureProvider(loader, it, ktx2Provider) }
-            providers.add(ktx2Provider)
-        }
-    }
+    /** Replaces the configuration the loader was created with. */
+    fun setConfiguration(config: ResourceConfiguration) = config.useNative { FilaGltfioResourceLoader_setConfiguration(nativeHandle, it) }
 
     /**
      * Destroys this loader and frees its internal caches. Must happen on the same thread that
@@ -72,11 +64,8 @@ class ResourceLoader : AutoCloseable {
      * CPU-side data blobs can be freed.
      */
     fun destroy() {
-        if (nativeHandle != NullPointer) FilaResourceLoader_destroy(nativeHandle)
+        if (nativeHandle != NullPointer) FilaGltfioResourceLoader_destroy(nativeHandle)
         nativeHandle = NullPointer
-        providers.forEach { FilaResourceLoader_destroyTextureProvider(it) }
-        providers.clear()
-        freeResourceCopies()
     }
 
     /** Same as [destroy]; lets this be used with `use { }` and try-with-resources. */
@@ -85,16 +74,24 @@ class ResourceLoader : AutoCloseable {
     /**
      * Feeds the binary content of an external resource into the loader's URI cache.
      *
-     * Every resource returned by [FilamentAsset.getResourceUris] should be added before calling
+     * Every resource returned by [FilamentAsset.resourceUris] should be added before calling
      * [loadResources] or [asyncBeginLoad]. Self-contained GLB files typically need no calls.
      */
-    fun addResourceData(url: String, data: ByteArray) {
-        val copy = resources.toInterop(data)
-        url.useCString { FilaResourceLoader_addResourceData(nativeHandle, it, copy, data.size) }
+    fun addResourceData(uri: String, buffer: ByteArray) {
+        // The loader keeps the buffer until it's evicted; Filament's release callback frees the copy then.
+        val u = upload(buffer, buffer.size, null)
+        uri.useCString { FilaGltfioResourceLoader_addResourceData(nativeHandle, it, u.ptr, u.size, u.callback, u.userData) }
     }
 
+    /**
+     * Registers [provider] to decode textures of [mimeType] (e.g. `image/png`). The loader doesn't
+     * own it: destroy it after the loader.
+     */
+    fun addTextureProvider(mimeType: String, provider: TextureProvider) =
+        mimeType.useCString { FilaGltfioResourceLoader_addTextureProvider(nativeHandle, it, provider.nativeObject) }
+
     /** Checks whether the given resource URI has already been added via [addResourceData]. */
-    fun hasResourceData(url: String): Boolean = url.useCString { FilaResourceLoader_hasResourceData(nativeHandle, it) }
+    fun hasResourceData(uri: String): Boolean = uri.useCString { FilaGltfioResourceLoader_hasResourceData(nativeHandle, it) }
 
     /**
      * Synchronously loads resources for [asset] from the URI cache and finalizes the asset:
@@ -104,7 +101,7 @@ class ResourceLoader : AutoCloseable {
      * @see asyncBeginLoad
      */
     fun loadResources(asset: FilamentAsset): Boolean {
-        return FilaResourceLoader_loadResources(nativeHandle, asset.nativeHandle)
+        return FilaGltfioResourceLoader_loadResources(nativeHandle, asset.nativeHandle)
     }
 
     /**
@@ -114,18 +111,18 @@ class ResourceLoader : AutoCloseable {
      * @return false if the loading process could not start.
      */
     fun asyncBeginLoad(asset: FilamentAsset): Boolean {
-        return FilaResourceLoader_asyncBeginLoad(nativeHandle, asset.nativeHandle)
+        return FilaGltfioResourceLoader_asyncBeginLoad(nativeHandle, asset.nativeHandle)
     }
 
     /** Gets the status of an asynchronous load as a percentage in `[0, 1]`. */
-    fun asyncGetLoadProgress(): Float = FilaResourceLoader_asyncGetLoadProgress(nativeHandle)
+    fun asyncGetLoadProgress(): Float = FilaGltfioResourceLoader_asyncGetLoadProgress(nativeHandle)
 
     /**
      * Performs any pending main-thread work of an asynchronous load. Call periodically until
      * [asyncGetLoadProgress] returns 1.0; harmless after that.
      */
     fun asyncUpdateLoad() {
-        FilaResourceLoader_asyncUpdateLoad(nativeHandle)
+        FilaGltfioResourceLoader_asyncUpdateLoad(nativeHandle)
     }
 
     /**
@@ -133,7 +130,7 @@ class ResourceLoader : AutoCloseable {
      * Only needed if [asyncBeginLoad] was used and cancellation is required before completion.
      */
     fun asyncCancelLoad() {
-        FilaResourceLoader_asyncCancelLoad(nativeHandle)
+        FilaGltfioResourceLoader_asyncCancelLoad(nativeHandle)
     }
 
     /**
@@ -141,53 +138,18 @@ class ResourceLoader : AutoCloseable {
      * model is fully loaded or loading has been cancelled.
      */
     fun evictResourceData() {
-        FilaResourceLoader_evictResourceData(nativeHandle)
-        freeResourceCopies()
-    }
-
-    private fun freeResourceCopies() {
-        resources.release()
+        FilaGltfioResourceLoader_evictResourceData(nativeHandle)
     }
 }
 
-@ExternalSymbolName("FilaResourceLoader_create")
-private external fun FilaResourceLoader_create(engine: NativePointer, normalizeSkinningWeights: Boolean): NativePointer
-
-@ExternalSymbolName("FilaResourceLoader_createStbProvider")
-private external fun FilaResourceLoader_createStbProvider(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaResourceLoader_addTextureProvider")
-private external fun FilaResourceLoader_addTextureProvider(loader: NativePointer, mimeType: NativePointer, provider: NativePointer)
-
-@ExternalSymbolName("FilaResourceLoader_createKtx2Provider")
-private external fun FilaResourceLoader_createKtx2Provider(engine: NativePointer): NativePointer
-
-@ExternalSymbolName("FilaResourceLoader_destroy")
-private external fun FilaResourceLoader_destroy(loader: NativePointer)
-
-@ExternalSymbolName("FilaResourceLoader_destroyTextureProvider")
-private external fun FilaResourceLoader_destroyTextureProvider(provider: NativePointer)
-
-@ExternalSymbolName("FilaResourceLoader_addResourceData")
-private external fun FilaResourceLoader_addResourceData(loader: NativePointer, uri: NativePointer, buffer: NativePointer, bufferByteCount: Int)
-
-@ExternalSymbolName("FilaResourceLoader_hasResourceData")
-private external fun FilaResourceLoader_hasResourceData(loader: NativePointer, uri: NativePointer): Boolean
-
-@ExternalSymbolName("FilaResourceLoader_loadResources")
-private external fun FilaResourceLoader_loadResources(loader: NativePointer, asset: NativePointer): Boolean
-
-@ExternalSymbolName("FilaResourceLoader_asyncBeginLoad")
-private external fun FilaResourceLoader_asyncBeginLoad(loader: NativePointer, asset: NativePointer): Boolean
-
-@ExternalSymbolName("FilaResourceLoader_asyncGetLoadProgress")
-private external fun FilaResourceLoader_asyncGetLoadProgress(loader: NativePointer): Float
-
-@ExternalSymbolName("FilaResourceLoader_asyncUpdateLoad")
-private external fun FilaResourceLoader_asyncUpdateLoad(loader: NativePointer)
-
-@ExternalSymbolName("FilaResourceLoader_asyncCancelLoad")
-private external fun FilaResourceLoader_asyncCancelLoad(loader: NativePointer)
-
-@ExternalSymbolName("FilaResourceLoader_evictResourceData")
-private external fun FilaResourceLoader_evictResourceData(loader: NativePointer)
+/** A native copy of this configuration for [block]. */
+private inline fun <R> ResourceConfiguration.useNative(block: (NativePointer) -> R): R {
+    val c = FilaGltfioResourceConfiguration_create()
+    try {
+        FilaGltfioResourceConfiguration_setEngine(c, engine.nativeObject)
+        FilaGltfioResourceConfiguration_setNormalizeSkinningWeights(c, normalizeSkinningWeights)
+        return block(c)
+    } finally {
+        FilaGltfioResourceConfiguration_destroy(c)
+    }
+}

@@ -17,6 +17,7 @@ Each entry is one line; click the version link at the bottom for the full diff.
 > **Web setup changed** — `filament.js`/`filament.wasm` are replaced by `filament-kmp.js`/`.wasm` (plus optional `filamat-kmp.*`) from each GitHub release. See [Getting Started → Web](docs/getting-started.md#web--wasm).
 
 ### Changed
+- **gltfio follows its C++ API** (`gltfio`): `AssetLoader.create(AssetConfiguration)`, `ResourceLoader(ResourceConfiguration)` with explicit `addTextureProvider`, `createUbershaderProvider`/`createStbProvider`/`createKtx2Provider`/`createWebpProvider`, a concrete `MaterialProvider`, `UvMap` of `UvSet` and C++-named per-index getters.
 - **`MaterialBuilder.init()`/`shutdown()`/`initJs` replace the `Filamat` object** (`filamat`), matching filamat's C++.
 - **`MaterialBuilder.parameter(name, …)` replaces `uniformParameter`/`uniformParameterArray`/`samplerParameter`** and `MaterialPackage.data` replaces `buffer` (`filamat`), matching filamat's C++.
 - **Android runs on our own C API over JNI** (`filament-jni` + `filament-jni-android`, `libfilament-c.so` per ABI) instead of the upstream `filament-android`/`gltfio-android`/`filament-utils-android`/`filamat-android` artifacts; Android `nativeObject` is now the C handle as a `Long`.

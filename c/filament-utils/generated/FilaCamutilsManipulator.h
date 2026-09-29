@@ -88,6 +88,7 @@ void FilaCamutilsManipulatorBuilder_getDetails(const FilaCamutilsManipulatorBuil
 void FilaCamutilsManipulatorBuilder_setDetails(FilaCamutilsManipulatorBuilder* self, const FilaCamutilsManipulatorConfig* value);
 
 // filament::camutils::Manipulator
+void FilaCamutilsManipulator_destroy(FilaCamutilsManipulator* self);
 FilaCamutilsMode FilaCamutilsManipulator_getMode(const FilaCamutilsManipulator* self);
 void FilaCamutilsManipulator_setViewport(FilaCamutilsManipulator* self, int32_t width, int32_t height);
 void FilaCamutilsManipulator_getLookAt(const FilaCamutilsManipulator* self, FilaFloat3* eyePosition, FilaFloat3* targetPosition, FilaFloat3* upward);

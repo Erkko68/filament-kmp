@@ -12,6 +12,7 @@ FILA_TYPE(FilaGltfioAssetConfigurationExtended, filament::gltfio::AssetConfigura
 FILA_TYPE(FilaGltfioAssetLoader, filament::gltfio::AssetLoader)
 FILA_TYPE(FilaGltfioFilamentAsset, filament::gltfio::FilamentAsset)
 FILA_TYPE(FilaGltfioFilamentInstance, filament::gltfio::FilamentInstance)
+FILA_TYPE(FilaGltfioMaterialKey, filament::gltfio::MaterialKey)
 FILA_TYPE(FilaGltfioMaterialProvider, filament::gltfio::MaterialProvider)
 FILA_TYPE(FilaGltfioResourceConfiguration, filament::gltfio::ResourceConfiguration)
 FILA_TYPE(FilaGltfioResourceLoader, filament::gltfio::ResourceLoader)

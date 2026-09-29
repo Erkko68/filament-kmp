@@ -1,5 +1,6 @@
 package io.github.erkko68.filament.gltfio
 
+import io.github.erkko68.filament.gltfio.capi.*
 import io.github.erkko68.filament.interop.*
 
 /** How a glTF material's alpha channel is interpreted. */
@@ -93,100 +94,157 @@ data class MaterialKey(
     var hasSheen: Boolean = false,
     /** A custom index of refraction is set (`KHR_materials_ior`). */
     var hasIOR: Boolean = false,
-)
+    /** The volume extension is enabled (`KHR_materials_volume`). */
+    var hasVolume: Boolean = false,
+    /** Dispersion is enabled (`KHR_materials_dispersion`). */
+    var hasDispersion: Boolean = false,
+    /** The specular extension is enabled (`KHR_materials_specular`). */
+    var hasSpecular: Boolean = false,
+    /** A specular strength texture is bound. */
+    var hasSpecularTexture: Boolean = false,
+    /** A specular color texture is bound. */
+    var hasSpecularColorTexture: Boolean = false,
+    /** glTF texcoord set index for the specular strength texture. */
+    var specularTextureUV: Int = 0,
+    /** glTF texcoord set index for the specular color texture. */
+    var specularColorTextureUV: Int = 0,
+) {
+    /** [hasMetallicRoughnessTexture] under its specular-glossiness name: the same bit in C++'s union. */
+    var hasSpecularGlossinessTexture: Boolean
+        get() = hasMetallicRoughnessTexture
+        set(value) { hasMetallicRoughnessTexture = value }
+
+    /** [metallicRoughnessUV] under its specular-glossiness name: the same bits in C++'s union. */
+    var specularGlossinessUV: Int
+        get() = metallicRoughnessUV
+        set(value) { metallicRoughnessUV = value }
+}
+
+/** One of Filament's UV sets a glTF texcoord set maps to. */
+enum class UvSet { UNUSED, UV0, UV1 }
+
+/** Entries in a [UvMap]. */
+const val UV_MAP_SIZE: Int = 8
+
+/** Maps each glTF texcoord set (the index) to a Filament [UvSet]; [UV_MAP_SIZE] entries. */
+typealias UvMap = Array<UvSet>
+
+/** The number of Filament UV sets [uvmap] uses. */
+fun getNumUvSets(uvmap: UvMap): Int = uvmap.useNative { p, n -> FilaGltfio_getNumUvSets(p, n) }
 
 /**
- * Mutates this key to trim requested features down to what the provider supports, and fills
- * [uvmap] with the resulting glTF-texcoord → Filament-UV-set mapping. Called by providers
- * before material creation.
- *
- * A free function upstream (`filament::gltfio::constrainMaterial`); an extension here so the
- * call site reads the same.
+ * Trims [key]'s requested features down to what the providers support, and fills [uvmap] with the
+ * resulting glTF-texcoord → Filament-UV-set mapping. Called by providers before material creation.
  */
-fun MaterialKey.constrainMaterial(uvmap: IntArray) {
-    val key = toInts()
-    val uv = ByteArray(8) { uvmap.getOrElse(it) { 0 }.toByte() }
-    key.usePinned { k -> uv.usePinned { u -> FilaMaterialKey_constrainMaterial(k, u) } }
-    for (i in 0 until minOf(8, uvmap.size)) uvmap[i] = uv[i].toInt()
-    setFrom(key)
+fun constrainMaterial(key: MaterialKey, uvmap: UvMap) {
+    key.useNative { k -> uvmap.useNative { u, n -> FilaGltfio_constrainMaterial(k, u, n) } }
 }
 
-// The C API takes a MaterialKey flattened to one Int per field, in declaration order (FILA_MATERIAL_KEY_FIELD_COUNT).
-internal fun MaterialKey.toInts(): IntArray = intArrayOf(
-    if (doubleSided) 1 else 0,
-    if (unlit) 1 else 0,
-    if (hasVertexColors) 1 else 0,
-    if (hasBaseColorTexture) 1 else 0,
-    if (hasNormalTexture) 1 else 0,
-    if (hasOcclusionTexture) 1 else 0,
-    if (hasEmissiveTexture) 1 else 0,
-    if (useSpecularGlossiness) 1 else 0,
-    alphaMode.ordinal,
-    if (enableDiagnostics) 1 else 0,
-    if (hasMetallicRoughnessTexture) 1 else 0,
-    metallicRoughnessUV,
-    baseColorUV,
-    if (hasClearCoatTexture) 1 else 0,
-    clearCoatUV,
-    if (hasClearCoatRoughnessTexture) 1 else 0,
-    clearCoatRoughnessUV,
-    if (hasClearCoatNormalTexture) 1 else 0,
-    clearCoatNormalUV,
-    if (hasClearCoat) 1 else 0,
-    if (hasTransmission) 1 else 0,
-    if (hasTextureTransforms) 1 else 0,
-    emissiveUV,
-    aoUV,
-    normalUV,
-    if (hasTransmissionTexture) 1 else 0,
-    transmissionUV,
-    if (hasSheenColorTexture) 1 else 0,
-    sheenColorUV,
-    if (hasSheenRoughnessTexture) 1 else 0,
-    sheenRoughnessUV,
-    if (hasVolumeThicknessTexture) 1 else 0,
-    volumeThicknessUV,
-    if (hasSheen) 1 else 0,
-    if (hasIOR) 1 else 0
-)
-
-private fun MaterialKey.setFrom(f: IntArray) {
-    doubleSided = f[0] != 0
-    unlit = f[1] != 0
-    hasVertexColors = f[2] != 0
-    hasBaseColorTexture = f[3] != 0
-    hasNormalTexture = f[4] != 0
-    hasOcclusionTexture = f[5] != 0
-    hasEmissiveTexture = f[6] != 0
-    useSpecularGlossiness = f[7] != 0
-    alphaMode = AlphaMode.entries[f[8]]
-    enableDiagnostics = f[9] != 0
-    hasMetallicRoughnessTexture = f[10] != 0
-    metallicRoughnessUV = f[11]
-    baseColorUV = f[12]
-    hasClearCoatTexture = f[13] != 0
-    clearCoatUV = f[14]
-    hasClearCoatRoughnessTexture = f[15] != 0
-    clearCoatRoughnessUV = f[16]
-    hasClearCoatNormalTexture = f[17] != 0
-    clearCoatNormalUV = f[18]
-    hasClearCoat = f[19] != 0
-    hasTransmission = f[20] != 0
-    hasTextureTransforms = f[21] != 0
-    emissiveUV = f[22]
-    aoUV = f[23]
-    normalUV = f[24]
-    hasTransmissionTexture = f[25] != 0
-    transmissionUV = f[26]
-    hasSheenColorTexture = f[27] != 0
-    sheenColorUV = f[28]
-    hasSheenRoughnessTexture = f[29] != 0
-    sheenRoughnessUV = f[30]
-    hasVolumeThicknessTexture = f[31] != 0
-    volumeThicknessUV = f[32]
-    hasSheen = f[33] != 0
-    hasIOR = f[34] != 0
+/** A native copy of this key for [block]; what C changed in it is copied back. */
+internal inline fun <R> MaterialKey.useNative(block: (NativePointer) -> R): R {
+    val k = FilaGltfioMaterialKey_create()
+    try {
+        writeTo(k)
+        return block(k).also { readFrom(k) }
+    } finally {
+        FilaGltfioMaterialKey_destroy(k)
+    }
 }
 
-@ExternalSymbolName("FilaMaterialKey_constrainMaterial")
-private external fun FilaMaterialKey_constrainMaterial(key: NativePointer, uvmap: NativePointer)
+/** A native copy of this map (C enums, one int each) for [block]; what C changed in it is copied back. */
+internal inline fun <R> UvMap.useNative(block: (NativePointer, Int) -> R): R {
+    val sets = IntArray(size) { this[it].ordinal }
+    return sets.usePinned { block(it, size) }.also { sets.forEachIndexed { i, v -> this[i] = UvSet.entries[v] } }
+}
+
+@PublishedApi
+internal fun MaterialKey.writeTo(k: NativePointer) {
+    FilaGltfioMaterialKey_setDoubleSided(k, doubleSided)
+    FilaGltfioMaterialKey_setUnlit(k, unlit)
+    FilaGltfioMaterialKey_setHasVertexColors(k, hasVertexColors)
+    FilaGltfioMaterialKey_setHasBaseColorTexture(k, hasBaseColorTexture)
+    FilaGltfioMaterialKey_setHasNormalTexture(k, hasNormalTexture)
+    FilaGltfioMaterialKey_setHasOcclusionTexture(k, hasOcclusionTexture)
+    FilaGltfioMaterialKey_setHasEmissiveTexture(k, hasEmissiveTexture)
+    FilaGltfioMaterialKey_setUseSpecularGlossiness(k, useSpecularGlossiness)
+    FilaGltfioMaterialKey_setAlphaMode(k, alphaMode.ordinal)
+    FilaGltfioMaterialKey_setEnableDiagnostics(k, enableDiagnostics)
+    FilaGltfioMaterialKey_setHasMetallicRoughnessTexture(k, hasMetallicRoughnessTexture)
+    FilaGltfioMaterialKey_setMetallicRoughnessUV(k, metallicRoughnessUV)
+    FilaGltfioMaterialKey_setBaseColorUV(k, baseColorUV)
+    FilaGltfioMaterialKey_setHasClearCoatTexture(k, hasClearCoatTexture)
+    FilaGltfioMaterialKey_setClearCoatUV(k, clearCoatUV)
+    FilaGltfioMaterialKey_setHasClearCoatRoughnessTexture(k, hasClearCoatRoughnessTexture)
+    FilaGltfioMaterialKey_setClearCoatRoughnessUV(k, clearCoatRoughnessUV)
+    FilaGltfioMaterialKey_setHasClearCoatNormalTexture(k, hasClearCoatNormalTexture)
+    FilaGltfioMaterialKey_setClearCoatNormalUV(k, clearCoatNormalUV)
+    FilaGltfioMaterialKey_setHasClearCoat(k, hasClearCoat)
+    FilaGltfioMaterialKey_setHasTransmission(k, hasTransmission)
+    FilaGltfioMaterialKey_setHasTextureTransforms(k, hasTextureTransforms)
+    FilaGltfioMaterialKey_setEmissiveUV(k, emissiveUV)
+    FilaGltfioMaterialKey_setAoUV(k, aoUV)
+    FilaGltfioMaterialKey_setNormalUV(k, normalUV)
+    FilaGltfioMaterialKey_setHasTransmissionTexture(k, hasTransmissionTexture)
+    FilaGltfioMaterialKey_setTransmissionUV(k, transmissionUV)
+    FilaGltfioMaterialKey_setHasSheenColorTexture(k, hasSheenColorTexture)
+    FilaGltfioMaterialKey_setSheenColorUV(k, sheenColorUV)
+    FilaGltfioMaterialKey_setHasSheenRoughnessTexture(k, hasSheenRoughnessTexture)
+    FilaGltfioMaterialKey_setSheenRoughnessUV(k, sheenRoughnessUV)
+    FilaGltfioMaterialKey_setHasVolumeThicknessTexture(k, hasVolumeThicknessTexture)
+    FilaGltfioMaterialKey_setVolumeThicknessUV(k, volumeThicknessUV)
+    FilaGltfioMaterialKey_setHasSheen(k, hasSheen)
+    FilaGltfioMaterialKey_setHasIOR(k, hasIOR)
+    FilaGltfioMaterialKey_setHasVolume(k, hasVolume)
+    FilaGltfioMaterialKey_setHasDispersion(k, hasDispersion)
+    FilaGltfioMaterialKey_setHasSpecular(k, hasSpecular)
+    FilaGltfioMaterialKey_setHasSpecularTexture(k, hasSpecularTexture)
+    FilaGltfioMaterialKey_setHasSpecularColorTexture(k, hasSpecularColorTexture)
+    FilaGltfioMaterialKey_setSpecularTextureUV(k, specularTextureUV)
+    FilaGltfioMaterialKey_setSpecularColorTextureUV(k, specularColorTextureUV)
+}
+
+@PublishedApi
+internal fun MaterialKey.readFrom(k: NativePointer) {
+    doubleSided = FilaGltfioMaterialKey_getDoubleSided(k)
+    unlit = FilaGltfioMaterialKey_getUnlit(k)
+    hasVertexColors = FilaGltfioMaterialKey_getHasVertexColors(k)
+    hasBaseColorTexture = FilaGltfioMaterialKey_getHasBaseColorTexture(k)
+    hasNormalTexture = FilaGltfioMaterialKey_getHasNormalTexture(k)
+    hasOcclusionTexture = FilaGltfioMaterialKey_getHasOcclusionTexture(k)
+    hasEmissiveTexture = FilaGltfioMaterialKey_getHasEmissiveTexture(k)
+    useSpecularGlossiness = FilaGltfioMaterialKey_getUseSpecularGlossiness(k)
+    alphaMode = AlphaMode.entries[FilaGltfioMaterialKey_getAlphaMode(k)]
+    enableDiagnostics = FilaGltfioMaterialKey_getEnableDiagnostics(k)
+    hasMetallicRoughnessTexture = FilaGltfioMaterialKey_getHasMetallicRoughnessTexture(k)
+    metallicRoughnessUV = FilaGltfioMaterialKey_getMetallicRoughnessUV(k)
+    baseColorUV = FilaGltfioMaterialKey_getBaseColorUV(k)
+    hasClearCoatTexture = FilaGltfioMaterialKey_getHasClearCoatTexture(k)
+    clearCoatUV = FilaGltfioMaterialKey_getClearCoatUV(k)
+    hasClearCoatRoughnessTexture = FilaGltfioMaterialKey_getHasClearCoatRoughnessTexture(k)
+    clearCoatRoughnessUV = FilaGltfioMaterialKey_getClearCoatRoughnessUV(k)
+    hasClearCoatNormalTexture = FilaGltfioMaterialKey_getHasClearCoatNormalTexture(k)
+    clearCoatNormalUV = FilaGltfioMaterialKey_getClearCoatNormalUV(k)
+    hasClearCoat = FilaGltfioMaterialKey_getHasClearCoat(k)
+    hasTransmission = FilaGltfioMaterialKey_getHasTransmission(k)
+    hasTextureTransforms = FilaGltfioMaterialKey_getHasTextureTransforms(k)
+    emissiveUV = FilaGltfioMaterialKey_getEmissiveUV(k)
+    aoUV = FilaGltfioMaterialKey_getAoUV(k)
+    normalUV = FilaGltfioMaterialKey_getNormalUV(k)
+    hasTransmissionTexture = FilaGltfioMaterialKey_getHasTransmissionTexture(k)
+    transmissionUV = FilaGltfioMaterialKey_getTransmissionUV(k)
+    hasSheenColorTexture = FilaGltfioMaterialKey_getHasSheenColorTexture(k)
+    sheenColorUV = FilaGltfioMaterialKey_getSheenColorUV(k)
+    hasSheenRoughnessTexture = FilaGltfioMaterialKey_getHasSheenRoughnessTexture(k)
+    sheenRoughnessUV = FilaGltfioMaterialKey_getSheenRoughnessUV(k)
+    hasVolumeThicknessTexture = FilaGltfioMaterialKey_getHasVolumeThicknessTexture(k)
+    volumeThicknessUV = FilaGltfioMaterialKey_getVolumeThicknessUV(k)
+    hasSheen = FilaGltfioMaterialKey_getHasSheen(k)
+    hasIOR = FilaGltfioMaterialKey_getHasIOR(k)
+    hasVolume = FilaGltfioMaterialKey_getHasVolume(k)
+    hasDispersion = FilaGltfioMaterialKey_getHasDispersion(k)
+    hasSpecular = FilaGltfioMaterialKey_getHasSpecular(k)
+    hasSpecularTexture = FilaGltfioMaterialKey_getHasSpecularTexture(k)
+    hasSpecularColorTexture = FilaGltfioMaterialKey_getHasSpecularColorTexture(k)
+    specularTextureUV = FilaGltfioMaterialKey_getSpecularTextureUV(k)
+    specularColorTextureUV = FilaGltfioMaterialKey_getSpecularColorTextureUV(k)
+}

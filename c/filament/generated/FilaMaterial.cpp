@@ -32,6 +32,30 @@ void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, boo
     fila::cpp(self)->isSubpass = value;
 }
 
+FilaUniformType FilaMaterialParameterInfo_getType(const FilaMaterialParameterInfo* self) {
+    return static_cast<FilaUniformType>(fila::cpp(self)->type);
+}
+
+void FilaMaterialParameterInfo_setType(FilaMaterialParameterInfo* self, FilaUniformType value) {
+    fila::cpp(self)->type = static_cast<filament::backend::UniformType>(value);
+}
+
+FilaSamplerType FilaMaterialParameterInfo_getSamplerType(const FilaMaterialParameterInfo* self) {
+    return static_cast<FilaSamplerType>(fila::cpp(self)->samplerType);
+}
+
+void FilaMaterialParameterInfo_setSamplerType(FilaMaterialParameterInfo* self, FilaSamplerType value) {
+    fila::cpp(self)->samplerType = static_cast<filament::backend::SamplerType>(value);
+}
+
+FilaSubpassType FilaMaterialParameterInfo_getSubpassType(const FilaMaterialParameterInfo* self) {
+    return static_cast<FilaSubpassType>(fila::cpp(self)->subpassType);
+}
+
+void FilaMaterialParameterInfo_setSubpassType(FilaMaterialParameterInfo* self, FilaSubpassType value) {
+    fila::cpp(self)->subpassType = static_cast<filament::backend::SubpassType>(value);
+}
+
 uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self) {
     return fila::cpp(self)->count;
 }

@@ -136,16 +136,24 @@ for a complete, working implementation you can copy.
 `gltfio` is independent of Compose too:
 
 ```kotlin
-val provider = UbershaderProvider(engine)
-val assetLoader = AssetLoader.create(engine, provider, engine.entityManager)
+val provider = createUbershaderProvider(engine)
+val assetLoader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
 val asset = assetLoader.createAsset(glbBytes)!!
 
-val resourceLoader = ResourceLoader(engine)
+// The loader decodes textures only for the MIME types a provider is registered under.
+val stb = createStbProvider(engine)
+val ktx2 = createKtx2Provider(engine)
+val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
+resourceLoader.addTextureProvider("image/png", stb)
+resourceLoader.addTextureProvider("image/jpeg", stb)
+resourceLoader.addTextureProvider("image/ktx2", ktx2)
 resourceLoader.loadResources(asset)      // must run before textures/morph targets exist
 scene.addEntities(asset.entities)
 
 // Teardown, in this order.
 resourceLoader.destroy()
+stb.destroy()
+ktx2.destroy()
 assetLoader.destroyAsset(asset)
 AssetLoader.destroy(assetLoader)
 provider.destroy()

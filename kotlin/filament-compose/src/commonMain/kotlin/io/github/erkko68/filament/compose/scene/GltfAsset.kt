@@ -15,7 +15,10 @@ import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.gltfio.AssetLoader
 import io.github.erkko68.filament.gltfio.FilamentAsset
+import io.github.erkko68.filament.gltfio.ResourceConfiguration
 import io.github.erkko68.filament.gltfio.ResourceLoader
+import io.github.erkko68.filament.gltfio.createKtx2Provider
+import io.github.erkko68.filament.gltfio.createStbProvider
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -93,7 +96,12 @@ internal fun rememberGltfAsset(
     }
 
     LaunchedEffect(gltfAsset) {
-        val resourceLoader = ResourceLoader(engine, true)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine, normalizeSkinningWeights = true))
+        val stb = createStbProvider(engine)
+        val ktx2 = createKtx2Provider(engine)
+        resourceLoader.addTextureProvider("image/png", stb)
+        resourceLoader.addTextureProvider("image/jpeg", stb)
+        resourceLoader.addTextureProvider("image/ktx2", ktx2)
         try {
             resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
             while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
@@ -103,6 +111,8 @@ internal fun rememberGltfAsset(
             gltfAsset.isReady = true
         } finally {
             resourceLoader.destroy()
+            stb.destroy()
+            ktx2.destroy()
         }
     }
 

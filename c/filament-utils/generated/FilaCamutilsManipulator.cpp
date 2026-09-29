@@ -272,6 +272,10 @@ void FilaCamutilsManipulatorBuilder_setDetails(FilaCamutilsManipulatorBuilder* s
     fila::cpp(self)->details = *fila::cpp(value);
 }
 
+void FilaCamutilsManipulator_destroy(FilaCamutilsManipulator* self) {
+    delete fila::cpp(self);
+}
+
 FilaCamutilsMode FilaCamutilsManipulator_getMode(const FilaCamutilsManipulator* self) {
     return static_cast<FilaCamutilsMode>(fila::cpp(self)->getMode());
 }

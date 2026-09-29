@@ -127,6 +127,40 @@ struct Items {
 template<typename F>
 Items<F> items(uint32_t count, F element) { return { count, element }; }
 
+// C's array as the std::array<T, N> the callee takes by pointer or reference: element(i) makes each T, and
+// store(t, i) writes the callee's changes back into C's array when the call ends.
+template<typename F, typename S>
+struct Updated {
+    uint32_t count;
+    F element;
+    S store;
+    std::shared_ptr<void> storage;
+    void (*writeBack)(Updated&) = nullptr;
+
+    template<typename T, size_t N>
+    std::array<T, N>* array() {
+        auto a = std::make_shared<std::array<T, N>>();
+        for (uint32_t i = 0; i < count && i < N; i++) (*a)[i] = T(element(i));
+        storage = a;
+        writeBack = [](Updated& u) {
+            auto& a = *static_cast<std::array<T, N>*>(u.storage.get());
+            for (uint32_t i = 0; i < u.count && i < N; i++) u.store(a[i], i);
+        };
+        return a.get();
+    }
+
+    template<typename T, size_t N>
+    operator std::array<T, N>*() { return array<T, N>(); }
+
+    template<typename T, size_t N>
+    operator std::array<T, N>&() { return *array<T, N>(); }
+
+    ~Updated() { if (writeBack) writeBack(*this); }
+};
+
+template<typename F, typename S>
+Updated<F, S> updated(uint32_t count, F element, S store) { return { count, element, store }; }
+
 // Fills an array field from C's array, up to either's size.
 template<typename T, size_t N, typename F>
 void assign(T (&array)[N], const Items<F>& items) {

@@ -107,6 +107,8 @@ FILA_JNI(jlong, argUser)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&argU
 FILA_JNI(jlong, keepBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&keepBuffer); }
 FILA_JNI(jlong, freeBuffer)(JNIEnv*, jclass) { return reinterpret_cast<jlong>(&freeBuffer); }
 
+FILA_JNI(jint, nativePointerSize)(JNIEnv*, jclass) { return sizeof(void*); }
+
 FILA_JNI(jstring, readString)(JNIEnv* env, jclass, jlong ptr) {
     return ptr ? env->NewStringUTF(reinterpret_cast<const char*>(ptr)) : nullptr;
 }

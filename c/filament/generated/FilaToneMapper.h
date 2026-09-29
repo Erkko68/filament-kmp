@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // filament::ToneMapper
+void FilaToneMapper_destroy(FilaToneMapper* self);
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self);
 bool FilaToneMapper_isLDR(const FilaToneMapper* self);
 

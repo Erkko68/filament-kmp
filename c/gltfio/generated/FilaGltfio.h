@@ -9,7 +9,8 @@ extern "C" {
 #endif
 
 // filament::gltfio
-FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount);
+uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
+void FilaGltfio_constrainMaterial(FilaGltfioMaterialKey* key, FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
 FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount);
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine);
 FilaGltfioTextureProvider* FilaGltfio_createKtx2Provider(FilaEngine* engine);

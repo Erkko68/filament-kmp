@@ -115,7 +115,7 @@ Upstream reference: **[Filament Engine](https://google.github.io/filament/Filame
 
 ### `gltfio`
 
-glTF 2.0 / GLB asset loader. Wraps `AssetLoader`, `FilamentAsset`, `FilamentInstance`, `ResourceLoader`, `Animator`, and `UbershaderProvider`.
+glTF 2.0 / GLB asset loader. Wraps `AssetLoader`, `FilamentAsset`, `FilamentInstance`, `ResourceLoader`, `Animator`, `MaterialProvider` (`createUbershaderProvider`) and `TextureProvider`.
 
 ```kotlin
 implementation("io.github.erkko68.filament:gltfio:0.6.0")

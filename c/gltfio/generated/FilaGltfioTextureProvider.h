@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 // filament::gltfio::TextureProvider
+void FilaGltfioTextureProvider_destroy(FilaGltfioTextureProvider* self);
 // skipped Texture * filament::gltfio::TextureProvider::pushTexture(const uint8_t * data, size_t byteCount, const char * mimeType, TextureFlags flags): filament::gltfio::TextureProvider::*
 // skipped Texture * filament::gltfio::TextureProvider::popTexture(): filament::gltfio::TextureProvider::*
 // skipped void filament::gltfio::TextureProvider::updateQueue(): filament::gltfio::TextureProvider::*

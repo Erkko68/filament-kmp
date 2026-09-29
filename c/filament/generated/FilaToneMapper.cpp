@@ -4,6 +4,10 @@
 
 extern "C" {
 
+void FilaToneMapper_destroy(FilaToneMapper* self) {
+    delete fila::cpp(self);
+}
+
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self) {
     return fila::cpp(self)->isOneDimensional();
 }

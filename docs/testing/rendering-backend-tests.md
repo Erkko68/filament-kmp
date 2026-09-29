@@ -64,7 +64,7 @@ capability.
 
 ## Still open
 
-- `UbershaderProvider.createMaterialInstance` / `Material.createInstance` aborts on the
+- `MaterialProvider.createMaterialInstance` / `Material.createInstance` aborts on the
   `base_unlit_opaque` ubershader (ordinary materials work; `getMaterial`/`getDefaultInstance`
   work). The abort is inside prebuilt filament's `noexcept` `createInstance`; the release
   build strips the message and SIP blocks lldb here. Documented in

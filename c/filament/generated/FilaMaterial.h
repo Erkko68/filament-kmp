@@ -18,6 +18,12 @@ bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* sel
 void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value);
 bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self);
 void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, bool value);
+FilaUniformType FilaMaterialParameterInfo_getType(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setType(FilaMaterialParameterInfo* self, FilaUniformType value);
+FilaSamplerType FilaMaterialParameterInfo_getSamplerType(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setSamplerType(FilaMaterialParameterInfo* self, FilaSamplerType value);
+FilaSubpassType FilaMaterialParameterInfo_getSubpassType(const FilaMaterialParameterInfo* self);
+void FilaMaterialParameterInfo_setSubpassType(FilaMaterialParameterInfo* self, FilaSubpassType value);
 uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self);
 void FilaMaterialParameterInfo_setCount(FilaMaterialParameterInfo* self, uint32_t value);
 FilaPrecision FilaMaterialParameterInfo_getPrecision(const FilaMaterialParameterInfo* self);

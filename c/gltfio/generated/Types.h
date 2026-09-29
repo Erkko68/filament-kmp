@@ -14,10 +14,25 @@ typedef struct FilaGltfioAssetConfigurationExtended FilaGltfioAssetConfiguration
 typedef struct FilaGltfioAssetLoader FilaGltfioAssetLoader;
 typedef struct FilaGltfioFilamentAsset FilaGltfioFilamentAsset;
 typedef struct FilaGltfioFilamentInstance FilaGltfioFilamentInstance;
+typedef struct FilaGltfioMaterialKey FilaGltfioMaterialKey;
 typedef struct FilaGltfioMaterialProvider FilaGltfioMaterialProvider;
 typedef struct FilaGltfioResourceConfiguration FilaGltfioResourceConfiguration;
 typedef struct FilaGltfioResourceLoader FilaGltfioResourceLoader;
 typedef struct FilaGltfioTextureProvider FilaGltfioTextureProvider;
+
+// filament::gltfio::AlphaMode
+typedef enum FilaGltfioAlphaMode {
+    FILA_GLTFIO_ALPHA_MODE_OPAQUE = 0,
+    FILA_GLTFIO_ALPHA_MODE_MASK = 1,
+    FILA_GLTFIO_ALPHA_MODE_BLEND = 2,
+} FilaGltfioAlphaMode;
+
+// filament::gltfio::UvSet
+typedef enum FilaGltfioUvSet {
+    FILA_GLTFIO_UV_SET_UNUSED = 0,
+    FILA_GLTFIO_UV_SET_UV0 = 1,
+    FILA_GLTFIO_UV_SET_UV1 = 2,
+} FilaGltfioUvSet;
 
 #ifdef __cplusplus
 }

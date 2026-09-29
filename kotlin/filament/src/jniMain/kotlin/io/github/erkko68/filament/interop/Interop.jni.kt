@@ -31,6 +31,9 @@ actual class InteropScope actual constructor() {
     actual fun toInterop(array: LongArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asLongBuffer().put(array!!) }
     actual fun toInterop(array: FloatArray?): NativePointer = copyIn(array?.size ?: 0, 4) { it.asFloatBuffer().put(array!!) }
     actual fun toInterop(array: DoubleArray?): NativePointer = copyIn(array?.size ?: 0, 8) { it.asDoubleBuffer().put(array!!) }
+    actual fun toInterop(pointers: List<NativePointer>): NativePointer = copyIn(pointers.size, FilaJni.pointerSize) { b ->
+        if (FilaJni.pointerSize == 8) b.asLongBuffer().put(pointers.toLongArray()) else b.asIntBuffer().put(IntArray(pointers.size) { pointers[it].toInt() })
+    }
 
     private inline fun NativePointer.copyOut(count: Int, width: Int, get: (ByteBuffer) -> Unit) {
         if (this != NullPointer && count > 0) get(FilaJni.buffer(this, count * width))
@@ -53,6 +56,20 @@ actual fun upload(data: ByteArray, size: Int, onRelease: (() -> Unit)?): Upload 
     jniUpload(data, size, onRelease).let { Upload(it.ptr, it.size, it.callback, it.userData) }
 
 actual fun stringFromInterop(ptr: NativePointer): String? = FilaJni.readString(ptr)
+
+actual fun readInts(ptr: NativePointer, count: Int): IntArray =
+    IntArray(count).also { if (count > 0) FilaJni.buffer(ptr, count * 4).asIntBuffer().get(it) }
+
+actual fun readFloats(ptr: NativePointer, count: Int): FloatArray =
+    FloatArray(count).also { if (count > 0) FilaJni.buffer(ptr, count * 4).asFloatBuffer().get(it) }
+
+actual fun readPointers(ptr: NativePointer, count: Int): List<NativePointer> {
+    if (count == 0) return emptyList()
+    val b = FilaJni.buffer(ptr, count * FilaJni.pointerSize)
+    // Android's 32-bit ABIs have 4-byte pointers, zero-extended into NativePointer.
+    return if (FilaJni.pointerSize == 8) LongArray(count).also { b.asLongBuffer().get(it) }.toList()
+    else IntArray(count).also { b.asIntBuffer().get(it) }.map { it.toLong() and 0xFFFFFFFFL }
+}
 
 actual object Callbacks {
     actual fun register(once: Boolean, fn: (arg: NativePointer) -> Unit): NativePointer = JniCallbacks.register(once) { a, _ -> fn(a) }

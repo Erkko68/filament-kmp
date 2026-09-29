@@ -54,10 +54,13 @@ gltfio/*.h
 !gltfio/math.h
 # Driven by ResourceLoader and AssetLoader, or only for writing a C++ MaterialProvider.
 -filament::gltfio::TextureProvider::*
--filament::gltfio::MaterialKey
--filament::gltfio::getNumUvSets
+-filament::gltfio::processShaderString
+-filament::gltfio::MaterialKey::padding
+-filament::gltfio::MaterialKey::padding2
 -filament::gltfio::NodeManager
 -filament::gltfio::TrsTransformManager
+# Lives in libgltfio (JIT via filamat), which only desktop prebuilds; every platform links gltfio_core.
+-filament::gltfio::createJitShaderProvider
 # Internal instance type, and utils' name component manager (not part of the C API).
 -filament::gltfio::Animator::addInstance
 -filament::gltfio::AssetConfiguration::names

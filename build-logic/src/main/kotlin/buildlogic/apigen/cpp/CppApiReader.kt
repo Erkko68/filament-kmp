@@ -94,6 +94,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         val constructors = ArrayList<List<CppParam>>()
         if (!abstract && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true) constructors += emptyList<CppParam>()
         var destructible = true
+        var virtualDestructor = false
         // A declared move constructor deletes the implicit copy.
         var copyable = !abstract && ((dd?.get("moveCtor") as? Map<*, *>)?.get("userDeclared") != true ||
             (dd?.get("copyCtor") as? Map<*, *>)?.get("userDeclared") == true)
@@ -117,11 +118,18 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     if (!abstract && usable && self == null) constructors += params
                 }
                 "FunctionTemplateDecl" -> template(child, qualified, isPublic, free = false)?.let { methods += it }
-                "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
+                "CXXDestructorDecl" -> {
+                    destructible = isPublic && child["explicitlyDeleted"] != true
+                    virtualDestructor = destructible && child["virtual"] == true
+                }
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
                     val deprecated = child.children().any { it["kind"] == "DeprecatedAttr" }
                     fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated)
+                }
+                // An anonymous union or struct's members are the record's own (MaterialKey's UV fields).
+                "CXXRecordDecl" if child["name"] == null -> anonymousFields(child).forEach { field ->
+                    fields += CppField(field["name"] as String, scopes.resolve(spelledType(field), qualified), null, isPublic, false)
                 }
                 // `class Frustum getFrustum()` declares Frustum in the namespace, though clang lists it here.
                 "CXXRecordDecl", "ClassTemplateDecl" -> if (child["parentDeclContextId"] == null)
@@ -130,8 +138,16 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             }
         }
         records[qualified] = CppRecord(
-            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable,
+            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable, copyable, virtualDestructor,
         )
+    }
+
+    private fun anonymousFields(record: Map<*, *>): List<Map<*, *>> = record.children().flatMap {
+        when {
+            it["kind"] == "FieldDecl" && it["name"] != null -> listOf(it)
+            it["kind"] == "CXXRecordDecl" && it["name"] == null -> anonymousFields(it)
+            else -> emptyList()
+        }
     }
 
     /** A function template's function, its parameters declared in a scope of its own (`owner::name::T`). */

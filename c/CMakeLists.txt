@@ -24,7 +24,7 @@ include(cmake/FilamentLibraries.cmake)
 
 set(FILA_MODULES filament filamat filament-utils gltfio)
 # Modules on the generated API (<module>/generated + <module>/manual); the rest still build <module>/cpp.
-set(FILA_GENERATED_MODULES filamat)
+set(FILA_GENERATED_MODULES filamat gltfio)
 foreach(module IN LISTS FILA_MODULES)
     if (NOT module IN_LIST FILA_GENERATED_MODULES)
         include_directories(${module}/c)

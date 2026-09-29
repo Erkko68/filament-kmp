@@ -17,8 +17,8 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -40,8 +40,8 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -60,15 +60,15 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val instance = asset.instance
         val skinCount = instance.skinCount
         assertTrue(skinCount >= 0)
-        assertNotNull(instance.skinNames)
+        repeat(skinCount) { instance.getSkinNameAt(it) }
 
         if (skinCount > 0) {
             instance.getJointCountAt(0)
@@ -85,16 +85,13 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val instance = asset.instance
-        val variantNames = instance.materialVariantNames
-        assertNotNull(variantNames)
-
-        if (variantNames.isNotEmpty()) {
+        if (instance.materialVariantCount > 0) {
             instance.applyMaterialVariant(0)
         }
 
@@ -110,12 +107,12 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getFoxGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         resourceLoader.loadResources(asset)
 
         val instance = asset.instance
@@ -123,8 +120,7 @@ class FilamentInstanceTest : GltfioTestFixture() {
         // Fox is a rigged model with at least one skin.
         assertTrue(skinCount > 0)
 
-        val skinNames = instance.skinNames
-        assertEquals(skinCount, skinNames.size)
+        repeat(skinCount) { instance.getSkinNameAt(it) }
 
         val jointCount = instance.getJointCountAt(0)
         assertTrue(jointCount > 0)
@@ -147,15 +143,14 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getMaterialVariantsGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
         val instance = asset.instance
-        val variantNames = instance.materialVariantNames
         // The synthetic asset declares two KHR_materials_variants.
-        assertEquals(2, variantNames.size)
+        assertEquals(2, instance.materialVariantCount)
 
         instance.applyMaterialVariant(0)
         instance.applyMaterialVariant(1)
@@ -170,8 +165,8 @@ class FilamentInstanceTest : GltfioTestFixture() {
         val bytes = TestGlb.getDuckGlbBytes()
         if (bytes.isEmpty()) return
 
-        val provider = UbershaderProvider(engine)
-        val loader = AssetLoader.create(engine, provider, engine.entityManager)
+        val provider = createUbershaderProvider(engine)
+        val loader = AssetLoader.create(AssetConfiguration(engine, provider, engine.entityManager))
         val asset = loader.createAsset(bytes)
         assertNotNull(asset)
 
@@ -184,7 +179,7 @@ class FilamentInstanceTest : GltfioTestFixture() {
             assertFailsWith<IllegalStateException> { instance.animator }
         }
 
-        val resourceLoader = ResourceLoader(engine)
+        val resourceLoader = ResourceLoader(ResourceConfiguration(engine))
         assertTrue(resourceLoader.loadResources(asset))
         assertNotNull(instance.animator)
 
