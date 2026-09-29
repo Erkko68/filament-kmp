@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.scene
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -11,6 +12,8 @@ import io.github.erkko68.filament.Material
 import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.EngineRetention
+import io.github.erkko68.filament.compose.RetainEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.utils.TextureLoader
 import kotlin.coroutines.cancellation.CancellationException
@@ -74,6 +77,7 @@ internal fun rememberMaterial(
     bytes: ByteArray,
     onError: ((Throwable) -> Unit)? = null,
 ): Material? {
+    RetainEngine(engine)
     val material = remember(engine, bytes) {
         try {
             Material.Builder().payload(bytes).build(engine)
@@ -95,7 +99,7 @@ internal fun rememberMaterial(
 
     DisposableEffect(material) {
         onDispose {
-            engine.destroyMaterial(material)
+            MaterialLifetimes.destroyMaterial(engine, material)
         }
     }
 
@@ -144,6 +148,7 @@ internal fun rememberTexture(
     type: TextureLoader.TextureType = TextureLoader.TextureType.COLOR,
     onError: ((Throwable) -> Unit)? = null,
 ): Texture? {
+    RetainEngine(engine)
     val texture = remember(engine, bytes, type) {
         TextureLoader.loadTexture(engine, bytes, type)
     }
@@ -190,13 +195,8 @@ fun rememberMaterialInstance(
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
 ): MaterialInstance? {
     if (material == null) return null
-    val instance = remember(material) { material.createInstance() }
-
-    DisposableEffect(instance) {
-        onDispose { engine.destroyMaterialInstance(instance) }
-    }
-
-    return instance
+    RetainEngine(engine)
+    return rememberOwnedInstance(engine, material)
 }
 
 /**
@@ -249,9 +249,8 @@ internal fun rememberConfiguredMaterialInstance(
     engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine(),
     configure: MaterialInstance.() -> Unit,
 ): MaterialInstance {
-    val instance = remember(material) {
-        material.createInstance()
-    }
+    RetainEngine(engine)
+    val instance = rememberOwnedInstance(engine, material)
 
     // Re-apply parameters whenever the instance is (re)built or any key changes. A no-op
     // onDispose keeps this a pure setter — the instance's own teardown is the effect below.
@@ -260,15 +259,89 @@ internal fun rememberConfiguredMaterialInstance(
         onDispose { }
     }
 
-    DisposableEffect(instance) {
-        onDispose {
-            engine.destroyMaterialInstance(instance)
-        }
+    return instance
+}
+
+/**
+ * A [MaterialInstance] of [material], destroyed when forgotten *or abandoned*: an instance created in a composition
+ * that is then discarded (SubcomposeLayout / LazyColumn precomposition) never runs a DisposableEffect, so it would
+ * leak, and Filament panics on destroying an engine that still has a material with live instances.
+ */
+@Composable
+private fun rememberOwnedInstance(engine: Engine, material: Material): MaterialInstance =
+    remember(material) { OwnedInstance(engine, material) }.instance
+
+private class OwnedInstance(private val engine: Engine, private val material: Material) : RememberObserver {
+    // Its own engine reference: abandoned after the applied objects are forgotten, it may outlive the engine's owner.
+    private val retention = EngineRetention(engine)
+    val instance: MaterialInstance = MaterialLifetimes.createInstance(material)
+
+    override fun onRemembered() {}
+
+    override fun onForgotten() {
+        MaterialLifetimes.destroyInstance(engine, material, instance)
+        retention.onForgotten()
     }
 
-    return instance
+    override fun onAbandoned() = onForgotten()
 }
 
 /** Sets a `float3` parameter from a [LinearColor], keeping call sites typed against the colour value class. */
 fun MaterialInstance.setParameter(name: String, color: LinearColor) =
     setParameter(name, color.r, color.g, color.b)
+
+/**
+ * Live [MaterialInstance]s per [Material], and renderables per instance, so tearing a scene down never destroys
+ * a material before its instances, nor an instance a renderable still draws with: Filament panics on either
+ * (a precondition, fatal on the JVM), and Compose gives no order between them when it deactivates or abandons a
+ * composition (a LazyColumn item recycled or prefetched). A material or instance destroyed while still in use goes
+ * with its last user instead.
+ */
+// ponytail: composition-thread only, like every Filament call here; a lock if instances ever leave that thread.
+internal object MaterialLifetimes {
+    private val liveInstances = HashMap<Material, Int>()
+    private val pendingMaterials = HashMap<Material, Engine>()
+    private val instanceUsers = HashMap<MaterialInstance, Int>()
+    private val pendingInstances = HashMap<MaterialInstance, Pair<Engine, Material>>()
+
+    fun createInstance(material: Material): MaterialInstance =
+        material.createInstance().also { liveInstances[material] = (liveInstances[material] ?: 0) + 1 }
+
+    /** Destroys [instance] now, or once the last renderable drawing with it [unuse]s it. */
+    fun destroyInstance(engine: Engine, material: Material, instance: MaterialInstance) {
+        if ((instanceUsers[instance] ?: 0) > 0) pendingInstances[instance] = engine to material
+        else destroyInstanceNow(engine, material, instance)
+    }
+
+    /** Destroys [material] now, or with its last live instance. */
+    fun destroyMaterial(engine: Engine, material: Material) {
+        if ((liveInstances[material] ?: 0) > 0) pendingMaterials[material] = engine else engine.destroyMaterial(material)
+    }
+
+    /** A renderable now draws with [instance]. */
+    fun use(instance: MaterialInstance) {
+        instanceUsers[instance] = (instanceUsers[instance] ?: 0) + 1
+    }
+
+    /** A renderable drawing with [instance] is gone. */
+    fun unuse(instance: MaterialInstance) {
+        val left = (instanceUsers[instance] ?: 1) - 1
+        if (left > 0) {
+            instanceUsers[instance] = left
+            return
+        }
+        instanceUsers.remove(instance)
+        pendingInstances.remove(instance)?.let { (engine, material) -> destroyInstanceNow(engine, material, instance) }
+    }
+
+    private fun destroyInstanceNow(engine: Engine, material: Material, instance: MaterialInstance) {
+        engine.destroyMaterialInstance(instance)
+        val left = (liveInstances[material] ?: 1) - 1
+        if (left > 0) {
+            liveInstances[material] = left
+            return
+        }
+        liveInstances.remove(material)
+        pendingMaterials.remove(material)?.destroyMaterial(material)
+    }
+}

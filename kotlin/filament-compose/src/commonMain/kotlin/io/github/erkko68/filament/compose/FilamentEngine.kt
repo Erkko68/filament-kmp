@@ -18,7 +18,7 @@ import io.github.erkko68.filament.Filament
 fun rememberFilamentEngine(backend: Engine.Backend = Engine.Backend.DEFAULT): Engine {
     val engine = remember(backend) { Filament.init(); Engine.create(backend) }
     DisposableEffect(engine) {
-        onDispose { engine.destroy() }
+        onDispose { EngineLifetimes.destroyWhenUnused(engine) }
     }
     return engine
 }

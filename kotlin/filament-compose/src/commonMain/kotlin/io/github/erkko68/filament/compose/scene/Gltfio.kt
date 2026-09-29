@@ -1,10 +1,12 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.remember
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.compose.EngineRetention
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.RetainEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.compose.scene.GltfioContext.Companion.acquire
 import io.github.erkko68.filament.gltfio.AssetLoader
@@ -64,9 +66,26 @@ internal class GltfioContext private constructor(
  */
 @Composable
 internal fun rememberGltfioContext(engine: Engine = LocalFilamentEngine.current ?: noFilamentEngine()): GltfioContext {
-    val context = remember(engine) { GltfioContext.acquire(engine) }
-    DisposableEffect(engine) {
-        onDispose { GltfioContext.release(engine) }
+    RetainEngine(engine)
+    return remember(engine) { GltfioContextLease(engine) }.context
+}
+
+/**
+ * One reference to [engine]'s [GltfioContext], released when forgotten *or abandoned*: a composition discarded
+ * before it applies (SubcomposeLayout / LazyColumn precomposition) runs no DisposableEffect, so the context and
+ * its materials would never be destroyed, and Filament panics on destroying an engine whose materials still have
+ * instances.
+ */
+internal class GltfioContextLease(private val engine: Engine) : RememberObserver {
+    private val retention = EngineRetention(engine)
+    val context: GltfioContext = GltfioContext.acquire(engine)
+
+    override fun onRemembered() {}
+
+    override fun onForgotten() {
+        GltfioContext.release(engine)
+        retention.onForgotten()
     }
-    return context
+
+    override fun onAbandoned() = onForgotten()
 }

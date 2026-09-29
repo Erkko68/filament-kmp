@@ -11,6 +11,7 @@ import io.github.erkko68.filament.MaterialInstance
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.TextureSampler
 import io.github.erkko68.filament.compose.LocalFilamentEngine
+import io.github.erkko68.filament.compose.RetainEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 
 /**
@@ -73,7 +74,7 @@ internal class StandardMaterialCache(val engine: Engine) {
         cache.getOrPut(type) { Material.Builder().payload(type.payload()).build(engine) }
 
     fun dispose() {
-        for (material in cache.values) engine.destroyMaterial(material)
+        for (material in cache.values) MaterialLifetimes.destroyMaterial(engine, material)
         cache.clear()
     }
 }
@@ -104,11 +105,12 @@ fun rememberStandardMaterial(
         cache.get(type)
     } else {
         // Hoisted engine outside a scene: this call site owns the material.
+        RetainEngine(engine)
         val material = remember(engine, type) {
             Material.Builder().payload(type.payload()).build(engine)
         }
         DisposableEffect(material) {
-            onDispose { engine.destroyMaterial(material) }
+            onDispose { MaterialLifetimes.destroyMaterial(engine, material) }
         }
         material
     }

@@ -1,8 +1,8 @@
 package io.github.erkko68.filament.compose.scene
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import io.github.erkko68.filament.Engine
+import io.github.erkko68.filament.compose.EngineRetention
 import io.github.erkko68.filament.compose.LocalFilamentEngine
 import io.github.erkko68.filament.compose.noFilamentEngine
 import io.github.erkko68.filament.gltfio.AssetLoader
@@ -83,9 +84,7 @@ internal fun rememberGltfAsset(
     val gltfioContext = rememberGltfioContext(engine)
     val assetLoader = gltfioContext.assetLoader
 
-    val gltfAsset = remember(bytes, assetLoader) {
-        assetLoader.createAsset(bytes)?.let { GltfAsset(it, assetLoader) }
-    }
+    val gltfAsset = remember(bytes, assetLoader) { OwnedGltfAsset(engine, bytes) }.asset
 
     if (gltfAsset == null) {
         // Bytes were produced but failed to parse — report once, keyed on the bytes.
@@ -95,15 +94,6 @@ internal fun rememberGltfAsset(
             )
         }
         return null
-    }
-
-    DisposableEffect(gltfAsset) {
-        onDispose {
-            // Here, not in the loading coroutine's `finally`: that only runs after every onDispose of
-            // this pass, i.e. after the asset — and a composition-owned engine — are already destroyed.
-            gltfAsset.releaseResourceLoader()
-            assetLoader.destroyAsset(gltfAsset.filamentAsset)
-        }
     }
 
     LaunchedEffect(gltfAsset) {
@@ -178,4 +168,30 @@ fun rememberGltfAsset(
         }
     }
     return bytes?.let { rememberGltfAsset(engine, it, onError) }
+}
+
+/**
+ * A parsed glTF asset (null when the bytes don't parse), destroyed when forgotten *or abandoned*: an asset created in
+ * a composition that is then discarded runs no DisposableEffect and would leak its material instances, which makes
+ * Filament panic when the engine goes. It holds its own [GltfioContext] reference, so the context outlives it
+ * whatever order Compose forgets or abandons the two in. Its loader goes here too, not in the loading coroutine's
+ * `finally`, which only runs after the asset and a composition-owned engine are gone.
+ */
+private class OwnedGltfAsset(private val engine: Engine, bytes: ByteArray) : RememberObserver {
+    private val retention = EngineRetention(engine)
+    private val loader = GltfioContext.acquire(engine).assetLoader
+    val asset: GltfAsset? = loader.createAsset(bytes)?.let { GltfAsset(it, loader) }
+
+    override fun onRemembered() {}
+
+    override fun onForgotten() {
+        asset?.let {
+            it.releaseResourceLoader()
+            loader.destroyAsset(it.filamentAsset)
+        }
+        GltfioContext.release(engine)
+        retention.onForgotten()
+    }
+
+    override fun onAbandoned() = onForgotten()
 }

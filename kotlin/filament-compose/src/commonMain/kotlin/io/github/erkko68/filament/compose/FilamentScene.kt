@@ -56,6 +56,7 @@ fun rememberFilamentScene(
     indirectLightState: IndirectLightState? = null,
     content: @Composable FilamentSceneScope.() -> Unit,
 ): FilamentScene {
+    RetainEngine(engine)
     val scene = remember(engine) { engine.createScene() }
 
     // Registered before the content's effects so it disposes *after* them — entities are

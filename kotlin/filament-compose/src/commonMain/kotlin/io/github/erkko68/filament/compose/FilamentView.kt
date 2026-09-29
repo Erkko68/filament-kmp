@@ -64,6 +64,7 @@ fun FilamentView(
     renderingEnabled: Boolean = true,
 ) {
     val engine        = scene.engine
+    RetainEngine(engine)
     val filamentScene = scene.scene
 
     val renderer = remember(engine) { engine.createRenderer() }
