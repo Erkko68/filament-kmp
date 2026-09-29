@@ -70,7 +70,7 @@ FilaScene* FilaView_getScene(FilaView* self);
 void FilaView_setRenderTarget(FilaView* self, FilaRenderTarget* renderTarget);
 FilaRenderTarget* FilaView_getRenderTarget(const FilaView* self);
 void FilaView_setViewport(FilaView* self, const FilaViewport* viewport);
-const FilaViewport* FilaView_getViewport(const FilaView* self);
+void FilaView_getViewport(const FilaView* self, FilaViewport* out);
 void FilaView_setCamera(FilaView* self, FilaCamera* camera);
 bool FilaView_hasCamera(const FilaView* self);
 FilaCamera* FilaView_getCamera(FilaView* self);

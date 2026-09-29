@@ -5,51 +5,51 @@
 extern "C" {
 
 FilaGltfioResourceLoader* FilaGltfioResourceLoader_create(const FilaGltfioResourceConfiguration* config) {
-    return reinterpret_cast<FilaGltfioResourceLoader*>(new filament::gltfio::ResourceLoader(*reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(config)));
+    return fila::c(new filament::gltfio::ResourceLoader(*fila::cpp(config)));
 }
 
 void FilaGltfioResourceLoader_destroy(FilaGltfioResourceLoader* self) {
-    delete reinterpret_cast<filament::gltfio::ResourceLoader*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaGltfioResourceLoader_setConfiguration(FilaGltfioResourceLoader* self, const FilaGltfioResourceConfiguration* config) {
-    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->setConfiguration(*reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(config));
+    fila::cpp(self)->setConfiguration(*fila::cpp(config));
 }
 
 void FilaGltfioResourceLoader_addResourceData(FilaGltfioResourceLoader* self, const char* uri, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
-    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->addResourceData(uri, filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser));
+    fila::cpp(self)->addResourceData(uri, filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser));
 }
 
 void FilaGltfioResourceLoader_addTextureProvider(FilaGltfioResourceLoader* self, const char* mimeType, FilaGltfioTextureProvider* provider) {
-    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->addTextureProvider(mimeType, reinterpret_cast<filament::gltfio::TextureProvider*>(provider));
+    fila::cpp(self)->addTextureProvider(mimeType, fila::cpp(provider));
 }
 
 bool FilaGltfioResourceLoader_hasResourceData(const FilaGltfioResourceLoader* self, const char* uri) {
-    return reinterpret_cast<const filament::gltfio::ResourceLoader*>(self)->hasResourceData(uri);
+    return fila::cpp(self)->hasResourceData(uri);
 }
 
 void FilaGltfioResourceLoader_evictResourceData(FilaGltfioResourceLoader* self) {
-    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->evictResourceData();
+    fila::cpp(self)->evictResourceData();
 }
 
 bool FilaGltfioResourceLoader_loadResources(FilaGltfioResourceLoader* self, FilaGltfioFilamentAsset* asset) {
-    return reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->loadResources(reinterpret_cast<filament::gltfio::FilamentAsset*>(asset));
+    return fila::cpp(self)->loadResources(fila::cpp(asset));
 }
 
 bool FilaGltfioResourceLoader_asyncBeginLoad(FilaGltfioResourceLoader* self, FilaGltfioFilamentAsset* asset) {
-    return reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->asyncBeginLoad(reinterpret_cast<filament::gltfio::FilamentAsset*>(asset));
+    return fila::cpp(self)->asyncBeginLoad(fila::cpp(asset));
 }
 
 float FilaGltfioResourceLoader_asyncGetLoadProgress(const FilaGltfioResourceLoader* self) {
-    return reinterpret_cast<const filament::gltfio::ResourceLoader*>(self)->asyncGetLoadProgress();
+    return fila::cpp(self)->asyncGetLoadProgress();
 }
 
 void FilaGltfioResourceLoader_asyncUpdateLoad(FilaGltfioResourceLoader* self) {
-    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->asyncUpdateLoad();
+    fila::cpp(self)->asyncUpdateLoad();
 }
 
 void FilaGltfioResourceLoader_asyncCancelLoad(FilaGltfioResourceLoader* self) {
-    reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->asyncCancelLoad();
+    fila::cpp(self)->asyncCancelLoad();
 }
 
 } // extern "C"

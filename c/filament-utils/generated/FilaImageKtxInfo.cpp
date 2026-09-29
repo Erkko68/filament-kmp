@@ -5,83 +5,83 @@
 extern "C" {
 
 FilaImageKtxInfo* FilaImageKtxInfo_create(void) {
-    return reinterpret_cast<FilaImageKtxInfo*>(new image::KtxInfo());
+    return fila::c(new image::KtxInfo());
 }
 
 void FilaImageKtxInfo_destroy(FilaImageKtxInfo* self) {
-    delete reinterpret_cast<image::KtxInfo*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaImageKtxInfo_getEndianness(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->endianness;
+    return fila::cpp(self)->endianness;
 }
 
 void FilaImageKtxInfo_setEndianness(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->endianness = value;
+    fila::cpp(self)->endianness = value;
 }
 
 uint32_t FilaImageKtxInfo_getGlType(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->glType;
+    return fila::cpp(self)->glType;
 }
 
 void FilaImageKtxInfo_setGlType(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->glType = value;
+    fila::cpp(self)->glType = value;
 }
 
 uint32_t FilaImageKtxInfo_getGlTypeSize(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->glTypeSize;
+    return fila::cpp(self)->glTypeSize;
 }
 
 void FilaImageKtxInfo_setGlTypeSize(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->glTypeSize = value;
+    fila::cpp(self)->glTypeSize = value;
 }
 
 uint32_t FilaImageKtxInfo_getGlFormat(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->glFormat;
+    return fila::cpp(self)->glFormat;
 }
 
 void FilaImageKtxInfo_setGlFormat(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->glFormat = value;
+    fila::cpp(self)->glFormat = value;
 }
 
 uint32_t FilaImageKtxInfo_getGlInternalFormat(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->glInternalFormat;
+    return fila::cpp(self)->glInternalFormat;
 }
 
 void FilaImageKtxInfo_setGlInternalFormat(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->glInternalFormat = value;
+    fila::cpp(self)->glInternalFormat = value;
 }
 
 uint32_t FilaImageKtxInfo_getGlBaseInternalFormat(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->glBaseInternalFormat;
+    return fila::cpp(self)->glBaseInternalFormat;
 }
 
 void FilaImageKtxInfo_setGlBaseInternalFormat(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->glBaseInternalFormat = value;
+    fila::cpp(self)->glBaseInternalFormat = value;
 }
 
 uint32_t FilaImageKtxInfo_getPixelWidth(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->pixelWidth;
+    return fila::cpp(self)->pixelWidth;
 }
 
 void FilaImageKtxInfo_setPixelWidth(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->pixelWidth = value;
+    fila::cpp(self)->pixelWidth = value;
 }
 
 uint32_t FilaImageKtxInfo_getPixelHeight(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->pixelHeight;
+    return fila::cpp(self)->pixelHeight;
 }
 
 void FilaImageKtxInfo_setPixelHeight(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->pixelHeight = value;
+    fila::cpp(self)->pixelHeight = value;
 }
 
 uint32_t FilaImageKtxInfo_getPixelDepth(const FilaImageKtxInfo* self) {
-    return reinterpret_cast<const image::KtxInfo*>(self)->pixelDepth;
+    return fila::cpp(self)->pixelDepth;
 }
 
 void FilaImageKtxInfo_setPixelDepth(FilaImageKtxInfo* self, uint32_t value) {
-    reinterpret_cast<image::KtxInfo*>(self)->pixelDepth = value;
+    fila::cpp(self)->pixelDepth = value;
 }
 
 } // extern "C"

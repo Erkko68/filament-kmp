@@ -5,347 +5,347 @@
 extern "C" {
 
 FilaGltfioMaterialKey* FilaGltfioMaterialKey_create(void) {
-    return reinterpret_cast<FilaGltfioMaterialKey*>(new filament::gltfio::MaterialKey());
+    return fila::c(new filament::gltfio::MaterialKey());
 }
 
 void FilaGltfioMaterialKey_destroy(FilaGltfioMaterialKey* self) {
-    delete reinterpret_cast<filament::gltfio::MaterialKey*>(self);
+    delete fila::cpp(self);
 }
 
 bool FilaGltfioMaterialKey_getDoubleSided(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->doubleSided;
+    return fila::cpp(self)->doubleSided;
 }
 
 void FilaGltfioMaterialKey_setDoubleSided(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->doubleSided = value;
+    fila::cpp(self)->doubleSided = value;
 }
 
 bool FilaGltfioMaterialKey_getUnlit(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->unlit;
+    return fila::cpp(self)->unlit;
 }
 
 void FilaGltfioMaterialKey_setUnlit(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->unlit = value;
+    fila::cpp(self)->unlit = value;
 }
 
 bool FilaGltfioMaterialKey_getHasVertexColors(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasVertexColors;
+    return fila::cpp(self)->hasVertexColors;
 }
 
 void FilaGltfioMaterialKey_setHasVertexColors(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasVertexColors = value;
+    fila::cpp(self)->hasVertexColors = value;
 }
 
 bool FilaGltfioMaterialKey_getHasBaseColorTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasBaseColorTexture;
+    return fila::cpp(self)->hasBaseColorTexture;
 }
 
 void FilaGltfioMaterialKey_setHasBaseColorTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasBaseColorTexture = value;
+    fila::cpp(self)->hasBaseColorTexture = value;
 }
 
 bool FilaGltfioMaterialKey_getHasNormalTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasNormalTexture;
+    return fila::cpp(self)->hasNormalTexture;
 }
 
 void FilaGltfioMaterialKey_setHasNormalTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasNormalTexture = value;
+    fila::cpp(self)->hasNormalTexture = value;
 }
 
 bool FilaGltfioMaterialKey_getHasOcclusionTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasOcclusionTexture;
+    return fila::cpp(self)->hasOcclusionTexture;
 }
 
 void FilaGltfioMaterialKey_setHasOcclusionTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasOcclusionTexture = value;
+    fila::cpp(self)->hasOcclusionTexture = value;
 }
 
 bool FilaGltfioMaterialKey_getHasEmissiveTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasEmissiveTexture;
+    return fila::cpp(self)->hasEmissiveTexture;
 }
 
 void FilaGltfioMaterialKey_setHasEmissiveTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasEmissiveTexture = value;
+    fila::cpp(self)->hasEmissiveTexture = value;
 }
 
 bool FilaGltfioMaterialKey_getUseSpecularGlossiness(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->useSpecularGlossiness;
+    return fila::cpp(self)->useSpecularGlossiness;
 }
 
 void FilaGltfioMaterialKey_setUseSpecularGlossiness(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->useSpecularGlossiness = value;
+    fila::cpp(self)->useSpecularGlossiness = value;
 }
 
 FilaGltfioAlphaMode FilaGltfioMaterialKey_getAlphaMode(const FilaGltfioMaterialKey* self) {
-    return static_cast<FilaGltfioAlphaMode>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->alphaMode);
+    return static_cast<FilaGltfioAlphaMode>(fila::cpp(self)->alphaMode);
 }
 
 void FilaGltfioMaterialKey_setAlphaMode(FilaGltfioMaterialKey* self, FilaGltfioAlphaMode value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->alphaMode = static_cast<filament::gltfio::AlphaMode>(value);
+    fila::cpp(self)->alphaMode = static_cast<filament::gltfio::AlphaMode>(value);
 }
 
 bool FilaGltfioMaterialKey_getEnableDiagnostics(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->enableDiagnostics;
+    return fila::cpp(self)->enableDiagnostics;
 }
 
 void FilaGltfioMaterialKey_setEnableDiagnostics(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->enableDiagnostics = value;
+    fila::cpp(self)->enableDiagnostics = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getBaseColorUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->baseColorUV);
+    return static_cast<uint32_t>(fila::cpp(self)->baseColorUV);
 }
 
 void FilaGltfioMaterialKey_setBaseColorUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->baseColorUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->baseColorUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasClearCoatTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasClearCoatTexture;
+    return fila::cpp(self)->hasClearCoatTexture;
 }
 
 void FilaGltfioMaterialKey_setHasClearCoatTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasClearCoatTexture = value;
+    fila::cpp(self)->hasClearCoatTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getClearCoatUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->clearCoatUV);
+    return static_cast<uint32_t>(fila::cpp(self)->clearCoatUV);
 }
 
 void FilaGltfioMaterialKey_setClearCoatUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->clearCoatUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->clearCoatUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasClearCoatRoughnessTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasClearCoatRoughnessTexture;
+    return fila::cpp(self)->hasClearCoatRoughnessTexture;
 }
 
 void FilaGltfioMaterialKey_setHasClearCoatRoughnessTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasClearCoatRoughnessTexture = value;
+    fila::cpp(self)->hasClearCoatRoughnessTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getClearCoatRoughnessUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->clearCoatRoughnessUV);
+    return static_cast<uint32_t>(fila::cpp(self)->clearCoatRoughnessUV);
 }
 
 void FilaGltfioMaterialKey_setClearCoatRoughnessUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->clearCoatRoughnessUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->clearCoatRoughnessUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasClearCoatNormalTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasClearCoatNormalTexture;
+    return fila::cpp(self)->hasClearCoatNormalTexture;
 }
 
 void FilaGltfioMaterialKey_setHasClearCoatNormalTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasClearCoatNormalTexture = value;
+    fila::cpp(self)->hasClearCoatNormalTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getClearCoatNormalUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->clearCoatNormalUV);
+    return static_cast<uint32_t>(fila::cpp(self)->clearCoatNormalUV);
 }
 
 void FilaGltfioMaterialKey_setClearCoatNormalUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->clearCoatNormalUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->clearCoatNormalUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasClearCoat(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasClearCoat;
+    return fila::cpp(self)->hasClearCoat;
 }
 
 void FilaGltfioMaterialKey_setHasClearCoat(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasClearCoat = value;
+    fila::cpp(self)->hasClearCoat = value;
 }
 
 bool FilaGltfioMaterialKey_getHasTransmission(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasTransmission;
+    return fila::cpp(self)->hasTransmission;
 }
 
 void FilaGltfioMaterialKey_setHasTransmission(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasTransmission = value;
+    fila::cpp(self)->hasTransmission = value;
 }
 
 bool FilaGltfioMaterialKey_getHasTextureTransforms(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasTextureTransforms;
+    return fila::cpp(self)->hasTextureTransforms;
 }
 
 void FilaGltfioMaterialKey_setHasTextureTransforms(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasTextureTransforms = value;
+    fila::cpp(self)->hasTextureTransforms = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getEmissiveUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->emissiveUV);
+    return static_cast<uint32_t>(fila::cpp(self)->emissiveUV);
 }
 
 void FilaGltfioMaterialKey_setEmissiveUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->emissiveUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->emissiveUV = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaGltfioMaterialKey_getAoUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->aoUV);
+    return static_cast<uint32_t>(fila::cpp(self)->aoUV);
 }
 
 void FilaGltfioMaterialKey_setAoUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->aoUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->aoUV = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaGltfioMaterialKey_getNormalUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->normalUV);
+    return static_cast<uint32_t>(fila::cpp(self)->normalUV);
 }
 
 void FilaGltfioMaterialKey_setNormalUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->normalUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->normalUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasTransmissionTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasTransmissionTexture;
+    return fila::cpp(self)->hasTransmissionTexture;
 }
 
 void FilaGltfioMaterialKey_setHasTransmissionTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasTransmissionTexture = value;
+    fila::cpp(self)->hasTransmissionTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getTransmissionUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->transmissionUV);
+    return static_cast<uint32_t>(fila::cpp(self)->transmissionUV);
 }
 
 void FilaGltfioMaterialKey_setTransmissionUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->transmissionUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->transmissionUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasSheenColorTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasSheenColorTexture;
+    return fila::cpp(self)->hasSheenColorTexture;
 }
 
 void FilaGltfioMaterialKey_setHasSheenColorTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasSheenColorTexture = value;
+    fila::cpp(self)->hasSheenColorTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getSheenColorUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->sheenColorUV);
+    return static_cast<uint32_t>(fila::cpp(self)->sheenColorUV);
 }
 
 void FilaGltfioMaterialKey_setSheenColorUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->sheenColorUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->sheenColorUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasSheenRoughnessTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasSheenRoughnessTexture;
+    return fila::cpp(self)->hasSheenRoughnessTexture;
 }
 
 void FilaGltfioMaterialKey_setHasSheenRoughnessTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasSheenRoughnessTexture = value;
+    fila::cpp(self)->hasSheenRoughnessTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getSheenRoughnessUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->sheenRoughnessUV);
+    return static_cast<uint32_t>(fila::cpp(self)->sheenRoughnessUV);
 }
 
 void FilaGltfioMaterialKey_setSheenRoughnessUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->sheenRoughnessUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->sheenRoughnessUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasVolumeThicknessTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasVolumeThicknessTexture;
+    return fila::cpp(self)->hasVolumeThicknessTexture;
 }
 
 void FilaGltfioMaterialKey_setHasVolumeThicknessTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasVolumeThicknessTexture = value;
+    fila::cpp(self)->hasVolumeThicknessTexture = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getVolumeThicknessUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->volumeThicknessUV);
+    return static_cast<uint32_t>(fila::cpp(self)->volumeThicknessUV);
 }
 
 void FilaGltfioMaterialKey_setVolumeThicknessUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->volumeThicknessUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->volumeThicknessUV = static_cast<uint8_t>(value);
 }
 
 bool FilaGltfioMaterialKey_getHasSheen(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasSheen;
+    return fila::cpp(self)->hasSheen;
 }
 
 void FilaGltfioMaterialKey_setHasSheen(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasSheen = value;
+    fila::cpp(self)->hasSheen = value;
 }
 
 bool FilaGltfioMaterialKey_getHasIOR(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasIOR;
+    return fila::cpp(self)->hasIOR;
 }
 
 void FilaGltfioMaterialKey_setHasIOR(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasIOR = value;
+    fila::cpp(self)->hasIOR = value;
 }
 
 bool FilaGltfioMaterialKey_getHasVolume(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasVolume;
+    return fila::cpp(self)->hasVolume;
 }
 
 void FilaGltfioMaterialKey_setHasVolume(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasVolume = value;
+    fila::cpp(self)->hasVolume = value;
 }
 
 bool FilaGltfioMaterialKey_getHasDispersion(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasDispersion;
+    return fila::cpp(self)->hasDispersion;
 }
 
 void FilaGltfioMaterialKey_setHasDispersion(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasDispersion = value;
+    fila::cpp(self)->hasDispersion = value;
 }
 
 bool FilaGltfioMaterialKey_getHasSpecular(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasSpecular;
+    return fila::cpp(self)->hasSpecular;
 }
 
 void FilaGltfioMaterialKey_setHasSpecular(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasSpecular = value;
+    fila::cpp(self)->hasSpecular = value;
 }
 
 bool FilaGltfioMaterialKey_getHasSpecularTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasSpecularTexture;
+    return fila::cpp(self)->hasSpecularTexture;
 }
 
 void FilaGltfioMaterialKey_setHasSpecularTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasSpecularTexture = value;
+    fila::cpp(self)->hasSpecularTexture = value;
 }
 
 bool FilaGltfioMaterialKey_getHasSpecularColorTexture(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->hasSpecularColorTexture;
+    return fila::cpp(self)->hasSpecularColorTexture;
 }
 
 void FilaGltfioMaterialKey_setHasSpecularColorTexture(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->hasSpecularColorTexture = value;
+    fila::cpp(self)->hasSpecularColorTexture = value;
 }
 
 bool FilaGltfioMaterialKey_getPadding(const FilaGltfioMaterialKey* self) {
-    return reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->padding;
+    return fila::cpp(self)->padding;
 }
 
 void FilaGltfioMaterialKey_setPadding(FilaGltfioMaterialKey* self, bool value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->padding = value;
+    fila::cpp(self)->padding = value;
 }
 
 uint32_t FilaGltfioMaterialKey_getSpecularTextureUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->specularTextureUV);
+    return static_cast<uint32_t>(fila::cpp(self)->specularTextureUV);
 }
 
 void FilaGltfioMaterialKey_setSpecularTextureUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->specularTextureUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->specularTextureUV = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaGltfioMaterialKey_getSpecularColorTextureUV(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->specularColorTextureUV);
+    return static_cast<uint32_t>(fila::cpp(self)->specularColorTextureUV);
 }
 
 void FilaGltfioMaterialKey_setSpecularColorTextureUV(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->specularColorTextureUV = static_cast<uint8_t>(value);
+    fila::cpp(self)->specularColorTextureUV = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaGltfioMaterialKey_getPadding2(const FilaGltfioMaterialKey* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialKey*>(self)->padding2);
+    return static_cast<uint32_t>(fila::cpp(self)->padding2);
 }
 
 void FilaGltfioMaterialKey_setPadding2(FilaGltfioMaterialKey* self, uint32_t value) {
-    reinterpret_cast<filament::gltfio::MaterialKey*>(self)->padding2 = static_cast<uint16_t>(value);
+    fila::cpp(self)->padding2 = static_cast<uint16_t>(value);
 }
 
 } // extern "C"

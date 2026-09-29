@@ -5,51 +5,51 @@
 extern "C" {
 
 FilaFramePipelineEstimatorWorkload* FilaFramePipelineEstimatorWorkload_create(void) {
-    return reinterpret_cast<FilaFramePipelineEstimatorWorkload*>(new filament::FramePipelineEstimator::Workload());
+    return fila::c(new filament::FramePipelineEstimator::Workload());
 }
 
 void FilaFramePipelineEstimatorWorkload_destroy(FilaFramePipelineEstimatorWorkload* self) {
-    delete reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaFramePipelineEstimatorWorkload_getIdealFrameDuration(const FilaFramePipelineEstimatorWorkload* self, int64_t* out) {
-    *out = (reinterpret_cast<const filament::FramePipelineEstimator::Workload*>(self)->idealFrameDuration).count();
+    *out = (fila::cpp(self)->idealFrameDuration).count();
 }
 
 void FilaFramePipelineEstimatorWorkload_setIdealFrameDuration(FilaFramePipelineEstimatorWorkload* self, int64_t value) {
-    reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self)->idealFrameDuration = std::chrono::nanoseconds(value);
+    fila::cpp(self)->idealFrameDuration = std::chrono::nanoseconds(value);
 }
 
 float FilaFramePipelineEstimatorWorkload_getIdealFrameRate(const FilaFramePipelineEstimatorWorkload* self) {
-    return reinterpret_cast<const filament::FramePipelineEstimator::Workload*>(self)->idealFrameRate;
+    return fila::cpp(self)->idealFrameRate;
 }
 
 void FilaFramePipelineEstimatorWorkload_setIdealFrameRate(FilaFramePipelineEstimatorWorkload* self, float value) {
-    reinterpret_cast<filament::FramePipelineEstimator::Workload*>(self)->idealFrameRate = value;
+    fila::cpp(self)->idealFrameRate = value;
 }
 
 FilaFramePipelineEstimatorPacingSizing* FilaFramePipelineEstimatorPacingSizing_create(void) {
-    return reinterpret_cast<FilaFramePipelineEstimatorPacingSizing*>(new filament::FramePipelineEstimator::PacingSizing());
+    return fila::c(new filament::FramePipelineEstimator::PacingSizing());
 }
 
 void FilaFramePipelineEstimatorPacingSizing_destroy(FilaFramePipelineEstimatorPacingSizing* self) {
-    delete reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaFramePipelineEstimatorPacingSizing_getLatencyFrames(const FilaFramePipelineEstimatorPacingSizing* self) {
-    return reinterpret_cast<const filament::FramePipelineEstimator::PacingSizing*>(self)->latencyFrames;
+    return fila::cpp(self)->latencyFrames;
 }
 
 void FilaFramePipelineEstimatorPacingSizing_setLatencyFrames(FilaFramePipelineEstimatorPacingSizing* self, uint32_t value) {
-    reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self)->latencyFrames = value;
+    fila::cpp(self)->latencyFrames = value;
 }
 
 void FilaFramePipelineEstimatorPacingSizing_getSafeDelayDuration(const FilaFramePipelineEstimatorPacingSizing* self, int64_t* out) {
-    *out = (reinterpret_cast<const filament::FramePipelineEstimator::PacingSizing*>(self)->safeDelayDuration).count();
+    *out = (fila::cpp(self)->safeDelayDuration).count();
 }
 
 void FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration(FilaFramePipelineEstimatorPacingSizing* self, int64_t value) {
-    reinterpret_cast<filament::FramePipelineEstimator::PacingSizing*>(self)->safeDelayDuration = std::chrono::nanoseconds(value);
+    fila::cpp(self)->safeDelayDuration = std::chrono::nanoseconds(value);
 }
 
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile) {

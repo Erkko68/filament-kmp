@@ -5,55 +5,55 @@
 extern "C" {
 
 FilaGenericToneMapper* FilaGenericToneMapper_create(float contrast, float midGrayIn, float midGrayOut, float hdrMax) {
-    return reinterpret_cast<FilaGenericToneMapper*>(new filament::GenericToneMapper(contrast, midGrayIn, midGrayOut, hdrMax));
+    return fila::c(new filament::GenericToneMapper(contrast, midGrayIn, midGrayOut, hdrMax));
 }
 
 void FilaGenericToneMapper_destroy(FilaGenericToneMapper* self) {
-    delete reinterpret_cast<filament::GenericToneMapper*>(self);
+    delete fila::cpp(self);
 }
 
 FilaToneMapper* FilaGenericToneMapper_asToneMapper(FilaGenericToneMapper* self) {
-    return reinterpret_cast<FilaToneMapper*>(static_cast<filament::ToneMapper*>(reinterpret_cast<filament::GenericToneMapper*>(self)));
+    return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
 bool FilaGenericToneMapper_isOneDimensional(const FilaGenericToneMapper* self) {
-    return reinterpret_cast<const filament::GenericToneMapper*>(self)->isOneDimensional();
+    return fila::cpp(self)->isOneDimensional();
 }
 
 bool FilaGenericToneMapper_isLDR(const FilaGenericToneMapper* self) {
-    return reinterpret_cast<const filament::GenericToneMapper*>(self)->isLDR();
+    return fila::cpp(self)->isLDR();
 }
 
 float FilaGenericToneMapper_getContrast(const FilaGenericToneMapper* self) {
-    return reinterpret_cast<const filament::GenericToneMapper*>(self)->getContrast();
+    return fila::cpp(self)->getContrast();
 }
 
 float FilaGenericToneMapper_getMidGrayIn(const FilaGenericToneMapper* self) {
-    return reinterpret_cast<const filament::GenericToneMapper*>(self)->getMidGrayIn();
+    return fila::cpp(self)->getMidGrayIn();
 }
 
 float FilaGenericToneMapper_getMidGrayOut(const FilaGenericToneMapper* self) {
-    return reinterpret_cast<const filament::GenericToneMapper*>(self)->getMidGrayOut();
+    return fila::cpp(self)->getMidGrayOut();
 }
 
 float FilaGenericToneMapper_getHdrMax(const FilaGenericToneMapper* self) {
-    return reinterpret_cast<const filament::GenericToneMapper*>(self)->getHdrMax();
+    return fila::cpp(self)->getHdrMax();
 }
 
 void FilaGenericToneMapper_setContrast(FilaGenericToneMapper* self, float contrast) {
-    reinterpret_cast<filament::GenericToneMapper*>(self)->setContrast(contrast);
+    fila::cpp(self)->setContrast(contrast);
 }
 
 void FilaGenericToneMapper_setMidGrayIn(FilaGenericToneMapper* self, float midGrayIn) {
-    reinterpret_cast<filament::GenericToneMapper*>(self)->setMidGrayIn(midGrayIn);
+    fila::cpp(self)->setMidGrayIn(midGrayIn);
 }
 
 void FilaGenericToneMapper_setMidGrayOut(FilaGenericToneMapper* self, float midGrayOut) {
-    reinterpret_cast<filament::GenericToneMapper*>(self)->setMidGrayOut(midGrayOut);
+    fila::cpp(self)->setMidGrayOut(midGrayOut);
 }
 
 void FilaGenericToneMapper_setHdrMax(FilaGenericToneMapper* self, float hdrMax) {
-    reinterpret_cast<filament::GenericToneMapper*>(self)->setHdrMax(hdrMax);
+    fila::cpp(self)->setHdrMax(hdrMax);
 }
 
 } // extern "C"

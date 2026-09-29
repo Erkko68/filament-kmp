@@ -5,15 +5,15 @@
 extern "C" {
 
 uint32_t FilaGltfioMaterialProvider_getMaterialsCount(const FilaGltfioMaterialProvider* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::MaterialProvider*>(self)->getMaterialsCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getMaterialsCount());
 }
 
 void FilaGltfioMaterialProvider_destroyMaterials(FilaGltfioMaterialProvider* self) {
-    reinterpret_cast<filament::gltfio::MaterialProvider*>(self)->destroyMaterials();
+    fila::cpp(self)->destroyMaterials();
 }
 
 bool FilaGltfioMaterialProvider_needsDummyData(const FilaGltfioMaterialProvider* self, FilaVertexAttribute attrib) {
-    return reinterpret_cast<const filament::gltfio::MaterialProvider*>(self)->needsDummyData(static_cast<filament::VertexAttribute>(attrib));
+    return fila::cpp(self)->needsDummyData(static_cast<filament::VertexAttribute>(attrib));
 }
 
 } // extern "C"

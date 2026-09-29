@@ -5,91 +5,91 @@
 extern "C" {
 
 FilaTextureSampler* FilaTextureSampler_create(void) {
-    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler());
+    return fila::c(new filament::TextureSampler());
 }
 
 FilaTextureSampler* FilaTextureSampler_create_SamplerParams(const FilaSamplerParams* params) {
-    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(*reinterpret_cast<const filament::backend::SamplerParams*>(params)));
+    return fila::c(new filament::TextureSampler(*fila::cpp(params)));
 }
 
 FilaTextureSampler* FilaTextureSampler_create_MagFilter_WrapMode(FilaSamplerMagFilter minMag, FilaSamplerWrapMode str) {
-    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMagFilter>(minMag), static_cast<filament::backend::SamplerWrapMode>(str)));
+    return fila::c(new filament::TextureSampler(static_cast<filament::backend::SamplerMagFilter>(minMag), static_cast<filament::backend::SamplerWrapMode>(str)));
 }
 
 FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode str) {
-    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMinFilter>(min), static_cast<filament::backend::SamplerMagFilter>(mag), static_cast<filament::backend::SamplerWrapMode>(str)));
+    return fila::c(new filament::TextureSampler(static_cast<filament::backend::SamplerMinFilter>(min), static_cast<filament::backend::SamplerMagFilter>(mag), static_cast<filament::backend::SamplerWrapMode>(str)));
 }
 
 FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapMode_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode s, FilaSamplerWrapMode t, FilaSamplerWrapMode r) {
-    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMinFilter>(min), static_cast<filament::backend::SamplerMagFilter>(mag), static_cast<filament::backend::SamplerWrapMode>(s), static_cast<filament::backend::SamplerWrapMode>(t), static_cast<filament::backend::SamplerWrapMode>(r)));
+    return fila::c(new filament::TextureSampler(static_cast<filament::backend::SamplerMinFilter>(min), static_cast<filament::backend::SamplerMagFilter>(mag), static_cast<filament::backend::SamplerWrapMode>(s), static_cast<filament::backend::SamplerWrapMode>(t), static_cast<filament::backend::SamplerWrapMode>(r)));
 }
 
 FilaTextureSampler* FilaTextureSampler_create_CompareMode_CompareFunc(FilaSamplerCompareMode mode, FilaSamplerCompareFunc func) {
-    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerCompareMode>(mode), static_cast<filament::backend::SamplerCompareFunc>(func)));
+    return fila::c(new filament::TextureSampler(static_cast<filament::backend::SamplerCompareMode>(mode), static_cast<filament::backend::SamplerCompareFunc>(func)));
 }
 
 void FilaTextureSampler_destroy(FilaTextureSampler* self) {
-    delete reinterpret_cast<filament::TextureSampler*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaTextureSampler_setMinFilter(FilaTextureSampler* self, FilaSamplerMinFilter v) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setMinFilter(static_cast<filament::backend::SamplerMinFilter>(v));
+    fila::cpp(self)->setMinFilter(static_cast<filament::backend::SamplerMinFilter>(v));
 }
 
 void FilaTextureSampler_setMagFilter(FilaTextureSampler* self, FilaSamplerMagFilter v) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setMagFilter(static_cast<filament::backend::SamplerMagFilter>(v));
+    fila::cpp(self)->setMagFilter(static_cast<filament::backend::SamplerMagFilter>(v));
 }
 
 void FilaTextureSampler_setWrapModeS(FilaTextureSampler* self, FilaSamplerWrapMode v) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setWrapModeS(static_cast<filament::backend::SamplerWrapMode>(v));
+    fila::cpp(self)->setWrapModeS(static_cast<filament::backend::SamplerWrapMode>(v));
 }
 
 void FilaTextureSampler_setWrapModeT(FilaTextureSampler* self, FilaSamplerWrapMode v) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setWrapModeT(static_cast<filament::backend::SamplerWrapMode>(v));
+    fila::cpp(self)->setWrapModeT(static_cast<filament::backend::SamplerWrapMode>(v));
 }
 
 void FilaTextureSampler_setWrapModeR(FilaTextureSampler* self, FilaSamplerWrapMode v) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setWrapModeR(static_cast<filament::backend::SamplerWrapMode>(v));
+    fila::cpp(self)->setWrapModeR(static_cast<filament::backend::SamplerWrapMode>(v));
 }
 
 void FilaTextureSampler_setAnisotropy(FilaTextureSampler* self, float anisotropy) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setAnisotropy(anisotropy);
+    fila::cpp(self)->setAnisotropy(anisotropy);
 }
 
 void FilaTextureSampler_setCompareMode(FilaTextureSampler* self, FilaSamplerCompareMode mode, FilaSamplerCompareFunc func) {
-    reinterpret_cast<filament::TextureSampler*>(self)->setCompareMode(static_cast<filament::backend::SamplerCompareMode>(mode), static_cast<filament::backend::SamplerCompareFunc>(func));
+    fila::cpp(self)->setCompareMode(static_cast<filament::backend::SamplerCompareMode>(mode), static_cast<filament::backend::SamplerCompareFunc>(func));
 }
 
 FilaSamplerMinFilter FilaTextureSampler_getMinFilter(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerMinFilter>(reinterpret_cast<const filament::TextureSampler*>(self)->getMinFilter());
+    return static_cast<FilaSamplerMinFilter>(fila::cpp(self)->getMinFilter());
 }
 
 FilaSamplerMagFilter FilaTextureSampler_getMagFilter(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerMagFilter>(reinterpret_cast<const filament::TextureSampler*>(self)->getMagFilter());
+    return static_cast<FilaSamplerMagFilter>(fila::cpp(self)->getMagFilter());
 }
 
 FilaSamplerWrapMode FilaTextureSampler_getWrapModeS(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerWrapMode>(reinterpret_cast<const filament::TextureSampler*>(self)->getWrapModeS());
+    return static_cast<FilaSamplerWrapMode>(fila::cpp(self)->getWrapModeS());
 }
 
 FilaSamplerWrapMode FilaTextureSampler_getWrapModeT(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerWrapMode>(reinterpret_cast<const filament::TextureSampler*>(self)->getWrapModeT());
+    return static_cast<FilaSamplerWrapMode>(fila::cpp(self)->getWrapModeT());
 }
 
 FilaSamplerWrapMode FilaTextureSampler_getWrapModeR(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerWrapMode>(reinterpret_cast<const filament::TextureSampler*>(self)->getWrapModeR());
+    return static_cast<FilaSamplerWrapMode>(fila::cpp(self)->getWrapModeR());
 }
 
 float FilaTextureSampler_getAnisotropy(const FilaTextureSampler* self) {
-    return reinterpret_cast<const filament::TextureSampler*>(self)->getAnisotropy();
+    return fila::cpp(self)->getAnisotropy();
 }
 
 FilaSamplerCompareMode FilaTextureSampler_getCompareMode(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerCompareMode>(reinterpret_cast<const filament::TextureSampler*>(self)->getCompareMode());
+    return static_cast<FilaSamplerCompareMode>(fila::cpp(self)->getCompareMode());
 }
 
 FilaSamplerCompareFunc FilaTextureSampler_getCompareFunc(const FilaTextureSampler* self) {
-    return static_cast<FilaSamplerCompareFunc>(reinterpret_cast<const filament::TextureSampler*>(self)->getCompareFunc());
+    return static_cast<FilaSamplerCompareFunc>(fila::cpp(self)->getCompareFunc());
 }
 
 } // extern "C"

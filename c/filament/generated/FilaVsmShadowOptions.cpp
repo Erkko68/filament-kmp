@@ -5,59 +5,59 @@
 extern "C" {
 
 FilaVsmShadowOptions* FilaVsmShadowOptions_create(void) {
-    return reinterpret_cast<FilaVsmShadowOptions*>(new filament::VsmShadowOptions());
+    return fila::c(new filament::VsmShadowOptions());
 }
 
 void FilaVsmShadowOptions_destroy(FilaVsmShadowOptions* self) {
-    delete reinterpret_cast<filament::VsmShadowOptions*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaVsmShadowOptions_getAnisotropy(const FilaVsmShadowOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::VsmShadowOptions*>(self)->anisotropy);
+    return static_cast<uint32_t>(fila::cpp(self)->anisotropy);
 }
 
 void FilaVsmShadowOptions_setAnisotropy(FilaVsmShadowOptions* self, uint32_t value) {
-    reinterpret_cast<filament::VsmShadowOptions*>(self)->anisotropy = static_cast<uint8_t>(value);
+    fila::cpp(self)->anisotropy = static_cast<uint8_t>(value);
 }
 
 bool FilaVsmShadowOptions_getMipmapping(const FilaVsmShadowOptions* self) {
-    return reinterpret_cast<const filament::VsmShadowOptions*>(self)->mipmapping;
+    return fila::cpp(self)->mipmapping;
 }
 
 void FilaVsmShadowOptions_setMipmapping(FilaVsmShadowOptions* self, bool value) {
-    reinterpret_cast<filament::VsmShadowOptions*>(self)->mipmapping = value;
+    fila::cpp(self)->mipmapping = value;
 }
 
 uint32_t FilaVsmShadowOptions_getMsaaSamples(const FilaVsmShadowOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::VsmShadowOptions*>(self)->msaaSamples);
+    return static_cast<uint32_t>(fila::cpp(self)->msaaSamples);
 }
 
 void FilaVsmShadowOptions_setMsaaSamples(FilaVsmShadowOptions* self, uint32_t value) {
-    reinterpret_cast<filament::VsmShadowOptions*>(self)->msaaSamples = static_cast<uint8_t>(value);
+    fila::cpp(self)->msaaSamples = static_cast<uint8_t>(value);
 }
 
 bool FilaVsmShadowOptions_getHighPrecision(const FilaVsmShadowOptions* self) {
-    return reinterpret_cast<const filament::VsmShadowOptions*>(self)->highPrecision;
+    return fila::cpp(self)->highPrecision;
 }
 
 void FilaVsmShadowOptions_setHighPrecision(FilaVsmShadowOptions* self, bool value) {
-    reinterpret_cast<filament::VsmShadowOptions*>(self)->highPrecision = value;
+    fila::cpp(self)->highPrecision = value;
 }
 
 float FilaVsmShadowOptions_getMinVarianceScale(const FilaVsmShadowOptions* self) {
-    return reinterpret_cast<const filament::VsmShadowOptions*>(self)->minVarianceScale;
+    return fila::cpp(self)->minVarianceScale;
 }
 
 void FilaVsmShadowOptions_setMinVarianceScale(FilaVsmShadowOptions* self, float value) {
-    reinterpret_cast<filament::VsmShadowOptions*>(self)->minVarianceScale = value;
+    fila::cpp(self)->minVarianceScale = value;
 }
 
 float FilaVsmShadowOptions_getLightBleedReduction(const FilaVsmShadowOptions* self) {
-    return reinterpret_cast<const filament::VsmShadowOptions*>(self)->lightBleedReduction;
+    return fila::cpp(self)->lightBleedReduction;
 }
 
 void FilaVsmShadowOptions_setLightBleedReduction(FilaVsmShadowOptions* self, float value) {
-    reinterpret_cast<filament::VsmShadowOptions*>(self)->lightBleedReduction = value;
+    fila::cpp(self)->lightBleedReduction = value;
 }
 
 } // extern "C"

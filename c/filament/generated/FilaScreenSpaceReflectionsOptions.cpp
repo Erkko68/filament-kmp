@@ -5,51 +5,51 @@
 extern "C" {
 
 FilaScreenSpaceReflectionsOptions* FilaScreenSpaceReflectionsOptions_create(void) {
-    return reinterpret_cast<FilaScreenSpaceReflectionsOptions*>(new filament::ScreenSpaceReflectionsOptions());
+    return fila::c(new filament::ScreenSpaceReflectionsOptions());
 }
 
 void FilaScreenSpaceReflectionsOptions_destroy(FilaScreenSpaceReflectionsOptions* self) {
-    delete reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaScreenSpaceReflectionsOptions_getThickness(const FilaScreenSpaceReflectionsOptions* self) {
-    return reinterpret_cast<const filament::ScreenSpaceReflectionsOptions*>(self)->thickness;
+    return fila::cpp(self)->thickness;
 }
 
 void FilaScreenSpaceReflectionsOptions_setThickness(FilaScreenSpaceReflectionsOptions* self, float value) {
-    reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(self)->thickness = value;
+    fila::cpp(self)->thickness = value;
 }
 
 float FilaScreenSpaceReflectionsOptions_getBias(const FilaScreenSpaceReflectionsOptions* self) {
-    return reinterpret_cast<const filament::ScreenSpaceReflectionsOptions*>(self)->bias;
+    return fila::cpp(self)->bias;
 }
 
 void FilaScreenSpaceReflectionsOptions_setBias(FilaScreenSpaceReflectionsOptions* self, float value) {
-    reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(self)->bias = value;
+    fila::cpp(self)->bias = value;
 }
 
 float FilaScreenSpaceReflectionsOptions_getMaxDistance(const FilaScreenSpaceReflectionsOptions* self) {
-    return reinterpret_cast<const filament::ScreenSpaceReflectionsOptions*>(self)->maxDistance;
+    return fila::cpp(self)->maxDistance;
 }
 
 void FilaScreenSpaceReflectionsOptions_setMaxDistance(FilaScreenSpaceReflectionsOptions* self, float value) {
-    reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(self)->maxDistance = value;
+    fila::cpp(self)->maxDistance = value;
 }
 
 float FilaScreenSpaceReflectionsOptions_getStride(const FilaScreenSpaceReflectionsOptions* self) {
-    return reinterpret_cast<const filament::ScreenSpaceReflectionsOptions*>(self)->stride;
+    return fila::cpp(self)->stride;
 }
 
 void FilaScreenSpaceReflectionsOptions_setStride(FilaScreenSpaceReflectionsOptions* self, float value) {
-    reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(self)->stride = value;
+    fila::cpp(self)->stride = value;
 }
 
 bool FilaScreenSpaceReflectionsOptions_getEnabled(const FilaScreenSpaceReflectionsOptions* self) {
-    return reinterpret_cast<const filament::ScreenSpaceReflectionsOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaScreenSpaceReflectionsOptions_setEnabled(FilaScreenSpaceReflectionsOptions* self, bool value) {
-    reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 } // extern "C"

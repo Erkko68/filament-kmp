@@ -5,31 +5,31 @@
 extern "C" {
 
 FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create(void) {
-    return reinterpret_cast<FilaFrameHistoryStreamResult*>(new filament::FrameHistoryStream::Result());
+    return fila::c(new filament::FrameHistoryStream::Result());
 }
 
 FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_FrameInfo(const FilaRendererFrameInfo* info) {
-    return reinterpret_cast<FilaFrameHistoryStreamResult*>(new filament::FrameHistoryStream::Result(*reinterpret_cast<const filament::Renderer::FrameInfo*>(info)));
+    return fila::c(new filament::FrameHistoryStream::Result(*fila::cpp(info)));
 }
 
 FilaFrameHistoryStreamResult* FilaFrameHistoryStreamResult_create_uint32_t(uint32_t frameId) {
-    return reinterpret_cast<FilaFrameHistoryStreamResult*>(new filament::FrameHistoryStream::Result(frameId));
+    return fila::c(new filament::FrameHistoryStream::Result(frameId));
 }
 
 uint32_t FilaFrameHistoryStreamResult_getFrameId(const FilaFrameHistoryStreamResult* self) {
-    return reinterpret_cast<const filament::FrameHistoryStream::Result*>(self)->getFrameId();
+    return fila::cpp(self)->getFrameId();
 }
 
 uint32_t FilaFrameHistoryStreamResult_getMissingId(const FilaFrameHistoryStreamResult* self) {
-    return reinterpret_cast<const filament::FrameHistoryStream::Result*>(self)->getMissingId();
+    return fila::cpp(self)->getMissingId();
 }
 
 FilaFrameHistoryStream* FilaFrameHistoryStream_create(FilaRenderer* renderer) {
-    return reinterpret_cast<FilaFrameHistoryStream*>(new filament::FrameHistoryStream(reinterpret_cast<filament::Renderer*>(renderer)));
+    return fila::c(new filament::FrameHistoryStream(fila::cpp(renderer)));
 }
 
 void FilaFrameHistoryStream_destroy(FilaFrameHistoryStream* self) {
-    delete reinterpret_cast<filament::FrameHistoryStream*>(self);
+    delete fila::cpp(self);
 }
 
 } // extern "C"

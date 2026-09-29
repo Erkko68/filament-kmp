@@ -5,231 +5,231 @@
 extern "C" {
 
 FilaMaterialParameterInfo* FilaMaterialParameterInfo_create(void) {
-    return reinterpret_cast<FilaMaterialParameterInfo*>(new filament::Material::ParameterInfo());
+    return fila::c(new filament::Material::ParameterInfo());
 }
 
 void FilaMaterialParameterInfo_destroy(FilaMaterialParameterInfo* self) {
-    delete reinterpret_cast<filament::Material::ParameterInfo*>(self);
+    delete fila::cpp(self);
 }
 
 const char* FilaMaterialParameterInfo_getName(const FilaMaterialParameterInfo* self) {
-    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->name;
+    return fila::cpp(self)->name;
 }
 
 bool FilaMaterialParameterInfo_getIsSampler(const FilaMaterialParameterInfo* self) {
-    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->isSampler;
+    return fila::cpp(self)->isSampler;
 }
 
 void FilaMaterialParameterInfo_setIsSampler(FilaMaterialParameterInfo* self, bool value) {
-    reinterpret_cast<filament::Material::ParameterInfo*>(self)->isSampler = value;
+    fila::cpp(self)->isSampler = value;
 }
 
 bool FilaMaterialParameterInfo_getIsSubpass(const FilaMaterialParameterInfo* self) {
-    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->isSubpass;
+    return fila::cpp(self)->isSubpass;
 }
 
 void FilaMaterialParameterInfo_setIsSubpass(FilaMaterialParameterInfo* self, bool value) {
-    reinterpret_cast<filament::Material::ParameterInfo*>(self)->isSubpass = value;
+    fila::cpp(self)->isSubpass = value;
 }
 
 uint32_t FilaMaterialParameterInfo_getCount(const FilaMaterialParameterInfo* self) {
-    return reinterpret_cast<const filament::Material::ParameterInfo*>(self)->count;
+    return fila::cpp(self)->count;
 }
 
 void FilaMaterialParameterInfo_setCount(FilaMaterialParameterInfo* self, uint32_t value) {
-    reinterpret_cast<filament::Material::ParameterInfo*>(self)->count = value;
+    fila::cpp(self)->count = value;
 }
 
 FilaPrecision FilaMaterialParameterInfo_getPrecision(const FilaMaterialParameterInfo* self) {
-    return static_cast<FilaPrecision>(reinterpret_cast<const filament::Material::ParameterInfo*>(self)->precision);
+    return static_cast<FilaPrecision>(fila::cpp(self)->precision);
 }
 
 void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, FilaPrecision value) {
-    reinterpret_cast<filament::Material::ParameterInfo*>(self)->precision = static_cast<filament::backend::Precision>(value);
+    fila::cpp(self)->precision = static_cast<filament::backend::Precision>(value);
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_create(void) {
-    return reinterpret_cast<FilaMaterialBuilder*>(new filament::Material::Builder());
+    return fila::c(new filament::Material::Builder());
 }
 
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self) {
-    delete reinterpret_cast<filament::Material::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size) {
-    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->package(payload, static_cast<size_t>(size)));
+    return fila::c(&fila::cpp(self)->package(payload, static_cast<size_t>(size)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount) {
-    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->sphericalHarmonicsBandCount(static_cast<size_t>(shBandCount)));
+    return fila::c(&fila::cpp(self)->sphericalHarmonicsBandCount(static_cast<size_t>(shBandCount)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality) {
-    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->shadowSamplingQuality(static_cast<filament::Material::Builder::ShadowSamplingQuality>(quality)));
+    return fila::c(&fila::cpp(self)->shadowSamplingQuality(static_cast<filament::Material::Builder::ShadowSamplingQuality>(quality)));
 }
 
 FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, FilaMaterialUboBatchingMode uboBatchingMode) {
-    return reinterpret_cast<FilaMaterialBuilder*>(&reinterpret_cast<filament::Material::Builder*>(self)->uboBatching(static_cast<filament::Material::UboBatchingMode>(uboBatchingMode)));
+    return fila::c(&fila::cpp(self)->uboBatching(static_cast<filament::Material::UboBatchingMode>(uboBatchingMode)));
 }
 
 FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaMaterial*>(reinterpret_cast<const filament::Material::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    reinterpret_cast<filament::Material*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
 }
 
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    reinterpret_cast<filament::Material*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
 }
 
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    reinterpret_cast<filament::Material*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
 }
 
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* self, const char* name) {
-    return reinterpret_cast<FilaMaterialInstance*>(reinterpret_cast<const filament::Material*>(self)->createInstance(name));
+    return fila::c(fila::cpp(self)->createInstance(name));
 }
 
 const char* FilaMaterial_getName(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->getName();
+    return fila::cpp(self)->getName();
 }
 
 FilaShading FilaMaterial_getShading(const FilaMaterial* self) {
-    return static_cast<FilaShading>(reinterpret_cast<const filament::Material*>(self)->getShading());
+    return static_cast<FilaShading>(fila::cpp(self)->getShading());
 }
 
 FilaInterpolation FilaMaterial_getInterpolation(const FilaMaterial* self) {
-    return static_cast<FilaInterpolation>(reinterpret_cast<const filament::Material*>(self)->getInterpolation());
+    return static_cast<FilaInterpolation>(fila::cpp(self)->getInterpolation());
 }
 
 FilaBlendingMode FilaMaterial_getBlendingMode(const FilaMaterial* self) {
-    return static_cast<FilaBlendingMode>(reinterpret_cast<const filament::Material*>(self)->getBlendingMode());
+    return static_cast<FilaBlendingMode>(fila::cpp(self)->getBlendingMode());
 }
 
 FilaVertexDomain FilaMaterial_getVertexDomain(const FilaMaterial* self) {
-    return static_cast<FilaVertexDomain>(reinterpret_cast<const filament::Material*>(self)->getVertexDomain());
+    return static_cast<FilaVertexDomain>(fila::cpp(self)->getVertexDomain());
 }
 
 uint32_t FilaMaterial_getSupportedVariants(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->getSupportedVariants();
+    return fila::cpp(self)->getSupportedVariants();
 }
 
 FilaMaterialDomain FilaMaterial_getMaterialDomain(const FilaMaterial* self) {
-    return static_cast<FilaMaterialDomain>(reinterpret_cast<const filament::Material*>(self)->getMaterialDomain());
+    return static_cast<FilaMaterialDomain>(fila::cpp(self)->getMaterialDomain());
 }
 
 FilaCullingMode FilaMaterial_getCullingMode(const FilaMaterial* self) {
-    return static_cast<FilaCullingMode>(reinterpret_cast<const filament::Material*>(self)->getCullingMode());
+    return static_cast<FilaCullingMode>(fila::cpp(self)->getCullingMode());
 }
 
 FilaTransparencyMode FilaMaterial_getTransparencyMode(const FilaMaterial* self) {
-    return static_cast<FilaTransparencyMode>(reinterpret_cast<const filament::Material*>(self)->getTransparencyMode());
+    return static_cast<FilaTransparencyMode>(fila::cpp(self)->getTransparencyMode());
 }
 
 bool FilaMaterial_isColorWriteEnabled(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->isColorWriteEnabled();
+    return fila::cpp(self)->isColorWriteEnabled();
 }
 
 bool FilaMaterial_isDepthWriteEnabled(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->isDepthWriteEnabled();
+    return fila::cpp(self)->isDepthWriteEnabled();
 }
 
 bool FilaMaterial_isDepthCullingEnabled(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->isDepthCullingEnabled();
+    return fila::cpp(self)->isDepthCullingEnabled();
 }
 
 bool FilaMaterial_isDoubleSided(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->isDoubleSided();
+    return fila::cpp(self)->isDoubleSided();
 }
 
 bool FilaMaterial_isAlphaToCoverageEnabled(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->isAlphaToCoverageEnabled();
+    return fila::cpp(self)->isAlphaToCoverageEnabled();
 }
 
 float FilaMaterial_getMaskThreshold(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->getMaskThreshold();
+    return fila::cpp(self)->getMaskThreshold();
 }
 
 bool FilaMaterial_hasShadowMultiplier(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->hasShadowMultiplier();
+    return fila::cpp(self)->hasShadowMultiplier();
 }
 
 bool FilaMaterial_hasSpecularAntiAliasing(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->hasSpecularAntiAliasing();
+    return fila::cpp(self)->hasSpecularAntiAliasing();
 }
 
 float FilaMaterial_getSpecularAntiAliasingVariance(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->getSpecularAntiAliasingVariance();
+    return fila::cpp(self)->getSpecularAntiAliasingVariance();
 }
 
 float FilaMaterial_getSpecularAntiAliasingThreshold(const FilaMaterial* self) {
-    return reinterpret_cast<const filament::Material*>(self)->getSpecularAntiAliasingThreshold();
+    return fila::cpp(self)->getSpecularAntiAliasingThreshold();
 }
 
 uint32_t FilaMaterial_getRequiredAttributes(const FilaMaterial* self) {
-    return (reinterpret_cast<const filament::Material*>(self)->getRequiredAttributes()).getValue();
+    return (fila::cpp(self)->getRequiredAttributes()).getValue();
 }
 
 FilaRefractionMode FilaMaterial_getRefractionMode(const FilaMaterial* self) {
-    return static_cast<FilaRefractionMode>(reinterpret_cast<const filament::Material*>(self)->getRefractionMode());
+    return static_cast<FilaRefractionMode>(fila::cpp(self)->getRefractionMode());
 }
 
 FilaRefractionType FilaMaterial_getRefractionType(const FilaMaterial* self) {
-    return static_cast<FilaRefractionType>(reinterpret_cast<const filament::Material*>(self)->getRefractionType());
+    return static_cast<FilaRefractionType>(fila::cpp(self)->getRefractionType());
 }
 
 FilaReflectionMode FilaMaterial_getReflectionMode(const FilaMaterial* self) {
-    return static_cast<FilaReflectionMode>(reinterpret_cast<const filament::Material*>(self)->getReflectionMode());
+    return static_cast<FilaReflectionMode>(fila::cpp(self)->getReflectionMode());
 }
 
 FilaFeatureLevel FilaMaterial_getFeatureLevel(const FilaMaterial* self) {
-    return static_cast<FilaFeatureLevel>(reinterpret_cast<const filament::Material*>(self)->getFeatureLevel());
+    return static_cast<FilaFeatureLevel>(fila::cpp(self)->getFeatureLevel());
 }
 
 uint32_t FilaMaterial_getParameterCount(const FilaMaterial* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Material*>(self)->getParameterCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getParameterCount());
 }
 
 uint32_t FilaMaterial_getParameters(const FilaMaterial* self, FilaMaterialParameterInfo* parameters, uint32_t count) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Material*>(self)->getParameters(reinterpret_cast<filament::Material::ParameterInfo*>(parameters), static_cast<size_t>(count)));
+    return static_cast<uint32_t>(fila::cpp(self)->getParameters(fila::cpp(parameters), static_cast<size_t>(count)));
 }
 
 bool FilaMaterial_hasParameter_char(const FilaMaterial* self, const char* name) {
-    return reinterpret_cast<const filament::Material*>(self)->hasParameter(name);
+    return fila::cpp(self)->hasParameter(name);
 }
 
 bool FilaMaterial_hasParameter_string_view(const FilaMaterial* self, const char* name) {
-    return reinterpret_cast<const filament::Material*>(self)->hasParameter(std::string_view(name));
+    return fila::cpp(self)->hasParameter(std::string_view(name));
 }
 
 bool FilaMaterial_isSampler(const FilaMaterial* self, const char* name) {
-    return reinterpret_cast<const filament::Material*>(self)->isSampler(name);
+    return fila::cpp(self)->isSampler(name);
 }
 
 const char* FilaMaterial_getSource(const FilaMaterial* self) {
-    return (reinterpret_cast<const filament::Material*>(self)->getSource()).data();
+    return (fila::cpp(self)->getSource()).data();
 }
 
 const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, const char* samplerName) {
-    return reinterpret_cast<const filament::Material*>(self)->getParameterTransformName(samplerName);
+    return fila::cpp(self)->getParameterTransformName(samplerName);
 }
 
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler) {
-    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, reinterpret_cast<const filament::Texture*>(texture), *reinterpret_cast<const filament::TextureSampler*>(sampler));
+    fila::cpp(self)->setDefaultParameter(name, fila::cpp(texture), *fila::cpp(sampler));
 }
 
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color) {
-    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
+    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(*color));
 }
 
 void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color) {
-    reinterpret_cast<filament::Material*>(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
+    fila::cpp(self)->setDefaultParameter(name, static_cast<filament::RgbaType>(type), std::bit_cast<filament::math::float4>(*color));
 }
 
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self) {
-    return reinterpret_cast<FilaMaterialInstance*>(reinterpret_cast<filament::Material*>(self)->getDefaultInstance());
+    return fila::c(fila::cpp(self)->getDefaultInstance());
 }
 
 } // extern "C"

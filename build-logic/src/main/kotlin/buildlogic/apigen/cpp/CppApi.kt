@@ -100,7 +100,7 @@ class CppParam(val name: String, val type: CppType, val default: CppValue?) {
     override fun toString() = "$type $name" + (default?.let { " = $it" } ?: "")
 }
 
-class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean)
+class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean, val isDeprecated: Boolean)
 
 class CppEnum(val name: String, val header: String?, val underlying: String?, val constants: List<Pair<String, BigInteger>>)
 

@@ -5,71 +5,71 @@
 extern "C" {
 
 FilaColorTransferFunction* FilaColorTransferFunction_create_double_double(double a, double b, double c, double d, double e, double f, double g) {
-    return reinterpret_cast<FilaColorTransferFunction*>(new filament::color::TransferFunction(a, b, c, d, e, f, g));
+    return fila::c(new filament::color::TransferFunction(a, b, c, d, e, f, g));
 }
 
 FilaColorTransferFunction* FilaColorTransferFunction_create(double a, double b, double c, double d, double g) {
-    return reinterpret_cast<FilaColorTransferFunction*>(new filament::color::TransferFunction(a, b, c, d, g));
+    return fila::c(new filament::color::TransferFunction(a, b, c, d, g));
 }
 
 void FilaColorTransferFunction_destroy(FilaColorTransferFunction* self) {
-    delete reinterpret_cast<filament::color::TransferFunction*>(self);
+    delete fila::cpp(self);
 }
 
 double FilaColorTransferFunction_getA(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->a;
+    return fila::cpp(self)->a;
 }
 
 void FilaColorTransferFunction_setA(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->a = value;
+    fila::cpp(self)->a = value;
 }
 
 double FilaColorTransferFunction_getB(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->b;
+    return fila::cpp(self)->b;
 }
 
 void FilaColorTransferFunction_setB(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->b = value;
+    fila::cpp(self)->b = value;
 }
 
 double FilaColorTransferFunction_getC(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->c;
+    return fila::cpp(self)->c;
 }
 
 void FilaColorTransferFunction_setC(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->c = value;
+    fila::cpp(self)->c = value;
 }
 
 double FilaColorTransferFunction_getD(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->d;
+    return fila::cpp(self)->d;
 }
 
 void FilaColorTransferFunction_setD(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->d = value;
+    fila::cpp(self)->d = value;
 }
 
 double FilaColorTransferFunction_getE(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->e;
+    return fila::cpp(self)->e;
 }
 
 void FilaColorTransferFunction_setE(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->e = value;
+    fila::cpp(self)->e = value;
 }
 
 double FilaColorTransferFunction_getF(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->f;
+    return fila::cpp(self)->f;
 }
 
 void FilaColorTransferFunction_setF(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->f = value;
+    fila::cpp(self)->f = value;
 }
 
 double FilaColorTransferFunction_getG(const FilaColorTransferFunction* self) {
-    return reinterpret_cast<const filament::color::TransferFunction*>(self)->g;
+    return fila::cpp(self)->g;
 }
 
 void FilaColorTransferFunction_setG(FilaColorTransferFunction* self, double value) {
-    reinterpret_cast<filament::color::TransferFunction*>(self)->g = value;
+    fila::cpp(self)->g = value;
 }
 
 } // extern "C"

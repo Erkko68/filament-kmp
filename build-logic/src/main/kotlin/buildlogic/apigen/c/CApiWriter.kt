@@ -48,7 +48,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         // Types last: the forwarders decide which math types need mirrors.
         apiHeaders.modules.keys.forEach { module ->
             out["$module/generated/Types.h"] = types(module)
-            out["$module/generated/Includes.hpp"] = "$BANNER\n#pragma once\n\n#include <bit>\n\n" + headers.joinToString("") { "#include <$it>\n" }
+            out["$module/generated/Includes.hpp"] = includes(module)
         }
         return out
     }
@@ -66,35 +66,36 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
                 val name = CNames.function(record.name, "create", suffix)
                 emit(name, "$cpp(${spelled(params)})", section) {
                     val bridged = bridge(params)
-                    "$self* $name(${cParams(null, bridged)})" to "return reinterpret_cast<$self*>(new $cpp(${args(bridged)}));"
+                    "$self* $name(${cParams(null, bridged)})" to "return fila::c(new $cpp(${args(bridged)}));"
                 }
             }
             if (record.constructors.isNotEmpty() && record.destructible) {
                 emit("${self}_destroy", "~${record.name}()", section) {
-                    "void ${self}_destroy($self* self)" to "delete reinterpret_cast<$cpp*>(self);"
+                    "void ${self}_destroy($self* self)" to "delete fila::cpp(self);"
                 }
             }
         }
         if (!bridges.uninstantiated(record)) {
             // C can't upcast: a base's functions take the base's handle.
-            record.bases.mapNotNull { api.records[it] }.filter { base ->
+            record.bases.mapNotNull { api.records[it] }.filter { it !in bridges.twins(record) }.filter { base ->
                 !bridges.uninstantiated(base) && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
             }.forEach { base ->
                 val baseType = CNames.type(base.name)
                 val name = "${self}_as${baseType.removePrefix("Fila")}"
                 val baseCpp = bridges.cpp(base.name)
                 emit(name, "static_cast<$baseCpp*>", section) {
-                    "$baseType* $name($self* self)" to
-                        "return reinterpret_cast<$baseType*>(static_cast<$baseCpp*>(reinterpret_cast<$cpp*>(self)));"
+                    "$baseType* $name($self* self)" to "return fila::c(static_cast<$baseCpp*>(fila::cpp(self)));"
                 }
             }
         }
-        // Deprecated API isn't bound at all.
-        val methods = record.methods.filter { it.isPublic && it.isApi && !it.isDeprecated }
+        // Deprecated API isn't bound at all, nor overloads only literals can call.
+        val methods = (record.methods + bridges.twins(record).flatMap { it.methods }).filter { m -> m.isPublic && m.isApi && !m.isDeprecated && m.params.none { it.type.decl in LITERAL_ONLY } }
             // A const overload and its non-const twin take the same C arguments; the non-const one covers both.
             .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
         overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
-        if (bridges.isValue(record.name) && !bridges.uninstantiated(record)) record.fields.filter { it.isPublic }.forEach { field(record, it, section) }
+        if (bridges.isValue(record.name) && !bridges.uninstantiated(record)) {
+            (bridges.twins(record).flatMap { it.fields } + record.fields).filter { it.isPublic && !it.isDeprecated }.forEach { field(record, it, section) }
+        }
         if (section.declarations.isEmpty()) return
         file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
         file.definitions.append(section.definitions)
@@ -112,12 +113,11 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
 
     private fun forwarder(method: CppMethod, name: String): Pair<String, String> {
         if (method.mangled == null && !bridges.instantiated(method.owner)) throw Unsupported("member of a class template")
-        val owner = bridges.cpp(method.owner)
         val returns = bridges.result(method.returns)
         val params = bridge(method.params)
         val const = if (method.isConst) "const " else ""
         val self = if (method.isStatic) null else "$const${CNames.type(method.owner)}* self"
-        val target = if (method.isStatic) "$owner::" else "reinterpret_cast<$const$owner*>(self)->"
+        val target = if (method.isStatic) "${bridges.cpp(method.owner)}::" else "fila::cpp(self)->"
         val call = "$target${method.name}(${args(params)})"
         return when {
             returns.out -> "void $name(${cParams(self, params, out = "${returns.c}* out")})" to returns.store(call)
@@ -130,13 +130,12 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     private fun field(record: CppRecord, field: CppField, section: Section) {
         val self = CNames.type(record.name)
         val cpp = "${field.type.spelling} ${record.name}::${field.name}"
-        val recordCpp = bridges.cpp(record.name)
         val accessor = field.name.replaceFirstChar(Char::uppercaseChar)
         // A method of the same name (Box::getCenter) already reads it.
         val getter = "${self}_get$accessor"
         if (getter !in functionNames) emit(getter, cpp, section) {
             val result = bridges.result(field.type, lvalue = true)
-            val read = "reinterpret_cast<const $recordCpp*>(self)->${field.name}"
+            val read = "fila::cpp(self)->${field.name}"
             if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read)
             else "${result.c} $getter(const $self* self)" to "return ${result.convert(read)};"
         }
@@ -144,7 +143,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         if (setter !in functionNames) emit(setter, cpp, section) {
             if (bridges.borrowsPointer(field.type)) throw Unsupported("${field.type.spelling}: the struct would keep the caller's pointer")
             val param = bridges.param(field.type)
-            "void $setter($self* self, ${param.c} value)" to "reinterpret_cast<$recordCpp*>(self)->${field.name} = ${param.convert("value")};"
+            "void $setter($self* self, ${param.c} value)" to "fila::cpp(self)->${field.name} = ${param.convert("value")};"
         }
     }
 
@@ -190,14 +189,30 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             bridges.mathTypes.forEach { body.appendLine(mathMirror(it)) }
             body.appendLine()
         }
-        surface.mapNotNull { api.records[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
-            .forEach { body.appendLine("typedef struct ${CNames.type(it.name)} ${CNames.type(it.name)};") }
+        moduleRecords(module).forEach { body.appendLine("typedef struct ${CNames.type(it.name)} ${CNames.type(it.name)};") }
         surface.mapNotNull { api.enums[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
             .forEach { body.appendLine().append(enum(it)) }
         val include = if (module == baseModule) "#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>"
             else "#include \"../../$baseModule/generated/Types.h\""
         return header("${module}_Types", include, body.toString())
     }
+
+    /** The C++ headers, and the `fila::cpp`/`fila::c` overloads between the module's C types and C++'s. */
+    private fun includes(module: String): String {
+        val text = StringBuilder("$BANNER\n#pragma once\n\n")
+        if (module == baseModule) text.append("#include <bit>\n#include <string_view>\n\n").append(headers.joinToString("") { "#include <$it>\n" })
+        else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
+        text.append("#include \"Types.h\"\n\nnamespace fila {\n\n")
+        if (module == baseModule) {
+            text.append(PRELUDE)
+            bridges.mathTypes.forEach { text.appendLine("FILA_TYPE(${CNames.type(it)}, $it)") }
+        }
+        moduleRecords(module).filter { it.accessible && !bridges.uninstantiated(it) }
+            .forEach { text.appendLine("FILA_TYPE(${CNames.type(it.name)}, ${bridges.cpp(it.name)})") }
+        return text.append("\n} // namespace fila\n").toString()
+    }
+
+    private fun moduleRecords(module: String) = surface.mapNotNull { api.records[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
 
     private fun enum(enum: CppEnum): String {
         val name = CNames.type(enum.name)
@@ -231,6 +246,21 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
 
     private companion object {
         const val BANNER = "// Generated by generateCApi from Filament's public headers; do not edit."
+        val PRELUDE = """
+            |// C and C++ types naming one object (a handle, a math mirror): cpp() and c() convert pointers between them.
+            |#define FILA_TYPE(C, ...) \
+            |    inline __VA_ARGS__* cpp(C* p) { return reinterpret_cast<__VA_ARGS__*>(p); } \
+            |    inline const __VA_ARGS__* cpp(const C* p) { return reinterpret_cast<const __VA_ARGS__*>(p); } \
+            |    inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
+            |    inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
+            |
+            |// StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).
+            |inline utils::StaticString staticString(const char* s) {
+            |    static_assert(sizeof(utils::StaticString) == sizeof(std::string_view));
+            |    return std::bit_cast<utils::StaticString>(std::string_view(s));
+            |}
+            |
+            |""".trimMargin()
         // Names the forwarders declare themselves.
         val RESERVED = setOf("self", "out")
     }

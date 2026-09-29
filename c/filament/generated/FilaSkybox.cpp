@@ -5,55 +5,55 @@
 extern "C" {
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_create(void) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(new filament::Skybox::Builder());
+    return fila::c(new filament::Skybox::Builder());
 }
 
 void FilaSkyboxBuilder_destroy(FilaSkyboxBuilder* self) {
-    delete reinterpret_cast<filament::Skybox::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_environment(FilaSkyboxBuilder* self, FilaTexture* cubemap) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->environment(reinterpret_cast<filament::Texture*>(cubemap)));
+    return fila::c(&fila::cpp(self)->environment(fila::cpp(cubemap)));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_showSun(FilaSkyboxBuilder* self, bool show) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->showSun(show));
+    return fila::c(&fila::cpp(self)->showSun(show));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_intensity(FilaSkyboxBuilder* self, float envIntensity) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->intensity(envIntensity));
+    return fila::c(&fila::cpp(self)->intensity(envIntensity));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_color(FilaSkyboxBuilder* self, const FilaFloat4* color) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->color(std::bit_cast<filament::math::float4>(*color)));
+    return fila::c(&fila::cpp(self)->color(std::bit_cast<filament::math::float4>(*color)));
 }
 
 FilaSkyboxBuilder* FilaSkyboxBuilder_priority(FilaSkyboxBuilder* self, uint32_t priority) {
-    return reinterpret_cast<FilaSkyboxBuilder*>(&reinterpret_cast<filament::Skybox::Builder*>(self)->priority(static_cast<uint8_t>(priority)));
+    return fila::c(&fila::cpp(self)->priority(static_cast<uint8_t>(priority)));
 }
 
 FilaSkybox* FilaSkyboxBuilder_build(FilaSkyboxBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaSkybox*>(reinterpret_cast<filament::Skybox::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaSkybox_setColor(FilaSkybox* self, const FilaFloat4* color) {
-    reinterpret_cast<filament::Skybox*>(self)->setColor(std::bit_cast<filament::math::float4>(*color));
+    fila::cpp(self)->setColor(std::bit_cast<filament::math::float4>(*color));
 }
 
 void FilaSkybox_setLayerMask(FilaSkybox* self, uint32_t select, uint32_t values) {
-    reinterpret_cast<filament::Skybox*>(self)->setLayerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
+    fila::cpp(self)->setLayerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
 uint32_t FilaSkybox_getLayerMask(const FilaSkybox* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Skybox*>(self)->getLayerMask());
+    return static_cast<uint32_t>(fila::cpp(self)->getLayerMask());
 }
 
 float FilaSkybox_getIntensity(const FilaSkybox* self) {
-    return reinterpret_cast<const filament::Skybox*>(self)->getIntensity();
+    return fila::cpp(self)->getIntensity();
 }
 
 const FilaTexture* FilaSkybox_getTexture(const FilaSkybox* self) {
-    return reinterpret_cast<const FilaTexture*>(reinterpret_cast<const filament::Skybox*>(self)->getTexture());
+    return fila::c(fila::cpp(self)->getTexture());
 }
 
 } // extern "C"

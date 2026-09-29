@@ -5,351 +5,351 @@
 extern "C" {
 
 FilaRenderableManagerBone* FilaRenderableManagerBone_create(void) {
-    return reinterpret_cast<FilaRenderableManagerBone*>(new filament::RenderableManager::Bone());
+    return fila::c(new filament::RenderableManager::Bone());
 }
 
 void FilaRenderableManagerBone_destroy(FilaRenderableManagerBone* self) {
-    delete reinterpret_cast<filament::RenderableManager::Bone*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaRenderableManagerBone_getUnitQuaternion(const FilaRenderableManagerBone* self, FilaQuatf* out) {
-    *out = std::bit_cast<FilaQuatf>(reinterpret_cast<const filament::RenderableManager::Bone*>(self)->unitQuaternion);
+    *out = std::bit_cast<FilaQuatf>(fila::cpp(self)->unitQuaternion);
 }
 
 void FilaRenderableManagerBone_setUnitQuaternion(FilaRenderableManagerBone* self, const FilaQuatf* value) {
-    reinterpret_cast<filament::RenderableManager::Bone*>(self)->unitQuaternion = std::bit_cast<filament::math::quatf>(*value);
+    fila::cpp(self)->unitQuaternion = std::bit_cast<filament::math::quatf>(*value);
 }
 
 void FilaRenderableManagerBone_getTranslation(const FilaRenderableManagerBone* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::RenderableManager::Bone*>(self)->translation);
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->translation);
 }
 
 void FilaRenderableManagerBone_setTranslation(FilaRenderableManagerBone* self, const FilaFloat3* value) {
-    reinterpret_cast<filament::RenderableManager::Bone*>(self)->translation = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->translation = std::bit_cast<filament::math::float3>(*value);
 }
 
 float FilaRenderableManagerBone_getReserved(const FilaRenderableManagerBone* self) {
-    return reinterpret_cast<const filament::RenderableManager::Bone*>(self)->reserved;
+    return fila::cpp(self)->reserved;
 }
 
 void FilaRenderableManagerBone_setReserved(FilaRenderableManagerBone* self, float value) {
-    reinterpret_cast<filament::RenderableManager::Bone*>(self)->reserved = value;
+    fila::cpp(self)->reserved = value;
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(uint32_t count) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(new filament::RenderableManager::Builder(static_cast<size_t>(count)));
+    return fila::c(new filament::RenderableManager::Builder(static_cast<size_t>(count)));
 }
 
 void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* self) {
-    delete reinterpret_cast<filament::RenderableManager::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t minIndex, uint32_t maxIndex, uint32_t count) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), reinterpret_cast<filament::IndexBuffer*>(indices), static_cast<size_t>(offset), static_cast<size_t>(minIndex), static_cast<size_t>(maxIndex), static_cast<size_t>(count)));
+    return fila::c(&fila::cpp(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), fila::cpp(indices), static_cast<size_t>(offset), static_cast<size_t>(minIndex), static_cast<size_t>(maxIndex), static_cast<size_t>(count)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t count) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), reinterpret_cast<filament::IndexBuffer*>(indices), static_cast<size_t>(offset), static_cast<size_t>(count)));
+    return fila::c(&fila::cpp(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), fila::cpp(indices), static_cast<size_t>(offset), static_cast<size_t>(count)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), reinterpret_cast<filament::IndexBuffer*>(indices)));
+    return fila::c(&fila::cpp(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), fila::cpp(indices)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, uint32_t offset, uint32_t count) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), static_cast<size_t>(offset), static_cast<size_t>(count)));
+    return fila::c(&fila::cpp(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), static_cast<size_t>(offset), static_cast<size_t>(count)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry(FilaRenderableManagerBuilder* self, uint32_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices)));
+    return fila::c(&fila::cpp(self)->geometry(static_cast<size_t>(index), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometryType(FilaRenderableManagerBuilder* self, FilaRenderableManagerBuilderGeometryType type) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometryType(static_cast<filament::RenderableManager::Builder::GeometryType>(type)));
+    return fila::c(&fila::cpp(self)->geometryType(static_cast<filament::RenderableManager::Builder::GeometryType>(type)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_material(FilaRenderableManagerBuilder* self, uint32_t index, const FilaMaterialInstance* materialInstance) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->material(static_cast<size_t>(index), reinterpret_cast<const filament::MaterialInstance*>(materialInstance)));
+    return fila::c(&fila::cpp(self)->material(static_cast<size_t>(index), fila::cpp(materialInstance)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boundingBox(FilaRenderableManagerBuilder* self, const FilaBox* axisAlignedBoundingBox) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->boundingBox(*reinterpret_cast<const filament::Box*>(axisAlignedBoundingBox)));
+    return fila::c(&fila::cpp(self)->boundingBox(*fila::cpp(axisAlignedBoundingBox)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_layerMask(FilaRenderableManagerBuilder* self, uint32_t select, uint32_t values) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->layerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values)));
+    return fila::c(&fila::cpp(self)->layerMask(static_cast<uint8_t>(select), static_cast<uint8_t>(values)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_priority(FilaRenderableManagerBuilder* self, uint32_t priority) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->priority(static_cast<uint8_t>(priority)));
+    return fila::c(&fila::cpp(self)->priority(static_cast<uint8_t>(priority)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_channel(FilaRenderableManagerBuilder* self, uint32_t channel) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->channel(static_cast<uint8_t>(channel)));
+    return fila::c(&fila::cpp(self)->channel(static_cast<uint8_t>(channel)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_culling(FilaRenderableManagerBuilder* self, bool enable) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->culling(enable));
+    return fila::c(&fila::cpp(self)->culling(enable));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_lightChannel(FilaRenderableManagerBuilder* self, uint32_t channel, bool enable) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->lightChannel(static_cast<unsigned int>(channel), enable));
+    return fila::c(&fila::cpp(self)->lightChannel(static_cast<unsigned int>(channel), enable));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_castShadows(FilaRenderableManagerBuilder* self, bool enable) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->castShadows(enable));
+    return fila::c(&fila::cpp(self)->castShadows(enable));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_receiveShadows(FilaRenderableManagerBuilder* self, bool enable) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->receiveShadows(enable));
+    return fila::c(&fila::cpp(self)->receiveShadows(enable));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_screenSpaceContactShadows(FilaRenderableManagerBuilder* self, bool enable) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->screenSpaceContactShadows(enable));
+    return fila::c(&fila::cpp(self)->screenSpaceContactShadows(enable));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_enableSkinningBuffers(FilaRenderableManagerBuilder* self, bool enabled) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->enableSkinningBuffers(enabled));
+    return fila::c(&fila::cpp(self)->enableSkinningBuffers(enabled));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_fog(FilaRenderableManagerBuilder* self, bool enabled) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->fog(enabled));
+    return fila::c(&fila::cpp(self)->fog(enabled));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_SkinningBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, FilaSkinningBuffer* skinningBuffer, uint32_t count, uint32_t offset) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->skinning(reinterpret_cast<filament::SkinningBuffer*>(skinningBuffer), static_cast<size_t>(count), static_cast<size_t>(offset)));
+    return fila::c(&fila::cpp(self)->skinning(fila::cpp(skinningBuffer), static_cast<size_t>(count), static_cast<size_t>(offset)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_mat4f(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaMat4f* transforms) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->skinning(static_cast<size_t>(boneCount), reinterpret_cast<const filament::math::mat4f*>(transforms)));
+    return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount), fila::cpp(transforms)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_Bone(FilaRenderableManagerBuilder* self, uint32_t boneCount, const FilaRenderableManagerBone* bones) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->skinning(static_cast<size_t>(boneCount), reinterpret_cast<const filament::RenderableManager::Bone*>(bones)));
+    return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount), fila::cpp(bones)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, uint32_t boneCount) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->skinning(static_cast<size_t>(boneCount)));
+    return fila::c(&fila::cpp(self)->skinning(static_cast<size_t>(boneCount)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, const FilaFloat2* indicesAndWeights, uint32_t count, uint32_t bonesPerVertex) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->boneIndicesAndWeights(static_cast<size_t>(primitiveIndex), reinterpret_cast<const filament::math::float2*>(indicesAndWeights), static_cast<size_t>(count), static_cast<size_t>(bonesPerVertex)));
+    return fila::c(&fila::cpp(self)->boneIndicesAndWeights(static_cast<size_t>(primitiveIndex), fila::cpp(indicesAndWeights), static_cast<size_t>(count), static_cast<size_t>(bonesPerVertex)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_size_t(FilaRenderableManagerBuilder* self, uint32_t targetCount) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->morphing(static_cast<size_t>(targetCount)));
+    return fila::c(&fila::cpp(self)->morphing(static_cast<size_t>(targetCount)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_MorphTargetBuffer(FilaRenderableManagerBuilder* self, FilaMorphTargetBuffer* morphTargetBuffer) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->morphing(reinterpret_cast<filament::MorphTargetBuffer*>(morphTargetBuffer)));
+    return fila::c(&fila::cpp(self)->morphing(fila::cpp(morphTargetBuffer)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_uint8_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t level, uint32_t primitiveIndex, uint32_t offset) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->morphing(static_cast<uint8_t>(level), static_cast<size_t>(primitiveIndex), static_cast<size_t>(offset)));
+    return fila::c(&fila::cpp(self)->morphing(static_cast<uint8_t>(level), static_cast<size_t>(primitiveIndex), static_cast<size_t>(offset)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_blendOrder(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, uint32_t blendOrder) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->blendOrder(static_cast<size_t>(primitiveIndex), static_cast<uint16_t>(blendOrder)));
+    return fila::c(&fila::cpp(self)->blendOrder(static_cast<size_t>(primitiveIndex), static_cast<uint16_t>(blendOrder)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_globalBlendOrderEnabled(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, bool enabled) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->globalBlendOrderEnabled(static_cast<size_t>(primitiveIndex), enabled));
+    return fila::c(&fila::cpp(self)->globalBlendOrderEnabled(static_cast<size_t>(primitiveIndex), enabled));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances(FilaRenderableManagerBuilder* self, uint32_t instanceCount) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->instances(static_cast<size_t>(instanceCount)));
+    return fila::c(&fila::cpp(self)->instances(static_cast<size_t>(instanceCount)));
 }
 
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_instances_InstanceBuffer(FilaRenderableManagerBuilder* self, uint32_t instanceCount, FilaInstanceBuffer* instanceBuffer) {
-    return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->instances(static_cast<size_t>(instanceCount), reinterpret_cast<filament::InstanceBuffer*>(instanceBuffer)));
+    return fila::c(&fila::cpp(self)->instances(static_cast<size_t>(instanceCount), fila::cpp(instanceBuffer)));
 }
 
 FilaRenderableManagerBuilderResult FilaRenderableManagerBuilder_build(const FilaRenderableManagerBuilder* self, FilaEngine* engine, FilaEntity entity) {
-    return static_cast<FilaRenderableManagerBuilderResult>(reinterpret_cast<const filament::RenderableManager::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine), utils::Entity::import(entity)));
+    return static_cast<FilaRenderableManagerBuilderResult>(fila::cpp(self)->build(*fila::cpp(engine), utils::Entity::import(entity)));
 }
 
 bool FilaRenderableManager_hasComponent(const FilaRenderableManager* self, FilaEntity e) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->hasComponent(utils::Entity::import(e));
+    return fila::cpp(self)->hasComponent(utils::Entity::import(e));
 }
 
 uint32_t FilaRenderableManager_getInstance(const FilaRenderableManager* self, FilaEntity e) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->getInstance(utils::Entity::import(e)).asValue();
+    return fila::cpp(self)->getInstance(utils::Entity::import(e)).asValue();
 }
 
 uint32_t FilaRenderableManager_getComponentCount(const FilaRenderableManager* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getComponentCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getComponentCount());
 }
 
 bool FilaRenderableManager_empty(const FilaRenderableManager* self) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->empty();
+    return fila::cpp(self)->empty();
 }
 
 FilaEntity FilaRenderableManager_getEntity(const FilaRenderableManager* self, uint32_t i) {
-    return utils::Entity::smuggle(reinterpret_cast<const filament::RenderableManager*>(self)->getEntity(filament::RenderableManager::Instance(i)));
+    return utils::Entity::smuggle(fila::cpp(self)->getEntity(filament::RenderableManager::Instance(i)));
 }
 
 const FilaEntity* FilaRenderableManager_getEntities(const FilaRenderableManager* self) {
-    return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::RenderableManager*>(self)->getEntities());
+    return reinterpret_cast<const FilaEntity*>(fila::cpp(self)->getEntities());
 }
 
 void FilaRenderableManager_destroy(FilaRenderableManager* self, FilaEntity e) {
-    reinterpret_cast<filament::RenderableManager*>(self)->destroy(utils::Entity::import(e));
+    fila::cpp(self)->destroy(utils::Entity::import(e));
 }
 
 void FilaRenderableManager_setAxisAlignedBoundingBox(FilaRenderableManager* self, uint32_t instance, const FilaBox* aabb) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setAxisAlignedBoundingBox(filament::RenderableManager::Instance(instance), *reinterpret_cast<const filament::Box*>(aabb));
+    fila::cpp(self)->setAxisAlignedBoundingBox(filament::RenderableManager::Instance(instance), *fila::cpp(aabb));
 }
 
 void FilaRenderableManager_getAxisAlignedBoundingBox(const FilaRenderableManager* self, uint32_t instance, FilaBox* out) {
-    *reinterpret_cast<filament::Box*>(out) = reinterpret_cast<const filament::RenderableManager*>(self)->getAxisAlignedBoundingBox(filament::RenderableManager::Instance(instance));
+    *fila::cpp(out) = fila::cpp(self)->getAxisAlignedBoundingBox(filament::RenderableManager::Instance(instance));
 }
 
 void FilaRenderableManager_setLayerMask(FilaRenderableManager* self, uint32_t instance, uint32_t select, uint32_t values) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setLayerMask(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(select), static_cast<uint8_t>(values));
+    fila::cpp(self)->setLayerMask(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
 uint32_t FilaRenderableManager_getLayerMask(const FilaRenderableManager* self, uint32_t instance) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getLayerMask(filament::RenderableManager::Instance(instance)));
+    return static_cast<uint32_t>(fila::cpp(self)->getLayerMask(filament::RenderableManager::Instance(instance)));
 }
 
 void FilaRenderableManager_setPriority(FilaRenderableManager* self, uint32_t instance, uint32_t priority) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setPriority(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(priority));
+    fila::cpp(self)->setPriority(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(priority));
 }
 
 uint32_t FilaRenderableManager_getPriority(const FilaRenderableManager* self, uint32_t instance) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getPriority(filament::RenderableManager::Instance(instance)));
+    return static_cast<uint32_t>(fila::cpp(self)->getPriority(filament::RenderableManager::Instance(instance)));
 }
 
 void FilaRenderableManager_setChannel(FilaRenderableManager* self, uint32_t instance, uint32_t channel) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setChannel(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(channel));
+    fila::cpp(self)->setChannel(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(channel));
 }
 
 uint32_t FilaRenderableManager_getChannel(const FilaRenderableManager* self, uint32_t instance) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getChannel(filament::RenderableManager::Instance(instance)));
+    return static_cast<uint32_t>(fila::cpp(self)->getChannel(filament::RenderableManager::Instance(instance)));
 }
 
 void FilaRenderableManager_setCulling(FilaRenderableManager* self, uint32_t instance, bool enable) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setCulling(filament::RenderableManager::Instance(instance), enable);
+    fila::cpp(self)->setCulling(filament::RenderableManager::Instance(instance), enable);
 }
 
 bool FilaRenderableManager_isCullingEnabled(const FilaRenderableManager* self, uint32_t instance) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->isCullingEnabled(filament::RenderableManager::Instance(instance));
+    return fila::cpp(self)->isCullingEnabled(filament::RenderableManager::Instance(instance));
 }
 
 void FilaRenderableManager_setFogEnabled(FilaRenderableManager* self, uint32_t instance, bool enable) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setFogEnabled(filament::RenderableManager::Instance(instance), enable);
+    fila::cpp(self)->setFogEnabled(filament::RenderableManager::Instance(instance), enable);
 }
 
 bool FilaRenderableManager_getFogEnabled(const FilaRenderableManager* self, uint32_t instance) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->getFogEnabled(filament::RenderableManager::Instance(instance));
+    return fila::cpp(self)->getFogEnabled(filament::RenderableManager::Instance(instance));
 }
 
 void FilaRenderableManager_setLightChannel(FilaRenderableManager* self, uint32_t instance, uint32_t channel, bool enable) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setLightChannel(filament::RenderableManager::Instance(instance), static_cast<unsigned int>(channel), enable);
+    fila::cpp(self)->setLightChannel(filament::RenderableManager::Instance(instance), static_cast<unsigned int>(channel), enable);
 }
 
 bool FilaRenderableManager_getLightChannel(const FilaRenderableManager* self, uint32_t instance, uint32_t channel) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->getLightChannel(filament::RenderableManager::Instance(instance), static_cast<unsigned int>(channel));
+    return fila::cpp(self)->getLightChannel(filament::RenderableManager::Instance(instance), static_cast<unsigned int>(channel));
 }
 
 void FilaRenderableManager_setCastShadows(FilaRenderableManager* self, uint32_t instance, bool enable) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setCastShadows(filament::RenderableManager::Instance(instance), enable);
+    fila::cpp(self)->setCastShadows(filament::RenderableManager::Instance(instance), enable);
 }
 
 void FilaRenderableManager_setReceiveShadows(FilaRenderableManager* self, uint32_t instance, bool enable) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setReceiveShadows(filament::RenderableManager::Instance(instance), enable);
+    fila::cpp(self)->setReceiveShadows(filament::RenderableManager::Instance(instance), enable);
 }
 
 void FilaRenderableManager_setScreenSpaceContactShadows(FilaRenderableManager* self, uint32_t instance, bool enable) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setScreenSpaceContactShadows(filament::RenderableManager::Instance(instance), enable);
+    fila::cpp(self)->setScreenSpaceContactShadows(filament::RenderableManager::Instance(instance), enable);
 }
 
 bool FilaRenderableManager_isShadowCaster(const FilaRenderableManager* self, uint32_t instance) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->isShadowCaster(filament::RenderableManager::Instance(instance));
+    return fila::cpp(self)->isShadowCaster(filament::RenderableManager::Instance(instance));
 }
 
 bool FilaRenderableManager_isShadowReceiver(const FilaRenderableManager* self, uint32_t instance) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->isShadowReceiver(filament::RenderableManager::Instance(instance));
+    return fila::cpp(self)->isShadowReceiver(filament::RenderableManager::Instance(instance));
 }
 
 bool FilaRenderableManager_isScreenSpaceContactShadowsEnabled(const FilaRenderableManager* self, uint32_t instance) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->isScreenSpaceContactShadowsEnabled(filament::RenderableManager::Instance(instance));
+    return fila::cpp(self)->isScreenSpaceContactShadowsEnabled(filament::RenderableManager::Instance(instance));
 }
 
 void FilaRenderableManager_setBones_Bone_size_t_size_t(FilaRenderableManager* self, uint32_t instance, const FilaRenderableManagerBone* transforms, uint32_t boneCount, uint32_t offset) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setBones(filament::RenderableManager::Instance(instance), reinterpret_cast<const filament::RenderableManager::Bone*>(transforms), static_cast<size_t>(boneCount), static_cast<size_t>(offset));
+    fila::cpp(self)->setBones(filament::RenderableManager::Instance(instance), fila::cpp(transforms), static_cast<size_t>(boneCount), static_cast<size_t>(offset));
 }
 
 void FilaRenderableManager_setBones_mat4f_size_t_size_t(FilaRenderableManager* self, uint32_t instance, const FilaMat4f* transforms, uint32_t boneCount, uint32_t offset) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setBones(filament::RenderableManager::Instance(instance), reinterpret_cast<const filament::math::mat4f*>(transforms), static_cast<size_t>(boneCount), static_cast<size_t>(offset));
+    fila::cpp(self)->setBones(filament::RenderableManager::Instance(instance), fila::cpp(transforms), static_cast<size_t>(boneCount), static_cast<size_t>(offset));
 }
 
 void FilaRenderableManager_setSkinningBuffer(FilaRenderableManager* self, uint32_t instance, FilaSkinningBuffer* skinningBuffer, uint32_t count, uint32_t offset) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setSkinningBuffer(filament::RenderableManager::Instance(instance), reinterpret_cast<filament::SkinningBuffer*>(skinningBuffer), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(self)->setSkinningBuffer(filament::RenderableManager::Instance(instance), fila::cpp(skinningBuffer), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaRenderableManager_setMorphWeights(FilaRenderableManager* self, uint32_t instance, const float* weights, uint32_t count, uint32_t offset) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setMorphWeights(filament::RenderableManager::Instance(instance), weights, static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(self)->setMorphWeights(filament::RenderableManager::Instance(instance), weights, static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaRenderableManager_setMorphTargetBufferOffsetAt(FilaRenderableManager* self, uint32_t instance, uint32_t level, uint32_t primitiveIndex, uint32_t offset) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setMorphTargetBufferOffsetAt(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(level), static_cast<size_t>(primitiveIndex), static_cast<size_t>(offset));
+    fila::cpp(self)->setMorphTargetBufferOffsetAt(filament::RenderableManager::Instance(instance), static_cast<uint8_t>(level), static_cast<size_t>(primitiveIndex), static_cast<size_t>(offset));
 }
 
 FilaMorphTargetBuffer* FilaRenderableManager_getMorphTargetBuffer(const FilaRenderableManager* self, uint32_t instance) {
-    return reinterpret_cast<FilaMorphTargetBuffer*>(reinterpret_cast<const filament::RenderableManager*>(self)->getMorphTargetBuffer(filament::RenderableManager::Instance(instance)));
+    return fila::c(fila::cpp(self)->getMorphTargetBuffer(filament::RenderableManager::Instance(instance)));
 }
 
 uint32_t FilaRenderableManager_getMorphTargetCount(const FilaRenderableManager* self, uint32_t instance) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getMorphTargetCount(filament::RenderableManager::Instance(instance)));
+    return static_cast<uint32_t>(fila::cpp(self)->getMorphTargetCount(filament::RenderableManager::Instance(instance)));
 }
 
 uint32_t FilaRenderableManager_getPrimitiveCount(const FilaRenderableManager* self, uint32_t instance) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getPrimitiveCount(filament::RenderableManager::Instance(instance)));
+    return static_cast<uint32_t>(fila::cpp(self)->getPrimitiveCount(filament::RenderableManager::Instance(instance)));
 }
 
 uint32_t FilaRenderableManager_getInstanceCount(const FilaRenderableManager* self, uint32_t instance) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getInstanceCount(filament::RenderableManager::Instance(instance)));
+    return static_cast<uint32_t>(fila::cpp(self)->getInstanceCount(filament::RenderableManager::Instance(instance)));
 }
 
 void FilaRenderableManager_setMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, const FilaMaterialInstance* materialInstance) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), reinterpret_cast<const filament::MaterialInstance*>(materialInstance));
+    fila::cpp(self)->setMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), fila::cpp(materialInstance));
 }
 
 void FilaRenderableManager_clearMaterialInstanceAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex) {
-    reinterpret_cast<filament::RenderableManager*>(self)->clearMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex));
+    fila::cpp(self)->clearMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex));
 }
 
 FilaMaterialInstance* FilaRenderableManager_getMaterialInstanceAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex) {
-    return reinterpret_cast<FilaMaterialInstance*>(reinterpret_cast<const filament::RenderableManager*>(self)->getMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex)));
+    return fila::c(fila::cpp(self)->getMaterialInstanceAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex)));
 }
 
 void FilaRenderableManager_setGeometryAt_IndexBuffer_size_t_size_t(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, uint32_t offset, uint32_t count) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), reinterpret_cast<filament::IndexBuffer*>(indices), static_cast<size_t>(offset), static_cast<size_t>(count));
+    fila::cpp(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), fila::cpp(indices), static_cast<size_t>(offset), static_cast<size_t>(count));
 }
 
 void FilaRenderableManager_setGeometryAt_size_t_size_t(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, FilaPrimitiveType type, FilaVertexBuffer* vertices, uint32_t offset, uint32_t count) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), static_cast<size_t>(offset), static_cast<size_t>(count));
+    fila::cpp(self)->setGeometryAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<filament::backend::PrimitiveType>(type), fila::cpp(vertices), static_cast<size_t>(offset), static_cast<size_t>(count));
 }
 
 void FilaRenderableManager_setBlendOrderAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, uint32_t order) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setBlendOrderAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<uint16_t>(order));
+    fila::cpp(self)->setBlendOrderAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), static_cast<uint16_t>(order));
 }
 
 uint32_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::RenderableManager*>(self)->getBlendOrderAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex)));
+    return static_cast<uint32_t>(fila::cpp(self)->getBlendOrderAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex)));
 }
 
 void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, bool enabled) {
-    reinterpret_cast<filament::RenderableManager*>(self)->setGlobalBlendOrderEnabledAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), enabled);
+    fila::cpp(self)->setGlobalBlendOrderEnabledAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex), enabled);
 }
 
 bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex) {
-    return reinterpret_cast<const filament::RenderableManager*>(self)->isGlobalBlendOrderEnabledAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex));
+    return fila::cpp(self)->isGlobalBlendOrderEnabledAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex));
 }
 
 uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex) {
-    return (reinterpret_cast<const filament::RenderableManager*>(self)->getEnabledAttributesAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex))).getValue();
+    return (fila::cpp(self)->getEnabledAttributesAt(filament::RenderableManager::Instance(instance), static_cast<size_t>(primitiveIndex))).getValue();
 }
 
 } // extern "C"

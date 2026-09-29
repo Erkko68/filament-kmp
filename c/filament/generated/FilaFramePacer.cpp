@@ -5,159 +5,159 @@
 extern "C" {
 
 FilaFramePacerHardwareTimeline* FilaFramePacerHardwareTimeline_create(void) {
-    return reinterpret_cast<FilaFramePacerHardwareTimeline*>(new filament::FramePacer::HardwareTimeline());
+    return fila::c(new filament::FramePacer::HardwareTimeline());
 }
 
 void FilaFramePacerHardwareTimeline_destroy(FilaFramePacerHardwareTimeline* self) {
-    delete reinterpret_cast<filament::FramePacer::HardwareTimeline*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaFramePacerHardwareTimeline_getExpectedPresentationTime(const FilaFramePacerHardwareTimeline* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((reinterpret_cast<const filament::FramePacer::HardwareTimeline*>(self)->expectedPresentationTime).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->expectedPresentationTime).time_since_epoch()).count();
 }
 
 void FilaFramePacerHardwareTimeline_setExpectedPresentationTime(FilaFramePacerHardwareTimeline* self, int64_t value) {
-    reinterpret_cast<filament::FramePacer::HardwareTimeline*>(self)->expectedPresentationTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(self)->expectedPresentationTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 void FilaFramePacerHardwareTimeline_getDeadline(const FilaFramePacerHardwareTimeline* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((reinterpret_cast<const filament::FramePacer::HardwareTimeline*>(self)->deadline).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->deadline).time_since_epoch()).count();
 }
 
 void FilaFramePacerHardwareTimeline_setDeadline(FilaFramePacerHardwareTimeline* self, int64_t value) {
-    reinterpret_cast<filament::FramePacer::HardwareTimeline*>(self)->deadline = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(self)->deadline = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 FilaFramePacerVsyncTick* FilaFramePacerVsyncTick_create(void) {
-    return reinterpret_cast<FilaFramePacerVsyncTick*>(new filament::FramePacer::VsyncTick());
+    return fila::c(new filament::FramePacer::VsyncTick());
 }
 
 void FilaFramePacerVsyncTick_destroy(FilaFramePacerVsyncTick* self) {
-    delete reinterpret_cast<filament::FramePacer::VsyncTick*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaFramePacerVsyncTick_getBaseTime(const FilaFramePacerVsyncTick* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((reinterpret_cast<const filament::FramePacer::VsyncTick*>(self)->baseTime).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->baseTime).time_since_epoch()).count();
 }
 
 void FilaFramePacerVsyncTick_setBaseTime(FilaFramePacerVsyncTick* self, int64_t value) {
-    reinterpret_cast<filament::FramePacer::VsyncTick*>(self)->baseTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(self)->baseTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 void FilaFramePacerVsyncTick_getVsyncPeriod(const FilaFramePacerVsyncTick* self, int64_t* out) {
-    *out = (reinterpret_cast<const filament::FramePacer::VsyncTick*>(self)->vsyncPeriod).count();
+    *out = (fila::cpp(self)->vsyncPeriod).count();
 }
 
 void FilaFramePacerVsyncTick_setVsyncPeriod(FilaFramePacerVsyncTick* self, int64_t value) {
-    reinterpret_cast<filament::FramePacer::VsyncTick*>(self)->vsyncPeriod = std::chrono::nanoseconds(value);
+    fila::cpp(self)->vsyncPeriod = std::chrono::nanoseconds(value);
 }
 
 void FilaFramePacerVsyncTick_getFrameScheduleTime(const FilaFramePacerVsyncTick* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((reinterpret_cast<const filament::FramePacer::VsyncTick*>(self)->frameScheduleTime).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->frameScheduleTime).time_since_epoch()).count();
 }
 
 void FilaFramePacerVsyncTick_setFrameScheduleTime(FilaFramePacerVsyncTick* self, int64_t value) {
-    reinterpret_cast<filament::FramePacer::VsyncTick*>(self)->frameScheduleTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
+    fila::cpp(self)->frameScheduleTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
 FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void) {
-    return reinterpret_cast<FilaFramePacerConfiguration*>(new filament::FramePacer::Configuration());
+    return fila::c(new filament::FramePacer::Configuration());
 }
 
 void FilaFramePacerConfiguration_destroy(FilaFramePacerConfiguration* self) {
-    delete reinterpret_cast<filament::FramePacer::Configuration*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaFramePacerConfiguration_getTargetFrameRate(const FilaFramePacerConfiguration* self) {
-    return reinterpret_cast<const filament::FramePacer::Configuration*>(self)->targetFrameRate;
+    return fila::cpp(self)->targetFrameRate;
 }
 
 void FilaFramePacerConfiguration_setTargetFrameRate(FilaFramePacerConfiguration* self, float value) {
-    reinterpret_cast<filament::FramePacer::Configuration*>(self)->targetFrameRate = value;
+    fila::cpp(self)->targetFrameRate = value;
 }
 
 void FilaFramePacerConfiguration_getLatency(const FilaFramePacerConfiguration* self, int64_t* out) {
-    *out = (reinterpret_cast<const filament::FramePacer::Configuration*>(self)->latency).count();
+    *out = (fila::cpp(self)->latency).count();
 }
 
 void FilaFramePacerConfiguration_setLatency(FilaFramePacerConfiguration* self, int64_t value) {
-    reinterpret_cast<filament::FramePacer::Configuration*>(self)->latency = std::chrono::nanoseconds(value);
+    fila::cpp(self)->latency = std::chrono::nanoseconds(value);
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_create(void) {
-    return reinterpret_cast<FilaFramePacerBuilder*>(new filament::FramePacer::Builder());
+    return fila::c(new filament::FramePacer::Builder());
 }
 
 void FilaFramePacerBuilder_destroy(FilaFramePacerBuilder* self) {
-    delete reinterpret_cast<filament::FramePacer::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_targetFrameRate(FilaFramePacerBuilder* self, float fps) {
-    return reinterpret_cast<FilaFramePacerBuilder*>(&reinterpret_cast<filament::FramePacer::Builder*>(self)->targetFrameRate(fps));
+    return fila::c(&fila::cpp(self)->targetFrameRate(fps));
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_latency(FilaFramePacerBuilder* self, int64_t latency) {
-    return reinterpret_cast<FilaFramePacerBuilder*>(&reinterpret_cast<filament::FramePacer::Builder*>(self)->latency(std::chrono::nanoseconds(latency)));
+    return fila::c(&fila::cpp(self)->latency(std::chrono::nanoseconds(latency)));
 }
 
 FilaFramePacerBuilder* FilaFramePacerBuilder_latencyFrames(FilaFramePacerBuilder* self, uint32_t frames) {
-    return reinterpret_cast<FilaFramePacerBuilder*>(&reinterpret_cast<filament::FramePacer::Builder*>(self)->latencyFrames(frames));
+    return fila::c(&fila::cpp(self)->latencyFrames(frames));
 }
 
 FilaFramePacer* FilaFramePacerBuilder_build(const FilaFramePacerBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaFramePacer*>(reinterpret_cast<const filament::FramePacer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaFramePacer_configure(FilaFramePacer* self, const FilaFramePacerConfiguration* config) {
-    reinterpret_cast<filament::FramePacer*>(self)->configure(*reinterpret_cast<const filament::FramePacer::Configuration*>(config));
+    fila::cpp(self)->configure(*fila::cpp(config));
 }
 
 void FilaFramePacer_getConfiguration(const FilaFramePacer* self, FilaFramePacerConfiguration* out) {
-    *reinterpret_cast<filament::FramePacer::Configuration*>(out) = reinterpret_cast<const filament::FramePacer*>(self)->getConfiguration();
+    *fila::cpp(out) = fila::cpp(self)->getConfiguration();
 }
 
 FilaFramePacerFrameStatus FilaFramePacer_setupFrame(FilaFramePacer* self, const FilaFramePacerVsyncTick* tick) {
-    return static_cast<FilaFramePacerFrameStatus>(reinterpret_cast<filament::FramePacer*>(self)->setupFrame(*reinterpret_cast<const filament::FramePacer::VsyncTick*>(tick)));
+    return static_cast<FilaFramePacerFrameStatus>(fila::cpp(self)->setupFrame(*fila::cpp(tick)));
 }
 
 bool FilaFramePacer_setupExtraFrame(FilaFramePacer* self) {
-    return reinterpret_cast<filament::FramePacer*>(self)->setupExtraFrame();
+    return fila::cpp(self)->setupExtraFrame();
 }
 
 bool FilaFramePacer_hasGpuFallenBehind(FilaFramePacer* self, FilaRenderer* renderer) {
-    return reinterpret_cast<filament::FramePacer*>(self)->hasGpuFallenBehind(reinterpret_cast<filament::Renderer*>(renderer));
+    return fila::cpp(self)->hasGpuFallenBehind(fila::cpp(renderer));
 }
 
 void FilaFramePacer_applyPresentationTime(FilaFramePacer* self, FilaRenderer* renderer) {
-    reinterpret_cast<filament::FramePacer*>(self)->applyPresentationTime(reinterpret_cast<filament::Renderer*>(renderer));
+    fila::cpp(self)->applyPresentationTime(fila::cpp(renderer));
 }
 
 void FilaFramePacer_getExpectedPresentationTime(const FilaFramePacer* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((reinterpret_cast<const filament::FramePacer*>(self)->getExpectedPresentationTime()).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->getExpectedPresentationTime()).time_since_epoch()).count();
 }
 
 void FilaFramePacer_getRenderingDeadline(const FilaFramePacer* self, int64_t* out) {
-    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((reinterpret_cast<const filament::FramePacer*>(self)->getRenderingDeadline()).time_since_epoch()).count();
+    *out = std::chrono::duration_cast<std::chrono::nanoseconds>((fila::cpp(self)->getRenderingDeadline()).time_since_epoch()).count();
 }
 
 void FilaFramePacer_getEffectiveLatency(const FilaFramePacer* self, int64_t* out) {
-    *out = (reinterpret_cast<const filament::FramePacer*>(self)->getEffectiveLatency()).count();
+    *out = (fila::cpp(self)->getEffectiveLatency()).count();
 }
 
 FilaFramePacerPacingStatus FilaFramePacer_getPacingStatus(const FilaFramePacer* self) {
-    return static_cast<FilaFramePacerPacingStatus>(reinterpret_cast<const filament::FramePacer*>(self)->getPacingStatus());
+    return static_cast<FilaFramePacerPacingStatus>(fila::cpp(self)->getPacingStatus());
 }
 
 void FilaFramePacer_resetPacing(FilaFramePacer* self) {
-    reinterpret_cast<filament::FramePacer*>(self)->resetPacing();
+    fila::cpp(self)->resetPacing();
 }
 
 float FilaFramePacer_getSelectedFrameRate(const FilaFramePacer* self) {
-    return reinterpret_cast<const filament::FramePacer*>(self)->getSelectedFrameRate();
+    return fila::cpp(self)->getSelectedFrameRate();
 }
 
 bool FilaFramePacer_isExactFrameRateAchieved(const FilaFramePacer* self) {
-    return reinterpret_cast<const filament::FramePacer*>(self)->isExactFrameRateAchieved();
+    return fila::cpp(self)->isExactFrameRateAchieved();
 }
 
 } // extern "C"

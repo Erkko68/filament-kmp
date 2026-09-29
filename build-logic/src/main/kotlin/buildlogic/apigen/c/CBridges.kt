@@ -59,7 +59,11 @@ private val BUFFER_CALLBACK = "FilaBufferDescriptorCallback" to "typedef void (*
 private val USER_CALLBACK = "FilaCallback" to "typedef void (*FilaCallback)(void* user);"
 private val ARG_CALLBACK = "FilaArgCallback" to "typedef void (*FilaArgCallback)(void* arg, void* user);"
 
-private val STRINGS = setOf("std::string_view", "std::string", "utils::CString", "utils::ImmutableCString")
+private const val STATIC_STRING = "utils::StaticString"
+private val STRINGS = setOf("std::string_view", "std::string", "utils::CString", "utils::ImmutableCString", STATIC_STRING)
+
+/** String types only literals convert to; overloads taking `const char*` cover them. */
+internal val LITERAL_ONLY = setOf("filament::MaterialInstance::StringLiteral")
 
 /** Why a declaration stays hand-written; the generator leaves a comment saying so instead of code. */
 internal class Unsupported(reason: String) : Exception(reason)
@@ -80,9 +84,12 @@ internal class CBridges(private val api: CppApi) {
      * A record with public fields, or private ones C can create and copy (camutils' Bookmark). C holds it by pointer
      * like any other, but copies it in and out like a value.
      */
-    fun isValue(record: String) = api.records.getValue(record).let { r ->
-        r.fields.any { it.isPublic } || (r.fields.isNotEmpty() && creatable(r) && r.copyable)
+    fun isValue(record: String): Boolean = api.records.getValue(record).let { r ->
+        r.fields.any { it.isPublic } || (r.fields.isNotEmpty() && creatable(r) && r.copyable) || twins(r).any { isValue(it.name) }
     }
+
+    /** Bases with [record]'s C name (backend::Viewport under filament::Viewport): C sees one type, so it gets theirs. */
+    fun twins(record: CppRecord) = record.bases.mapNotNull { api.records[it] }.filter { CNames.type(it.name) == CNames.type(record.name) }
 
     /** A class template C binds, or a record nested in one: C binds the instantiation the library exports. */
     fun instantiated(name: String) = instantiations(name).isNotEmpty()
@@ -219,7 +226,8 @@ internal class CBridges(private val api: CppApi) {
         fun string(decl: String): CBridge {
             if (!byValue) throw Unsupported("$decl by pointer")
             return when {
-                !result -> CBridge("const char*", { "$decl($it)" })
+                // Only literals make a StaticString; fila::staticString makes one because everything taking it copies it.
+                !result -> CBridge("const char*", { if (decl == STATIC_STRING) "fila::staticString($it)" else "$decl($it)" })
                 // ponytail: assumes the view is NUL-terminated (literals, CString storage); an out length if one isn't.
                 decl == "std::string_view" -> CBridge("const char*", { "($it).data()" })
                 indirection == null && !lvalue -> throw Unsupported("$decl result: C would point into a destroyed temporary")
@@ -261,7 +269,7 @@ internal class CBridges(private val api: CppApi) {
         fun math(decl: String): CBridge {
             val name = CNames.type(decl)
             return when {
-                !byValue -> pointer(name, decl)
+                !byValue -> handle(name)
                 result -> CBridge(name, { "std::bit_cast<$name>($it)" }, out = true)
                 else -> CBridge("const $name*", { "std::bit_cast<$decl>(*$it)" })
             }
@@ -272,10 +280,10 @@ internal class CBridges(private val api: CppApi) {
             val name = CNames.type(decl)
             return when {
                 !value && indirection == null -> throw Unsupported("$decl by value")
-                !value || !byValue -> pointer(name, decl)
-                !result -> CBridge("const $name*", { "*reinterpret_cast<const $decl*>($it)" })
+                !value || !byValue -> handle(name)
+                !result -> CBridge("const $name*", { "*fila::cpp($it)" })
                 !copyable -> throw Unsupported("$decl result: C can't create one to copy it into")
-                else -> CBridge(name, { it }, out = true, store = { "*reinterpret_cast<$decl*>(out) = $it;" })
+                else -> CBridge(name, { it }, out = true, store = { "*fila::cpp(out) = $it;" })
             }
         }
 
@@ -288,6 +296,13 @@ internal class CBridges(private val api: CppApi) {
             val address = if (indirection == "*") "" else "&"
             return if (result) CBridge(cType, { "reinterpret_cast<$cType>($address$it)" })
             else CBridge(cType, { (if (indirection == "*") "" else "*") + "reinterpret_cast<$c$cppName*>($it)" })
+        }
+
+        /** A pointer to a record's handle or a math mirror, converted by the `FILA_TYPE` overloads. */
+        private fun handle(cName: String): CBridge {
+            val ref = indirection != "*"
+            return if (result) CBridge("$c$cName*", { "fila::c(${if (ref) "&" else ""}$it)" })
+            else CBridge("$c$cName*", { "${if (ref) "*" else ""}fila::cpp($it)" })
         }
     }
 }

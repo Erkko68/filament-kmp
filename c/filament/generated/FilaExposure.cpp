@@ -5,7 +5,7 @@
 extern "C" {
 
 float FilaExposure_ev100_Camera(const FilaCamera* camera) {
-    return filament::Exposure::ev100(*reinterpret_cast<const filament::Camera*>(camera));
+    return filament::Exposure::ev100(*fila::cpp(camera));
 }
 
 float FilaExposure_ev100_float_float_float(float aperture, float shutterSpeed, float sensitivity) {
@@ -21,7 +21,7 @@ float FilaExposure_ev100FromIlluminance(float illuminance) {
 }
 
 float FilaExposure_exposure_Camera(const FilaCamera* camera) {
-    return filament::Exposure::exposure(*reinterpret_cast<const filament::Camera*>(camera));
+    return filament::Exposure::exposure(*fila::cpp(camera));
 }
 
 float FilaExposure_exposure_float_float_float(float aperture, float shutterSpeed, float sensitivity) {
@@ -33,7 +33,7 @@ float FilaExposure_exposure_float(float ev100) {
 }
 
 float FilaExposure_luminance_Camera(const FilaCamera* camera) {
-    return filament::Exposure::luminance(*reinterpret_cast<const filament::Camera*>(camera));
+    return filament::Exposure::luminance(*fila::cpp(camera));
 }
 
 float FilaExposure_luminance_float_float_float(float aperture, float shutterSpeed, float sensitivity) {
@@ -45,7 +45,7 @@ float FilaExposure_luminance_float(float ev100) {
 }
 
 float FilaExposure_illuminance_Camera(const FilaCamera* camera) {
-    return filament::Exposure::illuminance(*reinterpret_cast<const filament::Camera*>(camera));
+    return filament::Exposure::illuminance(*fila::cpp(camera));
 }
 
 float FilaExposure_illuminance_float_float_float(float aperture, float shutterSpeed, float sensitivity) {

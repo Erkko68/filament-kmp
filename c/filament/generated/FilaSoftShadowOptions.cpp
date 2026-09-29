@@ -5,43 +5,43 @@
 extern "C" {
 
 FilaSoftShadowOptions* FilaSoftShadowOptions_create(void) {
-    return reinterpret_cast<FilaSoftShadowOptions*>(new filament::SoftShadowOptions());
+    return fila::c(new filament::SoftShadowOptions());
 }
 
 void FilaSoftShadowOptions_destroy(FilaSoftShadowOptions* self) {
-    delete reinterpret_cast<filament::SoftShadowOptions*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaSoftShadowOptions_getPenumbraScale(const FilaSoftShadowOptions* self) {
-    return reinterpret_cast<const filament::SoftShadowOptions*>(self)->penumbraScale;
+    return fila::cpp(self)->penumbraScale;
 }
 
 void FilaSoftShadowOptions_setPenumbraScale(FilaSoftShadowOptions* self, float value) {
-    reinterpret_cast<filament::SoftShadowOptions*>(self)->penumbraScale = value;
+    fila::cpp(self)->penumbraScale = value;
 }
 
 float FilaSoftShadowOptions_getPenumbraRatioScale(const FilaSoftShadowOptions* self) {
-    return reinterpret_cast<const filament::SoftShadowOptions*>(self)->penumbraRatioScale;
+    return fila::cpp(self)->penumbraRatioScale;
 }
 
 void FilaSoftShadowOptions_setPenumbraRatioScale(FilaSoftShadowOptions* self, float value) {
-    reinterpret_cast<filament::SoftShadowOptions*>(self)->penumbraRatioScale = value;
+    fila::cpp(self)->penumbraRatioScale = value;
 }
 
 float FilaSoftShadowOptions_getMaxPenumbraRatio(const FilaSoftShadowOptions* self) {
-    return reinterpret_cast<const filament::SoftShadowOptions*>(self)->maxPenumbraRatio;
+    return fila::cpp(self)->maxPenumbraRatio;
 }
 
 void FilaSoftShadowOptions_setMaxPenumbraRatio(FilaSoftShadowOptions* self, float value) {
-    reinterpret_cast<filament::SoftShadowOptions*>(self)->maxPenumbraRatio = value;
+    fila::cpp(self)->maxPenumbraRatio = value;
 }
 
 float FilaSoftShadowOptions_getMaxSearchRadius(const FilaSoftShadowOptions* self) {
-    return reinterpret_cast<const filament::SoftShadowOptions*>(self)->maxSearchRadius;
+    return fila::cpp(self)->maxSearchRadius;
 }
 
 void FilaSoftShadowOptions_setMaxSearchRadius(FilaSoftShadowOptions* self, float value) {
-    reinterpret_cast<filament::SoftShadowOptions*>(self)->maxSearchRadius = value;
+    fila::cpp(self)->maxSearchRadius = value;
 }
 
 } // extern "C"

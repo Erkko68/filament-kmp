@@ -5,43 +5,43 @@
 extern "C" {
 
 FilaGeometryTranscoderConfig* FilaGeometryTranscoderConfig_create(void) {
-    return reinterpret_cast<FilaGeometryTranscoderConfig*>(new filament::geometry::Transcoder::Config());
+    return fila::c(new filament::geometry::Transcoder::Config());
 }
 
 void FilaGeometryTranscoderConfig_destroy(FilaGeometryTranscoderConfig* self) {
-    delete reinterpret_cast<filament::geometry::Transcoder::Config*>(self);
+    delete fila::cpp(self);
 }
 
 FilaGeometryComponentType FilaGeometryTranscoderConfig_getComponentType(const FilaGeometryTranscoderConfig* self) {
-    return static_cast<FilaGeometryComponentType>(reinterpret_cast<const filament::geometry::Transcoder::Config*>(self)->componentType);
+    return static_cast<FilaGeometryComponentType>(fila::cpp(self)->componentType);
 }
 
 void FilaGeometryTranscoderConfig_setComponentType(FilaGeometryTranscoderConfig* self, FilaGeometryComponentType value) {
-    reinterpret_cast<filament::geometry::Transcoder::Config*>(self)->componentType = static_cast<filament::geometry::ComponentType>(value);
+    fila::cpp(self)->componentType = static_cast<filament::geometry::ComponentType>(value);
 }
 
 bool FilaGeometryTranscoderConfig_getNormalized(const FilaGeometryTranscoderConfig* self) {
-    return reinterpret_cast<const filament::geometry::Transcoder::Config*>(self)->normalized;
+    return fila::cpp(self)->normalized;
 }
 
 void FilaGeometryTranscoderConfig_setNormalized(FilaGeometryTranscoderConfig* self, bool value) {
-    reinterpret_cast<filament::geometry::Transcoder::Config*>(self)->normalized = value;
+    fila::cpp(self)->normalized = value;
 }
 
 uint32_t FilaGeometryTranscoderConfig_getComponentCount(const FilaGeometryTranscoderConfig* self) {
-    return reinterpret_cast<const filament::geometry::Transcoder::Config*>(self)->componentCount;
+    return fila::cpp(self)->componentCount;
 }
 
 void FilaGeometryTranscoderConfig_setComponentCount(FilaGeometryTranscoderConfig* self, uint32_t value) {
-    reinterpret_cast<filament::geometry::Transcoder::Config*>(self)->componentCount = value;
+    fila::cpp(self)->componentCount = value;
 }
 
 uint32_t FilaGeometryTranscoderConfig_getInputStrideBytes(const FilaGeometryTranscoderConfig* self) {
-    return reinterpret_cast<const filament::geometry::Transcoder::Config*>(self)->inputStrideBytes;
+    return fila::cpp(self)->inputStrideBytes;
 }
 
 void FilaGeometryTranscoderConfig_setInputStrideBytes(FilaGeometryTranscoderConfig* self, uint32_t value) {
-    reinterpret_cast<filament::geometry::Transcoder::Config*>(self)->inputStrideBytes = value;
+    fila::cpp(self)->inputStrideBytes = value;
 }
 
 } // extern "C"

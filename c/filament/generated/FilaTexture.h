@@ -20,8 +20,7 @@ FilaTextureBuilder* FilaTextureBuilder_sampler(FilaTextureBuilder* self, FilaSam
 FilaTextureBuilder* FilaTextureBuilder_format(FilaTextureBuilder* self, FilaTextureFormat format);
 FilaTextureBuilder* FilaTextureBuilder_usage(FilaTextureBuilder* self, FilaTextureUsage usage);
 FilaTextureBuilder* FilaTextureBuilder_swizzle(FilaTextureBuilder* self, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a);
-// TODO(handwritten) FilaTextureBuilder_name: Builder & filament::Texture::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaTextureBuilder* FilaTextureBuilder_name(FilaTextureBuilder* self, const char* name);
 FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self);
 // TODO(handwritten) FilaTextureBuilder_async: Builder & filament::Texture::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
 //     AsyncCompletionCallback: std::function

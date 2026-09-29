@@ -13,8 +13,7 @@ FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_create(void);
 void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self);
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_boneCount(FilaSkinningBufferBuilder* self, uint32_t boneCount);
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_initialize(FilaSkinningBufferBuilder* self, bool initialize);
-// TODO(handwritten) FilaSkinningBufferBuilder_name: Builder & filament::SkinningBuffer::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_name(FilaSkinningBufferBuilder* self, const char* name);
 FilaSkinningBuffer* FilaSkinningBufferBuilder_build(FilaSkinningBufferBuilder* self, FilaEngine* engine);
 
 // filament::SkinningBuffer

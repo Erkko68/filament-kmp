@@ -5,23 +5,23 @@
 extern "C" {
 
 FilaGT7ToneMapper* FilaGT7ToneMapper_create(void) {
-    return reinterpret_cast<FilaGT7ToneMapper*>(new filament::GT7ToneMapper());
+    return fila::c(new filament::GT7ToneMapper());
 }
 
 void FilaGT7ToneMapper_destroy(FilaGT7ToneMapper* self) {
-    delete reinterpret_cast<filament::GT7ToneMapper*>(self);
+    delete fila::cpp(self);
 }
 
 FilaToneMapper* FilaGT7ToneMapper_asToneMapper(FilaGT7ToneMapper* self) {
-    return reinterpret_cast<FilaToneMapper*>(static_cast<filament::ToneMapper*>(reinterpret_cast<filament::GT7ToneMapper*>(self)));
+    return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
 bool FilaGT7ToneMapper_isOneDimensional(const FilaGT7ToneMapper* self) {
-    return reinterpret_cast<const filament::GT7ToneMapper*>(self)->isOneDimensional();
+    return fila::cpp(self)->isOneDimensional();
 }
 
 bool FilaGT7ToneMapper_isLDR(const FilaGT7ToneMapper* self) {
-    return reinterpret_cast<const filament::GT7ToneMapper*>(self)->isLDR();
+    return fila::cpp(self)->isLDR();
 }
 
 } // extern "C"

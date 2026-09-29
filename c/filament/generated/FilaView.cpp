@@ -5,495 +5,495 @@
 extern "C" {
 
 FilaViewFroxelConfigurationInfo* FilaViewFroxelConfigurationInfo_create(void) {
-    return reinterpret_cast<FilaViewFroxelConfigurationInfo*>(new filament::View::FroxelConfigurationInfo());
+    return fila::c(new filament::View::FroxelConfigurationInfo());
 }
 
 void FilaViewFroxelConfigurationInfo_destroy(FilaViewFroxelConfigurationInfo* self) {
-    delete reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaViewFroxelConfigurationInfo_getWidth(const FilaViewFroxelConfigurationInfo* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->width);
+    return static_cast<uint32_t>(fila::cpp(self)->width);
 }
 
 void FilaViewFroxelConfigurationInfo_setWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->width = static_cast<uint16_t>(value);
+    fila::cpp(self)->width = static_cast<uint16_t>(value);
 }
 
 uint32_t FilaViewFroxelConfigurationInfo_getHeight(const FilaViewFroxelConfigurationInfo* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->height);
+    return static_cast<uint32_t>(fila::cpp(self)->height);
 }
 
 void FilaViewFroxelConfigurationInfo_setHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->height = static_cast<uint16_t>(value);
+    fila::cpp(self)->height = static_cast<uint16_t>(value);
 }
 
 uint32_t FilaViewFroxelConfigurationInfo_getDepth(const FilaViewFroxelConfigurationInfo* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->depth);
+    return static_cast<uint32_t>(fila::cpp(self)->depth);
 }
 
 void FilaViewFroxelConfigurationInfo_setDepth(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->depth = static_cast<uint16_t>(value);
+    fila::cpp(self)->depth = static_cast<uint16_t>(value);
 }
 
 uint32_t FilaViewFroxelConfigurationInfo_getViewportWidth(const FilaViewFroxelConfigurationInfo* self) {
-    return reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->viewportWidth;
+    return fila::cpp(self)->viewportWidth;
 }
 
 void FilaViewFroxelConfigurationInfo_setViewportWidth(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->viewportWidth = value;
+    fila::cpp(self)->viewportWidth = value;
 }
 
 uint32_t FilaViewFroxelConfigurationInfo_getViewportHeight(const FilaViewFroxelConfigurationInfo* self) {
-    return reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->viewportHeight;
+    return fila::cpp(self)->viewportHeight;
 }
 
 void FilaViewFroxelConfigurationInfo_setViewportHeight(FilaViewFroxelConfigurationInfo* self, uint32_t value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->viewportHeight = value;
+    fila::cpp(self)->viewportHeight = value;
 }
 
 void FilaViewFroxelConfigurationInfo_getFroxelDimension(const FilaViewFroxelConfigurationInfo* self, FilaUint2* out) {
-    *out = std::bit_cast<FilaUint2>(reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->froxelDimension);
+    *out = std::bit_cast<FilaUint2>(fila::cpp(self)->froxelDimension);
 }
 
 void FilaViewFroxelConfigurationInfo_setFroxelDimension(FilaViewFroxelConfigurationInfo* self, const FilaUint2* value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->froxelDimension = std::bit_cast<filament::math::uint2>(*value);
+    fila::cpp(self)->froxelDimension = std::bit_cast<filament::math::uint2>(*value);
 }
 
 float FilaViewFroxelConfigurationInfo_getZLightFar(const FilaViewFroxelConfigurationInfo* self) {
-    return reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->zLightFar;
+    return fila::cpp(self)->zLightFar;
 }
 
 void FilaViewFroxelConfigurationInfo_setZLightFar(FilaViewFroxelConfigurationInfo* self, float value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->zLightFar = value;
+    fila::cpp(self)->zLightFar = value;
 }
 
 float FilaViewFroxelConfigurationInfo_getLinearizer(const FilaViewFroxelConfigurationInfo* self) {
-    return reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->linearizer;
+    return fila::cpp(self)->linearizer;
 }
 
 void FilaViewFroxelConfigurationInfo_setLinearizer(FilaViewFroxelConfigurationInfo* self, float value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->linearizer = value;
+    fila::cpp(self)->linearizer = value;
 }
 
 void FilaViewFroxelConfigurationInfo_getP(const FilaViewFroxelConfigurationInfo* self, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->p);
+    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->p);
 }
 
 void FilaViewFroxelConfigurationInfo_setP(FilaViewFroxelConfigurationInfo* self, const FilaMat4f* value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->p = std::bit_cast<filament::math::mat4f>(*value);
+    fila::cpp(self)->p = std::bit_cast<filament::math::mat4f>(*value);
 }
 
 void FilaViewFroxelConfigurationInfo_getClipTransform(const FilaViewFroxelConfigurationInfo* self, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(self)->clipTransform);
+    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->clipTransform);
 }
 
 void FilaViewFroxelConfigurationInfo_setClipTransform(FilaViewFroxelConfigurationInfo* self, const FilaFloat4* value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfo*>(self)->clipTransform = std::bit_cast<filament::math::float4>(*value);
+    fila::cpp(self)->clipTransform = std::bit_cast<filament::math::float4>(*value);
 }
 
 FilaViewFroxelConfigurationInfoWithAge* FilaViewFroxelConfigurationInfoWithAge_create(void) {
-    return reinterpret_cast<FilaViewFroxelConfigurationInfoWithAge*>(new filament::View::FroxelConfigurationInfoWithAge());
+    return fila::c(new filament::View::FroxelConfigurationInfoWithAge());
 }
 
 void FilaViewFroxelConfigurationInfoWithAge_destroy(FilaViewFroxelConfigurationInfoWithAge* self) {
-    delete reinterpret_cast<filament::View::FroxelConfigurationInfoWithAge*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaViewFroxelConfigurationInfoWithAge_getInfo(const FilaViewFroxelConfigurationInfoWithAge* self, FilaViewFroxelConfigurationInfo* out) {
-    *reinterpret_cast<filament::View::FroxelConfigurationInfo*>(out) = reinterpret_cast<const filament::View::FroxelConfigurationInfoWithAge*>(self)->info;
+    *fila::cpp(out) = fila::cpp(self)->info;
 }
 
 void FilaViewFroxelConfigurationInfoWithAge_setInfo(FilaViewFroxelConfigurationInfoWithAge* self, const FilaViewFroxelConfigurationInfo* value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfoWithAge*>(self)->info = *reinterpret_cast<const filament::View::FroxelConfigurationInfo*>(value);
+    fila::cpp(self)->info = *fila::cpp(value);
 }
 
 uint32_t FilaViewFroxelConfigurationInfoWithAge_getAge(const FilaViewFroxelConfigurationInfoWithAge* self) {
-    return reinterpret_cast<const filament::View::FroxelConfigurationInfoWithAge*>(self)->age;
+    return fila::cpp(self)->age;
 }
 
 void FilaViewFroxelConfigurationInfoWithAge_setAge(FilaViewFroxelConfigurationInfoWithAge* self, uint32_t value) {
-    reinterpret_cast<filament::View::FroxelConfigurationInfoWithAge*>(self)->age = value;
+    fila::cpp(self)->age = value;
 }
 
 FilaViewPickingQueryResult* FilaViewPickingQueryResult_create(void) {
-    return reinterpret_cast<FilaViewPickingQueryResult*>(new filament::View::PickingQueryResult());
+    return fila::c(new filament::View::PickingQueryResult());
 }
 
 void FilaViewPickingQueryResult_destroy(FilaViewPickingQueryResult* self) {
-    delete reinterpret_cast<filament::View::PickingQueryResult*>(self);
+    delete fila::cpp(self);
 }
 
 FilaEntity FilaViewPickingQueryResult_getRenderable(const FilaViewPickingQueryResult* self) {
-    return utils::Entity::smuggle(reinterpret_cast<const filament::View::PickingQueryResult*>(self)->renderable);
+    return utils::Entity::smuggle(fila::cpp(self)->renderable);
 }
 
 void FilaViewPickingQueryResult_setRenderable(FilaViewPickingQueryResult* self, FilaEntity value) {
-    reinterpret_cast<filament::View::PickingQueryResult*>(self)->renderable = utils::Entity::import(value);
+    fila::cpp(self)->renderable = utils::Entity::import(value);
 }
 
 float FilaViewPickingQueryResult_getDepth(const FilaViewPickingQueryResult* self) {
-    return reinterpret_cast<const filament::View::PickingQueryResult*>(self)->depth;
+    return fila::cpp(self)->depth;
 }
 
 void FilaViewPickingQueryResult_setDepth(FilaViewPickingQueryResult* self, float value) {
-    reinterpret_cast<filament::View::PickingQueryResult*>(self)->depth = value;
+    fila::cpp(self)->depth = value;
 }
 
 uint32_t FilaViewPickingQueryResult_getReserved1(const FilaViewPickingQueryResult* self) {
-    return reinterpret_cast<const filament::View::PickingQueryResult*>(self)->reserved1;
+    return fila::cpp(self)->reserved1;
 }
 
 void FilaViewPickingQueryResult_setReserved1(FilaViewPickingQueryResult* self, uint32_t value) {
-    reinterpret_cast<filament::View::PickingQueryResult*>(self)->reserved1 = value;
+    fila::cpp(self)->reserved1 = value;
 }
 
 uint32_t FilaViewPickingQueryResult_getReserved2(const FilaViewPickingQueryResult* self) {
-    return reinterpret_cast<const filament::View::PickingQueryResult*>(self)->reserved2;
+    return fila::cpp(self)->reserved2;
 }
 
 void FilaViewPickingQueryResult_setReserved2(FilaViewPickingQueryResult* self, uint32_t value) {
-    reinterpret_cast<filament::View::PickingQueryResult*>(self)->reserved2 = value;
+    fila::cpp(self)->reserved2 = value;
 }
 
 void FilaViewPickingQueryResult_getFragCoords(const FilaViewPickingQueryResult* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::View::PickingQueryResult*>(self)->fragCoords);
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->fragCoords);
 }
 
 void FilaViewPickingQueryResult_setFragCoords(FilaViewPickingQueryResult* self, const FilaFloat3* value) {
-    reinterpret_cast<filament::View::PickingQueryResult*>(self)->fragCoords = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->fragCoords = std::bit_cast<filament::math::float3>(*value);
 }
 
 FilaViewPickingQuery* FilaViewPickingQuery_create(void) {
-    return reinterpret_cast<FilaViewPickingQuery*>(new filament::View::PickingQuery());
+    return fila::c(new filament::View::PickingQuery());
 }
 
 void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self) {
-    delete reinterpret_cast<filament::View::PickingQuery*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaView_setName(FilaView* self, const char* name) {
-    reinterpret_cast<filament::View*>(self)->setName(name);
+    fila::cpp(self)->setName(name);
 }
 
 const char* FilaView_getName(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->getName();
+    return fila::cpp(self)->getName();
 }
 
 void FilaView_setScene(FilaView* self, FilaScene* scene) {
-    reinterpret_cast<filament::View*>(self)->setScene(reinterpret_cast<filament::Scene*>(scene));
+    fila::cpp(self)->setScene(fila::cpp(scene));
 }
 
 FilaScene* FilaView_getScene(FilaView* self) {
-    return reinterpret_cast<FilaScene*>(reinterpret_cast<filament::View*>(self)->getScene());
+    return fila::c(fila::cpp(self)->getScene());
 }
 
 void FilaView_setRenderTarget(FilaView* self, FilaRenderTarget* renderTarget) {
-    reinterpret_cast<filament::View*>(self)->setRenderTarget(reinterpret_cast<filament::RenderTarget*>(renderTarget));
+    fila::cpp(self)->setRenderTarget(fila::cpp(renderTarget));
 }
 
 FilaRenderTarget* FilaView_getRenderTarget(const FilaView* self) {
-    return reinterpret_cast<FilaRenderTarget*>(reinterpret_cast<const filament::View*>(self)->getRenderTarget());
+    return fila::c(fila::cpp(self)->getRenderTarget());
 }
 
 void FilaView_setViewport(FilaView* self, const FilaViewport* viewport) {
-    reinterpret_cast<filament::View*>(self)->setViewport(*reinterpret_cast<const filament::Viewport*>(viewport));
+    fila::cpp(self)->setViewport(*fila::cpp(viewport));
 }
 
-const FilaViewport* FilaView_getViewport(const FilaView* self) {
-    return reinterpret_cast<const FilaViewport*>(&reinterpret_cast<const filament::View*>(self)->getViewport());
+void FilaView_getViewport(const FilaView* self, FilaViewport* out) {
+    *fila::cpp(out) = fila::cpp(self)->getViewport();
 }
 
 void FilaView_setCamera(FilaView* self, FilaCamera* camera) {
-    reinterpret_cast<filament::View*>(self)->setCamera(reinterpret_cast<filament::Camera*>(camera));
+    fila::cpp(self)->setCamera(fila::cpp(camera));
 }
 
 bool FilaView_hasCamera(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->hasCamera();
+    return fila::cpp(self)->hasCamera();
 }
 
 FilaCamera* FilaView_getCamera(FilaView* self) {
-    return reinterpret_cast<FilaCamera*>(&reinterpret_cast<filament::View*>(self)->getCamera());
+    return fila::c(&fila::cpp(self)->getCamera());
 }
 
 void FilaView_setChannelDepthClearEnabled(FilaView* self, uint32_t channel, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setChannelDepthClearEnabled(static_cast<uint8_t>(channel), enabled);
+    fila::cpp(self)->setChannelDepthClearEnabled(static_cast<uint8_t>(channel), enabled);
 }
 
 bool FilaView_isChannelDepthClearEnabled(const FilaView* self, uint32_t channel) {
-    return reinterpret_cast<const filament::View*>(self)->isChannelDepthClearEnabled(static_cast<uint8_t>(channel));
+    return fila::cpp(self)->isChannelDepthClearEnabled(static_cast<uint8_t>(channel));
 }
 
 void FilaView_setBlendMode(FilaView* self, FilaBlendMode blendMode) {
-    reinterpret_cast<filament::View*>(self)->setBlendMode(static_cast<filament::BlendMode>(blendMode));
+    fila::cpp(self)->setBlendMode(static_cast<filament::BlendMode>(blendMode));
 }
 
 FilaBlendMode FilaView_getBlendMode(const FilaView* self) {
-    return static_cast<FilaBlendMode>(reinterpret_cast<const filament::View*>(self)->getBlendMode());
+    return static_cast<FilaBlendMode>(fila::cpp(self)->getBlendMode());
 }
 
 void FilaView_setVisibleLayers(FilaView* self, uint32_t select, uint32_t values) {
-    reinterpret_cast<filament::View*>(self)->setVisibleLayers(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
+    fila::cpp(self)->setVisibleLayers(static_cast<uint8_t>(select), static_cast<uint8_t>(values));
 }
 
 void FilaView_setLayerEnabled(FilaView* self, uint32_t layer, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setLayerEnabled(static_cast<size_t>(layer), enabled);
+    fila::cpp(self)->setLayerEnabled(static_cast<size_t>(layer), enabled);
 }
 
 uint32_t FilaView_getVisibleLayers(const FilaView* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::View*>(self)->getVisibleLayers());
+    return static_cast<uint32_t>(fila::cpp(self)->getVisibleLayers());
 }
 
 void FilaView_setShadowingEnabled(FilaView* self, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setShadowingEnabled(enabled);
+    fila::cpp(self)->setShadowingEnabled(enabled);
 }
 
 bool FilaView_isShadowingEnabled(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isShadowingEnabled();
+    return fila::cpp(self)->isShadowingEnabled();
 }
 
 void FilaView_setScreenSpaceRefractionEnabled(FilaView* self, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setScreenSpaceRefractionEnabled(enabled);
+    fila::cpp(self)->setScreenSpaceRefractionEnabled(enabled);
 }
 
 bool FilaView_isScreenSpaceRefractionEnabled(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isScreenSpaceRefractionEnabled();
+    return fila::cpp(self)->isScreenSpaceRefractionEnabled();
 }
 
 void FilaView_setAntiAliasing(FilaView* self, FilaAntiAliasing type) {
-    reinterpret_cast<filament::View*>(self)->setAntiAliasing(static_cast<filament::AntiAliasing>(type));
+    fila::cpp(self)->setAntiAliasing(static_cast<filament::AntiAliasing>(type));
 }
 
 FilaAntiAliasing FilaView_getAntiAliasing(const FilaView* self) {
-    return static_cast<FilaAntiAliasing>(reinterpret_cast<const filament::View*>(self)->getAntiAliasing());
+    return static_cast<FilaAntiAliasing>(fila::cpp(self)->getAntiAliasing());
 }
 
 void FilaView_setTemporalAntiAliasingOptions(FilaView* self, const FilaTemporalAntiAliasingOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setTemporalAntiAliasingOptions(*reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(options));
+    fila::cpp(self)->setTemporalAntiAliasingOptions(*fila::cpp(options));
 }
 
 void FilaView_getTemporalAntiAliasingOptions(const FilaView* self, FilaTemporalAntiAliasingOptions* out) {
-    *reinterpret_cast<filament::TemporalAntiAliasingOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getTemporalAntiAliasingOptions();
+    *fila::cpp(out) = fila::cpp(self)->getTemporalAntiAliasingOptions();
 }
 
 void FilaView_setScreenSpaceReflectionsOptions(FilaView* self, const FilaScreenSpaceReflectionsOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setScreenSpaceReflectionsOptions(*reinterpret_cast<const filament::ScreenSpaceReflectionsOptions*>(options));
+    fila::cpp(self)->setScreenSpaceReflectionsOptions(*fila::cpp(options));
 }
 
 void FilaView_getScreenSpaceReflectionsOptions(const FilaView* self, FilaScreenSpaceReflectionsOptions* out) {
-    *reinterpret_cast<filament::ScreenSpaceReflectionsOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getScreenSpaceReflectionsOptions();
+    *fila::cpp(out) = fila::cpp(self)->getScreenSpaceReflectionsOptions();
 }
 
 void FilaView_setGuardBandOptions(FilaView* self, const FilaGuardBandOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setGuardBandOptions(*reinterpret_cast<const filament::GuardBandOptions*>(options));
+    fila::cpp(self)->setGuardBandOptions(*fila::cpp(options));
 }
 
 void FilaView_getGuardBandOptions(const FilaView* self, FilaGuardBandOptions* out) {
-    *reinterpret_cast<filament::GuardBandOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getGuardBandOptions();
+    *fila::cpp(out) = fila::cpp(self)->getGuardBandOptions();
 }
 
 void FilaView_setMultiSampleAntiAliasingOptions(FilaView* self, const FilaMultiSampleAntiAliasingOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setMultiSampleAntiAliasingOptions(*reinterpret_cast<const filament::MultiSampleAntiAliasingOptions*>(options));
+    fila::cpp(self)->setMultiSampleAntiAliasingOptions(*fila::cpp(options));
 }
 
 void FilaView_getMultiSampleAntiAliasingOptions(const FilaView* self, FilaMultiSampleAntiAliasingOptions* out) {
-    *reinterpret_cast<filament::MultiSampleAntiAliasingOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getMultiSampleAntiAliasingOptions();
+    *fila::cpp(out) = fila::cpp(self)->getMultiSampleAntiAliasingOptions();
 }
 
 void FilaView_setColorGrading(FilaView* self, FilaColorGrading* colorGrading) {
-    reinterpret_cast<filament::View*>(self)->setColorGrading(reinterpret_cast<filament::ColorGrading*>(colorGrading));
+    fila::cpp(self)->setColorGrading(fila::cpp(colorGrading));
 }
 
 const FilaColorGrading* FilaView_getColorGrading(const FilaView* self) {
-    return reinterpret_cast<const FilaColorGrading*>(reinterpret_cast<const filament::View*>(self)->getColorGrading());
+    return fila::c(fila::cpp(self)->getColorGrading());
 }
 
 void FilaView_setAmbientOcclusionOptions(FilaView* self, const FilaAmbientOcclusionOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setAmbientOcclusionOptions(*reinterpret_cast<const filament::AmbientOcclusionOptions*>(options));
+    fila::cpp(self)->setAmbientOcclusionOptions(*fila::cpp(options));
 }
 
 void FilaView_getAmbientOcclusionOptions(const FilaView* self, FilaAmbientOcclusionOptions* out) {
-    *reinterpret_cast<filament::AmbientOcclusionOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getAmbientOcclusionOptions();
+    *fila::cpp(out) = fila::cpp(self)->getAmbientOcclusionOptions();
 }
 
 void FilaView_setBloomOptions(FilaView* self, const FilaBloomOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setBloomOptions(*reinterpret_cast<const filament::BloomOptions*>(options));
+    fila::cpp(self)->setBloomOptions(*fila::cpp(options));
 }
 
 void FilaView_getBloomOptions(const FilaView* self, FilaBloomOptions* out) {
-    *reinterpret_cast<filament::BloomOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getBloomOptions();
+    *fila::cpp(out) = fila::cpp(self)->getBloomOptions();
 }
 
 void FilaView_setFogOptions(FilaView* self, const FilaFogOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setFogOptions(*reinterpret_cast<const filament::FogOptions*>(options));
+    fila::cpp(self)->setFogOptions(*fila::cpp(options));
 }
 
 void FilaView_getFogOptions(const FilaView* self, FilaFogOptions* out) {
-    *reinterpret_cast<filament::FogOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getFogOptions();
+    *fila::cpp(out) = fila::cpp(self)->getFogOptions();
 }
 
 void FilaView_setDepthOfFieldOptions(FilaView* self, const FilaDepthOfFieldOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setDepthOfFieldOptions(*reinterpret_cast<const filament::DepthOfFieldOptions*>(options));
+    fila::cpp(self)->setDepthOfFieldOptions(*fila::cpp(options));
 }
 
 void FilaView_getDepthOfFieldOptions(const FilaView* self, FilaDepthOfFieldOptions* out) {
-    *reinterpret_cast<filament::DepthOfFieldOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getDepthOfFieldOptions();
+    *fila::cpp(out) = fila::cpp(self)->getDepthOfFieldOptions();
 }
 
 void FilaView_setVignetteOptions(FilaView* self, const FilaVignetteOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setVignetteOptions(*reinterpret_cast<const filament::VignetteOptions*>(options));
+    fila::cpp(self)->setVignetteOptions(*fila::cpp(options));
 }
 
 void FilaView_getVignetteOptions(const FilaView* self, FilaVignetteOptions* out) {
-    *reinterpret_cast<filament::VignetteOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getVignetteOptions();
+    *fila::cpp(out) = fila::cpp(self)->getVignetteOptions();
 }
 
 void FilaView_setDithering(FilaView* self, FilaDithering dithering) {
-    reinterpret_cast<filament::View*>(self)->setDithering(static_cast<filament::Dithering>(dithering));
+    fila::cpp(self)->setDithering(static_cast<filament::Dithering>(dithering));
 }
 
 FilaDithering FilaView_getDithering(const FilaView* self) {
-    return static_cast<FilaDithering>(reinterpret_cast<const filament::View*>(self)->getDithering());
+    return static_cast<FilaDithering>(fila::cpp(self)->getDithering());
 }
 
 void FilaView_setDynamicResolutionOptions(FilaView* self, const FilaDynamicResolutionOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setDynamicResolutionOptions(*reinterpret_cast<const filament::DynamicResolutionOptions*>(options));
+    fila::cpp(self)->setDynamicResolutionOptions(*fila::cpp(options));
 }
 
 void FilaView_getDynamicResolutionOptions(const FilaView* self, FilaDynamicResolutionOptions* out) {
-    *reinterpret_cast<filament::DynamicResolutionOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getDynamicResolutionOptions();
+    *fila::cpp(out) = fila::cpp(self)->getDynamicResolutionOptions();
 }
 
 void FilaView_getLastDynamicResolutionScale(const FilaView* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::View*>(self)->getLastDynamicResolutionScale());
+    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getLastDynamicResolutionScale());
 }
 
 void FilaView_setRenderQuality(FilaView* self, const FilaRenderQuality* renderQuality) {
-    reinterpret_cast<filament::View*>(self)->setRenderQuality(*reinterpret_cast<const filament::RenderQuality*>(renderQuality));
+    fila::cpp(self)->setRenderQuality(*fila::cpp(renderQuality));
 }
 
 void FilaView_getRenderQuality(const FilaView* self, FilaRenderQuality* out) {
-    *reinterpret_cast<filament::RenderQuality*>(out) = reinterpret_cast<const filament::View*>(self)->getRenderQuality();
+    *fila::cpp(out) = fila::cpp(self)->getRenderQuality();
 }
 
 void FilaView_setDynamicLightingOptions(FilaView* self, float zLightNear, float zLightFar) {
-    reinterpret_cast<filament::View*>(self)->setDynamicLightingOptions(zLightNear, zLightFar);
+    fila::cpp(self)->setDynamicLightingOptions(zLightNear, zLightFar);
 }
 
 void FilaView_setGridSize(FilaView* self, double size) {
-    reinterpret_cast<filament::View*>(self)->setGridSize(size);
+    fila::cpp(self)->setGridSize(size);
 }
 
 double FilaView_getGridSize(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->getGridSize();
+    return fila::cpp(self)->getGridSize();
 }
 
 double FilaView_getEffectiveGridSize(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->getEffectiveGridSize();
+    return fila::cpp(self)->getEffectiveGridSize();
 }
 
 void FilaView_setShadowType(FilaView* self, FilaShadowType shadow) {
-    reinterpret_cast<filament::View*>(self)->setShadowType(static_cast<filament::ShadowType>(shadow));
+    fila::cpp(self)->setShadowType(static_cast<filament::ShadowType>(shadow));
 }
 
 FilaShadowType FilaView_getShadowType(const FilaView* self) {
-    return static_cast<FilaShadowType>(reinterpret_cast<const filament::View*>(self)->getShadowType());
+    return static_cast<FilaShadowType>(fila::cpp(self)->getShadowType());
 }
 
 void FilaView_setVsmShadowOptions(FilaView* self, const FilaVsmShadowOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setVsmShadowOptions(*reinterpret_cast<const filament::VsmShadowOptions*>(options));
+    fila::cpp(self)->setVsmShadowOptions(*fila::cpp(options));
 }
 
 void FilaView_getVsmShadowOptions(const FilaView* self, FilaVsmShadowOptions* out) {
-    *reinterpret_cast<filament::VsmShadowOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getVsmShadowOptions();
+    *fila::cpp(out) = fila::cpp(self)->getVsmShadowOptions();
 }
 
 void FilaView_setSoftShadowOptions(FilaView* self, const FilaSoftShadowOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setSoftShadowOptions(*reinterpret_cast<const filament::SoftShadowOptions*>(options));
+    fila::cpp(self)->setSoftShadowOptions(*fila::cpp(options));
 }
 
 void FilaView_getSoftShadowOptions(const FilaView* self, FilaSoftShadowOptions* out) {
-    *reinterpret_cast<filament::SoftShadowOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getSoftShadowOptions();
+    *fila::cpp(out) = fila::cpp(self)->getSoftShadowOptions();
 }
 
 void FilaView_setPostProcessingEnabled(FilaView* self, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setPostProcessingEnabled(enabled);
+    fila::cpp(self)->setPostProcessingEnabled(enabled);
 }
 
 bool FilaView_isPostProcessingEnabled(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isPostProcessingEnabled();
+    return fila::cpp(self)->isPostProcessingEnabled();
 }
 
 void FilaView_setFrontFaceWindingInverted(FilaView* self, bool inverted) {
-    reinterpret_cast<filament::View*>(self)->setFrontFaceWindingInverted(inverted);
+    fila::cpp(self)->setFrontFaceWindingInverted(inverted);
 }
 
 bool FilaView_isFrontFaceWindingInverted(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isFrontFaceWindingInverted();
+    return fila::cpp(self)->isFrontFaceWindingInverted();
 }
 
 void FilaView_setTransparentPickingEnabled(FilaView* self, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setTransparentPickingEnabled(enabled);
+    fila::cpp(self)->setTransparentPickingEnabled(enabled);
 }
 
 bool FilaView_isTransparentPickingEnabled(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isTransparentPickingEnabled();
+    return fila::cpp(self)->isTransparentPickingEnabled();
 }
 
 void FilaView_setStencilBufferEnabled(FilaView* self, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setStencilBufferEnabled(enabled);
+    fila::cpp(self)->setStencilBufferEnabled(enabled);
 }
 
 bool FilaView_isStencilBufferEnabled(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isStencilBufferEnabled();
+    return fila::cpp(self)->isStencilBufferEnabled();
 }
 
 void FilaView_setStereoscopicOptions(FilaView* self, const FilaStereoscopicOptions* options) {
-    reinterpret_cast<filament::View*>(self)->setStereoscopicOptions(*reinterpret_cast<const filament::StereoscopicOptions*>(options));
+    fila::cpp(self)->setStereoscopicOptions(*fila::cpp(options));
 }
 
 void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptions* out) {
-    *reinterpret_cast<filament::StereoscopicOptions*>(out) = reinterpret_cast<const filament::View*>(self)->getStereoscopicOptions();
+    *fila::cpp(out) = fila::cpp(self)->getStereoscopicOptions();
 }
 
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling) {
-    reinterpret_cast<filament::View*>(self)->setFrustumCullingEnabled(culling);
+    fila::cpp(self)->setFrustumCullingEnabled(culling);
 }
 
 bool FilaView_isFrustumCullingEnabled(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->isFrustumCullingEnabled();
+    return fila::cpp(self)->isFrustumCullingEnabled();
 }
 
 void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera) {
-    reinterpret_cast<filament::View*>(self)->setDebugCamera(reinterpret_cast<filament::Camera*>(camera));
+    fila::cpp(self)->setDebugCamera(fila::cpp(camera));
 }
 
 void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled) {
-    reinterpret_cast<filament::View*>(self)->setFroxelVizEnabled(enabled);
+    fila::cpp(self)->setFroxelVizEnabled(enabled);
 }
 
 void FilaView_getFroxelConfigurationInfo(const FilaView* self, FilaViewFroxelConfigurationInfoWithAge* out) {
-    *reinterpret_cast<filament::View::FroxelConfigurationInfoWithAge*>(out) = reinterpret_cast<const filament::View*>(self)->getFroxelConfigurationInfo();
+    *fila::cpp(out) = fila::cpp(self)->getFroxelConfigurationInfo();
 }
 
 void FilaView_setMaterialGlobal(FilaView* self, uint32_t index, const FilaFloat4* value) {
-    reinterpret_cast<filament::View*>(self)->setMaterialGlobal(index, std::bit_cast<filament::math::float4>(*value));
+    fila::cpp(self)->setMaterialGlobal(index, std::bit_cast<filament::math::float4>(*value));
 }
 
 void FilaView_getMaterialGlobal(const FilaView* self, uint32_t index, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::View*>(self)->getMaterialGlobal(index));
+    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getMaterialGlobal(index));
 }
 
 FilaEntity FilaView_getFogEntity(const FilaView* self) {
-    return utils::Entity::smuggle(reinterpret_cast<const filament::View*>(self)->getFogEntity());
+    return utils::Entity::smuggle(fila::cpp(self)->getFogEntity());
 }
 
 int32_t FilaView_getVisibleRenderableCount(const FilaView* self) {
-    return reinterpret_cast<const filament::View*>(self)->getVisibleRenderableCount();
+    return fila::cpp(self)->getVisibleRenderableCount();
 }
 
 void FilaView_clearFrameHistory(FilaView* self, FilaEngine* engine) {
-    reinterpret_cast<filament::View*>(self)->clearFrameHistory(*reinterpret_cast<filament::Engine*>(engine));
+    fila::cpp(self)->clearFrameHistory(*fila::cpp(engine));
 }
 
 } // extern "C"

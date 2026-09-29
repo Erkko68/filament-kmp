@@ -13,8 +13,7 @@ FilaStreamBuilder* FilaStreamBuilder_create(void);
 void FilaStreamBuilder_destroy(FilaStreamBuilder* self);
 FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width);
 FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height);
-// TODO(handwritten) FilaStreamBuilder_name: Builder & filament::Stream::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* name);
 FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine);
 
 // filament::Stream

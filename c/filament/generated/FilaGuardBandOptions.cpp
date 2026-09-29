@@ -5,19 +5,19 @@
 extern "C" {
 
 FilaGuardBandOptions* FilaGuardBandOptions_create(void) {
-    return reinterpret_cast<FilaGuardBandOptions*>(new filament::GuardBandOptions());
+    return fila::c(new filament::GuardBandOptions());
 }
 
 void FilaGuardBandOptions_destroy(FilaGuardBandOptions* self) {
-    delete reinterpret_cast<filament::GuardBandOptions*>(self);
+    delete fila::cpp(self);
 }
 
 bool FilaGuardBandOptions_getEnabled(const FilaGuardBandOptions* self) {
-    return reinterpret_cast<const filament::GuardBandOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaGuardBandOptions_setEnabled(FilaGuardBandOptions* self, bool value) {
-    reinterpret_cast<filament::GuardBandOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 } // extern "C"

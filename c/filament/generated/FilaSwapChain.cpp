@@ -5,35 +5,35 @@
 extern "C" {
 
 bool FilaSwapChain_isProtectedContentSupported(FilaEngine* engine) {
-    return filament::SwapChain::isProtectedContentSupported(*reinterpret_cast<filament::Engine*>(engine));
+    return filament::SwapChain::isProtectedContentSupported(*fila::cpp(engine));
 }
 
 bool FilaSwapChain_isSRGBSwapChainSupported(FilaEngine* engine) {
-    return filament::SwapChain::isSRGBSwapChainSupported(*reinterpret_cast<filament::Engine*>(engine));
+    return filament::SwapChain::isSRGBSwapChainSupported(*fila::cpp(engine));
 }
 
 bool FilaSwapChain_isMSAASwapChainSupported(FilaEngine* engine, uint32_t samples) {
-    return filament::SwapChain::isMSAASwapChainSupported(*reinterpret_cast<filament::Engine*>(engine), samples);
+    return filament::SwapChain::isMSAASwapChainSupported(*fila::cpp(engine), samples);
 }
 
 int32_t FilaSwapChain_isFrameRateChangeSupported(const FilaSwapChain* self) {
-    return [](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }(reinterpret_cast<const filament::SwapChain*>(self)->isFrameRateChangeSupported());
+    return [](utils::tribool t) { return t.is_indeterminate() ? 2 : int32_t(t.is_true()); }(fila::cpp(self)->isFrameRateChangeSupported());
 }
 
 void FilaSwapChain_setFrameRate(FilaSwapChain* self, float frameRate, FilaPlatformFrameRateCompatibility compatibility, FilaPlatformChangeFrameRateStrategy strategy) {
-    reinterpret_cast<filament::SwapChain*>(self)->setFrameRate(frameRate, static_cast<filament::backend::Platform::FrameRateCompatibility>(compatibility), static_cast<filament::backend::Platform::ChangeFrameRateStrategy>(strategy));
+    fila::cpp(self)->setFrameRate(frameRate, static_cast<filament::backend::Platform::FrameRateCompatibility>(compatibility), static_cast<filament::backend::Platform::ChangeFrameRateStrategy>(strategy));
 }
 
 void* FilaSwapChain_getNativeWindow(const FilaSwapChain* self) {
-    return reinterpret_cast<const filament::SwapChain*>(self)->getNativeWindow();
+    return fila::cpp(self)->getNativeWindow();
 }
 
 bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* self) {
-    return reinterpret_cast<const filament::SwapChain*>(self)->isFrameScheduledCallbackSet();
+    return fila::cpp(self)->isFrameScheduledCallbackSet();
 }
 
 void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* self, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    reinterpret_cast<filament::SwapChain*>(self)->setFrameCompletedCallback(reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->setFrameCompletedCallback(fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
 }
 
 } // extern "C"

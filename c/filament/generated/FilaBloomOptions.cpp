@@ -5,163 +5,163 @@
 extern "C" {
 
 FilaBloomOptions* FilaBloomOptions_create(void) {
-    return reinterpret_cast<FilaBloomOptions*>(new filament::BloomOptions());
+    return fila::c(new filament::BloomOptions());
 }
 
 void FilaBloomOptions_destroy(FilaBloomOptions* self) {
-    delete reinterpret_cast<filament::BloomOptions*>(self);
+    delete fila::cpp(self);
 }
 
 FilaTexture* FilaBloomOptions_getDirt(const FilaBloomOptions* self) {
-    return reinterpret_cast<FilaTexture*>(reinterpret_cast<const filament::BloomOptions*>(self)->dirt);
+    return fila::c(fila::cpp(self)->dirt);
 }
 
 void FilaBloomOptions_setDirt(FilaBloomOptions* self, FilaTexture* value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->dirt = reinterpret_cast<filament::Texture*>(value);
+    fila::cpp(self)->dirt = fila::cpp(value);
 }
 
 float FilaBloomOptions_getDirtStrength(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->dirtStrength;
+    return fila::cpp(self)->dirtStrength;
 }
 
 void FilaBloomOptions_setDirtStrength(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->dirtStrength = value;
+    fila::cpp(self)->dirtStrength = value;
 }
 
 float FilaBloomOptions_getStrength(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->strength;
+    return fila::cpp(self)->strength;
 }
 
 void FilaBloomOptions_setStrength(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->strength = value;
+    fila::cpp(self)->strength = value;
 }
 
 uint32_t FilaBloomOptions_getResolution(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->resolution;
+    return fila::cpp(self)->resolution;
 }
 
 void FilaBloomOptions_setResolution(FilaBloomOptions* self, uint32_t value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->resolution = value;
+    fila::cpp(self)->resolution = value;
 }
 
 uint32_t FilaBloomOptions_getLevels(const FilaBloomOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::BloomOptions*>(self)->levels);
+    return static_cast<uint32_t>(fila::cpp(self)->levels);
 }
 
 void FilaBloomOptions_setLevels(FilaBloomOptions* self, uint32_t value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->levels = static_cast<uint8_t>(value);
+    fila::cpp(self)->levels = static_cast<uint8_t>(value);
 }
 
 FilaBloomOptionsBlendMode FilaBloomOptions_getBlendMode(const FilaBloomOptions* self) {
-    return static_cast<FilaBloomOptionsBlendMode>(reinterpret_cast<const filament::BloomOptions*>(self)->blendMode);
+    return static_cast<FilaBloomOptionsBlendMode>(fila::cpp(self)->blendMode);
 }
 
 void FilaBloomOptions_setBlendMode(FilaBloomOptions* self, FilaBloomOptionsBlendMode value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->blendMode = static_cast<filament::BloomOptions::BlendMode>(value);
+    fila::cpp(self)->blendMode = static_cast<filament::BloomOptions::BlendMode>(value);
 }
 
 bool FilaBloomOptions_getThreshold(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->threshold;
+    return fila::cpp(self)->threshold;
 }
 
 void FilaBloomOptions_setThreshold(FilaBloomOptions* self, bool value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->threshold = value;
+    fila::cpp(self)->threshold = value;
 }
 
 bool FilaBloomOptions_getEnabled(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaBloomOptions_setEnabled(FilaBloomOptions* self, bool value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 float FilaBloomOptions_getHighlight(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->highlight;
+    return fila::cpp(self)->highlight;
 }
 
 void FilaBloomOptions_setHighlight(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->highlight = value;
+    fila::cpp(self)->highlight = value;
 }
 
 FilaQualityLevel FilaBloomOptions_getQuality(const FilaBloomOptions* self) {
-    return static_cast<FilaQualityLevel>(reinterpret_cast<const filament::BloomOptions*>(self)->quality);
+    return static_cast<FilaQualityLevel>(fila::cpp(self)->quality);
 }
 
 void FilaBloomOptions_setQuality(FilaBloomOptions* self, FilaQualityLevel value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->quality = static_cast<filament::QualityLevel>(value);
+    fila::cpp(self)->quality = static_cast<filament::QualityLevel>(value);
 }
 
 bool FilaBloomOptions_getLensFlare(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->lensFlare;
+    return fila::cpp(self)->lensFlare;
 }
 
 void FilaBloomOptions_setLensFlare(FilaBloomOptions* self, bool value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->lensFlare = value;
+    fila::cpp(self)->lensFlare = value;
 }
 
 bool FilaBloomOptions_getStarburst(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->starburst;
+    return fila::cpp(self)->starburst;
 }
 
 void FilaBloomOptions_setStarburst(FilaBloomOptions* self, bool value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->starburst = value;
+    fila::cpp(self)->starburst = value;
 }
 
 float FilaBloomOptions_getChromaticAberration(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->chromaticAberration;
+    return fila::cpp(self)->chromaticAberration;
 }
 
 void FilaBloomOptions_setChromaticAberration(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->chromaticAberration = value;
+    fila::cpp(self)->chromaticAberration = value;
 }
 
 uint32_t FilaBloomOptions_getGhostCount(const FilaBloomOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::BloomOptions*>(self)->ghostCount);
+    return static_cast<uint32_t>(fila::cpp(self)->ghostCount);
 }
 
 void FilaBloomOptions_setGhostCount(FilaBloomOptions* self, uint32_t value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->ghostCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->ghostCount = static_cast<uint8_t>(value);
 }
 
 float FilaBloomOptions_getGhostSpacing(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->ghostSpacing;
+    return fila::cpp(self)->ghostSpacing;
 }
 
 void FilaBloomOptions_setGhostSpacing(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->ghostSpacing = value;
+    fila::cpp(self)->ghostSpacing = value;
 }
 
 float FilaBloomOptions_getGhostThreshold(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->ghostThreshold;
+    return fila::cpp(self)->ghostThreshold;
 }
 
 void FilaBloomOptions_setGhostThreshold(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->ghostThreshold = value;
+    fila::cpp(self)->ghostThreshold = value;
 }
 
 float FilaBloomOptions_getHaloThickness(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->haloThickness;
+    return fila::cpp(self)->haloThickness;
 }
 
 void FilaBloomOptions_setHaloThickness(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->haloThickness = value;
+    fila::cpp(self)->haloThickness = value;
 }
 
 float FilaBloomOptions_getHaloRadius(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->haloRadius;
+    return fila::cpp(self)->haloRadius;
 }
 
 void FilaBloomOptions_setHaloRadius(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->haloRadius = value;
+    fila::cpp(self)->haloRadius = value;
 }
 
 float FilaBloomOptions_getHaloThreshold(const FilaBloomOptions* self) {
-    return reinterpret_cast<const filament::BloomOptions*>(self)->haloThreshold;
+    return fila::cpp(self)->haloThreshold;
 }
 
 void FilaBloomOptions_setHaloThreshold(FilaBloomOptions* self, float value) {
-    reinterpret_cast<filament::BloomOptions*>(self)->haloThreshold = value;
+    fila::cpp(self)->haloThreshold = value;
 }
 
 } // extern "C"

@@ -13,9 +13,6 @@ FilaGltfioResourceConfiguration* FilaGltfioResourceConfiguration_create(void);
 void FilaGltfioResourceConfiguration_destroy(FilaGltfioResourceConfiguration* self);
 FilaEngine* FilaGltfioResourceConfiguration_getEngine(const FilaGltfioResourceConfiguration* self);
 void FilaGltfioResourceConfiguration_setEngine(FilaGltfioResourceConfiguration* self, FilaEngine* value);
-const char* FilaGltfioResourceConfiguration_getGltfPath(const FilaGltfioResourceConfiguration* self);
-// TODO(handwritten) FilaGltfioResourceConfiguration_setGltfPath: const char * filament::gltfio::ResourceConfiguration::gltfPath
-//     const char *: the struct would keep the caller's pointer
 bool FilaGltfioResourceConfiguration_getNormalizeSkinningWeights(const FilaGltfioResourceConfiguration* self);
 void FilaGltfioResourceConfiguration_setNormalizeSkinningWeights(FilaGltfioResourceConfiguration* self, bool value);
 

@@ -5,23 +5,23 @@
 extern "C" {
 
 FilaDisplayRangeToneMapper* FilaDisplayRangeToneMapper_create(void) {
-    return reinterpret_cast<FilaDisplayRangeToneMapper*>(new filament::DisplayRangeToneMapper());
+    return fila::c(new filament::DisplayRangeToneMapper());
 }
 
 void FilaDisplayRangeToneMapper_destroy(FilaDisplayRangeToneMapper* self) {
-    delete reinterpret_cast<filament::DisplayRangeToneMapper*>(self);
+    delete fila::cpp(self);
 }
 
 FilaToneMapper* FilaDisplayRangeToneMapper_asToneMapper(FilaDisplayRangeToneMapper* self) {
-    return reinterpret_cast<FilaToneMapper*>(static_cast<filament::ToneMapper*>(reinterpret_cast<filament::DisplayRangeToneMapper*>(self)));
+    return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
 bool FilaDisplayRangeToneMapper_isOneDimensional(const FilaDisplayRangeToneMapper* self) {
-    return reinterpret_cast<const filament::DisplayRangeToneMapper*>(self)->isOneDimensional();
+    return fila::cpp(self)->isOneDimensional();
 }
 
 bool FilaDisplayRangeToneMapper_isLDR(const FilaDisplayRangeToneMapper* self) {
-    return reinterpret_cast<const filament::DisplayRangeToneMapper*>(self)->isLDR();
+    return fila::cpp(self)->isLDR();
 }
 
 } // extern "C"

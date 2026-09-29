@@ -5,139 +5,139 @@
 extern "C" {
 
 FilaTemporalAntiAliasingOptions* FilaTemporalAntiAliasingOptions_create(void) {
-    return reinterpret_cast<FilaTemporalAntiAliasingOptions*>(new filament::TemporalAntiAliasingOptions());
+    return fila::c(new filament::TemporalAntiAliasingOptions());
 }
 
 void FilaTemporalAntiAliasingOptions_destroy(FilaTemporalAntiAliasingOptions* self) {
-    delete reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaTemporalAntiAliasingOptions_getFilterWidth(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->filterWidth;
+    return fila::cpp(self)->filterWidth;
 }
 
 void FilaTemporalAntiAliasingOptions_setFilterWidth(FilaTemporalAntiAliasingOptions* self, float value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->filterWidth = value;
+    fila::cpp(self)->filterWidth = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getFeedback(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->feedback;
+    return fila::cpp(self)->feedback;
 }
 
 void FilaTemporalAntiAliasingOptions_setFeedback(FilaTemporalAntiAliasingOptions* self, float value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->feedback = value;
+    fila::cpp(self)->feedback = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getLodBias(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->lodBias;
+    return fila::cpp(self)->lodBias;
 }
 
 void FilaTemporalAntiAliasingOptions_setLodBias(FilaTemporalAntiAliasingOptions* self, float value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->lodBias = value;
+    fila::cpp(self)->lodBias = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getSharpness(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->sharpness;
+    return fila::cpp(self)->sharpness;
 }
 
 void FilaTemporalAntiAliasingOptions_setSharpness(FilaTemporalAntiAliasingOptions* self, float value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->sharpness = value;
+    fila::cpp(self)->sharpness = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getEnabled(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaTemporalAntiAliasingOptions_setEnabled(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 float FilaTemporalAntiAliasingOptions_getUpscaling(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->upscaling;
+    return fila::cpp(self)->upscaling;
 }
 
 void FilaTemporalAntiAliasingOptions_setUpscaling(FilaTemporalAntiAliasingOptions* self, float value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->upscaling = value;
+    fila::cpp(self)->upscaling = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getFilterHistory(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->filterHistory;
+    return fila::cpp(self)->filterHistory;
 }
 
 void FilaTemporalAntiAliasingOptions_setFilterHistory(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->filterHistory = value;
+    fila::cpp(self)->filterHistory = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getFilterInput(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->filterInput;
+    return fila::cpp(self)->filterInput;
 }
 
 void FilaTemporalAntiAliasingOptions_setFilterInput(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->filterInput = value;
+    fila::cpp(self)->filterInput = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getUseYCoCg(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->useYCoCg;
+    return fila::cpp(self)->useYCoCg;
 }
 
 void FilaTemporalAntiAliasingOptions_setUseYCoCg(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->useYCoCg = value;
+    fila::cpp(self)->useYCoCg = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getHdr(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->hdr;
+    return fila::cpp(self)->hdr;
 }
 
 void FilaTemporalAntiAliasingOptions_setHdr(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->hdr = value;
+    fila::cpp(self)->hdr = value;
 }
 
 FilaTemporalAntiAliasingOptionsBoxType FilaTemporalAntiAliasingOptions_getBoxType(const FilaTemporalAntiAliasingOptions* self) {
-    return static_cast<FilaTemporalAntiAliasingOptionsBoxType>(reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->boxType);
+    return static_cast<FilaTemporalAntiAliasingOptionsBoxType>(fila::cpp(self)->boxType);
 }
 
 void FilaTemporalAntiAliasingOptions_setBoxType(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsBoxType value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->boxType = static_cast<filament::TemporalAntiAliasingOptions::BoxType>(value);
+    fila::cpp(self)->boxType = static_cast<filament::TemporalAntiAliasingOptions::BoxType>(value);
 }
 
 FilaTemporalAntiAliasingOptionsBoxClipping FilaTemporalAntiAliasingOptions_getBoxClipping(const FilaTemporalAntiAliasingOptions* self) {
-    return static_cast<FilaTemporalAntiAliasingOptionsBoxClipping>(reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->boxClipping);
+    return static_cast<FilaTemporalAntiAliasingOptionsBoxClipping>(fila::cpp(self)->boxClipping);
 }
 
 void FilaTemporalAntiAliasingOptions_setBoxClipping(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsBoxClipping value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->boxClipping = static_cast<filament::TemporalAntiAliasingOptions::BoxClipping>(value);
+    fila::cpp(self)->boxClipping = static_cast<filament::TemporalAntiAliasingOptions::BoxClipping>(value);
 }
 
 FilaTemporalAntiAliasingOptionsJitterPattern FilaTemporalAntiAliasingOptions_getJitterPattern(const FilaTemporalAntiAliasingOptions* self) {
-    return static_cast<FilaTemporalAntiAliasingOptionsJitterPattern>(reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->jitterPattern);
+    return static_cast<FilaTemporalAntiAliasingOptionsJitterPattern>(fila::cpp(self)->jitterPattern);
 }
 
 void FilaTemporalAntiAliasingOptions_setJitterPattern(FilaTemporalAntiAliasingOptions* self, FilaTemporalAntiAliasingOptionsJitterPattern value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->jitterPattern = static_cast<filament::TemporalAntiAliasingOptions::JitterPattern>(value);
+    fila::cpp(self)->jitterPattern = static_cast<filament::TemporalAntiAliasingOptions::JitterPattern>(value);
 }
 
 float FilaTemporalAntiAliasingOptions_getVarianceGamma(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->varianceGamma;
+    return fila::cpp(self)->varianceGamma;
 }
 
 void FilaTemporalAntiAliasingOptions_setVarianceGamma(FilaTemporalAntiAliasingOptions* self, float value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->varianceGamma = value;
+    fila::cpp(self)->varianceGamma = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getPreventFlickering(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->preventFlickering;
+    return fila::cpp(self)->preventFlickering;
 }
 
 void FilaTemporalAntiAliasingOptions_setPreventFlickering(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->preventFlickering = value;
+    fila::cpp(self)->preventFlickering = value;
 }
 
 bool FilaTemporalAntiAliasingOptions_getHistoryReprojection(const FilaTemporalAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::TemporalAntiAliasingOptions*>(self)->historyReprojection;
+    return fila::cpp(self)->historyReprojection;
 }
 
 void FilaTemporalAntiAliasingOptions_setHistoryReprojection(FilaTemporalAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::TemporalAntiAliasingOptions*>(self)->historyReprojection = value;
+    fila::cpp(self)->historyReprojection = value;
 }
 
 } // extern "C"

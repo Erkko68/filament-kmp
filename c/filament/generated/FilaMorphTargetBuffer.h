@@ -13,8 +13,7 @@ FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create(void);
 void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_vertexCount(FilaMorphTargetBufferBuilder* self, uint32_t vertexCount);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_count(FilaMorphTargetBufferBuilder* self, uint32_t count);
-// TODO(handwritten) FilaMorphTargetBufferBuilder_name: Builder & filament::MorphTargetBuffer::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_name(FilaMorphTargetBufferBuilder* self, const char* name);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withPositions(FilaMorphTargetBufferBuilder* self, bool enable);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_withTangents(FilaMorphTargetBufferBuilder* self, bool enable);
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_enableCustomMorphing(FilaMorphTargetBufferBuilder* self, bool enable);

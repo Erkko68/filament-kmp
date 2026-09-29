@@ -5,19 +5,19 @@
 extern "C" {
 
 void FilaUtilsEntityManagerListener_onEntitiesDestroyed(FilaUtilsEntityManagerListener* self, uint32_t n, const FilaEntity* entities) {
-    reinterpret_cast<utils::EntityManager::Listener*>(self)->onEntitiesDestroyed(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(entities));
+    fila::cpp(self)->onEntitiesDestroyed(static_cast<size_t>(n), reinterpret_cast<const utils::Entity*>(entities));
 }
 
 FilaUtilsEntityManager* FilaUtilsEntityManager_get(void) {
-    return reinterpret_cast<FilaUtilsEntityManager*>(&utils::EntityManager::get());
+    return fila::c(&utils::EntityManager::get());
 }
 
 void FilaUtilsEntityManager_unregisterChangeCallback(FilaUtilsEntityManager* self, const void* token) {
-    reinterpret_cast<utils::EntityManager*>(self)->unregisterChangeCallback(token);
+    fila::cpp(self)->unregisterChangeCallback(token);
 }
 
 void FilaUtilsEntityManager_flushNotifications(FilaUtilsEntityManager* self) {
-    reinterpret_cast<utils::EntityManager*>(self)->flushNotifications();
+    fila::cpp(self)->flushNotifications();
 }
 
 uint32_t FilaUtilsEntityManager_getMaxEntityCount(void) {
@@ -25,47 +25,47 @@ uint32_t FilaUtilsEntityManager_getMaxEntityCount(void) {
 }
 
 uint32_t FilaUtilsEntityManager_getEntityCount(const FilaUtilsEntityManager* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const utils::EntityManager*>(self)->getEntityCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getEntityCount());
 }
 
 void FilaUtilsEntityManager_create_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities) {
-    reinterpret_cast<utils::EntityManager*>(self)->create(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
+    fila::cpp(self)->create(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
 }
 
 FilaEntity FilaUtilsEntityManager_create(FilaUtilsEntityManager* self) {
-    return utils::Entity::smuggle(reinterpret_cast<utils::EntityManager*>(self)->create());
+    return utils::Entity::smuggle(fila::cpp(self)->create());
 }
 
 void FilaUtilsEntityManager_destroy_size_t_Entity(FilaUtilsEntityManager* self, uint32_t n, FilaEntity* entities) {
-    reinterpret_cast<utils::EntityManager*>(self)->destroy(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
+    fila::cpp(self)->destroy(static_cast<size_t>(n), reinterpret_cast<utils::Entity*>(entities));
 }
 
 void FilaUtilsEntityManager_destroy_Entity(FilaUtilsEntityManager* self, FilaEntity e) {
-    reinterpret_cast<utils::EntityManager*>(self)->destroy(utils::Entity::import(e));
+    fila::cpp(self)->destroy(utils::Entity::import(e));
 }
 
 bool FilaUtilsEntityManager_isAlive(const FilaUtilsEntityManager* self, FilaEntity e) {
-    return reinterpret_cast<const utils::EntityManager*>(self)->isAlive(utils::Entity::import(e));
+    return fila::cpp(self)->isAlive(utils::Entity::import(e));
 }
 
 void FilaUtilsEntityManager_registerListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l) {
-    reinterpret_cast<utils::EntityManager*>(self)->registerListener(reinterpret_cast<utils::EntityManager::Listener*>(l));
+    fila::cpp(self)->registerListener(fila::cpp(l));
 }
 
 void FilaUtilsEntityManager_unregisterListener(FilaUtilsEntityManager* self, FilaUtilsEntityManagerListener* l) {
-    reinterpret_cast<utils::EntityManager*>(self)->unregisterListener(reinterpret_cast<utils::EntityManager::Listener*>(l));
+    fila::cpp(self)->unregisterListener(fila::cpp(l));
 }
 
 void FilaUtilsEntityManager_advanceEpoch(FilaUtilsEntityManager* self) {
-    reinterpret_cast<utils::EntityManager*>(self)->advanceEpoch();
+    fila::cpp(self)->advanceEpoch();
 }
 
 void FilaUtilsEntityManager_reclaimSafeEpochs(FilaUtilsEntityManager* self) {
-    reinterpret_cast<utils::EntityManager*>(self)->reclaimSafeEpochs();
+    fila::cpp(self)->reclaimSafeEpochs();
 }
 
 void FilaUtilsEntityManager_getLatestEpochID(const FilaUtilsEntityManager* self, uint64_t* out) {
-    *out = reinterpret_cast<const utils::EntityManager*>(self)->getLatestEpochID();
+    *out = fila::cpp(self)->getLatestEpochID();
 }
 
 } // extern "C"

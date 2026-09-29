@@ -5,19 +5,19 @@
 extern "C" {
 
 FilaCamutilsBookmark* FilaCamutilsBookmark_create(void) {
-    return reinterpret_cast<FilaCamutilsBookmark*>(new filament::camutils::Bookmark<float>());
+    return fila::c(new filament::camutils::Bookmark<float>());
 }
 
 void FilaCamutilsBookmark_destroy(FilaCamutilsBookmark* self) {
-    delete reinterpret_cast<filament::camutils::Bookmark<float>*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaCamutilsBookmark_interpolate(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b, double t, FilaCamutilsBookmark* out) {
-    *reinterpret_cast<filament::camutils::Bookmark<float>*>(out) = filament::camutils::Bookmark<float>::interpolate(*reinterpret_cast<const filament::camutils::Bookmark<float>*>(a), *reinterpret_cast<const filament::camutils::Bookmark<float>*>(b), t);
+    *fila::cpp(out) = filament::camutils::Bookmark<float>::interpolate(*fila::cpp(a), *fila::cpp(b), t);
 }
 
 double FilaCamutilsBookmark_duration(const FilaCamutilsBookmark* a, const FilaCamutilsBookmark* b) {
-    return filament::camutils::Bookmark<float>::duration(*reinterpret_cast<const filament::camutils::Bookmark<float>*>(a), *reinterpret_cast<const filament::camutils::Bookmark<float>*>(b));
+    return filament::camutils::Bookmark<float>::duration(*fila::cpp(a), *fila::cpp(b));
 }
 
 } // extern "C"

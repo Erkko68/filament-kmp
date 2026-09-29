@@ -5,19 +5,19 @@
 extern "C" {
 
 FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount) {
-    return reinterpret_cast<FilaGltfioMaterialProvider*>(filament::gltfio::createUbershaderProvider(reinterpret_cast<filament::Engine*>(engine), archive, static_cast<size_t>(archiveByteCount)));
+    return fila::c(filament::gltfio::createUbershaderProvider(fila::cpp(engine), archive, static_cast<size_t>(archiveByteCount)));
 }
 
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine) {
-    return reinterpret_cast<FilaGltfioTextureProvider*>(filament::gltfio::createStbProvider(reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(filament::gltfio::createStbProvider(fila::cpp(engine)));
 }
 
 FilaGltfioTextureProvider* FilaGltfio_createKtx2Provider(FilaEngine* engine) {
-    return reinterpret_cast<FilaGltfioTextureProvider*>(filament::gltfio::createKtx2Provider(reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(filament::gltfio::createKtx2Provider(fila::cpp(engine)));
 }
 
 FilaGltfioTextureProvider* FilaGltfio_createWebpProvider(FilaEngine* engine) {
-    return reinterpret_cast<FilaGltfioTextureProvider*>(filament::gltfio::createWebpProvider(reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(filament::gltfio::createWebpProvider(fila::cpp(engine)));
 }
 
 bool FilaGltfio_isWebpSupported(void) {
@@ -25,7 +25,7 @@ bool FilaGltfio_isWebpSupported(void) {
 }
 
 void FilaGltfio_decomposeMatrix(const FilaMat4f* mat, FilaFloat3* translation, FilaQuatf* rotation, FilaFloat3* scale) {
-    filament::gltfio::decomposeMatrix(std::bit_cast<filament::math::mat4f>(*mat), reinterpret_cast<filament::math::float3*>(translation), reinterpret_cast<filament::math::quatf*>(rotation), reinterpret_cast<filament::math::float3*>(scale));
+    filament::gltfio::decomposeMatrix(std::bit_cast<filament::math::mat4f>(*mat), fila::cpp(translation), fila::cpp(rotation), fila::cpp(scale));
 }
 
 void FilaGltfio_composeMatrix(const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale, FilaMat4f* out) {

@@ -5,31 +5,31 @@
 extern "C" {
 
 FilaCompressedPixelDataType FilaKtxreaderKtx1Reader_toCompressedPixelDataType(const FilaImageKtxInfo* info) {
-    return static_cast<FilaCompressedPixelDataType>(ktxreader::Ktx1Reader::toCompressedPixelDataType(*reinterpret_cast<const image::KtxInfo*>(info)));
+    return static_cast<FilaCompressedPixelDataType>(ktxreader::Ktx1Reader::toCompressedPixelDataType(*fila::cpp(info)));
 }
 
 FilaPixelDataType FilaKtxreaderKtx1Reader_toPixelDataType(const FilaImageKtxInfo* info) {
-    return static_cast<FilaPixelDataType>(ktxreader::Ktx1Reader::toPixelDataType(*reinterpret_cast<const image::KtxInfo*>(info)));
+    return static_cast<FilaPixelDataType>(ktxreader::Ktx1Reader::toPixelDataType(*fila::cpp(info)));
 }
 
 FilaPixelDataFormat FilaKtxreaderKtx1Reader_toPixelDataFormat(const FilaImageKtxInfo* info) {
-    return static_cast<FilaPixelDataFormat>(ktxreader::Ktx1Reader::toPixelDataFormat(*reinterpret_cast<const image::KtxInfo*>(info)));
+    return static_cast<FilaPixelDataFormat>(ktxreader::Ktx1Reader::toPixelDataFormat(*fila::cpp(info)));
 }
 
 bool FilaKtxreaderKtx1Reader_isCompressed(const FilaImageKtxInfo* info) {
-    return ktxreader::Ktx1Reader::isCompressed(*reinterpret_cast<const image::KtxInfo*>(info));
+    return ktxreader::Ktx1Reader::isCompressed(*fila::cpp(info));
 }
 
 FilaTextureFormat FilaKtxreaderKtx1Reader_toTextureFormat(const FilaImageKtxInfo* info) {
-    return static_cast<FilaTextureFormat>(ktxreader::Ktx1Reader::toTextureFormat(*reinterpret_cast<const image::KtxInfo*>(info)));
+    return static_cast<FilaTextureFormat>(ktxreader::Ktx1Reader::toTextureFormat(*fila::cpp(info)));
 }
 
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture_Callback_void(FilaEngine* engine, const FilaImageKtx1Bundle* ktx, bool srgb, FilaKtxreaderKtx1ReaderCallback callback, void* userdata) {
-    return reinterpret_cast<FilaTexture*>(ktxreader::Ktx1Reader::createTexture(reinterpret_cast<filament::Engine*>(engine), *reinterpret_cast<const image::Ktx1Bundle*>(ktx), srgb, callback, userdata));
+    return fila::c(ktxreader::Ktx1Reader::createTexture(fila::cpp(engine), *fila::cpp(ktx), srgb, callback, userdata));
 }
 
 FilaTexture* FilaKtxreaderKtx1Reader_createTexture(FilaEngine* engine, FilaImageKtx1Bundle* ktx, bool srgb) {
-    return reinterpret_cast<FilaTexture*>(ktxreader::Ktx1Reader::createTexture(reinterpret_cast<filament::Engine*>(engine), reinterpret_cast<image::Ktx1Bundle*>(ktx), srgb));
+    return fila::c(ktxreader::Ktx1Reader::createTexture(fila::cpp(engine), fila::cpp(ktx), srgb));
 }
 
 bool FilaKtxreaderKtx1Reader_isSrgbTextureFormat(FilaTextureFormat format) {

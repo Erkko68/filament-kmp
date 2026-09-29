@@ -5,275 +5,275 @@
 extern "C" {
 
 FilaAmbientOcclusionOptionsSsct* FilaAmbientOcclusionOptionsSsct_create(void) {
-    return reinterpret_cast<FilaAmbientOcclusionOptionsSsct*>(new filament::AmbientOcclusionOptions::Ssct());
+    return fila::c(new filament::AmbientOcclusionOptions::Ssct());
 }
 
 void FilaAmbientOcclusionOptionsSsct_destroy(FilaAmbientOcclusionOptionsSsct* self) {
-    delete reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaAmbientOcclusionOptionsSsct_getLightConeRad(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->lightConeRad;
+    return fila::cpp(self)->lightConeRad;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setLightConeRad(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->lightConeRad = value;
+    fila::cpp(self)->lightConeRad = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getShadowDistance(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->shadowDistance;
+    return fila::cpp(self)->shadowDistance;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setShadowDistance(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->shadowDistance = value;
+    fila::cpp(self)->shadowDistance = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getContactDistanceMax(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->contactDistanceMax;
+    return fila::cpp(self)->contactDistanceMax;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setContactDistanceMax(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->contactDistanceMax = value;
+    fila::cpp(self)->contactDistanceMax = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getIntensity(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->intensity;
+    return fila::cpp(self)->intensity;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setIntensity(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->intensity = value;
+    fila::cpp(self)->intensity = value;
 }
 
 void FilaAmbientOcclusionOptionsSsct_getLightDirection(const FilaAmbientOcclusionOptionsSsct* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->lightDirection);
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->lightDirection);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setLightDirection(FilaAmbientOcclusionOptionsSsct* self, const FilaFloat3* value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->lightDirection = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->lightDirection = std::bit_cast<filament::math::float3>(*value);
 }
 
 float FilaAmbientOcclusionOptionsSsct_getDepthBias(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->depthBias;
+    return fila::cpp(self)->depthBias;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setDepthBias(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->depthBias = value;
+    fila::cpp(self)->depthBias = value;
 }
 
 float FilaAmbientOcclusionOptionsSsct_getDepthSlopeBias(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->depthSlopeBias;
+    return fila::cpp(self)->depthSlopeBias;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setDepthSlopeBias(FilaAmbientOcclusionOptionsSsct* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->depthSlopeBias = value;
+    fila::cpp(self)->depthSlopeBias = value;
 }
 
 uint32_t FilaAmbientOcclusionOptionsSsct_getSampleCount(const FilaAmbientOcclusionOptionsSsct* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->sampleCount);
+    return static_cast<uint32_t>(fila::cpp(self)->sampleCount);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setSampleCount(FilaAmbientOcclusionOptionsSsct* self, uint32_t value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->sampleCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->sampleCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaAmbientOcclusionOptionsSsct_getRayCount(const FilaAmbientOcclusionOptionsSsct* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->rayCount);
+    return static_cast<uint32_t>(fila::cpp(self)->rayCount);
 }
 
 void FilaAmbientOcclusionOptionsSsct_setRayCount(FilaAmbientOcclusionOptionsSsct* self, uint32_t value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->rayCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->rayCount = static_cast<uint8_t>(value);
 }
 
 bool FilaAmbientOcclusionOptionsSsct_getEnabled(const FilaAmbientOcclusionOptionsSsct* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaAmbientOcclusionOptionsSsct_setEnabled(FilaAmbientOcclusionOptionsSsct* self, bool value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 FilaAmbientOcclusionOptionsGtao* FilaAmbientOcclusionOptionsGtao_create(void) {
-    return reinterpret_cast<FilaAmbientOcclusionOptionsGtao*>(new filament::AmbientOcclusionOptions::Gtao());
+    return fila::c(new filament::AmbientOcclusionOptions::Gtao());
 }
 
 void FilaAmbientOcclusionOptionsGtao_destroy(FilaAmbientOcclusionOptionsGtao* self) {
-    delete reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaAmbientOcclusionOptionsGtao_getSampleSliceCount(const FilaAmbientOcclusionOptionsGtao* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(self)->sampleSliceCount);
+    return static_cast<uint32_t>(fila::cpp(self)->sampleSliceCount);
 }
 
 void FilaAmbientOcclusionOptionsGtao_setSampleSliceCount(FilaAmbientOcclusionOptionsGtao* self, uint32_t value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self)->sampleSliceCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->sampleSliceCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaAmbientOcclusionOptionsGtao_getSampleStepsPerSlice(const FilaAmbientOcclusionOptionsGtao* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(self)->sampleStepsPerSlice);
+    return static_cast<uint32_t>(fila::cpp(self)->sampleStepsPerSlice);
 }
 
 void FilaAmbientOcclusionOptionsGtao_setSampleStepsPerSlice(FilaAmbientOcclusionOptionsGtao* self, uint32_t value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self)->sampleStepsPerSlice = static_cast<uint8_t>(value);
+    fila::cpp(self)->sampleStepsPerSlice = static_cast<uint8_t>(value);
 }
 
 float FilaAmbientOcclusionOptionsGtao_getThicknessHeuristic(const FilaAmbientOcclusionOptionsGtao* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(self)->thicknessHeuristic;
+    return fila::cpp(self)->thicknessHeuristic;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setThicknessHeuristic(FilaAmbientOcclusionOptionsGtao* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self)->thicknessHeuristic = value;
+    fila::cpp(self)->thicknessHeuristic = value;
 }
 
 bool FilaAmbientOcclusionOptionsGtao_getUseVisibilityBitmasks(const FilaAmbientOcclusionOptionsGtao* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(self)->useVisibilityBitmasks;
+    return fila::cpp(self)->useVisibilityBitmasks;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setUseVisibilityBitmasks(FilaAmbientOcclusionOptionsGtao* self, bool value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self)->useVisibilityBitmasks = value;
+    fila::cpp(self)->useVisibilityBitmasks = value;
 }
 
 float FilaAmbientOcclusionOptionsGtao_getConstThickness(const FilaAmbientOcclusionOptionsGtao* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(self)->constThickness;
+    return fila::cpp(self)->constThickness;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setConstThickness(FilaAmbientOcclusionOptionsGtao* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self)->constThickness = value;
+    fila::cpp(self)->constThickness = value;
 }
 
 bool FilaAmbientOcclusionOptionsGtao_getLinearThickness(const FilaAmbientOcclusionOptionsGtao* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(self)->linearThickness;
+    return fila::cpp(self)->linearThickness;
 }
 
 void FilaAmbientOcclusionOptionsGtao_setLinearThickness(FilaAmbientOcclusionOptionsGtao* self, bool value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(self)->linearThickness = value;
+    fila::cpp(self)->linearThickness = value;
 }
 
 FilaAmbientOcclusionOptions* FilaAmbientOcclusionOptions_create(void) {
-    return reinterpret_cast<FilaAmbientOcclusionOptions*>(new filament::AmbientOcclusionOptions());
+    return fila::c(new filament::AmbientOcclusionOptions());
 }
 
 void FilaAmbientOcclusionOptions_destroy(FilaAmbientOcclusionOptions* self) {
-    delete reinterpret_cast<filament::AmbientOcclusionOptions*>(self);
+    delete fila::cpp(self);
 }
 
 FilaAmbientOcclusionOptionsAmbientOcclusionType FilaAmbientOcclusionOptions_getAoType(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaAmbientOcclusionOptionsAmbientOcclusionType>(reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->aoType);
+    return static_cast<FilaAmbientOcclusionOptionsAmbientOcclusionType>(fila::cpp(self)->aoType);
 }
 
 void FilaAmbientOcclusionOptions_setAoType(FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsAmbientOcclusionType value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->aoType = static_cast<filament::AmbientOcclusionOptions::AmbientOcclusionType>(value);
+    fila::cpp(self)->aoType = static_cast<filament::AmbientOcclusionOptions::AmbientOcclusionType>(value);
 }
 
 float FilaAmbientOcclusionOptions_getRadius(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->radius;
+    return fila::cpp(self)->radius;
 }
 
 void FilaAmbientOcclusionOptions_setRadius(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->radius = value;
+    fila::cpp(self)->radius = value;
 }
 
 float FilaAmbientOcclusionOptions_getPower(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->power;
+    return fila::cpp(self)->power;
 }
 
 void FilaAmbientOcclusionOptions_setPower(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->power = value;
+    fila::cpp(self)->power = value;
 }
 
 float FilaAmbientOcclusionOptions_getBias(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->bias;
+    return fila::cpp(self)->bias;
 }
 
 void FilaAmbientOcclusionOptions_setBias(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->bias = value;
+    fila::cpp(self)->bias = value;
 }
 
 float FilaAmbientOcclusionOptions_getResolution(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->resolution;
+    return fila::cpp(self)->resolution;
 }
 
 void FilaAmbientOcclusionOptions_setResolution(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->resolution = value;
+    fila::cpp(self)->resolution = value;
 }
 
 float FilaAmbientOcclusionOptions_getIntensity(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->intensity;
+    return fila::cpp(self)->intensity;
 }
 
 void FilaAmbientOcclusionOptions_setIntensity(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->intensity = value;
+    fila::cpp(self)->intensity = value;
 }
 
 float FilaAmbientOcclusionOptions_getBilateralThreshold(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->bilateralThreshold;
+    return fila::cpp(self)->bilateralThreshold;
 }
 
 void FilaAmbientOcclusionOptions_setBilateralThreshold(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->bilateralThreshold = value;
+    fila::cpp(self)->bilateralThreshold = value;
 }
 
 FilaQualityLevel FilaAmbientOcclusionOptions_getQuality(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaQualityLevel>(reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->quality);
+    return static_cast<FilaQualityLevel>(fila::cpp(self)->quality);
 }
 
 void FilaAmbientOcclusionOptions_setQuality(FilaAmbientOcclusionOptions* self, FilaQualityLevel value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->quality = static_cast<filament::QualityLevel>(value);
+    fila::cpp(self)->quality = static_cast<filament::QualityLevel>(value);
 }
 
 FilaQualityLevel FilaAmbientOcclusionOptions_getLowPassFilter(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaQualityLevel>(reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->lowPassFilter);
+    return static_cast<FilaQualityLevel>(fila::cpp(self)->lowPassFilter);
 }
 
 void FilaAmbientOcclusionOptions_setLowPassFilter(FilaAmbientOcclusionOptions* self, FilaQualityLevel value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->lowPassFilter = static_cast<filament::QualityLevel>(value);
+    fila::cpp(self)->lowPassFilter = static_cast<filament::QualityLevel>(value);
 }
 
 FilaQualityLevel FilaAmbientOcclusionOptions_getUpsampling(const FilaAmbientOcclusionOptions* self) {
-    return static_cast<FilaQualityLevel>(reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->upsampling);
+    return static_cast<FilaQualityLevel>(fila::cpp(self)->upsampling);
 }
 
 void FilaAmbientOcclusionOptions_setUpsampling(FilaAmbientOcclusionOptions* self, FilaQualityLevel value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->upsampling = static_cast<filament::QualityLevel>(value);
+    fila::cpp(self)->upsampling = static_cast<filament::QualityLevel>(value);
 }
 
 bool FilaAmbientOcclusionOptions_getEnabled(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaAmbientOcclusionOptions_setEnabled(FilaAmbientOcclusionOptions* self, bool value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 bool FilaAmbientOcclusionOptions_getBentNormals(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->bentNormals;
+    return fila::cpp(self)->bentNormals;
 }
 
 void FilaAmbientOcclusionOptions_setBentNormals(FilaAmbientOcclusionOptions* self, bool value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->bentNormals = value;
+    fila::cpp(self)->bentNormals = value;
 }
 
 float FilaAmbientOcclusionOptions_getMinHorizonAngleRad(const FilaAmbientOcclusionOptions* self) {
-    return reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->minHorizonAngleRad;
+    return fila::cpp(self)->minHorizonAngleRad;
 }
 
 void FilaAmbientOcclusionOptions_setMinHorizonAngleRad(FilaAmbientOcclusionOptions* self, float value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->minHorizonAngleRad = value;
+    fila::cpp(self)->minHorizonAngleRad = value;
 }
 
 void FilaAmbientOcclusionOptions_getSsct(const FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsSsct* out) {
-    *reinterpret_cast<filament::AmbientOcclusionOptions::Ssct*>(out) = reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->ssct;
+    *fila::cpp(out) = fila::cpp(self)->ssct;
 }
 
 void FilaAmbientOcclusionOptions_setSsct(FilaAmbientOcclusionOptions* self, const FilaAmbientOcclusionOptionsSsct* value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->ssct = *reinterpret_cast<const filament::AmbientOcclusionOptions::Ssct*>(value);
+    fila::cpp(self)->ssct = *fila::cpp(value);
 }
 
 void FilaAmbientOcclusionOptions_getGtao(const FilaAmbientOcclusionOptions* self, FilaAmbientOcclusionOptionsGtao* out) {
-    *reinterpret_cast<filament::AmbientOcclusionOptions::Gtao*>(out) = reinterpret_cast<const filament::AmbientOcclusionOptions*>(self)->gtao;
+    *fila::cpp(out) = fila::cpp(self)->gtao;
 }
 
 void FilaAmbientOcclusionOptions_setGtao(FilaAmbientOcclusionOptions* self, const FilaAmbientOcclusionOptionsGtao* value) {
-    reinterpret_cast<filament::AmbientOcclusionOptions*>(self)->gtao = *reinterpret_cast<const filament::AmbientOcclusionOptions::Gtao*>(value);
+    fila::cpp(self)->gtao = *fila::cpp(value);
 }
 
 } // extern "C"

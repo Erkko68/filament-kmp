@@ -114,7 +114,8 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                 "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
-                    fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic)
+                    val deprecated = child.children().any { it["kind"] == "DeprecatedAttr" }
+                    fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic, deprecated)
                 }
                 "CXXRecordDecl", "ClassTemplateDecl" ->
                     visit(child, qualified, exported = public && isPublic, accessible = accessible && isPublic, template = template)

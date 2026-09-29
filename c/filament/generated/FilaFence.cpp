@@ -5,11 +5,11 @@
 extern "C" {
 
 FilaFenceStatus FilaFence_wait(FilaFence* self, FilaFenceMode mode, uint64_t timeout) {
-    return static_cast<FilaFenceStatus>(reinterpret_cast<filament::Fence*>(self)->wait(static_cast<filament::Fence::Mode>(mode), timeout));
+    return static_cast<FilaFenceStatus>(fila::cpp(self)->wait(static_cast<filament::Fence::Mode>(mode), timeout));
 }
 
 FilaFenceStatus FilaFence_waitAndDestroy(FilaFence* fence, FilaFenceMode mode) {
-    return static_cast<FilaFenceStatus>(filament::Fence::waitAndDestroy(reinterpret_cast<filament::Fence*>(fence), static_cast<filament::Fence::Mode>(mode)));
+    return static_cast<FilaFenceStatus>(filament::Fence::waitAndDestroy(fila::cpp(fence), static_cast<filament::Fence::Mode>(mode)));
 }
 
 } // extern "C"

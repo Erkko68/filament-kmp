@@ -5,59 +5,59 @@
 extern "C" {
 
 FilaDynamicResolutionOptions* FilaDynamicResolutionOptions_create(void) {
-    return reinterpret_cast<FilaDynamicResolutionOptions*>(new filament::DynamicResolutionOptions());
+    return fila::c(new filament::DynamicResolutionOptions());
 }
 
 void FilaDynamicResolutionOptions_destroy(FilaDynamicResolutionOptions* self) {
-    delete reinterpret_cast<filament::DynamicResolutionOptions*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaDynamicResolutionOptions_getMinScale(const FilaDynamicResolutionOptions* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::DynamicResolutionOptions*>(self)->minScale);
+    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->minScale);
 }
 
 void FilaDynamicResolutionOptions_setMinScale(FilaDynamicResolutionOptions* self, const FilaFloat2* value) {
-    reinterpret_cast<filament::DynamicResolutionOptions*>(self)->minScale = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->minScale = std::bit_cast<filament::math::float2>(*value);
 }
 
 void FilaDynamicResolutionOptions_getMaxScale(const FilaDynamicResolutionOptions* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::DynamicResolutionOptions*>(self)->maxScale);
+    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->maxScale);
 }
 
 void FilaDynamicResolutionOptions_setMaxScale(FilaDynamicResolutionOptions* self, const FilaFloat2* value) {
-    reinterpret_cast<filament::DynamicResolutionOptions*>(self)->maxScale = std::bit_cast<filament::math::float2>(*value);
+    fila::cpp(self)->maxScale = std::bit_cast<filament::math::float2>(*value);
 }
 
 float FilaDynamicResolutionOptions_getSharpness(const FilaDynamicResolutionOptions* self) {
-    return reinterpret_cast<const filament::DynamicResolutionOptions*>(self)->sharpness;
+    return fila::cpp(self)->sharpness;
 }
 
 void FilaDynamicResolutionOptions_setSharpness(FilaDynamicResolutionOptions* self, float value) {
-    reinterpret_cast<filament::DynamicResolutionOptions*>(self)->sharpness = value;
+    fila::cpp(self)->sharpness = value;
 }
 
 bool FilaDynamicResolutionOptions_getEnabled(const FilaDynamicResolutionOptions* self) {
-    return reinterpret_cast<const filament::DynamicResolutionOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaDynamicResolutionOptions_setEnabled(FilaDynamicResolutionOptions* self, bool value) {
-    reinterpret_cast<filament::DynamicResolutionOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 bool FilaDynamicResolutionOptions_getHomogeneousScaling(const FilaDynamicResolutionOptions* self) {
-    return reinterpret_cast<const filament::DynamicResolutionOptions*>(self)->homogeneousScaling;
+    return fila::cpp(self)->homogeneousScaling;
 }
 
 void FilaDynamicResolutionOptions_setHomogeneousScaling(FilaDynamicResolutionOptions* self, bool value) {
-    reinterpret_cast<filament::DynamicResolutionOptions*>(self)->homogeneousScaling = value;
+    fila::cpp(self)->homogeneousScaling = value;
 }
 
 FilaQualityLevel FilaDynamicResolutionOptions_getQuality(const FilaDynamicResolutionOptions* self) {
-    return static_cast<FilaQualityLevel>(reinterpret_cast<const filament::DynamicResolutionOptions*>(self)->quality);
+    return static_cast<FilaQualityLevel>(fila::cpp(self)->quality);
 }
 
 void FilaDynamicResolutionOptions_setQuality(FilaDynamicResolutionOptions* self, FilaQualityLevel value) {
-    reinterpret_cast<filament::DynamicResolutionOptions*>(self)->quality = static_cast<filament::QualityLevel>(value);
+    fila::cpp(self)->quality = static_cast<filament::QualityLevel>(value);
 }
 
 } // extern "C"

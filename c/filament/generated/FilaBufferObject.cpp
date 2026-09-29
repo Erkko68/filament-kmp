@@ -5,31 +5,35 @@
 extern "C" {
 
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void) {
-    return reinterpret_cast<FilaBufferObjectBuilder*>(new filament::BufferObject::Builder());
+    return fila::c(new filament::BufferObject::Builder());
 }
 
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self) {
-    delete reinterpret_cast<filament::BufferObject::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount) {
-    return reinterpret_cast<FilaBufferObjectBuilder*>(&reinterpret_cast<filament::BufferObject::Builder*>(self)->size(byteCount));
+    return fila::c(&fila::cpp(self)->size(byteCount));
 }
 
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType) {
-    return reinterpret_cast<FilaBufferObjectBuilder*>(&reinterpret_cast<filament::BufferObject::Builder*>(self)->bindingType(static_cast<filament::backend::BufferObjectBinding>(bindingType)));
+    return fila::c(&fila::cpp(self)->bindingType(static_cast<filament::backend::BufferObjectBinding>(bindingType)));
+}
+
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* self, const char* name) {
+    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
 }
 
 FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaBufferObject*>(reinterpret_cast<filament::BufferObject::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaBufferObject_setBuffer(FilaBufferObject* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
-    reinterpret_cast<filament::BufferObject*>(self)->setBuffer(*reinterpret_cast<filament::Engine*>(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+    fila::cpp(self)->setBuffer(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
 }
 
 uint32_t FilaBufferObject_getByteCount(const FilaBufferObject* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::BufferObject*>(self)->getByteCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getByteCount());
 }
 
 } // extern "C"

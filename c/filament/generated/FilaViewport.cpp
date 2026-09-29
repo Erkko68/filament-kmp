@@ -5,23 +5,59 @@
 extern "C" {
 
 FilaViewport* FilaViewport_create(void) {
-    return reinterpret_cast<FilaViewport*>(new filament::Viewport());
+    return fila::c(new filament::Viewport());
 }
 
 FilaViewport* FilaViewport_create_int32_t_int32_t_uint32_t_uint32_t(int32_t left, int32_t bottom, uint32_t width, uint32_t height) {
-    return reinterpret_cast<FilaViewport*>(new filament::Viewport(left, bottom, width, height));
+    return fila::c(new filament::Viewport(left, bottom, width, height));
 }
 
 void FilaViewport_destroy(FilaViewport* self) {
-    delete reinterpret_cast<filament::Viewport*>(self);
-}
-
-FilaViewport* FilaViewport_asViewport(FilaViewport* self) {
-    return reinterpret_cast<FilaViewport*>(static_cast<filament::backend::Viewport*>(reinterpret_cast<filament::Viewport*>(self)));
+    delete fila::cpp(self);
 }
 
 bool FilaViewport_empty(const FilaViewport* self) {
-    return reinterpret_cast<const filament::Viewport*>(self)->empty();
+    return fila::cpp(self)->empty();
+}
+
+int32_t FilaViewport_right(const FilaViewport* self) {
+    return fila::cpp(self)->right();
+}
+
+int32_t FilaViewport_top(const FilaViewport* self) {
+    return fila::cpp(self)->top();
+}
+
+int32_t FilaViewport_getLeft(const FilaViewport* self) {
+    return fila::cpp(self)->left;
+}
+
+void FilaViewport_setLeft(FilaViewport* self, int32_t value) {
+    fila::cpp(self)->left = value;
+}
+
+int32_t FilaViewport_getBottom(const FilaViewport* self) {
+    return fila::cpp(self)->bottom;
+}
+
+void FilaViewport_setBottom(FilaViewport* self, int32_t value) {
+    fila::cpp(self)->bottom = value;
+}
+
+uint32_t FilaViewport_getWidth(const FilaViewport* self) {
+    return fila::cpp(self)->width;
+}
+
+void FilaViewport_setWidth(FilaViewport* self, uint32_t value) {
+    fila::cpp(self)->width = value;
+}
+
+uint32_t FilaViewport_getHeight(const FilaViewport* self) {
+    return fila::cpp(self)->height;
+}
+
+void FilaViewport_setHeight(FilaViewport* self, uint32_t value) {
+    fila::cpp(self)->height = value;
 }
 
 } // extern "C"

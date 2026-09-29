@@ -5,55 +5,55 @@
 extern "C" {
 
 bool FilaGltfioTrsTransformManager_hasComponent(const FilaGltfioTrsTransformManager* self, FilaEntity e) {
-    return reinterpret_cast<const filament::gltfio::TrsTransformManager*>(self)->hasComponent(utils::Entity::import(e));
+    return fila::cpp(self)->hasComponent(utils::Entity::import(e));
 }
 
 uint32_t FilaGltfioTrsTransformManager_getInstance(const FilaGltfioTrsTransformManager* self, FilaEntity e) {
-    return reinterpret_cast<const filament::gltfio::TrsTransformManager*>(self)->getInstance(utils::Entity::import(e)).asValue();
+    return fila::cpp(self)->getInstance(utils::Entity::import(e)).asValue();
 }
 
 void FilaGltfioTrsTransformManager_create(FilaGltfioTrsTransformManager* self, FilaEntity entity) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->create(utils::Entity::import(entity));
+    fila::cpp(self)->create(utils::Entity::import(entity));
 }
 
 void FilaGltfioTrsTransformManager_create_float3_quatf_float3(FilaGltfioTrsTransformManager* self, FilaEntity entity, const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->create(utils::Entity::import(entity), std::bit_cast<filament::math::float3>(*translation), std::bit_cast<filament::math::quatf>(*rotation), std::bit_cast<filament::math::float3>(*scale));
+    fila::cpp(self)->create(utils::Entity::import(entity), std::bit_cast<filament::math::float3>(*translation), std::bit_cast<filament::math::quatf>(*rotation), std::bit_cast<filament::math::float3>(*scale));
 }
 
 void FilaGltfioTrsTransformManager_destroy(FilaGltfioTrsTransformManager* self, FilaEntity e) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->destroy(utils::Entity::import(e));
+    fila::cpp(self)->destroy(utils::Entity::import(e));
 }
 
 void FilaGltfioTrsTransformManager_setTranslation(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaFloat3* translation) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->setTranslation(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::float3>(*translation));
+    fila::cpp(self)->setTranslation(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::float3>(*translation));
 }
 
 void FilaGltfioTrsTransformManager_getTranslation(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::gltfio::TrsTransformManager*>(self)->getTranslation(filament::gltfio::TrsTransformManager::Instance(ci)));
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getTranslation(filament::gltfio::TrsTransformManager::Instance(ci)));
 }
 
 void FilaGltfioTrsTransformManager_setRotation(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaQuatf* rotation) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->setRotation(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::quatf>(*rotation));
+    fila::cpp(self)->setRotation(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::quatf>(*rotation));
 }
 
 void FilaGltfioTrsTransformManager_getRotation(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaQuatf* out) {
-    *out = std::bit_cast<FilaQuatf>(reinterpret_cast<const filament::gltfio::TrsTransformManager*>(self)->getRotation(filament::gltfio::TrsTransformManager::Instance(ci)));
+    *out = std::bit_cast<FilaQuatf>(fila::cpp(self)->getRotation(filament::gltfio::TrsTransformManager::Instance(ci)));
 }
 
 void FilaGltfioTrsTransformManager_setScale(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaFloat3* scale) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->setScale(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::float3>(*scale));
+    fila::cpp(self)->setScale(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::float3>(*scale));
 }
 
 void FilaGltfioTrsTransformManager_getScale(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::gltfio::TrsTransformManager*>(self)->getScale(filament::gltfio::TrsTransformManager::Instance(ci)));
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getScale(filament::gltfio::TrsTransformManager::Instance(ci)));
 }
 
 void FilaGltfioTrsTransformManager_setTrs(FilaGltfioTrsTransformManager* self, uint32_t ci, const FilaFloat3* translation, const FilaQuatf* rotation, const FilaFloat3* scale) {
-    reinterpret_cast<filament::gltfio::TrsTransformManager*>(self)->setTrs(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::float3>(*translation), std::bit_cast<filament::math::quatf>(*rotation), std::bit_cast<filament::math::float3>(*scale));
+    fila::cpp(self)->setTrs(filament::gltfio::TrsTransformManager::Instance(ci), std::bit_cast<filament::math::float3>(*translation), std::bit_cast<filament::math::quatf>(*rotation), std::bit_cast<filament::math::float3>(*scale));
 }
 
 void FilaGltfioTrsTransformManager_getTransform(const FilaGltfioTrsTransformManager* self, uint32_t ci, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(reinterpret_cast<const filament::gltfio::TrsTransformManager*>(self)->getTransform(filament::gltfio::TrsTransformManager::Instance(ci)));
+    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getTransform(filament::gltfio::TrsTransformManager::Instance(ci)));
 }
 
 } // extern "C"

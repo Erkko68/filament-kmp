@@ -5,47 +5,47 @@
 extern "C" {
 
 FilaGltfioAssetConfiguration* FilaGltfioAssetConfiguration_create(void) {
-    return reinterpret_cast<FilaGltfioAssetConfiguration*>(new filament::gltfio::AssetConfiguration());
+    return fila::c(new filament::gltfio::AssetConfiguration());
 }
 
 void FilaGltfioAssetConfiguration_destroy(FilaGltfioAssetConfiguration* self) {
-    delete reinterpret_cast<filament::gltfio::AssetConfiguration*>(self);
+    delete fila::cpp(self);
 }
 
 FilaEngine* FilaGltfioAssetConfiguration_getEngine(const FilaGltfioAssetConfiguration* self) {
-    return reinterpret_cast<FilaEngine*>(reinterpret_cast<const filament::gltfio::AssetConfiguration*>(self)->engine);
+    return fila::c(fila::cpp(self)->engine);
 }
 
 void FilaGltfioAssetConfiguration_setEngine(FilaGltfioAssetConfiguration* self, FilaEngine* value) {
-    reinterpret_cast<filament::gltfio::AssetConfiguration*>(self)->engine = reinterpret_cast<filament::Engine*>(value);
+    fila::cpp(self)->engine = fila::cpp(value);
 }
 
 FilaGltfioMaterialProvider* FilaGltfioAssetConfiguration_getMaterials(const FilaGltfioAssetConfiguration* self) {
-    return reinterpret_cast<FilaGltfioMaterialProvider*>(reinterpret_cast<const filament::gltfio::AssetConfiguration*>(self)->materials);
+    return fila::c(fila::cpp(self)->materials);
 }
 
 void FilaGltfioAssetConfiguration_setMaterials(FilaGltfioAssetConfiguration* self, FilaGltfioMaterialProvider* value) {
-    reinterpret_cast<filament::gltfio::AssetConfiguration*>(self)->materials = reinterpret_cast<filament::gltfio::MaterialProvider*>(value);
+    fila::cpp(self)->materials = fila::cpp(value);
 }
 
 FilaUtilsEntityManager* FilaGltfioAssetConfiguration_getEntities(const FilaGltfioAssetConfiguration* self) {
-    return reinterpret_cast<FilaUtilsEntityManager*>(reinterpret_cast<const filament::gltfio::AssetConfiguration*>(self)->entities);
+    return fila::c(fila::cpp(self)->entities);
 }
 
 void FilaGltfioAssetConfiguration_setEntities(FilaGltfioAssetConfiguration* self, FilaUtilsEntityManager* value) {
-    reinterpret_cast<filament::gltfio::AssetConfiguration*>(self)->entities = reinterpret_cast<utils::EntityManager*>(value);
+    fila::cpp(self)->entities = fila::cpp(value);
 }
 
 char* FilaGltfioAssetConfiguration_getDefaultNodeName(const FilaGltfioAssetConfiguration* self) {
-    return reinterpret_cast<const filament::gltfio::AssetConfiguration*>(self)->defaultNodeName;
+    return fila::cpp(self)->defaultNodeName;
 }
 
 FilaGltfioAssetConfigurationExtended* FilaGltfioAssetConfiguration_getExt(const FilaGltfioAssetConfiguration* self) {
-    return reinterpret_cast<FilaGltfioAssetConfigurationExtended*>(reinterpret_cast<const filament::gltfio::AssetConfiguration*>(self)->ext);
+    return fila::c(fila::cpp(self)->ext);
 }
 
 void FilaGltfioAssetConfiguration_setExt(FilaGltfioAssetConfiguration* self, FilaGltfioAssetConfigurationExtended* value) {
-    reinterpret_cast<filament::gltfio::AssetConfiguration*>(self)->ext = reinterpret_cast<filament::gltfio::AssetConfigurationExtended*>(value);
+    fila::cpp(self)->ext = fila::cpp(value);
 }
 
 } // extern "C"

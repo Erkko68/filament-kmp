@@ -13,8 +13,7 @@ FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void);
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_size(FilaBufferObjectBuilder* self, uint32_t byteCount);
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_bindingType(FilaBufferObjectBuilder* self, FilaBufferObjectBinding bindingType);
-// TODO(handwritten) FilaBufferObjectBuilder_name: Builder & filament::BufferObject::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaBufferObjectBuilder* FilaBufferObjectBuilder_name(FilaBufferObjectBuilder* self, const char* name);
 FilaBufferObject* FilaBufferObjectBuilder_build(FilaBufferObjectBuilder* self, FilaEngine* engine);
 
 // filament::BufferObject

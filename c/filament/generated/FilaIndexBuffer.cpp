@@ -5,35 +5,39 @@
 extern "C" {
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void) {
-    return reinterpret_cast<FilaIndexBufferBuilder*>(new filament::IndexBuffer::Builder());
+    return fila::c(new filament::IndexBuffer::Builder());
 }
 
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self) {
-    delete reinterpret_cast<filament::IndexBuffer::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount) {
-    return reinterpret_cast<FilaIndexBufferBuilder*>(&reinterpret_cast<filament::IndexBuffer::Builder*>(self)->indexCount(indexCount));
+    return fila::c(&fila::cpp(self)->indexCount(indexCount));
 }
 
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType) {
-    return reinterpret_cast<FilaIndexBufferBuilder*>(&reinterpret_cast<filament::IndexBuffer::Builder*>(self)->bufferType(static_cast<filament::IndexBuffer::IndexType>(indexType)));
+    return fila::c(&fila::cpp(self)->bufferType(static_cast<filament::IndexBuffer::IndexType>(indexType)));
+}
+
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name) {
+    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
 }
 
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaIndexBuffer*>(reinterpret_cast<filament::IndexBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaIndexBuffer_setBuffer(FilaIndexBuffer* self, FilaEngine* engine, void* buffer, uint32_t bufferSize, FilaBufferDescriptorCallback bufferCallback, void* bufferUser, uint32_t byteOffset) {
-    reinterpret_cast<filament::IndexBuffer*>(self)->setBuffer(*reinterpret_cast<filament::Engine*>(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
+    fila::cpp(self)->setBuffer(*fila::cpp(engine), filament::backend::BufferDescriptor(buffer, bufferSize, bufferCallback, bufferUser), byteOffset);
 }
 
 uint32_t FilaIndexBuffer_getIndexCount(const FilaIndexBuffer* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::IndexBuffer*>(self)->getIndexCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getIndexCount());
 }
 
 bool FilaIndexBuffer_isCreationComplete(const FilaIndexBuffer* self) {
-    return reinterpret_cast<const filament::IndexBuffer*>(self)->isCreationComplete();
+    return fila::cpp(self)->isCreationComplete();
 }
 
 } // extern "C"

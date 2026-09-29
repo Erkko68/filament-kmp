@@ -5,403 +5,403 @@
 extern "C" {
 
 FilaEngineConfig* FilaEngineConfig_create(void) {
-    return reinterpret_cast<FilaEngineConfig*>(new filament::Engine::Config());
+    return fila::c(new filament::Engine::Config());
 }
 
 void FilaEngineConfig_destroy(FilaEngineConfig* self) {
-    delete reinterpret_cast<filament::Engine::Config*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaEngineConfig_getCommandBufferSizeMB(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->commandBufferSizeMB;
+    return fila::cpp(self)->commandBufferSizeMB;
 }
 
 void FilaEngineConfig_setCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->commandBufferSizeMB = value;
+    fila::cpp(self)->commandBufferSizeMB = value;
 }
 
 uint32_t FilaEngineConfig_getPerRenderPassArenaSizeMB(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->perRenderPassArenaSizeMB;
+    return fila::cpp(self)->perRenderPassArenaSizeMB;
 }
 
 void FilaEngineConfig_setPerRenderPassArenaSizeMB(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->perRenderPassArenaSizeMB = value;
+    fila::cpp(self)->perRenderPassArenaSizeMB = value;
 }
 
 uint32_t FilaEngineConfig_getDriverHandleArenaSizeMB(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->driverHandleArenaSizeMB;
+    return fila::cpp(self)->driverHandleArenaSizeMB;
 }
 
 void FilaEngineConfig_setDriverHandleArenaSizeMB(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->driverHandleArenaSizeMB = value;
+    fila::cpp(self)->driverHandleArenaSizeMB = value;
 }
 
 uint32_t FilaEngineConfig_getMinCommandBufferSizeMB(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->minCommandBufferSizeMB;
+    return fila::cpp(self)->minCommandBufferSizeMB;
 }
 
 void FilaEngineConfig_setMinCommandBufferSizeMB(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->minCommandBufferSizeMB = value;
+    fila::cpp(self)->minCommandBufferSizeMB = value;
 }
 
 uint32_t FilaEngineConfig_getPerFrameCommandsSizeMB(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->perFrameCommandsSizeMB;
+    return fila::cpp(self)->perFrameCommandsSizeMB;
 }
 
 void FilaEngineConfig_setPerFrameCommandsSizeMB(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->perFrameCommandsSizeMB = value;
+    fila::cpp(self)->perFrameCommandsSizeMB = value;
 }
 
 uint32_t FilaEngineConfig_getJobSystemThreadCount(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->jobSystemThreadCount;
+    return fila::cpp(self)->jobSystemThreadCount;
 }
 
 void FilaEngineConfig_setJobSystemThreadCount(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->jobSystemThreadCount = value;
+    fila::cpp(self)->jobSystemThreadCount = value;
 }
 
 uint32_t FilaEngineConfig_getMetalUploadBufferSizeBytes(const FilaEngineConfig* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine::Config*>(self)->metalUploadBufferSizeBytes);
+    return static_cast<uint32_t>(fila::cpp(self)->metalUploadBufferSizeBytes);
 }
 
 void FilaEngineConfig_setMetalUploadBufferSizeBytes(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->metalUploadBufferSizeBytes = static_cast<size_t>(value);
+    fila::cpp(self)->metalUploadBufferSizeBytes = static_cast<size_t>(value);
 }
 
 bool FilaEngineConfig_getMetalDisablePanicOnDrawableFailure(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->metalDisablePanicOnDrawableFailure;
+    return fila::cpp(self)->metalDisablePanicOnDrawableFailure;
 }
 
 void FilaEngineConfig_setMetalDisablePanicOnDrawableFailure(FilaEngineConfig* self, bool value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->metalDisablePanicOnDrawableFailure = value;
+    fila::cpp(self)->metalDisablePanicOnDrawableFailure = value;
 }
 
 bool FilaEngineConfig_getDisableParallelShaderCompile(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->disableParallelShaderCompile;
+    return fila::cpp(self)->disableParallelShaderCompile;
 }
 
 void FilaEngineConfig_setDisableParallelShaderCompile(FilaEngineConfig* self, bool value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->disableParallelShaderCompile = value;
+    fila::cpp(self)->disableParallelShaderCompile = value;
 }
 
 FilaPlatformStereoscopicType FilaEngineConfig_getStereoscopicType(const FilaEngineConfig* self) {
-    return static_cast<FilaPlatformStereoscopicType>(reinterpret_cast<const filament::Engine::Config*>(self)->stereoscopicType);
+    return static_cast<FilaPlatformStereoscopicType>(fila::cpp(self)->stereoscopicType);
 }
 
 void FilaEngineConfig_setStereoscopicType(FilaEngineConfig* self, FilaPlatformStereoscopicType value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->stereoscopicType = static_cast<filament::backend::Platform::StereoscopicType>(value);
+    fila::cpp(self)->stereoscopicType = static_cast<filament::backend::Platform::StereoscopicType>(value);
 }
 
 uint32_t FilaEngineConfig_getStereoscopicEyeCount(const FilaEngineConfig* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine::Config*>(self)->stereoscopicEyeCount);
+    return static_cast<uint32_t>(fila::cpp(self)->stereoscopicEyeCount);
 }
 
 void FilaEngineConfig_setStereoscopicEyeCount(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->stereoscopicEyeCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->stereoscopicEyeCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaEngineConfig_getResourceAllocatorCacheSizeMB(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->resourceAllocatorCacheSizeMB;
+    return fila::cpp(self)->resourceAllocatorCacheSizeMB;
 }
 
 void FilaEngineConfig_setResourceAllocatorCacheSizeMB(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->resourceAllocatorCacheSizeMB = value;
+    fila::cpp(self)->resourceAllocatorCacheSizeMB = value;
 }
 
 uint32_t FilaEngineConfig_getResourceAllocatorCacheMaxAge(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->resourceAllocatorCacheMaxAge;
+    return fila::cpp(self)->resourceAllocatorCacheMaxAge;
 }
 
 void FilaEngineConfig_setResourceAllocatorCacheMaxAge(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->resourceAllocatorCacheMaxAge = value;
+    fila::cpp(self)->resourceAllocatorCacheMaxAge = value;
 }
 
 bool FilaEngineConfig_getDisableHandleUseAfterFreeCheck(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->disableHandleUseAfterFreeCheck;
+    return fila::cpp(self)->disableHandleUseAfterFreeCheck;
 }
 
 void FilaEngineConfig_setDisableHandleUseAfterFreeCheck(FilaEngineConfig* self, bool value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->disableHandleUseAfterFreeCheck = value;
+    fila::cpp(self)->disableHandleUseAfterFreeCheck = value;
 }
 
 FilaEngineConfigShaderLanguage FilaEngineConfig_getPreferredShaderLanguage(const FilaEngineConfig* self) {
-    return static_cast<FilaEngineConfigShaderLanguage>(reinterpret_cast<const filament::Engine::Config*>(self)->preferredShaderLanguage);
+    return static_cast<FilaEngineConfigShaderLanguage>(fila::cpp(self)->preferredShaderLanguage);
 }
 
 void FilaEngineConfig_setPreferredShaderLanguage(FilaEngineConfig* self, FilaEngineConfigShaderLanguage value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->preferredShaderLanguage = static_cast<filament::Engine::Config::ShaderLanguage>(value);
+    fila::cpp(self)->preferredShaderLanguage = static_cast<filament::Engine::Config::ShaderLanguage>(value);
 }
 
 bool FilaEngineConfig_getForceGLES2Context(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->forceGLES2Context;
+    return fila::cpp(self)->forceGLES2Context;
 }
 
 void FilaEngineConfig_setForceGLES2Context(FilaEngineConfig* self, bool value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->forceGLES2Context = value;
+    fila::cpp(self)->forceGLES2Context = value;
 }
 
 bool FilaEngineConfig_getAssertNativeWindowIsValid(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->assertNativeWindowIsValid;
+    return fila::cpp(self)->assertNativeWindowIsValid;
 }
 
 void FilaEngineConfig_setAssertNativeWindowIsValid(FilaEngineConfig* self, bool value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->assertNativeWindowIsValid = value;
+    fila::cpp(self)->assertNativeWindowIsValid = value;
 }
 
 FilaPlatformGpuContextPriority FilaEngineConfig_getGpuContextPriority(const FilaEngineConfig* self) {
-    return static_cast<FilaPlatformGpuContextPriority>(reinterpret_cast<const filament::Engine::Config*>(self)->gpuContextPriority);
+    return static_cast<FilaPlatformGpuContextPriority>(fila::cpp(self)->gpuContextPriority);
 }
 
 void FilaEngineConfig_setGpuContextPriority(FilaEngineConfig* self, FilaPlatformGpuContextPriority value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->gpuContextPriority = static_cast<filament::backend::Platform::GpuContextPriority>(value);
+    fila::cpp(self)->gpuContextPriority = static_cast<filament::backend::Platform::GpuContextPriority>(value);
 }
 
 uint32_t FilaEngineConfig_getSharedUboInitialSizeInBytes(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->sharedUboInitialSizeInBytes;
+    return fila::cpp(self)->sharedUboInitialSizeInBytes;
 }
 
 void FilaEngineConfig_setSharedUboInitialSizeInBytes(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->sharedUboInitialSizeInBytes = value;
+    fila::cpp(self)->sharedUboInitialSizeInBytes = value;
 }
 
 FilaPlatformAsynchronousMode FilaEngineConfig_getAsynchronousMode(const FilaEngineConfig* self) {
-    return static_cast<FilaPlatformAsynchronousMode>(reinterpret_cast<const filament::Engine::Config*>(self)->asynchronousMode);
+    return static_cast<FilaPlatformAsynchronousMode>(fila::cpp(self)->asynchronousMode);
 }
 
 void FilaEngineConfig_setAsynchronousMode(FilaEngineConfig* self, FilaPlatformAsynchronousMode value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->asynchronousMode = static_cast<filament::backend::Platform::AsynchronousMode>(value);
+    fila::cpp(self)->asynchronousMode = static_cast<filament::backend::Platform::AsynchronousMode>(value);
 }
 
 uint32_t FilaEngineConfig_getMaterialCacheCapacity(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->materialCacheCapacity;
+    return fila::cpp(self)->materialCacheCapacity;
 }
 
 void FilaEngineConfig_setMaterialCacheCapacity(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->materialCacheCapacity = value;
+    fila::cpp(self)->materialCacheCapacity = value;
 }
 
 uint32_t FilaEngineConfig_getProgramCacheCapacity(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->programCacheCapacity;
+    return fila::cpp(self)->programCacheCapacity;
 }
 
 void FilaEngineConfig_setProgramCacheCapacity(FilaEngineConfig* self, uint32_t value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->programCacheCapacity = value;
+    fila::cpp(self)->programCacheCapacity = value;
 }
 
 bool FilaEngineConfig_getEnableMultipleDirectionalLights(const FilaEngineConfig* self) {
-    return reinterpret_cast<const filament::Engine::Config*>(self)->enableMultipleDirectionalLights;
+    return fila::cpp(self)->enableMultipleDirectionalLights;
 }
 
 void FilaEngineConfig_setEnableMultipleDirectionalLights(FilaEngineConfig* self, bool value) {
-    reinterpret_cast<filament::Engine::Config*>(self)->enableMultipleDirectionalLights = value;
+    fila::cpp(self)->enableMultipleDirectionalLights = value;
 }
 
 FilaEngineFeatureFlag* FilaEngineFeatureFlag_create(void) {
-    return reinterpret_cast<FilaEngineFeatureFlag*>(new filament::Engine::FeatureFlag());
+    return fila::c(new filament::Engine::FeatureFlag());
 }
 
 void FilaEngineFeatureFlag_destroy(FilaEngineFeatureFlag* self) {
-    delete reinterpret_cast<filament::Engine::FeatureFlag*>(self);
+    delete fila::cpp(self);
 }
 
 const char* FilaEngineFeatureFlag_getName(const FilaEngineFeatureFlag* self) {
-    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->name;
+    return fila::cpp(self)->name;
 }
 
 const char* FilaEngineFeatureFlag_getDescription(const FilaEngineFeatureFlag* self) {
-    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->description;
+    return fila::cpp(self)->description;
 }
 
 const bool* FilaEngineFeatureFlag_getValue(const FilaEngineFeatureFlag* self) {
-    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->value;
+    return fila::cpp(self)->value;
 }
 
 bool FilaEngineFeatureFlag_getConstant(const FilaEngineFeatureFlag* self) {
-    return reinterpret_cast<const filament::Engine::FeatureFlag*>(self)->constant;
+    return fila::cpp(self)->constant;
 }
 
 void FilaEngineFeatureFlag_setConstant(FilaEngineFeatureFlag* self, bool value) {
-    reinterpret_cast<filament::Engine::FeatureFlag*>(self)->constant = value;
+    fila::cpp(self)->constant = value;
 }
 
 FilaEngineBuilder* FilaEngineBuilder_create(void) {
-    return reinterpret_cast<FilaEngineBuilder*>(new filament::Engine::Builder());
+    return fila::c(new filament::Engine::Builder());
 }
 
 void FilaEngineBuilder_destroy(FilaEngineBuilder* self) {
-    delete reinterpret_cast<filament::Engine::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaEngineBuilder* FilaEngineBuilder_backend(FilaEngineBuilder* self, FilaBackend backend) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->backend(static_cast<filament::backend::Backend>(backend)));
+    return fila::c(&fila::cpp(self)->backend(static_cast<filament::backend::Backend>(backend)));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_platform(FilaEngineBuilder* self, FilaPlatform* platform) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->platform(reinterpret_cast<filament::backend::Platform*>(platform)));
+    return fila::c(&fila::cpp(self)->platform(fila::cpp(platform)));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_config(FilaEngineBuilder* self, const FilaEngineConfig* config) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->config(reinterpret_cast<const filament::Engine::Config*>(config)));
+    return fila::c(&fila::cpp(self)->config(fila::cpp(config)));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_sharedContext(FilaEngineBuilder* self, void* sharedContext) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->sharedContext(sharedContext));
+    return fila::c(&fila::cpp(self)->sharedContext(sharedContext));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_featureLevel(FilaEngineBuilder* self, FilaFeatureLevel featureLevel) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->featureLevel(static_cast<filament::backend::FeatureLevel>(featureLevel)));
+    return fila::c(&fila::cpp(self)->featureLevel(static_cast<filament::backend::FeatureLevel>(featureLevel)));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_paused(FilaEngineBuilder* self, bool paused) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->paused(paused));
+    return fila::c(&fila::cpp(self)->paused(paused));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_feature(FilaEngineBuilder* self, const char* name, bool value) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->feature(name, value));
+    return fila::c(&fila::cpp(self)->feature(name, value));
 }
 
 FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const FilaColorGradingBuilder* colorGrading) {
-    return reinterpret_cast<FilaEngineBuilder*>(&reinterpret_cast<filament::Engine::Builder*>(self)->colorGrading(*reinterpret_cast<const filament::ColorGrading::Builder*>(colorGrading)));
+    return fila::c(&fila::cpp(self)->colorGrading(*fila::cpp(colorGrading)));
 }
 
 void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCallback callback, void* callbackUser) {
-    reinterpret_cast<const filament::Engine::Builder*>(self)->build([=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->build([=](auto* arg) { callback((void*) arg, callbackUser); });
 }
 
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self) {
-    return reinterpret_cast<FilaEngine*>(reinterpret_cast<const filament::Engine::Builder*>(self)->build());
+    return fila::c(fila::cpp(self)->build());
 }
 
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config) {
-    return reinterpret_cast<FilaEngine*>(filament::Engine::create(static_cast<filament::backend::Backend>(backend), reinterpret_cast<filament::backend::Platform*>(platform), sharedContext, reinterpret_cast<const filament::Engine::Config*>(config)));
+    return fila::c(filament::Engine::create(static_cast<filament::backend::Backend>(backend), fila::cpp(platform), sharedContext, fila::cpp(config)));
 }
 
 FilaEngine* FilaEngine_getEngine(void* token) {
-    return reinterpret_cast<FilaEngine*>(filament::Engine::getEngine(token));
+    return fila::c(filament::Engine::getEngine(token));
 }
 
 void FilaEngine_destroy_Engine(FilaEngine* engine) {
-    filament::Engine::destroy(reinterpret_cast<filament::Engine*>(engine));
+    filament::Engine::destroy(fila::cpp(engine));
 }
 
 bool FilaEngine_destroy_BufferObject(FilaEngine* self, const FilaBufferObject* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::BufferObject*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_VertexBuffer(FilaEngine* self, const FilaVertexBuffer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::VertexBuffer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Fence(FilaEngine* self, const FilaFence* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Fence*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Sync(FilaEngine* self, const FilaSync* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Sync*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_IndexBuffer(FilaEngine* self, const FilaIndexBuffer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::IndexBuffer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_SkinningBuffer(FilaEngine* self, const FilaSkinningBuffer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::SkinningBuffer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_MorphTargetBuffer(FilaEngine* self, const FilaMorphTargetBuffer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::MorphTargetBuffer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_IndirectLight(FilaEngine* self, const FilaIndirectLight* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::IndirectLight*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Material(FilaEngine* self, const FilaMaterial* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Material*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_MaterialInstance(FilaEngine* self, const FilaMaterialInstance* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::MaterialInstance*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Renderer(FilaEngine* self, const FilaRenderer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Renderer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_FramePacer(FilaEngine* self, const FilaFramePacer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::FramePacer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Scene(FilaEngine* self, const FilaScene* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Scene*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Skybox(FilaEngine* self, const FilaSkybox* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Skybox*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_ColorGrading(FilaEngine* self, const FilaColorGrading* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::ColorGrading*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_SwapChain(FilaEngine* self, const FilaSwapChain* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::SwapChain*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Stream(FilaEngine* self, const FilaStream* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Stream*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_Texture(FilaEngine* self, const FilaTexture* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::Texture*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_RenderTarget(FilaEngine* self, const FilaRenderTarget* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::RenderTarget*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_View(FilaEngine* self, const FilaView* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::View*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 bool FilaEngine_destroy_InstanceBuffer(FilaEngine* self, const FilaInstanceBuffer* p) {
-    return reinterpret_cast<filament::Engine*>(self)->destroy(reinterpret_cast<const filament::InstanceBuffer*>(p));
+    return fila::cpp(self)->destroy(fila::cpp(p));
 }
 
 void FilaEngine_destroy_Entity(FilaEngine* self, FilaEntity e) {
-    reinterpret_cast<filament::Engine*>(self)->destroy(utils::Entity::import(e));
+    fila::cpp(self)->destroy(utils::Entity::import(e));
 }
 
 FilaFeatureLevel FilaEngine_getSupportedFeatureLevel(const FilaEngine* self) {
-    return static_cast<FilaFeatureLevel>(reinterpret_cast<const filament::Engine*>(self)->getSupportedFeatureLevel());
+    return static_cast<FilaFeatureLevel>(fila::cpp(self)->getSupportedFeatureLevel());
 }
 
 FilaFeatureLevel FilaEngine_setActiveFeatureLevel(FilaEngine* self, FilaFeatureLevel featureLevel) {
-    return static_cast<FilaFeatureLevel>(reinterpret_cast<filament::Engine*>(self)->setActiveFeatureLevel(static_cast<filament::backend::FeatureLevel>(featureLevel)));
+    return static_cast<FilaFeatureLevel>(fila::cpp(self)->setActiveFeatureLevel(static_cast<filament::backend::FeatureLevel>(featureLevel)));
 }
 
 FilaFeatureLevel FilaEngine_getActiveFeatureLevel(const FilaEngine* self) {
-    return static_cast<FilaFeatureLevel>(reinterpret_cast<const filament::Engine*>(self)->getActiveFeatureLevel());
+    return static_cast<FilaFeatureLevel>(fila::cpp(self)->getActiveFeatureLevel());
 }
 
 uint32_t FilaEngine_getMaxAutomaticInstances(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getMaxAutomaticInstances());
+    return static_cast<uint32_t>(fila::cpp(self)->getMaxAutomaticInstances());
 }
 
 bool FilaEngine_isStereoSupported(const FilaEngine* self, FilaPlatformStereoscopicType stereoscopicType) {
-    return reinterpret_cast<const filament::Engine*>(self)->isStereoSupported(static_cast<filament::backend::Platform::StereoscopicType>(stereoscopicType));
+    return fila::cpp(self)->isStereoSupported(static_cast<filament::backend::Platform::StereoscopicType>(stereoscopicType));
 }
 
 bool FilaEngine_isAsynchronousModeEnabled(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->isAsynchronousModeEnabled();
+    return fila::cpp(self)->isAsynchronousModeEnabled();
 }
 
 bool FilaEngine_hasUnrecoverableFailure(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->hasUnrecoverableFailure();
+    return fila::cpp(self)->hasUnrecoverableFailure();
 }
 
 void FilaEngine_getConfig(const FilaEngine* self, FilaEngineConfig* out) {
-    *reinterpret_cast<filament::Engine::Config*>(out) = reinterpret_cast<const filament::Engine*>(self)->getConfig();
+    *fila::cpp(out) = fila::cpp(self)->getConfig();
 }
 
 uint32_t FilaEngine_getMaxStereoscopicEyes(void) {
@@ -409,271 +409,271 @@ uint32_t FilaEngine_getMaxStereoscopicEyes(void) {
 }
 
 FilaUtilsEntityManager* FilaEngine_getEntityManager(FilaEngine* self) {
-    return reinterpret_cast<FilaUtilsEntityManager*>(&reinterpret_cast<filament::Engine*>(self)->getEntityManager());
+    return fila::c(&fila::cpp(self)->getEntityManager());
 }
 
 FilaRenderableManager* FilaEngine_getRenderableManager(FilaEngine* self) {
-    return reinterpret_cast<FilaRenderableManager*>(&reinterpret_cast<filament::Engine*>(self)->getRenderableManager());
+    return fila::c(&fila::cpp(self)->getRenderableManager());
 }
 
 FilaLightManager* FilaEngine_getLightManager(FilaEngine* self) {
-    return reinterpret_cast<FilaLightManager*>(&reinterpret_cast<filament::Engine*>(self)->getLightManager());
+    return fila::c(&fila::cpp(self)->getLightManager());
 }
 
 FilaTransformManager* FilaEngine_getTransformManager(FilaEngine* self) {
-    return reinterpret_cast<FilaTransformManager*>(&reinterpret_cast<filament::Engine*>(self)->getTransformManager());
+    return fila::c(&fila::cpp(self)->getTransformManager());
 }
 
 void FilaEngine_enableAccurateTranslations(FilaEngine* self) {
-    reinterpret_cast<filament::Engine*>(self)->enableAccurateTranslations();
+    fila::cpp(self)->enableAccurateTranslations();
 }
 
 void FilaEngine_setAutomaticInstancingEnabled(FilaEngine* self, bool enable) {
-    reinterpret_cast<filament::Engine*>(self)->setAutomaticInstancingEnabled(enable);
+    fila::cpp(self)->setAutomaticInstancingEnabled(enable);
 }
 
 bool FilaEngine_isAutomaticInstancingEnabled(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->isAutomaticInstancingEnabled();
+    return fila::cpp(self)->isAutomaticInstancingEnabled();
 }
 
 FilaSwapChain* FilaEngine_createSwapChain_void_uint64_t(FilaEngine* self, void* nativeWindow, uint64_t flags) {
-    return reinterpret_cast<FilaSwapChain*>(reinterpret_cast<filament::Engine*>(self)->createSwapChain(nativeWindow, flags));
+    return fila::c(fila::cpp(self)->createSwapChain(nativeWindow, flags));
 }
 
 FilaSwapChain* FilaEngine_createSwapChain_uint32_t_uint32_t_uint64_t(FilaEngine* self, uint32_t width, uint32_t height, uint64_t flags) {
-    return reinterpret_cast<FilaSwapChain*>(reinterpret_cast<filament::Engine*>(self)->createSwapChain(width, height, flags));
+    return fila::c(fila::cpp(self)->createSwapChain(width, height, flags));
 }
 
 FilaRenderer* FilaEngine_createRenderer(FilaEngine* self) {
-    return reinterpret_cast<FilaRenderer*>(reinterpret_cast<filament::Engine*>(self)->createRenderer());
+    return fila::c(fila::cpp(self)->createRenderer());
 }
 
 FilaView* FilaEngine_createView(FilaEngine* self) {
-    return reinterpret_cast<FilaView*>(reinterpret_cast<filament::Engine*>(self)->createView());
+    return fila::c(fila::cpp(self)->createView());
 }
 
 FilaScene* FilaEngine_createScene(FilaEngine* self) {
-    return reinterpret_cast<FilaScene*>(reinterpret_cast<filament::Engine*>(self)->createScene());
+    return fila::c(fila::cpp(self)->createScene());
 }
 
 FilaCamera* FilaEngine_createCamera(FilaEngine* self, FilaEntity entity) {
-    return reinterpret_cast<FilaCamera*>(reinterpret_cast<filament::Engine*>(self)->createCamera(utils::Entity::import(entity)));
+    return fila::c(fila::cpp(self)->createCamera(utils::Entity::import(entity)));
 }
 
 FilaCamera* FilaEngine_getCameraComponent(FilaEngine* self, FilaEntity entity) {
-    return reinterpret_cast<FilaCamera*>(reinterpret_cast<filament::Engine*>(self)->getCameraComponent(utils::Entity::import(entity)));
+    return fila::c(fila::cpp(self)->getCameraComponent(utils::Entity::import(entity)));
 }
 
 void FilaEngine_destroyCameraComponent(FilaEngine* self, FilaEntity entity) {
-    reinterpret_cast<filament::Engine*>(self)->destroyCameraComponent(utils::Entity::import(entity));
+    fila::cpp(self)->destroyCameraComponent(utils::Entity::import(entity));
 }
 
 FilaFence* FilaEngine_createFence(FilaEngine* self) {
-    return reinterpret_cast<FilaFence*>(reinterpret_cast<filament::Engine*>(self)->createFence());
+    return fila::c(fila::cpp(self)->createFence());
 }
 
 FilaSync* FilaEngine_createSync(FilaEngine* self) {
-    return reinterpret_cast<FilaSync*>(reinterpret_cast<filament::Engine*>(self)->createSync());
+    return fila::c(fila::cpp(self)->createSync());
 }
 
 bool FilaEngine_isValid_BufferObject(const FilaEngine* self, const FilaBufferObject* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::BufferObject*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_VertexBuffer(const FilaEngine* self, const FilaVertexBuffer* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::VertexBuffer*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Fence(const FilaEngine* self, const FilaFence* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Fence*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Sync(const FilaEngine* self, const FilaSync* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Sync*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_IndexBuffer(const FilaEngine* self, const FilaIndexBuffer* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::IndexBuffer*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_SkinningBuffer(const FilaEngine* self, const FilaSkinningBuffer* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::SkinningBuffer*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_MorphTargetBuffer(const FilaEngine* self, const FilaMorphTargetBuffer* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::MorphTargetBuffer*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_IndirectLight(const FilaEngine* self, const FilaIndirectLight* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::IndirectLight*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Material(const FilaEngine* self, const FilaMaterial* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Material*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Material_MaterialInstance(const FilaEngine* self, const FilaMaterial* m, const FilaMaterialInstance* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Material*>(m), reinterpret_cast<const filament::MaterialInstance*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(m), fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Renderer(const FilaEngine* self, const FilaRenderer* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Renderer*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Scene(const FilaEngine* self, const FilaScene* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Scene*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Skybox(const FilaEngine* self, const FilaSkybox* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Skybox*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_ColorGrading(const FilaEngine* self, const FilaColorGrading* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::ColorGrading*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_SwapChain(const FilaEngine* self, const FilaSwapChain* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::SwapChain*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Stream(const FilaEngine* self, const FilaStream* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Stream*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_Texture(const FilaEngine* self, const FilaTexture* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::Texture*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_RenderTarget(const FilaEngine* self, const FilaRenderTarget* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::RenderTarget*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_View(const FilaEngine* self, const FilaView* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::View*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValid_InstanceBuffer(const FilaEngine* self, const FilaInstanceBuffer* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValid(reinterpret_cast<const filament::InstanceBuffer*>(p));
+    return fila::cpp(self)->isValid(fila::cpp(p));
 }
 
 bool FilaEngine_isValidExpensive(const FilaEngine* self, const FilaMaterialInstance* p) {
-    return reinterpret_cast<const filament::Engine*>(self)->isValidExpensive(reinterpret_cast<const filament::MaterialInstance*>(p));
+    return fila::cpp(self)->isValidExpensive(fila::cpp(p));
 }
 
 uint32_t FilaEngine_getBufferObjectCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getBufferObjectCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getBufferObjectCount());
 }
 
 uint32_t FilaEngine_getViewCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getViewCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getViewCount());
 }
 
 uint32_t FilaEngine_getSceneCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSceneCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getSceneCount());
 }
 
 uint32_t FilaEngine_getSwapChainCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSwapChainCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getSwapChainCount());
 }
 
 uint32_t FilaEngine_getStreamCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getStreamCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getStreamCount());
 }
 
 uint32_t FilaEngine_getIndexBufferCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getIndexBufferCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getIndexBufferCount());
 }
 
 uint32_t FilaEngine_getSkinningBufferCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSkinningBufferCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getSkinningBufferCount());
 }
 
 uint32_t FilaEngine_getMorphTargetBufferCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getMorphTargetBufferCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getMorphTargetBufferCount());
 }
 
 uint32_t FilaEngine_getInstanceBufferCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getInstanceBufferCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getInstanceBufferCount());
 }
 
 uint32_t FilaEngine_getVertexBufferCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getVertexBufferCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getVertexBufferCount());
 }
 
 uint32_t FilaEngine_getIndirectLightCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getIndirectLightCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getIndirectLightCount());
 }
 
 uint32_t FilaEngine_getMaterialCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getMaterialCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getMaterialCount());
 }
 
 uint32_t FilaEngine_getTextureCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getTextureCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getTextureCount());
 }
 
 uint32_t FilaEngine_getSkyboxeCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getSkyboxeCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getSkyboxeCount());
 }
 
 uint32_t FilaEngine_getColorGradingCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getColorGradingCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getColorGradingCount());
 }
 
 uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Engine*>(self)->getRenderTargetCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getRenderTargetCount());
 }
 
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id) {
-    return reinterpret_cast<filament::Engine*>(self)->cancelAsyncCall(id);
+    return fila::cpp(self)->cancelAsyncCall(id);
 }
 
 void FilaEngine_flushAndWait(FilaEngine* self) {
-    reinterpret_cast<filament::Engine*>(self)->flushAndWait();
+    fila::cpp(self)->flushAndWait();
 }
 
 bool FilaEngine_flushAndWait_uint64_t(FilaEngine* self, uint64_t timeout) {
-    return reinterpret_cast<filament::Engine*>(self)->flushAndWait(timeout);
+    return fila::cpp(self)->flushAndWait(timeout);
 }
 
 void FilaEngine_flush(FilaEngine* self) {
-    reinterpret_cast<filament::Engine*>(self)->flush();
+    fila::cpp(self)->flush();
 }
 
 bool FilaEngine_isPaused(const FilaEngine* self) {
-    return reinterpret_cast<const filament::Engine*>(self)->isPaused();
+    return fila::cpp(self)->isPaused();
 }
 
 void FilaEngine_setPaused(FilaEngine* self, bool paused) {
-    reinterpret_cast<filament::Engine*>(self)->setPaused(paused);
+    fila::cpp(self)->setPaused(paused);
 }
 
 void FilaEngine_pumpMessageQueues(FilaEngine* self) {
-    reinterpret_cast<filament::Engine*>(self)->pumpMessageQueues();
+    fila::cpp(self)->pumpMessageQueues();
 }
 
 void FilaEngine_unprotected(FilaEngine* self) {
-    reinterpret_cast<filament::Engine*>(self)->unprotected();
+    fila::cpp(self)->unprotected();
 }
 
 const FilaMaterial* FilaEngine_getDefaultMaterial(const FilaEngine* self) {
-    return reinterpret_cast<const FilaMaterial*>(reinterpret_cast<const filament::Engine*>(self)->getDefaultMaterial());
+    return fila::c(fila::cpp(self)->getDefaultMaterial());
 }
 
 FilaBackend FilaEngine_getBackend(const FilaEngine* self) {
-    return static_cast<FilaBackend>(reinterpret_cast<const filament::Engine*>(self)->getBackend());
+    return static_cast<FilaBackend>(fila::cpp(self)->getBackend());
 }
 
 FilaPlatform* FilaEngine_getPlatform(const FilaEngine* self) {
-    return reinterpret_cast<FilaPlatform*>(reinterpret_cast<const filament::Engine*>(self)->getPlatform());
+    return fila::c(fila::cpp(self)->getPlatform());
 }
 
 void* FilaEngine_streamAlloc(FilaEngine* self, uint32_t size, uint32_t alignment) {
-    return reinterpret_cast<filament::Engine*>(self)->streamAlloc(static_cast<size_t>(size), static_cast<size_t>(alignment));
+    return fila::cpp(self)->streamAlloc(static_cast<size_t>(size), static_cast<size_t>(alignment));
 }
 
 void FilaEngine_execute(FilaEngine* self) {
-    reinterpret_cast<filament::Engine*>(self)->execute();
+    fila::cpp(self)->execute();
 }
 
 void FilaEngine_getSteadyClockTimeNano(uint64_t* out) {
@@ -681,23 +681,23 @@ void FilaEngine_getSteadyClockTimeNano(uint64_t* out) {
 }
 
 FilaDebugRegistry* FilaEngine_getDebugRegistry(FilaEngine* self) {
-    return reinterpret_cast<FilaDebugRegistry*>(&reinterpret_cast<filament::Engine*>(self)->getDebugRegistry());
+    return fila::c(&fila::cpp(self)->getDebugRegistry());
 }
 
 bool FilaEngine_hasFeatureFlag(FilaEngine* self, const char* name) {
-    return reinterpret_cast<filament::Engine*>(self)->hasFeatureFlag(name);
+    return fila::cpp(self)->hasFeatureFlag(name);
 }
 
 bool FilaEngine_setFeatureFlag(FilaEngine* self, const char* name, bool value) {
-    return reinterpret_cast<filament::Engine*>(self)->setFeatureFlag(name, value);
+    return fila::cpp(self)->setFeatureFlag(name, value);
 }
 
 bool* FilaEngine_getFeatureFlagPtr(const FilaEngine* self, const char* name) {
-    return reinterpret_cast<const filament::Engine*>(self)->getFeatureFlagPtr(name);
+    return fila::cpp(self)->getFeatureFlagPtr(name);
 }
 
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    reinterpret_cast<filament::Engine*>(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), reinterpret_cast<const filament::Material*>(material), reinterpret_cast<const filament::View*>(view), utils::tribool(static_cast<utils::tribool::Value>(shadowReceiver)), utils::tribool(static_cast<utils::tribool::Value>(skinning)), reinterpret_cast<filament::backend::CallbackHandler*>(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(material), fila::cpp(view), utils::tribool(static_cast<utils::tribool::Value>(shadowReceiver)), utils::tribool(static_cast<utils::tribool::Value>(skinning)), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
 }
 
 } // extern "C"

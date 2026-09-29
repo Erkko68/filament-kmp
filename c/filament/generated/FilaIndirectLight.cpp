@@ -5,79 +5,79 @@
 extern "C" {
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_create(void) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(new filament::IndirectLight::Builder());
+    return fila::c(new filament::IndirectLight::Builder());
 }
 
 void FilaIndirectLightBuilder_destroy(FilaIndirectLightBuilder* self) {
-    delete reinterpret_cast<filament::IndirectLight::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_reflections(FilaIndirectLightBuilder* self, const FilaTexture* cubemap) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(&reinterpret_cast<filament::IndirectLight::Builder*>(self)->reflections(reinterpret_cast<const filament::Texture*>(cubemap)));
+    return fila::c(&fila::cpp(self)->reflections(fila::cpp(cubemap)));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_uint8_t_float3(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(&reinterpret_cast<filament::IndirectLight::Builder*>(self)->irradiance(static_cast<uint8_t>(bands), reinterpret_cast<const filament::math::float3*>(sh)));
+    return fila::c(&fila::cpp(self)->irradiance(static_cast<uint8_t>(bands), fila::cpp(sh)));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_irradiance_Texture(FilaIndirectLightBuilder* self, const FilaTexture* cubemap) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(&reinterpret_cast<filament::IndirectLight::Builder*>(self)->irradiance(reinterpret_cast<const filament::Texture*>(cubemap)));
+    return fila::c(&fila::cpp(self)->irradiance(fila::cpp(cubemap)));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_radiance(FilaIndirectLightBuilder* self, uint32_t bands, const FilaFloat3* sh) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(&reinterpret_cast<filament::IndirectLight::Builder*>(self)->radiance(static_cast<uint8_t>(bands), reinterpret_cast<const filament::math::float3*>(sh)));
+    return fila::c(&fila::cpp(self)->radiance(static_cast<uint8_t>(bands), fila::cpp(sh)));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_intensity(FilaIndirectLightBuilder* self, float envIntensity) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(&reinterpret_cast<filament::IndirectLight::Builder*>(self)->intensity(envIntensity));
+    return fila::c(&fila::cpp(self)->intensity(envIntensity));
 }
 
 FilaIndirectLightBuilder* FilaIndirectLightBuilder_rotation(FilaIndirectLightBuilder* self, const FilaMat3f* rotation) {
-    return reinterpret_cast<FilaIndirectLightBuilder*>(&reinterpret_cast<filament::IndirectLight::Builder*>(self)->rotation(std::bit_cast<filament::math::mat3f>(*rotation)));
+    return fila::c(&fila::cpp(self)->rotation(std::bit_cast<filament::math::mat3f>(*rotation)));
 }
 
 FilaIndirectLight* FilaIndirectLightBuilder_build(FilaIndirectLightBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaIndirectLight*>(reinterpret_cast<filament::IndirectLight::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 void FilaIndirectLight_setIntensity(FilaIndirectLight* self, float intensity) {
-    reinterpret_cast<filament::IndirectLight*>(self)->setIntensity(intensity);
+    fila::cpp(self)->setIntensity(intensity);
 }
 
 float FilaIndirectLight_getIntensity(const FilaIndirectLight* self) {
-    return reinterpret_cast<const filament::IndirectLight*>(self)->getIntensity();
+    return fila::cpp(self)->getIntensity();
 }
 
 void FilaIndirectLight_setRotation(FilaIndirectLight* self, const FilaMat3f* rotation) {
-    reinterpret_cast<filament::IndirectLight*>(self)->setRotation(std::bit_cast<filament::math::mat3f>(*rotation));
+    fila::cpp(self)->setRotation(std::bit_cast<filament::math::mat3f>(*rotation));
 }
 
 void FilaIndirectLight_getRotation(const FilaIndirectLight* self, FilaMat3f* out) {
-    *out = std::bit_cast<FilaMat3f>(reinterpret_cast<const filament::IndirectLight*>(self)->getRotation());
+    *out = std::bit_cast<FilaMat3f>(fila::cpp(self)->getRotation());
 }
 
 const FilaTexture* FilaIndirectLight_getReflectionsTexture(const FilaIndirectLight* self) {
-    return reinterpret_cast<const FilaTexture*>(reinterpret_cast<const filament::IndirectLight*>(self)->getReflectionsTexture());
+    return fila::c(fila::cpp(self)->getReflectionsTexture());
 }
 
 const FilaTexture* FilaIndirectLight_getIrradianceTexture(const FilaIndirectLight* self) {
-    return reinterpret_cast<const FilaTexture*>(reinterpret_cast<const filament::IndirectLight*>(self)->getIrradianceTexture());
+    return fila::c(fila::cpp(self)->getIrradianceTexture());
 }
 
 void FilaIndirectLight_getDirectionEstimate_float3(const FilaFloat3* sh, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(filament::IndirectLight::getDirectionEstimate(reinterpret_cast<const filament::math::float3*>(sh)));
+    *out = std::bit_cast<FilaFloat3>(filament::IndirectLight::getDirectionEstimate(fila::cpp(sh)));
 }
 
 void FilaIndirectLight_getDirectionEstimate(const FilaIndirectLight* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::IndirectLight*>(self)->getDirectionEstimate());
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->getDirectionEstimate());
 }
 
 void FilaIndirectLight_getColorEstimate_float3(const FilaFloat3* sh, const FilaFloat3* direction, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(filament::IndirectLight::getColorEstimate(reinterpret_cast<const filament::math::float3*>(sh), std::bit_cast<filament::math::float3>(*direction)));
+    *out = std::bit_cast<FilaFloat4>(filament::IndirectLight::getColorEstimate(fila::cpp(sh), std::bit_cast<filament::math::float3>(*direction)));
 }
 
 void FilaIndirectLight_getColorEstimate(const FilaIndirectLight* self, const FilaFloat3* direction, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::IndirectLight*>(self)->getColorEstimate(std::bit_cast<filament::math::float3>(*direction)));
+    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->getColorEstimate(std::bit_cast<filament::math::float3>(*direction)));
 }
 
 } // extern "C"

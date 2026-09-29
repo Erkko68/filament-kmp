@@ -5,67 +5,71 @@
 extern "C" {
 
 FilaTextureBuilder* FilaTextureBuilder_create(void) {
-    return reinterpret_cast<FilaTextureBuilder*>(new filament::Texture::Builder());
+    return fila::c(new filament::Texture::Builder());
 }
 
 void FilaTextureBuilder_destroy(FilaTextureBuilder* self) {
-    delete reinterpret_cast<filament::Texture::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaTextureBuilder* FilaTextureBuilder_width(FilaTextureBuilder* self, uint32_t width) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->width(width));
+    return fila::c(&fila::cpp(self)->width(width));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_height(FilaTextureBuilder* self, uint32_t height) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->height(height));
+    return fila::c(&fila::cpp(self)->height(height));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_depth(FilaTextureBuilder* self, uint32_t depth) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->depth(depth));
+    return fila::c(&fila::cpp(self)->depth(depth));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_levels(FilaTextureBuilder* self, uint32_t levels) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->levels(static_cast<uint8_t>(levels)));
+    return fila::c(&fila::cpp(self)->levels(static_cast<uint8_t>(levels)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_samples(FilaTextureBuilder* self, uint32_t samples) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->samples(static_cast<uint8_t>(samples)));
+    return fila::c(&fila::cpp(self)->samples(static_cast<uint8_t>(samples)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_sampler(FilaTextureBuilder* self, FilaSamplerType target) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->sampler(static_cast<filament::backend::SamplerType>(target)));
+    return fila::c(&fila::cpp(self)->sampler(static_cast<filament::backend::SamplerType>(target)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_format(FilaTextureBuilder* self, FilaTextureFormat format) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->format(static_cast<filament::backend::TextureFormat>(format)));
+    return fila::c(&fila::cpp(self)->format(static_cast<filament::backend::TextureFormat>(format)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_usage(FilaTextureBuilder* self, FilaTextureUsage usage) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->usage(static_cast<filament::backend::TextureUsage>(usage)));
+    return fila::c(&fila::cpp(self)->usage(static_cast<filament::backend::TextureUsage>(usage)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_swizzle(FilaTextureBuilder* self, FilaTextureSwizzle r, FilaTextureSwizzle g, FilaTextureSwizzle b, FilaTextureSwizzle a) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->swizzle(static_cast<filament::backend::TextureSwizzle>(r), static_cast<filament::backend::TextureSwizzle>(g), static_cast<filament::backend::TextureSwizzle>(b), static_cast<filament::backend::TextureSwizzle>(a)));
+    return fila::c(&fila::cpp(self)->swizzle(static_cast<filament::backend::TextureSwizzle>(r), static_cast<filament::backend::TextureSwizzle>(g), static_cast<filament::backend::TextureSwizzle>(b), static_cast<filament::backend::TextureSwizzle>(a)));
+}
+
+FilaTextureBuilder* FilaTextureBuilder_name(FilaTextureBuilder* self, const char* name) {
+    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_external(FilaTextureBuilder* self) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->external());
+    return fila::c(&fila::cpp(self)->external());
 }
 
 FilaTexture* FilaTextureBuilder_build(FilaTextureBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaTexture*>(reinterpret_cast<filament::Texture::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 FilaTextureBuilder* FilaTextureBuilder_import(FilaTextureBuilder* self, int64_t id) {
-    return reinterpret_cast<FilaTextureBuilder*>(&reinterpret_cast<filament::Texture::Builder*>(self)->import(static_cast<intptr_t>(id)));
+    return fila::c(&fila::cpp(self)->import(static_cast<intptr_t>(id)));
 }
 
 bool FilaTexture_isTextureFormatSupported(FilaEngine* engine, FilaTextureFormat format) {
-    return filament::Texture::isTextureFormatSupported(*reinterpret_cast<filament::Engine*>(engine), static_cast<filament::backend::TextureFormat>(format));
+    return filament::Texture::isTextureFormatSupported(*fila::cpp(engine), static_cast<filament::backend::TextureFormat>(format));
 }
 
 bool FilaTexture_isTextureFormatMipmappable(FilaEngine* engine, FilaTextureFormat format) {
-    return filament::Texture::isTextureFormatMipmappable(*reinterpret_cast<filament::Engine*>(engine), static_cast<filament::backend::TextureFormat>(format));
+    return filament::Texture::isTextureFormatMipmappable(*fila::cpp(engine), static_cast<filament::backend::TextureFormat>(format));
 }
 
 bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format) {
@@ -73,11 +77,11 @@ bool FilaTexture_isTextureFormatCompressed(FilaTextureFormat format) {
 }
 
 bool FilaTexture_isProtectedTexturesSupported(FilaEngine* engine) {
-    return filament::Texture::isProtectedTexturesSupported(*reinterpret_cast<filament::Engine*>(engine));
+    return filament::Texture::isProtectedTexturesSupported(*fila::cpp(engine));
 }
 
 bool FilaTexture_isTextureSwizzleSupported(FilaEngine* engine) {
-    return filament::Texture::isTextureSwizzleSupported(*reinterpret_cast<filament::Engine*>(engine));
+    return filament::Texture::isTextureSwizzleSupported(*fila::cpp(engine));
 }
 
 uint32_t FilaTexture_computeTextureDataSize(FilaPixelDataFormat format, FilaPixelDataType type, uint32_t stride, uint32_t height, uint32_t alignment) {
@@ -89,63 +93,63 @@ bool FilaTexture_validatePixelFormatAndType(FilaTextureFormat internalFormat, Fi
 }
 
 uint32_t FilaTexture_getMaxTextureSize(FilaEngine* engine, FilaSamplerType type) {
-    return static_cast<uint32_t>(filament::Texture::getMaxTextureSize(*reinterpret_cast<filament::Engine*>(engine), static_cast<filament::backend::SamplerType>(type)));
+    return static_cast<uint32_t>(filament::Texture::getMaxTextureSize(*fila::cpp(engine), static_cast<filament::backend::SamplerType>(type)));
 }
 
 uint32_t FilaTexture_getMaxArrayTextureLayers(FilaEngine* engine) {
-    return static_cast<uint32_t>(filament::Texture::getMaxArrayTextureLayers(*reinterpret_cast<filament::Engine*>(engine)));
+    return static_cast<uint32_t>(filament::Texture::getMaxArrayTextureLayers(*fila::cpp(engine)));
 }
 
 uint32_t FilaTexture_getWidth(const FilaTexture* self, uint32_t level) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getWidth(static_cast<size_t>(level)));
+    return static_cast<uint32_t>(fila::cpp(self)->getWidth(static_cast<size_t>(level)));
 }
 
 uint32_t FilaTexture_getHeight(const FilaTexture* self, uint32_t level) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getHeight(static_cast<size_t>(level)));
+    return static_cast<uint32_t>(fila::cpp(self)->getHeight(static_cast<size_t>(level)));
 }
 
 uint32_t FilaTexture_getDepth(const FilaTexture* self, uint32_t level) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getDepth(static_cast<size_t>(level)));
+    return static_cast<uint32_t>(fila::cpp(self)->getDepth(static_cast<size_t>(level)));
 }
 
 uint32_t FilaTexture_getLevels(const FilaTexture* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Texture*>(self)->getLevels());
+    return static_cast<uint32_t>(fila::cpp(self)->getLevels());
 }
 
 FilaSamplerType FilaTexture_getTarget(const FilaTexture* self) {
-    return static_cast<FilaSamplerType>(reinterpret_cast<const filament::Texture*>(self)->getTarget());
+    return static_cast<FilaSamplerType>(fila::cpp(self)->getTarget());
 }
 
 FilaTextureFormat FilaTexture_getFormat(const FilaTexture* self) {
-    return static_cast<FilaTextureFormat>(reinterpret_cast<const filament::Texture*>(self)->getFormat());
+    return static_cast<FilaTextureFormat>(fila::cpp(self)->getFormat());
 }
 
 void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t zoffset, uint32_t width, uint32_t height, uint32_t depth, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
-    reinterpret_cast<const filament::Texture*>(self)->setImage(*reinterpret_cast<filament::Engine*>(engine), static_cast<size_t>(level), xoffset, yoffset, zoffset, width, height, depth, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+    fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, zoffset, width, height, depth, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
 void FilaTexture_setImage_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
-    reinterpret_cast<const filament::Texture*>(self)->setImage(*reinterpret_cast<filament::Engine*>(engine), static_cast<size_t>(level), filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+    fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
 void FilaTexture_setImage_uint32_t_uint32_t_uint32_t_uint32_t_PixelBufferDescriptor(const FilaTexture* self, FilaEngine* engine, uint32_t level, uint32_t xoffset, uint32_t yoffset, uint32_t width, uint32_t height, void* buffer, uint32_t bufferSize, FilaPixelDataFormat bufferFormat, FilaPixelDataType bufferType, uint32_t bufferAlignment, uint32_t bufferLeft, uint32_t bufferTop, uint32_t bufferStride, FilaBufferDescriptorCallback bufferCallback, void* bufferUser) {
-    reinterpret_cast<const filament::Texture*>(self)->setImage(*reinterpret_cast<filament::Engine*>(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
+    fila::cpp(self)->setImage(*fila::cpp(engine), static_cast<size_t>(level), xoffset, yoffset, width, height, filament::backend::PixelBufferDescriptor(buffer, bufferSize, static_cast<filament::backend::PixelDataFormat>(bufferFormat), static_cast<filament::backend::PixelDataType>(bufferType), bufferAlignment, bufferLeft, bufferTop, bufferStride, bufferCallback, bufferUser));
 }
 
 void FilaTexture_setExternalImage_void_size_t(FilaTexture* self, FilaEngine* engine, void* image, uint32_t plane) {
-    reinterpret_cast<filament::Texture*>(self)->setExternalImage(*reinterpret_cast<filament::Engine*>(engine), image, static_cast<size_t>(plane));
+    fila::cpp(self)->setExternalImage(*fila::cpp(engine), image, static_cast<size_t>(plane));
 }
 
 void FilaTexture_setExternalStream(FilaTexture* self, FilaEngine* engine, FilaStream* stream) {
-    reinterpret_cast<filament::Texture*>(self)->setExternalStream(*reinterpret_cast<filament::Engine*>(engine), reinterpret_cast<filament::Stream*>(stream));
+    fila::cpp(self)->setExternalStream(*fila::cpp(engine), fila::cpp(stream));
 }
 
 void FilaTexture_generateMipmaps(const FilaTexture* self, FilaEngine* engine) {
-    reinterpret_cast<const filament::Texture*>(self)->generateMipmaps(*reinterpret_cast<filament::Engine*>(engine));
+    fila::cpp(self)->generateMipmaps(*fila::cpp(engine));
 }
 
 bool FilaTexture_isCreationComplete(const FilaTexture* self) {
-    return reinterpret_cast<const filament::Texture*>(self)->isCreationComplete();
+    return fila::cpp(self)->isCreationComplete();
 }
 
 } // extern "C"

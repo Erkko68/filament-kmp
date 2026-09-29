@@ -5,15 +5,15 @@
 extern "C" {
 
 FilaColorGamut* FilaColorGamut_create_Primaries(const FilaColorPrimaries* primaries) {
-    return reinterpret_cast<FilaColorGamut*>(new filament::color::Gamut(*reinterpret_cast<const filament::color::Primaries*>(primaries)));
+    return fila::c(new filament::color::Gamut(*fila::cpp(primaries)));
 }
 
 FilaColorGamut* FilaColorGamut_create_float2_float2_float2(const FilaFloat2* r, const FilaFloat2* g, const FilaFloat2* b) {
-    return reinterpret_cast<FilaColorGamut*>(new filament::color::Gamut(std::bit_cast<filament::math::float2>(*r), std::bit_cast<filament::math::float2>(*g), std::bit_cast<filament::math::float2>(*b)));
+    return fila::c(new filament::color::Gamut(std::bit_cast<filament::math::float2>(*r), std::bit_cast<filament::math::float2>(*g), std::bit_cast<filament::math::float2>(*b)));
 }
 
 void FilaColorGamut_getPrimaries(const FilaColorGamut* self, FilaColorPrimaries* out) {
-    *reinterpret_cast<filament::color::Primaries*>(out) = reinterpret_cast<const filament::color::Gamut*>(self)->getPrimaries();
+    *fila::cpp(out) = fila::cpp(self)->getPrimaries();
 }
 
 } // extern "C"

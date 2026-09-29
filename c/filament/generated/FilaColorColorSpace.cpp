@@ -5,19 +5,19 @@
 extern "C" {
 
 FilaColorColorSpace* FilaColorColorSpace_create(const FilaColorPrimaries* primaries, const FilaColorTransferFunction* transferFunction, const FilaFloat2* whitePoint) {
-    return reinterpret_cast<FilaColorColorSpace*>(new filament::color::ColorSpace(*reinterpret_cast<const filament::color::Primaries*>(primaries), *reinterpret_cast<const filament::color::TransferFunction*>(transferFunction), std::bit_cast<filament::math::float2>(*whitePoint)));
+    return fila::c(new filament::color::ColorSpace(*fila::cpp(primaries), *fila::cpp(transferFunction), std::bit_cast<filament::math::float2>(*whitePoint)));
 }
 
 void FilaColorColorSpace_destroy(FilaColorColorSpace* self) {
-    delete reinterpret_cast<filament::color::ColorSpace*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaColorColorSpace_getPrimaries(const FilaColorColorSpace* self, FilaColorPrimaries* out) {
-    *reinterpret_cast<filament::color::Primaries*>(out) = reinterpret_cast<const filament::color::ColorSpace*>(self)->getPrimaries();
+    *fila::cpp(out) = fila::cpp(self)->getPrimaries();
 }
 
 void FilaColorColorSpace_getWhitePoint(const FilaColorColorSpace* self, FilaFloat2* out) {
-    *out = std::bit_cast<FilaFloat2>(reinterpret_cast<const filament::color::ColorSpace*>(self)->getWhitePoint());
+    *out = std::bit_cast<FilaFloat2>(fila::cpp(self)->getWhitePoint());
 }
 
 } // extern "C"

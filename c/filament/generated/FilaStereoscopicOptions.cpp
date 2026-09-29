@@ -5,19 +5,19 @@
 extern "C" {
 
 FilaStereoscopicOptions* FilaStereoscopicOptions_create(void) {
-    return reinterpret_cast<FilaStereoscopicOptions*>(new filament::StereoscopicOptions());
+    return fila::c(new filament::StereoscopicOptions());
 }
 
 void FilaStereoscopicOptions_destroy(FilaStereoscopicOptions* self) {
-    delete reinterpret_cast<filament::StereoscopicOptions*>(self);
+    delete fila::cpp(self);
 }
 
 bool FilaStereoscopicOptions_getEnabled(const FilaStereoscopicOptions* self) {
-    return reinterpret_cast<const filament::StereoscopicOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaStereoscopicOptions_setEnabled(FilaStereoscopicOptions* self, bool value) {
-    reinterpret_cast<filament::StereoscopicOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 } // extern "C"

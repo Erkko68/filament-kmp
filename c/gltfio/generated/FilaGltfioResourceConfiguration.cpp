@@ -5,31 +5,27 @@
 extern "C" {
 
 FilaGltfioResourceConfiguration* FilaGltfioResourceConfiguration_create(void) {
-    return reinterpret_cast<FilaGltfioResourceConfiguration*>(new filament::gltfio::ResourceConfiguration());
+    return fila::c(new filament::gltfio::ResourceConfiguration());
 }
 
 void FilaGltfioResourceConfiguration_destroy(FilaGltfioResourceConfiguration* self) {
-    delete reinterpret_cast<filament::gltfio::ResourceConfiguration*>(self);
+    delete fila::cpp(self);
 }
 
 FilaEngine* FilaGltfioResourceConfiguration_getEngine(const FilaGltfioResourceConfiguration* self) {
-    return reinterpret_cast<FilaEngine*>(reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(self)->engine);
+    return fila::c(fila::cpp(self)->engine);
 }
 
 void FilaGltfioResourceConfiguration_setEngine(FilaGltfioResourceConfiguration* self, FilaEngine* value) {
-    reinterpret_cast<filament::gltfio::ResourceConfiguration*>(self)->engine = reinterpret_cast<filament::Engine*>(value);
-}
-
-const char* FilaGltfioResourceConfiguration_getGltfPath(const FilaGltfioResourceConfiguration* self) {
-    return reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(self)->gltfPath;
+    fila::cpp(self)->engine = fila::cpp(value);
 }
 
 bool FilaGltfioResourceConfiguration_getNormalizeSkinningWeights(const FilaGltfioResourceConfiguration* self) {
-    return reinterpret_cast<const filament::gltfio::ResourceConfiguration*>(self)->normalizeSkinningWeights;
+    return fila::cpp(self)->normalizeSkinningWeights;
 }
 
 void FilaGltfioResourceConfiguration_setNormalizeSkinningWeights(FilaGltfioResourceConfiguration* self, bool value) {
-    reinterpret_cast<filament::gltfio::ResourceConfiguration*>(self)->normalizeSkinningWeights = value;
+    fila::cpp(self)->normalizeSkinningWeights = value;
 }
 
 } // extern "C"

@@ -5,87 +5,87 @@
 extern "C" {
 
 FilaGltfioFilamentInstance* FilaGltfioFilamentInstance_create(void) {
-    return reinterpret_cast<FilaGltfioFilamentInstance*>(new filament::gltfio::FilamentInstance());
+    return fila::c(new filament::gltfio::FilamentInstance());
 }
 
 void FilaGltfioFilamentInstance_destroy(FilaGltfioFilamentInstance* self) {
-    delete reinterpret_cast<filament::gltfio::FilamentInstance*>(self);
+    delete fila::cpp(self);
 }
 
 const FilaGltfioFilamentAsset* FilaGltfioFilamentInstance_getAsset(const FilaGltfioFilamentInstance* self) {
-    return reinterpret_cast<const FilaGltfioFilamentAsset*>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getAsset());
+    return fila::c(fila::cpp(self)->getAsset());
 }
 
 const FilaEntity* FilaGltfioFilamentInstance_getEntities(const FilaGltfioFilamentInstance* self) {
-    return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getEntities());
+    return reinterpret_cast<const FilaEntity*>(fila::cpp(self)->getEntities());
 }
 
 uint32_t FilaGltfioFilamentInstance_getEntityCount(const FilaGltfioFilamentInstance* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getEntityCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getEntityCount());
 }
 
 FilaEntity FilaGltfioFilamentInstance_getRoot(const FilaGltfioFilamentInstance* self) {
-    return utils::Entity::smuggle(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getRoot());
+    return utils::Entity::smuggle(fila::cpp(self)->getRoot());
 }
 
 void FilaGltfioFilamentInstance_applyMaterialVariant(FilaGltfioFilamentInstance* self, uint32_t variantIndex) {
-    reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->applyMaterialVariant(static_cast<size_t>(variantIndex));
+    fila::cpp(self)->applyMaterialVariant(static_cast<size_t>(variantIndex));
 }
 
 uint32_t FilaGltfioFilamentInstance_getMaterialVariantCount(const FilaGltfioFilamentInstance* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getMaterialVariantCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getMaterialVariantCount());
 }
 
 const char* FilaGltfioFilamentInstance_getMaterialVariantName(const FilaGltfioFilamentInstance* self, uint32_t variantIndex) {
-    return reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getMaterialVariantName(static_cast<size_t>(variantIndex));
+    return fila::cpp(self)->getMaterialVariantName(static_cast<size_t>(variantIndex));
 }
 
 FilaGltfioAnimator* FilaGltfioFilamentInstance_getAnimator(FilaGltfioFilamentInstance* self) {
-    return reinterpret_cast<FilaGltfioAnimator*>(reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->getAnimator());
+    return fila::c(fila::cpp(self)->getAnimator());
 }
 
 uint32_t FilaGltfioFilamentInstance_getSkinCount(const FilaGltfioFilamentInstance* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getSkinCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getSkinCount());
 }
 
 const char* FilaGltfioFilamentInstance_getSkinNameAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex) {
-    return reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getSkinNameAt(static_cast<size_t>(skinIndex));
+    return fila::cpp(self)->getSkinNameAt(static_cast<size_t>(skinIndex));
 }
 
 uint32_t FilaGltfioFilamentInstance_getJointCountAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getJointCountAt(static_cast<size_t>(skinIndex)));
+    return static_cast<uint32_t>(fila::cpp(self)->getJointCountAt(static_cast<size_t>(skinIndex)));
 }
 
 const FilaEntity* FilaGltfioFilamentInstance_getJointsAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex) {
-    return reinterpret_cast<const FilaEntity*>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getJointsAt(static_cast<size_t>(skinIndex)));
+    return reinterpret_cast<const FilaEntity*>(fila::cpp(self)->getJointsAt(static_cast<size_t>(skinIndex)));
 }
 
 void FilaGltfioFilamentInstance_attachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target) {
-    reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->attachSkin(static_cast<size_t>(skinIndex), utils::Entity::import(target));
+    fila::cpp(self)->attachSkin(static_cast<size_t>(skinIndex), utils::Entity::import(target));
 }
 
 void FilaGltfioFilamentInstance_detachSkin(FilaGltfioFilamentInstance* self, uint32_t skinIndex, FilaEntity target) {
-    reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->detachSkin(static_cast<size_t>(skinIndex), utils::Entity::import(target));
+    fila::cpp(self)->detachSkin(static_cast<size_t>(skinIndex), utils::Entity::import(target));
 }
 
 const FilaMat4f* FilaGltfioFilamentInstance_getInverseBindMatricesAt(const FilaGltfioFilamentInstance* self, uint32_t skinIndex) {
-    return reinterpret_cast<const FilaMat4f*>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getInverseBindMatricesAt(static_cast<size_t>(skinIndex)));
+    return fila::c(fila::cpp(self)->getInverseBindMatricesAt(static_cast<size_t>(skinIndex)));
 }
 
 void FilaGltfioFilamentInstance_recomputeBoundingBoxes(FilaGltfioFilamentInstance* self) {
-    reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->recomputeBoundingBoxes();
+    fila::cpp(self)->recomputeBoundingBoxes();
 }
 
 void FilaGltfioFilamentInstance_getBoundingBox(const FilaGltfioFilamentInstance* self, FilaAabb* out) {
-    *reinterpret_cast<filament::Aabb*>(out) = reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getBoundingBox();
+    *fila::cpp(out) = fila::cpp(self)->getBoundingBox();
 }
 
 uint32_t FilaGltfioFilamentInstance_getMaterialInstanceCount(const FilaGltfioFilamentInstance* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::FilamentInstance*>(self)->getMaterialInstanceCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getMaterialInstanceCount());
 }
 
 void FilaGltfioFilamentInstance_detachMaterialInstances(FilaGltfioFilamentInstance* self) {
-    reinterpret_cast<filament::gltfio::FilamentInstance*>(self)->detachMaterialInstances();
+    fila::cpp(self)->detachMaterialInstances();
 }
 
 } // extern "C"

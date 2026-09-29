@@ -13,10 +13,6 @@ FilaRendererDisplayInfo* FilaRendererDisplayInfo_create(void);
 void FilaRendererDisplayInfo_destroy(FilaRendererDisplayInfo* self);
 float FilaRendererDisplayInfo_getRefreshRate(const FilaRendererDisplayInfo* self);
 void FilaRendererDisplayInfo_setRefreshRate(FilaRendererDisplayInfo* self, float value);
-void FilaRendererDisplayInfo_getPresentationDeadlineNanos(const FilaRendererDisplayInfo* self, uint64_t* out);
-void FilaRendererDisplayInfo_setPresentationDeadlineNanos(FilaRendererDisplayInfo* self, uint64_t value);
-void FilaRendererDisplayInfo_getVsyncOffsetNanos(const FilaRendererDisplayInfo* self, uint64_t* out);
-void FilaRendererDisplayInfo_setVsyncOffsetNanos(FilaRendererDisplayInfo* self, uint64_t value);
 
 // filament::Renderer::FrameInfo
 FilaRendererFrameInfo* FilaRendererFrameInfo_create(void);

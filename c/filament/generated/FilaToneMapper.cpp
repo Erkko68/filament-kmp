@@ -5,11 +5,11 @@
 extern "C" {
 
 bool FilaToneMapper_isOneDimensional(const FilaToneMapper* self) {
-    return reinterpret_cast<const filament::ToneMapper*>(self)->isOneDimensional();
+    return fila::cpp(self)->isOneDimensional();
 }
 
 bool FilaToneMapper_isLDR(const FilaToneMapper* self) {
-    return reinterpret_cast<const filament::ToneMapper*>(self)->isLDR();
+    return fila::cpp(self)->isLDR();
 }
 
 } // extern "C"

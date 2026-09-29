@@ -5,87 +5,87 @@
 extern "C" {
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_create(void) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(new filament::ColorGrading::Builder());
+    return fila::c(new filament::ColorGrading::Builder());
 }
 
 void FilaColorGradingBuilder_destroy(FilaColorGradingBuilder* self) {
-    delete reinterpret_cast<filament::ColorGrading::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_quality(FilaColorGradingBuilder* self, FilaColorGradingQualityLevel qualityLevel) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->quality(static_cast<filament::ColorGrading::QualityLevel>(qualityLevel)));
+    return fila::c(&fila::cpp(self)->quality(static_cast<filament::ColorGrading::QualityLevel>(qualityLevel)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_format(FilaColorGradingBuilder* self, FilaColorGradingLutFormat format) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->format(static_cast<filament::ColorGrading::LutFormat>(format)));
+    return fila::c(&fila::cpp(self)->format(static_cast<filament::ColorGrading::LutFormat>(format)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_dimensions(FilaColorGradingBuilder* self, uint32_t dim) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->dimensions(static_cast<uint8_t>(dim)));
+    return fila::c(&fila::cpp(self)->dimensions(static_cast<uint8_t>(dim)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_toneMapper(FilaColorGradingBuilder* self, const FilaToneMapper* toneMapper) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->toneMapper(reinterpret_cast<const filament::ToneMapper*>(toneMapper)));
+    return fila::c(&fila::cpp(self)->toneMapper(fila::cpp(toneMapper)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_luminanceScaling(FilaColorGradingBuilder* self, bool luminanceScaling) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->luminanceScaling(luminanceScaling));
+    return fila::c(&fila::cpp(self)->luminanceScaling(luminanceScaling));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_gamutMapping(FilaColorGradingBuilder* self, bool gamutMapping) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->gamutMapping(gamutMapping));
+    return fila::c(&fila::cpp(self)->gamutMapping(gamutMapping));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_exposure(FilaColorGradingBuilder* self, float exposure) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->exposure(exposure));
+    return fila::c(&fila::cpp(self)->exposure(exposure));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_nightAdaptation(FilaColorGradingBuilder* self, float adaptation) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->nightAdaptation(adaptation));
+    return fila::c(&fila::cpp(self)->nightAdaptation(adaptation));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_whiteBalance(FilaColorGradingBuilder* self, float temperature, float tint) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->whiteBalance(temperature, tint));
+    return fila::c(&fila::cpp(self)->whiteBalance(temperature, tint));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_channelMixer(FilaColorGradingBuilder* self, const FilaFloat3* outRed, const FilaFloat3* outGreen, const FilaFloat3* outBlue) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->channelMixer(std::bit_cast<filament::math::float3>(*outRed), std::bit_cast<filament::math::float3>(*outGreen), std::bit_cast<filament::math::float3>(*outBlue)));
+    return fila::c(&fila::cpp(self)->channelMixer(std::bit_cast<filament::math::float3>(*outRed), std::bit_cast<filament::math::float3>(*outGreen), std::bit_cast<filament::math::float3>(*outBlue)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_shadowsMidtonesHighlights(FilaColorGradingBuilder* self, const FilaFloat4* shadows, const FilaFloat4* midtones, const FilaFloat4* highlights, const FilaFloat4* ranges) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->shadowsMidtonesHighlights(std::bit_cast<filament::math::float4>(*shadows), std::bit_cast<filament::math::float4>(*midtones), std::bit_cast<filament::math::float4>(*highlights), std::bit_cast<filament::math::float4>(*ranges)));
+    return fila::c(&fila::cpp(self)->shadowsMidtonesHighlights(std::bit_cast<filament::math::float4>(*shadows), std::bit_cast<filament::math::float4>(*midtones), std::bit_cast<filament::math::float4>(*highlights), std::bit_cast<filament::math::float4>(*ranges)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_slopeOffsetPower(FilaColorGradingBuilder* self, const FilaFloat3* slope, const FilaFloat3* offset, const FilaFloat3* power) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->slopeOffsetPower(std::bit_cast<filament::math::float3>(*slope), std::bit_cast<filament::math::float3>(*offset), std::bit_cast<filament::math::float3>(*power)));
+    return fila::c(&fila::cpp(self)->slopeOffsetPower(std::bit_cast<filament::math::float3>(*slope), std::bit_cast<filament::math::float3>(*offset), std::bit_cast<filament::math::float3>(*power)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_contrast(FilaColorGradingBuilder* self, float contrast) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->contrast(contrast));
+    return fila::c(&fila::cpp(self)->contrast(contrast));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* self, float vibrance) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->vibrance(vibrance));
+    return fila::c(&fila::cpp(self)->vibrance(vibrance));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* self, float saturation) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->saturation(saturation));
+    return fila::c(&fila::cpp(self)->saturation(saturation));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, const FilaFloat3* shadowGamma, const FilaFloat3* midPoint, const FilaFloat3* highlightScale) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->curves(std::bit_cast<filament::math::float3>(*shadowGamma), std::bit_cast<filament::math::float3>(*midPoint), std::bit_cast<filament::math::float3>(*highlightScale)));
+    return fila::c(&fila::cpp(self)->curves(std::bit_cast<filament::math::float3>(*shadowGamma), std::bit_cast<filament::math::float3>(*midPoint), std::bit_cast<filament::math::float3>(*highlightScale)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->outputColorSpace(*reinterpret_cast<const filament::color::ColorSpace*>(colorSpace)));
+    return fila::c(&fila::cpp(self)->outputColorSpace(*fila::cpp(colorSpace)));
 }
 
 FilaColorGradingBuilder* FilaColorGradingBuilder_fastMath(FilaColorGradingBuilder* self, bool fastMath) {
-    return reinterpret_cast<FilaColorGradingBuilder*>(&reinterpret_cast<filament::ColorGrading::Builder*>(self)->fastMath(fastMath));
+    return fila::c(&fila::cpp(self)->fastMath(fastMath));
 }
 
 FilaColorGrading* FilaColorGradingBuilder_build(FilaColorGradingBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaColorGrading*>(reinterpret_cast<filament::ColorGrading::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 } // extern "C"

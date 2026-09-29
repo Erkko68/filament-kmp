@@ -17,8 +17,7 @@ FilaVertexBufferBuilder* FilaVertexBufferBuilder_enableBufferObjects(FilaVertexB
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_attribute(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, uint32_t bufferIndex, FilaElementType attributeType, uint32_t byteOffset, uint32_t byteStride);
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_normalized(FilaVertexBufferBuilder* self, FilaVertexAttribute attribute, bool normalized);
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_advancedSkinning(FilaVertexBufferBuilder* self, bool enabled);
-// TODO(handwritten) FilaVertexBufferBuilder_name: Builder & filament::VertexBuffer::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaVertexBufferBuilder* FilaVertexBufferBuilder_name(FilaVertexBufferBuilder* self, const char* name);
 // TODO(handwritten) FilaVertexBufferBuilder_async: Builder & filament::VertexBuffer::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
 //     AsyncCompletionCallback: std::function
 FilaVertexBuffer* FilaVertexBufferBuilder_build(const FilaVertexBufferBuilder* self, FilaEngine* engine);

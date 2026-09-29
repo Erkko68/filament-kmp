@@ -5,99 +5,99 @@
 extern "C" {
 
 FilaDepthOfFieldOptions* FilaDepthOfFieldOptions_create(void) {
-    return reinterpret_cast<FilaDepthOfFieldOptions*>(new filament::DepthOfFieldOptions());
+    return fila::c(new filament::DepthOfFieldOptions());
 }
 
 void FilaDepthOfFieldOptions_destroy(FilaDepthOfFieldOptions* self) {
-    delete reinterpret_cast<filament::DepthOfFieldOptions*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaDepthOfFieldOptions_getCocScale(const FilaDepthOfFieldOptions* self) {
-    return reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->cocScale;
+    return fila::cpp(self)->cocScale;
 }
 
 void FilaDepthOfFieldOptions_setCocScale(FilaDepthOfFieldOptions* self, float value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->cocScale = value;
+    fila::cpp(self)->cocScale = value;
 }
 
 float FilaDepthOfFieldOptions_getCocAspectRatio(const FilaDepthOfFieldOptions* self) {
-    return reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->cocAspectRatio;
+    return fila::cpp(self)->cocAspectRatio;
 }
 
 void FilaDepthOfFieldOptions_setCocAspectRatio(FilaDepthOfFieldOptions* self, float value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->cocAspectRatio = value;
+    fila::cpp(self)->cocAspectRatio = value;
 }
 
 float FilaDepthOfFieldOptions_getMaxApertureDiameter(const FilaDepthOfFieldOptions* self) {
-    return reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->maxApertureDiameter;
+    return fila::cpp(self)->maxApertureDiameter;
 }
 
 void FilaDepthOfFieldOptions_setMaxApertureDiameter(FilaDepthOfFieldOptions* self, float value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->maxApertureDiameter = value;
+    fila::cpp(self)->maxApertureDiameter = value;
 }
 
 bool FilaDepthOfFieldOptions_getEnabled(const FilaDepthOfFieldOptions* self) {
-    return reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaDepthOfFieldOptions_setEnabled(FilaDepthOfFieldOptions* self, bool value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 FilaDepthOfFieldOptionsFilter FilaDepthOfFieldOptions_getFilter(const FilaDepthOfFieldOptions* self) {
-    return static_cast<FilaDepthOfFieldOptionsFilter>(reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->filter);
+    return static_cast<FilaDepthOfFieldOptionsFilter>(fila::cpp(self)->filter);
 }
 
 void FilaDepthOfFieldOptions_setFilter(FilaDepthOfFieldOptions* self, FilaDepthOfFieldOptionsFilter value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->filter = static_cast<filament::DepthOfFieldOptions::Filter>(value);
+    fila::cpp(self)->filter = static_cast<filament::DepthOfFieldOptions::Filter>(value);
 }
 
 bool FilaDepthOfFieldOptions_getNativeResolution(const FilaDepthOfFieldOptions* self) {
-    return reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->nativeResolution;
+    return fila::cpp(self)->nativeResolution;
 }
 
 void FilaDepthOfFieldOptions_setNativeResolution(FilaDepthOfFieldOptions* self, bool value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->nativeResolution = value;
+    fila::cpp(self)->nativeResolution = value;
 }
 
 uint32_t FilaDepthOfFieldOptions_getForegroundRingCount(const FilaDepthOfFieldOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->foregroundRingCount);
+    return static_cast<uint32_t>(fila::cpp(self)->foregroundRingCount);
 }
 
 void FilaDepthOfFieldOptions_setForegroundRingCount(FilaDepthOfFieldOptions* self, uint32_t value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->foregroundRingCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->foregroundRingCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaDepthOfFieldOptions_getBackgroundRingCount(const FilaDepthOfFieldOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->backgroundRingCount);
+    return static_cast<uint32_t>(fila::cpp(self)->backgroundRingCount);
 }
 
 void FilaDepthOfFieldOptions_setBackgroundRingCount(FilaDepthOfFieldOptions* self, uint32_t value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->backgroundRingCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->backgroundRingCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaDepthOfFieldOptions_getFastGatherRingCount(const FilaDepthOfFieldOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->fastGatherRingCount);
+    return static_cast<uint32_t>(fila::cpp(self)->fastGatherRingCount);
 }
 
 void FilaDepthOfFieldOptions_setFastGatherRingCount(FilaDepthOfFieldOptions* self, uint32_t value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->fastGatherRingCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->fastGatherRingCount = static_cast<uint8_t>(value);
 }
 
 uint32_t FilaDepthOfFieldOptions_getMaxForegroundCOC(const FilaDepthOfFieldOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->maxForegroundCOC);
+    return static_cast<uint32_t>(fila::cpp(self)->maxForegroundCOC);
 }
 
 void FilaDepthOfFieldOptions_setMaxForegroundCOC(FilaDepthOfFieldOptions* self, uint32_t value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->maxForegroundCOC = static_cast<uint16_t>(value);
+    fila::cpp(self)->maxForegroundCOC = static_cast<uint16_t>(value);
 }
 
 uint32_t FilaDepthOfFieldOptions_getMaxBackgroundCOC(const FilaDepthOfFieldOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::DepthOfFieldOptions*>(self)->maxBackgroundCOC);
+    return static_cast<uint32_t>(fila::cpp(self)->maxBackgroundCOC);
 }
 
 void FilaDepthOfFieldOptions_setMaxBackgroundCOC(FilaDepthOfFieldOptions* self, uint32_t value) {
-    reinterpret_cast<filament::DepthOfFieldOptions*>(self)->maxBackgroundCOC = static_cast<uint16_t>(value);
+    fila::cpp(self)->maxBackgroundCOC = static_cast<uint16_t>(value);
 }
 
 } // extern "C"

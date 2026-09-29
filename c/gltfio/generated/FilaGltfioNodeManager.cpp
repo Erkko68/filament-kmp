@@ -5,35 +5,35 @@
 extern "C" {
 
 bool FilaGltfioNodeManager_hasComponent(const FilaGltfioNodeManager* self, FilaEntity e) {
-    return reinterpret_cast<const filament::gltfio::NodeManager*>(self)->hasComponent(utils::Entity::import(e));
+    return fila::cpp(self)->hasComponent(utils::Entity::import(e));
 }
 
 uint32_t FilaGltfioNodeManager_getInstance(const FilaGltfioNodeManager* self, FilaEntity e) {
-    return reinterpret_cast<const filament::gltfio::NodeManager*>(self)->getInstance(utils::Entity::import(e)).asValue();
+    return fila::cpp(self)->getInstance(utils::Entity::import(e)).asValue();
 }
 
 void FilaGltfioNodeManager_create(FilaGltfioNodeManager* self, FilaEntity entity) {
-    reinterpret_cast<filament::gltfio::NodeManager*>(self)->create(utils::Entity::import(entity));
+    fila::cpp(self)->create(utils::Entity::import(entity));
 }
 
 void FilaGltfioNodeManager_destroy(FilaGltfioNodeManager* self, FilaEntity e) {
-    reinterpret_cast<filament::gltfio::NodeManager*>(self)->destroy(utils::Entity::import(e));
+    fila::cpp(self)->destroy(utils::Entity::import(e));
 }
 
 void FilaGltfioNodeManager_setExtras(FilaGltfioNodeManager* self, uint32_t ci, const char* extras) {
-    reinterpret_cast<filament::gltfio::NodeManager*>(self)->setExtras(filament::gltfio::NodeManager::Instance(ci), utils::CString(extras));
+    fila::cpp(self)->setExtras(filament::gltfio::NodeManager::Instance(ci), utils::CString(extras));
 }
 
 const char* FilaGltfioNodeManager_getExtras(const FilaGltfioNodeManager* self, uint32_t ci) {
-    return (reinterpret_cast<const filament::gltfio::NodeManager*>(self)->getExtras(filament::gltfio::NodeManager::Instance(ci))).c_str();
+    return (fila::cpp(self)->getExtras(filament::gltfio::NodeManager::Instance(ci))).c_str();
 }
 
 void FilaGltfioNodeManager_setSceneMembership(FilaGltfioNodeManager* self, uint32_t ci, uint32_t scenes) {
-    reinterpret_cast<filament::gltfio::NodeManager*>(self)->setSceneMembership(filament::gltfio::NodeManager::Instance(ci), utils::bitset32(scenes));
+    fila::cpp(self)->setSceneMembership(filament::gltfio::NodeManager::Instance(ci), utils::bitset32(scenes));
 }
 
 uint32_t FilaGltfioNodeManager_getSceneMembership(const FilaGltfioNodeManager* self, uint32_t ci) {
-    return (reinterpret_cast<const filament::gltfio::NodeManager*>(self)->getSceneMembership(filament::gltfio::NodeManager::Instance(ci))).getValue();
+    return (fila::cpp(self)->getSceneMembership(filament::gltfio::NodeManager::Instance(ci))).getValue();
 }
 
 } // extern "C"

@@ -5,35 +5,35 @@
 extern "C" {
 
 FilaImageKtxBlobIndex* FilaImageKtxBlobIndex_create(void) {
-    return reinterpret_cast<FilaImageKtxBlobIndex*>(new image::KtxBlobIndex());
+    return fila::c(new image::KtxBlobIndex());
 }
 
 void FilaImageKtxBlobIndex_destroy(FilaImageKtxBlobIndex* self) {
-    delete reinterpret_cast<image::KtxBlobIndex*>(self);
+    delete fila::cpp(self);
 }
 
 uint32_t FilaImageKtxBlobIndex_getMipLevel(const FilaImageKtxBlobIndex* self) {
-    return reinterpret_cast<const image::KtxBlobIndex*>(self)->mipLevel;
+    return fila::cpp(self)->mipLevel;
 }
 
 void FilaImageKtxBlobIndex_setMipLevel(FilaImageKtxBlobIndex* self, uint32_t value) {
-    reinterpret_cast<image::KtxBlobIndex*>(self)->mipLevel = value;
+    fila::cpp(self)->mipLevel = value;
 }
 
 uint32_t FilaImageKtxBlobIndex_getArrayIndex(const FilaImageKtxBlobIndex* self) {
-    return reinterpret_cast<const image::KtxBlobIndex*>(self)->arrayIndex;
+    return fila::cpp(self)->arrayIndex;
 }
 
 void FilaImageKtxBlobIndex_setArrayIndex(FilaImageKtxBlobIndex* self, uint32_t value) {
-    reinterpret_cast<image::KtxBlobIndex*>(self)->arrayIndex = value;
+    fila::cpp(self)->arrayIndex = value;
 }
 
 uint32_t FilaImageKtxBlobIndex_getCubeFace(const FilaImageKtxBlobIndex* self) {
-    return reinterpret_cast<const image::KtxBlobIndex*>(self)->cubeFace;
+    return fila::cpp(self)->cubeFace;
 }
 
 void FilaImageKtxBlobIndex_setCubeFace(FilaImageKtxBlobIndex* self, uint32_t value) {
-    reinterpret_cast<image::KtxBlobIndex*>(self)->cubeFace = value;
+    fila::cpp(self)->cubeFace = value;
 }
 
 } // extern "C"

@@ -13,8 +13,7 @@ FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void);
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_indexCount(FilaIndexBufferBuilder* self, uint32_t indexCount);
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_bufferType(FilaIndexBufferBuilder* self, FilaIndexBufferIndexType indexType);
-// TODO(handwritten) FilaIndexBufferBuilder_name: Builder & filament::IndexBuffer::Builder::name(const utils::StaticString & name)
-//     const utils::StaticString &: utils::StaticString
+FilaIndexBufferBuilder* FilaIndexBufferBuilder_name(FilaIndexBufferBuilder* self, const char* name);
 // TODO(handwritten) FilaIndexBufferBuilder_async: Builder & filament::IndexBuffer::Builder::async(backend::CallbackHandler * _Nullable handler, AsyncCompletionCallback callback, void * _Nullable user)
 //     AsyncCompletionCallback: std::function
 FilaIndexBuffer* FilaIndexBufferBuilder_build(FilaIndexBufferBuilder* self, FilaEngine* engine);

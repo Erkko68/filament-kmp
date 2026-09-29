@@ -5,51 +5,51 @@
 extern "C" {
 
 FilaVignetteOptions* FilaVignetteOptions_create(void) {
-    return reinterpret_cast<FilaVignetteOptions*>(new filament::VignetteOptions());
+    return fila::c(new filament::VignetteOptions());
 }
 
 void FilaVignetteOptions_destroy(FilaVignetteOptions* self) {
-    delete reinterpret_cast<filament::VignetteOptions*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaVignetteOptions_getMidPoint(const FilaVignetteOptions* self) {
-    return reinterpret_cast<const filament::VignetteOptions*>(self)->midPoint;
+    return fila::cpp(self)->midPoint;
 }
 
 void FilaVignetteOptions_setMidPoint(FilaVignetteOptions* self, float value) {
-    reinterpret_cast<filament::VignetteOptions*>(self)->midPoint = value;
+    fila::cpp(self)->midPoint = value;
 }
 
 float FilaVignetteOptions_getRoundness(const FilaVignetteOptions* self) {
-    return reinterpret_cast<const filament::VignetteOptions*>(self)->roundness;
+    return fila::cpp(self)->roundness;
 }
 
 void FilaVignetteOptions_setRoundness(FilaVignetteOptions* self, float value) {
-    reinterpret_cast<filament::VignetteOptions*>(self)->roundness = value;
+    fila::cpp(self)->roundness = value;
 }
 
 float FilaVignetteOptions_getFeather(const FilaVignetteOptions* self) {
-    return reinterpret_cast<const filament::VignetteOptions*>(self)->feather;
+    return fila::cpp(self)->feather;
 }
 
 void FilaVignetteOptions_setFeather(FilaVignetteOptions* self, float value) {
-    reinterpret_cast<filament::VignetteOptions*>(self)->feather = value;
+    fila::cpp(self)->feather = value;
 }
 
 void FilaVignetteOptions_getColor(const FilaVignetteOptions* self, FilaFloat4* out) {
-    *out = std::bit_cast<FilaFloat4>(reinterpret_cast<const filament::VignetteOptions*>(self)->color);
+    *out = std::bit_cast<FilaFloat4>(fila::cpp(self)->color);
 }
 
 void FilaVignetteOptions_setColor(FilaVignetteOptions* self, const FilaFloat4* value) {
-    reinterpret_cast<filament::VignetteOptions*>(self)->color = std::bit_cast<filament::math::float4>(*value);
+    fila::cpp(self)->color = std::bit_cast<filament::math::float4>(*value);
 }
 
 bool FilaVignetteOptions_getEnabled(const FilaVignetteOptions* self) {
-    return reinterpret_cast<const filament::VignetteOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaVignetteOptions_setEnabled(FilaVignetteOptions* self, bool value) {
-    reinterpret_cast<filament::VignetteOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 } // extern "C"

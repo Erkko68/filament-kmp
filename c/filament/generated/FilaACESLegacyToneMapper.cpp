@@ -5,23 +5,23 @@
 extern "C" {
 
 FilaACESLegacyToneMapper* FilaACESLegacyToneMapper_create(void) {
-    return reinterpret_cast<FilaACESLegacyToneMapper*>(new filament::ACESLegacyToneMapper());
+    return fila::c(new filament::ACESLegacyToneMapper());
 }
 
 void FilaACESLegacyToneMapper_destroy(FilaACESLegacyToneMapper* self) {
-    delete reinterpret_cast<filament::ACESLegacyToneMapper*>(self);
+    delete fila::cpp(self);
 }
 
 FilaToneMapper* FilaACESLegacyToneMapper_asToneMapper(FilaACESLegacyToneMapper* self) {
-    return reinterpret_cast<FilaToneMapper*>(static_cast<filament::ToneMapper*>(reinterpret_cast<filament::ACESLegacyToneMapper*>(self)));
+    return fila::c(static_cast<filament::ToneMapper*>(fila::cpp(self)));
 }
 
 bool FilaACESLegacyToneMapper_isOneDimensional(const FilaACESLegacyToneMapper* self) {
-    return reinterpret_cast<const filament::ACESLegacyToneMapper*>(self)->isOneDimensional();
+    return fila::cpp(self)->isOneDimensional();
 }
 
 bool FilaACESLegacyToneMapper_isLDR(const FilaACESLegacyToneMapper* self) {
-    return reinterpret_cast<const filament::ACESLegacyToneMapper*>(self)->isLDR();
+    return fila::cpp(self)->isLDR();
 }
 
 } // extern "C"

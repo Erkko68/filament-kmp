@@ -5,79 +5,79 @@
 extern "C" {
 
 FilaAabbCorners* FilaAabbCorners_create(void) {
-    return reinterpret_cast<FilaAabbCorners*>(new filament::Aabb::Corners());
+    return fila::c(new filament::Aabb::Corners());
 }
 
 void FilaAabbCorners_destroy(FilaAabbCorners* self) {
-    delete reinterpret_cast<filament::Aabb::Corners*>(self);
+    delete fila::cpp(self);
 }
 
 FilaFloat3* FilaAabbCorners_begin(FilaAabbCorners* self) {
-    return reinterpret_cast<FilaFloat3*>(reinterpret_cast<filament::Aabb::Corners*>(self)->begin());
+    return fila::c(fila::cpp(self)->begin());
 }
 
 FilaFloat3* FilaAabbCorners_end(FilaAabbCorners* self) {
-    return reinterpret_cast<FilaFloat3*>(reinterpret_cast<filament::Aabb::Corners*>(self)->end());
+    return fila::c(fila::cpp(self)->end());
 }
 
 FilaFloat3* FilaAabbCorners_data(FilaAabbCorners* self) {
-    return reinterpret_cast<FilaFloat3*>(reinterpret_cast<filament::Aabb::Corners*>(self)->data());
+    return fila::c(fila::cpp(self)->data());
 }
 
 uint32_t FilaAabbCorners_size(const FilaAabbCorners* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Aabb::Corners*>(self)->size());
+    return static_cast<uint32_t>(fila::cpp(self)->size());
 }
 
 FilaAabb* FilaAabb_create(void) {
-    return reinterpret_cast<FilaAabb*>(new filament::Aabb());
+    return fila::c(new filament::Aabb());
 }
 
 void FilaAabb_destroy(FilaAabb* self) {
-    delete reinterpret_cast<filament::Aabb*>(self);
+    delete fila::cpp(self);
 }
 
 void FilaAabb_center(const FilaAabb* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Aabb*>(self)->center());
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->center());
 }
 
 void FilaAabb_extent(const FilaAabb* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Aabb*>(self)->extent());
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->extent());
 }
 
 bool FilaAabb_isEmpty(const FilaAabb* self) {
-    return reinterpret_cast<const filament::Aabb*>(self)->isEmpty();
+    return fila::cpp(self)->isEmpty();
 }
 
 void FilaAabb_getCorners(const FilaAabb* self, FilaAabbCorners* out) {
-    *reinterpret_cast<filament::Aabb::Corners*>(out) = reinterpret_cast<const filament::Aabb*>(self)->getCorners();
+    *fila::cpp(out) = fila::cpp(self)->getCorners();
 }
 
 float FilaAabb_contains(const FilaAabb* self, const FilaFloat3* p) {
-    return reinterpret_cast<const filament::Aabb*>(self)->contains(std::bit_cast<filament::math::float3>(*p));
+    return fila::cpp(self)->contains(std::bit_cast<filament::math::float3>(*p));
 }
 
 void FilaAabb_transform_mat3f_float3_Aabb(const FilaMat3f* m, const FilaFloat3* t, const FilaAabb* box, FilaAabb* out) {
-    *reinterpret_cast<filament::Aabb*>(out) = filament::Aabb::transform(std::bit_cast<filament::math::mat3f>(*m), std::bit_cast<filament::math::float3>(*t), *reinterpret_cast<const filament::Aabb*>(box));
+    *fila::cpp(out) = filament::Aabb::transform(std::bit_cast<filament::math::mat3f>(*m), std::bit_cast<filament::math::float3>(*t), *fila::cpp(box));
 }
 
 void FilaAabb_transform_mat4f(const FilaAabb* self, const FilaMat4f* m, FilaAabb* out) {
-    *reinterpret_cast<filament::Aabb*>(out) = reinterpret_cast<const filament::Aabb*>(self)->transform(std::bit_cast<filament::math::mat4f>(*m));
+    *fila::cpp(out) = fila::cpp(self)->transform(std::bit_cast<filament::math::mat4f>(*m));
 }
 
 void FilaAabb_getMin(const FilaAabb* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Aabb*>(self)->min);
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->min);
 }
 
 void FilaAabb_setMin(FilaAabb* self, const FilaFloat3* value) {
-    reinterpret_cast<filament::Aabb*>(self)->min = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->min = std::bit_cast<filament::math::float3>(*value);
 }
 
 void FilaAabb_getMax(const FilaAabb* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::Aabb*>(self)->max);
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->max);
 }
 
 void FilaAabb_setMax(FilaAabb* self, const FilaFloat3* value) {
-    reinterpret_cast<filament::Aabb*>(self)->max = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->max = std::bit_cast<filament::math::float3>(*value);
 }
 
 } // extern "C"

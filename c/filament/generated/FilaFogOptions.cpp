@@ -5,107 +5,107 @@
 extern "C" {
 
 FilaFogOptions* FilaFogOptions_create(void) {
-    return reinterpret_cast<FilaFogOptions*>(new filament::FogOptions());
+    return fila::c(new filament::FogOptions());
 }
 
 void FilaFogOptions_destroy(FilaFogOptions* self) {
-    delete reinterpret_cast<filament::FogOptions*>(self);
+    delete fila::cpp(self);
 }
 
 float FilaFogOptions_getDistance(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->distance;
+    return fila::cpp(self)->distance;
 }
 
 void FilaFogOptions_setDistance(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->distance = value;
+    fila::cpp(self)->distance = value;
 }
 
 float FilaFogOptions_getCutOffDistance(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->cutOffDistance;
+    return fila::cpp(self)->cutOffDistance;
 }
 
 void FilaFogOptions_setCutOffDistance(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->cutOffDistance = value;
+    fila::cpp(self)->cutOffDistance = value;
 }
 
 float FilaFogOptions_getMaximumOpacity(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->maximumOpacity;
+    return fila::cpp(self)->maximumOpacity;
 }
 
 void FilaFogOptions_setMaximumOpacity(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->maximumOpacity = value;
+    fila::cpp(self)->maximumOpacity = value;
 }
 
 float FilaFogOptions_getHeight(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->height;
+    return fila::cpp(self)->height;
 }
 
 void FilaFogOptions_setHeight(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->height = value;
+    fila::cpp(self)->height = value;
 }
 
 float FilaFogOptions_getHeightFalloff(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->heightFalloff;
+    return fila::cpp(self)->heightFalloff;
 }
 
 void FilaFogOptions_setHeightFalloff(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->heightFalloff = value;
+    fila::cpp(self)->heightFalloff = value;
 }
 
 void FilaFogOptions_getColor(const FilaFogOptions* self, FilaFloat3* out) {
-    *out = std::bit_cast<FilaFloat3>(reinterpret_cast<const filament::FogOptions*>(self)->color);
+    *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->color);
 }
 
 void FilaFogOptions_setColor(FilaFogOptions* self, const FilaFloat3* value) {
-    reinterpret_cast<filament::FogOptions*>(self)->color = std::bit_cast<filament::math::float3>(*value);
+    fila::cpp(self)->color = std::bit_cast<filament::math::float3>(*value);
 }
 
 float FilaFogOptions_getDensity(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->density;
+    return fila::cpp(self)->density;
 }
 
 void FilaFogOptions_setDensity(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->density = value;
+    fila::cpp(self)->density = value;
 }
 
 float FilaFogOptions_getInScatteringStart(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->inScatteringStart;
+    return fila::cpp(self)->inScatteringStart;
 }
 
 void FilaFogOptions_setInScatteringStart(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->inScatteringStart = value;
+    fila::cpp(self)->inScatteringStart = value;
 }
 
 float FilaFogOptions_getInScatteringSize(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->inScatteringSize;
+    return fila::cpp(self)->inScatteringSize;
 }
 
 void FilaFogOptions_setInScatteringSize(FilaFogOptions* self, float value) {
-    reinterpret_cast<filament::FogOptions*>(self)->inScatteringSize = value;
+    fila::cpp(self)->inScatteringSize = value;
 }
 
 bool FilaFogOptions_getFogColorFromIbl(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->fogColorFromIbl;
+    return fila::cpp(self)->fogColorFromIbl;
 }
 
 void FilaFogOptions_setFogColorFromIbl(FilaFogOptions* self, bool value) {
-    reinterpret_cast<filament::FogOptions*>(self)->fogColorFromIbl = value;
+    fila::cpp(self)->fogColorFromIbl = value;
 }
 
 FilaTexture* FilaFogOptions_getSkyColor(const FilaFogOptions* self) {
-    return reinterpret_cast<FilaTexture*>(reinterpret_cast<const filament::FogOptions*>(self)->skyColor);
+    return fila::c(fila::cpp(self)->skyColor);
 }
 
 void FilaFogOptions_setSkyColor(FilaFogOptions* self, FilaTexture* value) {
-    reinterpret_cast<filament::FogOptions*>(self)->skyColor = reinterpret_cast<filament::Texture*>(value);
+    fila::cpp(self)->skyColor = fila::cpp(value);
 }
 
 bool FilaFogOptions_getEnabled(const FilaFogOptions* self) {
-    return reinterpret_cast<const filament::FogOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaFogOptions_setEnabled(FilaFogOptions* self, bool value) {
-    reinterpret_cast<filament::FogOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 } // extern "C"

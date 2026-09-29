@@ -5,35 +5,35 @@
 extern "C" {
 
 FilaMultiSampleAntiAliasingOptions* FilaMultiSampleAntiAliasingOptions_create(void) {
-    return reinterpret_cast<FilaMultiSampleAntiAliasingOptions*>(new filament::MultiSampleAntiAliasingOptions());
+    return fila::c(new filament::MultiSampleAntiAliasingOptions());
 }
 
 void FilaMultiSampleAntiAliasingOptions_destroy(FilaMultiSampleAntiAliasingOptions* self) {
-    delete reinterpret_cast<filament::MultiSampleAntiAliasingOptions*>(self);
+    delete fila::cpp(self);
 }
 
 bool FilaMultiSampleAntiAliasingOptions_getEnabled(const FilaMultiSampleAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::MultiSampleAntiAliasingOptions*>(self)->enabled;
+    return fila::cpp(self)->enabled;
 }
 
 void FilaMultiSampleAntiAliasingOptions_setEnabled(FilaMultiSampleAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::MultiSampleAntiAliasingOptions*>(self)->enabled = value;
+    fila::cpp(self)->enabled = value;
 }
 
 uint32_t FilaMultiSampleAntiAliasingOptions_getSampleCount(const FilaMultiSampleAntiAliasingOptions* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::MultiSampleAntiAliasingOptions*>(self)->sampleCount);
+    return static_cast<uint32_t>(fila::cpp(self)->sampleCount);
 }
 
 void FilaMultiSampleAntiAliasingOptions_setSampleCount(FilaMultiSampleAntiAliasingOptions* self, uint32_t value) {
-    reinterpret_cast<filament::MultiSampleAntiAliasingOptions*>(self)->sampleCount = static_cast<uint8_t>(value);
+    fila::cpp(self)->sampleCount = static_cast<uint8_t>(value);
 }
 
 bool FilaMultiSampleAntiAliasingOptions_getCustomResolve(const FilaMultiSampleAntiAliasingOptions* self) {
-    return reinterpret_cast<const filament::MultiSampleAntiAliasingOptions*>(self)->customResolve;
+    return fila::cpp(self)->customResolve;
 }
 
 void FilaMultiSampleAntiAliasingOptions_setCustomResolve(FilaMultiSampleAntiAliasingOptions* self, bool value) {
-    reinterpret_cast<filament::MultiSampleAntiAliasingOptions*>(self)->customResolve = value;
+    fila::cpp(self)->customResolve = value;
 }
 
 } // extern "C"

@@ -5,39 +5,39 @@
 extern "C" {
 
 FilaGltfioAssetLoader* FilaGltfioAssetLoader_create(const FilaGltfioAssetConfiguration* config) {
-    return reinterpret_cast<FilaGltfioAssetLoader*>(filament::gltfio::AssetLoader::create(*reinterpret_cast<const filament::gltfio::AssetConfiguration*>(config)));
+    return fila::c(filament::gltfio::AssetLoader::create(*fila::cpp(config)));
 }
 
 FilaGltfioFilamentAsset* FilaGltfioAssetLoader_createAsset(FilaGltfioAssetLoader* self, const uint8_t* bytes, uint32_t numBytes) {
-    return reinterpret_cast<FilaGltfioFilamentAsset*>(reinterpret_cast<filament::gltfio::AssetLoader*>(self)->createAsset(bytes, numBytes));
+    return fila::c(fila::cpp(self)->createAsset(bytes, numBytes));
 }
 
 FilaGltfioFilamentInstance* FilaGltfioAssetLoader_createInstance(FilaGltfioAssetLoader* self, FilaGltfioFilamentAsset* asset) {
-    return reinterpret_cast<FilaGltfioFilamentInstance*>(reinterpret_cast<filament::gltfio::AssetLoader*>(self)->createInstance(reinterpret_cast<filament::gltfio::FilamentAsset*>(asset)));
+    return fila::c(fila::cpp(self)->createInstance(fila::cpp(asset)));
 }
 
 void FilaGltfioAssetLoader_enableDiagnostics(FilaGltfioAssetLoader* self, bool enable) {
-    reinterpret_cast<filament::gltfio::AssetLoader*>(self)->enableDiagnostics(enable);
+    fila::cpp(self)->enableDiagnostics(enable);
 }
 
 void FilaGltfioAssetLoader_destroyAsset(FilaGltfioAssetLoader* self, const FilaGltfioFilamentAsset* asset) {
-    reinterpret_cast<filament::gltfio::AssetLoader*>(self)->destroyAsset(reinterpret_cast<const filament::gltfio::FilamentAsset*>(asset));
+    fila::cpp(self)->destroyAsset(fila::cpp(asset));
 }
 
 void FilaGltfioAssetLoader_gc(FilaGltfioAssetLoader* self) {
-    reinterpret_cast<filament::gltfio::AssetLoader*>(self)->gc();
+    fila::cpp(self)->gc();
 }
 
 uint32_t FilaGltfioAssetLoader_getMaterialsCount(const FilaGltfioAssetLoader* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::AssetLoader*>(self)->getMaterialsCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getMaterialsCount());
 }
 
 FilaGltfioNodeManager* FilaGltfioAssetLoader_getNodeManager(FilaGltfioAssetLoader* self) {
-    return reinterpret_cast<FilaGltfioNodeManager*>(&reinterpret_cast<filament::gltfio::AssetLoader*>(self)->getNodeManager());
+    return fila::c(&fila::cpp(self)->getNodeManager());
 }
 
 FilaGltfioMaterialProvider* FilaGltfioAssetLoader_getMaterialProvider(FilaGltfioAssetLoader* self) {
-    return reinterpret_cast<FilaGltfioMaterialProvider*>(&reinterpret_cast<filament::gltfio::AssetLoader*>(self)->getMaterialProvider());
+    return fila::c(&fila::cpp(self)->getMaterialProvider());
 }
 
 } // extern "C"

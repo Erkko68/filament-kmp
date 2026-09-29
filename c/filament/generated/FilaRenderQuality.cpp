@@ -5,19 +5,19 @@
 extern "C" {
 
 FilaRenderQuality* FilaRenderQuality_create(void) {
-    return reinterpret_cast<FilaRenderQuality*>(new filament::RenderQuality());
+    return fila::c(new filament::RenderQuality());
 }
 
 void FilaRenderQuality_destroy(FilaRenderQuality* self) {
-    delete reinterpret_cast<filament::RenderQuality*>(self);
+    delete fila::cpp(self);
 }
 
 FilaQualityLevel FilaRenderQuality_getHdrColorBuffer(const FilaRenderQuality* self) {
-    return static_cast<FilaQualityLevel>(reinterpret_cast<const filament::RenderQuality*>(self)->hdrColorBuffer);
+    return static_cast<FilaQualityLevel>(fila::cpp(self)->hdrColorBuffer);
 }
 
 void FilaRenderQuality_setHdrColorBuffer(FilaRenderQuality* self, FilaQualityLevel value) {
-    reinterpret_cast<filament::RenderQuality*>(self)->hdrColorBuffer = static_cast<filament::QualityLevel>(value);
+    fila::cpp(self)->hdrColorBuffer = static_cast<filament::QualityLevel>(value);
 }
 
 } // extern "C"

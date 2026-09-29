@@ -5,31 +5,31 @@
 extern "C" {
 
 void FilaGltfioAnimator_applyAnimation(const FilaGltfioAnimator* self, uint32_t animationIndex, float time) {
-    reinterpret_cast<const filament::gltfio::Animator*>(self)->applyAnimation(static_cast<size_t>(animationIndex), time);
+    fila::cpp(self)->applyAnimation(static_cast<size_t>(animationIndex), time);
 }
 
 void FilaGltfioAnimator_updateBoneMatrices(FilaGltfioAnimator* self) {
-    reinterpret_cast<filament::gltfio::Animator*>(self)->updateBoneMatrices();
+    fila::cpp(self)->updateBoneMatrices();
 }
 
 void FilaGltfioAnimator_applyCrossFade(FilaGltfioAnimator* self, uint32_t previousAnimIndex, float previousAnimTime, float alpha) {
-    reinterpret_cast<filament::gltfio::Animator*>(self)->applyCrossFade(static_cast<size_t>(previousAnimIndex), previousAnimTime, alpha);
+    fila::cpp(self)->applyCrossFade(static_cast<size_t>(previousAnimIndex), previousAnimTime, alpha);
 }
 
 void FilaGltfioAnimator_resetBoneMatrices(FilaGltfioAnimator* self) {
-    reinterpret_cast<filament::gltfio::Animator*>(self)->resetBoneMatrices();
+    fila::cpp(self)->resetBoneMatrices();
 }
 
 uint32_t FilaGltfioAnimator_getAnimationCount(const FilaGltfioAnimator* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::gltfio::Animator*>(self)->getAnimationCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getAnimationCount());
 }
 
 float FilaGltfioAnimator_getAnimationDuration(const FilaGltfioAnimator* self, uint32_t animationIndex) {
-    return reinterpret_cast<const filament::gltfio::Animator*>(self)->getAnimationDuration(static_cast<size_t>(animationIndex));
+    return fila::cpp(self)->getAnimationDuration(static_cast<size_t>(animationIndex));
 }
 
 const char* FilaGltfioAnimator_getAnimationName(const FilaGltfioAnimator* self, uint32_t animationIndex) {
-    return reinterpret_cast<const filament::gltfio::Animator*>(self)->getAnimationName(static_cast<size_t>(animationIndex));
+    return fila::cpp(self)->getAnimationName(static_cast<size_t>(animationIndex));
 }
 
 } // extern "C"

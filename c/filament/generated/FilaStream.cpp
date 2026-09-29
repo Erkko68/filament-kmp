@@ -5,43 +5,47 @@
 extern "C" {
 
 FilaStreamBuilder* FilaStreamBuilder_create(void) {
-    return reinterpret_cast<FilaStreamBuilder*>(new filament::Stream::Builder());
+    return fila::c(new filament::Stream::Builder());
 }
 
 void FilaStreamBuilder_destroy(FilaStreamBuilder* self) {
-    delete reinterpret_cast<filament::Stream::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaStreamBuilder* FilaStreamBuilder_width(FilaStreamBuilder* self, uint32_t width) {
-    return reinterpret_cast<FilaStreamBuilder*>(&reinterpret_cast<filament::Stream::Builder*>(self)->width(width));
+    return fila::c(&fila::cpp(self)->width(width));
 }
 
 FilaStreamBuilder* FilaStreamBuilder_height(FilaStreamBuilder* self, uint32_t height) {
-    return reinterpret_cast<FilaStreamBuilder*>(&reinterpret_cast<filament::Stream::Builder*>(self)->height(height));
+    return fila::c(&fila::cpp(self)->height(height));
+}
+
+FilaStreamBuilder* FilaStreamBuilder_name(FilaStreamBuilder* self, const char* name) {
+    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
 }
 
 FilaStream* FilaStreamBuilder_build(FilaStreamBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaStream*>(reinterpret_cast<filament::Stream::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 FilaStreamType FilaStream_getStreamType(const FilaStream* self) {
-    return static_cast<FilaStreamType>(reinterpret_cast<const filament::Stream*>(self)->getStreamType());
+    return static_cast<FilaStreamType>(fila::cpp(self)->getStreamType());
 }
 
 void FilaStream_setAcquiredImage_Callback_void_mat3f(FilaStream* self, void* image, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform) {
-    reinterpret_cast<filament::Stream*>(self)->setAcquiredImage(image, callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
+    fila::cpp(self)->setAcquiredImage(image, callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
 }
 
 void FilaStream_setAcquiredImage_CallbackHandler_Callback_void_mat3f(FilaStream* self, void* image, FilaCallbackHandler* handler, FilaStreamCallback callback, void* userdata, const FilaMat3f* transform) {
-    reinterpret_cast<filament::Stream*>(self)->setAcquiredImage(image, reinterpret_cast<filament::backend::CallbackHandler*>(handler), callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
+    fila::cpp(self)->setAcquiredImage(image, fila::cpp(handler), callback, userdata, std::bit_cast<filament::math::mat3f>(*transform));
 }
 
 void FilaStream_setDimensions(FilaStream* self, uint32_t width, uint32_t height) {
-    reinterpret_cast<filament::Stream*>(self)->setDimensions(width, height);
+    fila::cpp(self)->setDimensions(width, height);
 }
 
 void FilaStream_getTimestamp(const FilaStream* self, int64_t* out) {
-    *out = reinterpret_cast<const filament::Stream*>(self)->getTimestamp();
+    *out = fila::cpp(self)->getTimestamp();
 }
 
 } // extern "C"

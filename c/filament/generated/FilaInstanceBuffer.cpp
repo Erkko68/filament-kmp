@@ -5,31 +5,35 @@
 extern "C" {
 
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create(uint32_t instanceCount) {
-    return reinterpret_cast<FilaInstanceBufferBuilder*>(new filament::InstanceBuffer::Builder(static_cast<size_t>(instanceCount)));
+    return fila::c(new filament::InstanceBuffer::Builder(static_cast<size_t>(instanceCount)));
 }
 
 void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self) {
-    delete reinterpret_cast<filament::InstanceBuffer::Builder*>(self);
+    delete fila::cpp(self);
 }
 
 FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_localTransforms(FilaInstanceBufferBuilder* self, const FilaMat4f* localTransforms) {
-    return reinterpret_cast<FilaInstanceBufferBuilder*>(&reinterpret_cast<filament::InstanceBuffer::Builder*>(self)->localTransforms(reinterpret_cast<const filament::math::mat4f*>(localTransforms)));
+    return fila::c(&fila::cpp(self)->localTransforms(fila::cpp(localTransforms)));
+}
+
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_name(FilaInstanceBufferBuilder* self, const char* name) {
+    return fila::c(&fila::cpp(self)->name(fila::staticString(name)));
 }
 
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine) {
-    return reinterpret_cast<FilaInstanceBuffer*>(reinterpret_cast<const filament::InstanceBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
+    return fila::c(fila::cpp(self)->build(*fila::cpp(engine)));
 }
 
 uint32_t FilaInstanceBuffer_getInstanceCount(const FilaInstanceBuffer* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::InstanceBuffer*>(self)->getInstanceCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getInstanceCount());
 }
 
 void FilaInstanceBuffer_setLocalTransforms(FilaInstanceBuffer* self, const FilaMat4f* localTransforms, uint32_t count, uint32_t offset) {
-    reinterpret_cast<filament::InstanceBuffer*>(self)->setLocalTransforms(reinterpret_cast<const filament::math::mat4f*>(localTransforms), static_cast<size_t>(count), static_cast<size_t>(offset));
+    fila::cpp(self)->setLocalTransforms(fila::cpp(localTransforms), static_cast<size_t>(count), static_cast<size_t>(offset));
 }
 
 void FilaInstanceBuffer_getLocalTransform(FilaInstanceBuffer* self, uint32_t index, FilaMat4f* out) {
-    *out = std::bit_cast<FilaMat4f>(reinterpret_cast<filament::InstanceBuffer*>(self)->getLocalTransform(static_cast<size_t>(index)));
+    *out = std::bit_cast<FilaMat4f>(fila::cpp(self)->getLocalTransform(static_cast<size_t>(index)));
 }
 
 } // extern "C"

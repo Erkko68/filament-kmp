@@ -5,55 +5,55 @@
 extern "C" {
 
 void FilaScene_setSkybox(FilaScene* self, FilaSkybox* skybox) {
-    reinterpret_cast<filament::Scene*>(self)->setSkybox(reinterpret_cast<filament::Skybox*>(skybox));
+    fila::cpp(self)->setSkybox(fila::cpp(skybox));
 }
 
 FilaSkybox* FilaScene_getSkybox(const FilaScene* self) {
-    return reinterpret_cast<FilaSkybox*>(reinterpret_cast<const filament::Scene*>(self)->getSkybox());
+    return fila::c(fila::cpp(self)->getSkybox());
 }
 
 void FilaScene_setIndirectLight(FilaScene* self, FilaIndirectLight* ibl) {
-    reinterpret_cast<filament::Scene*>(self)->setIndirectLight(reinterpret_cast<filament::IndirectLight*>(ibl));
+    fila::cpp(self)->setIndirectLight(fila::cpp(ibl));
 }
 
 FilaIndirectLight* FilaScene_getIndirectLight(const FilaScene* self) {
-    return reinterpret_cast<FilaIndirectLight*>(reinterpret_cast<const filament::Scene*>(self)->getIndirectLight());
+    return fila::c(fila::cpp(self)->getIndirectLight());
 }
 
 void FilaScene_addEntity(FilaScene* self, FilaEntity entity) {
-    reinterpret_cast<filament::Scene*>(self)->addEntity(utils::Entity::import(entity));
+    fila::cpp(self)->addEntity(utils::Entity::import(entity));
 }
 
 void FilaScene_addEntities(FilaScene* self, const FilaEntity* entities, uint32_t count) {
-    reinterpret_cast<filament::Scene*>(self)->addEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
+    fila::cpp(self)->addEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
 }
 
 void FilaScene_remove(FilaScene* self, FilaEntity entity) {
-    reinterpret_cast<filament::Scene*>(self)->remove(utils::Entity::import(entity));
+    fila::cpp(self)->remove(utils::Entity::import(entity));
 }
 
 void FilaScene_removeEntities(FilaScene* self, const FilaEntity* entities, uint32_t count) {
-    reinterpret_cast<filament::Scene*>(self)->removeEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
+    fila::cpp(self)->removeEntities(reinterpret_cast<const utils::Entity*>(entities), static_cast<size_t>(count));
 }
 
 void FilaScene_removeAllEntities(FilaScene* self) {
-    reinterpret_cast<filament::Scene*>(self)->removeAllEntities();
+    fila::cpp(self)->removeAllEntities();
 }
 
 uint32_t FilaScene_getEntityCount(const FilaScene* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Scene*>(self)->getEntityCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getEntityCount());
 }
 
 uint32_t FilaScene_getRenderableCount(const FilaScene* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Scene*>(self)->getRenderableCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getRenderableCount());
 }
 
 uint32_t FilaScene_getLightCount(const FilaScene* self) {
-    return static_cast<uint32_t>(reinterpret_cast<const filament::Scene*>(self)->getLightCount());
+    return static_cast<uint32_t>(fila::cpp(self)->getLightCount());
 }
 
 bool FilaScene_hasEntity(const FilaScene* self, FilaEntity entity) {
-    return reinterpret_cast<const filament::Scene*>(self)->hasEntity(utils::Entity::import(entity));
+    return fila::cpp(self)->hasEntity(utils::Entity::import(entity));
 }
 
 } // extern "C"
