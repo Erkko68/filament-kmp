@@ -192,7 +192,7 @@ import io.github.erkko68.filament.compose.FilamentApp
 fun main() = FilamentApp { App() }
 ```
 
-If you use `MaterialBuilder`, load the compiler before using it: `Filamat.initJs { Filamat.init() }`.
+If you use `MaterialBuilder`, load the compiler before using it: `MaterialBuilder.initJs { MaterialBuilder.init() }`.
 
 ## 4. Your first scene
 

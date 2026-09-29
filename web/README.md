@@ -10,7 +10,7 @@ GitHub release (see [getting started](../docs/getting-started.md)).
 | File | Contents |
 | :--- | :--- |
 | `filament-kmp.{js,wasm}` | filament + gltfio + filament-utils in one instance (they share `Engine` pointers). Loaded by `Filament.initJs`. |
-| `filamat-kmp.{js,wasm}` | The runtime material compiler, separate and optional (~6.4 MB). Loaded by `Filamat.initJs`. Linked with a 4 MB stack: glslang overflows the 64 KB default. |
+| `filamat-kmp.{js,wasm}` | The runtime material compiler, separate and optional (~6.4 MB). Loaded by `MaterialBuilder.initJs`. Linked with a 4 MB stack: glslang overflows the 64 KB default. |
 
 ## Build
 

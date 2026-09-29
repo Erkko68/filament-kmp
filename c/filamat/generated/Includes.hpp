@@ -6,15 +6,9 @@
 
 namespace fila {
 
-FILA_TYPE(FilaFilamatEnums, filamat::Enums)
 FILA_TYPE(FilaFilamatMaterialBuilder, filamat::MaterialBuilder)
 FILA_TYPE(FilaFilamatMaterialBuilderAttribute, filamat::MaterialBuilder::Attribute)
-FILA_TYPE(FilaFilamatMaterialBuilderConstant, filamat::MaterialBuilder::Constant)
-FILA_TYPE(FilaFilamatMaterialBuilderCustomVariable, filamat::MaterialBuilder::CustomVariable)
-FILA_TYPE(FilaFilamatMaterialBuilderOutput, filamat::MaterialBuilder::Output)
-FILA_TYPE(FilaFilamatMaterialBuilderParameter, filamat::MaterialBuilder::Parameter)
 FILA_TYPE(FilaFilamatMaterialBuilderPreprocessorDefine, filamat::MaterialBuilder::PreprocessorDefine)
-FILA_TYPE(FilaFilamatMaterialBuilderPushConstant, filamat::MaterialBuilder::PushConstant)
 FILA_TYPE(FilaFilamatMaterialBuilderBase, filamat::MaterialBuilderBase)
 FILA_TYPE(FilaFilamatPackage, filamat::Package)
 

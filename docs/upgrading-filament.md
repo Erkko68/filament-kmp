@@ -129,8 +129,10 @@ stay calls). Struct fields and enum values aren't covered. The task runs on macO
 
 #### Adding a method
 
-Use `build/reports/api-gaps.txt` as the worklist. For each new public method — e.g.
-`ColorGrading::Builder::fastMath(bool)`:
+Use `build/reports/api-gaps.txt` as the worklist. Modules on the generated API (filamat so far) need no
+shim: run `./gradlew generateCApi generateKotlinExternals`, hand-write any new `TODO(handwritten)` in
+`c/<module>/manual`, and call the new external from the Kotlin wrapper. For the others, per new public
+method — e.g. `ColorGrading::Builder::fastMath(bool)`:
 
 1. **C header** — declare the shim in `c/<module>/c/<Class>.h`. Fixed-width types only (no
    `size_t`), no structs by value — see [Declaring a binding](bindings.md#declaring-a-binding):

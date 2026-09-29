@@ -65,11 +65,26 @@ gltfio/*.h
 
 [filamat]
 filamat/*.h
-# Takes filament's private BufferInterfaceBlock; isSampler/isUniform/isSubpass read the unnamed enum.
+# Takes filament's private BufferInterfaceBlock.
 -filamat::MaterialBuilder::buffer
--filamat::MaterialBuilder::Parameter::parameterType
-# matinfo's shader dump; takes the private CodeGenParams.
+# matc's .mat-file string <-> enum tables; Kotlin enums have valueOf/name.
+-filamat::Enums
+# Upstream's "for internal use" block (@cond never): matc's subpasses, introspection and shader dump.
+-filamat::MaterialBuilder::subpass
+-filamat::MaterialBuilder::Parameter
+-filamat::MaterialBuilder::Output
+-filamat::MaterialBuilder::Constant
+-filamat::MaterialBuilder::PushConstant
+-filamat::MaterialBuilder::CustomVariable
 -filamat::MaterialBuilder::peek
+-filamat::MaterialBuilder::hasSamplerType
+-filamat::MaterialBuilder::getParameterCount
+-filamat::MaterialBuilder::getParameters
+-filamat::MaterialBuilder::getSubpassCount
+-filamat::MaterialBuilder::getSubPasses
+-filamat::MaterialBuilder::getVariantFilter
+-filamat::MaterialBuilder::getFeatureLevel
+-filamat::MaterialBuilder::getApiLevel
 
 [filament-utils]
 camutils/*.h

@@ -113,7 +113,7 @@ upstream bugs in Filament's WebGL backend, not binding gaps.
 ### Runtime material compilation (filamat)
 
 `MaterialBuilder` works on web through a separate, optional `filamat-kmp.wasm` (~6.4 MB). Serve
-`filamat-kmp.js` + `.wasm` next to `filament-kmp.js`, then call `Filamat.initJs { Filamat.init() }`
+`filamat-kmp.js` + `.wasm` next to `filament-kmp.js`, then call `MaterialBuilder.initJs { MaterialBuilder.init() }`
 before building materials.
 
 Limits:
@@ -129,7 +129,7 @@ For big materials, or anything that must load fast, compile offline with `matc` 
 
 `filament-kmp.wasm` is ~2.8 MB (~1.1 MB gzipped), plus ~230 KB of JS glue. `filamat-kmp.wasm` adds
 ~6.4 MB (~1.9 MB gzipped) only if you serve it. Lazy-load the `FilamentView` screen, or call
-`Filamat.initJs` only when you need it, if startup time matters.
+`MaterialBuilder.initJs` only when you need it, if startup time matters.
 
 ## Threading model
 

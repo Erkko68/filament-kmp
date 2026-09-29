@@ -1,10 +1,5 @@
-public final class io/github/erkko68/filament/filamat/Filamat {
-	public static final field INSTANCE Lio/github/erkko68/filament/filamat/Filamat;
-	public final fun init ()V
-	public final fun shutdown ()V
-}
-
 public final class io/github/erkko68/filament/filamat/MaterialBuilder {
+	public static final field Companion Lio/github/erkko68/filament/filamat/MaterialBuilder$Companion;
 	public fun <init> ()V
 	public final fun alphaToCoverage (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun blending (Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendingMode;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
@@ -12,44 +7,111 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder {
 	public final fun clearCoatIorChange (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun colorWrite (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun coloredPenumbra (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun compilationParameters (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun constant (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;F)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun constant (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun constant (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun culling (Lio/github/erkko68/filament/filamat/MaterialBuilder$CullingMode;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun customBlendFunctions (Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun customSurfaceShading (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun depthCulling (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun depthWrite (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun doubleSided (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun enableFramebufferFetch ()Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun featureLevel (Lio/github/erkko68/filament/Engine$FeatureLevel;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun flipUV (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun generateDebugInfo (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun groupSize (III)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun includeEssl1 (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun instanced (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun interpolation (Lio/github/erkko68/filament/filamat/MaterialBuilder$Interpolation;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun linearFog (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun maskThreshold (F)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun material (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun material (Ljava/lang/String;I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun material$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;Ljava/lang/String;IILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun materialDomain (Lio/github/erkko68/filament/filamat/MaterialBuilder$MaterialDomain;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun materialVertex (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun materialSource (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun materialVertex (Ljava/lang/String;I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun materialVertex$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;Ljava/lang/String;IILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun multiBounceAmbientOcclusion (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun name (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun noSamplerValidation (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun optimization (Lio/github/erkko68/filament/filamat/MaterialBuilder$Optimization;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun output (Lio/github/erkko68/filament/filamat/MaterialBuilder$VariableQualifier;Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;Ljava/lang/String;I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun output$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;Lio/github/erkko68/filament/filamat/MaterialBuilder$VariableQualifier;Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;Ljava/lang/String;IILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun parameter (Ljava/lang/String;ILio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun parameter (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerType;Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerFormat;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;ZZLjava/lang/String;Ljava/util/Set;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun parameter (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun parameter$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;Ljava/lang/String;ILio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;ILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun parameter$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerType;Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerFormat;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;ZZLjava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public static synthetic fun parameter$default (Lio/github/erkko68/filament/filamat/MaterialBuilder;Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;ILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun platform (Lio/github/erkko68/filament/filamat/MaterialBuilder$Platform;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun postLightingBlending (Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendingMode;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun printShaders (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun quality (Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun reflectionMode (Lio/github/erkko68/filament/filamat/MaterialBuilder$ReflectionMode;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun refractionMode (Lio/github/erkko68/filament/filamat/MaterialBuilder$RefractionMode;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun refractionType (Lio/github/erkko68/filament/filamat/MaterialBuilder$RefractionType;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun require (Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun samplerParameter (Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerType;Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerFormat;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun saveRawVariants (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun setApiLevel (I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun shaderDefine (Ljava/lang/String;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun shading (Lio/github/erkko68/filament/filamat/MaterialBuilder$Shading;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun shadowFarAttenuation (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun shadowMultiplier (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun specularAmbientOcclusion (Lio/github/erkko68/filament/filamat/MaterialBuilder$SpecularAmbientOcclusion;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun specularAntiAliasing (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun specularAntiAliasingThreshold (F)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun specularAntiAliasingVariance (F)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun stereoscopicEyeCount (I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun stereoscopicType (Lio/github/erkko68/filament/Engine$StereoscopicType;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun targetApi (Lio/github/erkko68/filament/filamat/MaterialBuilder$TargetApi;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun transparencyMode (Lio/github/erkko68/filament/filamat/MaterialBuilder$TransparencyMode;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun transparentShadow (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun uniformParameter (Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun uniformParameter (Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun uniformParameterArray (Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;ILio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
-	public final fun uniformParameterArray (Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;ILjava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun useDefaultDepthVariant ()Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun useLegacyMorphing ()Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun variable (Lio/github/erkko68/filament/filamat/MaterialBuilder$Variable;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun variable (Lio/github/erkko68/filament/filamat/MaterialBuilder$Variable;Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun variantFilter (I)Lio/github/erkko68/filament/filamat/MaterialBuilder;
 	public final fun vertexDomain (Lio/github/erkko68/filament/filamat/MaterialBuilder$VertexDomain;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun vertexDomainDeviceJittered (Z)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+	public final fun workarounds (Lio/github/erkko68/filament/filamat/MaterialBuilder$Workarounds;)Lio/github/erkko68/filament/filamat/MaterialBuilder;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$Attribute {
+	public fun <init> (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;
+	public final fun component3 ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;Ljava/lang/String;Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$Attribute;
+	public static synthetic fun copy$default (Lio/github/erkko68/filament/filamat/MaterialBuilder$Attribute;Ljava/lang/String;Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/github/erkko68/filament/filamat/MaterialBuilder$Attribute;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributeName ()Ljava/lang/String;
+	public final fun getDefineName ()Ljava/lang/String;
+	public final fun getLocation ()Lio/github/erkko68/filament/VertexBuffer$VertexAttribute;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getType ()Lio/github/erkko68/filament/filamat/MaterialBuilder$UniformType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction : java/lang/Enum {
+	public static final field DST_ALPHA Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field DST_COLOR Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field ONE Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field ONE_MINUS_DST_ALPHA Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field ONE_MINUS_DST_COLOR Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field ONE_MINUS_SRC_ALPHA Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field ONE_MINUS_SRC_COLOR Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field SRC_ALPHA Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field SRC_ALPHA_SATURATE Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field SRC_COLOR Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static final field ZERO Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendFunction;
 }
 
 public final class io/github/erkko68/filament/filamat/MaterialBuilder$BlendingMode : java/lang/Enum {
@@ -64,6 +126,21 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$BlendingMo
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendingMode;
 	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$BlendingMode;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$Companion {
+	public final fun getAttributeDatabase ()Ljava/util/List;
+	public final fun init ()V
+	public final fun shutdown ()V
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$ConstantType : java/lang/Enum {
+	public static final field BOOL Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;
+	public static final field FLOAT Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;
+	public static final field INT Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$ConstantType;
 }
 
 public final class io/github/erkko68/filament/filamat/MaterialBuilder$CullingMode : java/lang/Enum {
@@ -100,6 +177,32 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$Optimizati
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$Optimization;
 	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$Optimization;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget : java/lang/Enum {
+	public static final field COLOR Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget;
+	public static final field DEPTH Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputTarget;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$OutputType : java/lang/Enum {
+	public static final field FLOAT Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field FLOAT2 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field FLOAT3 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field FLOAT4 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field INT Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field INT2 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field INT3 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field INT4 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field UINT Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field UINT2 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field UINT3 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static final field UINT4 Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$OutputType;
 }
 
 public final class io/github/erkko68/filament/filamat/MaterialBuilder$ParameterPrecision : java/lang/Enum {
@@ -166,6 +269,25 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$SamplerTyp
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerType;
 	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$SamplerType;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality : java/lang/Enum {
+	public static final field DEFAULT Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;
+	public static final field HIGH Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;
+	public static final field LOW Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;
+	public static final field NORMAL Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderQuality;
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$ShaderStage : java/lang/Enum {
+	public static final field COMPUTE Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderStage;
+	public static final field FRAGMENT Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderStage;
+	public static final field VERTEX Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderStage;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderStage;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$ShaderStage;
 }
 
 public final class io/github/erkko68/filament/filamat/MaterialBuilder$Shading : java/lang/Enum {
@@ -243,6 +365,13 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$Variable :
 	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$Variable;
 }
 
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$VariableQualifier : java/lang/Enum {
+	public static final field OUT Lio/github/erkko68/filament/filamat/MaterialBuilder$VariableQualifier;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$VariableQualifier;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$VariableQualifier;
+}
+
 public final class io/github/erkko68/filament/filamat/MaterialBuilder$VertexDomain : java/lang/Enum {
 	public static final field DEVICE Lio/github/erkko68/filament/filamat/MaterialBuilder$VertexDomain;
 	public static final field OBJECT Lio/github/erkko68/filament/filamat/MaterialBuilder$VertexDomain;
@@ -253,8 +382,26 @@ public final class io/github/erkko68/filament/filamat/MaterialBuilder$VertexDoma
 	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$VertexDomain;
 }
 
+public final class io/github/erkko68/filament/filamat/MaterialBuilder$Workarounds : java/lang/Enum {
+	public static final field ALL Lio/github/erkko68/filament/filamat/MaterialBuilder$Workarounds;
+	public static final field NONE Lio/github/erkko68/filament/filamat/MaterialBuilder$Workarounds;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/erkko68/filament/filamat/MaterialBuilder$Workarounds;
+	public static fun values ()[Lio/github/erkko68/filament/filamat/MaterialBuilder$Workarounds;
+}
+
 public final class io/github/erkko68/filament/filamat/MaterialPackage {
-	public final fun getBuffer ()[B
+	public static final field Companion Lio/github/erkko68/filament/filamat/MaterialPackage$Companion;
+	public fun <init> (I)V
+	public fun <init> ([BI)V
+	public synthetic fun <init> ([BIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getData ()[B
+	public final fun getSize ()I
 	public final fun isValid ()Z
+	public final fun setValid (Z)V
+}
+
+public final class io/github/erkko68/filament/filamat/MaterialPackage$Companion {
+	public final fun invalidPackage ()Lio/github/erkko68/filament/filamat/MaterialPackage;
 }
 

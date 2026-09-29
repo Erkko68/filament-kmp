@@ -5,7 +5,6 @@ import io.github.erkko68.filament.EntityManager
 import io.github.erkko68.filament.IndirectLight
 import io.github.erkko68.filament.SurfaceOrientation
 import io.github.erkko68.filament.Texture
-import io.github.erkko68.filament.filamat.Filamat
 import io.github.erkko68.filament.filamat.MaterialBuilder
 import io.github.erkko68.filament.utils.Manipulator
 import kotlin.test.Test
@@ -26,10 +25,10 @@ private val coldStarts: Map<String, () -> Unit> = mapOf(
         Texture.computeDataSize(Texture.Format.RGBA, Texture.Type.UBYTE, 4, 4, 1)
         Texture.validatePixelFormatAndType(Texture.InternalFormat.RGBA8, Texture.Format.RGBA, Texture.Type.UBYTE)
     },
-    "Filamat.init" to {
-        Filamat.init()
+    "MaterialBuilder.init" to {
+        MaterialBuilder.init()
         MaterialBuilder().name("ColdStart").shading(MaterialBuilder.Shading.UNLIT).build()
-        Filamat.shutdown()
+        MaterialBuilder.shutdown()
     },
 )
 

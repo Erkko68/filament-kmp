@@ -144,15 +144,15 @@ val package = MaterialBuilder()
     .platform(MaterialBuilder.Platform.ALL)
     .targetApi(MaterialBuilder.TargetApi.ALL)
     .shading(MaterialBuilder.Shading.LIT)
-    .uniformParameter(MaterialBuilder.UniformType.FLOAT3, "baseColor")
+    .parameter("baseColor", MaterialBuilder.UniformType.FLOAT3)
     .material("void material(inout MaterialInputs m) { prepareMaterial(m); m.baseColor.rgb = materialParams.baseColor; }")
     .build()
-val template = Material.Builder().payload(package.buffer).build(engine)
+val template = Material.Builder().payload(package.data).build(engine)
 ```
 
 > [!NOTE]
 > On Web the compiler is a separate, optional `filamat-kmp.wasm` (~6.4 MB): serve it and call
-> `Filamat.initJs` first. It has a 4 MB stack and blocks the main thread — see
+> `MaterialBuilder.initJs` first. It has a 4 MB stack and blocks the main thread — see
 > [Platform Notes — Web](../platform-notes.md#runtime-material-compilation-filamat).
 
 > [!TIP]

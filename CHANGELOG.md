@@ -17,6 +17,8 @@ Each entry is one line; click the version link at the bottom for the full diff.
 > **Web setup changed** — `filament.js`/`filament.wasm` are replaced by `filament-kmp.js`/`.wasm` (plus optional `filamat-kmp.*`) from each GitHub release. See [Getting Started → Web](docs/getting-started.md#web--wasm).
 
 ### Changed
+- **`MaterialBuilder.init()`/`shutdown()`/`initJs` replace the `Filamat` object** (`filamat`), matching filamat's C++.
+- **`MaterialBuilder.parameter(name, …)` replaces `uniformParameter`/`uniformParameterArray`/`samplerParameter`** and `MaterialPackage.data` replaces `buffer` (`filamat`), matching filamat's C++.
 - **Android runs on our own C API over JNI** (`filament-jni` + `filament-jni-android`, `libfilament-c.so` per ABI) instead of the upstream `filament-android`/`gltfio-android`/`filament-utils-android`/`filamat-android` artifacts; Android `nativeObject` is now the C handle as a `Long`.
 - **Web runs on our own C API compiled to wasm** instead of upstream's embind `filament.js`; `:web` holds the wasm runtime (package `io.github.erkko68.filament.wasm`).
 - **Desktop runs on JNI instead of Project Panama (FFM)**: `filament-ffm*` is replaced by `filament-jni-desktop` + `filament-jni-runtime-<os>-<arch>` (group `io.github.erkko68.filament`), `NativeSurface` takes the window as a `Long` address, and the JVM floor drops from 22 to **17**.
@@ -25,8 +27,9 @@ Each entry is one line; click the version link at the bottom for the full diff.
 - **`./gradlew apiGaps`** (build): reports the Filament C++ API `c/` doesn't call (clang's AST + linker symbols, inline methods included) and `Fila*` functions without a Kotlin external; replaces `check-common-api.sh`.
 - **`renderingEnabled` on `FilamentView` / `FilamentSceneView`** (`filament-compose`): `false` stops the render loop and keeps the last frame on screen, so a static or hidden view no longer renders every display refresh.
 - **JVM runtime for Windows on ARM**: `filament-jni-runtime-windows-arm64`, with Filament built from source since upstream ships no prebuilts for it.
-- **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `Filamat.initJs`.
+- **`MaterialBuilder` on web** via the optional `filamat-kmp.wasm`; load it with `MaterialBuilder.initJs`.
 - **Runtime Material sample** scene compiling shaders with filamat.
+- **The rest of filamat's `MaterialBuilder`** (`filamat`): `constant`, sampler `filterable`/`multisample`/`transformName`/`stages`, `quality`, `featureLevel`, `customBlendFunctions`, `instanced`, `linearFog`, `stereoscopic*`, `output`, `groupSize`, `materialSource`, `getAttributeDatabase` and more; `MaterialPackage` gains `size`, its constructors and `invalidPackage()`.
 
 ### Fixed
 - **Compressed `Texture.InternalFormat`s (ETC2, DXT, ASTC, RGTC, BPTC) were silently created as `RGBA8`** on every platform; they now reach Filament.
