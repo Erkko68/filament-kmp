@@ -175,7 +175,7 @@ class CameraState internal constructor(
 
     // Scratch buffers for the matrix getters — one CameraState is attached to one view (see
     // attach), so reads are single-threaded. Saves the array alloc, not the Mat4 alloc.
-    private val tmpViewArray = FloatArray(16)
+    private val tmpViewArray = DoubleArray(16)
     private val tmpProjArray = DoubleArray(16)
 
     /**
@@ -197,7 +197,7 @@ class CameraState internal constructor(
      * (`viewState.view?.camera?.getProjectionMatrix()`).
      */
     val projectionMatrix: Mat4?
-        get() = attachedCamera?.getProjectionMatrix(tmpProjArray)?.toMat4()
+        get() = attachedCamera?.getProjectionMatrix(out = tmpProjArray)?.toMat4()
 
     internal fun snapshot(): CameraSnapshot =
         CameraSnapshot(eye, target, up, projection, exposure, focusDistance, shift, scaling)
@@ -265,13 +265,6 @@ fun rememberCameraState(
 
 // Filament hands back column-major arrays, and Mat4's primary constructor takes columns — so the
 // groups of four map straight across. (Mat4.of() is *not* the right tool: it reads row-major.)
-private fun FloatArray.toMat4() = Mat4(
-    Float4(this[0], this[1], this[2], this[3]),
-    Float4(this[4], this[5], this[6], this[7]),
-    Float4(this[8], this[9], this[10], this[11]),
-    Float4(this[12], this[13], this[14], this[15]),
-)
-
 private fun DoubleArray.toMat4() = Mat4(
     Float4(this[0].toFloat(), this[1].toFloat(), this[2].toFloat(), this[3].toFloat()),
     Float4(this[4].toFloat(), this[5].toFloat(), this[6].toFloat(), this[7].toFloat()),

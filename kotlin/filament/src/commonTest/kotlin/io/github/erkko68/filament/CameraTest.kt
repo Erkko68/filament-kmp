@@ -50,15 +50,9 @@ class CameraTest : FilamentTestFixture() {
         val cullProj = cam.getCullingProjectionMatrix()
         assertEquals(16, cullProj.size)
 
-        val modelF = cam.getModelMatrix(null as FloatArray?)
-        assertEquals(16, modelF.size)
-        val modelD = cam.getModelMatrix(null as DoubleArray?)
-        assertEquals(16, modelD.size)
-
-        val viewF = cam.getViewMatrix(null as FloatArray?)
-        assertEquals(16, viewF.size)
-        val viewD = cam.getViewMatrix(null as DoubleArray?)
-        assertEquals(16, viewD.size)
+        assertEquals(16, cam.getModelMatrix().size)
+        assertEquals(16, cam.getViewMatrix().size)
+        assertEquals(16, cam.getEyeFromViewMatrix().size)
 
         // Directions & Vectors
         val pos = cam.getPosition()
@@ -71,8 +65,8 @@ class CameraTest : FilamentTestFixture() {
         assertEquals(3, fwd.size)
 
         // Clip planes
-        assertTrue(cam.near >= 0f)
-        assertTrue(cam.cullingFar >= 0f)
+        assertTrue(cam.near >= 0.0)
+        assertTrue(cam.cullingFar >= 0.0)
 
         // Exposure & Lens Properties
         cam.setExposure(1.8f, 0.01f, 100f)
@@ -87,7 +81,15 @@ class CameraTest : FilamentTestFixture() {
         assertEquals(7.5f, cam.focusDistance)
 
         // FOV check
-        assertTrue(cam.getFieldOfViewInDegrees(Camera.Fov.VERTICAL) >= 0.0)
+        assertTrue(cam.getFieldOfViewInDegrees(Camera.Fov.VERTICAL) >= 0f)
+
+        // Statics
+        assertEquals(16, Camera.projection(Camera.Fov.VERTICAL, 45.0, 1.0, 0.1).size)
+        assertEquals(16, Camera.projection(50.0, 1.0, 0.1, 100.0).size)
+        val lens = Camera.projection(50.0, 1.0, 0.1, 100.0)
+        val identity = Camera.inverseProjection(lens).let { inv -> DoubleArray(16) { i -> (0..3).sumOf { k -> lens[k * 4 + i % 4] * inv[(i / 4) * 4 + k] } } }
+        for (i in 0 until 16) assertEquals(if (i % 5 == 0) 1.0 else 0.0, identity[i], 1e-9)
+        assertTrue(Camera.computeEffectiveFocalLength(0.05, 10.0) > 0.05)
 
         // Cleanup
         engine.destroyCameraComponent(entity)

@@ -329,6 +329,19 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             |template<typename F>
             |Items<F> items(uint32_t count, F element) { return { count, element }; }
             |
+            |// C's callback as the utils::Invocable the callee takes: the lambda, or an empty one (unset) when C passed NULL.
+            |template<typename L>
+            |struct Callable {
+            |    bool set;
+            |    L lambda;
+            |
+            |    template<typename T>
+            |    operator T() && { return set ? T(std::move(lambda)) : T(); }
+            |};
+            |
+            |template<typename L>
+            |Callable<L> callable(bool set, L lambda) { return { set, std::move(lambda) }; }
+            |
             |// C's array as the std::array<T, N> the callee takes by pointer or reference: element(i) makes each T, and
             |// store(t, i) writes the callee's changes back into C's array when the call ends.
             |template<typename F, typename S>

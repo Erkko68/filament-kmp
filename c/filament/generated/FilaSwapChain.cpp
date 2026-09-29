@@ -33,7 +33,7 @@ bool FilaSwapChain_isFrameScheduledCallbackSet(const FilaSwapChain* self) {
 }
 
 void FilaSwapChain_setFrameCompletedCallback(FilaSwapChain* self, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->setFrameCompletedCallback(fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->setFrameCompletedCallback(fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 } // extern "C"

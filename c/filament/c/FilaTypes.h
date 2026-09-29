@@ -20,6 +20,7 @@ typedef struct FilaSwapChain FilaSwapChain;
 typedef struct FilaIndirectLight FilaIndirectLight;
 typedef struct FilaSkybox FilaSkybox;
 typedef struct FilaColorGrading FilaColorGrading;
+typedef struct FilaColorGradingBuilder FilaColorGradingBuilder;
 typedef struct FilaRenderTarget FilaRenderTarget;
 
 typedef struct FilaVertexBuffer FilaVertexBuffer;

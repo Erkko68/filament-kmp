@@ -25,6 +25,7 @@ class RenderTargetTest : FilamentTestFixture() {
             .mipLevel(RenderTarget.AttachmentPoint.COLOR, 0)
             .face(RenderTarget.AttachmentPoint.COLOR, Texture.CubemapFace.POSITIVE_X)
             .layer(RenderTarget.AttachmentPoint.COLOR, 0)
+            .samples(1)
             .build(engine)
 
         assertNotNull(target)
@@ -38,6 +39,7 @@ class RenderTargetTest : FilamentTestFixture() {
         assertEquals(0, target.getMipLevel(RenderTarget.AttachmentPoint.COLOR))
         assertEquals(Texture.CubemapFace.POSITIVE_X, target.getFace(RenderTarget.AttachmentPoint.COLOR))
         assertEquals(0, target.getLayer(RenderTarget.AttachmentPoint.COLOR))
+        assertTrue(target.supportedColorAttachmentsCount >= 4)
 
         engine.destroyRenderTarget(target)
         engine.destroyTexture(tex)

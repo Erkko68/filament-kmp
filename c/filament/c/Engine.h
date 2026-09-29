@@ -2,7 +2,6 @@
 #define FILAMENT_C_ENGINE_H
 
 #include "FilaTypes.h"
-#include "ColorGrading.h"
 
 #ifdef __cplusplus
 extern "C" {

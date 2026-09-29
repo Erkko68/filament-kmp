@@ -489,15 +489,15 @@ bool FilaMaterialInstance_getConstant_bool(const FilaMaterialInstance* self, con
 }
 
 void FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterialInstance_compile_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterialInstance_setScissor(FilaMaterialInstance* self, uint32_t left, uint32_t bottom, uint32_t width, uint32_t height) {

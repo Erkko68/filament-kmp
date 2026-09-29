@@ -125,15 +125,15 @@ FilaMaterial* FilaMaterialBuilder_build(const FilaMaterialBuilder* self, FilaEng
 }
 
 void FilaMaterial_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), variants, fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterial_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), static_cast<filament::UserVariantFilterBit>(variants), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 void FilaMaterial_compile_CallbackHandler_Invocable(FilaMaterial* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 FilaMaterialInstance* FilaMaterial_createInstance(const FilaMaterial* self, const char* name) {

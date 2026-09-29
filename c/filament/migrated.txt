@@ -17,3 +17,7 @@ FilaGT7ToneMapper
 FilaAgxToneMapper
 FilaGenericToneMapper
 FilaDisplayRangeToneMapper
+FilaCamera
+FilaColorGrading
+FilaSwapChain
+FilaRenderTarget

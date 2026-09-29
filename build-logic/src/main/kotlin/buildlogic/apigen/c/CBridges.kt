@@ -371,7 +371,7 @@ internal class CBridges(private val api: CppApi) {
 
         /**
          * A C++ callable C passes as a function pointer and its user data: `void (*)(void* user)`, or
-         * `void (*)(void* arg, void* user)` for one pointer argument. Returns it with its typedef.
+         * `void (*)(void* arg, void* user)` for one pointer argument; NULL is an empty one. Returns it with its typedef.
          */
         fun invocable(spelling: String): Pair<CBridge, Pair<String, String>> {
             if (result) throw Unsupported("$spelling result")
@@ -382,7 +382,7 @@ internal class CBridges(private val api: CppApi) {
             val (name, typedef) = if (arg == null) USER_CALLBACK else ARG_CALLBACK
             return CBridge(
                 name,
-                { n -> if (arg == null) "[=] { $n(${n}User); }" else "[=](auto* arg) { $n((void*) arg, ${n}User); }" },
+                { n -> "fila::callable($n, " + (if (arg == null) "[=] { $n(${n}User); }" else "[=](auto* arg) { $n((void*) arg, ${n}User); }") + ")" },
                 extra = listOf("void*" to "User"),
             ) to (name to typedef)
         }

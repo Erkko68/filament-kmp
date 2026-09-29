@@ -265,7 +265,7 @@ FilaEngineBuilder* FilaEngineBuilder_colorGrading(FilaEngineBuilder* self, const
 }
 
 void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->build([=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->build(fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self) {
@@ -637,7 +637,7 @@ uint32_t FilaEngine_getRenderTargetCount(const FilaEngine* self) {
 }
 
 uint32_t FilaEngine_runCommandAsync(FilaEngine* self, FilaCallback command, void* commandUser, FilaCallbackHandler* handler, FilaEngineAsyncCompletionCallback onComplete, void* user) {
-    return fila::cpp(self)->runCommandAsync([=] { command(commandUser); }, fila::cpp(handler), onComplete ? filament::Engine::AsyncCompletionCallback([=](auto a0, auto a1) { onComplete(a0, static_cast<FilaAsyncCallStatus>(a1)); }) : nullptr, user);
+    return fila::cpp(self)->runCommandAsync(fila::callable(command, [=] { command(commandUser); }), fila::cpp(handler), onComplete ? filament::Engine::AsyncCompletionCallback([=](auto a0, auto a1) { onComplete(a0, static_cast<FilaAsyncCallStatus>(a1)); }) : nullptr, user);
 }
 
 bool FilaEngine_cancelAsyncCall(FilaEngine* self, uint32_t id) {
@@ -701,7 +701,7 @@ bool FilaEngine_getFeatureFlag(const FilaEngine* self, const char* name, bool* o
 }
 
 void FilaEngine_compile(FilaEngine* self, FilaCompilerPriorityQueue priority, const FilaMaterial* material, const FilaView* view, int32_t shadowReceiver, int32_t skinning, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser) {
-    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(material), fila::cpp(view), utils::tribool(static_cast<utils::tribool::Value>(shadowReceiver)), utils::tribool(static_cast<utils::tribool::Value>(skinning)), fila::cpp(handler), [=](auto* arg) { callback((void*) arg, callbackUser); });
+    fila::cpp(self)->compile(static_cast<filament::backend::CompilerPriorityQueue>(priority), fila::cpp(material), fila::cpp(view), utils::tribool(static_cast<utils::tribool::Value>(shadowReceiver)), utils::tribool(static_cast<utils::tribool::Value>(skinning)), fila::cpp(handler), fila::callable(callback, [=](auto* arg) { callback((void*) arg, callbackUser); }));
 }
 
 } // extern "C"

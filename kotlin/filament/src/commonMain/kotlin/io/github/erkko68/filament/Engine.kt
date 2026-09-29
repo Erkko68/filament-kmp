@@ -1,5 +1,6 @@
 package io.github.erkko68.filament
 
+import io.github.erkko68.filament.capi.*
 import io.github.erkko68.filament.interop.*
 
 /**
@@ -674,9 +675,6 @@ class Engine internal constructor(
         )
     }
 }
-
-@ExternalSymbolName("FilaCamera_getEntity")
-private external fun FilaCamera_getEntity(camera: NativePointer): Int
 
 @ExternalSymbolName("FilaEngineBuilder_backend")
 private external fun FilaEngineBuilder_backend(builder: NativePointer, backend: Int)
