@@ -63,6 +63,19 @@ The Desktop integration renders to an offscreen readable swap chain and copies p
 
 This is unavoidable with Compose Desktop today: there is no public API to embed a native rendering surface inside a Skia canvas.
 
+### Windows: GPU selection
+
+Compose Desktop draws Windows with Direct3D 12, and `filament-compose` runs Filament's Vulkan backend on the **same GPU** so frames are shared GPU-to-GPU (shared textures can't cross GPUs). Compose picks that GPU when the first window opens: by default the system's default adapter, which on hybrid laptops is usually the **integrated** one. To render on the discrete GPU, ask for it before opening any window:
+
+```kotlin
+fun main() {
+    System.setProperty("skiko.gpu.priority", "discrete") // or "integrated" / "auto"
+    application { /* … */ }
+}
+```
+
+or pass `-Dskiko.gpu.priority=discrete` (e.g. `jvmArgs += "-Dskiko.gpu.priority=discrete"` in `compose.desktop.application`). This moves your whole Compose app to that GPU, not only the Filament views. `rememberFilamentEngine()` must be called inside the window that shows it, and only `Engine.Backend.DEFAULT` / `VULKAN` work there.
+
 ### Native library loading
 
 Each platform's `libfilament-c` (`.dll`, `.dylib`, `.so`) ships in its `filament-jni-runtime-<os>-<arch>` jar. `Filament.init()` extracts it once into a content-hash-keyed cache dir (`~/.filament-kmp/`) and loads it; no system installation of Filament is needed. Runs on any **JDK 17+**. See [`desktop/README.md`](../desktop/README.md) for the loader's knobs.

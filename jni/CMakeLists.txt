@@ -59,7 +59,8 @@ if (APPLE)
         "LINKER:-dead_strip")
 elseif (WIN32)
     # A DLL exports only what's declared JNIEXPORT, which is exactly the seal.
-    # PlatformWGL / BlueGL need OpenGL + GDI; utils::Path needs shlwapi.
+    # PlatformWGL / BlueGL need OpenGL + GDI; utils::Path needs shlwapi. D3DHelper loads d3d12.dll itself.
+    target_sources(filament-c-jni PRIVATE src/main/cpp/D3DHelper.cpp)
     target_link_libraries(filament-c-jni PRIVATE opengl32 gdi32 user32 shlwapi)
 else()
     target_sources(filament-c-jni PRIVATE src/main/cpp/GlxHelper.cpp)

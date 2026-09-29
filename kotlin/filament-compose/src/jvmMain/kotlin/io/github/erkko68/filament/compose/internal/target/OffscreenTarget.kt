@@ -3,6 +3,7 @@ package io.github.erkko68.filament.compose.internal.target
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.View
+import io.github.erkko68.filament.compose.internal.target.d3d.D3DOffscreenTarget
 import io.github.erkko68.filament.compose.internal.target.glx.GlxOffscreenTarget
 import io.github.erkko68.filament.compose.internal.target.metal.MetalOffscreenTarget
 import java.awt.Window
@@ -24,7 +25,7 @@ internal fun OffscreenTarget(engine: Engine, window: Window?, width: Int, height
     val os = System.getProperty("os.name").orEmpty().lowercase()
     return when {
         "mac" in os -> MetalOffscreenTarget.create(engine, window, width, height)
-        "win" in os -> windowsOffscreenTarget(engine, window, width, height)
+        "win" in os -> D3DOffscreenTarget.create(engine, window, width, height)
         else -> GlxOffscreenTarget.create(engine, window, width, height)
     }
 }

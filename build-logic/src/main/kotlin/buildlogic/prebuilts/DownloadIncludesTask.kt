@@ -49,6 +49,8 @@ abstract class DownloadIncludesTask : DefaultTask() {
         "libs/iblprefilter/include/", "libs/filameshio/include/",
         "libs/generatePrefilterMipmap/include/",
         "filament/include/", "filament/backend/include/",
+        // BlueVK and the Vulkan headers, for backend/platforms/VulkanPlatform.h (jni's D3DHelper).
+        "libs/bluevk/include/",
         // Third-party headers that filament's public API transitively includes.
         "third_party/robin-map/include/", "third_party/mikktspace/include/",
         "third_party/getopt/include/",
