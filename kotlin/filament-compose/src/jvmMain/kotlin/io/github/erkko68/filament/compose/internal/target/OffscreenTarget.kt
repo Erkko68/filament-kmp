@@ -38,7 +38,10 @@ internal fun OffscreenTarget(engine: Engine, window: Window?, width: Int, height
     return FallbackOffscreenTarget(gpu, window, engine, readback)
 }
 
-/** Renders with [current] (a GPU-to-GPU target) until it throws, then reports it and reads back instead. */
+/**
+ * Renders with [current] (a GPU-to-GPU target) until it throws, then reports it and reads back instead;
+ * also reads back once GPU sharing is off for the session, e.g. after another view failed.
+ */
 private class FallbackOffscreenTarget(
     private var current: OffscreenTarget,
     private val window: Window?,
@@ -50,16 +53,21 @@ private class FallbackOffscreenTarget(
     override val bottomUp: Boolean get() = current.bottomUp
 
     override fun renderFrame(renderer: Renderer, view: View, frameTimeNanos: Long): Image? {
+        if (onGpu && !GpuFrameSharing.enabled) fallBack()
         if (!onGpu) return current.renderFrame(renderer, view, frameTimeNanos)
         return GpuFrameSharing.guard("rendering a frame", window, engine, {
             current.renderFrame(renderer, view, frameTimeNanos)
         }, {
-            onGpu = false
-            // A target that failed mid-frame may fail to close too; the readback replaces it either way.
-            runCatching { current.close() }
-            current = readback()
+            fallBack()
             current.renderFrame(renderer, view, frameTimeNanos)
         })
+    }
+
+    private fun fallBack() {
+        onGpu = false
+        // A target that failed mid-frame may fail to close too; the readback replaces it either way.
+        runCatching { current.close() }
+        current = readback()
     }
 
     override fun close() = current.close()

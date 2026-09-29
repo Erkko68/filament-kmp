@@ -68,6 +68,7 @@ fun main() {
 Set it before the first `rememberFilamentEngine()`. Only engines that `rememberFilamentEngine()` creates afterwards, inside the window that shows them, share frames, and their backend must match Compose's API: `Engine.Backend.DEFAULT` always does, otherwise `METAL` on macOS, `VULKAN` on Windows, `OPENGL` on Linux. It relies on skiko internals, so it's experimental:
 
 - If a setup isn't covered (e.g. Compose fell back to software rendering, or the backend doesn't match Compose's API), it logs one line with the reason and uses CPU readback.
+- Views find Compose's GPU context through their window, so use one Compose surface per window (a `ComposeWindow`, or a single `ComposePanel`); with several in one window a view may pick another surface's context.
 - If it **fails**, it prints a report (versions, GPU, stack trace) to the console, switches to CPU readback for the rest of the session and asks you to [open an issue](https://github.com/Erkko68/filament-kmp/issues/new) with the report. A crash inside the GPU driver can't be caught this way.
 
 ### Pixel readback overhead
@@ -80,9 +81,13 @@ By default the Desktop integration renders to an offscreen readable swap chain a
 
 Compose Desktop has no public API to embed a native rendering surface inside a Skia canvas; [GPU-to-GPU frame sharing](#gpu-to-gpu-frame-sharing-experimental) avoids the copy through skiko internals, at the cost of being experimental.
 
-### Windows: GPU selection
+### GPU selection
 
-Compose Desktop draws Windows with Direct3D 12. With [GPU-to-GPU frame sharing](#gpu-to-gpu-frame-sharing-experimental) on, `filament-compose` runs Filament's Vulkan backend on the **same GPU** (shared textures can't cross GPUs). Compose picks that GPU when the first window opens: by default the system's default adapter, which on hybrid laptops is usually the **integrated** one. To render on the discrete GPU, ask for it before opening any window:
+Shared textures can't cross GPUs, so with [GPU-to-GPU frame sharing](#gpu-to-gpu-frame-sharing-experimental) on, Filament must render on the GPU Compose picked.
+
+**macOS**: Filament's Metal engine always uses the system default GPU. If Compose picks another one (e.g. `skiko.gpu.priority=integrated` on a dual-GPU Mac), the views log one line and use CPU readback.
+
+**Windows**: Compose Desktop draws with Direct3D 12. With frame sharing on, `filament-compose` runs Filament's Vulkan backend on the **same GPU**. Compose picks that GPU when the first window opens: by default the system's default adapter, which on hybrid laptops is usually the **integrated** one. To render on the discrete GPU, ask for it before opening any window:
 
 ```kotlin
 fun main() {
