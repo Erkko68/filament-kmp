@@ -8,6 +8,22 @@ FilaTextureSampler* FilaTextureSampler_create(void) {
     return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler());
 }
 
+FilaTextureSampler* FilaTextureSampler_create_MagFilter_WrapMode(FilaSamplerMagFilter minMag, FilaSamplerWrapMode str) {
+    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMagFilter>(minMag), static_cast<filament::backend::SamplerWrapMode>(str)));
+}
+
+FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode str) {
+    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMinFilter>(min), static_cast<filament::backend::SamplerMagFilter>(mag), static_cast<filament::backend::SamplerWrapMode>(str)));
+}
+
+FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapMode_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode s, FilaSamplerWrapMode t, FilaSamplerWrapMode r) {
+    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerMinFilter>(min), static_cast<filament::backend::SamplerMagFilter>(mag), static_cast<filament::backend::SamplerWrapMode>(s), static_cast<filament::backend::SamplerWrapMode>(t), static_cast<filament::backend::SamplerWrapMode>(r)));
+}
+
+FilaTextureSampler* FilaTextureSampler_create_CompareMode_CompareFunc(FilaSamplerCompareMode mode, FilaSamplerCompareFunc func) {
+    return reinterpret_cast<FilaTextureSampler*>(new filament::TextureSampler(static_cast<filament::backend::SamplerCompareMode>(mode), static_cast<filament::backend::SamplerCompareFunc>(func)));
+}
+
 void FilaTextureSampler_destroy(FilaTextureSampler* self) {
     delete reinterpret_cast<filament::TextureSampler*>(self);
 }

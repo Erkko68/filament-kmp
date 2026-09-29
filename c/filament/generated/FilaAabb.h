@@ -30,7 +30,7 @@ extern "C" {
 // TODO(handwritten) FilaAabb_contains: float filament::Aabb::contains(math::float3 p) const
 //     member of a value struct
 // TODO(handwritten) FilaAabb_transform_mat3f_float3_Aabb: static Aabb filament::Aabb::transform(const math::mat3f & m, const math::float3 & t, const Aabb & box)
-//     member of a value struct
+//     Aabb: value struct
 // TODO(handwritten) FilaAabb_transform_mat4f: Aabb filament::Aabb::transform(const math::mat4f & m) const
 //     member of a value struct
 

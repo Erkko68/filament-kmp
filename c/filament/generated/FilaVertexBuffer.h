@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::VertexBuffer::Builder
 FilaVertexBufferBuilder* FilaVertexBufferBuilder_create(void);
+// TODO(handwritten) FilaVertexBufferBuilder_create_Builder: filament::VertexBuffer::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaVertexBufferBuilder_create_Builder: filament::VertexBuffer::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaVertexBufferBuilder_destroy(FilaVertexBufferBuilder* self);
 // TODO(handwritten) FilaVertexBufferBuilder_bufferCount: Builder & filament::VertexBuffer::Builder::bufferCount(uint8_t bufferCount)
 //     Builder &: filament::BuilderNameMixin::Builder

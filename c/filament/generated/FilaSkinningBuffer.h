@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::SkinningBuffer::Builder
 FilaSkinningBufferBuilder* FilaSkinningBufferBuilder_create(void);
+// TODO(handwritten) FilaSkinningBufferBuilder_create_Builder: filament::SkinningBuffer::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaSkinningBufferBuilder_create_Builder: filament::SkinningBuffer::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaSkinningBufferBuilder_destroy(FilaSkinningBufferBuilder* self);
 // TODO(handwritten) FilaSkinningBufferBuilder_boneCount: Builder & filament::SkinningBuffer::Builder::boneCount(uint32_t boneCount)
 //     Builder &: filament::BuilderNameMixin::Builder

@@ -8,6 +8,10 @@ FilaFrustum* FilaFrustum_create(void) {
     return reinterpret_cast<FilaFrustum*>(new filament::Frustum());
 }
 
+FilaFrustum* FilaFrustum_create_mat4f(FilaMat4f pv) {
+    return reinterpret_cast<FilaFrustum*>(new filament::Frustum(std::bit_cast<filament::math::mat4f>(pv)));
+}
+
 void FilaFrustum_destroy(FilaFrustum* self) {
     delete reinterpret_cast<filament::Frustum*>(self);
 }

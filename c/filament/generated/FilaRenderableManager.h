@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 // filament::RenderableManager::Builder
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t count);
+void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* self);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, size_t offset, size_t minIndex, size_t maxIndex, size_t count);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, size_t offset, size_t count);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices);

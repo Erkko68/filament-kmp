@@ -16,7 +16,12 @@ typedef struct FilaCamutilsBookmark FilaCamutilsBookmark;
 typedef struct FilaCamutilsManipulator FilaCamutilsManipulator;
 typedef struct FilaGeometrySurfaceOrientation FilaGeometrySurfaceOrientation;
 typedef struct FilaGeometrySurfaceOrientationBuilder FilaGeometrySurfaceOrientationBuilder;
+typedef struct FilaGeometryTangentSpaceMesh FilaGeometryTangentSpaceMesh;
+typedef struct FilaGeometryTangentSpaceMeshBuilder FilaGeometryTangentSpaceMeshBuilder;
 typedef struct FilaGeometryTranscoder FilaGeometryTranscoder;
+typedef struct FilaImageKtx1Bundle FilaImageKtx1Bundle;
+typedef struct FilaKtxreaderKtx2Reader FilaKtxreaderKtx2Reader;
+typedef struct FilaKtxreaderKtx2ReaderAsync FilaKtxreaderKtx2ReaderAsync;
 
 // IBLPrefilterContext::Kernel
 typedef enum FilaIBLPrefilterContextKernel {
@@ -56,6 +61,38 @@ typedef enum FilaGeometryComponentType {
     FILA_GEOMETRY_COMPONENT_TYPE_HALF = 4,
     FILA_GEOMETRY_COMPONENT_TYPE_FLOAT = 5,
 } FilaGeometryComponentType;
+
+// filament::geometry::TangentSpaceMesh::Algorithm
+typedef enum FilaGeometryTangentSpaceMeshAlgorithm {
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_DEFAULT = 0,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_MIKKTSPACE = 1,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_LENGYEL = 2,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_HUGHES_MOLLER = 3,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_ALGORITHM_FRISVAD = 4,
+} FilaGeometryTangentSpaceMeshAlgorithm;
+
+// filament::geometry::TangentSpaceMesh::AuxAttribute
+typedef enum FilaGeometryTangentSpaceMeshAuxAttribute {
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_AUX_ATTRIBUTE_UV1 = 0,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_AUX_ATTRIBUTE_COLORS = 1,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_AUX_ATTRIBUTE_JOINTS = 2,
+    FILA_GEOMETRY_TANGENT_SPACE_MESH_AUX_ATTRIBUTE_WEIGHTS = 3,
+} FilaGeometryTangentSpaceMeshAuxAttribute;
+
+// ktxreader::Ktx2Reader::Result
+typedef enum FilaKtxreaderKtx2ReaderResult {
+    FILA_KTXREADER_KTX2_READER_RESULT_SUCCESS = 0,
+    FILA_KTXREADER_KTX2_READER_RESULT_COMPRESSED_TRANSCODE_FAILURE = 1,
+    FILA_KTXREADER_KTX2_READER_RESULT_UNCOMPRESSED_TRANSCODE_FAILURE = 2,
+    FILA_KTXREADER_KTX2_READER_RESULT_FORMAT_UNSUPPORTED = 3,
+    FILA_KTXREADER_KTX2_READER_RESULT_FORMAT_ALREADY_REQUESTED = 4,
+} FilaKtxreaderKtx2ReaderResult;
+
+// ktxreader::Ktx2Reader::TransferFunction
+typedef enum FilaKtxreaderKtx2ReaderTransferFunction {
+    FILA_KTXREADER_KTX2_READER_TRANSFER_FUNCTION_LINEAR = 0,
+    FILA_KTXREADER_KTX2_READER_TRANSFER_FUNCTION_S_RGB = 1,
+} FilaKtxreaderKtx2ReaderTransferFunction;
 
 #ifdef __cplusplus
 }

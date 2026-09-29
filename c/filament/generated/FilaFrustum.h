@@ -10,6 +10,7 @@ extern "C" {
 
 // filament::Frustum
 FilaFrustum* FilaFrustum_create(void);
+FilaFrustum* FilaFrustum_create_mat4f(FilaMat4f pv);
 void FilaFrustum_destroy(FilaFrustum* self);
 void FilaFrustum_setProjection(FilaFrustum* self, FilaMat4f pv);
 FilaFloat4 FilaFrustum_getNormalizedPlane(const FilaFrustum* self, FilaFrustumPlane plane);

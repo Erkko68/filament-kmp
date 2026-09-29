@@ -4,6 +4,14 @@
 
 extern "C" {
 
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(size_t instanceCount) {
+    return reinterpret_cast<FilaInstanceBufferBuilder*>(new filament::InstanceBuffer::Builder(instanceCount));
+}
+
+void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self) {
+    delete reinterpret_cast<filament::InstanceBuffer::Builder*>(self);
+}
+
 FilaInstanceBuffer* FilaInstanceBufferBuilder_build(const FilaInstanceBufferBuilder* self, FilaEngine* engine) {
     return reinterpret_cast<FilaInstanceBuffer*>(reinterpret_cast<const filament::InstanceBuffer::Builder*>(self)->build(*reinterpret_cast<filament::Engine*>(engine)));
 }

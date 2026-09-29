@@ -4,6 +4,10 @@
 
 extern "C" {
 
+void FilaGltfioResourceLoader_destroy(FilaGltfioResourceLoader* self) {
+    delete reinterpret_cast<filament::gltfio::ResourceLoader*>(self);
+}
+
 void FilaGltfioResourceLoader_addTextureProvider(FilaGltfioResourceLoader* self, const char* mimeType, FilaGltfioTextureProvider* provider) {
     reinterpret_cast<filament::gltfio::ResourceLoader*>(self)->addTextureProvider(mimeType, reinterpret_cast<filament::gltfio::TextureProvider*>(provider));
 }

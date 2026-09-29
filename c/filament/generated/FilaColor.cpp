@@ -4,14 +4,6 @@
 
 extern "C" {
 
-FilaColor* FilaColor_create(void) {
-    return reinterpret_cast<FilaColor*>(new filament::Color());
-}
-
-void FilaColor_destroy(FilaColor* self) {
-    delete reinterpret_cast<filament::Color*>(self);
-}
-
 FilaFloat3 FilaColor_toLinear_RgbType_float3(FilaRgbType type, FilaFloat3 color) {
     return std::bit_cast<FilaFloat3>(filament::Color::toLinear(static_cast<filament::RgbType>(type), std::bit_cast<filament::math::float3>(color)));
 }

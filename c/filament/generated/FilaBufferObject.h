@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::BufferObject::Builder
 FilaBufferObjectBuilder* FilaBufferObjectBuilder_create(void);
+// TODO(handwritten) FilaBufferObjectBuilder_create_Builder: filament::BufferObject::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaBufferObjectBuilder_create_Builder: filament::BufferObject::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaBufferObjectBuilder_destroy(FilaBufferObjectBuilder* self);
 // TODO(handwritten) FilaBufferObjectBuilder_size: Builder & filament::BufferObject::Builder::size(uint32_t byteCount)
 //     Builder &: filament::BuilderNameMixin::Builder

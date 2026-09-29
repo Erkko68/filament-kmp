@@ -10,6 +10,12 @@ extern "C" {
 
 // filament::TextureSampler
 FilaTextureSampler* FilaTextureSampler_create(void);
+// TODO(handwritten) FilaTextureSampler_create_SamplerParams: filament::TextureSampler(backend::SamplerParams params)
+//     backend::SamplerParams: value struct
+FilaTextureSampler* FilaTextureSampler_create_MagFilter_WrapMode(FilaSamplerMagFilter minMag, FilaSamplerWrapMode str);
+FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode str);
+FilaTextureSampler* FilaTextureSampler_create_MinFilter_MagFilter_WrapMode_WrapMode_WrapMode(FilaSamplerMinFilter min, FilaSamplerMagFilter mag, FilaSamplerWrapMode s, FilaSamplerWrapMode t, FilaSamplerWrapMode r);
+FilaTextureSampler* FilaTextureSampler_create_CompareMode_CompareFunc(FilaSamplerCompareMode mode, FilaSamplerCompareFunc func);
 void FilaTextureSampler_destroy(FilaTextureSampler* self);
 void FilaTextureSampler_setMinFilter(FilaTextureSampler* self, FilaSamplerMinFilter v);
 void FilaTextureSampler_setMagFilter(FilaTextureSampler* self, FilaSamplerMagFilter v);

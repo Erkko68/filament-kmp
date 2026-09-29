@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::Texture::Builder
 FilaTextureBuilder* FilaTextureBuilder_create(void);
+// TODO(handwritten) FilaTextureBuilder_create_Builder: filament::Texture::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaTextureBuilder_create_Builder: filament::Texture::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaTextureBuilder_destroy(FilaTextureBuilder* self);
 // TODO(handwritten) FilaTextureBuilder_width: Builder & filament::Texture::Builder::width(uint32_t width)
 //     Builder &: filament::BuilderNameMixin::Builder

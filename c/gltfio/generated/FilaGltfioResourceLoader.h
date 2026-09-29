@@ -9,6 +9,9 @@ extern "C" {
 #endif
 
 // filament::gltfio::ResourceLoader
+// TODO(handwritten) FilaGltfioResourceLoader_create: filament::gltfio::ResourceLoader(const ResourceConfiguration & config)
+//     const ResourceConfiguration &: value struct
+void FilaGltfioResourceLoader_destroy(FilaGltfioResourceLoader* self);
 // TODO(handwritten) FilaGltfioResourceLoader_setConfiguration: void filament::gltfio::ResourceLoader::setConfiguration(const ResourceConfiguration & config)
 //     const ResourceConfiguration &: value struct
 // TODO(handwritten) FilaGltfioResourceLoader_addResourceData: void filament::gltfio::ResourceLoader::addResourceData(const char * uri, BufferDescriptor && buffer)

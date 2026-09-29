@@ -4,8 +4,8 @@
 
 extern "C" {
 
-FilaGenericToneMapper* FilaGenericToneMapper_create(void) {
-    return reinterpret_cast<FilaGenericToneMapper*>(new filament::GenericToneMapper());
+FilaGenericToneMapper* FilaGenericToneMapper_create(float contrast, float midGrayIn, float midGrayOut, float hdrMax) {
+    return reinterpret_cast<FilaGenericToneMapper*>(new filament::GenericToneMapper(contrast, midGrayIn, midGrayOut, hdrMax));
 }
 
 void FilaGenericToneMapper_destroy(FilaGenericToneMapper* self) {

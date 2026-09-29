@@ -9,8 +9,6 @@ extern "C" {
 #endif
 
 // filament::Color
-FilaColor* FilaColor_create(void);
-void FilaColor_destroy(FilaColor* self);
 FilaFloat3 FilaColor_toLinear_RgbType_float3(FilaRgbType type, FilaFloat3 color);
 FilaFloat4 FilaColor_toLinear_RgbaType_float4(FilaRgbaType type, FilaFloat4 color);
 FilaFloat3 FilaColor_cct(float K);

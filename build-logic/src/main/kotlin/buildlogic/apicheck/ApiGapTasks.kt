@@ -2,7 +2,7 @@ package buildlogic.apicheck
 
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.cppapi.ApiModelTask
-import buildlogic.cppapi.PUBLIC_HEADERS
+import buildlogic.cppapi.apiHeaderFiles
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.filamentLibDir
 import buildlogic.platform.hostPlatform
@@ -22,7 +22,7 @@ fun Project.registerApiGapTasks() {
         group = "verification"
         description = "Reports the Filament C++ API surface clang sees in the public headers."
         includeDir.set(root.dir("include"))
-        publicHeaders.from(root.dir("include").asFileTree.matching { include(PUBLIC_HEADERS) })
+        publicHeaders.from(apiHeaderFiles())
         report.set(layout.buildDirectory.file("reports/api-model.txt"))
     }
     if (hostPlatform() == "windows") return // nm can't read MSVC objects
@@ -41,7 +41,7 @@ fun Project.registerApiGapTasks() {
         description = "Reports the Filament C++ API the Fila* C API doesn't call, and Fila* functions Kotlin doesn't bind."
         filamentLibraries.from(filamentLibDir(target).map { dir -> FILAMENT_LIBRARIES.map { dir.file("lib$it.a") } })
         includeDir.set(root.dir("include"))
-        publicHeaders.from(root.dir("include").asFileTree.matching { include(PUBLIC_HEADERS) })
+        publicHeaders.from(apiHeaderFiles())
         cApiObjects.from(cBuild.flatMap { it.buildDir }.map { it.asFileTree.matching { include("CMakeFiles/fila-*.dir/**/*.o") } })
         cApiHeaders.from(root.dir("c").asFileTree.matching { include("*/c/*.h") })
         externals.from(root.dir("kotlin").asFileTree.matching { include("*/src/commonMain/**/*.kt") })

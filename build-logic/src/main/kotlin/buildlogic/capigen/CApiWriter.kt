@@ -1,98 +1,148 @@
 package buildlogic.capigen
 
+import buildlogic.cppapi.ApiHeaders
 import buildlogic.cppapi.CppApi
 import buildlogic.cppapi.CppEnum
 import buildlogic.cppapi.CppMethod
+import buildlogic.cppapi.CppParam
 import buildlogic.cppapi.CppRecord
 
 /**
- * Writes the C API for [api]'s exported classes: per module a `Types.h` (handles, enums, math mirrors), an
- * `Includes.hpp` of [headers], and per top-level class a header and its C++ forwarders. What can't be bridged
- * becomes a `TODO(handwritten)` comment where its declaration would be.
+ * Writes the C API for what [headers] declare: per module a `Types.h` (handles, enums, math mirrors) and an
+ * `Includes.hpp` of [headers], and per top-level class or namespace a header and its C++ forwarders. What can't be
+ * bridged becomes a `TODO(handwritten)` comment where its declaration would be.
  */
-internal class CApiWriter(private val api: CppApi, private val headers: List<String>) {
+internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHeaders, private val headers: Set<String>) {
     private val bridges = CBridges(api)
-    private val surface = api.surface()
+    private val surface = api.surface(headers)
+    private val baseModule = apiHeaders.modules.keys.first()
     private val functionNames = HashSet<String>()
+    private val files = LinkedHashMap<String, Section>()
+
+    /** One generated header and its forwarders. */
+    private class Section(val module: String) {
+        val declarations = StringBuilder()
+        val definitions = StringBuilder()
+    }
 
     /** Generated file text by path under `c/`. */
     fun write(): Map<String, String> {
-        val files = LinkedHashMap<String, String>()
-        val classes = api.records.values.filter { it.name in surface && it.exported }.groupBy { topLevel(it.name) }
-        for ((top, records) in classes) {
-            val declarations = StringBuilder()
-            val definitions = StringBuilder()
-            records.forEach { record(it, declarations, definitions) }
-            if (declarations.isEmpty()) continue
-            val dir = "${moduleOf(top)}/generated"
-            val name = CNames.type(top)
-            files["$dir/$name.h"] = header(name, "#include \"Types.h\"", declarations.toString())
-            files["$dir/$name.cpp"] = "$BANNER\n#include \"Includes.hpp\"\n#include \"$name.h\"\n\nextern \"C\" {\n\n$definitions} // extern \"C\"\n"
+        api.apiRecords(headers).groupBy { topLevel(it.name) }.forEach { (top, records) ->
+            val section = section(moduleOf(api.records.getValue(top).header), CNames.type(top))
+            records.forEach { record(it, section) }
+        }
+        api.apiFunctions(headers).groupBy { it.owner }.forEach { (namespace, functions) ->
+            // filament's own functions would otherwise land in a bare "Fila.h".
+            val section = section(moduleOf(functions.first().header), CNames.type(namespace).takeIf { it != "Fila" } ?: "FilaFilament")
+            section.declarations.appendLine("// $namespace")
+            overloads(functions, section) { CNames.function(namespace, it.name, suffix = "") }
+            section.declarations.appendLine()
+        }
+        val out = LinkedHashMap<String, String>()
+        files.filterValues { it.declarations.isNotBlank() }.forEach { (name, section) ->
+            val dir = "${section.module}/generated"
+            out["$dir/$name.h"] = header(name, "#include \"Types.h\"", section.declarations.toString())
+            out["$dir/$name.cpp"] = "$BANNER\n#include \"Includes.hpp\"\n#include \"$name.h\"\n\nextern \"C\" {\n\n${section.definitions}} // extern \"C\"\n"
         }
         // Types last: the forwarders decide which math types need mirrors.
-        MODULES.forEach { module ->
-            files["$module/generated/Types.h"] = types(module)
-            files["$module/generated/Includes.hpp"] = "$BANNER\n#pragma once\n\n#include <bit>\n\n" + headers.joinToString("") { "#include <$it>\n" }
+        apiHeaders.modules.keys.forEach { module ->
+            out["$module/generated/Types.h"] = types(module)
+            out["$module/generated/Includes.hpp"] = "$BANNER\n#pragma once\n\n#include <bit>\n\n" + headers.joinToString("") { "#include <$it>\n" }
         }
-        return files
+        return out
     }
 
-    private fun record(record: CppRecord, fileDeclarations: StringBuilder, definitions: StringBuilder) {
-        val declarations = StringBuilder()
+    private fun section(module: String, name: String) = files.getOrPut(name) { Section(module) }
+
+    private fun record(record: CppRecord, file: Section) {
+        val section = Section(file.module)
         val self = CNames.type(record.name)
-        val handle = bridges.isHandle(record.name) && !record.template
-        if (handle && record.defaultConstructible && record.destructible) {
-            function("${self}_create", "$self* ${self}_create(void)", "return reinterpret_cast<$self*>(new ${record.name}());", declarations, definitions)
-            function("${self}_destroy", "void ${self}_destroy($self* self)", "delete reinterpret_cast<${record.name}*>(self);", declarations, definitions)
+        // Constructing is only worth it for something to call: filamat::Enums, say, only holds static templates.
+        val instanceMethods = record.methods.any { it.isPublic && it.isApi && !it.isStatic && !it.isDeprecated }
+        if (bridges.isHandle(record.name) && !record.template && record.allocatable && instanceMethods) {
+            record.constructors.zip(suffixes(record.constructors)).forEach { (params, suffix) ->
+                val name = CNames.function(record.name, "create", suffix)
+                emit(name, "${record.name}(${spelled(params)})", section) {
+                    val bridged = bridge(params)
+                    "$self* $name(${cParams(null, bridged)})" to "return reinterpret_cast<$self*>(new ${record.name}(${args(bridged)}));"
+                }
+            }
+            if (record.constructors.isNotEmpty() && record.destructible) {
+                emit("${self}_destroy", "~${record.name}()", section) {
+                    "void ${self}_destroy($self* self)" to "delete reinterpret_cast<${record.name}*>(self);"
+                }
+            }
         }
-        // C can't upcast: a base's functions take the base's handle.
-        val bases = record.bases.mapNotNull { api.records[it] }.filter { base ->
-            handle && bridges.isHandle(base.name) && !base.template && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
-        }
-        bases.map { it.name }.forEach { base ->
-            val name = "${self}_as${CNames.type(base).removePrefix("Fila")}"
-            function(name, "${CNames.type(base)}* $name($self* self)", "return reinterpret_cast<${CNames.type(base)}*>(static_cast<$base*>(reinterpret_cast<${record.name}*>(self)));", declarations, definitions)
+        if (bridges.isHandle(record.name) && !record.template) {
+            // C can't upcast: a base's functions take the base's handle.
+            record.bases.mapNotNull { api.records[it] }.filter { base ->
+                bridges.isHandle(base.name) && !base.template && base.methods.any { it.isPublic && it.isApi && !it.isDeprecated }
+            }.forEach { base ->
+                val baseType = CNames.type(base.name)
+                val name = "${self}_as${baseType.removePrefix("Fila")}"
+                emit(name, "static_cast<${base.name}*>", section) {
+                    "$baseType* $name($self* self)" to
+                        "return reinterpret_cast<$baseType*>(static_cast<${base.name}*>(reinterpret_cast<${record.name}*>(self)));"
+                }
+            }
         }
         // Deprecated API isn't bound at all.
         val methods = record.methods.filter { it.isPublic && it.isApi && !it.isDeprecated }
             // A const overload and its non-const twin take the same C arguments; the non-const one covers both.
             .groupBy { m -> m.name to m.params.map { it.type.spelling } }.values.map { twins -> twins.firstOrNull { !it.isConst } ?: twins.first() }
-        methods.groupBy { it.name }.values.forEach { overloads ->
-            overloads.zip(suffixes(overloads)).forEach { (method, suffix) ->
-                method(method, CNames.function(record.name, method.name, suffix), declarations, definitions)
+        overloads(methods, section) { CNames.function(record.name, it.name, suffix = "") }
+        if (section.declarations.isEmpty()) return
+        file.declarations.appendLine("// ${record.name}").append(section.declarations).appendLine()
+        file.definitions.append(section.definitions)
+    }
+
+    /** Emits [functions], suffixing overloads of one name with the types that tell them apart. */
+    private fun overloads(functions: List<CppMethod>, section: Section, baseName: (CppMethod) -> String) {
+        functions.groupBy { it.name }.values.forEach { group ->
+            group.zip(suffixes(group.map { it.params })).forEach { (function, suffix) ->
+                val name = baseName(function) + if (suffix.isEmpty()) "" else "_$suffix"
+                emit(name, signature(function), section) { forwarder(function, name) }
             }
         }
-        if (declarations.isNotEmpty()) fileDeclarations.appendLine("// ${record.name}").append(declarations).appendLine()
     }
 
-    private fun method(method: CppMethod, name: String, declarations: StringBuilder, definitions: StringBuilder) {
+    private fun forwarder(method: CppMethod, name: String): Pair<String, String> {
+        if (method.mangled == null) throw Unsupported("member of a class template")
+        if (!method.isStatic && !bridges.isHandle(method.owner)) throw Unsupported("member of a value struct")
+        val returns = bridges.of(method.returns)
+        val params = bridge(method.params)
+        val const = if (method.isConst) "const " else ""
+        val self = if (method.isStatic) null else "$const${CNames.type(method.owner)}* self"
+        val target = if (method.isStatic) "${method.owner}::" else "reinterpret_cast<$const${method.owner}*>(self)->"
+        val call = "$target${method.name}(${args(params)})"
+        val body = if (returns.c == "void") "$call;" else "return ${returns.toC(call)};"
+        return "${returns.c} $name(${cParams(self, params)})" to body
+    }
+
+    /** Writes one function, or a `TODO(handwritten)` naming [cpp] when [build] can't bridge it. */
+    private fun emit(name: String, cpp: String, section: Section, build: () -> Pair<String, String>) {
         try {
-            if (method.mangled == null) throw Unsupported("member of a class template")
-            if (!bridges.isHandle(method.owner)) throw Unsupported("member of a value struct")
-            val returns = bridges.of(method.returns)
-            val params = method.params.mapIndexed { i, p -> p.name.ifEmpty { "arg$i" }.let { if (it == "self") "self_" else it } to bridges.of(p.type) }
-            val const = if (method.isConst) "const " else ""
-            val self = if (method.isStatic) null else "$const${CNames.type(method.owner)}* self"
-            val target = if (method.isStatic) "${method.owner}::" else "reinterpret_cast<$const${method.owner}*>(self)->"
-            val call = "$target${method.name}(${params.joinToString { (n, b) -> b.toCpp(n) }})"
-            val cParams = (listOfNotNull(self) + params.map { (n, b) -> "${b.c} $n" }).joinToString().ifEmpty { "void" }
-            val body = if (returns.c == "void") "$call;" else "return ${returns.toC(call)};"
-            function(name, "${returns.c} $name($cParams)", body, declarations, definitions)
+            val (signature, body) = build()
+            if (!functionNames.add(name)) throw Unsupported("$name is already generated for another overload")
+            section.declarations.appendLine("$signature;")
+            section.definitions.appendLine("$signature {\n    $body\n}\n")
         } catch (e: Unsupported) {
-            declarations.appendLine("// TODO(handwritten) $name: ${signature(method)}\n//     ${e.message}")
+            section.declarations.appendLine("// TODO(handwritten) $name: $cpp\n//     ${e.message}")
         }
     }
 
-    private fun function(name: String, signature: String, body: String, declarations: StringBuilder, definitions: StringBuilder) {
-        if (!functionNames.add(name)) throw Unsupported("$name is already generated for another overload")
-        declarations.appendLine("$signature;")
-        definitions.appendLine("$signature {\n    $body\n}\n")
-    }
+    private fun bridge(params: List<CppParam>) =
+        params.mapIndexed { i, p -> p.name.ifEmpty { "arg$i" }.let { if (it == "self") "self_" else it } to bridges.of(p.type) }
+
+    private fun cParams(self: String?, params: List<Pair<String, CBridge>>) =
+        (listOfNotNull(self) + params.map { (n, b) -> "${b.c} $n" }).joinToString().ifEmpty { "void" }
+
+    private fun args(params: List<Pair<String, CBridge>>) = params.joinToString { (n, b) -> b.toCpp(n) }
 
     /** Overloads take the short type names of the parameters after the ones they all share. */
-    private fun suffixes(overloads: List<CppMethod>): List<String> {
-        if (overloads.size == 1) return listOf("")
-        val names = overloads.map { m -> m.params.map { shortName(it.type.spelling) } }
+    private fun suffixes(overloads: List<List<CppParam>>): List<String> {
+        if (overloads.size <= 1) return overloads.map { "" }
+        val names = overloads.map { params -> params.map { shortName(it.type.spelling) } }
         val shared = (0 until names.minOf { it.size }).takeWhile { i -> names.all { it[i] == names[0][i] } }.size
         val tails = names.map { it.drop(shared).joinToString("_") }
         return if (tails.toSet().size == tails.size) tails else names.map { it.joinToString("_") }
@@ -104,17 +154,17 @@ internal class CApiWriter(private val api: CppApi, private val headers: List<Str
 
     private fun types(module: String): String {
         val body = StringBuilder()
-        if (module == "filament") {
+        if (module == baseModule) {
             body.appendLine("typedef int32_t FilaEntity;\n")
             bridges.mathTypes.forEach { body.appendLine(mathMirror(it)) }
             body.appendLine()
         }
-        surface.filter { it in api.records && moduleOf(it) == module && bridges.isHandle(it) }.sorted()
-            .forEach { body.appendLine("typedef struct ${CNames.type(it)} ${CNames.type(it)};") }
-        surface.mapNotNull { api.enums[it] }.filter { moduleOf(it.name) == module }.sortedBy { it.name }
+        surface.mapNotNull { api.records[it] }.filter { moduleOf(it.header) == module && bridges.isHandle(it.name) }.sortedBy { it.name }
+            .forEach { body.appendLine("typedef struct ${CNames.type(it.name)} ${CNames.type(it.name)};") }
+        surface.mapNotNull { api.enums[it] }.filter { moduleOf(it.header) == module }.sortedBy { it.name }
             .forEach { body.appendLine().append(enum(it)) }
-        val include = if (module == "filament") "#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>"
-            else "#include \"../../filament/generated/Types.h\""
+        val include = if (module == baseModule) "#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>"
+            else "#include \"../../$baseModule/generated/Types.h\""
         return header("${module}_Types", include, body.toString())
     }
 
@@ -136,14 +186,18 @@ internal class CApiWriter(private val api: CppApi, private val headers: List<Str
             "$body\n#ifdef __cplusplus\n}\n#endif\n\n#endif // $guard\n"
     }
 
+    /** API headers go to their section's module; the types they use from elsewhere, to the first. */
+    private fun moduleOf(header: String?) = header?.let(apiHeaders::moduleOf) ?: baseModule
+
     private fun topLevel(record: String) =
         generateSequence(record) { it.substringBeforeLast("::", "").takeIf { parent -> parent in api.records } }.last()
 
-    private fun signature(m: CppMethod) = (if (m.isStatic) "static " else "") + "${m.returns.spelling} ${m.owner}::${m.name}(" +
-        m.params.joinToString { "${it.type.spelling} ${it.name}".trim() } + ")" + if (m.isConst) " const" else ""
+    private fun spelled(params: List<CppParam>) = params.joinToString { "${it.type.spelling} ${it.name}".trim() }
 
-    companion object {
-        val MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
-        private const val BANNER = "// Generated by generateCApi from Filament's public headers; do not edit."
+    private fun signature(m: CppMethod) = (if (m.isStatic) "static " else "") + "${m.returns.spelling} ${m.owner}::${m.name}(" +
+        spelled(m.params) + ")" + if (m.isConst) " const" else ""
+
+    private companion object {
+        const val BANNER = "// Generated by generateCApi from Filament's public headers; do not edit."
     }
 }

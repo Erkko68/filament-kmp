@@ -9,6 +9,12 @@ extern "C" {
 #endif
 
 // filament::InstanceBuffer::Builder
+FilaInstanceBufferBuilder* FilaInstanceBufferBuilder_create_size_t(size_t instanceCount);
+// TODO(handwritten) FilaInstanceBufferBuilder_create_Builder: filament::InstanceBuffer::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaInstanceBufferBuilder_create_Builder: filament::InstanceBuffer::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
+void FilaInstanceBufferBuilder_destroy(FilaInstanceBufferBuilder* self);
 // TODO(handwritten) FilaInstanceBufferBuilder_localTransforms: Builder & filament::InstanceBuffer::Builder::localTransforms(const math::mat4f * _Nullable localTransforms)
 //     Builder &: filament::BuilderNameMixin::Builder
 // TODO(handwritten) FilaInstanceBufferBuilder_name: Builder & filament::InstanceBuffer::Builder::name(const utils::StaticString & name)

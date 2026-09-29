@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::MorphTargetBuffer::Builder
 FilaMorphTargetBufferBuilder* FilaMorphTargetBufferBuilder_create(void);
+// TODO(handwritten) FilaMorphTargetBufferBuilder_create_Builder: filament::MorphTargetBuffer::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaMorphTargetBufferBuilder_create_Builder: filament::MorphTargetBuffer::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaMorphTargetBufferBuilder_destroy(FilaMorphTargetBufferBuilder* self);
 // TODO(handwritten) FilaMorphTargetBufferBuilder_vertexCount: Builder & filament::MorphTargetBuffer::Builder::vertexCount(size_t vertexCount)
 //     Builder &: filament::BuilderNameMixin::Builder

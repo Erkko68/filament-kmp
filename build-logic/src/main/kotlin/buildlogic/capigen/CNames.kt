@@ -16,11 +16,3 @@ internal object CNames {
     private fun upperSnake(name: String) = WORD_BREAK.replace(name, "$1_$2").uppercase()
 }
 
-/** The C module (`c/<module>`) a declaration's functions and types are generated into. */
-internal fun moduleOf(qualified: String): String = when {
-    qualified.startsWith("filament::gltfio::") -> "gltfio"
-    qualified.startsWith("filamat::") -> "filamat"
-    qualified.startsWith("filament::camutils::") || qualified.startsWith("filament::geometry::") ||
-        qualified.startsWith("IBLPrefilterContext") -> "filament-utils"
-    else -> "filament"
-}

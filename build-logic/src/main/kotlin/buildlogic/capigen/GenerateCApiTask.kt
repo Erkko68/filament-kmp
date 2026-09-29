@@ -2,12 +2,20 @@ package buildlogic.capigen
 
 import buildlogic.cppapi.ClangAstDump
 import buildlogic.cppapi.CppApiReader
-import buildlogic.cppapi.PUBLIC_HEADERS
+import buildlogic.cppapi.ApiHeaders
+import buildlogic.cppapi.apiHeaderFiles
+import buildlogic.cppapi.apiHeaders
+import buildlogic.cppapi.apiHeadersFile
+import buildlogic.cppapi.relativeHeaders
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectories
@@ -32,19 +40,25 @@ abstract class GenerateCApiTask @Inject constructor(private val exec: ExecOperat
 
     @get:Internal abstract val includeDir: DirectoryProperty
 
+    /** `c/api-headers.txt`: which headers, and which module each one's API goes to. */
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
+    abstract val apiHeadersFile: RegularFileProperty
+
+    @get:Input abstract val modules: ListProperty<String>
+
     @get:Internal abstract val cDir: DirectoryProperty
 
     @get:OutputDirectories
-    val outputDirs get() = CApiWriter.MODULES.map { cDir.dir("$it/generated") }
+    val outputDirs get() = modules.get().map { cDir.dir("$it/generated") }
 
     @TaskAction
     fun generate() {
         val include = includeDir.get().asFile
-        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, publicHeaders.files)
-        val headers = publicHeaders.files.map { it.relativeTo(include).invariantSeparatorsPath }.sorted()
-        val files = CApiWriter(api, headers).write()
+        val headers = relativeHeaders(publicHeaders.files, include)
+        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers)
+        val files = CApiWriter(api, ApiHeaders.parse(apiHeadersFile.get().asFile.readText()), headers).write()
         val c = cDir.get().asFile
-        CApiWriter.MODULES.forEach { c.resolve("$it/generated").deleteRecursively() }
+        modules.get().forEach { c.resolve("$it/generated").deleteRecursively() }
         files.forEach { (path, text) -> c.resolve(path).apply { parentFile.mkdirs() }.writeText(text) }
 
         val generated = files.keys.map(c::resolve)
@@ -78,7 +92,9 @@ fun Project.registerGenerateCApi() {
         group = "build setup"
         description = "Generates the Fila* C API from Filament's public headers into c/<module>/generated."
         includeDir.set(root.dir("include"))
-        publicHeaders.from(root.dir("include").asFileTree.matching { include(PUBLIC_HEADERS) })
+        publicHeaders.from(apiHeaderFiles())
+        apiHeadersFile.set(apiHeadersFile())
+        modules.set(apiHeaders().modules.keys.toList())
         cDir.set(root.dir("c"))
     }
 }

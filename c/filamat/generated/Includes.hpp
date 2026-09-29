@@ -5,7 +5,6 @@
 
 #include <camutils/Bookmark.h>
 #include <camutils/Manipulator.h>
-#include <camutils/compiler.h>
 #include <filamat/Enums.h>
 #include <filamat/MaterialBuilder.h>
 #include <filamat/Package.h>
@@ -64,4 +63,7 @@
 #include <gltfio/TextureProvider.h>
 #include <gltfio/TrsTransformManager.h>
 #include <gltfio/math.h>
+#include <image/Ktx1Bundle.h>
+#include <ktxreader/Ktx1Reader.h>
+#include <ktxreader/Ktx2Reader.h>
 #include <utils/EntityManager.h>

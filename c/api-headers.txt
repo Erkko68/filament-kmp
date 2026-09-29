@@ -1,0 +1,25 @@
+# The Filament headers the Fila* C API is generated from (generateCApi), and that apiModel/apiGaps report on.
+# Globs relative to include/, grouped by the C module (c/<module>) their declarations are generated into.
+#
+# Every public class and free function these headers declare gets C functions. Types they use from other
+# headers (backend/, math/, utils/) are bridged as C types only, into the first module. `!glob` excludes a header
+# that declares nothing (the generator fails on listed headers it finds no declarations in).
+
+[filament]
+filament/*.h
+utils/EntityManager.h
+
+[gltfio]
+gltfio/*.h
+
+[filamat]
+filamat/*.h
+
+[filament-utils]
+camutils/*.h
+!camutils/compiler.h
+geometry/*.h
+filament-iblprefilter/*.h
+ktxreader/*.h
+# Ktx1Reader builds textures from bundles.
+image/Ktx1Bundle.h

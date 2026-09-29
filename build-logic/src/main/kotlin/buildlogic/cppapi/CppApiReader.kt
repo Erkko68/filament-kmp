@@ -3,11 +3,6 @@ package buildlogic.cppapi
 import java.io.File
 import java.math.BigInteger
 
-/** Globs under Filament's include dir for the headers that declare its public API. */
-internal val PUBLIC_HEADERS = listOf(
-    "filament/*.h", "gltfio/*.h", "filamat/*.h", "camutils/*.h", "geometry/*.h", "filament-iblprefilter/*.h", "utils/EntityManager.h",
-)
-
 /** Builds a [CppApi] from clang's AST of [headers]; nothing here parses C++ itself. */
 internal class CppApiReader(private val ast: ClangAstDump, private val workDir: File) {
     private val scopes = CppScopes()
@@ -15,23 +10,37 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
     private val enums = LinkedHashMap<String, CppEnum>()
     private val aliases = LinkedHashMap<String, CppType>()
     private val constants = HashMap<String, CppValue>()
+    private val functions = ArrayList<CppMethod>()
     private val values = CppValues(scopes, constants)
+    private val seenHeaders = HashSet<String>()
+    private var headerOf: Map<Map<*, *>, String?> = emptyMap()
 
-    fun read(includeDir: File, headers: Collection<File>): CppApi {
+    /** Reads [headers] (paths relative to [includeDir]); each must declare something the filters dump. */
+    fun read(includeDir: File, headers: Collection<String>): CppApi {
         val unit = workDir.resolve("headers.cpp")
-        unit.writeText(headers.map { it.relativeTo(includeDir).invariantSeparatorsPath }.sorted().joinToString("") { "#include <$it>\n" })
+        unit.writeText(headers.sorted().joinToString("") { "#include <$it>\n" })
         scopes.namespace("std")
         // A filter dumps the outermost declarations it matches, so each document sits in the filter's namespace.
         FILTERS.forEach { filter ->
             val namespace = filter.substringBeforeLast("::", "")
             if (filter.endsWith("::")) scopes.namespace(namespace) else if (namespace.isNotEmpty()) scopes.partialNamespace(namespace)
             SKIPPED.forEach { scopes.partialNamespace(qualify(namespace, it)) }
-            ast.forEachDeclaration(unit, includeDir, filter, SKIPPED) { visit(it, namespace, exported = false) }
+            ast.forEachDeclaration(unit, includeDir, filter, SKIPPED) { document ->
+                headerOf = DeclarationFiles.of(document, includeDir)
+                visit(document, namespace, exported = false, accessible = true)
+            }
         }
-        return CppApi(records, enums, aliases, constants)
+        val missed = headers.filterNot { it in seenHeaders }
+        check(missed.isEmpty()) { "No AST filter dumps the declarations of ${missed.joinToString()}; add one to CppApiReader.FILTERS" }
+        return CppApi(records, enums, aliases, constants, functions)
     }
 
-    private fun visit(node: Map<*, *>, scope: String, exported: Boolean, template: Boolean = false) {
+    /**
+     * [exported]: `*_PUBLIC` or publicly nested in an exported class, what the libraries' symbols follow.
+     * [accessible]: nameable from outside, at namespace scope or publicly nested.
+     */
+    private fun visit(node: Map<*, *>, scope: String, exported: Boolean, accessible: Boolean, template: Boolean = false) {
+        headerOf[node]?.let(seenHeaders::add)
         val kind = node["kind"]
         if (kind == "UsingDirectiveDecl") return scopes.usingNamespace(scope, (node["nominatedNamespace"] as Map<*, *>)["name"] as String)
         val name = node["name"] as? String ?: return
@@ -40,16 +49,18 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         when (kind) {
             "NamespaceDecl" -> {
                 scopes.namespace(qualified)
-                node.children().forEach { visit(it, qualified, exported = false) }
+                node.children().forEach { visit(it, qualified, exported = false, accessible = true) }
             }
             "ClassTemplateDecl" -> node.children().forEach { child ->
                 if (child["kind"] == "TemplateTypeParmDecl") (child["name"] as? String)?.let { scopes.templateParameter("$qualified::$it") }
-                visit(child, scope, exported, template = true)
+                visit(child, scope, exported, accessible, template = true)
             }
             "CXXRecordDecl" -> if (node["isImplicit"] != true) {
                 scopes.type(qualified)
-                if (node["completeDefinition"] == true) visitRecord(node, qualified, exported, template)
+                if (node["completeDefinition"] == true) visitRecord(node, qualified, exported, accessible, template)
             }
+            // A redeclaration repeats one already read.
+            "FunctionDecl" -> if (node["previousDecl"] == null) functions += method(node, scope, isPublic = true, free = true)
             "EnumDecl" -> visitEnum(node, qualified)
             "TypeAliasDecl", "TypedefDecl" -> {
                 val target = scopes.resolve(spelledType(node), scope)
@@ -64,7 +75,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         }
     }
 
-    private fun visitRecord(node: Map<*, *>, qualified: String, exported: Boolean, template: Boolean) {
+    private fun visitRecord(node: Map<*, *>, qualified: String, exported: Boolean, accessible: Boolean, template: Boolean) {
         val children = node.children()
         @Suppress("UNCHECKED_CAST")
         val bases = (node["bases"] as? List<Map<*, *>>).orEmpty()
@@ -75,29 +86,41 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
         val fields = ArrayList<CppField>()
         val dd = node["definitionData"] as? Map<*, *>
         val abstract = dd?.get("isAbstract") == true
-        var defaultConstructible = !abstract && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true
+        val constructors = ArrayList<List<CppParam>>()
+        if (!abstract && (dd?.get("defaultCtor") as? Map<*, *>)?.get("needsImplicit") == true) constructors += emptyList<CppParam>()
         var destructible = true
+        var allocatable = publicBases.all { records[it]?.allocatable != false }
         var access = if (node["tagUsed"] == "class") "private" else "public"
         for (child in children) {
             val isPublic = access == "public"
             when (child["kind"]) {
                 "AccessSpecDecl" -> access = child["access"] as String
-                "CXXMethodDecl" -> methods += method(child, qualified, isPublic)
-                "CXXConstructorDecl" -> if (!abstract && isPublic && child["explicitlyDeleted"] != true &&
-                    child.children().filter { it["kind"] == "ParmVarDecl" }.all { initializer(it) != null }) defaultConstructible = true
+                "CXXMethodDecl" -> {
+                    methods += method(child, qualified, isPublic)
+                    if (child["name"] == "operator new" && (child["explicitlyDeleted"] == true || !isPublic)) allocatable = false
+                }
+                "CXXConstructorDecl" -> if (!abstract && isPublic && child["explicitlyDeleted"] != true && child["isImplicit"] != true) {
+                    val params = method(child, qualified, isPublic).params
+                    // Copies and moves take the record itself; C holds handles, never copies.
+                    if (params.singleOrNull()?.type?.decl != qualified) constructors += params
+                }
                 "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
                     fields += CppField(name, type, initializer(child)?.let { values.of(it, qualified) }, isPublic)
                 }
-                "CXXRecordDecl", "ClassTemplateDecl" -> visit(child, qualified, exported = public && isPublic)
-                else -> visit(child, qualified, exported = false)
+                "CXXRecordDecl", "ClassTemplateDecl" ->
+                    visit(child, qualified, exported = public && isPublic, accessible = accessible && isPublic)
+                else -> visit(child, qualified, exported = false, accessible = accessible && isPublic)
             }
         }
-        records[qualified] = CppRecord(qualified, public, template, publicBases, methods, fields, defaultConstructible, destructible)
+        records[qualified] = CppRecord(
+            qualified, headerOf[node], public, accessible, template, publicBases, methods, fields, constructors, destructible, allocatable,
+        )
     }
 
-    private fun method(node: Map<*, *>, owner: String, isPublic: Boolean): CppMethod {
+    /** A method, or with [free] a function in namespace [owner]. */
+    private fun method(node: Map<*, *>, owner: String, isPublic: Boolean, free: Boolean = false): CppMethod {
         val name = node["name"] as String
         val (returns, qualifiers) = splitSignature(spelledType(node))
         val params = node.children().filter { it["kind"] == "ParmVarDecl" }.map { param ->
@@ -108,8 +131,8 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             )
         }
         return CppMethod(
-            owner, name, node["mangledName"] as? String, scopes.resolve(returns, owner), params,
-            isStatic = node["storageClass"] == "static",
+            owner, name, headerOf[node], node["mangledName"] as? String, scopes.resolve(returns, owner), params,
+            isStatic = free || node["storageClass"] == "static",
             isConst = qualifiers.split(' ').contains("const"),
             isPublic = isPublic,
             isDeprecated = node.children().any { it["kind"] == "DeprecatedAttr" },
@@ -127,7 +150,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             constant["name"] as String to value
         }
         val underlying = (node["fixedUnderlyingType"] as? Map<*, *>)?.get("qualType") as? String
-        enums[qualified] = CppEnum(qualified, underlying, constants)
+        enums[qualified] = CppEnum(qualified, headerOf[node], underlying, constants)
     }
 
     /** A declaration's initializer: its one child that isn't a comment or an attribute. */
@@ -139,8 +162,9 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
     private fun qualify(scope: String, name: String) = if (scope.isEmpty()) name else "$scope::$name"
 
     private companion object {
-        // utils first: filament's headers use utils::EntityManager, and names resolve as they're declared.
-        val FILTERS = listOf("utils::EntityManager", "filament::", "filamat::", "IBLPrefilterContext")
+        // Dependencies first (names resolve as they're declared): filament uses utils::EntityManager, ktxreader uses
+        // image's bundles and filament.
+        val FILTERS = listOf("utils::EntityManager", "image::Ktx", "filament::", "filamat::", "ktxreader::", "IBLPrefilterContext")
         // Math templates are huge and declare no API of their own.
         val SKIPPED = setOf("math")
         val NOT_EXPRESSIONS = listOf("Comment", "Attr", "Decl")

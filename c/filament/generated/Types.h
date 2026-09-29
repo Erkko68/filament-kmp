@@ -42,8 +42,13 @@ typedef struct FilaEngineBuilder FilaEngineBuilder;
 typedef struct FilaFence FilaFence;
 typedef struct FilaFilamentAPI FilaFilamentAPI;
 typedef struct FilaFilmicToneMapper FilaFilmicToneMapper;
+typedef struct FilaFrameHistoryStream FilaFrameHistoryStream;
+typedef struct FilaFrameHistoryStreamNewFramesRange FilaFrameHistoryStreamNewFramesRange;
+typedef struct FilaFrameHistoryStreamNewFramesRangeIterator FilaFrameHistoryStreamNewFramesRangeIterator;
+typedef struct FilaFrameHistoryStreamResult FilaFrameHistoryStreamResult;
 typedef struct FilaFramePacer FilaFramePacer;
 typedef struct FilaFramePacerBuilder FilaFramePacerBuilder;
+typedef struct FilaFramePipelineEstimator FilaFramePipelineEstimator;
 typedef struct FilaFrustum FilaFrustum;
 typedef struct FilaGT7ToneMapper FilaGT7ToneMapper;
 typedef struct FilaGenericToneMapper FilaGenericToneMapper;
@@ -95,12 +100,10 @@ typedef struct FilaCallbackHandler FilaCallbackHandler;
 typedef struct FilaPlatform FilaPlatform;
 typedef struct FilaPlatformExternalImage FilaPlatformExternalImage;
 typedef struct FilaPlatformExternalImageHandle FilaPlatformExternalImageHandle;
-typedef struct FilaPlatformFence FilaPlatformFence;
-typedef struct FilaPlatformStream FilaPlatformStream;
 typedef struct FilaPlatformSwapChain FilaPlatformSwapChain;
-typedef struct FilaPlatformSync FilaPlatformSync;
-typedef struct FilaPresentCallable FilaPresentCallable;
 typedef struct FilaColorColorSpace FilaColorColorSpace;
+typedef struct FilaColorGamut FilaColorGamut;
+typedef struct FilaColorPartialColorSpace FilaColorPartialColorSpace;
 typedef struct FilaUtilsEntityManager FilaUtilsEntityManager;
 typedef struct FilaUtilsEntityManagerListener FilaUtilsEntityManagerListener;
 
@@ -212,6 +215,13 @@ typedef enum FilaFramePacerPacingStatus {
     FILA_FRAME_PACER_PACING_STATUS_DISPLAY_STARVING = -1,
     FILA_FRAME_PACER_PACING_STATUS_DISPLAY_STUFFED = 1,
 } FilaFramePacerPacingStatus;
+
+// filament::FramePipelineEstimator::TargetPercentile
+typedef enum FilaFramePipelineEstimatorTargetPercentile {
+    FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P50 = 0,
+    FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P90 = 1,
+    FILA_FRAME_PIPELINE_ESTIMATOR_TARGET_PERCENTILE_P95 = 2,
+} FilaFramePipelineEstimatorTargetPercentile;
 
 // filament::Frustum::Plane
 typedef enum FilaFrustumPlane {
@@ -485,6 +495,64 @@ typedef enum FilaCompilerPriorityQueue {
     FILA_COMPILER_PRIORITY_QUEUE_HIGH = 1,
     FILA_COMPILER_PRIORITY_QUEUE_LOW = 2,
 } FilaCompilerPriorityQueue;
+
+// filament::backend::CompressedPixelDataType
+typedef enum FilaCompressedPixelDataType {
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_R11 = 0,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_R11_SIGNED = 1,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_RG11 = 2,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_EAC_RG11_SIGNED = 3,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_ETC2_RGB8 = 4,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_ETC2_SRGB8 = 5,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_ETC2_RGB8_A1 = 6,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_ETC2_SRGB8_A1 = 7,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_ETC2_EAC_RGBA8 = 8,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_ETC2_EAC_SRGBA8 = 9,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT1_RGB = 10,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT1_RGBA = 11,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT3_RGBA = 12,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT5_RGBA = 13,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT1_SRGB = 14,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT1_SRGBA = 15,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT3_SRGBA = 16,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_DXT5_SRGBA = 17,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_4X4 = 18,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_5X4 = 19,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_5X5 = 20,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_6X5 = 21,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_6X6 = 22,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_8X5 = 23,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_8X6 = 24,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_8X8 = 25,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_10X5 = 26,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_10X6 = 27,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_10X8 = 28,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_10X10 = 29,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_12X10 = 30,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_ASTC_12X12 = 31,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_4X4 = 32,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_5X4 = 33,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_5X5 = 34,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_6X5 = 35,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_6X6 = 36,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_8X5 = 37,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_8X6 = 38,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_8X8 = 39,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_10X5 = 40,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_10X6 = 41,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_10X8 = 42,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_10X10 = 43,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_12X10 = 44,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB8_ALPHA8_ASTC_12X12 = 45,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RED_RGTC1 = 46,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SIGNED_RED_RGTC1 = 47,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RED_GREEN_RGTC2 = 48,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SIGNED_RED_GREEN_RGTC2 = 49,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGB_BPTC_SIGNED_FLOAT = 50,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGB_BPTC_UNSIGNED_FLOAT = 51,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_RGBA_BPTC_UNORM = 52,
+    FILA_COMPRESSED_PIXEL_DATA_TYPE_SRGB_ALPHA_BPTC_UNORM = 53,
+} FilaCompressedPixelDataType;
 
 // filament::backend::ConstantType
 typedef enum FilaConstantType {

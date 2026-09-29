@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 // filament::GenericToneMapper
-FilaGenericToneMapper* FilaGenericToneMapper_create(void);
+FilaGenericToneMapper* FilaGenericToneMapper_create(float contrast, float midGrayIn, float midGrayOut, float hdrMax);
 void FilaGenericToneMapper_destroy(FilaGenericToneMapper* self);
 FilaToneMapper* FilaGenericToneMapper_asToneMapper(FilaGenericToneMapper* self);
 bool FilaGenericToneMapper_isOneDimensional(const FilaGenericToneMapper* self);

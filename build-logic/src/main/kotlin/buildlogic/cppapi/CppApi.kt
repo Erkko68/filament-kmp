@@ -12,10 +12,19 @@ class CppApi(
     val enums: Map<String, CppEnum>,
     val aliases: Map<String, CppType>,
     val constants: Map<String, CppValue>,
+    /** Namespace-level functions. */
+    val functions: List<CppMethod>,
 ) {
-    fun surface(): Set<String> {
+    /** The records API [headers] declare that code outside can name: what gets bound. */
+    fun apiRecords(headers: Set<String>) = records.values.filter { it.accessible && it.header in headers }
+
+    fun apiFunctions(headers: Set<String>) = functions.filter { it.header in headers && it.isApi && !it.isDeprecated }
+
+    /** [apiRecords] and [apiFunctions], plus every type their public members reach. */
+    fun surface(headers: Set<String>): Set<String> {
         val seen = LinkedHashSet<String>()
-        val queue = ArrayDeque(records.values.filter { it.exported }.map { it.name })
+        val queue = ArrayDeque(apiRecords(headers).map { it.name })
+        apiFunctions(headers).flatMapTo(queue) { f -> (f.params.map { it.type } + f.returns).mapNotNull { it.decl } }
         while (queue.isNotEmpty()) {
             val name = queue.removeFirst()
             if (!seen.add(name)) continue
@@ -43,24 +52,35 @@ class CppType(val spelling: String, val decl: String?, val kind: Kind) {
 }
 
 /**
- * [exported]: `*_PUBLIC`, or publicly nested in an exported class. [template]: a class template, named without its
- * arguments. [defaultConstructible]/[destructible]: publicly, so C can `new` and `delete` it.
+ * [header]: relative to the include dir, null outside it. [exported]: `*_PUBLIC`, or publicly nested in an exported
+ * class. [accessible]: nameable from outside the class. [template]: a class template, named without its arguments.
+ * [constructors]: the public ones' parameters, copies and moves aside. [destructible]: publicly. [allocatable]: no
+ * base deletes `operator new` (Filament's handle classes do: only the Engine creates them).
  */
 class CppRecord(
     val name: String,
+    val header: String?,
     val exported: Boolean,
+    val accessible: Boolean,
     val template: Boolean,
     val bases: List<String>,
     val methods: List<CppMethod>,
     val fields: List<CppField>,
-    val defaultConstructible: Boolean,
+    val constructors: List<List<CppParam>>,
     val destructible: Boolean,
-)
+    val allocatable: Boolean,
+) {
+    val defaultConstructible get() = constructors.any { ctor -> ctor.all { it.default != null } }
+}
 
-/** [mangled] is null for members of class templates. [isApi]: written by hand, not deleted, not an operator. */
+/**
+ * A method, or a namespace-level function ([owner] is the namespace, [isStatic] set). [mangled] is null for members
+ * of class templates. [isApi]: written by hand, not deleted, not an operator.
+ */
 class CppMethod(
     val owner: String,
     val name: String,
+    val header: String?,
     val mangled: String?,
     val returns: CppType,
     val params: List<CppParam>,
@@ -80,7 +100,7 @@ class CppParam(val name: String, val type: CppType, val default: CppValue?) {
 
 class CppField(val name: String, val type: CppType, val default: CppValue?, val isPublic: Boolean)
 
-class CppEnum(val name: String, val underlying: String?, val constants: List<Pair<String, BigInteger>>)
+class CppEnum(val name: String, val header: String?, val underlying: String?, val constants: List<Pair<String, BigInteger>>)
 
 /** A default argument or field initializer, folded as far as the AST allows. */
 sealed interface CppValue {

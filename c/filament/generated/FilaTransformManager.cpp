@@ -4,16 +4,12 @@
 
 extern "C" {
 
-FilaTransformManagerChildren_sentinel* FilaTransformManagerChildren_sentinel_create(void) {
-    return reinterpret_cast<FilaTransformManagerChildren_sentinel*>(new filament::TransformManager::children_sentinel());
-}
-
-void FilaTransformManagerChildren_sentinel_destroy(FilaTransformManagerChildren_sentinel* self) {
-    delete reinterpret_cast<filament::TransformManager::children_sentinel*>(self);
-}
-
 bool FilaTransformManagerChildren_iterator_isAtEnd(const FilaTransformManagerChildren_iterator* self) {
     return reinterpret_cast<const filament::TransformManager::children_iterator*>(self)->isAtEnd();
+}
+
+void FilaTransformManagerChildren_range_destroy(FilaTransformManagerChildren_range* self) {
+    delete reinterpret_cast<filament::TransformManager::children_range*>(self);
 }
 
 bool FilaTransformManager_hasComponent(const FilaTransformManager* self, FilaEntity e) {

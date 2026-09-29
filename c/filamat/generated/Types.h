@@ -8,6 +8,7 @@
 extern "C" {
 #endif
 
+typedef struct FilaFilamatEnums FilaFilamatEnums;
 typedef struct FilaFilamatMaterialBuilder FilaFilamatMaterialBuilder;
 typedef struct FilaFilamatMaterialBuilderBase FilaFilamatMaterialBuilderBase;
 typedef struct FilaFilamatPackage FilaFilamatPackage;

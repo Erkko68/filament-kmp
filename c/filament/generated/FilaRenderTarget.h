@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::RenderTarget::Builder
 FilaRenderTargetBuilder* FilaRenderTargetBuilder_create(void);
+// TODO(handwritten) FilaRenderTargetBuilder_create_Builder: filament::RenderTarget::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaRenderTargetBuilder_create_Builder: filament::RenderTarget::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaRenderTargetBuilder_destroy(FilaRenderTargetBuilder* self);
 // TODO(handwritten) FilaRenderTargetBuilder_texture: Builder & filament::RenderTarget::Builder::texture(AttachmentPoint attachment, Texture * _Nullable texture)
 //     Builder &: filament::BuilderNameMixin::Builder

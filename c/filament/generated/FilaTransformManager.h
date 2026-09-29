@@ -8,14 +8,13 @@
 extern "C" {
 #endif
 
-// filament::TransformManager::children_sentinel
-FilaTransformManagerChildren_sentinel* FilaTransformManagerChildren_sentinel_create(void);
-void FilaTransformManagerChildren_sentinel_destroy(FilaTransformManagerChildren_sentinel* self);
-
 // filament::TransformManager::children_iterator
 bool FilaTransformManagerChildren_iterator_isAtEnd(const FilaTransformManagerChildren_iterator* self);
 
 // filament::TransformManager::children_range
+// TODO(handwritten) FilaTransformManagerChildren_range_create: filament::TransformManager::children_range(const children_iterator begin)
+//     filament::TransformManager::children_iterator by value
+void FilaTransformManagerChildren_range_destroy(FilaTransformManagerChildren_range* self);
 // TODO(handwritten) FilaTransformManagerChildren_range_begin: children_iterator filament::TransformManager::children_range::begin() const
 //     filament::TransformManager::children_iterator by value
 // TODO(handwritten) FilaTransformManagerChildren_range_end: children_sentinel filament::TransformManager::children_range::end() const

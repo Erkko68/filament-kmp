@@ -4,14 +4,6 @@
 
 extern "C" {
 
-FilaLightManagerShadowCascades* FilaLightManagerShadowCascades_create(void) {
-    return reinterpret_cast<FilaLightManagerShadowCascades*>(new filament::LightManager::ShadowCascades());
-}
-
-void FilaLightManagerShadowCascades_destroy(FilaLightManagerShadowCascades* self) {
-    delete reinterpret_cast<filament::LightManager::ShadowCascades*>(self);
-}
-
 void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint8_t cascades) {
     filament::LightManager::ShadowCascades::computeUniformSplits(splitPositions, cascades);
 }
@@ -22,6 +14,14 @@ void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint
 
 void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint8_t cascades, float near, float far, float lambda) {
     filament::LightManager::ShadowCascades::computePracticalSplits(splitPositions, cascades, near, far, lambda);
+}
+
+FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType type) {
+    return reinterpret_cast<FilaLightManagerBuilder*>(new filament::LightManager::Builder(static_cast<filament::LightManager::Type>(type)));
+}
+
+void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self) {
+    delete reinterpret_cast<filament::LightManager::Builder*>(self);
 }
 
 FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, unsigned int channel, bool enable) {

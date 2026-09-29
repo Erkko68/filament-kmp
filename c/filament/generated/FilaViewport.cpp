@@ -8,6 +8,10 @@ FilaViewport* FilaViewport_create(void) {
     return reinterpret_cast<FilaViewport*>(new filament::Viewport());
 }
 
+FilaViewport* FilaViewport_create_int32_t_int32_t_uint32_t_uint32_t(int32_t left, int32_t bottom, uint32_t width, uint32_t height) {
+    return reinterpret_cast<FilaViewport*>(new filament::Viewport(left, bottom, width, height));
+}
+
 void FilaViewport_destroy(FilaViewport* self) {
     delete reinterpret_cast<filament::Viewport*>(self);
 }

@@ -24,7 +24,7 @@ extern "C" {
 // TODO(handwritten) FilaBox_getBoundingSphere: math::float4 filament::Box::getBoundingSphere() const
 //     member of a value struct
 // TODO(handwritten) FilaBox_transform: static Box filament::Box::transform(const math::mat3f & m, const math::float3 & t, const Box & box)
-//     member of a value struct
+//     Box: value struct
 
 
 #ifdef __cplusplus

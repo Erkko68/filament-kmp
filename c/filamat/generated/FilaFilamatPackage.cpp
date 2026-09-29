@@ -8,6 +8,14 @@ FilaFilamatPackage* FilaFilamatPackage_create(void) {
     return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package());
 }
 
+FilaFilamatPackage* FilaFilamatPackage_create_size_t(size_t size) {
+    return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package(size));
+}
+
+FilaFilamatPackage* FilaFilamatPackage_create_void_size_t(const void* src, size_t size) {
+    return reinterpret_cast<FilaFilamatPackage*>(new filamat::Package(src, size));
+}
+
 void FilaFilamatPackage_destroy(FilaFilamatPackage* self) {
     delete reinterpret_cast<filamat::Package*>(self);
 }

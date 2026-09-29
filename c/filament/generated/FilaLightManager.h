@@ -9,13 +9,13 @@ extern "C" {
 #endif
 
 // filament::LightManager::ShadowCascades
-FilaLightManagerShadowCascades* FilaLightManagerShadowCascades_create(void);
-void FilaLightManagerShadowCascades_destroy(FilaLightManagerShadowCascades* self);
 void FilaLightManagerShadowCascades_computeUniformSplits(float* splitPositions, uint8_t cascades);
 void FilaLightManagerShadowCascades_computeLogSplits(float* splitPositions, uint8_t cascades, float near, float far);
 void FilaLightManagerShadowCascades_computePracticalSplits(float* splitPositions, uint8_t cascades, float near, float far, float lambda);
 
 // filament::LightManager::Builder
+FilaLightManagerBuilder* FilaLightManagerBuilder_create(FilaLightManagerType type);
+void FilaLightManagerBuilder_destroy(FilaLightManagerBuilder* self);
 FilaLightManagerBuilder* FilaLightManagerBuilder_lightChannel(FilaLightManagerBuilder* self, unsigned int channel, bool enable);
 FilaLightManagerBuilder* FilaLightManagerBuilder_castShadows(FilaLightManagerBuilder* self, bool enable);
 // TODO(handwritten) FilaLightManagerBuilder_shadowOptions: Builder & filament::LightManager::Builder::shadowOptions(const ShadowOptions & options)

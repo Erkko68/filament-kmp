@@ -4,6 +4,14 @@
 
 extern "C" {
 
+FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_create(size_t count) {
+    return reinterpret_cast<FilaRenderableManagerBuilder*>(new filament::RenderableManager::Builder(count));
+}
+
+void FilaRenderableManagerBuilder_destroy(FilaRenderableManagerBuilder* self) {
+    delete reinterpret_cast<filament::RenderableManager::Builder*>(self);
+}
+
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_geometry_IndexBuffer_size_t_size_t_size_t_size_t(FilaRenderableManagerBuilder* self, size_t index, FilaPrimitiveType type, FilaVertexBuffer* vertices, FilaIndexBuffer* indices, size_t offset, size_t minIndex, size_t maxIndex, size_t count) {
     return reinterpret_cast<FilaRenderableManagerBuilder*>(&reinterpret_cast<filament::RenderableManager::Builder*>(self)->geometry(index, static_cast<filament::backend::PrimitiveType>(type), reinterpret_cast<filament::VertexBuffer*>(vertices), reinterpret_cast<filament::IndexBuffer*>(indices), offset, minIndex, maxIndex, count));
 }

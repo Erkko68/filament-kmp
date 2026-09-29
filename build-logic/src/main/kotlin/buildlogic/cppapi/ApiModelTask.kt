@@ -26,8 +26,10 @@ abstract class ApiModelTask @Inject constructor(private val exec: ExecOperations
 
     @TaskAction
     fun run() {
-        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(includeDir.get().asFile, publicHeaders.files)
-        val surface = api.surface()
+        val include = includeDir.get().asFile
+        val headers = relativeHeaders(publicHeaders.files, include)
+        val api = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir).read(include, headers)
+        val surface = api.surface(headers)
         val unresolved = sortedSetOf<String>()
         val unsupported = sortedSetOf<String>()
         fun type(t: CppType, where: String) = t.also { if (it.kind == CppType.Kind.UNRESOLVED) unresolved += "${it.spelling}  in $where" }
@@ -50,6 +52,10 @@ abstract class ApiModelTask @Inject constructor(private val exec: ExecOperations
                 m.params.forEach { type(it.type, where); value(it.default, where) }
                 text.appendLine("  $m")
             }
+        }
+        api.apiFunctions(headers).forEach { f ->
+            f.params.forEach { type(it.type, "${f.owner}::${f.name}"); value(it.default, "${f.owner}::${f.name}") }
+            text.appendLine("function $f")
         }
         text.appendLine("\n## Unresolved types").append(unresolved.joinToString("") { "$it\n" })
         text.appendLine("\n## Unsupported defaults").append(unsupported.joinToString("") { "$it\n" })

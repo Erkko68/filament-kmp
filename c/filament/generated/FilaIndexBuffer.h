@@ -10,6 +10,10 @@ extern "C" {
 
 // filament::IndexBuffer::Builder
 FilaIndexBufferBuilder* FilaIndexBufferBuilder_create(void);
+// TODO(handwritten) FilaIndexBufferBuilder_create_Builder: filament::IndexBuffer::Builder(const Builder & rhs)
+//     const Builder &: filament::BuilderNameMixin::Builder
+// TODO(handwritten) FilaIndexBufferBuilder_create_Builder: filament::IndexBuffer::Builder(Builder && rhs)
+//     Builder &&: rvalue reference
 void FilaIndexBufferBuilder_destroy(FilaIndexBufferBuilder* self);
 // TODO(handwritten) FilaIndexBufferBuilder_indexCount: Builder & filament::IndexBuffer::Builder::indexCount(uint32_t indexCount)
 //     Builder &: filament::BuilderNameMixin::Builder
