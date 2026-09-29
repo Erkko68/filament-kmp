@@ -40,7 +40,7 @@ internal class CppScopes {
             Decl.TEMPLATE_PARAMETER -> Kind.TEMPLATE_PARAMETER
             else -> Kind.DECLARED
         }
-        return CppType(spelling, decl, kind)
+        return CppType(spelling, decl, kind, templateArgs(spelling).map { resolve(it, scope) })
     }
 
     /** The qualified name [spelled] refers to from [scope]; under a namespace nothing dumped declares it, a guess. */
@@ -86,6 +86,22 @@ internal class CppScopes {
             val bare = generateSequence(spelling) { s -> TEMPLATE_ARGS.replace(s, "").takeIf { it != s } }.last()
             if ('(' in bare) return null
             return QUALIFIERS.replace(bare, " ").trim().replace(Regex("\\s+"), " ")
+        }
+
+        /** The outermost template's arguments: `X<A<B, C>, D>` gives `A<B, C>` and `D`. */
+        fun templateArgs(spelling: String): List<String> {
+            val open = spelling.indexOf('<')
+            val close = spelling.lastIndexOf('>')
+            if (open < 0 || close < open) return emptyList()
+            val args = ArrayList<String>()
+            var depth = 0
+            var start = open + 1
+            for (i in start until close) when (spelling[i]) {
+                '<', '(' -> depth++
+                '>', ')' -> depth--
+                ',' -> if (depth == 0) { args += spelling.substring(start, i).trim(); start = i + 1 }
+            }
+            return args + spelling.substring(start, close).trim()
         }
 
         fun isBuiltin(base: String) = base.split(' ').all { it in BUILTIN_WORDS } || BUILTIN_TYPEDEFS.matches(base)

@@ -39,8 +39,8 @@ class CppApi(
     }
 }
 
-/** A type as the header spells it, and the declaration its base name resolves to (see [Kind]). */
-class CppType(val spelling: String, val decl: String?, val kind: Kind) {
+/** A type as the header spells it, the declaration its base name resolves to (see [Kind]), and its template arguments. */
+class CppType(val spelling: String, val decl: String?, val kind: Kind, val args: List<CppType> = emptyList()) {
     enum class Kind { BUILTIN, DECLARED, EXTERNAL, FUNCTION, TEMPLATE_PARAMETER, UNRESOLVED }
 
     override fun toString() = when (kind) {

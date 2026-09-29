@@ -15,8 +15,7 @@ extern "C" {
 //     UvMap *: std::array
 // TODO(handwritten) FilaGltfio_processShaderString: static void filament::gltfio::processShaderString(std::string * shader, const UvMap & uvmap, const MaterialKey & config)
 //     std::string by pointer
-// TODO(handwritten) FilaGltfio_createJitShaderProvider: static MaterialProvider * filament::gltfio::createJitShaderProvider(Engine * engine, bool optimizeShaders, const utils::FixedCapacityVector<const char *> & variantFilters)
-//     const utils::FixedCapacityVector<const char *> &: utils::FixedCapacityVector
+FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount);
 FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount);
 FilaGltfioTextureProvider* FilaGltfio_createStbProvider(FilaEngine* engine);
 FilaGltfioTextureProvider* FilaGltfio_createKtx2Provider(FilaEngine* engine);

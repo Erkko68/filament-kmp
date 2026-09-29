@@ -468,6 +468,10 @@ void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera) {
     fila::cpp(self)->setDebugCamera(fila::cpp(camera));
 }
 
+uint32_t FilaView_getDirectionalShadowCameras(const FilaView* self, const FilaCamera** out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getDirectionalShadowCameras(), outCapacity, [&](auto& x, uint32_t i) { out[i] = fila::c(x); });
+}
+
 void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled) {
     fila::cpp(self)->setFroxelVizEnabled(enabled);
 }

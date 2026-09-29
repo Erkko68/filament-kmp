@@ -45,7 +45,7 @@ FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t_Bone(
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_skinning_size_t(FilaRenderableManagerBuilder* self, uint32_t boneCount);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_boneIndicesAndWeights_float2_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t primitiveIndex, const FilaFloat2* indicesAndWeights, uint32_t count, uint32_t bonesPerVertex);
 // TODO(handwritten) FilaRenderableManagerBuilder_boneIndicesAndWeights_FixedCapacityVector: Builder & filament::RenderableManager::Builder::boneIndicesAndWeights(size_t primitiveIndex, utils::FixedCapacityVector<utils::FixedCapacityVector<math::float2>> indicesAndWeightsVector)
-//     utils::FixedCapacityVector<utils::FixedCapacityVector<math::float2>>: utils::FixedCapacityVector
+//     utils::FixedCapacityVector<utils::FixedCapacityVector<math::float2>>: elements C passes in pieces
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_size_t(FilaRenderableManagerBuilder* self, uint32_t targetCount);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_MorphTargetBuffer(FilaRenderableManagerBuilder* self, FilaMorphTargetBuffer* morphTargetBuffer);
 FilaRenderableManagerBuilder* FilaRenderableManagerBuilder_morphing_uint8_t_size_t_size_t(FilaRenderableManagerBuilder* self, uint32_t level, uint32_t primitiveIndex, uint32_t offset);

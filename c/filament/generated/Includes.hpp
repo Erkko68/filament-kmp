@@ -79,6 +79,29 @@ namespace fila {
     inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
     inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
 
+// C's array as the FixedCapacityVector<T> the callee takes; element(i) makes each T.
+template<typename F>
+struct Items {
+    uint32_t count;
+    F element;
+    template<typename T>
+    operator utils::FixedCapacityVector<T>() const {
+        auto v = utils::FixedCapacityVector<T>::with_capacity(count);
+        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
+        return v;
+    }
+};
+
+template<typename F>
+Items<F> items(uint32_t count, F element) { return { count, element }; }
+
+// Stores up to capacity of items into C's array; returns how many there are.
+template<typename V, typename F>
+uint32_t copy(const V& items, uint32_t capacity, F store) {
+    for (uint32_t i = 0; i < capacity && i < items.size(); i++) store(items[i], i);
+    return uint32_t(items.size());
+}
+
 // StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).
 inline utils::StaticString staticString(const char* s) {
     static_assert(sizeof(utils::StaticString) == sizeof(std::string_view));

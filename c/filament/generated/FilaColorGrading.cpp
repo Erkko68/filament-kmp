@@ -76,6 +76,10 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder*
     return fila::c(&fila::cpp(self)->curves(std::bit_cast<filament::math::float3>(*shadowGamma), std::bit_cast<filament::math::float3>(*midPoint), std::bit_cast<filament::math::float3>(*highlightScale)));
 }
 
+FilaColorGradingBuilder* FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* self, const FilaFloat3* data, uint32_t dataCount, uint32_t dimension) {
+    return fila::c(&fila::cpp(self)->customLut(fila::items(dataCount, [&](uint32_t i) { return std::bit_cast<filament::math::float3>(*(data + i)); }), static_cast<uint8_t>(dimension)));
+}
+
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace) {
     return fila::c(&fila::cpp(self)->outputColorSpace(*fila::cpp(colorSpace)));
 }

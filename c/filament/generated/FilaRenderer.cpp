@@ -228,6 +228,10 @@ void FilaRendererClearOptions_setDiscard(FilaRendererClearOptions* self, bool va
     fila::cpp(self)->discard = value;
 }
 
+uint32_t FilaRenderer_getFrameInfoHistory(const FilaRenderer* self, uint32_t historySize, FilaRendererFrameInfo* const* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getFrameInfoHistory(static_cast<size_t>(historySize)), outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
+}
+
 uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self) {
     return static_cast<uint32_t>(fila::cpp(self)->getMaxFrameHistorySize());
 }

@@ -27,8 +27,7 @@ FilaColorGradingBuilder* FilaColorGradingBuilder_contrast(FilaColorGradingBuilde
 FilaColorGradingBuilder* FilaColorGradingBuilder_vibrance(FilaColorGradingBuilder* self, float vibrance);
 FilaColorGradingBuilder* FilaColorGradingBuilder_saturation(FilaColorGradingBuilder* self, float saturation);
 FilaColorGradingBuilder* FilaColorGradingBuilder_curves(FilaColorGradingBuilder* self, const FilaFloat3* shadowGamma, const FilaFloat3* midPoint, const FilaFloat3* highlightScale);
-// TODO(handwritten) FilaColorGradingBuilder_customLut: Builder & filament::ColorGrading::Builder::customLut(utils::FixedCapacityVector<math::float3> data, uint8_t dimension)
-//     utils::FixedCapacityVector<math::float3>: utils::FixedCapacityVector
+FilaColorGradingBuilder* FilaColorGradingBuilder_customLut(FilaColorGradingBuilder* self, const FilaFloat3* data, uint32_t dataCount, uint32_t dimension);
 FilaColorGradingBuilder* FilaColorGradingBuilder_outputColorSpace(FilaColorGradingBuilder* self, const FilaColorColorSpace* colorSpace);
 // TODO(handwritten) FilaColorGradingBuilder_exportLut: Builder & filament::ColorGrading::Builder::exportLut(ExportCallback _Nullable callback, void * _Nullable user)
 //     void (*)(const void * _Nonnull, size_t, backend::PixelDataFormat, backend::PixelDataType, uint32_t, uint32_t, uint32_t, void * _Nullable): takes C++ types

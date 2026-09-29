@@ -120,9 +120,9 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         val target = if (method.isStatic) "${bridges.cpp(method.owner)}::" else "fila::cpp(self)->"
         val call = "$target${method.name}(${args(params)})"
         return when {
-            returns.out -> "void $name(${cParams(self, params, out = "${returns.c}* out")})" to returns.store(call)
+            returns.out -> "void $name(${cParams(self, params, out = "${returns.c}* out")})" to returns.store(call, "out")
             returns.c == "void" -> "void $name(${cParams(self, params)})" to "$call;"
-            else -> "${returns.c} $name(${cParams(self, params)})" to "return ${returns.convert(call)};"
+            else -> "${returns.c} $name(${cParams(self, params, trailing(returns))})" to "return ${returns.convert(call)};"
         }
     }
 
@@ -136,14 +136,14 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         if (getter !in functionNames) emit(getter, cpp, section) {
             val result = bridges.result(field.type, lvalue = true)
             val read = "fila::cpp(self)->${field.name}"
-            if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read)
-            else "${result.c} $getter(const $self* self)" to "return ${result.convert(read)};"
+            if (result.out) "void $getter(const $self* self, ${result.c}* out)" to result.store(read, "out")
+            else "${result.c} $getter(${cParams("const $self* self", emptyList(), trailing(result))})" to "return ${result.convert(read)};"
         }
         val setter = "${self}_set$accessor"
         if (setter !in functionNames) emit(setter, cpp, section) {
             if (bridges.borrowsPointer(field.type)) throw Unsupported("${field.type.spelling}: the struct would keep the caller's pointer")
             val param = bridges.param(field.type)
-            "void $setter($self* self, ${param.c} value)" to "fila::cpp(self)->${field.name} = ${param.convert("value")};"
+            "void $setter(${cParams("$self* self", listOf("value" to param))})" to "fila::cpp(self)->${field.name} = ${param.convert("value")};"
         }
     }
 
@@ -164,6 +164,8 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
 
     private fun cParams(self: String?, params: List<Pair<String, CBridge>>, out: String? = null) =
         (listOfNotNull(self) + params.flatMap { (n, b) -> listOf("${b.c} $n") + b.extra.map { (c, suffix) -> "$c $n$suffix" } } + listOfNotNull(out)).joinToString().ifEmpty { "void" }
+
+    private fun trailing(result: CBridge) = result.extra.joinToString { (c, name) -> "$c $name" }.ifEmpty { null }
 
     private fun args(params: List<Pair<String, CBridge>>) = params.joinToString { (n, b) -> b.convert(n) }
 
@@ -253,6 +255,29 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             |    inline const __VA_ARGS__* cpp(const C* p) { return reinterpret_cast<const __VA_ARGS__*>(p); } \
             |    inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
             |    inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
+            |
+            |// C's array as the FixedCapacityVector<T> the callee takes; element(i) makes each T.
+            |template<typename F>
+            |struct Items {
+            |    uint32_t count;
+            |    F element;
+            |    template<typename T>
+            |    operator utils::FixedCapacityVector<T>() const {
+            |        auto v = utils::FixedCapacityVector<T>::with_capacity(count);
+            |        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
+            |        return v;
+            |    }
+            |};
+            |
+            |template<typename F>
+            |Items<F> items(uint32_t count, F element) { return { count, element }; }
+            |
+            |// Stores up to capacity of items into C's array; returns how many there are.
+            |template<typename V, typename F>
+            |uint32_t copy(const V& items, uint32_t capacity, F store) {
+            |    for (uint32_t i = 0; i < capacity && i < items.size(); i++) store(items[i], i);
+            |    return uint32_t(items.size());
+            |}
             |
             |// StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).
             |inline utils::StaticString staticString(const char* s) {

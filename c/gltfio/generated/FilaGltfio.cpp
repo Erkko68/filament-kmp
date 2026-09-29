@@ -4,6 +4,10 @@
 
 extern "C" {
 
+FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount) {
+    return fila::c(filament::gltfio::createJitShaderProvider(fila::cpp(engine), optimizeShaders, fila::items(variantFiltersCount, [&](uint32_t i) { return variantFilters[i]; })));
+}
+
 FilaGltfioMaterialProvider* FilaGltfio_createUbershaderProvider(FilaEngine* engine, const void* archive, uint32_t archiveByteCount) {
     return fila::c(filament::gltfio::createUbershaderProvider(fila::cpp(engine), archive, static_cast<size_t>(archiveByteCount)));
 }

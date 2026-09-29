@@ -73,8 +73,7 @@ bool FilaRendererClearOptions_getDiscard(const FilaRendererClearOptions* self);
 void FilaRendererClearOptions_setDiscard(FilaRendererClearOptions* self, bool value);
 
 // filament::Renderer
-// TODO(handwritten) FilaRenderer_getFrameInfoHistory: utils::FixedCapacityVector<FrameInfo> filament::Renderer::getFrameInfoHistory(size_t historySize) const
-//     utils::FixedCapacityVector<FrameInfo>: utils::FixedCapacityVector
+uint32_t FilaRenderer_getFrameInfoHistory(const FilaRenderer* self, uint32_t historySize, FilaRendererFrameInfo* const* out, uint32_t outCapacity);
 uint32_t FilaRenderer_getMaxFrameHistorySize(const FilaRenderer* self);
 void FilaRenderer_setDisplayInfo(FilaRenderer* self, const FilaRendererDisplayInfo* info);
 void FilaRenderer_setFrameRateOptions(FilaRenderer* self, const FilaRendererFrameRateOptions* options);

@@ -16,8 +16,7 @@ uint32_t FilaFrameHistoryStreamResult_getFrameId(const FilaFrameHistoryStreamRes
 uint32_t FilaFrameHistoryStreamResult_getMissingId(const FilaFrameHistoryStreamResult* self);
 
 // filament::FrameHistoryStream::NewFramesRange
-// TODO(handwritten) FilaFrameHistoryStreamNewFramesRange_create: filament::FrameHistoryStream::NewFramesRange(utils::FixedCapacityVector<Renderer::FrameInfo> history, uint32_t * pLastProcessedFrameId)
-//     utils::FixedCapacityVector<Renderer::FrameInfo>: utils::FixedCapacityVector
+FilaFrameHistoryStreamNewFramesRange* FilaFrameHistoryStreamNewFramesRange_create(const FilaRendererFrameInfo* const* history, uint32_t historyCount, uint32_t* pLastProcessedFrameId);
 // TODO(handwritten) FilaFrameHistoryStreamNewFramesRange_begin: iterator filament::FrameHistoryStream::NewFramesRange::begin() const
 //     filament::FrameHistoryStream::NewFramesRange::Iterator by value
 // TODO(handwritten) FilaFrameHistoryStreamNewFramesRange_end: iterator filament::FrameHistoryStream::NewFramesRange::end() const

@@ -8,14 +8,17 @@ import buildlogic.apigen.cpp.CppType.Kind
 
 /**
  * How a C++ value crosses into C: its C spelling, and the expression converting it to the other side. [out]: a
- * result C returns through a trailing `out` pointer ([CAbi]), which [store] writes.
+ * result C returns through a trailing `out` pointer ([CAbi]), which [store] writes given the value and the pointer.
  */
 internal class CBridge(
     val c: String,
     val convert: (String) -> String,
     val out: Boolean = false,
-    val store: (String) -> String = { "*out = ${convert(it)};" },
-    /** C parameters after the first, as (type, name suffix): one C++ argument C passes in pieces. */
+    val store: (String, String) -> String = { v, out -> "*$out = ${convert(v)};" },
+    /**
+     * A parameter's C parameters after the first, as (type, name suffix): one C++ argument C passes in pieces. A
+     * result's trailing parameters, as (type, name).
+     */
     val extra: List<Pair<String, String>> = emptyList(),
 )
 
@@ -60,6 +63,8 @@ private val USER_CALLBACK = "FilaCallback" to "typedef void (*FilaCallback)(void
 private val ARG_CALLBACK = "FilaArgCallback" to "typedef void (*FilaArgCallback)(void* arg, void* user);"
 
 private const val STATIC_STRING = "utils::StaticString"
+private const val VECTOR = "utils::FixedCapacityVector"
+
 private val STRINGS = setOf("std::string_view", "std::string", "utils::CString", "utils::ImmutableCString", STATIC_STRING)
 
 /** String types only literals convert to; overloads taking `const char*` cover them. */
@@ -151,6 +156,7 @@ internal class CBridges(private val api: CppApi) {
         return when {
             target.kind == Kind.FUNCTION && lastAlias != null && indirection == null -> functionPointer(lastAlias, target.spelling)
             decl in UPLOADS -> bridge.upload(decl!!, pixels = decl == PIXEL_BUFFER).also { callbackTypes += BUFFER_CALLBACK }
+            decl == VECTOR -> vector(target, bridge)
             decl == "utils::Invocable" -> bridge.invocable(target.spelling).let { (b, typedef) -> callbackTypes += typedef; b }
             indirection == "&&" -> throw Unsupported("${type.spelling}: rvalue reference")
             target.kind == Kind.BUILTIN -> bridge.builtin(shape(target.spelling).base)
@@ -166,6 +172,31 @@ internal class CBridges(private val api: CppApi) {
             decl in api.records -> api.records.getValue(decl).let { bridge.record(cpp(decl), isValue(decl), creatable(it) && it.defaultConstructible) }
             else -> throw Unsupported("${type.spelling}: $decl")
         }
+    }
+
+    /**
+     * C passes an array and its count; `fila::items` converts it to whichever vector the callee takes. A result fills
+     * C's array up to its capacity and returns how many there are. Math elements are contiguous mirrors; value
+     * records, the handles C created to copy into.
+     */
+    private fun vector(type: CppType, bridge: Bridge): CBridge {
+        if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
+        val element = type.args.single()
+        val mirror = element.decl.orEmpty().startsWith("filament::math::") && shape(element.spelling).indirection.isEmpty()
+        val e = if (bridge.result) result(element, lvalue = bridge.indirection == "&") else param(element)
+        if (e.extra.isNotEmpty()) throw Unsupported("${type.spelling}: elements C passes in pieces")
+        if (!bridge.result) {
+            val items = if (mirror || e.c.endsWith("*")) "${e.c}${if (mirror) "" else " const*"}" else "const ${e.c}*"
+            val item = { n: String -> if (mirror) "($n + i)" else "$n[i]" }
+            return CBridge(items, { n -> "fila::items(${n}Count, [&](uint32_t i) { return ${e.convert(item(n))}; })" }, extra = listOf("uint32_t" to "Count"))
+        }
+        val handles = e.out && element.decl in api.records
+        val store = if (handles) e.store("x", "out[i]") else "out[i] = ${e.convert("x")};"
+        return CBridge(
+            "uint32_t",
+            { call -> "fila::copy($call, outCapacity, [&](auto& x, uint32_t i) { $store })" },
+            extra = listOf((if (handles) "${e.c}* const*" else "${e.c}*") to "out", "uint32_t" to "outCapacity"),
+        )
     }
 
     /** A function pointer alias whose parameters are all C types: C declares the same type under the alias's name. */
@@ -283,7 +314,7 @@ internal class CBridges(private val api: CppApi) {
                 !value || !byValue -> handle(name)
                 !result -> CBridge("const $name*", { "*fila::cpp($it)" })
                 !copyable -> throw Unsupported("$decl result: C can't create one to copy it into")
-                else -> CBridge(name, { it }, out = true, store = { "*fila::cpp(out) = $it;" })
+                else -> CBridge(name, { it }, out = true, store = { v, out -> "*fila::cpp($out) = $v;" })
             }
         }
 

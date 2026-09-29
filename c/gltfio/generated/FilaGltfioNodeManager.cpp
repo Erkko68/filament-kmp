@@ -20,6 +20,14 @@ void FilaGltfioNodeManager_destroy(FilaGltfioNodeManager* self, FilaEntity e) {
     fila::cpp(self)->destroy(utils::Entity::import(e));
 }
 
+void FilaGltfioNodeManager_setMorphTargetNames(FilaGltfioNodeManager* self, uint32_t ci, const char* const* names, uint32_t namesCount) {
+    fila::cpp(self)->setMorphTargetNames(filament::gltfio::NodeManager::Instance(ci), fila::items(namesCount, [&](uint32_t i) { return utils::CString(names[i]); }));
+}
+
+uint32_t FilaGltfioNodeManager_getMorphTargetNames(const FilaGltfioNodeManager* self, uint32_t ci, const char** out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getMorphTargetNames(filament::gltfio::NodeManager::Instance(ci)), outCapacity, [&](auto& x, uint32_t i) { out[i] = (x).c_str(); });
+}
+
 void FilaGltfioNodeManager_setExtras(FilaGltfioNodeManager* self, uint32_t ci, const char* extras) {
     fila::cpp(self)->setExtras(filament::gltfio::NodeManager::Instance(ci), utils::CString(extras));
 }

@@ -137,8 +137,7 @@ void FilaView_getStereoscopicOptions(const FilaView* self, FilaStereoscopicOptio
 void FilaView_setFrustumCullingEnabled(FilaView* self, bool culling);
 bool FilaView_isFrustumCullingEnabled(const FilaView* self);
 void FilaView_setDebugCamera(FilaView* self, FilaCamera* camera);
-// TODO(handwritten) FilaView_getDirectionalShadowCameras: utils::FixedCapacityVector<const Camera *> filament::View::getDirectionalShadowCameras() const
-//     utils::FixedCapacityVector<const Camera *>: utils::FixedCapacityVector
+uint32_t FilaView_getDirectionalShadowCameras(const FilaView* self, const FilaCamera** out, uint32_t outCapacity);
 void FilaView_setFroxelVizEnabled(FilaView* self, bool enabled);
 void FilaView_getFroxelConfigurationInfo(const FilaView* self, FilaViewFroxelConfigurationInfoWithAge* out);
 // TODO(handwritten) FilaView_pick: PickingQuery & filament::View::pick(uint32_t x, uint32_t y, backend::CallbackHandler * _Nullable handler, PickingQueryResultCallback _Nonnull callback)

@@ -13,10 +13,8 @@ bool FilaGltfioNodeManager_hasComponent(const FilaGltfioNodeManager* self, FilaE
 uint32_t FilaGltfioNodeManager_getInstance(const FilaGltfioNodeManager* self, FilaEntity e);
 void FilaGltfioNodeManager_create(FilaGltfioNodeManager* self, FilaEntity entity);
 void FilaGltfioNodeManager_destroy(FilaGltfioNodeManager* self, FilaEntity e);
-// TODO(handwritten) FilaGltfioNodeManager_setMorphTargetNames: void filament::gltfio::NodeManager::setMorphTargetNames(Instance ci, utils::FixedCapacityVector<CString> names)
-//     utils::FixedCapacityVector<CString>: utils::FixedCapacityVector
-// TODO(handwritten) FilaGltfioNodeManager_getMorphTargetNames: const utils::FixedCapacityVector<CString> & filament::gltfio::NodeManager::getMorphTargetNames(Instance ci) const
-//     const utils::FixedCapacityVector<CString> &: utils::FixedCapacityVector
+void FilaGltfioNodeManager_setMorphTargetNames(FilaGltfioNodeManager* self, uint32_t ci, const char* const* names, uint32_t namesCount);
+uint32_t FilaGltfioNodeManager_getMorphTargetNames(const FilaGltfioNodeManager* self, uint32_t ci, const char** out, uint32_t outCapacity);
 void FilaGltfioNodeManager_setExtras(FilaGltfioNodeManager* self, uint32_t ci, const char* extras);
 const char* FilaGltfioNodeManager_getExtras(const FilaGltfioNodeManager* self, uint32_t ci);
 void FilaGltfioNodeManager_setSceneMembership(FilaGltfioNodeManager* self, uint32_t ci, uint32_t scenes);
