@@ -51,6 +51,17 @@ class GltfAsset internal constructor(
      * make them fight over the same transform.
      */
     internal var primaryInstanceClaimed = false
+
+    /** The loader uploading this asset's resources, until the load completes or is abandoned. */
+    internal var resourceLoader: ResourceLoader? = null
+
+    /** Cancels an unfinished load and destroys its loader; a no-op once released. */
+    internal fun releaseResourceLoader() {
+        val loader = resourceLoader ?: return
+        resourceLoader = null
+        if (!isReady) loader.asyncCancelLoad()
+        loader.destroy()
+    }
 }
 
 /**
@@ -88,22 +99,22 @@ internal fun rememberGltfAsset(
 
     DisposableEffect(gltfAsset) {
         onDispose {
+            // Here, not in the loading coroutine's `finally`: that only runs after every onDispose of
+            // this pass, i.e. after the asset — and a composition-owned engine — are already destroyed.
+            gltfAsset.releaseResourceLoader()
             assetLoader.destroyAsset(gltfAsset.filamentAsset)
         }
     }
 
     LaunchedEffect(gltfAsset) {
-        val resourceLoader = ResourceLoader(engine, true)
-        try {
-            resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
-            while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
-                resourceLoader.asyncUpdateLoad()
-                withFrameNanos { }
-            }
-            gltfAsset.isReady = true
-        } finally {
-            resourceLoader.destroy()
+        val resourceLoader = ResourceLoader(engine, true).also { gltfAsset.resourceLoader = it }
+        resourceLoader.asyncBeginLoad(gltfAsset.filamentAsset)
+        while (resourceLoader.asyncGetLoadProgress() < 1.0f) {
+            resourceLoader.asyncUpdateLoad()
+            withFrameNanos { }
         }
+        gltfAsset.isReady = true
+        gltfAsset.releaseResourceLoader()
     }
 
     return gltfAsset
