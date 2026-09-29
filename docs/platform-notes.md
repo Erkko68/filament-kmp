@@ -60,12 +60,12 @@ By default each frame is copied back through the CPU (below). Opt in to render F
 ```kotlin
 @OptIn(ExperimentalGpuToGpuFrameSharing::class)
 fun main() {
-    FilamentComposeDesktop.gpuToGpuFrameSharingEnabled = true
+    FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled = true
     application { /* … */ }
 }
 ```
 
-Set it before the first `rememberFilamentEngine()`. Only engines that `rememberFilamentEngine()` creates afterwards, inside the window that shows them, share frames. It relies on skiko internals, so it's experimental:
+Set it before the first `rememberFilamentEngine()`. Only engines that `rememberFilamentEngine()` creates afterwards, inside the window that shows them, share frames, and their backend must match Compose's API: `Engine.Backend.DEFAULT` always does, otherwise `METAL` on macOS, `VULKAN` on Windows, `OPENGL` on Linux. It relies on skiko internals, so it's experimental:
 
 - If a setup isn't covered (e.g. Compose fell back to software rendering, or the backend doesn't match Compose's API), it logs one line with the reason and uses CPU readback.
 - If it **fails**, it prints a report (versions, GPU, stack trace) to the console, switches to CPU readback for the rest of the session and asks you to [open an issue](https://github.com/Erkko68/filament-kmp/issues/new) with the report. A crash inside the GPU driver can't be caught this way.

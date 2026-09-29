@@ -20,7 +20,7 @@ public abstract interface annotation class io/github/erkko68/filament/compose/Ex
 public final class io/github/erkko68/filament/compose/FilamentComposeDesktop {
 	public static final field $stable I
 	public static final field INSTANCE Lio/github/erkko68/filament/compose/FilamentComposeDesktop;
-	public static final fun getGpuToGpuFrameSharingEnabled ()Z
+	public static final fun isGpuToGpuFrameSharingEnabled ()Z
 	public static final fun setGpuToGpuFrameSharingEnabled (Z)V
 }
 

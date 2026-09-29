@@ -1,7 +1,7 @@
 package io.github.erkko68.filament.compose
 
 /**
- * Marks Compose Desktop's experimental GPU-to-GPU frame sharing ([FilamentComposeDesktop.gpuToGpuFrameSharingEnabled]).
+ * Marks Compose Desktop's experimental GPU-to-GPU frame sharing ([FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled]).
  *
  * It reaches into skiko's internals to hand Filament's frames to Compose's own GPU context, so a
  * skiko update, GPU or driver it wasn't tested on can break it. Failures fall back to CPU readback
@@ -31,5 +31,5 @@ object FilamentComposeDesktop {
     @ExperimentalGpuToGpuFrameSharing
     @Volatile
     @JvmStatic
-    var gpuToGpuFrameSharingEnabled: Boolean = false
+    var isGpuToGpuFrameSharingEnabled: Boolean = false
 }

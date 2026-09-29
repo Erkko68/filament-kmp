@@ -53,7 +53,7 @@ internal object GpuFrameSharing {
 
     /** Opted in, and nothing has failed yet this session. */
     @OptIn(ExperimentalGpuToGpuFrameSharing::class)
-    val enabled: Boolean get() = FilamentComposeDesktop.gpuToGpuFrameSharingEnabled && !failed
+    val enabled: Boolean get() = FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled && !failed
 
     /** Records that [engine] was created for GPU-to-GPU sharing; engines created otherwise keep CPU readback. */
     fun optIn(engine: Engine) {
