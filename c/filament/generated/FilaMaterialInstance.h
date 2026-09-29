@@ -18,6 +18,26 @@ void FilaMaterialInstance_setParameter_size_t_RgbType_float3(FilaMaterialInstanc
 void FilaMaterialInstance_setParameter_RgbType_float3(FilaMaterialInstance* self, const char* name, FilaRgbType type, const FilaFloat3* color);
 void FilaMaterialInstance_setParameter_size_t_RgbaType_float4(FilaMaterialInstance* self, const char* name, uint32_t nameLength, FilaRgbaType type, const FilaFloat4* color);
 void FilaMaterialInstance_setParameter_RgbaType_float4(FilaMaterialInstance* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
+// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, size_t nameLength, const T & value)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, const T & value)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, size_t nameLength, const T * _Nonnull values, size_t count)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_setParameter: template void filament::MaterialInstance::setParameter(const char * _Nonnull name, const T * _Nonnull values, const size_t count)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_getParameter: template T filament::MaterialInstance::getParameter(const char * _Nonnull name, size_t nameLength) const
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_getParameter: template T filament::MaterialInstance::getParameter(const char * _Nonnull name) const
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_setConstant: template void filament::MaterialInstance::setConstant(const char * _Nonnull name, size_t nameLength, T value)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_setConstant: template void filament::MaterialInstance::setConstant(const char * _Nonnull name, T value)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_getConstant: template T filament::MaterialInstance::getConstant(const char * _Nonnull name, size_t nameLength) const
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialInstance_getConstant: template T filament::MaterialInstance::getConstant(const char * _Nonnull name) const
+//     function template: C binds its instantiations
 void FilaMaterialInstance_compile_UserVariantFilterMask_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, uint32_t variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_compile_UserVariantFilterBit_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaUserVariantFilterBit variants, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);
 void FilaMaterialInstance_compile_CallbackHandler_Invocable(FilaMaterialInstance* self, FilaCompilerPriorityQueue priority, FilaCallbackHandler* handler, FilaArgCallback callback, void* callbackUser);

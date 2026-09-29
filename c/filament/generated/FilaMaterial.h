@@ -27,6 +27,10 @@ void FilaMaterialParameterInfo_setPrecision(FilaMaterialParameterInfo* self, Fil
 FilaMaterialBuilder* FilaMaterialBuilder_create(void);
 void FilaMaterialBuilder_destroy(FilaMaterialBuilder* self);
 FilaMaterialBuilder* FilaMaterialBuilder_package(FilaMaterialBuilder* self, const void* payload, uint32_t size);
+// TODO(handwritten) FilaMaterialBuilder_constant: template Builder & filament::Material::Builder::constant(const char * _Nonnull name, size_t nameLength, T value)
+//     function template: C binds its instantiations
+// TODO(handwritten) FilaMaterialBuilder_constant: template Builder & filament::Material::Builder::constant(const char * _Nonnull name, T value)
+//     function template: C binds its instantiations
 FilaMaterialBuilder* FilaMaterialBuilder_sphericalHarmonicsBandCount(FilaMaterialBuilder* self, uint32_t shBandCount);
 FilaMaterialBuilder* FilaMaterialBuilder_shadowSamplingQuality(FilaMaterialBuilder* self, FilaMaterialBuilderShadowSamplingQuality quality);
 FilaMaterialBuilder* FilaMaterialBuilder_uboBatching(FilaMaterialBuilder* self, FilaMaterialUboBatchingMode uboBatchingMode);
@@ -71,6 +75,8 @@ const char* FilaMaterial_getParameterTransformName(const FilaMaterial* self, con
 void FilaMaterial_setDefaultParameter_Texture_TextureSampler(FilaMaterial* self, const char* name, const FilaTexture* texture, const FilaTextureSampler* sampler);
 void FilaMaterial_setDefaultParameter_RgbType_float3(FilaMaterial* self, const char* name, FilaRgbType type, const FilaFloat3* color);
 void FilaMaterial_setDefaultParameter_RgbaType_float4(FilaMaterial* self, const char* name, FilaRgbaType type, const FilaFloat4* color);
+// TODO(handwritten) FilaMaterial_setDefaultParameter: template void filament::Material::setDefaultParameter(const char * _Nonnull name, T value)
+//     function template: C binds its instantiations
 FilaMaterialInstance* FilaMaterial_getDefaultInstance(FilaMaterial* self);
 
 

@@ -101,6 +101,8 @@ uint32_t FilaRenderableManager_getBlendOrderAt(const FilaRenderableManager* self
 void FilaRenderableManager_setGlobalBlendOrderEnabledAt(FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex, bool enabled);
 bool FilaRenderableManager_isGlobalBlendOrderEnabledAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
 uint32_t FilaRenderableManager_getEnabledAttributesAt(const FilaRenderableManager* self, uint32_t instance, uint32_t primitiveIndex);
+// TODO(handwritten) FilaRenderableManager_computeAABB: template static Box filament::RenderableManager::computeAABB(const VECTOR * _Nonnull vertices, const INDEX * _Nonnull indices, size_t count, size_t stride)
+//     function template: C binds its instantiations
 
 
 #ifdef __cplusplus

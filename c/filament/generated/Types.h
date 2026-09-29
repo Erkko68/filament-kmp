@@ -131,7 +131,6 @@ typedef struct FilaVignetteOptions FilaVignetteOptions;
 typedef struct FilaVsmShadowOptions FilaVsmShadowOptions;
 typedef struct FilaBufferDescriptor FilaBufferDescriptor;
 typedef struct FilaCallbackHandler FilaCallbackHandler;
-typedef struct FilaConstantValue FilaConstantValue;
 typedef struct FilaPixelBufferDescriptor FilaPixelBufferDescriptor;
 typedef struct FilaPlatform FilaPlatform;
 typedef struct FilaPlatformCompositorTiming FilaPlatformCompositorTiming;
@@ -806,13 +805,6 @@ typedef enum FilaSamplerWrapMode {
     FILA_SAMPLER_WRAP_MODE_MIRRORED_REPEAT = 2,
 } FilaSamplerWrapMode;
 
-// filament::backend::ShaderStage
-typedef enum FilaShaderStage {
-    FILA_SHADER_STAGE_VERTEX = 0,
-    FILA_SHADER_STAGE_FRAGMENT = 1,
-    FILA_SHADER_STAGE_COMPUTE = 2,
-} FilaShaderStage;
-
 // filament::backend::ShaderStageFlags
 typedef enum FilaShaderStageFlags {
     FILA_SHADER_STAGE_FLAGS_NONE = 0,
@@ -846,11 +838,6 @@ typedef enum FilaStreamType {
     FILA_STREAM_TYPE_NATIVE = 0,
     FILA_STREAM_TYPE_ACQUIRED = 1,
 } FilaStreamType;
-
-// filament::backend::SubpassType
-typedef enum FilaSubpassType {
-    FILA_SUBPASS_TYPE_SUBPASS_INPUT = 0,
-} FilaSubpassType;
 
 // filament::backend::TextureCubemapFace
 typedef enum FilaTextureCubemapFace {

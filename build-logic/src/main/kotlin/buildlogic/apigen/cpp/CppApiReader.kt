@@ -65,6 +65,9 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             }
             // A redeclaration repeats one already read.
             "FunctionDecl" -> if (node["previousDecl"] == null) functions += method(node, scope, isPublic = true, free = true)
+            "FunctionTemplateDecl" -> node.children().firstOrNull { it["kind"] == "FunctionDecl" }?.let {
+                functions += method(it, scope, isPublic = true, free = true, template = true)
+            }
             "EnumDecl" -> visitEnum(node, qualified)
             "TypeAliasDecl", "TypedefDecl" -> {
                 val target = scopes.resolve(spelledType(node), scope)
@@ -115,6 +118,9 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
                     // aggregate's default constructor is declared once a header uses it.
                     if (!abstract && usable && self == null) constructors += params
                 }
+                "FunctionTemplateDecl" -> child.children().firstOrNull { it["kind"] == "CXXMethodDecl" }?.let {
+                    methods += method(it, qualified, isPublic, template = true)
+                }
                 "CXXDestructorDecl" -> destructible = isPublic && child["explicitlyDeleted"] != true
                 "FieldDecl" -> (child["name"] as? String)?.let { name ->
                     val type = scopes.resolve(spelledType(child), qualified)
@@ -133,7 +139,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
     }
 
     /** A method, or with [free] a function in namespace [owner]. */
-    private fun method(node: Map<*, *>, owner: String, isPublic: Boolean, free: Boolean = false): CppMethod {
+    private fun method(node: Map<*, *>, owner: String, isPublic: Boolean, free: Boolean = false, template: Boolean = false): CppMethod {
         val name = node["name"] as String
         val (returns, qualifiers) = splitSignature(spelledType(node))
         val params = node.children().filter { it["kind"] == "ParmVarDecl" }.map { param ->
@@ -150,6 +156,7 @@ internal class CppApiReader(private val ast: ClangAstDump, private val workDir: 
             isPublic = isPublic,
             isDeprecated = node.children().any { it["kind"] == "DeprecatedAttr" },
             isApi = node["isImplicit"] != true && node["explicitlyDeleted"] != true && !name.startsWith("operator"),
+            isTemplate = template,
         )
     }
 

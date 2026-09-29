@@ -23,14 +23,23 @@ include(cmake/Platform.cmake)
 include(cmake/FilamentLibraries.cmake)
 
 set(FILA_MODULES filament filamat filament-utils gltfio)
+# Modules on the generated API (<module>/generated + <module>/manual); the rest still build <module>/cpp.
+set(FILA_GENERATED_MODULES filamat)
 foreach(module IN LISTS FILA_MODULES)
-    include_directories(${module}/c)
+    if (NOT module IN_LIST FILA_GENERATED_MODULES)
+        include_directories(${module}/c)
+    endif()
 endforeach()
-# gltfio and filament-utils reuse filament's internal conversion helpers.
-include_directories(filament/cpp ${FILAMENT_INCLUDE_DIR})
+# gltfio and filament-utils reuse filament's internal conversion helpers. The JNI forwarders include
+# headers by their path under c/.
+include_directories(filament/cpp ${CMAKE_CURRENT_SOURCE_DIR} ${FILAMENT_INCLUDE_DIR})
 
 foreach(module IN LISTS FILA_MODULES)
-    file(GLOB sources CONFIGURE_DEPENDS ${module}/cpp/*.cpp)
+    if (module IN_LIST FILA_GENERATED_MODULES)
+        file(GLOB sources CONFIGURE_DEPENDS ${module}/generated/*.cpp ${module}/manual/*.cpp)
+    else()
+        file(GLOB sources CONFIGURE_DEPENDS ${module}/cpp/*.cpp)
+    endif()
     add_library(fila-${module} OBJECT ${sources})
 endforeach()
 

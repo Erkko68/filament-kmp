@@ -127,6 +127,8 @@ class CppMethod(
     val isPublic: Boolean,
     val isDeprecated: Boolean,
     val isApi: Boolean,
+    /** A function template: C binds its instantiations, which only a hand can list. */
+    val isTemplate: Boolean = false,
 ) {
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +
         (if (isConst) " const" else "")

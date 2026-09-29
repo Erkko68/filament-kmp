@@ -4,6 +4,7 @@ import buildlogic.apigen.c.GenerateCApiTask
 import buildlogic.apigen.cpp.ApiModelTask
 import buildlogic.apigen.externals.GenerateBindingsTask
 import buildlogic.apigen.gaps.ApiGapsTask
+import buildlogic.apigen.kotlin.GenerateKotlinExternalsTask
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.filamentLibDir
@@ -14,6 +15,9 @@ import org.gradle.kotlin.dsl.register
 private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "camutils", "geometry", "filament-iblprefilter", "utils")
 private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
 
+/** C modules on the generated API, by the Kotlin package of their externals; the rest still use c/<module>/{c,cpp}. */
+private val GENERATED_MODULES = mapOf("filamat" to "io.github.erkko68.filament.filamat.capi")
+
 /**
  * Registers the API generator, C++ headers → Fila* C → Kotlin, one package per stage:
  *
@@ -21,6 +25,7 @@ private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio"
  * ApiHeaders   c/api-headers.txt: which headers are API, and the C module each goes to
  * cpp/         clang's AST of those headers → CppApi model         apiModel        (report)
  * c/           CppApi → c/<module>/generated                       generateCApi    (committed)
+ * kotlin/      c/<module>/{generated,manual} → Kotlin externals     generateKotlinExternals (committed)
  * externals/   common Kotlin externals → JNI forwarders, wasm tables  generateBindings (build/)
  * gaps/        C++ API the C API doesn't call, C the Kotlin doesn't bind  apiGaps  (report)
  * ```
@@ -45,11 +50,20 @@ fun Project.registerApiGenTasks() {
         cDir.set(root.dir("c"))
     }
 
+    tasks.register<GenerateKotlinExternalsTask>("generateKotlinExternals") {
+        group = "build setup"
+        description = "Generates the common Kotlin externals of the generated and manual Fila* C headers."
+        cDir.set(root.dir("c"))
+        kotlinDir.set(root.dir("kotlin"))
+        packages.set(GENERATED_MODULES)
+    }
+
     tasks.register<GenerateBindingsTask>("generateBindings") {
         group = "filament"
         description = "Generates the JNI forwarders and wasm export tables from the common externals."
         sources.from(root.dir("kotlin").asFileTree.matching { include("*/src/commonMain/**/*.kt") })
-        headers.from(root.dir("c").asFileTree.matching { include("*/c/*.h") })
+        headers.from(root.dir("c").asFileTree.matching { include("*/c/*.h", "*/generated/*.h", "*/manual/*.h") })
+        cDir.set(root.dir("c"))
         wasmRuntimes.put("filamat", "filamat-kmp")
         outputDir.set(layout.buildDirectory.dir("generated/bindings"))
     }

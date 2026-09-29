@@ -43,7 +43,8 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         files.filterValues { it.declarations.isNotBlank() }.forEach { (name, section) ->
             val dir = "${section.module}/generated"
             out["$dir/$name.h"] = header(name, "#include \"Types.h\"", section.declarations.toString())
-            out["$dir/$name.cpp"] = "$BANNER\n#include \"Includes.hpp\"\n#include \"$name.h\"\n\nextern \"C\" {\n\n${section.definitions}} // extern \"C\"\n"
+            // Only TODOs and skip notes: nothing to forward.
+            if (section.definitions.isNotEmpty()) out["$dir/$name.cpp"] = "$BANNER\n#include \"Includes.hpp\"\n#include \"$name.h\"\n\nextern \"C\" {\n\n${section.definitions}} // extern \"C\"\n"
         }
         // Types last: the forwarders decide which math types need mirrors.
         apiHeaders.modules.keys.forEach { module ->
@@ -112,11 +113,13 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
 
     /** Emits [functions], suffixing overloads of one name with the types that tell them apart. */
     private fun overloads(functions: List<CppMethod>, section: Section, baseName: (CppMethod) -> String) {
-        functions.groupBy { it.name }.values.forEach { group ->
+        functions.groupBy { it.name }.values.forEach { all ->
+            val (templates, group) = all.partition { it.isTemplate }
             group.zip(suffixes(group.map { it.params })).forEach { (function, suffix) ->
                 val name = baseName(function) + if (suffix.isEmpty()) "" else "_$suffix"
                 emit(name, signature(function), section) { forwarder(function, name) }
             }
+            templates.forEach { section.declarations.appendLine("// TODO(handwritten) ${baseName(it)}: template ${signature(it)}\n//     function template: C binds its instantiations") }
         }
     }
 

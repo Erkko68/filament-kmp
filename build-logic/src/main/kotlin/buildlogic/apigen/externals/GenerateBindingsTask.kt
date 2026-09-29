@@ -11,6 +11,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -36,9 +37,11 @@ abstract class GenerateBindingsTask : DefaultTask() {
     /** Kotlin module → the wasm runtime its C module links into; others go to [DEFAULT_WASM_RUNTIME]. */
     @get:Input abstract val wasmRuntimes: MapProperty<String, String>
 
-    /** Fila* headers the JNI forwarders include for the prototypes. */
-    @get:InputFiles @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    /** Fila* headers under [cDir] the JNI forwarders include for the prototypes. */
+    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val headers: ConfigurableFileCollection
+
+    @get:Internal abstract val cDir: DirectoryProperty
 
     @get:OutputDirectory abstract val outputDir: DirectoryProperty
 
@@ -46,9 +49,15 @@ abstract class GenerateBindingsTask : DefaultTask() {
     fun generate() {
         val out = outputDir.get().asFile.apply { deleteRecursively() }
         val sources = sources.files.sortedBy { it.path }.mapNotNull(ExternalFunctionParser::parse)
-        val headerNames = headers.files.map { it.name }.sorted()
+        val headerPaths = headers.files.map { it.relativeTo(cDir.get().asFile).invariantSeparatorsPath }.sorted()
+        // Generated externals (the capi packages) bind the generated and manual headers, the rest the hand-written
+        // c/<module>/c ones: the two declare the same types differently.
+        val (handHeaders, generatedHeaders) = headerPaths.partition { it.split('/')[1] == "c" }
 
-        sources.forEach { out.write("jni/${it.file.nameWithoutExtension}.c", JniForwarderWriter.write(it, headerNames)) }
+        sources.forEach { source ->
+            val own = if (".capi." in source.jvmClass) generatedHeaders else handHeaders
+            out.write("jni/${source.file.nameWithoutExtension}.c", JniForwarderWriter.write(source, own))
+        }
 
         val byRuntime = sources.groupBy { wasmRuntimes.get()[it.kotlinModule] ?: DEFAULT_WASM_RUNTIME }
             .mapValues { (_, files) -> files.flatMap { it.functions }.distinctBy { it.symbol }.sortedBy { it.symbol } }
