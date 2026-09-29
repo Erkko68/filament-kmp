@@ -15,6 +15,8 @@ internal class CBridge(
     val convert: (String) -> String,
     val out: Boolean = false,
     val store: (String, String) -> String = { v, out -> "*$out = ${convert(v)};" },
+    /** A parameter assigned to a field: the statement given the field and the C argument. */
+    val assign: (String, String) -> String = { field, v -> "$field = ${convert(v)};" },
     /**
      * A parameter's C parameters after the first, as (type, name suffix): one C++ argument C passes in pieces. A
      * result's trailing parameters, as (type, name).
@@ -64,6 +66,10 @@ private val ARG_CALLBACK = "FilaArgCallback" to "typedef void (*FilaArgCallback)
 
 private const val STATIC_STRING = "utils::StaticString"
 private const val VECTOR = "utils::FixedCapacityVector"
+private const val SLICE = "utils::Slice"
+private val SEQUENCES = setOf(VECTOR, SLICE, "std::array")
+
+private fun isArray(type: CppType) = type.spelling.trim().endsWith("]")
 
 private val STRINGS = setOf("std::string_view", "std::string", "utils::CString", "utils::ImmutableCString", STATIC_STRING)
 
@@ -121,8 +127,11 @@ internal class CBridges(private val api: CppApi) {
     fun creatable(record: CppRecord) = !uninstantiated(record) && record.allocatable && record.destructible && record.constructors.isNotEmpty()
 
     /** A pointer to plain data (`const char*`, `void*`): a struct keeping it would outlive the caller's buffer. */
-    fun borrowsPointer(type: CppType) =
-        (type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()) || type.decl == "std::string_view"
+    fun borrowsPointer(type: CppType): Boolean = when {
+        isArray(type) -> borrowsPointer(type.args.single())
+        type.decl in api.aliases -> borrowsPointer(api.aliases.getValue(type.decl!!))
+        else -> (type.kind == Kind.BUILTIN && shape(type.spelling).indirection.isNotEmpty()) || type.decl == "std::string_view" || type.decl == SLICE
+    }
 
     /** The integer typedef of an enum too wide for a C enum (whose enumerators are ints), or null. */
     fun wideEnumType(enum: CppEnum) = if (enum.constants.all { it.second.bitLength() < 32 }) null else CAbi.byValue(enum.underlying ?: "uint64_t")
@@ -134,13 +143,13 @@ internal class CBridges(private val api: CppApi) {
         var target = type
         var alias: String? = null
         var lastAlias: String? = null
-        while (target.decl in api.aliases) {
+        while (!isArray(target) && target.decl in api.aliases) {
             alias = alias ?: target.decl
             lastAlias = target.decl
             target = api.aliases.getValue(target.decl!!)
             if (shape(target.spelling).indirection.isNotEmpty()) throw Unsupported("${type.spelling}: alias of a pointer")
         }
-        if ('[' in type.spelling || '[' in target.spelling) throw Unsupported("${type.spelling}: array")
+        if (isArray(target)) return sequence(target, Bridge(shape.const, indirection, result, lvalue))
         var decl = target.decl
         if (target.kind == Kind.TEMPLATE_PARAMETER) {
             val argument = INSTANTIATIONS[decl!!.substringBeforeLast("::")]?.get(decl.substringAfterLast("::"))
@@ -156,7 +165,7 @@ internal class CBridges(private val api: CppApi) {
         return when {
             target.kind == Kind.FUNCTION && lastAlias != null && indirection == null -> functionPointer(lastAlias, target.spelling)
             decl in UPLOADS -> bridge.upload(decl!!, pixels = decl == PIXEL_BUFFER).also { callbackTypes += BUFFER_CALLBACK }
-            decl == VECTOR -> vector(target, bridge)
+            decl in SEQUENCES -> sequence(target, bridge)
             decl == "std::function" && lastAlias != null -> function(lastAlias, target.args.single(), bridge)
             decl == "utils::Invocable" -> bridge.invocable(target.spelling).let { (b, typedef) -> callbackTypes += typedef; b }
             indirection == "&&" -> throw Unsupported("${type.spelling}: rvalue reference")
@@ -176,20 +185,26 @@ internal class CBridges(private val api: CppApi) {
     }
 
     /**
-     * C passes an array and its count; `fila::items` converts it to whichever vector the callee takes. A result fills
-     * C's array up to its capacity and returns how many there are. Math elements are contiguous mirrors; value
-     * records, the handles C created to copy into.
+     * A FixedCapacityVector, Slice, std::array or array. C passes an array and its count; `fila::items` converts it to whichever
+     * the callee takes. A result fills C's array up to its capacity and returns how many there are. Math elements are
+     * contiguous mirrors; value records, the handles C created to copy into.
      */
-    private fun vector(type: CppType, bridge: Bridge): CBridge {
+    private fun sequence(type: CppType, bridge: Bridge): CBridge {
         if (!bridge.byValue) throw Unsupported("${type.spelling}: by non-const reference")
-        val element = type.args.single()
-        val mirror = element.decl.orEmpty().startsWith("filament::math::") && shape(element.spelling).indirection.isEmpty()
-        val e = if (bridge.result) result(element, lvalue = bridge.indirection == "&") else param(element)
+        // std::array's second argument is its size.
+        val element = type.args.first()
+        val mirror = generateSequence(element) { t -> t.decl?.let(api.aliases::get) }.last().decl.orEmpty().startsWith("filament::math::") &&
+            shape(element.spelling).indirection.isEmpty()
+        // A Slice views elements that outlive it, as an lvalue's do.
+        val lvalue = bridge.lvalue || bridge.indirection == "&" || type.decl == SLICE
+        val e = if (bridge.result) result(element, lvalue) else param(element)
         if (e.extra.isNotEmpty()) throw Unsupported("${type.spelling}: elements C passes in pieces")
         if (!bridge.result) {
             val items = if (mirror || e.c.endsWith("*")) "${e.c}${if (mirror) "" else " const*"}" else "const ${e.c}*"
             val item = { n: String -> if (mirror) "($n + i)" else "$n[i]" }
-            return CBridge(items, { n -> "fila::items(${n}Count, [&](uint32_t i) { return ${e.convert(item(n))}; })" }, extra = listOf("uint32_t" to "Count"))
+            val convert = { n: String -> "fila::items(${n}Count, [&](uint32_t i) { return ${e.convert(item(n))}; })" }
+            return CBridge(items, convert, extra = listOf("uint32_t" to "Count"),
+                assign = { field, v -> if (isArray(type)) "fila::assign($field, ${convert(v)});" else "$field = ${convert(v)};" })
         }
         val handles = e.out && element.decl in api.records
         val store = if (handles) e.store("x", "out[i]") else "out[i] = ${e.convert("x")};"

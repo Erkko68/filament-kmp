@@ -60,6 +60,10 @@ void FilaFramePacerVsyncTick_setFrameScheduleTime(FilaFramePacerVsyncTick* self,
     fila::cpp(self)->frameScheduleTime = std::chrono::steady_clock::time_point(std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::nanoseconds(value)));
 }
 
+uint32_t FilaFramePacerVsyncTick_getTimelines(const FilaFramePacerVsyncTick* self, FilaFramePacerHardwareTimeline* const* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->timelines, outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
+}
+
 FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void) {
     return fila::c(new filament::FramePacer::Configuration());
 }

@@ -41,7 +41,7 @@ class CppApi(
 
 /**
  * A type as the header spells it, the declaration its base name resolves to (see [Kind]), and its template arguments
- * ([args]; a function type's are its return and parameter types).
+ * ([args]; a function type's are its return and parameter types, an array's its element).
  */
 class CppType(val spelling: String, val decl: String?, val kind: Kind, val args: List<CppType> = emptyList()) {
     enum class Kind { BUILTIN, DECLARED, EXTERNAL, FUNCTION, TEMPLATE_PARAMETER, UNRESOLVED }

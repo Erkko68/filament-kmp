@@ -9,10 +9,9 @@ extern "C" {
 #endif
 
 // filament::gltfio
-// TODO(handwritten) FilaGltfio_getNumUvSets: static uint8_t filament::gltfio::getNumUvSets(const UvMap & uvmap)
-//     const UvMap &: std::array
+uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount);
 // TODO(handwritten) FilaGltfio_constrainMaterial: static void filament::gltfio::constrainMaterial(MaterialKey * key, UvMap * uvmap)
-//     UvMap *: std::array
+//     std::array<UvSet, UvMapSize>: by non-const reference
 // TODO(handwritten) FilaGltfio_processShaderString: static void filament::gltfio::processShaderString(std::string * shader, const UvMap & uvmap, const MaterialKey & config)
 //     std::string by pointer
 FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount);

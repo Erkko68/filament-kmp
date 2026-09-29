@@ -12,6 +12,14 @@ void FilaCamutilsManipulatorConfig_destroy(FilaCamutilsManipulatorConfig* self) 
     delete fila::cpp(self);
 }
 
+uint32_t FilaCamutilsManipulatorConfig_getViewport(const FilaCamutilsManipulatorConfig* self, int32_t* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->viewport, outCapacity, [&](auto& x, uint32_t i) { out[i] = static_cast<int32_t>(x); });
+}
+
+void FilaCamutilsManipulatorConfig_setViewport(FilaCamutilsManipulatorConfig* self, const int32_t* value, uint32_t valueCount) {
+    fila::assign(fila::cpp(self)->viewport, fila::items(valueCount, [&](uint32_t i) { return static_cast<int>(value[i]); }));
+}
+
 void FilaCamutilsManipulatorConfig_getTargetPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out) {
     *out = std::bit_cast<FilaFloat3>(fila::cpp(self)->targetPosition);
 }

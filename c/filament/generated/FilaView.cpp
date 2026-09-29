@@ -172,6 +172,10 @@ void FilaViewPickingQuery_destroy(FilaViewPickingQuery* self) {
     delete fila::cpp(self);
 }
 
+uint32_t FilaViewPickingQuery_getStorage(const FilaViewPickingQuery* self, void** out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->storage, outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+}
+
 void FilaView_setName(FilaView* self, const char* name) {
     fila::cpp(self)->setName(name);
 }

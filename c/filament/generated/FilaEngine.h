@@ -90,8 +90,7 @@ void FilaEngineBuilder_build_Invocable(const FilaEngineBuilder* self, FilaArgCal
 FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self);
 
 // filament::Engine
-// TODO(handwritten) FilaEngine_getFeatureFlags: utils::Slice<const FeatureFlag> filament::Engine::getFeatureFlags() const
-//     utils::Slice<const FeatureFlag>: utils::Slice
+uint32_t FilaEngine_getFeatureFlags(const FilaEngine* self, FilaEngineFeatureFlag* const* out, uint32_t outCapacity);
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config);
 // TODO(handwritten) FilaEngine_createAsync: static void filament::Engine::createAsync(CreateCallback * callback, void * _Nullable user, Backend backend, Platform * _Nullable platform, void * _Nullable sharedContext, const Config * _Nullable config)
 //     CreateCallback *: function type

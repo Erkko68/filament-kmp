@@ -15,10 +15,8 @@ FilaFloat3* FilaAabbCorners_begin(FilaAabbCorners* self);
 FilaFloat3* FilaAabbCorners_end(FilaAabbCorners* self);
 FilaFloat3* FilaAabbCorners_data(FilaAabbCorners* self);
 uint32_t FilaAabbCorners_size(const FilaAabbCorners* self);
-// TODO(handwritten) FilaAabbCorners_getVertices: value_type[8] filament::Aabb::Corners::vertices
-//     value_type[8]: array
-// TODO(handwritten) FilaAabbCorners_setVertices: value_type[8] filament::Aabb::Corners::vertices
-//     value_type[8]: array
+uint32_t FilaAabbCorners_getVertices(const FilaAabbCorners* self, FilaFloat3* out, uint32_t outCapacity);
+void FilaAabbCorners_setVertices(FilaAabbCorners* self, const FilaFloat3* value, uint32_t valueCount);
 
 // filament::Aabb
 FilaAabb* FilaAabb_create(void);

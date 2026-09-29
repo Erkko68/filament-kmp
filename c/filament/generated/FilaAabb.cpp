@@ -28,6 +28,14 @@ uint32_t FilaAabbCorners_size(const FilaAabbCorners* self) {
     return static_cast<uint32_t>(fila::cpp(self)->size());
 }
 
+uint32_t FilaAabbCorners_getVertices(const FilaAabbCorners* self, FilaFloat3* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->vertices, outCapacity, [&](auto& x, uint32_t i) { out[i] = std::bit_cast<FilaFloat3>(x); });
+}
+
+void FilaAabbCorners_setVertices(FilaAabbCorners* self, const FilaFloat3* value, uint32_t valueCount) {
+    fila::assign(fila::cpp(self)->vertices, fila::items(valueCount, [&](uint32_t i) { return std::bit_cast<filament::math::float3>(*(value + i)); }));
+}
+
 FilaAabb* FilaAabb_create(void) {
     return fila::c(new filament::Aabb());
 }

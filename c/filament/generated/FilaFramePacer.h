@@ -25,10 +25,9 @@ void FilaFramePacerVsyncTick_getVsyncPeriod(const FilaFramePacerVsyncTick* self,
 void FilaFramePacerVsyncTick_setVsyncPeriod(FilaFramePacerVsyncTick* self, int64_t value);
 void FilaFramePacerVsyncTick_getFrameScheduleTime(const FilaFramePacerVsyncTick* self, int64_t* out);
 void FilaFramePacerVsyncTick_setFrameScheduleTime(FilaFramePacerVsyncTick* self, int64_t value);
-// TODO(handwritten) FilaFramePacerVsyncTick_getTimelines: Timelines filament::FramePacer::VsyncTick::timelines
-//     Timelines: utils::Slice
+uint32_t FilaFramePacerVsyncTick_getTimelines(const FilaFramePacerVsyncTick* self, FilaFramePacerHardwareTimeline* const* out, uint32_t outCapacity);
 // TODO(handwritten) FilaFramePacerVsyncTick_setTimelines: Timelines filament::FramePacer::VsyncTick::timelines
-//     Timelines: utils::Slice
+//     Timelines: the struct would keep the caller's pointer
 
 // filament::FramePacer::Configuration
 FilaFramePacerConfiguration* FilaFramePacerConfiguration_create(void);

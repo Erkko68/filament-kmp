@@ -272,6 +272,10 @@ FilaEngine* FilaEngineBuilder_build(const FilaEngineBuilder* self) {
     return fila::c(fila::cpp(self)->build());
 }
 
+uint32_t FilaEngine_getFeatureFlags(const FilaEngine* self, FilaEngineFeatureFlag* const* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getFeatureFlags(), outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
+}
+
 FilaEngine* FilaEngine_create(FilaBackend backend, FilaPlatform* platform, void* sharedContext, const FilaEngineConfig* config) {
     return fila::c(filament::Engine::create(static_cast<filament::backend::Backend>(backend), fila::cpp(platform), sharedContext, fila::cpp(config)));
 }

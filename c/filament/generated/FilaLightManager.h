@@ -23,10 +23,8 @@ uint32_t FilaLightManagerShadowOptions_getMapSize(const FilaLightManagerShadowOp
 void FilaLightManagerShadowOptions_setMapSize(FilaLightManagerShadowOptions* self, uint32_t value);
 uint32_t FilaLightManagerShadowOptions_getShadowCascades(const FilaLightManagerShadowOptions* self);
 void FilaLightManagerShadowOptions_setShadowCascades(FilaLightManagerShadowOptions* self, uint32_t value);
-// TODO(handwritten) FilaLightManagerShadowOptions_getCascadeSplitPositions: float[3] filament::LightManager::ShadowOptions::cascadeSplitPositions
-//     float[3]: array
-// TODO(handwritten) FilaLightManagerShadowOptions_setCascadeSplitPositions: float[3] filament::LightManager::ShadowOptions::cascadeSplitPositions
-//     float[3]: array
+uint32_t FilaLightManagerShadowOptions_getCascadeSplitPositions(const FilaLightManagerShadowOptions* self, float* out, uint32_t outCapacity);
+void FilaLightManagerShadowOptions_setCascadeSplitPositions(FilaLightManagerShadowOptions* self, const float* value, uint32_t valueCount);
 float FilaLightManagerShadowOptions_getConstantBias(const FilaLightManagerShadowOptions* self);
 void FilaLightManagerShadowOptions_setConstantBias(FilaLightManagerShadowOptions* self, float value);
 float FilaLightManagerShadowOptions_getNormalBias(const FilaLightManagerShadowOptions* self);

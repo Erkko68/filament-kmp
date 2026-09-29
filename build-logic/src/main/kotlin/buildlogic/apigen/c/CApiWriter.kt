@@ -143,7 +143,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
         if (setter !in functionNames) emit(setter, cpp, section) {
             if (bridges.borrowsPointer(field.type)) throw Unsupported("${field.type.spelling}: the struct would keep the caller's pointer")
             val param = bridges.param(field.type)
-            "void $setter(${cParams("$self* self", listOf("value" to param))})" to "fila::cpp(self)->${field.name} = ${param.convert("value")};"
+            "void $setter(${cParams("$self* self", listOf("value" to param))})" to param.assign("fila::cpp(self)->${field.name}", "value")
         }
     }
 
@@ -202,7 +202,7 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
     /** The C++ headers, and the `fila::cpp`/`fila::c` overloads between the module's C types and C++'s. */
     private fun includes(module: String): String {
         val text = StringBuilder("$BANNER\n#pragma once\n\n")
-        if (module == baseModule) text.append("#include <bit>\n#include <string_view>\n\n").append(headers.joinToString("") { "#include <$it>\n" })
+        if (module == baseModule) text.append("#include <array>\n#include <bit>\n#include <iterator>\n#include <memory>\n#include <string_view>\n\n").append(headers.joinToString("") { "#include <$it>\n" })
         else text.append("#include \"../../$baseModule/generated/Includes.hpp\"\n")
         text.append("#include \"Types.h\"\n\nnamespace fila {\n\n")
         if (module == baseModule) {
@@ -256,27 +256,53 @@ internal class CApiWriter(private val api: CppApi, private val apiHeaders: ApiHe
             |    inline C* c(__VA_ARGS__* p) { return reinterpret_cast<C*>(p); } \
             |    inline const C* c(const __VA_ARGS__* p) { return reinterpret_cast<const C*>(p); }
             |
-            |// C's array as the FixedCapacityVector<T> the callee takes; element(i) makes each T.
+            |// C's array as the FixedCapacityVector<T>, Slice<T> or std::array<T, N> the callee takes; element(i) makes each T. A Slice's
+            |// elements live as long as the Items, until the end of the call.
             |template<typename F>
             |struct Items {
             |    uint32_t count;
             |    F element;
+            |    mutable std::shared_ptr<void> storage;
+            |
             |    template<typename T>
-            |    operator utils::FixedCapacityVector<T>() const {
+            |    utils::FixedCapacityVector<T> vector() const {
             |        auto v = utils::FixedCapacityVector<T>::with_capacity(count);
             |        for (uint32_t i = 0; i < count; i++) v.push_back(T(element(i)));
             |        return v;
+            |    }
+            |
+            |    template<typename T>
+            |    operator utils::FixedCapacityVector<T>() const { return vector<T>(); }
+            |
+            |    template<typename T, size_t N>
+            |    operator std::array<T, N>() const {
+            |        std::array<T, N> a{};
+            |        for (uint32_t i = 0; i < count && i < N; i++) a[i] = T(element(i));
+            |        return a;
+            |    }
+            |
+            |    template<typename T>
+            |    operator utils::Slice<T>() const {
+            |        auto v = std::make_shared<utils::FixedCapacityVector<std::remove_const_t<T>>>(vector<std::remove_const_t<T>>());
+            |        storage = v;
+            |        return { v->data(), v->size() };
             |    }
             |};
             |
             |template<typename F>
             |Items<F> items(uint32_t count, F element) { return { count, element }; }
             |
+            |// Fills an array field from C's array, up to either's size.
+            |template<typename T, size_t N, typename F>
+            |void assign(T (&array)[N], const Items<F>& items) {
+            |    for (uint32_t i = 0; i < items.count && i < N; i++) array[i] = T(items.element(i));
+            |}
+            |
             |// Stores up to capacity of items into C's array; returns how many there are.
             |template<typename V, typename F>
             |uint32_t copy(const V& items, uint32_t capacity, F store) {
-            |    for (uint32_t i = 0; i < capacity && i < items.size(); i++) store(items[i], i);
-            |    return uint32_t(items.size());
+            |    for (uint32_t i = 0; i < capacity && i < std::size(items); i++) store(items[i], i);
+            |    return uint32_t(std::size(items));
             |}
             |
             |// StaticString only has a literal constructor. Everything taking one copies it (builderMakeName).

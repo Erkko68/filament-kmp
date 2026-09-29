@@ -616,6 +616,10 @@ uint32_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBui
     return static_cast<uint32_t>(fila::cpp(self)->getSubpassCount());
 }
 
+uint32_t FilaFilamatMaterialBuilder_getSubPasses(const FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderParameter* const* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->getSubPasses(), outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
+}
+
 uint32_t FilaFilamatMaterialBuilder_getVariantFilter(const FilaFilamatMaterialBuilder* self) {
     return fila::cpp(self)->getVariantFilter();
 }
@@ -626,6 +630,10 @@ FilaFeatureLevel FilaFilamatMaterialBuilder_getFeatureLevel(const FilaFilamatMat
 
 uint32_t FilaFilamatMaterialBuilder_getApiLevel(const FilaFilamatMaterialBuilder* self) {
     return fila::cpp(self)->getApiLevel();
+}
+
+uint32_t FilaFilamatMaterialBuilder_getAttributeDatabase(FilaFilamatMaterialBuilderAttribute* const* out, uint32_t outCapacity) {
+    return fila::copy(filamat::MaterialBuilder::getAttributeDatabase(), outCapacity, [&](auto& x, uint32_t i) { *fila::cpp(out[i]) = x; });
 }
 
 } // extern "C"

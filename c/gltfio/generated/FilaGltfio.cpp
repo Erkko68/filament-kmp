@@ -4,6 +4,10 @@
 
 extern "C" {
 
+uint32_t FilaGltfio_getNumUvSets(const FilaGltfioUvSet* uvmap, uint32_t uvmapCount) {
+    return static_cast<uint32_t>(filament::gltfio::getNumUvSets(fila::items(uvmapCount, [&](uint32_t i) { return static_cast<filament::gltfio::UvSet>(uvmap[i]); })));
+}
+
 FilaGltfioMaterialProvider* FilaGltfio_createJitShaderProvider(FilaEngine* engine, bool optimizeShaders, const char* const* variantFilters, uint32_t variantFiltersCount) {
     return fila::c(filament::gltfio::createJitShaderProvider(fila::cpp(engine), optimizeShaders, fila::items(variantFiltersCount, [&](uint32_t i) { return variantFilters[i]; })));
 }

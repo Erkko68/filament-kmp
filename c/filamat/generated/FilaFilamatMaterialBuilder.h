@@ -202,13 +202,11 @@ uint32_t FilaFilamatMaterialBuilder_getParameterCount(const FilaFilamatMaterialB
 // TODO(handwritten) FilaFilamatMaterialBuilder_getParameters: const ParameterList & filamat::MaterialBuilder::getParameters() const
 //     const ParameterList &: std::vector
 uint32_t FilaFilamatMaterialBuilder_getSubpassCount(const FilaFilamatMaterialBuilder* self);
-// TODO(handwritten) FilaFilamatMaterialBuilder_getSubPasses: const SubpassList & filamat::MaterialBuilder::getSubPasses() const
-//     const SubpassList &: array
+uint32_t FilaFilamatMaterialBuilder_getSubPasses(const FilaFilamatMaterialBuilder* self, FilaFilamatMaterialBuilderParameter* const* out, uint32_t outCapacity);
 uint32_t FilaFilamatMaterialBuilder_getVariantFilter(const FilaFilamatMaterialBuilder* self);
 FilaFeatureLevel FilaFilamatMaterialBuilder_getFeatureLevel(const FilaFilamatMaterialBuilder* self);
 uint32_t FilaFilamatMaterialBuilder_getApiLevel(const FilaFilamatMaterialBuilder* self);
-// TODO(handwritten) FilaFilamatMaterialBuilder_getAttributeDatabase: static const AttributeDatabase & filamat::MaterialBuilder::getAttributeDatabase()
-//     const AttributeDatabase &: std::array
+uint32_t FilaFilamatMaterialBuilder_getAttributeDatabase(FilaFilamatMaterialBuilderAttribute* const* out, uint32_t outCapacity);
 
 
 #ifdef __cplusplus

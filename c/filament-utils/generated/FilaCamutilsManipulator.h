@@ -11,10 +11,8 @@ extern "C" {
 // filament::camutils::Manipulator::Config
 FilaCamutilsManipulatorConfig* FilaCamutilsManipulatorConfig_create(void);
 void FilaCamutilsManipulatorConfig_destroy(FilaCamutilsManipulatorConfig* self);
-// TODO(handwritten) FilaCamutilsManipulatorConfig_getViewport: int[2] filament::camutils::Manipulator::Config::viewport
-//     int[2]: array
-// TODO(handwritten) FilaCamutilsManipulatorConfig_setViewport: int[2] filament::camutils::Manipulator::Config::viewport
-//     int[2]: array
+uint32_t FilaCamutilsManipulatorConfig_getViewport(const FilaCamutilsManipulatorConfig* self, int32_t* out, uint32_t outCapacity);
+void FilaCamutilsManipulatorConfig_setViewport(FilaCamutilsManipulatorConfig* self, const int32_t* value, uint32_t valueCount);
 void FilaCamutilsManipulatorConfig_getTargetPosition(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);
 void FilaCamutilsManipulatorConfig_setTargetPosition(FilaCamutilsManipulatorConfig* self, const FilaFloat3* value);
 void FilaCamutilsManipulatorConfig_getUpVector(const FilaCamutilsManipulatorConfig* self, FilaFloat3* out);

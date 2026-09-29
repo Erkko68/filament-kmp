@@ -52,6 +52,14 @@ void FilaLightManagerShadowOptions_setShadowCascades(FilaLightManagerShadowOptio
     fila::cpp(self)->shadowCascades = static_cast<uint8_t>(value);
 }
 
+uint32_t FilaLightManagerShadowOptions_getCascadeSplitPositions(const FilaLightManagerShadowOptions* self, float* out, uint32_t outCapacity) {
+    return fila::copy(fila::cpp(self)->cascadeSplitPositions, outCapacity, [&](auto& x, uint32_t i) { out[i] = x; });
+}
+
+void FilaLightManagerShadowOptions_setCascadeSplitPositions(FilaLightManagerShadowOptions* self, const float* value, uint32_t valueCount) {
+    fila::assign(fila::cpp(self)->cascadeSplitPositions, fila::items(valueCount, [&](uint32_t i) { return value[i]; }));
+}
+
 float FilaLightManagerShadowOptions_getConstantBias(const FilaLightManagerShadowOptions* self) {
     return fila::cpp(self)->constantBias;
 }

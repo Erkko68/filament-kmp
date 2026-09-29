@@ -26,14 +26,10 @@ void FilaFramePipelineEstimatorPacingSizing_setSafeDelayDuration(FilaFramePipeli
 
 // filament::FramePipelineEstimator
 double FilaFramePipelineEstimator_getZScore(FilaFramePipelineEstimatorTargetPercentile targetPercentile);
-// TODO(handwritten) FilaFramePipelineEstimator_estimateWorkload_TargetPercentile: static Workload filament::FramePipelineEstimator::estimateWorkload(FrameInfoHistory history, TargetPercentile targetPercentile)
-//     FrameInfoHistory: utils::Slice
-// TODO(handwritten) FilaFramePipelineEstimator_estimateWorkload_double: static Workload filament::FramePipelineEstimator::estimateWorkload(FrameInfoHistory history, double zScore)
-//     FrameInfoHistory: utils::Slice
-// TODO(handwritten) FilaFramePipelineEstimator_estimatePacing_TargetPercentile: static PacingSizing filament::FramePipelineEstimator::estimatePacing(FrameInfoHistory history, std::chrono::nanoseconds pacingPeriod, TargetPercentile targetPercentile)
-//     FrameInfoHistory: utils::Slice
-// TODO(handwritten) FilaFramePipelineEstimator_estimatePacing_double: static PacingSizing filament::FramePipelineEstimator::estimatePacing(FrameInfoHistory history, std::chrono::nanoseconds pacingPeriod, double zScore)
-//     FrameInfoHistory: utils::Slice
+void FilaFramePipelineEstimator_estimateWorkload_TargetPercentile(const FilaRendererFrameInfo* const* history, uint32_t historyCount, FilaFramePipelineEstimatorTargetPercentile targetPercentile, FilaFramePipelineEstimatorWorkload* out);
+void FilaFramePipelineEstimator_estimateWorkload_double(const FilaRendererFrameInfo* const* history, uint32_t historyCount, double zScore, FilaFramePipelineEstimatorWorkload* out);
+void FilaFramePipelineEstimator_estimatePacing_TargetPercentile(const FilaRendererFrameInfo* const* history, uint32_t historyCount, int64_t pacingPeriod, FilaFramePipelineEstimatorTargetPercentile targetPercentile, FilaFramePipelineEstimatorPacingSizing* out);
+void FilaFramePipelineEstimator_estimatePacing_double(const FilaRendererFrameInfo* const* history, uint32_t historyCount, int64_t pacingPeriod, double zScore, FilaFramePipelineEstimatorPacingSizing* out);
 
 
 #ifdef __cplusplus

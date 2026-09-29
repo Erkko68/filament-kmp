@@ -32,6 +32,11 @@ internal class CppScopes {
     }
 
     fun resolve(spelling: String, scope: String): CppType {
+        // An array resolves as its element does, which is its argument.
+        spelling.trim().takeIf { it.endsWith("]") }?.let { array ->
+            val element = resolve(array.substringBeforeLast('[').trim(), scope)
+            return CppType(spelling, element.decl, element.kind, listOf(element))
+        }
         val base = baseName(spelling) ?: return CppType(spelling, null, Kind.FUNCTION, functionTypes(spelling).map { resolve(it, scope) })
         if (isBuiltin(base)) return CppType(spelling, null, Kind.BUILTIN)
         val decl = lookup(base, scope) ?: return CppType(spelling, null, Kind.UNRESOLVED)
