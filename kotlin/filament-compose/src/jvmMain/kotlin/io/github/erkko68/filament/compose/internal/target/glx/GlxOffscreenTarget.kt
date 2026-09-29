@@ -7,6 +7,7 @@ import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.internal.target.OffscreenTarget
+import io.github.erkko68.filament.compose.internal.target.unavailable
 import io.github.erkko68.filament.jni.GlxHelper
 import java.awt.Window
 import org.jetbrains.skia.BackendRenderTarget
@@ -151,10 +152,9 @@ internal class GlxOffscreenTarget private constructor(
 
     companion object {
         fun create(engine: Engine, window: Window?, width: Int, height: Int): GlxOffscreenTarget {
-            val skiko = checkNotNull(SkikoGlx.find(window)) { "Compose isn't rendering with OpenGL in this window" }
-            check(GlxEngines.sharesContext(engine, skiko)) {
-                "On Linux the Engine must share Compose's GL context: create it with rememberFilamentEngine() " +
-                    "inside the window that shows it"
+            val skiko = SkikoGlx.find(window) ?: unavailable("Compose isn't rendering this window with OpenGL")
+            if (!GlxEngines.sharesContext(engine, skiko)) {
+                unavailable("the engine must come from rememberFilamentEngine() inside the window that shows it")
             }
             return GlxOffscreenTarget(engine, skiko, width, height)
         }

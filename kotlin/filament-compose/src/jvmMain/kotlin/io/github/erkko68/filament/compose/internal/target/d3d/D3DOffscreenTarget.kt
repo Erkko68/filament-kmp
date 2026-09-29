@@ -6,6 +6,7 @@ import io.github.erkko68.filament.Renderer
 import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.internal.target.OffscreenTarget
+import io.github.erkko68.filament.compose.internal.target.unavailable
 import io.github.erkko68.filament.jni.D3DHelper
 import java.awt.Window
 import org.jetbrains.skia.BackendRenderTarget
@@ -88,14 +89,14 @@ internal class D3DOffscreenTarget private constructor(
 
     companion object {
         fun create(engine: Engine, window: Window?, width: Int, height: Int): D3DOffscreenTarget {
-            val skiko = checkNotNull(SkikoD3D.find(window)) { "Compose isn't rendering with Direct3D in this window" }
-            val platform = checkNotNull(D3DEngines.platformOf(engine)) {
-                "On Windows the Engine must render on Compose's GPU: create it with rememberFilamentEngine() " +
-                    "inside the window that shows it"
-            }
-            check(D3DHelper.nIsInteropReady(platform)) {
-                "The Vulkan driver can't import Compose's D3D12 textures (needs VK_KHR_external_memory_win32, " +
-                    "VK_KHR_external_semaphore_win32 and timeline semaphores on the same GPU)"
+            val skiko = SkikoD3D.find(window) ?: unavailable("Compose isn't rendering this window with Direct3D")
+            val platform = D3DEngines.platformOf(engine)
+                ?: unavailable("the engine must come from rememberFilamentEngine() inside the window that shows it")
+            if (!D3DHelper.nIsInteropReady(platform)) {
+                unavailable(
+                    "the Vulkan driver can't import Compose's D3D12 textures (needs VK_KHR_external_memory_win32, " +
+                        "VK_KHR_external_semaphore_win32 and timeline semaphores on Compose's GPU)",
+                )
             }
             return D3DOffscreenTarget(engine, skiko, platform, width, height)
         }

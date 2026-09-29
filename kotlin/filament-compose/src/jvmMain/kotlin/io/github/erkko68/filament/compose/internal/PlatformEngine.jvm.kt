@@ -7,12 +7,16 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.awt.LocalAwtWindow
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.Filament
+import io.github.erkko68.filament.compose.internal.target.DesktopOs
+import io.github.erkko68.filament.compose.internal.target.GpuFrameSharing
 import io.github.erkko68.filament.compose.internal.target.d3d.D3DEngines
 import io.github.erkko68.filament.compose.internal.target.glx.GlxEngines
+import io.github.erkko68.filament.compose.internal.target.unavailable
 
 /**
- * On Linux the engine shares the window's GL context; on Windows it runs on the window's D3D12 GPU.
- * Without one (e.g. no window) it's a plain engine.
+ * With GPU-to-GPU frame sharing on, the engine is built to reach the window's GPU context: on Linux
+ * it shares skiko's GL context, on Windows it runs on skiko's D3D12 GPU. Otherwise (or if that
+ * fails) it's a plain engine, and frames go through CPU readback.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -20,12 +24,18 @@ internal actual fun rememberPlatformEngine(backend: Engine.Backend): Engine {
     val window = LocalAwtWindow.current
     val engine = remember(backend) {
         Filament.init()
-        val os = System.getProperty("os.name").orEmpty().lowercase()
-        when {
-            "linux" in os -> GlxEngines.create(backend, window)
-            "win" in os -> D3DEngines.create(backend, window)
-            else -> null
-        } ?: Engine.create(backend)
+        val shared = if (!GpuFrameSharing.enabled) null else {
+            GpuFrameSharing.guard("creating the Filament engine", window, null, {
+                when (DesktopOs.current) {
+                    // skiko's MTLTextures are sampleable by any engine on the same (default) GPU.
+                    DesktopOs.MACOS -> Engine.create(backend)
+                    DesktopOs.WINDOWS -> D3DEngines.create(backend, window)
+                    DesktopOs.LINUX -> GlxEngines.create(backend, window)
+                    DesktopOs.OTHER -> unavailable("no GPU-to-GPU path on ${System.getProperty("os.name")}")
+                }
+            }, { null })
+        }
+        shared?.also(GpuFrameSharing::optIn) ?: Engine.create(backend)
     }
     // The Windows engine's platform outlives it; Engine.destroy() is idempotent, so this is safe
     // whichever of this and rememberFilamentEngine's own dispose runs first.

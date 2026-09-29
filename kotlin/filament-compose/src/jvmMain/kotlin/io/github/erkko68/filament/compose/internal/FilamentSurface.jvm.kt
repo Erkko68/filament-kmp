@@ -44,6 +44,8 @@ internal actual fun FilamentSurface(
     var layoutSize by remember { mutableStateOf(IntSize.Zero) }
     var textureSize by remember { mutableStateOf(IntSize.Zero) }
     var displayedImage by remember { mutableStateOf<Image?>(null) }
+    // Whether displayedImage's rows run bottom-up; set with it, as it may outlive its target.
+    var displayedBottomUp by remember { mutableStateOf(false) }
     // The replaced frame stays alive one more frame, until Compose has replayed its last draw.
     val previousImage = remember { Ref<Image>() }
     var target by remember { mutableStateOf<OffscreenTarget?>(null) }
@@ -74,14 +76,14 @@ internal actual fun FilamentSurface(
         }
     }
 
-    DisposableEffect(textureSize) {
+    DisposableEffect(textureSize, transparent) {
         val w = textureSize.width
         val h = textureSize.height
 
         if (w > 0 && h > 0) {
             view.viewport = Viewport(0, 0, w, h)
             onResizeRef.value?.invoke(w.toDouble() / h.toDouble())
-            target = OffscreenTarget(engine, window, w, h)
+            target = OffscreenTarget(engine, window, w, h, transparent)
         }
 
         onDispose {
@@ -92,10 +94,12 @@ internal actual fun FilamentSurface(
     }
 
     FilamentRenderLoop(renderingEnabled) { frameTime ->
-        val image = target?.renderFrame(renderer, view, frameTime) ?: return@FilamentRenderLoop
+        val current = target ?: return@FilamentRenderLoop
+        val image = current.renderFrame(renderer, view, frameTime) ?: return@FilamentRenderLoop
         previousImage.value?.close()
         previousImage.value = displayedImage
         displayedImage = image
+        displayedBottomUp = current.bottomUp
     }
 
     Spacer(
@@ -104,7 +108,13 @@ internal actual fun FilamentSurface(
             .drawBehind {
                 val image = displayedImage ?: return@drawBehind
                 drawIntoCanvas { canvas ->
-                    canvas.skiaCanvas.drawImageRect(
+                    val skia = canvas.skiaCanvas
+                    skia.save()
+                    if (displayedBottomUp) {
+                        skia.translate(0f, size.height)
+                        skia.scale(1f, -1f)
+                    }
+                    skia.drawImageRect(
                         image,
                         Rect.makeWH(image.width.toFloat(), image.height.toFloat()),
                         Rect.makeWH(size.width, size.height),
@@ -112,6 +122,7 @@ internal actual fun FilamentSurface(
                         null,
                         true,
                     )
+                    skia.restore()
                 }
             }
     )

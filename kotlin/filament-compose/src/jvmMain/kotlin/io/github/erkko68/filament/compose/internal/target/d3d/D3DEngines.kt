@@ -2,6 +2,7 @@ package io.github.erkko68.filament.compose.internal.target.d3d
 
 import io.github.erkko68.filament.Engine
 import io.github.erkko68.filament.InternalFilamentApi
+import io.github.erkko68.filament.compose.internal.target.unavailable
 import io.github.erkko68.filament.jni.D3DHelper
 import java.awt.Window
 import java.util.Collections
@@ -14,16 +15,19 @@ import java.util.IdentityHashMap
 internal object D3DEngines {
     private val platforms = Collections.synchronizedMap(IdentityHashMap<Engine, Long>())
 
-    /** A Vulkan engine on [window]'s skiko GPU, or null when skiko isn't drawing it with Direct3D. */
+    /** A Vulkan engine on [window]'s skiko GPU. */
     @OptIn(InternalFilamentApi::class)
-    fun create(backend: Engine.Backend, window: Window?): Engine? {
-        if (backend != Engine.Backend.DEFAULT && backend != Engine.Backend.VULKAN) return null
-        val skiko = SkikoD3D.find(window) ?: return null
-        val platform = D3DHelper.nCreatePlatform(skiko.devicePtr, skiko.hwnd).takeIf { it != 0L } ?: return null
+    fun create(backend: Engine.Backend, window: Window?): Engine {
+        if (backend != Engine.Backend.DEFAULT && backend != Engine.Backend.VULKAN) {
+            unavailable("on Windows it needs Engine.Backend.DEFAULT or VULKAN, not $backend")
+        }
+        val skiko = SkikoD3D.find(window) ?: unavailable("Compose isn't rendering this window with Direct3D")
+        val platform = D3DHelper.nCreatePlatform(skiko.devicePtr, skiko.hwnd)
+        check(platform != 0L) { "skiko's Direct3DRedrawer.device doesn't have the expected native layout" }
         val handle = D3DHelper.nCreateEngine(platform)
         if (handle == 0L) {
             D3DHelper.nDestroyPlatform(platform)
-            return null
+            error("Filament couldn't create a Vulkan engine on skiko's GPU")
         }
         return Engine(handle).also { platforms[it] = platform }
     }

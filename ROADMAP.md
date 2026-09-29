@@ -41,9 +41,9 @@ uses the official AAR, still depends on upstream's Java bindings.
 > material/scene APIs, or any other module; those work the same regardless of how the final image
 > reaches the Compose canvas.
 >
-> Status: forward-looking. The interim approach (CPU readback everywhere, Metal GPU sharing on
-> macOS) is what ships today; everything below is the plan for closing the Linux/Windows
-> zero-copy gap.
+> Status: CPU readback is the default everywhere; GPU sharing on macOS, Windows and Linux ships as
+> an experimental opt-in (`FilamentComposeDesktop.gpuToGpuFrameSharingEnabled`) built on skiko
+> internals, falling back to readback on failure. Everything below is the plan for a supported path.
 
 ### The problem
 
@@ -64,13 +64,13 @@ GPU API's *resource model*:
 
 | OS      | skiko backend (today) | Resource model | GPU sharing today |
 |---------|-----------------------|----------------|-------------------|
-| macOS   | Metal                 | device         | ✅ works (Metal texture wrap) |
-| Windows | Direct3D 12           | device         | ⚠️ possible via Vulkan→D3D12 external-memory, not built |
-| Linux   | OpenGL                | context        | ❌ blocked by skiko's legacy GL context handling |
+| macOS   | Metal                 | device         | 🧪 opt-in: Metal texture wrap on skiko's device |
+| Windows | Direct3D 12           | device         | 🧪 opt-in: Vulkan renders into shared D3D12 textures (custom `VulkanPlatform` swap chain) |
+| Linux   | OpenGL                | context        | 🧪 opt-in: Filament's GL engine shares skiko's GLX context (reflected) |
 
-Interim fallback on all platforms: **CPU readback** (`SwapChain` READABLE → `readPixels` →
-`Image.makeRaster` → draw), double-buffered to pipeline the GPU→CPU copy. Correct everywhere,
-but pays `W×H×4` of bandwidth per frame.
+Default on all platforms: **CPU readback** (`SwapChain` READABLE → `readPixels` →
+`Image.makeRaster` → draw), with two readbacks in flight to pipeline the GPU→CPU copy. Correct
+everywhere, but pays `W×H×4` of bandwidth per frame.
 
 ### The endgame: both halves migrate to Dawn
 

@@ -7,6 +7,7 @@ import io.github.erkko68.filament.SwapChain
 import io.github.erkko68.filament.Texture
 import io.github.erkko68.filament.View
 import io.github.erkko68.filament.compose.internal.target.OffscreenTarget
+import io.github.erkko68.filament.compose.internal.target.unavailable
 import io.github.erkko68.filament.jni.MetalHelper
 import java.awt.Window
 import org.jetbrains.skia.BackendRenderTarget
@@ -110,11 +111,13 @@ internal class MetalOffscreenTarget private constructor(
 
     companion object {
         fun create(engine: Engine, window: Window?, width: Int, height: Int): MetalOffscreenTarget {
-            check(engine.backend == Engine.Backend.METAL) { "Compose Desktop on macOS needs Engine.Backend.METAL" }
-            val skiko = checkNotNull(SkikoMetal.find(window)) { "Compose isn't rendering with Metal in this window" }
+            if (engine.backend != Engine.Backend.METAL) {
+                unavailable("on macOS it needs Engine.Backend.METAL, not ${engine.backend}")
+            }
+            val skiko = SkikoMetal.find(window) ?: unavailable("Compose isn't rendering this window with Metal")
             // Filament always renders on the system default GPU; Skia can only sample textures from its own.
-            check(MetalHelper.nIsSystemDefaultDevice(skiko.devicePtr)) {
-                "Compose picked a non-default GPU; set -Dskiko.metal.gpu.priority so it matches Filament's"
+            if (!MetalHelper.nIsSystemDefaultDevice(skiko.devicePtr)) {
+                unavailable("Compose picked a non-default GPU; set -Dskiko.gpu.priority so it matches Filament's")
             }
             return MetalOffscreenTarget(engine, skiko, width, height)
         }
