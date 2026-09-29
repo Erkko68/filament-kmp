@@ -20,7 +20,7 @@ class CppApi(
             val name = queue.removeFirst()
             if (!seen.add(name)) continue
             records[name]?.let { record ->
-                val methods = record.methods.filter { it.isPublic && it.isApi }
+                val methods = record.methods.filter { it.isPublic && it.isApi && !it.isDeprecated }
                 (methods.flatMap { m -> m.params.map { it.type } + m.returns } + record.fields.filter { it.isPublic }.map { it.type })
                     .mapNotNullTo(queue) { it.decl }
             }
@@ -42,8 +42,20 @@ class CppType(val spelling: String, val decl: String?, val kind: Kind) {
     }
 }
 
-/** [exported]: `*_PUBLIC`, or publicly nested in an exported class. */
-class CppRecord(val name: String, val exported: Boolean, val methods: List<CppMethod>, val fields: List<CppField>)
+/**
+ * [exported]: `*_PUBLIC`, or publicly nested in an exported class. [template]: a class template, named without its
+ * arguments. [defaultConstructible]/[destructible]: publicly, so C can `new` and `delete` it.
+ */
+class CppRecord(
+    val name: String,
+    val exported: Boolean,
+    val template: Boolean,
+    val bases: List<String>,
+    val methods: List<CppMethod>,
+    val fields: List<CppField>,
+    val defaultConstructible: Boolean,
+    val destructible: Boolean,
+)
 
 /** [mangled] is null for members of class templates. [isApi]: written by hand, not deleted, not an operator. */
 class CppMethod(
@@ -55,6 +67,7 @@ class CppMethod(
     val isStatic: Boolean,
     val isConst: Boolean,
     val isPublic: Boolean,
+    val isDeprecated: Boolean,
     val isApi: Boolean,
 ) {
     override fun toString() = (if (isStatic) "static " else "") + "$returns $owner::$name(${params.joinToString()})" +

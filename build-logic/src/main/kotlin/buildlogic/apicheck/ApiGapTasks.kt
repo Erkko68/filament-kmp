@@ -2,6 +2,7 @@ package buildlogic.apicheck
 
 import buildlogic.cmake.registerCApiBuild
 import buildlogic.cppapi.ApiModelTask
+import buildlogic.cppapi.PUBLIC_HEADERS
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.filamentLibDir
 import buildlogic.platform.hostPlatform
@@ -9,9 +10,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
 private val FILAMENT_LIBRARIES = listOf("filament", "gltfio_core", "filamat", "camutils", "geometry", "filament-iblprefilter", "utils")
-private val PUBLIC_HEADERS = listOf(
-    "filament/*.h", "gltfio/*.h", "filamat/*.h", "camutils/*.h", "geometry/*.h", "filament-iblprefilter/*.h", "utils/EntityManager.h",
-)
 private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
 
 /**
