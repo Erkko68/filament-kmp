@@ -1,5 +1,7 @@
 package buildlogic.apicheck
 
+import buildlogic.cppapi.ClangAstDump
+import buildlogic.cppapi.CppApiReader
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -46,8 +48,8 @@ abstract class ApiGapsTask @Inject constructor(private val exec: ExecOperations)
     @TaskAction
     fun run() {
         val nm = SymbolReader(exec)
-        val headers = HeaderApiReader(ClangAstDump(exec, temporaryDir), temporaryDir)
-            .read(includeDir.get().asFile, publicHeaders.files)
+        val headers = CppApiReader(ClangAstDump(exec, temporaryDir), temporaryDir)
+            .read(includeDir.get().asFile, publicHeaders.files).headerApi()
         val demangler = Demangler(exec)
         val headerMethods = demangler.demangle(headers.methods)
         val undeclared = CppApiGaps.undeclared(nm.read(filamentLibraries.files), demangler.demangle(headers.declared), headers.publicClasses)

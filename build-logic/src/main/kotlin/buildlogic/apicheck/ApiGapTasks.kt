@@ -1,6 +1,7 @@
 package buildlogic.apicheck
 
 import buildlogic.cmake.registerCApiBuild
+import buildlogic.cppapi.ApiModelTask
 import buildlogic.platform.FilamentTarget
 import buildlogic.platform.filamentLibDir
 import buildlogic.platform.hostPlatform
@@ -14,13 +15,20 @@ private val PUBLIC_HEADERS = listOf(
 private val C_MODULES = listOf("filament", "filamat", "filament-utils", "gltfio")
 
 /**
- * Registers `apiGaps` ([ApiGapsTask]) for the host, plus `apiGapsCBuild`: the C API's objects built at -O0,
+ * Registers `apiModel` ([ApiModelTask]) and, off Windows, `apiGaps` ([ApiGapsTask]) for the host, plus `apiGapsCBuild`: the C API's objects built at -O0,
  * so calls to Filament's inline methods stay calls.
  */
 fun Project.registerApiGapTasks() {
+    val root = layout.projectDirectory
+    tasks.register<ApiModelTask>("apiModel") {
+        group = "verification"
+        description = "Reports the Filament C++ API surface clang sees in the public headers."
+        includeDir.set(root.dir("include"))
+        publicHeaders.from(root.dir("include").asFileTree.matching { include(PUBLIC_HEADERS) })
+        report.set(layout.buildDirectory.file("reports/api-model.txt"))
+    }
     if (hostPlatform() == "windows") return // nm can't read MSVC objects
     val target = FilamentTarget.host()
-    val root = layout.projectDirectory
     val cBuild = registerCApiBuild("apiGapsCBuild", target) {
         description = "Builds the Fila* C API's objects without inlining, for apiGaps."
         buildType.set("Debug")

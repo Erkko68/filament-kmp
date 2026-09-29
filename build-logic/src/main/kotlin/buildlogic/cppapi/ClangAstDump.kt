@@ -1,4 +1,4 @@
-package buildlogic.apicheck
+package buildlogic.cppapi
 
 import groovy.json.JsonSlurper
 import org.gradle.process.ExecOperations
