@@ -53,15 +53,45 @@ On the **iOS Simulator**, enabling shadows (directional/spot) produces a fully b
 
 ## JVM / Desktop
 
+### GPU-to-GPU frame sharing (experimental)
+
+By default each frame is copied back through the CPU (below). Opt in to render Filament's frames into textures shared with Compose's own GPU context instead: Metal on macOS, Direct3D 12 on Windows, OpenGL on Linux.
+
+```kotlin
+@OptIn(ExperimentalGpuToGpuFrameSharing::class)
+fun main() {
+    FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled = true
+    application { /* … */ }
+}
+```
+
+Set it before the first `rememberFilamentEngine()`. Only engines that `rememberFilamentEngine()` creates afterwards, inside the window that shows them, share frames, and their backend must match Compose's API: `Engine.Backend.DEFAULT` always does, otherwise `METAL` on macOS, `VULKAN` on Windows, `OPENGL` on Linux. It relies on skiko internals, so it's experimental:
+
+- If a setup isn't covered (e.g. Compose fell back to software rendering, or the backend doesn't match Compose's API), it logs one line with the reason and uses CPU readback.
+- If it **fails**, it prints a report (versions, GPU, stack trace) to the console, switches to CPU readback for the rest of the session and asks you to [open an issue](https://github.com/Erkko68/filament-kmp/issues/new) with the report. A crash inside the GPU driver can't be caught this way.
+
 ### Pixel readback overhead
 
-The Desktop integration renders to an offscreen readable swap chain and copies pixels back to the CPU each frame for Skia compositing. The readback lands directly in Skia-owned memory (no CPU-side re-copies or per-frame allocation), so the cost is the GPU→CPU transfer itself. Expect:
+By default the Desktop integration renders to an offscreen readable swap chain and copies pixels back to the CPU each frame for Skia compositing. The readback lands directly in Skia-owned memory that the frame's image then wraps (no CPU-side re-copies), so the cost is the GPU→CPU transfer plus one buffer allocation per frame. Expect:
 
 - **1–2 frames of latency** vs. a native swap-chain.
 - **Transfer bandwidth** scaling with window size (a 4K window reads back ~33 MB/frame).
 - A **150 ms resize debounce** before reallocating textures — drag-resizing feels slightly stuttery, but final layout is clean.
 
-This is unavoidable with Compose Desktop today: there is no public API to embed a native rendering surface inside a Skia canvas.
+Compose Desktop has no public API to embed a native rendering surface inside a Skia canvas; [GPU-to-GPU frame sharing](#gpu-to-gpu-frame-sharing-experimental) avoids the copy through skiko internals, at the cost of being experimental.
+
+### Windows: GPU selection
+
+Compose Desktop draws Windows with Direct3D 12. With [GPU-to-GPU frame sharing](#gpu-to-gpu-frame-sharing-experimental) on, `filament-compose` runs Filament's Vulkan backend on the **same GPU** (shared textures can't cross GPUs). Compose picks that GPU when the first window opens: by default the system's default adapter, which on hybrid laptops is usually the **integrated** one. To render on the discrete GPU, ask for it before opening any window:
+
+```kotlin
+fun main() {
+    System.setProperty("skiko.gpu.priority", "discrete") // or "integrated" / "auto"
+    application { /* … */ }
+}
+```
+
+or pass `-Dskiko.gpu.priority=discrete` (e.g. `jvmArgs += "-Dskiko.gpu.priority=discrete"` in `compose.desktop.application`). This moves your whole Compose app to that GPU, not only the Filament views. Only `Engine.Backend.DEFAULT` / `VULKAN` engines share frames on Windows; others use CPU readback.
 
 ### Native library loading
 

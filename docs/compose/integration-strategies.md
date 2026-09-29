@@ -39,21 +39,33 @@ Instead, all views of one engine share a `WebViewCompositor`:
 
 ---
 
-## 3. Pixel Readback (JVM / Desktop)
+## 3. Offscreen Texture into Skia (JVM / Desktop)
 
-On JVM/Desktop, there is no way to embed a native Filament surface inside a Skia/Compose canvas. Instead, Filament renders to an offscreen headless swap chain and the pixels are read back to the CPU each frame, then handed to Skia.
+Compose Desktop has no public API to embed a native surface inside its Skia canvas, so Filament renders offscreen, sized to the composable (with a 150 ms resize debounce so textures aren't reallocated on every pixel of a window drag), and each finished frame becomes a Skia `Image` drawn onto a `Spacer` in a `drawBehind` modifier with linear sampling. How the frame reaches Skia depends on whether GPU-to-GPU frame sharing is on.
 
-### How it Works
+### Default: CPU readback
 
-1. **Readable headless SwapChain**: Filament renders into an offscreen swap chain created with the `READABLE` config flag, sized to the composable (with a 150 ms resize debounce so textures aren't reallocated on every pixel of a window drag).
-2. **Zero-copy double-buffered readback**: two slots each own a block of Skia-managed pixel memory (`Data`), and `Renderer.readPixels` writes the GPU→CPU copy *directly into it* — no intermediate `ByteArray`, no per-frame allocation. While one slot backs the image on screen, the other's readback is in flight, keeping the copy pipelined with rendering. Completion may fire on Filament's backend thread; an atomic per-slot state hands the result to the UI thread, which is the only place slots are recycled.
-3. **Skia Image**: the completed slot is wrapped in a Skia `Image` via the `Data` overload of `Image.makeRaster`, which shares the pixels instead of copying them.
-4. **Compose drawing**: the image is drawn onto a `Spacer` in a `drawBehind` modifier with linear sampling, which lets Compose widgets be overlaid on top of the 3D content. `readPixels` row order is backend-dependent — Metal delivers rows top-down, OpenGL bottom-up — so the draw flips vertically on OpenGL (pinned by the `readPixelsRowOrderMatchesBackendConvention` Tier C test).
+1. **Readable headless SwapChain**: Filament renders into a swap chain created with the `READABLE` config flag.
+2. **Readback into Skia memory**: `Renderer.readPixels` writes each frame straight into a fresh block of Skia-managed memory (`Data`), with no intermediate `ByteArray`. Up to two readbacks are in flight, keeping the copy pipelined with rendering; completion may fire on Filament's backend thread and hands the newest frame to the UI thread atomically.
+3. **Skia Image**: the `Data` overload of `Image.makeRaster` wraps the pixels without copying them. The image keeps its memory alive, so a frame outlives the swap chain that produced it (e.g. across a resize).
+4. **Row order**: `readPixels` row order is backend-dependent (Metal top-down, OpenGL bottom-up), so the draw flips vertically on OpenGL (pinned by the `readPixelsRowOrderMatchesBackendConvention` Tier C test).
+
+### Experimental: GPU-to-GPU frame sharing
+
+With `FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled` (see [Platform Notes](../platform-notes.md#gpu-to-gpu-frame-sharing-experimental)), Filament renders into textures on Compose's own GPU context, found through skiko internals, and Skia wraps each finished texture on its `DirectContext` and snapshots it:
+
+| OS | Compose draws with | Filament side |
+| :--- | :--- | :--- |
+| **macOS** | Metal | Metal engine renders into `MTLTexture`s on skiko's device |
+| **Windows** | Direct3D 12 | Vulkan engine on skiko's GPU renders into shared D3D12 textures (custom `VulkanPlatform` swap chain), signalling a shared fence |
+| **Linux** | OpenGL (GLX) | OpenGL engine shares skiko's GLX context and renders into its textures |
+
+The snapshot is a GPU-side copy, and the CPU waits for it before Filament reuses the texture. If a setup isn't covered, or anything fails, the view falls back to CPU readback.
 
 ### Trade-offs
 
-- **Pros**: Compose widgets can be overlaid freely over the 3D content; the only per-frame cost beyond rendering is the GPU→CPU transfer itself.
-- **Cons**: GPU→CPU transfer bandwidth scales with window size; 1–2 frame latency from the asynchronous readback pipeline.
+- **Pros**: Compose widgets can be overlaid freely over the 3D content; with GPU sharing on, frames never leave the GPU.
+- **Cons**: CPU readback pays GPU→CPU bandwidth that scales with window size, plus 1–2 frames of latency. GPU sharing depends on skiko internals, so a skiko update can break it (it then falls back to readback).
 
 ---
 
@@ -82,7 +94,7 @@ opaque garbage. Each platform then needs its own surface change:
 | **Android** | `SurfaceView` → `TextureView` with `isOpaque = false`; swapchain gets `CONFIG_TRANSPARENT`. A `TextureView` composites in the view hierarchy rather than owning a hardware layer, so it costs more than the opaque path. |
 | **iOS** | `CAMetalLayer.opaque = false`, swapchain gets `CONFIG_TRANSPARENT`, and the interop view is `placedAsOverlay` — as a normal interop view Compose punches a hole for it and erases whatever was drawn behind. |
 | **Web** | The per-view 2D canvas moves *in front* of the Compose canvas (`zIndex: 1`, `pointer-events: none`) with no hole punch, and the blit `clearRect`s first so the view's own alpha survives. `Engine.create` also always requests `alpha: true` on the WebGL context — it defaults to `alpha: false`, which forces every frame opaque regardless of blend mode. |
-| **JVM / Desktop** | The readback image switches from `OPAQUE` to `PREMUL` alpha; the rest of the path already composites through Compose. |
+| **JVM / Desktop** | The readback image switches from `OPAQUE` to `PREMUL` alpha (GPU-shared frames are premultiplied already); the rest of the path already composites through Compose. |
 
 The surface type and its swapchain flags are fixed when the platform view is created, so toggling
 `transparent` at runtime rebuilds the surface (via `key(transparent)`) rather than mutating it.
@@ -94,7 +106,7 @@ not a scene property — two views of one scene can differ.
 
 ## Future Direction
 
-The stacking limitation on Android, iOS, and Web is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile, **WebGPU** on the web — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way the JVM/Metal path already shares a GPU texture with Skia. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch and per-view blit workarounds. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
+The stacking limitation on Android, iOS, and Web is a consequence of today's surface/context model, not a fundamental one. Newer GPU APIs with first-class shared-context and render-to-texture interop — **Vulkan** and **Metal** on mobile, **WebGPU** on the web — would let Filament render into a texture that the host UI's renderer (Skia/Skiko) can sample directly, the way the desktop's experimental GPU-sharing path already hands Skia a Filament texture. That would bring true in-tree compositing (and arbitrary stacking) to those platforms and retire the hole-punch and per-view blit workarounds. It depends on both Filament and Compose Multiplatform exposing those backends through their public surfaces.
 
 ## Summary
 
@@ -103,4 +115,4 @@ The stacking limitation on Android, iOS, and Web is a consequence of today's sur
 | **Android** | Native `SurfaceView` + SwapChain | None | On top only | No | `TextureView`, `CONFIG_TRANSPARENT` |
 | **iOS** | Native `CAMetalLayer` + SwapChain | None | On top only | No | non-opaque layer, `placedAsOverlay` |
 | **Web** | Offscreen canvas + per-view `drawImage` blit | GPU canvas→canvas | On top only | No (side-by-side OK) | canvas in front, `alpha: true` context |
-| **JVM / Desktop** | Offscreen readable SwapChain + `readPixels` | GPU→CPU every frame | Above or below | Yes | `PREMUL` readback |
+| **JVM / Desktop** | Offscreen SwapChain → Skia `Image` | GPU→CPU every frame (GPU-side with the experimental opt-in) | Above or below | Yes | `PREMUL` readback |

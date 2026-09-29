@@ -16,135 +16,112 @@ API-surface enforcement) are done, and the focus shifts to tracking upstream and
   listed in the [changelog](CHANGELOG.md)).
 - **Known gaps** — per-platform binding gaps are tracked via `@PlatformGap` and the coverage
   table in [Platform Notes](docs/platform-notes.md); web-specific limits now come only from
-  WebGL and single-threaded wasm, since web calls our own C API.
+  WebGL and single-threaded wasm, since every platform calls our own C API.
 
-## Upstream API consistency
+## A C API generated from Filament's headers
 
-Filament's per-language bindings are hand-written and drift apart: Android's Java API misses
-parts of the C++ API, and each release reopens the gaps. JVM, iOS and web avoid this: all three
-call our own C wrapper (`c/`), so a binding added there reaches all of them. Only Android, which
-uses the official AAR, still depends on upstream's Java bindings.
+Every platform calls the same C wrapper (`c/`): JVM and Android over JNI, iOS through Kotlin/Native,
+web as wasm. That wrapper is **generated from Filament's public C++ headers**, so the Kotlin API
+tracks C++ (names, owners, defaults) instead of drifting the way hand-written bindings do.
 
-- **Upstream is moving to generated bindings.** Filament is annotating its public C++ headers so
-  bindings can be generated from them automatically —
-  [google/filament#10410](https://github.com/google/filament/pull/10410) (`APIGEN` annotations and
-  `Slice` APIs) is the first step.
-- **What it means for us** — once the Android Java bindings are generated, they should cover the
-  whole C++ API and the remaining Android `@PlatformGap`s can go. Until then we keep closing gaps
-  per release with `./gradlew apiGaps`.
+```
+c/api-headers.txt ─► clang JSON AST ─► C++ API model ─► generateCApi ─► c/<module>/generated (Fila* C + C++ forwarders)
+                                                                   └─► generateKotlinExternals ─► <pkg>.capi externals
+                                                                                                  └─► generateBindings ─► JNI forwarders, wasm tables
+```
 
-## Cross-platform GPU sharing & the Dawn convergence
+- **Scope is declared, not inferred.** `c/api-headers.txt` lists each module's headers plus a skip
+  list (debug hooks, engine internals), and every skipped member is noted in the generated header.
+  An entry that names nothing fails the build, so the list can't go stale.
+- **One mapping per C++ shape.** Classes become opaque handles; value structs are handles with
+  field getters/setters seeded from the C++ defaults; strings, sequences (`Slice`,
+  `FixedCapacityVector`, `std::array`), `std::optional`, buffer uploads and callbacks each have one C
+  shape; templates are instantiated from a table. Overloads get type-based suffixes.
+- **Hand-written code is the exception.** What has no mechanical mapping (callbacks that take C++
+  types, pointers the C side can't own) goes in `c/<module>/manual`, and the generated header names
+  the C++ signature it stands in for.
+- **Upgrading Filament is a regenerate.** A new release means regenerating, reviewing the diff and
+  adapting the Kotlin layer; `./gradlew apiGaps` reports any C++ API the C layer doesn't reach.
 
-> **Scope: `filament-compose` only.** This roadmap is about the display bridge in the
-> `:kotlin:filament-compose` module — how Filament's offscreen output is presented inside Compose
-> Multiplatform (skiko/Skia). It does **not** affect the core `:kotlin:filament` bindings, the
-> material/scene APIs, or any other module; those work the same regardless of how the final image
-> reaches the Compose canvas.
->
-> Status: forward-looking. The interim approach (CPU readback everywhere, Metal GPU sharing on
-> macOS) is what ships today; everything below is the plan for closing the Linux/Windows
-> zero-copy gap.
+Upstream is moving the same way for its own bindings:
+[google/filament#10410](https://github.com/google/filament/pull/10410) annotates the headers and
+[#10426](https://github.com/google/filament/pull/10426) generates the Android Java from them. We
+don't depend on it, since Android runs on our C API too, but both read the same headers.
 
-### The problem
+## Compose Desktop: GPU-to-GPU frame sharing
 
-To display Filament's offscreen output inside Compose Multiplatform we hand a Filament-rendered
-texture to skiko/Skia (which owns the Compose canvas). Doing this **without a CPU round-trip**
-requires Filament and skiko to share a GPU resource. Whether that's possible comes down to the
-GPU API's *resource model*:
+> **Scope: `filament-compose` on desktop only.** This is about how Filament's frames reach the
+> Compose Desktop canvas; the bindings and every other platform work the same either way.
 
-- **Device-resource model** (Metal, D3D12, Vulkan, WebGPU): resources belong to the *device*.
-  You wrap an externally-created texture on skiko's existing context — no context sharing needed.
-  This is exactly why macOS works: Filament and skiko both use the system `MTLDevice`, so a
-  Filament `MTLTexture` can be wrapped as a Skia `BackendRenderTarget`.
-- **Context-resource model** (OpenGL): resources belong to a *context / share-group*. skiko would
-  have to create Filament's context inside its own share-group and expose its `GLXContext`/`HGLRC`.
-  skiko's legacy desktop GL redrawer does not do this — **this is the wall we hit on Linux.**
+### Where it stands
 
-#### Where each platform stands today
+Compose Desktop has no public API to embed a native surface, so Filament renders offscreen and each
+frame becomes a Skia `Image`. By default that goes through a CPU readback (correct everywhere, but
+`W×H×4` bytes of GPU→CPU bandwidth per frame). Frames can instead stay on the GPU on every
+desktop OS through an experimental opt-in
+(`FilamentComposeDesktop.isGpuToGpuFrameSharingEnabled`):
 
-| OS      | skiko backend (today) | Resource model | GPU sharing today |
-|---------|-----------------------|----------------|-------------------|
-| macOS   | Metal                 | device         | ✅ works (Metal texture wrap) |
-| Windows | Direct3D 12           | device         | ⚠️ possible via Vulkan→D3D12 external-memory, not built |
-| Linux   | OpenGL                | context        | ❌ blocked by skiko's legacy GL context handling |
+| OS      | Compose draws with | How Filament's frame reaches it |
+|---------|--------------------|---------------------------------|
+| macOS   | Metal              | Metal engine renders into `MTLTexture`s on skiko's device |
+| Windows | Direct3D 12        | Vulkan engine renders into shared D3D12 textures through a custom `VulkanPlatform` swap chain, synced by a shared fence |
+| Linux   | OpenGL (GLX)       | OpenGL engine shares skiko's GLX context |
 
-Interim fallback on all platforms: **CPU readback** (`SwapChain` READABLE → `readPixels` →
-`Image.makeRaster` → draw), double-buffered to pipeline the GPU→CPU copy. Correct everywhere,
-but pays `W×H×4` of bandwidth per frame.
+Skia wraps each finished texture on Compose's own `DirectContext` and snapshots it (a GPU-side
+copy). Any failure prints a report, asks for an issue and falls back to CPU readback.
 
-### The endgame: both halves migrate to Dawn
+### Why it's experimental
 
-The clean, universal fix is for **both** sides to render on **Dawn** (Google's native WebGPU
-implementation, backed by D3D12 / Metal / Vulkan):
+Wrapping a foreign texture on skiko's context is public API (`BackendRenderTarget.makeMetal` /
+`makeDirect3D` / `makeGL` → `Surface.makeFromBackendRenderTarget`). *Finding* Compose's context is
+not: we reach into `SkiaLayer.redrawerManager.redrawer` for its `DirectContext`, draw lock and
+device (the Metal adapter, the D3D12 `DirectXDevice`, the GLX context). Any skiko update can
+reshape those internals; the fallback keeps the app rendering when it does.
 
-- **skiko → Graphite → Dawn/Vulkan.** Skia's next-gen backend (Graphite) is designed around
-  modern device-model APIs (Metal, Vulkan, Dawn, D3D12). When skiko migrates off Ganesh, a
-  Vulkan/Dawn desktop backend arrives with it.
-- **Filament → WebGPU → Dawn.** Filament already has a WebGPU backend that runs on desktop
-  natively via Dawn (not web-only). It's experimental and behind a build flag today, but actively
-  developed by Google.
+**A skiko upgrade alone doesn't remove the reflection.** skiko 0.152 made
+`Canvas.recordingContext` public ([JetBrains/skiko#1219](https://github.com/JetBrains/skiko/pull/1219))
+and 0.154 adds `Canvas.surface` ([#1313](https://github.com/JetBrains/skiko/pull/1313)), but
+Compose Desktop records every draw into a `Picture` that only skiko's internal redrawer replays on
+the GPU, so inside Compose both return `null` (probed on Compose `1.13.0-alpha01`). When Compose
+moves to skiko 0.152 the reflection paths change (the Metal context moves onto `MetalRedrawer`), but
+they're still needed. They go away once Compose exposes a window's GPU context publicly.
 
-WebGPU is a device-resource model, and Dawn supports shared/external texture memory. So once both
-halves are on Dawn, sharing reduces to: **create one `WGPUDevice`, render both Filament and skiko
-on it, wrap Filament's `wgpu::Texture` on skiko's Graphite recorder.** This is cleaner than raw
-Vulkan because there is no per-OS VK↔D3D12↔GL import glue — both sides speak the same Dawn device
-on every platform, and it dissolves the Linux GL-context wall entirely. It also subsumes the
-existing macOS Metal path and the web path into one model.
+### Next: skiko's move to Graphite
 
-#### The two waits are the same bet
+skiko is moving from Skia's Ganesh backend to **Graphite**, built for device-model APIs (Metal,
+Vulkan, Dawn):
 
-| Layer    | Today                       | Target              | Status |
-|----------|-----------------------------|---------------------|--------|
-| skiko    | Ganesh (GL / D3D12 / Metal) | Graphite + Dawn/Vulkan | Major issue, staffed (JetBrains internship), no public date |
-| Filament | OpenGL / Vulkan / Metal     | WebGPU / Dawn       | Experimental, active, behind a build flag |
+- `skiko-graphite` ships Metal and Vulkan contexts, recorders and `BackendTexture`s, and
+  `Surface.wrapBackendTexture`, the Graphite way to draw into a foreign texture
+  ([#1245](https://github.com/JetBrains/skiko/pull/1245),
+  [#1261](https://github.com/JetBrains/skiko/pull/1261)).
+- The AWT redrawers no longer create Ganesh objects natively
+  ([#1266](https://github.com/JetBrains/skiko/pull/1266)), `skiko-graphite-awt` artifacts are
+  published ([#1277](https://github.com/JetBrains/skiko/pull/1277)), and Ganesh is being split into
+  its own `skiko-ganesh` module ([#1301](https://github.com/JetBrains/skiko/pull/1301)).
 
-Both must land **together** for the shared-Dawn-device payoff. Realistic horizon: 2026–2027.
+Once Compose draws its windows with Graphite, Filament's Metal/Vulkan textures can be handed over as
+Graphite `BackendTexture`s, and on Vulkan both sides can share one device on every OS, with no
+D3D12 or GLX glue. Our targets are already split per API, so the move is one new target, not a
+rewrite. It still needs Compose to expose the window's Graphite context publicly.
 
-### Interim options (until Dawn convergence lands)
+### Endgame: both halves on Dawn
 
-1. **Keep CPU readback** as the universal fallback (current `main`).
-2. **macOS Metal sharing** — already proven; the device-model wrap pattern.
-3. **Filament external-memory export patch** — patch Filament's Vulkan backend to export the render
-   target as external memory (opaque-FD on Linux, NT-handle on Windows), then import into skiko's
-   native API (D3D12 on Windows, GL via `GL_EXT_memory_object_fd` on Linux). Highest cost, but the
-   work carries straight over to the Dawn endgame.
-4. **Native overlay / hole-punch** — render Filament's native `SwapChain` into a child surface
-   layered into the Compose window (`compose.interop.blending` for z-order). Zero readback, no
-   skiko cooperation, no engine patch — but can't blend Compose between 3D layers.
+Filament has an experimental WebGPU backend that runs natively through **Dawn** (behind a build
+flag), and Graphite supports Dawn too. With both sides on one `WGPUDevice`, sharing is a texture
+wrap on every OS, and the web path joins the same model.
 
-### What we can do now
-
-The Filament half is the half we control. Concretely: build Filament with the WebGPU/Dawn backend
-enabled on desktop (`WEBGPU_OPTION` / `-Wj` in `build.sh`) and run the existing samples against it
-to gauge how close that half already is. skiko's half we can only watch.
-
-### Findings: reaching skiko's context (2026-09-29)
-
-Wrapping a foreign texture on skiko's Ganesh context has been public API since 2021
-(`BackendRenderTarget.makeMetal` / `makeDirect3D` / `makeGL` → `Surface.makeFromBackendRenderTarget`
-→ `makeImageSnapshot`). The missing piece is *finding Compose's context*, which the macOS path does
-by reflection.
-
-- **`Canvas.recordingContext` doesn't help inside Compose.** skiko 0.152 made it public
-  ([JetBrains/skiko#1219](https://github.com/JetBrains/skiko/pull/1219), shipped with Compose
-  `1.13.0-alpha01`). Probed on macOS/Metal: it returns `null` on every frame, both in
-  `drawBehind` and in a wrapped `SkiaLayer.renderDelegate`. On AWT, skiko records every public
-  draw hook into a `PictureRecorder`; only its internal redrawer ever touches the GPU surface.
-- **skiko-graphite doesn't help yet.** `Surface.wrapBackendTexture` needs a Graphite `Recorder`,
-  and Compose's AWT redrawers are still Ganesh-only.
-- **Vulkan can't be forced.** `SKIKO_RENDER_API` has no `VULKAN` value (it falls back to the OS
-  default), and there's no Vulkan AWT redrawer, so Filament Vulkan ↔ skiko Vulkan isn't possible yet.
-
-Recheck when Compose exposes its context publicly or skiko ships a Graphite AWT redrawer.
+| Layer    | Today                          | Target                  | Status |
+|----------|--------------------------------|-------------------------|--------|
+| skiko    | Ganesh (GL / D3D12 / Metal)    | Graphite (Metal / Vulkan / Dawn) | In progress: graphite modules shipped, AWT redrawers not yet |
+| Filament | OpenGL / Vulkan / Metal        | WebGPU / Dawn           | Experimental, behind a build flag |
 
 ### Track these
 
-- **skiko: Switch from Ganesh to Graphite** — https://github.com/JetBrains/skiko/issues/982
-- **SKIKO-549 — Vulkan bindings** — https://youtrack.jetbrains.com/issue/SKIKO-549/Vulkan-bindings
+- **skiko: Graphite modules and AWT** — [#1245](https://github.com/JetBrains/skiko/pull/1245), [#1266](https://github.com/JetBrains/skiko/pull/1266), [#1301](https://github.com/JetBrains/skiko/pull/1301), [releases](https://github.com/JetBrains/skiko/releases)
 - **JetBrains internship — Graphite backend support in Skiko** — https://internship.jetbrains.com/projects/1686
-- **Filament #2054 — WebGPU added support to be future proof** — https://github.com/google/filament/issues/2054
-- **Filament RELEASE_NOTES** — https://github.com/google/filament/blob/main/RELEASE_NOTES.md
-- **Filament BUILDING** (WebGPU build flag) — https://github.com/google/filament/blob/main/BUILDING.md
-- **google/dawn — native WebGPU (D3D12 / Metal / Vulkan / GL)** — https://github.com/google/dawn
-- **Skia Vulkan backend** — https://skia.org/docs/user/special/vulkan/
+- **SKIKO-549 — Vulkan bindings** — https://youtrack.jetbrains.com/issue/SKIKO-549/Vulkan-bindings
 - **compose-jb #382 — Expose skiko's renderApi** — https://github.com/JetBrains/compose-multiplatform/issues/382
+- **Filament #2054 — WebGPU support** — https://github.com/google/filament/issues/2054
+- **Filament BUILDING** (WebGPU build flag) — https://github.com/google/filament/blob/main/BUILDING.md
+- **google/dawn — native WebGPU** — https://github.com/google/dawn
